@@ -887,562 +887,574 @@ var Jetty;
 })(Jetty || (Jetty = {}));
 /**
 * @module Jetty
-*/
-var Jetty;
-(function (Jetty) {
-    function JettyController($scope, $location, workspace, jolokia) {
-        var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}">' + '<i class="{{row.getProperty(col.field) | jettyIconClass}}"></i>' + '</div>';
-        var urlTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">' + '<a ng-href="{{row.getProperty(col.field)}}" target="_blank">{{row.getProperty(col.field)}}</a>' + '</div>';
-
-        $scope.uninstallDialog = new UI.Dialog();
-
-        $scope.httpPort;
-        $scope.httpScheme = "http";
-
-        $scope.webapps = [];
-        $scope.selected = [];
-
-        var columnDefs = [
-            {
-                field: 'state',
-                displayName: 'State',
-                cellTemplate: stateTemplate,
-                width: 56,
-                minWidth: 56,
-                maxWidth: 56,
-                resizable: false
-            },
-            {
-                field: 'displayName',
-                displayName: 'Name',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'contextPath',
-                displayName: 'Context-Path',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'url',
-                displayName: 'Url',
-                cellTemplate: urlTemplate,
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            }
-        ];
-
-        $scope.gridOptions = {
-            data: 'webapps',
-            displayFooter: true,
-            selectedItems: $scope.selected,
-            columnDefs: columnDefs,
-            filterOptions: {
-                filterText: ''
-            },
-            title: "Web applications"
-        };
-
-        // function to control the web applications
-        $scope.controlWebApps = function (op) {
-            // grab id of mbean names to control
-            var mbeanNames = $scope.selected.map(function (b) {
-                return b.mbean;
-            });
-            if (!angular.isArray(mbeanNames)) {
-                mbeanNames = [mbeanNames];
-            }
-
-            // execute operation on each mbean
-            var lastIndex = (mbeanNames.length || 1) - 1;
-            angular.forEach(mbeanNames, function (mbean, idx) {
-                var onResponse = (idx >= lastIndex) ? $scope.onLastResponse : $scope.onResponse;
-                jolokia.request({
-                    type: 'exec',
-                    mbean: mbean,
-                    operation: op,
-                    arguments: null
-                }, onSuccess(onResponse, { error: onResponse }));
-            });
-        };
-
-        $scope.stop = function () {
-            $scope.controlWebApps('stop');
-        };
-
-        $scope.start = function () {
-            $scope.controlWebApps('start');
-        };
-
-        $scope.uninstall = function () {
-            $scope.controlWebApps('destroy');
-            $scope.uninstallDialog.close();
-        };
-
-        $scope.anySelectionHasState = function (state) {
-            var selected = $scope.selected || [];
-            return selected.length && selected.any(function (s) {
-                return Jetty.isState(s, state);
-            });
-        };
-
-        $scope.everySelectionHasState = function (state) {
-            var selected = $scope.selected || [];
-            return selected.length && selected.every(function (s) {
-                return Jetty.isState(s, state);
-            });
-        };
-
-        // function to trigger reloading page
-        $scope.onLastResponse = function (response) {
-            $scope.onResponse(response);
-
-            // we only want to force updating the data on the last response
-            loadData();
-        };
-
-        $scope.onResponse = function (response) {
-            //console.log("got response: " + response);
-        };
-
-        $scope.$on('jmxTreeUpdated', reloadFunction);
-        $scope.$watch('workspace.tree', reloadFunction);
-
-        // grab server information once
-        $scope.jettyServerVersion = "";
-        $scope.jettyServerStartupTime = "";
-
-        var servers = jolokia.search("org.eclipse.jetty.server:type=server,*");
-        if (servers && servers.length === 1) {
-            $scope.jettyServerVersion = jolokia.getAttribute(servers[0], "version");
-            $scope.jettyServerStartupTime = jolokia.getAttribute(servers[0], "startupTime");
-        } else {
-            console.log("Cannot find jetty server or there was more than one server. response is: " + servers);
-        }
-
-        function reloadFunction() {
-            // if the JMX tree is reloaded its probably because a new MBean has been added or removed
-            // so lets reload, asynchronously just in case
-            setTimeout(loadData, 50);
-        }
-
-        function loadData() {
-            console.log("Loading Jetty webapp data...");
-
-            // must load connectors first, before showing applications, so we do this call synchronously
-            // jetty 7/8
-            var connectors = jolokia.search("org.eclipse.jetty.server.nio:type=selectchannelconnector,*");
-            if (!connectors) {
-                // jetty 9
-                connectors = jolokia.search("org.eclipse.jetty.server:type=serverconnector,*");
-            }
-            if (connectors) {
-                var found = false;
-                angular.forEach(connectors, function (key, value) {
-                    var mbean = key;
-                    if (!found) {
-                        var data = jolokia.request({ type: "read", mbean: mbean, attribute: ["port", "protocols"] });
-                        if (data && data.value && data.value.protocols && data.value.protocols.toString().toLowerCase().startsWith("http")) {
-                            found = true;
-                            $scope.httpPort = data.value.port;
-                            $scope.httpScheme = "http";
-                        }
-                    }
-                });
-            }
-
-            // support embedded jetty which may use morbay mbean names
-            jolokia.search("org.mortbay.jetty.plugin:type=jettywebappcontext,*", onSuccess(render));
-            jolokia.search("org.eclipse.jetty.webapp:type=webappcontext,*", onSuccess(render));
-            jolokia.search("org.eclipse.jetty.servlet:type=servletcontexthandler,*", onSuccess(render));
-        }
-
-        function render(response) {
-            $scope.webapps = [];
-            $scope.mbeanIndex = {};
-            $scope.selected.length = 0;
-
-            function onAttributes(response) {
-                var obj = response.value;
-                if (obj) {
-                    obj.mbean = response.request.mbean;
-                    if (!obj.state) {
-                        // lets leave the state as it is if it is defined
-                        obj.state = obj['running'] === undefined || obj['running'] ? "started" : "stopped";
-                    }
-
-                    // compute the url for the webapp, and we want to use http as scheme
-                    var hostname = Core.extractTargetUrl($location, $scope.httpScheme, $scope.httpPort);
-                    obj.url = hostname + obj['contextPath'];
-
-                    var mbean = obj.mbean;
-                    if (mbean) {
-                        var idx = $scope.mbeanIndex[mbean];
-                        if (angular.isDefined(idx)) {
-                            $scope.webapps[mbean] = obj;
-                        } else {
-                            $scope.mbeanIndex[mbean] = $scope.webapps.length;
-                            $scope.webapps.push(obj);
-                        }
-                        Core.$apply($scope);
-                    }
-                }
-            }
-
-            angular.forEach(response, function (value, key) {
-                var mbean = value;
-                jolokia.request({ type: "read", mbean: mbean, attribute: [] }, onSuccess(onAttributes));
-            });
-            Core.$apply($scope);
-        }
-    }
-    Jetty.JettyController = JettyController;
-})(Jetty || (Jetty = {}));
-/**
-* @module Jetty
 * @main Jetty
 */
+/// <reference path="./jettyHelpers.ts"/>
 var Jetty;
 (function (Jetty) {
     var pluginName = 'jetty';
-    angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore']).config(function ($routeProvider) {
-        $routeProvider.when('/jetty/server', { templateUrl: 'app/jetty/html/server.html' }).when('/jetty/applications', { templateUrl: 'app/jetty/html/applications.html' }).when('/jetty/connectors', { templateUrl: 'app/jetty/html/connectors.html' }).when('/jetty/threadpools', { templateUrl: 'app/jetty/html/threadpools.html' });
-    }).filter('jettyIconClass', function () {
-        return Jetty.iconClass;
-    }).run(function ($location, workspace, viewRegistry, helpRegistry) {
-        viewRegistry['jetty'] = "app/jetty/html/layoutJettyTabs.html";
-        helpRegistry.addUserDoc('jetty', 'app/jetty/doc/help.md', function () {
-            return workspace.treeContainsDomainAndProperties("org.eclipse.jetty.server");
-        });
+    Jetty._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore']);
 
-        workspace.topLevelTabs.push({
-            id: "jetty",
-            content: "Jetty",
-            title: "Manage your Jetty container",
-            isValid: function (workspace) {
-                return workspace.treeContainsDomainAndProperties("org.eclipse.jetty.server");
-            },
-            href: function () {
-                return "#/jetty/applications";
-            },
-            isActive: function (workspace) {
-                return workspace.isTopTabActive("jetty");
-            }
-        });
+    Jetty._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/jetty/server', { templateUrl: 'app/jetty/html/server.html' }).when('/jetty/applications', { templateUrl: 'app/jetty/html/applications.html' }).when('/jetty/connectors', { templateUrl: 'app/jetty/html/connectors.html' }).when('/jetty/threadpools', { templateUrl: 'app/jetty/html/threadpools.html' });
+        }]);
+
+    Jetty._module.filter('jettyIconClass', function () {
+        return Jetty.iconClass;
     });
+
+    Jetty._module.run([
+        "$location", "workspace", "viewRegistry", "helpRegistry", function ($location, workspace, viewRegistry, helpRegistry) {
+            viewRegistry['jetty'] = "app/jetty/html/layoutJettyTabs.html";
+            helpRegistry.addUserDoc('jetty', 'app/jetty/doc/help.md', function () {
+                return workspace.treeContainsDomainAndProperties("org.eclipse.jetty.server");
+            });
+
+            workspace.topLevelTabs.push({
+                id: "jetty",
+                content: "Jetty",
+                title: "Manage your Jetty container",
+                isValid: function (workspace) {
+                    return workspace.treeContainsDomainAndProperties("org.eclipse.jetty.server");
+                },
+                href: function () {
+                    return "#/jetty/applications";
+                },
+                isActive: function (workspace) {
+                    return workspace.isTopTabActive("jetty");
+                }
+            });
+        }]);
 
     hawtioPluginLoader.addModule(pluginName);
 })(Jetty || (Jetty = {}));
 /**
 * @module Jetty
 */
+/// <reference path="./jettyPlugin.ts"/>
 var Jetty;
 (function (Jetty) {
-    function ThreadPoolsController($scope, $location, workspace, jolokia) {
-        var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jettyIconClass}}"></i></div>';
+    Jetty._module.controller("Jetty.JettyController", [
+        "$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+            var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}">' + '<i class="{{row.getProperty(col.field) | jettyIconClass}}"></i>' + '</div>';
+            var urlTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">' + '<a ng-href="{{row.getProperty(col.field)}}" target="_blank">{{row.getProperty(col.field)}}</a>' + '</div>';
 
-        $scope.threadpools = [];
+            $scope.uninstallDialog = new UI.Dialog();
 
-        var columnDefs = [
-            {
-                field: 'running',
-                displayName: 'State',
-                cellTemplate: stateTemplate,
-                width: 56,
-                minWidth: 56,
-                maxWidth: 56,
-                resizable: false
-            },
-            {
-                field: 'threads',
-                displayName: 'Threads',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'minThreads',
-                displayName: 'Min Threads',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'maxThreads',
-                displayName: 'Max Threads',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'idleThreads',
-                displayName: 'Idle Threads',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'idleTimeout',
-                displayName: 'Idle Timeout (ms)',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'name',
-                displayName: 'Name',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            }
-        ];
+            $scope.httpPort;
+            $scope.httpScheme = "http";
 
-        $scope.gridOptions = {
-            data: 'threadpools',
-            displayFooter: true,
-            canSelectRows: false,
-            columnDefs: columnDefs,
-            title: "Thread Pools"
-        };
+            $scope.webapps = [];
+            $scope.selected = [];
 
-        function render78(response) {
-            $scope.threadpools = [];
-
-            function onAttributes(response) {
-                var obj = response.value;
-                if (obj) {
-                    // jetty78 vs jetty9 is a bit different
-                    obj.running = obj['running'] !== undefined ? obj['running'] : obj['state'] == "STARTED";
-                    obj.idleTimeout = obj['idleTimeout'] !== undefined ? obj['idleTimeout'] : obj['maxIdleTimeMs'];
-                    $scope.threadpools.push(obj);
+            var columnDefs = [
+                {
+                    field: 'state',
+                    displayName: 'State',
+                    cellTemplate: stateTemplate,
+                    width: 56,
+                    minWidth: 56,
+                    maxWidth: 56,
+                    resizable: false
+                },
+                {
+                    field: 'displayName',
+                    displayName: 'Name',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'contextPath',
+                    displayName: 'Context-Path',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'url',
+                    displayName: 'Url',
+                    cellTemplate: urlTemplate,
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
                 }
+            ];
+
+            $scope.gridOptions = {
+                data: 'webapps',
+                displayFooter: true,
+                selectedItems: $scope.selected,
+                columnDefs: columnDefs,
+                filterOptions: {
+                    filterText: ''
+                },
+                title: "Web applications"
+            };
+
+            // function to control the web applications
+            $scope.controlWebApps = function (op) {
+                // grab id of mbean names to control
+                var mbeanNames = $scope.selected.map(function (b) {
+                    return b.mbean;
+                });
+                if (!angular.isArray(mbeanNames)) {
+                    mbeanNames = [mbeanNames];
+                }
+
+                // execute operation on each mbean
+                var lastIndex = (mbeanNames.length || 1) - 1;
+                angular.forEach(mbeanNames, function (mbean, idx) {
+                    var onResponse = (idx >= lastIndex) ? $scope.onLastResponse : $scope.onResponse;
+                    jolokia.request({
+                        type: 'exec',
+                        mbean: mbean,
+                        operation: op,
+                        arguments: null
+                    }, onSuccess(onResponse, { error: onResponse }));
+                });
+            };
+
+            $scope.stop = function () {
+                $scope.controlWebApps('stop');
+            };
+
+            $scope.start = function () {
+                $scope.controlWebApps('start');
+            };
+
+            $scope.uninstall = function () {
+                $scope.controlWebApps('destroy');
+                $scope.uninstallDialog.close();
+            };
+
+            $scope.anySelectionHasState = function (state) {
+                var selected = $scope.selected || [];
+                return selected.length && selected.any(function (s) {
+                    return Jetty.isState(s, state);
+                });
+            };
+
+            $scope.everySelectionHasState = function (state) {
+                var selected = $scope.selected || [];
+                return selected.length && selected.every(function (s) {
+                    return Jetty.isState(s, state);
+                });
+            };
+
+            // function to trigger reloading page
+            $scope.onLastResponse = function (response) {
+                $scope.onResponse(response);
+
+                // we only want to force updating the data on the last response
+                loadData();
+            };
+
+            $scope.onResponse = function (response) {
+                //console.log("got response: " + response);
+            };
+
+            $scope.$on('jmxTreeUpdated', reloadFunction);
+            $scope.$watch('workspace.tree', reloadFunction);
+
+            // grab server information once
+            $scope.jettyServerVersion = "";
+            $scope.jettyServerStartupTime = "";
+
+            var servers = jolokia.search("org.eclipse.jetty.server:type=server,*");
+            if (servers && servers.length === 1) {
+                $scope.jettyServerVersion = jolokia.getAttribute(servers[0], "version");
+                $scope.jettyServerStartupTime = jolokia.getAttribute(servers[0], "startupTime");
+            } else {
+                console.log("Cannot find jetty server or there was more than one server. response is: " + servers);
             }
 
-            // create structure for each response
-            angular.forEach(response, function (value, key) {
-                var mbean = value;
-                jolokia.request({ type: "read", mbean: mbean, attribute: [] }, onSuccess(onAttributes));
-            });
-            Core.$apply($scope);
-        }
-        ;
+            function reloadFunction() {
+                // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+                // so lets reload, asynchronously just in case
+                setTimeout(loadData, 50);
+            }
 
-        $scope.$on('jmxTreeUpdated', reloadFunction);
-        $scope.$watch('workspace.tree', reloadFunction);
+            function loadData() {
+                console.log("Loading Jetty webapp data...");
 
-        function reloadFunction() {
-            // if the JMX tree is reloaded its probably because a new MBean has been added or removed
-            // so lets reload, asynchronously just in case
-            setTimeout(loadData, 50);
-        }
+                // must load connectors first, before showing applications, so we do this call synchronously
+                // jetty 7/8
+                var connectors = jolokia.search("org.eclipse.jetty.server.nio:type=selectchannelconnector,*");
+                if (!connectors) {
+                    // jetty 9
+                    connectors = jolokia.search("org.eclipse.jetty.server:type=serverconnector,*");
+                }
+                if (connectors) {
+                    var found = false;
+                    angular.forEach(connectors, function (key, value) {
+                        var mbean = key;
+                        if (!found) {
+                            var data = jolokia.request({ type: "read", mbean: mbean, attribute: ["port", "protocols"] });
+                            if (data && data.value && data.value.protocols && data.value.protocols.toString().toLowerCase().startsWith("http")) {
+                                found = true;
+                                $scope.httpPort = data.value.port;
+                                $scope.httpScheme = "http";
+                            }
+                        }
+                    });
+                }
 
-        function loadData() {
-            console.log("Loading Jetty thread pool data...");
-            var tree = workspace.tree;
+                // support embedded jetty which may use morbay mbean names
+                jolokia.search("org.mortbay.jetty.plugin:type=jettywebappcontext,*", onSuccess(render));
+                jolokia.search("org.eclipse.jetty.webapp:type=webappcontext,*", onSuccess(render));
+                jolokia.search("org.eclipse.jetty.servlet:type=servletcontexthandler,*", onSuccess(render));
+            }
 
-            jolokia.search("org.eclipse.jetty.util.thread:type=queuedthreadpool,*", onSuccess(render78));
-        }
-    }
-    Jetty.ThreadPoolsController = ThreadPoolsController;
+            function render(response) {
+                $scope.webapps = [];
+                $scope.mbeanIndex = {};
+                $scope.selected.length = 0;
+
+                function onAttributes(response) {
+                    var obj = response.value;
+                    if (obj) {
+                        obj.mbean = response.request.mbean;
+                        if (!obj.state) {
+                            // lets leave the state as it is if it is defined
+                            obj.state = obj['running'] === undefined || obj['running'] ? "started" : "stopped";
+                        }
+
+                        // compute the url for the webapp, and we want to use http as scheme
+                        var hostname = Core.extractTargetUrl($location, $scope.httpScheme, $scope.httpPort);
+                        obj.url = hostname + obj['contextPath'];
+
+                        var mbean = obj.mbean;
+                        if (mbean) {
+                            var idx = $scope.mbeanIndex[mbean];
+                            if (angular.isDefined(idx)) {
+                                $scope.webapps[mbean] = obj;
+                            } else {
+                                $scope.mbeanIndex[mbean] = $scope.webapps.length;
+                                $scope.webapps.push(obj);
+                            }
+                            Core.$apply($scope);
+                        }
+                    }
+                }
+
+                angular.forEach(response, function (value, key) {
+                    var mbean = value;
+                    jolokia.request({ type: "read", mbean: mbean, attribute: [] }, onSuccess(onAttributes));
+                });
+                Core.$apply($scope);
+            }
+        }]);
 })(Jetty || (Jetty = {}));
 /**
 * @module Jetty
 */
+/// <reference path="./jettyPlugin.ts"/>
 var Jetty;
 (function (Jetty) {
-    function ConnectorsController($scope, $location, workspace, jolokia) {
-        var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jettyIconClass}}"></i></div>';
+    Jetty._module.controller("Jetty.ThreadPoolsController", [
+        "$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+            var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jettyIconClass}}"></i></div>';
 
-        $scope.connectors = [];
-        $scope.selected = [];
+            $scope.threadpools = [];
 
-        var columnDefs = [
-            {
-                field: 'running',
-                displayName: 'State',
-                cellTemplate: stateTemplate,
-                width: 56,
-                minWidth: 56,
-                maxWidth: 56,
-                resizable: false
-            },
-            {
-                field: 'port',
-                displayName: 'Port',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'protocols',
-                displayName: 'Protocols',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'default',
-                displayName: 'Default',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            }
-        ];
+            var columnDefs = [
+                {
+                    field: 'running',
+                    displayName: 'State',
+                    cellTemplate: stateTemplate,
+                    width: 56,
+                    minWidth: 56,
+                    maxWidth: 56,
+                    resizable: false
+                },
+                {
+                    field: 'threads',
+                    displayName: 'Threads',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'minThreads',
+                    displayName: 'Min Threads',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'maxThreads',
+                    displayName: 'Max Threads',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'idleThreads',
+                    displayName: 'Idle Threads',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'idleTimeout',
+                    displayName: 'Idle Timeout (ms)',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'name',
+                    displayName: 'Name',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                }
+            ];
 
-        $scope.gridOptions = {
-            data: 'connectors',
-            displayFooter: true,
-            selectedItems: $scope.selected,
-            columnDefs: columnDefs,
-            filterOptions: {
-                filterText: ''
-            },
-            title: "Connectors"
-        };
+            $scope.gridOptions = {
+                data: 'threadpools',
+                displayFooter: true,
+                canSelectRows: false,
+                columnDefs: columnDefs,
+                title: "Thread Pools"
+            };
 
-        // function to control the connectors
-        $scope.controlConnectors = function (op) {
-            // grab id of mbean names to control
-            var mbeanNames = $scope.selected.map(function (b) {
-                return b.mbean;
-            });
-            if (!angular.isArray(mbeanNames)) {
-                mbeanNames = [mbeanNames];
-            }
+            function render78(response) {
+                $scope.threadpools = [];
 
-            // execute operation on each mbean
-            var lastIndex = (mbeanNames.length || 1) - 1;
-            angular.forEach(mbeanNames, function (mbean, idx) {
-                var onResponse = (idx >= lastIndex) ? $scope.onLastResponse : $scope.onResponse;
-                jolokia.request({
-                    type: 'exec',
-                    mbean: mbean,
-                    operation: op,
-                    arguments: null
-                }, onSuccess(onResponse, { error: onResponse }));
-            });
-        };
-
-        $scope.stop = function () {
-            $scope.controlConnectors('stop');
-        };
-
-        $scope.start = function () {
-            $scope.controlConnectors('start');
-        };
-
-        $scope.anySelectionIsRunning = function () {
-            var selected = $scope.selected || [];
-            return selected.length && selected.any(function (s) {
-                return s.running;
-            });
-        };
-
-        $scope.everySelectionIsRunning = function (state) {
-            var selected = $scope.selected || [];
-            return selected.length && selected.every(function (s) {
-                return s.running;
-            });
-        };
-
-        function render78(response) {
-            $scope.connectors = [];
-            $scope.selected.length = 0;
-
-            function onAttributes(response) {
-                var obj = response.value;
-                if (obj) {
-                    // split each into 2 rows as we want http and https on each row
-                    obj.mbean = response.request.mbean;
-                    obj.protocols = "[http]";
-                    obj.default = "http";
-                    obj.port = obj.port;
-                    obj.running = obj['running'] !== undefined ? obj['running'] : true;
-                    $scope.connectors.push(obj);
-                    if (obj.confidentialPort) {
-                        // create a clone of obj for https
-                        var copyObj = {
-                            protocols: "[https]",
-                            default: "https",
-                            port: obj.confidentialPort,
-                            running: obj.running,
-                            mbean: obj.mbean
-                        };
-                        $scope.connectors.push(copyObj);
+                function onAttributes(response) {
+                    var obj = response.value;
+                    if (obj) {
+                        // jetty78 vs jetty9 is a bit different
+                        obj.running = obj['running'] !== undefined ? obj['running'] : obj['state'] == "STARTED";
+                        obj.idleTimeout = obj['idleTimeout'] !== undefined ? obj['idleTimeout'] : obj['maxIdleTimeMs'];
+                        $scope.threadpools.push(obj);
                     }
-                    Core.$apply($scope);
                 }
+
+                // create structure for each response
+                angular.forEach(response, function (value, key) {
+                    var mbean = value;
+                    jolokia.request({ type: "read", mbean: mbean, attribute: [] }, onSuccess(onAttributes));
+                });
+                Core.$apply($scope);
+            }
+            ;
+
+            $scope.$on('jmxTreeUpdated', reloadFunction);
+            $scope.$watch('workspace.tree', reloadFunction);
+
+            function reloadFunction() {
+                // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+                // so lets reload, asynchronously just in case
+                setTimeout(loadData, 50);
             }
 
-            // create structure for each response
-            angular.forEach(response, function (value, key) {
-                var mbean = value;
-                jolokia.request({ type: "read", mbean: mbean, attribute: [] }, onSuccess(onAttributes));
-            });
-            Core.$apply($scope);
-        }
-        ;
+            function loadData() {
+                console.log("Loading Jetty thread pool data...");
+                var tree = workspace.tree;
 
-        function render9(response) {
+                jolokia.search("org.eclipse.jetty.util.thread:type=queuedthreadpool,*", onSuccess(render78));
+            }
+        }]);
+})(Jetty || (Jetty = {}));
+/**
+* @module Jetty
+*/
+/// <reference path="./jettyPlugin.ts"/>
+var Jetty;
+(function (Jetty) {
+    Jetty._module.controller("Jetty.ConnectorsController", [
+        "$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+            var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jettyIconClass}}"></i></div>';
+
             $scope.connectors = [];
-            $scope.selected.length = 0;
+            $scope.selected = [];
 
-            function onAttributes(response) {
-                var obj = response.value;
-                if (obj) {
-                    obj.mbean = response.request.mbean;
-                    obj.protocols = obj['protocols'];
-                    obj.default = obj['defaultProtocol'];
-                    obj.port = obj.port;
-                    obj.running = obj['state'] == "STARTED";
-                    $scope.connectors.push(obj);
-                    Core.$apply($scope);
+            var columnDefs = [
+                {
+                    field: 'running',
+                    displayName: 'State',
+                    cellTemplate: stateTemplate,
+                    width: 56,
+                    minWidth: 56,
+                    maxWidth: 56,
+                    resizable: false
+                },
+                {
+                    field: 'port',
+                    displayName: 'Port',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'protocols',
+                    displayName: 'Protocols',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'default',
+                    displayName: 'Default',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
                 }
+            ];
+
+            $scope.gridOptions = {
+                data: 'connectors',
+                displayFooter: true,
+                selectedItems: $scope.selected,
+                columnDefs: columnDefs,
+                filterOptions: {
+                    filterText: ''
+                },
+                title: "Connectors"
+            };
+
+            // function to control the connectors
+            $scope.controlConnectors = function (op) {
+                // grab id of mbean names to control
+                var mbeanNames = $scope.selected.map(function (b) {
+                    return b.mbean;
+                });
+                if (!angular.isArray(mbeanNames)) {
+                    mbeanNames = [mbeanNames];
+                }
+
+                // execute operation on each mbean
+                var lastIndex = (mbeanNames.length || 1) - 1;
+                angular.forEach(mbeanNames, function (mbean, idx) {
+                    var onResponse = (idx >= lastIndex) ? $scope.onLastResponse : $scope.onResponse;
+                    jolokia.request({
+                        type: 'exec',
+                        mbean: mbean,
+                        operation: op,
+                        arguments: null
+                    }, onSuccess(onResponse, { error: onResponse }));
+                });
+            };
+
+            $scope.stop = function () {
+                $scope.controlConnectors('stop');
+            };
+
+            $scope.start = function () {
+                $scope.controlConnectors('start');
+            };
+
+            $scope.anySelectionIsRunning = function () {
+                var selected = $scope.selected || [];
+                return selected.length && selected.any(function (s) {
+                    return s.running;
+                });
+            };
+
+            $scope.everySelectionIsRunning = function (state) {
+                var selected = $scope.selected || [];
+                return selected.length && selected.every(function (s) {
+                    return s.running;
+                });
+            };
+
+            function render78(response) {
+                $scope.connectors = [];
+                $scope.selected.length = 0;
+
+                function onAttributes(response) {
+                    var obj = response.value;
+                    if (obj) {
+                        // split each into 2 rows as we want http and https on each row
+                        obj.mbean = response.request.mbean;
+                        obj.protocols = "[http]";
+                        obj.default = "http";
+                        obj.port = obj.port;
+                        obj.running = obj['running'] !== undefined ? obj['running'] : true;
+                        $scope.connectors.push(obj);
+                        if (obj.confidentialPort) {
+                            // create a clone of obj for https
+                            var copyObj = {
+                                protocols: "[https]",
+                                default: "https",
+                                port: obj.confidentialPort,
+                                running: obj.running,
+                                mbean: obj.mbean
+                            };
+                            $scope.connectors.push(copyObj);
+                        }
+                        Core.$apply($scope);
+                    }
+                }
+
+                // create structure for each response
+                angular.forEach(response, function (value, key) {
+                    var mbean = value;
+                    jolokia.request({ type: "read", mbean: mbean, attribute: [] }, onSuccess(onAttributes));
+                });
+                Core.$apply($scope);
+            }
+            ;
+
+            function render9(response) {
+                $scope.connectors = [];
+                $scope.selected.length = 0;
+
+                function onAttributes(response) {
+                    var obj = response.value;
+                    if (obj) {
+                        obj.mbean = response.request.mbean;
+                        obj.protocols = obj['protocols'];
+                        obj.default = obj['defaultProtocol'];
+                        obj.port = obj.port;
+                        obj.running = obj['state'] == "STARTED";
+                        $scope.connectors.push(obj);
+                        Core.$apply($scope);
+                    }
+                }
+
+                // create structure for each response
+                angular.forEach(response, function (value, key) {
+                    var mbean = value;
+                    jolokia.request({ type: "read", mbean: mbean, attribute: [] }, onSuccess(onAttributes));
+                });
+                Core.$apply($scope);
+            }
+            ;
+
+            // function to trigger reloading page
+            $scope.onLastResponse = function (response) {
+                $scope.onResponse(response);
+
+                // we only want to force updating the data on the last response
+                loadData();
+            };
+
+            $scope.onResponse = function (response) {
+                //console.log("got response: " + response);
+            };
+
+            $scope.$on('jmxTreeUpdated', reloadFunction);
+            $scope.$watch('workspace.tree', reloadFunction);
+
+            function reloadFunction() {
+                // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+                // so lets reload, asynchronously just in case
+                setTimeout(loadData, 50);
             }
 
-            // create structure for each response
-            angular.forEach(response, function (value, key) {
-                var mbean = value;
-                jolokia.request({ type: "read", mbean: mbean, attribute: [] }, onSuccess(onAttributes));
-            });
-            Core.$apply($scope);
-        }
-        ;
+            function loadData() {
+                console.log("Loading Jetty connector data...");
+                var tree = workspace.tree;
 
-        // function to trigger reloading page
-        $scope.onLastResponse = function (response) {
-            $scope.onResponse(response);
-
-            // we only want to force updating the data on the last response
-            loadData();
-        };
-
-        $scope.onResponse = function (response) {
-            //console.log("got response: " + response);
-        };
-
-        $scope.$on('jmxTreeUpdated', reloadFunction);
-        $scope.$watch('workspace.tree', reloadFunction);
-
-        function reloadFunction() {
-            // if the JMX tree is reloaded its probably because a new MBean has been added or removed
-            // so lets reload, asynchronously just in case
-            setTimeout(loadData, 50);
-        }
-
-        function loadData() {
-            console.log("Loading Jetty connector data...");
-            var tree = workspace.tree;
-
-            jolokia.search("org.eclipse.jetty.server.nio:type=selectchannelconnector,*", onSuccess(render78));
-            jolokia.search("org.eclipse.jetty.server:type=serverconnector,*", onSuccess(render9));
-        }
-    }
-    Jetty.ConnectorsController = ConnectorsController;
+                jolokia.search("org.eclipse.jetty.server.nio:type=selectchannelconnector,*", onSuccess(render78));
+                jolokia.search("org.eclipse.jetty.server:type=serverconnector,*", onSuccess(render9));
+            }
+        }]);
 })(Jetty || (Jetty = {}));
 /**
 * @module Git
@@ -8158,73 +8170,6 @@ var ES;
 */
 var JVM;
 (function (JVM) {
-    function JVMsController($scope, $window, $location, workspace, jolokia, mbeanName) {
-        JVM.configureScope($scope, $location, workspace);
-        $scope.data = [];
-        $scope.deploying = false;
-        $scope.status = '';
-
-        $scope.fetch = function () {
-            notification('info', 'Discovering local JVM processes, please wait...');
-            jolokia.request({
-                type: 'exec', mbean: mbeanName,
-                operation: 'listLocalJVMs()',
-                arguments: []
-            }, {
-                success: render,
-                error: function (response) {
-                    $scope.data = [];
-                    $scope.status = 'Could not discover local JVM processes: ' + response.error;
-                    Core.$apply($scope);
-                }
-            });
-        };
-
-        $scope.stopAgent = function (pid) {
-            notification('info', "Attempting to detach agent from PID " + pid);
-            jolokia.request({
-                type: 'exec', mbean: mbeanName,
-                operation: 'stopAgent(java.lang.String)',
-                arguments: [pid]
-            }, onSuccess(function () {
-                notification('success', "Detached agent from PID " + pid);
-                $scope.fetch();
-            }));
-        };
-
-        $scope.startAgent = function (pid) {
-            notification('info', "Attempting to attach agent to PID " + pid);
-            jolokia.request({
-                type: 'exec', mbean: mbeanName,
-                operation: 'startAgent(java.lang.String)',
-                arguments: [pid]
-            }, onSuccess(function () {
-                notification('success', "Attached agent to PID " + pid);
-                $scope.fetch();
-            }));
-        };
-
-        $scope.connectTo = function (url) {
-            $window.open("?url=" + encodeURIComponent(url));
-        };
-
-        function render(response) {
-            $scope.data = response.value;
-            if ($scope.data.length === 0) {
-                $scope.status = 'Could not discover local JVM processes';
-            }
-            Core.$apply($scope);
-        }
-
-        $scope.fetch();
-    }
-    JVM.JVMsController = JVMsController;
-})(JVM || (JVM = {}));
-/**
-* @module JVM
-*/
-var JVM;
-(function (JVM) {
     JVM.log = Logger.get("JVM");
 
     JVM.connectControllerKey = "jvmConnectSettings";
@@ -8302,412 +8247,493 @@ var JVM;
 })(JVM || (JVM = {}));
 /**
 * @module JVM
-*/
-var JVM;
-(function (JVM) {
-    function ResetController($scope, localStorage) {
-        $scope.doClearConnectSettings = function () {
-            var doReset = function () {
-                delete localStorage[JVM.connectControllerKey];
-                delete localStorage[JVM.connectionSettingsKey];
-                setTimeout(function () {
-                    window.location.reload();
-                }, 10);
-            };
-            doReset();
-        };
-    }
-    JVM.ResetController = ResetController;
-})(JVM || (JVM = {}));
-/**
-* @module JVM
-*/
-var JVM;
-(function (JVM) {
-    function DiscoveryController($scope, localStorage, jolokia) {
-        $scope.discovering = true;
-
-        $scope.$watch('agents', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                $scope.selectedAgent = $scope.agents.find(function (a) {
-                    return a['selected'];
-                });
-            }
-        }, true);
-
-        $scope.closePopover = function ($event) {
-            $($event.currentTarget).parents('.popover').prev().popover('hide');
-        };
-
-        function doConnect(agent) {
-            if (!agent.url) {
-                notification('warning', 'No URL available to connect to agent');
-                return;
-            }
-            var options = new Core.ConnectToServerOptions();
-
-            var urlObject = Core.parseUrl(agent.url);
-            angular.extend(options, urlObject);
-            options.userName = agent.username;
-            options.password = agent.password;
-
-            Core.connectToServer(localStorage, options);
-        }
-        ;
-
-        $scope.connectWithCredentials = function ($event, agent) {
-            $scope.closePopover($event);
-            doConnect(agent);
-        };
-
-        $scope.gotoServer = function ($event, agent) {
-            if (agent.secured) {
-                $($event.currentTarget).popover('show');
-            } else {
-                doConnect(agent);
-            }
-        };
-
-        $scope.getElementId = function (agent) {
-            return agent.agent_id.dasherize().replace(/\./g, "-");
-        };
-
-        $scope.getLogo = function (agent) {
-            if (agent.server_product) {
-                return JVM.logoRegistry[agent.server_product];
-            }
-            return JVM.logoRegistry['generic'];
-        };
-
-        $scope.filterMatches = function (agent) {
-            if (Core.isBlank($scope.filter)) {
-                return true;
-            } else {
-                return angular.toJson(agent).toLowerCase().has($scope.filter.toLowerCase());
-            }
-        };
-
-        $scope.getAgentIdClass = function (agent) {
-            if ($scope.hasName(agent)) {
-                return "";
-            }
-            return "strong";
-        };
-
-        $scope.hasName = function (agent) {
-            if (agent.server_vendor && agent.server_product && agent.server_version) {
-                return true;
-            }
-            return false;
-        };
-
-        function render(response) {
-            if (!response.value) {
-                return;
-            }
-            var responseJson = angular.toJson(response.value.sortBy(function (agent) {
-                return agent['agent_id'];
-            }), true);
-            if ($scope.responseJson !== responseJson) {
-                if ($scope.discovering) {
-                    $scope.discovering = false;
-                }
-                $scope.responseJson = responseJson;
-                JVM.log.debug("agents: ", $scope.agents);
-                $scope.agents = response.value;
-                Core.$apply($scope);
-            }
-        }
-
-        var updateRate = localStorage['updateRate'];
-        if (updateRate > 0) {
-            Core.register(jolokia, $scope, {
-                type: 'exec', mbean: 'jolokia:type=Discovery',
-                operation: 'lookupAgentsWithTimeout',
-                arguments: [updateRate]
-            }, onSuccess(render));
-        } else {
-            Core.register(jolokia, $scope, {
-                type: 'exec', mbean: 'jolokia:type=Discovery',
-                operation: 'lookupAgents',
-                arguments: []
-            }, onSuccess(render));
-        }
-    }
-    JVM.DiscoveryController = DiscoveryController;
-})(JVM || (JVM = {}));
-/**
-* @module JVM
-*/
-var JVM;
-(function (JVM) {
-    function NavController($scope, $location, workspace) {
-        JVM.configureScope($scope, $location, workspace);
-    }
-    JVM.NavController = NavController;
-})(JVM || (JVM = {}));
-/**
-* @module JVM
 * @main JVM
 */
+/// <reference path="./jvmHelpers.ts"/>
 var JVM;
 (function (JVM) {
     JVM.rootPath = 'app/jvm';
     JVM.templatePath = JVM.rootPath + '/html/';
     JVM.pluginName = 'jvm';
 
-    angular.module(JVM.pluginName, ['bootstrap', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-forms', 'ui']).config(function ($routeProvider) {
-        $routeProvider.when('/jvm/discover', { templateUrl: JVM.templatePath + 'discover.html' }).when('/jvm/connect', { templateUrl: JVM.templatePath + 'connect.html' }).when('/jvm/local', { templateUrl: JVM.templatePath + 'local.html' });
-    }).constant('mbeanName', 'hawtio:type=JVMList').run(function ($location, workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) {
-        viewRegistry[JVM.pluginName] = JVM.templatePath + 'layoutConnect.html';
-        helpRegistry.addUserDoc('jvm', 'app/jvm/doc/help.md');
+    JVM._module = angular.module(JVM.pluginName, ['bootstrap', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-forms', 'ui']);
 
-        preferencesRegistry.addTab("Connect", 'app/jvm/html/reset.html');
+    JVM._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/jvm/discover', { templateUrl: JVM.templatePath + 'discover.html' }).when('/jvm/connect', { templateUrl: JVM.templatePath + 'connect.html' }).when('/jvm/local', { templateUrl: JVM.templatePath + 'local.html' });
+        }]);
 
-        workspace.topLevelTabs.push({
-            id: "connect",
-            content: "Connect",
-            title: "Connect to other JVMs",
-            isValid: function (workspace) {
-                return true;
-            },
-            href: function () {
-                return '#/jvm/connect';
-            },
-            isActive: function (workspace) {
-                return workspace.isLinkActive("jvm");
-            }
-        });
-    });
+    JVM._module.constant('mbeanName', 'hawtio:type=JVMList');
+
+    JVM._module.run([
+        "$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry", function ($location, workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) {
+            viewRegistry[JVM.pluginName] = JVM.templatePath + 'layoutConnect.html';
+            helpRegistry.addUserDoc('jvm', 'app/jvm/doc/help.md');
+
+            preferencesRegistry.addTab("Connect", 'app/jvm/html/reset.html');
+
+            workspace.topLevelTabs.push({
+                id: "connect",
+                content: "Connect",
+                title: "Connect to other JVMs",
+                isValid: function (workspace) {
+                    return true;
+                },
+                href: function () {
+                    return '#/jvm/connect';
+                },
+                isActive: function (workspace) {
+                    return workspace.isLinkActive("jvm");
+                }
+            });
+        }]);
 
     hawtioPluginLoader.addModule(JVM.pluginName);
 })(JVM || (JVM = {}));
 /**
 * @module JVM
 */
+/// <reference path="./jvmPlugin.ts"/>
 var JVM;
 (function (JVM) {
-    function ConnectController($scope, $location, localStorage, workspace) {
-        JVM.configureScope($scope, $location, workspace);
+    JVM._module.controller("JVM.JVMsController", [
+        "$scope", "$window", "$location", "workspace", "jolokia", "mbeanName", function ($scope, $window, $location, workspace, jolokia, mbeanName) {
+            JVM.configureScope($scope, $location, workspace);
+            $scope.data = [];
+            $scope.deploying = false;
+            $scope.status = '';
 
-        $scope.forms = {};
-
-        var hasMBeans = workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length;
-
-        $scope.disableProxy = !hasMBeans || Core.isChromeApp();
-        $scope.useProxy = $scope.disableProxy ? false : true;
-
-        $scope.settings = {
-            last: 1,
-            lastConnection: ''
-        };
-
-        // load settings like current tab, last used connection
-        if (JVM.connectControllerKey in localStorage) {
-            try  {
-                $scope.settings = angular.fromJson(localStorage[JVM.connectControllerKey]);
-            } catch (e) {
-                // corrupt config
-                delete localStorage[JVM.connectControllerKey];
-            }
-        }
-
-        // load connection settings
-        // TODO add known default configurations here...
-        $scope.connectionConfigs = {};
-
-        if (JVM.connectionSettingsKey in localStorage) {
-            try  {
-                $scope.connectionConfigs = angular.fromJson(localStorage[JVM.connectionSettingsKey]);
-            } catch (e) {
-                // corrupt config
-                delete localStorage[JVM.connectionSettingsKey];
-            }
-        }
-
-        /*
-        log.debug("Controller settings: ", $scope.settings);
-        log.debug("Current config: ", $scope.currentConfig);
-        log.debug("All connection settings: ", $scope.connectionConfigs);
-        */
-        $scope.formConfig = {
-            properties: {
-                connectionName: {
-                    type: 'java.lang.String',
-                    tooltip: 'Name for this connection',
-                    'input-attributes': {
-                        'placeholder': 'Unnamed...'
+            $scope.fetch = function () {
+                notification('info', 'Discovering local JVM processes, please wait...');
+                jolokia.request({
+                    type: 'exec', mbean: mbeanName,
+                    operation: 'listLocalJVMs()',
+                    arguments: []
+                }, {
+                    success: render,
+                    error: function (response) {
+                        $scope.data = [];
+                        $scope.status = 'Could not discover local JVM processes: ' + response.error;
+                        Core.$apply($scope);
                     }
-                },
-                scheme: {
-                    type: 'java.lang.String',
-                    tooltip: 'HTTP or HTTPS',
-                    required: true
-                },
-                host: {
-                    type: 'java.lang.String',
-                    tooltip: 'Target host to connect to',
-                    required: true
-                },
-                port: {
-                    type: 'java.lang.Integer',
-                    tooltip: 'The HTTP port used to connect to the server',
-                    'input-attributes': {
-                        'min': '0'
-                    },
-                    required: true
-                },
-                path: {
-                    type: 'java.lang.String',
-                    tooltip: "The URL path used to connect to Jolokia on the remote server"
-                },
-                userName: {
-                    type: 'java.lang.String',
-                    tooltip: "The user name to be used when connecting to Jolokia"
-                },
-                password: {
-                    type: 'password',
-                    tooltip: 'The password to be used when connecting to Jolokia'
-                },
-                useProxy: {
-                    type: 'java.lang.Boolean',
-                    tooltip: 'Whether or not we should use a proxy. See more information in the panel to the left.',
-                    'control-attributes': {
-                        'ng-hide': 'disableProxy'
-                    }
-                }
-            },
-            type: 'void'
-        };
-
-        function newConfig() {
-            var answer = {
-                scheme: 'http',
-                host: 'localhost',
-                path: 'jolokia',
-                port: '8181',
-                userName: '',
-                password: ''
+                });
             };
 
-            if ($scope.disableProxy) {
-                answer['useProxy'] = false;
-            } else {
-                answer['useProxy'] = true;
-            }
-            return answer;
-        }
+            $scope.stopAgent = function (pid) {
+                notification('info', "Attempting to detach agent from PID " + pid);
+                jolokia.request({
+                    type: 'exec', mbean: mbeanName,
+                    operation: 'stopAgent(java.lang.String)',
+                    arguments: [pid]
+                }, onSuccess(function () {
+                    notification('success', "Detached agent from PID " + pid);
+                    $scope.fetch();
+                }));
+            };
 
-        $scope.clearSettings = function () {
-            delete localStorage[JVM.connectControllerKey];
-            delete localStorage[JVM.connectionSettingsKey];
-            window.location.reload();
-        };
+            $scope.startAgent = function (pid) {
+                notification('info', "Attempting to attach agent to PID " + pid);
+                jolokia.request({
+                    type: 'exec', mbean: mbeanName,
+                    operation: 'startAgent(java.lang.String)',
+                    arguments: [pid]
+                }, onSuccess(function () {
+                    notification('success', "Attached agent to PID " + pid);
+                    $scope.fetch();
+                }));
+            };
 
-        $scope.newConnection = function () {
-            $scope.settings.lastConnection = '';
-        };
+            $scope.connectTo = function (url) {
+                $window.open("?url=" + encodeURIComponent(url));
+            };
 
-        $scope.deleteConnection = function () {
-            Core.removeRegex($scope.settings.lastConnection);
-            delete $scope.connectionConfigs[$scope.settings.lastConnection];
-            var tmp = Object.extended($scope.connectionConfigs);
-            if (tmp.size() === 0) {
-                $scope.settings.lastConnection = '';
-            } else {
-                $scope.settings.lastConnection = tmp.keys().first();
-            }
-            localStorage[JVM.connectionSettingsKey] = angular.toJson($scope.connectionConfigs);
-        };
-
-        $scope.$watch('settings', function (newValue, oldValue) {
-            if (Core.isBlank($scope.settings['lastConnection'])) {
-                $scope.currentConfig = newConfig();
-            } else {
-                $scope.currentConfig = Object.extended($scope.connectionConfigs[$scope.settings['lastConnection']]).clone();
-            }
-
-            if (newValue !== oldValue) {
-                localStorage[JVM.connectControllerKey] = angular.toJson(newValue);
-            }
-        }, true);
-
-        $scope.save = function () {
-            $scope.gotoServer($scope.currentConfig, null, true);
-        };
-
-        $scope.gotoServer = function (json, form, saveOnly) {
-            if (json) {
-                var jsonCloned = Object.extended(json).clone(true);
-
-                JVM.log.debug("json: ", jsonCloned);
-
-                // new connection created via the form, let's save it
-                var connectionName = jsonCloned['connectionName'];
-                if (Core.isBlank(connectionName)) {
-                    connectionName = "Unnamed" + $scope.settings.last++;
-                    jsonCloned['connectionName'] = connectionName;
+            function render(response) {
+                $scope.data = response.value;
+                if ($scope.data.length === 0) {
+                    $scope.status = 'Could not discover local JVM processes';
                 }
+                Core.$apply($scope);
+            }
 
-                var regexs = Core.getRegexs();
+            $scope.fetch();
+        }]);
+})(JVM || (JVM = {}));
+/**
+* @module JVM
+*/
+/// <reference path="./jvmPlugin.ts"/>
+var JVM;
+(function (JVM) {
+    JVM._module.controller("JVM.ResetController", [
+        "$scope", "localStorage", function ($scope, localStorage) {
+            $scope.doClearConnectSettings = function () {
+                var doReset = function () {
+                    delete localStorage[JVM.connectControllerKey];
+                    delete localStorage[JVM.connectionSettingsKey];
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 10);
+                };
+                doReset();
+            };
+        }]);
+})(JVM || (JVM = {}));
+/**
+* @module JVM
+*/
+/// <reference path="./jvmPlugin.ts"/>
+var JVM;
+(function (JVM) {
+    JVM._module.controller("JVM.DiscoveryController", [
+        "$scope", "localStorage", "jolokia", function ($scope, localStorage, jolokia) {
+            $scope.discovering = true;
 
-                var hasFunc = function (r) {
-                    return r['name'] === $scope.settings.lastConnection;
+            $scope.$watch('agents', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    $scope.selectedAgent = $scope.agents.find(function (a) {
+                        return a['selected'];
+                    });
+                }
+            }, true);
+
+            $scope.closePopover = function ($event) {
+                $($event.currentTarget).parents('.popover').prev().popover('hide');
+            };
+
+            function doConnect(agent) {
+                if (!agent.url) {
+                    notification('warning', 'No URL available to connect to agent');
+                    return;
+                }
+                var options = new Core.ConnectToServerOptions();
+
+                var urlObject = Core.parseUrl(agent.url);
+                angular.extend(options, urlObject);
+                options.userName = agent.username;
+                options.password = agent.password;
+
+                Core.connectToServer(localStorage, options);
+            }
+            ;
+
+            $scope.connectWithCredentials = function ($event, agent) {
+                $scope.closePopover($event);
+                doConnect(agent);
+            };
+
+            $scope.gotoServer = function ($event, agent) {
+                if (agent.secured) {
+                    $($event.currentTarget).popover('show');
+                } else {
+                    doConnect(agent);
+                }
+            };
+
+            $scope.getElementId = function (agent) {
+                return agent.agent_id.dasherize().replace(/\./g, "-");
+            };
+
+            $scope.getLogo = function (agent) {
+                if (agent.server_product) {
+                    return JVM.logoRegistry[agent.server_product];
+                }
+                return JVM.logoRegistry['generic'];
+            };
+
+            $scope.filterMatches = function (agent) {
+                if (Core.isBlank($scope.filter)) {
+                    return true;
+                } else {
+                    return angular.toJson(agent).toLowerCase().has($scope.filter.toLowerCase());
+                }
+            };
+
+            $scope.getAgentIdClass = function (agent) {
+                if ($scope.hasName(agent)) {
+                    return "";
+                }
+                return "strong";
+            };
+
+            $scope.hasName = function (agent) {
+                if (agent.server_vendor && agent.server_product && agent.server_version) {
+                    return true;
+                }
+                return false;
+            };
+
+            function render(response) {
+                if (!response.value) {
+                    return;
+                }
+                var responseJson = angular.toJson(response.value.sortBy(function (agent) {
+                    return agent['agent_id'];
+                }), true);
+                if ($scope.responseJson !== responseJson) {
+                    if ($scope.discovering) {
+                        $scope.discovering = false;
+                    }
+                    $scope.responseJson = responseJson;
+                    JVM.log.debug("agents: ", $scope.agents);
+                    $scope.agents = response.value;
+                    Core.$apply($scope);
+                }
+            }
+
+            var updateRate = localStorage['updateRate'];
+            if (updateRate > 0) {
+                Core.register(jolokia, $scope, {
+                    type: 'exec', mbean: 'jolokia:type=Discovery',
+                    operation: 'lookupAgentsWithTimeout',
+                    arguments: [updateRate]
+                }, onSuccess(render));
+            } else {
+                Core.register(jolokia, $scope, {
+                    type: 'exec', mbean: 'jolokia:type=Discovery',
+                    operation: 'lookupAgents',
+                    arguments: []
+                }, onSuccess(render));
+            }
+        }]);
+})(JVM || (JVM = {}));
+/**
+* @module JVM
+*/
+/// <reference path="./jvmPlugin.ts"/>
+var JVM;
+(function (JVM) {
+    JVM._module.controller("JVM.NavController", [
+        "$scope", "$location", "workspace", function ($scope, $location, workspace) {
+            JVM.configureScope($scope, $location, workspace);
+        }]);
+})(JVM || (JVM = {}));
+/**
+* @module JVM
+*/
+/// <reference path="./jvmPlugin.ts"/>
+var JVM;
+(function (JVM) {
+    JVM._module.controller("JVM.ConnectController", [
+        "$scope", "$location", "localStorage", "workspace", function ($scope, $location, localStorage, workspace) {
+            JVM.configureScope($scope, $location, workspace);
+
+            $scope.forms = {};
+
+            var hasMBeans = workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length;
+
+            $scope.disableProxy = !hasMBeans || Core.isChromeApp();
+            $scope.useProxy = $scope.disableProxy ? false : true;
+
+            $scope.settings = {
+                last: 1,
+                lastConnection: ''
+            };
+
+            // load settings like current tab, last used connection
+            if (JVM.connectControllerKey in localStorage) {
+                try  {
+                    $scope.settings = angular.fromJson(localStorage[JVM.connectControllerKey]);
+                } catch (e) {
+                    // corrupt config
+                    delete localStorage[JVM.connectControllerKey];
+                }
+            }
+
+            // load connection settings
+            // TODO add known default configurations here...
+            $scope.connectionConfigs = {};
+
+            if (JVM.connectionSettingsKey in localStorage) {
+                try  {
+                    $scope.connectionConfigs = angular.fromJson(localStorage[JVM.connectionSettingsKey]);
+                } catch (e) {
+                    // corrupt config
+                    delete localStorage[JVM.connectionSettingsKey];
+                }
+            }
+
+            /*
+            log.debug("Controller settings: ", $scope.settings);
+            log.debug("Current config: ", $scope.currentConfig);
+            log.debug("All connection settings: ", $scope.connectionConfigs);
+            */
+            $scope.formConfig = {
+                properties: {
+                    connectionName: {
+                        type: 'java.lang.String',
+                        tooltip: 'Name for this connection',
+                        'input-attributes': {
+                            'placeholder': 'Unnamed...'
+                        }
+                    },
+                    scheme: {
+                        type: 'java.lang.String',
+                        tooltip: 'HTTP or HTTPS',
+                        required: true
+                    },
+                    host: {
+                        type: 'java.lang.String',
+                        tooltip: 'Target host to connect to',
+                        required: true
+                    },
+                    port: {
+                        type: 'java.lang.Integer',
+                        tooltip: 'The HTTP port used to connect to the server',
+                        'input-attributes': {
+                            'min': '0'
+                        },
+                        required: true
+                    },
+                    path: {
+                        type: 'java.lang.String',
+                        tooltip: "The URL path used to connect to Jolokia on the remote server"
+                    },
+                    userName: {
+                        type: 'java.lang.String',
+                        tooltip: "The user name to be used when connecting to Jolokia"
+                    },
+                    password: {
+                        type: 'password',
+                        tooltip: 'The password to be used when connecting to Jolokia'
+                    },
+                    useProxy: {
+                        type: 'java.lang.Boolean',
+                        tooltip: 'Whether or not we should use a proxy. See more information in the panel to the left.',
+                        'control-attributes': {
+                            'ng-hide': 'disableProxy'
+                        }
+                    }
+                },
+                type: 'void'
+            };
+
+            function newConfig() {
+                var answer = {
+                    scheme: 'http',
+                    host: 'localhost',
+                    path: 'jolokia',
+                    port: '8181',
+                    userName: '',
+                    password: ''
                 };
 
-                if ($scope.settings.lastConnection !== connectionName && !Core.isBlank($scope.settings.lastConnection)) {
-                    //we're updating an existing connection...
-                    delete $scope.connectionConfigs[$scope.settings.lastConnection];
-
-                    // clean up any similarly named regex
-                    if (regexs) {
-                        regexs = regexs.exclude(hasFunc);
-                    }
+                if ($scope.disableProxy) {
+                    answer['useProxy'] = false;
+                } else {
+                    answer['useProxy'] = true;
                 }
+                return answer;
+            }
 
-                $scope.connectionConfigs[connectionName] = jsonCloned;
+            $scope.clearSettings = function () {
+                delete localStorage[JVM.connectControllerKey];
+                delete localStorage[JVM.connectionSettingsKey];
+                window.location.reload();
+            };
+
+            $scope.newConnection = function () {
+                $scope.settings.lastConnection = '';
+            };
+
+            $scope.deleteConnection = function () {
+                Core.removeRegex($scope.settings.lastConnection);
+                delete $scope.connectionConfigs[$scope.settings.lastConnection];
+                var tmp = Object.extended($scope.connectionConfigs);
+                if (tmp.size() === 0) {
+                    $scope.settings.lastConnection = '';
+                } else {
+                    $scope.settings.lastConnection = tmp.keys().first();
+                }
                 localStorage[JVM.connectionSettingsKey] = angular.toJson($scope.connectionConfigs);
-                if (regexs && !regexs.any(hasFunc)) {
-                    Core.storeConnectionRegex(regexs, connectionName, jsonCloned);
+            };
+
+            $scope.$watch('settings', function (newValue, oldValue) {
+                if (Core.isBlank($scope.settings['lastConnection'])) {
+                    $scope.currentConfig = newConfig();
+                } else {
+                    $scope.currentConfig = Object.extended($scope.connectionConfigs[$scope.settings['lastConnection']]).clone();
                 }
 
-                // let's default to saved connections now that we've a new connection
-                $scope.currentConfig = jsonCloned;
-                $scope.settings.lastConnection = connectionName;
-            }
+                if (newValue !== oldValue) {
+                    localStorage[JVM.connectControllerKey] = angular.toJson(newValue);
+                }
+            }, true);
 
-            if (saveOnly === true) {
+            $scope.save = function () {
+                $scope.gotoServer($scope.currentConfig, null, true);
+            };
+
+            $scope.gotoServer = function (json, form, saveOnly) {
+                if (json) {
+                    var jsonCloned = Object.extended(json).clone(true);
+
+                    JVM.log.debug("json: ", jsonCloned);
+
+                    // new connection created via the form, let's save it
+                    var connectionName = jsonCloned['connectionName'];
+                    if (Core.isBlank(connectionName)) {
+                        connectionName = "Unnamed" + $scope.settings.last++;
+                        jsonCloned['connectionName'] = connectionName;
+                    }
+
+                    var regexs = Core.getRegexs();
+
+                    var hasFunc = function (r) {
+                        return r['name'] === $scope.settings.lastConnection;
+                    };
+
+                    if ($scope.settings.lastConnection !== connectionName && !Core.isBlank($scope.settings.lastConnection)) {
+                        //we're updating an existing connection...
+                        delete $scope.connectionConfigs[$scope.settings.lastConnection];
+
+                        // clean up any similarly named regex
+                        if (regexs) {
+                            regexs = regexs.exclude(hasFunc);
+                        }
+                    }
+
+                    $scope.connectionConfigs[connectionName] = jsonCloned;
+                    localStorage[JVM.connectionSettingsKey] = angular.toJson($scope.connectionConfigs);
+                    if (regexs && !regexs.any(hasFunc)) {
+                        Core.storeConnectionRegex(regexs, connectionName, jsonCloned);
+                    }
+
+                    // let's default to saved connections now that we've a new connection
+                    $scope.currentConfig = jsonCloned;
+                    $scope.settings.lastConnection = connectionName;
+                }
+
+                if (saveOnly === true) {
+                    Core.$apply($scope);
+                    return;
+                }
+
+                var options = new Core.ConnectToServerOptions();
+                var host = $scope.currentConfig['host'] || 'localhost';
+
+                JVM.log.info("using scheme: " + $scope.currentConfig['scheme'] + " and host name: " + host + " and user: " + $scope.currentConfig['userName'] + " and password: " + ($scope.currentConfig['password'] ? "********" : $scope.currentConfig['password']));
+                options.name = $scope.currentConfig['connectionName'];
+                options.scheme = $scope.currentConfig['scheme'];
+                options.host = host;
+                options.port = $scope.currentConfig['port'];
+                options.path = $scope.currentConfig['path'];
+                options.userName = $scope.currentConfig['userName'];
+                options.password = $scope.currentConfig['password'];
+                options.useProxy = $scope.currentConfig['useProxy'];
+
                 Core.$apply($scope);
-                return;
+
+                Core.connectToServer(localStorage, options);
+            };
+
+            function init() {
+                JVM.log.debug("Initializing");
+                var schemeEnum = ['http', 'https'];
+                Core.pathSet($scope.formConfig, ['properties', 'scheme', 'enum'], schemeEnum);
             }
 
-            var options = new Core.ConnectToServerOptions();
-            var host = $scope.currentConfig['host'] || 'localhost';
-
-            JVM.log.info("using scheme: " + $scope.currentConfig['scheme'] + " and host name: " + host + " and user: " + $scope.currentConfig['userName'] + " and password: " + ($scope.currentConfig['password'] ? "********" : $scope.currentConfig['password']));
-            options.name = $scope.currentConfig['connectionName'];
-            options.scheme = $scope.currentConfig['scheme'];
-            options.host = host;
-            options.port = $scope.currentConfig['port'];
-            options.path = $scope.currentConfig['path'];
-            options.userName = $scope.currentConfig['userName'];
-            options.password = $scope.currentConfig['password'];
-            options.useProxy = $scope.currentConfig['useProxy'];
-
-            Core.$apply($scope);
-
-            Core.connectToServer(localStorage, options);
-        };
-
-        function init() {
-            JVM.log.debug("Initializing");
-            var schemeEnum = ['http', 'https'];
-            Core.pathSet($scope.formConfig, ['properties', 'scheme', 'enum'], schemeEnum);
-        }
-
-        init();
-    }
-    JVM.ConnectController = ConnectController;
+            init();
+        }]);
 })(JVM || (JVM = {}));
 /**
 * @module OpenEJB
@@ -22588,1901 +22614,6 @@ var Camin;
 })(Camin || (Camin = {}));
 /**
 * @module Jmx
-* @main Jmx
-*/
-var Jmx;
-(function (Jmx) {
-    var pluginName = 'jmx';
-
-    Jmx.currentProcessId = '';
-
-    angular.module(pluginName, ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.modal', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-ui', 'hawtioRbac']).config(function ($routeProvider) {
-        $routeProvider.when('/jmx/attributes', { templateUrl: 'app/jmx/html/attributes.html' }).when('/jmx/operations', { templateUrl: 'app/jmx/html/operations.html' }).when('/jmx/charts', { templateUrl: 'app/jmx/html/charts.html' }).when('/jmx/chartEdit', { templateUrl: 'app/jmx/html/chartEdit.html' }).when('/jmx/help/:tabName', { templateUrl: 'app/core/html/help.html' }).when('/jmx/widget/donut', { templateUrl: 'app/jmx/html/donutChart.html' }).when('/jmx/widget/area', { templateUrl: 'app/jmx/html/areaChart.html' });
-    }).factory('jmxTreeLazyLoadRegistry', function () {
-        return Jmx.lazyLoaders;
-    }).factory('jmxWidgetTypes', function () {
-        return Jmx.jmxWidgetTypes;
-    }).factory('jmxWidgets', function () {
-        return Jmx.jmxWidgets;
-    }).run(function ($location, workspace, viewRegistry, layoutTree, jolokia, pageTitle, helpRegistry) {
-        viewRegistry['jmx'] = layoutTree;
-        helpRegistry.addUserDoc('jmx', 'app/jmx/doc/help.md');
-
-        pageTitle.addTitleElement(function () {
-            if (Jmx.currentProcessId === '') {
-                try  {
-                    Jmx.currentProcessId = jolokia.getAttribute('java.lang:type=Runtime', 'Name');
-                } catch (e) {
-                    // ignore
-                }
-                if (Jmx.currentProcessId && Jmx.currentProcessId.has("@")) {
-                    Jmx.currentProcessId = "pid:" + Jmx.currentProcessId.split("@")[0];
-                }
-            }
-            return Jmx.currentProcessId;
-        });
-
-        workspace.topLevelTabs.push({
-            id: "jmx",
-            content: "JMX",
-            title: "View the JMX MBeans in this process",
-            isValid: function (workspace) {
-                return workspace.hasMBeans();
-            },
-            href: function () {
-                return "#/jmx/attributes";
-            },
-            isActive: function (workspace) {
-                return workspace.isTopTabActive("jmx");
-            }
-        });
-
-        workspace.subLevelTabs.push({
-            content: '<i class="icon-list"></i> Attributes',
-            title: "View the attribute values on your selection",
-            isValid: function (workspace) {
-                return true;
-            },
-            href: function () {
-                return "#/jmx/attributes";
-            }
-        });
-        workspace.subLevelTabs.push({
-            content: '<i class="icon-leaf"></i> Operations',
-            title: "Execute operations on your selection",
-            isValid: function (workspace) {
-                return true;
-            },
-            href: function () {
-                return "#/jmx/operations";
-            }
-        });
-        workspace.subLevelTabs.push({
-            content: '<i class="icon-bar-chart"></i> Chart',
-            title: "View a chart of the metrics on your selection",
-            isValid: function (workspace) {
-                return true;
-            },
-            href: function () {
-                return "#/jmx/charts";
-            }
-        });
-        workspace.subLevelTabs.push({
-            content: '<i class="icon-cog"></i> Edit Chart',
-            title: "Edit the chart configuration",
-            isValid: function (workspace) {
-                return workspace.isLinkActive("jmx/chart");
-            },
-            href: function () {
-                return "#/jmx/chartEdit";
-            }
-        });
-    });
-
-    hawtioPluginLoader.addModule(pluginName);
-})(Jmx || (Jmx = {}));
-/**
-* @module Jmx
-*/
-var Jmx;
-(function (Jmx) {
-    function TreeHeaderController($scope) {
-        $scope.expandAll = function () {
-            Tree.expandAll("#jmxtree");
-        };
-
-        $scope.contractAll = function () {
-            Tree.contractAll("#jmxtree");
-        };
-    }
-    Jmx.TreeHeaderController = TreeHeaderController;
-
-    function MBeansController($scope, $location, workspace) {
-        $scope.num = 1;
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateSelectionFromURL, 50);
-        });
-
-        $scope.select = function (node) {
-            $scope.workspace.updateSelectionNode(node);
-            Core.$apply($scope);
-        };
-
-        function updateSelectionFromURL() {
-            Jmx.updateTreeSelectionFromURL($location, $("#jmxtree"));
-        }
-
-        $scope.populateTree = function () {
-            var treeElement = $("#jmxtree");
-            $scope.tree = workspace.tree;
-            Jmx.enableTree($scope, $location, workspace, treeElement, $scope.tree.children, true);
-            setTimeout(updateSelectionFromURL, 50);
-        };
-
-        $scope.$on('jmxTreeUpdated', $scope.populateTree);
-
-        $scope.populateTree();
-    }
-    Jmx.MBeansController = MBeansController;
-})(Jmx || (Jmx = {}));
-/**
-* @module Jmx
-*/
-var Jmx;
-(function (Jmx) {
-    function ChartController($scope, $element, $location, workspace, localStorage, jolokiaUrl, jolokiaParams) {
-        $scope.metrics = [];
-        $scope.updateRate = 1000; //parseInt(localStorage['updateRate']);
-
-        $scope.context = null;
-        $scope.jolokia = null;
-        $scope.charts = null;
-
-        $scope.reset = function () {
-            if ($scope.context) {
-                $scope.context.stop();
-                $scope.context = null;
-            }
-            if ($scope.jolokia) {
-                $scope.jolokia.stop();
-                $scope.jolokia = null;
-            }
-            if ($scope.charts) {
-                $scope.charts.empty();
-                $scope.charts = null;
-            }
-        };
-
-        $scope.$on('$destroy', function () {
-            try  {
-                $scope.deregRouteChange();
-            } catch (error) {
-                // ignore
-            }
-            try  {
-                $scope.dereg();
-            } catch (error) {
-                // ignore
-            }
-            $scope.reset();
-        });
-
-        $scope.errorMessage = function () {
-            if ($scope.updateRate === 0) {
-                return "updateRate";
-            }
-
-            if ($scope.metrics.length === 0) {
-                return "metrics";
-            }
-        };
-
-        var doRender = Core.throttled(render, 200);
-
-        $scope.deregRouteChange = $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            doRender();
-        });
-        $scope.dereg = $scope.$watch('workspace.selection', function () {
-            if (workspace.moveIfViewInvalid())
-                return;
-            doRender();
-        });
-
-        doRender();
-
-        function render() {
-            var node = workspace.selection;
-            if (!angular.isDefined(node) || !angular.isDefined($scope.updateRate) || $scope.updateRate === 0) {
-                // Called render too early, let's retry
-                setTimeout(doRender, 500);
-                Core.$apply($scope);
-                return;
-            }
-            var width = 594;
-            var charts = $element.find('#charts');
-            if (charts) {
-                width = charts.width();
-            } else {
-                // Called render too early, let's retry
-                setTimeout(doRender, 500);
-                Core.$apply($scope);
-                return;
-            }
-
-            // clear out any existing context
-            $scope.reset();
-
-            $scope.charts = charts;
-            $scope.jolokia = new Jolokia(jolokiaParams);
-            $scope.jolokia.start($scope.updateRate);
-
-            var mbean = node.objectName;
-            $scope.metrics = [];
-
-            var context = cubism.context().serverDelay($scope.updateRate).clientDelay($scope.updateRate).step($scope.updateRate).size(width);
-
-            $scope.context = context;
-            $scope.jolokiaContext = context.jolokia($scope.jolokia);
-            var search = $location.search();
-            var attributeNames = toSearchArgumentArray(search["att"]);
-
-            if (mbean) {
-                // TODO make generic as we can cache them; they rarely ever change
-                // lets get the attributes for this mbean
-                // we need to escape the mbean path for list
-                var listKey = encodeMBeanPath(mbean);
-
-                //console.log("Looking up mbeankey: " + listKey);
-                var meta = $scope.jolokia.list(listKey);
-                if (meta) {
-                    var attributes = meta.attr;
-                    if (attributes) {
-                        var foundNames = [];
-                        for (var key in attributes) {
-                            var value = attributes[key];
-                            if (value) {
-                                var typeName = value['type'];
-                                if (isNumberTypeName(typeName)) {
-                                    foundNames.push(key);
-                                }
-                            }
-                        }
-
-                        // lets filter the attributes
-                        // if we find none then the att search attribute is invalid
-                        // so lets discard the filter - as it must be for some other mbean
-                        if (attributeNames.length) {
-                            var filtered = foundNames.filter(function (key) {
-                                return attributeNames.indexOf(key) >= 0;
-                            });
-                            if (filtered.length) {
-                                foundNames = filtered;
-                            }
-                        }
-                        angular.forEach(foundNames, function (key) {
-                            var metric = $scope.jolokiaContext.metric({
-                                type: 'read',
-                                mbean: mbean,
-                                attribute: key
-                            }, humanizeValue(key));
-                            if (metric) {
-                                $scope.metrics.push(metric);
-                            }
-                        });
-                    }
-                }
-            } else {
-                // lets try pull out the attributes and elements from the URI and use those to chart
-                var elementNames = toSearchArgumentArray(search["el"]);
-                if (attributeNames && attributeNames.length && elementNames && elementNames.length) {
-                    // first lets map the element names to mbean names to keep the URI small
-                    var mbeans = {};
-                    elementNames.forEach(function (elementName) {
-                        var child = node.get(elementName);
-                        if (!child && node.children) {
-                            child = node.children.find(function (n) {
-                                return elementName === n["title"];
-                            });
-                        }
-                        if (child) {
-                            var mbean = child.objectName;
-                            if (mbean) {
-                                mbeans[elementName] = mbean;
-                            }
-                        }
-                    });
-
-                    // lets create the metrics
-                    attributeNames.forEach(function (key) {
-                        angular.forEach(mbeans, function (mbean, name) {
-                            var attributeTitle = humanizeValue(key);
-
-                            // for now lets always be verbose
-                            var title = name + ": " + attributeTitle;
-
-                            var metric = $scope.jolokiaContext.metric({
-                                type: 'read',
-                                mbean: mbean,
-                                attribute: key
-                            }, title);
-                            if (metric) {
-                                $scope.metrics.push(metric);
-                            }
-                        });
-                    });
-                }
-
-                // if we've children and none of the query arguments matched any metrics
-                // lets redirect back to the edit view
-                if (node.children.length && !$scope.metrics.length) {
-                    // lets forward to the chart selection UI if we have some children; they may have
-                    // chartable attributes
-                    $location.path("jmx/chartEdit");
-                }
-            }
-
-            if ($scope.metrics.length > 0) {
-                var d3Selection = d3.select(charts.get(0));
-                var axisEl = d3Selection.selectAll(".axis");
-
-                var bail = false;
-
-                axisEl.data(["top", "bottom"]).enter().append("div").attr("class", function (d) {
-                    return d + " axis";
-                }).each(function (d) {
-                    if (bail) {
-                        return;
-                    }
-                    try  {
-                        d3.select(this).call(context.axis().ticks(12).orient(d));
-                    } catch (error) {
-                        // still rendering at not the right time...
-                        // log.debug("error: ", error);
-                        if (!bail) {
-                            bail = true;
-                        }
-                    }
-                });
-
-                if (bail) {
-                    $scope.reset();
-                    setTimeout(doRender, 500);
-                    Core.$apply($scope);
-                    return;
-                }
-
-                d3Selection.append("div").attr("class", "rule").call(context.rule());
-
-                context.on("focus", function (i) {
-                    try  {
-                        d3Selection.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
-                    } catch (error) {
-                        Jmx.log.info("error: ", error);
-                    }
-                });
-
-                $scope.metrics.forEach(function (metric) {
-                    d3Selection.call(function (div) {
-                        div.append("div").data([metric]).attr("class", "horizon").call(context.horizon());
-                    });
-                });
-            } else {
-                $scope.reset();
-            }
-
-            Core.$apply($scope);
-        }
-        ;
-    }
-    Jmx.ChartController = ChartController;
-})(Jmx || (Jmx = {}));
-/**
-* @module Jmx
-*/
-var Jmx;
-(function (Jmx) {
-    function ChartEditController($scope, $location, workspace, jolokia) {
-        $scope.selectedAttributes = [];
-        $scope.selectedMBeans = [];
-        $scope.metrics = {};
-        $scope.mbeans = {};
-
-        // TODO move this function to $routeScope
-        $scope.size = function (value) {
-            if (angular.isObject(value)) {
-                return Object.size(value);
-            } else if (angular.isArray(value)) {
-                return value.length;
-            } else
-                return 1;
-        };
-
-        $scope.canViewChart = function () {
-            return $scope.selectedAttributes.length && $scope.selectedMBeans.length && $scope.size($scope.mbeans) > 0 && $scope.size($scope.metrics) > 0;
-        };
-
-        $scope.showAttributes = function () {
-            return $scope.canViewChart() && $scope.size($scope.metrics) > 1;
-        };
-
-        $scope.showElements = function () {
-            return $scope.canViewChart() && $scope.size($scope.mbeans) > 1;
-        };
-
-        $scope.viewChart = function () {
-            // lets add the attributes and mbeans into the URL so we can navigate back to the charts view
-            var search = $location.search();
-
-            // if we have selected all attributes, then lets just remove the attribute
-            if ($scope.selectedAttributes.length === $scope.size($scope.metrics)) {
-                delete search["att"];
-            } else {
-                search["att"] = $scope.selectedAttributes;
-            }
-
-            // if we are on an mbean with no children lets discard an unnecessary parameter
-            if ($scope.selectedMBeans.length === $scope.size($scope.mbeans) && $scope.size($scope.mbeans) === 1) {
-                delete search["el"];
-            } else {
-                search["el"] = $scope.selectedMBeans;
-            }
-            $location.search(search);
-            $location.path("jmx/charts");
-        };
-
-        $scope.$watch('workspace.selection', render);
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(render, 50);
-        });
-
-        function render() {
-            var node = workspace.selection;
-            if (!angular.isDefined(node)) {
-                return;
-            }
-
-            $scope.selectedAttributes = [];
-            $scope.selectedMBeans = [];
-            $scope.metrics = {};
-            $scope.mbeans = {};
-            var mbeanCounter = 0;
-            var resultCounter = 0;
-
-            // lets iterate through all the children if the current node is not an mbean
-            var children = node.children;
-            if (!children || !children.length || node.objectName) {
-                children = [node];
-            }
-            if (children) {
-                children.forEach(function (mbeanNode) {
-                    var mbean = mbeanNode.objectName;
-                    var name = mbeanNode.title;
-                    if (name && mbean) {
-                        mbeanCounter++;
-                        $scope.mbeans[name] = name;
-
-                        // we need to escape the mbean path for list
-                        var listKey = escapeMBeanPath(mbean);
-
-                        //var listKey = encodeMBeanPath(mbean);
-                        jolokia.list(listKey, onSuccess(function (meta) {
-                            var attributes = meta.attr;
-                            if (attributes) {
-                                for (var key in attributes) {
-                                    var value = attributes[key];
-                                    if (value) {
-                                        var typeName = value['type'];
-                                        if (isNumberTypeName(typeName)) {
-                                            if (!$scope.metrics[key]) {
-                                                //console.log("Number attribute " + key + " for " + mbean);
-                                                $scope.metrics[key] = key;
-                                            }
-                                        }
-                                    }
-                                }
-                                if (++resultCounter >= mbeanCounter) {
-                                    // TODO do we need to sort just in case?
-                                    // lets look in the search URI to default the selections
-                                    var search = $location.search();
-                                    var attributeNames = toSearchArgumentArray(search["att"]);
-                                    var elementNames = toSearchArgumentArray(search["el"]);
-                                    if (attributeNames && attributeNames.length) {
-                                        attributeNames.forEach(function (name) {
-                                            if ($scope.metrics[name]) {
-                                                $scope.selectedAttributes.push(name);
-                                            }
-                                        });
-                                    }
-                                    if (elementNames && elementNames.length) {
-                                        elementNames.forEach(function (name) {
-                                            if ($scope.mbeans[name]) {
-                                                $scope.selectedMBeans.push(name);
-                                            }
-                                        });
-                                    }
-
-                                    // default selections if there are none
-                                    if ($scope.selectedMBeans.length < 1) {
-                                        $scope.selectedMBeans = Object.keys($scope.mbeans);
-                                    }
-                                    if ($scope.selectedAttributes.length < 1) {
-                                        var attrKeys = Object.keys($scope.metrics).sort();
-                                        if ($scope.selectedMBeans.length > 1) {
-                                            $scope.selectedAttributes = [attrKeys.first()];
-                                        } else {
-                                            $scope.selectedAttributes = attrKeys;
-                                        }
-                                    }
-
-                                    // lets update the sizes using jquery as it seems AngularJS doesn't support it
-                                    $("#attributes").attr("size", Object.size($scope.metrics));
-                                    $("#mbeans").attr("size", Object.size($scope.mbeans));
-                                    Core.$apply($scope);
-                                }
-                            }
-                        }));
-                    }
-                });
-            }
-        }
-    }
-    Jmx.ChartEditController = ChartEditController;
-})(Jmx || (Jmx = {}));
-/**
-* @module Jmx
-*/
-var Jmx;
-(function (Jmx) {
-    // IOperationControllerScope
-    function OperationController($scope, workspace, jolokia, $timeout) {
-        $scope.item = $scope.selectedOperation;
-        $scope.title = $scope.item.humanReadable;
-        $scope.desc = $scope.item.desc;
-        $scope.operationResult = '';
-        $scope.executeIcon = "icon-ok";
-        $scope.mode = "text";
-        $scope.entity = {};
-        $scope.formConfig = {
-            properties: {},
-            description: $scope.objectName + "::" + $scope.item.name
-        };
-
-        $scope.item.args.forEach(function (arg) {
-            $scope.formConfig.properties[arg.name] = {
-                type: arg.type,
-                tooltip: arg.desc,
-                help: "Type: " + arg.type
-            };
-        });
-
-        $timeout(function () {
-            $("html, body").animate({ scrollTop: 0 }, "medium");
-        }, 250);
-
-        var sanitize = function (args) {
-            if (args) {
-                args.forEach(function (arg) {
-                    switch (arg.type) {
-                        case "int":
-                        case "long":
-                            arg.formType = "number";
-                            break;
-                        default:
-                            arg.formType = "text";
-                    }
-                });
-            }
-
-            return args;
-        };
-
-        $scope.args = sanitize($scope.item.args);
-
-        $scope.dump = function (data) {
-            console.log(data);
-        };
-
-        $scope.ok = function () {
-            $scope.operationResult = '';
-        };
-
-        $scope.reset = function () {
-            $scope.entity = {};
-        };
-
-        $scope.close = function () {
-            $scope.$parent.showInvoke = false;
-        };
-
-        $scope.handleResponse = function (response) {
-            $scope.executeIcon = "icon-ok";
-            $scope.operationStatus = "success";
-
-            if (response === null || 'null' === response) {
-                $scope.operationResult = "Operation Succeeded!";
-            } else if (typeof response === 'string') {
-                $scope.operationResult = response;
-            } else {
-                $scope.operationResult = angular.toJson(response, true);
-            }
-
-            $scope.mode = CodeEditor.detectTextFormat($scope.operationResult);
-
-            Core.$apply($scope);
-        };
-
-        $scope.onSubmit = function (json, form) {
-            Jmx.log.debug("onSubmit: json:", json, " form: ", form);
-            Jmx.log.debug("$scope.item.args: ", $scope.item.args);
-            angular.forEach(json, function (value, key) {
-                $scope.item.args.find(function (arg) {
-                    return arg['name'] === key;
-                }).value = value;
-            });
-            $scope.execute();
-        };
-
-        $scope.execute = function () {
-            var node = workspace.selection;
-
-            if (!node) {
-                return;
-            }
-
-            var objectName = node.objectName;
-
-            if (!objectName) {
-                return;
-            }
-
-            var args = [objectName, $scope.item.name];
-            if ($scope.item.args) {
-                $scope.item.args.forEach(function (arg) {
-                    args.push(arg.value);
-                });
-            }
-
-            args.push(onSuccess($scope.handleResponse, {
-                error: function (response) {
-                    $scope.executeIcon = "icon-ok";
-                    $scope.operationStatus = "error";
-                    var error = response.error;
-                    $scope.operationResult = error;
-                    var stacktrace = response.stacktrace;
-                    if (stacktrace) {
-                        $scope.operationResult = stacktrace;
-                    }
-                    Core.$apply($scope);
-                }
-            }));
-
-            $scope.executeIcon = "icon-spinner icon-spin";
-            var fn = jolokia.execute;
-            fn.apply(jolokia, args);
-        };
-    }
-    Jmx.OperationController = OperationController;
-
-    function OperationsController($scope, workspace, jolokia, rbacACLMBean, $templateCache) {
-        $scope.operations = {};
-        $scope.objectName = '';
-        $scope.methodFilter = '';
-        $scope.workspace = workspace;
-        $scope.selectedOperation = null;
-        $scope.showInvoke = false;
-        $scope.template = "";
-
-        $scope.invokeOp = function (operation) {
-            if (!$scope.canInvoke(operation)) {
-                return;
-            }
-            $scope.selectedOperation = operation;
-            $scope.showInvoke = true;
-        };
-
-        $scope.getJson = function (operation) {
-            return angular.toJson(operation, true);
-        };
-
-        $scope.cancel = function () {
-            $scope.selectedOperation = null;
-            $scope.showInvoke = false;
-        };
-
-        $scope.$watch('showInvoke', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                if (newValue) {
-                    $scope.template = $templateCache.get("operationTemplate");
-                } else {
-                    $scope.template = "";
-                }
-            }
-        });
-
-        var fetch = Core.throttled(function () {
-            var node = workspace.selection;
-            if (!node) {
-                return;
-            }
-
-            $scope.objectName = node.objectName;
-            if (!$scope.objectName) {
-                return;
-            }
-
-            jolokia.request({
-                type: 'list',
-                path: escapeMBeanPath($scope.objectName)
-            }, onSuccess(render));
-        }, 500);
-
-        function getArgs(args) {
-            return "(" + args.map(function (arg) {
-                return arg.type;
-            }).join() + ")";
-        }
-
-        function sanitize(value) {
-            for (var item in value) {
-                item = "" + item;
-                value[item].name = item;
-                value[item].humanReadable = humanizeValue(item);
-            }
-            return value;
-        }
-
-        $scope.isOperationsEmpty = function () {
-            return $.isEmptyObject($scope.operations);
-        };
-
-        $scope.doFilter = function (item) {
-            if (Core.isBlank($scope.methodFilter)) {
-                return true;
-            }
-            if (item.name.toLowerCase().has($scope.methodFilter.toLowerCase()) || item.humanReadable.toLowerCase().has($scope.methodFilter.toLowerCase())) {
-                return true;
-            }
-            return false;
-        };
-
-        $scope.canInvoke = function (operation) {
-            if (!('canInvoke' in operation)) {
-                return true;
-            } else {
-                return operation['canInvoke'];
-            }
-        };
-
-        $scope.getClass = function (operation) {
-            if ($scope.canInvoke(operation)) {
-                return 'can-invoke';
-            } else {
-                return 'cant-invoke';
-            }
-        };
-
-        $scope.$watch('workspace.selection', function (newValue, oldValue) {
-            if (!workspace.selection || workspace.moveIfViewInvalid()) {
-                return;
-            }
-            fetch();
-        });
-
-        function fetchPermissions(objectName, operations) {
-            var map = {};
-            map[objectName] = [];
-
-            angular.forEach(operations, function (value, key) {
-                map[objectName].push(value.name);
-            });
-
-            jolokia.request({
-                type: 'exec',
-                mbean: rbacACLMBean,
-                operation: 'canInvoke(java.util.Map)',
-                arguments: [map]
-            }, onSuccess(function (response) {
-                var map = response.value;
-                angular.forEach(map[objectName], function (value, key) {
-                    operations[key]['canInvoke'] = value['CanInvoke'];
-                });
-
-                //log.debug("Got operations: ", $scope.operations);
-                Core.$apply($scope);
-            }, {
-                error: function (response) {
-                    // silently ignore
-                    Core.$apply($scope);
-                }
-            }));
-        }
-
-        function render(response) {
-            var ops = response.value.op;
-            var answer = {};
-
-            angular.forEach(ops, function (value, key) {
-                if (angular.isArray(value)) {
-                    angular.forEach(value, function (value, index) {
-                        answer[key + getArgs(value.args)] = value;
-                    });
-                } else {
-                    answer[key + getArgs(value.args)] = value;
-                }
-            });
-            $scope.operations = sanitize(answer);
-            if (Core.isBlank(rbacACLMBean) || $scope.isOperationsEmpty()) {
-                Core.$apply($scope);
-                return;
-            } else {
-                fetchPermissions($scope.objectName, $scope.operations);
-            }
-        }
-    }
-    Jmx.OperationsController = OperationsController;
-})(Jmx || (Jmx = {}));
-/**
-* @module Jmx
-*/
-var Jmx;
-(function (Jmx) {
-    function DonutChartController($scope, $routeParams, jolokia, $templateCache) {
-        /*
-        console.log("routeParams: ", $routeParams);
-        
-        
-        // using multiple attributes
-        $scope.mbean = "java.lang:type=OperatingSystem";
-        $scope.total = "MaxFileDescriptorCount";
-        $scope.terms = "OpenFileDescriptorCount";
-        */
-        // using a single attribute with multiple paths
-        /*
-        $scope.mbean = "java.lang:type=Memory";
-        $scope.total = "Max";
-        $scope.attribute = "HeapMemoryUsage";
-        $scope.terms = "Used";
-        */
-        $scope.mbean = $routeParams['mbean'];
-        $scope.total = $routeParams['total'];
-        $scope.attribute = $routeParams['attribute'];
-        $scope.terms = $routeParams['terms'];
-
-        $scope.remainder = $routeParams['remaining'];
-
-        $scope.template = "";
-        $scope.termsArray = $scope.terms.split(",");
-
-        $scope.data = {
-            total: 0,
-            terms: []
-        };
-
-        if (!$scope.attribute) {
-            $scope.reqs = [{ type: 'read', mbean: $scope.mbean, attribute: $scope.total }];
-
-            $scope.termsArray.forEach(function (term) {
-                $scope.reqs.push({ type: 'read', mbean: $scope.mbean, attribute: term });
-                $scope.data.terms.push({
-                    term: term,
-                    count: 0
-                });
-            });
-        } else {
-            var terms = $scope.termsArray.include($scope.total);
-            $scope.reqs = [{ type: 'read', mbean: $scope.mbean, attribute: $scope.attribute, paths: terms.join(",") }];
-
-            $scope.termsArray.forEach(function (term) {
-                $scope.data.terms.push({
-                    term: term,
-                    count: 0
-                });
-            });
-        }
-
-        if ($scope.remainder && $scope.remainder !== "-") {
-            $scope.data.terms.push({
-                term: $scope.remainder,
-                count: 0
-            });
-        }
-
-        /*
-        $scope.data = {
-        total: 100,
-        terms: [{
-        term: "One",
-        count: 25
-        }, {
-        term: "Two",
-        count: 75
-        }]
-        };
-        */
-        $scope.render = function (response) {
-            //console.log("got: ", response);
-            var freeTerm = null;
-            if ($scope.remainder && $scope.remainder !== "-") {
-                freeTerm = $scope.data.terms.find(function (term) {
-                    return term.term === $scope.remainder;
-                });
-            }
-
-            if (!$scope.attribute) {
-                if (response.request.attribute === $scope.total) {
-                    $scope.data.total = response.value;
-                } else {
-                    var term = $scope.data.terms.find(function (term) {
-                        return term.term === response.request.attribute;
-                    });
-                    if (term) {
-                        term.count = response.value;
-                    }
-
-                    if (freeTerm) {
-                        freeTerm.count = $scope.data.total;
-                        $scope.data.terms.forEach(function (term) {
-                            if (term.term !== $scope.remainder) {
-                                freeTerm.count = freeTerm.count - term.count;
-                            }
-                        });
-                    }
-                }
-            } else {
-                if (response.request.attribute === $scope.attribute) {
-                    $scope.data.total = response.value[$scope.total.toLowerCase()];
-
-                    $scope.data.terms.forEach(function (term) {
-                        if (term.term !== $scope.remainder) {
-                            term.count = response.value[term.term.toLowerCase()];
-                        }
-                    });
-
-                    if (freeTerm) {
-                        freeTerm.count = $scope.data.total;
-                        $scope.data.terms.forEach(function (term) {
-                            if (term.term !== $scope.remainder) {
-                                freeTerm.count = freeTerm.count - term.count;
-                            }
-                        });
-                    }
-                }
-            }
-            if ($scope.template === "") {
-                $scope.template = $templateCache.get("donut");
-            }
-
-            // console.log("Data: ", $scope.data);
-            $scope.data = Object.clone($scope.data);
-            Core.$apply($scope);
-        };
-
-        Core.register(jolokia, $scope, $scope.reqs, onSuccess($scope.render));
-    }
-    Jmx.DonutChartController = DonutChartController;
-})(Jmx || (Jmx = {}));
-/**
-* @module Jmx
-*/
-var Jmx;
-(function (Jmx) {
-    function createDashboardLink(widgetType, widget) {
-        var href = "#" + widgetType.route;
-        var routeParams = angular.toJson(widget);
-        var title = widget.title;
-        var size = angular.toJson({
-            size_x: widgetType.size_x,
-            size_y: widgetType.size_y
-        });
-
-        return "/dashboard/add?tab=dashboard" + "&href=" + encodeURIComponent(href) + "&size=" + encodeURIComponent(size) + "&title=" + encodeURIComponent(title) + "&routeParams=" + encodeURIComponent(routeParams);
-    }
-    Jmx.createDashboardLink = createDashboardLink;
-
-    function getWidgetType(widget) {
-        return Jmx.jmxWidgetTypes.find(function (type) {
-            return type.type === widget.type;
-        });
-    }
-    Jmx.getWidgetType = getWidgetType;
-
-    Jmx.jmxWidgetTypes = [
-        {
-            type: "donut",
-            icon: "icon-smile",
-            route: "/jmx/widget/donut",
-            size_x: 2,
-            size_y: 2,
-            title: "Add Donut chart to Dashboard"
-        },
-        {
-            type: "area",
-            icon: "icon-bar-chart",
-            route: "/jmx/widget/area",
-            size_x: 4,
-            size_y: 2,
-            title: "Add Area chart to Dashboard"
-        }
-    ];
-
-    Jmx.jmxWidgets = [
-        {
-            type: "donut",
-            title: "Java Heap Memory",
-            mbean: "java.lang:type=Memory",
-            attribute: "HeapMemoryUsage",
-            total: "Max",
-            terms: "Used",
-            remaining: "Free"
-        },
-        {
-            type: "donut",
-            title: "Java Non Heap Memory",
-            mbean: "java.lang:type=Memory",
-            attribute: "NonHeapMemoryUsage",
-            total: "Max",
-            terms: "Used",
-            remaining: "Free"
-        },
-        {
-            type: "donut",
-            title: "File Descriptor Usage",
-            mbean: "java.lang:type=OperatingSystem",
-            total: "MaxFileDescriptorCount",
-            terms: "OpenFileDescriptorCount",
-            remaining: "Free"
-        },
-        {
-            type: "donut",
-            title: "Loaded Classes",
-            mbean: "java.lang:type=ClassLoading",
-            total: "TotalLoadedClassCount",
-            terms: "LoadedClassCount,UnloadedClassCount",
-            remaining: "-"
-        },
-        {
-            type: "donut",
-            title: "Swap Size",
-            mbean: "java.lang:type=OperatingSystem",
-            total: "TotalSwapSpaceSize",
-            terms: "FreeSwapSpaceSize",
-            remaining: "Used Swap"
-        },
-        {
-            type: "area",
-            title: "Process CPU Time",
-            mbean: "java.lang:type=OperatingSystem",
-            attribute: "ProcessCpuTime"
-        },
-        {
-            type: "area",
-            title: "Process CPU Load",
-            mbean: "java.lang:type=OperatingSystem",
-            attribute: "ProcessCpuLoad"
-        },
-        {
-            type: "area",
-            title: "System CPU Load",
-            mbean: "java.lang:type=OperatingSystem",
-            attribute: "SystemCpuLoad"
-        },
-        {
-            type: "area",
-            title: "System CPU Time",
-            mbean: "java.lang:type=OperatingSystem",
-            attribute: "SystemCpuTime"
-        }
-    ];
-})(Jmx || (Jmx = {}));
-/**
-* @module Jmx
-*/
-var Jmx;
-(function (Jmx) {
-    Jmx.propertiesColumnDefs = [
-        {
-            field: 'name',
-            displayName: 'Property',
-            width: "27%",
-            cellTemplate: '<div class="ngCellText" title="{{row.entity.attrDesc}}" ' + 'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="row.entity.getDashboardWidgets()"></div>{{row.entity.name}}</div>' },
-        {
-            field: 'value',
-            displayName: 'Value',
-            width: "70%",
-            cellTemplate: '<div class="ngCellText" ng-click="row.entity.onViewAttribute()" title="{{row.entity.tooltip}}" ng-bind-html-unsafe="row.entity.summary"></div>'
-        }
-    ];
-
-    Jmx.foldersColumnDefs = [
-        {
-            displayName: 'Name',
-            cellTemplate: '<div class="ngCellText"><a href="{{row.entity.folderHref(row)}}"><i class="{{row.entity.folderIconClass(row)}}"></i> {{row.getProperty("title")}}</a></div>'
-        }
-    ];
-
-    function AttributesController($scope, $element, $location, workspace, jolokia, jmxWidgets, jmxWidgetTypes, $templateCache) {
-        $scope.searchText = '';
-        $scope.selectedItems = [];
-
-        $scope.lastKey = null;
-        $scope.attributesInfoCache = {};
-
-        $scope.entity = {};
-        $scope.attributeSchema = {};
-        $scope.gridData = [];
-        $scope.attributes = "";
-
-        $scope.$watch('gridData.length', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                if (newValue > 0) {
-                    $scope.attributes = $templateCache.get('gridTemplate');
-                } else {
-                    $scope.attributes = "";
-                }
-            }
-        });
-
-        var attributeSchemaBasic = {
-            properties: {
-                'key': {
-                    description: 'Key',
-                    tooltip: 'Attribute key',
-                    type: 'string',
-                    readOnly: 'true'
-                },
-                'description': {
-                    description: 'Description',
-                    tooltip: 'Attribute description',
-                    type: 'string',
-                    formTemplate: "<textarea class='input-xlarge' rows='2' readonly='true'></textarea>"
-                },
-                'type': {
-                    description: 'Type',
-                    tooltip: 'Attribute type',
-                    type: 'string',
-                    readOnly: 'true'
-                }
-            }
-        };
-
-        $scope.gridOptions = {
-            scope: $scope,
-            selectedItems: [],
-            showFilter: false,
-            canSelectRows: false,
-            enableRowSelection: false,
-            enableRowClickSelection: false,
-            keepLastSelected: false,
-            multiSelect: true,
-            showColumnMenu: true,
-            displaySelectionCheckbox: false,
-            filterOptions: {
-                filterText: ''
-            },
-            // TODO disabled for now as it causes https://github.com/hawtio/hawtio/issues/262
-            //sortInfo: { field: 'name', direction: 'asc'},
-            data: 'gridData',
-            columnDefs: Jmx.propertiesColumnDefs
-        };
-
-        $scope.$watch('gridOptions.selectedItems', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                Jmx.log.debug("Selected items: ", newValue);
-                $scope.selectedItems = newValue;
-            }
-        }, true);
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            // clear selection if we clicked the jmx nav bar button
-            // otherwise we may show data from Camel/ActiveMQ or other plugins that
-            // reuse the JMX plugin for showing tables (#884)
-            var currentUrl = $location.url();
-            if (currentUrl.endsWith("/jmx/attributes")) {
-                Jmx.log.debug("Reset selection in JMX plugin");
-                workspace.selection = null;
-                $scope.lastKey = null;
-            }
-
-            setTimeout(updateTableContents, 50);
-        });
-
-        $scope.$watch('workspace.selection', function () {
-            if (workspace.moveIfViewInvalid()) {
-                Core.unregister(jolokia, $scope);
-                return;
-            }
-            setTimeout(function () {
-                $scope.gridData = [];
-                Core.$apply($scope);
-                setTimeout(function () {
-                    updateTableContents();
-                }, 10);
-            }, 10);
-        });
-
-        $scope.hasWidget = function (row) {
-            return true;
-        };
-
-        $scope.onCancelAttribute = function () {
-            // clear entity
-            $scope.entity = {};
-        };
-
-        $scope.onUpdateAttribute = function () {
-            var value = $scope.entity["attrValueEdit"];
-            var key = $scope.entity["key"];
-
-            // clear entity
-            $scope.entity = {};
-
-            // TODO: check if value changed
-            // update the attribute on the mbean
-            var mbean = workspace.getSelectedMBeanName();
-            if (mbean) {
-                jolokia.setAttribute(mbean, key, value, onSuccess(function (response) {
-                    notification("success", "Updated attribute " + key);
-                }));
-            }
-        };
-
-        $scope.onViewAttribute = function (row) {
-            if (!row.summary) {
-                return;
-            }
-
-            // create entity and populate it with data from the selected row
-            $scope.entity = {};
-            $scope.entity["key"] = row.key;
-            $scope.entity["description"] = row.attrDesc;
-            $scope.entity["type"] = row.type;
-            $scope.entity["rw"] = row.rw;
-            var type = asJsonSchemaType(row.type, row.key);
-            var readOnly = !row.rw;
-
-            // calculate a textare with X number of rows that usually fit the value to display
-            var len = row.summary.length;
-            var rows = (len / 40) + 1;
-            if (rows > 10) {
-                // cap at most 10 rows to not make the dialog too large
-                rows = 10;
-            }
-
-            if (readOnly) {
-                // if the value is empty its a &nbsp; as we need this for the table to allow us to click on the empty row
-                if (row.summary === '&nbsp;') {
-                    $scope.entity["attrValueView"] = '';
-                } else {
-                    $scope.entity["attrValueView"] = row.summary;
-                }
-
-                // clone from the basic schema to the new schema we create on-the-fly
-                // this is needed as the dialog have problems if reusing the schema, and changing the schema afterwards
-                // so its safer to create a new schema according to our needs
-                $scope.attributeSchemaView = {};
-                for (var i in attributeSchemaBasic) {
-                    $scope.attributeSchemaView[i] = attributeSchemaBasic[i];
-                }
-
-                // and add the new attrValue which is dynamic computed
-                $scope.attributeSchemaView.properties.attrValueView = {
-                    description: 'Value',
-                    label: "Value",
-                    tooltip: 'Attribute value',
-                    type: 'string',
-                    formTemplate: "<textarea class='input-xlarge' rows='" + rows + "' readonly='true'></textarea>"
-                };
-
-                // just to be safe, then delete not needed part of the schema
-                if ($scope.attributeSchemaView) {
-                    delete $scope.attributeSchemaView.properties.attrValueEdit;
-                }
-            } else {
-                // if the value is empty its a &nbsp; as we need this for the table to allow us to click on the empty row
-                if (row.summary === '&nbsp;') {
-                    $scope.entity["attrValueEdit"] = '';
-                } else {
-                    $scope.entity["attrValueEdit"] = row.summary;
-                }
-
-                // clone from the basic schema to the new schema we create on-the-fly
-                // this is needed as the dialog have problems if reusing the schema, and changing the schema afterwards
-                // so its safer to create a new schema according to our needs
-                $scope.attributeSchemaEdit = {};
-                for (var i in attributeSchemaBasic) {
-                    $scope.attributeSchemaEdit[i] = attributeSchemaBasic[i];
-                }
-
-                // and add the new attrValue which is dynamic computed
-                $scope.attributeSchemaEdit.properties.attrValueEdit = {
-                    description: 'Value',
-                    label: "Value",
-                    tooltip: 'Attribute value',
-                    type: 'string',
-                    formTemplate: "<textarea class='input-xlarge' rows='" + rows + "'></textarea>"
-                };
-
-                // just to be safe, then delete not needed part of the schema
-                if ($scope.attributeSchemaEdit) {
-                    delete $scope.attributeSchemaEdit.properties.attrValueView;
-                }
-            }
-
-            $scope.showAttributeDialog = true;
-        };
-
-        $scope.getDashboardWidgets = function (row) {
-            var mbean = workspace.getSelectedMBeanName();
-            if (!mbean) {
-                return '';
-            }
-            var potentialCandidates = jmxWidgets.filter(function (widget) {
-                return mbean === widget.mbean;
-            });
-
-            if (potentialCandidates.isEmpty()) {
-                return '';
-            }
-
-            potentialCandidates = potentialCandidates.filter(function (widget) {
-                return widget.attribute === row.key || widget.total === row.key;
-            });
-
-            if (potentialCandidates.isEmpty()) {
-                return '';
-            }
-
-            row.addChartToDashboard = function (type) {
-                $scope.addChartToDashboard(row, type);
-            };
-
-            var rc = [];
-            potentialCandidates.forEach(function (widget) {
-                var widgetType = Jmx.getWidgetType(widget);
-                rc.push("<i class=\"" + widgetType['icon'] + " clickable\" title=\"" + widgetType['title'] + "\" ng-click=\"row.entity.addChartToDashboard('" + widgetType['type'] + "')\"></i>");
-            });
-            return rc.join() + "&nbsp;";
-        };
-
-        $scope.addChartToDashboard = function (row, widgetType) {
-            var mbean = workspace.getSelectedMBeanName();
-            var candidates = jmxWidgets.filter(function (widget) {
-                return mbean === widget.mbean;
-            });
-
-            candidates = candidates.filter(function (widget) {
-                return widget.attribute === row.key || widget.total === row.key;
-            });
-
-            candidates = candidates.filter(function (widget) {
-                return widget.type === widgetType;
-            });
-
-            // hmmm, we really should only have one result...
-            var widget = candidates.first();
-            var type = Jmx.getWidgetType(widget);
-
-            //console.log("widgetType: ", type, " widget: ", widget);
-            $location.url(Jmx.createDashboardLink(type, widget));
-        };
-
-        /*
-        * Returns the toolBar template HTML to use for the current selection
-        */
-        $scope.toolBarTemplate = function () {
-            // lets lookup the list of helpers by domain
-            var answer = Jmx.getAttributeToolBar(workspace.selection);
-
-            // TODO - maybe there's a better way to determine when to enable selections
-            /*
-            if (answer.startsWith("app/camel") && workspace.selection.children.length > 0) {
-            $scope.selectToggle.setSelect(true);
-            } else {
-            $scope.selectToggle.setSelect(false);
-            }
-            */
-            return answer;
-        };
-
-        $scope.invokeSelectedMBeans = function (operationName, completeFunction) {
-            if (typeof completeFunction === "undefined") { completeFunction = null; }
-            var queries = [];
-            angular.forEach($scope.selectedItems || [], function (item) {
-                var mbean = item["_id"];
-                if (mbean) {
-                    var opName = operationName;
-                    if (angular.isFunction(operationName)) {
-                        opName = operationName(item);
-                    }
-
-                    //console.log("Invoking operation " + opName + " on " + mbean);
-                    queries.push({ type: "exec", operation: opName, mbean: mbean });
-                }
-            });
-            if (queries.length) {
-                var callback = function () {
-                    if (completeFunction) {
-                        completeFunction();
-                    } else {
-                        operationComplete();
-                    }
-                };
-                jolokia.request(queries, onSuccess(callback, { error: callback }));
-            }
-        };
-
-        $scope.folderHref = function (row) {
-            if (!row.getProperty) {
-                return "";
-            }
-            var key = row.getProperty("key");
-            if (key) {
-                return Core.createHref($location, "#" + $location.path() + "?nid=" + key, ["nid"]);
-            } else {
-                return "";
-            }
-        };
-
-        $scope.folderIconClass = function (row) {
-            // TODO lets ignore the classes property for now
-            // as we don't have an easy way to know if there is an icon defined for an icon or not
-            // and we want to make sure there always is an icon shown
-            /*
-            var classes = (row.getProperty("addClass") || "").trim();
-            if (classes) {
-            return classes;
-            }
-            */
-            if (!row.getProperty) {
-                return "";
-            }
-            return row.getProperty("objectName") ? "icon-cog" : "icon-folder-close";
-        };
-
-        function operationComplete() {
-            updateTableContents();
-        }
-
-        function updateTableContents() {
-            // lets clear any previous queries just in case!
-            Core.unregister(jolokia, $scope);
-
-            $scope.gridData = [];
-            $scope.mbeanIndex = null;
-            var mbean = workspace.getSelectedMBeanName();
-            var request = null;
-            var node = workspace.selection;
-            if (node === null || angular.isUndefined(node) || node.key !== $scope.lastKey) {
-                // cache attributes info, so we know if the attribute is read-only or read-write, and also the attribute description
-                $scope.attributesInfoCache = null;
-                if (mbean) {
-                    var asQuery = function (node) {
-                        var path = escapeMBeanPath(node);
-                        var query = {
-                            type: "LIST",
-                            method: "post",
-                            path: path,
-                            ignoreErrors: true
-                        };
-                        return query;
-                    };
-                    var infoQuery = asQuery(mbean);
-                    jolokia.request(infoQuery, onSuccess(function (response) {
-                        $scope.attributesInfoCache = response.value;
-                        Jmx.log.debug("Updated attributes info cache for mbean " + mbean);
-                    }));
-                }
-            }
-
-            if (mbean) {
-                request = { type: 'read', mbean: mbean };
-                if (node.key !== $scope.lastKey) {
-                    $scope.gridOptions.columnDefs = Jmx.propertiesColumnDefs;
-                    $scope.gridOptions.enableRowClickSelection = false;
-                }
-            } else if (node) {
-                if (node.key !== $scope.lastKey) {
-                    $scope.gridOptions.columnDefs = [];
-                    $scope.gridOptions.enableRowClickSelection = true;
-                }
-
-                // lets query each child's details
-                var children = node.children;
-                if (children) {
-                    var childNodes = children.map(function (child) {
-                        return child.objectName;
-                    });
-                    var mbeans = childNodes.filter(function (mbean) {
-                        return mbean;
-                    });
-                    if (mbeans) {
-                        var typeNames = Jmx.getUniqueTypeNames(children);
-                        if (typeNames.length <= 1) {
-                            var query = mbeans.map(function (mbean) {
-                                return { type: "READ", mbean: mbean, ignoreErrors: true };
-                            });
-                            if (query.length > 0) {
-                                request = query;
-
-                                // deal with multiple results
-                                $scope.mbeanIndex = {};
-                                $scope.mbeanRowCounter = 0;
-                                $scope.mbeanCount = mbeans.length;
-                                //$scope.columnDefs = [];
-                            }
-                        } else {
-                            console.log("Too many type names " + typeNames);
-                        }
-                    }
-                }
-            }
-
-            //var callback = onSuccess(render, { error: render });
-            var callback = onSuccess(render);
-            if (request) {
-                $scope.request = request;
-                Core.register(jolokia, $scope, request, callback);
-            } else if (node) {
-                if (node.key !== $scope.lastKey) {
-                    $scope.gridOptions.columnDefs = Jmx.foldersColumnDefs;
-                    $scope.gridOptions.enableRowClickSelection = true;
-                }
-                $scope.gridData = node.children;
-                addHandlerFunctions($scope.gridData);
-            }
-            if (node) {
-                $scope.lastKey = node.key;
-            }
-            Core.$apply($scope);
-        }
-
-        function render(response) {
-            var data = response.value;
-            var mbeanIndex = $scope.mbeanIndex;
-            var mbean = response.request['mbean'];
-
-            if (mbean) {
-                // lets store the mbean in the row for later
-                data["_id"] = mbean;
-            }
-            if (mbeanIndex) {
-                if (mbean) {
-                    var idx = mbeanIndex[mbean];
-                    if (!angular.isDefined(idx)) {
-                        idx = $scope.mbeanRowCounter;
-                        mbeanIndex[mbean] = idx;
-                        $scope.mbeanRowCounter += 1;
-                    }
-                    if (idx === 0) {
-                        // this is to force the table to repaint
-                        $scope.selectedIndices = $scope.selectedItems.map(function (item) {
-                            return $scope.gridData.indexOf(item);
-                        });
-                        $scope.gridData = [];
-
-                        if (!$scope.gridOptions.columnDefs.length) {
-                            // lets update the column definitions based on any configured defaults
-                            var key = workspace.selectionConfigKey();
-                            var defaultDefs = workspace.attributeColumnDefs[key] || [];
-                            var defaultSize = defaultDefs.length;
-                            var map = {};
-                            angular.forEach(defaultDefs, function (value, key) {
-                                var field = value.field;
-                                if (field) {
-                                    map[field] = value;
-                                }
-                            });
-
-                            var extraDefs = [];
-                            angular.forEach(data, function (value, key) {
-                                if (includePropertyValue(key, value)) {
-                                    if (!map[key]) {
-                                        extraDefs.push({
-                                            field: key,
-                                            displayName: key === '_id' ? 'Object name' : humanizeValue(key),
-                                            visible: defaultSize === 0
-                                        });
-                                    }
-                                }
-                            });
-
-                            // the additional columns (which are not pre-configured), should be sorted
-                            // so the column menu has a nice sorted list instead of random ordering
-                            extraDefs = extraDefs.sort(function (def, def2) {
-                                // make sure _id is last
-                                if (def.field.startsWith('_')) {
-                                    return 1;
-                                } else if (def2.field.startsWith('_')) {
-                                    return -1;
-                                }
-                                return def.field.localeCompare(def2.field);
-                            });
-                            extraDefs.forEach(function (e) {
-                                defaultDefs.push(e);
-                            });
-
-                            $scope.gridOptions.columnDefs = defaultDefs;
-                            $scope.gridOptions.enableRowClickSelection = true;
-                        }
-                    }
-
-                    // assume 1 row of data per mbean
-                    $scope.gridData[idx] = data;
-                    addHandlerFunctions($scope.gridData);
-
-                    var count = $scope.mbeanCount;
-                    if (!count || idx + 1 >= count) {
-                        // only cause a refresh on the last row
-                        var newSelections = $scope.selectedIndices.map(function (idx) {
-                            return $scope.gridData[idx];
-                        }).filter(function (row) {
-                            return row;
-                        });
-                        $scope.selectedItems.splice(0, $scope.selectedItems.length);
-                        $scope.selectedItems.push.apply($scope.selectedItems, newSelections);
-
-                        //console.log("Would have selected " + JSON.stringify($scope.selectedItems));
-                        Core.$apply($scope);
-                    }
-                    // if the last row, then fire an event
-                } else {
-                    console.log("No mbean name in request " + JSON.stringify(response.request));
-                }
-            } else {
-                $scope.gridOptions.columnDefs = Jmx.propertiesColumnDefs;
-                $scope.gridOptions.enableRowClickSelection = false;
-                var showAllAttributes = true;
-                if (angular.isObject(data)) {
-                    var properties = [];
-                    angular.forEach(data, function (value, key) {
-                        if (showAllAttributes || includePropertyValue(key, value)) {
-                            // always skip keys which start with _
-                            if (!key.startsWith("_")) {
-                                // lets format the ObjectName nicely dealing with objects with
-                                // nested object names or arrays of object names
-                                if (key === "ObjectName") {
-                                    value = unwrapObjectName(value);
-                                }
-
-                                // lets unwrap any arrays of object names
-                                if (angular.isArray(value)) {
-                                    value = value.map(function (v) {
-                                        return unwrapObjectName(v);
-                                    });
-                                }
-
-                                // the value must be string as the sorting/filtering of the table relies on that
-                                var type = lookupAttributeType(key);
-                                var data = { key: key, name: humanizeValue(key), value: safeNullAsString(value, type) };
-
-                                generateSummaryAndDetail(key, data);
-                                properties.push(data);
-                            }
-                        }
-                    });
-                    if (!properties.any(function (p) {
-                        return p['key'] === 'ObjectName';
-                    })) {
-                        var objectName = {
-                            key: "ObjectName",
-                            name: "Object Name",
-                            value: mbean
-                        };
-                        generateSummaryAndDetail(objectName.key, objectName);
-                        properties.push(objectName);
-                    }
-                    properties = properties.sortBy("name");
-                    $scope.selectedItems = [data];
-                    data = properties;
-                }
-                $scope.gridData = data;
-                addHandlerFunctions($scope.gridData);
-                Core.$apply($scope);
-            }
-        }
-
-        function addHandlerFunctions(data) {
-            data.forEach(function (item) {
-                item['inDashboard'] = $scope.inDashboard;
-                item['getDashboardWidgets'] = function () {
-                    return $scope.getDashboardWidgets(item);
-                };
-                item['onViewAttribute'] = function () {
-                    $scope.onViewAttribute(item);
-                };
-                item['folderIconClass'] = function (row) {
-                    return $scope.folderIconClass(row);
-                };
-                item['folderHref'] = function (row) {
-                    return $scope.folderHref(row);
-                };
-            });
-        }
-
-        function unwrapObjectName(value) {
-            if (!angular.isObject(value)) {
-                return value;
-            }
-            var keys = Object.keys(value);
-            if (keys.length === 1 && keys[0] === "objectName") {
-                return value["objectName"];
-            }
-            return value;
-        }
-
-        function generateSummaryAndDetail(key, data) {
-            var value = data.value;
-            if (!angular.isArray(value) && angular.isObject(value)) {
-                var detailHtml = "<table class='table table-striped'>";
-                var summary = "";
-                var object = value;
-                var keys = Object.keys(value).sort();
-                angular.forEach(keys, function (key) {
-                    var value = object[key];
-                    detailHtml += "<tr><td>" + humanizeValue(key) + "</td><td>" + value + "</td></tr>";
-                    summary += "" + humanizeValue(key) + ": " + value + "  ";
-                });
-                detailHtml += "</table>";
-                data.summary = summary;
-                data.detailHtml = detailHtml;
-                data.tooltip = summary;
-            } else {
-                var text = value;
-
-                // if the text is empty then use a no-break-space so the table allows us to click on the row,
-                // otherwise if the text is empty, then you cannot click on the row
-                if (text === '') {
-                    text = '&nbsp;';
-                    data.tooltip = "";
-                } else {
-                    data.tooltip = text;
-                }
-                data.summary = "" + text + "";
-                data.detailHtml = "<pre>" + text + "</pre>";
-                if (angular.isArray(value)) {
-                    var html = "<ul>";
-                    angular.forEach(value, function (item) {
-                        html += "<li>" + item + "</li>";
-                    });
-                    html += "</ul>";
-                    data.detailHtml = html;
-                }
-            }
-
-            // enrich the data with information if the attribute is read-only/read-write, and the JMX attribute description (if any)
-            data.rw = false;
-            data.attrDesc = data.name;
-            data.type = "string";
-            if ($scope.attributesInfoCache != null && 'attr' in $scope.attributesInfoCache) {
-                var info = $scope.attributesInfoCache.attr[key];
-                if (angular.isDefined(info)) {
-                    data.rw = info.rw;
-                    data.attrDesc = info.desc;
-                    data.type = info.type;
-                }
-            }
-        }
-
-        function lookupAttributeType(key) {
-            if ($scope.attributesInfoCache != null && 'attr' in $scope.attributesInfoCache) {
-                var info = $scope.attributesInfoCache.attr[key];
-                if (angular.isDefined(info)) {
-                    return info.type;
-                }
-            }
-            return null;
-        }
-
-        function includePropertyValue(key, value) {
-            return !angular.isObject(value);
-        }
-
-        function asJsonSchemaType(typeName, id) {
-            if (typeName) {
-                var lower = typeName.toLowerCase();
-                if (lower.startsWith("int") || lower === "long" || lower === "short" || lower === "byte" || lower.endsWith("int")) {
-                    return "integer";
-                }
-                if (lower === "double" || lower === "float" || lower === "bigdecimal") {
-                    return "number";
-                }
-                if (lower === "boolean" || lower === "java.lang.boolean") {
-                    return "boolean";
-                }
-                if (lower === "string" || lower === "java.lang.String") {
-                    return "string";
-                }
-            }
-
-            // fallback as string
-            return "string";
-        }
-    }
-    Jmx.AttributesController = AttributesController;
-})(Jmx || (Jmx = {}));
-/**
-* @module Jmx
-*/
-var Jmx;
-(function (Jmx) {
-    function AttributeController($scope, jolokia) {
-        $scope.init = function (mbean, attribute) {
-            $scope.mbean = mbean;
-            $scope.attribute = attribute;
-
-            if (angular.isDefined($scope.mbean) && angular.isDefined($scope.attribute)) {
-                Core.register(jolokia, $scope, {
-                    type: 'read', mbean: $scope.mbean, attribute: $scope.attribute
-                }, onSuccess(render));
-            }
-        };
-
-        function render(response) {
-            if (!Object.equal($scope.data, response.value)) {
-                $scope.data = safeNull(response.value);
-                Core.$apply($scope);
-            }
-        }
-    }
-    Jmx.AttributeController = AttributeController;
-
-    function AttributeChartController($scope, jolokia, $document) {
-        $scope.init = function (mbean, attribute) {
-            $scope.mbean = mbean;
-            $scope.attribute = attribute;
-
-            if (angular.isDefined($scope.mbean) && angular.isDefined($scope.attribute)) {
-                Core.register(jolokia, $scope, {
-                    type: 'read', mbean: $scope.mbean, attribute: $scope.attribute
-                }, onSuccess(render));
-            }
-        };
-
-        function render(response) {
-            if (!angular.isDefined($scope.chart)) {
-                $scope.chart = $($document.find("#" + $scope.attribute)[0]);
-                if ($scope.chart) {
-                    $scope.width = $scope.chart.width();
-                }
-            }
-
-            if (!angular.isDefined($scope.context)) {
-                console.log("Got: ", response);
-
-                $scope.context = cubism.context().serverDelay(0).clientDelay(0).step(1000).size($scope.width);
-                $scope.jcontext = $scope.context.jolokia(jolokia);
-
-                $scope.metrics = [];
-
-                Object.extended(response.value).keys(function (key, value) {
-                    $scope.metrics.push($scope.jcontext.metric({
-                        type: 'read',
-                        mbean: $scope.mbean,
-                        attribute: $scope.attribute,
-                        path: key
-                    }, $scope.attribute));
-                });
-
-                d3.select("#" + $scope.attribute).call(function (div) {
-                    div.append("div").data($scope.metrics).call($scope.context.horizon());
-                });
-
-                // let cubism take over at this point...
-                Core.unregister(jolokia, $scope);
-                Core.$apply($scope);
-            }
-        }
-    }
-    Jmx.AttributeChartController = AttributeChartController;
-})(Jmx || (Jmx = {}));
-/**
-* @module Jmx
 */
 var Jmx;
 (function (Jmx) {
@@ -24731,50 +22862,1966 @@ var Jmx;
 })(Jmx || (Jmx = {}));
 /**
 * @module Jmx
+* @main Jmx
+*/
+/// <reference path="./jmxHelpers.ts"/>
+var Jmx;
+(function (Jmx) {
+    var pluginName = 'jmx';
+
+    Jmx.currentProcessId = '';
+
+    Jmx._module = angular.module(pluginName, ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.modal', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-ui', 'hawtioRbac']);
+
+    Jmx._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/jmx/attributes', { templateUrl: 'app/jmx/html/attributes.html' }).when('/jmx/operations', { templateUrl: 'app/jmx/html/operations.html' }).when('/jmx/charts', { templateUrl: 'app/jmx/html/charts.html' }).when('/jmx/chartEdit', { templateUrl: 'app/jmx/html/chartEdit.html' }).when('/jmx/help/:tabName', { templateUrl: 'app/core/html/help.html' }).when('/jmx/widget/donut', { templateUrl: 'app/jmx/html/donutChart.html' }).when('/jmx/widget/area', { templateUrl: 'app/jmx/html/areaChart.html' });
+        }]);
+
+    Jmx._module.factory('jmxTreeLazyLoadRegistry', function () {
+        return Jmx.lazyLoaders;
+    });
+
+    Jmx._module.factory('jmxWidgetTypes', function () {
+        return Jmx.jmxWidgetTypes;
+    });
+
+    Jmx._module.factory('jmxWidgets', function () {
+        return Jmx.jmxWidgets;
+    });
+
+    Jmx._module.run([
+        "$location", "workspace", "viewRegistry", "layoutTree", "jolokia", "pageTitle", "helpRegistry", function ($location, workspace, viewRegistry, layoutTree, jolokia, pageTitle, helpRegistry) {
+            viewRegistry['jmx'] = layoutTree;
+            helpRegistry.addUserDoc('jmx', 'app/jmx/doc/help.md');
+
+            pageTitle.addTitleElement(function () {
+                if (Jmx.currentProcessId === '') {
+                    try  {
+                        Jmx.currentProcessId = jolokia.getAttribute('java.lang:type=Runtime', 'Name');
+                    } catch (e) {
+                        // ignore
+                    }
+                    if (Jmx.currentProcessId && Jmx.currentProcessId.has("@")) {
+                        Jmx.currentProcessId = "pid:" + Jmx.currentProcessId.split("@")[0];
+                    }
+                }
+                return Jmx.currentProcessId;
+            });
+
+            workspace.topLevelTabs.push({
+                id: "jmx",
+                content: "JMX",
+                title: "View the JMX MBeans in this process",
+                isValid: function (workspace) {
+                    return workspace.hasMBeans();
+                },
+                href: function () {
+                    return "#/jmx/attributes";
+                },
+                isActive: function (workspace) {
+                    return workspace.isTopTabActive("jmx");
+                }
+            });
+
+            workspace.subLevelTabs.push({
+                content: '<i class="icon-list"></i> Attributes',
+                title: "View the attribute values on your selection",
+                isValid: function (workspace) {
+                    return true;
+                },
+                href: function () {
+                    return "#/jmx/attributes";
+                }
+            });
+            workspace.subLevelTabs.push({
+                content: '<i class="icon-leaf"></i> Operations',
+                title: "Execute operations on your selection",
+                isValid: function (workspace) {
+                    return true;
+                },
+                href: function () {
+                    return "#/jmx/operations";
+                }
+            });
+            workspace.subLevelTabs.push({
+                content: '<i class="icon-bar-chart"></i> Chart',
+                title: "View a chart of the metrics on your selection",
+                isValid: function (workspace) {
+                    return true;
+                },
+                href: function () {
+                    return "#/jmx/charts";
+                }
+            });
+            workspace.subLevelTabs.push({
+                content: '<i class="icon-cog"></i> Edit Chart',
+                title: "Edit the chart configuration",
+                isValid: function (workspace) {
+                    return workspace.isLinkActive("jmx/chart");
+                },
+                href: function () {
+                    return "#/jmx/chartEdit";
+                }
+            });
+        }]);
+
+    hawtioPluginLoader.addModule(pluginName);
+})(Jmx || (Jmx = {}));
+/**
+* @module Jmx
+*/
+/// <reference path="./jmxPlugin.ts"/>
+var Jmx;
+(function (Jmx) {
+    Jmx._module.controller("Jmx.TreeHeaderController", [
+        "$scope", function ($scope) {
+            $scope.expandAll = function () {
+                Tree.expandAll("#jmxtree");
+            };
+
+            $scope.contractAll = function () {
+                Tree.contractAll("#jmxtree");
+            };
+        }]);
+
+    Jmx._module.controller("Jmx.MBeansController", [
+        "$scope", "$location", "workspace", function ($scope, $location, workspace) {
+            $scope.num = 1;
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateSelectionFromURL, 50);
+            });
+
+            $scope.select = function (node) {
+                $scope.workspace.updateSelectionNode(node);
+                Core.$apply($scope);
+            };
+
+            function updateSelectionFromURL() {
+                Jmx.updateTreeSelectionFromURL($location, $("#jmxtree"));
+            }
+
+            $scope.populateTree = function () {
+                var treeElement = $("#jmxtree");
+                $scope.tree = workspace.tree;
+                Jmx.enableTree($scope, $location, workspace, treeElement, $scope.tree.children, true);
+                setTimeout(updateSelectionFromURL, 50);
+            };
+
+            $scope.$on('jmxTreeUpdated', $scope.populateTree);
+
+            $scope.populateTree();
+        }]);
+})(Jmx || (Jmx = {}));
+/**
+* @module Jmx
+*/
+/// <reference path="./jmxPlugin.ts"/>
+var Jmx;
+(function (Jmx) {
+    Jmx._module.controller("Jmx.ChartController", [
+        "$scope", "$element", "$location", "workspace", "localStorage", "jolokiaUrl", "jolokiaParams", function ($scope, $element, $location, workspace, localStorage, jolokiaUrl, jolokiaParams) {
+            $scope.metrics = [];
+            $scope.updateRate = 1000; //parseInt(localStorage['updateRate']);
+
+            $scope.context = null;
+            $scope.jolokia = null;
+            $scope.charts = null;
+
+            $scope.reset = function () {
+                if ($scope.context) {
+                    $scope.context.stop();
+                    $scope.context = null;
+                }
+                if ($scope.jolokia) {
+                    $scope.jolokia.stop();
+                    $scope.jolokia = null;
+                }
+                if ($scope.charts) {
+                    $scope.charts.empty();
+                    $scope.charts = null;
+                }
+            };
+
+            $scope.$on('$destroy', function () {
+                try  {
+                    $scope.deregRouteChange();
+                } catch (error) {
+                    // ignore
+                }
+                try  {
+                    $scope.dereg();
+                } catch (error) {
+                    // ignore
+                }
+                $scope.reset();
+            });
+
+            $scope.errorMessage = function () {
+                if ($scope.updateRate === 0) {
+                    return "updateRate";
+                }
+
+                if ($scope.metrics.length === 0) {
+                    return "metrics";
+                }
+            };
+
+            var doRender = Core.throttled(render, 200);
+
+            $scope.deregRouteChange = $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                doRender();
+            });
+            $scope.dereg = $scope.$watch('workspace.selection', function () {
+                if (workspace.moveIfViewInvalid())
+                    return;
+                doRender();
+            });
+
+            doRender();
+
+            function render() {
+                var node = workspace.selection;
+                if (!angular.isDefined(node) || !angular.isDefined($scope.updateRate) || $scope.updateRate === 0) {
+                    // Called render too early, let's retry
+                    setTimeout(doRender, 500);
+                    Core.$apply($scope);
+                    return;
+                }
+                var width = 594;
+                var charts = $element.find('#charts');
+                if (charts) {
+                    width = charts.width();
+                } else {
+                    // Called render too early, let's retry
+                    setTimeout(doRender, 500);
+                    Core.$apply($scope);
+                    return;
+                }
+
+                // clear out any existing context
+                $scope.reset();
+
+                $scope.charts = charts;
+                $scope.jolokia = new Jolokia(jolokiaParams);
+                $scope.jolokia.start($scope.updateRate);
+
+                var mbean = node.objectName;
+                $scope.metrics = [];
+
+                var context = cubism.context().serverDelay($scope.updateRate).clientDelay($scope.updateRate).step($scope.updateRate).size(width);
+
+                $scope.context = context;
+                $scope.jolokiaContext = context.jolokia($scope.jolokia);
+                var search = $location.search();
+                var attributeNames = toSearchArgumentArray(search["att"]);
+
+                if (mbean) {
+                    // TODO make generic as we can cache them; they rarely ever change
+                    // lets get the attributes for this mbean
+                    // we need to escape the mbean path for list
+                    var listKey = encodeMBeanPath(mbean);
+
+                    //console.log("Looking up mbeankey: " + listKey);
+                    var meta = $scope.jolokia.list(listKey);
+                    if (meta) {
+                        var attributes = meta.attr;
+                        if (attributes) {
+                            var foundNames = [];
+                            for (var key in attributes) {
+                                var value = attributes[key];
+                                if (value) {
+                                    var typeName = value['type'];
+                                    if (isNumberTypeName(typeName)) {
+                                        foundNames.push(key);
+                                    }
+                                }
+                            }
+
+                            // lets filter the attributes
+                            // if we find none then the att search attribute is invalid
+                            // so lets discard the filter - as it must be for some other mbean
+                            if (attributeNames.length) {
+                                var filtered = foundNames.filter(function (key) {
+                                    return attributeNames.indexOf(key) >= 0;
+                                });
+                                if (filtered.length) {
+                                    foundNames = filtered;
+                                }
+                            }
+                            angular.forEach(foundNames, function (key) {
+                                var metric = $scope.jolokiaContext.metric({
+                                    type: 'read',
+                                    mbean: mbean,
+                                    attribute: key
+                                }, humanizeValue(key));
+                                if (metric) {
+                                    $scope.metrics.push(metric);
+                                }
+                            });
+                        }
+                    }
+                } else {
+                    // lets try pull out the attributes and elements from the URI and use those to chart
+                    var elementNames = toSearchArgumentArray(search["el"]);
+                    if (attributeNames && attributeNames.length && elementNames && elementNames.length) {
+                        // first lets map the element names to mbean names to keep the URI small
+                        var mbeans = {};
+                        elementNames.forEach(function (elementName) {
+                            var child = node.get(elementName);
+                            if (!child && node.children) {
+                                child = node.children.find(function (n) {
+                                    return elementName === n["title"];
+                                });
+                            }
+                            if (child) {
+                                var mbean = child.objectName;
+                                if (mbean) {
+                                    mbeans[elementName] = mbean;
+                                }
+                            }
+                        });
+
+                        // lets create the metrics
+                        attributeNames.forEach(function (key) {
+                            angular.forEach(mbeans, function (mbean, name) {
+                                var attributeTitle = humanizeValue(key);
+
+                                // for now lets always be verbose
+                                var title = name + ": " + attributeTitle;
+
+                                var metric = $scope.jolokiaContext.metric({
+                                    type: 'read',
+                                    mbean: mbean,
+                                    attribute: key
+                                }, title);
+                                if (metric) {
+                                    $scope.metrics.push(metric);
+                                }
+                            });
+                        });
+                    }
+
+                    // if we've children and none of the query arguments matched any metrics
+                    // lets redirect back to the edit view
+                    if (node.children.length && !$scope.metrics.length) {
+                        // lets forward to the chart selection UI if we have some children; they may have
+                        // chartable attributes
+                        $location.path("jmx/chartEdit");
+                    }
+                }
+
+                if ($scope.metrics.length > 0) {
+                    var d3Selection = d3.select(charts.get(0));
+                    var axisEl = d3Selection.selectAll(".axis");
+
+                    var bail = false;
+
+                    axisEl.data(["top", "bottom"]).enter().append("div").attr("class", function (d) {
+                        return d + " axis";
+                    }).each(function (d) {
+                        if (bail) {
+                            return;
+                        }
+                        try  {
+                            d3.select(this).call(context.axis().ticks(12).orient(d));
+                        } catch (error) {
+                            // still rendering at not the right time...
+                            // log.debug("error: ", error);
+                            if (!bail) {
+                                bail = true;
+                            }
+                        }
+                    });
+
+                    if (bail) {
+                        $scope.reset();
+                        setTimeout(doRender, 500);
+                        Core.$apply($scope);
+                        return;
+                    }
+
+                    d3Selection.append("div").attr("class", "rule").call(context.rule());
+
+                    context.on("focus", function (i) {
+                        try  {
+                            d3Selection.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
+                        } catch (error) {
+                            Jmx.log.info("error: ", error);
+                        }
+                    });
+
+                    $scope.metrics.forEach(function (metric) {
+                        d3Selection.call(function (div) {
+                            div.append("div").data([metric]).attr("class", "horizon").call(context.horizon());
+                        });
+                    });
+                } else {
+                    $scope.reset();
+                }
+
+                Core.$apply($scope);
+            }
+            ;
+        }]);
+})(Jmx || (Jmx = {}));
+/**
+* @module Jmx
+*/
+/// <reference path="./jmxPlugin.ts"/>
+var Jmx;
+(function (Jmx) {
+    Jmx._module.controller("Jmx.ChartEditController", [
+        "$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+            $scope.selectedAttributes = [];
+            $scope.selectedMBeans = [];
+            $scope.metrics = {};
+            $scope.mbeans = {};
+
+            // TODO move this function to $routeScope
+            $scope.size = function (value) {
+                if (angular.isObject(value)) {
+                    return Object.size(value);
+                } else if (angular.isArray(value)) {
+                    return value.length;
+                } else
+                    return 1;
+            };
+
+            $scope.canViewChart = function () {
+                return $scope.selectedAttributes.length && $scope.selectedMBeans.length && $scope.size($scope.mbeans) > 0 && $scope.size($scope.metrics) > 0;
+            };
+
+            $scope.showAttributes = function () {
+                return $scope.canViewChart() && $scope.size($scope.metrics) > 1;
+            };
+
+            $scope.showElements = function () {
+                return $scope.canViewChart() && $scope.size($scope.mbeans) > 1;
+            };
+
+            $scope.viewChart = function () {
+                // lets add the attributes and mbeans into the URL so we can navigate back to the charts view
+                var search = $location.search();
+
+                // if we have selected all attributes, then lets just remove the attribute
+                if ($scope.selectedAttributes.length === $scope.size($scope.metrics)) {
+                    delete search["att"];
+                } else {
+                    search["att"] = $scope.selectedAttributes;
+                }
+
+                // if we are on an mbean with no children lets discard an unnecessary parameter
+                if ($scope.selectedMBeans.length === $scope.size($scope.mbeans) && $scope.size($scope.mbeans) === 1) {
+                    delete search["el"];
+                } else {
+                    search["el"] = $scope.selectedMBeans;
+                }
+                $location.search(search);
+                $location.path("jmx/charts");
+            };
+
+            $scope.$watch('workspace.selection', render);
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(render, 50);
+            });
+
+            function render() {
+                var node = workspace.selection;
+                if (!angular.isDefined(node)) {
+                    return;
+                }
+
+                $scope.selectedAttributes = [];
+                $scope.selectedMBeans = [];
+                $scope.metrics = {};
+                $scope.mbeans = {};
+                var mbeanCounter = 0;
+                var resultCounter = 0;
+
+                // lets iterate through all the children if the current node is not an mbean
+                var children = node.children;
+                if (!children || !children.length || node.objectName) {
+                    children = [node];
+                }
+                if (children) {
+                    children.forEach(function (mbeanNode) {
+                        var mbean = mbeanNode.objectName;
+                        var name = mbeanNode.title;
+                        if (name && mbean) {
+                            mbeanCounter++;
+                            $scope.mbeans[name] = name;
+
+                            // we need to escape the mbean path for list
+                            var listKey = escapeMBeanPath(mbean);
+
+                            //var listKey = encodeMBeanPath(mbean);
+                            jolokia.list(listKey, onSuccess(function (meta) {
+                                var attributes = meta.attr;
+                                if (attributes) {
+                                    for (var key in attributes) {
+                                        var value = attributes[key];
+                                        if (value) {
+                                            var typeName = value['type'];
+                                            if (isNumberTypeName(typeName)) {
+                                                if (!$scope.metrics[key]) {
+                                                    //console.log("Number attribute " + key + " for " + mbean);
+                                                    $scope.metrics[key] = key;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (++resultCounter >= mbeanCounter) {
+                                        // TODO do we need to sort just in case?
+                                        // lets look in the search URI to default the selections
+                                        var search = $location.search();
+                                        var attributeNames = toSearchArgumentArray(search["att"]);
+                                        var elementNames = toSearchArgumentArray(search["el"]);
+                                        if (attributeNames && attributeNames.length) {
+                                            attributeNames.forEach(function (name) {
+                                                if ($scope.metrics[name]) {
+                                                    $scope.selectedAttributes.push(name);
+                                                }
+                                            });
+                                        }
+                                        if (elementNames && elementNames.length) {
+                                            elementNames.forEach(function (name) {
+                                                if ($scope.mbeans[name]) {
+                                                    $scope.selectedMBeans.push(name);
+                                                }
+                                            });
+                                        }
+
+                                        // default selections if there are none
+                                        if ($scope.selectedMBeans.length < 1) {
+                                            $scope.selectedMBeans = Object.keys($scope.mbeans);
+                                        }
+                                        if ($scope.selectedAttributes.length < 1) {
+                                            var attrKeys = Object.keys($scope.metrics).sort();
+                                            if ($scope.selectedMBeans.length > 1) {
+                                                $scope.selectedAttributes = [attrKeys.first()];
+                                            } else {
+                                                $scope.selectedAttributes = attrKeys;
+                                            }
+                                        }
+
+                                        // lets update the sizes using jquery as it seems AngularJS doesn't support it
+                                        $("#attributes").attr("size", Object.size($scope.metrics));
+                                        $("#mbeans").attr("size", Object.size($scope.mbeans));
+                                        Core.$apply($scope);
+                                    }
+                                }
+                            }));
+                        }
+                    });
+                }
+            }
+        }]);
+})(Jmx || (Jmx = {}));
+/**
+* @module Jmx
+*/
+/// <reference path="./jmxPlugin.ts"/>
+var Jmx;
+(function (Jmx) {
+    // IOperationControllerScope
+    Jmx._module.controller("Jmx.OperationController", [
+        "$scope", "workspace", "jolokia", "$timeout", function ($scope, workspace, jolokia, $timeout) {
+            $scope.item = $scope.selectedOperation;
+            $scope.title = $scope.item.humanReadable;
+            $scope.desc = $scope.item.desc;
+            $scope.operationResult = '';
+            $scope.executeIcon = "icon-ok";
+            $scope.mode = "text";
+            $scope.entity = {};
+            $scope.formConfig = {
+                properties: {},
+                description: $scope.objectName + "::" + $scope.item.name
+            };
+
+            $scope.item.args.forEach(function (arg) {
+                $scope.formConfig.properties[arg.name] = {
+                    type: arg.type,
+                    tooltip: arg.desc,
+                    help: "Type: " + arg.type
+                };
+            });
+
+            $timeout(function () {
+                $("html, body").animate({ scrollTop: 0 }, "medium");
+            }, 250);
+
+            var sanitize = function (args) {
+                if (args) {
+                    args.forEach(function (arg) {
+                        switch (arg.type) {
+                            case "int":
+                            case "long":
+                                arg.formType = "number";
+                                break;
+                            default:
+                                arg.formType = "text";
+                        }
+                    });
+                }
+
+                return args;
+            };
+
+            $scope.args = sanitize($scope.item.args);
+
+            $scope.dump = function (data) {
+                console.log(data);
+            };
+
+            $scope.ok = function () {
+                $scope.operationResult = '';
+            };
+
+            $scope.reset = function () {
+                $scope.entity = {};
+            };
+
+            $scope.close = function () {
+                $scope.$parent.showInvoke = false;
+            };
+
+            $scope.handleResponse = function (response) {
+                $scope.executeIcon = "icon-ok";
+                $scope.operationStatus = "success";
+
+                if (response === null || 'null' === response) {
+                    $scope.operationResult = "Operation Succeeded!";
+                } else if (typeof response === 'string') {
+                    $scope.operationResult = response;
+                } else {
+                    $scope.operationResult = angular.toJson(response, true);
+                }
+
+                $scope.mode = CodeEditor.detectTextFormat($scope.operationResult);
+
+                Core.$apply($scope);
+            };
+
+            $scope.onSubmit = function (json, form) {
+                Jmx.log.debug("onSubmit: json:", json, " form: ", form);
+                Jmx.log.debug("$scope.item.args: ", $scope.item.args);
+                angular.forEach(json, function (value, key) {
+                    $scope.item.args.find(function (arg) {
+                        return arg['name'] === key;
+                    }).value = value;
+                });
+                $scope.execute();
+            };
+
+            $scope.execute = function () {
+                var node = workspace.selection;
+
+                if (!node) {
+                    return;
+                }
+
+                var objectName = node.objectName;
+
+                if (!objectName) {
+                    return;
+                }
+
+                var args = [objectName, $scope.item.name];
+                if ($scope.item.args) {
+                    $scope.item.args.forEach(function (arg) {
+                        args.push(arg.value);
+                    });
+                }
+
+                args.push(onSuccess($scope.handleResponse, {
+                    error: function (response) {
+                        $scope.executeIcon = "icon-ok";
+                        $scope.operationStatus = "error";
+                        var error = response.error;
+                        $scope.operationResult = error;
+                        var stacktrace = response.stacktrace;
+                        if (stacktrace) {
+                            $scope.operationResult = stacktrace;
+                        }
+                        Core.$apply($scope);
+                    }
+                }));
+
+                $scope.executeIcon = "icon-spinner icon-spin";
+                var fn = jolokia.execute;
+                fn.apply(jolokia, args);
+            };
+        }]);
+
+    Jmx._module.controller("Jmx.OperationsController", [
+        "$scope", "workspace", "jolokia", "rbacACLMBean", "$templateCache", function ($scope, workspace, jolokia, rbacACLMBean, $templateCache) {
+            $scope.operations = {};
+            $scope.objectName = '';
+            $scope.methodFilter = '';
+            $scope.workspace = workspace;
+            $scope.selectedOperation = null;
+            $scope.showInvoke = false;
+            $scope.template = "";
+
+            $scope.invokeOp = function (operation) {
+                if (!$scope.canInvoke(operation)) {
+                    return;
+                }
+                $scope.selectedOperation = operation;
+                $scope.showInvoke = true;
+            };
+
+            $scope.getJson = function (operation) {
+                return angular.toJson(operation, true);
+            };
+
+            $scope.cancel = function () {
+                $scope.selectedOperation = null;
+                $scope.showInvoke = false;
+            };
+
+            $scope.$watch('showInvoke', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    if (newValue) {
+                        $scope.template = $templateCache.get("operationTemplate");
+                    } else {
+                        $scope.template = "";
+                    }
+                }
+            });
+
+            var fetch = Core.throttled(function () {
+                var node = workspace.selection;
+                if (!node) {
+                    return;
+                }
+
+                $scope.objectName = node.objectName;
+                if (!$scope.objectName) {
+                    return;
+                }
+
+                jolokia.request({
+                    type: 'list',
+                    path: escapeMBeanPath($scope.objectName)
+                }, onSuccess(render));
+            }, 500);
+
+            function getArgs(args) {
+                return "(" + args.map(function (arg) {
+                    return arg.type;
+                }).join() + ")";
+            }
+
+            function sanitize(value) {
+                for (var item in value) {
+                    item = "" + item;
+                    value[item].name = item;
+                    value[item].humanReadable = humanizeValue(item);
+                }
+                return value;
+            }
+
+            $scope.isOperationsEmpty = function () {
+                return $.isEmptyObject($scope.operations);
+            };
+
+            $scope.doFilter = function (item) {
+                if (Core.isBlank($scope.methodFilter)) {
+                    return true;
+                }
+                if (item.name.toLowerCase().has($scope.methodFilter.toLowerCase()) || item.humanReadable.toLowerCase().has($scope.methodFilter.toLowerCase())) {
+                    return true;
+                }
+                return false;
+            };
+
+            $scope.canInvoke = function (operation) {
+                if (!('canInvoke' in operation)) {
+                    return true;
+                } else {
+                    return operation['canInvoke'];
+                }
+            };
+
+            $scope.getClass = function (operation) {
+                if ($scope.canInvoke(operation)) {
+                    return 'can-invoke';
+                } else {
+                    return 'cant-invoke';
+                }
+            };
+
+            $scope.$watch('workspace.selection', function (newValue, oldValue) {
+                if (!workspace.selection || workspace.moveIfViewInvalid()) {
+                    return;
+                }
+                fetch();
+            });
+
+            function fetchPermissions(objectName, operations) {
+                var map = {};
+                map[objectName] = [];
+
+                angular.forEach(operations, function (value, key) {
+                    map[objectName].push(value.name);
+                });
+
+                jolokia.request({
+                    type: 'exec',
+                    mbean: rbacACLMBean,
+                    operation: 'canInvoke(java.util.Map)',
+                    arguments: [map]
+                }, onSuccess(function (response) {
+                    var map = response.value;
+                    angular.forEach(map[objectName], function (value, key) {
+                        operations[key]['canInvoke'] = value['CanInvoke'];
+                    });
+
+                    //log.debug("Got operations: ", $scope.operations);
+                    Core.$apply($scope);
+                }, {
+                    error: function (response) {
+                        // silently ignore
+                        Core.$apply($scope);
+                    }
+                }));
+            }
+
+            function render(response) {
+                var ops = response.value.op;
+                var answer = {};
+
+                angular.forEach(ops, function (value, key) {
+                    if (angular.isArray(value)) {
+                        angular.forEach(value, function (value, index) {
+                            answer[key + getArgs(value.args)] = value;
+                        });
+                    } else {
+                        answer[key + getArgs(value.args)] = value;
+                    }
+                });
+                $scope.operations = sanitize(answer);
+                if (Core.isBlank(rbacACLMBean) || $scope.isOperationsEmpty()) {
+                    Core.$apply($scope);
+                    return;
+                } else {
+                    fetchPermissions($scope.objectName, $scope.operations);
+                }
+            }
+        }]);
+})(Jmx || (Jmx = {}));
+/**
+* @module Jmx
+*/
+/// <reference path="./jmxPlugin.ts"/>
+var Jmx;
+(function (Jmx) {
+    Jmx._module.controller("Jmx.DonutChartController", [
+        "$scope", "$routeParams", "jolokia", "$templateCache", function ($scope, $routeParams, jolokia, $templateCache) {
+            /*
+            console.log("routeParams: ", $routeParams);
+            
+            
+            // using multiple attributes
+            $scope.mbean = "java.lang:type=OperatingSystem";
+            $scope.total = "MaxFileDescriptorCount";
+            $scope.terms = "OpenFileDescriptorCount";
+            */
+            // using a single attribute with multiple paths
+            /*
+            $scope.mbean = "java.lang:type=Memory";
+            $scope.total = "Max";
+            $scope.attribute = "HeapMemoryUsage";
+            $scope.terms = "Used";
+            */
+            $scope.mbean = $routeParams['mbean'];
+            $scope.total = $routeParams['total'];
+            $scope.attribute = $routeParams['attribute'];
+            $scope.terms = $routeParams['terms'];
+
+            $scope.remainder = $routeParams['remaining'];
+
+            $scope.template = "";
+            $scope.termsArray = $scope.terms.split(",");
+
+            $scope.data = {
+                total: 0,
+                terms: []
+            };
+
+            if (!$scope.attribute) {
+                $scope.reqs = [{ type: 'read', mbean: $scope.mbean, attribute: $scope.total }];
+
+                $scope.termsArray.forEach(function (term) {
+                    $scope.reqs.push({ type: 'read', mbean: $scope.mbean, attribute: term });
+                    $scope.data.terms.push({
+                        term: term,
+                        count: 0
+                    });
+                });
+            } else {
+                var terms = $scope.termsArray.include($scope.total);
+                $scope.reqs = [{ type: 'read', mbean: $scope.mbean, attribute: $scope.attribute, paths: terms.join(",") }];
+
+                $scope.termsArray.forEach(function (term) {
+                    $scope.data.terms.push({
+                        term: term,
+                        count: 0
+                    });
+                });
+            }
+
+            if ($scope.remainder && $scope.remainder !== "-") {
+                $scope.data.terms.push({
+                    term: $scope.remainder,
+                    count: 0
+                });
+            }
+
+            /*
+            $scope.data = {
+            total: 100,
+            terms: [{
+            term: "One",
+            count: 25
+            }, {
+            term: "Two",
+            count: 75
+            }]
+            };
+            */
+            $scope.render = function (response) {
+                //console.log("got: ", response);
+                var freeTerm = null;
+                if ($scope.remainder && $scope.remainder !== "-") {
+                    freeTerm = $scope.data.terms.find(function (term) {
+                        return term.term === $scope.remainder;
+                    });
+                }
+
+                if (!$scope.attribute) {
+                    if (response.request.attribute === $scope.total) {
+                        $scope.data.total = response.value;
+                    } else {
+                        var term = $scope.data.terms.find(function (term) {
+                            return term.term === response.request.attribute;
+                        });
+                        if (term) {
+                            term.count = response.value;
+                        }
+
+                        if (freeTerm) {
+                            freeTerm.count = $scope.data.total;
+                            $scope.data.terms.forEach(function (term) {
+                                if (term.term !== $scope.remainder) {
+                                    freeTerm.count = freeTerm.count - term.count;
+                                }
+                            });
+                        }
+                    }
+                } else {
+                    if (response.request.attribute === $scope.attribute) {
+                        $scope.data.total = response.value[$scope.total.toLowerCase()];
+
+                        $scope.data.terms.forEach(function (term) {
+                            if (term.term !== $scope.remainder) {
+                                term.count = response.value[term.term.toLowerCase()];
+                            }
+                        });
+
+                        if (freeTerm) {
+                            freeTerm.count = $scope.data.total;
+                            $scope.data.terms.forEach(function (term) {
+                                if (term.term !== $scope.remainder) {
+                                    freeTerm.count = freeTerm.count - term.count;
+                                }
+                            });
+                        }
+                    }
+                }
+                if ($scope.template === "") {
+                    $scope.template = $templateCache.get("donut");
+                }
+
+                // console.log("Data: ", $scope.data);
+                $scope.data = Object.clone($scope.data);
+                Core.$apply($scope);
+            };
+
+            Core.register(jolokia, $scope, $scope.reqs, onSuccess($scope.render));
+        }]);
+})(Jmx || (Jmx = {}));
+/**
+* @module Jmx
 */
 var Jmx;
 (function (Jmx) {
-    function AreaChartController($scope, $routeParams, jolokia, $templateCache, localStorage, $element) {
-        $scope.mbean = $routeParams['mbean'];
-        $scope.attribute = $routeParams['attribute'];
-        $scope.duration = localStorage['updateRate'];
+    function createDashboardLink(widgetType, widget) {
+        var href = "#" + widgetType.route;
+        var routeParams = angular.toJson(widget);
+        var title = widget.title;
+        var size = angular.toJson({
+            size_x: widgetType.size_x,
+            size_y: widgetType.size_y
+        });
 
-        $scope.width = 308;
-        $scope.height = 296;
+        return "/dashboard/add?tab=dashboard" + "&href=" + encodeURIComponent(href) + "&size=" + encodeURIComponent(size) + "&title=" + encodeURIComponent(title) + "&routeParams=" + encodeURIComponent(routeParams);
+    }
+    Jmx.createDashboardLink = createDashboardLink;
 
-        $scope.template = "";
+    function getWidgetType(widget) {
+        return Jmx.jmxWidgetTypes.find(function (type) {
+            return type.type === widget.type;
+        });
+    }
+    Jmx.getWidgetType = getWidgetType;
 
-        $scope.entries = [];
+    Jmx.jmxWidgetTypes = [
+        {
+            type: "donut",
+            icon: "icon-smile",
+            route: "/jmx/widget/donut",
+            size_x: 2,
+            size_y: 2,
+            title: "Add Donut chart to Dashboard"
+        },
+        {
+            type: "area",
+            icon: "icon-bar-chart",
+            route: "/jmx/widget/area",
+            size_x: 4,
+            size_y: 2,
+            title: "Add Area chart to Dashboard"
+        }
+    ];
 
-        $scope.data = {
-            entries: $scope.entries
-        };
+    Jmx.jmxWidgets = [
+        {
+            type: "donut",
+            title: "Java Heap Memory",
+            mbean: "java.lang:type=Memory",
+            attribute: "HeapMemoryUsage",
+            total: "Max",
+            terms: "Used",
+            remaining: "Free"
+        },
+        {
+            type: "donut",
+            title: "Java Non Heap Memory",
+            mbean: "java.lang:type=Memory",
+            attribute: "NonHeapMemoryUsage",
+            total: "Max",
+            terms: "Used",
+            remaining: "Free"
+        },
+        {
+            type: "donut",
+            title: "File Descriptor Usage",
+            mbean: "java.lang:type=OperatingSystem",
+            total: "MaxFileDescriptorCount",
+            terms: "OpenFileDescriptorCount",
+            remaining: "Free"
+        },
+        {
+            type: "donut",
+            title: "Loaded Classes",
+            mbean: "java.lang:type=ClassLoading",
+            total: "TotalLoadedClassCount",
+            terms: "LoadedClassCount,UnloadedClassCount",
+            remaining: "-"
+        },
+        {
+            type: "donut",
+            title: "Swap Size",
+            mbean: "java.lang:type=OperatingSystem",
+            total: "TotalSwapSpaceSize",
+            terms: "FreeSwapSpaceSize",
+            remaining: "Used Swap"
+        },
+        {
+            type: "area",
+            title: "Process CPU Time",
+            mbean: "java.lang:type=OperatingSystem",
+            attribute: "ProcessCpuTime"
+        },
+        {
+            type: "area",
+            title: "Process CPU Load",
+            mbean: "java.lang:type=OperatingSystem",
+            attribute: "ProcessCpuLoad"
+        },
+        {
+            type: "area",
+            title: "System CPU Load",
+            mbean: "java.lang:type=OperatingSystem",
+            attribute: "SystemCpuLoad"
+        },
+        {
+            type: "area",
+            title: "System CPU Time",
+            mbean: "java.lang:type=OperatingSystem",
+            attribute: "SystemCpuTime"
+        }
+    ];
+})(Jmx || (Jmx = {}));
+/**
+* @module Jmx
+*/
+/// <reference path="./jmxPlugin.ts"/>
+var Jmx;
+(function (Jmx) {
+    Jmx.propertiesColumnDefs = [
+        {
+            field: 'name',
+            displayName: 'Property',
+            width: "27%",
+            cellTemplate: '<div class="ngCellText" title="{{row.entity.attrDesc}}" ' + 'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="row.entity.getDashboardWidgets()"></div>{{row.entity.name}}</div>' },
+        {
+            field: 'value',
+            displayName: 'Value',
+            width: "70%",
+            cellTemplate: '<div class="ngCellText" ng-click="row.entity.onViewAttribute()" title="{{row.entity.tooltip}}" ng-bind-html-unsafe="row.entity.summary"></div>'
+        }
+    ];
 
-        $scope.req = [{ type: 'read', mbean: $scope.mbean, attribute: $scope.attribute }];
+    Jmx.foldersColumnDefs = [
+        {
+            displayName: 'Name',
+            cellTemplate: '<div class="ngCellText"><a href="{{row.entity.folderHref(row)}}"><i class="{{row.entity.folderIconClass(row)}}"></i> {{row.getProperty("title")}}</a></div>'
+        }
+    ];
 
-        $scope.render = function (response) {
-            $scope.entries.push({
-                time: response.timestamp,
-                count: response.value
+    Jmx._module.controller("Jmx.AttributesController", [
+        "$scope", "$element", "$location", "workspace", "jolokia", "jmxWidgets", "jmxWidgetTypes", "$templateCache", function ($scope, $element, $location, workspace, jolokia, jmxWidgets, jmxWidgetTypes, $templateCache) {
+            $scope.searchText = '';
+            $scope.selectedItems = [];
+
+            $scope.lastKey = null;
+            $scope.attributesInfoCache = {};
+
+            $scope.entity = {};
+            $scope.attributeSchema = {};
+            $scope.gridData = [];
+            $scope.attributes = "";
+
+            $scope.$watch('gridData.length', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    if (newValue > 0) {
+                        $scope.attributes = $templateCache.get('gridTemplate');
+                    } else {
+                        $scope.attributes = "";
+                    }
+                }
             });
 
-            $scope.entries = $scope.entries.last(15);
+            var attributeSchemaBasic = {
+                properties: {
+                    'key': {
+                        description: 'Key',
+                        tooltip: 'Attribute key',
+                        type: 'string',
+                        readOnly: 'true'
+                    },
+                    'description': {
+                        description: 'Description',
+                        tooltip: 'Attribute description',
+                        type: 'string',
+                        formTemplate: "<textarea class='input-xlarge' rows='2' readonly='true'></textarea>"
+                    },
+                    'type': {
+                        description: 'Type',
+                        tooltip: 'Attribute type',
+                        type: 'string',
+                        readOnly: 'true'
+                    }
+                }
+            };
 
-            if ($scope.template === "") {
-                $scope.template = $templateCache.get("areaChart");
+            $scope.gridOptions = {
+                scope: $scope,
+                selectedItems: [],
+                showFilter: false,
+                canSelectRows: false,
+                enableRowSelection: false,
+                enableRowClickSelection: false,
+                keepLastSelected: false,
+                multiSelect: true,
+                showColumnMenu: true,
+                displaySelectionCheckbox: false,
+                filterOptions: {
+                    filterText: ''
+                },
+                // TODO disabled for now as it causes https://github.com/hawtio/hawtio/issues/262
+                //sortInfo: { field: 'name', direction: 'asc'},
+                data: 'gridData',
+                columnDefs: Jmx.propertiesColumnDefs
+            };
+
+            $scope.$watch('gridOptions.selectedItems', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    Jmx.log.debug("Selected items: ", newValue);
+                    $scope.selectedItems = newValue;
+                }
+            }, true);
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                // clear selection if we clicked the jmx nav bar button
+                // otherwise we may show data from Camel/ActiveMQ or other plugins that
+                // reuse the JMX plugin for showing tables (#884)
+                var currentUrl = $location.url();
+                if (currentUrl.endsWith("/jmx/attributes")) {
+                    Jmx.log.debug("Reset selection in JMX plugin");
+                    workspace.selection = null;
+                    $scope.lastKey = null;
+                }
+
+                setTimeout(updateTableContents, 50);
+            });
+
+            $scope.$watch('workspace.selection', function () {
+                if (workspace.moveIfViewInvalid()) {
+                    Core.unregister(jolokia, $scope);
+                    return;
+                }
+                setTimeout(function () {
+                    $scope.gridData = [];
+                    Core.$apply($scope);
+                    setTimeout(function () {
+                        updateTableContents();
+                    }, 10);
+                }, 10);
+            });
+
+            $scope.hasWidget = function (row) {
+                return true;
+            };
+
+            $scope.onCancelAttribute = function () {
+                // clear entity
+                $scope.entity = {};
+            };
+
+            $scope.onUpdateAttribute = function () {
+                var value = $scope.entity["attrValueEdit"];
+                var key = $scope.entity["key"];
+
+                // clear entity
+                $scope.entity = {};
+
+                // TODO: check if value changed
+                // update the attribute on the mbean
+                var mbean = workspace.getSelectedMBeanName();
+                if (mbean) {
+                    jolokia.setAttribute(mbean, key, value, onSuccess(function (response) {
+                        notification("success", "Updated attribute " + key);
+                    }));
+                }
+            };
+
+            $scope.onViewAttribute = function (row) {
+                if (!row.summary) {
+                    return;
+                }
+
+                // create entity and populate it with data from the selected row
+                $scope.entity = {};
+                $scope.entity["key"] = row.key;
+                $scope.entity["description"] = row.attrDesc;
+                $scope.entity["type"] = row.type;
+                $scope.entity["rw"] = row.rw;
+                var type = asJsonSchemaType(row.type, row.key);
+                var readOnly = !row.rw;
+
+                // calculate a textare with X number of rows that usually fit the value to display
+                var len = row.summary.length;
+                var rows = (len / 40) + 1;
+                if (rows > 10) {
+                    // cap at most 10 rows to not make the dialog too large
+                    rows = 10;
+                }
+
+                if (readOnly) {
+                    // if the value is empty its a &nbsp; as we need this for the table to allow us to click on the empty row
+                    if (row.summary === '&nbsp;') {
+                        $scope.entity["attrValueView"] = '';
+                    } else {
+                        $scope.entity["attrValueView"] = row.summary;
+                    }
+
+                    // clone from the basic schema to the new schema we create on-the-fly
+                    // this is needed as the dialog have problems if reusing the schema, and changing the schema afterwards
+                    // so its safer to create a new schema according to our needs
+                    $scope.attributeSchemaView = {};
+                    for (var i in attributeSchemaBasic) {
+                        $scope.attributeSchemaView[i] = attributeSchemaBasic[i];
+                    }
+
+                    // and add the new attrValue which is dynamic computed
+                    $scope.attributeSchemaView.properties.attrValueView = {
+                        description: 'Value',
+                        label: "Value",
+                        tooltip: 'Attribute value',
+                        type: 'string',
+                        formTemplate: "<textarea class='input-xlarge' rows='" + rows + "' readonly='true'></textarea>"
+                    };
+
+                    // just to be safe, then delete not needed part of the schema
+                    if ($scope.attributeSchemaView) {
+                        delete $scope.attributeSchemaView.properties.attrValueEdit;
+                    }
+                } else {
+                    // if the value is empty its a &nbsp; as we need this for the table to allow us to click on the empty row
+                    if (row.summary === '&nbsp;') {
+                        $scope.entity["attrValueEdit"] = '';
+                    } else {
+                        $scope.entity["attrValueEdit"] = row.summary;
+                    }
+
+                    // clone from the basic schema to the new schema we create on-the-fly
+                    // this is needed as the dialog have problems if reusing the schema, and changing the schema afterwards
+                    // so its safer to create a new schema according to our needs
+                    $scope.attributeSchemaEdit = {};
+                    for (var i in attributeSchemaBasic) {
+                        $scope.attributeSchemaEdit[i] = attributeSchemaBasic[i];
+                    }
+
+                    // and add the new attrValue which is dynamic computed
+                    $scope.attributeSchemaEdit.properties.attrValueEdit = {
+                        description: 'Value',
+                        label: "Value",
+                        tooltip: 'Attribute value',
+                        type: 'string',
+                        formTemplate: "<textarea class='input-xlarge' rows='" + rows + "'></textarea>"
+                    };
+
+                    // just to be safe, then delete not needed part of the schema
+                    if ($scope.attributeSchemaEdit) {
+                        delete $scope.attributeSchemaEdit.properties.attrValueView;
+                    }
+                }
+
+                $scope.showAttributeDialog = true;
+            };
+
+            $scope.getDashboardWidgets = function (row) {
+                var mbean = workspace.getSelectedMBeanName();
+                if (!mbean) {
+                    return '';
+                }
+                var potentialCandidates = jmxWidgets.filter(function (widget) {
+                    return mbean === widget.mbean;
+                });
+
+                if (potentialCandidates.isEmpty()) {
+                    return '';
+                }
+
+                potentialCandidates = potentialCandidates.filter(function (widget) {
+                    return widget.attribute === row.key || widget.total === row.key;
+                });
+
+                if (potentialCandidates.isEmpty()) {
+                    return '';
+                }
+
+                row.addChartToDashboard = function (type) {
+                    $scope.addChartToDashboard(row, type);
+                };
+
+                var rc = [];
+                potentialCandidates.forEach(function (widget) {
+                    var widgetType = Jmx.getWidgetType(widget);
+                    rc.push("<i class=\"" + widgetType['icon'] + " clickable\" title=\"" + widgetType['title'] + "\" ng-click=\"row.entity.addChartToDashboard('" + widgetType['type'] + "')\"></i>");
+                });
+                return rc.join() + "&nbsp;";
+            };
+
+            $scope.addChartToDashboard = function (row, widgetType) {
+                var mbean = workspace.getSelectedMBeanName();
+                var candidates = jmxWidgets.filter(function (widget) {
+                    return mbean === widget.mbean;
+                });
+
+                candidates = candidates.filter(function (widget) {
+                    return widget.attribute === row.key || widget.total === row.key;
+                });
+
+                candidates = candidates.filter(function (widget) {
+                    return widget.type === widgetType;
+                });
+
+                // hmmm, we really should only have one result...
+                var widget = candidates.first();
+                var type = Jmx.getWidgetType(widget);
+
+                //console.log("widgetType: ", type, " widget: ", widget);
+                $location.url(Jmx.createDashboardLink(type, widget));
+            };
+
+            /*
+            * Returns the toolBar template HTML to use for the current selection
+            */
+            $scope.toolBarTemplate = function () {
+                // lets lookup the list of helpers by domain
+                var answer = Jmx.getAttributeToolBar(workspace.selection);
+
+                // TODO - maybe there's a better way to determine when to enable selections
+                /*
+                if (answer.startsWith("app/camel") && workspace.selection.children.length > 0) {
+                $scope.selectToggle.setSelect(true);
+                } else {
+                $scope.selectToggle.setSelect(false);
+                }
+                */
+                return answer;
+            };
+
+            $scope.invokeSelectedMBeans = function (operationName, completeFunction) {
+                if (typeof completeFunction === "undefined") { completeFunction = null; }
+                var queries = [];
+                angular.forEach($scope.selectedItems || [], function (item) {
+                    var mbean = item["_id"];
+                    if (mbean) {
+                        var opName = operationName;
+                        if (angular.isFunction(operationName)) {
+                            opName = operationName(item);
+                        }
+
+                        //console.log("Invoking operation " + opName + " on " + mbean);
+                        queries.push({ type: "exec", operation: opName, mbean: mbean });
+                    }
+                });
+                if (queries.length) {
+                    var callback = function () {
+                        if (completeFunction) {
+                            completeFunction();
+                        } else {
+                            operationComplete();
+                        }
+                    };
+                    jolokia.request(queries, onSuccess(callback, { error: callback }));
+                }
+            };
+
+            $scope.folderHref = function (row) {
+                if (!row.getProperty) {
+                    return "";
+                }
+                var key = row.getProperty("key");
+                if (key) {
+                    return Core.createHref($location, "#" + $location.path() + "?nid=" + key, ["nid"]);
+                } else {
+                    return "";
+                }
+            };
+
+            $scope.folderIconClass = function (row) {
+                // TODO lets ignore the classes property for now
+                // as we don't have an easy way to know if there is an icon defined for an icon or not
+                // and we want to make sure there always is an icon shown
+                /*
+                var classes = (row.getProperty("addClass") || "").trim();
+                if (classes) {
+                return classes;
+                }
+                */
+                if (!row.getProperty) {
+                    return "";
+                }
+                return row.getProperty("objectName") ? "icon-cog" : "icon-folder-close";
+            };
+
+            function operationComplete() {
+                updateTableContents();
             }
 
+            function updateTableContents() {
+                // lets clear any previous queries just in case!
+                Core.unregister(jolokia, $scope);
+
+                $scope.gridData = [];
+                $scope.mbeanIndex = null;
+                var mbean = workspace.getSelectedMBeanName();
+                var request = null;
+                var node = workspace.selection;
+                if (node === null || angular.isUndefined(node) || node.key !== $scope.lastKey) {
+                    // cache attributes info, so we know if the attribute is read-only or read-write, and also the attribute description
+                    $scope.attributesInfoCache = null;
+                    if (mbean) {
+                        var asQuery = function (node) {
+                            var path = escapeMBeanPath(node);
+                            var query = {
+                                type: "LIST",
+                                method: "post",
+                                path: path,
+                                ignoreErrors: true
+                            };
+                            return query;
+                        };
+                        var infoQuery = asQuery(mbean);
+                        jolokia.request(infoQuery, onSuccess(function (response) {
+                            $scope.attributesInfoCache = response.value;
+                            Jmx.log.debug("Updated attributes info cache for mbean " + mbean);
+                        }));
+                    }
+                }
+
+                if (mbean) {
+                    request = { type: 'read', mbean: mbean };
+                    if (node.key !== $scope.lastKey) {
+                        $scope.gridOptions.columnDefs = Jmx.propertiesColumnDefs;
+                        $scope.gridOptions.enableRowClickSelection = false;
+                    }
+                } else if (node) {
+                    if (node.key !== $scope.lastKey) {
+                        $scope.gridOptions.columnDefs = [];
+                        $scope.gridOptions.enableRowClickSelection = true;
+                    }
+
+                    // lets query each child's details
+                    var children = node.children;
+                    if (children) {
+                        var childNodes = children.map(function (child) {
+                            return child.objectName;
+                        });
+                        var mbeans = childNodes.filter(function (mbean) {
+                            return mbean;
+                        });
+                        if (mbeans) {
+                            var typeNames = Jmx.getUniqueTypeNames(children);
+                            if (typeNames.length <= 1) {
+                                var query = mbeans.map(function (mbean) {
+                                    return { type: "READ", mbean: mbean, ignoreErrors: true };
+                                });
+                                if (query.length > 0) {
+                                    request = query;
+
+                                    // deal with multiple results
+                                    $scope.mbeanIndex = {};
+                                    $scope.mbeanRowCounter = 0;
+                                    $scope.mbeanCount = mbeans.length;
+                                    //$scope.columnDefs = [];
+                                }
+                            } else {
+                                console.log("Too many type names " + typeNames);
+                            }
+                        }
+                    }
+                }
+
+                //var callback = onSuccess(render, { error: render });
+                var callback = onSuccess(render);
+                if (request) {
+                    $scope.request = request;
+                    Core.register(jolokia, $scope, request, callback);
+                } else if (node) {
+                    if (node.key !== $scope.lastKey) {
+                        $scope.gridOptions.columnDefs = Jmx.foldersColumnDefs;
+                        $scope.gridOptions.enableRowClickSelection = true;
+                    }
+                    $scope.gridData = node.children;
+                    addHandlerFunctions($scope.gridData);
+                }
+                if (node) {
+                    $scope.lastKey = node.key;
+                }
+                Core.$apply($scope);
+            }
+
+            function render(response) {
+                var data = response.value;
+                var mbeanIndex = $scope.mbeanIndex;
+                var mbean = response.request['mbean'];
+
+                if (mbean) {
+                    // lets store the mbean in the row for later
+                    data["_id"] = mbean;
+                }
+                if (mbeanIndex) {
+                    if (mbean) {
+                        var idx = mbeanIndex[mbean];
+                        if (!angular.isDefined(idx)) {
+                            idx = $scope.mbeanRowCounter;
+                            mbeanIndex[mbean] = idx;
+                            $scope.mbeanRowCounter += 1;
+                        }
+                        if (idx === 0) {
+                            // this is to force the table to repaint
+                            $scope.selectedIndices = $scope.selectedItems.map(function (item) {
+                                return $scope.gridData.indexOf(item);
+                            });
+                            $scope.gridData = [];
+
+                            if (!$scope.gridOptions.columnDefs.length) {
+                                // lets update the column definitions based on any configured defaults
+                                var key = workspace.selectionConfigKey();
+                                var defaultDefs = workspace.attributeColumnDefs[key] || [];
+                                var defaultSize = defaultDefs.length;
+                                var map = {};
+                                angular.forEach(defaultDefs, function (value, key) {
+                                    var field = value.field;
+                                    if (field) {
+                                        map[field] = value;
+                                    }
+                                });
+
+                                var extraDefs = [];
+                                angular.forEach(data, function (value, key) {
+                                    if (includePropertyValue(key, value)) {
+                                        if (!map[key]) {
+                                            extraDefs.push({
+                                                field: key,
+                                                displayName: key === '_id' ? 'Object name' : humanizeValue(key),
+                                                visible: defaultSize === 0
+                                            });
+                                        }
+                                    }
+                                });
+
+                                // the additional columns (which are not pre-configured), should be sorted
+                                // so the column menu has a nice sorted list instead of random ordering
+                                extraDefs = extraDefs.sort(function (def, def2) {
+                                    // make sure _id is last
+                                    if (def.field.startsWith('_')) {
+                                        return 1;
+                                    } else if (def2.field.startsWith('_')) {
+                                        return -1;
+                                    }
+                                    return def.field.localeCompare(def2.field);
+                                });
+                                extraDefs.forEach(function (e) {
+                                    defaultDefs.push(e);
+                                });
+
+                                $scope.gridOptions.columnDefs = defaultDefs;
+                                $scope.gridOptions.enableRowClickSelection = true;
+                            }
+                        }
+
+                        // assume 1 row of data per mbean
+                        $scope.gridData[idx] = data;
+                        addHandlerFunctions($scope.gridData);
+
+                        var count = $scope.mbeanCount;
+                        if (!count || idx + 1 >= count) {
+                            // only cause a refresh on the last row
+                            var newSelections = $scope.selectedIndices.map(function (idx) {
+                                return $scope.gridData[idx];
+                            }).filter(function (row) {
+                                return row;
+                            });
+                            $scope.selectedItems.splice(0, $scope.selectedItems.length);
+                            $scope.selectedItems.push.apply($scope.selectedItems, newSelections);
+
+                            //console.log("Would have selected " + JSON.stringify($scope.selectedItems));
+                            Core.$apply($scope);
+                        }
+                        // if the last row, then fire an event
+                    } else {
+                        console.log("No mbean name in request " + JSON.stringify(response.request));
+                    }
+                } else {
+                    $scope.gridOptions.columnDefs = Jmx.propertiesColumnDefs;
+                    $scope.gridOptions.enableRowClickSelection = false;
+                    var showAllAttributes = true;
+                    if (angular.isObject(data)) {
+                        var properties = [];
+                        angular.forEach(data, function (value, key) {
+                            if (showAllAttributes || includePropertyValue(key, value)) {
+                                // always skip keys which start with _
+                                if (!key.startsWith("_")) {
+                                    // lets format the ObjectName nicely dealing with objects with
+                                    // nested object names or arrays of object names
+                                    if (key === "ObjectName") {
+                                        value = unwrapObjectName(value);
+                                    }
+
+                                    // lets unwrap any arrays of object names
+                                    if (angular.isArray(value)) {
+                                        value = value.map(function (v) {
+                                            return unwrapObjectName(v);
+                                        });
+                                    }
+
+                                    // the value must be string as the sorting/filtering of the table relies on that
+                                    var type = lookupAttributeType(key);
+                                    var data = { key: key, name: humanizeValue(key), value: safeNullAsString(value, type) };
+
+                                    generateSummaryAndDetail(key, data);
+                                    properties.push(data);
+                                }
+                            }
+                        });
+                        if (!properties.any(function (p) {
+                            return p['key'] === 'ObjectName';
+                        })) {
+                            var objectName = {
+                                key: "ObjectName",
+                                name: "Object Name",
+                                value: mbean
+                            };
+                            generateSummaryAndDetail(objectName.key, objectName);
+                            properties.push(objectName);
+                        }
+                        properties = properties.sortBy("name");
+                        $scope.selectedItems = [data];
+                        data = properties;
+                    }
+                    $scope.gridData = data;
+                    addHandlerFunctions($scope.gridData);
+                    Core.$apply($scope);
+                }
+            }
+
+            function addHandlerFunctions(data) {
+                data.forEach(function (item) {
+                    item['inDashboard'] = $scope.inDashboard;
+                    item['getDashboardWidgets'] = function () {
+                        return $scope.getDashboardWidgets(item);
+                    };
+                    item['onViewAttribute'] = function () {
+                        $scope.onViewAttribute(item);
+                    };
+                    item['folderIconClass'] = function (row) {
+                        return $scope.folderIconClass(row);
+                    };
+                    item['folderHref'] = function (row) {
+                        return $scope.folderHref(row);
+                    };
+                });
+            }
+
+            function unwrapObjectName(value) {
+                if (!angular.isObject(value)) {
+                    return value;
+                }
+                var keys = Object.keys(value);
+                if (keys.length === 1 && keys[0] === "objectName") {
+                    return value["objectName"];
+                }
+                return value;
+            }
+
+            function generateSummaryAndDetail(key, data) {
+                var value = data.value;
+                if (!angular.isArray(value) && angular.isObject(value)) {
+                    var detailHtml = "<table class='table table-striped'>";
+                    var summary = "";
+                    var object = value;
+                    var keys = Object.keys(value).sort();
+                    angular.forEach(keys, function (key) {
+                        var value = object[key];
+                        detailHtml += "<tr><td>" + humanizeValue(key) + "</td><td>" + value + "</td></tr>";
+                        summary += "" + humanizeValue(key) + ": " + value + "  ";
+                    });
+                    detailHtml += "</table>";
+                    data.summary = summary;
+                    data.detailHtml = detailHtml;
+                    data.tooltip = summary;
+                } else {
+                    var text = value;
+
+                    // if the text is empty then use a no-break-space so the table allows us to click on the row,
+                    // otherwise if the text is empty, then you cannot click on the row
+                    if (text === '') {
+                        text = '&nbsp;';
+                        data.tooltip = "";
+                    } else {
+                        data.tooltip = text;
+                    }
+                    data.summary = "" + text + "";
+                    data.detailHtml = "<pre>" + text + "</pre>";
+                    if (angular.isArray(value)) {
+                        var html = "<ul>";
+                        angular.forEach(value, function (item) {
+                            html += "<li>" + item + "</li>";
+                        });
+                        html += "</ul>";
+                        data.detailHtml = html;
+                    }
+                }
+
+                // enrich the data with information if the attribute is read-only/read-write, and the JMX attribute description (if any)
+                data.rw = false;
+                data.attrDesc = data.name;
+                data.type = "string";
+                if ($scope.attributesInfoCache != null && 'attr' in $scope.attributesInfoCache) {
+                    var info = $scope.attributesInfoCache.attr[key];
+                    if (angular.isDefined(info)) {
+                        data.rw = info.rw;
+                        data.attrDesc = info.desc;
+                        data.type = info.type;
+                    }
+                }
+            }
+
+            function lookupAttributeType(key) {
+                if ($scope.attributesInfoCache != null && 'attr' in $scope.attributesInfoCache) {
+                    var info = $scope.attributesInfoCache.attr[key];
+                    if (angular.isDefined(info)) {
+                        return info.type;
+                    }
+                }
+                return null;
+            }
+
+            function includePropertyValue(key, value) {
+                return !angular.isObject(value);
+            }
+
+            function asJsonSchemaType(typeName, id) {
+                if (typeName) {
+                    var lower = typeName.toLowerCase();
+                    if (lower.startsWith("int") || lower === "long" || lower === "short" || lower === "byte" || lower.endsWith("int")) {
+                        return "integer";
+                    }
+                    if (lower === "double" || lower === "float" || lower === "bigdecimal") {
+                        return "number";
+                    }
+                    if (lower === "boolean" || lower === "java.lang.boolean") {
+                        return "boolean";
+                    }
+                    if (lower === "string" || lower === "java.lang.String") {
+                        return "string";
+                    }
+                }
+
+                // fallback as string
+                return "string";
+            }
+        }]);
+})(Jmx || (Jmx = {}));
+/**
+* @module Jmx
+*/
+/// <reference path="./jmxPlugin.ts"/>
+var Jmx;
+(function (Jmx) {
+    Jmx._module.controller("Jmx.AttributeController", [
+        "$scope", "jolokia", function ($scope, jolokia) {
+            $scope.init = function (mbean, attribute) {
+                $scope.mbean = mbean;
+                $scope.attribute = attribute;
+
+                if (angular.isDefined($scope.mbean) && angular.isDefined($scope.attribute)) {
+                    Core.register(jolokia, $scope, {
+                        type: 'read', mbean: $scope.mbean, attribute: $scope.attribute
+                    }, onSuccess(render));
+                }
+            };
+
+            function render(response) {
+                if (!Object.equal($scope.data, response.value)) {
+                    $scope.data = safeNull(response.value);
+                    Core.$apply($scope);
+                }
+            }
+        }]);
+
+    Jmx._module.controller("Jmx.AttributeChartController", [
+        "$scope", "jolokia", "$document", function ($scope, jolokia, $document) {
+            $scope.init = function (mbean, attribute) {
+                $scope.mbean = mbean;
+                $scope.attribute = attribute;
+
+                if (angular.isDefined($scope.mbean) && angular.isDefined($scope.attribute)) {
+                    Core.register(jolokia, $scope, {
+                        type: 'read', mbean: $scope.mbean, attribute: $scope.attribute
+                    }, onSuccess(render));
+                }
+            };
+
+            function render(response) {
+                if (!angular.isDefined($scope.chart)) {
+                    $scope.chart = $($document.find("#" + $scope.attribute)[0]);
+                    if ($scope.chart) {
+                        $scope.width = $scope.chart.width();
+                    }
+                }
+
+                if (!angular.isDefined($scope.context)) {
+                    console.log("Got: ", response);
+
+                    $scope.context = cubism.context().serverDelay(0).clientDelay(0).step(1000).size($scope.width);
+                    $scope.jcontext = $scope.context.jolokia(jolokia);
+
+                    $scope.metrics = [];
+
+                    Object.extended(response.value).keys(function (key, value) {
+                        $scope.metrics.push($scope.jcontext.metric({
+                            type: 'read',
+                            mbean: $scope.mbean,
+                            attribute: $scope.attribute,
+                            path: key
+                        }, $scope.attribute));
+                    });
+
+                    d3.select("#" + $scope.attribute).call(function (div) {
+                        div.append("div").data($scope.metrics).call($scope.context.horizon());
+                    });
+
+                    // let cubism take over at this point...
+                    Core.unregister(jolokia, $scope);
+                    Core.$apply($scope);
+                }
+            }
+        }]);
+})(Jmx || (Jmx = {}));
+/**
+* @module Jmx
+*/
+/// <reference path="./jmxPlugin.ts"/>
+var Jmx;
+(function (Jmx) {
+    Jmx._module.controller("Jmx.AreaChartController", [
+        "$scope", "$routeParams", "jolokia", "$templateCache", "localStorage", "$element", function ($scope, $routeParams, jolokia, $templateCache, localStorage, $element) {
+            $scope.mbean = $routeParams['mbean'];
+            $scope.attribute = $routeParams['attribute'];
+            $scope.duration = localStorage['updateRate'];
+
+            $scope.width = 308;
+            $scope.height = 296;
+
+            $scope.template = "";
+
+            $scope.entries = [];
+
             $scope.data = {
-                _type: "date_histogram",
                 entries: $scope.entries
             };
 
-            Core.$apply($scope);
-        };
+            $scope.req = [{ type: 'read', mbean: $scope.mbean, attribute: $scope.attribute }];
 
-        Core.register(jolokia, $scope, $scope.req, onSuccess($scope.render));
-    }
-    Jmx.AreaChartController = AreaChartController;
+            $scope.render = function (response) {
+                $scope.entries.push({
+                    time: response.timestamp,
+                    count: response.value
+                });
+
+                $scope.entries = $scope.entries.last(15);
+
+                if ($scope.template === "") {
+                    $scope.template = $templateCache.get("areaChart");
+                }
+
+                $scope.data = {
+                    _type: "date_histogram",
+                    entries: $scope.entries
+                };
+
+                Core.$apply($scope);
+            };
+
+            Core.register(jolokia, $scope, $scope.req, onSuccess($scope.render));
+        }]);
 })(Jmx || (Jmx = {}));
 /**
 * @module Wiki
@@ -29041,252 +29088,6 @@ var Wiki;
     }
     Wiki.CamelController = CamelController;
 })(Wiki || (Wiki = {}));
-var JUnit;
-(function (JUnit) {
-    function TreeController($scope, $location, workspace, jolokia, inProgressStatus) {
-        var log = Logger.get("JUnit");
-
-        $scope.inProgressData = null;
-        $scope.alertClass = "success";
-
-        $scope.testClasses = [];
-        $scope.testClassMap = {};
-
-        $scope.gridOptions = {
-            selectedItems: [],
-            data: 'selectedTests',
-            displayFooter: false,
-            showFilter: false,
-            filterOptions: {
-                filterText: ''
-            },
-            //selectWithCheckboxOnly: true,
-            showSelectionCheckbox: true,
-            columnDefs: [
-                {
-                    field: 'id',
-                    displayName: 'Test Class'
-                }
-            ]
-        };
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateSelectionFromURL, 50);
-        });
-
-        $scope.$on('jmxTreeUpdated', function () {
-            reloadTree();
-        });
-
-        $scope.runAllTests = function () {
-            runTests($scope.testClasses);
-        };
-
-        $scope.runTests = function () {
-            var tests = ($scope.gridOptions.selectedItems || []).map(function (o) {
-                return o.id;
-            });
-            runTests(tests);
-        };
-
-        $scope.runTest = function (className) {
-            if (className) {
-                runTests([className]);
-            }
-        };
-
-        $scope.clearResults = function () {
-            $scope.testResults = null;
-            $scope.alertClass = "success";
-            inProgressStatus.data = null;
-            inProgressStatus.result = null;
-            inProgressStatus.alertClass = "success";
-        };
-
-        function updateSelectionFromURL() {
-            Jmx.updateTreeSelectionFromURL($location, $("#junittree"), true);
-        }
-
-        reloadTree();
-
-        function selectionChanged(data) {
-            var selectionKey = data ? data.key : null;
-            log.debug("Selection is now: " + selectionKey);
-            var selectedTests = $scope.testClasses;
-            $scope.selectionKey = selectionKey;
-            if (selectionKey) {
-                selectedTests = $scope.testClassMap[selectionKey] || [selectionKey];
-            }
-            $scope.selectedTests = selectedTests.map(function (t) {
-                return { id: t };
-            });
-            Core.$apply($scope);
-        }
-
-        function reloadTree() {
-            var mbean = JUnit.getIntrospectorMBean(workspace);
-            var domain = "org.unit";
-            var rootFolder = new Folder("Test Cases");
-            rootFolder.addClass = "testCases";
-            rootFolder.typeName = "testCases";
-            rootFolder.domain = domain;
-            rootFolder.key = "";
-            var children = [rootFolder];
-
-            if (mbean) {
-                function render(results) {
-                    $scope.testClasses = results;
-                    $scope.testClassMap = {};
-
-                    angular.forEach(results, function (className) {
-                        var paths = className.split(".");
-                        var last = paths.length - 1;
-                        var folder = rootFolder;
-                        var prefix = "";
-                        for (var i = 0; i < last; i++) {
-                            var path = paths[i];
-                            if (prefix) {
-                                prefix += ".";
-                            }
-                            prefix += path;
-                            var list = $scope.testClassMap[prefix];
-                            if (!list) {
-                                list = [];
-                                $scope.testClassMap[prefix] = list;
-                            }
-                            list.push(className);
-                            folder = workspace.folderGetOrElse(folder, path);
-                            folder.key = prefix;
-                        }
-                        var lastPath = paths[last];
-
-                        // lets add the test case...
-                        var testClass = new Folder(lastPath);
-                        testClass.addClass = "testClass";
-                        testClass.domain = domain;
-                        testClass.key = className;
-                        folder.children.push(testClass);
-                    });
-
-                    Core.$apply($scope);
-
-                    var treeElement = $("#junittree");
-                    Jmx.enableTree($scope, $location, workspace, treeElement, children, true, function (selectedNode) {
-                        var data = selectedNode.data;
-
-                        //$scope.select(data);
-                        //workspace.updateSelectionNode(data);
-                        selectionChanged(data);
-                        Core.$apply($scope);
-                    });
-
-                    // lets do this asynchronously to avoid Error: $digest already in progress
-                    setTimeout(updateSelectionFromURL, 50);
-                }
-
-                jolokia.execute(mbean, "findJUnitTestClassNames", onSuccess(render));
-            }
-        }
-
-        $scope.runningTests = function () {
-            if (inProgressStatus.data !== null && inProgressStatus.data.running) {
-                // in case we navigate back, then make sure the scope has the last up to date result to use
-                $scope.inProgressData = inProgressStatus.data;
-                $scope.alertClass = inProgressStatus.alertClass;
-                return true;
-            } else {
-                return false;
-            }
-        };
-
-        $scope.hasTestResults = function () {
-            if (inProgressStatus.result !== null) {
-                // in case we navigate back, then make sure the scope has the last up to date result to use
-                $scope.testResults = inProgressStatus.result;
-                $scope.alertClass = inProgressStatus.alertClass;
-                return true;
-            } else {
-                return false;
-            }
-        };
-
-        var renderInProgress = function (response) {
-            var result = response.value;
-            if (result) {
-                log.info("Render inProgress: " + result);
-
-                inProgressStatus.data = result;
-                $scope.inProgressData = inProgressStatus.data;
-
-                var alertClass = "success";
-                if (result.failureCount > 0) {
-                    alertClass = "error";
-                }
-                inProgressStatus.alertClass = alertClass;
-                $scope.alertClass = inProgressStatus.alertClass;
-
-                // if we no longer are running then clear handle
-                if (!result.running && inProgressStatus.jhandle !== null) {
-                    log.info("Unit test done, unreigster jolokia handle");
-                    jolokia.unregister(inProgressStatus.jhandle);
-                    inProgressStatus.jhandle = null;
-                }
-
-                Core.$apply($scope);
-            }
-        };
-
-        var renderResults = function (result) {
-            if (result) {
-                log.info("Render results: " + result);
-
-                inProgressStatus.data = null;
-                inProgressStatus.alertClass = null;
-                inProgressStatus.result = result;
-
-                var alertClass = "success";
-                var notificationClass = "success";
-                var message = "JUnit testing succeded with " + result.runCount + " runs.";
-                if (result.failureCount > 0) {
-                    alertClass = "error";
-                    notificationClass = "warning";
-                    message = "JUnit testing failed with " + result.failureCount + " failures.";
-                }
-                $scope.alertClass = alertClass;
-                $scope.testResults = inProgressStatus.result;
-
-                // publish notification
-                notification(notificationClass, message);
-
-                Core.$apply($scope);
-            }
-        };
-
-        function runTests(listOfClassNames) {
-            // reset before running new set of unit tests
-            $scope.clearResults();
-
-            var mbean = JUnit.getJUnitMBean(workspace);
-            if (mbean && listOfClassNames && listOfClassNames.length) {
-                // register callback for doing live update of testing progress
-                if (inProgressStatus.jhandle === null) {
-                    log.info("Registering jolokia handle");
-                    inProgressStatus.jhandle = jolokia.register(renderInProgress, {
-                        type: 'exec', mbean: mbean,
-                        operation: 'inProgress()',
-                        ignoreErrors: true,
-                        arguments: []
-                    });
-
-                    // execute the unit tests
-                    jolokia.execute(mbean, "runTestClasses", listOfClassNames, onSuccess(renderResults));
-                }
-            }
-        }
-    }
-    JUnit.TreeController = TreeController;
-})(JUnit || (JUnit = {}));
 /**
 * @module JUnit
 */
@@ -29316,47 +29117,304 @@ var JUnit;
 * @module JUnit
 * @main JUnit
 */
+/// <reference path="./junitHelpers.ts"/>
 var JUnit;
 (function (JUnit) {
     var pluginName = 'junit';
-    angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']).config(function ($routeProvider) {
-        $routeProvider.when('/junit/tests', { templateUrl: 'app/junit/html/tests.html', reloadOnSearch: false });
-    }).factory('inProgressStatus', function () {
+
+    JUnit._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']);
+
+    JUnit._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/junit/tests', { templateUrl: 'app/junit/html/tests.html', reloadOnSearch: false });
+        }]);
+
+    JUnit._module.factory('inProgressStatus', function () {
         return {
             jhandle: null,
             data: null,
             result: null,
             alertClass: "success"
         };
-    }).run(function ($location, workspace, viewRegistry, layoutFull, helpRegistry) {
-        viewRegistry['junit'] = 'app/junit/html/layoutJUnitTree.html';
-
-        helpRegistry.addUserDoc('junit', 'app/junit/doc/help.md', function () {
-            return JUnit.isJUnitPluginEnabled(workspace);
-        });
-
-        workspace.topLevelTabs.push({
-            id: "junit",
-            content: "JUnit",
-            title: "View and run test cases in this process",
-            isValid: function (workspace) {
-                return JUnit.isJUnitPluginEnabled(workspace);
-            },
-            href: function () {
-                return "#/junit/tests";
-            }
-        });
-        /*
-        workspace.subLevelTabs.push({
-        content: '<i class="icon-list-alt"></i> JUnit',
-        title: "View the logs in this process",
-        isValid: (workspace:Workspace) => workspace.hasDomainAndProperties('org.fusesource.insight', {type: 'JUnitQuery'}),
-        href: () => "#/logs"
-        });
-        */
     });
 
+    JUnit._module.run([
+        "$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", function ($location, workspace, viewRegistry, layoutFull, helpRegistry) {
+            viewRegistry['junit'] = 'app/junit/html/layoutJUnitTree.html';
+
+            helpRegistry.addUserDoc('junit', 'app/junit/doc/help.md', function () {
+                return JUnit.isJUnitPluginEnabled(workspace);
+            });
+
+            workspace.topLevelTabs.push({
+                id: "junit",
+                content: "JUnit",
+                title: "View and run test cases in this process",
+                isValid: function (workspace) {
+                    return JUnit.isJUnitPluginEnabled(workspace);
+                },
+                href: function () {
+                    return "#/junit/tests";
+                }
+            });
+            /*
+            workspace.subLevelTabs.push({
+            content: '<i class="icon-list-alt"></i> JUnit',
+            title: "View the logs in this process",
+            isValid: (workspace:Workspace) => workspace.hasDomainAndProperties('org.fusesource.insight', {type: 'JUnitQuery'}),
+            href: () => "#/logs"
+            });
+            */
+        }]);
+
     hawtioPluginLoader.addModule(pluginName);
+})(JUnit || (JUnit = {}));
+/// <reference path="./junitPlugin.ts"/>
+var JUnit;
+(function (JUnit) {
+    JUnit._module.controller("JUnit.TreeController", [
+        "$scope", "$location", "workspace", "jolokia", "inProgressStatus", function ($scope, $location, workspace, jolokia, inProgressStatus) {
+            var log = Logger.get("JUnit");
+
+            $scope.inProgressData = null;
+            $scope.alertClass = "success";
+
+            $scope.testClasses = [];
+            $scope.testClassMap = {};
+
+            $scope.gridOptions = {
+                selectedItems: [],
+                data: 'selectedTests',
+                displayFooter: false,
+                showFilter: false,
+                filterOptions: {
+                    filterText: ''
+                },
+                //selectWithCheckboxOnly: true,
+                showSelectionCheckbox: true,
+                columnDefs: [
+                    {
+                        field: 'id',
+                        displayName: 'Test Class'
+                    }
+                ]
+            };
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateSelectionFromURL, 50);
+            });
+
+            $scope.$on('jmxTreeUpdated', function () {
+                reloadTree();
+            });
+
+            $scope.runAllTests = function () {
+                runTests($scope.testClasses);
+            };
+
+            $scope.runTests = function () {
+                var tests = ($scope.gridOptions.selectedItems || []).map(function (o) {
+                    return o.id;
+                });
+                runTests(tests);
+            };
+
+            $scope.runTest = function (className) {
+                if (className) {
+                    runTests([className]);
+                }
+            };
+
+            $scope.clearResults = function () {
+                $scope.testResults = null;
+                $scope.alertClass = "success";
+                inProgressStatus.data = null;
+                inProgressStatus.result = null;
+                inProgressStatus.alertClass = "success";
+            };
+
+            function updateSelectionFromURL() {
+                Jmx.updateTreeSelectionFromURL($location, $("#junittree"), true);
+            }
+
+            reloadTree();
+
+            function selectionChanged(data) {
+                var selectionKey = data ? data.key : null;
+                log.debug("Selection is now: " + selectionKey);
+                var selectedTests = $scope.testClasses;
+                $scope.selectionKey = selectionKey;
+                if (selectionKey) {
+                    selectedTests = $scope.testClassMap[selectionKey] || [selectionKey];
+                }
+                $scope.selectedTests = selectedTests.map(function (t) {
+                    return { id: t };
+                });
+                Core.$apply($scope);
+            }
+
+            function reloadTree() {
+                var mbean = JUnit.getIntrospectorMBean(workspace);
+                var domain = "org.unit";
+                var rootFolder = new Folder("Test Cases");
+                rootFolder.addClass = "testCases";
+                rootFolder.typeName = "testCases";
+                rootFolder.domain = domain;
+                rootFolder.key = "";
+                var children = [rootFolder];
+
+                if (mbean) {
+                    function render(results) {
+                        $scope.testClasses = results;
+                        $scope.testClassMap = {};
+
+                        angular.forEach(results, function (className) {
+                            var paths = className.split(".");
+                            var last = paths.length - 1;
+                            var folder = rootFolder;
+                            var prefix = "";
+                            for (var i = 0; i < last; i++) {
+                                var path = paths[i];
+                                if (prefix) {
+                                    prefix += ".";
+                                }
+                                prefix += path;
+                                var list = $scope.testClassMap[prefix];
+                                if (!list) {
+                                    list = [];
+                                    $scope.testClassMap[prefix] = list;
+                                }
+                                list.push(className);
+                                folder = workspace.folderGetOrElse(folder, path);
+                                folder.key = prefix;
+                            }
+                            var lastPath = paths[last];
+
+                            // lets add the test case...
+                            var testClass = new Folder(lastPath);
+                            testClass.addClass = "testClass";
+                            testClass.domain = domain;
+                            testClass.key = className;
+                            folder.children.push(testClass);
+                        });
+
+                        Core.$apply($scope);
+
+                        var treeElement = $("#junittree");
+                        Jmx.enableTree($scope, $location, workspace, treeElement, children, true, function (selectedNode) {
+                            var data = selectedNode.data;
+
+                            //$scope.select(data);
+                            //workspace.updateSelectionNode(data);
+                            selectionChanged(data);
+                            Core.$apply($scope);
+                        });
+
+                        // lets do this asynchronously to avoid Error: $digest already in progress
+                        setTimeout(updateSelectionFromURL, 50);
+                    }
+
+                    jolokia.execute(mbean, "findJUnitTestClassNames", onSuccess(render));
+                }
+            }
+
+            $scope.runningTests = function () {
+                if (inProgressStatus.data !== null && inProgressStatus.data.running) {
+                    // in case we navigate back, then make sure the scope has the last up to date result to use
+                    $scope.inProgressData = inProgressStatus.data;
+                    $scope.alertClass = inProgressStatus.alertClass;
+                    return true;
+                } else {
+                    return false;
+                }
+            };
+
+            $scope.hasTestResults = function () {
+                if (inProgressStatus.result !== null) {
+                    // in case we navigate back, then make sure the scope has the last up to date result to use
+                    $scope.testResults = inProgressStatus.result;
+                    $scope.alertClass = inProgressStatus.alertClass;
+                    return true;
+                } else {
+                    return false;
+                }
+            };
+
+            var renderInProgress = function (response) {
+                var result = response.value;
+                if (result) {
+                    log.info("Render inProgress: " + result);
+
+                    inProgressStatus.data = result;
+                    $scope.inProgressData = inProgressStatus.data;
+
+                    var alertClass = "success";
+                    if (result.failureCount > 0) {
+                        alertClass = "error";
+                    }
+                    inProgressStatus.alertClass = alertClass;
+                    $scope.alertClass = inProgressStatus.alertClass;
+
+                    // if we no longer are running then clear handle
+                    if (!result.running && inProgressStatus.jhandle !== null) {
+                        log.info("Unit test done, unreigster jolokia handle");
+                        jolokia.unregister(inProgressStatus.jhandle);
+                        inProgressStatus.jhandle = null;
+                    }
+
+                    Core.$apply($scope);
+                }
+            };
+
+            var renderResults = function (result) {
+                if (result) {
+                    log.info("Render results: " + result);
+
+                    inProgressStatus.data = null;
+                    inProgressStatus.alertClass = null;
+                    inProgressStatus.result = result;
+
+                    var alertClass = "success";
+                    var notificationClass = "success";
+                    var message = "JUnit testing succeded with " + result.runCount + " runs.";
+                    if (result.failureCount > 0) {
+                        alertClass = "error";
+                        notificationClass = "warning";
+                        message = "JUnit testing failed with " + result.failureCount + " failures.";
+                    }
+                    $scope.alertClass = alertClass;
+                    $scope.testResults = inProgressStatus.result;
+
+                    // publish notification
+                    notification(notificationClass, message);
+
+                    Core.$apply($scope);
+                }
+            };
+
+            function runTests(listOfClassNames) {
+                // reset before running new set of unit tests
+                $scope.clearResults();
+
+                var mbean = JUnit.getJUnitMBean(workspace);
+                if (mbean && listOfClassNames && listOfClassNames.length) {
+                    // register callback for doing live update of testing progress
+                    if (inProgressStatus.jhandle === null) {
+                        log.info("Registering jolokia handle");
+                        inProgressStatus.jhandle = jolokia.register(renderInProgress, {
+                            type: 'exec', mbean: mbean,
+                            operation: 'inProgress()',
+                            ignoreErrors: true,
+                            arguments: []
+                        });
+
+                        // execute the unit tests
+                        jolokia.execute(mbean, "runTestClasses", listOfClassNames, onSuccess(renderResults));
+                    }
+                }
+            }
+        }]);
 })(JUnit || (JUnit = {}));
 /**
 * @module Perspective
@@ -47874,809 +47932,819 @@ var Jclouds;
 /**
 * @module Jclouds
 */
+/// <reference path="../jcloudsPlugin.ts"/>
 var Jclouds;
 (function (Jclouds) {
-    function HardwareController($scope, $filter, workspace, $routeParams) {
-        $scope.computeId = $routeParams.computeId;
-        $scope.hardwareId = $routeParams.hardwareId;
+    Jclouds._module.controller("Jclouds.HardwareController", [
+        "$scope", "$filter", "workspace", "$routeParams", function ($scope, $filter, workspace, $routeParams) {
+            $scope.computeId = $routeParams.computeId;
+            $scope.hardwareId = $routeParams.hardwareId;
 
-        updateTableContents();
+            updateTableContents();
 
-        $scope.processorsTable = {
-            plugins: [],
-            data: 'processors',
-            showFilter: false,
-            displayFooter: false,
-            displaySelectionCheckbox: false,
-            showColumnMenu: false,
-            rowHeight: 32,
-            columnDefs: [
-                {
-                    field: 'cores',
-                    displayName: 'Cores',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 50,
-                    resizable: false
-                },
-                {
-                    field: 'speed',
-                    displayName: 'Speed',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 100,
-                    resizable: false
-                }
-            ]
-        };
+            $scope.processorsTable = {
+                plugins: [],
+                data: 'processors',
+                showFilter: false,
+                displayFooter: false,
+                displaySelectionCheckbox: false,
+                showColumnMenu: false,
+                rowHeight: 32,
+                columnDefs: [
+                    {
+                        field: 'cores',
+                        displayName: 'Cores',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 50,
+                        resizable: false
+                    },
+                    {
+                        field: 'speed',
+                        displayName: 'Speed',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 100,
+                        resizable: false
+                    }
+                ]
+            };
 
-        $scope.volumesTable = {
-            plugins: [],
-            data: 'volumes',
-            showFilter: false,
-            displayFooter: false,
-            displaySelectionCheckbox: false,
-            showColumnMenu: false,
-            rowHeight: 32,
-            columnDefs: [
-                {
-                    field: 'id',
-                    displayName: 'Id',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 100,
-                    resizable: false
-                },
-                {
-                    field: 'type',
-                    displayName: 'Type',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 100,
-                    resizable: false
-                },
-                {
-                    field: 'device',
-                    displayName: 'Device',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 100,
-                    resizable: false
-                },
-                {
-                    field: 'size',
-                    displayName: 'Size',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 100,
-                    resizable: false
-                },
-                {
-                    field: 'bootDevice',
-                    displayName: 'Boot Device',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 100,
-                    resizable: false
-                },
-                {
-                    field: 'durable',
-                    displayName: 'Durable',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 100,
-                    resizable: false
-                }
-            ]
-        };
+            $scope.volumesTable = {
+                plugins: [],
+                data: 'volumes',
+                showFilter: false,
+                displayFooter: false,
+                displaySelectionCheckbox: false,
+                showColumnMenu: false,
+                rowHeight: 32,
+                columnDefs: [
+                    {
+                        field: 'id',
+                        displayName: 'Id',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 100,
+                        resizable: false
+                    },
+                    {
+                        field: 'type',
+                        displayName: 'Type',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 100,
+                        resizable: false
+                    },
+                    {
+                        field: 'device',
+                        displayName: 'Device',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 100,
+                        resizable: false
+                    },
+                    {
+                        field: 'size',
+                        displayName: 'Size',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 100,
+                        resizable: false
+                    },
+                    {
+                        field: 'bootDevice',
+                        displayName: 'Boot Device',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 100,
+                        resizable: false
+                    },
+                    {
+                        field: 'durable',
+                        displayName: 'Durable',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 100,
+                        resizable: false
+                    }
+                ]
+            };
 
-        function setHardwareProfiles(hardwareProfiles) {
-            $scope.row = findHardwareById(hardwareProfiles, $scope.hardwareId);
-            $scope.processors = $scope.row["processors"];
-            $scope.volumes = $scope.row["volumes"];
-            Core.$apply($scope);
-        }
-        ;
-
-        function updateTableContents() {
-            var jolokia = workspace.jolokia;
-            var computeMbean = Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId);
-
-            if (computeMbean) {
-                setHardwareProfiles(jolokia.request({ type: 'exec', mbean: computeMbean, operation: 'listHardwareProfiles()' }).value);
+            function setHardwareProfiles(hardwareProfiles) {
+                $scope.row = findHardwareById(hardwareProfiles, $scope.hardwareId);
+                $scope.processors = $scope.row["processors"];
+                $scope.volumes = $scope.row["volumes"];
+                Core.$apply($scope);
             }
-        }
+            ;
 
-        function findHardwareById(hardwareProfiles, id) {
-            return hardwareProfiles.find(function (hardware) {
-                return hardware.id === id;
-            });
-        }
-    }
-    Jclouds.HardwareController = HardwareController;
-})(Jclouds || (Jclouds = {}));
-/**
-* @module Jclouds
-*/
-var Jclouds;
-(function (Jclouds) {
-    function ComputeListController($scope, $location, workspace, jolokia) {
-        $scope.result = {};
-        $scope.computeServiceIds = [];
-        $scope.computeServices = [];
+            function updateTableContents() {
+                var jolokia = workspace.jolokia;
+                var computeMbean = Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId);
 
-        $scope.computeTable = {
-            plugins: [],
-            data: 'computeServices',
-            showFilter: false,
-            showColumnMenu: false,
-            filterOptions: {
-                useExternalFilter: true
-            },
-            selectedItems: $scope.selectedComputeServices,
-            rowHeight: 32,
-            selectWithCheckboxOnly: true,
-            columnDefs: [
-                {
-                    field: 'name',
-                    displayName: 'Service Name',
-                    cellTemplate: '<div class="ngCellText"><a href="#/jclouds/compute/service/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
-                    width: 200,
-                    resizable: false
-                },
-                {
-                    field: 'providerId',
-                    displayName: 'Proivder',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 200,
-                    resizable: false
-                },
-                {
-                    field: 'identity',
-                    displayName: 'Identity',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 200,
-                    resizable: false
+                if (computeMbean) {
+                    setHardwareProfiles(jolokia.request({ type: 'exec', mbean: computeMbean, operation: 'listHardwareProfiles()' }).value);
                 }
-            ]
-        };
+            }
 
-        render(Jclouds.listJcloudsMBeanNameOfType(workspace, "compute"));
-
-        function render(response) {
-            if (!Object.equal($scope.result, response)) {
-                $scope.result = response;
-                $scope.computeServiceIds = $scope.result;
-                var computeServices = [];
-                angular.forEach($scope.computeServiceIds, function (id) {
-                    computeServices.push(Jclouds.findContextByName(workspace, id));
+            function findHardwareById(hardwareProfiles, id) {
+                return hardwareProfiles.find(function (hardware) {
+                    return hardware.id === id;
                 });
-                $scope.computeServices = computeServices;
-                Core.$apply($scope);
             }
-        }
-    }
-    Jclouds.ComputeListController = ComputeListController;
+        }]);
 })(Jclouds || (Jclouds = {}));
 /**
 * @module Jclouds
 */
+/// <reference path="../jcloudsPlugin.ts"/>
 var Jclouds;
 (function (Jclouds) {
-    function ImageListController($scope, $location, workspace, jolokia, $routeParams) {
-        $scope.computeId = $routeParams.computeId;
+    Jclouds._module.controller("Jclouds.ComputeListController", [
+        "$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+            $scope.result = {};
+            $scope.computeServiceIds = [];
+            $scope.computeServices = [];
 
-        $scope.result = {};
-        $scope.images = [];
+            $scope.computeTable = {
+                plugins: [],
+                data: 'computeServices',
+                showFilter: false,
+                showColumnMenu: false,
+                filterOptions: {
+                    useExternalFilter: true
+                },
+                selectedItems: $scope.selectedComputeServices,
+                rowHeight: 32,
+                selectWithCheckboxOnly: true,
+                columnDefs: [
+                    {
+                        field: 'name',
+                        displayName: 'Service Name',
+                        cellTemplate: '<div class="ngCellText"><a href="#/jclouds/compute/service/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
+                        width: 200,
+                        resizable: false
+                    },
+                    {
+                        field: 'providerId',
+                        displayName: 'Proivder',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 200,
+                        resizable: false
+                    },
+                    {
+                        field: 'identity',
+                        displayName: 'Identity',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 200,
+                        resizable: false
+                    }
+                ]
+            };
 
-        $scope.operatingSystemFamily = "";
-        $scope.operatingSystemFamilies = [];
-        var os = $location.search()['os'];
-        if (os) {
-            $scope.operatingSystemFamily = os;
-        }
+            render(Jclouds.listJcloudsMBeanNameOfType(workspace, "compute"));
 
-        // selected images
-        $scope.selectedImages = [];
-
-        /*
-        var SearchProvider = function (scope, location) {
-        var self = this;
-        self.scope = scope;
-        self.location = location;
-        
-        self.callback = function (newValue, oldValue) {
-        if (newValue === oldValue) {
-        return;
-        }
-        self.scope.images = filterImages(self.scope.images, self.scope.operatingSystemFamily);
-        self.scope.operatingSystemFamily = setSelect(self.scope.operatingSystemFamily, self.scope.operatingSystemFamilies);
-        
-        var q = location.search();
-        q['os'] = self.scope.operatingSystemFamily;
-        location.search(q);
-        self.evalFilter();
-        };
-        
-        self.scope.$watch('operatingSystemFamily', self.callback);
-        self.scope.$watch('location', self.callback);
-        
-        self.init = function (childScope, grid) {
-        self.grid = grid;
-        self.childScope = childScope;
-        grid.searchProvider = self;
-        };
-        
-        self.evalFilter = function () {
-        var byOperatingSystemFamily = self.grid.sortedData;
-        if (self.scope.operatingSystemFamily !== "") {
-        byOperatingSystemFamily = self.grid.sortedData.findAll(function (item) {
-        return item["operatingSystem"]["family"] === self.scope.operatingSystemFamily
-        });
-        }
-        
-        self.grid.filteredData = byOperatingSystemFamily;
-        self.grid.rowFactory.filteredDataChanged();
-        };
-        }
-        
-        var searchProvider = new SearchProvider($scope, $location);
-        */
-        $scope.imageTable = {
-            //plugins: [searchProvider],
-            data: 'images',
-            showFilter: false,
-            showColumnMenu: false,
-            filterOptions: {
-                useExternalFilter: true
-            },
-            selectedItems: $scope.selectedImages,
-            rowHeight: 32,
-            selectWithCheckboxOnly: true,
-            columnDefs: [
-                {
-                    field: 'id',
-                    displayName: 'Id',
-                    cellTemplate: '<div class="ngCellText"><a href="#/jclouds/compute/image/{{computeId}}/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
-                    width: 200,
-                    resizable: false
-                },
-                {
-                    field: 'name',
-                    displayName: 'Name',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 200,
-                    resizable: false
-                },
-                {
-                    field: 'operatingSystem.family',
-                    displayName: 'Operating System',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 200
-                },
-                {
-                    field: 'operatingSystem.is64Bit',
-                    displayName: '64 bit',
-                    cellTemplate: '<div class="ngCellText pagination-centered"><i class="icon1point5x {{is64BitIcon(row.getProperty(col.field))}}"></i></div>',
-                    width: 200
-                },
-                {
-                    field: 'status',
-                    displayName: 'Status',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 300
+            function render(response) {
+                if (!Object.equal($scope.result, response)) {
+                    $scope.result = response;
+                    $scope.computeServiceIds = $scope.result;
+                    var computeServices = [];
+                    angular.forEach($scope.computeServiceIds, function (id) {
+                        computeServices.push(Jclouds.findContextByName(workspace, id));
+                    });
+                    $scope.computeServices = computeServices;
+                    Core.$apply($scope);
                 }
-            ]
-        };
-
-        Core.register(jolokia, $scope, {
-            type: 'exec', mbean: Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId), operation: 'listImages()'
-        }, onSuccess(render));
-
-        function render(response) {
-            if (!Object.equal($scope.result, response.value)) {
-                $scope.result = response.value;
-                $scope.images = $scope.result;
-                $scope.operatingSystemFamilies = extractOperatingSystemFamilies($scope.images);
-                Core.$apply($scope);
             }
-        }
+        }]);
+})(Jclouds || (Jclouds = {}));
+/**
+* @module Jclouds
+*/
+/// <reference path="../jcloudsPlugin.ts"/>
+var Jclouds;
+(function (Jclouds) {
+    Jclouds._module.controller("Jclouds.ImageListController", [
+        "$scope", "$location", "workspace", "jolokia", "$routeParams", function ($scope, $location, workspace, jolokia, $routeParams) {
+            $scope.computeId = $routeParams.computeId;
 
-        function extractOperatingSystemFamilies(images) {
-            var operatingSystemFamilies = [];
-            operatingSystemFamilies.push("");
-            angular.forEach(images, function (image) {
-                var operatingSystemFamily = image["operatingSystem"]["family"];
+            $scope.result = {};
+            $scope.images = [];
 
-                operatingSystemFamilies.push(operatingSystemFamily);
+            $scope.operatingSystemFamily = "";
+            $scope.operatingSystemFamilies = [];
+            var os = $location.search()['os'];
+            if (os) {
+                $scope.operatingSystemFamily = os;
+            }
+
+            // selected images
+            $scope.selectedImages = [];
+
+            /*
+            var SearchProvider = function (scope, location) {
+            var self = this;
+            self.scope = scope;
+            self.location = location;
+            
+            self.callback = function (newValue, oldValue) {
+            if (newValue === oldValue) {
+            return;
+            }
+            self.scope.images = filterImages(self.scope.images, self.scope.operatingSystemFamily);
+            self.scope.operatingSystemFamily = setSelect(self.scope.operatingSystemFamily, self.scope.operatingSystemFamilies);
+            
+            var q = location.search();
+            q['os'] = self.scope.operatingSystemFamily;
+            location.search(q);
+            self.evalFilter();
+            };
+            
+            self.scope.$watch('operatingSystemFamily', self.callback);
+            self.scope.$watch('location', self.callback);
+            
+            self.init = function (childScope, grid) {
+            self.grid = grid;
+            self.childScope = childScope;
+            grid.searchProvider = self;
+            };
+            
+            self.evalFilter = function () {
+            var byOperatingSystemFamily = self.grid.sortedData;
+            if (self.scope.operatingSystemFamily !== "") {
+            byOperatingSystemFamily = self.grid.sortedData.findAll(function (item) {
+            return item["operatingSystem"]["family"] === self.scope.operatingSystemFamily
             });
-            return operatingSystemFamilies.unique();
-        }
-
-        $scope.is64BitIcon = function (is64bit) {
-            if (is64bit) {
-                return 'icon-thumbs-up';
-            } else {
-                return 'icon-thumbs-down';
             }
-        };
-    }
-    Jclouds.ImageListController = ImageListController;
+            
+            self.grid.filteredData = byOperatingSystemFamily;
+            self.grid.rowFactory.filteredDataChanged();
+            };
+            }
+            
+            var searchProvider = new SearchProvider($scope, $location);
+            */
+            $scope.imageTable = {
+                //plugins: [searchProvider],
+                data: 'images',
+                showFilter: false,
+                showColumnMenu: false,
+                filterOptions: {
+                    useExternalFilter: true
+                },
+                selectedItems: $scope.selectedImages,
+                rowHeight: 32,
+                selectWithCheckboxOnly: true,
+                columnDefs: [
+                    {
+                        field: 'id',
+                        displayName: 'Id',
+                        cellTemplate: '<div class="ngCellText"><a href="#/jclouds/compute/image/{{computeId}}/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
+                        width: 200,
+                        resizable: false
+                    },
+                    {
+                        field: 'name',
+                        displayName: 'Name',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 200,
+                        resizable: false
+                    },
+                    {
+                        field: 'operatingSystem.family',
+                        displayName: 'Operating System',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 200
+                    },
+                    {
+                        field: 'operatingSystem.is64Bit',
+                        displayName: '64 bit',
+                        cellTemplate: '<div class="ngCellText pagination-centered"><i class="icon1point5x {{is64BitIcon(row.getProperty(col.field))}}"></i></div>',
+                        width: 200
+                    },
+                    {
+                        field: 'status',
+                        displayName: 'Status',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 300
+                    }
+                ]
+            };
+
+            Core.register(jolokia, $scope, {
+                type: 'exec', mbean: Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId), operation: 'listImages()'
+            }, onSuccess(render));
+
+            function render(response) {
+                if (!Object.equal($scope.result, response.value)) {
+                    $scope.result = response.value;
+                    $scope.images = $scope.result;
+                    $scope.operatingSystemFamilies = extractOperatingSystemFamilies($scope.images);
+                    Core.$apply($scope);
+                }
+            }
+
+            function extractOperatingSystemFamilies(images) {
+                var operatingSystemFamilies = [];
+                operatingSystemFamilies.push("");
+                angular.forEach(images, function (image) {
+                    var operatingSystemFamily = image["operatingSystem"]["family"];
+
+                    operatingSystemFamilies.push(operatingSystemFamily);
+                });
+                return operatingSystemFamilies.unique();
+            }
+
+            $scope.is64BitIcon = function (is64bit) {
+                if (is64bit) {
+                    return 'icon-thumbs-up';
+                } else {
+                    return 'icon-thumbs-down';
+                }
+            };
+        }]);
 })(Jclouds || (Jclouds = {}));
 /**
 * @module Jclouds
 */
+/// <reference path="../jcloudsPlugin.ts"/>
 var Jclouds;
 (function (Jclouds) {
-    function ComputeLocationListController($scope, $location, workspace, jolokia, $routeParams) {
-        $scope.computeId = $routeParams.computeId;
+    Jclouds._module.controller("Jclouds.ComputeLocationListController", [
+        "$scope", "$location", "workspace", "jolokia", "$routeParams", function ($scope, $location, workspace, jolokia, $routeParams) {
+            $scope.computeId = $routeParams.computeId;
 
-        $scope.result = {};
-        $scope.locations = [];
+            $scope.result = {};
+            $scope.locations = [];
 
-        // selected locations
-        $scope.selectedLocations = [];
+            // selected locations
+            $scope.selectedLocations = [];
 
-        $scope.locationTable = {
-            plugins: [],
-            data: 'locations',
-            showFilter: false,
-            showColumnMenu: false,
-            filterOptions: {
-                useExternalFilter: true
-            },
-            selectedItems: $scope.selectedLocations,
-            rowHeight: 32,
-            selectWithCheckboxOnly: true,
-            columnDefs: [
-                {
-                    field: 'id',
-                    displayName: 'Id',
-                    cellTemplate: '<div class="ngCellText"><a href="#/jclouds/compute/location/{{computeId}}/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
-                    width: 200,
-                    resizable: false
+            $scope.locationTable = {
+                plugins: [],
+                data: 'locations',
+                showFilter: false,
+                showColumnMenu: false,
+                filterOptions: {
+                    useExternalFilter: true
                 },
-                {
-                    field: 'description',
-                    displayName: 'Description',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 200,
-                    resizable: false
+                selectedItems: $scope.selectedLocations,
+                rowHeight: 32,
+                selectWithCheckboxOnly: true,
+                columnDefs: [
+                    {
+                        field: 'id',
+                        displayName: 'Id',
+                        cellTemplate: '<div class="ngCellText"><a href="#/jclouds/compute/location/{{computeId}}/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
+                        width: 200,
+                        resizable: false
+                    },
+                    {
+                        field: 'description',
+                        displayName: 'Description',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 200,
+                        resizable: false
+                    }
+                ]
+            };
+
+            Core.register(jolokia, $scope, {
+                type: 'exec', mbean: Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId), operation: 'listAssignableLocations()'
+            }, onSuccess(render));
+
+            function render(response) {
+                if (!Object.equal($scope.result, response.value)) {
+                    $scope.result = response.value;
+                    $scope.locations = $scope.result;
+                    Core.$apply($scope);
                 }
-            ]
-        };
-
-        Core.register(jolokia, $scope, {
-            type: 'exec', mbean: Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId), operation: 'listAssignableLocations()'
-        }, onSuccess(render));
-
-        function render(response) {
-            if (!Object.equal($scope.result, response.value)) {
-                $scope.result = response.value;
-                $scope.locations = $scope.result;
-                Core.$apply($scope);
             }
-        }
-    }
-    Jclouds.ComputeLocationListController = ComputeLocationListController;
+        }]);
 })(Jclouds || (Jclouds = {}));
 /**
 * @module Jclouds
 */
+/// <reference path="../jcloudsPlugin.ts"/>
 var Jclouds;
 (function (Jclouds) {
-    function HardwareListController($scope, $location, workspace, jolokia, $routeParams) {
-        $scope.computeId = $routeParams.computeId;
+    Jclouds._module.controller("Jclouds.HardwareListController", [
+        "$scope", "$location", "workspace", "jolokia", "$routeParams", function ($scope, $location, workspace, jolokia, $routeParams) {
+            $scope.computeId = $routeParams.computeId;
 
-        $scope.result = {};
-        $scope.hardwares = [];
+            $scope.result = {};
+            $scope.hardwares = [];
 
-        // selected hardwares
-        $scope.selectedHardwares = [];
+            // selected hardwares
+            $scope.selectedHardwares = [];
 
-        $scope.hardwareTable = {
-            plugins: [],
-            data: 'hardwares',
-            showFilter: false,
-            showColumnMenu: false,
-            filterOptions: {
-                useExternalFilter: true
-            },
-            selectedItems: $scope.selectedHardwares,
-            rowHeight: 32,
-            selectWithCheckboxOnly: true,
-            columnDefs: [
-                {
-                    field: 'id',
-                    displayName: 'Id',
-                    cellTemplate: '<div class="ngCellText"><a href="#/jclouds/compute/hardware/{{computeId}}/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
-                    width: 200,
-                    resizable: false
+            $scope.hardwareTable = {
+                plugins: [],
+                data: 'hardwares',
+                showFilter: false,
+                showColumnMenu: false,
+                filterOptions: {
+                    useExternalFilter: true
                 },
-                {
-                    field: 'name',
-                    displayName: 'Name',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 200,
-                    resizable: false
-                },
-                {
-                    field: 'ram',
-                    displayName: 'Ram',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 200,
-                    resizable: false
-                },
-                {
-                    field: 'hypervisor',
-                    displayName: 'Hypervisor',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 200,
-                    resizable: false
+                selectedItems: $scope.selectedHardwares,
+                rowHeight: 32,
+                selectWithCheckboxOnly: true,
+                columnDefs: [
+                    {
+                        field: 'id',
+                        displayName: 'Id',
+                        cellTemplate: '<div class="ngCellText"><a href="#/jclouds/compute/hardware/{{computeId}}/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
+                        width: 200,
+                        resizable: false
+                    },
+                    {
+                        field: 'name',
+                        displayName: 'Name',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 200,
+                        resizable: false
+                    },
+                    {
+                        field: 'ram',
+                        displayName: 'Ram',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 200,
+                        resizable: false
+                    },
+                    {
+                        field: 'hypervisor',
+                        displayName: 'Hypervisor',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 200,
+                        resizable: false
+                    }
+                ]
+            };
+
+            Core.register(jolokia, $scope, {
+                type: 'exec', mbean: Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId), operation: 'listHardwareProfiles()'
+            }, onSuccess(render));
+
+            function render(response) {
+                if (!Object.equal($scope.result, response.value)) {
+                    $scope.result = response.value;
+                    $scope.hardwares = $scope.result;
+                    Core.$apply($scope);
                 }
-            ]
-        };
-
-        Core.register(jolokia, $scope, {
-            type: 'exec', mbean: Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId), operation: 'listHardwareProfiles()'
-        }, onSuccess(render));
-
-        function render(response) {
-            if (!Object.equal($scope.result, response.value)) {
-                $scope.result = response.value;
-                $scope.hardwares = $scope.result;
-                Core.$apply($scope);
             }
-        }
 
-        $scope.is64BitIcon = function (is64bit) {
-            if (is64bit) {
-                return 'icon-thumbs-up';
-            } else {
-                return 'icon-thumbs-down';
-            }
-        };
-    }
-    Jclouds.HardwareListController = HardwareListController;
+            $scope.is64BitIcon = function (is64bit) {
+                if (is64bit) {
+                    return 'icon-thumbs-up';
+                } else {
+                    return 'icon-thumbs-down';
+                }
+            };
+        }]);
 })(Jclouds || (Jclouds = {}));
 /**
 * @module Jclouds
 */
+/// <reference path="../jcloudsPlugin.ts"/>
 var Jclouds;
 (function (Jclouds) {
-    function NodeListController($scope, $location, workspace, jolokia, $routeParams) {
-        $scope.computeId = $routeParams.computeId;
+    Jclouds._module.controller("Jclouds.NodeListController", [
+        "$scope", "$location", "workspace", "jolokia", "$routeParams", function ($scope, $location, workspace, jolokia, $routeParams) {
+            $scope.computeId = $routeParams.computeId;
 
-        $scope.result = {};
-        $scope.nodes = [];
+            $scope.result = {};
+            $scope.nodes = [];
 
-        $scope.group = "";
-        $scope.groups = [];
+            $scope.group = "";
+            $scope.groups = [];
 
-        $scope.location = "";
-        $scope.locations = [];
+            $scope.location = "";
+            $scope.locations = [];
 
-        var grp = $location.search()['group'];
-        if (grp) {
-            $scope.group = grp;
-        }
-
-        var loc = $location.search()['location'];
-        if (loc) {
-            $scope.location = loc;
-        }
-
-        // selected nodes
-        $scope.selectedNodes = [];
-
-        /*
-        var SearchProvider = function (scope, location) {
-        var self = this;
-        self.scope = scope;
-        self.location = location;
-        
-        self.callback = function (newValue, oldValue) {
-        if (newValue === oldValue) {
-        return;
-        }
-        self.scope.nodes = filterNodes(self.scope.nodes, self.scope.group, self.scope.location);
-        self.scope.group = setSelect(self.scope.group, self.scope.groups);
-        self.scope.location = setSelect(self.scope.location, self.scope.locations);
-        
-        var q = location.search();
-        q['group'] = self.scope.group;
-        q['location'] = self.scope.location;
-        location.search(q);
-        self.evalFilter();
-        };
-        
-        self.scope.$watch('group', self.callback);
-        self.scope.$watch('location', self.callback);
-        
-        self.init = function (childScope, grid) {
-        self.grid = grid;
-        self.childScope = childScope;
-        grid.searchProvider = self;
-        };
-        
-        self.evalFilter = function () {
-        var byGroup = self.grid.sortedData;
-        if (self.scope.group !== "") {
-        byGroup = self.grid.sortedData.findAll(function (item) {
-        return item["group"] === self.scope.group
-        });
-        }
-        
-        var byLocation = byGroup;
-        if (self.scope.location !== "") {
-        byLocation = self.grid.sortedData.findAll(function (item) {
-        return item["locationId"] === self.scope.location
-        });
-        }
-        
-        self.grid.filteredData = byLocation;
-        self.grid.rowFactory.filteredDataChanged();
-        };
-        }
-        
-        var searchProvider = new SearchProvider($scope, $location);
-        */
-        $scope.nodeTable = {
-            //plugins: [searchProvider],
-            data: 'nodes',
-            showFilter: false,
-            showColumnMenu: false,
-            filterOptions: {
-                useExternalFilter: true
-            },
-            selectedItems: $scope.selectedNodes,
-            rowHeight: 32,
-            selectWithCheckboxOnly: true,
-            columnDefs: [
-                {
-                    field: 'id',
-                    displayName: 'Id',
-                    cellTemplate: '<div class="ngCellText"><a href="#/jclouds/compute/node/{{computeId}}/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
-                    width: 200,
-                    resizable: false
-                },
-                {
-                    field: 'group',
-                    displayName: 'Group',
-                    cellTemplate: '<div class="ngCellText"><a href="#/jclouds/compute/node/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
-                    width: 200,
-                    resizable: false
-                },
-                {
-                    field: 'operatingSystem.family',
-                    displayName: 'Operating System',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 200
-                },
-                {
-                    field: 'locationId',
-                    displayName: 'Location',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 200
-                },
-                {
-                    field: 'hostname',
-                    displayName: 'Host Name',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 300
-                }
-            ]
-        };
-
-        Core.register(jolokia, $scope, {
-            type: 'exec', mbean: Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId), operation: 'listNodes()'
-        }, onSuccess(render));
-
-        function render(response) {
-            if (!Object.equal($scope.result, response.value)) {
-                $scope.result = response.value;
-                $scope.nodes = $scope.result;
-                $scope.locations = extractLocations($scope.nodes);
-                $scope.groups = extractGroups($scope.nodes);
-                Core.$apply($scope);
+            var grp = $location.search()['group'];
+            if (grp) {
+                $scope.group = grp;
             }
-        }
 
-        function extractGroups(nodes) {
-            var groups = [];
-            groups.push("");
-            angular.forEach(nodes, function (node) {
-                var group = node["group"];
-                groups.push(group);
+            var loc = $location.search()['location'];
+            if (loc) {
+                $scope.location = loc;
+            }
+
+            // selected nodes
+            $scope.selectedNodes = [];
+
+            /*
+            var SearchProvider = function (scope, location) {
+            var self = this;
+            self.scope = scope;
+            self.location = location;
+            
+            self.callback = function (newValue, oldValue) {
+            if (newValue === oldValue) {
+            return;
+            }
+            self.scope.nodes = filterNodes(self.scope.nodes, self.scope.group, self.scope.location);
+            self.scope.group = setSelect(self.scope.group, self.scope.groups);
+            self.scope.location = setSelect(self.scope.location, self.scope.locations);
+            
+            var q = location.search();
+            q['group'] = self.scope.group;
+            q['location'] = self.scope.location;
+            location.search(q);
+            self.evalFilter();
+            };
+            
+            self.scope.$watch('group', self.callback);
+            self.scope.$watch('location', self.callback);
+            
+            self.init = function (childScope, grid) {
+            self.grid = grid;
+            self.childScope = childScope;
+            grid.searchProvider = self;
+            };
+            
+            self.evalFilter = function () {
+            var byGroup = self.grid.sortedData;
+            if (self.scope.group !== "") {
+            byGroup = self.grid.sortedData.findAll(function (item) {
+            return item["group"] === self.scope.group
             });
-            return groups.unique();
-        }
-
-        function extractLocations(nodes) {
-            var locations = [];
-            locations.push("");
-            angular.forEach(nodes, function (node) {
-                var location = node["locationId"];
-                locations.push(location);
+            }
+            
+            var byLocation = byGroup;
+            if (self.scope.location !== "") {
+            byLocation = self.grid.sortedData.findAll(function (item) {
+            return item["locationId"] === self.scope.location
             });
-            return locations.unique();
-        }
+            }
+            
+            self.grid.filteredData = byLocation;
+            self.grid.rowFactory.filteredDataChanged();
+            };
+            }
+            
+            var searchProvider = new SearchProvider($scope, $location);
+            */
+            $scope.nodeTable = {
+                //plugins: [searchProvider],
+                data: 'nodes',
+                showFilter: false,
+                showColumnMenu: false,
+                filterOptions: {
+                    useExternalFilter: true
+                },
+                selectedItems: $scope.selectedNodes,
+                rowHeight: 32,
+                selectWithCheckboxOnly: true,
+                columnDefs: [
+                    {
+                        field: 'id',
+                        displayName: 'Id',
+                        cellTemplate: '<div class="ngCellText"><a href="#/jclouds/compute/node/{{computeId}}/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
+                        width: 200,
+                        resizable: false
+                    },
+                    {
+                        field: 'group',
+                        displayName: 'Group',
+                        cellTemplate: '<div class="ngCellText"><a href="#/jclouds/compute/node/{{row.getProperty(col.field)}}{{hash}}">{{row.getProperty(col.field)}}</a></div>',
+                        width: 200,
+                        resizable: false
+                    },
+                    {
+                        field: 'operatingSystem.family',
+                        displayName: 'Operating System',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 200
+                    },
+                    {
+                        field: 'locationId',
+                        displayName: 'Location',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 200
+                    },
+                    {
+                        field: 'hostname',
+                        displayName: 'Host Name',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 300
+                    }
+                ]
+            };
 
-        $scope.resume = function () {
-            $scope.selectedNodes.forEach(function (node) {
-                Jclouds.resumeNode(workspace, jolokia, $scope.computeId, node.id, function () {
+            Core.register(jolokia, $scope, {
+                type: 'exec', mbean: Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId), operation: 'listNodes()'
+            }, onSuccess(render));
+
+            function render(response) {
+                if (!Object.equal($scope.result, response.value)) {
+                    $scope.result = response.value;
+                    $scope.nodes = $scope.result;
+                    $scope.locations = extractLocations($scope.nodes);
+                    $scope.groups = extractGroups($scope.nodes);
+                    Core.$apply($scope);
+                }
+            }
+
+            function extractGroups(nodes) {
+                var groups = [];
+                groups.push("");
+                angular.forEach(nodes, function (node) {
+                    var group = node["group"];
+                    groups.push(group);
+                });
+                return groups.unique();
+            }
+
+            function extractLocations(nodes) {
+                var locations = [];
+                locations.push("");
+                angular.forEach(nodes, function (node) {
+                    var location = node["locationId"];
+                    locations.push(location);
+                });
+                return locations.unique();
+            }
+
+            $scope.resume = function () {
+                $scope.selectedNodes.forEach(function (node) {
+                    Jclouds.resumeNode(workspace, jolokia, $scope.computeId, node.id, function () {
+                        console.log("Resumed!");
+                    }, function () {
+                        console.log("Failed to resume!");
+                    });
+                });
+            };
+
+            $scope.suspend = function () {
+                $scope.selectedNodes.forEach(function (node) {
+                    Jclouds.suspendNode(workspace, jolokia, $scope.computeId, node.id, function () {
+                        console.log("Suspended!");
+                    }, function () {
+                        console.log("Failed to suspend!");
+                    });
+                });
+            };
+
+            $scope.reboot = function () {
+                $scope.selectedNodes.forEach(function (node) {
+                    Jclouds.rebootNode(workspace, jolokia, $scope.computeId, node.id, function () {
+                        console.log("Rebooted!");
+                    }, function () {
+                        console.log("Failed to reboot!");
+                    });
+                });
+            };
+
+            $scope.destroy = function () {
+                $scope.selectedNodes.forEach(function (node) {
+                    Jclouds.destroyNode(workspace, jolokia, $scope.computeId, node.id, function () {
+                        console.log("Destroyed!");
+                    }, function () {
+                        console.log("Failed to destroy!");
+                    });
+                });
+            };
+        }]);
+})(Jclouds || (Jclouds = {}));
+/**
+* @module Jclouds
+*/
+/// <reference path="../jcloudsPlugin.ts"/>
+var Jclouds;
+(function (Jclouds) {
+    Jclouds._module.controller("Jclouds.ComputeNavigationController", [
+        "$scope", "$routeParams", "workspace", function ($scope, $routeParams, workspace) {
+            $scope.computeId = $routeParams.computeId;
+
+            $scope.isActive = function (nav) {
+                if (angular.isString(nav))
+                    return workspace.isLinkActive(nav);
+                var fn = nav.isActive;
+                if (fn) {
+                    return fn(workspace);
+                }
+                return workspace.isLinkActive(nav.href());
+            };
+        }]);
+})(Jclouds || (Jclouds = {}));
+/**
+* @module Jclouds
+*/
+/// <reference path="../jcloudsPlugin.ts"/>
+var Jclouds;
+(function (Jclouds) {
+    Jclouds._module.controller("Jclouds.ImageController", [
+        "$scope", "$filter", "workspace", "$routeParams", function ($scope, $filter, workspace, $routeParams) {
+            $scope.computeId = $routeParams.computeId;
+            $scope.imageId = $routeParams.imageId;
+
+            updateTableContents();
+
+            function setImage(api) {
+                $scope.row = api;
+                Core.$apply($scope);
+            }
+            ;
+
+            function updateTableContents() {
+                var jolokia = workspace.jolokia;
+                var computeMbean = Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId);
+
+                if (computeMbean) {
+                    setImage(jolokia.request({ type: 'exec', mbean: computeMbean, operation: 'getImage(java.lang.String)', arguments: [$scope.imageId] }).value);
+                }
+            }
+        }]);
+})(Jclouds || (Jclouds = {}));
+/**
+* @module Jclouds
+*/
+/// <reference path="../jcloudsPlugin.ts"/>
+var Jclouds;
+(function (Jclouds) {
+    Jclouds._module.controller("Jclouds.ComputeLocationController", [
+        "$scope", "$filter", "workspace", "$routeParams", function ($scope, $filter, workspace, $routeParams) {
+            $scope.computeId = $routeParams.computeId;
+            $scope.locationId = $routeParams.locationId;
+
+            updateTableContents();
+
+            function setLocationProfiles(locationProfiles) {
+                $scope.row = findLocationById(locationProfiles, $scope.locationId);
+                Core.$apply($scope);
+            }
+            ;
+
+            function updateTableContents() {
+                var jolokia = workspace.jolokia;
+                var computeMbean = Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId);
+
+                if (computeMbean) {
+                    setLocationProfiles(jolokia.request({ type: 'exec', mbean: computeMbean, operation: 'listAssignableLocations()' }).value);
+                }
+            }
+
+            function findLocationById(locationProfiles, id) {
+                return locationProfiles.find(function (location) {
+                    return location.id === id;
+                });
+            }
+        }]);
+})(Jclouds || (Jclouds = {}));
+/**
+* @module Jclouds
+*/
+/// <reference path="../jcloudsPlugin.ts"/>
+var Jclouds;
+(function (Jclouds) {
+    Jclouds._module.controller("Jclouds.NodeController", [
+        "$scope", "$filter", "workspace", "$routeParams", function ($scope, $filter, workspace, $routeParams) {
+            $scope.computeId = $routeParams.computeId;
+            $scope.nodeId = $routeParams.nodeId;
+
+            updateTableContents();
+
+            function setNode(api) {
+                $scope.row = api;
+                Core.$apply($scope);
+            }
+            ;
+
+            function updateTableContents() {
+                var computeMbean = Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId);
+                var jolokia = workspace.jolokia;
+
+                if (computeMbean) {
+                    setNode(jolokia.request({ type: 'exec', mbean: computeMbean, operation: 'getNode(java.lang.String)', arguments: [$scope.nodeId] }).value);
+                }
+            }
+
+            $scope.resume = function () {
+                Jclouds.resumeNode(workspace, workspace.jolokia, $scope.computeId, $scope.nodeId, function () {
                     console.log("Resumed!");
                 }, function () {
                     console.log("Failed to resume!");
                 });
-            });
-        };
+            };
 
-        $scope.suspend = function () {
-            $scope.selectedNodes.forEach(function (node) {
-                Jclouds.suspendNode(workspace, jolokia, $scope.computeId, node.id, function () {
+            $scope.suspend = function () {
+                Jclouds.suspendNode(workspace, workspace.jolokia, $scope.computeId, $scope.nodeId, function () {
                     console.log("Suspended!");
                 }, function () {
                     console.log("Failed to suspend!");
                 });
-            });
-        };
+            };
 
-        $scope.reboot = function () {
-            $scope.selectedNodes.forEach(function (node) {
-                Jclouds.rebootNode(workspace, jolokia, $scope.computeId, node.id, function () {
+            $scope.reboot = function () {
+                Jclouds.rebootNode(workspace, workspace.jolokia, $scope.computeId, $scope.nodeId, function () {
                     console.log("Rebooted!");
                 }, function () {
                     console.log("Failed to reboot!");
                 });
-            });
-        };
+            };
 
-        $scope.destroy = function () {
-            $scope.selectedNodes.forEach(function (node) {
-                Jclouds.destroyNode(workspace, jolokia, $scope.computeId, node.id, function () {
+            $scope.destroy = function () {
+                Jclouds.destroyNode(workspace, workspace.jolokia, $scope.computeId, $scope.nodeId, function () {
                     console.log("Destroyed!");
                 }, function () {
                     console.log("Failed to destroy!");
                 });
-            });
-        };
-    }
-    Jclouds.NodeListController = NodeListController;
-})(Jclouds || (Jclouds = {}));
-/**
-* @module Jclouds
-*/
-var Jclouds;
-(function (Jclouds) {
-    function ComputeNavigationController($scope, $routeParams, workspace) {
-        $scope.computeId = $routeParams.computeId;
-
-        $scope.isActive = function (nav) {
-            if (angular.isString(nav))
-                return workspace.isLinkActive(nav);
-            var fn = nav.isActive;
-            if (fn) {
-                return fn(workspace);
-            }
-            return workspace.isLinkActive(nav.href());
-        };
-    }
-    Jclouds.ComputeNavigationController = ComputeNavigationController;
-})(Jclouds || (Jclouds = {}));
-/**
-* @module Jclouds
-*/
-var Jclouds;
-(function (Jclouds) {
-    function ImageController($scope, $filter, workspace, $routeParams) {
-        $scope.computeId = $routeParams.computeId;
-        $scope.imageId = $routeParams.imageId;
-
-        updateTableContents();
-
-        function setImage(api) {
-            $scope.row = api;
-            Core.$apply($scope);
-        }
-        ;
-
-        function updateTableContents() {
-            var jolokia = workspace.jolokia;
-            var computeMbean = Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId);
-
-            if (computeMbean) {
-                setImage(jolokia.request({ type: 'exec', mbean: computeMbean, operation: 'getImage(java.lang.String)', arguments: [$scope.imageId] }).value);
-            }
-        }
-    }
-    Jclouds.ImageController = ImageController;
-})(Jclouds || (Jclouds = {}));
-/**
-* @module Jclouds
-*/
-var Jclouds;
-(function (Jclouds) {
-    function ComputeLocationController($scope, $filter, workspace, $routeParams) {
-        $scope.computeId = $routeParams.computeId;
-        $scope.locationId = $routeParams.locationId;
-
-        updateTableContents();
-
-        function setLocationProfiles(locationProfiles) {
-            $scope.row = findLocationById(locationProfiles, $scope.locationId);
-            Core.$apply($scope);
-        }
-        ;
-
-        function updateTableContents() {
-            var jolokia = workspace.jolokia;
-            var computeMbean = Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId);
-
-            if (computeMbean) {
-                setLocationProfiles(jolokia.request({ type: 'exec', mbean: computeMbean, operation: 'listAssignableLocations()' }).value);
-            }
-        }
-
-        function findLocationById(locationProfiles, id) {
-            return locationProfiles.find(function (location) {
-                return location.id === id;
-            });
-        }
-    }
-    Jclouds.ComputeLocationController = ComputeLocationController;
-})(Jclouds || (Jclouds = {}));
-/**
-* @module Jclouds
-*/
-var Jclouds;
-(function (Jclouds) {
-    function NodeController($scope, $filter, workspace, $routeParams) {
-        $scope.computeId = $routeParams.computeId;
-        $scope.nodeId = $routeParams.nodeId;
-
-        updateTableContents();
-
-        function setNode(api) {
-            $scope.row = api;
-            Core.$apply($scope);
-        }
-        ;
-
-        function updateTableContents() {
-            var computeMbean = Jclouds.getSelectionJcloudsComputeMBean(workspace, $scope.computeId);
-            var jolokia = workspace.jolokia;
-
-            if (computeMbean) {
-                setNode(jolokia.request({ type: 'exec', mbean: computeMbean, operation: 'getNode(java.lang.String)', arguments: [$scope.nodeId] }).value);
-            }
-        }
-
-        $scope.resume = function () {
-            Jclouds.resumeNode(workspace, workspace.jolokia, $scope.computeId, $scope.nodeId, function () {
-                console.log("Resumed!");
-            }, function () {
-                console.log("Failed to resume!");
-            });
-        };
-
-        $scope.suspend = function () {
-            Jclouds.suspendNode(workspace, workspace.jolokia, $scope.computeId, $scope.nodeId, function () {
-                console.log("Suspended!");
-            }, function () {
-                console.log("Failed to suspend!");
-            });
-        };
-
-        $scope.reboot = function () {
-            Jclouds.rebootNode(workspace, workspace.jolokia, $scope.computeId, $scope.nodeId, function () {
-                console.log("Rebooted!");
-            }, function () {
-                console.log("Failed to reboot!");
-            });
-        };
-
-        $scope.destroy = function () {
-            Jclouds.destroyNode(workspace, workspace.jolokia, $scope.computeId, $scope.nodeId, function () {
-                console.log("Destroyed!");
-            }, function () {
-                console.log("Failed to destroy!");
-            });
-        };
-    }
-    Jclouds.NodeController = NodeController;
+            };
+        }]);
 })(Jclouds || (Jclouds = {}));
 /**
 * @module Jclouds
