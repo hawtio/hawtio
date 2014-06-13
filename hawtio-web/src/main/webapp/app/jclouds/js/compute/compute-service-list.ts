@@ -1,8 +1,9 @@
 /**
  * @module Jclouds
  */
+/// <reference path="../jcloudsPlugin.ts"/>
 module Jclouds {
-    export function ComputeListController($scope, $location, workspace, jolokia) {
+    _module.controller("Jclouds.ComputeListController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace, jolokia) => {
 
         $scope.result = {};
         $scope.computeServiceIds = [];
@@ -58,5 +59,5 @@ module Jclouds {
                 Core.$apply($scope);
             }
         }
-    }
+    }]);
 }

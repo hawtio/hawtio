@@ -1,9 +1,10 @@
 /**
  * @module Jclouds
  */
+/// <reference path="../jcloudsPlugin.ts"/>
 module Jclouds {
 
-    export function ComputeLocationController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {
+    _module.controller("Jclouds.ComputeLocationController", ["$scope", "$filter", "workspace", "$routeParams", ($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) => {
         $scope.computeId = $routeParams.computeId
         $scope.locationId = $routeParams.locationId;
 
@@ -31,5 +32,5 @@ module Jclouds {
                 return location.id === id
             });
         }
-   }
+   }]);
 }

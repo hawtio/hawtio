@@ -1,9 +1,10 @@
 /**
  * @module Jclouds
  */
+/// <reference path="../jcloudsPlugin.ts"/>
 module Jclouds {
 
-    export function HardwareController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {
+    _module.controller("Jclouds.HardwareController", ["$scope", "$filter", "workspace", "$routeParams", ($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) => {
         $scope.computeId = $routeParams.computeId
         $scope.hardwareId = $routeParams.hardwareId;
 
@@ -113,5 +114,5 @@ module Jclouds {
                 return hardware.id === id
             });
         }
-   }
+   }]);
 }

@@ -1,8 +1,9 @@
 /**
  * @module Jclouds
  */
+/// <reference path="../jcloudsPlugin.ts"/>
 module Jclouds {
-    export function ImageListController($scope, $location, workspace, jolokia, $routeParams) {
+    _module.controller("Jclouds.ImageListController", ["$scope", "$location", "workspace", "jolokia", "$routeParams", ($scope, $location, workspace, jolokia, $routeParams) => {
         $scope.computeId = $routeParams.computeId;
 
         $scope.result = {};
@@ -141,5 +142,5 @@ module Jclouds {
                 return 'icon-thumbs-down';
             }
         }
-    }
+    }]);
 }

@@ -1,8 +1,9 @@
 /**
  * @module Jclouds
  */
+/// <reference path="../jcloudsPlugin.ts"/>
 module Jclouds {
-    export function NodeListController($scope, $location, workspace, jolokia, $routeParams) {
+    _module.controller("Jclouds.NodeListController", ["$scope", "$location", "workspace", "jolokia", "$routeParams", ($scope, $location, workspace, jolokia, $routeParams) => {
         $scope.computeId = $routeParams.computeId;
 
         $scope.result = {};
@@ -185,5 +186,5 @@ module Jclouds {
                 destroyNode(workspace,jolokia, $scope.computeId, node.id, function() {console.log("Destroyed!")}, function() {console.log("Failed to destroy!")});
             });
         }
-    }
+    }]);
 }

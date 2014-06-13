@@ -1,9 +1,10 @@
 /**
  * @module Jetty
  */
+/// <reference path="./jettyPlugin.ts"/>
 module Jetty {
 
-  export function ThreadPoolsController($scope, $location, workspace:Workspace, jolokia) {
+  _module.controller("Jetty.ThreadPoolsController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jettyIconClass}}"></i></div>';
 
@@ -108,5 +109,5 @@ module Jetty {
       jolokia.search("org.eclipse.jetty.util.thread:type=queuedthreadpool,*", onSuccess(render78));
     }
 
-  }
+  }]);
 }

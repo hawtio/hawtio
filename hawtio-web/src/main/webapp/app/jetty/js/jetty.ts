@@ -1,9 +1,10 @@
 /**
  * @module Jetty
  */
+/// <reference path="./jettyPlugin.ts"/>
 module Jetty {
 
-  export function JettyController($scope, $location, workspace:Workspace, jolokia) {
+  _module.controller("Jetty.JettyController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}">' +
         '<i class="{{row.getProperty(col.field) | jettyIconClass}}"></i>' +
@@ -212,5 +213,5 @@ module Jetty {
       });
       Core.$apply($scope);
     }
-  }
+  }]);
 }

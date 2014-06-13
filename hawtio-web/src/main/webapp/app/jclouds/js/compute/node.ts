@@ -1,9 +1,10 @@
 /**
  * @module Jclouds
  */
+/// <reference path="../jcloudsPlugin.ts"/>
 module Jclouds {
 
-    export function NodeController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {
+    _module.controller("Jclouds.NodeController", ["$scope", "$filter", "workspace", "$routeParams", ($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) => {
         $scope.computeId = $routeParams.computeId
         $scope.nodeId = $routeParams.nodeId;
 
@@ -57,5 +58,5 @@ module Jclouds {
                 console.log("Failed to destroy!")
             });
         }
-    }
+    }]);
 }

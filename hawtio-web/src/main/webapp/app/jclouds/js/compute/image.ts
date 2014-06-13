@@ -1,9 +1,10 @@
 /**
  * @module Jclouds
  */
+/// <reference path="../jcloudsPlugin.ts"/>
 module Jclouds {
 
-    export function ImageController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {
+    _module.controller("Jclouds.ImageController", ["$scope", "$filter", "workspace", "$routeParams", ($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) => {
         $scope.computeId = $routeParams.computeId
         $scope.imageId = $routeParams.imageId;
 
@@ -25,5 +26,5 @@ module Jclouds {
                 );
             }
         }
-   }
+   }]);
 }
