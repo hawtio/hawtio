@@ -1,4 +1,4 @@
-///<reference path="formHelpers.ts"/>
+///<reference path="formPlugin.ts"/>
 module Forms {
 
   _module.controller("Forms.FormTestController", ["$scope", "workspace", ($scope, workspace) => {
