@@ -1,9 +1,10 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
 module Wiki {
 
-  export function CamelController($scope, $location, $routeParams, localStorage:WindowLocalStorage, workspace:Workspace, wikiRepository:GitWikiRepository, jolokia) {
+  _module.controller("Wiki.CamelController", ["$scope", "$location", "$routeParams", "localStorage", "workspace", "wikiRepository", "jolokia", ($scope, $location, $routeParams, localStorage:WindowLocalStorage, workspace:Workspace, wikiRepository:GitWikiRepository, jolokia) => {
     Wiki.initScope($scope, $routeParams, $location);
     Camel.initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia);
     $scope.schema = Camel.getConfiguredCamelModel();
@@ -461,5 +462,5 @@ module Wiki {
        }
        */
     }
-  }
+  }]);
 }

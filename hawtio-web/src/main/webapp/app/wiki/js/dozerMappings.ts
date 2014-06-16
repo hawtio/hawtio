@@ -1,8 +1,9 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
 module Wiki {
-  export function DozerMappingsController($scope, $location, $routeParams, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache) {
+  _module.controller("Wiki.DozerMappingsController", ["$scope", "$location", "$routeParams", "workspace", "jolokia", "wikiRepository", "$templateCache", ($scope, $location, $routeParams, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache) => {
     var log:Logging.Logger = Logger.get("Dozer");
 
     Wiki.initScope($scope, $routeParams, $location);
@@ -515,5 +516,5 @@ module Wiki {
        }
        */
     }
-  }
+  }]);
 }

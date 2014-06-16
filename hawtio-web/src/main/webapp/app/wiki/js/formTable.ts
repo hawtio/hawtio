@@ -1,9 +1,10 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
 module Wiki {
 
-  export function FormTableController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
+  _module.controller("Wiki.FormTableController", ["$scope", "$location", "$routeParams", "workspace", "wikiRepository", ($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) => {
     Wiki.initScope($scope, $routeParams, $location);
     $scope.columnDefs = [];
 
@@ -102,5 +103,5 @@ module Wiki {
       }
     }
     Core.$apply($scope);
-  }
+  }]);
 }

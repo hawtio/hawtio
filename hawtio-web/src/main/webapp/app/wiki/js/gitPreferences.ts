@@ -1,8 +1,9 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
  module Wiki {
-  export function GitPreferences($scope, localStorage, userDetails) {
+  _module.controller("Wiki.GitPreferences", ["$scope", "localStorage", "userDetails", ($scope, localStorage, userDetails) => {
     Core.initPreferenceScope($scope, localStorage, {
       'gitUserName': {
         'value': userDetails.username
@@ -11,6 +12,5 @@
         'value': ''
       }  
     });
-
-  }
+  }]);
  }

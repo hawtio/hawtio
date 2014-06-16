@@ -1,8 +1,9 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
 module Wiki {
-  export function NavBarController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
+  _module.controller("Wiki.NavBarController", ["$scope", "$location", "$routeParams", "workspace", "wikiRepository", ($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) => {
 
     Wiki.initScope($scope, $routeParams, $location);
 
@@ -125,5 +126,5 @@ module Wiki {
       }
       Core.$apply($scope);
     }
-  }
+  }]);
 }

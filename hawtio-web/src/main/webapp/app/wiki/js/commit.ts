@@ -1,9 +1,10 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
 module Wiki {
 
-  export function CommitController($scope, $location, $routeParams, $templateCache, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
+  _module.controller("Wiki.CommitController", ["$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", ($scope, $location, $routeParams, $templateCache, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) => {
 
     Wiki.initScope($scope, $routeParams, $location);
     $scope.commitId = $scope.objectId;
@@ -131,5 +132,5 @@ module Wiki {
         Core.$apply($scope);
       });
     }
-  }
+  }]);
 }

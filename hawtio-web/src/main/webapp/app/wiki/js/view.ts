@@ -1,31 +1,18 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
 module Wiki {
 
   function goToLink(link, $timeout, $location) {
     var href = Core.trimLeading(link, "#");
     $timeout(() => {
-      console.log("About to navigate to: " + href);
+      log.debug("About to navigate to: " + href);
       $location.url(href);
     }, 100);
   }
 
-  export function ViewController($scope, 
-                                 $location, 
-                                 $routeParams, 
-                                 $route, 
-                                 $http, 
-                                 $timeout, 
-                                 workspace:Workspace, 
-                                 marked, 
-                                 fileExtensionTypeRegistry, 
-                                 wikiRepository:GitWikiRepository, 
-                                 $compile, 
-                                 $templateCache, 
-                                 jolokia) {
-
-    var log:Logging.Logger = Logger.get("Wiki");
+  _module.controller("Wiki.ViewController", ["$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", ($scope, $location, $routeParams, $route, $http, $timeout, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile, $templateCache, jolokia) => {
 
     Wiki.initScope($scope, $routeParams, $location);
 
@@ -759,5 +746,5 @@ module Wiki {
       var newFileName = $scope.rename.newFileName;
       return ($scope.pageId && newFileName) ? $scope.pageId + "/" + newFileName : null;
     }
-  }
+  }]);
 }

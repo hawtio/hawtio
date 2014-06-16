@@ -1,10 +1,10 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
 module Wiki {
 
-  export function HistoryController($scope, $location, $routeParams, $templateCache,
-                                    workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
+  _module.controller("Wiki.HistoryController", ["$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", ($scope, $location, $routeParams, $templateCache, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) => {
 
     Wiki.initScope($scope, $routeParams, $location);
     $scope.selectedItems = [];
@@ -121,5 +121,5 @@ module Wiki {
       });
       Wiki.loadBranches(wikiRepository, $scope);
     }
-  }
+  }]);
 }

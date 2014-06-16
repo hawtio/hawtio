@@ -1,8 +1,9 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
 module Wiki {
-  export function EditController($scope, $location, $routeParams, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
+  _module.controller("Wiki.EditController", ["$scope", "$location", "$routeParams", "fileExtensionTypeRegistry", "wikiRepository", ($scope, $location, $routeParams, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) => {
 
     Wiki.initScope($scope, $routeParams, $location);
     $scope.entity = {
@@ -153,5 +154,5 @@ module Wiki {
         Core.$apply($scope);
       });
     }
-  }
+  }]);
 }
