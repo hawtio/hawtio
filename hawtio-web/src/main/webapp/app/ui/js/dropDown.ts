@@ -1,6 +1,7 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
 
   export function hawtioDropDown($templateCache) {
@@ -11,7 +12,7 @@ module UI {
       scope: {
         config: '=hawtioDropDown'
       },
-      controller: ($scope, $element, $attrs) => {
+      controller: ["$scope", "$element", "$attrs", ($scope, $element, $attrs) => {
 
         if (!$scope.config) {
           $scope.config = {};
@@ -70,7 +71,7 @@ module UI {
           return 'open';
         };
 
-      },
+      }],
       link: ($scope, $element, $attrs) => {
         $scope.menuStyle = $templateCache.get("withsubmenus.html");
 
@@ -83,5 +84,7 @@ module UI {
       }
     };
   }
+
+  _module.directive('hawtioDropDown', ["$templateCache", UI.hawtioDropDown]);
 
 }

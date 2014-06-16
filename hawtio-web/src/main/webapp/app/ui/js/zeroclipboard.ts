@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('zeroClipboard', ["$parse", ($parse) => {
+    return UI.ZeroClipboardDirective($parse);
+  }]);
 
   export function ZeroClipboardDirective($parse) {
     return {

@@ -7,6 +7,17 @@ module UI {
 
   export var scrollBarWidth:number = null;
 
+  export function findParentWith($scope, attribute) {
+    if (attribute in $scope) {
+      return $scope;
+    }
+    if (!$scope.$parent) {
+      return null;
+    }
+    // let's go up the scope tree
+    return findParentWith($scope.$parent, attribute);
+  }
+
   export function getIfSet(attribute, $attr, def) {
     if (attribute in $attr) {
       var wantedAnswer = $attr[attribute];

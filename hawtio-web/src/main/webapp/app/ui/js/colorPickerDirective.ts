@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('hawtioColorPicker', () => {
+    return new UI.ColorPicker()
+  });
 
   export var selected:string = "selected";
   export var unselected:string = "unselected";

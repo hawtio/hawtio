@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('hawtioConfirmDialog', () => {
+    return new UI.ConfirmDialog();
+  });
 
   /**
    * Configuration object for the ConfirmDialog directive

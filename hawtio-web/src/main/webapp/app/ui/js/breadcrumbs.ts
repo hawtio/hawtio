@@ -1,6 +1,7 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
 
   export function hawtioBreadcrumbs() {
@@ -136,5 +137,7 @@ module UI {
       }
     }
   }
+
+  _module.directive('hawtioBreadcrumbs', UI.hawtioBreadcrumbs);
 
 }

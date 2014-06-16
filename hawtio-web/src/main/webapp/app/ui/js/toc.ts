@@ -1,6 +1,7 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
 
   export function HawtioTocDisplay(marked, $location, $anchorScroll, $compile) {
@@ -11,7 +12,7 @@ module UI {
       scope: {
         getContents: '&'
       },
-      controller: ($scope, $element, $attrs) => {
+      controller: ["$scope", "$element", "$attrs", ($scope, $element, $attrs) => {
         $scope.remaining = -1;
         $scope.render = false;
         $scope.chapters = [];
@@ -67,7 +68,7 @@ module UI {
             });
           });
         };
-      },
+      }],
       link: ($scope, $element, $attrs) => {
         var offsetTop = 0;
         var logbar = $('.logbar');
@@ -264,4 +265,7 @@ module UI {
       }
     }
   }
+
+  _module.directive('hawtioTocDisplay', ["marked", "$location", "$anchorScroll", "$compile", UI.HawtioTocDisplay]);
+
 }

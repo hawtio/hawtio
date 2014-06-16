@@ -1,8 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
 
+  _module.directive('hawtioAutoColumns', () => {
+    return new UI.AutoColumns();
+  });
   /**
    * Directive class that organizes child elements into columns automatically
    *

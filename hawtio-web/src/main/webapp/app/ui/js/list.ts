@@ -1,21 +1,8 @@
 /**
  * @module UI
  */
-
+/// <reference path="./uiPlugin.ts"/>
 module UI {
-
-
-  export function findParentWith($scope, attribute) {
-    if (attribute in $scope) {
-      return $scope;
-    }
-    if (!$scope.$parent) {
-      return null;
-    }
-    // let's go up the scope tree
-    return findParentWith($scope.$parent, attribute);
-  }
-
 
   export function hawtioList($templateCache, $compile) {
     return {
@@ -108,4 +95,7 @@ module UI {
       }
     };
   }
+
+  _module.directive('hawtioList', ["$templateCache", "$compile", UI.hawtioList]);
+
 }

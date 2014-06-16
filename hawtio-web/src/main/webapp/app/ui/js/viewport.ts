@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('hawtioViewport', () => {
+    return new UI.ViewportHeight();
+  });
 
   export class ViewportHeight {
     public restrict = 'A';
@@ -46,6 +51,10 @@ module UI {
     };
   }
 
+  _module.directive('hawtioHorizontalViewport', () => {
+    return new UI.HorizontalViewport();
+  });
+
   export class HorizontalViewport {
     public restrict = 'A';
 
@@ -62,6 +71,4 @@ module UI {
       });
     };
   }
-
-
 }

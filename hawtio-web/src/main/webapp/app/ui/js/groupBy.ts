@@ -1,3 +1,4 @@
+/// <reference path="./uiPlugin.ts"/>
 module UI {
   export function groupBy() {
     return (list, group) => {
@@ -25,4 +26,6 @@ module UI {
       return list;
     };
   }
+
+  _module.filter('hawtioGroupBy', UI.groupBy);
 }

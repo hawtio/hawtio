@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('hawtioPager', () => {
+    return new UI.TablePager();
+  });
 
   export class TablePager {
     public restrict = 'A';

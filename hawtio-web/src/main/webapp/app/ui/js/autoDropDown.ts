@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('hawtioAutoDropdown', () => {
+    return UI.AutoDropDown;
+  });
 
   /**
    * TODO turn this into a normal directive function
