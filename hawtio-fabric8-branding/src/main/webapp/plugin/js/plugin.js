@@ -23,12 +23,13 @@ var fabric8Branding = (function (self) {
     Themes.brandings['fabric8'] = {
       label: 'fabric8',
       setFunc: function(branding) {
-        branding.appName = 'fabric8 console';
-        branding.appLogo = self.context + '/plugin/img/fabric8_icon.svg';
+        branding.appName = 'fabric8';
+        branding.appLogo = self.context + 'plugin/img/fabric8_icon.svg';
         branding.logoOnly = false;
         branding.fullscreenLogin = true;
         branding.css = self.context + 'plugin/css/branding.css';
         branding.favicon = self.context + 'plugin/img/favicon.ico';
+        branding.welcomePageUrl = self.context + 'plugin/doc/welcome.md';
         return branding;
       }
     }
