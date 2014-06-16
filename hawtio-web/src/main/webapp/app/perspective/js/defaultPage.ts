@@ -1,6 +1,7 @@
 /**
  * @module Perspective
  */
+/// <reference path="./perspectivePlugin.ts"/>
 module Perspective {
 
   /**
@@ -22,4 +23,6 @@ module Perspective {
       console.log("No default page could be chosen!");
     }
   }
+
+  _module.controller("Perspective.DefaultPageController", ["$scope", "$location", "localStorage", "workspace", "jolokia", DefaultPageController]);
 }

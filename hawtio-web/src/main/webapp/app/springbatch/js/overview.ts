@@ -1,6 +1,7 @@
+/// <reference path="./springbatchPlugin.ts"/>
 module SpringBatch {
 
-    export function JobOverviewExecListController($scope,$routeParams, $location, workspace:Workspace, jolokia, $resource, $rootScope,$http) {
+    _module.controller("SpringBatch.JobOverviewExecListController", ["$scope", "$routeParams", "$location", "workspace", "jolokia", "$resource", "$rootScope", "$http", ($scope,$routeParams, $location, workspace:Workspace, jolokia, $resource, $rootScope,$http) => {
 
         var springBatchServerOrigin = $rootScope.springBatchServer;
         var springBatchServerPath = springBatchServerOrigin+'jobs/:jobName';
@@ -215,7 +216,5 @@ module SpringBatch {
                 $scope.stepExecutionList = stepList;
             });
         };
-
-
-    }
+    }]);
 }

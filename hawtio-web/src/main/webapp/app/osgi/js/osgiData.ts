@@ -1,6 +1,7 @@
 /**
  * @module Osgi
  */
+/// <reference path="./osgiPlugin.ts"/>
 module Osgi {
 
     export class OsgiDataService {
@@ -17,6 +18,7 @@ module Osgi {
         public getBundles() {
             var bundles = {};
 
+            // TODO make this async,especially given this returns lots of data
             var response = this.jolokia.request({
                 type: 'exec',
                 mbean: getSelectionBundleMBean(this.workspace),

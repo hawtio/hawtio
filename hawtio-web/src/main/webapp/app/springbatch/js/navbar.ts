@@ -1,5 +1,6 @@
+/// <reference path="./springbatchPlugin.ts"/>
 module SpringBatch {
-    export function NavBarController($scope, $routeParams, $location, workspace:Workspace) {
+    _module.controller("SpringBatch.NavBarController", ["$scope", "$routeParams", "$location", "workspace", ($scope, $routeParams, $location, workspace:Workspace) => {
 
         var subLevelTabs =[
             {uri:'servers',name:'Servers List'} ,
@@ -12,5 +13,5 @@ module SpringBatch {
         $scope.isActive = (tab) => {
             return ('/springbatch/'+tab.uri === $location.path());
         };
-    }
+    }]);
 }

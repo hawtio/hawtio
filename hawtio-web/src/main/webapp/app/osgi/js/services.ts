@@ -1,13 +1,10 @@
 /**
  * @module Osgi
  */
+/// <reference path="./osgiPlugin.ts"/>
 module Osgi {
 
-    export function ServiceController($scope,
-                                      $filter:ng.IFilterService,
-                                      workspace:Workspace,
-                                      $templateCache:ng.ITemplateCacheService,
-                                      $compile:ng.IAttributes) {
+    _module.controller("Osgi.ServiceController", ["$scope", "$filter", "workspace", "$templateCache", "$compile", ($scope, $filter:ng.IFilterService, workspace:Workspace, $templateCache:ng.ITemplateCacheService, $compile:ng.IAttributes) => {
 
         var dateFilter = $filter('date');
 
@@ -42,6 +39,6 @@ module Osgi {
             $scope.widget.populateTable(response.value);
             Core.$apply($scope);
         };
-    }
+    }]);
 };
 

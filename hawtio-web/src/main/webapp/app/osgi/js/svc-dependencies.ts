@@ -1,9 +1,10 @@
 /**
  * @module Osgi
  */
+/// <reference path="./osgiPlugin.ts"/>
 module Osgi {
 
-    export function ServiceDependencyController($scope, $location, $routeParams, workspace:Workspace, osgiDataService: OsgiDataService) {
+    _module.controller("Osgi.ServiceDependencyController", ["$scope", "$location", "$routeParams", "workspace", "osgiDataService", ($scope, $location, $routeParams, workspace:Workspace, osgiDataService: OsgiDataService) => {
 
         $scope.init = () => {
 
@@ -142,5 +143,5 @@ module Osgi {
 
         $scope.init();
         $scope.updateGraph();
-    }
+    }]);
 }

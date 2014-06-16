@@ -1,8 +1,9 @@
 /**
  * @module Osgi
  */
+/// <reference path="./osgiPlugin.ts"/>
 module Osgi {
-    export function FrameworkController($scope, $dialog, workspace:Workspace) {
+    _module.controller("Osgi.FrameworkController", ["$scope", "$dialog", "workspace", ($scope, $dialog, workspace:Workspace) => {
         $scope.editDialog = new UI.Dialog();
 
         updateContents();
@@ -50,5 +51,5 @@ module Osgi {
                     onSuccess(populatePage));
             }
         }
-    }
+    }]);
 }

@@ -1,9 +1,10 @@
 /**
  * @module Osgi
  */
+/// <reference path="./osgiPlugin.ts"/>
 module Osgi {
 
-    export function PackageController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {
+    _module.controller("Osgi.PackageController", ["$scope", "$filter", "workspace", "$routeParams", ($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) => {
         $scope.package = $routeParams.package;
         $scope.version = $routeParams.version;
 
@@ -24,5 +25,5 @@ module Osgi {
                     onSuccess(populateTable));
             }
         }
-    }
+    }]);
 }

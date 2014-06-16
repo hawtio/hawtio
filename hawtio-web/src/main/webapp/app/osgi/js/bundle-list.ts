@@ -1,8 +1,9 @@
 /**
  * @module Osgi
  */
+/// <reference path="./osgiPlugin.ts"/>
 module Osgi {
-  export function BundleListController($scope, workspace:Workspace, jolokia, localStorage) {
+  _module.controller("Osgi.BundleListController", ["$scope", "workspace", "jolokia", "localStorage", ($scope, workspace:Workspace, jolokia, localStorage) => {
     $scope.result = {};
     $scope.bundles = [];
     $scope.bundleUrl = "";
@@ -200,5 +201,5 @@ module Osgi {
       type: 'exec', mbean: getSelectionBundleMBean(workspace),
       operation: 'listBundles()'
     }, onSuccess(processResponse));
-  }
+  }]);
 }

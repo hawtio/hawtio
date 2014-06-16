@@ -1,9 +1,10 @@
 /**
  * @module Source
  */
+/// <reference path="./sourcePlugin.ts"/>
 module Source {
 
-  export function JavaDocController($scope, $location, $routeParams, workspace:Workspace, fileExtensionTypeRegistry, jolokia) {
+  _module.controller("Source.JavaDocController", ["$scope", "$location", "$routeParams", "workspace", "fileExtensionTypeRegistry", ($scope, $location, $routeParams, workspace:Workspace, fileExtensionTypeRegistry, jolokia) => {
     $scope.pageId = Wiki.pageId($routeParams, $location);
     var mavenCoords = $routeParams["mavenCoords"];
     var fileName = $scope.pageId;
@@ -47,5 +48,5 @@ module Source {
         jolokia.execute(mbean, "getJavaDoc", mavenCoords, fileName, onSuccess(viewContents));
       }
     }
-  }
+  }]);
 }

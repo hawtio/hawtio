@@ -1,9 +1,10 @@
 /**
  * @module Site
  */
+/// <reference path="./sitePlugin.ts"/>
 module Site {
 
-  export function IndexController($scope, $location) {
+  _module.controller("Site.IndexController", ["$scope", "$location", ($scope, $location) => {
     $scope.slideInterval = 5000;
-  }
+  }]);
 }

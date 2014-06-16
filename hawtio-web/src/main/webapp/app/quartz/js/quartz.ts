@@ -1,9 +1,10 @@
 /**
  * @module Quartz
  */
+/// <reference path="./quartzPlugin.ts"/>
 module Quartz {
 
-  export function QuartzController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia) {
+  _module.controller("Quartz.QuartzController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location:ng.ILocationService, workspace:Workspace, jolokia) => {
 
     var log:Logging.Logger = Logger.get("Quartz");
 
@@ -552,6 +553,6 @@ module Quartz {
 
     // reload tree on startup
     reloadTree();
-  }
+  }]);
 
 }

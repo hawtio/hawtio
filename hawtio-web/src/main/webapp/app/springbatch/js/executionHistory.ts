@@ -1,6 +1,7 @@
+/// <reference path="./springbatchPlugin.ts"/>
 module SpringBatch {
 
-    export function ExecutionHistoryController($scope, $routeParams, $location, workspace:Workspace, $resource, $rootScope) {
+    _module.controller("SpringBatch.ExecutionHistoryController", ["$scope", "$routeParams", "$location", "workspace", "$resource", "$rootScope", ($scope, $routeParams, $location, workspace:Workspace, $resource, $rootScope) => {
         var springBatchServerOrigin = $rootScope.springBatchServer;
         var proxyUrl = '/hawtio/proxy/';
         var executionHistoryPath = 'jobs/:jobName/executions.json';
@@ -18,5 +19,5 @@ module SpringBatch {
             $scope.jobName = $routeParams.jobName;
             $scope.jobId = $routeParams.jobId;
         })
-    }
+    }]);
 }

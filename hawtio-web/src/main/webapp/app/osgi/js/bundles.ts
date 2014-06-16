@@ -1,9 +1,10 @@
 /**
  * @module Osgi
  */
+/// <reference path="./osgiPlugin.ts"/>
 module Osgi {
 
-  export function BundlesController($scope, workspace:Workspace, jolokia) {
+  _module.controller("Osgi.BundlesController", ["$scope", "workspace", "jolokia", ($scope, workspace:Workspace, jolokia) => {
 
     $scope.result = {};
     $scope.bundles = [];
@@ -181,5 +182,5 @@ module Osgi {
       operation: 'listBundles()'
     }, onSuccess(render));
 
-  }
+  }]);
 }

@@ -1,8 +1,9 @@
 /**
  * @module Osgi
  */
+/// <reference path="./osgiPlugin.ts"/>
 module Osgi {
-  export function PidController($scope, $timeout, $routeParams, $location, workspace:Workspace, jolokia) {
+  _module.controller("Osgi.PidController", ["$scope", "$timeout", "$routeParams", "$location", "workspace", "jolokia", ($scope, $timeout, $routeParams, $location, workspace:Workspace, jolokia) => {
     $scope.deletePropDialog = new UI.Dialog();
     $scope.deletePidDialog = new UI.Dialog();
     $scope.addPropertyDialog = new UI.Dialog();
@@ -390,5 +391,5 @@ module Osgi {
       $scope.modelLoaded = false;
       Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, $scope.pid, populateTable);
     }
-  }
+  }]);
 }

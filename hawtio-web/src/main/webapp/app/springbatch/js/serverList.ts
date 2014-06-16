@@ -1,6 +1,7 @@
+/// <reference path="./springbatchPlugin.ts"/>
 module SpringBatch {
 
-    export function ServerListController($scope, $location, workspace:Workspace, jolokia, $resource, $rootScope, $http) {
+    _module.controller("SpringBatch.ServerListController", ["$scope", "$location", "workspace", "jolokia", "$resource", "$rootScope", "$http", ($scope, $location, workspace:Workspace, jolokia, $resource, $rootScope, $http) => {
 
         var serverList = [];
         var serverHref = '';
@@ -18,5 +19,5 @@ module SpringBatch {
             serverHref='';
         }
         $scope.serverList = serverList;
-    }
+    }]);
 }

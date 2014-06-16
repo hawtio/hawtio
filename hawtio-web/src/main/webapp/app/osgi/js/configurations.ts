@@ -1,9 +1,10 @@
 /**
  * @module Osgi
  */
+/// <reference path="./osgiPlugin.ts"/>
 module Osgi {
 
-  export function ConfigurationsController($scope, $routeParams, $location, workspace:Workspace, jolokia) {
+  _module.controller("Osgi.ConfigurationsController", ["$scope", "$routeParams", "$location", "workspace", "jolokia", ($scope, $routeParams, $location, workspace:Workspace, jolokia) => {
     $scope.selectedItems = [];
 
     $scope.grid = {
@@ -251,8 +252,5 @@ module Osgi {
         }
       };
     }
-
-
-
-  }
+  }]);
 }

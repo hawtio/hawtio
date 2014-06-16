@@ -2,13 +2,14 @@
  * @module RBAC
  * @main RBAC
  */
+/// <reference path="./rbacHelpers.ts"/>
 module RBAC {
 
   export var pluginName:string = "hawtioRbac";
   export var log:Logging.Logger = Logger.get("RBAC");
   export var _module = angular.module(pluginName, ["hawtioCore"]);
 
-  _module.factory('rbacTasks', (postLoginTasks:Core.Tasks, jolokia) => {
+  _module.factory('rbacTasks', ["postLoginTasks", "jolokia", (postLoginTasks:Core.Tasks, jolokia) => {
     postLoginTasks.addTask("FetchJMXSecurityMBeans", () => {
       jolokia.request({
         type: 'search',
@@ -43,13 +44,13 @@ module RBAC {
     });
 
     return RBAC.rbacTasks;
-  });
+  }]);
 
-  _module.factory('rbacACLMBean', (rbacTasks) => {
+  _module.factory('rbacACLMBean', ["rbacTasks", (rbacTasks) => {
     return rbacTasks.getACLMBean();
-  });
+  }]);
 
-  _module.run((jolokia,
+  _module.run(["jolokia", "rbacTasks", "preLogoutTasks", "workspace", "$rootScope", (jolokia,
                rbacTasks,
                preLogoutTasks:Core.Tasks,
                workspace:Core.Workspace,
@@ -109,9 +110,7 @@ module RBAC {
         }));
       });
     });
-
-  });
-
+  }]);
+  hawtioPluginLoader.addModule(pluginName);
 }
 
-hawtioPluginLoader.addModule(RBAC.pluginName);

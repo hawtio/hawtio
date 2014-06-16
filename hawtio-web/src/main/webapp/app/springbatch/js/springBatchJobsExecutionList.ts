@@ -1,6 +1,7 @@
+/// <reference path="./springbatchPlugin.ts"/>
 module SpringBatch{
 
-    export function SpringBatchJobExecutionListController($scope, $resource, $rootScope) {
+    _module.controller("SpringBatch.SpringBatchJobExecutionListController", ["$scope", "$resource", "$rootScope", ($scope, $resource, $rootScope) => {
         var springBatchServerOrigin = $rootScope.springBatchServer;
         if(springBatchServerOrigin == undefined){
             $rootScope.alert.content='No Server selected. Please, use Connect or Server List screen to select one.';
@@ -24,6 +25,5 @@ module SpringBatch{
             }
             $scope.jobExecutions = executionList;
         });
-    }
-
+    }]);
 }

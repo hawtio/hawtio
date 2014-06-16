@@ -11,7 +11,7 @@ module Fabric {
       profileId: '='
     };
 
-    public controller = ["$scope", "$element", "$attrs", "$routeParams", "jolokia", "$location", "workspace", "$qa", ($scope, $element, $attrs, $routeParams, jolokia, $location, workspace, $q) => {
+    public controller = ["$scope", "$element", "$attrs", "$routeParams", "jolokia", "$location", "workspace", "$q", ($scope, $element, $attrs, $routeParams, jolokia, $location, workspace, $q) => {
 
       $scope.inDirective = true;
 

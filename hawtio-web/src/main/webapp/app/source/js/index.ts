@@ -1,9 +1,10 @@
 /**
  * @module Source
  */
+/// <reference path="./sourcePlugin.ts"/>
 module Source {
 
-  export function IndexController($scope, $location, $routeParams, workspace:Workspace, jolokia) {
+  _module.controller("Source.IndexController", ["$scope", "$location", "$routeParams", "workspace", "jolokia", ($scope, $location, $routeParams, workspace:Workspace, jolokia) => {
 
     $scope.pageId = Wiki.pageId($routeParams, $location);
     $scope.mavenCoords = $routeParams["mavenCoords"];
@@ -109,5 +110,5 @@ module Source {
     var maybeUpdateView = Core.throttled(updateView, 1000);
     setTimeout(maybeUpdateView, 50);
 
-  }
+  }]);
 }

@@ -1,10 +1,10 @@
 /**
  * @module Source
  */
-
+/// <reference path="./sourcePlugin.ts"/>
 module Source {
 
-  export function SourceController($scope, $location, $routeParams, workspace:Workspace, fileExtensionTypeRegistry, jolokia) {
+  _module.controller("Source.SourceController", ["$scope", "$location", "$routeParams", "workspace", "fileExtensionTypeRegistry", ($scope, $location, $routeParams, workspace:Workspace, fileExtensionTypeRegistry, jolokia) => {
 
     $scope.pageId = Wiki.pageId($routeParams, $location);
     $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
@@ -111,5 +111,5 @@ module Source {
 
     var maybeUpdateView = Core.throttled(updateView, 1000);
      setTimeout(maybeUpdateView, 50);
-  }
+  }]);
 }

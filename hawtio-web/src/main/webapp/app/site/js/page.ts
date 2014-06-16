@@ -1,9 +1,10 @@
 /**
  * @module Site
  */
+/// <reference path="./sitePlugin.ts"/>
 module Site {
 
-  export function PageController($scope, $routeParams, $location, $compile, $http, fileExtensionTypeRegistry) {
+  _module.controller("Site.PageController", ["$scope", "$routeParams", "$location", "$compile", "$http", "fileExtensionTypeRegistry", ($scope, $routeParams, $location, $compile, $http, fileExtensionTypeRegistry) => {
 
     var log:Logging.Logger = Logger.get("Site");
     var pageId = $routeParams["page"];
@@ -48,5 +49,5 @@ module Site {
       $compile($scope.html)($scope);
       Core.$apply($scope);
     }
-  }
+  }]);
 }

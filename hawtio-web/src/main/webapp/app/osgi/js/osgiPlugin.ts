@@ -2,9 +2,13 @@
  * @module Osgi
  * @main Osgi
  */
+/// <reference path="./osgiHelpers.ts"/>
 module Osgi {
   var pluginName = 'osgi';
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore', 'hawtio-ui']).config(($routeProvider) => {
+
+  export var _module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore', 'hawtio-ui']);
+  
+  _module.config(["$routeProvider", ($routeProvider) => {
     $routeProvider.
             when('/osgi/bundle-list', {templateUrl: 'app/osgi/html/bundle-list.html'}).
             when('/osgi/bundles', {templateUrl: 'app/osgi/html/bundles.html'}).
@@ -17,27 +21,28 @@ module Osgi {
             when('/osgi/pid/:pid', {templateUrl: 'app/osgi/html/pid.html'}).
             when('/osgi/fwk', {templateUrl: 'app/osgi/html/framework.html'}).
             when('/osgi/dependencies', {templateUrl: 'app/osgi/html/svc-dependencies.html', reloadOnSearch: false })
-  }).
-          run((workspace:Workspace, viewRegistry, helpRegistry) => {
+  }]);
 
-            viewRegistry['osgi'] = "app/osgi/html/layoutOsgi.html";
-            helpRegistry.addUserDoc('osgi', 'app/osgi/doc/help.md', () => {
-              return workspace.treeContainsDomainAndProperties("osgi.core");
-            });
+  _module.run(["workspace", "viewRegistry", "helpRegistry", (workspace:Workspace, viewRegistry, helpRegistry) => {
 
-        workspace.topLevelTabs.push( {
-              id: "osgi",
-              content: "OSGi",
-              title: "Visualise and manage the bundles and services in this OSGi container",
-              isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("osgi.core"),
-              href: () => "#/osgi/bundle-list",
-              isActive: (workspace: Workspace) => workspace.isLinkActive("osgi")
-            });
+    viewRegistry['osgi'] = "app/osgi/html/layoutOsgi.html";
+    helpRegistry.addUserDoc('osgi', 'app/osgi/doc/help.md', () => {
+      return workspace.treeContainsDomainAndProperties("osgi.core");
+    });
 
-      })
-      .factory('osgiDataService', function (workspace: Workspace, jolokia) {
-        return new OsgiDataService(workspace, jolokia);
-      });
+    workspace.topLevelTabs.push({
+      id: "osgi",
+      content: "OSGi",
+      title: "Visualise and manage the bundles and services in this OSGi container",
+      isValid: (workspace: Workspace) => workspace.treeContainsDomainAndProperties("osgi.core"),
+      href: () => "#/osgi/bundle-list",
+      isActive: (workspace: Workspace) => workspace.isLinkActive("osgi")
+    });
+  }]);
+
+  _module.factory('osgiDataService', ["workspace", "jolokia", (workspace: Workspace, jolokia) => {
+    return new OsgiDataService(workspace, jolokia);
+  }]);
 
   hawtioPluginLoader.addModule(pluginName);
 }
