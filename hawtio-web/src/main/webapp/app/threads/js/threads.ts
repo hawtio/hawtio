@@ -1,9 +1,10 @@
 /**
  * @module Threads
  */
+/// <reference path="./threadsPlugin.ts"/>
 module Threads {
 
-  export function ThreadsController($scope, $routeParams, $templateCache, jolokia) {
+  _module.controller("Threads.ThreadsController", ["$scope", "$routeParams", "$templateCache", "jolokia", ($scope, $routeParams, $templateCache, jolokia) => {
 
     $scope.selectedRowJson = '';
 
@@ -288,6 +289,5 @@ module Threads {
 
     initFunc();
 
-  }
-
+  }]);
 }

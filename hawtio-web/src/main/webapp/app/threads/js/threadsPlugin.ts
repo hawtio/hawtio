@@ -11,18 +11,16 @@ module Threads {
   export var mbeanType = 'Threading';
   export var mbean = jmxDomain + ":type=" + mbeanType;
 
-  export var angularModule = angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'ui']);
+  export var _module = angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'ui']);
 
-  angularModule.config(($routeProvider) => {
+  _module.config(["$routeProvider", ($routeProvider) => {
     $routeProvider.
         when('/threads', {templateUrl: templatePath + 'index.html'});
-  });
+  }]);
 
-  angularModule.run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
-
+  _module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", ($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
     viewRegistry['threads'] = layoutFull;
     helpRegistry.addUserDoc('threads', 'app/threads/doc/help.md');
-
     workspace.topLevelTabs.push({
       id: "threads",
       content: "Threads",
@@ -31,11 +29,7 @@ module Threads {
       href: () => "#/threads",
       isActive: (workspace:Workspace) => workspace.isTopTabActive("threads")
     });
-
-  });
-
-
-
+  }]);
 
   hawtioPluginLoader.addModule(pluginName);
 }

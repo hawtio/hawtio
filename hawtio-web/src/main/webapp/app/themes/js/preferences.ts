@@ -1,8 +1,9 @@
 /**
  *  @module Themes
  */
+/// <reference path="./themesPlugin.ts"/>
 module Themes {
-  export function PreferencesController($scope, localStorage, branding) {
+  _module.controller("Themes.PreferencesController", ["$scope", "localStorage", "branding", ($scope, localStorage, branding) => {
 
     $scope.availableThemes = Themes.getAvailableThemes();
     $scope.availableBrandings = Themes.getAvailableBrandings();
@@ -25,5 +26,5 @@ module Themes {
         }
       }
     });
-  }
+  }]);
 }

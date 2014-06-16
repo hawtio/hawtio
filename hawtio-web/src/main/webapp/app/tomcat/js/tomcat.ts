@@ -1,6 +1,7 @@
+/// <reference path="./tomcatPlugin.ts"/>
 module Tomcat {
 
-    export function TomcatController($scope, $location, workspace:Workspace, jolokia) {
+    _module.controller("Tomcat.TomcatController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | tomcatIconClass}}"></i></div>';
         var urlTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">' +
@@ -314,5 +315,5 @@ module Tomcat {
           $scope.gridOptions.columnDefs = columnDefsTomcat7;
         }
 
-    }
+    }]);
 }

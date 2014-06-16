@@ -1,6 +1,7 @@
+/// <reference path="./tomcatPlugin.ts"/>
 module Tomcat {
 
-    export function ConnectorsController($scope, $location, workspace:Workspace, jolokia) {
+    _module.controller("Tomcat.ConnectorsController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | tomcatIconClass}}"></i></div>';
 
@@ -158,16 +159,16 @@ module Tomcat {
       $scope.$on('jmxTreeUpdated', reloadFunction);
       $scope.$watch('workspace.tree', reloadFunction);
 
-    function reloadFunction() {
-      // if the JMX tree is reloaded its probably because a new MBean has been added or removed
-      // so lets reload, asynchronously just in case
-      setTimeout(loadData, 50);
-    }
+      function reloadFunction() {
+        // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+        // so lets reload, asynchronously just in case
+        setTimeout(loadData, 50);
+      }
 
       function loadData() {
         console.log("Loading tomcat connector data...");
         jolokia.search("*:type=Connector,*", onSuccess(render));
       }
 
-    }
+    }]);
 }
