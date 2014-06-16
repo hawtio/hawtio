@@ -1,9 +1,10 @@
 /**
  * @module Maven
  */
+/// <reference path="./mavenPlugin.ts"/>
 module Maven {
 
-  export function SearchController($scope, $location, workspace:Workspace, jolokia) {
+  _module.controller("Maven.SearchController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
     var log:Logging.Logger = Logger.get("Maven");
 
@@ -126,5 +127,5 @@ module Maven {
 
       Core.$apply($scope);
     }
-  }
+  }]);
 }

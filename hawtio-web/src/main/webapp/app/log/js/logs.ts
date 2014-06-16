@@ -1,6 +1,7 @@
 /**
  * @module Log
  */
+/// <reference path="./logPlugin.ts"/>
 module Log {
 
   var log:Logging.Logger = Logger.get("Log");
@@ -13,7 +14,7 @@ module Log {
     message: string;
   }
 
-  export function LogController($scope, $routeParams, $location, localStorage, workspace:Workspace, jolokia, $window, $document, $templateCache) {
+  _module.controller("Log.LogController", ["$scope", "$routeParams", "$location", "localStorage", "workspace", "jolokia", "$window", "$document", "$templateCache", ($scope, $routeParams, $location, localStorage, workspace:Workspace, jolokia, $window, $document, $templateCache) => {
     $scope.sortAsc = true;
     var value = localStorage["logSortAsc"];
     if (angular.isString(value)) {
@@ -435,5 +436,5 @@ module Log {
 
       jolokia.execute(logQueryMBean, "getLogResults(int)", $scope.logBatchSize, onSuccess(firstCallback));
     }
-  }
+  }]);
 }

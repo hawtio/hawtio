@@ -1,9 +1,10 @@
 /**
  * @module Maven
  */
+/// <reference path="./mavenPlugin.ts"/>
 module Maven {
 
-  export function DependenciesController($scope, $routeParams, $location, workspace:Workspace, jolokia) {
+  _module.controller("Maven.DependenciesController", ["$scope", "$routeParams", "$location", "workspace", "jolokia", ($scope, $routeParams, $location, workspace:Workspace, jolokia) => {
     $scope.artifacts = [];
     $scope.group = $routeParams["group"] || "";
     $scope.artifact = $routeParams["artifact"] || "";
@@ -92,5 +93,5 @@ module Maven {
         addChildren(node, child);
       });
     }
-  }
+  }]);
 }

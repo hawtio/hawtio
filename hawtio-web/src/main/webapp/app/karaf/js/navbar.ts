@@ -1,9 +1,10 @@
 /**
  * @module Karaf
  */
+/// <reference path="./karafPlugin.ts"/>
 module Karaf {
 
-  export function NavBarController($scope, workspace:Workspace) {
+  _module.controller("Karaf.NavBarController", ["$scope", "workspace", ($scope, workspace:Workspace) => {
 
     $scope.hash = workspace.hash();
 
@@ -22,5 +23,5 @@ module Karaf {
     $scope.isPrefixActive = (nav) => {
       return workspace.isLinkPrefixActive(nav);
     };
-  }
+  }]);
 }

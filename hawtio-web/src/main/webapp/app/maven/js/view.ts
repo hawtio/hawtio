@@ -1,9 +1,10 @@
 /**
  * @module Maven
  */
+/// <reference path="./mavenPlugin.ts"/>
 module Maven {
 
-  export function ViewController($scope, $location, workspace:Workspace, jolokia) {
+  _module.controller("Maven.ViewController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
     $scope.$watch('workspace.tree', function () {
       // if the JMX tree is reloaded its probably because a new MBean has been added or removed
       // so lets reload, asynchronously just in case
@@ -17,5 +18,5 @@ module Maven {
 
     function loadData() {
     }
-  }
+  }]);
 }

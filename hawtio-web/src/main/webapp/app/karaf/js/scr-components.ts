@@ -1,9 +1,10 @@
 /**
  * @module Karaf
  */
+/// <reference path="./karafPlugin.ts"/>
 module Karaf {
 
-    export function ScrComponentsController($scope, $location, workspace, jolokia) {
+    _module.controller("Karaf.ScrComponentsController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace, jolokia) => {
 
         $scope.component = empty();
 
@@ -85,5 +86,5 @@ module Karaf {
                 Core.$apply($scope);
             }
         }
-    }
+    }]);
 }

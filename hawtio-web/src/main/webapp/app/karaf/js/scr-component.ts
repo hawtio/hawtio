@@ -1,14 +1,13 @@
 /**
  * @module Karaf
  */
+/// <reference path="./karafPlugin.ts"/>
 module Karaf {
 
-    export function ScrComponentController($scope, $location, workspace, jolokia, $routeParams) {
+    _module.controller("Karaf.ScrComponentController", ["$scope", "$location", "workspace", "jolokia", "$routeParams", ($scope, $location, workspace, jolokia, $routeParams) => {
 
         $scope.name = $routeParams.name;
         populateTable();
-
-
 
         function populateTable() {
             $scope.row = getComponentByName(workspace, jolokia, $scope.name);
@@ -30,5 +29,5 @@ module Karaf {
                 console.log("Failed to deactivate!")
             });
         };
-    }
+    }]);
 }

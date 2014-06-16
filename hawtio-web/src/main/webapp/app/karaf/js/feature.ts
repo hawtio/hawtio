@@ -1,9 +1,10 @@
 /**
  * @module Karaf
  */
+/// <reference path="./karafPlugin.ts"/>
 module Karaf {
 
-    export function FeatureController($scope, jolokia, workspace:Workspace, $routeParams) {
+    _module.controller("Karaf.FeatureController", ["$scope", "jolokia", "workspace", "$routeParams", ($scope, jolokia, workspace:Workspace, $routeParams) => {
         $scope.hasFabric = Fabric.hasFabric(workspace);
         $scope.name = $routeParams.name;
         $scope.version = $routeParams.version;
@@ -102,5 +103,5 @@ module Karaf {
             });
             feature["BundleDetails"] = bundleDetails;
         }
-    }
+    }]);
 }

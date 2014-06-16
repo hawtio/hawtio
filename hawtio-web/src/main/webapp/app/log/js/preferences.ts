@@ -1,8 +1,9 @@
 /**
  * @module Logs
  */
- module Logs {
-  export function PreferencesController($scope, localStorage) {
+/// <reference path="./logPlugin.ts"/>
+ module Log {
+  _module.controller("Log.PreferencesController", ["$scope", "localStorage", ($scope, localStorage) => {
     Core.initPreferenceScope($scope, localStorage, {
       'logCacheSize': {
         'value': 1000,
@@ -17,6 +18,5 @@
         'converter': Core.parseBooleanValue
       }
     });
-
-  };
+  }]);
  }
