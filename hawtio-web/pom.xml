@@ -16,6 +16,7 @@
     <!-- when not doing a release lets use a dummy version number to test out the replacement in the manifest.json -->
     <chrome-version>1.0.1</chrome-version>
     <phantomjs-executable>/usr/local/bin/phantomjs</phantomjs-executable>
+    <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
     <watch>false</watch>
   </properties>
 
@@ -368,6 +369,22 @@
     <plugins>
 
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>src/main/webapp/app</directory>
+              <includes>
+                <include>app.js</include>
+              </includes>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <groupId>io.hawt</groupId>
         <artifactId>typescript-maven-plugin</artifactId>
         <version>0.0.1</version>
@@ -422,6 +439,20 @@
                   </fileset>
                 </copy>
 
+              </target>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <echo>Copying generated app.js</echo>
+                <copy tofile="${webapp-outdir}/app/app.js" file="${basedir}/src/main/webapp/app/app.js"/>
               </target>
             </configuration>
           </execution>
