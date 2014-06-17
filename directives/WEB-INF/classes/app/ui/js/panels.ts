@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('hawtioMessagePanel', () => {
+    return new UI.MessagePanel();
+  });
 
   export class MessagePanel {
     public restrict = 'A';
@@ -48,6 +53,11 @@ module UI {
       })
     };
   }
+
+
+  _module.directive('hawtioInfoPanel', () => {
+    return new UI.InfoPanel();
+  });
 
   export class InfoPanel {
     public restrict = 'A';

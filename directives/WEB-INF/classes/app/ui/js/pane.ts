@@ -1,6 +1,7 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
 
   export function hawtioPane() {
@@ -117,6 +118,8 @@ module UI {
       }
     }
   }
+
+  _module.directive('hawtioPane', UI.hawtioPane);
 
 }
 

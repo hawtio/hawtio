@@ -1,6 +1,7 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
 
   /**
@@ -9,7 +10,7 @@ module UI {
    * @param $templateCache
    * @constructor
    */
-  export function IconTestController($scope, $templateCache) {
+  _module.controller("UI.IconTestController", ["$scope", "$templateCache", ($scope, $templateCache) => {
     $scope.exampleHtml = $templateCache.get('example-html');
     $scope.exampleConfigJson = $templateCache.get('example-config-json');
 
@@ -17,7 +18,7 @@ module UI {
       $scope.icons = angular.fromJson($scope.exampleConfigJson);
       //log.debug("Icons: ", $scope.icons);
     });
-  }
+  }]);
 
   /**
    * The hawtio-icon directive
@@ -47,5 +48,6 @@ module UI {
       }
     };
   }
+  _module.directive('hawtioIcon', UI.hawtioIcon);
 
 }

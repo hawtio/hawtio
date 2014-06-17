@@ -3,464 +3,6 @@
 */
 var Maven;
 (function (Maven) {
-    function ArtifactController($scope, $routeParams, workspace, jolokia) {
-        $scope.row = {
-            groupId: $routeParams["group"] || "",
-            artifactId: $routeParams["artifact"] || "",
-            version: $routeParams["version"] || "",
-            classifier: $routeParams["classifier"] || "",
-            packaging: $routeParams["packaging"] || ""
-        };
-        var row = $scope.row;
-
-        $scope.id = Maven.getName(row);
-
-        Maven.addMavenFunctions($scope, workspace);
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateTableContents, 50);
-        });
-
-        $scope.$watch('workspace.selection', function () {
-            updateTableContents();
-        });
-
-        function updateTableContents() {
-            var mbean = Maven.getMavenIndexerMBean(workspace);
-
-            // lets query the name and description of the GAV
-            if (mbean) {
-                jolokia.execute(mbean, "search", row.groupId, row.artifactId, row.version, row.packaging, row.classifier, "", onSuccess(render));
-            } else {
-                console.log("No MavenIndexerMBean!");
-            }
-        }
-
-        function render(response) {
-            if (response && response.length) {
-                var first = response[0];
-                row.name = first.name;
-                row.description = first.description;
-            }
-            Core.$apply($scope);
-        }
-    }
-    Maven.ArtifactController = ArtifactController;
-})(Maven || (Maven = {}));
-/**
-* @module Maven
-*/
-var Maven;
-(function (Maven) {
-    function DependenciesController($scope, $routeParams, $location, workspace, jolokia) {
-        $scope.artifacts = [];
-        $scope.group = $routeParams["group"] || "";
-        $scope.artifact = $routeParams["artifact"] || "";
-        $scope.version = $routeParams["version"] || "";
-        $scope.classifier = $routeParams["classifier"] || "";
-        $scope.packaging = $routeParams["packaging"] || "";
-
-        $scope.dependencyTree = null;
-
-        Maven.addMavenFunctions($scope, workspace);
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateTableContents, 50);
-        });
-
-        $scope.$watch('workspace.selection', function () {
-            updateTableContents();
-        });
-
-        $scope.onSelectNode = function (node) {
-            $scope.selected = node;
-        };
-
-        $scope.onRootNode = function (rootNode) {
-            // process the rootNode
-        };
-
-        $scope.validSelection = function () {
-            return $scope.selected && $scope.selected !== $scope.rootDependency;
-        };
-
-        $scope.viewDetails = function () {
-            var dependency = Core.pathGet($scope.selected, ["dependency"]);
-            var link = $scope.detailLink(dependency);
-            if (link) {
-                var path = Core.trimLeading(link, "#");
-                console.log("going to view " + path);
-                $location.path(path);
-            }
-        };
-
-        function updateTableContents() {
-            var mbean = Maven.getAetherMBean(workspace);
-            if (mbean) {
-                jolokia.execute(mbean, "resolveJson(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)", $scope.group, $scope.artifact, $scope.version, $scope.packaging, $scope.classifier, onSuccess(render));
-            } else {
-                console.log("No AetherMBean!");
-            }
-        }
-
-        function render(response) {
-            if (response) {
-                var json = JSON.parse(response);
-                if (json) {
-                    //console.log("Found json: " + JSON.stringify(json, null, "  "));
-                    $scope.dependencyTree = new Folder("Dependencies");
-                    $scope.dependencyActivations = [];
-                    addChildren($scope.dependencyTree, json);
-                    $scope.dependencyActivations.reverse();
-                    $scope.rootDependency = $scope.dependencyTree.children[0];
-                }
-            }
-            Core.$apply($scope);
-        }
-
-        function addChildren(folder, dependency) {
-            var name = Maven.getName(dependency);
-            var node = new Folder(name);
-            node.key = name.replace(/\//g, '_');
-            node["dependency"] = dependency;
-            $scope.dependencyActivations.push(node.key);
-
-            /*
-            var imageUrl = Camel.getRouteNodeIcon(value);
-            node.icon = imageUrl;
-            //node.tooltip = tooltip;
-            */
-            folder.children.push(node);
-
-            var children = dependency["children"];
-            angular.forEach(children, function (child) {
-                addChildren(node, child);
-            });
-        }
-    }
-    Maven.DependenciesController = DependenciesController;
-})(Maven || (Maven = {}));
-/**
-* @module Maven
-*/
-var Maven;
-(function (Maven) {
-    function PomXmlController($scope) {
-        $scope.mavenPomXml = "\n" + "  <dependency>\n" + "    <groupId>" + orBlank($scope.row.groupId) + "</groupId>\n" + "    <artifactId>" + orBlank($scope.row.artifactId) + "</artifactId>\n" + "    <version>" + orBlank($scope.row.version) + "</version>\n" + "  </dependency>\n";
-
-        function orBlank(text) {
-            return text || "";
-        }
-    }
-    Maven.PomXmlController = PomXmlController;
-})(Maven || (Maven = {}));
-/**
-* @module Maven
-*/
-var Maven;
-(function (Maven) {
-    function SearchController($scope, $location, workspace, jolokia) {
-        var log = Logger.get("Maven");
-
-        $scope.artifacts = [];
-        $scope.selected = [];
-        $scope.done = false;
-        $scope.inProgress = false;
-        $scope.form = {
-            searchText: ""
-        };
-        $scope.search = "";
-        $scope.searchForm = 'app/maven/html/searchForm.html';
-
-        Maven.addMavenFunctions($scope, workspace);
-
-        var columnDefs = [
-            {
-                field: 'groupId',
-                displayName: 'Group'
-            },
-            {
-                field: 'artifactId',
-                displayName: 'Artifact',
-                cellTemplate: '<div class="ngCellText" title="Name: {{row.entity.name}}">{{row.entity.artifactId}}</div>'
-            },
-            {
-                field: 'version',
-                displayName: 'Version',
-                cellTemplate: '<div class="ngCellText" title="Name: {{row.entity.name}}"><a ng-href="{{detailLink(row.entity)}}">{{row.entity.version}}</a</div>'
-            }
-        ];
-
-        $scope.gridOptions = {
-            data: 'artifacts',
-            displayFooter: true,
-            selectedItems: $scope.selected,
-            selectWithCheckboxOnly: true,
-            columnDefs: columnDefs,
-            rowDetailTemplateId: "artifactDetailTemplate",
-            filterOptions: {
-                filterText: 'search'
-            }
-        };
-
-        $scope.hasAdvancedSearch = function (form) {
-            return form.searchGroup || form.searchArtifact || form.searchVersion || form.searchPackaging || form.searchClassifier || form.searchClassName;
-        };
-
-        $scope.doSearch = function () {
-            $scope.done = false;
-            $scope.inProgress = true;
-            $scope.artifacts = [];
-
-            // ensure ui is updated with search in progress...
-            setTimeout(function () {
-                Core.$apply($scope);
-            }, 50);
-
-            var mbean = Maven.getMavenIndexerMBean(workspace);
-            var form = $scope.form;
-            if (mbean) {
-                var searchText = form.searchText;
-                var kind = form.artifactType;
-                if (kind) {
-                    if (kind === "className") {
-                        log.debug("Search for: " + form.searchText + " className");
-                        jolokia.execute(mbean, "searchClasses", searchText, onSuccess(render));
-                    } else {
-                        var paths = kind.split('/');
-                        var packaging = paths[0];
-                        var classifier = paths[1];
-                        log.debug("Search for: " + form.searchText + " packaging " + packaging + " classifier " + classifier);
-                        jolokia.execute(mbean, "searchTextAndPackaging", searchText, packaging, classifier, onSuccess(render));
-                    }
-                } else if (searchText) {
-                    log.debug("Search text is: " + form.searchText);
-                    jolokia.execute(mbean, "searchText", form.searchText, onSuccess(render));
-                } else if ($scope.hasAdvancedSearch(form)) {
-                    log.debug("Searching for " + form.searchGroup + "/" + form.searchArtifact + "/" + form.searchVersion + "/" + form.searchPackaging + "/" + form.searchClassifier + "/" + form.searchClassName);
-
-                    jolokia.execute(mbean, "search", form.searchGroup || "", form.searchArtifact || "", form.searchVersion || "", form.searchPackaging || "", form.searchClassifier || "", form.searchClassName || "", onSuccess(render));
-                }
-            } else {
-                notification("error", "Cannot find the Maven Indexer MBean!");
-            }
-        };
-
-        // cap ui table at one thousand
-        var RESPONSE_LIMIT = 1000;
-        var SERVER_RESPONSE_LIMIT = (10 * RESPONSE_LIMIT) + 1;
-
-        function render(response) {
-            log.debug("Search done, preparing result.");
-            $scope.done = true;
-            $scope.inProgress = false;
-
-            // let's limit the reponse to avoid blowing up
-            // the browser until we start using a widget
-            // that supports pagination
-            if (response.length > RESPONSE_LIMIT) {
-                var serverLimit = response.length === SERVER_RESPONSE_LIMIT;
-                if (serverLimit) {
-                    $scope.tooManyResponses = "This search returned more than " + (SERVER_RESPONSE_LIMIT - 1) + " artifacts, showing the first " + RESPONSE_LIMIT + ", please refine your search";
-                } else {
-                    $scope.tooManyResponses = "This search returned " + response.length + " artifacts, showing the first " + RESPONSE_LIMIT + ", please refine your search";
-                }
-            } else {
-                $scope.tooManyResponses = "";
-            }
-            $scope.artifacts = response.first(RESPONSE_LIMIT);
-
-            Core.$apply($scope);
-        }
-    }
-    Maven.SearchController = SearchController;
-})(Maven || (Maven = {}));
-/**
-* @module Maven
-*/
-var Maven;
-(function (Maven) {
-    function VersionsController($scope, $routeParams, workspace, jolokia) {
-        $scope.artifacts = [];
-        $scope.group = $routeParams["group"] || "";
-        $scope.artifact = $routeParams["artifact"] || "";
-        $scope.version = "";
-        $scope.classifier = $routeParams["classifier"] || "";
-        $scope.packaging = $routeParams["packaging"] || "";
-
-        var id = $scope.group + "/" + $scope.artifact;
-        if ($scope.classifier) {
-            id += "/" + $scope.classifier;
-        }
-        if ($scope.packaging) {
-            id += "/" + $scope.packaging;
-        }
-        var columnTitle = id + " versions";
-
-        var columnDefs = [
-            {
-                field: 'version',
-                displayName: columnTitle,
-                cellTemplate: '<div class="ngCellText"><a href="#/maven/artifact/{{row.entity.groupId}}/{{row.entity.artifactId}}/{{row.entity.version}}">{{row.entity.version}}</a></div>'
-            }
-        ];
-
-        $scope.gridOptions = {
-            data: 'artifacts',
-            displayFooter: true,
-            selectedItems: $scope.selected,
-            selectWithCheckboxOnly: true,
-            columnDefs: columnDefs,
-            rowDetailTemplateId: "artifactDetailTemplate",
-            sortInfo: { field: 'versionNumber', direction: 'DESC' },
-            filterOptions: {
-                filterText: 'search'
-            }
-        };
-
-        Maven.addMavenFunctions($scope, workspace);
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateTableContents, 50);
-        });
-
-        $scope.$watch('workspace.selection', function () {
-            updateTableContents();
-        });
-
-        function updateTableContents() {
-            var mbean = Maven.getMavenIndexerMBean(workspace);
-            if (mbean) {
-                jolokia.execute(mbean, "versionComplete", $scope.group, $scope.artifact, $scope.version, $scope.packaging, $scope.classifier, onSuccess(render));
-            } else {
-                console.log("No MavenIndexerMBean!");
-            }
-        }
-
-        function render(response) {
-            $scope.artifacts = [];
-            angular.forEach(response, function (version) {
-                var versionNumberArray = Core.parseVersionNumbers(version);
-                var versionNumber = 0;
-                for (var i = 0; i <= 4; i++) {
-                    var num = (i >= versionNumberArray.length) ? 0 : versionNumberArray[i];
-                    versionNumber *= 1000;
-                    versionNumber += num;
-                }
-
-                $scope.artifacts.push({
-                    groupId: $scope.group,
-                    artifactId: $scope.artifact,
-                    packaging: $scope.packaging,
-                    classifier: $scope.classifier,
-                    version: version,
-                    versionNumber: versionNumber
-                });
-            });
-            Core.$apply($scope);
-        }
-    }
-    Maven.VersionsController = VersionsController;
-})(Maven || (Maven = {}));
-/**
-* @module Maven
-* @main Maven
-*/
-var Maven;
-(function (Maven) {
-    var pluginName = 'maven';
-    angular.module(pluginName, ['bootstrap', 'ngResource', 'datatable', 'tree', 'hawtioCore', 'hawtio-ui']).config(function ($routeProvider) {
-        $routeProvider.when('/maven/search', { templateUrl: 'app/maven/html/search.html' }).when('/maven/advancedSearch', { templateUrl: 'app/maven/html/advancedSearch.html' }).when('/maven/artifact/:group/:artifact/:version/:classifier/:packaging', { templateUrl: 'app/maven/html/artifact.html' }).when('/maven/artifact/:group/:artifact/:version/:classifier', { templateUrl: 'app/maven/html/artifact.html' }).when('/maven/artifact/:group/:artifact/:version', { templateUrl: 'app/maven/html/artifact.html' }).when('/maven/dependencies/:group/:artifact/:version/:classifier/:packaging', { templateUrl: 'app/maven/html/dependencies.html' }).when('/maven/dependencies/:group/:artifact/:version/:classifier', { templateUrl: 'app/maven/html/dependencies.html' }).when('/maven/dependencies/:group/:artifact/:version', { templateUrl: 'app/maven/html/dependencies.html' }).when('/maven/versions/:group/:artifact/:classifier/:packaging', { templateUrl: 'app/maven/html/versions.html' }).when('/maven/view/:group/:artifact/:version/:classifier/:packaging', { templateUrl: 'app/maven/html/view.html' }).when('/maven/test', { templateUrl: 'app/maven/html/test.html' });
-    }).run(function ($location, workspace, viewRegistry, helpRegistry) {
-        viewRegistry['maven'] = "app/maven/html/layoutMaven.html";
-
-        workspace.topLevelTabs.push({
-            id: "maven",
-            content: "Maven",
-            title: "Search maven repositories for artifacts",
-            isValid: function (workspace) {
-                return Maven.getMavenIndexerMBean(workspace);
-            },
-            href: function () {
-                return "#/maven/search";
-            },
-            isActive: function (workspace) {
-                return workspace.isLinkActive("/maven");
-            }
-        });
-
-        helpRegistry.addUserDoc('maven', 'app/maven/doc/help.md', function () {
-            return Maven.getMavenIndexerMBean(workspace) !== null;
-        });
-        helpRegistry.addDevDoc("maven", 'app/maven/doc/developer.md');
-    });
-
-    hawtioPluginLoader.addModule(pluginName);
-})(Maven || (Maven = {}));
-/**
-* @module Maven
-*/
-var Maven;
-(function (Maven) {
-    function ViewController($scope, $location, workspace, jolokia) {
-        $scope.$watch('workspace.tree', function () {
-            // if the JMX tree is reloaded its probably because a new MBean has been added or removed
-            // so lets reload, asynchronously just in case
-            setTimeout(loadData, 50);
-        });
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            setTimeout(loadData, 50);
-        });
-
-        function loadData() {
-        }
-    }
-    Maven.ViewController = ViewController;
-})(Maven || (Maven = {}));
-/**
-* @module Maven
-*/
-var Maven;
-(function (Maven) {
-    function TestController($scope, workspace, jolokia, $q, $templateCache) {
-        $scope.html = "text/html";
-
-        $scope.someUri = '';
-        $scope.uriParts = [];
-        $scope.mavenCompletion = $templateCache.get("mavenCompletionTemplate");
-
-        $scope.$watch('someUri', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                $scope.uriParts = newValue.split("/");
-            }
-        });
-
-        $scope.$watch('uriParts', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                if (newValue.length === 1 && newValue.length < oldValue.length) {
-                    if (oldValue.last() !== '' && newValue.first().has(oldValue.last())) {
-                        var merged = oldValue.first(oldValue.length - 1).include(newValue.first());
-                        $scope.someUri = merged.join('/');
-                    }
-                }
-            }
-        }, true);
-
-        $scope.doCompletionMaven = function (something) {
-            return Maven.completeMavenUri($q, $scope, workspace, jolokia, something);
-        };
-    }
-    Maven.TestController = TestController;
-})(Maven || (Maven = {}));
-/**
-* @module Maven
-*/
-var Maven;
-(function (Maven) {
     Maven.log = Logger.get("Maven");
 
     /**
@@ -698,6 +240,479 @@ var Maven;
         };
     }
     Maven.addMavenFunctions = addMavenFunctions;
+})(Maven || (Maven = {}));
+/**
+* @module Maven
+* @main Maven
+*/
+/// <reference path="./mavenHelpers.ts"/>
+var Maven;
+(function (Maven) {
+    var pluginName = 'maven';
+
+    Maven._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'datatable', 'tree', 'hawtioCore', 'hawtio-ui']);
+
+    Maven._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/maven/search', { templateUrl: 'app/maven/html/search.html' }).when('/maven/advancedSearch', { templateUrl: 'app/maven/html/advancedSearch.html' }).when('/maven/artifact/:group/:artifact/:version/:classifier/:packaging', { templateUrl: 'app/maven/html/artifact.html' }).when('/maven/artifact/:group/:artifact/:version/:classifier', { templateUrl: 'app/maven/html/artifact.html' }).when('/maven/artifact/:group/:artifact/:version', { templateUrl: 'app/maven/html/artifact.html' }).when('/maven/dependencies/:group/:artifact/:version/:classifier/:packaging', { templateUrl: 'app/maven/html/dependencies.html' }).when('/maven/dependencies/:group/:artifact/:version/:classifier', { templateUrl: 'app/maven/html/dependencies.html' }).when('/maven/dependencies/:group/:artifact/:version', { templateUrl: 'app/maven/html/dependencies.html' }).when('/maven/versions/:group/:artifact/:classifier/:packaging', { templateUrl: 'app/maven/html/versions.html' }).when('/maven/view/:group/:artifact/:version/:classifier/:packaging', { templateUrl: 'app/maven/html/view.html' }).when('/maven/test', { templateUrl: 'app/maven/html/test.html' });
+        }]);
+
+    Maven._module.run([
+        "$location", "workspace", "viewRegistry", "helpRegistry", function ($location, workspace, viewRegistry, helpRegistry) {
+            viewRegistry['maven'] = "app/maven/html/layoutMaven.html";
+
+            workspace.topLevelTabs.push({
+                id: "maven",
+                content: "Maven",
+                title: "Search maven repositories for artifacts",
+                isValid: function (workspace) {
+                    return Maven.getMavenIndexerMBean(workspace);
+                },
+                href: function () {
+                    return "#/maven/search";
+                },
+                isActive: function (workspace) {
+                    return workspace.isLinkActive("/maven");
+                }
+            });
+
+            helpRegistry.addUserDoc('maven', 'app/maven/doc/help.md', function () {
+                return Maven.getMavenIndexerMBean(workspace) !== null;
+            });
+            helpRegistry.addDevDoc("maven", 'app/maven/doc/developer.md');
+        }]);
+
+    hawtioPluginLoader.addModule(pluginName);
+})(Maven || (Maven = {}));
+/**
+* @module Maven
+*/
+/// <reference path="./mavenPlugin.ts"/>
+var Maven;
+(function (Maven) {
+    Maven._module.controller("Maven.ArtifactController", [
+        "$scope", "$routeParams", "workspace", "jolokia", function ($scope, $routeParams, workspace, jolokia) {
+            $scope.row = {
+                groupId: $routeParams["group"] || "",
+                artifactId: $routeParams["artifact"] || "",
+                version: $routeParams["version"] || "",
+                classifier: $routeParams["classifier"] || "",
+                packaging: $routeParams["packaging"] || ""
+            };
+            var row = $scope.row;
+
+            $scope.id = Maven.getName(row);
+
+            Maven.addMavenFunctions($scope, workspace);
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateTableContents, 50);
+            });
+
+            $scope.$watch('workspace.selection', function () {
+                updateTableContents();
+            });
+
+            function updateTableContents() {
+                var mbean = Maven.getMavenIndexerMBean(workspace);
+
+                // lets query the name and description of the GAV
+                if (mbean) {
+                    jolokia.execute(mbean, "search", row.groupId, row.artifactId, row.version, row.packaging, row.classifier, "", onSuccess(render));
+                } else {
+                    console.log("No MavenIndexerMBean!");
+                }
+            }
+
+            function render(response) {
+                if (response && response.length) {
+                    var first = response[0];
+                    row.name = first.name;
+                    row.description = first.description;
+                }
+                Core.$apply($scope);
+            }
+        }]);
+})(Maven || (Maven = {}));
+/**
+* @module Maven
+*/
+/// <reference path="./mavenPlugin.ts"/>
+var Maven;
+(function (Maven) {
+    Maven._module.controller("Maven.DependenciesController", [
+        "$scope", "$routeParams", "$location", "workspace", "jolokia", function ($scope, $routeParams, $location, workspace, jolokia) {
+            $scope.artifacts = [];
+            $scope.group = $routeParams["group"] || "";
+            $scope.artifact = $routeParams["artifact"] || "";
+            $scope.version = $routeParams["version"] || "";
+            $scope.classifier = $routeParams["classifier"] || "";
+            $scope.packaging = $routeParams["packaging"] || "";
+
+            $scope.dependencyTree = null;
+
+            Maven.addMavenFunctions($scope, workspace);
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateTableContents, 50);
+            });
+
+            $scope.$watch('workspace.selection', function () {
+                updateTableContents();
+            });
+
+            $scope.onSelectNode = function (node) {
+                $scope.selected = node;
+            };
+
+            $scope.onRootNode = function (rootNode) {
+                // process the rootNode
+            };
+
+            $scope.validSelection = function () {
+                return $scope.selected && $scope.selected !== $scope.rootDependency;
+            };
+
+            $scope.viewDetails = function () {
+                var dependency = Core.pathGet($scope.selected, ["dependency"]);
+                var link = $scope.detailLink(dependency);
+                if (link) {
+                    var path = Core.trimLeading(link, "#");
+                    console.log("going to view " + path);
+                    $location.path(path);
+                }
+            };
+
+            function updateTableContents() {
+                var mbean = Maven.getAetherMBean(workspace);
+                if (mbean) {
+                    jolokia.execute(mbean, "resolveJson(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)", $scope.group, $scope.artifact, $scope.version, $scope.packaging, $scope.classifier, onSuccess(render));
+                } else {
+                    console.log("No AetherMBean!");
+                }
+            }
+
+            function render(response) {
+                if (response) {
+                    var json = JSON.parse(response);
+                    if (json) {
+                        //console.log("Found json: " + JSON.stringify(json, null, "  "));
+                        $scope.dependencyTree = new Folder("Dependencies");
+                        $scope.dependencyActivations = [];
+                        addChildren($scope.dependencyTree, json);
+                        $scope.dependencyActivations.reverse();
+                        $scope.rootDependency = $scope.dependencyTree.children[0];
+                    }
+                }
+                Core.$apply($scope);
+            }
+
+            function addChildren(folder, dependency) {
+                var name = Maven.getName(dependency);
+                var node = new Folder(name);
+                node.key = name.replace(/\//g, '_');
+                node["dependency"] = dependency;
+                $scope.dependencyActivations.push(node.key);
+
+                /*
+                var imageUrl = Camel.getRouteNodeIcon(value);
+                node.icon = imageUrl;
+                //node.tooltip = tooltip;
+                */
+                folder.children.push(node);
+
+                var children = dependency["children"];
+                angular.forEach(children, function (child) {
+                    addChildren(node, child);
+                });
+            }
+        }]);
+})(Maven || (Maven = {}));
+/**
+* @module Maven
+*/
+/// <reference path="./mavenPlugin.ts"/>
+var Maven;
+(function (Maven) {
+    Maven._module.controller("Maven.PomXmlController", [
+        "$scope", function ($scope) {
+            $scope.mavenPomXml = "\n" + "  <dependency>\n" + "    <groupId>" + orBlank($scope.row.groupId) + "</groupId>\n" + "    <artifactId>" + orBlank($scope.row.artifactId) + "</artifactId>\n" + "    <version>" + orBlank($scope.row.version) + "</version>\n" + "  </dependency>\n";
+
+            function orBlank(text) {
+                return text || "";
+            }
+        }]);
+})(Maven || (Maven = {}));
+/**
+* @module Maven
+*/
+/// <reference path="./mavenPlugin.ts"/>
+var Maven;
+(function (Maven) {
+    Maven._module.controller("Maven.SearchController", [
+        "$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+            var log = Logger.get("Maven");
+
+            $scope.artifacts = [];
+            $scope.selected = [];
+            $scope.done = false;
+            $scope.inProgress = false;
+            $scope.form = {
+                searchText: ""
+            };
+            $scope.search = "";
+            $scope.searchForm = 'app/maven/html/searchForm.html';
+
+            Maven.addMavenFunctions($scope, workspace);
+
+            var columnDefs = [
+                {
+                    field: 'groupId',
+                    displayName: 'Group'
+                },
+                {
+                    field: 'artifactId',
+                    displayName: 'Artifact',
+                    cellTemplate: '<div class="ngCellText" title="Name: {{row.entity.name}}">{{row.entity.artifactId}}</div>'
+                },
+                {
+                    field: 'version',
+                    displayName: 'Version',
+                    cellTemplate: '<div class="ngCellText" title="Name: {{row.entity.name}}"><a ng-href="{{detailLink(row.entity)}}">{{row.entity.version}}</a</div>'
+                }
+            ];
+
+            $scope.gridOptions = {
+                data: 'artifacts',
+                displayFooter: true,
+                selectedItems: $scope.selected,
+                selectWithCheckboxOnly: true,
+                columnDefs: columnDefs,
+                rowDetailTemplateId: "artifactDetailTemplate",
+                filterOptions: {
+                    filterText: 'search'
+                }
+            };
+
+            $scope.hasAdvancedSearch = function (form) {
+                return form.searchGroup || form.searchArtifact || form.searchVersion || form.searchPackaging || form.searchClassifier || form.searchClassName;
+            };
+
+            $scope.doSearch = function () {
+                $scope.done = false;
+                $scope.inProgress = true;
+                $scope.artifacts = [];
+
+                // ensure ui is updated with search in progress...
+                setTimeout(function () {
+                    Core.$apply($scope);
+                }, 50);
+
+                var mbean = Maven.getMavenIndexerMBean(workspace);
+                var form = $scope.form;
+                if (mbean) {
+                    var searchText = form.searchText;
+                    var kind = form.artifactType;
+                    if (kind) {
+                        if (kind === "className") {
+                            log.debug("Search for: " + form.searchText + " className");
+                            jolokia.execute(mbean, "searchClasses", searchText, onSuccess(render));
+                        } else {
+                            var paths = kind.split('/');
+                            var packaging = paths[0];
+                            var classifier = paths[1];
+                            log.debug("Search for: " + form.searchText + " packaging " + packaging + " classifier " + classifier);
+                            jolokia.execute(mbean, "searchTextAndPackaging", searchText, packaging, classifier, onSuccess(render));
+                        }
+                    } else if (searchText) {
+                        log.debug("Search text is: " + form.searchText);
+                        jolokia.execute(mbean, "searchText", form.searchText, onSuccess(render));
+                    } else if ($scope.hasAdvancedSearch(form)) {
+                        log.debug("Searching for " + form.searchGroup + "/" + form.searchArtifact + "/" + form.searchVersion + "/" + form.searchPackaging + "/" + form.searchClassifier + "/" + form.searchClassName);
+
+                        jolokia.execute(mbean, "search", form.searchGroup || "", form.searchArtifact || "", form.searchVersion || "", form.searchPackaging || "", form.searchClassifier || "", form.searchClassName || "", onSuccess(render));
+                    }
+                } else {
+                    notification("error", "Cannot find the Maven Indexer MBean!");
+                }
+            };
+
+            // cap ui table at one thousand
+            var RESPONSE_LIMIT = 1000;
+            var SERVER_RESPONSE_LIMIT = (10 * RESPONSE_LIMIT) + 1;
+
+            function render(response) {
+                log.debug("Search done, preparing result.");
+                $scope.done = true;
+                $scope.inProgress = false;
+
+                // let's limit the reponse to avoid blowing up
+                // the browser until we start using a widget
+                // that supports pagination
+                if (response.length > RESPONSE_LIMIT) {
+                    var serverLimit = response.length === SERVER_RESPONSE_LIMIT;
+                    if (serverLimit) {
+                        $scope.tooManyResponses = "This search returned more than " + (SERVER_RESPONSE_LIMIT - 1) + " artifacts, showing the first " + RESPONSE_LIMIT + ", please refine your search";
+                    } else {
+                        $scope.tooManyResponses = "This search returned " + response.length + " artifacts, showing the first " + RESPONSE_LIMIT + ", please refine your search";
+                    }
+                } else {
+                    $scope.tooManyResponses = "";
+                }
+                $scope.artifacts = response.first(RESPONSE_LIMIT);
+
+                Core.$apply($scope);
+            }
+        }]);
+})(Maven || (Maven = {}));
+/**
+* @module Maven
+*/
+/// <reference path="./mavenPlugin.ts"/>
+var Maven;
+(function (Maven) {
+    Maven._module.controller("Maven.VersionsController", [
+        "$scope", "$routeParams", "workspace", "jolokia", function ($scope, $routeParams, workspace, jolokia) {
+            $scope.artifacts = [];
+            $scope.group = $routeParams["group"] || "";
+            $scope.artifact = $routeParams["artifact"] || "";
+            $scope.version = "";
+            $scope.classifier = $routeParams["classifier"] || "";
+            $scope.packaging = $routeParams["packaging"] || "";
+
+            var id = $scope.group + "/" + $scope.artifact;
+            if ($scope.classifier) {
+                id += "/" + $scope.classifier;
+            }
+            if ($scope.packaging) {
+                id += "/" + $scope.packaging;
+            }
+            var columnTitle = id + " versions";
+
+            var columnDefs = [
+                {
+                    field: 'version',
+                    displayName: columnTitle,
+                    cellTemplate: '<div class="ngCellText"><a href="#/maven/artifact/{{row.entity.groupId}}/{{row.entity.artifactId}}/{{row.entity.version}}">{{row.entity.version}}</a></div>'
+                }
+            ];
+
+            $scope.gridOptions = {
+                data: 'artifacts',
+                displayFooter: true,
+                selectedItems: $scope.selected,
+                selectWithCheckboxOnly: true,
+                columnDefs: columnDefs,
+                rowDetailTemplateId: "artifactDetailTemplate",
+                sortInfo: { field: 'versionNumber', direction: 'DESC' },
+                filterOptions: {
+                    filterText: 'search'
+                }
+            };
+
+            Maven.addMavenFunctions($scope, workspace);
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateTableContents, 50);
+            });
+
+            $scope.$watch('workspace.selection', function () {
+                updateTableContents();
+            });
+
+            function updateTableContents() {
+                var mbean = Maven.getMavenIndexerMBean(workspace);
+                if (mbean) {
+                    jolokia.execute(mbean, "versionComplete", $scope.group, $scope.artifact, $scope.version, $scope.packaging, $scope.classifier, onSuccess(render));
+                } else {
+                    console.log("No MavenIndexerMBean!");
+                }
+            }
+
+            function render(response) {
+                $scope.artifacts = [];
+                angular.forEach(response, function (version) {
+                    var versionNumberArray = Core.parseVersionNumbers(version);
+                    var versionNumber = 0;
+                    for (var i = 0; i <= 4; i++) {
+                        var num = (i >= versionNumberArray.length) ? 0 : versionNumberArray[i];
+                        versionNumber *= 1000;
+                        versionNumber += num;
+                    }
+
+                    $scope.artifacts.push({
+                        groupId: $scope.group,
+                        artifactId: $scope.artifact,
+                        packaging: $scope.packaging,
+                        classifier: $scope.classifier,
+                        version: version,
+                        versionNumber: versionNumber
+                    });
+                });
+                Core.$apply($scope);
+            }
+        }]);
+})(Maven || (Maven = {}));
+/**
+* @module Maven
+*/
+/// <reference path="./mavenPlugin.ts"/>
+var Maven;
+(function (Maven) {
+    Maven._module.controller("Maven.ViewController", [
+        "$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+            $scope.$watch('workspace.tree', function () {
+                // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+                // so lets reload, asynchronously just in case
+                setTimeout(loadData, 50);
+            });
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                setTimeout(loadData, 50);
+            });
+
+            function loadData() {
+            }
+        }]);
+})(Maven || (Maven = {}));
+/**
+* @module Maven
+*/
+/// <reference path="./mavenPlugin.ts"/>
+var Maven;
+(function (Maven) {
+    Maven._module.controller("Maven.TestController", [
+        "$scope", "workspace", "jolokia", "$q", "$templateCache", function ($scope, workspace, jolokia, $q, $templateCache) {
+            $scope.html = "text/html";
+
+            $scope.someUri = '';
+            $scope.uriParts = [];
+            $scope.mavenCompletion = $templateCache.get("mavenCompletionTemplate");
+
+            $scope.$watch('someUri', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    $scope.uriParts = newValue.split("/");
+                }
+            });
+
+            $scope.$watch('uriParts', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    if (newValue.length === 1 && newValue.length < oldValue.length) {
+                        if (oldValue.last() !== '' && newValue.first().has(oldValue.last())) {
+                            var merged = oldValue.first(oldValue.length - 1).include(newValue.first());
+                            $scope.someUri = merged.join('/');
+                        }
+                    }
+                }
+            }, true);
+
+            $scope.doCompletionMaven = function (something) {
+                return Maven.completeMavenUri($q, $scope, workspace, jolokia, something);
+            };
+        }]);
 })(Maven || (Maven = {}));
 /**
 * @module Apollo
@@ -4841,7 +4856,7 @@ var Fabric;
                 profileId: '='
             };
             this.controller = [
-                "$scope", "$element", "$attrs", "$routeParams", "jolokia", "$location", "workspace", "$qa", function ($scope, $element, $attrs, $routeParams, jolokia, $location, workspace, $q) {
+                "$scope", "$element", "$attrs", "$routeParams", "jolokia", "$location", "workspace", "$q", function ($scope, $element, $attrs, $routeParams, jolokia, $location, workspace, $q) {
                     $scope.inDirective = true;
 
                     Fabric.initScope($scope, $location, jolokia, workspace);
@@ -8737,75 +8752,82 @@ var JVM;
 })(JVM || (JVM = {}));
 /**
 * @module OpenEJB
-*/
-var OpenEJB;
-(function (OpenEJB) {
-    function TreeController($scope, $location, workspace) {
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateSelectionFromURL, 50);
-        });
-
-        $scope.$watch('workspace.tree', function () {
-            if (workspace.moveIfViewInvalid())
-                return;
-
-            var children = [];
-            var tree = workspace.tree;
-            if (tree) {
-                var nodes = tree.children;
-                angular.forEach(nodes, function (node) {
-                    var nodeChildren = node.children;
-                    if (node.title.startsWith("openejb") && nodeChildren) {
-                        children = children.concat(nodeChildren);
-                    }
-                });
-            }
-            var treeElement = $("#openejbTree");
-            Jmx.enableTree($scope, $location, workspace, treeElement, children, true);
-
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateSelectionFromURL, 50);
-        });
-
-        function updateSelectionFromURL() {
-            Jmx.updateTreeSelectionFromURL($location, $("#openejbTree"), true);
-        }
-    }
-    OpenEJB.TreeController = TreeController;
-})(OpenEJB || (OpenEJB = {}));
-/**
-* @module OpenEJB
 * @main OpenEJB
 */
 var OpenEJB;
 (function (OpenEJB) {
     var pluginName = 'openejb';
-    angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(function ($routeProvider) {
-        // TODO custom tomcat views go here...
-    }).run(function ($location, workspace, viewRegistry, helpRegistry) {
-        viewRegistry['openojb'] = "app/openejb/html/layoutOpenEJBTree.html";
-        helpRegistry.addUserDoc('openejb', 'app/openejb/doc/help.md', function () {
-            return workspace.treeContainsDomainAndProperties("openejb");
-        });
+    OpenEJB._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']);
 
-        workspace.topLevelTabs.push({
-            id: "openejb",
-            content: "OpenEJB",
-            title: "Manage your OpenEJB resources",
-            isValid: function (workspace) {
+    OpenEJB._module.config([
+        "$routeProvider", function ($routeProvider) {
+            // TODO custom openejb views go here...
+        }]);
+
+    OpenEJB._module.run([
+        "$location", "workspace", "viewRegistry", "helpRegistry", function ($location, workspace, viewRegistry, helpRegistry) {
+            viewRegistry['openojb'] = "app/openejb/html/layoutOpenEJBTree.html";
+            helpRegistry.addUserDoc('openejb', 'app/openejb/doc/help.md', function () {
                 return workspace.treeContainsDomainAndProperties("openejb");
-            },
-            href: function () {
-                return "#/jmx/attributes?tab=openejb";
-            },
-            isActive: function (workspace) {
-                return workspace.isTopTabActive("openejb");
-            }
-        });
-    });
+            });
+
+            workspace.topLevelTabs.push({
+                id: "openejb",
+                content: "OpenEJB",
+                title: "Manage your OpenEJB resources",
+                isValid: function (workspace) {
+                    return workspace.treeContainsDomainAndProperties("openejb");
+                },
+                href: function () {
+                    return "#/jmx/attributes?tab=openejb";
+                },
+                isActive: function (workspace) {
+                    return workspace.isTopTabActive("openejb");
+                }
+            });
+        }]);
 
     hawtioPluginLoader.addModule(pluginName);
+})(OpenEJB || (OpenEJB = {}));
+/**
+* @module OpenEJB
+*/
+/// <reference path="./openejbPlugin.ts"/>
+var OpenEJB;
+(function (OpenEJB) {
+    OpenEJB._module.controller("OpenEJB.TreeController", [
+        "$scope", "$location", "workspace", function ($scope, $location, workspace) {
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateSelectionFromURL, 50);
+            });
+
+            $scope.$watch('workspace.tree', function () {
+                if (workspace.moveIfViewInvalid())
+                    return;
+
+                var children = [];
+                var tree = workspace.tree;
+                if (tree) {
+                    var nodes = tree.children;
+                    angular.forEach(nodes, function (node) {
+                        var nodeChildren = node.children;
+                        if (node.title.startsWith("openejb") && nodeChildren) {
+                            children = children.concat(nodeChildren);
+                        }
+                    });
+                }
+                var treeElement = $("#openejbTree");
+                Jmx.enableTree($scope, $location, workspace, treeElement, children, true);
+
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateSelectionFromURL, 50);
+            });
+
+            function updateSelectionFromURL() {
+                Jmx.updateTreeSelectionFromURL($location, $("#openejbTree"), true);
+            }
+        }]);
 })(OpenEJB || (OpenEJB = {}));
 /**
 * @module Dashboard
@@ -17744,7 +17766,7 @@ var Forms;
     })();
     Forms.SimpleForm = SimpleForm;
 })(Forms || (Forms = {}));
-///<reference path="formHelpers.ts"/>
+///<reference path="formPlugin.ts"/>
 var Forms;
 (function (Forms) {
     Forms._module.controller("Forms.FormTestController", [
@@ -18711,216 +18733,222 @@ var Tree;
     }
     Tree.sanitize = sanitize;
 
-    angular.module(Tree.pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).directive('hawtioTree', function (workspace, $timeout, $location) {
-        // return the directive link function. (compile function not needed)
-        return function (scope, element, attrs) {
-            var tree = null;
-            var data = null;
-            var widget = null;
-            var timeoutId = null;
-            var onSelectFn = lookupFunction("onselect");
-            var onDragStartFn = lookupFunction("ondragstart");
-            var onDragEnterFn = lookupFunction("ondragenter");
-            var onDropFn = lookupFunction("ondrop");
+    Tree._module = angular.module(Tree.pluginName, ['bootstrap', 'ngResource', 'hawtioCore']);
 
-            function lookupFunction(attrName) {
-                var answer = null;
-                var fnName = attrs[attrName];
-                if (fnName) {
-                    answer = Core.pathGet(scope, fnName);
-                    if (!angular.isFunction(answer)) {
-                        answer = null;
+    Tree._module.directive('hawtioTree', [
+        "workspace", "$timeout", "$location", function (workspace, $timeout, $location) {
+            // return the directive link function. (compile function not needed)
+            return function (scope, element, attrs) {
+                var tree = null;
+                var data = null;
+                var widget = null;
+                var timeoutId = null;
+                var onSelectFn = lookupFunction("onselect");
+                var onDragStartFn = lookupFunction("ondragstart");
+                var onDragEnterFn = lookupFunction("ondragenter");
+                var onDropFn = lookupFunction("ondrop");
+
+                function lookupFunction(attrName) {
+                    var answer = null;
+                    var fnName = attrs[attrName];
+                    if (fnName) {
+                        answer = Core.pathGet(scope, fnName);
+                        if (!angular.isFunction(answer)) {
+                            answer = null;
+                        }
                     }
+                    return answer;
                 }
-                return answer;
-            }
 
-            // watch the expression, and update the UI on change.
-            var data = attrs.hawtioTree;
-            var queryParam = data;
+                // watch the expression, and update the UI on change.
+                var data = attrs.hawtioTree;
+                var queryParam = data;
 
-            scope.$watch(data, onWidgetDataChange);
+                scope.$watch(data, onWidgetDataChange);
 
-            // lets add a separate event so we can force updates
-            // if we find cases where the delta logic doesn't work
-            scope.$on("hawtio.tree." + data, function (args) {
-                var value = Core.pathGet(scope, data);
-                onWidgetDataChange(value);
-            });
+                // lets add a separate event so we can force updates
+                // if we find cases where the delta logic doesn't work
+                scope.$on("hawtio.tree." + data, function (args) {
+                    var value = Core.pathGet(scope, data);
+                    onWidgetDataChange(value);
+                });
 
-            // listen on DOM destroy (removal) event, and cancel the next UI update
-            // to prevent updating ofter the DOM element was removed.
-            element.bind('$destroy', function () {
-                $timeout.cancel(timeoutId);
-            });
+                // listen on DOM destroy (removal) event, and cancel the next UI update
+                // to prevent updating ofter the DOM element was removed.
+                element.bind('$destroy', function () {
+                    $timeout.cancel(timeoutId);
+                });
 
-            updateLater(); // kick off the UI update process.
+                updateLater(); // kick off the UI update process.
 
-            // used to update the UI
-            function updateWidget() {
-                // console.log("updating the grid!!");
-                Core.$applyNowOrLater(scope);
-            }
-
-            function onWidgetDataChange(value) {
-                tree = value;
-                if (tree) {
-                    Tree.sanitize(tree);
+                // used to update the UI
+                function updateWidget() {
+                    // console.log("updating the grid!!");
+                    Core.$applyNowOrLater(scope);
                 }
-                if (tree && !widget) {
-                    // lets find a child table element
-                    // or lets add one if there's not one already
-                    var treeElement = $(element);
-                    var children = Core.asArray(tree);
-                    var hideRoot = attrs["hideroot"];
-                    if ("true" === hideRoot) {
-                        children = tree['children'];
+
+                function onWidgetDataChange(value) {
+                    tree = value;
+                    if (tree) {
+                        Tree.sanitize(tree);
                     }
-                    var config = {
-                        clickFolderMode: 3,
-                        /*
-                        * The event handler called when a different node in the tree is selected
-                        */
-                        onActivate: function (node) {
-                            var data = node.data;
-                            if (onSelectFn) {
-                                onSelectFn(data, node);
-                            } else {
-                                workspace.updateSelectionNode(data);
-                            }
-                            Core.$apply(scope);
-                        },
-                        /*
-                        onLazyRead: function(treeNode) {
-                        var folder = treeNode.data;
-                        var plugin = null;
-                        if (folder) {
-                        plugin = Jmx.findLazyLoadingFunction(workspace, folder);
+                    if (tree && !widget) {
+                        // lets find a child table element
+                        // or lets add one if there's not one already
+                        var treeElement = $(element);
+                        var children = Core.asArray(tree);
+                        var hideRoot = attrs["hideroot"];
+                        if ("true" === hideRoot) {
+                            children = tree['children'];
                         }
-                        if (plugin) {
-                        console.log("Lazy loading folder " + folder.title);
-                        var oldChildren = folder.childen;
-                        plugin(workspace, folder, () => {
-                        treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
-                        var newChildren = folder.children;
-                        if (newChildren !== oldChildren) {
-                        treeNode.removeChildren();
-                        angular.forEach(newChildren, newChild => {
-                        treeNode.addChild(newChild);
-                        });
-                        }
-                        });
-                        } else {
-                        treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
-                        }
-                        },
-                        */
-                        onClick: function (node, event) {
-                            if (event["metaKey"]) {
-                                event.preventDefault();
-                                var url = $location.absUrl();
-                                if (node && node.data) {
-                                    var key = node.data["key"];
-                                    if (key) {
-                                        var hash = $location.search();
-                                        hash[queryParam] = key;
-
-                                        // TODO this could maybe be a generic helper function?
-                                        // lets trim after the ?
-                                        var idx = url.indexOf('?');
-                                        if (idx <= 0) {
-                                            url += "?";
-                                        } else {
-                                            url = url.substring(0, idx + 1);
-                                        }
-                                        url += $.param(hash);
-                                    }
+                        var config = {
+                            clickFolderMode: 3,
+                            /*
+                            * The event handler called when a different node in the tree is selected
+                            */
+                            onActivate: function (node) {
+                                var data = node.data;
+                                if (onSelectFn) {
+                                    onSelectFn(data, node);
+                                } else {
+                                    workspace.updateSelectionNode(data);
                                 }
-                                window.open(url, '_blank');
-                                window.focus();
-                                return false;
-                            }
-                            return true;
-                        },
-                        persist: false,
-                        debugLevel: 0,
-                        children: children,
-                        dnd: {
-                            onDragStart: onDragStartFn ? onDragStartFn : function (node) {
-                                /* This function MUST be defined to enable dragging for the tree.
-                                *  Return false to cancel dragging of node.
-                                */
-                                console.log("onDragStart!");
-                                return true;
+                                Core.$apply(scope);
                             },
-                            onDragEnter: onDragEnterFn ? onDragEnterFn : function (node, sourceNode) {
-                                console.log("onDragEnter!");
-                                return true;
-                            },
-                            onDrop: onDropFn ? onDropFn : function (node, sourceNode, hitMode) {
-                                console.log("onDrop!");
-
-                                /* This function MUST be defined to enable dropping of items on
-                                *  the tree.
-                                */
-                                sourceNode.move(node, hitMode);
-                                return true;
+                            /*
+                            onLazyRead: function(treeNode) {
+                            var folder = treeNode.data;
+                            var plugin = null;
+                            if (folder) {
+                            plugin = Jmx.findLazyLoadingFunction(workspace, folder);
                             }
-                        }
-                    };
-                    if (!onDropFn && !onDragEnterFn && !onDragStartFn) {
-                        delete config["dnd"];
-                    }
-                    widget = treeElement.dynatree(config);
-
-                    var activatedNode = false;
-                    var activateNodeName = attrs["activatenodes"];
-                    if (activateNodeName) {
-                        var values = scope[activateNodeName];
-                        var tree = treeElement.dynatree("getTree");
-                        if (values && tree) {
-                            angular.forEach(Core.asArray(values), function (value) {
-                                //tree.selectKey(value, true);
-                                tree.activateKey(value);
-                                activatedNode = true;
+                            if (plugin) {
+                            console.log("Lazy loading folder " + folder.title);
+                            var oldChildren = folder.childen;
+                            plugin(workspace, folder, () => {
+                            treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
+                            var newChildren = folder.children;
+                            if (newChildren !== oldChildren) {
+                            treeNode.removeChildren();
+                            angular.forEach(newChildren, newChild => {
+                            treeNode.addChild(newChild);
                             });
-                        }
-                    }
-                    var root = treeElement.dynatree("getRoot");
-                    if (root) {
-                        var onRootName = attrs["onroot"];
-                        if (onRootName) {
-                            var fn = scope[onRootName];
-                            if (fn) {
-                                fn(root);
                             }
-                        }
+                            });
+                            } else {
+                            treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
+                            }
+                            },
+                            */
+                            onClick: function (node, event) {
+                                if (event["metaKey"]) {
+                                    event.preventDefault();
+                                    var url = $location.absUrl();
+                                    if (node && node.data) {
+                                        var key = node.data["key"];
+                                        if (key) {
+                                            var hash = $location.search();
+                                            hash[queryParam] = key;
 
-                        // select and activate first child if we have not activated any others
-                        if (!activatedNode) {
-                            var children = root['getChildren']();
-                            if (children && children.length) {
-                                var child = children[0];
-                                child.expand(true);
-                                child.activate(true);
+                                            // TODO this could maybe be a generic helper function?
+                                            // lets trim after the ?
+                                            var idx = url.indexOf('?');
+                                            if (idx <= 0) {
+                                                url += "?";
+                                            } else {
+                                                url = url.substring(0, idx + 1);
+                                            }
+                                            url += $.param(hash);
+                                        }
+                                    }
+                                    window.open(url, '_blank');
+                                    window.focus();
+                                    return false;
+                                }
+                                return true;
+                            },
+                            persist: false,
+                            debugLevel: 0,
+                            children: children,
+                            dnd: {
+                                onDragStart: onDragStartFn ? onDragStartFn : function (node) {
+                                    /* This function MUST be defined to enable dragging for the tree.
+                                    *  Return false to cancel dragging of node.
+                                    */
+                                    console.log("onDragStart!");
+                                    return true;
+                                },
+                                onDragEnter: onDragEnterFn ? onDragEnterFn : function (node, sourceNode) {
+                                    console.log("onDragEnter!");
+                                    return true;
+                                },
+                                onDrop: onDropFn ? onDropFn : function (node, sourceNode, hitMode) {
+                                    console.log("onDrop!");
+
+                                    /* This function MUST be defined to enable dropping of items on
+                                    *  the tree.
+                                    */
+                                    sourceNode.move(node, hitMode);
+                                    return true;
+                                }
+                            }
+                        };
+                        if (!onDropFn && !onDragEnterFn && !onDragStartFn) {
+                            delete config["dnd"];
+                        }
+                        widget = treeElement.dynatree(config);
+
+                        var activatedNode = false;
+                        var activateNodeName = attrs["activatenodes"];
+                        if (activateNodeName) {
+                            var values = scope[activateNodeName];
+                            var tree = treeElement.dynatree("getTree");
+                            if (values && tree) {
+                                angular.forEach(Core.asArray(values), function (value) {
+                                    //tree.selectKey(value, true);
+                                    tree.activateKey(value);
+                                    activatedNode = true;
+                                });
+                            }
+                        }
+                        var root = treeElement.dynatree("getRoot");
+                        if (root) {
+                            var onRootName = attrs["onroot"];
+                            if (onRootName) {
+                                var fn = scope[onRootName];
+                                if (fn) {
+                                    fn(root);
+                                }
+                            }
+
+                            // select and activate first child if we have not activated any others
+                            if (!activatedNode) {
+                                var children = root['getChildren']();
+                                if (children && children.length) {
+                                    var child = children[0];
+                                    child.expand(true);
+                                    child.activate(true);
+                                }
                             }
                         }
                     }
+                    updateWidget();
                 }
-                updateWidget();
-            }
 
-            // schedule update in one second
-            function updateLater() {
-                // save the timeoutId for canceling
-                timeoutId = $timeout(function () {
-                    updateWidget(); // update DOM
-                }, 300);
-            }
-        };
-    }).run(function (helpRegistry) {
-        helpRegistry.addDevDoc(Tree.pluginName, 'app/tree/doc/developer.md');
-    });
+                // schedule update in one second
+                function updateLater() {
+                    // save the timeoutId for canceling
+                    timeoutId = $timeout(function () {
+                        updateWidget(); // update DOM
+                    }, 300);
+                }
+            };
+        }]);
+
+    Tree._module.run([
+        "helpRegistry", function (helpRegistry) {
+            helpRegistry.addDevDoc(Tree.pluginName, 'app/tree/doc/developer.md');
+        }]);
 
     hawtioPluginLoader.addModule(Tree.pluginName);
 })(Tree || (Tree = {}));
@@ -20991,70 +21019,6 @@ var ActiveMQ;
 */
 var Site;
 (function (Site) {
-    function IndexController($scope, $location) {
-        $scope.slideInterval = 5000;
-    }
-    Site.IndexController = IndexController;
-})(Site || (Site = {}));
-/**
-* @module Site
-*/
-var Site;
-(function (Site) {
-    function PageController($scope, $routeParams, $location, $compile, $http, fileExtensionTypeRegistry) {
-        var log = Logger.get("Site");
-        var pageId = $routeParams["page"];
-        if (!pageId) {
-            pageId = "README.md";
-            /*
-            $location.path("/site/doc/index.md");
-            return;
-            */
-        }
-
-        if (!pageId.startsWith("/") && pageId.indexOf(":/") < 0 && pageId.indexOf("app/site/") < 0) {
-            // lets assume the page is relative to app/site/
-            pageId = "app/site/" + pageId;
-        }
-        $scope.pageId = pageId;
-        $scope.pageFolder = pageId.substring(0, pageId.lastIndexOf('/') + 1);
-
-        log.info("Loading page '" + $scope.pageId + "'");
-
-        $scope.getContents = function (filename, cb) {
-            var fullPath = $scope.pageFolder + filename;
-            log.info("Loading the contents of: " + fullPath);
-            $http.get(fullPath).success(cb).error(function () {
-                return cb(" ");
-            });
-        };
-
-        $http.get($scope.pageId).success(onResults);
-
-        function onResults(contents, status, headers, config) {
-            $scope.contents = contents;
-            $scope.html = contents;
-
-            var format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry) || "markdown";
-            if ("markdown" === format) {
-                // lets convert it to HTML
-                $scope.html = contents ? marked(contents) : "";
-            } else if (format && format.startsWith("html")) {
-                $scope.html = contents;
-            } else {
-                // TODO?
-            }
-            $compile($scope.html)($scope);
-            Core.$apply($scope);
-        }
-    }
-    Site.PageController = PageController;
-})(Site || (Site = {}));
-/**
-* @module Site
-*/
-var Site;
-(function (Site) {
     Site.sitePluginEnabled = false;
 
     function isSiteNavBarValid() {
@@ -21066,357 +21030,109 @@ var Site;
 * @module Site
 * @main Site
 */
+/// <reference path="./siteHelpers.ts"/>
 var Site;
 (function (Site) {
     var pluginName = 'site';
 
-    angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore', 'hawtio-ui']).config(function ($routeProvider) {
-        $routeProvider.when('/site', { templateUrl: 'app/site/html/index.html' }).when('/site/', { templateUrl: 'app/site/html/index.html' }).when('/site/book/*page', { templateUrl: 'app/site/html/book.html', reloadOnSearch: false }).when('/site/*page', { templateUrl: 'app/site/html/page.html' });
-    }).run(function ($location, workspace, viewRegistry, layoutFull, helpRegistry) {
-        viewRegistry[pluginName] = layoutFull;
+    Site._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore', 'hawtio-ui']);
 
-        workspace.topLevelTabs.push({
-            id: "site",
-            content: "Site",
-            title: "View the documentation for Hawtio",
-            isValid: function (workspace) {
-                return false;
-            },
-            href: function () {
-                return "#/site";
-            }
-        });
-        /*
-        helpRegistry.addUserDoc('log', 'app/log/doc/help.md', () => {
-        return workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'});
-        });
-        
-        */
-    });
+    Site._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/site', { templateUrl: 'app/site/html/index.html' }).when('/site/', { templateUrl: 'app/site/html/index.html' }).when('/site/book/*page', { templateUrl: 'app/site/html/book.html', reloadOnSearch: false }).when('/site/*page', { templateUrl: 'app/site/html/page.html' });
+        }]);
+
+    Site._module.run([
+        "$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", function ($location, workspace, viewRegistry, layoutFull, helpRegistry) {
+            viewRegistry[pluginName] = layoutFull;
+
+            workspace.topLevelTabs.push({
+                id: "site",
+                content: "Site",
+                title: "View the documentation for Hawtio",
+                isValid: function (workspace) {
+                    return false;
+                },
+                href: function () {
+                    return "#/site";
+                }
+            });
+            /*
+            helpRegistry.addUserDoc('log', 'app/log/doc/help.md', () => {
+            return workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'});
+            });
+            
+            */
+        }]);
 
     hawtioPluginLoader.addModule(pluginName);
 })(Site || (Site = {}));
-var Tomcat;
-(function (Tomcat) {
-    function TomcatController($scope, $location, workspace, jolokia) {
-        var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | tomcatIconClass}}"></i></div>';
-        var urlTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">' + '<a ng-href="{{row.getProperty(col.field)}}" target="_blank">{{row.getProperty(col.field)}}</a>' + '</div>';
-
-        $scope.uninstallDialog = new UI.Dialog();
-
-        $scope.httpPort;
-        $scope.httpScheme = "http";
-
-        $scope.webapps = [];
-        $scope.selected = [];
-
-        var columnDefsTomcat5 = [
-            {
-                field: 'state',
-                displayName: 'State',
-                cellTemplate: stateTemplate,
-                width: 56,
-                minWidth: 56,
-                maxWidth: 56,
-                resizable: false
-            },
-            {
-                field: 'path',
-                displayName: 'Context-Path',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'url',
-                displayName: 'Url',
-                cellTemplate: urlTemplate,
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'startTime',
-                displayName: 'Start Time',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            }
-        ];
-
-        var columnDefsTomcat6 = [
-            {
-                field: 'stateName',
-                displayName: 'State',
-                cellTemplate: stateTemplate,
-                width: 56,
-                minWidth: 56,
-                maxWidth: 56,
-                resizable: false
-            },
-            {
-                field: 'path',
-                displayName: 'Context-Path',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'url',
-                displayName: 'Url',
-                cellTemplate: urlTemplate,
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'startTime',
-                displayName: 'Start Time',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            }
-        ];
-
-        var columnDefsTomcat7 = [
-            {
-                field: 'stateName',
-                displayName: 'State',
-                cellTemplate: stateTemplate,
-                width: 56,
-                minWidth: 56,
-                maxWidth: 56,
-                resizable: false
-            },
-            {
-                field: 'path',
-                displayName: 'Context-Path',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'displayName',
-                displayName: 'Display Name',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'url',
-                displayName: 'Url',
-                cellTemplate: urlTemplate,
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'startTime',
-                displayName: 'Start Time',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            }
-        ];
-
-        $scope.gridOptions = {
-            data: 'webapps',
-            displayFooter: true,
-            selectedItems: $scope.selected,
-            selectWithCheckboxOnly: true,
-            filterOptions: {
-                filterText: ''
-            }
-        };
-
-        /*        function extractHttpPort(response) {
-        var obj = response;
-        if (obj) {
-        angular.forEach(obj, function (key, value) {
-        var mbean = key;
-        jolokia.request({type: "read", mbean: mbean, attribute: ["port", "scheme", "protocol"]}, onSuccess(onHttpPort));
-        });
-        }
-        }
-        
-        function onHttpPort(response) {
-        // we only need the HTTP protocol
-        var obj = response.value;
-        if (obj && obj.protocol && obj.protocol.toString().startsWith("HTTP")) {
-        $scope.httpPort = obj.port;
-        $scope.httpScheme = obj.scheme;
-        }
-        }
-        */
-        function render(response) {
-            response = Tomcat.filerTomcatOrCatalina(response);
-
-            $scope.webapps = [];
-            $scope.mbeanIndex = {};
-            $scope.selected.length = 0;
-
-            function onAttributes(response) {
-                var obj = response.value;
-                if (obj) {
-                    obj.mbean = response.request.mbean;
-                    var mbean = obj.mbean;
-
-                    // compute the url for the webapp, and we want to use http as scheme
-                    var hostname = Core.extractTargetUrl($location, $scope.httpScheme, $scope.httpPort);
-                    obj.url = hostname + obj['path'];
-
-                    if (mbean) {
-                        // format the start time as readable date format
-                        obj.startTime = Tomcat.millisToDateFormat(obj.startTime);
-
-                        var idx = $scope.mbeanIndex[mbean];
-                        if (angular.isDefined(idx)) {
-                            $scope.webapps[mbean] = obj;
-                        } else {
-                            $scope.mbeanIndex[mbean] = $scope.webapps.length;
-                            $scope.webapps.push(obj);
-                        }
-
-                        // ensure web page is updated
-                        Core.$apply($scope);
-                    }
-                }
+/**
+* @module Site
+*/
+/// <reference path="./sitePlugin.ts"/>
+var Site;
+(function (Site) {
+    Site._module.controller("Site.IndexController", [
+        "$scope", "$location", function ($scope, $location) {
+            $scope.slideInterval = 5000;
+        }]);
+})(Site || (Site = {}));
+/**
+* @module Site
+*/
+/// <reference path="./sitePlugin.ts"/>
+var Site;
+(function (Site) {
+    Site._module.controller("Site.PageController", [
+        "$scope", "$routeParams", "$location", "$compile", "$http", "fileExtensionTypeRegistry", function ($scope, $routeParams, $location, $compile, $http, fileExtensionTypeRegistry) {
+            var log = Logger.get("Site");
+            var pageId = $routeParams["page"];
+            if (!pageId) {
+                pageId = "README.md";
+                /*
+                $location.path("/site/doc/index.md");
+                return;
+                */
             }
 
-            angular.forEach(response, function (value, key) {
-                var mbean = value;
-                if (Tomcat.isTomcat5($scope.tomcatServerVersion)) {
-                    jolokia.request({
-                        type: "read", mbean: mbean,
-                        attribute: ["path", "state", "startTime"] }, onSuccess(onAttributes));
-                } else if (Tomcat.isTomcat6($scope.tomcatServerVersion)) {
-                    jolokia.request({
-                        type: "read", mbean: mbean,
-                        attribute: ["path", "stateName", "startTime"] }, onSuccess(onAttributes));
-                } else {
-                    jolokia.request({
-                        type: "read", mbean: mbean,
-                        attribute: ["displayName", "path", "stateName", "startTime"] }, onSuccess(onAttributes));
-                }
-            });
-            Core.$apply($scope);
-        }
-        ;
-
-        // function to control the web applications
-        $scope.controlWebApps = function (op) {
-            // grab id of mbean names to control
-            var mbeanNames = $scope.selected.map(function (b) {
-                return b.mbean;
-            });
-            if (!angular.isArray(mbeanNames)) {
-                mbeanNames = [mbeanNames];
+            if (!pageId.startsWith("/") && pageId.indexOf(":/") < 0 && pageId.indexOf("app/site/") < 0) {
+                // lets assume the page is relative to app/site/
+                pageId = "app/site/" + pageId;
             }
+            $scope.pageId = pageId;
+            $scope.pageFolder = pageId.substring(0, pageId.lastIndexOf('/') + 1);
 
-            // execute operation on each mbean
-            var lastIndex = (mbeanNames.length || 1) - 1;
-            angular.forEach(mbeanNames, function (mbean, idx) {
-                var onResponse = (idx >= lastIndex) ? $scope.onLastResponse : $scope.onResponse;
-                jolokia.request({
-                    type: 'exec',
-                    mbean: mbean,
-                    operation: op,
-                    arguments: null
-                }, onSuccess(onResponse, { error: onResponse }));
-            });
-        };
+            log.info("Loading page '" + $scope.pageId + "'");
 
-        $scope.stop = function () {
-            $scope.controlWebApps('stop');
-        };
-
-        $scope.start = function () {
-            $scope.controlWebApps('start');
-        };
-
-        $scope.reload = function () {
-            $scope.controlWebApps('reload');
-        };
-
-        $scope.uninstall = function () {
-            $scope.controlWebApps('destroy');
-            $scope.uninstallDialog.close();
-        };
-
-        // function to trigger reloading page
-        $scope.onLastResponse = function (response) {
-            $scope.onResponse(response);
-
-            // we only want to force updating the data on the last response
-            loadData();
-        };
-
-        $scope.onResponse = function (response) {
-            //console.log("got response: " + response);
-        };
-
-        $scope.$on('jmxTreeUpdated', reloadFunction);
-        $scope.$watch('workspace.tree', reloadFunction);
-
-        function reloadFunction() {
-            // if the JMX tree is reloaded its probably because a new MBean has been added or removed
-            // so lets reload, asynchronously just in case
-            setTimeout(loadData, 50);
-        }
-
-        function loadData() {
-            console.log("Loading tomcat webapp data...");
-
-            // must load connectors first, before showing applications, so we do this call synchronously
-            var connectors = jolokia.search("*:type=Connector,*");
-            if (connectors) {
-                var found = false;
-                angular.forEach(connectors, function (key, value) {
-                    var mbean = key;
-                    if (!found) {
-                        var data = jolokia.request({ type: "read", mbean: mbean, attribute: ["port", "scheme", "protocol"] });
-                        if (data && data.value) {
-                            function isHttp(value) {
-                                return value && value.toString().startsWith("http");
-                            }
-
-                            if (isHttp(data.value.protocol) || isHttp(data.value.scheme)) {
-                                found = true;
-                                $scope.httpPort = data.value.port;
-                                $scope.httpScheme = data.value.scheme;
-                            }
-                        }
-                    }
+            $scope.getContents = function (filename, cb) {
+                var fullPath = $scope.pageFolder + filename;
+                log.info("Loading the contents of: " + fullPath);
+                $http.get(fullPath).success(cb).error(function () {
+                    return cb(" ");
                 });
+            };
+
+            $http.get($scope.pageId).success(onResults);
+
+            function onResults(contents, status, headers, config) {
+                $scope.contents = contents;
+                $scope.html = contents;
+
+                var format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry) || "markdown";
+                if ("markdown" === format) {
+                    // lets convert it to HTML
+                    $scope.html = contents ? marked(contents) : "";
+                } else if (format && format.startsWith("html")) {
+                    $scope.html = contents;
+                } else {
+                    // TODO?
+                }
+                $compile($scope.html)($scope);
+                Core.$apply($scope);
             }
-            jolokia.search("*:j2eeType=WebModule,*", onSuccess(render));
-        }
-
-        // grab server information once
-        $scope.tomcatServerVersion = "";
-
-        var servers = jolokia.search("*:type=Server");
-        servers = Tomcat.filerTomcatOrCatalina(servers);
-        if (servers && servers.length === 1) {
-            $scope.tomcatServerVersion = jolokia.getAttribute(servers[0], "serverInfo");
-        } else {
-            console.log("Cannot find Tomcat server or there was more than one server. response is: " + servers);
-        }
-
-        // the columns shown in the applications view depends on the Tomcat version in use
-        if (Tomcat.isTomcat5($scope.tomcatServerVersion)) {
-            console.log("Using Tomcat 5");
-            $scope.gridOptions.columnDefs = columnDefsTomcat5;
-        } else if (Tomcat.isTomcat6($scope.tomcatServerVersion)) {
-            console.log("Using Tomcat 6");
-            $scope.gridOptions.columnDefs = columnDefsTomcat6;
-        } else {
-            console.log("Using Tomcat 7");
-            $scope.gridOptions.columnDefs = columnDefsTomcat7;
-        }
-    }
-    Tomcat.TomcatController = TomcatController;
-})(Tomcat || (Tomcat = {}));
+        }]);
+})(Site || (Site = {}));
 var Tomcat;
 (function (Tomcat) {
     function filerTomcatOrCatalina(response) {
@@ -21476,373 +21192,706 @@ var Tomcat;
     }
     Tomcat.isTomcat6 = isTomcat6;
 })(Tomcat || (Tomcat = {}));
-var Tomcat;
-(function (Tomcat) {
-    function ConnectorsController($scope, $location, workspace, jolokia) {
-        var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | tomcatIconClass}}"></i></div>';
-
-        $scope.connectors = [];
-        $scope.selected = [];
-
-        var columnDefs = [
-            {
-                field: 'stateName',
-                displayName: 'State',
-                cellTemplate: stateTemplate,
-                width: 56,
-                minWidth: 56,
-                maxWidth: 56,
-                resizable: false
-            },
-            {
-                field: 'port',
-                displayName: 'Port',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'scheme',
-                displayName: 'Scheme',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'protocol',
-                displayName: 'Protocol',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'secure',
-                displayName: 'Secure',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'connectionLinger',
-                displayName: 'Connection Linger',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'connectionTimeout',
-                displayName: 'Connection Timeout',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'keepAliveTimeout',
-                displayName: 'Keep Alive Timeout',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'minSpareThreads',
-                displayName: 'Minimum Threads',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'maxThreads',
-                displayName: 'Maximum Threads',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            }
-        ];
-
-        $scope.gridOptions = {
-            data: 'connectors',
-            displayFooter: true,
-            selectedItems: $scope.selected,
-            selectWithCheckboxOnly: true,
-            columnDefs: columnDefs,
-            filterOptions: {
-                filterText: ''
-            }
-        };
-
-        function render(response) {
-            response = Tomcat.filerTomcatOrCatalina(response);
-
-            $scope.connectors = [];
-            $scope.selected.length = 0;
-
-            function onAttributes(response) {
-                var obj = response.value;
-                if (obj) {
-                    obj.mbean = response.request.mbean;
-                    $scope.connectors.push(obj);
-                    Core.$apply($scope);
-                }
-            }
-
-            // create structure for each response
-            angular.forEach(response, function (value, key) {
-                var mbean = value;
-                jolokia.request({
-                    type: "read", mbean: mbean, attribute: [
-                        "scheme", "port", "protocol", "secure",
-                        "connectionLinger", "connectionTimeout", "keepAliveTimeout", "minSpareThreads", "maxThreads", "stateName"] }, onSuccess(onAttributes));
-            });
-            Core.$apply($scope);
-        }
-        ;
-
-        // function to control the connectors
-        $scope.controlConnector = function (op) {
-            // grab id of mbean names to control
-            var ids = $scope.selected.map(function (b) {
-                return b.mbean;
-            });
-            if (!angular.isArray(ids)) {
-                ids = [ids];
-            }
-
-            // execute operation on each mbean
-            ids.forEach(function (id) {
-                jolokia.request({
-                    type: 'exec',
-                    mbean: id,
-                    operation: op,
-                    arguments: null
-                }, onSuccess($scope.onResponse, { error: $scope.onResponse }));
-            });
-        };
-
-        $scope.stop = function () {
-            $scope.controlConnector('stop');
-        };
-
-        $scope.start = function () {
-            $scope.controlConnector('start');
-        };
-
-        $scope.destroy = function () {
-            $scope.controlConnector('destroy');
-        };
-
-        // function to trigger reloading page
-        $scope.onResponse = function (response) {
-            //console.log("got response: " + response);
-            loadData();
-        };
-
-        $scope.$on('jmxTreeUpdated', reloadFunction);
-        $scope.$watch('workspace.tree', reloadFunction);
-
-        function reloadFunction() {
-            // if the JMX tree is reloaded its probably because a new MBean has been added or removed
-            // so lets reload, asynchronously just in case
-            setTimeout(loadData, 50);
-        }
-
-        function loadData() {
-            console.log("Loading tomcat connector data...");
-            jolokia.search("*:type=Connector,*", onSuccess(render));
-        }
-    }
-    Tomcat.ConnectorsController = ConnectorsController;
-})(Tomcat || (Tomcat = {}));
-var Tomcat;
-(function (Tomcat) {
-    function SessionsController($scope, $location, workspace, jolokia) {
-        var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | tomcatIconClass}}"></i></div>';
-
-        $scope.sessions = [];
-        $scope.search = "";
-
-        var columnDefs = [
-            {
-                field: 'stateName',
-                displayName: 'State',
-                cellTemplate: stateTemplate,
-                width: 56,
-                minWidth: 56,
-                maxWidth: 56,
-                resizable: false
-            },
-            {
-                field: 'path',
-                displayName: 'Context-Path',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'activeSessions',
-                displayName: 'Active Sessions',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'expiredSessions',
-                displayName: 'Expired Sessions',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'rejectedSessions',
-                displayName: 'Rejected Sessions',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'maxActive',
-                displayName: 'Max Active Sessions',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'maxActiveSessions',
-                displayName: 'Max Active Sessions Allowed',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'maxInactiveInterval',
-                displayName: 'Max Inactive Interval',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'sessionCounter',
-                displayName: 'Session Counter',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'sessionCreateRate',
-                displayName: 'Session Create Rate',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            },
-            {
-                field: 'sessionExpireRate',
-                displayName: 'Session Expire Rate',
-                cellFilter: null,
-                width: "*",
-                resizable: true
-            }
-        ];
-
-        $scope.gridOptions = {
-            data: 'sessions',
-            displayFooter: false,
-            displaySelectionCheckbox: false,
-            canSelectRows: false,
-            columnDefs: columnDefs,
-            filterOptions: {
-                filterText: ''
-            }
-        };
-
-        function render(response) {
-            response = Tomcat.filerTomcatOrCatalina(response);
-
-            $scope.sessions = [];
-
-            function onAttributes(response) {
-                var obj = response.value;
-                if (obj) {
-                    obj.mbean = response.request.mbean;
-                    var mbean = obj.mbean;
-                    if (mbean) {
-                        // the context path is part of the mbean name
-                        // grab the 2nd part of the mbean that has context=/name
-                        var context = mbean.toString().split(",")[1];
-                        if (context) {
-                            if (context.toString().indexOf("path=") !== -1) {
-                                // and remove the leading path=/ from the name (Tomcat 5 or 6)
-                                obj.path = context.toString().substr(5);
-                            } else {
-                                // and remove the leading context=/ from the name (Tomcat 7)
-                                obj.path = context.toString().substr(9);
-                            }
-                        } else {
-                            obj.path = "";
-                        }
-
-                        $scope.sessions.push(obj);
-                        Core.$apply($scope);
-                    }
-                }
-            }
-
-            angular.forEach(response, function (value, key) {
-                var mbean = value;
-                jolokia.request({ type: "read", mbean: mbean }, onSuccess(onAttributes));
-            });
-            Core.$apply($scope);
-        }
-        ;
-
-        $scope.$on('jmxTreeUpdated', reloadFunction);
-        $scope.$watch('workspace.tree', reloadFunction);
-
-        function reloadFunction() {
-            // if the JMX tree is reloaded its probably because a new MBean has been added or removed
-            // so lets reload, asynchronously just in case
-            setTimeout(loadData, 50);
-        }
-
-        function loadData() {
-            console.log("Loading tomcat session data...");
-            jolokia.search("*:type=Manager,*", onSuccess(render));
-        }
-    }
-    Tomcat.SessionsController = SessionsController;
-})(Tomcat || (Tomcat = {}));
 /**
 * @module Tomcat
 * @main Tomcat
 */
+/// <reference path="./tomcatHelpers.ts"/>
 var Tomcat;
 (function (Tomcat) {
     var pluginName = 'tomcat';
-    angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore']).config(function ($routeProvider) {
-        $routeProvider.when('/tomcat/server', { templateUrl: 'app/tomcat/html/server.html' }).when('/tomcat/applications', { templateUrl: 'app/tomcat/html/applications.html' }).when('/tomcat/connectors', { templateUrl: 'app/tomcat/html/connectors.html' }).when('/tomcat/sessions', { templateUrl: 'app/tomcat/html/sessions.html' });
-    }).filter('tomcatIconClass', function () {
-        return Tomcat.iconClass;
-    }).run(function ($location, workspace, viewRegistry, helpRegistry) {
-        viewRegistry['tomcat'] = "app/tomcat/html/layoutTomcatTabs.html";
-        helpRegistry.addUserDoc('tomcat', 'app/tomcat/doc/help.md', function () {
-            return workspace.treeContainsDomainAndProperties("Tomcat") || workspace.treeContainsDomainAndProperties("Catalina");
-        });
+    Tomcat._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore']);
 
-        workspace.topLevelTabs.push({
-            id: "tomcat",
-            content: "Tomcat",
-            title: "Manage your Tomcat container",
-            isValid: function (workspace) {
-                return workspace.treeContainsDomainAndProperties("Tomcat") || workspace.treeContainsDomainAndProperties("Catalina");
-            },
-            href: function () {
-                return "#/tomcat/applications";
-            },
-            isActive: function (workspace) {
-                return workspace.isTopTabActive("tomcat");
-            }
-        });
+    Tomcat._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/tomcat/server', { templateUrl: 'app/tomcat/html/server.html' }).when('/tomcat/applications', { templateUrl: 'app/tomcat/html/applications.html' }).when('/tomcat/connectors', { templateUrl: 'app/tomcat/html/connectors.html' }).when('/tomcat/sessions', { templateUrl: 'app/tomcat/html/sessions.html' });
+        }]);
+
+    Tomcat._module.filter('tomcatIconClass', function () {
+        return Tomcat.iconClass;
     });
 
+    Tomcat._module.run([
+        "$location", "workspace", "viewRegistry", "helpRegistry", function ($location, workspace, viewRegistry, helpRegistry) {
+            viewRegistry['tomcat'] = "app/tomcat/html/layoutTomcatTabs.html";
+            helpRegistry.addUserDoc('tomcat', 'app/tomcat/doc/help.md', function () {
+                return workspace.treeContainsDomainAndProperties("Tomcat") || workspace.treeContainsDomainAndProperties("Catalina");
+            });
+
+            workspace.topLevelTabs.push({
+                id: "tomcat",
+                content: "Tomcat",
+                title: "Manage your Tomcat container",
+                isValid: function (workspace) {
+                    return workspace.treeContainsDomainAndProperties("Tomcat") || workspace.treeContainsDomainAndProperties("Catalina");
+                },
+                href: function () {
+                    return "#/tomcat/applications";
+                },
+                isActive: function (workspace) {
+                    return workspace.isTopTabActive("tomcat");
+                }
+            });
+        }]);
+
     hawtioPluginLoader.addModule(pluginName);
+})(Tomcat || (Tomcat = {}));
+/// <reference path="./tomcatPlugin.ts"/>
+var Tomcat;
+(function (Tomcat) {
+    Tomcat._module.controller("Tomcat.TomcatController", [
+        "$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+            var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | tomcatIconClass}}"></i></div>';
+            var urlTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">' + '<a ng-href="{{row.getProperty(col.field)}}" target="_blank">{{row.getProperty(col.field)}}</a>' + '</div>';
+
+            $scope.uninstallDialog = new UI.Dialog();
+
+            $scope.httpPort;
+            $scope.httpScheme = "http";
+
+            $scope.webapps = [];
+            $scope.selected = [];
+
+            var columnDefsTomcat5 = [
+                {
+                    field: 'state',
+                    displayName: 'State',
+                    cellTemplate: stateTemplate,
+                    width: 56,
+                    minWidth: 56,
+                    maxWidth: 56,
+                    resizable: false
+                },
+                {
+                    field: 'path',
+                    displayName: 'Context-Path',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'url',
+                    displayName: 'Url',
+                    cellTemplate: urlTemplate,
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'startTime',
+                    displayName: 'Start Time',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                }
+            ];
+
+            var columnDefsTomcat6 = [
+                {
+                    field: 'stateName',
+                    displayName: 'State',
+                    cellTemplate: stateTemplate,
+                    width: 56,
+                    minWidth: 56,
+                    maxWidth: 56,
+                    resizable: false
+                },
+                {
+                    field: 'path',
+                    displayName: 'Context-Path',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'url',
+                    displayName: 'Url',
+                    cellTemplate: urlTemplate,
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'startTime',
+                    displayName: 'Start Time',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                }
+            ];
+
+            var columnDefsTomcat7 = [
+                {
+                    field: 'stateName',
+                    displayName: 'State',
+                    cellTemplate: stateTemplate,
+                    width: 56,
+                    minWidth: 56,
+                    maxWidth: 56,
+                    resizable: false
+                },
+                {
+                    field: 'path',
+                    displayName: 'Context-Path',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'displayName',
+                    displayName: 'Display Name',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'url',
+                    displayName: 'Url',
+                    cellTemplate: urlTemplate,
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'startTime',
+                    displayName: 'Start Time',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                }
+            ];
+
+            $scope.gridOptions = {
+                data: 'webapps',
+                displayFooter: true,
+                selectedItems: $scope.selected,
+                selectWithCheckboxOnly: true,
+                filterOptions: {
+                    filterText: ''
+                }
+            };
+
+            /*        function extractHttpPort(response) {
+            var obj = response;
+            if (obj) {
+            angular.forEach(obj, function (key, value) {
+            var mbean = key;
+            jolokia.request({type: "read", mbean: mbean, attribute: ["port", "scheme", "protocol"]}, onSuccess(onHttpPort));
+            });
+            }
+            }
+            
+            function onHttpPort(response) {
+            // we only need the HTTP protocol
+            var obj = response.value;
+            if (obj && obj.protocol && obj.protocol.toString().startsWith("HTTP")) {
+            $scope.httpPort = obj.port;
+            $scope.httpScheme = obj.scheme;
+            }
+            }
+            */
+            function render(response) {
+                response = Tomcat.filerTomcatOrCatalina(response);
+
+                $scope.webapps = [];
+                $scope.mbeanIndex = {};
+                $scope.selected.length = 0;
+
+                function onAttributes(response) {
+                    var obj = response.value;
+                    if (obj) {
+                        obj.mbean = response.request.mbean;
+                        var mbean = obj.mbean;
+
+                        // compute the url for the webapp, and we want to use http as scheme
+                        var hostname = Core.extractTargetUrl($location, $scope.httpScheme, $scope.httpPort);
+                        obj.url = hostname + obj['path'];
+
+                        if (mbean) {
+                            // format the start time as readable date format
+                            obj.startTime = Tomcat.millisToDateFormat(obj.startTime);
+
+                            var idx = $scope.mbeanIndex[mbean];
+                            if (angular.isDefined(idx)) {
+                                $scope.webapps[mbean] = obj;
+                            } else {
+                                $scope.mbeanIndex[mbean] = $scope.webapps.length;
+                                $scope.webapps.push(obj);
+                            }
+
+                            // ensure web page is updated
+                            Core.$apply($scope);
+                        }
+                    }
+                }
+
+                angular.forEach(response, function (value, key) {
+                    var mbean = value;
+                    if (Tomcat.isTomcat5($scope.tomcatServerVersion)) {
+                        jolokia.request({
+                            type: "read", mbean: mbean,
+                            attribute: ["path", "state", "startTime"] }, onSuccess(onAttributes));
+                    } else if (Tomcat.isTomcat6($scope.tomcatServerVersion)) {
+                        jolokia.request({
+                            type: "read", mbean: mbean,
+                            attribute: ["path", "stateName", "startTime"] }, onSuccess(onAttributes));
+                    } else {
+                        jolokia.request({
+                            type: "read", mbean: mbean,
+                            attribute: ["displayName", "path", "stateName", "startTime"] }, onSuccess(onAttributes));
+                    }
+                });
+                Core.$apply($scope);
+            }
+            ;
+
+            // function to control the web applications
+            $scope.controlWebApps = function (op) {
+                // grab id of mbean names to control
+                var mbeanNames = $scope.selected.map(function (b) {
+                    return b.mbean;
+                });
+                if (!angular.isArray(mbeanNames)) {
+                    mbeanNames = [mbeanNames];
+                }
+
+                // execute operation on each mbean
+                var lastIndex = (mbeanNames.length || 1) - 1;
+                angular.forEach(mbeanNames, function (mbean, idx) {
+                    var onResponse = (idx >= lastIndex) ? $scope.onLastResponse : $scope.onResponse;
+                    jolokia.request({
+                        type: 'exec',
+                        mbean: mbean,
+                        operation: op,
+                        arguments: null
+                    }, onSuccess(onResponse, { error: onResponse }));
+                });
+            };
+
+            $scope.stop = function () {
+                $scope.controlWebApps('stop');
+            };
+
+            $scope.start = function () {
+                $scope.controlWebApps('start');
+            };
+
+            $scope.reload = function () {
+                $scope.controlWebApps('reload');
+            };
+
+            $scope.uninstall = function () {
+                $scope.controlWebApps('destroy');
+                $scope.uninstallDialog.close();
+            };
+
+            // function to trigger reloading page
+            $scope.onLastResponse = function (response) {
+                $scope.onResponse(response);
+
+                // we only want to force updating the data on the last response
+                loadData();
+            };
+
+            $scope.onResponse = function (response) {
+                //console.log("got response: " + response);
+            };
+
+            $scope.$on('jmxTreeUpdated', reloadFunction);
+            $scope.$watch('workspace.tree', reloadFunction);
+
+            function reloadFunction() {
+                // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+                // so lets reload, asynchronously just in case
+                setTimeout(loadData, 50);
+            }
+
+            function loadData() {
+                console.log("Loading tomcat webapp data...");
+
+                // must load connectors first, before showing applications, so we do this call synchronously
+                var connectors = jolokia.search("*:type=Connector,*");
+                if (connectors) {
+                    var found = false;
+                    angular.forEach(connectors, function (key, value) {
+                        var mbean = key;
+                        if (!found) {
+                            var data = jolokia.request({ type: "read", mbean: mbean, attribute: ["port", "scheme", "protocol"] });
+                            if (data && data.value) {
+                                function isHttp(value) {
+                                    return value && value.toString().startsWith("http");
+                                }
+
+                                if (isHttp(data.value.protocol) || isHttp(data.value.scheme)) {
+                                    found = true;
+                                    $scope.httpPort = data.value.port;
+                                    $scope.httpScheme = data.value.scheme;
+                                }
+                            }
+                        }
+                    });
+                }
+                jolokia.search("*:j2eeType=WebModule,*", onSuccess(render));
+            }
+
+            // grab server information once
+            $scope.tomcatServerVersion = "";
+
+            var servers = jolokia.search("*:type=Server");
+            servers = Tomcat.filerTomcatOrCatalina(servers);
+            if (servers && servers.length === 1) {
+                $scope.tomcatServerVersion = jolokia.getAttribute(servers[0], "serverInfo");
+            } else {
+                console.log("Cannot find Tomcat server or there was more than one server. response is: " + servers);
+            }
+
+            // the columns shown in the applications view depends on the Tomcat version in use
+            if (Tomcat.isTomcat5($scope.tomcatServerVersion)) {
+                console.log("Using Tomcat 5");
+                $scope.gridOptions.columnDefs = columnDefsTomcat5;
+            } else if (Tomcat.isTomcat6($scope.tomcatServerVersion)) {
+                console.log("Using Tomcat 6");
+                $scope.gridOptions.columnDefs = columnDefsTomcat6;
+            } else {
+                console.log("Using Tomcat 7");
+                $scope.gridOptions.columnDefs = columnDefsTomcat7;
+            }
+        }]);
+})(Tomcat || (Tomcat = {}));
+/// <reference path="./tomcatPlugin.ts"/>
+var Tomcat;
+(function (Tomcat) {
+    Tomcat._module.controller("Tomcat.ConnectorsController", [
+        "$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+            var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | tomcatIconClass}}"></i></div>';
+
+            $scope.connectors = [];
+            $scope.selected = [];
+
+            var columnDefs = [
+                {
+                    field: 'stateName',
+                    displayName: 'State',
+                    cellTemplate: stateTemplate,
+                    width: 56,
+                    minWidth: 56,
+                    maxWidth: 56,
+                    resizable: false
+                },
+                {
+                    field: 'port',
+                    displayName: 'Port',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'scheme',
+                    displayName: 'Scheme',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'protocol',
+                    displayName: 'Protocol',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'secure',
+                    displayName: 'Secure',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'connectionLinger',
+                    displayName: 'Connection Linger',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'connectionTimeout',
+                    displayName: 'Connection Timeout',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'keepAliveTimeout',
+                    displayName: 'Keep Alive Timeout',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'minSpareThreads',
+                    displayName: 'Minimum Threads',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'maxThreads',
+                    displayName: 'Maximum Threads',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                }
+            ];
+
+            $scope.gridOptions = {
+                data: 'connectors',
+                displayFooter: true,
+                selectedItems: $scope.selected,
+                selectWithCheckboxOnly: true,
+                columnDefs: columnDefs,
+                filterOptions: {
+                    filterText: ''
+                }
+            };
+
+            function render(response) {
+                response = Tomcat.filerTomcatOrCatalina(response);
+
+                $scope.connectors = [];
+                $scope.selected.length = 0;
+
+                function onAttributes(response) {
+                    var obj = response.value;
+                    if (obj) {
+                        obj.mbean = response.request.mbean;
+                        $scope.connectors.push(obj);
+                        Core.$apply($scope);
+                    }
+                }
+
+                // create structure for each response
+                angular.forEach(response, function (value, key) {
+                    var mbean = value;
+                    jolokia.request({
+                        type: "read", mbean: mbean, attribute: [
+                            "scheme", "port", "protocol", "secure",
+                            "connectionLinger", "connectionTimeout", "keepAliveTimeout", "minSpareThreads", "maxThreads", "stateName"] }, onSuccess(onAttributes));
+                });
+                Core.$apply($scope);
+            }
+            ;
+
+            // function to control the connectors
+            $scope.controlConnector = function (op) {
+                // grab id of mbean names to control
+                var ids = $scope.selected.map(function (b) {
+                    return b.mbean;
+                });
+                if (!angular.isArray(ids)) {
+                    ids = [ids];
+                }
+
+                // execute operation on each mbean
+                ids.forEach(function (id) {
+                    jolokia.request({
+                        type: 'exec',
+                        mbean: id,
+                        operation: op,
+                        arguments: null
+                    }, onSuccess($scope.onResponse, { error: $scope.onResponse }));
+                });
+            };
+
+            $scope.stop = function () {
+                $scope.controlConnector('stop');
+            };
+
+            $scope.start = function () {
+                $scope.controlConnector('start');
+            };
+
+            $scope.destroy = function () {
+                $scope.controlConnector('destroy');
+            };
+
+            // function to trigger reloading page
+            $scope.onResponse = function (response) {
+                //console.log("got response: " + response);
+                loadData();
+            };
+
+            $scope.$on('jmxTreeUpdated', reloadFunction);
+            $scope.$watch('workspace.tree', reloadFunction);
+
+            function reloadFunction() {
+                // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+                // so lets reload, asynchronously just in case
+                setTimeout(loadData, 50);
+            }
+
+            function loadData() {
+                console.log("Loading tomcat connector data...");
+                jolokia.search("*:type=Connector,*", onSuccess(render));
+            }
+        }]);
+})(Tomcat || (Tomcat = {}));
+/// <reference path="./tomcatPlugin.ts"/>
+var Tomcat;
+(function (Tomcat) {
+    Tomcat._module.controller("Tomcat.SessionsController", [
+        "$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+            var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | tomcatIconClass}}"></i></div>';
+
+            $scope.sessions = [];
+            $scope.search = "";
+
+            var columnDefs = [
+                {
+                    field: 'stateName',
+                    displayName: 'State',
+                    cellTemplate: stateTemplate,
+                    width: 56,
+                    minWidth: 56,
+                    maxWidth: 56,
+                    resizable: false
+                },
+                {
+                    field: 'path',
+                    displayName: 'Context-Path',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'activeSessions',
+                    displayName: 'Active Sessions',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'expiredSessions',
+                    displayName: 'Expired Sessions',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'rejectedSessions',
+                    displayName: 'Rejected Sessions',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'maxActive',
+                    displayName: 'Max Active Sessions',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'maxActiveSessions',
+                    displayName: 'Max Active Sessions Allowed',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'maxInactiveInterval',
+                    displayName: 'Max Inactive Interval',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'sessionCounter',
+                    displayName: 'Session Counter',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'sessionCreateRate',
+                    displayName: 'Session Create Rate',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                },
+                {
+                    field: 'sessionExpireRate',
+                    displayName: 'Session Expire Rate',
+                    cellFilter: null,
+                    width: "*",
+                    resizable: true
+                }
+            ];
+
+            $scope.gridOptions = {
+                data: 'sessions',
+                displayFooter: false,
+                displaySelectionCheckbox: false,
+                canSelectRows: false,
+                columnDefs: columnDefs,
+                filterOptions: {
+                    filterText: ''
+                }
+            };
+
+            function render(response) {
+                response = Tomcat.filerTomcatOrCatalina(response);
+
+                $scope.sessions = [];
+
+                function onAttributes(response) {
+                    var obj = response.value;
+                    if (obj) {
+                        obj.mbean = response.request.mbean;
+                        var mbean = obj.mbean;
+                        if (mbean) {
+                            // the context path is part of the mbean name
+                            // grab the 2nd part of the mbean that has context=/name
+                            var context = mbean.toString().split(",")[1];
+                            if (context) {
+                                if (context.toString().indexOf("path=") !== -1) {
+                                    // and remove the leading path=/ from the name (Tomcat 5 or 6)
+                                    obj.path = context.toString().substr(5);
+                                } else {
+                                    // and remove the leading context=/ from the name (Tomcat 7)
+                                    obj.path = context.toString().substr(9);
+                                }
+                            } else {
+                                obj.path = "";
+                            }
+
+                            $scope.sessions.push(obj);
+                            Core.$apply($scope);
+                        }
+                    }
+                }
+
+                angular.forEach(response, function (value, key) {
+                    var mbean = value;
+                    jolokia.request({ type: "read", mbean: mbean }, onSuccess(onAttributes));
+                });
+                Core.$apply($scope);
+            }
+            ;
+
+            $scope.$on('jmxTreeUpdated', reloadFunction);
+            $scope.$watch('workspace.tree', reloadFunction);
+
+            function reloadFunction() {
+                // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+                // so lets reload, asynchronously just in case
+                setTimeout(loadData, 50);
+            }
+
+            function loadData() {
+                console.log("Loading tomcat session data...");
+                jolokia.search("*:type=Manager,*", onSuccess(render));
+            }
+        }]);
 })(Tomcat || (Tomcat = {}));
 var Camin;
 (function (Camin) {
@@ -24828,2110 +24877,6 @@ var Jmx;
 */
 var Wiki;
 (function (Wiki) {
-    function CamelCanvasController($scope, $element, workspace, jolokia, wikiRepository, $templateCache, $interpolate) {
-        $scope.addDialog = new UI.Dialog();
-        $scope.propertiesDialog = new UI.Dialog();
-        $scope.modified = false;
-        $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
-        $scope.camelMaximumLabelWidth = Camel.maximumLabelWidth(localStorage);
-        $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
-
-        $scope.forms = {};
-
-        $scope.nodeTemplate = $interpolate($templateCache.get("nodeTemplate"));
-
-        $scope.$watch("camelContextTree", function () {
-            var tree = $scope.camelContextTree;
-            $scope.rootFolder = tree;
-
-            // now we've got cid values in the tree and DOM, lets create an index so we can bind the DOM to the tree model
-            $scope.folders = Camel.addFoldersToIndex($scope.rootFolder);
-
-            var doc = Core.pathGet(tree, ["xmlDocument"]);
-            if (doc) {
-                $scope.doc = doc;
-                reloadRouteIds();
-                onRouteSelectionChanged();
-            }
-        });
-
-        $scope.addAndCloseDialog = function () {
-            var nodeModel = $scope.selectedNodeModel();
-            if (nodeModel) {
-                addNewNode(nodeModel);
-            }
-            $scope.addDialog.close();
-        };
-
-        $scope.removeNode = function () {
-            var folder = getSelectedOrRouteFolder();
-            if (folder) {
-                var nodeName = Camel.getFolderCamelNodeId(folder);
-                folder.detach();
-                if ("route" === nodeName) {
-                    // lets also clear the selected route node
-                    $scope.selectedRouteId = null;
-                }
-                updateSelection(null);
-                treeModified();
-            }
-        };
-
-        $scope.doLayout = function () {
-            $scope.drawnRouteId = null;
-            onRouteSelectionChanged();
-        };
-
-        function isRouteOrNode() {
-            return !$scope.selectedFolder;
-        }
-
-        $scope.getDeleteTitle = function () {
-            if (isRouteOrNode()) {
-                return "Delete this route";
-            }
-            return "Delete this node";
-        };
-
-        $scope.getDeleteTarget = function () {
-            if (isRouteOrNode()) {
-                return "Route";
-            }
-            return "Node";
-        };
-
-        $scope.isFormDirty = function () {
-            Wiki.log.debug("endpointForm: ", $scope.endpointForm);
-            if ($scope.endpointForm.$dirty) {
-                return true;
-            }
-            if (!$scope.forms['formEditor']) {
-                return false;
-            } else {
-                return $scope.forms['formEditor']['$dirty'];
-            }
-        };
-
-        /* TODO
-        $scope.resetForms = () => {
-        
-        }
-        */
-        /*
-        * Converts a path and a set of endpoint parameters into a URI we can then use to store in the XML
-        */
-        function createEndpointURI(endpointScheme, slashesText, endpointPath, endpointParameters) {
-            console.log("scheme " + endpointScheme + " path " + endpointPath + " parameters " + endpointParameters);
-
-            // now lets create the new URI from the path and parameters
-            // TODO should we use JMX for this?
-            var uri = ((endpointScheme) ? endpointScheme + ":" + slashesText : "") + (endpointPath ? endpointPath : "");
-            var paramText = Core.hashToString(endpointParameters);
-            if (paramText) {
-                uri += "?" + paramText;
-            }
-            return uri;
-        }
-
-        $scope.updateProperties = function () {
-            Wiki.log.info("old URI is " + $scope.nodeData.uri);
-            var uri = createEndpointURI($scope.endpointScheme, ($scope.endpointPathHasSlashes ? "//" : ""), $scope.endpointPath, $scope.endpointParameters);
-            Wiki.log.info("new URI is " + uri);
-            if (uri) {
-                $scope.nodeData.uri = uri;
-            }
-
-            var key = null;
-            var selectedFolder = $scope.selectedFolder;
-            if (selectedFolder) {
-                key = selectedFolder.key;
-
-                // lets delete the current selected node's div so its updated with the new template values
-                var elements = $element.find(".canvas").find("[id='" + key + "']").first().remove();
-            }
-
-            treeModified();
-
-            if (key) {
-                updateSelection(key);
-            }
-
-            if ($scope.isFormDirty()) {
-                $scope.endpointForm.$setPristine();
-                if ($scope.forms['formEditor']) {
-                    $scope.forms['formEditor'].$setPristine();
-                }
-            }
-
-            Core.$apply($scope);
-        };
-
-        $scope.save = function () {
-            // generate the new XML
-            if ($scope.rootFolder) {
-                var xmlNode = Camel.generateXmlFromFolder($scope.rootFolder);
-                if (xmlNode) {
-                    var text = Core.xmlNodeToString(xmlNode);
-                    if (text) {
-                        var decoded = decodeURIComponent(text);
-                        Wiki.log.debug("Saving xml decoded: " + decoded);
-
-                        // lets save the file...
-                        var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
-                        wikiRepository.putPage($scope.branch, $scope.pageId, decoded, commitMessage, function (status) {
-                            Wiki.onComplete(status);
-                            notification("success", "Saved " + $scope.pageId);
-                            $scope.modified = false;
-                            goToView();
-                            Core.$apply($scope);
-                        });
-                    }
-                }
-            }
-        };
-
-        $scope.cancel = function () {
-            console.log("cancelling...");
-            // TODO show dialog if folks are about to lose changes...
-        };
-
-        $scope.$watch("selectedRouteId", onRouteSelectionChanged);
-
-        function goToView() {
-            // TODO lets navigate to the view if we have a separate view one day :)
-            /*
-            if ($scope.breadcrumbs && $scope.breadcrumbs.length > 1) {
-            var viewLink = $scope.breadcrumbs[$scope.breadcrumbs.length - 2];
-            console.log("goToView has found view " + viewLink);
-            var path = Core.trimLeading(viewLink, "#");
-            $location.path(path);
-            } else {
-            console.log("goToView has no breadcrumbs!");
-            }
-            */
-        }
-
-        function addNewNode(nodeModel) {
-            var doc = $scope.doc || document;
-            var parentFolder = $scope.selectedFolder || $scope.rootFolder;
-            var key = nodeModel["_id"];
-            if (!key) {
-                console.log("WARNING: no id for model " + JSON.stringify(nodeModel));
-            } else {
-                var treeNode = $scope.selectedFolder;
-                if (key === "route") {
-                    // lets add to the root of the tree
-                    treeNode = $scope.rootFolder;
-                } else {
-                    if (!treeNode) {
-                        // lets select the last route - and create a new route if need be
-                        var root = $scope.rootFolder;
-                        var children = root.children;
-                        if (!children || !children.length) {
-                            addNewNode(Camel.getCamelSchema("route"));
-                            children = root.children;
-                        }
-                        if (children && children.length) {
-                            treeNode = getRouteFolder($scope.rootFolder, $scope.selectedRouteId) || children[children.length - 1];
-                        } else {
-                            console.log("Could not add a new route to the empty tree!");
-                            return;
-                        }
-                    }
-
-                    // if the parent folder likes to act as a pipeline, then add
-                    // after the parent, rather than as a child
-                    var parentTypeName = Camel.getFolderCamelNodeId(treeNode);
-                    if (!Camel.acceptOutput(parentTypeName)) {
-                        treeNode = treeNode.parent || treeNode;
-                    }
-                }
-                if (treeNode) {
-                    var node = doc.createElement(key);
-                    parentFolder = treeNode;
-                    var addedNode = Camel.addRouteChild(parentFolder, node);
-
-                    // TODO add the schema here for an element??
-                    // or default the data or something
-                    var nodeData = {};
-                    if (key === "endpoint" && $scope.endpointConfig) {
-                        var key = $scope.endpointConfig.key;
-                        if (key) {
-                            nodeData["uri"] = key + ":";
-                        }
-                    }
-                    addedNode["camelNodeData"] = nodeData;
-                    addedNode["endpointConfig"] = $scope.endpointConfig;
-
-                    if (key === "route") {
-                        // lets generate a new routeId and switch to it
-                        var count = $scope.routeIds.length;
-                        var nodeId = null;
-                        while (true) {
-                            nodeId = "route" + (++count);
-                            if (!$scope.routeIds.find(nodeId)) {
-                                break;
-                            }
-                        }
-                        addedNode["routeXmlNode"].setAttribute("id", nodeId);
-                        $scope.selectedRouteId = nodeId;
-                    }
-                }
-            }
-            treeModified();
-        }
-
-        function treeModified(reposition) {
-            if (typeof reposition === "undefined") { reposition = true; }
-            // lets recreate the XML model from the update Folder tree
-            var newDoc = Camel.generateXmlFromFolder($scope.rootFolder);
-            var tree = Camel.loadCamelTree(newDoc, $scope.pageId);
-            if (tree) {
-                $scope.rootFolder = tree;
-                $scope.doc = Core.pathGet(tree, ["xmlDocument"]);
-            }
-            $scope.modified = true;
-            reloadRouteIds();
-            $scope.doLayout();
-            Core.$apply($scope);
-        }
-
-        function reloadRouteIds() {
-            $scope.routeIds = [];
-            var doc = $($scope.doc);
-            $scope.camelSelectionDetails.selectedCamelContextId = doc.find("camelContext").attr("id");
-            doc.find("route").each(function (idx, route) {
-                var id = route.getAttribute("id");
-                if (id) {
-                    $scope.routeIds.push(id);
-                }
-            });
-        }
-
-        function onRouteSelectionChanged() {
-            if ($scope.doc) {
-                if (!$scope.selectedRouteId && $scope.routeIds && $scope.routeIds.length) {
-                    $scope.selectedRouteId = $scope.routeIds[0];
-                }
-                if ($scope.selectedRouteId && $scope.selectedRouteId !== $scope.drawnRouteId) {
-                    var nodes = [];
-                    var links = [];
-                    Camel.loadRouteXmlNodes($scope, $scope.doc, $scope.selectedRouteId, nodes, links, getWidth());
-                    updateSelection($scope.selectedRouteId);
-
-                    // now we've got cid values in the tree and DOM, lets create an index so we can bind the DOM to the tree model
-                    $scope.folders = Camel.addFoldersToIndex($scope.rootFolder);
-                    showGraph(nodes, links);
-                    $scope.drawnRouteId = $scope.selectedRouteId;
-                }
-                $scope.camelSelectionDetails.selectedRouteId = $scope.selectedRouteId;
-            }
-        }
-
-        function showGraph(nodes, links) {
-            layoutGraph(nodes, links);
-        }
-
-        function getNodeId(node) {
-            if (angular.isNumber(node)) {
-                var idx = node;
-                node = $scope.nodeStates[idx];
-                if (!node) {
-                    console.log("Cant find node at " + idx);
-                    return "node-" + idx;
-                }
-            }
-            return node.cid || "node-" + node.id;
-        }
-
-        function getSelectedOrRouteFolder() {
-            return $scope.selectedFolder || getRouteFolder($scope.rootFolder, $scope.selectedRouteId);
-        }
-
-        function getContainerElement() {
-            var rootElement = $element;
-            var containerElement = rootElement.find(".canvas");
-            if (!containerElement || !containerElement.length)
-                containerElement = rootElement;
-            return containerElement;
-        }
-
-        // context menu (right click) on any component.
-        /* TODO disabling this for now just so I can look at elements easily in the dev tools
-        jsPlumb.bind("contextmenu", function (component, originalEvent) {
-        alert("context menu on component " + component.id);
-        originalEvent.preventDefault();
-        return false;
-        });
-        */
-        /*
-        function clearCanvasLayout(jsPlumb, containerElement) {
-        try {
-        containerElement.empty();
-        jsPlumb.reset();
-        } catch (e) {
-        // ignore errors
-        }
-        return jsPlumb;
-        }
-        */
-        // configure canvas layout and styles
-        var endpointStyle = ["Dot", { radius: 4, cssClass: 'camel-canvas-endpoint' }];
-        var hoverPaintStyle = { strokeStyle: "red", lineWidth: 3 };
-
-        //var labelStyles: any[] = [ "Label", { label:"FOO", id:"label" }];
-        var labelStyles = ["Label"];
-        var arrowStyles = [
-            "Arrow", {
-                location: 1,
-                id: "arrow",
-                length: 8,
-                width: 8,
-                foldback: 0.8
-            }];
-        var connectorStyle = ["StateMachine", { curviness: 10, proximityLimit: 50 }];
-
-        jsPlumb.importDefaults({
-            Endpoint: endpointStyle,
-            HoverPaintStyle: hoverPaintStyle,
-            ConnectionOverlays: [
-                arrowStyles,
-                labelStyles
-            ]
-        });
-
-        $scope.$on('$destroy', function () {
-            jsPlumb.reset();
-        });
-
-        // double click on any connection
-        jsPlumb.bind("dblclick", function (connection, originalEvent) {
-            if (jsPlumb.isSuspendDrawing()) {
-                return;
-            }
-            alert("double click on connection from " + connection.sourceId + " to " + connection.targetId);
-        });
-
-        jsPlumb.bind('connection', function (info, evt) {
-            if (jsPlumb.isSuspendDrawing()) {
-                return;
-            }
-
-            //log.debug("Connection event: ", info);
-            Wiki.log.debug("Creating connection from ", info.source.get(0).id, " to ", info.target.get(0).id);
-            var link = getLink(info);
-            var source = $scope.folders[link.source];
-            var target = $scope.folders[link.target];
-            source.moveChild(target);
-            treeModified();
-        });
-
-        jsPlumb.bind('connectionDetached', function (info, evt) {
-            if (jsPlumb.isSuspendDrawing()) {
-                return;
-            }
-
-            //log.debug("Connection detach event: ", info);
-            Wiki.log.debug("Detaching connection from ", info.source.get(0).id, " to ", info.target.get(0).id);
-            var link = getLink(info);
-            var source = $scope.folders[link.source];
-            var target = $scope.folders[link.target];
-            // TODO orphan target folder without actually deleting it
-        });
-
-        // lets delete connections on click
-        jsPlumb.bind("click", function (c) {
-            if (jsPlumb.isSuspendDrawing()) {
-                return;
-            }
-            jsPlumb.detach(c);
-        });
-
-        function layoutGraph(nodes, links) {
-            var transitions = [];
-            var states = Core.createGraphStates(nodes, links, transitions);
-
-            Wiki.log.debug("links: ", links);
-            Wiki.log.debug("transitions: ", transitions);
-
-            $scope.nodeStates = states;
-            var containerElement = getContainerElement();
-
-            jsPlumb.doWhileSuspended(function () {
-                //set our container to some arbitrary initial size
-                containerElement.css({
-                    'width': '800px',
-                    'height': '800px',
-                    'min-height': '800px',
-                    'min-width': '800px'
-                });
-                var containerHeight = 0;
-                var containerWidth = 0;
-
-                containerElement.find('div.component').each(function (i, el) {
-                    Wiki.log.debug("Checking: ", el, " ", i);
-                    if (!states.any(function (node) {
-                        return el.id === getNodeId(node);
-                    })) {
-                        Wiki.log.debug("Removing element: ", el.id);
-                        jsPlumb.remove(el);
-                    }
-                });
-
-                angular.forEach(states, function (node) {
-                    Wiki.log.debug("node: ", node);
-                    var id = getNodeId(node);
-                    var div = containerElement.find('#' + id);
-
-                    if (!div[0]) {
-                        div = $($scope.nodeTemplate({
-                            id: id,
-                            node: node
-                        }));
-                        div.appendTo(containerElement);
-                    }
-
-                    // Make the node a jsplumb source
-                    jsPlumb.makeSource(div, {
-                        filter: "img.nodeIcon",
-                        anchor: "Continuous",
-                        connector: connectorStyle,
-                        connectorStyle: { strokeStyle: "#666", lineWidth: 3 },
-                        maxConnections: -1
-                    });
-
-                    // and also a jsplumb target
-                    jsPlumb.makeTarget(div, {
-                        dropOptions: { hoverClass: "dragHover" },
-                        anchor: "Continuous"
-                    });
-
-                    jsPlumb.draggable(div, {
-                        containment: '.camel-canvas'
-                    });
-
-                    // add event handlers to this node
-                    div.click(function () {
-                        var newFlag = !div.hasClass("selected");
-                        containerElement.find('div.component').toggleClass("selected", false);
-                        div.toggleClass("selected", newFlag);
-                        var id = div.attr("id");
-                        updateSelection(newFlag ? id : null);
-                        Core.$apply($scope);
-                    });
-
-                    div.dblclick(function () {
-                        var id = div.attr("id");
-                        updateSelection(id);
-
-                        //$scope.propertiesDialog.open();
-                        Core.$apply($scope);
-                    });
-
-                    var height = div.height();
-                    var width = div.width();
-                    if (height || width) {
-                        node.width = width;
-                        node.height = height;
-                        div.css({
-                            'min-width': width,
-                            'min-height': height
-                        });
-                    }
-                });
-
-                var edgeSep = 10;
-
-                // Create the layout and get the buildGraph
-                dagre.layout().nodeSep(100).edgeSep(edgeSep).rankSep(75).nodes(states).edges(transitions).debugLevel(1).run();
-
-                angular.forEach(states, function (node) {
-                    // position the node in the graph
-                    var id = getNodeId(node);
-                    var div = $("#" + id);
-                    var divHeight = div.height();
-                    var divWidth = div.width();
-                    var leftOffset = node.dagre.x + divWidth;
-                    var bottomOffset = node.dagre.y + divHeight;
-                    if (containerHeight < bottomOffset) {
-                        containerHeight = bottomOffset + edgeSep * 2;
-                    }
-                    if (containerWidth < leftOffset) {
-                        containerWidth = leftOffset + edgeSep * 2;
-                    }
-                    div.css({ top: node.dagre.y, left: node.dagre.x });
-                });
-
-                // size the container to fit the graph
-                containerElement.css({
-                    'width': containerWidth,
-                    'height': containerHeight,
-                    'min-height': containerHeight,
-                    'min-width': containerWidth
-                });
-
-                containerElement.dblclick(function () {
-                    $scope.propertiesDialog.open();
-                });
-
-                jsPlumb.setSuspendEvents(true);
-
-                // Detach all the current connections and reconnect everything based on the updated graph
-                jsPlumb.detachEveryConnection({ fireEvent: false });
-
-                angular.forEach(links, function (link) {
-                    jsPlumb.connect({
-                        source: getNodeId(link.source),
-                        target: getNodeId(link.target)
-                    });
-                });
-                jsPlumb.setSuspendEvents(false);
-            });
-
-            return states;
-        }
-
-        function getLink(info) {
-            var sourceId = info.source.get(0).id;
-            var targetId = info.target.get(0).id;
-            return {
-                source: sourceId,
-                target: targetId
-            };
-        }
-
-        function getNodeByCID(nodes, cid) {
-            return nodes.find(function (node) {
-                return node.cid === cid;
-            });
-        }
-
-        /*
-        * Updates the selection with the given folder or ID
-        */
-        function updateSelection(folderOrId) {
-            var folder = null;
-            if (angular.isString(folderOrId)) {
-                var id = folderOrId;
-                folder = (id && $scope.folders) ? $scope.folders[id] : null;
-            } else {
-                folder = folderOrId;
-            }
-            $scope.selectedFolder = folder;
-            folder = getSelectedOrRouteFolder();
-            $scope.nodeXmlNode = null;
-            $scope.propertiesTemplate = null;
-            if (folder) {
-                var nodeName = Camel.getFolderCamelNodeId(folder);
-                $scope.nodeData = Camel.getRouteFolderJSON(folder);
-                $scope.nodeDataChangedFields = {};
-                $scope.nodeModel = Camel.getCamelSchema(nodeName);
-                if ($scope.nodeModel) {
-                    $scope.propertiesTemplate = "app/wiki/html/camelPropertiesEdit.html";
-                }
-                $scope.selectedEndpoint = null;
-                if ("endpoint" === nodeName) {
-                    var uri = $scope.nodeData["uri"];
-                    if (uri) {
-                        // lets decompose the URI into scheme, path and parameters
-                        var idx = uri.indexOf(":");
-                        if (idx > 0) {
-                            var endpointScheme = uri.substring(0, idx);
-                            var endpointPath = uri.substring(idx + 1);
-
-                            // for empty paths lets assume we need // on a URI
-                            $scope.endpointPathHasSlashes = endpointPath ? false : true;
-                            if (endpointPath.startsWith("//")) {
-                                endpointPath = endpointPath.substring(2);
-                                $scope.endpointPathHasSlashes = true;
-                            }
-                            idx = endpointPath.indexOf("?");
-                            var endpointParameters = {};
-                            if (idx > 0) {
-                                var parameters = endpointPath.substring(idx + 1);
-                                endpointPath = endpointPath.substring(0, idx);
-                                endpointParameters = Core.stringToHash(parameters);
-                            }
-
-                            $scope.endpointScheme = endpointScheme;
-                            $scope.endpointPath = endpointPath;
-                            $scope.endpointParameters = endpointParameters;
-
-                            console.log("endpoint " + endpointScheme + " path " + endpointPath + " and parameters " + JSON.stringify(endpointParameters));
-                            $scope.loadEndpointSchema(endpointScheme);
-                            $scope.selectedEndpoint = {
-                                endpointScheme: endpointScheme,
-                                endpointPath: endpointPath,
-                                parameters: endpointParameters
-                            };
-                        }
-                    }
-                }
-            }
-        }
-
-        function getWidth() {
-            var canvasDiv = $($element);
-            return canvasDiv.width();
-        }
-
-        function getFolderIdAttribute(route) {
-            var id = null;
-            if (route) {
-                var xmlNode = route["routeXmlNode"];
-                if (xmlNode) {
-                    id = xmlNode.getAttribute("id");
-                }
-            }
-            return id;
-        }
-
-        function getRouteFolder(tree, routeId) {
-            var answer = null;
-            if (tree) {
-                angular.forEach(tree.children, function (route) {
-                    if (!answer) {
-                        var id = getFolderIdAttribute(route);
-                        if (routeId === id) {
-                            answer = route;
-                        }
-                    }
-                });
-            }
-            return answer;
-        }
-        /*
-        if (jsPlumb) {
-        jsPlumb.bind("ready", setup);
-        }
-        
-        function setup() {
-        $scope.jsPlumbSetup = true;
-        }
-        */
-    }
-    Wiki.CamelCanvasController = CamelCanvasController;
-})(Wiki || (Wiki = {}));
-/**
-* @module Wiki
-*/
-var Wiki;
-(function (Wiki) {
-    function GitPreferences($scope, localStorage, userDetails) {
-        Core.initPreferenceScope($scope, localStorage, {
-            'gitUserName': {
-                'value': userDetails.username
-            },
-            'gitUserEmail': {
-                'value': ''
-            }
-        });
-    }
-    Wiki.GitPreferences = GitPreferences;
-})(Wiki || (Wiki = {}));
-/**
-* @module Wiki
-*/
-var Wiki;
-(function (Wiki) {
-    function HistoryController($scope, $location, $routeParams, $templateCache, workspace, marked, fileExtensionTypeRegistry, wikiRepository) {
-        Wiki.initScope($scope, $routeParams, $location);
-        $scope.selectedItems = [];
-
-        // TODO we could configure this?
-        $scope.dateFormat = 'EEE, MMM d, y : hh:mm:ss a';
-
-        $scope.gridOptions = {
-            data: 'logs',
-            showFilter: false,
-            selectedItems: $scope.selectedItems,
-            showSelectionCheckbox: true,
-            displaySelectionCheckbox: true,
-            filterOptions: {
-                filterText: ''
-            },
-            columnDefs: [
-                {
-                    field: 'commitHashText',
-                    displayName: 'Change',
-                    cellTemplate: $templateCache.get('changeCellTemplate.html'),
-                    cellFilter: "",
-                    width: "*"
-                },
-                {
-                    field: 'date',
-                    displayName: 'Modified',
-                    cellFilter: "date: dateFormat",
-                    width: "**"
-                },
-                {
-                    field: 'author',
-                    displayName: 'Author',
-                    cellFilter: "",
-                    width: "**"
-                },
-                {
-                    field: 'shortMessage',
-                    displayName: 'Message',
-                    cellTemplate: '<div class="ngCellText" title="{{row.entity.shortMessage}}">{{row.entity.trimmedMessage}}</div>',
-                    cellFilter: "",
-                    width: "****"
-                }
-            ]
-        };
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateView, 50);
-        });
-
-        $scope.$watch('workspace.tree', function () {
-            if (!$scope.git && Git.getGitMBean(workspace)) {
-                // lets do this asynchronously to avoid Error: $digest already in progress
-                //console.log("Reloading the view as we now seem to have a git mbean!");
-                setTimeout(updateView, 50);
-            }
-        });
-        $scope.canRevert = function () {
-            return $scope.selectedItems.length === 1 && $scope.selectedItems[0] !== $scope.logs[0];
-        };
-
-        $scope.revert = function () {
-            if ($scope.selectedItems.length > 0) {
-                var objectId = $scope.selectedItems[0].name;
-                if (objectId) {
-                    var commitMessage = "Reverting file " + $scope.pageId + " to previous version " + objectId;
-                    wikiRepository.revertTo($scope.branch, objectId, $scope.pageId, commitMessage, function (result) {
-                        Wiki.onComplete(result);
-
-                        // now lets update the view
-                        notification('success', "Successfully reverted " + $scope.pageId);
-                        updateView();
-                    });
-                }
-                $scope.selectedItems.splice(0, $scope.selectedItems.length);
-            }
-        };
-
-        $scope.diff = function () {
-            var defaultValue = " ";
-            var objectId = defaultValue;
-            if ($scope.selectedItems.length > 0) {
-                objectId = $scope.selectedItems[0].name || defaultValue;
-            }
-            var baseObjectId = defaultValue;
-            if ($scope.selectedItems.length > 1) {
-                baseObjectId = $scope.selectedItems[1].name || defaultValue;
-
-                // make the objectId (the one that will start with b/ path) always newer than baseObjectId
-                if ($scope.selectedItems[0].date < $scope.selectedItems[1].date) {
-                    var _ = baseObjectId;
-                    baseObjectId = objectId;
-                    objectId = _;
-                }
-            }
-            var link = Wiki.startLink($scope.branch) + "/diff/" + $scope.pageId + "/" + objectId + "/" + baseObjectId;
-            var path = Core.trimLeading(link, "#");
-            $location.path(path);
-        };
-
-        updateView();
-
-        function updateView() {
-            var objectId = "";
-            var limit = 0;
-
-            $scope.git = wikiRepository.history($scope.branch, objectId, $scope.pageId, limit, function (logArray) {
-                angular.forEach(logArray, function (log) {
-                    // lets use the shorter hash for links by default
-                    var commitId = log.commitHashText || log.name;
-                    log.commitLink = Wiki.startLink($scope.branch) + "/commit/" + $scope.pageId + "/" + commitId;
-                });
-                $scope.logs = logArray;
-                Core.$apply($scope);
-            });
-            Wiki.loadBranches(wikiRepository, $scope);
-        }
-    }
-    Wiki.HistoryController = HistoryController;
-})(Wiki || (Wiki = {}));
-/**
-* @module Wiki
-*/
-var Wiki;
-(function (Wiki) {
-    function goToLink(link, $timeout, $location) {
-        var href = Core.trimLeading(link, "#");
-        $timeout(function () {
-            console.log("About to navigate to: " + href);
-            $location.url(href);
-        }, 100);
-    }
-
-    function ViewController($scope, $location, $routeParams, $route, $http, $timeout, workspace, marked, fileExtensionTypeRegistry, wikiRepository, $compile, $templateCache, jolokia) {
-        var log = Logger.get("Wiki");
-
-        Wiki.initScope($scope, $routeParams, $location);
-
-        $scope.fabricTopLevel = "fabric/profiles/";
-
-        $scope.versionId = $scope.branch;
-
-        $scope.paneTemplate = '';
-
-        $scope.profileId = Fabric.pagePathToProfileId($scope.pageId);
-        $scope.showProfileHeader = $scope.profileId && $scope.pageId.endsWith(Fabric.profileSuffix) ? true : false;
-
-        $scope.operationCounter = 1;
-        $scope.addDialog = new UI.Dialog();
-        $scope.generateDialog = new UI.Dialog();
-        $scope.renameDialog = new UI.Dialog();
-        $scope.moveDialog = new UI.Dialog();
-        $scope.deleteDialog = new UI.Dialog();
-        $scope.isFile = false;
-        $scope.rename = {
-            newFileName: ""
-        };
-        $scope.move = {
-            moveFolder: ""
-        };
-        $scope.createDocumentTree = Wiki.createWizardTree(workspace, $scope);
-
-        $scope.createDocumentTreeActivations = ["camel-spring.xml", "ReadMe.md"];
-        $scope.fileExists = {
-            exists: false,
-            name: ""
-        };
-
-        // bind filter model values to search params...
-        Core.bindModelToSearchParam($scope, $location, "searchText", "q", "");
-
-        // only reload the page if certain search parameters change
-        Core.reloadWhenParametersChange($route, $scope, $location);
-
-        $scope.gridOptions = {
-            data: 'children',
-            displayFooter: false,
-            selectedItems: [],
-            showSelectionCheckbox: true,
-            enableSorting: false,
-            useExternalSorting: true,
-            columnDefs: [
-                {
-                    field: 'name',
-                    displayName: 'Name',
-                    cellTemplate: $templateCache.get('fileCellTemplate.html'),
-                    headerCellTemplate: $templateCache.get('fileColumnTemplate.html')
-                }
-            ]
-        };
-
-        $scope.childActions = [];
-
-        var maybeUpdateView = Core.throttled(updateView, 1000);
-
-        $scope.$on('wikiBranchesUpdated', function () {
-            updateView();
-        });
-
-        /*
-        if (!$scope.nameOnly) {
-        $scope.gridOptions.columnDefs.push({
-        field: 'lastModified',
-        displayName: 'Modified',
-        cellFilter: "date:'EEE, MMM d, y : hh:mm:ss a'"
-        });
-        $scope.gridOptions.columnDefs.push({
-        field: 'length',
-        displayName: 'Size',
-        cellFilter: "number"
-        });
-        }
-        */
-        $scope.createDashboardLink = function () {
-            var href = '/wiki/branch/:branch/view/*page';
-            var page = $routeParams['page'];
-            var title = page ? page.split("/").last() : null;
-            var size = angular.toJson({
-                size_x: 2,
-                size_y: 2
-            });
-            var answer = "#/dashboard/add?tab=dashboard" + "&href=" + encodeURIComponent(href) + "&size=" + encodeURIComponent(size) + "&routeParams=" + encodeURIComponent(angular.toJson($routeParams));
-            if (title) {
-                answer += "&title=" + encodeURIComponent(title);
-            }
-            return answer;
-        };
-
-        $scope.displayClass = function () {
-            if (!$scope.children || $scope.children.length === 0) {
-                return "";
-            }
-            return "span9";
-        };
-
-        $scope.parentLink = function () {
-            var start = Wiki.startLink($scope.branch);
-            var prefix = start + "/view";
-
-            //console.log("pageId: ", $scope.pageId)
-            var parts = $scope.pageId.split("/");
-
-            //console.log("parts: ", parts);
-            var path = "/" + parts.first(parts.length - 1).join("/");
-
-            //console.log("path: ", path);
-            return Core.createHref($location, prefix + path, []);
-        };
-
-        $scope.childLink = function (child) {
-            var start = Wiki.startLink($scope.branch);
-            var prefix = start + "/view";
-            var postFix = "";
-            var path = Wiki.encodePath(child.path);
-            if (child.directory) {
-                // if we are a folder with the same name as a form file, lets add a form param...
-                var formPath = path + ".form";
-                var children = $scope.children;
-                if (children) {
-                    var formFile = children.find(function (child) {
-                        return child['path'] === formPath;
-                    });
-                    if (formFile) {
-                        prefix = start + "/formTable";
-                        postFix = "?form=" + formPath;
-                    }
-                }
-            } else {
-                var xmlNamespaces = child.xmlNamespaces;
-                if (xmlNamespaces && xmlNamespaces.length) {
-                    if (xmlNamespaces.any(function (ns) {
-                        return Wiki.camelNamespaces.any(ns);
-                    })) {
-                        prefix = start + "/camel/canvas";
-                    } else if (xmlNamespaces.any(function (ns) {
-                        return Wiki.dozerNamespaces.any(ns);
-                    })) {
-                        prefix = start + "/dozer/mappings";
-                    } else {
-                        console.log("child " + path + " has namespaces " + xmlNamespaces);
-                    }
-                }
-                if (child.path.endsWith(".form")) {
-                    postFix = "?form=/";
-                } else if (Wiki.isIndexPage(child.path)) {
-                    // lets default to book view on index pages
-                    prefix = start + "/book";
-                }
-            }
-            return Core.createHref($location, prefix + path + postFix, ["form"]);
-        };
-
-        $scope.fileName = function (entity) {
-            return Wiki.hideFineNameExtensions(entity.name);
-        };
-
-        $scope.fileClass = function (entity) {
-            if (entity.name.has(".profile")) {
-                return "green";
-            }
-            return "";
-        };
-
-        $scope.fileIconHtml = function (entity) {
-            return Wiki.fileIconHtml(entity);
-        };
-
-        $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
-        var options = {
-            readOnly: true,
-            mode: {
-                name: $scope.format
-            }
-        };
-        $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
-
-        $scope.editLink = function () {
-            var pageName = ($scope.directory) ? $scope.readMePath : $scope.pageId;
-            return (pageName) ? Wiki.editLink($scope.branch, pageName, $location) : null;
-        };
-
-        $scope.branchLink = function (branch) {
-            if (branch) {
-                return Wiki.branchLink(branch, $scope.pageId, $location);
-            }
-            return null;
-        };
-
-        $scope.historyLink = "#/wiki" + ($scope.branch ? "/branch/" + $scope.branch : "") + "/history/" + $scope.pageId;
-
-        $scope.$watch('workspace.tree', function () {
-            if (!$scope.git && Git.getGitMBean(workspace)) {
-                // lets do this asynchronously to avoid Error: $digest already in progress
-                //log.info("Reloading view as the tree changed and we have a git mbean now");
-                setTimeout(maybeUpdateView, 50);
-            }
-        });
-
-        /*
-        // TODO this doesn't work for some reason!
-        $scope.$on('jmxTreeUpdated', function () {
-        console.log("view: jmx tree updated!");
-        });
-        */
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            //log.info("Reloading view due to $routeChangeSuccess");
-            setTimeout(maybeUpdateView, 50);
-        });
-
-        $scope.onSubmit = function (json, form) {
-            notification("success", "Submitted form :" + form.get(0).name + " data: " + JSON.stringify(json));
-        };
-
-        $scope.onCancel = function (form) {
-            notification("success", "Clicked cancel!");
-        };
-
-        $scope.onCreateDocumentSelect = function (node) {
-            $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
-            $scope.selectedCreateDocumentTemplateRegex = $scope.selectedCreateDocumentTemplate.regex || /.*/;
-            checkFileExists(getNewDocumentPath());
-        };
-
-        $scope.$watch("newDocumentName", function () {
-            checkFileExists(getNewDocumentPath());
-        });
-
-        $scope.openAddDialog = function () {
-            $scope.newDocumentName = null;
-            $scope.addDialog.open();
-        };
-
-        $scope.addAndCloseDialog = function (fileName) {
-            $scope.newDocumentName = fileName;
-            var template = $scope.selectedCreateDocumentTemplate;
-            var path = getNewDocumentPath();
-            if (!template || !path) {
-                return;
-            }
-            var name = Wiki.fileName(path);
-            var fileName = name;
-            var folder = Wiki.fileParent(path);
-            var exemplar = template.exemplar;
-
-            var commitMessage = "Created " + template.label;
-            var exemplarUri = url("/app/wiki/exemplar/" + exemplar);
-
-            if (template.folder) {
-                notification("success", "Creating new folder " + name);
-
-                wikiRepository.createDirectory($scope.branch, path, commitMessage, function (status) {
-                    $scope.addDialog.close();
-                    Core.$apply($scope);
-                    var link = Wiki.viewLink($scope.branch, path, $location);
-                    goToLink(link, $timeout, $location);
-                });
-            } else if (template.profile) {
-                function toPath(profileName) {
-                    var answer = "fabric/profiles/" + profileName;
-                    answer = answer.replace(/-/g, "/");
-                    answer = answer + ".profile";
-                    return answer;
-                }
-
-                function toProfileName(path) {
-                    var answer = path.replace(/^fabric\/profiles\//, "");
-                    answer = answer.replace(/\//g, "-");
-                    answer = answer.replace(/\.profile$/, "");
-                    return answer;
-                }
-
-                // strip off any profile name in case the user creates a profile while looking at
-                // another profile
-                folder = folder.replace(/\/=?(\w*)\.profile$/, "");
-
-                var concatenated = folder + "/" + name;
-
-                var profileName = toProfileName(concatenated);
-                var targetPath = toPath(profileName);
-
-                $scope.addDialog.close();
-
-                Fabric.createProfile(workspace.jolokia, $scope.branch, profileName, ['default'], function () {
-                    notification('success', 'Created profile ' + profileName);
-                    Core.$apply($scope);
-
-                    Fabric.newConfigFile(workspace.jolokia, $scope.branch, profileName, 'ReadMe.md', function () {
-                        notification('info', 'Created empty Readme.md in profile ' + profileName);
-                        Core.$apply($scope);
-
-                        var contents = "Here's an empty ReadMe.md for '" + profileName + "', please update!";
-
-                        Fabric.saveConfigFile(workspace.jolokia, $scope.branch, profileName, 'ReadMe.md', contents.encodeBase64(), function () {
-                            notification('info', 'Updated Readme.md in profile ' + profileName);
-                            Core.$apply($scope);
-                            var link = Wiki.viewLink($scope.branch, targetPath, $location);
-                            goToLink(link, $timeout, $location);
-                        }, function (response) {
-                            notification('error', 'Failed to set ReadMe.md data in profile ' + profileName + ' due to ' + response.error);
-                            Core.$apply($scope);
-                        });
-                    }, function (response) {
-                        notification('error', 'Failed to create ReadMe.md in profile ' + profileName + ' due to ' + response.error);
-                        Core.$apply($scope);
-                    });
-                }, function (response) {
-                    notification('error', 'Failed to create profile ' + profileName + ' due to ' + response.error);
-                    Core.$apply($scope);
-                });
-            } else if (template.version) {
-                if (name === exemplar) {
-                    name = '';
-                }
-                Fabric.doCreateVersion($scope, jolokia, $location, name);
-            } else if (template.generated) {
-                $scope.addDialog.close();
-
-                var generateDialog = $scope.generateDialog;
-                $scope.formSchema = template.generated.schema;
-                $scope.formData = template.generated.form(workspace, $scope);
-                $scope.generate = function () {
-                    template.generated.generate(workspace, $scope.formData, function (contents) {
-                        generateDialog.close();
-                        wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, function (status) {
-                            console.log("Created file " + name);
-                            Wiki.onComplete(status);
-                            $scope.generateDialog.close();
-                            updateView();
-                        });
-                    }, function (error) {
-                        generateDialog.close();
-                        notification('error', error);
-                    });
-                };
-                generateDialog.open();
-            } else {
-                notification("success", "Creating new document " + name);
-
-                $http.get(exemplarUri).success(function (contents) {
-                    // TODO lets check this page does not exist - if it does lets keep adding a new post fix...
-                    wikiRepository.putPage($scope.branch, path, contents, commitMessage, function (status) {
-                        console.log("Created file " + name);
-                        Wiki.onComplete(status);
-
-                        // lets navigate to the edit link
-                        // load the directory and find the child item
-                        $scope.git = wikiRepository.getPage($scope.branch, folder, $scope.objectId, function (details) {
-                            // lets find the child entry so we can calculate its correct edit link
-                            var link = null;
-                            if (details && details.children) {
-                                console.log("scanned the directory " + details.children.length + " children");
-                                var child = details.children.find(function (c) {
-                                    return c.name === fileName;
-                                });
-                                if (child) {
-                                    link = $scope.childLink(child);
-                                } else {
-                                    console.log("Could not find name '" + fileName + "' in the list of file names " + JSON.stringify(details.children.map(function (c) {
-                                        return c.name;
-                                    })));
-                                }
-                            }
-                            if (!link) {
-                                console.log("WARNING: could not find the childLink so reverting to the wiki edit page!");
-                                link = Wiki.editLink($scope.branch, path, $location);
-                            }
-                            $scope.addDialog.close();
-                            Core.$apply($scope);
-                            goToLink(link, $timeout, $location);
-                        });
-                    });
-                });
-            }
-            $scope.addDialog.close();
-        };
-
-        $scope.openDeleteDialog = function () {
-            if ($scope.gridOptions.selectedItems.length) {
-                $scope.selectedFileHtml = "<ul>" + $scope.gridOptions.selectedItems.map(function (file) {
-                    return "<li>" + file.name + "</li>";
-                }).sort().join("") + "</ul>";
-                $scope.deleteDialog.open();
-            } else {
-                console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
-            }
-        };
-
-        $scope.deleteAndCloseDialog = function () {
-            var files = $scope.gridOptions.selectedItems;
-            var fileCount = files.length;
-            console.log("Deleting selection: " + files);
-            angular.forEach(files, function (file, idx) {
-                var path = $scope.pageId + "/" + file.name;
-                console.log("About to delete " + path);
-                $scope.git = wikiRepository.removePage($scope.branch, path, null, function (result) {
-                    if (idx + 1 === fileCount) {
-                        $scope.gridOptions.selectedItems.splice(0, fileCount);
-                        var message = Core.maybePlural(fileCount, "document");
-                        notification("success", "Deleted " + message);
-                        Core.$apply($scope);
-                        updateView();
-                    }
-                });
-            });
-            $scope.deleteDialog.close();
-        };
-
-        $scope.$watch("rename.newFileName", function () {
-            // ignore errors if the file is the same as the rename file!
-            var path = getRenameFilePath();
-            if ($scope.originalRenameFilePath === path) {
-                $scope.fileExists = { exsits: false, name: null };
-            } else {
-                checkFileExists(path);
-            }
-        });
-
-        $scope.openRenameDialog = function () {
-            var name = null;
-            if ($scope.gridOptions.selectedItems.length) {
-                var selected = $scope.gridOptions.selectedItems[0];
-                name = selected.name;
-            }
-            if (name) {
-                $scope.rename.newFileName = name;
-                $scope.originalRenameFilePath = getRenameFilePath();
-                $scope.renameDialog.open();
-                $timeout(function () {
-                    $('#renameFileName').focus();
-                }, 50);
-            } else {
-                console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
-            }
-        };
-
-        $scope.renameAndCloseDialog = function () {
-            if ($scope.gridOptions.selectedItems.length) {
-                var selected = $scope.gridOptions.selectedItems[0];
-                var newPath = getRenameFilePath();
-                if (selected && newPath) {
-                    var oldName = selected.name;
-                    var newName = Wiki.fileName(newPath);
-                    var oldPath = $scope.pageId + "/" + oldName;
-                    console.log("About to rename file " + oldPath + " to " + newPath);
-                    $scope.git = wikiRepository.rename($scope.branch, oldPath, newPath, null, function (result) {
-                        notification("success", "Renamed file to  " + newName);
-                        $scope.gridOptions.selectedItems.splice(0, 1);
-                        $scope.renameDialog.close();
-                        Core.$apply($scope);
-                        updateView();
-                    });
-                }
-            }
-            $scope.renameDialog.close();
-        };
-
-        $scope.openMoveDialog = function () {
-            if ($scope.gridOptions.selectedItems.length) {
-                $scope.move.moveFolder = $scope.pageId;
-                $scope.moveDialog.open();
-                $timeout(function () {
-                    $('#moveFolder').focus();
-                }, 50);
-            } else {
-                console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
-            }
-        };
-
-        $scope.moveAndCloseDialog = function () {
-            var files = $scope.gridOptions.selectedItems;
-            var fileCount = files.length;
-            var moveFolder = $scope.move.moveFolder;
-            var oldFolder = $scope.pageId;
-            if (moveFolder && fileCount && moveFolder !== oldFolder) {
-                console.log("Moving " + fileCount + " file(s) to " + moveFolder);
-                angular.forEach(files, function (file, idx) {
-                    var oldPath = oldFolder + "/" + file.name;
-                    var newPath = moveFolder + "/" + file.name;
-                    console.log("About to move " + oldPath + " to " + newPath);
-                    $scope.git = wikiRepository.rename($scope.branch, oldPath, newPath, null, function (result) {
-                        if (idx + 1 === fileCount) {
-                            $scope.gridOptions.selectedItems.splice(0, fileCount);
-                            var message = Core.maybePlural(fileCount, "document");
-                            notification("success", "Moved " + message + " to " + newPath);
-                            $scope.moveDialog.close();
-                            Core.$apply($scope);
-                            updateView();
-                        }
-                    });
-                });
-            }
-            $scope.moveDialog.close();
-        };
-
-        $scope.folderNames = function (text) {
-            return wikiRepository.completePath($scope.branch, text, true, null);
-        };
-
-        setTimeout(maybeUpdateView, 50);
-
-        function isDiffView() {
-            var path = $location.path();
-            return path && (path.startsWith("/wiki/diff") || path.startsWith("/wiki/branch/" + $scope.branch + "/diff"));
-        }
-
-        function updateView() {
-            if (isDiffView()) {
-                var baseObjectId = $routeParams["baseObjectId"];
-                $scope.git = wikiRepository.diff($scope.objectId, baseObjectId, $scope.pageId, onFileDetails);
-            } else {
-                $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onFileDetails);
-            }
-            Wiki.loadBranches(wikiRepository, $scope);
-        }
-
-        $scope.updateView = updateView;
-
-        function viewContents(pageName, contents) {
-            $scope.sourceView = null;
-
-            var format = null;
-            if (isDiffView()) {
-                format = "diff";
-            } else {
-                format = Wiki.fileFormat(pageName, fileExtensionTypeRegistry) || $scope.format;
-            }
-            if ("markdown" === format) {
-                // lets convert it to HTML
-                $scope.html = contents ? marked(contents) : "";
-                $scope.html = $compile($scope.html)($scope);
-            } else if (format && format.startsWith("html")) {
-                $scope.html = contents;
-                $compile($scope.html)($scope);
-            } else {
-                var form = null;
-                if (format && format === "javascript") {
-                    form = $location.search()["form"];
-                }
-                $scope.source = contents;
-                $scope.form = form;
-                if (form) {
-                    // now lets try load the form JSON so we can then render the form
-                    $scope.sourceView = null;
-                    if (form === "/") {
-                        onFormSchema(_jsonSchema);
-                    } else {
-                        $scope.git = wikiRepository.getPage($scope.branch, form, $scope.objectId, function (details) {
-                            onFormSchema(Wiki.parseJson(details.text));
-                        });
-                    }
-                } else {
-                    $scope.sourceView = "app/wiki/html/sourceView.html";
-                }
-            }
-            Core.$apply($scope);
-        }
-
-        function onFormSchema(json) {
-            $scope.formDefinition = json;
-            if ($scope.source) {
-                $scope.formEntity = Wiki.parseJson($scope.source);
-            }
-            $scope.sourceView = "app/wiki/html/formView.html";
-            Core.$apply($scope);
-        }
-
-        function onFileDetails(details) {
-            var contents = details.text;
-            $scope.directory = details.directory;
-
-            if (details && details.format) {
-                $scope.format = details.format;
-            } else {
-                $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
-            }
-            $scope.codeMirrorOptions.mode.name = $scope.format;
-
-            //console.log("format is '" + $scope.format + "'");
-            $scope.children = null;
-
-            if (details.directory) {
-                var directories = details.children.filter(function (dir) {
-                    return dir.directory && !dir.name.has(".profile");
-                });
-                var profiles = details.children.filter(function (dir) {
-                    return dir.directory && dir.name.has(".profile");
-                });
-                var files = details.children.filter(function (file) {
-                    return !file.directory;
-                });
-
-                directories = directories.sortBy(function (dir) {
-                    return dir.name;
-                });
-                profiles = profiles.sortBy(function (dir) {
-                    return dir.name;
-                });
-
-                files = files.sortBy(function (file) {
-                    return file.name;
-                }).sortBy(function (file) {
-                    return file.name.split('.').last();
-                });
-
-                $scope.children = Array.create(directories, profiles, files);
-            }
-
-            $scope.html = null;
-            $scope.source = null;
-            $scope.readMePath = null;
-
-            $scope.isFile = false;
-            if ($scope.children) {
-                $scope.$broadcast('pane.open');
-
-                // if we have a readme then lets render it...
-                var item = $scope.children.find(function (info) {
-                    var name = (info.name || "").toLowerCase();
-                    var ext = Wiki.fileExtension(name);
-                    return name && ext && ((name.startsWith("readme.") || name === "readme") || (name.startsWith("index.") || name === "index"));
-                });
-                if (item) {
-                    var pageName = item.path;
-                    $scope.readMePath = pageName;
-                    wikiRepository.getPage($scope.branch, pageName, $scope.objectId, function (readmeDetails) {
-                        viewContents(pageName, readmeDetails.text);
-                    });
-                }
-            } else {
-                $scope.$broadcast('pane.close');
-                var pageName = $scope.pageId;
-                viewContents(pageName, contents);
-                $scope.isFile = true;
-            }
-            Core.$apply($scope);
-        }
-
-        function checkFileExists(path) {
-            $scope.operationCounter += 1;
-            var counter = $scope.operationCounter;
-            if (path) {
-                wikiRepository.exists($scope.branch, path, function (result) {
-                    // filter old results
-                    if ($scope.operationCounter === counter) {
-                        console.log("for path " + path + " got result " + result);
-                        $scope.fileExists.exists = result ? true : false;
-                        $scope.fileExists.name = result ? result.name : null;
-                        Core.$apply($scope);
-                    } else {
-                        // console.log("Ignoring old results for " + path);
-                    }
-                });
-            }
-        }
-
-        // Called by hawtio TOC directive...
-        $scope.getContents = function (filename, cb) {
-            var pageId = filename;
-            if ($scope.directory) {
-                pageId = $scope.pageId + '/' + filename;
-            } else {
-                var pathParts = $scope.pageId.split('/');
-                pathParts = pathParts.remove(pathParts.last());
-                pathParts.push(filename);
-                pageId = pathParts.join('/');
-            }
-            log.debug("pageId: ", $scope.pageId);
-            log.debug("branch: ", $scope.branch);
-            log.debug("filename: ", filename);
-            log.debug("using pageId: ", pageId);
-            wikiRepository.getPage($scope.branch, pageId, undefined, function (data) {
-                cb(data.text);
-            });
-        };
-
-        function getNewDocumentPath() {
-            var template = $scope.selectedCreateDocumentTemplate;
-            if (!template) {
-                console.log("No template selected.");
-                return null;
-            }
-            var exemplar = template.exemplar || "";
-            var name = $scope.newDocumentName || exemplar;
-
-            if (name.indexOf('.') < 0) {
-                // lets add the file extension from the exemplar
-                var idx = exemplar.lastIndexOf(".");
-                if (idx > 0) {
-                    name += exemplar.substring(idx);
-                }
-            }
-
-            // lets deal with directories in the name
-            var folder = $scope.pageId;
-            if ($scope.isFile) {
-                // if we are a file lets discard the last part of the path
-                var idx = folder.lastIndexOf("/");
-                if (idx <= 0) {
-                    folder = "";
-                } else {
-                    folder = folder.substring(0, idx);
-                }
-            }
-            var fileName = name;
-            var idx = name.lastIndexOf("/");
-            if (idx > 0) {
-                folder += "/" + name.substring(0, idx);
-                name = name.substring(idx + 1);
-            }
-            folder = Core.trimLeading(folder, "/");
-            return folder + (folder ? "/" : "") + name;
-        }
-
-        function getRenameFilePath() {
-            var newFileName = $scope.rename.newFileName;
-            return ($scope.pageId && newFileName) ? $scope.pageId + "/" + newFileName : null;
-        }
-    }
-    Wiki.ViewController = ViewController;
-})(Wiki || (Wiki = {}));
-/**
-* @module Wiki
-*/
-var Wiki;
-(function (Wiki) {
-    function NavBarController($scope, $location, $routeParams, workspace, wikiRepository) {
-        Wiki.initScope($scope, $routeParams, $location);
-
-        $scope.createLink = function () {
-            var pageId = Wiki.pageId($routeParams, $location);
-            return Wiki.createLink($scope.branch, pageId, $location, $scope);
-        };
-
-        $scope.startLink = Wiki.startLink($scope.branch);
-
-        $scope.sourceLink = function () {
-            var path = $location.path();
-            var answer = null;
-            angular.forEach(Wiki.customViewLinks($scope), function (link) {
-                if (path.startsWith(link)) {
-                    answer = Core.createHref($location, Wiki.startLink($scope.branch) + "/view" + path.substring(link.length));
-                }
-            });
-
-            // remove the form parameter on view/edit links
-            return (!answer && $location.search()["form"]) ? Core.createHref($location, "#" + path, ["form"]) : answer;
-        };
-
-        $scope.isActive = function (href) {
-            if (!href) {
-                return false;
-            }
-            return href.endsWith($routeParams['page']);
-        };
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(loadBreadcrumbs, 50);
-        });
-
-        loadBreadcrumbs();
-
-        function switchFromViewToCustomLink(breadcrumb, link) {
-            var href = breadcrumb.href;
-            if (href) {
-                breadcrumb.href = href.replace("wiki/view", link);
-            }
-        }
-
-        function loadBreadcrumbs() {
-            var start = Wiki.startLink($scope.branch);
-            var href = start + "/view";
-            $scope.breadcrumbs = [
-                { href: href, name: "root" }
-            ];
-            var path = Wiki.pageId($routeParams, $location);
-            var array = path ? path.split("/") : [];
-            angular.forEach(array, function (name) {
-                if (!name.startsWith("/") && !href.endsWith("/")) {
-                    href += "/";
-                }
-                href += Wiki.encodePath(name);
-                if (!name.isBlank()) {
-                    $scope.breadcrumbs.push({ href: href, name: name });
-                }
-            });
-
-            // lets swizzle the last one or two to be formTable views if the last or 2nd to last
-            var loc = $location.path();
-            if ($scope.breadcrumbs.length) {
-                var last = $scope.breadcrumbs[$scope.breadcrumbs.length - 1];
-
-                // possibly trim any required file extensions
-                last.name = Wiki.hideFineNameExtensions(last.name);
-
-                var swizzled = false;
-                angular.forEach(Wiki.customViewLinks($scope), function (link) {
-                    if (!swizzled && loc.startsWith(link)) {
-                        // lets swizzle the view to the current link
-                        switchFromViewToCustomLink($scope.breadcrumbs.last(), Core.trimLeading(link, "/"));
-                        swizzled = true;
-                    }
-                });
-                if (!swizzled && $location.search()["form"]) {
-                    var lastName = $scope.breadcrumbs.last().name;
-                    if (lastName && lastName.endsWith(".json")) {
-                        // previous breadcrumb should be a formTable
-                        switchFromViewToCustomLink($scope.breadcrumbs[$scope.breadcrumbs.length - 2], "wiki/formTable");
-                    }
-                }
-            }
-
-            /*
-            if (loc.startsWith("/wiki/history") || loc.startsWith("/wiki/version")
-            || loc.startsWith("/wiki/diff") || loc.startsWith("/wiki/commit")) {
-            // lets add a history tab
-            $scope.breadcrumbs.push({href: "#/wiki/history/" + path, name: "History"});
-            } else if ($scope.branch) {
-            var prefix ="/wiki/branch/" + $scope.branch;
-            if (loc.startsWith(prefix + "/history") || loc.startsWith(prefix + "/version")
-            || loc.startsWith(prefix + "/diff") || loc.startsWith(prefix + "/commit")) {
-            // lets add a history tab
-            $scope.breadcrumbs.push({href: "#/wiki/branch/" + $scope.branch + "/history/" + path, name: "History"});
-            }
-            }
-            */
-            var name = null;
-            if (loc.startsWith("/wiki/version")) {
-                // lets add a version tab
-                name = ($routeParams["objectId"] || "").substring(0, 6) || "Version";
-                $scope.breadcrumbs.push({ href: "#" + loc, name: name });
-            }
-            if (loc.startsWith("/wiki/diff")) {
-                // lets add a version tab
-                var v1 = ($routeParams["objectId"] || "").substring(0, 6);
-                var v2 = ($routeParams["baseObjectId"] || "").substring(0, 6);
-                name = "Diff";
-                if (v1) {
-                    if (v2) {
-                        name += " " + v1 + " " + v2;
-                    } else {
-                        name += " " + v1;
-                    }
-                }
-                $scope.breadcrumbs.push({ href: "#" + loc, name: name });
-            }
-            Core.$apply($scope);
-        }
-    }
-    Wiki.NavBarController = NavBarController;
-})(Wiki || (Wiki = {}));
-/**
-* @module Wiki
-*/
-var Wiki;
-(function (Wiki) {
-    function EditController($scope, $location, $routeParams, fileExtensionTypeRegistry, wikiRepository) {
-        Wiki.initScope($scope, $routeParams, $location);
-        $scope.entity = {
-            source: null
-        };
-
-        var format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
-        var form = null;
-        if ((format && format === "javascript") || isCreate()) {
-            form = $location.search()["form"];
-        }
-
-        var options = {
-            mode: {
-                name: format
-            }
-        };
-        $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
-        $scope.modified = false;
-
-        $scope.isValid = function () {
-            return $scope.fileName;
-        };
-
-        $scope.canSave = function () {
-            return !$scope.modified;
-        };
-
-        $scope.$watch('entity.source', function (newValue, oldValue) {
-            $scope.modified = newValue && oldValue && newValue !== oldValue;
-        }, true);
-
-        Wiki.log.debug("path: ", $scope.path);
-
-        $scope.$watch('modified', function (newValue, oldValue) {
-            Wiki.log.debug("modified: ", newValue);
-        });
-
-        $scope.viewLink = function () {
-            return Wiki.viewLink($scope.branch, $scope.pageId, $location, $scope.fileName);
-        };
-
-        $scope.cancel = function () {
-            goToView();
-        };
-
-        $scope.save = function () {
-            if ($scope.modified && $scope.fileName) {
-                saveTo($scope["pageId"]);
-            }
-        };
-
-        $scope.create = function () {
-            // lets combine the file name with the current pageId (which is the directory)
-            var path = $scope.pageId + "/" + $scope.fileName;
-            console.log("creating new file at " + path);
-            saveTo(path);
-        };
-
-        $scope.onSubmit = function (json, form) {
-            if (isCreate()) {
-                $scope.create();
-            } else {
-                $scope.save();
-            }
-        };
-
-        $scope.onCancel = function (form) {
-            setTimeout(function () {
-                goToView();
-                Core.$apply($scope);
-            }, 50);
-        };
-
-        updateView();
-
-        function isCreate() {
-            return $location.path().startsWith("/wiki/create");
-        }
-
-        function updateView() {
-            // only load the source if not in create mode
-            if (isCreate()) {
-                updateSourceView();
-            } else {
-                Wiki.log.debug("Getting page, branch: ", $scope.branch, " pageId: ", $scope.pageId, " objectId: ", $scope.objectId);
-                wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onFileContents);
-            }
-        }
-
-        function onFileContents(details) {
-            var contents = details.text;
-            $scope.entity.source = contents;
-            $scope.fileName = $scope.pageId.split('/').last();
-            Wiki.log.debug("file name: ", $scope.fileName);
-            Wiki.log.debug("file details: ", details);
-            updateSourceView();
-            Core.$apply($scope);
-        }
-
-        function updateSourceView() {
-            if (form) {
-                if (isCreate()) {
-                    // lets default a file name
-                    if (!$scope.fileName) {
-                        $scope.fileName = "" + Core.getUUID() + ".json";
-                    }
-                }
-
-                // now lets try load the form defintion JSON so we can then render the form
-                $scope.sourceView = null;
-                if (form === "/") {
-                    onFormSchema(_jsonSchema);
-                } else {
-                    $scope.git = wikiRepository.getPage($scope.branch, form, $scope.objectId, function (details) {
-                        onFormSchema(Wiki.parseJson(details.text));
-                    });
-                }
-            } else {
-                $scope.sourceView = "app/wiki/html/sourceEdit.html";
-            }
-        }
-
-        function onFormSchema(json) {
-            $scope.formDefinition = json;
-            if ($scope.entity.source) {
-                $scope.formEntity = Wiki.parseJson($scope.entity.source);
-            }
-            $scope.sourceView = "app/wiki/html/formEdit.html";
-            Core.$apply($scope);
-        }
-
-        function goToView() {
-            var path = Core.trimLeading($scope.viewLink(), "#");
-            Wiki.log.debug("going to view " + path);
-            $location.path(Wiki.decodePath(path));
-            Wiki.log.debug("location is now " + $location.path());
-        }
-
-        function saveTo(path) {
-            var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
-            var contents = $scope.entity.source;
-            if ($scope.formEntity) {
-                contents = JSON.stringify($scope.formEntity, null, "  ");
-            }
-            Wiki.log.debug("Saving file, branch: ", $scope.branch, " path: ", $scope.path);
-
-            //console.log("About to write contents '" + contents + "'");
-            wikiRepository.putPage($scope.branch, path, contents, commitMessage, function (status) {
-                Wiki.onComplete(status);
-                $scope.modified = false;
-                notification("success", "Saved " + path);
-                goToView();
-                Core.$apply($scope);
-            });
-        }
-    }
-    Wiki.EditController = EditController;
-})(Wiki || (Wiki = {}));
-/**
-* @module Wiki
-*/
-var Wiki;
-(function (Wiki) {
-    
-
-    /**
-    * @class GitWikiRepository
-    */
-    var GitWikiRepository = (function () {
-        function GitWikiRepository(factoryMethod) {
-            this.factoryMethod = factoryMethod;
-            this.directoryPrefix = "";
-        }
-        GitWikiRepository.prototype.getRepositoryLabel = function (fn, error) {
-            this.git().getRepositoryLabel(fn, error);
-        };
-
-        GitWikiRepository.prototype.exists = function (branch, path, fn) {
-            var fullPath = this.getPath(path);
-            this.git().exists(branch, fullPath, fn);
-        };
-
-        GitWikiRepository.prototype.completePath = function (branch, completionText, directoriesOnly, fn) {
-            return this.git().completePath(branch, completionText, directoriesOnly, fn);
-        };
-
-        GitWikiRepository.prototype.getPage = function (branch, path, objectId, fn) {
-            var _this = this;
-            var git = this.git();
-            path = path || "/";
-            if (git) {
-                if (objectId) {
-                    var blobPath = this.getLogPath(path);
-
-                    // TODO deal with versioned directories?
-                    git.getContent(objectId, blobPath, function (content) {
-                        var details = {
-                            text: content,
-                            directory: false
-                        };
-                        fn(details);
-                    });
-                } else {
-                    var fullPath = this.getPath(path);
-                    git.read(branch, fullPath, function (details) {
-                        // lets fix up any paths to be relative to the wiki
-                        var children = details.children;
-                        angular.forEach(children, function (child) {
-                            var path = child.path;
-                            if (path) {
-                                var directoryPrefix = "/" + _this.directoryPrefix;
-                                if (path.startsWith(directoryPrefix)) {
-                                    path = "/" + path.substring(directoryPrefix.length);
-                                    child.path = path;
-                                }
-                            }
-                        });
-                        fn(details);
-                    });
-                }
-            }
-            return git;
-        };
-
-        /**
-        * Performs a diff on the versions
-        * @method diff
-        * @for GitWikiRepository
-        * @param {String} objectId
-        * @param {String} baseObjectId
-        * @param {String} path
-        * @param {Function} fn
-        * @return {any}
-        */
-        GitWikiRepository.prototype.diff = function (objectId, baseObjectId, path, fn) {
-            var fullPath = this.getLogPath(path);
-            var git = this.git();
-            if (git) {
-                git.diff(objectId, baseObjectId, fullPath, function (content) {
-                    var details = {
-                        text: content,
-                        format: "diff",
-                        directory: false
-                    };
-                    fn(details);
-                });
-            }
-            return git;
-        };
-
-        GitWikiRepository.prototype.commitInfo = function (commitId, fn) {
-            this.git().commitInfo(commitId, fn);
-        };
-
-        GitWikiRepository.prototype.commitTree = function (commitId, fn) {
-            this.git().commitTree(commitId, fn);
-        };
-
-        GitWikiRepository.prototype.putPage = function (branch, path, contents, commitMessage, fn) {
-            var fullPath = this.getPath(path);
-            this.git().write(branch, fullPath, commitMessage, contents, fn);
-        };
-
-        GitWikiRepository.prototype.putPageBase64 = function (branch, path, contents, commitMessage, fn) {
-            var fullPath = this.getPath(path);
-            this.git().writeBase64(branch, fullPath, commitMessage, contents, fn);
-        };
-
-        GitWikiRepository.prototype.createDirectory = function (branch, path, commitMessage, fn) {
-            var fullPath = this.getPath(path);
-            this.git().createDirectory(branch, fullPath, commitMessage, fn);
-        };
-
-        GitWikiRepository.prototype.revertTo = function (branch, objectId, blobPath, commitMessage, fn) {
-            var fullPath = this.getLogPath(blobPath);
-            this.git().revertTo(branch, objectId, fullPath, commitMessage, fn);
-        };
-
-        GitWikiRepository.prototype.rename = function (branch, oldPath, newPath, commitMessage, fn) {
-            var fullOldPath = this.getPath(oldPath);
-            var fullNewPath = this.getPath(newPath);
-            if (!commitMessage) {
-                commitMessage = "Renaming page " + oldPath + " to " + newPath;
-            }
-            this.git().rename(branch, fullOldPath, fullNewPath, commitMessage, fn);
-        };
-
-        GitWikiRepository.prototype.removePage = function (branch, path, commitMessage, fn) {
-            var fullPath = this.getPath(path);
-            if (!commitMessage) {
-                commitMessage = "Removing page " + path;
-            }
-            this.git().remove(branch, fullPath, commitMessage, fn);
-        };
-
-        /**
-        * Returns the full path to use in the git repo
-        * @method getPath
-        * @for GitWikiRepository
-        * @param {String} path
-        * @return {String{
-        */
-        GitWikiRepository.prototype.getPath = function (path) {
-            var directoryPrefix = this.directoryPrefix;
-            return (directoryPrefix) ? directoryPrefix + path : path;
-        };
-
-        GitWikiRepository.prototype.getLogPath = function (path) {
-            return Core.trimLeading(this.getPath(path), "/");
-        };
-
-        /**
-        * Return the history of the repository or a specific directory or file path
-        * @method history
-        * @for GitWikiRepository
-        * @param {String} branch
-        * @param {String} objectId
-        * @param {String} path
-        * @param {Number} limit
-        * @param {Function} fn
-        * @return {any}
-        */
-        GitWikiRepository.prototype.history = function (branch, objectId, path, limit, fn) {
-            var fullPath = this.getLogPath(path);
-            var git = this.git();
-            if (git) {
-                git.history(branch, objectId, fullPath, limit, fn);
-            }
-            return git;
-        };
-
-        /**
-        * Get the contents of a blobPath for a given commit objectId
-        * @method getContent
-        * @for GitWikiRepository
-        * @param {String} objectId
-        * @param {String} blobPath
-        * @param {Function} fn
-        * @return {any}
-        */
-        GitWikiRepository.prototype.getContent = function (objectId, blobPath, fn) {
-            var fullPath = this.getLogPath(blobPath);
-            var git = this.git();
-            if (git) {
-                git.getContent(objectId, fullPath, fn);
-            }
-            return git;
-        };
-
-        /**
-        * Get the list of branches
-        * @method branches
-        * @for GitWikiRepository
-        * @param {Function} fn
-        * @return {any}
-        */
-        GitWikiRepository.prototype.branches = function (fn) {
-            var git = this.git();
-            if (git) {
-                git.branches(fn);
-            }
-            return git;
-        };
-
-        /**
-        * Get the JSON contents of the path with optional name wildcard and search
-        * @method jsonChildContents
-        * @for GitWikiRepository
-        * @param {String} path
-        * @param {String} nameWildcard
-        * @param {String} search
-        * @param {Function} fn
-        * @return {any}
-        */
-        GitWikiRepository.prototype.jsonChildContents = function (path, nameWildcard, search, fn) {
-            var fullPath = this.getLogPath(path);
-            var git = this.git();
-            if (git) {
-                git.readJsonChildContent(fullPath, nameWildcard, search, fn);
-            }
-            return git;
-        };
-
-        GitWikiRepository.prototype.git = function () {
-            var repository = this.factoryMethod();
-            if (!repository) {
-                console.log("No repository yet! TODO we should use a local impl!");
-            }
-            return repository;
-        };
-        return GitWikiRepository;
-    })();
-    Wiki.GitWikiRepository = GitWikiRepository;
-})(Wiki || (Wiki = {}));
-/**
-* @module Wiki
-*/
-var Wiki;
-(function (Wiki) {
     Wiki.log = Logger.get("Wiki");
 
     Wiki.camelNamespaces = ["http://camel.apache.org/schema/spring", "http://camel.apache.org/schema/blueprint"];
@@ -27650,6 +25595,7 @@ var Wiki;
 * @module Wiki
 * @main Wiki
 */
+/// <reference path="./wikiHelpers.ts"/>
 var Wiki;
 (function (Wiki) {
     var pluginName = 'wiki';
@@ -27657,16 +25603,24 @@ var Wiki;
     Wiki.templatePath = 'app/wiki/html/';
     Wiki.tab = null;
 
-    angular.module(pluginName, ['bootstrap', 'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ngResource', 'hawtioCore', 'hawtio-ui', 'tree', 'camel']).config(function ($routeProvider) {
-        // allow optional branch paths...
-        angular.forEach(["", "/branch/:branch"], function (path) {
-            $routeProvider.when('/wiki' + path + '/view', { templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false }).when('/wiki' + path + '/view/*page', { templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false }).when('/wiki' + path + '/book/*page', { templateUrl: 'app/wiki/html/viewBook.html', reloadOnSearch: false }).when('/wiki' + path + '/create/*page', { templateUrl: 'app/wiki/html/createPage.html' }).when('/wiki' + path + '/edit/*page', { templateUrl: 'app/wiki/html/editPage.html' }).when('/wiki' + path + '/version/*page/:objectId', { templateUrl: 'app/wiki/html/viewPage.html' }).when('/wiki' + path + '/history/*page', { templateUrl: 'app/wiki/html/history.html' }).when('/wiki' + path + '/commit/*page/:objectId', { templateUrl: 'app/wiki/html/commit.html' }).when('/wiki' + path + '/diff/*page/:objectId/:baseObjectId', { templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false }).when('/wiki' + path + '/formTable/*page', { templateUrl: 'app/wiki/html/formTable.html' }).when('/wiki' + path + '/dozer/mappings/*page', { templateUrl: 'app/wiki/html/dozerMappings.html' }).when('/wiki' + path + '/configurations/*page', { templateUrl: 'app/wiki/html/configurations.html' }).when('/wiki' + path + '/configuration/:pid/*page', { templateUrl: 'app/wiki/html/configuration.html' }).when('/wiki' + path + '/configuration/:pid/:factoryPid/*page', { templateUrl: 'app/wiki/html/configuration.html' }).when('/wiki' + path + '/camel/diagram/*page', { templateUrl: 'app/wiki/html/camelDiagram.html' }).when('/wiki' + path + '/camel/canvas/*page', { templateUrl: 'app/wiki/html/camelCanvas.html' }).when('/wiki' + path + '/camel/properties/*page', { templateUrl: 'app/wiki/html/camelProperties.html' });
-        });
-    }).factory('wikiRepository', function (workspace, jolokia, localStorage) {
-        return new Wiki.GitWikiRepository(function () {
-            return Git.createGitRepository(workspace, jolokia, localStorage);
-        });
-    }).factory('fileExtensionTypeRegistry', function () {
+    Wiki._module = angular.module(pluginName, ['bootstrap', 'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ngResource', 'hawtioCore', 'hawtio-ui', 'tree', 'camel']);
+
+    Wiki._module.config([
+        "$routeProvider", function ($routeProvider) {
+            // allow optional branch paths...
+            angular.forEach(["", "/branch/:branch"], function (path) {
+                $routeProvider.when('/wiki' + path + '/view', { templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false }).when('/wiki' + path + '/view/*page', { templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false }).when('/wiki' + path + '/book/*page', { templateUrl: 'app/wiki/html/viewBook.html', reloadOnSearch: false }).when('/wiki' + path + '/create/*page', { templateUrl: 'app/wiki/html/createPage.html' }).when('/wiki' + path + '/edit/*page', { templateUrl: 'app/wiki/html/editPage.html' }).when('/wiki' + path + '/version/*page/:objectId', { templateUrl: 'app/wiki/html/viewPage.html' }).when('/wiki' + path + '/history/*page', { templateUrl: 'app/wiki/html/history.html' }).when('/wiki' + path + '/commit/*page/:objectId', { templateUrl: 'app/wiki/html/commit.html' }).when('/wiki' + path + '/diff/*page/:objectId/:baseObjectId', { templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false }).when('/wiki' + path + '/formTable/*page', { templateUrl: 'app/wiki/html/formTable.html' }).when('/wiki' + path + '/dozer/mappings/*page', { templateUrl: 'app/wiki/html/dozerMappings.html' }).when('/wiki' + path + '/configurations/*page', { templateUrl: 'app/wiki/html/configurations.html' }).when('/wiki' + path + '/configuration/:pid/*page', { templateUrl: 'app/wiki/html/configuration.html' }).when('/wiki' + path + '/configuration/:pid/:factoryPid/*page', { templateUrl: 'app/wiki/html/configuration.html' }).when('/wiki' + path + '/camel/diagram/*page', { templateUrl: 'app/wiki/html/camelDiagram.html' }).when('/wiki' + path + '/camel/canvas/*page', { templateUrl: 'app/wiki/html/camelCanvas.html' }).when('/wiki' + path + '/camel/properties/*page', { templateUrl: 'app/wiki/html/camelProperties.html' });
+            });
+        }]);
+
+    Wiki._module.factory('wikiRepository', [
+        "workspace", "jolokia", "localStorage", function (workspace, jolokia, localStorage) {
+            return new Wiki.GitWikiRepository(function () {
+                return Git.createGitRepository(workspace, jolokia, localStorage);
+            });
+        }]);
+
+    Wiki._module.factory('fileExtensionTypeRegistry', function () {
         return {
             "markdown": ["md", "markdown", "mdown", "mkdn", "mkd"],
             "htmlmixed": ["html", "xhtml", "htm"],
@@ -27676,544 +25630,2645 @@ var Wiki;
             "xml": ["xml", "xsd", "wsdl", "atom"],
             "properties": ["properties"]
         };
-    }).filter('fileIconClass', function () {
-        return Wiki.iconClass;
-    }).directive('wikiHrefAdjuster', function ($location) {
-        return {
-            restrict: 'A',
-            link: function ($scope, $element, $attr) {
-                $element.bind('DOMNodeInserted', function (event) {
-                    var ays = $element.find('a');
-                    angular.forEach(ays, function (a) {
-                        if (a.hasAttribute('no-adjust')) {
-                            return;
-                        }
-                        a = $(a);
-                        var href = (a.attr('href') || "").trim();
-                        if (href) {
-                            var fileExtension = a.attr('file-extension');
-                            var newValue = Wiki.adjustHref($scope, $location, href, fileExtension);
-                            if (newValue) {
-                                a.attr('href', newValue);
-                            }
-                        }
-                    });
-                    var imgs = $element.find('img');
-                    angular.forEach(imgs, function (a) {
-                        if (a.hasAttribute('no-adjust')) {
-                            return;
-                        }
-                        a = $(a);
-                        var href = (a.attr('src') || "").trim();
-                        if (href) {
-                            if (href.startsWith("/")) {
-                                href = url(href);
-                                a.attr('src', href);
-
-                                // lets avoid this element being reprocessed
-                                a.attr('no-adjust', 'true');
-                            }
-                        }
-                    });
-                });
-            }
-        };
-    }).directive('wikiTitleLinker', function ($location) {
-        return {
-            restrict: 'A',
-            link: function ($scope, $element, $attr) {
-                var loaded = false;
-
-                function offsetTop(elements) {
-                    if (elements) {
-                        var offset = elements.offset();
-                        if (offset) {
-                            return offset.top;
-                        }
-                    }
-                    return 0;
-                }
-
-                function scrollToHash() {
-                    var answer = false;
-                    var id = $location.search()["hash"];
-                    return scrollToId(id);
-                }
-
-                function scrollToId(id) {
-                    var answer = false;
-                    var id = $location.search()["hash"];
-                    if (id) {
-                        var selector = 'a[name="' + id + '"]';
-                        var targetElements = $element.find(selector);
-                        if (targetElements && targetElements.length) {
-                            var scrollDuration = 1;
-                            var delta = offsetTop($($element));
-                            var top = offsetTop(targetElements) - delta;
-                            if (top < 0) {
-                                top = 0;
-                            }
-
-                            //log.info("scrolling to hash: " + id + " top: " + top + " delta:" + delta);
-                            $('body,html').animate({
-                                scrollTop: top
-                            }, scrollDuration);
-                            answer = true;
-                        } else {
-                            //log.info("could find element for: " + selector);
-                        }
-                    }
-                    return answer;
-                }
-
-                function addLinks(event) {
-                    var headings = $element.find('h1,h2,h3,h4,h5,h6,h7');
-                    var updated = false;
-                    angular.forEach(headings, function (he) {
-                        var h1 = $(he);
-
-                        // now lets try find a child header
-                        var a = h1.parent("a");
-                        if (!a || !a.length) {
-                            var text = h1.text();
-                            if (text) {
-                                var target = text.replace(/ /g, "-");
-                                var pathWithHash = "#" + $location.path() + "?hash=" + target;
-                                var link = Core.createHref($location, pathWithHash, ['hash']);
-
-                                // lets wrap the heading in a link
-                                var newA = $('<a name="' + target + '" href="' + link + '" ng-click="onLinkClick()"></a>');
-                                newA.on("click", function () {
-                                    setTimeout(function () {
-                                        if (scrollToId(target)) {
-                                        }
-                                    }, 50);
-                                });
-
-                                newA.insertBefore(h1);
-                                h1.detach();
-                                newA.append(h1);
-                                updated = true;
-                            }
-                        }
-                    });
-                    if (updated && !loaded) {
-                        setTimeout(function () {
-                            if (scrollToHash()) {
-                                loaded = true;
-                            }
-                        }, 50);
-                    }
-                }
-
-                function onEventInserted(event) {
-                    // avoid any more events while we do our thing
-                    $element.unbind('DOMNodeInserted', onEventInserted);
-                    addLinks(event);
-                    $element.bind('DOMNodeInserted', onEventInserted);
-                }
-
-                $element.bind('DOMNodeInserted', onEventInserted);
-            }
-        };
-    }).run(function ($location, workspace, viewRegistry, jolokia, localStorage, layoutFull, helpRegistry, preferencesRegistry, wikiRepository, postLoginTasks, $rootScope) {
-        viewRegistry['wiki'] = layoutFull;
-        helpRegistry.addUserDoc('wiki', 'app/wiki/doc/help.md', function () {
-            return Wiki.isWikiEnabled(workspace, jolokia, localStorage);
-        });
-
-        preferencesRegistry.addTab("Git", 'app/wiki/html/gitPreferences.html');
-
-        Wiki.tab = {
-            id: "wiki",
-            content: "Wiki",
-            title: "View and edit wiki pages",
-            isValid: function (workspace) {
-                return Wiki.isWikiEnabled(workspace, jolokia, localStorage);
-            },
-            href: function () {
-                return "#/wiki/view";
-            },
-            isActive: function (workspace) {
-                return workspace.isLinkActive("/wiki") && !workspace.linkContains("fabric", "profiles") && !workspace.linkContains("editFeatures");
-            }
-        };
-        workspace.topLevelTabs.push(Wiki.tab);
-
-        postLoginTasks.addTask('wikiGetRepositoryLabel', function () {
-            wikiRepository.getRepositoryLabel(function (label) {
-                Wiki.tab.content = label;
-                Core.$apply($rootScope);
-            }, function (response) {
-                // silently ignore
-            });
-        });
-
-        // add empty regexs to templates that don't define
-        // them so ng-pattern doesn't barf
-        Wiki.documentTemplates.forEach(function (template) {
-            Wiki.log.debug("Checking template: ", template);
-            if (!template['regex']) {
-                Wiki.log.debug("Setting regex");
-                template.regex = /(?:)/;
-            }
-        });
     });
+
+    Wiki._module.filter('fileIconClass', function () {
+        return Wiki.iconClass;
+    });
+
+    Wiki._module.run([
+        "$location", "workspace", "viewRegistry", "jolokia", "localStorage", "layoutFull", "helpRegistry", "preferencesRegistry", "wikiRepository", "postLoginTasks", "$rootScope", function ($location, workspace, viewRegistry, jolokia, localStorage, layoutFull, helpRegistry, preferencesRegistry, wikiRepository, postLoginTasks, $rootScope) {
+            viewRegistry['wiki'] = layoutFull;
+            helpRegistry.addUserDoc('wiki', 'app/wiki/doc/help.md', function () {
+                return Wiki.isWikiEnabled(workspace, jolokia, localStorage);
+            });
+
+            preferencesRegistry.addTab("Git", 'app/wiki/html/gitPreferences.html');
+
+            Wiki.tab = {
+                id: "wiki",
+                content: "Wiki",
+                title: "View and edit wiki pages",
+                isValid: function (workspace) {
+                    return Wiki.isWikiEnabled(workspace, jolokia, localStorage);
+                },
+                href: function () {
+                    return "#/wiki/view";
+                },
+                isActive: function (workspace) {
+                    return workspace.isLinkActive("/wiki") && !workspace.linkContains("fabric", "profiles") && !workspace.linkContains("editFeatures");
+                }
+            };
+            workspace.topLevelTabs.push(Wiki.tab);
+
+            postLoginTasks.addTask('wikiGetRepositoryLabel', function () {
+                wikiRepository.getRepositoryLabel(function (label) {
+                    Wiki.tab.content = label;
+                    Core.$apply($rootScope);
+                }, function (response) {
+                    // silently ignore
+                });
+            });
+
+            // add empty regexs to templates that don't define
+            // them so ng-pattern doesn't barf
+            Wiki.documentTemplates.forEach(function (template) {
+                if (!template['regex']) {
+                    template.regex = /(?:)/;
+                }
+            });
+        }]);
 
     hawtioPluginLoader.addModule(pluginName);
 })(Wiki || (Wiki = {}));
 /**
 * @module Wiki
 */
+/// <reference path="./wikiPlugin.ts"/>
 var Wiki;
 (function (Wiki) {
-    function DozerMappingsController($scope, $location, $routeParams, workspace, jolokia, wikiRepository, $templateCache) {
-        var log = Logger.get("Dozer");
+    Wiki._module.controller("Wiki.CamelCanvasController", [
+        "$scope", "$element", "workspace", "jolokia", "wikiRepository", "templateCache", "$interpolate", function ($scope, $element, workspace, jolokia, wikiRepository, $templateCache, $interpolate) {
+            $scope.addDialog = new UI.Dialog();
+            $scope.propertiesDialog = new UI.Dialog();
+            $scope.modified = false;
+            $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
+            $scope.camelMaximumLabelWidth = Camel.maximumLabelWidth(localStorage);
+            $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
 
-        Wiki.initScope($scope, $routeParams, $location);
-        Dozer.schemaConfigure();
+            $scope.forms = {};
 
-        $scope.profileId = Fabric.pagePathToProfileId($scope.pageId);
-        $scope.versionId = $scope.branch || "1.0";
+            $scope.nodeTemplate = $interpolate($templateCache.get("nodeTemplate"));
 
-        $scope.schema = {};
-        $scope.addDialog = new UI.Dialog();
-        $scope.propertiesDialog = new UI.Dialog();
-        $scope.deleteDialog = false;
-        $scope.unmappedFieldsHasValid = false;
-        $scope.modified = false;
+            $scope.$watch("camelContextTree", function () {
+                var tree = $scope.camelContextTree;
+                $scope.rootFolder = tree;
 
-        $scope.selectedItems = [];
-        $scope.mappings = [];
-        $scope.schemas = [];
+                // now we've got cid values in the tree and DOM, lets create an index so we can bind the DOM to the tree model
+                $scope.folders = Camel.addFoldersToIndex($scope.rootFolder);
 
-        $scope.aName = '';
-        $scope.bName = '';
-
-        $scope.connectorStyle = ["Bezier"];
-
-        $scope.main = "";
-        $scope.tab = "Mappings";
-
-        $scope.gridOptions = {
-            selectedItems: $scope.selectedItems,
-            data: 'mappings',
-            displayFooter: false,
-            showFilter: false,
-            //sortInfo: { field: 'timestamp', direction: 'DESC'},
-            filterOptions: {
-                filterText: "searchText"
-            },
-            columnDefs: [
-                {
-                    field: 'class_a',
-                    displayName: 'From',
-                    cellTemplate: '<div class="ngCellText">{{row.entity.class_a.name}}</div>'
-                },
-                {
-                    field: 'class_b',
-                    displayName: 'To',
-                    cellTemplate: '<div class="ngCellText">{{row.entity.class_b.name}}</div>'
+                var doc = Core.pathGet(tree, ["xmlDocument"]);
+                if (doc) {
+                    $scope.doc = doc;
+                    reloadRouteIds();
+                    onRouteSelectionChanged();
                 }
-            ]
-        };
-
-        if ($scope.profileId) {
-            Fabric.profileJolokia(jolokia, $scope.profileId, $scope.versionId, function (containerJolokia) {
-                $scope.containerJolokia = containerJolokia;
-                $scope.missingContainer = !containerJolokia ? true : false;
             });
-        }
 
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateView, 50);
-        });
+            $scope.addAndCloseDialog = function () {
+                var nodeModel = $scope.selectedNodeModel();
+                if (nodeModel) {
+                    addNewNode(nodeModel);
+                }
+                $scope.addDialog.close();
+            };
 
-        $scope.triggerRefresh = function (timeout) {
-            if (typeof timeout === "undefined") { timeout = 500; }
-            $scope.main = "";
-            setTimeout(function () {
-                $scope.main = $templateCache.get("pageTemplate.html");
+            $scope.removeNode = function () {
+                var folder = getSelectedOrRouteFolder();
+                if (folder) {
+                    var nodeName = Camel.getFolderCamelNodeId(folder);
+                    folder.detach();
+                    if ("route" === nodeName) {
+                        // lets also clear the selected route node
+                        $scope.selectedRouteId = null;
+                    }
+                    updateSelection(null);
+                    treeModified();
+                }
+            };
+
+            $scope.doLayout = function () {
+                $scope.drawnRouteId = null;
+                onRouteSelectionChanged();
+            };
+
+            function isRouteOrNode() {
+                return !$scope.selectedFolder;
+            }
+
+            $scope.getDeleteTitle = function () {
+                if (isRouteOrNode()) {
+                    return "Delete this route";
+                }
+                return "Delete this node";
+            };
+
+            $scope.getDeleteTarget = function () {
+                if (isRouteOrNode()) {
+                    return "Route";
+                }
+                return "Node";
+            };
+
+            $scope.isFormDirty = function () {
+                Wiki.log.debug("endpointForm: ", $scope.endpointForm);
+                if ($scope.endpointForm.$dirty) {
+                    return true;
+                }
+                if (!$scope.forms['formEditor']) {
+                    return false;
+                } else {
+                    return $scope.forms['formEditor']['$dirty'];
+                }
+            };
+
+            /* TODO
+            $scope.resetForms = () => {
+            
+            }
+            */
+            /*
+            * Converts a path and a set of endpoint parameters into a URI we can then use to store in the XML
+            */
+            function createEndpointURI(endpointScheme, slashesText, endpointPath, endpointParameters) {
+                console.log("scheme " + endpointScheme + " path " + endpointPath + " parameters " + endpointParameters);
+
+                // now lets create the new URI from the path and parameters
+                // TODO should we use JMX for this?
+                var uri = ((endpointScheme) ? endpointScheme + ":" + slashesText : "") + (endpointPath ? endpointPath : "");
+                var paramText = Core.hashToString(endpointParameters);
+                if (paramText) {
+                    uri += "?" + paramText;
+                }
+                return uri;
+            }
+
+            $scope.updateProperties = function () {
+                Wiki.log.info("old URI is " + $scope.nodeData.uri);
+                var uri = createEndpointURI($scope.endpointScheme, ($scope.endpointPathHasSlashes ? "//" : ""), $scope.endpointPath, $scope.endpointParameters);
+                Wiki.log.info("new URI is " + uri);
+                if (uri) {
+                    $scope.nodeData.uri = uri;
+                }
+
+                var key = null;
+                var selectedFolder = $scope.selectedFolder;
+                if (selectedFolder) {
+                    key = selectedFolder.key;
+
+                    // lets delete the current selected node's div so its updated with the new template values
+                    var elements = $element.find(".canvas").find("[id='" + key + "']").first().remove();
+                }
+
+                treeModified();
+
+                if (key) {
+                    updateSelection(key);
+                }
+
+                if ($scope.isFormDirty()) {
+                    $scope.endpointForm.$setPristine();
+                    if ($scope.forms['formEditor']) {
+                        $scope.forms['formEditor'].$setPristine();
+                    }
+                }
+
                 Core.$apply($scope);
-            }, timeout);
-        };
+            };
 
-        $scope.disableReload = function () {
-            var aValue = Core.pathGet($scope, ["selectedMapping", "class_a", "value"]);
-            var bValue = Core.pathGet($scope, ["selectedMapping", "class_b", "value"]);
-            return aValue === $scope.aName && bValue === $scope.bName;
-        };
+            $scope.save = function () {
+                // generate the new XML
+                if ($scope.rootFolder) {
+                    var xmlNode = Camel.generateXmlFromFolder($scope.rootFolder);
+                    if (xmlNode) {
+                        var text = Core.xmlNodeToString(xmlNode);
+                        if (text) {
+                            var decoded = decodeURIComponent(text);
+                            Wiki.log.debug("Saving xml decoded: " + decoded);
 
-        $scope.doReload = function () {
-            $scope.selectedMapping.class_a.value = $scope.aName;
-            $scope.selectedMapping.class_b.value = $scope.bName;
-            $scope.triggerRefresh();
-        };
+                            // lets save the file...
+                            var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
+                            wikiRepository.putPage($scope.branch, $scope.pageId, decoded, commitMessage, function (status) {
+                                Wiki.onComplete(status);
+                                notification("success", "Saved " + $scope.pageId);
+                                $scope.modified = false;
+                                goToView();
+                                Core.$apply($scope);
+                            });
+                        }
+                    }
+                }
+            };
 
-        $scope.$watch('selectedMapping', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                $scope.aName = newValue.class_a.value;
-                $scope.bName = newValue.class_b.value;
-                $scope.triggerRefresh();
+            $scope.cancel = function () {
+                console.log("cancelling...");
+                // TODO show dialog if folks are about to lose changes...
+            };
+
+            $scope.$watch("selectedRouteId", onRouteSelectionChanged);
+
+            function goToView() {
+                // TODO lets navigate to the view if we have a separate view one day :)
+                /*
+                if ($scope.breadcrumbs && $scope.breadcrumbs.length > 1) {
+                var viewLink = $scope.breadcrumbs[$scope.breadcrumbs.length - 2];
+                console.log("goToView has found view " + viewLink);
+                var path = Core.trimLeading(viewLink, "#");
+                $location.path(path);
+                } else {
+                console.log("goToView has no breadcrumbs!");
+                }
+                */
             }
-        });
 
-        $scope.$watch('selectedMapping.class_a.value', function (newValue, oldValue) {
-            if (newValue !== oldValue && newValue !== '') {
-                $scope.fetchProperties(newValue, $scope.selectedMapping.class_a, 'Right');
-            }
-        });
-
-        $scope.$watch('selectedMapping.class_b.value', function (newValue, oldValue) {
-            if (newValue !== oldValue && newValue !== '') {
-                $scope.fetchProperties(newValue, $scope.selectedMapping.class_b, 'Left');
-            }
-        });
-
-        $scope.fetchProperties = function (className, target, anchor) {
-            var introspectorMBean = Dozer.getIntrospectorMBean(workspace);
-            if (introspectorMBean && !$scope.missingContainer) {
-                var aJolokia = $scope.containerJolokia || jolokia;
-                aJolokia.request({
-                    type: 'exec',
-                    mbean: introspectorMBean,
-                    operation: 'getProperties(java.lang.String)',
-                    arguments: [className]
-                }, {
-                    success: function (response) {
-                        target.error = null;
-                        target.properties = response.value;
-                        var parentId = '';
-                        if (angular.isDefined(target.value)) {
-                            parentId = target.value;
-                        } else {
-                            parentId = target.path;
+            function addNewNode(nodeModel) {
+                var doc = $scope.doc || document;
+                var parentFolder = $scope.selectedFolder || $scope.rootFolder;
+                var key = nodeModel["_id"];
+                if (!key) {
+                    console.log("WARNING: no id for model " + JSON.stringify(nodeModel));
+                } else {
+                    var treeNode = $scope.selectedFolder;
+                    if (key === "route") {
+                        // lets add to the root of the tree
+                        treeNode = $scope.rootFolder;
+                    } else {
+                        if (!treeNode) {
+                            // lets select the last route - and create a new route if need be
+                            var root = $scope.rootFolder;
+                            var children = root.children;
+                            if (!children || !children.length) {
+                                addNewNode(Camel.getCamelSchema("route"));
+                                children = root.children;
+                            }
+                            if (children && children.length) {
+                                treeNode = getRouteFolder($scope.rootFolder, $scope.selectedRouteId) || children[children.length - 1];
+                            } else {
+                                console.log("Could not add a new route to the empty tree!");
+                                return;
+                            }
                         }
 
-                        angular.forEach(target.properties, function (property) {
-                            property.id = Core.getUUID();
-                            property.path = parentId + '/' + property.displayName;
-                            property.anchor = anchor;
-                            // TODO - Let's see if we need to do this...
-                            /*
-                            var lookup = !Dozer.excludedPackages.any((excluded) => { return property.typeName.has(excluded); });
-                            if (lookup) {
-                            $scope.fetchProperties(property.typeName, property, anchor);
+                        // if the parent folder likes to act as a pipeline, then add
+                        // after the parent, rather than as a child
+                        var parentTypeName = Camel.getFolderCamelNodeId(treeNode);
+                        if (!Camel.acceptOutput(parentTypeName)) {
+                            treeNode = treeNode.parent || treeNode;
+                        }
+                    }
+                    if (treeNode) {
+                        var node = doc.createElement(key);
+                        parentFolder = treeNode;
+                        var addedNode = Camel.addRouteChild(parentFolder, node);
+
+                        // TODO add the schema here for an element??
+                        // or default the data or something
+                        var nodeData = {};
+                        if (key === "endpoint" && $scope.endpointConfig) {
+                            var key = $scope.endpointConfig.key;
+                            if (key) {
+                                nodeData["uri"] = key + ":";
                             }
-                            */
-                        });
-                        Core.$apply($scope);
-                    },
-                    error: function (response) {
-                        target.properties = null;
-                        target.error = {
-                            'type': response.error_type,
-                            'stackTrace': response.error
-                        };
-                        log.error("got: " + response);
-                        Core.$apply($scope);
+                        }
+                        addedNode["camelNodeData"] = nodeData;
+                        addedNode["endpointConfig"] = $scope.endpointConfig;
+
+                        if (key === "route") {
+                            // lets generate a new routeId and switch to it
+                            var count = $scope.routeIds.length;
+                            var nodeId = null;
+                            while (true) {
+                                nodeId = "route" + (++count);
+                                if (!$scope.routeIds.find(nodeId)) {
+                                    break;
+                                }
+                            }
+                            addedNode["routeXmlNode"].setAttribute("id", nodeId);
+                            $scope.selectedRouteId = nodeId;
+                        }
+                    }
+                }
+                treeModified();
+            }
+
+            function treeModified(reposition) {
+                if (typeof reposition === "undefined") { reposition = true; }
+                // lets recreate the XML model from the update Folder tree
+                var newDoc = Camel.generateXmlFromFolder($scope.rootFolder);
+                var tree = Camel.loadCamelTree(newDoc, $scope.pageId);
+                if (tree) {
+                    $scope.rootFolder = tree;
+                    $scope.doc = Core.pathGet(tree, ["xmlDocument"]);
+                }
+                $scope.modified = true;
+                reloadRouteIds();
+                $scope.doLayout();
+                Core.$apply($scope);
+            }
+
+            function reloadRouteIds() {
+                $scope.routeIds = [];
+                var doc = $($scope.doc);
+                $scope.camelSelectionDetails.selectedCamelContextId = doc.find("camelContext").attr("id");
+                doc.find("route").each(function (idx, route) {
+                    var id = route.getAttribute("id");
+                    if (id) {
+                        $scope.routeIds.push(id);
                     }
                 });
             }
-        };
 
-        $scope.getSourceAndTarget = function (info) {
-            var sourcePath = info.source.attr('field-path');
-            var targetPath = info.target.attr('field-path');
+            function onRouteSelectionChanged() {
+                if ($scope.doc) {
+                    if (!$scope.selectedRouteId && $scope.routeIds && $scope.routeIds.length) {
+                        $scope.selectedRouteId = $scope.routeIds[0];
+                    }
+                    if ($scope.selectedRouteId && $scope.selectedRouteId !== $scope.drawnRouteId) {
+                        var nodes = [];
+                        var links = [];
+                        Camel.loadRouteXmlNodes($scope, $scope.doc, $scope.selectedRouteId, nodes, links, getWidth());
+                        updateSelection($scope.selectedRouteId);
 
-            var sourceField = sourcePath.split('/').last();
-            var targetField = sourcePath.split('/').last();
+                        // now we've got cid values in the tree and DOM, lets create an index so we can bind the DOM to the tree model
+                        $scope.folders = Camel.addFoldersToIndex($scope.rootFolder);
+                        showGraph(nodes, links);
+                        $scope.drawnRouteId = $scope.selectedRouteId;
+                    }
+                    $scope.camelSelectionDetails.selectedRouteId = $scope.selectedRouteId;
+                }
+            }
 
-            return {
-                from: sourceField,
-                to: targetField
-            };
-        };
+            function showGraph(nodes, links) {
+                layoutGraph(nodes, links);
+            }
 
-        function extractProperty(clazz, prop) {
-            return (!clazz || !clazz.properties) ? null : clazz.properties.find(function (property) {
-                return property.path.endsWith('/' + prop);
+            function getNodeId(node) {
+                if (angular.isNumber(node)) {
+                    var idx = node;
+                    node = $scope.nodeStates[idx];
+                    if (!node) {
+                        console.log("Cant find node at " + idx);
+                        return "node-" + idx;
+                    }
+                }
+                return node.cid || "node-" + node.id;
+            }
+
+            function getSelectedOrRouteFolder() {
+                return $scope.selectedFolder || getRouteFolder($scope.rootFolder, $scope.selectedRouteId);
+            }
+
+            function getContainerElement() {
+                var rootElement = $element;
+                var containerElement = rootElement.find(".canvas");
+                if (!containerElement || !containerElement.length)
+                    containerElement = rootElement;
+                return containerElement;
+            }
+
+            // context menu (right click) on any component.
+            /* TODO disabling this for now just so I can look at elements easily in the dev tools
+            jsPlumb.bind("contextmenu", function (component, originalEvent) {
+            alert("context menu on component " + component.id);
+            originalEvent.preventDefault();
+            return false;
             });
-        }
+            */
+            /*
+            function clearCanvasLayout(jsPlumb, containerElement) {
+            try {
+            containerElement.empty();
+            jsPlumb.reset();
+            } catch (e) {
+            // ignore errors
+            }
+            return jsPlumb;
+            }
+            */
+            // configure canvas layout and styles
+            var endpointStyle = ["Dot", { radius: 4, cssClass: 'camel-canvas-endpoint' }];
+            var hoverPaintStyle = { strokeStyle: "red", lineWidth: 3 };
 
-        // The jsPlumb directive will call this after it's done it's thing...
-        function addConnectionClickHandler(connection, jsplumb) {
-            connection.bind('click', function (connection) {
-                jsplumb.detach(connection);
+            //var labelStyles: any[] = [ "Label", { label:"FOO", id:"label" }];
+            var labelStyles = ["Label"];
+            var arrowStyles = [
+                "Arrow", {
+                    location: 1,
+                    id: "arrow",
+                    length: 8,
+                    width: 8,
+                    foldback: 0.8
+                }];
+            var connectorStyle = ["StateMachine", { curviness: 10, proximityLimit: 50 }];
+
+            jsPlumb.importDefaults({
+                Endpoint: endpointStyle,
+                HoverPaintStyle: hoverPaintStyle,
+                ConnectionOverlays: [
+                    arrowStyles,
+                    labelStyles
+                ]
             });
-        }
 
-        function getPaintStyle() {
-            return {
-                strokeStyle: UI.colors.sample(),
-                lineWidth: 4
-            };
-        }
+            $scope.$on('$destroy', function () {
+                jsPlumb.reset();
+            });
 
-        $scope.jsPlumbCallback = function (jsplumb, nodes, nodesById, connections) {
-            // Set up any connections loaded from the XML
-            // TODO - currently we actually are only looking at the top-level properties
-            angular.forEach($scope.selectedMapping.fields, function (field) {
-                var a_property = extractProperty($scope.selectedMapping.class_a, field.a.value);
-                var b_property = extractProperty($scope.selectedMapping.class_b, field.b.value);
+            // double click on any connection
+            jsPlumb.bind("dblclick", function (connection, originalEvent) {
+                if (jsPlumb.isSuspendDrawing()) {
+                    return;
+                }
+                alert("double click on connection from " + connection.sourceId + " to " + connection.targetId);
+            });
 
-                if (a_property && b_property) {
-                    var a_node = nodesById[a_property.id];
-                    var b_node = nodesById[b_property.id];
+            jsPlumb.bind('connection', function (info, evt) {
+                if (jsPlumb.isSuspendDrawing()) {
+                    return;
+                }
 
-                    var connection = $scope.jsPlumb.connect({
-                        source: a_node.el,
-                        target: b_node.el
-                    }, {
-                        connector: $scope.connectorStyle,
-                        maxConnections: 1,
-                        paintStyle: getPaintStyle()
+                //log.debug("Connection event: ", info);
+                Wiki.log.debug("Creating connection from ", info.source.get(0).id, " to ", info.target.get(0).id);
+                var link = getLink(info);
+                var source = $scope.folders[link.source];
+                var target = $scope.folders[link.target];
+                source.moveChild(target);
+                treeModified();
+            });
+
+            jsPlumb.bind('connectionDetached', function (info, evt) {
+                if (jsPlumb.isSuspendDrawing()) {
+                    return;
+                }
+
+                //log.debug("Connection detach event: ", info);
+                Wiki.log.debug("Detaching connection from ", info.source.get(0).id, " to ", info.target.get(0).id);
+                var link = getLink(info);
+                var source = $scope.folders[link.source];
+                var target = $scope.folders[link.target];
+                // TODO orphan target folder without actually deleting it
+            });
+
+            // lets delete connections on click
+            jsPlumb.bind("click", function (c) {
+                if (jsPlumb.isSuspendDrawing()) {
+                    return;
+                }
+                jsPlumb.detach(c);
+            });
+
+            function layoutGraph(nodes, links) {
+                var transitions = [];
+                var states = Core.createGraphStates(nodes, links, transitions);
+
+                Wiki.log.debug("links: ", links);
+                Wiki.log.debug("transitions: ", transitions);
+
+                $scope.nodeStates = states;
+                var containerElement = getContainerElement();
+
+                jsPlumb.doWhileSuspended(function () {
+                    //set our container to some arbitrary initial size
+                    containerElement.css({
+                        'width': '800px',
+                        'height': '800px',
+                        'min-height': '800px',
+                        'min-width': '800px'
+                    });
+                    var containerHeight = 0;
+                    var containerWidth = 0;
+
+                    containerElement.find('div.component').each(function (i, el) {
+                        Wiki.log.debug("Checking: ", el, " ", i);
+                        if (!states.any(function (node) {
+                            return el.id === getNodeId(node);
+                        })) {
+                            Wiki.log.debug("Removing element: ", el.id);
+                            jsPlumb.remove(el);
+                        }
                     });
 
-                    //Ensure loaded connections can also be removed
-                    addConnectionClickHandler(connection, jsplumb);
-                    a_node.connections.push(connection);
-                    b_node.connections.push(connection);
-                }
-            });
+                    angular.forEach(states, function (node) {
+                        Wiki.log.debug("node: ", node);
+                        var id = getNodeId(node);
+                        var div = containerElement.find('#' + id);
 
-            // Handle new connection events...
-            jsplumb.bind('connection', function (info) {
-                // Add a handler so we can click on a connection to make it go away
-                addConnectionClickHandler(info.connection, jsplumb);
-                info.connection.setPaintStyle(getPaintStyle());
+                        if (!div[0]) {
+                            div = $($scope.nodeTemplate({
+                                id: id,
+                                node: node
+                            }));
+                            div.appendTo(containerElement);
+                        }
 
-                var newMapping = $scope.getSourceAndTarget(info);
+                        // Make the node a jsplumb source
+                        jsPlumb.makeSource(div, {
+                            filter: "img.nodeIcon",
+                            anchor: "Continuous",
+                            connector: connectorStyle,
+                            connectorStyle: { strokeStyle: "#666", lineWidth: 3 },
+                            maxConnections: -1
+                        });
 
-                var field = new Dozer.Field(new Dozer.FieldDefinition(newMapping.from), new Dozer.FieldDefinition(newMapping.to));
-                $scope.selectedMapping.fields.push(field);
-                $scope.modified = true;
-                Core.$apply($scope);
-            });
+                        // and also a jsplumb target
+                        jsPlumb.makeTarget(div, {
+                            dropOptions: { hoverClass: "dragHover" },
+                            anchor: "Continuous"
+                        });
 
-            // Handle connection detach events...
-            jsplumb.bind('connectionDetached', function (info) {
-                var toDetach = $scope.getSourceAndTarget(info);
-                var field = new Dozer.Field(new Dozer.FieldDefinition(toDetach.from), new Dozer.FieldDefinition(toDetach.to));
-                $scope.selectedMapping.fields.remove(field);
-                $scope.modified = true;
-                Core.$apply($scope);
-            });
-        };
+                        jsPlumb.draggable(div, {
+                            containment: '.camel-canvas'
+                        });
 
-        $scope.formatStackTrace = function (exception) {
-            return Log.formatStackTrace(exception);
-        };
+                        // add event handlers to this node
+                        div.click(function () {
+                            var newFlag = !div.hasClass("selected");
+                            containerElement.find('div.component').toggleClass("selected", false);
+                            div.toggleClass("selected", newFlag);
+                            var id = div.attr("id");
+                            updateSelection(newFlag ? id : null);
+                            Core.$apply($scope);
+                        });
 
-        $scope.addMapping = function () {
-            var treeNode = $scope.rootTreeNode;
-            if (treeNode) {
-                var parentFolder = treeNode.data;
-                var mapping = new Dozer.Mapping();
-                var addedNode = Dozer.createMappingFolder(mapping, parentFolder);
-                var added = treeNode.addChild(addedNode);
-                if (added) {
-                    added.expand(true);
-                    added.select(true);
-                    added.activate(true);
-                    onTreeModified();
-                }
-                $scope.mappings.push(mapping);
-                $scope.selectedMapping = mapping;
+                        div.dblclick(function () {
+                            var id = div.attr("id");
+                            updateSelection(id);
+
+                            //$scope.propertiesDialog.open();
+                            Core.$apply($scope);
+                        });
+
+                        var height = div.height();
+                        var width = div.width();
+                        if (height || width) {
+                            node.width = width;
+                            node.height = height;
+                            div.css({
+                                'min-width': width,
+                                'min-height': height
+                            });
+                        }
+                    });
+
+                    var edgeSep = 10;
+
+                    // Create the layout and get the buildGraph
+                    dagre.layout().nodeSep(100).edgeSep(edgeSep).rankSep(75).nodes(states).edges(transitions).debugLevel(1).run();
+
+                    angular.forEach(states, function (node) {
+                        // position the node in the graph
+                        var id = getNodeId(node);
+                        var div = $("#" + id);
+                        var divHeight = div.height();
+                        var divWidth = div.width();
+                        var leftOffset = node.dagre.x + divWidth;
+                        var bottomOffset = node.dagre.y + divHeight;
+                        if (containerHeight < bottomOffset) {
+                            containerHeight = bottomOffset + edgeSep * 2;
+                        }
+                        if (containerWidth < leftOffset) {
+                            containerWidth = leftOffset + edgeSep * 2;
+                        }
+                        div.css({ top: node.dagre.y, left: node.dagre.x });
+                    });
+
+                    // size the container to fit the graph
+                    containerElement.css({
+                        'width': containerWidth,
+                        'height': containerHeight,
+                        'min-height': containerHeight,
+                        'min-width': containerWidth
+                    });
+
+                    containerElement.dblclick(function () {
+                        $scope.propertiesDialog.open();
+                    });
+
+                    jsPlumb.setSuspendEvents(true);
+
+                    // Detach all the current connections and reconnect everything based on the updated graph
+                    jsPlumb.detachEveryConnection({ fireEvent: false });
+
+                    angular.forEach(links, function (link) {
+                        jsPlumb.connect({
+                            source: getNodeId(link.source),
+                            target: getNodeId(link.target)
+                        });
+                    });
+                    jsPlumb.setSuspendEvents(false);
+                });
+
+                return states;
             }
-        };
 
-        $scope.addField = function () {
-            if ($scope.selectedMapping) {
-                // lets find all the possible unmapped fields we can map from...
-                Dozer.findUnmappedFields(workspace, $scope.selectedMapping, function (data) {
-                    log.warn("has unmapped data fields: " + data);
-                    $scope.unmappedFields = data;
-                    $scope.unmappedFieldsHasValid = false;
-                    $scope.addDialog.open();
-                    Core.$apply($scope);
+            function getLink(info) {
+                var sourceId = info.source.get(0).id;
+                var targetId = info.target.get(0).id;
+                return {
+                    source: sourceId,
+                    target: targetId
+                };
+            }
+
+            function getNodeByCID(nodes, cid) {
+                return nodes.find(function (node) {
+                    return node.cid === cid;
                 });
             }
-        };
 
-        $scope.addAndCloseDialog = function () {
-            log.info("About to add the unmapped fields " + JSON.stringify($scope.unmappedFields, null, "  "));
-            if ($scope.selectedMapping) {
-                // TODO whats the folder???
-                angular.forEach($scope.unmappedFields, function (unmappedField) {
-                    if (unmappedField.valid) {
-                        // TODO detect exclude!
-                        var field = new Dozer.Field(new Dozer.FieldDefinition(unmappedField.fromField), new Dozer.FieldDefinition(unmappedField.toField));
-                        $scope.selectedMapping.fields.push(field);
-                        var treeNode = $scope.selectedMappingTreeNode;
-                        var mappingFolder = $scope.selectedMappingFolder;
-                        if (treeNode && mappingFolder) {
-                            var fieldFolder = Dozer.addMappingFieldFolder(field, mappingFolder);
-                            var added = treeNode.addChild(fieldFolder);
-                            if (added) {
-                                added.expand(true);
-                                added.select(true);
-                                added.activate(true);
-                                onTreeModified();
+            /*
+            * Updates the selection with the given folder or ID
+            */
+            function updateSelection(folderOrId) {
+                var folder = null;
+                if (angular.isString(folderOrId)) {
+                    var id = folderOrId;
+                    folder = (id && $scope.folders) ? $scope.folders[id] : null;
+                } else {
+                    folder = folderOrId;
+                }
+                $scope.selectedFolder = folder;
+                folder = getSelectedOrRouteFolder();
+                $scope.nodeXmlNode = null;
+                $scope.propertiesTemplate = null;
+                if (folder) {
+                    var nodeName = Camel.getFolderCamelNodeId(folder);
+                    $scope.nodeData = Camel.getRouteFolderJSON(folder);
+                    $scope.nodeDataChangedFields = {};
+                    $scope.nodeModel = Camel.getCamelSchema(nodeName);
+                    if ($scope.nodeModel) {
+                        $scope.propertiesTemplate = "app/wiki/html/camelPropertiesEdit.html";
+                    }
+                    $scope.selectedEndpoint = null;
+                    if ("endpoint" === nodeName) {
+                        var uri = $scope.nodeData["uri"];
+                        if (uri) {
+                            // lets decompose the URI into scheme, path and parameters
+                            var idx = uri.indexOf(":");
+                            if (idx > 0) {
+                                var endpointScheme = uri.substring(0, idx);
+                                var endpointPath = uri.substring(idx + 1);
+
+                                // for empty paths lets assume we need // on a URI
+                                $scope.endpointPathHasSlashes = endpointPath ? false : true;
+                                if (endpointPath.startsWith("//")) {
+                                    endpointPath = endpointPath.substring(2);
+                                    $scope.endpointPathHasSlashes = true;
+                                }
+                                idx = endpointPath.indexOf("?");
+                                var endpointParameters = {};
+                                if (idx > 0) {
+                                    var parameters = endpointPath.substring(idx + 1);
+                                    endpointPath = endpointPath.substring(0, idx);
+                                    endpointParameters = Core.stringToHash(parameters);
+                                }
+
+                                $scope.endpointScheme = endpointScheme;
+                                $scope.endpointPath = endpointPath;
+                                $scope.endpointParameters = endpointParameters;
+
+                                console.log("endpoint " + endpointScheme + " path " + endpointPath + " and parameters " + JSON.stringify(endpointParameters));
+                                $scope.loadEndpointSchema(endpointScheme);
+                                $scope.selectedEndpoint = {
+                                    endpointScheme: endpointScheme,
+                                    endpointPath: endpointPath,
+                                    parameters: endpointParameters
+                                };
                             }
-                        } else {
-                            log.warn("No treenode and folder for mapping node! treeNode " + treeNode + " mappingFolder " + mappingFolder);
                         }
                     }
-                });
+                }
             }
-            $scope.addDialog.close();
-        };
 
-        $scope.canDelete = function () {
-            return $scope.selectedFolder ? true : false;
-        };
+            function getWidth() {
+                var canvasDiv = $($element);
+                return canvasDiv.width();
+            }
 
-        $scope.removeNode = function () {
-            if ($scope.selectedFolder && $scope.treeNode) {
-                // TODO deal with deleting fields
-                var folder = $scope.selectedFolder;
-                var entity = folder.entity;
-                if (entity instanceof Dozer.Field) {
-                    // lets remove this from the parent mapping
-                    var mapping = Core.pathGet(folder, ["parent", "entity"]);
-                    if (mapping) {
-                        mapping.fields.remove(entity);
+            function getFolderIdAttribute(route) {
+                var id = null;
+                if (route) {
+                    var xmlNode = route["routeXmlNode"];
+                    if (xmlNode) {
+                        id = xmlNode.getAttribute("id");
                     }
                 }
-                $scope.selectedFolder.detach();
-                $scope.treeNode.remove();
-                $scope.selectedFolder = null;
-                $scope.treeNode = null;
-                onTreeModified();
+                return id;
             }
-        };
 
-        $scope.saveMappings = function () {
-            $scope.model.mappings = $scope.mappings;
-            var text = Dozer.saveToXmlText($scope.model);
-            if (text) {
+            function getRouteFolder(tree, routeId) {
+                var answer = null;
+                if (tree) {
+                    angular.forEach(tree.children, function (route) {
+                        if (!answer) {
+                            var id = getFolderIdAttribute(route);
+                            if (routeId === id) {
+                                answer = route;
+                            }
+                        }
+                    });
+                }
+                return answer;
+            }
+            /*
+            if (jsPlumb) {
+            jsPlumb.bind("ready", setup);
+            }
+            
+            function setup() {
+            $scope.jsPlumbSetup = true;
+            }
+            */
+        }]);
+})(Wiki || (Wiki = {}));
+/**
+* @module Wiki
+*/
+/// <reference path="./wikiPlugin.ts"/>
+var Wiki;
+(function (Wiki) {
+    Wiki._module.controller("Wiki.GitPreferences", [
+        "$scope", "localStorage", "userDetails", function ($scope, localStorage, userDetails) {
+            Core.initPreferenceScope($scope, localStorage, {
+                'gitUserName': {
+                    'value': userDetails.username
+                },
+                'gitUserEmail': {
+                    'value': ''
+                }
+            });
+        }]);
+})(Wiki || (Wiki = {}));
+/**
+* @module Wiki
+*/
+/// <reference path="./wikiPlugin.ts"/>
+var Wiki;
+(function (Wiki) {
+    Wiki._module.controller("Wiki.HistoryController", [
+        "$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", function ($scope, $location, $routeParams, $templateCache, workspace, marked, fileExtensionTypeRegistry, wikiRepository) {
+            Wiki.initScope($scope, $routeParams, $location);
+            $scope.selectedItems = [];
+
+            // TODO we could configure this?
+            $scope.dateFormat = 'EEE, MMM d, y : hh:mm:ss a';
+
+            $scope.gridOptions = {
+                data: 'logs',
+                showFilter: false,
+                selectedItems: $scope.selectedItems,
+                showSelectionCheckbox: true,
+                displaySelectionCheckbox: true,
+                filterOptions: {
+                    filterText: ''
+                },
+                columnDefs: [
+                    {
+                        field: 'commitHashText',
+                        displayName: 'Change',
+                        cellTemplate: $templateCache.get('changeCellTemplate.html'),
+                        cellFilter: "",
+                        width: "*"
+                    },
+                    {
+                        field: 'date',
+                        displayName: 'Modified',
+                        cellFilter: "date: dateFormat",
+                        width: "**"
+                    },
+                    {
+                        field: 'author',
+                        displayName: 'Author',
+                        cellFilter: "",
+                        width: "**"
+                    },
+                    {
+                        field: 'shortMessage',
+                        displayName: 'Message',
+                        cellTemplate: '<div class="ngCellText" title="{{row.entity.shortMessage}}">{{row.entity.trimmedMessage}}</div>',
+                        cellFilter: "",
+                        width: "****"
+                    }
+                ]
+            };
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateView, 50);
+            });
+
+            $scope.$watch('workspace.tree', function () {
+                if (!$scope.git && Git.getGitMBean(workspace)) {
+                    // lets do this asynchronously to avoid Error: $digest already in progress
+                    //console.log("Reloading the view as we now seem to have a git mbean!");
+                    setTimeout(updateView, 50);
+                }
+            });
+            $scope.canRevert = function () {
+                return $scope.selectedItems.length === 1 && $scope.selectedItems[0] !== $scope.logs[0];
+            };
+
+            $scope.revert = function () {
+                if ($scope.selectedItems.length > 0) {
+                    var objectId = $scope.selectedItems[0].name;
+                    if (objectId) {
+                        var commitMessage = "Reverting file " + $scope.pageId + " to previous version " + objectId;
+                        wikiRepository.revertTo($scope.branch, objectId, $scope.pageId, commitMessage, function (result) {
+                            Wiki.onComplete(result);
+
+                            // now lets update the view
+                            notification('success', "Successfully reverted " + $scope.pageId);
+                            updateView();
+                        });
+                    }
+                    $scope.selectedItems.splice(0, $scope.selectedItems.length);
+                }
+            };
+
+            $scope.diff = function () {
+                var defaultValue = " ";
+                var objectId = defaultValue;
+                if ($scope.selectedItems.length > 0) {
+                    objectId = $scope.selectedItems[0].name || defaultValue;
+                }
+                var baseObjectId = defaultValue;
+                if ($scope.selectedItems.length > 1) {
+                    baseObjectId = $scope.selectedItems[1].name || defaultValue;
+
+                    // make the objectId (the one that will start with b/ path) always newer than baseObjectId
+                    if ($scope.selectedItems[0].date < $scope.selectedItems[1].date) {
+                        var _ = baseObjectId;
+                        baseObjectId = objectId;
+                        objectId = _;
+                    }
+                }
+                var link = Wiki.startLink($scope.branch) + "/diff/" + $scope.pageId + "/" + objectId + "/" + baseObjectId;
+                var path = Core.trimLeading(link, "#");
+                $location.path(path);
+            };
+
+            updateView();
+
+            function updateView() {
+                var objectId = "";
+                var limit = 0;
+
+                $scope.git = wikiRepository.history($scope.branch, objectId, $scope.pageId, limit, function (logArray) {
+                    angular.forEach(logArray, function (log) {
+                        // lets use the shorter hash for links by default
+                        var commitId = log.commitHashText || log.name;
+                        log.commitLink = Wiki.startLink($scope.branch) + "/commit/" + $scope.pageId + "/" + commitId;
+                    });
+                    $scope.logs = logArray;
+                    Core.$apply($scope);
+                });
+                Wiki.loadBranches(wikiRepository, $scope);
+            }
+        }]);
+})(Wiki || (Wiki = {}));
+/**
+* @module Wiki
+*/
+/// <reference path="./wikiPlugin.ts"/>
+var Wiki;
+(function (Wiki) {
+    function goToLink(link, $timeout, $location) {
+        var href = Core.trimLeading(link, "#");
+        $timeout(function () {
+            Wiki.log.debug("About to navigate to: " + href);
+            $location.url(href);
+        }, 100);
+    }
+
+    Wiki._module.controller("Wiki.ViewController", [
+        "$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", function ($scope, $location, $routeParams, $route, $http, $timeout, workspace, marked, fileExtensionTypeRegistry, wikiRepository, $compile, $templateCache, jolokia) {
+            Wiki.initScope($scope, $routeParams, $location);
+
+            $scope.fabricTopLevel = "fabric/profiles/";
+
+            $scope.versionId = $scope.branch;
+
+            $scope.paneTemplate = '';
+
+            $scope.profileId = Fabric.pagePathToProfileId($scope.pageId);
+            $scope.showProfileHeader = $scope.profileId && $scope.pageId.endsWith(Fabric.profileSuffix) ? true : false;
+
+            $scope.operationCounter = 1;
+            $scope.addDialog = new UI.Dialog();
+            $scope.generateDialog = new UI.Dialog();
+            $scope.renameDialog = new UI.Dialog();
+            $scope.moveDialog = new UI.Dialog();
+            $scope.deleteDialog = new UI.Dialog();
+            $scope.isFile = false;
+            $scope.rename = {
+                newFileName: ""
+            };
+            $scope.move = {
+                moveFolder: ""
+            };
+            $scope.createDocumentTree = Wiki.createWizardTree(workspace, $scope);
+
+            $scope.createDocumentTreeActivations = ["camel-spring.xml", "ReadMe.md"];
+            $scope.fileExists = {
+                exists: false,
+                name: ""
+            };
+
+            // bind filter model values to search params...
+            Core.bindModelToSearchParam($scope, $location, "searchText", "q", "");
+
+            // only reload the page if certain search parameters change
+            Core.reloadWhenParametersChange($route, $scope, $location);
+
+            $scope.gridOptions = {
+                data: 'children',
+                displayFooter: false,
+                selectedItems: [],
+                showSelectionCheckbox: true,
+                enableSorting: false,
+                useExternalSorting: true,
+                columnDefs: [
+                    {
+                        field: 'name',
+                        displayName: 'Name',
+                        cellTemplate: $templateCache.get('fileCellTemplate.html'),
+                        headerCellTemplate: $templateCache.get('fileColumnTemplate.html')
+                    }
+                ]
+            };
+
+            $scope.childActions = [];
+
+            var maybeUpdateView = Core.throttled(updateView, 1000);
+
+            $scope.$on('wikiBranchesUpdated', function () {
+                updateView();
+            });
+
+            /*
+            if (!$scope.nameOnly) {
+            $scope.gridOptions.columnDefs.push({
+            field: 'lastModified',
+            displayName: 'Modified',
+            cellFilter: "date:'EEE, MMM d, y : hh:mm:ss a'"
+            });
+            $scope.gridOptions.columnDefs.push({
+            field: 'length',
+            displayName: 'Size',
+            cellFilter: "number"
+            });
+            }
+            */
+            $scope.createDashboardLink = function () {
+                var href = '/wiki/branch/:branch/view/*page';
+                var page = $routeParams['page'];
+                var title = page ? page.split("/").last() : null;
+                var size = angular.toJson({
+                    size_x: 2,
+                    size_y: 2
+                });
+                var answer = "#/dashboard/add?tab=dashboard" + "&href=" + encodeURIComponent(href) + "&size=" + encodeURIComponent(size) + "&routeParams=" + encodeURIComponent(angular.toJson($routeParams));
+                if (title) {
+                    answer += "&title=" + encodeURIComponent(title);
+                }
+                return answer;
+            };
+
+            $scope.displayClass = function () {
+                if (!$scope.children || $scope.children.length === 0) {
+                    return "";
+                }
+                return "span9";
+            };
+
+            $scope.parentLink = function () {
+                var start = Wiki.startLink($scope.branch);
+                var prefix = start + "/view";
+
+                //console.log("pageId: ", $scope.pageId)
+                var parts = $scope.pageId.split("/");
+
+                //console.log("parts: ", parts);
+                var path = "/" + parts.first(parts.length - 1).join("/");
+
+                //console.log("path: ", path);
+                return Core.createHref($location, prefix + path, []);
+            };
+
+            $scope.childLink = function (child) {
+                var start = Wiki.startLink($scope.branch);
+                var prefix = start + "/view";
+                var postFix = "";
+                var path = Wiki.encodePath(child.path);
+                if (child.directory) {
+                    // if we are a folder with the same name as a form file, lets add a form param...
+                    var formPath = path + ".form";
+                    var children = $scope.children;
+                    if (children) {
+                        var formFile = children.find(function (child) {
+                            return child['path'] === formPath;
+                        });
+                        if (formFile) {
+                            prefix = start + "/formTable";
+                            postFix = "?form=" + formPath;
+                        }
+                    }
+                } else {
+                    var xmlNamespaces = child.xmlNamespaces;
+                    if (xmlNamespaces && xmlNamespaces.length) {
+                        if (xmlNamespaces.any(function (ns) {
+                            return Wiki.camelNamespaces.any(ns);
+                        })) {
+                            prefix = start + "/camel/canvas";
+                        } else if (xmlNamespaces.any(function (ns) {
+                            return Wiki.dozerNamespaces.any(ns);
+                        })) {
+                            prefix = start + "/dozer/mappings";
+                        } else {
+                            console.log("child " + path + " has namespaces " + xmlNamespaces);
+                        }
+                    }
+                    if (child.path.endsWith(".form")) {
+                        postFix = "?form=/";
+                    } else if (Wiki.isIndexPage(child.path)) {
+                        // lets default to book view on index pages
+                        prefix = start + "/book";
+                    }
+                }
+                return Core.createHref($location, prefix + path + postFix, ["form"]);
+            };
+
+            $scope.fileName = function (entity) {
+                return Wiki.hideFineNameExtensions(entity.name);
+            };
+
+            $scope.fileClass = function (entity) {
+                if (entity.name.has(".profile")) {
+                    return "green";
+                }
+                return "";
+            };
+
+            $scope.fileIconHtml = function (entity) {
+                return Wiki.fileIconHtml(entity);
+            };
+
+            $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
+            var options = {
+                readOnly: true,
+                mode: {
+                    name: $scope.format
+                }
+            };
+            $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
+
+            $scope.editLink = function () {
+                var pageName = ($scope.directory) ? $scope.readMePath : $scope.pageId;
+                return (pageName) ? Wiki.editLink($scope.branch, pageName, $location) : null;
+            };
+
+            $scope.branchLink = function (branch) {
+                if (branch) {
+                    return Wiki.branchLink(branch, $scope.pageId, $location);
+                }
+                return null;
+            };
+
+            $scope.historyLink = "#/wiki" + ($scope.branch ? "/branch/" + $scope.branch : "") + "/history/" + $scope.pageId;
+
+            $scope.$watch('workspace.tree', function () {
+                if (!$scope.git && Git.getGitMBean(workspace)) {
+                    // lets do this asynchronously to avoid Error: $digest already in progress
+                    //log.info("Reloading view as the tree changed and we have a git mbean now");
+                    setTimeout(maybeUpdateView, 50);
+                }
+            });
+
+            /*
+            // TODO this doesn't work for some reason!
+            $scope.$on('jmxTreeUpdated', function () {
+            console.log("view: jmx tree updated!");
+            });
+            */
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                //log.info("Reloading view due to $routeChangeSuccess");
+                setTimeout(maybeUpdateView, 50);
+            });
+
+            $scope.onSubmit = function (json, form) {
+                notification("success", "Submitted form :" + form.get(0).name + " data: " + JSON.stringify(json));
+            };
+
+            $scope.onCancel = function (form) {
+                notification("success", "Clicked cancel!");
+            };
+
+            $scope.onCreateDocumentSelect = function (node) {
+                $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
+                $scope.selectedCreateDocumentTemplateRegex = $scope.selectedCreateDocumentTemplate.regex || /.*/;
+                checkFileExists(getNewDocumentPath());
+            };
+
+            $scope.$watch("newDocumentName", function () {
+                checkFileExists(getNewDocumentPath());
+            });
+
+            $scope.openAddDialog = function () {
+                $scope.newDocumentName = null;
+                $scope.addDialog.open();
+            };
+
+            $scope.addAndCloseDialog = function (fileName) {
+                $scope.newDocumentName = fileName;
+                var template = $scope.selectedCreateDocumentTemplate;
+                var path = getNewDocumentPath();
+                if (!template || !path) {
+                    return;
+                }
+                var name = Wiki.fileName(path);
+                var fileName = name;
+                var folder = Wiki.fileParent(path);
+                var exemplar = template.exemplar;
+
+                var commitMessage = "Created " + template.label;
+                var exemplarUri = url("/app/wiki/exemplar/" + exemplar);
+
+                if (template.folder) {
+                    notification("success", "Creating new folder " + name);
+
+                    wikiRepository.createDirectory($scope.branch, path, commitMessage, function (status) {
+                        $scope.addDialog.close();
+                        Core.$apply($scope);
+                        var link = Wiki.viewLink($scope.branch, path, $location);
+                        goToLink(link, $timeout, $location);
+                    });
+                } else if (template.profile) {
+                    function toPath(profileName) {
+                        var answer = "fabric/profiles/" + profileName;
+                        answer = answer.replace(/-/g, "/");
+                        answer = answer + ".profile";
+                        return answer;
+                    }
+
+                    function toProfileName(path) {
+                        var answer = path.replace(/^fabric\/profiles\//, "");
+                        answer = answer.replace(/\//g, "-");
+                        answer = answer.replace(/\.profile$/, "");
+                        return answer;
+                    }
+
+                    // strip off any profile name in case the user creates a profile while looking at
+                    // another profile
+                    folder = folder.replace(/\/=?(\w*)\.profile$/, "");
+
+                    var concatenated = folder + "/" + name;
+
+                    var profileName = toProfileName(concatenated);
+                    var targetPath = toPath(profileName);
+
+                    $scope.addDialog.close();
+
+                    Fabric.createProfile(workspace.jolokia, $scope.branch, profileName, ['default'], function () {
+                        notification('success', 'Created profile ' + profileName);
+                        Core.$apply($scope);
+
+                        Fabric.newConfigFile(workspace.jolokia, $scope.branch, profileName, 'ReadMe.md', function () {
+                            notification('info', 'Created empty Readme.md in profile ' + profileName);
+                            Core.$apply($scope);
+
+                            var contents = "Here's an empty ReadMe.md for '" + profileName + "', please update!";
+
+                            Fabric.saveConfigFile(workspace.jolokia, $scope.branch, profileName, 'ReadMe.md', contents.encodeBase64(), function () {
+                                notification('info', 'Updated Readme.md in profile ' + profileName);
+                                Core.$apply($scope);
+                                var link = Wiki.viewLink($scope.branch, targetPath, $location);
+                                goToLink(link, $timeout, $location);
+                            }, function (response) {
+                                notification('error', 'Failed to set ReadMe.md data in profile ' + profileName + ' due to ' + response.error);
+                                Core.$apply($scope);
+                            });
+                        }, function (response) {
+                            notification('error', 'Failed to create ReadMe.md in profile ' + profileName + ' due to ' + response.error);
+                            Core.$apply($scope);
+                        });
+                    }, function (response) {
+                        notification('error', 'Failed to create profile ' + profileName + ' due to ' + response.error);
+                        Core.$apply($scope);
+                    });
+                } else if (template.version) {
+                    if (name === exemplar) {
+                        name = '';
+                    }
+                    Fabric.doCreateVersion($scope, jolokia, $location, name);
+                } else if (template.generated) {
+                    $scope.addDialog.close();
+
+                    var generateDialog = $scope.generateDialog;
+                    $scope.formSchema = template.generated.schema;
+                    $scope.formData = template.generated.form(workspace, $scope);
+                    $scope.generate = function () {
+                        template.generated.generate(workspace, $scope.formData, function (contents) {
+                            generateDialog.close();
+                            wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, function (status) {
+                                console.log("Created file " + name);
+                                Wiki.onComplete(status);
+                                $scope.generateDialog.close();
+                                updateView();
+                            });
+                        }, function (error) {
+                            generateDialog.close();
+                            notification('error', error);
+                        });
+                    };
+                    generateDialog.open();
+                } else {
+                    notification("success", "Creating new document " + name);
+
+                    $http.get(exemplarUri).success(function (contents) {
+                        // TODO lets check this page does not exist - if it does lets keep adding a new post fix...
+                        wikiRepository.putPage($scope.branch, path, contents, commitMessage, function (status) {
+                            console.log("Created file " + name);
+                            Wiki.onComplete(status);
+
+                            // lets navigate to the edit link
+                            // load the directory and find the child item
+                            $scope.git = wikiRepository.getPage($scope.branch, folder, $scope.objectId, function (details) {
+                                // lets find the child entry so we can calculate its correct edit link
+                                var link = null;
+                                if (details && details.children) {
+                                    console.log("scanned the directory " + details.children.length + " children");
+                                    var child = details.children.find(function (c) {
+                                        return c.name === fileName;
+                                    });
+                                    if (child) {
+                                        link = $scope.childLink(child);
+                                    } else {
+                                        console.log("Could not find name '" + fileName + "' in the list of file names " + JSON.stringify(details.children.map(function (c) {
+                                            return c.name;
+                                        })));
+                                    }
+                                }
+                                if (!link) {
+                                    console.log("WARNING: could not find the childLink so reverting to the wiki edit page!");
+                                    link = Wiki.editLink($scope.branch, path, $location);
+                                }
+                                $scope.addDialog.close();
+                                Core.$apply($scope);
+                                goToLink(link, $timeout, $location);
+                            });
+                        });
+                    });
+                }
+                $scope.addDialog.close();
+            };
+
+            $scope.openDeleteDialog = function () {
+                if ($scope.gridOptions.selectedItems.length) {
+                    $scope.selectedFileHtml = "<ul>" + $scope.gridOptions.selectedItems.map(function (file) {
+                        return "<li>" + file.name + "</li>";
+                    }).sort().join("") + "</ul>";
+                    $scope.deleteDialog.open();
+                } else {
+                    console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
+                }
+            };
+
+            $scope.deleteAndCloseDialog = function () {
+                var files = $scope.gridOptions.selectedItems;
+                var fileCount = files.length;
+                console.log("Deleting selection: " + files);
+                angular.forEach(files, function (file, idx) {
+                    var path = $scope.pageId + "/" + file.name;
+                    console.log("About to delete " + path);
+                    $scope.git = wikiRepository.removePage($scope.branch, path, null, function (result) {
+                        if (idx + 1 === fileCount) {
+                            $scope.gridOptions.selectedItems.splice(0, fileCount);
+                            var message = Core.maybePlural(fileCount, "document");
+                            notification("success", "Deleted " + message);
+                            Core.$apply($scope);
+                            updateView();
+                        }
+                    });
+                });
+                $scope.deleteDialog.close();
+            };
+
+            $scope.$watch("rename.newFileName", function () {
+                // ignore errors if the file is the same as the rename file!
+                var path = getRenameFilePath();
+                if ($scope.originalRenameFilePath === path) {
+                    $scope.fileExists = { exsits: false, name: null };
+                } else {
+                    checkFileExists(path);
+                }
+            });
+
+            $scope.openRenameDialog = function () {
+                var name = null;
+                if ($scope.gridOptions.selectedItems.length) {
+                    var selected = $scope.gridOptions.selectedItems[0];
+                    name = selected.name;
+                }
+                if (name) {
+                    $scope.rename.newFileName = name;
+                    $scope.originalRenameFilePath = getRenameFilePath();
+                    $scope.renameDialog.open();
+                    $timeout(function () {
+                        $('#renameFileName').focus();
+                    }, 50);
+                } else {
+                    console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
+                }
+            };
+
+            $scope.renameAndCloseDialog = function () {
+                if ($scope.gridOptions.selectedItems.length) {
+                    var selected = $scope.gridOptions.selectedItems[0];
+                    var newPath = getRenameFilePath();
+                    if (selected && newPath) {
+                        var oldName = selected.name;
+                        var newName = Wiki.fileName(newPath);
+                        var oldPath = $scope.pageId + "/" + oldName;
+                        console.log("About to rename file " + oldPath + " to " + newPath);
+                        $scope.git = wikiRepository.rename($scope.branch, oldPath, newPath, null, function (result) {
+                            notification("success", "Renamed file to  " + newName);
+                            $scope.gridOptions.selectedItems.splice(0, 1);
+                            $scope.renameDialog.close();
+                            Core.$apply($scope);
+                            updateView();
+                        });
+                    }
+                }
+                $scope.renameDialog.close();
+            };
+
+            $scope.openMoveDialog = function () {
+                if ($scope.gridOptions.selectedItems.length) {
+                    $scope.move.moveFolder = $scope.pageId;
+                    $scope.moveDialog.open();
+                    $timeout(function () {
+                        $('#moveFolder').focus();
+                    }, 50);
+                } else {
+                    console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
+                }
+            };
+
+            $scope.moveAndCloseDialog = function () {
+                var files = $scope.gridOptions.selectedItems;
+                var fileCount = files.length;
+                var moveFolder = $scope.move.moveFolder;
+                var oldFolder = $scope.pageId;
+                if (moveFolder && fileCount && moveFolder !== oldFolder) {
+                    console.log("Moving " + fileCount + " file(s) to " + moveFolder);
+                    angular.forEach(files, function (file, idx) {
+                        var oldPath = oldFolder + "/" + file.name;
+                        var newPath = moveFolder + "/" + file.name;
+                        console.log("About to move " + oldPath + " to " + newPath);
+                        $scope.git = wikiRepository.rename($scope.branch, oldPath, newPath, null, function (result) {
+                            if (idx + 1 === fileCount) {
+                                $scope.gridOptions.selectedItems.splice(0, fileCount);
+                                var message = Core.maybePlural(fileCount, "document");
+                                notification("success", "Moved " + message + " to " + newPath);
+                                $scope.moveDialog.close();
+                                Core.$apply($scope);
+                                updateView();
+                            }
+                        });
+                    });
+                }
+                $scope.moveDialog.close();
+            };
+
+            $scope.folderNames = function (text) {
+                return wikiRepository.completePath($scope.branch, text, true, null);
+            };
+
+            setTimeout(maybeUpdateView, 50);
+
+            function isDiffView() {
+                var path = $location.path();
+                return path && (path.startsWith("/wiki/diff") || path.startsWith("/wiki/branch/" + $scope.branch + "/diff"));
+            }
+
+            function updateView() {
+                if (isDiffView()) {
+                    var baseObjectId = $routeParams["baseObjectId"];
+                    $scope.git = wikiRepository.diff($scope.objectId, baseObjectId, $scope.pageId, onFileDetails);
+                } else {
+                    $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onFileDetails);
+                }
+                Wiki.loadBranches(wikiRepository, $scope);
+            }
+
+            $scope.updateView = updateView;
+
+            function viewContents(pageName, contents) {
+                $scope.sourceView = null;
+
+                var format = null;
+                if (isDiffView()) {
+                    format = "diff";
+                } else {
+                    format = Wiki.fileFormat(pageName, fileExtensionTypeRegistry) || $scope.format;
+                }
+                if ("markdown" === format) {
+                    // lets convert it to HTML
+                    $scope.html = contents ? marked(contents) : "";
+                    $scope.html = $compile($scope.html)($scope);
+                } else if (format && format.startsWith("html")) {
+                    $scope.html = contents;
+                    $compile($scope.html)($scope);
+                } else {
+                    var form = null;
+                    if (format && format === "javascript") {
+                        form = $location.search()["form"];
+                    }
+                    $scope.source = contents;
+                    $scope.form = form;
+                    if (form) {
+                        // now lets try load the form JSON so we can then render the form
+                        $scope.sourceView = null;
+                        if (form === "/") {
+                            onFormSchema(_jsonSchema);
+                        } else {
+                            $scope.git = wikiRepository.getPage($scope.branch, form, $scope.objectId, function (details) {
+                                onFormSchema(Wiki.parseJson(details.text));
+                            });
+                        }
+                    } else {
+                        $scope.sourceView = "app/wiki/html/sourceView.html";
+                    }
+                }
+                Core.$apply($scope);
+            }
+
+            function onFormSchema(json) {
+                $scope.formDefinition = json;
+                if ($scope.source) {
+                    $scope.formEntity = Wiki.parseJson($scope.source);
+                }
+                $scope.sourceView = "app/wiki/html/formView.html";
+                Core.$apply($scope);
+            }
+
+            function onFileDetails(details) {
+                var contents = details.text;
+                $scope.directory = details.directory;
+
+                if (details && details.format) {
+                    $scope.format = details.format;
+                } else {
+                    $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
+                }
+                $scope.codeMirrorOptions.mode.name = $scope.format;
+
+                //console.log("format is '" + $scope.format + "'");
+                $scope.children = null;
+
+                if (details.directory) {
+                    var directories = details.children.filter(function (dir) {
+                        return dir.directory && !dir.name.has(".profile");
+                    });
+                    var profiles = details.children.filter(function (dir) {
+                        return dir.directory && dir.name.has(".profile");
+                    });
+                    var files = details.children.filter(function (file) {
+                        return !file.directory;
+                    });
+
+                    directories = directories.sortBy(function (dir) {
+                        return dir.name;
+                    });
+                    profiles = profiles.sortBy(function (dir) {
+                        return dir.name;
+                    });
+
+                    files = files.sortBy(function (file) {
+                        return file.name;
+                    }).sortBy(function (file) {
+                        return file.name.split('.').last();
+                    });
+
+                    $scope.children = Array.create(directories, profiles, files);
+                }
+
+                $scope.html = null;
+                $scope.source = null;
+                $scope.readMePath = null;
+
+                $scope.isFile = false;
+                if ($scope.children) {
+                    $scope.$broadcast('pane.open');
+
+                    // if we have a readme then lets render it...
+                    var item = $scope.children.find(function (info) {
+                        var name = (info.name || "").toLowerCase();
+                        var ext = Wiki.fileExtension(name);
+                        return name && ext && ((name.startsWith("readme.") || name === "readme") || (name.startsWith("index.") || name === "index"));
+                    });
+                    if (item) {
+                        var pageName = item.path;
+                        $scope.readMePath = pageName;
+                        wikiRepository.getPage($scope.branch, pageName, $scope.objectId, function (readmeDetails) {
+                            viewContents(pageName, readmeDetails.text);
+                        });
+                    }
+                } else {
+                    $scope.$broadcast('pane.close');
+                    var pageName = $scope.pageId;
+                    viewContents(pageName, contents);
+                    $scope.isFile = true;
+                }
+                Core.$apply($scope);
+            }
+
+            function checkFileExists(path) {
+                $scope.operationCounter += 1;
+                var counter = $scope.operationCounter;
+                if (path) {
+                    wikiRepository.exists($scope.branch, path, function (result) {
+                        // filter old results
+                        if ($scope.operationCounter === counter) {
+                            console.log("for path " + path + " got result " + result);
+                            $scope.fileExists.exists = result ? true : false;
+                            $scope.fileExists.name = result ? result.name : null;
+                            Core.$apply($scope);
+                        } else {
+                            // console.log("Ignoring old results for " + path);
+                        }
+                    });
+                }
+            }
+
+            // Called by hawtio TOC directive...
+            $scope.getContents = function (filename, cb) {
+                var pageId = filename;
+                if ($scope.directory) {
+                    pageId = $scope.pageId + '/' + filename;
+                } else {
+                    var pathParts = $scope.pageId.split('/');
+                    pathParts = pathParts.remove(pathParts.last());
+                    pathParts.push(filename);
+                    pageId = pathParts.join('/');
+                }
+                Wiki.log.debug("pageId: ", $scope.pageId);
+                Wiki.log.debug("branch: ", $scope.branch);
+                Wiki.log.debug("filename: ", filename);
+                Wiki.log.debug("using pageId: ", pageId);
+                wikiRepository.getPage($scope.branch, pageId, undefined, function (data) {
+                    cb(data.text);
+                });
+            };
+
+            function getNewDocumentPath() {
+                var template = $scope.selectedCreateDocumentTemplate;
+                if (!template) {
+                    console.log("No template selected.");
+                    return null;
+                }
+                var exemplar = template.exemplar || "";
+                var name = $scope.newDocumentName || exemplar;
+
+                if (name.indexOf('.') < 0) {
+                    // lets add the file extension from the exemplar
+                    var idx = exemplar.lastIndexOf(".");
+                    if (idx > 0) {
+                        name += exemplar.substring(idx);
+                    }
+                }
+
+                // lets deal with directories in the name
+                var folder = $scope.pageId;
+                if ($scope.isFile) {
+                    // if we are a file lets discard the last part of the path
+                    var idx = folder.lastIndexOf("/");
+                    if (idx <= 0) {
+                        folder = "";
+                    } else {
+                        folder = folder.substring(0, idx);
+                    }
+                }
+                var fileName = name;
+                var idx = name.lastIndexOf("/");
+                if (idx > 0) {
+                    folder += "/" + name.substring(0, idx);
+                    name = name.substring(idx + 1);
+                }
+                folder = Core.trimLeading(folder, "/");
+                return folder + (folder ? "/" : "") + name;
+            }
+
+            function getRenameFilePath() {
+                var newFileName = $scope.rename.newFileName;
+                return ($scope.pageId && newFileName) ? $scope.pageId + "/" + newFileName : null;
+            }
+        }]);
+})(Wiki || (Wiki = {}));
+/**
+* @module Wiki
+*/
+/// <reference path="./wikiPlugin.ts"/>
+var Wiki;
+(function (Wiki) {
+    Wiki._module.controller("Wiki.NavBarController", [
+        "$scope", "$location", "$routeParams", "workspace", "wikiRepository", function ($scope, $location, $routeParams, workspace, wikiRepository) {
+            Wiki.initScope($scope, $routeParams, $location);
+
+            $scope.createLink = function () {
+                var pageId = Wiki.pageId($routeParams, $location);
+                return Wiki.createLink($scope.branch, pageId, $location, $scope);
+            };
+
+            $scope.startLink = Wiki.startLink($scope.branch);
+
+            $scope.sourceLink = function () {
+                var path = $location.path();
+                var answer = null;
+                angular.forEach(Wiki.customViewLinks($scope), function (link) {
+                    if (path.startsWith(link)) {
+                        answer = Core.createHref($location, Wiki.startLink($scope.branch) + "/view" + path.substring(link.length));
+                    }
+                });
+
+                // remove the form parameter on view/edit links
+                return (!answer && $location.search()["form"]) ? Core.createHref($location, "#" + path, ["form"]) : answer;
+            };
+
+            $scope.isActive = function (href) {
+                if (!href) {
+                    return false;
+                }
+                return href.endsWith($routeParams['page']);
+            };
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(loadBreadcrumbs, 50);
+            });
+
+            loadBreadcrumbs();
+
+            function switchFromViewToCustomLink(breadcrumb, link) {
+                var href = breadcrumb.href;
+                if (href) {
+                    breadcrumb.href = href.replace("wiki/view", link);
+                }
+            }
+
+            function loadBreadcrumbs() {
+                var start = Wiki.startLink($scope.branch);
+                var href = start + "/view";
+                $scope.breadcrumbs = [
+                    { href: href, name: "root" }
+                ];
+                var path = Wiki.pageId($routeParams, $location);
+                var array = path ? path.split("/") : [];
+                angular.forEach(array, function (name) {
+                    if (!name.startsWith("/") && !href.endsWith("/")) {
+                        href += "/";
+                    }
+                    href += Wiki.encodePath(name);
+                    if (!name.isBlank()) {
+                        $scope.breadcrumbs.push({ href: href, name: name });
+                    }
+                });
+
+                // lets swizzle the last one or two to be formTable views if the last or 2nd to last
+                var loc = $location.path();
+                if ($scope.breadcrumbs.length) {
+                    var last = $scope.breadcrumbs[$scope.breadcrumbs.length - 1];
+
+                    // possibly trim any required file extensions
+                    last.name = Wiki.hideFineNameExtensions(last.name);
+
+                    var swizzled = false;
+                    angular.forEach(Wiki.customViewLinks($scope), function (link) {
+                        if (!swizzled && loc.startsWith(link)) {
+                            // lets swizzle the view to the current link
+                            switchFromViewToCustomLink($scope.breadcrumbs.last(), Core.trimLeading(link, "/"));
+                            swizzled = true;
+                        }
+                    });
+                    if (!swizzled && $location.search()["form"]) {
+                        var lastName = $scope.breadcrumbs.last().name;
+                        if (lastName && lastName.endsWith(".json")) {
+                            // previous breadcrumb should be a formTable
+                            switchFromViewToCustomLink($scope.breadcrumbs[$scope.breadcrumbs.length - 2], "wiki/formTable");
+                        }
+                    }
+                }
+
+                /*
+                if (loc.startsWith("/wiki/history") || loc.startsWith("/wiki/version")
+                || loc.startsWith("/wiki/diff") || loc.startsWith("/wiki/commit")) {
+                // lets add a history tab
+                $scope.breadcrumbs.push({href: "#/wiki/history/" + path, name: "History"});
+                } else if ($scope.branch) {
+                var prefix ="/wiki/branch/" + $scope.branch;
+                if (loc.startsWith(prefix + "/history") || loc.startsWith(prefix + "/version")
+                || loc.startsWith(prefix + "/diff") || loc.startsWith(prefix + "/commit")) {
+                // lets add a history tab
+                $scope.breadcrumbs.push({href: "#/wiki/branch/" + $scope.branch + "/history/" + path, name: "History"});
+                }
+                }
+                */
+                var name = null;
+                if (loc.startsWith("/wiki/version")) {
+                    // lets add a version tab
+                    name = ($routeParams["objectId"] || "").substring(0, 6) || "Version";
+                    $scope.breadcrumbs.push({ href: "#" + loc, name: name });
+                }
+                if (loc.startsWith("/wiki/diff")) {
+                    // lets add a version tab
+                    var v1 = ($routeParams["objectId"] || "").substring(0, 6);
+                    var v2 = ($routeParams["baseObjectId"] || "").substring(0, 6);
+                    name = "Diff";
+                    if (v1) {
+                        if (v2) {
+                            name += " " + v1 + " " + v2;
+                        } else {
+                            name += " " + v1;
+                        }
+                    }
+                    $scope.breadcrumbs.push({ href: "#" + loc, name: name });
+                }
+                Core.$apply($scope);
+            }
+        }]);
+})(Wiki || (Wiki = {}));
+/**
+* @module Wiki
+*/
+/// <reference path="./wikiPlugin.ts"/>
+var Wiki;
+(function (Wiki) {
+    Wiki._module.controller("Wiki.EditController", [
+        "$scope", "$location", "$routeParams", "fileExtensionTypeRegistry", "wikiRepository", function ($scope, $location, $routeParams, fileExtensionTypeRegistry, wikiRepository) {
+            Wiki.initScope($scope, $routeParams, $location);
+            $scope.entity = {
+                source: null
+            };
+
+            var format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
+            var form = null;
+            if ((format && format === "javascript") || isCreate()) {
+                form = $location.search()["form"];
+            }
+
+            var options = {
+                mode: {
+                    name: format
+                }
+            };
+            $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
+            $scope.modified = false;
+
+            $scope.isValid = function () {
+                return $scope.fileName;
+            };
+
+            $scope.canSave = function () {
+                return !$scope.modified;
+            };
+
+            $scope.$watch('entity.source', function (newValue, oldValue) {
+                $scope.modified = newValue && oldValue && newValue !== oldValue;
+            }, true);
+
+            Wiki.log.debug("path: ", $scope.path);
+
+            $scope.$watch('modified', function (newValue, oldValue) {
+                Wiki.log.debug("modified: ", newValue);
+            });
+
+            $scope.viewLink = function () {
+                return Wiki.viewLink($scope.branch, $scope.pageId, $location, $scope.fileName);
+            };
+
+            $scope.cancel = function () {
+                goToView();
+            };
+
+            $scope.save = function () {
+                if ($scope.modified && $scope.fileName) {
+                    saveTo($scope["pageId"]);
+                }
+            };
+
+            $scope.create = function () {
+                // lets combine the file name with the current pageId (which is the directory)
+                var path = $scope.pageId + "/" + $scope.fileName;
+                console.log("creating new file at " + path);
+                saveTo(path);
+            };
+
+            $scope.onSubmit = function (json, form) {
+                if (isCreate()) {
+                    $scope.create();
+                } else {
+                    $scope.save();
+                }
+            };
+
+            $scope.onCancel = function (form) {
+                setTimeout(function () {
+                    goToView();
+                    Core.$apply($scope);
+                }, 50);
+            };
+
+            updateView();
+
+            function isCreate() {
+                return $location.path().startsWith("/wiki/create");
+            }
+
+            function updateView() {
+                // only load the source if not in create mode
+                if (isCreate()) {
+                    updateSourceView();
+                } else {
+                    Wiki.log.debug("Getting page, branch: ", $scope.branch, " pageId: ", $scope.pageId, " objectId: ", $scope.objectId);
+                    wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onFileContents);
+                }
+            }
+
+            function onFileContents(details) {
+                var contents = details.text;
+                $scope.entity.source = contents;
+                $scope.fileName = $scope.pageId.split('/').last();
+                Wiki.log.debug("file name: ", $scope.fileName);
+                Wiki.log.debug("file details: ", details);
+                updateSourceView();
+                Core.$apply($scope);
+            }
+
+            function updateSourceView() {
+                if (form) {
+                    if (isCreate()) {
+                        // lets default a file name
+                        if (!$scope.fileName) {
+                            $scope.fileName = "" + Core.getUUID() + ".json";
+                        }
+                    }
+
+                    // now lets try load the form defintion JSON so we can then render the form
+                    $scope.sourceView = null;
+                    if (form === "/") {
+                        onFormSchema(_jsonSchema);
+                    } else {
+                        $scope.git = wikiRepository.getPage($scope.branch, form, $scope.objectId, function (details) {
+                            onFormSchema(Wiki.parseJson(details.text));
+                        });
+                    }
+                } else {
+                    $scope.sourceView = "app/wiki/html/sourceEdit.html";
+                }
+            }
+
+            function onFormSchema(json) {
+                $scope.formDefinition = json;
+                if ($scope.entity.source) {
+                    $scope.formEntity = Wiki.parseJson($scope.entity.source);
+                }
+                $scope.sourceView = "app/wiki/html/formEdit.html";
+                Core.$apply($scope);
+            }
+
+            function goToView() {
+                var path = Core.trimLeading($scope.viewLink(), "#");
+                Wiki.log.debug("going to view " + path);
+                $location.path(Wiki.decodePath(path));
+                Wiki.log.debug("location is now " + $location.path());
+            }
+
+            function saveTo(path) {
                 var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
-                wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, function (status) {
+                var contents = $scope.entity.source;
+                if ($scope.formEntity) {
+                    contents = JSON.stringify($scope.formEntity, null, "  ");
+                }
+                Wiki.log.debug("Saving file, branch: ", $scope.branch, " path: ", $scope.path);
+
+                //console.log("About to write contents '" + contents + "'");
+                wikiRepository.putPage($scope.branch, path, contents, commitMessage, function (status) {
                     Wiki.onComplete(status);
                     $scope.modified = false;
-                    notification("success", "Saved " + $scope.pageId);
+                    notification("success", "Saved " + path);
                     goToView();
                     Core.$apply($scope);
                 });
             }
+        }]);
+})(Wiki || (Wiki = {}));
+/**
+* @module Wiki
+*/
+var Wiki;
+(function (Wiki) {
+    
+
+    /**
+    * @class GitWikiRepository
+    */
+    var GitWikiRepository = (function () {
+        function GitWikiRepository(factoryMethod) {
+            this.factoryMethod = factoryMethod;
+            this.directoryPrefix = "";
+        }
+        GitWikiRepository.prototype.getRepositoryLabel = function (fn, error) {
+            this.git().getRepositoryLabel(fn, error);
         };
 
-        $scope.save = function () {
-            if ($scope.tab === "Mappings") {
-                $scope.saveMappings();
-                return;
+        GitWikiRepository.prototype.exists = function (branch, path, fn) {
+            var fullPath = this.getPath(path);
+            this.git().exists(branch, fullPath, fn);
+        };
+
+        GitWikiRepository.prototype.completePath = function (branch, completionText, directoriesOnly, fn) {
+            return this.git().completePath(branch, completionText, directoriesOnly, fn);
+        };
+
+        GitWikiRepository.prototype.getPage = function (branch, path, objectId, fn) {
+            var _this = this;
+            var git = this.git();
+            path = path || "/";
+            if (git) {
+                if (objectId) {
+                    var blobPath = this.getLogPath(path);
+
+                    // TODO deal with versioned directories?
+                    git.getContent(objectId, blobPath, function (content) {
+                        var details = {
+                            text: content,
+                            directory: false
+                        };
+                        fn(details);
+                    });
+                } else {
+                    var fullPath = this.getPath(path);
+                    git.read(branch, fullPath, function (details) {
+                        // lets fix up any paths to be relative to the wiki
+                        var children = details.children;
+                        angular.forEach(children, function (child) {
+                            var path = child.path;
+                            if (path) {
+                                var directoryPrefix = "/" + _this.directoryPrefix;
+                                if (path.startsWith(directoryPrefix)) {
+                                    path = "/" + path.substring(directoryPrefix.length);
+                                    child.path = path;
+                                }
+                            }
+                        });
+                        fn(details);
+                    });
+                }
             }
-            if ($scope.model) {
-                // lets copy the mappings from the tree
-                var model = Dozer.loadModelFromTree($scope.rootTreeNode, $scope.model);
-                var text = Dozer.saveToXmlText(model);
+            return git;
+        };
+
+        /**
+        * Performs a diff on the versions
+        * @method diff
+        * @for GitWikiRepository
+        * @param {String} objectId
+        * @param {String} baseObjectId
+        * @param {String} path
+        * @param {Function} fn
+        * @return {any}
+        */
+        GitWikiRepository.prototype.diff = function (objectId, baseObjectId, path, fn) {
+            var fullPath = this.getLogPath(path);
+            var git = this.git();
+            if (git) {
+                git.diff(objectId, baseObjectId, fullPath, function (content) {
+                    var details = {
+                        text: content,
+                        format: "diff",
+                        directory: false
+                    };
+                    fn(details);
+                });
+            }
+            return git;
+        };
+
+        GitWikiRepository.prototype.commitInfo = function (commitId, fn) {
+            this.git().commitInfo(commitId, fn);
+        };
+
+        GitWikiRepository.prototype.commitTree = function (commitId, fn) {
+            this.git().commitTree(commitId, fn);
+        };
+
+        GitWikiRepository.prototype.putPage = function (branch, path, contents, commitMessage, fn) {
+            var fullPath = this.getPath(path);
+            this.git().write(branch, fullPath, commitMessage, contents, fn);
+        };
+
+        GitWikiRepository.prototype.putPageBase64 = function (branch, path, contents, commitMessage, fn) {
+            var fullPath = this.getPath(path);
+            this.git().writeBase64(branch, fullPath, commitMessage, contents, fn);
+        };
+
+        GitWikiRepository.prototype.createDirectory = function (branch, path, commitMessage, fn) {
+            var fullPath = this.getPath(path);
+            this.git().createDirectory(branch, fullPath, commitMessage, fn);
+        };
+
+        GitWikiRepository.prototype.revertTo = function (branch, objectId, blobPath, commitMessage, fn) {
+            var fullPath = this.getLogPath(blobPath);
+            this.git().revertTo(branch, objectId, fullPath, commitMessage, fn);
+        };
+
+        GitWikiRepository.prototype.rename = function (branch, oldPath, newPath, commitMessage, fn) {
+            var fullOldPath = this.getPath(oldPath);
+            var fullNewPath = this.getPath(newPath);
+            if (!commitMessage) {
+                commitMessage = "Renaming page " + oldPath + " to " + newPath;
+            }
+            this.git().rename(branch, fullOldPath, fullNewPath, commitMessage, fn);
+        };
+
+        GitWikiRepository.prototype.removePage = function (branch, path, commitMessage, fn) {
+            var fullPath = this.getPath(path);
+            if (!commitMessage) {
+                commitMessage = "Removing page " + path;
+            }
+            this.git().remove(branch, fullPath, commitMessage, fn);
+        };
+
+        /**
+        * Returns the full path to use in the git repo
+        * @method getPath
+        * @for GitWikiRepository
+        * @param {String} path
+        * @return {String{
+        */
+        GitWikiRepository.prototype.getPath = function (path) {
+            var directoryPrefix = this.directoryPrefix;
+            return (directoryPrefix) ? directoryPrefix + path : path;
+        };
+
+        GitWikiRepository.prototype.getLogPath = function (path) {
+            return Core.trimLeading(this.getPath(path), "/");
+        };
+
+        /**
+        * Return the history of the repository or a specific directory or file path
+        * @method history
+        * @for GitWikiRepository
+        * @param {String} branch
+        * @param {String} objectId
+        * @param {String} path
+        * @param {Number} limit
+        * @param {Function} fn
+        * @return {any}
+        */
+        GitWikiRepository.prototype.history = function (branch, objectId, path, limit, fn) {
+            var fullPath = this.getLogPath(path);
+            var git = this.git();
+            if (git) {
+                git.history(branch, objectId, fullPath, limit, fn);
+            }
+            return git;
+        };
+
+        /**
+        * Get the contents of a blobPath for a given commit objectId
+        * @method getContent
+        * @for GitWikiRepository
+        * @param {String} objectId
+        * @param {String} blobPath
+        * @param {Function} fn
+        * @return {any}
+        */
+        GitWikiRepository.prototype.getContent = function (objectId, blobPath, fn) {
+            var fullPath = this.getLogPath(blobPath);
+            var git = this.git();
+            if (git) {
+                git.getContent(objectId, fullPath, fn);
+            }
+            return git;
+        };
+
+        /**
+        * Get the list of branches
+        * @method branches
+        * @for GitWikiRepository
+        * @param {Function} fn
+        * @return {any}
+        */
+        GitWikiRepository.prototype.branches = function (fn) {
+            var git = this.git();
+            if (git) {
+                git.branches(fn);
+            }
+            return git;
+        };
+
+        /**
+        * Get the JSON contents of the path with optional name wildcard and search
+        * @method jsonChildContents
+        * @for GitWikiRepository
+        * @param {String} path
+        * @param {String} nameWildcard
+        * @param {String} search
+        * @param {Function} fn
+        * @return {any}
+        */
+        GitWikiRepository.prototype.jsonChildContents = function (path, nameWildcard, search, fn) {
+            var fullPath = this.getLogPath(path);
+            var git = this.git();
+            if (git) {
+                git.readJsonChildContent(fullPath, nameWildcard, search, fn);
+            }
+            return git;
+        };
+
+        GitWikiRepository.prototype.git = function () {
+            var repository = this.factoryMethod();
+            if (!repository) {
+                console.log("No repository yet! TODO we should use a local impl!");
+            }
+            return repository;
+        };
+        return GitWikiRepository;
+    })();
+    Wiki.GitWikiRepository = GitWikiRepository;
+})(Wiki || (Wiki = {}));
+/// <reference path="./wikiPlugin.ts"/>
+var Wiki;
+(function (Wiki) {
+    Wiki._module.directive('wikiHrefAdjuster', [
+        "$location", function ($location) {
+            return {
+                restrict: 'A',
+                link: function ($scope, $element, $attr) {
+                    $element.bind('DOMNodeInserted', function (event) {
+                        var ays = $element.find('a');
+                        angular.forEach(ays, function (a) {
+                            if (a.hasAttribute('no-adjust')) {
+                                return;
+                            }
+                            a = $(a);
+                            var href = (a.attr('href') || "").trim();
+                            if (href) {
+                                var fileExtension = a.attr('file-extension');
+                                var newValue = Wiki.adjustHref($scope, $location, href, fileExtension);
+                                if (newValue) {
+                                    a.attr('href', newValue);
+                                }
+                            }
+                        });
+                        var imgs = $element.find('img');
+                        angular.forEach(imgs, function (a) {
+                            if (a.hasAttribute('no-adjust')) {
+                                return;
+                            }
+                            a = $(a);
+                            var href = (a.attr('src') || "").trim();
+                            if (href) {
+                                if (href.startsWith("/")) {
+                                    href = url(href);
+                                    a.attr('src', href);
+
+                                    // lets avoid this element being reprocessed
+                                    a.attr('no-adjust', 'true');
+                                }
+                            }
+                        });
+                    });
+                }
+            };
+        }]);
+
+    Wiki._module.directive('wikiTitleLinker', [
+        "$location", function ($location) {
+            return {
+                restrict: 'A',
+                link: function ($scope, $element, $attr) {
+                    var loaded = false;
+
+                    function offsetTop(elements) {
+                        if (elements) {
+                            var offset = elements.offset();
+                            if (offset) {
+                                return offset.top;
+                            }
+                        }
+                        return 0;
+                    }
+
+                    function scrollToHash() {
+                        var answer = false;
+                        var id = $location.search()["hash"];
+                        return scrollToId(id);
+                    }
+
+                    function scrollToId(id) {
+                        var answer = false;
+                        var id = $location.search()["hash"];
+                        if (id) {
+                            var selector = 'a[name="' + id + '"]';
+                            var targetElements = $element.find(selector);
+                            if (targetElements && targetElements.length) {
+                                var scrollDuration = 1;
+                                var delta = offsetTop($($element));
+                                var top = offsetTop(targetElements) - delta;
+                                if (top < 0) {
+                                    top = 0;
+                                }
+
+                                //log.info("scrolling to hash: " + id + " top: " + top + " delta:" + delta);
+                                $('body,html').animate({
+                                    scrollTop: top
+                                }, scrollDuration);
+                                answer = true;
+                            } else {
+                                //log.info("could find element for: " + selector);
+                            }
+                        }
+                        return answer;
+                    }
+
+                    function addLinks(event) {
+                        var headings = $element.find('h1,h2,h3,h4,h5,h6,h7');
+                        var updated = false;
+                        angular.forEach(headings, function (he) {
+                            var h1 = $(he);
+
+                            // now lets try find a child header
+                            var a = h1.parent("a");
+                            if (!a || !a.length) {
+                                var text = h1.text();
+                                if (text) {
+                                    var target = text.replace(/ /g, "-");
+                                    var pathWithHash = "#" + $location.path() + "?hash=" + target;
+                                    var link = Core.createHref($location, pathWithHash, ['hash']);
+
+                                    // lets wrap the heading in a link
+                                    var newA = $('<a name="' + target + '" href="' + link + '" ng-click="onLinkClick()"></a>');
+                                    newA.on("click", function () {
+                                        setTimeout(function () {
+                                            if (scrollToId(target)) {
+                                            }
+                                        }, 50);
+                                    });
+
+                                    newA.insertBefore(h1);
+                                    h1.detach();
+                                    newA.append(h1);
+                                    updated = true;
+                                }
+                            }
+                        });
+                        if (updated && !loaded) {
+                            setTimeout(function () {
+                                if (scrollToHash()) {
+                                    loaded = true;
+                                }
+                            }, 50);
+                        }
+                    }
+
+                    function onEventInserted(event) {
+                        // avoid any more events while we do our thing
+                        $element.unbind('DOMNodeInserted', onEventInserted);
+                        addLinks(event);
+                        $element.bind('DOMNodeInserted', onEventInserted);
+                    }
+
+                    $element.bind('DOMNodeInserted', onEventInserted);
+                }
+            };
+        }]);
+})(Wiki || (Wiki = {}));
+/**
+* @module Wiki
+*/
+/// <reference path="./wikiPlugin.ts"/>
+var Wiki;
+(function (Wiki) {
+    Wiki._module.controller("Wiki.DozerMappingsController", [
+        "$scope", "$location", "$routeParams", "workspace", "jolokia", "wikiRepository", "$templateCache", function ($scope, $location, $routeParams, workspace, jolokia, wikiRepository, $templateCache) {
+            var log = Logger.get("Dozer");
+
+            Wiki.initScope($scope, $routeParams, $location);
+            Dozer.schemaConfigure();
+
+            $scope.profileId = Fabric.pagePathToProfileId($scope.pageId);
+            $scope.versionId = $scope.branch || "1.0";
+
+            $scope.schema = {};
+            $scope.addDialog = new UI.Dialog();
+            $scope.propertiesDialog = new UI.Dialog();
+            $scope.deleteDialog = false;
+            $scope.unmappedFieldsHasValid = false;
+            $scope.modified = false;
+
+            $scope.selectedItems = [];
+            $scope.mappings = [];
+            $scope.schemas = [];
+
+            $scope.aName = '';
+            $scope.bName = '';
+
+            $scope.connectorStyle = ["Bezier"];
+
+            $scope.main = "";
+            $scope.tab = "Mappings";
+
+            $scope.gridOptions = {
+                selectedItems: $scope.selectedItems,
+                data: 'mappings',
+                displayFooter: false,
+                showFilter: false,
+                //sortInfo: { field: 'timestamp', direction: 'DESC'},
+                filterOptions: {
+                    filterText: "searchText"
+                },
+                columnDefs: [
+                    {
+                        field: 'class_a',
+                        displayName: 'From',
+                        cellTemplate: '<div class="ngCellText">{{row.entity.class_a.name}}</div>'
+                    },
+                    {
+                        field: 'class_b',
+                        displayName: 'To',
+                        cellTemplate: '<div class="ngCellText">{{row.entity.class_b.name}}</div>'
+                    }
+                ]
+            };
+
+            if ($scope.profileId) {
+                Fabric.profileJolokia(jolokia, $scope.profileId, $scope.versionId, function (containerJolokia) {
+                    $scope.containerJolokia = containerJolokia;
+                    $scope.missingContainer = !containerJolokia ? true : false;
+                });
+            }
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateView, 50);
+            });
+
+            $scope.triggerRefresh = function (timeout) {
+                if (typeof timeout === "undefined") { timeout = 500; }
+                $scope.main = "";
+                setTimeout(function () {
+                    $scope.main = $templateCache.get("pageTemplate.html");
+                    Core.$apply($scope);
+                }, timeout);
+            };
+
+            $scope.disableReload = function () {
+                var aValue = Core.pathGet($scope, ["selectedMapping", "class_a", "value"]);
+                var bValue = Core.pathGet($scope, ["selectedMapping", "class_b", "value"]);
+                return aValue === $scope.aName && bValue === $scope.bName;
+            };
+
+            $scope.doReload = function () {
+                $scope.selectedMapping.class_a.value = $scope.aName;
+                $scope.selectedMapping.class_b.value = $scope.bName;
+                $scope.triggerRefresh();
+            };
+
+            $scope.$watch('selectedMapping', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    $scope.aName = newValue.class_a.value;
+                    $scope.bName = newValue.class_b.value;
+                    $scope.triggerRefresh();
+                }
+            });
+
+            $scope.$watch('selectedMapping.class_a.value', function (newValue, oldValue) {
+                if (newValue !== oldValue && newValue !== '') {
+                    $scope.fetchProperties(newValue, $scope.selectedMapping.class_a, 'Right');
+                }
+            });
+
+            $scope.$watch('selectedMapping.class_b.value', function (newValue, oldValue) {
+                if (newValue !== oldValue && newValue !== '') {
+                    $scope.fetchProperties(newValue, $scope.selectedMapping.class_b, 'Left');
+                }
+            });
+
+            $scope.fetchProperties = function (className, target, anchor) {
+                var introspectorMBean = Dozer.getIntrospectorMBean(workspace);
+                if (introspectorMBean && !$scope.missingContainer) {
+                    var aJolokia = $scope.containerJolokia || jolokia;
+                    aJolokia.request({
+                        type: 'exec',
+                        mbean: introspectorMBean,
+                        operation: 'getProperties(java.lang.String)',
+                        arguments: [className]
+                    }, {
+                        success: function (response) {
+                            target.error = null;
+                            target.properties = response.value;
+                            var parentId = '';
+                            if (angular.isDefined(target.value)) {
+                                parentId = target.value;
+                            } else {
+                                parentId = target.path;
+                            }
+
+                            angular.forEach(target.properties, function (property) {
+                                property.id = Core.getUUID();
+                                property.path = parentId + '/' + property.displayName;
+                                property.anchor = anchor;
+                                // TODO - Let's see if we need to do this...
+                                /*
+                                var lookup = !Dozer.excludedPackages.any((excluded) => { return property.typeName.has(excluded); });
+                                if (lookup) {
+                                $scope.fetchProperties(property.typeName, property, anchor);
+                                }
+                                */
+                            });
+                            Core.$apply($scope);
+                        },
+                        error: function (response) {
+                            target.properties = null;
+                            target.error = {
+                                'type': response.error_type,
+                                'stackTrace': response.error
+                            };
+                            log.error("got: " + response);
+                            Core.$apply($scope);
+                        }
+                    });
+                }
+            };
+
+            $scope.getSourceAndTarget = function (info) {
+                var sourcePath = info.source.attr('field-path');
+                var targetPath = info.target.attr('field-path');
+
+                var sourceField = sourcePath.split('/').last();
+                var targetField = sourcePath.split('/').last();
+
+                return {
+                    from: sourceField,
+                    to: targetField
+                };
+            };
+
+            function extractProperty(clazz, prop) {
+                return (!clazz || !clazz.properties) ? null : clazz.properties.find(function (property) {
+                    return property.path.endsWith('/' + prop);
+                });
+            }
+
+            // The jsPlumb directive will call this after it's done it's thing...
+            function addConnectionClickHandler(connection, jsplumb) {
+                connection.bind('click', function (connection) {
+                    jsplumb.detach(connection);
+                });
+            }
+
+            function getPaintStyle() {
+                return {
+                    strokeStyle: UI.colors.sample(),
+                    lineWidth: 4
+                };
+            }
+
+            $scope.jsPlumbCallback = function (jsplumb, nodes, nodesById, connections) {
+                // Set up any connections loaded from the XML
+                // TODO - currently we actually are only looking at the top-level properties
+                angular.forEach($scope.selectedMapping.fields, function (field) {
+                    var a_property = extractProperty($scope.selectedMapping.class_a, field.a.value);
+                    var b_property = extractProperty($scope.selectedMapping.class_b, field.b.value);
+
+                    if (a_property && b_property) {
+                        var a_node = nodesById[a_property.id];
+                        var b_node = nodesById[b_property.id];
+
+                        var connection = $scope.jsPlumb.connect({
+                            source: a_node.el,
+                            target: b_node.el
+                        }, {
+                            connector: $scope.connectorStyle,
+                            maxConnections: 1,
+                            paintStyle: getPaintStyle()
+                        });
+
+                        //Ensure loaded connections can also be removed
+                        addConnectionClickHandler(connection, jsplumb);
+                        a_node.connections.push(connection);
+                        b_node.connections.push(connection);
+                    }
+                });
+
+                // Handle new connection events...
+                jsplumb.bind('connection', function (info) {
+                    // Add a handler so we can click on a connection to make it go away
+                    addConnectionClickHandler(info.connection, jsplumb);
+                    info.connection.setPaintStyle(getPaintStyle());
+
+                    var newMapping = $scope.getSourceAndTarget(info);
+
+                    var field = new Dozer.Field(new Dozer.FieldDefinition(newMapping.from), new Dozer.FieldDefinition(newMapping.to));
+                    $scope.selectedMapping.fields.push(field);
+                    $scope.modified = true;
+                    Core.$apply($scope);
+                });
+
+                // Handle connection detach events...
+                jsplumb.bind('connectionDetached', function (info) {
+                    var toDetach = $scope.getSourceAndTarget(info);
+                    var field = new Dozer.Field(new Dozer.FieldDefinition(toDetach.from), new Dozer.FieldDefinition(toDetach.to));
+                    $scope.selectedMapping.fields.remove(field);
+                    $scope.modified = true;
+                    Core.$apply($scope);
+                });
+            };
+
+            $scope.formatStackTrace = function (exception) {
+                return Log.formatStackTrace(exception);
+            };
+
+            $scope.addMapping = function () {
+                var treeNode = $scope.rootTreeNode;
+                if (treeNode) {
+                    var parentFolder = treeNode.data;
+                    var mapping = new Dozer.Mapping();
+                    var addedNode = Dozer.createMappingFolder(mapping, parentFolder);
+                    var added = treeNode.addChild(addedNode);
+                    if (added) {
+                        added.expand(true);
+                        added.select(true);
+                        added.activate(true);
+                        onTreeModified();
+                    }
+                    $scope.mappings.push(mapping);
+                    $scope.selectedMapping = mapping;
+                }
+            };
+
+            $scope.addField = function () {
+                if ($scope.selectedMapping) {
+                    // lets find all the possible unmapped fields we can map from...
+                    Dozer.findUnmappedFields(workspace, $scope.selectedMapping, function (data) {
+                        log.warn("has unmapped data fields: " + data);
+                        $scope.unmappedFields = data;
+                        $scope.unmappedFieldsHasValid = false;
+                        $scope.addDialog.open();
+                        Core.$apply($scope);
+                    });
+                }
+            };
+
+            $scope.addAndCloseDialog = function () {
+                log.info("About to add the unmapped fields " + JSON.stringify($scope.unmappedFields, null, "  "));
+                if ($scope.selectedMapping) {
+                    // TODO whats the folder???
+                    angular.forEach($scope.unmappedFields, function (unmappedField) {
+                        if (unmappedField.valid) {
+                            // TODO detect exclude!
+                            var field = new Dozer.Field(new Dozer.FieldDefinition(unmappedField.fromField), new Dozer.FieldDefinition(unmappedField.toField));
+                            $scope.selectedMapping.fields.push(field);
+                            var treeNode = $scope.selectedMappingTreeNode;
+                            var mappingFolder = $scope.selectedMappingFolder;
+                            if (treeNode && mappingFolder) {
+                                var fieldFolder = Dozer.addMappingFieldFolder(field, mappingFolder);
+                                var added = treeNode.addChild(fieldFolder);
+                                if (added) {
+                                    added.expand(true);
+                                    added.select(true);
+                                    added.activate(true);
+                                    onTreeModified();
+                                }
+                            } else {
+                                log.warn("No treenode and folder for mapping node! treeNode " + treeNode + " mappingFolder " + mappingFolder);
+                            }
+                        }
+                    });
+                }
+                $scope.addDialog.close();
+            };
+
+            $scope.canDelete = function () {
+                return $scope.selectedFolder ? true : false;
+            };
+
+            $scope.removeNode = function () {
+                if ($scope.selectedFolder && $scope.treeNode) {
+                    // TODO deal with deleting fields
+                    var folder = $scope.selectedFolder;
+                    var entity = folder.entity;
+                    if (entity instanceof Dozer.Field) {
+                        // lets remove this from the parent mapping
+                        var mapping = Core.pathGet(folder, ["parent", "entity"]);
+                        if (mapping) {
+                            mapping.fields.remove(entity);
+                        }
+                    }
+                    $scope.selectedFolder.detach();
+                    $scope.treeNode.remove();
+                    $scope.selectedFolder = null;
+                    $scope.treeNode = null;
+                    onTreeModified();
+                }
+            };
+
+            $scope.saveMappings = function () {
+                $scope.model.mappings = $scope.mappings;
+                var text = Dozer.saveToXmlText($scope.model);
                 if (text) {
                     var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
                     wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, function (status) {
@@ -28224,869 +28279,892 @@ var Wiki;
                         Core.$apply($scope);
                     });
                 }
-            }
-        };
+            };
 
-        $scope.cancel = function () {
-            log.info("cancelling...");
-            // TODO show dialog if folks are about to lose changes...
-        };
-
-        $scope.onRootTreeNode = function (rootTreeNode) {
-            $scope.rootTreeNode = rootTreeNode;
-        };
-
-        $scope.onNodeSelect = function (folder, treeNode) {
-            $scope.selectedFolder = folder;
-            $scope.treeNode = treeNode;
-            $scope.propertiesTemplate = null;
-            $scope.dozerEntity = null;
-            $scope.selectedDescription = "";
-            $scope.selectedMapping = null;
-            $scope.selectedMappingTreeNode = null;
-            $scope.selectedMappingFolder = null;
-
-            // now the model is bound, lets add a listener
-            if ($scope.removeModelChangeListener) {
-                $scope.removeModelChangeListener();
-                $scope.removeModelChangeListener = null;
-            }
-
-            if (folder) {
-                var entity = folder.entity;
-                $scope.dozerEntity = entity;
-                var propertiesTemplate = "app/wiki/html/dozerPropertiesEdit.html";
-                if (entity instanceof Dozer.Field) {
-                    //var field: Dozer.Field = entity;
-                    $scope.propertiesTemplate = propertiesTemplate;
-                    $scope.nodeModel = io_hawt_dozer_schema_Field;
-                    $scope.selectedDescription = "Field Mapping";
-                    $scope.selectedMapping = Core.pathGet(folder, ["parent", "entity"]);
-                    $scope.selectedMappingFolder = folder.parent;
-                    $scope.selectedMappingTreeNode = treeNode.parent;
-                } else if (entity instanceof Dozer.Mapping) {
-                    //var mapping: Dozer.Mapping = entity;
-                    $scope.propertiesTemplate = propertiesTemplate;
-                    $scope.nodeModel = io_hawt_dozer_schema_Mapping;
-                    $scope.selectedDescription = "Class Mapping";
-                    $scope.selectedMapping = entity;
-                    $scope.selectedMappingFolder = folder;
-                    $scope.selectedMappingTreeNode = treeNode;
+            $scope.save = function () {
+                if ($scope.tab === "Mappings") {
+                    $scope.saveMappings();
+                    return;
                 }
-                if ($scope.selectedMapping && !$scope.removeModelChangeListener) {
-                    /*
-                    TODO problem is we have many forms here so we end up creating lots of change events when really we don't change things!: )
-                    // maybe watch the entity instead?
-                    
-                    console.log("Adding onTreeModified form listener");
-                    $scope.removeModelChangeListener = $scope.$on("hawtio.form.modelChange", () => {
-                    console.log("form modified!");
-                    onTreeModified();
-                    });
-                    */
-                }
-            }
-
-            Core.$apply($scope);
-        };
-
-        $scope.onUnmappedFieldChange = function (unmappedField) {
-            unmappedField.valid = unmappedField.toField ? true : false;
-            $scope.unmappedFieldsHasValid = $scope.unmappedFields.find(function (f) {
-                return f.valid;
-            });
-        };
-
-        function findFieldNames(className, text) {
-            //console.log("Finding the to field names for expression '" + text + "'  on class " + className);
-            var properties = Dozer.findProperties(workspace, className, text, null);
-            return properties.map(function (p) {
-                return p.name;
-            });
-        }
-
-        $scope.fromFieldNames = function (text) {
-            var className = Core.pathGet($scope.selectedMapping, ["class_a", "value"]);
-            return findFieldNames(className, text);
-        };
-
-        $scope.toFieldNames = function (text) {
-            var className = Core.pathGet($scope.selectedMapping, ["class_b", "value"]);
-            return findFieldNames(className, text);
-        };
-
-        $scope.classNames = function (text) {
-            // lets only query if the size is reasonable
-            if (!text || text.length < 2)
-                return [];
-            return Core.time("Time the query of classes", function () {
-                log.info("searching for class names with filter '" + text + "'");
-                var answer = Dozer.findClassNames(workspace, text);
-                log.info("Found results: " + answer.length);
-                return answer;
-            });
-        };
-
-        updateView();
-
-        function updateView() {
-            $scope.pageId = Wiki.pageId($routeParams, $location);
-            if (Git.getGitMBean(workspace)) {
-                $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onResults);
-            }
-        }
-
-        function onResults(response) {
-            var text = response.text;
-            if (text) {
-                if ($scope.responseText !== text) {
-                    $scope.responseText = text;
-
-                    // lets remove any dodgy characters so we can use it as a DOM id
-                    $scope.model = Dozer.loadDozerModel(text, $scope.pageId);
-
-                    $scope.mappings = Core.pathGet($scope.model, ["mappings"]);
-
-                    $scope.mappingTree = Dozer.createDozerTree($scope.model);
-                    if (!angular.isDefined($scope.selectedMapping)) {
-                        $scope.selectedMapping = $scope.mappings.first();
-                    }
-
-                    $scope.main = $templateCache.get("pageTemplate.html");
-                }
-            } else {
-                log.warn("No XML found for page " + $scope.pageId);
-            }
-            Core.$apply($scope);
-        }
-
-        function onTreeModified() {
-            $scope.modified = true;
-        }
-
-        function goToView() {
-            // TODO lets navigate to the view if we have a separate view one day :)
-            /*
-            if ($scope.breadcrumbs && $scope.breadcrumbs.length > 1) {
-            var viewLink = $scope.breadcrumbs[$scope.breadcrumbs.length - 2];
-            console.log("goToView has found view " + viewLink);
-            var path = Core.trimLeading(viewLink, "#");
-            $location.path(path);
-            } else {
-            console.log("goToView has no breadcrumbs!");
-            }
-            */
-        }
-    }
-    Wiki.DozerMappingsController = DozerMappingsController;
-})(Wiki || (Wiki = {}));
-/**
-* @module Wiki
-*/
-var Wiki;
-(function (Wiki) {
-    function CommitController($scope, $location, $routeParams, $templateCache, workspace, marked, fileExtensionTypeRegistry, wikiRepository) {
-        Wiki.initScope($scope, $routeParams, $location);
-        $scope.commitId = $scope.objectId;
-        $scope.selectedItems = [];
-
-        // TODO we could configure this?
-        $scope.dateFormat = 'EEE, MMM d, y : hh:mm:ss a';
-
-        $scope.gridOptions = {
-            data: 'commits',
-            showFilter: false,
-            multiSelect: false,
-            selectWithCheckboxOnly: true,
-            showSelectionCheckbox: true,
-            displaySelectionCheckbox: true,
-            selectedItems: $scope.selectedItems,
-            filterOptions: {
-                filterText: ''
-            },
-            columnDefs: [
-                {
-                    field: 'path',
-                    displayName: 'File Name',
-                    cellTemplate: $templateCache.get('fileCellTemplate.html'),
-                    width: "***",
-                    cellFilter: ""
-                }
-            ]
-        };
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateView, 50);
-        });
-
-        $scope.$watch('workspace.tree', function () {
-            if (!$scope.git && Git.getGitMBean(workspace)) {
-                // lets do this asynchronously to avoid Error: $digest already in progress
-                //console.log("Reloading the view as we now seem to have a git mbean!");
-                setTimeout(updateView, 50);
-            }
-        });
-
-        $scope.canRevert = function () {
-            return $scope.selectedItems.length === 1;
-        };
-
-        $scope.revert = function () {
-            if ($scope.selectedItems.length > 0) {
-                var path = commitPath($scope.selectedItems[0]);
-                var objectId = $scope.commitId;
-                if (path && objectId) {
-                    var commitMessage = "Reverting file " + $scope.pageId + " to previous version " + objectId;
-                    wikiRepository.revertTo($scope.branch, objectId, $scope.pageId, commitMessage, function (result) {
-                        Wiki.onComplete(result);
-
-                        // now lets update the view
-                        updateView();
-                    });
-                }
-            }
-        };
-
-        function commitPath(commit) {
-            return commit.path || commit.name;
-        }
-
-        $scope.diff = function () {
-            if ($scope.selectedItems.length > 0) {
-                var commit = $scope.selectedItems[0];
-
-                /*
-                var commit = row;
-                var entity = row.entity;
-                if (entity) {
-                commit = entity;
-                }
-                */
-                var link = Wiki.startLink($scope.branch) + "/diff/" + commitPath(commit) + "/" + $scope.commitId + "/";
-                var path = Core.trimLeading(link, "#");
-                $location.path(path);
-            }
-        };
-
-        updateView();
-
-        function updateView() {
-            var commitId = $scope.commitId;
-
-            Wiki.loadBranches(wikiRepository, $scope);
-
-            wikiRepository.commitInfo(commitId, function (commitInfo) {
-                $scope.commitInfo = commitInfo;
-                Core.$apply($scope);
-            });
-
-            wikiRepository.commitTree(commitId, function (commits) {
-                $scope.commits = commits;
-                angular.forEach(commits, function (commit) {
-                    commit.fileIconHtml = Wiki.fileIconHtml(commit);
-                    commit.fileClass = commit.name.endsWith(".profile") ? "green" : "";
-                    var changeType = commit.changeType;
-                    var path = commitPath(commit);
-                    if (path) {
-                        commit.fileLink = Wiki.startLink($scope.branch) + '/version/' + path + '/' + commitId;
-                    }
-                    if (changeType) {
-                        changeType = changeType.toLowerCase();
-                        if (changeType.startsWith("a")) {
-                            commit.changeClass = "change-add";
-                            commit.change = "add";
-                            commit.title = "added";
-                        } else if (changeType.startsWith("d")) {
-                            commit.changeClass = "change-delete";
-                            commit.change = "delete";
-                            commit.title = "deleted";
-                            commit.fileLink = null;
-                        } else {
-                            commit.changeClass = "change-modify";
-                            commit.change = "modify";
-                            commit.title = "modified";
-                        }
-                        commit.changeTypeHtml = '<span class="' + commit.changeClass + '">' + commit.title + '</span>';
-                    }
-                });
-                Core.$apply($scope);
-            });
-        }
-    }
-    Wiki.CommitController = CommitController;
-})(Wiki || (Wiki = {}));
-/**
-* @module Wiki
-*/
-var Wiki;
-(function (Wiki) {
-    function FormTableController($scope, $location, $routeParams, workspace, wikiRepository) {
-        Wiki.initScope($scope, $routeParams, $location);
-        $scope.columnDefs = [];
-
-        $scope.gridOptions = {
-            data: 'list',
-            displayFooter: false,
-            showFilter: false,
-            filterOptions: {
-                filterText: ''
-            },
-            columnDefs: $scope.columnDefs
-        };
-
-        $scope.viewLink = function (row) {
-            return childLink(row, "/view");
-        };
-        $scope.editLink = function (row) {
-            return childLink(row, "/edit");
-        };
-
-        function childLink(child, prefix) {
-            var start = Wiki.startLink($scope.branch);
-            var childId = (child) ? child["_id"] || "" : "";
-            return Core.createHref($location, start + prefix + "/" + $scope.pageId + "/" + childId);
-        }
-
-        var linksColumn = {
-            field: '_id',
-            displayName: 'Actions',
-            cellTemplate: '<div class="ngCellText""><a ng-href="{{viewLink(row.entity)}}" class="btn">View</a> <a ng-href="{{editLink(row.entity)}}" class="btn">Edit</a></div>'
-        };
-
-        $scope.$watch('workspace.tree', function () {
-            if (!$scope.git && Git.getGitMBean(workspace)) {
-                // lets do this asynchronously to avoid Error: $digest already in progress
-                //console.log("Reloading the view as we now seem to have a git mbean!");
-                setTimeout(updateView, 50);
-            }
-        });
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateView, 50);
-        });
-
-        var form = $location.search()["form"];
-        if (form) {
-            wikiRepository.getPage($scope.branch, form, $scope.objectId, onFormData);
-        }
-
-        updateView();
-
-        function onResults(response) {
-            var list = [];
-            var map = Wiki.parseJson(response);
-            angular.forEach(map, function (value, key) {
-                value["_id"] = key;
-                list.push(value);
-            });
-            $scope.list = list;
-            Core.$apply($scope);
-        }
-
-        function updateView() {
-            var filter = Core.pathGet($scope, ["gridOptions", "filterOptions", "filterText"]) || "";
-            $scope.git = wikiRepository.jsonChildContents($scope.pageId, "*.json", filter, onResults);
-        }
-
-        function onFormData(details) {
-            var text = details.text;
-            if (text) {
-                $scope.formDefinition = Wiki.parseJson(text);
-
-                var columnDefs = [];
-                var schema = $scope.formDefinition;
-                angular.forEach(schema.properties, function (property, name) {
-                    if (name) {
-                        if (!Forms.isArrayOrNestedObject(property, schema)) {
-                            var colDef = {
-                                field: name,
-                                displayName: property.description || name,
-                                visible: true
-                            };
-                            columnDefs.push(colDef);
-                        }
-                    }
-                });
-                columnDefs.push(linksColumn);
-
-                $scope.columnDefs = columnDefs;
-                $scope.gridOptions.columnDefs = columnDefs;
-
-                // now we have the grid column stuff loaded, lets load the datatable
-                $scope.tableView = "app/wiki/html/formTableDatatable.html";
-            }
-        }
-        Core.$apply($scope);
-    }
-    Wiki.FormTableController = FormTableController;
-})(Wiki || (Wiki = {}));
-/**
-* @module Wiki
-*/
-var Wiki;
-(function (Wiki) {
-    function CamelController($scope, $location, $routeParams, localStorage, workspace, wikiRepository, jolokia) {
-        Wiki.initScope($scope, $routeParams, $location);
-        Camel.initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia);
-        $scope.schema = Camel.getConfiguredCamelModel();
-        $scope.modified = false;
-
-        $scope.findProfileCamelContext = true;
-        $scope.camelSelectionDetails = {
-            selectedCamelContextId: null,
-            selectedRouteId: null
-        };
-
-        $scope.isValid = function (nav) {
-            return nav && nav.isValid(workspace);
-        };
-
-        $scope.camelSubLevelTabs = [
-            {
-                content: '<i class="icon-picture"></i> Canvas',
-                title: "Edit the diagram in a draggy droppy way",
-                isValid: function (workspace) {
-                    return true;
-                },
-                href: function () {
-                    return Wiki.startLink($scope.branch) + "/camel/canvas/" + $scope.pageId;
-                }
-            },
-            {
-                content: '<i class=" icon-sitemap"></i> Tree',
-                title: "View the routes as a tree",
-                isValid: function (workspace) {
-                    return true;
-                },
-                href: function () {
-                    return Wiki.startLink($scope.branch) + "/camel/properties/" + $scope.pageId;
-                }
-            }
-        ];
-
-        var routeModel = _apacheCamelModel.definitions.route;
-        routeModel["_id"] = "route";
-
-        $scope.addDialog = new UI.Dialog();
-
-        // TODO doesn't seem that angular-ui uses these?
-        $scope.addDialog.options["dialogClass"] = "modal-large";
-        $scope.addDialog.options["cssClass"] = "modal-large";
-
-        $scope.paletteItemSearch = "";
-        $scope.paletteTree = new Folder("Palette");
-        $scope.paletteActivations = ["Routing_aggregate"];
-
-        // load $scope.paletteTree
-        angular.forEach(_apacheCamelModel.definitions, function (value, key) {
-            if (value.group) {
-                var group = (key === "route") ? $scope.paletteTree : $scope.paletteTree.getOrElse(value.group);
-                if (!group.key) {
-                    group.key = value.group;
-                }
-                value["_id"] = key;
-                var title = value["title"] || key;
-                var node = new Folder(title);
-                node.key = group.key + "_" + key;
-                node["nodeModel"] = value;
-                var imageUrl = Camel.getRouteNodeIcon(value);
-                node.icon = imageUrl;
-
-                // compiler was complaining about 'label' had no idea where it's coming from
-                // var tooltip = value["tooltip"] || value["description"] || label;
-                var tooltip = value["tooltip"] || value["description"] || '';
-                node.tooltip = tooltip;
-
-                group.children.push(node);
-            }
-        });
-
-        // load $scope.componentTree
-        $scope.componentTree = new Folder("Endpoints");
-
-        $scope.$watch("componentNames", function () {
-            var componentNames = $scope.componentNames;
-            if (componentNames && componentNames.length) {
-                $scope.componentTree = new Folder("Endpoints");
-                angular.forEach($scope.componentNames, function (endpointName) {
-                    var category = Camel.getEndpointCategory(endpointName);
-                    var groupName = category.label || "Core";
-                    var groupKey = category.id || groupName;
-                    var group = $scope.componentTree.getOrElse(groupName);
-
-                    var value = Camel.getEndpointConfig(endpointName, category);
-                    var key = endpointName;
-                    var label = value["label"] || endpointName;
-                    var node = new Folder(label);
-                    node.key = groupKey + "_" + key;
-                    node.key = key;
-                    node["nodeModel"] = value;
-                    var tooltip = value["tooltip"] || value["description"] || label;
-                    var imageUrl = url(value["icon"] || Camel.endpointIcon);
-                    node.icon = imageUrl;
-                    node.tooltip = tooltip;
-
-                    group.children.push(node);
-                });
-            }
-        });
-        $scope.componentActivations = ["bean"];
-
-        $scope.$watch('addDialog.show', function () {
-            if ($scope.addDialog.show) {
-                setTimeout(function () {
-                    $('#submit').focus();
-                }, 50);
-            }
-        });
-
-        $scope.$on("hawtio.form.modelChange", onModelChangeEvent);
-
-        $scope.onRootTreeNode = function (rootTreeNode) {
-            $scope.rootTreeNode = rootTreeNode;
-
-            // restore the real data at the root for saving the doc etc
-            rootTreeNode.data = $scope.camelContextTree;
-        };
-
-        $scope.addNode = function () {
-            if ($scope.nodeXmlNode) {
-                $scope.addDialog.open();
-            } else {
-                addNewNode(routeModel);
-            }
-        };
-
-        $scope.onPaletteSelect = function (node) {
-            $scope.selectedPaletteNode = (node && node["nodeModel"]) ? node : null;
-            if ($scope.selectedPaletteNode) {
-                $scope.selectedComponentNode = null;
-            }
-            console.log("Selected " + $scope.selectedPaletteNode + " : " + $scope.selectedComponentNode);
-        };
-
-        $scope.onComponentSelect = function (node) {
-            $scope.selectedComponentNode = (node && node["nodeModel"]) ? node : null;
-            if ($scope.selectedComponentNode) {
-                $scope.selectedPaletteNode = null;
-                var nodeName = node.key;
-                console.log("loading endpoint schema for node " + nodeName);
-                $scope.loadEndpointSchema(nodeName);
-                $scope.selectedComponentName = nodeName;
-            }
-            console.log("Selected " + $scope.selectedPaletteNode + " : " + $scope.selectedComponentNode);
-        };
-
-        $scope.selectedNodeModel = function () {
-            var nodeModel = null;
-            if ($scope.selectedPaletteNode) {
-                nodeModel = $scope.selectedPaletteNode["nodeModel"];
-                $scope.endpointConfig = null;
-            } else if ($scope.selectedComponentNode) {
-                // TODO lest create an endpoint nodeModel and associate
-                // the dummy URL and properties etc...
-                var endpointConfig = $scope.selectedComponentNode["nodeModel"];
-                var endpointSchema = $scope.endpointSchema;
-                nodeModel = $scope.schema.definitions.endpoint;
-                $scope.endpointConfig = {
-                    key: $scope.selectedComponentNode.key,
-                    schema: endpointSchema,
-                    details: endpointConfig
-                };
-            }
-            return nodeModel;
-        };
-
-        $scope.addAndCloseDialog = function () {
-            var nodeModel = $scope.selectedNodeModel();
-            if (nodeModel) {
-                addNewNode(nodeModel);
-            } else {
-                console.log("WARNING: no nodeModel!");
-            }
-            $scope.addDialog.close();
-        };
-
-        $scope.removeNode = function () {
-            if ($scope.selectedFolder && $scope.treeNode) {
-                $scope.selectedFolder.detach();
-                $scope.treeNode.remove();
-                $scope.selectedFolder = null;
-                $scope.treeNode = null;
-            }
-        };
-
-        $scope.canDelete = function () {
-            return $scope.selectedFolder ? true : false;
-        };
-
-        $scope.isActive = function (nav) {
-            if (angular.isString(nav))
-                return workspace.isLinkActive(nav);
-            var fn = nav.isActive;
-            if (fn) {
-                return fn(workspace);
-            }
-            return workspace.isLinkActive(nav.href());
-        };
-
-        $scope.save = function () {
-            // generate the new XML
-            if ($scope.rootTreeNode) {
-                var xmlNode = Camel.generateXmlFromFolder($scope.rootTreeNode);
-                if (xmlNode) {
-                    var text = Core.xmlNodeToString(xmlNode);
+                if ($scope.model) {
+                    // lets copy the mappings from the tree
+                    var model = Dozer.loadModelFromTree($scope.rootTreeNode, $scope.model);
+                    var text = Dozer.saveToXmlText(model);
                     if (text) {
-                        // lets save the file...
                         var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
                         wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, function (status) {
                             Wiki.onComplete(status);
-                            notification("success", "Saved " + $scope.pageId);
                             $scope.modified = false;
+                            notification("success", "Saved " + $scope.pageId);
                             goToView();
                             Core.$apply($scope);
                         });
                     }
                 }
-            }
-        };
+            };
 
-        $scope.cancel = function () {
-            console.log("cancelling...");
-            // TODO show dialog if folks are about to lose changes...
-        };
+            $scope.cancel = function () {
+                log.info("cancelling...");
+                // TODO show dialog if folks are about to lose changes...
+            };
 
-        $scope.$watch('workspace.tree', function () {
-            if (!$scope.git) {
-                // lets do this asynchronously to avoid Error: $digest already in progress
-                //console.log("Reloading the view as we now seem to have a git mbean!");
-                setTimeout(updateView, 50);
-            }
-        });
+            $scope.onRootTreeNode = function (rootTreeNode) {
+                $scope.rootTreeNode = rootTreeNode;
+            };
 
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateView, 50);
-        });
+            $scope.onNodeSelect = function (folder, treeNode) {
+                $scope.selectedFolder = folder;
+                $scope.treeNode = treeNode;
+                $scope.propertiesTemplate = null;
+                $scope.dozerEntity = null;
+                $scope.selectedDescription = "";
+                $scope.selectedMapping = null;
+                $scope.selectedMappingTreeNode = null;
+                $scope.selectedMappingFolder = null;
 
-        function getFolderXmlNode(treeNode) {
-            var routeXmlNode = Camel.createFolderXmlTree(treeNode, null);
-            if (routeXmlNode) {
-                $scope.nodeXmlNode = routeXmlNode;
-            }
-            return routeXmlNode;
-        }
-
-        $scope.onNodeSelect = function (folder, treeNode) {
-            $scope.selectedFolder = folder;
-            $scope.treeNode = treeNode;
-            $scope.propertiesTemplate = null;
-            $scope.diagramTemplate = null;
-            $scope.nodeXmlNode = null;
-            if (folder) {
-                $scope.nodeData = Camel.getRouteFolderJSON(folder);
-                $scope.nodeDataChangedFields = {};
-            }
-            var nodeName = Camel.getFolderCamelNodeId(folder);
-
-            // lets lazily create the XML tree so it can be used by the diagram
-            var routeXmlNode = getFolderXmlNode(treeNode);
-            if (nodeName) {
-                //var nodeName = routeXmlNode.localName;
-                $scope.nodeModel = Camel.getCamelSchema(nodeName);
-                if ($scope.nodeModel) {
-                    $scope.propertiesTemplate = "app/wiki/html/camelPropertiesEdit.html";
+                // now the model is bound, lets add a listener
+                if ($scope.removeModelChangeListener) {
+                    $scope.removeModelChangeListener();
+                    $scope.removeModelChangeListener = null;
                 }
-                $scope.diagramTemplate = "app/camel/html/routes.html";
+
+                if (folder) {
+                    var entity = folder.entity;
+                    $scope.dozerEntity = entity;
+                    var propertiesTemplate = "app/wiki/html/dozerPropertiesEdit.html";
+                    if (entity instanceof Dozer.Field) {
+                        //var field: Dozer.Field = entity;
+                        $scope.propertiesTemplate = propertiesTemplate;
+                        $scope.nodeModel = io_hawt_dozer_schema_Field;
+                        $scope.selectedDescription = "Field Mapping";
+                        $scope.selectedMapping = Core.pathGet(folder, ["parent", "entity"]);
+                        $scope.selectedMappingFolder = folder.parent;
+                        $scope.selectedMappingTreeNode = treeNode.parent;
+                    } else if (entity instanceof Dozer.Mapping) {
+                        //var mapping: Dozer.Mapping = entity;
+                        $scope.propertiesTemplate = propertiesTemplate;
+                        $scope.nodeModel = io_hawt_dozer_schema_Mapping;
+                        $scope.selectedDescription = "Class Mapping";
+                        $scope.selectedMapping = entity;
+                        $scope.selectedMappingFolder = folder;
+                        $scope.selectedMappingTreeNode = treeNode;
+                    }
+                    if ($scope.selectedMapping && !$scope.removeModelChangeListener) {
+                        /*
+                        TODO problem is we have many forms here so we end up creating lots of change events when really we don't change things!: )
+                        // maybe watch the entity instead?
+                        
+                        console.log("Adding onTreeModified form listener");
+                        $scope.removeModelChangeListener = $scope.$on("hawtio.form.modelChange", () => {
+                        console.log("form modified!");
+                        onTreeModified();
+                        });
+                        */
+                    }
+                }
+
+                Core.$apply($scope);
+            };
+
+            $scope.onUnmappedFieldChange = function (unmappedField) {
+                unmappedField.valid = unmappedField.toField ? true : false;
+                $scope.unmappedFieldsHasValid = $scope.unmappedFields.find(function (f) {
+                    return f.valid;
+                });
+            };
+
+            function findFieldNames(className, text) {
+                //console.log("Finding the to field names for expression '" + text + "'  on class " + className);
+                var properties = Dozer.findProperties(workspace, className, text, null);
+                return properties.map(function (p) {
+                    return p.name;
+                });
+            }
+
+            $scope.fromFieldNames = function (text) {
+                var className = Core.pathGet($scope.selectedMapping, ["class_a", "value"]);
+                return findFieldNames(className, text);
+            };
+
+            $scope.toFieldNames = function (text) {
+                var className = Core.pathGet($scope.selectedMapping, ["class_b", "value"]);
+                return findFieldNames(className, text);
+            };
+
+            $scope.classNames = function (text) {
+                // lets only query if the size is reasonable
+                if (!text || text.length < 2)
+                    return [];
+                return Core.time("Time the query of classes", function () {
+                    log.info("searching for class names with filter '" + text + "'");
+                    var answer = Dozer.findClassNames(workspace, text);
+                    log.info("Found results: " + answer.length);
+                    return answer;
+                });
+            };
+
+            updateView();
+
+            function updateView() {
+                $scope.pageId = Wiki.pageId($routeParams, $location);
+                if (Git.getGitMBean(workspace)) {
+                    $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onResults);
+                }
+            }
+
+            function onResults(response) {
+                var text = response.text;
+                if (text) {
+                    if ($scope.responseText !== text) {
+                        $scope.responseText = text;
+
+                        // lets remove any dodgy characters so we can use it as a DOM id
+                        $scope.model = Dozer.loadDozerModel(text, $scope.pageId);
+
+                        $scope.mappings = Core.pathGet($scope.model, ["mappings"]);
+
+                        $scope.mappingTree = Dozer.createDozerTree($scope.model);
+                        if (!angular.isDefined($scope.selectedMapping)) {
+                            $scope.selectedMapping = $scope.mappings.first();
+                        }
+
+                        $scope.main = $templateCache.get("pageTemplate.html");
+                    }
+                } else {
+                    log.warn("No XML found for page " + $scope.pageId);
+                }
                 Core.$apply($scope);
             }
-        };
 
-        $scope.onNodeDragEnter = function (node, sourceNode) {
-            var nodeFolder = node.data;
-            var sourceFolder = sourceNode.data;
-            if (nodeFolder && sourceFolder) {
-                var nodeId = Camel.getFolderCamelNodeId(nodeFolder);
-                var sourceId = Camel.getFolderCamelNodeId(sourceFolder);
-                if (nodeId && sourceId) {
-                    // we can only drag routes onto other routes (before / after / over)
-                    if (sourceId === "route") {
-                        return nodeId === "route";
-                    }
-                    return true;
-                }
+            function onTreeModified() {
+                $scope.modified = true;
             }
-            return false;
-        };
 
-        $scope.onNodeDrop = function (node, sourceNode, hitMode, ui, draggable) {
-            var nodeFolder = node.data;
-            var sourceFolder = sourceNode.data;
-            if (nodeFolder && sourceFolder) {
-                // we cannot drop a route into a route or a non-route to a top level!
-                var nodeId = Camel.getFolderCamelNodeId(nodeFolder);
-                var sourceId = Camel.getFolderCamelNodeId(sourceFolder);
-
-                if (nodeId === "route") {
-                    // hitMode must be "over" if we are not another route
-                    if (sourceId === "route") {
-                        if (hitMode === "over") {
-                            hitMode = "after";
-                        }
-                    } else {
-                        // disable before / after
-                        hitMode = "over";
-                    }
+            function goToView() {
+                // TODO lets navigate to the view if we have a separate view one day :)
+                /*
+                if ($scope.breadcrumbs && $scope.breadcrumbs.length > 1) {
+                var viewLink = $scope.breadcrumbs[$scope.breadcrumbs.length - 2];
+                console.log("goToView has found view " + viewLink);
+                var path = Core.trimLeading(viewLink, "#");
+                $location.path(path);
                 } else {
-                    if (Camel.acceptOutput(nodeId)) {
-                        hitMode = "over";
-                    } else {
-                        if (hitMode !== "before") {
-                            hitMode = "after";
-                        }
+                console.log("goToView has no breadcrumbs!");
+                }
+                */
+            }
+        }]);
+})(Wiki || (Wiki = {}));
+/**
+* @module Wiki
+*/
+/// <reference path="./wikiPlugin.ts"/>
+var Wiki;
+(function (Wiki) {
+    Wiki._module.controller("Wiki.CommitController", [
+        "$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", function ($scope, $location, $routeParams, $templateCache, workspace, marked, fileExtensionTypeRegistry, wikiRepository) {
+            Wiki.initScope($scope, $routeParams, $location);
+            $scope.commitId = $scope.objectId;
+            $scope.selectedItems = [];
+
+            // TODO we could configure this?
+            $scope.dateFormat = 'EEE, MMM d, y : hh:mm:ss a';
+
+            $scope.gridOptions = {
+                data: 'commits',
+                showFilter: false,
+                multiSelect: false,
+                selectWithCheckboxOnly: true,
+                showSelectionCheckbox: true,
+                displaySelectionCheckbox: true,
+                selectedItems: $scope.selectedItems,
+                filterOptions: {
+                    filterText: ''
+                },
+                columnDefs: [
+                    {
+                        field: 'path',
+                        displayName: 'File Name',
+                        cellTemplate: $templateCache.get('fileCellTemplate.html'),
+                        width: "***",
+                        cellFilter: ""
+                    }
+                ]
+            };
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateView, 50);
+            });
+
+            $scope.$watch('workspace.tree', function () {
+                if (!$scope.git && Git.getGitMBean(workspace)) {
+                    // lets do this asynchronously to avoid Error: $digest already in progress
+                    //console.log("Reloading the view as we now seem to have a git mbean!");
+                    setTimeout(updateView, 50);
+                }
+            });
+
+            $scope.canRevert = function () {
+                return $scope.selectedItems.length === 1;
+            };
+
+            $scope.revert = function () {
+                if ($scope.selectedItems.length > 0) {
+                    var path = commitPath($scope.selectedItems[0]);
+                    var objectId = $scope.commitId;
+                    if (path && objectId) {
+                        var commitMessage = "Reverting file " + $scope.pageId + " to previous version " + objectId;
+                        wikiRepository.revertTo($scope.branch, objectId, $scope.pageId, commitMessage, function (result) {
+                            Wiki.onComplete(result);
+
+                            // now lets update the view
+                            updateView();
+                        });
                     }
                 }
-                console.log("nodeDrop nodeId: " + nodeId + " sourceId: " + sourceId + " hitMode: " + hitMode);
+            };
 
-                sourceNode.move(node, hitMode);
+            function commitPath(commit) {
+                return commit.path || commit.name;
             }
-        };
 
-        updateView();
+            $scope.diff = function () {
+                if ($scope.selectedItems.length > 0) {
+                    var commit = $scope.selectedItems[0];
 
-        function addNewNode(nodeModel) {
-            var doc = $scope.doc || document;
-            var parentFolder = $scope.selectedFolder || $scope.camelContextTree;
-            var key = nodeModel["_id"];
-            var beforeNode = null;
-            if (!key) {
-                console.log("WARNING: no id for model " + JSON.stringify(nodeModel));
-            } else {
-                var treeNode = $scope.treeNode;
-                if (key === "route") {
-                    // lets add to the root of the tree
-                    treeNode = $scope.rootTreeNode;
+                    /*
+                    var commit = row;
+                    var entity = row.entity;
+                    if (entity) {
+                    commit = entity;
+                    }
+                    */
+                    var link = Wiki.startLink($scope.branch) + "/diff/" + commitPath(commit) + "/" + $scope.commitId + "/";
+                    var path = Core.trimLeading(link, "#");
+                    $location.path(path);
+                }
+            };
+
+            updateView();
+
+            function updateView() {
+                var commitId = $scope.commitId;
+
+                Wiki.loadBranches(wikiRepository, $scope);
+
+                wikiRepository.commitInfo(commitId, function (commitInfo) {
+                    $scope.commitInfo = commitInfo;
+                    Core.$apply($scope);
+                });
+
+                wikiRepository.commitTree(commitId, function (commits) {
+                    $scope.commits = commits;
+                    angular.forEach(commits, function (commit) {
+                        commit.fileIconHtml = Wiki.fileIconHtml(commit);
+                        commit.fileClass = commit.name.endsWith(".profile") ? "green" : "";
+                        var changeType = commit.changeType;
+                        var path = commitPath(commit);
+                        if (path) {
+                            commit.fileLink = Wiki.startLink($scope.branch) + '/version/' + path + '/' + commitId;
+                        }
+                        if (changeType) {
+                            changeType = changeType.toLowerCase();
+                            if (changeType.startsWith("a")) {
+                                commit.changeClass = "change-add";
+                                commit.change = "add";
+                                commit.title = "added";
+                            } else if (changeType.startsWith("d")) {
+                                commit.changeClass = "change-delete";
+                                commit.change = "delete";
+                                commit.title = "deleted";
+                                commit.fileLink = null;
+                            } else {
+                                commit.changeClass = "change-modify";
+                                commit.change = "modify";
+                                commit.title = "modified";
+                            }
+                            commit.changeTypeHtml = '<span class="' + commit.changeClass + '">' + commit.title + '</span>';
+                        }
+                    });
+                    Core.$apply($scope);
+                });
+            }
+        }]);
+})(Wiki || (Wiki = {}));
+/**
+* @module Wiki
+*/
+/// <reference path="./wikiPlugin.ts"/>
+var Wiki;
+(function (Wiki) {
+    Wiki._module.controller("Wiki.FormTableController", [
+        "$scope", "$location", "$routeParams", "workspace", "wikiRepository", function ($scope, $location, $routeParams, workspace, wikiRepository) {
+            Wiki.initScope($scope, $routeParams, $location);
+            $scope.columnDefs = [];
+
+            $scope.gridOptions = {
+                data: 'list',
+                displayFooter: false,
+                showFilter: false,
+                filterOptions: {
+                    filterText: ''
+                },
+                columnDefs: $scope.columnDefs
+            };
+
+            $scope.viewLink = function (row) {
+                return childLink(row, "/view");
+            };
+            $scope.editLink = function (row) {
+                return childLink(row, "/edit");
+            };
+
+            function childLink(child, prefix) {
+                var start = Wiki.startLink($scope.branch);
+                var childId = (child) ? child["_id"] || "" : "";
+                return Core.createHref($location, start + prefix + "/" + $scope.pageId + "/" + childId);
+            }
+
+            var linksColumn = {
+                field: '_id',
+                displayName: 'Actions',
+                cellTemplate: '<div class="ngCellText""><a ng-href="{{viewLink(row.entity)}}" class="btn">View</a> <a ng-href="{{editLink(row.entity)}}" class="btn">Edit</a></div>'
+            };
+
+            $scope.$watch('workspace.tree', function () {
+                if (!$scope.git && Git.getGitMBean(workspace)) {
+                    // lets do this asynchronously to avoid Error: $digest already in progress
+                    //console.log("Reloading the view as we now seem to have a git mbean!");
+                    setTimeout(updateView, 50);
+                }
+            });
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateView, 50);
+            });
+
+            var form = $location.search()["form"];
+            if (form) {
+                wikiRepository.getPage($scope.branch, form, $scope.objectId, onFormData);
+            }
+
+            updateView();
+
+            function onResults(response) {
+                var list = [];
+                var map = Wiki.parseJson(response);
+                angular.forEach(map, function (value, key) {
+                    value["_id"] = key;
+                    list.push(value);
+                });
+                $scope.list = list;
+                Core.$apply($scope);
+            }
+
+            function updateView() {
+                var filter = Core.pathGet($scope, ["gridOptions", "filterOptions", "filterText"]) || "";
+                $scope.git = wikiRepository.jsonChildContents($scope.pageId, "*.json", filter, onResults);
+            }
+
+            function onFormData(details) {
+                var text = details.text;
+                if (text) {
+                    $scope.formDefinition = Wiki.parseJson(text);
+
+                    var columnDefs = [];
+                    var schema = $scope.formDefinition;
+                    angular.forEach(schema.properties, function (property, name) {
+                        if (name) {
+                            if (!Forms.isArrayOrNestedObject(property, schema)) {
+                                var colDef = {
+                                    field: name,
+                                    displayName: property.description || name,
+                                    visible: true
+                                };
+                                columnDefs.push(colDef);
+                            }
+                        }
+                    });
+                    columnDefs.push(linksColumn);
+
+                    $scope.columnDefs = columnDefs;
+                    $scope.gridOptions.columnDefs = columnDefs;
+
+                    // now we have the grid column stuff loaded, lets load the datatable
+                    $scope.tableView = "app/wiki/html/formTableDatatable.html";
+                }
+            }
+            Core.$apply($scope);
+        }]);
+})(Wiki || (Wiki = {}));
+/**
+* @module Wiki
+*/
+/// <reference path="./wikiPlugin.ts"/>
+var Wiki;
+(function (Wiki) {
+    Wiki._module.controller("Wiki.CamelController", [
+        "$scope", "$location", "$routeParams", "localStorage", "workspace", "wikiRepository", "jolokia", function ($scope, $location, $routeParams, localStorage, workspace, wikiRepository, jolokia) {
+            Wiki.initScope($scope, $routeParams, $location);
+            Camel.initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia);
+            $scope.schema = Camel.getConfiguredCamelModel();
+            $scope.modified = false;
+
+            $scope.findProfileCamelContext = true;
+            $scope.camelSelectionDetails = {
+                selectedCamelContextId: null,
+                selectedRouteId: null
+            };
+
+            $scope.isValid = function (nav) {
+                return nav && nav.isValid(workspace);
+            };
+
+            $scope.camelSubLevelTabs = [
+                {
+                    content: '<i class="icon-picture"></i> Canvas',
+                    title: "Edit the diagram in a draggy droppy way",
+                    isValid: function (workspace) {
+                        return true;
+                    },
+                    href: function () {
+                        return Wiki.startLink($scope.branch) + "/camel/canvas/" + $scope.pageId;
+                    }
+                },
+                {
+                    content: '<i class=" icon-sitemap"></i> Tree',
+                    title: "View the routes as a tree",
+                    isValid: function (workspace) {
+                        return true;
+                    },
+                    href: function () {
+                        return Wiki.startLink($scope.branch) + "/camel/properties/" + $scope.pageId;
+                    }
+                }
+            ];
+
+            var routeModel = _apacheCamelModel.definitions.route;
+            routeModel["_id"] = "route";
+
+            $scope.addDialog = new UI.Dialog();
+
+            // TODO doesn't seem that angular-ui uses these?
+            $scope.addDialog.options["dialogClass"] = "modal-large";
+            $scope.addDialog.options["cssClass"] = "modal-large";
+
+            $scope.paletteItemSearch = "";
+            $scope.paletteTree = new Folder("Palette");
+            $scope.paletteActivations = ["Routing_aggregate"];
+
+            // load $scope.paletteTree
+            angular.forEach(_apacheCamelModel.definitions, function (value, key) {
+                if (value.group) {
+                    var group = (key === "route") ? $scope.paletteTree : $scope.paletteTree.getOrElse(value.group);
+                    if (!group.key) {
+                        group.key = value.group;
+                    }
+                    value["_id"] = key;
+                    var title = value["title"] || key;
+                    var node = new Folder(title);
+                    node.key = group.key + "_" + key;
+                    node["nodeModel"] = value;
+                    var imageUrl = Camel.getRouteNodeIcon(value);
+                    node.icon = imageUrl;
+
+                    // compiler was complaining about 'label' had no idea where it's coming from
+                    // var tooltip = value["tooltip"] || value["description"] || label;
+                    var tooltip = value["tooltip"] || value["description"] || '';
+                    node.tooltip = tooltip;
+
+                    group.children.push(node);
+                }
+            });
+
+            // load $scope.componentTree
+            $scope.componentTree = new Folder("Endpoints");
+
+            $scope.$watch("componentNames", function () {
+                var componentNames = $scope.componentNames;
+                if (componentNames && componentNames.length) {
+                    $scope.componentTree = new Folder("Endpoints");
+                    angular.forEach($scope.componentNames, function (endpointName) {
+                        var category = Camel.getEndpointCategory(endpointName);
+                        var groupName = category.label || "Core";
+                        var groupKey = category.id || groupName;
+                        var group = $scope.componentTree.getOrElse(groupName);
+
+                        var value = Camel.getEndpointConfig(endpointName, category);
+                        var key = endpointName;
+                        var label = value["label"] || endpointName;
+                        var node = new Folder(label);
+                        node.key = groupKey + "_" + key;
+                        node.key = key;
+                        node["nodeModel"] = value;
+                        var tooltip = value["tooltip"] || value["description"] || label;
+                        var imageUrl = url(value["icon"] || Camel.endpointIcon);
+                        node.icon = imageUrl;
+                        node.tooltip = tooltip;
+
+                        group.children.push(node);
+                    });
+                }
+            });
+            $scope.componentActivations = ["bean"];
+
+            $scope.$watch('addDialog.show', function () {
+                if ($scope.addDialog.show) {
+                    setTimeout(function () {
+                        $('#submit').focus();
+                    }, 50);
+                }
+            });
+
+            $scope.$on("hawtio.form.modelChange", onModelChangeEvent);
+
+            $scope.onRootTreeNode = function (rootTreeNode) {
+                $scope.rootTreeNode = rootTreeNode;
+
+                // restore the real data at the root for saving the doc etc
+                rootTreeNode.data = $scope.camelContextTree;
+            };
+
+            $scope.addNode = function () {
+                if ($scope.nodeXmlNode) {
+                    $scope.addDialog.open();
                 } else {
-                    if (!treeNode) {
-                        // lets select the last route - and create a new route if need be
-                        var root = $scope.rootTreeNode;
-                        var children = root.getChildren();
-                        if (!children || !children.length) {
-                            addNewNode(Camel.getCamelSchema("route"));
-                            children = root.getChildren();
-                        }
-                        if (children && children.length) {
-                            treeNode = children[children.length - 1];
-                        } else {
-                            console.log("Could not add a new route to the empty tree!");
-                            return;
-                        }
-                    }
+                    addNewNode(routeModel);
+                }
+            };
 
-                    // if the parent folder likes to act as a pipeline, then add
-                    // after the parent, rather than as a child
-                    var parentId = Camel.getFolderCamelNodeId(treeNode.data);
-                    if (!Camel.acceptOutput(parentId)) {
-                        // lets add the new node to the end of the parent
-                        beforeNode = treeNode.getNextSibling();
-                        treeNode = treeNode.getParent() || treeNode;
+            $scope.onPaletteSelect = function (node) {
+                $scope.selectedPaletteNode = (node && node["nodeModel"]) ? node : null;
+                if ($scope.selectedPaletteNode) {
+                    $scope.selectedComponentNode = null;
+                }
+                console.log("Selected " + $scope.selectedPaletteNode + " : " + $scope.selectedComponentNode);
+            };
+
+            $scope.onComponentSelect = function (node) {
+                $scope.selectedComponentNode = (node && node["nodeModel"]) ? node : null;
+                if ($scope.selectedComponentNode) {
+                    $scope.selectedPaletteNode = null;
+                    var nodeName = node.key;
+                    console.log("loading endpoint schema for node " + nodeName);
+                    $scope.loadEndpointSchema(nodeName);
+                    $scope.selectedComponentName = nodeName;
+                }
+                console.log("Selected " + $scope.selectedPaletteNode + " : " + $scope.selectedComponentNode);
+            };
+
+            $scope.selectedNodeModel = function () {
+                var nodeModel = null;
+                if ($scope.selectedPaletteNode) {
+                    nodeModel = $scope.selectedPaletteNode["nodeModel"];
+                    $scope.endpointConfig = null;
+                } else if ($scope.selectedComponentNode) {
+                    // TODO lest create an endpoint nodeModel and associate
+                    // the dummy URL and properties etc...
+                    var endpointConfig = $scope.selectedComponentNode["nodeModel"];
+                    var endpointSchema = $scope.endpointSchema;
+                    nodeModel = $scope.schema.definitions.endpoint;
+                    $scope.endpointConfig = {
+                        key: $scope.selectedComponentNode.key,
+                        schema: endpointSchema,
+                        details: endpointConfig
+                    };
+                }
+                return nodeModel;
+            };
+
+            $scope.addAndCloseDialog = function () {
+                var nodeModel = $scope.selectedNodeModel();
+                if (nodeModel) {
+                    addNewNode(nodeModel);
+                } else {
+                    console.log("WARNING: no nodeModel!");
+                }
+                $scope.addDialog.close();
+            };
+
+            $scope.removeNode = function () {
+                if ($scope.selectedFolder && $scope.treeNode) {
+                    $scope.selectedFolder.detach();
+                    $scope.treeNode.remove();
+                    $scope.selectedFolder = null;
+                    $scope.treeNode = null;
+                }
+            };
+
+            $scope.canDelete = function () {
+                return $scope.selectedFolder ? true : false;
+            };
+
+            $scope.isActive = function (nav) {
+                if (angular.isString(nav))
+                    return workspace.isLinkActive(nav);
+                var fn = nav.isActive;
+                if (fn) {
+                    return fn(workspace);
+                }
+                return workspace.isLinkActive(nav.href());
+            };
+
+            $scope.save = function () {
+                // generate the new XML
+                if ($scope.rootTreeNode) {
+                    var xmlNode = Camel.generateXmlFromFolder($scope.rootTreeNode);
+                    if (xmlNode) {
+                        var text = Core.xmlNodeToString(xmlNode);
+                        if (text) {
+                            // lets save the file...
+                            var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
+                            wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, function (status) {
+                                Wiki.onComplete(status);
+                                notification("success", "Saved " + $scope.pageId);
+                                $scope.modified = false;
+                                goToView();
+                                Core.$apply($scope);
+                            });
+                        }
                     }
                 }
-                if (treeNode) {
-                    var node = doc.createElement(key);
-                    parentFolder = treeNode.data;
-                    var addedNode = Camel.addRouteChild(parentFolder, node);
-                    if (addedNode) {
-                        var added = treeNode.addChild(addedNode, beforeNode);
-                        if (added) {
-                            getFolderXmlNode(added);
-                            added.expand(true);
-                            added.select(true);
-                            added.activate(true);
-                        }
-                    }
-                }
-            }
-        }
+            };
 
-        function onModelChangeEvent(event, name) {
-            // lets filter out events due to the node changing causing the
-            // forms to be recreated
-            if ($scope.nodeData) {
-                var fieldMap = $scope.nodeDataChangedFields;
-                if (fieldMap) {
-                    if (fieldMap[name]) {
-                        onNodeDataChanged();
-                    } else {
-                        // the selection has just changed so we get the initial event
-                        // we can ignore this :)
-                        fieldMap[name] = true;
-                    }
-                }
-            }
-        }
+            $scope.cancel = function () {
+                console.log("cancelling...");
+                // TODO show dialog if folks are about to lose changes...
+            };
 
-        function onNodeDataChanged() {
-            $scope.modified = true;
-            var selectedFolder = $scope.selectedFolder;
-            if ($scope.treeNode && selectedFolder) {
-                var routeXmlNode = getFolderXmlNode($scope.treeNode);
+            $scope.$watch('workspace.tree', function () {
+                if (!$scope.git) {
+                    // lets do this asynchronously to avoid Error: $digest already in progress
+                    //console.log("Reloading the view as we now seem to have a git mbean!");
+                    setTimeout(updateView, 50);
+                }
+            });
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateView, 50);
+            });
+
+            function getFolderXmlNode(treeNode) {
+                var routeXmlNode = Camel.createFolderXmlTree(treeNode, null);
                 if (routeXmlNode) {
-                    var nodeName = routeXmlNode.localName;
-                    var nodeSettings = Camel.getCamelSchema(nodeName);
-                    if (nodeSettings) {
-                        // update the title and tooltip etc
-                        Camel.updateRouteNodeLabelAndTooltip(selectedFolder, routeXmlNode, nodeSettings);
-                        $scope.treeNode.render(false, false);
+                    $scope.nodeXmlNode = routeXmlNode;
+                }
+                return routeXmlNode;
+            }
+
+            $scope.onNodeSelect = function (folder, treeNode) {
+                $scope.selectedFolder = folder;
+                $scope.treeNode = treeNode;
+                $scope.propertiesTemplate = null;
+                $scope.diagramTemplate = null;
+                $scope.nodeXmlNode = null;
+                if (folder) {
+                    $scope.nodeData = Camel.getRouteFolderJSON(folder);
+                    $scope.nodeDataChangedFields = {};
+                }
+                var nodeName = Camel.getFolderCamelNodeId(folder);
+
+                // lets lazily create the XML tree so it can be used by the diagram
+                var routeXmlNode = getFolderXmlNode(treeNode);
+                if (nodeName) {
+                    //var nodeName = routeXmlNode.localName;
+                    $scope.nodeModel = Camel.getCamelSchema(nodeName);
+                    if ($scope.nodeModel) {
+                        $scope.propertiesTemplate = "app/wiki/html/camelPropertiesEdit.html";
+                    }
+                    $scope.diagramTemplate = "app/camel/html/routes.html";
+                    Core.$apply($scope);
+                }
+            };
+
+            $scope.onNodeDragEnter = function (node, sourceNode) {
+                var nodeFolder = node.data;
+                var sourceFolder = sourceNode.data;
+                if (nodeFolder && sourceFolder) {
+                    var nodeId = Camel.getFolderCamelNodeId(nodeFolder);
+                    var sourceId = Camel.getFolderCamelNodeId(sourceFolder);
+                    if (nodeId && sourceId) {
+                        // we can only drag routes onto other routes (before / after / over)
+                        if (sourceId === "route") {
+                            return nodeId === "route";
+                        }
+                        return true;
                     }
                 }
+                return false;
+            };
 
-                // TODO not sure we need this to be honest
-                selectedFolder["camelNodeData"] = $scope.nodeData;
-            }
-        }
+            $scope.onNodeDrop = function (node, sourceNode, hitMode, ui, draggable) {
+                var nodeFolder = node.data;
+                var sourceFolder = sourceNode.data;
+                if (nodeFolder && sourceFolder) {
+                    // we cannot drop a route into a route or a non-route to a top level!
+                    var nodeId = Camel.getFolderCamelNodeId(nodeFolder);
+                    var sourceId = Camel.getFolderCamelNodeId(sourceFolder);
 
-        function onResults(response) {
-            var text = response.text;
-            if (text) {
-                // lets remove any dodgy characters so we can use it as a DOM id
-                var tree = Camel.loadCamelTree(text, $scope.pageId);
-                if (tree) {
-                    $scope.camelContextTree = tree;
+                    if (nodeId === "route") {
+                        // hitMode must be "over" if we are not another route
+                        if (sourceId === "route") {
+                            if (hitMode === "over") {
+                                hitMode = "after";
+                            }
+                        } else {
+                            // disable before / after
+                            hitMode = "over";
+                        }
+                    } else {
+                        if (Camel.acceptOutput(nodeId)) {
+                            hitMode = "over";
+                        } else {
+                            if (hitMode !== "before") {
+                                hitMode = "after";
+                            }
+                        }
+                    }
+                    console.log("nodeDrop nodeId: " + nodeId + " sourceId: " + sourceId + " hitMode: " + hitMode);
+
+                    sourceNode.move(node, hitMode);
                 }
-            } else {
-                console.log("No XML found for page " + $scope.pageId);
-            }
-            Core.$applyLater($scope);
-        }
+            };
 
-        function updateView() {
-            $scope.loadEndpointNames();
-            $scope.pageId = Wiki.pageId($routeParams, $location);
-            console.log("Has page id: " + $scope.pageId + " with $routeParams " + JSON.stringify($routeParams));
+            updateView();
 
-            if (Git.getGitMBean(workspace)) {
-                $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onResults);
-            }
-        }
+            function addNewNode(nodeModel) {
+                var doc = $scope.doc || document;
+                var parentFolder = $scope.selectedFolder || $scope.camelContextTree;
+                var key = nodeModel["_id"];
+                var beforeNode = null;
+                if (!key) {
+                    console.log("WARNING: no id for model " + JSON.stringify(nodeModel));
+                } else {
+                    var treeNode = $scope.treeNode;
+                    if (key === "route") {
+                        // lets add to the root of the tree
+                        treeNode = $scope.rootTreeNode;
+                    } else {
+                        if (!treeNode) {
+                            // lets select the last route - and create a new route if need be
+                            var root = $scope.rootTreeNode;
+                            var children = root.getChildren();
+                            if (!children || !children.length) {
+                                addNewNode(Camel.getCamelSchema("route"));
+                                children = root.getChildren();
+                            }
+                            if (children && children.length) {
+                                treeNode = children[children.length - 1];
+                            } else {
+                                console.log("Could not add a new route to the empty tree!");
+                                return;
+                            }
+                        }
 
-        function goToView() {
-            // TODO lets navigate to the view if we have a separate view one day :)
-            /*
-            if ($scope.breadcrumbs && $scope.breadcrumbs.length > 1) {
-            var viewLink = $scope.breadcrumbs[$scope.breadcrumbs.length - 2];
-            console.log("goToView has found view " + viewLink);
-            var path = Core.trimLeading(viewLink, "#");
-            $location.path(path);
-            } else {
-            console.log("goToView has no breadcrumbs!");
+                        // if the parent folder likes to act as a pipeline, then add
+                        // after the parent, rather than as a child
+                        var parentId = Camel.getFolderCamelNodeId(treeNode.data);
+                        if (!Camel.acceptOutput(parentId)) {
+                            // lets add the new node to the end of the parent
+                            beforeNode = treeNode.getNextSibling();
+                            treeNode = treeNode.getParent() || treeNode;
+                        }
+                    }
+                    if (treeNode) {
+                        var node = doc.createElement(key);
+                        parentFolder = treeNode.data;
+                        var addedNode = Camel.addRouteChild(parentFolder, node);
+                        if (addedNode) {
+                            var added = treeNode.addChild(addedNode, beforeNode);
+                            if (added) {
+                                getFolderXmlNode(added);
+                                added.expand(true);
+                                added.select(true);
+                                added.activate(true);
+                            }
+                        }
+                    }
+                }
             }
-            */
-        }
-    }
-    Wiki.CamelController = CamelController;
+
+            function onModelChangeEvent(event, name) {
+                // lets filter out events due to the node changing causing the
+                // forms to be recreated
+                if ($scope.nodeData) {
+                    var fieldMap = $scope.nodeDataChangedFields;
+                    if (fieldMap) {
+                        if (fieldMap[name]) {
+                            onNodeDataChanged();
+                        } else {
+                            // the selection has just changed so we get the initial event
+                            // we can ignore this :)
+                            fieldMap[name] = true;
+                        }
+                    }
+                }
+            }
+
+            function onNodeDataChanged() {
+                $scope.modified = true;
+                var selectedFolder = $scope.selectedFolder;
+                if ($scope.treeNode && selectedFolder) {
+                    var routeXmlNode = getFolderXmlNode($scope.treeNode);
+                    if (routeXmlNode) {
+                        var nodeName = routeXmlNode.localName;
+                        var nodeSettings = Camel.getCamelSchema(nodeName);
+                        if (nodeSettings) {
+                            // update the title and tooltip etc
+                            Camel.updateRouteNodeLabelAndTooltip(selectedFolder, routeXmlNode, nodeSettings);
+                            $scope.treeNode.render(false, false);
+                        }
+                    }
+
+                    // TODO not sure we need this to be honest
+                    selectedFolder["camelNodeData"] = $scope.nodeData;
+                }
+            }
+
+            function onResults(response) {
+                var text = response.text;
+                if (text) {
+                    // lets remove any dodgy characters so we can use it as a DOM id
+                    var tree = Camel.loadCamelTree(text, $scope.pageId);
+                    if (tree) {
+                        $scope.camelContextTree = tree;
+                    }
+                } else {
+                    console.log("No XML found for page " + $scope.pageId);
+                }
+                Core.$applyLater($scope);
+            }
+
+            function updateView() {
+                $scope.loadEndpointNames();
+                $scope.pageId = Wiki.pageId($routeParams, $location);
+                console.log("Has page id: " + $scope.pageId + " with $routeParams " + JSON.stringify($routeParams));
+
+                if (Git.getGitMBean(workspace)) {
+                    $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onResults);
+                }
+            }
+
+            function goToView() {
+                // TODO lets navigate to the view if we have a separate view one day :)
+                /*
+                if ($scope.breadcrumbs && $scope.breadcrumbs.length > 1) {
+                var viewLink = $scope.breadcrumbs[$scope.breadcrumbs.length - 2];
+                console.log("goToView has found view " + viewLink);
+                var path = Core.trimLeading(viewLink, "#");
+                $location.path(path);
+                } else {
+                console.log("goToView has no breadcrumbs!");
+                }
+                */
+            }
+        }]);
 })(Wiki || (Wiki = {}));
 /**
 * @module JUnit
@@ -29765,22 +29843,31 @@ var Perspective;
 * @module Perspective
 * @main Perspective
 */
+/// <reference path="./perspectiveHelpers.ts"/>
 var Perspective;
 (function (Perspective) {
     var pluginName = 'perspective';
-    angular.module(pluginName, ['hawtioCore']).config(function ($routeProvider) {
-        $routeProvider.when('/perspective/defaultPage', {
-            templateUrl: 'app/perspective/html/defaultPage.html',
-            controller: Perspective.DefaultPageController });
-    }).run(function ($location, workspace, viewRegistry, layoutFull) {
-        viewRegistry['perspective'] = layoutFull;
-    });
+
+    Perspective._module = angular.module(pluginName, ['hawtioCore']);
+
+    Perspective._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/perspective/defaultPage', {
+                templateUrl: 'app/perspective/html/defaultPage.html',
+                controller: Perspective.DefaultPageController });
+        }]);
+
+    Perspective._module.run([
+        "$location", "workspace", "viewRegistry", "layoutFull", function ($location, workspace, viewRegistry, layoutFull) {
+            viewRegistry['perspective'] = layoutFull;
+        }]);
 
     hawtioPluginLoader.addModule(pluginName);
 })(Perspective || (Perspective = {}));
 /**
 * @module Perspective
 */
+/// <reference path="./perspectivePlugin.ts"/>
 var Perspective;
 (function (Perspective) {
     /**
@@ -29803,6 +29890,8 @@ var Perspective;
         }
     }
     Perspective.DefaultPageController = DefaultPageController;
+
+    Perspective._module.controller("Perspective.DefaultPageController", ["$scope", "$location", "localStorage", "workspace", "jolokia", DefaultPageController]);
 })(Perspective || (Perspective = {}));
 /**
 * @module Perspective
@@ -31369,115 +31458,6 @@ var API;
 })(API || (API = {}));
 /**
 * @module RBAC
-* @main RBAC
-*/
-var RBAC;
-(function (RBAC) {
-    RBAC.pluginName = "hawtioRbac";
-    RBAC.log = Logger.get("RBAC");
-    RBAC._module = angular.module(RBAC.pluginName, ["hawtioCore"]);
-
-    RBAC._module.factory('rbacTasks', function (postLoginTasks, jolokia) {
-        postLoginTasks.addTask("FetchJMXSecurityMBeans", function () {
-            jolokia.request({
-                type: 'search',
-                mbean: '*:type=security,area=jmx,*'
-            }, onSuccess(function (response) {
-                var mbeans = response.value;
-                var chosen = "";
-                if (mbeans.length === 0) {
-                    RBAC.log.info("Didn't discover any JMXSecurity mbeans, client-side role based access control is disabled");
-                    return;
-                } else if (mbeans.length === 1) {
-                    chosen = mbeans.first();
-                } else if (mbeans.length > 1) {
-                    var picked = false;
-                    mbeans.forEach(function (mbean) {
-                        if (picked) {
-                            return;
-                        }
-                        if (mbean.has("HawtioDummy")) {
-                            return;
-                        }
-                        if (!mbean.has("rank=")) {
-                            chosen = mbean;
-                            picked = true;
-                        }
-                    });
-                }
-                RBAC.log.info("Using mbean ", chosen, " for client-side role based access control");
-                RBAC.rbacTasks.initialize(chosen);
-            }));
-        });
-
-        return RBAC.rbacTasks;
-    });
-
-    RBAC._module.factory('rbacACLMBean', function (rbacTasks) {
-        return rbacTasks.getACLMBean();
-    });
-
-    RBAC._module.run(function (jolokia, rbacTasks, preLogoutTasks, workspace, $rootScope) {
-        preLogoutTasks.addTask("resetRBAC", function () {
-            RBAC.log.debug("Resetting RBAC tasks");
-            rbacTasks.reset();
-        });
-
-        rbacTasks.addTask("init", function () {
-            RBAC.log.info("Initializing role based access support using mbean: ", rbacTasks.getACLMBean());
-        });
-
-        // add info to the JMX tree if we have access to invoke on mbeans
-        // or not
-        rbacTasks.addTask("JMXTreePostProcess", function () {
-            workspace.addTreePostProcessor(function (tree) {
-                var mbeans = {};
-                RBAC.flattenMBeanTree(mbeans, tree);
-                var requests = [];
-                angular.forEach(mbeans, function (value, key) {
-                    if (!('canInvoke' in value)) {
-                        requests.push({
-                            type: 'exec',
-                            mbean: rbacTasks.getACLMBean(),
-                            operation: 'canInvoke(java.lang.String)',
-                            arguments: [key]
-                        });
-                    }
-                });
-                var numResponses = 0;
-                var maybeRedraw = function () {
-                    numResponses = numResponses + 1;
-                    if (numResponses >= requests.length) {
-                        workspace.redrawTree();
-                        Core.$apply($rootScope);
-                    }
-                };
-                jolokia.request(requests, onSuccess(function (response) {
-                    var mbean = response.request.arguments[0];
-                    if (mbean) {
-                        mbeans[mbean]['canInvoke'] = response.value;
-                        var toAdd = "cant-invoke";
-                        if (response.value) {
-                            toAdd = "can-invoke";
-                        }
-                        mbeans[mbean]['addClass'] = RBAC.stripClasses(mbeans[mbean]['addClass']);
-                        mbeans[mbean]['addClass'] = RBAC.addClass(mbeans[mbean]['addClass'], toAdd);
-                        maybeRedraw();
-                    }
-                }, {
-                    error: function (response) {
-                        // silently ignore, but still track if we need to redraw
-                        maybeRedraw();
-                    }
-                }));
-            });
-        });
-    });
-})(RBAC || (RBAC = {}));
-
-hawtioPluginLoader.addModule(RBAC.pluginName);
-/**
-* @module RBAC
 */
 var RBAC;
 (function (RBAC) {
@@ -31520,6 +31500,118 @@ var RBAC;
 })(RBAC || (RBAC = {}));
 /**
 * @module RBAC
+* @main RBAC
+*/
+/// <reference path="./rbacHelpers.ts"/>
+var RBAC;
+(function (RBAC) {
+    RBAC.pluginName = "hawtioRbac";
+    RBAC.log = Logger.get("RBAC");
+    RBAC._module = angular.module(RBAC.pluginName, ["hawtioCore"]);
+
+    RBAC._module.factory('rbacTasks', [
+        "postLoginTasks", "jolokia", function (postLoginTasks, jolokia) {
+            postLoginTasks.addTask("FetchJMXSecurityMBeans", function () {
+                jolokia.request({
+                    type: 'search',
+                    mbean: '*:type=security,area=jmx,*'
+                }, onSuccess(function (response) {
+                    var mbeans = response.value;
+                    var chosen = "";
+                    if (mbeans.length === 0) {
+                        RBAC.log.info("Didn't discover any JMXSecurity mbeans, client-side role based access control is disabled");
+                        return;
+                    } else if (mbeans.length === 1) {
+                        chosen = mbeans.first();
+                    } else if (mbeans.length > 1) {
+                        var picked = false;
+                        mbeans.forEach(function (mbean) {
+                            if (picked) {
+                                return;
+                            }
+                            if (mbean.has("HawtioDummy")) {
+                                return;
+                            }
+                            if (!mbean.has("rank=")) {
+                                chosen = mbean;
+                                picked = true;
+                            }
+                        });
+                    }
+                    RBAC.log.info("Using mbean ", chosen, " for client-side role based access control");
+                    RBAC.rbacTasks.initialize(chosen);
+                }));
+            });
+
+            return RBAC.rbacTasks;
+        }]);
+
+    RBAC._module.factory('rbacACLMBean', [
+        "rbacTasks", function (rbacTasks) {
+            return rbacTasks.getACLMBean();
+        }]);
+
+    RBAC._module.run([
+        "jolokia", "rbacTasks", "preLogoutTasks", "workspace", "$rootScope", function (jolokia, rbacTasks, preLogoutTasks, workspace, $rootScope) {
+            preLogoutTasks.addTask("resetRBAC", function () {
+                RBAC.log.debug("Resetting RBAC tasks");
+                rbacTasks.reset();
+            });
+
+            rbacTasks.addTask("init", function () {
+                RBAC.log.info("Initializing role based access support using mbean: ", rbacTasks.getACLMBean());
+            });
+
+            // add info to the JMX tree if we have access to invoke on mbeans
+            // or not
+            rbacTasks.addTask("JMXTreePostProcess", function () {
+                workspace.addTreePostProcessor(function (tree) {
+                    var mbeans = {};
+                    RBAC.flattenMBeanTree(mbeans, tree);
+                    var requests = [];
+                    angular.forEach(mbeans, function (value, key) {
+                        if (!('canInvoke' in value)) {
+                            requests.push({
+                                type: 'exec',
+                                mbean: rbacTasks.getACLMBean(),
+                                operation: 'canInvoke(java.lang.String)',
+                                arguments: [key]
+                            });
+                        }
+                    });
+                    var numResponses = 0;
+                    var maybeRedraw = function () {
+                        numResponses = numResponses + 1;
+                        if (numResponses >= requests.length) {
+                            workspace.redrawTree();
+                            Core.$apply($rootScope);
+                        }
+                    };
+                    jolokia.request(requests, onSuccess(function (response) {
+                        var mbean = response.request.arguments[0];
+                        if (mbean) {
+                            mbeans[mbean]['canInvoke'] = response.value;
+                            var toAdd = "cant-invoke";
+                            if (response.value) {
+                                toAdd = "can-invoke";
+                            }
+                            mbeans[mbean]['addClass'] = RBAC.stripClasses(mbeans[mbean]['addClass']);
+                            mbeans[mbean]['addClass'] = RBAC.addClass(mbeans[mbean]['addClass'], toAdd);
+                            maybeRedraw();
+                        }
+                    }, {
+                        error: function (response) {
+                            // silently ignore, but still track if we need to redraw
+                            maybeRedraw();
+                        }
+                    }));
+                });
+            });
+        }]);
+    hawtioPluginLoader.addModule(RBAC.pluginName);
+})(RBAC || (RBAC = {}));
+/**
+* @module RBAC
 */
 /// <reference path="../../core/js/tasks.ts"/>
 var RBAC;
@@ -31544,308 +31636,6 @@ var RBAC;
 
     RBAC.rbacTasks = new RBAC.RBACTasksImpl();
 })(RBAC || (RBAC = {}));
-/**
-* @module Source
-*/
-var Source;
-(function (Source) {
-    function IndexController($scope, $location, $routeParams, workspace, jolokia) {
-        $scope.pageId = Wiki.pageId($routeParams, $location);
-        $scope.mavenCoords = $routeParams["mavenCoords"];
-        var fileName = $scope.pageId;
-        if (fileName === '/') {
-            fileName = undefined;
-        }
-
-        $scope.loadingMessage = "Loading source code from artifacts <b>" + $scope.mavenCoords + "</b>";
-
-        createBreadcrumbs();
-
-        $scope.setFileName = function (breadcrumb) {
-            fileName = Core.trimLeading(breadcrumb.fileName, "/");
-            fileName = Core.trimLeading(fileName, "/");
-            console.log("selected fileName '" + fileName + "'");
-            createBreadcrumbs();
-            filterFileNames();
-        };
-
-        $scope.$watch('workspace.tree', function (newValue, oldValue) {
-            if (!$scope.git && Git.getGitMBean(workspace)) {
-                // lets do this asynchronously to avoid Error: $digest already in progress
-                //console.log("Reloading the view as we now seem to have a git mbean!");
-                setTimeout(maybeUpdateView, 50);
-            }
-        });
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(maybeUpdateView, 50);
-        });
-
-        function filterFileNames() {
-            if (fileName) {
-                $scope.sourceFiles = $scope.allSourceFiles.filter(function (n) {
-                    return n && n.startsWith(fileName);
-                }).map(function (n) {
-                    return n.substring(fileName.length + 1);
-                }).filter(function (n) {
-                    return n;
-                });
-            } else {
-                $scope.sourceFiles = $scope.allSourceFiles;
-            }
-        }
-
-        $scope.sourceLinks = function (aFile) {
-            var name = aFile;
-            var paths = null;
-            var idx = aFile.lastIndexOf('/');
-            if (idx > 0) {
-                name = aFile.substring(idx + 1);
-                paths = aFile.substring(0, idx);
-            }
-            var answer = "";
-            var fullName = fileName || "";
-            if (paths) {
-                angular.forEach(paths.split("/"), function (path) {
-                    if (fullName) {
-                        fullName += "/";
-                    }
-                    fullName += path;
-                    answer += "<a href='#/source/index/" + $scope.mavenCoords + "/" + fullName + "'>" + path + "</a>/";
-                });
-            }
-            answer += "<a href='#/source/view/" + $scope.mavenCoords + "/" + fullName + "/" + name + "'>" + name + "</a>";
-            return answer;
-        };
-
-        function createBreadcrumbs() {
-            $scope.breadcrumbs = Source.createBreadcrumbLinks($scope.mavenCoords, fileName);
-            angular.forEach($scope.breadcrumbs, function (breadcrumb) {
-                breadcrumb.active = false;
-            });
-            $scope.breadcrumbs.last().active = true;
-        }
-
-        function viewContents(response) {
-            if (response) {
-                $scope.allSourceFiles = response.split("\n").map(function (n) {
-                    return n.trim();
-                }).filter(function (n) {
-                    return n;
-                });
-            } else {
-                $scope.allSourceFiles = [];
-            }
-            filterFileNames();
-            $scope.loadingMessage = null;
-            Core.$apply($scope);
-        }
-
-        function updateView() {
-            if (!$scope.mavenCoords) {
-                return;
-            }
-            var mbean = Source.getInsightMBean(workspace);
-            Source.log.debug("In update view, mbean: ", mbean);
-            if (mbean) {
-                jolokia.execute(mbean, "getSource", $scope.mavenCoords, null, "/", {
-                    success: viewContents,
-                    error: function (response) {
-                        Source.log.error("Failed to download the source code for the maven artifact: ", $scope.mavenCoords);
-                        Source.log.info("Stack trace: ", response.stacktrace);
-                        $scope.loadingMessage = "Could not download index, please see console for details";
-                        Core.$apply($scope);
-                    }
-                });
-            }
-        }
-
-        var maybeUpdateView = Core.throttled(updateView, 1000);
-        setTimeout(maybeUpdateView, 50);
-    }
-    Source.IndexController = IndexController;
-})(Source || (Source = {}));
-/**
-* @module Source
-* @main Source
-*/
-var Source;
-(function (Source) {
-    var pluginName = 'source';
-    angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'wiki']).config(function ($routeProvider) {
-        $routeProvider.when('/source/index/:mavenCoords', { templateUrl: 'app/source/html/index.html' }).when('/source/index/:mavenCoords/*page', { templateUrl: 'app/source/html/index.html' }).when('/source/view/:mavenCoords/class/:className/*page', { templateUrl: 'app/source/html/source.html' }).when('/source/view/:mavenCoords/*page', { templateUrl: 'app/source/html/source.html' }).when('/source/javadoc/:mavenCoords/*page', { templateUrl: 'app/source/html/javadoc.html' });
-    }).run(function ($location, workspace, viewRegistry, jolokia, localStorage, layoutFull, helpRegistry) {
-        viewRegistry['source'] = layoutFull;
-        helpRegistry.addUserDoc('source', 'app/source/doc/help.md');
-    });
-
-    hawtioPluginLoader.addModule(pluginName);
-})(Source || (Source = {}));
-/**
-* @module Source
-*/
-var Source;
-(function (Source) {
-    function JavaDocController($scope, $location, $routeParams, workspace, fileExtensionTypeRegistry, jolokia) {
-        $scope.pageId = Wiki.pageId($routeParams, $location);
-        var mavenCoords = $routeParams["mavenCoords"];
-        var fileName = $scope.pageId;
-
-        $scope.loadingMessage = "Loading javadoc code for file <b>" + fileName + "</b> from artifacts <b>" + mavenCoords + "</b>";
-
-        $scope.breadcrumbs = [];
-
-        // TODO load breadcrumbs
-        // $scope.breadcrumbs.push({href: "#" + loc, name: name});
-        $scope.$watch('workspace.tree', function () {
-            if (!$scope.git && Git.getGitMBean(workspace)) {
-                // lets do this asynchronously to avoid Error: $digest already in progress
-                //console.log("Reloading the view as we now seem to have a git mbean!");
-                setTimeout(updateView, 50);
-            }
-        });
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateView, 50);
-        });
-
-        function viewContents(response) {
-            $scope.source = response;
-            $scope.loadingMessage = null;
-            if (!response) {
-                var time = new Date().getTime();
-                if (!$scope.lastErrorTime || time - $scope.lastErrorTime > 3000) {
-                    $scope.lastErrorTime = time;
-                    notification("error", "Could not download the source code for the maven artifacts: " + mavenCoords);
-                }
-            }
-            Core.$apply($scope);
-        }
-
-        function updateView() {
-            var mbean = Source.getInsightMBean(workspace);
-            if (mbean) {
-                jolokia.execute(mbean, "getJavaDoc", mavenCoords, fileName, onSuccess(viewContents));
-            }
-        }
-    }
-    Source.JavaDocController = JavaDocController;
-})(Source || (Source = {}));
-/**
-* @module Source
-*/
-var Source;
-(function (Source) {
-    function SourceController($scope, $location, $routeParams, workspace, fileExtensionTypeRegistry, jolokia) {
-        $scope.pageId = Wiki.pageId($routeParams, $location);
-        $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
-        var lineNumber = $location.search()["line"] || 1;
-        var mavenCoords = $routeParams["mavenCoords"];
-        var className = $routeParams["className"] || "";
-        var fileName = $scope.pageId || "/";
-        var classNamePath = className.replace(/\./g, '/');
-
-        $scope.loadingMessage = "Loading source code for class <b>" + className + "</b> from artifacts <b>" + mavenCoords + "</b>";
-
-        //console.log("Source format is " + $scope.format + " line " + lineNumber + " className " + className + " file " + fileName);
-        $scope.breadcrumbs = [];
-
-        var idx = fileName.lastIndexOf('/');
-        var path = "/";
-        var name = fileName;
-        if (idx > 0) {
-            path = fileName.substring(0, idx);
-            name = fileName.substring(idx + 1);
-        } else if (className && className.indexOf('.') > 0) {
-            path = classNamePath;
-            idx = path.lastIndexOf('/');
-            if (idx > 0) {
-                name = path.substring(idx + 1);
-                path = path.substring(0, idx);
-            }
-        }
-        $scope.breadcrumbs = Source.createBreadcrumbLinks(mavenCoords, path);
-        $scope.breadcrumbs.push({ href: $location.url(), name: name, active: true });
-
-        $scope.javaDocLink = function () {
-            var path = classNamePath;
-            if (!path && fileName && fileName.endsWith(".java")) {
-                path = fileName.substring(0, fileName.length - 5);
-            }
-            if (path) {
-                return "javadoc/" + mavenCoords + "/" + path + ".html";
-            }
-            return null;
-        };
-
-        function updateLineSelection() {
-            var codeMirror = $scope.codeMirror;
-            if (codeMirror && lineNumber) {
-                var line = lineNumber - 1;
-                var lineText = codeMirror.getLine(line);
-                var endChar = (lineText) ? lineText.length : 1000;
-                var start = { line: line, ch: 0 };
-                var end = { line: line, ch: endChar };
-                codeMirror.scrollIntoView(start);
-                codeMirror.setCursor(start);
-                codeMirror.setSelection(start, end);
-                codeMirror.refresh();
-                codeMirror.focus();
-            }
-        }
-
-        $scope.$watch('workspace.tree', function (oldValue, newValue) {
-            if (!$scope.git && Git.getGitMBean(workspace)) {
-                // lets do this asynchronously to avoid Error: $digest already in progress
-                //console.log("Reloading the view as we now seem to have a git mbean!");
-                setTimeout(maybeUpdateView, 50);
-            }
-        });
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(maybeUpdateView, 50);
-        });
-
-        function viewContents(response) {
-            if (response) {
-                Source.log.debug("Downloaded file for the maven artifact: " + mavenCoords);
-                $scope.source = response;
-                $scope.loadingMessage = null;
-            } else {
-                // we could not download the source code
-                $scope.source = null;
-                $scope.loadingMessage = "Cannot download file, please see logging console for details.";
-                Source.log.error("Failed to download the source code for the Maven artifact: ", mavenCoords);
-            }
-            Core.$apply($scope);
-
-            // lets update the line selection asynchronously to check we've properly loaded by now
-            setTimeout(updateLineSelection, 100);
-        }
-
-        function updateView() {
-            var mbean = Source.getInsightMBean(workspace);
-            if (mbean) {
-                jolokia.execute(mbean, "getSource", mavenCoords, className, fileName, {
-                    success: viewContents,
-                    error: function (response) {
-                        Source.log.error("Failed to download the source code for the Maven artifact: ", mavenCoords);
-                        Source.log.info("Stack trace: ", response.stacktrace);
-                        $scope.loadingMessage = "Cannot not download file, please see logging console for details.";
-                        Core.$apply($scope);
-                    }
-                });
-            }
-        }
-
-        var maybeUpdateView = Core.throttled(updateView, 1000);
-        setTimeout(maybeUpdateView, 50);
-    }
-    Source.SourceController = SourceController;
-})(Source || (Source = {}));
 /**
 * @module Source
 */
@@ -31891,6 +31681,318 @@ var Source;
         return answer;
     }
     Source.createBreadcrumbLinks = createBreadcrumbLinks;
+})(Source || (Source = {}));
+/**
+* @module Source
+* @main Source
+*/
+/// <reference path="./sourceHelpers.ts"/>
+var Source;
+(function (Source) {
+    var pluginName = 'source';
+    Source._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'wiki']);
+
+    Source._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/source/index/:mavenCoords', { templateUrl: 'app/source/html/index.html' }).when('/source/index/:mavenCoords/*page', { templateUrl: 'app/source/html/index.html' }).when('/source/view/:mavenCoords/class/:className/*page', { templateUrl: 'app/source/html/source.html' }).when('/source/view/:mavenCoords/*page', { templateUrl: 'app/source/html/source.html' }).when('/source/javadoc/:mavenCoords/*page', { templateUrl: 'app/source/html/javadoc.html' });
+        }]);
+
+    Source._module.run([
+        "$location", "workspace", "viewRegistry", "jolokia", "localStorage", "layoutFull", "helpRegistry", function ($location, workspace, viewRegistry, jolokia, localStorage, layoutFull, helpRegistry) {
+            viewRegistry['source'] = layoutFull;
+            helpRegistry.addUserDoc('source', 'app/source/doc/help.md');
+        }]);
+
+    hawtioPluginLoader.addModule(pluginName);
+})(Source || (Source = {}));
+/**
+* @module Source
+*/
+/// <reference path="./sourcePlugin.ts"/>
+var Source;
+(function (Source) {
+    Source._module.controller("Source.IndexController", [
+        "$scope", "$location", "$routeParams", "workspace", "jolokia", function ($scope, $location, $routeParams, workspace, jolokia) {
+            $scope.pageId = Wiki.pageId($routeParams, $location);
+            $scope.mavenCoords = $routeParams["mavenCoords"];
+            var fileName = $scope.pageId;
+            if (fileName === '/') {
+                fileName = undefined;
+            }
+
+            $scope.loadingMessage = "Loading source code from artifacts <b>" + $scope.mavenCoords + "</b>";
+
+            createBreadcrumbs();
+
+            $scope.setFileName = function (breadcrumb) {
+                fileName = Core.trimLeading(breadcrumb.fileName, "/");
+                fileName = Core.trimLeading(fileName, "/");
+                console.log("selected fileName '" + fileName + "'");
+                createBreadcrumbs();
+                filterFileNames();
+            };
+
+            $scope.$watch('workspace.tree', function (newValue, oldValue) {
+                if (!$scope.git && Git.getGitMBean(workspace)) {
+                    // lets do this asynchronously to avoid Error: $digest already in progress
+                    //console.log("Reloading the view as we now seem to have a git mbean!");
+                    setTimeout(maybeUpdateView, 50);
+                }
+            });
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(maybeUpdateView, 50);
+            });
+
+            function filterFileNames() {
+                if (fileName) {
+                    $scope.sourceFiles = $scope.allSourceFiles.filter(function (n) {
+                        return n && n.startsWith(fileName);
+                    }).map(function (n) {
+                        return n.substring(fileName.length + 1);
+                    }).filter(function (n) {
+                        return n;
+                    });
+                } else {
+                    $scope.sourceFiles = $scope.allSourceFiles;
+                }
+            }
+
+            $scope.sourceLinks = function (aFile) {
+                var name = aFile;
+                var paths = null;
+                var idx = aFile.lastIndexOf('/');
+                if (idx > 0) {
+                    name = aFile.substring(idx + 1);
+                    paths = aFile.substring(0, idx);
+                }
+                var answer = "";
+                var fullName = fileName || "";
+                if (paths) {
+                    angular.forEach(paths.split("/"), function (path) {
+                        if (fullName) {
+                            fullName += "/";
+                        }
+                        fullName += path;
+                        answer += "<a href='#/source/index/" + $scope.mavenCoords + "/" + fullName + "'>" + path + "</a>/";
+                    });
+                }
+                answer += "<a href='#/source/view/" + $scope.mavenCoords + "/" + fullName + "/" + name + "'>" + name + "</a>";
+                return answer;
+            };
+
+            function createBreadcrumbs() {
+                $scope.breadcrumbs = Source.createBreadcrumbLinks($scope.mavenCoords, fileName);
+                angular.forEach($scope.breadcrumbs, function (breadcrumb) {
+                    breadcrumb.active = false;
+                });
+                $scope.breadcrumbs.last().active = true;
+            }
+
+            function viewContents(response) {
+                if (response) {
+                    $scope.allSourceFiles = response.split("\n").map(function (n) {
+                        return n.trim();
+                    }).filter(function (n) {
+                        return n;
+                    });
+                } else {
+                    $scope.allSourceFiles = [];
+                }
+                filterFileNames();
+                $scope.loadingMessage = null;
+                Core.$apply($scope);
+            }
+
+            function updateView() {
+                if (!$scope.mavenCoords) {
+                    return;
+                }
+                var mbean = Source.getInsightMBean(workspace);
+                Source.log.debug("In update view, mbean: ", mbean);
+                if (mbean) {
+                    jolokia.execute(mbean, "getSource", $scope.mavenCoords, null, "/", {
+                        success: viewContents,
+                        error: function (response) {
+                            Source.log.error("Failed to download the source code for the maven artifact: ", $scope.mavenCoords);
+                            Source.log.info("Stack trace: ", response.stacktrace);
+                            $scope.loadingMessage = "Could not download index, please see console for details";
+                            Core.$apply($scope);
+                        }
+                    });
+                }
+            }
+
+            var maybeUpdateView = Core.throttled(updateView, 1000);
+            setTimeout(maybeUpdateView, 50);
+        }]);
+})(Source || (Source = {}));
+/**
+* @module Source
+*/
+/// <reference path="./sourcePlugin.ts"/>
+var Source;
+(function (Source) {
+    Source._module.controller("Source.JavaDocController", [
+        "$scope", "$location", "$routeParams", "workspace", "fileExtensionTypeRegistry", function ($scope, $location, $routeParams, workspace, fileExtensionTypeRegistry, jolokia) {
+            $scope.pageId = Wiki.pageId($routeParams, $location);
+            var mavenCoords = $routeParams["mavenCoords"];
+            var fileName = $scope.pageId;
+
+            $scope.loadingMessage = "Loading javadoc code for file <b>" + fileName + "</b> from artifacts <b>" + mavenCoords + "</b>";
+
+            $scope.breadcrumbs = [];
+
+            // TODO load breadcrumbs
+            // $scope.breadcrumbs.push({href: "#" + loc, name: name});
+            $scope.$watch('workspace.tree', function () {
+                if (!$scope.git && Git.getGitMBean(workspace)) {
+                    // lets do this asynchronously to avoid Error: $digest already in progress
+                    //console.log("Reloading the view as we now seem to have a git mbean!");
+                    setTimeout(updateView, 50);
+                }
+            });
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateView, 50);
+            });
+
+            function viewContents(response) {
+                $scope.source = response;
+                $scope.loadingMessage = null;
+                if (!response) {
+                    var time = new Date().getTime();
+                    if (!$scope.lastErrorTime || time - $scope.lastErrorTime > 3000) {
+                        $scope.lastErrorTime = time;
+                        notification("error", "Could not download the source code for the maven artifacts: " + mavenCoords);
+                    }
+                }
+                Core.$apply($scope);
+            }
+
+            function updateView() {
+                var mbean = Source.getInsightMBean(workspace);
+                if (mbean) {
+                    jolokia.execute(mbean, "getJavaDoc", mavenCoords, fileName, onSuccess(viewContents));
+                }
+            }
+        }]);
+})(Source || (Source = {}));
+/**
+* @module Source
+*/
+/// <reference path="./sourcePlugin.ts"/>
+var Source;
+(function (Source) {
+    Source._module.controller("Source.SourceController", [
+        "$scope", "$location", "$routeParams", "workspace", "fileExtensionTypeRegistry", function ($scope, $location, $routeParams, workspace, fileExtensionTypeRegistry, jolokia) {
+            $scope.pageId = Wiki.pageId($routeParams, $location);
+            $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
+            var lineNumber = $location.search()["line"] || 1;
+            var mavenCoords = $routeParams["mavenCoords"];
+            var className = $routeParams["className"] || "";
+            var fileName = $scope.pageId || "/";
+            var classNamePath = className.replace(/\./g, '/');
+
+            $scope.loadingMessage = "Loading source code for class <b>" + className + "</b> from artifacts <b>" + mavenCoords + "</b>";
+
+            //console.log("Source format is " + $scope.format + " line " + lineNumber + " className " + className + " file " + fileName);
+            $scope.breadcrumbs = [];
+
+            var idx = fileName.lastIndexOf('/');
+            var path = "/";
+            var name = fileName;
+            if (idx > 0) {
+                path = fileName.substring(0, idx);
+                name = fileName.substring(idx + 1);
+            } else if (className && className.indexOf('.') > 0) {
+                path = classNamePath;
+                idx = path.lastIndexOf('/');
+                if (idx > 0) {
+                    name = path.substring(idx + 1);
+                    path = path.substring(0, idx);
+                }
+            }
+            $scope.breadcrumbs = Source.createBreadcrumbLinks(mavenCoords, path);
+            $scope.breadcrumbs.push({ href: $location.url(), name: name, active: true });
+
+            $scope.javaDocLink = function () {
+                var path = classNamePath;
+                if (!path && fileName && fileName.endsWith(".java")) {
+                    path = fileName.substring(0, fileName.length - 5);
+                }
+                if (path) {
+                    return "javadoc/" + mavenCoords + "/" + path + ".html";
+                }
+                return null;
+            };
+
+            function updateLineSelection() {
+                var codeMirror = $scope.codeMirror;
+                if (codeMirror && lineNumber) {
+                    var line = lineNumber - 1;
+                    var lineText = codeMirror.getLine(line);
+                    var endChar = (lineText) ? lineText.length : 1000;
+                    var start = { line: line, ch: 0 };
+                    var end = { line: line, ch: endChar };
+                    codeMirror.scrollIntoView(start);
+                    codeMirror.setCursor(start);
+                    codeMirror.setSelection(start, end);
+                    codeMirror.refresh();
+                    codeMirror.focus();
+                }
+            }
+
+            $scope.$watch('workspace.tree', function (oldValue, newValue) {
+                if (!$scope.git && Git.getGitMBean(workspace)) {
+                    // lets do this asynchronously to avoid Error: $digest already in progress
+                    //console.log("Reloading the view as we now seem to have a git mbean!");
+                    setTimeout(maybeUpdateView, 50);
+                }
+            });
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(maybeUpdateView, 50);
+            });
+
+            function viewContents(response) {
+                if (response) {
+                    Source.log.debug("Downloaded file for the maven artifact: " + mavenCoords);
+                    $scope.source = response;
+                    $scope.loadingMessage = null;
+                } else {
+                    // we could not download the source code
+                    $scope.source = null;
+                    $scope.loadingMessage = "Cannot download file, please see logging console for details.";
+                    Source.log.error("Failed to download the source code for the Maven artifact: ", mavenCoords);
+                }
+                Core.$apply($scope);
+
+                // lets update the line selection asynchronously to check we've properly loaded by now
+                setTimeout(updateLineSelection, 100);
+            }
+
+            function updateView() {
+                var mbean = Source.getInsightMBean(workspace);
+                if (mbean) {
+                    jolokia.execute(mbean, "getSource", mavenCoords, className, fileName, {
+                        success: viewContents,
+                        error: function (response) {
+                            Source.log.error("Failed to download the source code for the Maven artifact: ", mavenCoords);
+                            Source.log.info("Stack trace: ", response.stacktrace);
+                            $scope.loadingMessage = "Cannot not download file, please see logging console for details.";
+                            Core.$apply($scope);
+                        }
+                    });
+                }
+            }
+
+            var maybeUpdateView = Core.throttled(updateView, 1000);
+            setTimeout(maybeUpdateView, 50);
+        }]);
 })(Source || (Source = {}));
 /**
 * @module Camel
@@ -37485,433 +37587,6 @@ var Camel;
 */
 var Log;
 (function (Log) {
-    var log = Logger.get("Log");
-
-    function LogController($scope, $routeParams, $location, localStorage, workspace, jolokia, $window, $document, $templateCache) {
-        $scope.sortAsc = true;
-        var value = localStorage["logSortAsc"];
-        if (angular.isString(value)) {
-            $scope.sortAsc = "true" === value;
-        }
-        $scope.autoScroll = true;
-        value = localStorage["logAutoScroll"];
-        if (angular.isString(value)) {
-            $scope.autoScroll = "true" === value;
-        }
-
-        value = localStorage["logBatchSize"];
-        $scope.logBatchSize = angular.isNumber(value) ? value : 20;
-
-        $scope.logs = [];
-        $scope.showRowDetails = false;
-        $scope.showRaw = {
-            expanded: false
-        };
-
-        var logQueryMBean = Log.findLogQueryMBean(workspace);
-
-        $scope.init = function () {
-            $scope.searchText = $routeParams['s'];
-
-            if (!angular.isDefined($scope.searchText)) {
-                $scope.searchText = '';
-            }
-
-            $scope.filter = {
-                // The default logging level to show, empty string => show all
-                logLevelQuery: $routeParams['l'],
-                // The default value of the exact match logging filter
-                logLevelExactMatch: Core.parseBooleanValue($routeParams['e']),
-                // The default value of the search only in message field filter
-                messageOnly: Core.parseBooleanValue($routeParams['o'])
-            };
-
-            if (!angular.isDefined($scope.filter.logLevelQuery)) {
-                $scope.filter.logLevelQuery = '';
-            }
-            if (!angular.isDefined($scope.filter.logLevelExactMatch)) {
-                $scope.filter.logLevelExactMatch = false;
-            }
-            if (!angular.isDefined($scope.filter.messageOnly)) {
-                $scope.filter.messageOnly = false;
-            }
-        };
-
-        $scope.$on('$routeUpdate', $scope.init);
-
-        $scope.$watch('searchText', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                $location.search('s', newValue);
-            }
-        });
-
-        $scope.$watch('filter.logLevelQuery', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                $location.search('l', newValue);
-            }
-        });
-
-        $scope.$watch('filter.logLevelExactMatch', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                $location.search('e', newValue);
-            }
-        });
-
-        $scope.$watch('filter.messageOnly', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                $location.search('o', newValue);
-            }
-        });
-
-        $scope.init();
-
-        $scope.toTime = 0;
-        $scope.logFilter = {
-            afterTimestamp: $scope.toTime,
-            count: $scope.logBatchSize
-        };
-        $scope.logFilterJson = JSON.stringify($scope.logFilter);
-        $scope.queryJSON = { type: "EXEC", mbean: logQueryMBean, operation: "jsonQueryLogResults", arguments: [$scope.logFilterJson], ignoreErrors: true };
-
-        $scope.logLevels = ["TRACE", "DEBUG", "INFO", "WARN", "ERROR"];
-        $scope.logLevelMap = {};
-        $scope.skipFields = ['seq'];
-
-        angular.forEach($scope.logLevels, function (name, idx) {
-            $scope.logLevelMap[name] = idx;
-            $scope.logLevelMap[name.toLowerCase()] = idx;
-        });
-
-        $scope.selectedClass = function ($index) {
-            if ($index === $scope.selectedRowIndex) {
-                return 'selected';
-            }
-            return '';
-        };
-
-        $scope.$watch('selectedRowIndex', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                if (newValue < 0 || newValue > $scope.logs.length) {
-                    $scope.selectedRow = null;
-                    $scope.showRowDetails = false;
-                    return;
-                }
-                Log.log.debug("New index: ", newValue);
-                $scope.selectedRow = $scope.logs[newValue];
-                if (!$scope.showRowDetails) {
-                    $scope.showRowDetails = true;
-                }
-            }
-        });
-
-        $scope.hasOSGiProps = function (row) {
-            if (!row) {
-                return false;
-            }
-            if (!('properties' in row)) {
-                return false;
-            }
-            var props = row.properties;
-            var answer = Object.extended(props).keys().any(function (key) {
-                return key.startsWith('bundle');
-            });
-            return answer;
-        };
-
-        $scope.selectRow = function ($index) {
-            // in case the user clicks a row, closes the slideout and clicks
-            // the row again
-            if ($scope.selectedRowIndex == $index) {
-                $scope.showRowDetails = true;
-                return;
-            }
-            $scope.selectedRowIndex = $index;
-        };
-
-        $scope.getSelectedRowJson = function () {
-            return angular.toJson($scope.selectedRow, true);
-        };
-
-        $scope.logClass = function (log) {
-            if (!log) {
-                return '';
-            }
-            return logLevelClass(log['level']);
-        };
-
-        $scope.logIcon = function (log) {
-            if (!log) {
-                return '';
-            }
-            var style = $scope.logClass(log);
-            if (style === "error") {
-                return "red icon-warning-sign";
-            }
-            if (style === "warning") {
-                return "orange icon-exclamation-sign";
-            }
-            if (style === "info") {
-                return "icon-info-sign";
-            }
-            return "icon-cog";
-        };
-
-        $scope.logSourceHref = Log.logSourceHref;
-
-        $scope.hasLogSourceHref = function (row) {
-            if (!row) {
-                return false;
-            }
-            return Log.hasLogSourceHref(row);
-        };
-
-        $scope.hasLogSourceLineHref = function (row) {
-            if (!row) {
-                return false;
-            }
-            return Log.hasLogSourceLineHref(row);
-        };
-
-        $scope.dateFormat = 'yyyy-MM-dd HH:mm:ss';
-
-        $scope.formatException = function (line) {
-            return Log.formatStackLine(line);
-        };
-
-        $scope.getSupport = function () {
-            if (!$scope.selectedRow) {
-                return;
-            }
-            var uri = "https://access.redhat.com/knowledge/solutions";
-            var text = $scope.selectedRow.message;
-            var logger = $scope.selectedRow.logger;
-            uri = uri + "?logger=" + logger + "&text=" + text;
-            window.location.href = uri;
-        };
-
-        $scope.addToDashboardLink = function () {
-            var href = "#/logs";
-            var routeParams = angular.toJson($routeParams);
-            var size = angular.toJson({
-                size_x: 8,
-                size_y: 1
-            });
-            var title = "Logs";
-            if ($scope.filter.logLevelQuery !== "") {
-                title = title + " LogLevel: " + $scope.filter.logLevelQuery;
-            }
-            if ($scope.filter.logLevelExactMatch) {
-                title = title + " Exact Match";
-            }
-            if ($scope.searchText !== "") {
-                title = title + " Filter: " + $scope.searchText;
-            }
-            if ($scope.filter.messageOnly) {
-                title = title + " Message Only";
-            }
-
-            return "#/dashboard/add?tab=dashboard" + "&href=" + encodeURIComponent(href) + "&routeParams=" + encodeURIComponent(routeParams) + "&title=" + encodeURIComponent(title) + "&size=" + encodeURIComponent(size);
-        };
-
-        $scope.isInDashboardClass = function () {
-            if (angular.isDefined($scope.inDashboard && $scope.inDashboard)) {
-                return "log-table-dashboard";
-            }
-            return "";
-        };
-
-        $scope.sortIcon = function () {
-            if ($scope.sortAsc) {
-                return "icon-arrow-down";
-            } else {
-                return "icon-arrow-up";
-            }
-        };
-
-        $scope.filterLogMessage = function (log) {
-            var messageOnly = $scope.filter.messageOnly;
-
-            if ($scope.filter.logLevelQuery !== "") {
-                var logLevelExactMatch = $scope.filter.logLevelExactMatch;
-                var logLevelQuery = $scope.filter.logLevelQuery;
-                var logLevelQueryOrdinal = (logLevelExactMatch) ? 0 : $scope.logLevelMap[logLevelQuery];
-
-                if (logLevelExactMatch) {
-                    if (log.level !== logLevelQuery) {
-                        return false;
-                    }
-                } else {
-                    var idx = $scope.logLevelMap[log.level];
-                    if (!(idx >= logLevelQueryOrdinal || idx < 0)) {
-                        return false;
-                    }
-                }
-            }
-
-            if ($scope.searchText.startsWith("l=")) {
-                return log.logger.has($scope.searchText.last($scope.searchText.length - 2));
-            }
-            if ($scope.searchText.startsWith("m=")) {
-                return log.message.has($scope.searchText.last($scope.searchText.length - 2));
-            }
-            if (messageOnly) {
-                return log.message.has($scope.searchText);
-            }
-            return log.logger.has($scope.searchText) || log.message.has($scope.searchText);
-        };
-
-        $scope.formatStackTrace = function (exception) {
-            if (!exception) {
-                return "";
-            }
-            var answer = '<ul class="unstyled">\n';
-            exception.forEach(function (line) {
-                answer = answer + '<li>' + $scope.formatException(line) + '</li>';
-            });
-            answer += '\n</ul>';
-            return answer;
-        };
-
-        var updateValues = function (response) {
-            var scrollToTopOrBottom = false;
-
-            if (!$scope.inDashboard) {
-                var window = $($window);
-
-                if ($scope.logs.length === 0) {
-                    // initial page load, let's scroll to the bottom
-                    scrollToTopOrBottom = true;
-                }
-
-                if ($scope.sortAsc) {
-                    var pos = window.scrollTop() + window.height();
-                    var threshold = Core.getDocHeight() - 100;
-                } else {
-                    var pos = window.scrollTop() + window.height();
-                    var threshold = 100;
-                }
-                if (pos > threshold) {
-                    // page is scrolled near the bottom
-                    scrollToTopOrBottom = true;
-                }
-            }
-
-            var logs = response.events;
-
-            //log.info("log returned " + (logs ? logs.length : 0) + " results for query: " + $scope.toTime  + " from json: " + $scope.logFilterJson);
-            var toTime = response.toTimestamp;
-            if (toTime && angular.isNumber(toTime)) {
-                if (toTime < 0) {
-                    // on JBoss we get odd values and never seem to get any log events!
-                    console.log("ignoring dodgy value of toTime: " + toTime);
-                } else {
-                    $scope.toTime = toTime;
-                    $scope.logFilter.afterTimestamp = $scope.toTime;
-                    $scope.logFilterJson = JSON.stringify($scope.logFilter);
-                    $scope.queryJSON.arguments = [$scope.logFilterJson];
-                    // log.info("log returned " + (logs ? logs.length : 0) + " results for query: " + $scope.toTime  + " from json: " + $scope.logFilterJson);
-                }
-            }
-            if (logs) {
-                var maxSize = Log.getLogCacheSize(localStorage);
-
-                //don't really need many logs in a widget...
-                if ($scope.inDashboard) {
-                    maxSize = 10;
-                }
-                var counter = 0;
-                logs.forEach(function (log) {
-                    if (log) {
-                        // TODO Why do we compare 'item.seq === log.message' ?
-                        if (!$scope.logs.any(function (key, item) {
-                            return item.message === log.message && item.seq === log.message && item.timestamp === log.timestamp;
-                        })) {
-                            counter += 1;
-
-                            // if there is a seq in the reply, then its the timestamp with milli seconds
-                            if (log.seq != null) {
-                                log['timestampMs'] = log.seq;
-                            }
-                            if ($scope.sortAsc) {
-                                $scope.logs.push(log);
-                            } else {
-                                $scope.logs.unshift(log);
-                            }
-                        }
-                    }
-                });
-                if (maxSize > 0) {
-                    var size = $scope.logs.length;
-                    if (size > maxSize) {
-                        // lets trim the log size
-                        var count = size - maxSize;
-                        var pos = 0;
-                        if (!$scope.sortAsc) {
-                            pos = size - count;
-                        }
-
-                        $scope.logs.splice(pos, count);
-
-                        if ($scope.showRowDetails) {
-                            if ($scope.sortAsc) {
-                                $scope.selectedRowIndex -= count;
-                            } else {
-                                $scope.selectedRowIndex += count;
-                            }
-                        }
-                    }
-                }
-                if (counter) {
-                    if ($scope.autoScroll && scrollToTopOrBottom) {
-                        setTimeout(function () {
-                            var pos = 0;
-                            if ($scope.sortAsc) {
-                                pos = $document.height() - window.height();
-                            }
-                            log.debug("Scrolling to position: " + pos);
-                            $document.scrollTop(pos);
-                        }, 20);
-                    }
-                    Core.$apply($scope);
-                }
-            }
-        };
-
-        // listen for updates adding the since
-        var asyncUpdateValues = function (response) {
-            var value = response.value;
-            if (value) {
-                updateValues(value);
-            } else {
-                notification("error", "Failed to get a response! " + JSON.stringify(response, null, 4));
-            }
-        };
-
-        var callbackOptions = onSuccess(asyncUpdateValues, {
-            error: function (response) {
-                asyncUpdateValues(response);
-            },
-            silent: true
-        });
-
-        if (logQueryMBean) {
-            var firstCallback = function (results) {
-                updateValues(results);
-
-                // now lets register to perform incremental updates
-                Core.register(jolokia, $scope, $scope.queryJSON, callbackOptions);
-            };
-
-            jolokia.execute(logQueryMBean, "getLogResults(int)", $scope.logBatchSize, onSuccess(firstCallback));
-        }
-    }
-    Log.LogController = LogController;
-})(Log || (Log = {}));
-/**
-* @module Log
-*/
-var Log;
-(function (Log) {
     Log.log = Logger.get("Logs");
 
     function logSourceHref(row) {
@@ -38072,98 +37747,536 @@ var Log;
     Log.getLogCacheSize = getLogCacheSize;
 })(Log || (Log = {}));
 /**
-* @module Logs
-*/
-var Logs;
-(function (Logs) {
-    function PreferencesController($scope, localStorage) {
-        Core.initPreferenceScope($scope, localStorage, {
-            'logCacheSize': {
-                'value': 1000,
-                'converter': parseInt
-            },
-            'logSortAsc': {
-                'value': true,
-                'converter': Core.parseBooleanValue
-            },
-            'logAutoScroll': {
-                'value': true,
-                'converter': Core.parseBooleanValue
-            }
-        });
-    }
-    Logs.PreferencesController = PreferencesController;
-    ;
-})(Logs || (Logs = {}));
-/**
 * @module Log
 * @main Log
 */
+/// <reference path="./logHelpers.ts"/>
 var Log;
 (function (Log) {
     var pluginName = 'log';
 
     var hasMBean = false;
 
-    angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']).config(function ($routeProvider) {
-        $routeProvider.when('/logs', { templateUrl: 'app/log/html/logs.html', reloadOnSearch: false }).when('/openlogs', { redirectTo: function () {
-                // use a redirect, as the log plugin may not be valid, if we connect to a JVM which does not have the log mbean
-                // in the JMX tree, and if that happens, we need to redirect to home, so another tab is selected
-                if (hasMBean) {
-                    return '/logs';
-                } else {
-                    return '/home';
-                }
-            }, reloadOnSearch: false });
-    }).run(function ($location, workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) {
-        hasMBean = Log.treeContainsLogQueryMBean(workspace);
+    Log._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']);
 
-        viewRegistry['log'] = layoutFull;
-        helpRegistry.addUserDoc('log', 'app/log/doc/help.md', function () {
-            return Log.treeContainsLogQueryMBean(workspace);
-        });
+    Log._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/logs', { templateUrl: 'app/log/html/logs.html', reloadOnSearch: false }).when('/openlogs', { redirectTo: function () {
+                    // use a redirect, as the log plugin may not be valid, if we connect to a JVM which does not have the log mbean
+                    // in the JMX tree, and if that happens, we need to redirect to home, so another tab is selected
+                    if (hasMBean) {
+                        return '/logs';
+                    } else {
+                        return '/home';
+                    }
+                }, reloadOnSearch: false });
+        }]);
 
-        preferencesRegistry.addTab("Server Logs", "app/log/html/preferences.html", function () {
-            return Log.treeContainsLogQueryMBean(workspace);
-        });
+    Log._module.run([
+        "$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry", function ($location, workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) {
+            hasMBean = Log.treeContainsLogQueryMBean(workspace);
 
-        workspace.topLevelTabs.push({
-            id: "logs",
-            content: "Logs",
-            title: "View and search the logs of this container",
-            isValid: function (workspace) {
+            viewRegistry['log'] = layoutFull;
+            helpRegistry.addUserDoc('log', 'app/log/doc/help.md', function () {
                 return Log.treeContainsLogQueryMBean(workspace);
-            },
-            href: function () {
-                return "#/logs";
-            }
-        });
+            });
 
-        workspace.subLevelTabs.push({
-            content: '<i class="icon-list-alt"></i> Log',
-            title: "View the logs in this process",
-            isValid: function (workspace) {
-                return Log.isSelectionLogQueryMBean(workspace);
-            },
-            href: function () {
-                return "#/logs";
-            }
-        });
-    }).filter('logDateFilter', function ($filter) {
-        var standardDateFilter = $filter('date');
-        return function (log) {
-            if (!log) {
-                return null;
-            }
-            if (log.timestampMs) {
-                return standardDateFilter(log.timestampMs, 'yyyy-MM-dd HH:mm:ss.sss');
-            } else {
-                return standardDateFilter(log.timestamp, 'yyyy-MM-dd HH:mm:ss');
-            }
-        };
-    });
+            preferencesRegistry.addTab("Server Logs", "app/log/html/preferences.html", function () {
+                return Log.treeContainsLogQueryMBean(workspace);
+            });
+
+            workspace.topLevelTabs.push({
+                id: "logs",
+                content: "Logs",
+                title: "View and search the logs of this container",
+                isValid: function (workspace) {
+                    return Log.treeContainsLogQueryMBean(workspace);
+                },
+                href: function () {
+                    return "#/logs";
+                }
+            });
+
+            workspace.subLevelTabs.push({
+                content: '<i class="icon-list-alt"></i> Log',
+                title: "View the logs in this process",
+                isValid: function (workspace) {
+                    return Log.isSelectionLogQueryMBean(workspace);
+                },
+                href: function () {
+                    return "#/logs";
+                }
+            });
+        }]);
+
+    Log._module.filter('logDateFilter', [
+        "$filter", function ($filter) {
+            var standardDateFilter = $filter('date');
+            return function (log) {
+                if (!log) {
+                    return null;
+                }
+                if (log.timestampMs) {
+                    return standardDateFilter(log.timestampMs, 'yyyy-MM-dd HH:mm:ss.sss');
+                } else {
+                    return standardDateFilter(log.timestamp, 'yyyy-MM-dd HH:mm:ss');
+                }
+            };
+        }]);
 
     hawtioPluginLoader.addModule(pluginName);
+})(Log || (Log = {}));
+/**
+* @module Log
+*/
+/// <reference path="./logPlugin.ts"/>
+var Log;
+(function (Log) {
+    var log = Logger.get("Log");
+
+    Log._module.controller("Log.LogController", [
+        "$scope", "$routeParams", "$location", "localStorage", "workspace", "jolokia", "$window", "$document", "$templateCache", function ($scope, $routeParams, $location, localStorage, workspace, jolokia, $window, $document, $templateCache) {
+            $scope.sortAsc = true;
+            var value = localStorage["logSortAsc"];
+            if (angular.isString(value)) {
+                $scope.sortAsc = "true" === value;
+            }
+            $scope.autoScroll = true;
+            value = localStorage["logAutoScroll"];
+            if (angular.isString(value)) {
+                $scope.autoScroll = "true" === value;
+            }
+
+            value = localStorage["logBatchSize"];
+            $scope.logBatchSize = angular.isNumber(value) ? value : 20;
+
+            $scope.logs = [];
+            $scope.showRowDetails = false;
+            $scope.showRaw = {
+                expanded: false
+            };
+
+            var logQueryMBean = Log.findLogQueryMBean(workspace);
+
+            $scope.init = function () {
+                $scope.searchText = $routeParams['s'];
+
+                if (!angular.isDefined($scope.searchText)) {
+                    $scope.searchText = '';
+                }
+
+                $scope.filter = {
+                    // The default logging level to show, empty string => show all
+                    logLevelQuery: $routeParams['l'],
+                    // The default value of the exact match logging filter
+                    logLevelExactMatch: Core.parseBooleanValue($routeParams['e']),
+                    // The default value of the search only in message field filter
+                    messageOnly: Core.parseBooleanValue($routeParams['o'])
+                };
+
+                if (!angular.isDefined($scope.filter.logLevelQuery)) {
+                    $scope.filter.logLevelQuery = '';
+                }
+                if (!angular.isDefined($scope.filter.logLevelExactMatch)) {
+                    $scope.filter.logLevelExactMatch = false;
+                }
+                if (!angular.isDefined($scope.filter.messageOnly)) {
+                    $scope.filter.messageOnly = false;
+                }
+            };
+
+            $scope.$on('$routeUpdate', $scope.init);
+
+            $scope.$watch('searchText', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    $location.search('s', newValue);
+                }
+            });
+
+            $scope.$watch('filter.logLevelQuery', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    $location.search('l', newValue);
+                }
+            });
+
+            $scope.$watch('filter.logLevelExactMatch', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    $location.search('e', newValue);
+                }
+            });
+
+            $scope.$watch('filter.messageOnly', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    $location.search('o', newValue);
+                }
+            });
+
+            $scope.init();
+
+            $scope.toTime = 0;
+            $scope.logFilter = {
+                afterTimestamp: $scope.toTime,
+                count: $scope.logBatchSize
+            };
+            $scope.logFilterJson = JSON.stringify($scope.logFilter);
+            $scope.queryJSON = { type: "EXEC", mbean: logQueryMBean, operation: "jsonQueryLogResults", arguments: [$scope.logFilterJson], ignoreErrors: true };
+
+            $scope.logLevels = ["TRACE", "DEBUG", "INFO", "WARN", "ERROR"];
+            $scope.logLevelMap = {};
+            $scope.skipFields = ['seq'];
+
+            angular.forEach($scope.logLevels, function (name, idx) {
+                $scope.logLevelMap[name] = idx;
+                $scope.logLevelMap[name.toLowerCase()] = idx;
+            });
+
+            $scope.selectedClass = function ($index) {
+                if ($index === $scope.selectedRowIndex) {
+                    return 'selected';
+                }
+                return '';
+            };
+
+            $scope.$watch('selectedRowIndex', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    if (newValue < 0 || newValue > $scope.logs.length) {
+                        $scope.selectedRow = null;
+                        $scope.showRowDetails = false;
+                        return;
+                    }
+                    Log.log.debug("New index: ", newValue);
+                    $scope.selectedRow = $scope.logs[newValue];
+                    if (!$scope.showRowDetails) {
+                        $scope.showRowDetails = true;
+                    }
+                }
+            });
+
+            $scope.hasOSGiProps = function (row) {
+                if (!row) {
+                    return false;
+                }
+                if (!('properties' in row)) {
+                    return false;
+                }
+                var props = row.properties;
+                var answer = Object.extended(props).keys().any(function (key) {
+                    return key.startsWith('bundle');
+                });
+                return answer;
+            };
+
+            $scope.selectRow = function ($index) {
+                // in case the user clicks a row, closes the slideout and clicks
+                // the row again
+                if ($scope.selectedRowIndex == $index) {
+                    $scope.showRowDetails = true;
+                    return;
+                }
+                $scope.selectedRowIndex = $index;
+            };
+
+            $scope.getSelectedRowJson = function () {
+                return angular.toJson($scope.selectedRow, true);
+            };
+
+            $scope.logClass = function (log) {
+                if (!log) {
+                    return '';
+                }
+                return logLevelClass(log['level']);
+            };
+
+            $scope.logIcon = function (log) {
+                if (!log) {
+                    return '';
+                }
+                var style = $scope.logClass(log);
+                if (style === "error") {
+                    return "red icon-warning-sign";
+                }
+                if (style === "warning") {
+                    return "orange icon-exclamation-sign";
+                }
+                if (style === "info") {
+                    return "icon-info-sign";
+                }
+                return "icon-cog";
+            };
+
+            $scope.logSourceHref = Log.logSourceHref;
+
+            $scope.hasLogSourceHref = function (row) {
+                if (!row) {
+                    return false;
+                }
+                return Log.hasLogSourceHref(row);
+            };
+
+            $scope.hasLogSourceLineHref = function (row) {
+                if (!row) {
+                    return false;
+                }
+                return Log.hasLogSourceLineHref(row);
+            };
+
+            $scope.dateFormat = 'yyyy-MM-dd HH:mm:ss';
+
+            $scope.formatException = function (line) {
+                return Log.formatStackLine(line);
+            };
+
+            $scope.getSupport = function () {
+                if (!$scope.selectedRow) {
+                    return;
+                }
+                var uri = "https://access.redhat.com/knowledge/solutions";
+                var text = $scope.selectedRow.message;
+                var logger = $scope.selectedRow.logger;
+                uri = uri + "?logger=" + logger + "&text=" + text;
+                window.location.href = uri;
+            };
+
+            $scope.addToDashboardLink = function () {
+                var href = "#/logs";
+                var routeParams = angular.toJson($routeParams);
+                var size = angular.toJson({
+                    size_x: 8,
+                    size_y: 1
+                });
+                var title = "Logs";
+                if ($scope.filter.logLevelQuery !== "") {
+                    title = title + " LogLevel: " + $scope.filter.logLevelQuery;
+                }
+                if ($scope.filter.logLevelExactMatch) {
+                    title = title + " Exact Match";
+                }
+                if ($scope.searchText !== "") {
+                    title = title + " Filter: " + $scope.searchText;
+                }
+                if ($scope.filter.messageOnly) {
+                    title = title + " Message Only";
+                }
+
+                return "#/dashboard/add?tab=dashboard" + "&href=" + encodeURIComponent(href) + "&routeParams=" + encodeURIComponent(routeParams) + "&title=" + encodeURIComponent(title) + "&size=" + encodeURIComponent(size);
+            };
+
+            $scope.isInDashboardClass = function () {
+                if (angular.isDefined($scope.inDashboard && $scope.inDashboard)) {
+                    return "log-table-dashboard";
+                }
+                return "";
+            };
+
+            $scope.sortIcon = function () {
+                if ($scope.sortAsc) {
+                    return "icon-arrow-down";
+                } else {
+                    return "icon-arrow-up";
+                }
+            };
+
+            $scope.filterLogMessage = function (log) {
+                var messageOnly = $scope.filter.messageOnly;
+
+                if ($scope.filter.logLevelQuery !== "") {
+                    var logLevelExactMatch = $scope.filter.logLevelExactMatch;
+                    var logLevelQuery = $scope.filter.logLevelQuery;
+                    var logLevelQueryOrdinal = (logLevelExactMatch) ? 0 : $scope.logLevelMap[logLevelQuery];
+
+                    if (logLevelExactMatch) {
+                        if (log.level !== logLevelQuery) {
+                            return false;
+                        }
+                    } else {
+                        var idx = $scope.logLevelMap[log.level];
+                        if (!(idx >= logLevelQueryOrdinal || idx < 0)) {
+                            return false;
+                        }
+                    }
+                }
+
+                if ($scope.searchText.startsWith("l=")) {
+                    return log.logger.has($scope.searchText.last($scope.searchText.length - 2));
+                }
+                if ($scope.searchText.startsWith("m=")) {
+                    return log.message.has($scope.searchText.last($scope.searchText.length - 2));
+                }
+                if (messageOnly) {
+                    return log.message.has($scope.searchText);
+                }
+                return log.logger.has($scope.searchText) || log.message.has($scope.searchText);
+            };
+
+            $scope.formatStackTrace = function (exception) {
+                if (!exception) {
+                    return "";
+                }
+                var answer = '<ul class="unstyled">\n';
+                exception.forEach(function (line) {
+                    answer = answer + '<li>' + $scope.formatException(line) + '</li>';
+                });
+                answer += '\n</ul>';
+                return answer;
+            };
+
+            var updateValues = function (response) {
+                var scrollToTopOrBottom = false;
+
+                if (!$scope.inDashboard) {
+                    var window = $($window);
+
+                    if ($scope.logs.length === 0) {
+                        // initial page load, let's scroll to the bottom
+                        scrollToTopOrBottom = true;
+                    }
+
+                    if ($scope.sortAsc) {
+                        var pos = window.scrollTop() + window.height();
+                        var threshold = Core.getDocHeight() - 100;
+                    } else {
+                        var pos = window.scrollTop() + window.height();
+                        var threshold = 100;
+                    }
+                    if (pos > threshold) {
+                        // page is scrolled near the bottom
+                        scrollToTopOrBottom = true;
+                    }
+                }
+
+                var logs = response.events;
+
+                //log.info("log returned " + (logs ? logs.length : 0) + " results for query: " + $scope.toTime  + " from json: " + $scope.logFilterJson);
+                var toTime = response.toTimestamp;
+                if (toTime && angular.isNumber(toTime)) {
+                    if (toTime < 0) {
+                        // on JBoss we get odd values and never seem to get any log events!
+                        console.log("ignoring dodgy value of toTime: " + toTime);
+                    } else {
+                        $scope.toTime = toTime;
+                        $scope.logFilter.afterTimestamp = $scope.toTime;
+                        $scope.logFilterJson = JSON.stringify($scope.logFilter);
+                        $scope.queryJSON.arguments = [$scope.logFilterJson];
+                        // log.info("log returned " + (logs ? logs.length : 0) + " results for query: " + $scope.toTime  + " from json: " + $scope.logFilterJson);
+                    }
+                }
+                if (logs) {
+                    var maxSize = Log.getLogCacheSize(localStorage);
+
+                    //don't really need many logs in a widget...
+                    if ($scope.inDashboard) {
+                        maxSize = 10;
+                    }
+                    var counter = 0;
+                    logs.forEach(function (log) {
+                        if (log) {
+                            // TODO Why do we compare 'item.seq === log.message' ?
+                            if (!$scope.logs.any(function (key, item) {
+                                return item.message === log.message && item.seq === log.message && item.timestamp === log.timestamp;
+                            })) {
+                                counter += 1;
+
+                                // if there is a seq in the reply, then its the timestamp with milli seconds
+                                if (log.seq != null) {
+                                    log['timestampMs'] = log.seq;
+                                }
+                                if ($scope.sortAsc) {
+                                    $scope.logs.push(log);
+                                } else {
+                                    $scope.logs.unshift(log);
+                                }
+                            }
+                        }
+                    });
+                    if (maxSize > 0) {
+                        var size = $scope.logs.length;
+                        if (size > maxSize) {
+                            // lets trim the log size
+                            var count = size - maxSize;
+                            var pos = 0;
+                            if (!$scope.sortAsc) {
+                                pos = size - count;
+                            }
+
+                            $scope.logs.splice(pos, count);
+
+                            if ($scope.showRowDetails) {
+                                if ($scope.sortAsc) {
+                                    $scope.selectedRowIndex -= count;
+                                } else {
+                                    $scope.selectedRowIndex += count;
+                                }
+                            }
+                        }
+                    }
+                    if (counter) {
+                        if ($scope.autoScroll && scrollToTopOrBottom) {
+                            setTimeout(function () {
+                                var pos = 0;
+                                if ($scope.sortAsc) {
+                                    pos = $document.height() - window.height();
+                                }
+                                log.debug("Scrolling to position: " + pos);
+                                $document.scrollTop(pos);
+                            }, 20);
+                        }
+                        Core.$apply($scope);
+                    }
+                }
+            };
+
+            // listen for updates adding the since
+            var asyncUpdateValues = function (response) {
+                var value = response.value;
+                if (value) {
+                    updateValues(value);
+                } else {
+                    notification("error", "Failed to get a response! " + JSON.stringify(response, null, 4));
+                }
+            };
+
+            var callbackOptions = onSuccess(asyncUpdateValues, {
+                error: function (response) {
+                    asyncUpdateValues(response);
+                },
+                silent: true
+            });
+
+            if (logQueryMBean) {
+                var firstCallback = function (results) {
+                    updateValues(results);
+
+                    // now lets register to perform incremental updates
+                    Core.register(jolokia, $scope, $scope.queryJSON, callbackOptions);
+                };
+
+                jolokia.execute(logQueryMBean, "getLogResults(int)", $scope.logBatchSize, onSuccess(firstCallback));
+            }
+        }]);
+})(Log || (Log = {}));
+/**
+* @module Logs
+*/
+/// <reference path="./logPlugin.ts"/>
+var Log;
+(function (Log) {
+    Log._module.controller("Log.PreferencesController", [
+        "$scope", "localStorage", function ($scope, localStorage) {
+            Core.initPreferenceScope($scope, localStorage, {
+                'logCacheSize': {
+                    'value': 1000,
+                    'converter': parseInt
+                },
+                'logSortAsc': {
+                    'value': true,
+                    'converter': Core.parseBooleanValue
+                },
+                'logAutoScroll': {
+                    'value': true,
+                    'converter': Core.parseBooleanValue
+                }
+            });
+        }]);
 })(Log || (Log = {}));
 var JBoss;
 (function (JBoss) {
@@ -38632,2040 +38745,6 @@ var JBoss;
             }
         }]);
 })(JBoss || (JBoss = {}));
-/**
-* @module Osgi
-*/
-var Osgi;
-(function (Osgi) {
-    function ServiceDependencyController($scope, $location, $routeParams, workspace, osgiDataService) {
-        $scope.init = function () {
-            if ($routeParams["bundleFilter"]) {
-                $scope.bundleFilter = $routeParams["bundleFilter"];
-            } else {
-                $scope.bundleFilter = "";
-            }
-
-            if ($routeParams["pkgFilter"]) {
-                $scope.packageFilter = $routeParams["pkgFilter"];
-            } else {
-                $scope.packageFilter = "";
-            }
-
-            if ($routeParams["view"] == "packages") {
-                $scope.selectView = "packages";
-            } else {
-                $scope.selectView = "services";
-            }
-
-            if ($routeParams['hideUnused']) {
-                $scope.hideUnused = $routeParams['hideUnused'] == "true";
-            } else {
-                $scope.hideUnused = true;
-            }
-        };
-
-        $scope.updateLink = function () {
-            var search = $location.search;
-
-            if ($scope.bundleFilter && $scope.bundleFilter != "") {
-                search["bundleFilter"] = $scope.bundleFilter;
-            } else {
-                delete search["bundleFilter"];
-            }
-
-            if ($scope.packageFilter && $scope.packageFilter != "") {
-                search["pkgFilter"] = $scope.packageFilter;
-            } else {
-                delete search["pkgFilter"];
-            }
-
-            search["view"] = $scope.selectView;
-
-            if ($scope.hideUnused) {
-                search["hideUnused"] = "true";
-            } else {
-                search["hideUnused"] = "false";
-            }
-
-            $location.search(search);
-        };
-
-        $scope.addToDashboardLink = function () {
-            var routeParams = angular.toJson($routeParams);
-
-            var href = "#/osgi/dependencies";
-            var title = "OSGi dependencies";
-
-            var size = angular.toJson({
-                size_x: 2,
-                size_y: 2
-            });
-
-            var addLink = "#/dashboard/add?tab=dashboard" + "&href=" + encodeURIComponent(href) + "&routeParams=" + encodeURIComponent(routeParams) + "&size=" + encodeURIComponent(size) + "&title=" + encodeURIComponent(title);
-
-            return addLink;
-        };
-
-        $scope.$on('$routeUpdate', function () {
-            var search = $location.search;
-
-            if (search["bundleFilter"]) {
-                $scope.bundleFilter = $routeParams["bundleFilter"];
-            } else {
-                $scope.bundleFilter = "";
-            }
-
-            if (search["pkgFilter"]) {
-                $scope.packageFilter = $routeParams["pkgFilter"];
-            } else {
-                $scope.packageFilter = "";
-            }
-
-            if (search["view"] == "packages") {
-                $scope.selectView = "packages";
-            } else {
-                $scope.selectView = "services";
-            }
-
-            if (search['hideUnused']) {
-                $scope.hideUnused = $routeParams['hideUnused'] == "true";
-            } else {
-                $scope.hideUnused = true;
-            }
-
-            $scope.updateLink();
-            $scope.updateGraph();
-        });
-
-        $scope.updateGraph = function () {
-            $scope.updateLink();
-            $scope.updatePkgFilter();
-
-            var graphBuilder = new Osgi.OsgiGraphBuilder(osgiDataService, $scope.bundleFilter, $scope.packageFilter, $scope.selectView == "services", $scope.selectView == "packages", $scope.hideUnused);
-
-            $scope.graph = graphBuilder.buildGraph();
-            Core.$apply($scope);
-        };
-
-        $scope.updatePkgFilter = function () {
-            if ($scope.packageFilter == null || $scope.packageFilter == "") {
-                $scope.selectView = "services";
-                $scope.disablePkg = true;
-            } else {
-                $scope.disablePkg = false;
-            }
-        };
-
-        $scope.init();
-        $scope.updateGraph();
-    }
-    Osgi.ServiceDependencyController = ServiceDependencyController;
-})(Osgi || (Osgi = {}));
-/**
-* @module Osgi
-*/
-var Osgi;
-(function (Osgi) {
-    function PackageController($scope, $filter, workspace, $routeParams) {
-        $scope.package = $routeParams.package;
-        $scope.version = $routeParams.version;
-
-        updateTableContents();
-
-        function populateTable(response) {
-            var packages = Osgi.defaultPackageValues(workspace, $scope, response.value);
-            $scope.row = packages.filter({ "Name": $scope.package, "Version": $scope.version })[0];
-            Core.$apply($scope);
-        }
-        ;
-
-        function updateTableContents() {
-            var mbean = Osgi.getSelectionPackageMBean(workspace);
-            if (mbean) {
-                var jolokia = workspace.jolokia;
-                jolokia.request({ type: 'exec', mbean: mbean, operation: 'listPackages' }, onSuccess(populateTable));
-            }
-        }
-    }
-    Osgi.PackageController = PackageController;
-})(Osgi || (Osgi = {}));
-/**
-* @module Osgi
-*/
-var Osgi;
-(function (Osgi) {
-    var OsgiDataService = (function () {
-        function OsgiDataService(workspace, jolokia) {
-            this.jolokia = jolokia;
-            this.workspace = workspace;
-        }
-        OsgiDataService.prototype.getBundles = function () {
-            var bundles = {};
-
-            var response = this.jolokia.request({
-                type: 'exec',
-                mbean: Osgi.getSelectionBundleMBean(this.workspace),
-                operation: 'listBundles()'
-            }, onSuccess(null));
-
-            angular.forEach(response.value, function (value, key) {
-                var obj = {
-                    Identifier: value.Identifier,
-                    Name: "",
-                    SymbolicName: value.SymbolicName,
-                    Fragment: value.Fragment,
-                    State: value.State,
-                    Version: value.Version,
-                    LastModified: new Date(Number(value.LastModified)),
-                    Location: value.Location,
-                    StartLevel: undefined,
-                    RegisteredServices: value.RegisteredServices,
-                    ServicesInUse: value.ServicesInUse
-                };
-                if (value.Headers['Bundle-Name']) {
-                    obj.Name = value.Headers['Bundle-Name']['Value'];
-                }
-
-                bundles[value.Identifier] = obj;
-            });
-
-            return bundles;
-        };
-
-        OsgiDataService.prototype.getServices = function () {
-            var services = {};
-
-            var response = this.jolokia.request({
-                type: 'exec',
-                mbean: Osgi.getSelectionServiceMBean(this.workspace),
-                operation: 'listServices()'
-            }, onSuccess(null));
-
-            var answer = response.value;
-
-            angular.forEach(answer, function (value, key) {
-                services[value.Identifier] = value;
-            });
-
-            return services;
-        };
-
-        OsgiDataService.prototype.getPackages = function () {
-            var packages = {};
-
-            var response = this.jolokia.request({
-                type: 'exec',
-                mbean: Osgi.getSelectionPackageMBean(this.workspace),
-                operation: 'listPackages()'
-            }, onSuccess(null));
-
-            var answer = response.value.values;
-
-            answer.forEach(function (value) {
-                packages[value.Name + "-" + value.Version] = value;
-            });
-
-            return packages;
-        };
-        return OsgiDataService;
-    })();
-    Osgi.OsgiDataService = OsgiDataService;
-})(Osgi || (Osgi = {}));
-/**
-* @module Osgi
-* @main Osgi
-*/
-var Osgi;
-(function (Osgi) {
-    var pluginName = 'osgi';
-    angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore', 'hawtio-ui']).config(function ($routeProvider) {
-        $routeProvider.when('/osgi/bundle-list', { templateUrl: 'app/osgi/html/bundle-list.html' }).when('/osgi/bundles', { templateUrl: 'app/osgi/html/bundles.html' }).when('/osgi/bundle/:bundleId', { templateUrl: 'app/osgi/html/bundle.html' }).when('/osgi/services', { templateUrl: 'app/osgi/html/services.html' }).when('/osgi/packages', { templateUrl: 'app/osgi/html/packages.html' }).when('/osgi/package/:package/:version', { templateUrl: 'app/osgi/html/package.html' }).when('/osgi/configurations', { templateUrl: 'app/osgi/html/configurations.html' }).when('/osgi/pid/:pid/:factoryPid', { templateUrl: 'app/osgi/html/pid.html' }).when('/osgi/pid/:pid', { templateUrl: 'app/osgi/html/pid.html' }).when('/osgi/fwk', { templateUrl: 'app/osgi/html/framework.html' }).when('/osgi/dependencies', { templateUrl: 'app/osgi/html/svc-dependencies.html', reloadOnSearch: false });
-    }).run(function (workspace, viewRegistry, helpRegistry) {
-        viewRegistry['osgi'] = "app/osgi/html/layoutOsgi.html";
-        helpRegistry.addUserDoc('osgi', 'app/osgi/doc/help.md', function () {
-            return workspace.treeContainsDomainAndProperties("osgi.core");
-        });
-
-        workspace.topLevelTabs.push({
-            id: "osgi",
-            content: "OSGi",
-            title: "Visualise and manage the bundles and services in this OSGi container",
-            isValid: function (workspace) {
-                return workspace.treeContainsDomainAndProperties("osgi.core");
-            },
-            href: function () {
-                return "#/osgi/bundle-list";
-            },
-            isActive: function (workspace) {
-                return workspace.isLinkActive("osgi");
-            }
-        });
-    }).factory('osgiDataService', function (workspace, jolokia) {
-        return new Osgi.OsgiDataService(workspace, jolokia);
-    });
-
-    hawtioPluginLoader.addModule(pluginName);
-})(Osgi || (Osgi = {}));
-/**
-* @module Osgi
-*/
-var Osgi;
-(function (Osgi) {
-    function FrameworkController($scope, $dialog, workspace) {
-        $scope.editDialog = new UI.Dialog();
-
-        updateContents();
-
-        $scope.edit = function (attr, displayName) {
-            $scope.editAttr = attr;
-            $scope.editDisplayName = displayName;
-            $scope.editDialog.open();
-        };
-
-        $scope.edited = function (name, displayName, res) {
-            $scope.editDialog.close();
-
-            if (angular.isNumber(res)) {
-                var mbean = Osgi.getSelectionFrameworkMBean(workspace);
-                if (mbean) {
-                    var jolokia = workspace.jolokia;
-                    jolokia.request({
-                        type: 'write', mbean: mbean, attribute: name, value: res
-                    }, {
-                        error: function (response) {
-                            editWritten("error", response.error);
-                        },
-                        success: function (response) {
-                            editWritten("success", displayName + " changed to " + res);
-                        }
-                    });
-                }
-            }
-        };
-
-        function editWritten(status, message) {
-            notification(status, message);
-            updateContents();
-        }
-
-        function populatePage(response) {
-            $scope.startLevel = response.value.FrameworkStartLevel;
-            $scope.initialBundleStartLevel = response.value.InitialBundleStartLevel;
-            Core.$apply($scope);
-        }
-
-        function updateContents() {
-            var mbean = Osgi.getSelectionFrameworkMBean(workspace);
-            if (mbean) {
-                var jolokia = workspace.jolokia;
-                jolokia.request({ type: 'read', mbean: mbean }, onSuccess(populatePage));
-            }
-        }
-    }
-    Osgi.FrameworkController = FrameworkController;
-})(Osgi || (Osgi = {}));
-/**
-* @module Osgi
-*/
-var Osgi;
-(function (Osgi) {
-    function PackagesController($scope, $filter, workspace, $templateCache, $compile) {
-        var dateFilter = $filter('date');
-
-        $scope.widget = new DataTable.TableWidget($scope, $templateCache, $compile, [
-            {
-                "mDataProp": null,
-                "sClass": "control center",
-                "sDefaultContent": '<i class="icon-plus"></i>'
-            },
-            { "mDataProp": "Name" },
-            { "mDataProp": "VersionLink" },
-            { "mDataProp": "RemovalPending" }
-        ], {
-            rowDetailTemplateId: 'packageBundlesTemplate',
-            disableAddColumns: true
-        });
-
-        $scope.$watch('workspace.selection', function () {
-            updateTableContents();
-        });
-
-        function populateTable(response) {
-            var packages = Osgi.defaultPackageValues(workspace, $scope, response.value);
-            $scope.widget.populateTable(packages);
-            Core.$apply($scope);
-        }
-
-        function updateTableContents() {
-            var mbean = Osgi.getSelectionPackageMBean(workspace);
-            if (mbean) {
-                var jolokia = workspace.jolokia;
-                jolokia.request({ type: 'exec', mbean: mbean, operation: 'listPackages' }, onSuccess(populateTable));
-            }
-        }
-    }
-    Osgi.PackagesController = PackagesController;
-})(Osgi || (Osgi = {}));
-/**
-* @module Osgi
-*/
-var Osgi;
-(function (Osgi) {
-    function ConfigurationsController($scope, $routeParams, $location, workspace, jolokia) {
-        $scope.selectedItems = [];
-
-        $scope.grid = {
-            data: 'configurations',
-            showFilter: false,
-            showColumnMenu: false,
-            multiSelect: false,
-            filterOptions: {
-                filterText: "",
-                useExternalFilter: false
-            },
-            selectedItems: $scope.selectedItems,
-            showSelectionCheckbox: false,
-            displaySelectionCheckbox: false,
-            columnDefs: [
-                {
-                    field: 'Pid',
-                    displayName: 'Configuration',
-                    cellTemplate: '<div class="ngCellText"><a ng-href="{{row.entity.pidLink}}" title="{{row.entity.description}}">{{row.entity.name}}</a></div>'
-                }
-            ]
-        };
-
-        /** the kinds of config */
-        var configKinds = {
-            factory: {
-                class: "badge badge-info",
-                title: "Configuration factory used to create separate instances of the configuration"
-            },
-            pid: {
-                class: "badge badge-success",
-                title: "Configuration which has a set of properties associated with it"
-            },
-            pidNoValue: {
-                class: "badge badge-warning",
-                title: "Configuration which does not yet have any bound values"
-            }
-        };
-
-        $scope.addPidDialog = new UI.Dialog();
-
-        Osgi.initProfileScope($scope, $routeParams, $location, localStorage, jolokia, workspace, function () {
-            $scope.$watch('workspace.selection', function () {
-                updateTableContents();
-            });
-
-            updateTableContents();
-        });
-
-        $scope.addPid = function (newPid) {
-            $scope.addPidDialog.close();
-            var mbean = Osgi.getHawtioConfigAdminMBean($scope.workspace);
-            if (mbean && newPid) {
-                var json = JSON.stringify({});
-                $scope.jolokia.execute(mbean, "configAdminUpdate", newPid, json, onSuccess(function (response) {
-                    notification("success", "Successfully created pid: " + newPid);
-                    updateTableContents();
-                }));
-            }
-        };
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateTableContents, 50);
-        });
-
-        function onConfigPids(response) {
-            var pids = {};
-            angular.forEach(response, function (row) {
-                var pid = row[0];
-                var bundle = row[1];
-                var config = createPidConfig(pid, bundle);
-                config["hasValue"] = true;
-                config["kind"] = configKinds.pid;
-                pids[pid] = config;
-            });
-            $scope.pids = pids;
-
-            // lets load the factory pids
-            var mbean = Osgi.getSelectionConfigAdminMBean($scope.workspace);
-            if (mbean) {
-                $scope.jolokia.execute(mbean, 'getConfigurations', '(service.factoryPid=*)', onSuccess(onConfigFactoryPids, errorHandler("Failed to load factory PID configurations: ")));
-            }
-            loadMetaType();
-        }
-
-        /**
-        * For each factory PID lets find the underlying PID to use to edit it, then lets make a link between them
-        */
-        function onConfigFactoryPids(response) {
-            var mbean = Osgi.getSelectionConfigAdminMBean($scope.workspace);
-            var pids = $scope.pids;
-            if (pids && mbean) {
-                angular.forEach(response, function (row) {
-                    var pid = row[0];
-                    var bundle = row[1];
-                    if (pid) {
-                        var config = pids[pid];
-                        if (config) {
-                            config["isFactoryInstance"] = true;
-                            $scope.jolokia.execute(mbean, 'getFactoryPid', pid, onSuccess(function (factoryPid) {
-                                config["factoryPid"] = factoryPid;
-                                config["name"] = Osgi.removeFactoryPidPrefix(pid, factoryPid);
-                                if (factoryPid) {
-                                    var factoryConfig = getOrCreatePidConfig(factoryPid, bundle);
-                                    if (factoryConfig) {
-                                        setFactoryPid(factoryConfig);
-                                        var children = factoryConfig.children;
-                                        if (!children) {
-                                            children = {};
-                                            factoryConfig["children"] = children;
-                                        }
-                                        children[pid] = config;
-                                        if ($scope.inFabricProfile) {
-                                            Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, pid, function (configValues) {
-                                                var zkPid = Core.pathGet(configValues, ["fabric.zookeeper.pid", "Value"]);
-                                                if (zkPid) {
-                                                    config["name"] = Osgi.removeFactoryPidPrefix(zkPid, factoryPid);
-                                                    config["zooKeeperPid"] = zkPid;
-                                                    Core.$apply($scope);
-                                                }
-                                            });
-                                        }
-                                        Core.$apply($scope);
-                                    }
-                                }
-                            }));
-                        }
-                    }
-                });
-            }
-            updateMetaType();
-        }
-
-        function onMetaType(response) {
-            $scope.metaType = response;
-            updateMetaType();
-        }
-
-        function updateConfigurations() {
-            var pids = $scope.pids;
-            var configurations = [];
-            angular.forEach(pids, function (config, pid) {
-                if (!config["isFactoryInstance"]) {
-                    configurations.push(config);
-                }
-            });
-            $scope.configurations = configurations.sortBy("name");
-            Core.$apply($scope);
-        }
-
-        function updateMetaType() {
-            var metaType = $scope.metaType;
-            if (metaType) {
-                angular.forEach(metaType.pids, function (value, pid) {
-                    var bundle = null;
-                    var config = getOrCreatePidConfig(pid, bundle);
-                    if (config) {
-                        var factoryPidBundleIds = value.factoryPidBundleIds;
-                        if (factoryPidBundleIds && factoryPidBundleIds.length) {
-                            setFactoryPid(config);
-                        }
-                        config["name"] = value.name || pid;
-                        var description = value.description;
-                        if (description) {
-                            config["description"] = description + "\n" + pidBundleDescription(pid, config.bundle);
-                        }
-                    }
-                });
-            }
-            updateConfigurations();
-        }
-
-        function loadMetaType() {
-            var metaTypeMBean = Osgi.getMetaTypeMBean($scope.workspace);
-            if (metaTypeMBean && $scope.pids) {
-                $scope.jolokia.execute(metaTypeMBean, "metaTypeSummary", onSuccess(onMetaType));
-            }
-        }
-
-        function updateTableContents() {
-            $scope.configurations = [];
-            if ($scope.jolokia) {
-                var mbean = Osgi.getSelectionConfigAdminMBean($scope.workspace);
-                if (mbean) {
-                    $scope.jolokia.execute(mbean, 'getConfigurations', '(service.pid=*)', onSuccess(onConfigPids, errorHandler("Failed to load PID configurations: ")));
-                }
-            }
-        }
-
-        function pidBundleDescription(pid, bundle) {
-            return "pid: " + pid + "\nbundle: " + bundle;
-        }
-
-        function createPidConfig(pid, bundle) {
-            var config = {
-                pid: pid,
-                name: pid,
-                class: 'pid',
-                description: pidBundleDescription(pid, bundle),
-                bundle: bundle,
-                kind: configKinds.pidNoValue,
-                pidLink: createPidLink(pid)
-            };
-            return config;
-        }
-
-        function getOrCreatePidConfig(pid, bundle) {
-            var pids = $scope.pids;
-            var factoryConfig = pids[pid];
-            if (!factoryConfig) {
-                factoryConfig = createPidConfig(pid, bundle);
-                pids[pid] = factoryConfig;
-                updateConfigurations();
-            }
-            return factoryConfig;
-        }
-
-        function setFactoryPid(factoryConfig) {
-            factoryConfig["isFactory"] = true;
-            factoryConfig["class"] = "factoryPid";
-            factoryConfig["kind"] = configKinds.factory;
-            var factoryPid = factoryConfig["factoryPid"] || "";
-            var pid = factoryConfig["pid"] || "";
-            if (!factoryPid) {
-                factoryPid = pid;
-                pid = null;
-            }
-            factoryConfig["pidLink"] = createPidLink(pid, factoryPid);
-        }
-
-        function createPidLink(pid, factoryPid) {
-            if (typeof factoryPid === "undefined") { factoryPid = null; }
-            return Osgi.createConfigPidLink($scope, workspace, pid, factoryPid);
-        }
-
-        function errorHandler(message) {
-            return {
-                error: function (response) {
-                    notification("error", message + response['error'] || response);
-                    Core.defaultJolokiaErrorHandler(response);
-                }
-            };
-        }
-    }
-    Osgi.ConfigurationsController = ConfigurationsController;
-})(Osgi || (Osgi = {}));
-/**
-* @module Osgi
-*/
-var Osgi;
-(function (Osgi) {
-    function BundleListController($scope, workspace, jolokia, localStorage) {
-        $scope.result = {};
-        $scope.bundles = [];
-        $scope.bundleUrl = "";
-        $scope.display = {
-            bundleField: "Name",
-            sortField: "Identifier",
-            bundleFilter: "",
-            startLevelFilter: 0,
-            showPlatformBundles: false,
-            showCxfBundles: false,
-            showCamelBundles: true
-        };
-
-        if ('bundleList' in localStorage) {
-            $scope.display = angular.fromJson(localStorage['bundleList']);
-        }
-
-        $scope.$watch('display', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                localStorage['bundleList'] = angular.toJson(newValue);
-            }
-        }, true);
-
-        $scope.installDisabled = function () {
-            return $scope.bundleUrl === "";
-        };
-
-        $scope.install = function () {
-            jolokia.request({
-                type: 'exec',
-                mbean: Osgi.getSelectionFrameworkMBean(workspace),
-                operation: "installBundle(java.lang.String)",
-                arguments: [$scope.bundleUrl]
-            }, {
-                success: function (response) {
-                    var bundleID = response.value;
-                    jolokia.request({
-                        type: 'exec',
-                        mbean: Osgi.getSelectionBundleMBean(workspace),
-                        operation: "isFragment(long)",
-                        arguments: [bundleID]
-                    }, {
-                        success: function (response) {
-                            var isFragment = response.value;
-                            if (isFragment) {
-                                notification("success", "Fragment installed succesfully.");
-                                $scope.bundleUrl = "";
-                                Core.$apply($scope);
-                            } else {
-                                jolokia.request({
-                                    type: 'exec',
-                                    mbean: Osgi.getSelectionFrameworkMBean(workspace),
-                                    operation: "startBundle(long)",
-                                    arguments: [bundleID]
-                                }, {
-                                    success: function (response) {
-                                        notification("success", "Bundle installed and started successfully.");
-                                        $scope.bundleUrl = "";
-                                        Core.$apply($scope);
-                                    },
-                                    error: function (response) {
-                                        notification("error", response.error);
-                                    }
-                                });
-                            }
-                        },
-                        error: function (response) {
-                            notification("error", response.error);
-                        }
-                    });
-                },
-                error: function (response) {
-                    notification("error", response.error);
-                }
-            });
-        };
-
-        $scope.$watch('display.sortField', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                $scope.bundles = $scope.bundles.sortBy(newValue);
-            }
-        });
-
-        $scope.getStateStyle = function (state) {
-            return Osgi.getStateStyle("badge", state);
-        };
-
-        $scope.getLabel = function (bundleObject) {
-            var labelText;
-            if ($scope.display.bundleField === "Name") {
-                labelText = bundleObject.Name;
-                if (labelText === "") {
-                    labelText = bundleObject.SymbolicName;
-                }
-            } else {
-                labelText = bundleObject.SymbolicName;
-            }
-            return labelText;
-        };
-
-        $scope.filterBundle = function (bundle) {
-            if ($scope.display.startLevelFilter > 0 && bundle.StartLevel < $scope.display.startLevelFilter) {
-                return false;
-            }
-            var labelText = $scope.getLabel(bundle);
-            if ($scope.display.bundleFilter && !labelText.toLowerCase().has($scope.display.bundleFilter.toLowerCase())) {
-                return false;
-            }
-            if (Core.isBlank($scope.display.bundleFilter)) {
-                var answer = true;
-                if (!$scope.display.showPlatformBundles) {
-                    answer = !Karaf.isPlatformBundle(bundle['SymbolicName']);
-                }
-                if (answer && !$scope.display.showCxfBundles) {
-                    answer = !Karaf.isCxfBundle(bundle['SymbolicName']);
-                }
-                if (answer && !$scope.display.showCamelBundles) {
-                    answer = !Karaf.isCamelBundle(bundle['SymbolicName']);
-                }
-                return answer;
-            }
-
-            return true;
-        };
-
-        function processResponse(response) {
-            var value = response['value'];
-
-            var responseJson = angular.toJson(value);
-
-            if ($scope.responseJson !== responseJson) {
-                $scope.responseJson = responseJson;
-                $scope.bundles = [];
-                angular.forEach(value, function (value, key) {
-                    var obj = {
-                        Identifier: value.Identifier,
-                        Name: "",
-                        SymbolicName: value.SymbolicName,
-                        Fragment: value.Fragment,
-                        State: value.State,
-                        Version: value.Version,
-                        LastModified: new Date(Number(value.LastModified)),
-                        Location: value.Location,
-                        StartLevel: undefined
-                    };
-                    if (value.Headers['Bundle-Name']) {
-                        obj.Name = value.Headers['Bundle-Name']['Value'];
-                    }
-                    $scope.bundles.push(obj);
-                });
-
-                $scope.bundles = $scope.bundles.sortBy($scope.display.sortField);
-
-                Core.$apply($scope);
-
-                // Obtain start level information for all the bundles, let's do this async though
-                setTimeout(function () {
-                    var requests = [];
-
-                    for (var i = 0; i < $scope.bundles.length; i++) {
-                        var b = $scope.bundles[i];
-                        requests.push({
-                            type: 'exec', mbean: Osgi.getSelectionBundleMBean(workspace),
-                            operation: 'getStartLevel(long)',
-                            arguments: [b.Identifier]
-                        });
-                    }
-
-                    var outstanding = requests.length;
-
-                    jolokia.request(requests, onSuccess(function (response) {
-                        var id = response['request']['arguments'].first();
-                        if (angular.isDefined(id)) {
-                            var bundle = $scope.bundles[id];
-                            if (bundle) {
-                                Osgi.log.debug("Setting bundle: ", bundle['Identifier'], " start level to: ", response['value']);
-                                bundle['StartLevel'] = response['value'];
-                            }
-                        }
-                        outstanding = outstanding - 1;
-                        Osgi.log.debug("oustanding responses: ", outstanding);
-                        if (outstanding === 0) {
-                            Osgi.log.debug("Updating page...");
-                            Core.$apply($scope);
-                        }
-                    }));
-                }, 500);
-            }
-        }
-
-        Core.register(jolokia, $scope, {
-            type: 'exec', mbean: Osgi.getSelectionBundleMBean(workspace),
-            operation: 'listBundles()'
-        }, onSuccess(processResponse));
-    }
-    Osgi.BundleListController = BundleListController;
-})(Osgi || (Osgi = {}));
-/**
-* @module Osgi
-*/
-var Osgi;
-(function (Osgi) {
-    function ServiceController($scope, $filter, workspace, $templateCache, $compile) {
-        var dateFilter = $filter('date');
-
-        $scope.widget = new DataTable.TableWidget($scope, $templateCache, $compile, [
-            {
-                "mDataProp": null,
-                "sClass": "control center",
-                "sDefaultContent": '<i class="icon-plus"></i>'
-            },
-            { "mDataProp": "Identifier" },
-            { "mDataProp": "BundleIdentifier" },
-            { "mDataProp": "objectClass" }
-        ], {
-            rowDetailTemplateId: 'osgiServiceTemplate',
-            disableAddColumns: true
-        });
-
-        $scope.$watch('workspace.selection', function () {
-            var mbean = Osgi.getSelectionServiceMBean(workspace);
-            if (mbean) {
-                var jolokia = workspace.jolokia;
-                jolokia.request({ type: 'exec', mbean: mbean, operation: 'listServices()' }, onSuccess(populateTable));
-            }
-        });
-
-        var populateTable = function (response) {
-            Osgi.defaultServiceValues(workspace, $scope, response.value);
-            $scope.widget.populateTable(response.value);
-            Core.$apply($scope);
-        };
-    }
-    Osgi.ServiceController = ServiceController;
-})(Osgi || (Osgi = {}));
-;
-/**
-* @module Osgi
-*/
-var Osgi;
-(function (Osgi) {
-    function BundlesController($scope, workspace, jolokia) {
-        $scope.result = {};
-        $scope.bundles = [];
-        $scope.selected = [];
-        $scope.loading = true;
-        $scope.bundleUrl = "";
-
-        $scope.installDisabled = function () {
-            return $scope.bundleUrl === "";
-        };
-
-        var columnDefs = [
-            {
-                field: 'Identifier',
-                displayName: 'Identifier',
-                width: "48",
-                headerCellTemplate: '<div ng-click="col.sort()" class="ngHeaderSortColumn {{col.headerClass}}" ng-style="{\'cursor\': col.cursor}" ng-class="{ \'ngSorted\': !noSortVisible }"><div class="ngHeaderText colt{{$index}} pagination-centered" title="Identifier"><i class="icon-tag"></i></div><div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div><div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div></div>'
-            },
-            {
-                field: 'State',
-                displayName: 'Bundle State',
-                width: "24",
-                headerCellTemplate: '<div ng-click="col.sort()" class="ngHeaderSortColumn {{col.headerClass}}" ng-style="{\'cursor\': col.cursor}" ng-class="{ \'ngSorted\': !noSortVisible }"><div class="ngHeaderText colt{{$index}} pagination-centered" title="State"><i class="icon-tasks"></i></div><div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div><div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div></div>',
-                cellTemplate: '<div class="ngCellText" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field)}}"></i></div>'
-            },
-            {
-                field: 'Name',
-                displayName: 'Name',
-                width: "***",
-                cellTemplate: '<div class="ngCellText"><a href="#/osgi/bundle/{{row.entity.Identifier}}?p=container">{{row.getProperty(col.field)}}</a></div>'
-            },
-            {
-                field: 'SymbolicName',
-                displayName: 'Symbolic Name',
-                width: "***",
-                cellTemplate: '<div class="ngCellText"><a href="#/osgi/bundle/{{row.entity.Identifier}}?p=container">{{row.getProperty(col.field)}}</a></div>'
-            },
-            {
-                field: 'Version',
-                displayName: 'Version',
-                width: "**"
-            },
-            {
-                field: 'Location',
-                displayName: 'Update Location',
-                width: "***"
-            }
-        ];
-
-        $scope.gridOptions = {
-            data: 'bundles',
-            showFilter: false,
-            selectedItems: $scope.selected,
-            selectWithCheckboxOnly: true,
-            columnDefs: columnDefs,
-            filterOptions: {
-                filterText: ''
-            }
-        };
-
-        $scope.onResponse = function () {
-            jolokia.request({
-                type: 'exec',
-                mbean: Osgi.getSelectionBundleMBean(workspace),
-                operation: 'listBundles()'
-            }, {
-                success: render,
-                error: render
-            });
-        };
-
-        $scope.controlBundles = function (op) {
-            var startBundle = function (response) {
-            };
-            var ids = $scope.selected.map(function (b) {
-                return b.Identifier;
-            });
-            if (!angular.isArray(ids)) {
-                ids = [ids];
-            }
-            jolokia.request({
-                type: 'exec',
-                mbean: Osgi.getSelectionFrameworkMBean(workspace),
-                operation: op,
-                arguments: [ids]
-            }, {
-                success: $scope.onResponse,
-                error: $scope.onResponse
-            });
-        };
-
-        $scope.stop = function () {
-            $scope.controlBundles('stopBundles([J)');
-        };
-
-        $scope.start = function () {
-            $scope.controlBundles('startBundles([J)');
-        };
-
-        $scope.update = function () {
-            $scope.controlBundles('updateBundles([J)');
-        };
-
-        $scope.refresh = function () {
-            $scope.controlBundles('refreshBundles([J)');
-        };
-
-        $scope.uninstall = function () {
-            $scope.controlBundles('uninstallBundles([J)');
-        };
-
-        $scope.install = function () {
-            jolokia.request({
-                type: 'exec',
-                mbean: Osgi.getSelectionFrameworkMBean(workspace),
-                operation: "installBundle(java.lang.String)",
-                arguments: [$scope.bundleUrl]
-            }, {
-                success: function (response) {
-                    console.log("Got: ", response);
-                    $scope.bundleUrl = "";
-                    jolokia.request({
-                        type: 'exec',
-                        mbean: Osgi.getSelectionFrameworkMBean(workspace),
-                        operation: "startBundle(long)",
-                        arguments: [response.value]
-                    }, {
-                        success: $scope.onResponse,
-                        error: $scope.onResponse
-                    });
-                },
-                error: function (response) {
-                    $scope.bundleUrl = "";
-                    $scope.onResponse();
-                }
-            });
-        };
-
-        function render(response) {
-            if (!Object.equal($scope.result, response.value)) {
-                $scope.selected.length = 0;
-                $scope.result = response.value;
-                $scope.bundles = [];
-                angular.forEach($scope.result, function (value, key) {
-                    var obj = {
-                        Identifier: value.Identifier,
-                        Name: "",
-                        SymbolicName: value.SymbolicName,
-                        State: value.State,
-                        Version: value.Version,
-                        LastModified: value.LastModified,
-                        Location: value.Location
-                    };
-                    if (value.Headers['Bundle-Name']) {
-                        obj.Name = value.Headers['Bundle-Name']['Value'];
-                    }
-                    $scope.bundles.push(obj);
-                });
-                $scope.loading = false;
-                Core.$apply($scope);
-            }
-        }
-
-        Core.register(jolokia, $scope, {
-            type: 'exec', mbean: Osgi.getSelectionBundleMBean(workspace),
-            operation: 'listBundles()'
-        }, onSuccess(render));
-    }
-    Osgi.BundlesController = BundlesController;
-})(Osgi || (Osgi = {}));
-/**
-* @module Osgi
-*/
-var Osgi;
-(function (Osgi) {
-    function PidController($scope, $timeout, $routeParams, $location, workspace, jolokia) {
-        $scope.deletePropDialog = new UI.Dialog();
-        $scope.deletePidDialog = new UI.Dialog();
-        $scope.addPropertyDialog = new UI.Dialog();
-        $scope.factoryPid = $routeParams.factoryPid;
-        $scope.pid = $routeParams.pid || $scope.factoryPid;
-
-        $scope.selectValues = {};
-
-        $scope.modelLoaded = false;
-        $scope.canSave = false;
-
-        $scope.setEditMode = function (flag) {
-            $scope.editMode = flag;
-            $scope.formMode = flag ? "edit" : "view";
-            if (!flag || !$scope.entity) {
-                $scope.entity = {};
-                updateTableContents();
-            }
-        };
-        var startInEditMode = $scope.factoryPid && !$routeParams.pid;
-        $scope.setEditMode(startInEditMode);
-
-        $scope.$on("hawtio.form.modelChange", function () {
-            if ($scope.modelLoaded) {
-                // TODO lets check if we've really changed the values!
-                enableCanSave();
-                Core.$apply($scope);
-            }
-        });
-
-        Osgi.initProfileScope($scope, $routeParams, $location, localStorage, jolokia, workspace, function () {
-            updateTableContents();
-        });
-
-        function updatePid(mbean, pid, data) {
-            var completeFn = function (response) {
-                notification("success", "Successfully updated pid: " + pid);
-
-                if (pid && $scope.factoryPid && !$routeParams.pid && !$scope.zkPid) {
-                    // we've just created a new pid so lets move to the full pid URL
-                    var newPath = Osgi.createConfigPidPath($scope, pid, $scope.factoryPid);
-                    $location.path(newPath);
-                } else {
-                    $scope.setEditMode(false);
-                    $scope.canSave = false;
-                    $scope.saved = true;
-                }
-            };
-            var callback = onSuccess(completeFn, errorHandler("Failed to update: " + pid));
-            if ($scope.inFabricProfile) {
-                jolokia.execute(Fabric.managerMBean, "setProfileProperties", $scope.versionId, $scope.profileId, pid, data, callback);
-            } else {
-                var json = JSON.stringify(data);
-                $scope.jolokia.execute(mbean, "configAdminUpdate", pid, json, callback);
-            }
-        }
-
-        $scope.pidSave = function () {
-            var data = {};
-
-            angular.forEach($scope.entity, function (value, key) {
-                var text = undefined;
-                if (angular.isString(value)) {
-                    text = value;
-                } else if (angular.isDefined(value)) {
-                    text = value.toString();
-                }
-                if (angular.isDefined(text)) {
-                    data[decodeKey(key)] = text;
-                }
-            });
-
-            //log.info("about to update value " + angular.toJson(data));
-            var mbean = Osgi.getHawtioConfigAdminMBean(workspace);
-            if (mbean) {
-                var pidMBean = Osgi.getSelectionConfigAdminMBean($scope.workspace);
-                var pid = $scope.pid;
-                var zkPid = $scope.zkPid;
-                var factoryPid = $scope.factoryPid;
-                if (factoryPid && pidMBean && !zkPid) {
-                    // lets generate a new pid
-                    $scope.jolokia.execute(pidMBean, "createFactoryConfiguration", factoryPid, onSuccess(function (response) {
-                        pid = response;
-                        if (pid) {
-                            updatePid(mbean, pid, data);
-                        }
-                    }, errorHandler("Failed to create new PID: ")));
-                } else {
-                    if (zkPid) {
-                        pid = zkPid;
-                    }
-                    updatePid(mbean, pid, data);
-                }
-            }
-        };
-
-        function errorHandler(message) {
-            return {
-                error: function (response) {
-                    notification("error", message + "\n" + response['error'] || response);
-                    Core.defaultJolokiaErrorHandler(response);
-                }
-            };
-        }
-
-        function enableCanSave() {
-            if ($scope.editMode) {
-                $scope.canSave = true;
-            }
-        }
-
-        $scope.addPropertyConfirmed = function (key, value) {
-            $scope.addPropertyDialog.close();
-            $scope.configValues[key] = {
-                Key: key,
-                Value: value,
-                Type: "String"
-            };
-            enableCanSave();
-            updateSchema();
-        };
-
-        $scope.deletePidProp = function (e) {
-            $scope.deleteKey = e.Key;
-            $scope.deletePropDialog.open();
-        };
-
-        $scope.deletePidPropConfirmed = function () {
-            $scope.deletePropDialog.close();
-            var cell = document.getElementById("pid." + $scope.deleteKey);
-            cell.parentElement.remove();
-            enableCanSave();
-        };
-
-        $scope.deletePidConfirmed = function () {
-            $scope.deletePidDialog.close();
-
-            var mbean = Osgi.getSelectionConfigAdminMBean($scope.workspace);
-            if (mbean) {
-                $scope.jolokia.request({
-                    type: "exec",
-                    mbean: mbean,
-                    operation: 'delete',
-                    arguments: [$scope.pid]
-                }, {
-                    error: function (response) {
-                        notification("error", response.error);
-                    },
-                    success: function (response) {
-                        notification("success", "Successfully deleted pid: " + $scope.pid);
-                        $location.path($scope.configurationsLink);
-                    }
-                });
-            }
-        };
-
-        function populateTable(response) {
-            $scope.modelLoaded = true;
-            var configValues = response || {};
-            $scope.configValues = configValues;
-            $scope.zkPid = Core.pathGet(configValues, ["fabric.zookeeper.pid", "Value"]);
-
-            if ($scope.zkPid && $scope.saved) {
-                // lets load the current properties direct from git
-                // in case we have just saved them into git and config admin hasn't yet
-                // quite caught up yet (to avoid freaking the user out that things look like
-                // changes got reverted ;)
-                function onProfileProperties(gitProperties) {
-                    angular.forEach(gitProperties, function (value, key) {
-                        var configProperty = configValues[key];
-                        if (configProperty) {
-                            configProperty.Value = value;
-                        }
-                    });
-                    updateSchemaAndLoadMetaType();
-                    Core.$apply($scope);
-                }
-                jolokia.execute(Fabric.managerMBean, "getProfileProperties", $scope.versionId, $scope.profileId, $scope.zkPid, onSuccess(onProfileProperties));
-            } else {
-                updateSchemaAndLoadMetaType();
-            }
-        }
-
-        function updateSchemaAndLoadMetaType() {
-            updateSchema();
-            var metaTypeMBean = Osgi.getMetaTypeMBean($scope.workspace);
-            var configValues = $scope.configValues;
-            if (metaTypeMBean && configValues) {
-                var locale = null;
-                var pid = null;
-                var factoryId = configValues["service.factoryPid"];
-                if (factoryId) {
-                    pid = factoryId["Value"];
-                }
-                pid = pid || $scope.pid;
-                $scope.jolokia.execute(metaTypeMBean, "getPidMetaTypeObject", pid, locale, onSuccess(onMetaType));
-            }
-            Core.$apply($scope);
-        }
-
-        function onMetaType(response) {
-            $scope.metaType = response;
-            updateSchema();
-            Core.$apply($scope);
-        }
-
-        /**
-        * Updates the JSON schema model
-        */
-        function updateSchema() {
-            var properties = {};
-            var required = [];
-            $scope.defaultValues = {};
-            var schema = {
-                type: "object",
-                required: required,
-                properties: properties
-            };
-            $scope.schema = schema;
-            var inputClass = "span12";
-            var labelClass = "control-label";
-
-            var inputClassArray = "span11";
-            var labelClassArray = labelClass;
-
-            var metaType = $scope.metaType;
-            if (metaType) {
-                schema["id"] = metaType.id;
-                schema["name"] = metaType.name;
-                schema["description"] = metaType.description;
-
-                angular.forEach(metaType.attributes, function (attribute) {
-                    var id = attribute.id;
-                    if (isValidProperty(id)) {
-                        var key = encodeKey(id);
-                        var typeName = asJsonSchemaType(attribute.typeName, attribute.id);
-                        var attributeProperties = {
-                            title: attribute.name,
-                            tooltip: attribute.description,
-                            'input-attributes': {
-                                class: inputClass
-                            },
-                            'label-attributes': {
-                                class: labelClass
-                            },
-                            type: typeName
-                        };
-                        if (attribute.typeName === "char") {
-                            attributeProperties["maxLength"] = 1;
-                            attributeProperties["minLength"] = 1;
-                        }
-                        var cardinality = attribute.cardinality;
-                        if (cardinality) {
-                            attributeProperties.type = "array";
-                            attributeProperties["items"] = {
-                                'input-attributes': {
-                                    class: inputClassArray
-                                },
-                                'label-attributes': {
-                                    class: labelClassArray
-                                },
-                                "type": typeName
-                            };
-                        }
-                        if (attribute.required) {
-                            required.push(id);
-                        }
-                        var defaultValue = attribute.defaultValue;
-                        if (defaultValue) {
-                            if (angular.isArray(defaultValue) && defaultValue.length === 1) {
-                                defaultValue = defaultValue[0];
-                            }
-
-                            //attributeProperties["default"] = defaultValue;
-                            // TODO convert to boolean / number?
-                            $scope.defaultValues[key] = defaultValue;
-                        }
-                        var optionLabels = attribute.optionLabels;
-                        var optionValues = attribute.optionValues;
-                        if (optionLabels && optionLabels.length && optionValues && optionValues.length) {
-                            var enumObject = {};
-                            for (var i = 0; i < optionLabels.length; i++) {
-                                var label = optionLabels[i];
-                                var value = optionValues[i];
-                                enumObject[value] = label;
-                            }
-                            $scope.selectValues[key] = enumObject;
-                            Core.pathSet(attributeProperties, ['input-element'], "select");
-                            Core.pathSet(attributeProperties, ['input-attributes', "ng-options"], "key as value for (key, value) in selectValues." + key);
-                        }
-                        properties[key] = attributeProperties;
-                    }
-                });
-            }
-
-            // now add all the missing properties...
-            var entity = {};
-            angular.forEach($scope.configValues, function (value, rawKey) {
-                if (isValidProperty(rawKey)) {
-                    var key = encodeKey(rawKey);
-                    var attrValue = value;
-                    var attrType = "string";
-                    if (angular.isObject(value)) {
-                        attrValue = value.Value;
-                        attrType = asJsonSchemaType(value.Type, rawKey);
-                    }
-                    var property = properties[key];
-                    if (!property) {
-                        properties[key] = {
-                            'input-attributes': {
-                                class: inputClass
-                            },
-                            'label-attributes': {
-                                class: labelClass
-                            },
-                            type: attrType
-                        };
-                    } else {
-                        var propertyType = property["type"];
-                        if ("array" === propertyType) {
-                            if (!angular.isArray(attrValue)) {
-                                attrValue = attrValue ? attrValue.split(",") : [];
-                            }
-                        }
-                    }
-
-                    //comply with Forms.safeIdentifier in 'forms/js/formHelpers.ts'
-                    key = key.replace(/-/g, "_");
-                    entity[key] = attrValue;
-                }
-            });
-
-            // add default values for missing values
-            angular.forEach($scope.defaultValues, function (value, key) {
-                var current = entity[key];
-                if (!angular.isDefined(current)) {
-                    //log.info("updating entity " + key + " with default: " + value + " as was: " + current);
-                    entity[key] = value;
-                }
-            });
-
-            //log.info("default values: " + angular.toJson($scope.defaultValues));
-            $scope.entity = entity;
-        }
-
-        var ignorePropertyIds = ["service.pid", "service.factoryPid", "fabric.zookeeper.pid"];
-
-        function isValidProperty(id) {
-            return id && ignorePropertyIds.indexOf(id) < 0;
-        }
-
-        function encodeKey(key) {
-            return key.replace(/\./g, "__");
-        }
-
-        function decodeKey(key) {
-            return key.replace(/__/g, ".");
-        }
-
-        function asJsonSchemaType(typeName, id) {
-            if (typeName) {
-                var lower = typeName.toLowerCase();
-                if (lower.startsWith("int") || lower === "long" || lower === "short" || lower === "byte" || lower.endsWith("int")) {
-                    return "integer";
-                }
-                if (lower === "double" || lower === "float" || lower === "bigdecimal") {
-                    return "number";
-                }
-                if (lower === "string") {
-                    // TODO hack to try force password type on dodgy metadata such as pax web
-                    if (id && id.endsWith("password")) {
-                        return "password";
-                    }
-                    return "string";
-                }
-                return typeName;
-            } else {
-                return "string";
-            }
-        }
-
-        function updateTableContents() {
-            $scope.modelLoaded = false;
-            Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, $scope.pid, populateTable);
-        }
-    }
-    Osgi.PidController = PidController;
-})(Osgi || (Osgi = {}));
-/**
-* @module Osgi
-*/
-var Osgi;
-(function (Osgi) {
-    var OsgiGraphBuilder = (function () {
-        function OsgiGraphBuilder(osgiDataService, bundleFilter, packageFilter, showServices, showPackages, hideUnused) {
-            this.filteredBundles = {};
-            this.bundles = null;
-            this.services = null;
-            this.packages = null;
-            this.PREFIX_BUNDLE = "Bundle-";
-            this.PREFIX_SVC = "Service-";
-            this.PREFIX_PKG = "Package-";
-            this.osgiDataService = osgiDataService;
-            this.bundleFilter = bundleFilter;
-            this.packageFilter = packageFilter;
-            this.showServices = showServices;
-            this.showPackages = showPackages;
-            this.hideUnused = hideUnused;
-
-            this.graphBuilder = new ForceGraph.GraphBuilder();
-        }
-        OsgiGraphBuilder.prototype.getBundles = function () {
-            if (this.bundles == null) {
-                this.bundles = this.osgiDataService.getBundles();
-            }
-            return this.bundles;
-        };
-
-        OsgiGraphBuilder.prototype.getServices = function () {
-            if (this.services == null) {
-                this.services = this.osgiDataService.getServices();
-            }
-            return this.services;
-        };
-
-        OsgiGraphBuilder.prototype.getPackages = function () {
-            if (this.packages == null) {
-                this.packages = this.osgiDataService.getPackages();
-            }
-            return this.packages;
-        };
-
-        OsgiGraphBuilder.prototype.bundleNodeId = function (bundle) {
-            return this.PREFIX_BUNDLE + bundle.Identifier;
-        };
-
-        OsgiGraphBuilder.prototype.serviceNodeId = function (service) {
-            return this.PREFIX_SVC + service.Identifier;
-        };
-
-        OsgiGraphBuilder.prototype.pkgNodeId = function (pkg) {
-            return this.PREFIX_PKG + pkg.Name + "-" + pkg.Version;
-        };
-
-        // Create a service node from a given service
-        OsgiGraphBuilder.prototype.buildSvcNode = function (service) {
-            return {
-                id: this.serviceNodeId(service),
-                name: "" + service.Identifier,
-                type: "service",
-                used: false,
-                //                image: {
-                //                    url: "/hawtio/img/icons/osgi/service.png",
-                //                    width: 32,
-                //                    height:32
-                //                },
-                popup: {
-                    title: "Service [" + service.Identifier + "]",
-                    content: (function () {
-                        var result = "";
-
-                        if (service != null) {
-                            service.objectClass.forEach(function (clazz) {
-                                if (result.length > 0) {
-                                    result = result + "<br/>";
-                                }
-                                result = result + clazz;
-                            });
-                        }
-
-                        return result;
-                    })
-                }
-            };
-        };
-
-        // Create a bundle node for a given bundle
-        OsgiGraphBuilder.prototype.buildBundleNode = function (bundle) {
-            return {
-                id: this.bundleNodeId(bundle),
-                name: bundle.SymbolicName,
-                type: "bundle",
-                used: false,
-                navUrl: "#/osgi/bundle/" + bundle.Identifier,
-                //                image: {
-                //                    url: "/hawtio/img/icons/osgi/bundle.png",
-                //                    width: 32,
-                //                    height:32
-                //                },
-                popup: {
-                    title: "Bundle [" + bundle.Identifier + "]",
-                    content: "<p>" + bundle.SymbolicName + "<br/>Version " + bundle.Version + "</p>"
-                }
-            };
-        };
-
-        OsgiGraphBuilder.prototype.buildPackageNode = function (pkg) {
-            return {
-                id: this.pkgNodeId(pkg),
-                name: pkg.Name,
-                type: "package",
-                used: false,
-                popup: {
-                    title: "Package [" + pkg.Name + "]",
-                    content: "<p>" + pkg.Version + "</p>"
-                }
-            };
-        };
-
-        OsgiGraphBuilder.prototype.exportingBundle = function (pkg) {
-            var _this = this;
-            var result = null;
-
-            pkg.ExportingBundles.forEach(function (bundleId) {
-                if (_this.filteredBundles[_this.PREFIX_BUNDLE + bundleId] != null) {
-                    result = bundleId;
-                }
-            });
-            return result;
-        };
-
-        OsgiGraphBuilder.prototype.addFilteredBundles = function () {
-            var _this = this;
-            d3.values(this.getBundles()).forEach(function (bundle) {
-                if (_this.bundleFilter == null || _this.bundleFilter == "" || bundle.SymbolicName.startsWith(_this.bundleFilter)) {
-                    var bundleNode = _this.buildBundleNode(bundle);
-
-                    _this.filteredBundles[bundleNode.id] = bundle;
-
-                    bundleNode.used = true;
-
-                    _this.graphBuilder.addNode(bundleNode);
-
-                    if (_this.showServices) {
-                        var services = _this.getServices();
-
-                        bundle.RegisteredServices.forEach(function (sid) {
-                            var svcNode = _this.buildSvcNode(services[sid]);
-                            _this.graphBuilder.addNode(svcNode);
-                            _this.graphBuilder.addLink(bundleNode.id, svcNode.id, "registered");
-                        });
-                    }
-                }
-            });
-        };
-
-        OsgiGraphBuilder.prototype.addFilteredServices = function () {
-            var _this = this;
-            if (this.showServices) {
-                d3.values(this.getBundles()).forEach(function (bundle) {
-                    bundle.ServicesInUse.forEach(function (sid) {
-                        var svcNodeId = _this.PREFIX_SVC + sid;
-
-                        if (_this.graphBuilder.getNode(svcNodeId) != null) {
-                            _this.graphBuilder.getNode(svcNodeId).used = true;
-
-                            var bundleNode = _this.graphBuilder.getNode(_this.bundleNodeId(bundle)) || _this.buildBundleNode(bundle);
-                            bundleNode.used = true;
-
-                            _this.graphBuilder.addNode(bundleNode);
-                            _this.graphBuilder.addLink(svcNodeId, bundleNode.id, "inuse");
-                        }
-                    });
-                });
-            }
-        };
-
-        OsgiGraphBuilder.prototype.addFilteredPackages = function () {
-            var _this = this;
-            if (this.showPackages) {
-                d3.values(this.getPackages()).forEach(function (pkg) {
-                    if (_this.packageFilter == null || _this.packageFilter == "" || pkg.Name.startsWith(_this.packageFilter)) {
-                        var exportingId = _this.exportingBundle(pkg);
-
-                        if (exportingId != null) {
-                            var bundleNode = _this.graphBuilder.getNode(_this.PREFIX_BUNDLE + exportingId);
-                            bundleNode.used = true;
-
-                            var pkgNode = _this.buildPackageNode(pkg);
-
-                            _this.graphBuilder.addNode(pkgNode);
-                            _this.graphBuilder.addLink(bundleNode.id, pkgNode.id, "registered");
-
-                            pkg.ImportingBundles.forEach(function (bundleId) {
-                                var bundleNode = _this.graphBuilder.getNode(_this.PREFIX_BUNDLE + bundleId) || _this.buildBundleNode(_this.getBundles()[bundleId]);
-                                bundleNode.used = true;
-                                pkgNode.used = true;
-
-                                _this.graphBuilder.addNode(bundleNode);
-                                _this.graphBuilder.addLink(bundleNode.id, pkgNode.id, "inuse");
-                            });
-                        }
-                    }
-                });
-            }
-        };
-
-        OsgiGraphBuilder.prototype.buildGraph = function () {
-            var _this = this;
-            this.addFilteredBundles();
-            this.addFilteredServices();
-            this.addFilteredPackages();
-
-            if (this.hideUnused) {
-                // this will filter out all nodes that are not marked as used in our data model
-                this.graphBuilder.filterNodes(function (node) {
-                    return node.used;
-                });
-
-                // this will remove all nodes that do not have connections after filtering the unused nodes
-                this.graphBuilder.filterNodes(function (node) {
-                    return _this.graphBuilder.hasLinks(node.id);
-                });
-            }
-
-            return this.graphBuilder.buildGraph();
-        };
-        return OsgiGraphBuilder;
-    })();
-    Osgi.OsgiGraphBuilder = OsgiGraphBuilder;
-})(Osgi || (Osgi = {}));
-/**
-* @module Osgi
-*/
-var Osgi;
-(function (Osgi) {
-    function BundleController($scope, $location, workspace, $routeParams, jolokia) {
-        $scope.bundleId = $routeParams.bundleId;
-
-        updateTableContents();
-
-        $scope.showValue = function (key) {
-            switch (key) {
-                case "Bundle-Name":
-                case "Bundle-SymbolicName":
-                case "Bundle-Version":
-                case "Export-Package":
-                case "Import-Package":
-                    return false;
-                default:
-                    return true;
-            }
-        };
-
-        $scope.executeLoadClass = function (clazz) {
-            var mbean = Osgi.getHawtioOSGiToolsMBean(workspace);
-            if (mbean) {
-                jolokia.request({ type: 'exec', mbean: mbean, operation: 'getLoadClassOrigin', arguments: [$scope.bundleId, clazz] }, {
-                    success: function (response) {
-                        var divEl = document.getElementById("loadClassResult");
-                        var resultBundle = response.value;
-                        var style;
-                        var resultTxt;
-                        if (resultBundle === -1) {
-                            style = "";
-                            resultTxt = "Class can not be loaded from this bundle.";
-                        } else {
-                            style = "alert-success";
-                            resultTxt = "Class is served from Bundle " + Osgi.bundleLinks(workspace, resultBundle);
-                        }
-                        divEl.innerHTML += "<div class='alert " + style + "'>" + "<button type='button' class='close' data-dismiss='alert'>&times;</button>" + "Loading class <strong>" + clazz + "</strong> in Bundle " + $scope.bundleId + ". " + resultTxt + "</div>";
-                    },
-                    error: function (response) {
-                        inspectReportError(response);
-                    }
-                });
-            } else {
-                inspectReportNoMBeanFound();
-            }
-        };
-
-        $scope.executeFindResource = function (resource) {
-            var mbean = Osgi.getHawtioOSGiToolsMBean(workspace);
-            if (mbean) {
-                jolokia.request({ type: 'exec', mbean: mbean, operation: 'getResourceURL', arguments: [$scope.bundleId, resource] }, {
-                    success: function (response) {
-                        var divEl = document.getElementById("loadClassResult");
-                        var resultURL = response.value;
-                        var style;
-                        var resultTxt;
-                        if (resultURL === null) {
-                            style = "";
-                            resultTxt = "Resource can not be found from this bundle.";
-                        } else {
-                            style = "alert-success";
-                            resultTxt = "Resource is available from: " + resultURL;
-                        }
-                        divEl.innerHTML += "<div class='alert " + style + "'>" + "<button type='button' class='close' data-dismiss='alert'>&times;</button>" + "Finding resource <strong>" + resource + "</strong> in Bundle " + $scope.bundleId + ". " + resultTxt + "</div>";
-                    },
-                    error: function (response) {
-                        inspectReportError(response);
-                    }
-                });
-            } else {
-                inspectReportNoMBeanFound();
-            }
-        };
-
-        $scope.mavenLink = function (row) {
-            if (angular.isObject(row)) {
-                return Maven.mavenLink(row.Location);
-            }
-
-            // TODO try using the LogQuery mbean to find the mvn coords for a bundle id?
-            return "";
-        };
-
-        $scope.startBundle = function (bundleId) {
-            jolokia.request([
-                { type: 'exec', mbean: Osgi.getSelectionFrameworkMBean(workspace), operation: 'startBundle', arguments: [bundleId] }
-            ], onSuccess(updateTableContents));
-        };
-
-        $scope.stopBundle = function (bundleId) {
-            jolokia.request([
-                { type: 'exec', mbean: Osgi.getSelectionFrameworkMBean(workspace), operation: 'stopBundle', arguments: [bundleId] }
-            ], onSuccess(updateTableContents));
-        };
-
-        $scope.updatehBundle = function (bundleId) {
-            jolokia.request([
-                { type: 'exec', mbean: Osgi.getSelectionFrameworkMBean(workspace), operation: 'updateBundle', arguments: [bundleId] }
-            ], onSuccess(updateTableContents));
-        };
-
-        $scope.refreshBundle = function (bundleId) {
-            jolokia.request([
-                { type: 'exec', mbean: Osgi.getSelectionFrameworkMBean(workspace), operation: 'refreshBundle', arguments: [bundleId] }
-            ], onSuccess(updateTableContents));
-        };
-
-        $scope.uninstallBundle = function (bundleId) {
-            jolokia.request([{
-                    type: 'exec',
-                    mbean: Osgi.getSelectionFrameworkMBean(workspace),
-                    operation: 'uninstallBundle',
-                    arguments: [bundleId]
-                }], onSuccess(function () {
-                $location.path("/osgi/bundle-list");
-                Core.$apply($scope);
-            }));
-        };
-
-        function inspectReportNoMBeanFound() {
-            var divEl = document.getElementById("loadClassResult");
-            divEl.innerHTML += "<div class='alert alert-error'>" + "<button type='button' class='close' data-dismiss='alert'>&times;</button>" + "The hawtio.OSGiTools MBean is not available. Please contact technical support." + "</div>";
-        }
-
-        function inspectReportError(response) {
-            var divEl = document.getElementById("loadClassResult");
-            divEl.innerHTML += "<div class='alert alert-error'>" + "<button type='button' class='close' data-dismiss='alert'>&times;</button>" + "Problem invoking hawtio.OSGiTools MBean. " + response + "</div>";
-        }
-
-        function populateTable(response) {
-            var values = response.value;
-            $scope.bundles = values;
-
-            // now find the row based on the selection ui
-            Osgi.defaultBundleValues(workspace, $scope, values);
-            $scope.row = Osgi.findBundle($scope.bundleId, values);
-            Core.$apply($scope);
-
-            // This trick is to ensure that the popover is properly visible if it is
-            // smaller than the accordion
-            $('.accordion-body.collapse').hover(function () {
-                $(this).css('overflow', 'visible');
-            }, function () {
-                $(this).css('overflow', 'hidden');
-            });
-
-            // setup tooltips
-            $("#bsn").tooltip({
-                title: readBSNHeaderData($scope.row.Headers["Bundle-SymbolicName"].Value),
-                placement: "right" });
-
-            createImportPackageSection();
-            createExportPackageSection();
-            populateServicesSection();
-        }
-
-        function createImportPackageSection() {
-            // setup popovers
-            var importPackageHeaders = Osgi.parseManifestHeader($scope.row.Headers, "Import-Package");
-            for (var pkg in $scope.row.ImportData) {
-                var data = importPackageHeaders[pkg];
-                var po = "<small><table>" + "<tr><td><strong>Imported Version=</strong>" + $scope.row.ImportData[pkg].ReportedVersion + "</td></tr>";
-                if (data !== undefined) {
-                    // This happens in case the package was imported due to a DynamicImport-Package
-                    po += formatAttributesAndDirectivesForPopover(data, false);
-                    if (importPackageHeaders[pkg]["Dresolution"] !== "optional") {
-                        $(document.getElementById("import." + pkg)).addClass("badge-info");
-                    }
-                } else {
-                    // This is a dynamic import
-                    $(document.getElementById("import." + pkg)).addClass("badge-important");
-                    var reason = $scope.row.Headers["DynamicImport-Package"];
-                    if (reason !== undefined) {
-                        reason = reason.Value;
-                        po += "<tr><td>Dynamic Import. Imported due to:</td></tr>";
-                        po += "<tr><td><strong>DynamicImport-Package=</strong>" + reason + "</td></tr>";
-                    }
-                }
-                po += "</table></small>";
-                $(document.getElementById("import." + pkg)).popover({ title: "attributes and directives", content: po, trigger: "hover", html: true });
-
-                // Unset the value so that we can see whether there are any unbound optional imports left...
-                importPackageHeaders[pkg] = undefined;
-            }
-
-            var unsatisfied = "";
-            for (var pkg in importPackageHeaders) {
-                if (importPackageHeaders[pkg] === undefined) {
-                    continue;
-                }
-                if ($scope.row.ExportData[pkg] !== undefined) {
-                    continue;
-                }
-                unsatisfied += "<tr><td><div class='less-big badge badge-warning' id='unsatisfied." + pkg + "'>" + pkg + "</div></td></tr>";
-            }
-
-            if (unsatisfied !== "") {
-                unsatisfied = "<p/><p class='text-warning'>The following optional imports were not satisfied:<table>" + unsatisfied + "</table></p>";
-                document.getElementById("unsatisfiedOptionalImports").innerHTML = unsatisfied;
-            }
-
-            for (var pkg in importPackageHeaders) {
-                if (importPackageHeaders[pkg] === undefined) {
-                    continue;
-                }
-                var po = "<small><table>";
-                po += formatAttributesAndDirectivesForPopover(importPackageHeaders[pkg], false);
-                po += "</table></small>";
-                $(document.getElementById("unsatisfied." + pkg)).popover({ title: "attributes and directives", content: po, trigger: "hover", html: true });
-            }
-        }
-
-        function createExportPackageSection() {
-            // setup popovers
-            var exportPackageHeaders = Osgi.parseManifestHeader($scope.row.Headers, "Export-Package");
-            for (var pkg in $scope.row.ExportData) {
-                var po = "<small><table>" + "<tr><td><strong>Exported Version=</strong>" + $scope.row.ExportData[pkg].ReportedVersion + "</td></tr>";
-                po += formatAttributesAndDirectivesForPopover(exportPackageHeaders[pkg], true);
-                po += "</table></small>";
-                $(document.getElementById("export." + pkg)).popover({ title: "attributes and directives", content: po, trigger: "hover", html: true });
-            }
-        }
-
-        function populateServicesSection() {
-            if (($scope.row.RegisteredServices === undefined || $scope.row.RegisteredServices.length === 0) && ($scope.row.ServicesInUse === undefined || $scope.row.ServicesInUse === 0)) {
-                // no services for this bundle
-                return;
-            }
-
-            var mbean = Osgi.getSelectionServiceMBean(workspace);
-            if (mbean) {
-                jolokia.request({ type: 'exec', mbean: mbean, operation: 'listServices()' }, onSuccess(updateServices));
-            }
-        }
-
-        function updateServices(result) {
-            var data = result.value;
-            for (var id in data) {
-                var reg = document.getElementById("registers.service." + id);
-                var uses = document.getElementById("uses.service." + id);
-
-                if ((reg === undefined || reg === null) && (uses === undefined || uses === null)) {
-                    continue;
-                }
-
-                jolokia.request({
-                    type: 'exec', mbean: Osgi.getSelectionServiceMBean(workspace),
-                    operation: 'getProperties', arguments: [id] }, onSuccess(function (svcId, regEl, usesEl) {
-                    return function (resp) {
-                        var props = resp.value;
-                        var sortedKeys = Object.keys(props).sort();
-                        var po = "<small><table>";
-                        for (var i = 0; i < sortedKeys.length; i++) {
-                            var value = props[sortedKeys[i]];
-                            if (value !== undefined) {
-                                var fval = value.Value;
-                                if (fval.length > 15) {
-                                    fval = fval.replace(/[,]/g, ",<br/>&nbsp;&nbsp;");
-                                }
-
-                                po += "<tr><td valign='top'>" + sortedKeys[i] + "</td><td>" + fval + "</td></tr>";
-                            }
-                        }
-
-                        var regBID = data[svcId].BundleIdentifier;
-                        po += "<tr><td>Registered&nbsp;by</td><td>Bundle " + regBID + " <div class='less-big label'>" + $scope.bundles[regBID].SymbolicName + "</div></td></tr>";
-                        po += "</table></small>";
-
-                        if (regEl !== undefined && regEl !== null) {
-                            regEl.innerText = " " + formatServiceName(data[svcId].objectClass);
-                            $(regEl).popover({ title: "service properties", content: po, trigger: "hover", html: true });
-                        }
-                        if (usesEl !== undefined && usesEl !== null) {
-                            usesEl.innerText = " " + formatServiceName(data[svcId].objectClass);
-                            $(usesEl).popover({ title: "service properties", content: po, trigger: "hover", html: true });
-                        }
-                    };
-                }(id, reg, uses)));
-            }
-        }
-
-        function updateTableContents() {
-            //console.log("Loading the bundles");
-            var mbean = Osgi.getSelectionBundleMBean(workspace);
-            if (mbean) {
-                jolokia.request({ type: 'exec', mbean: mbean, operation: 'listBundles()' }, onSuccess(populateTable));
-            }
-        }
-    }
-    Osgi.BundleController = BundleController;
-
-    // These functions are exported independently to facilitate unit testing
-    function readBSNHeaderData(header) {
-        var idx = header.indexOf(";");
-        if (idx <= 0) {
-            return "";
-        }
-        return header.substring(idx + 1).trim();
-    }
-    Osgi.readBSNHeaderData = readBSNHeaderData;
-
-    function formatAttributesAndDirectivesForPopover(data, skipVersion) {
-        var str = "";
-        var sortedKeys = Object.keys(data).sort();
-        for (var i = 0; i < sortedKeys.length; i++) {
-            var da = sortedKeys[i];
-            var type = da.charAt(0);
-
-            var separator = "";
-            var txtClass;
-            if (type === "A") {
-                separator = "=";
-                txtClass = "text-info";
-            }
-            if (type === "D") {
-                separator = ":=";
-                txtClass = "muted";
-            }
-
-            if (separator !== "") {
-                if (skipVersion) {
-                    if (da === "Aversion") {
-                        continue;
-                    }
-                }
-
-                var value = data[da];
-                if (value.length > 15) {
-                    value = value.replace(/[,]/g, ",<br/>&nbsp;&nbsp;");
-                }
-                str += "<tr><td><strong class='" + txtClass + "'>" + da.substring(1) + "</strong>" + separator + value + "</td></tr>";
-            }
-        }
-        return str;
-    }
-    Osgi.formatAttributesAndDirectivesForPopover = formatAttributesAndDirectivesForPopover;
-
-    function formatServiceName(objClass) {
-        if (Object.isArray(objClass)) {
-            return formatServiceNameArray(objClass);
-        }
-        var name = objClass.toString();
-        var idx = name.lastIndexOf('.');
-        return name.substring(idx + 1);
-    }
-    Osgi.formatServiceName = formatServiceName;
-
-    function formatServiceNameArray(objClass) {
-        var rv = [];
-        for (var i = 0; i < objClass.length; i++) {
-            rv.add(formatServiceName(objClass[i]));
-        }
-        rv = rv.filter(function (elem, pos, self) {
-            return self.indexOf(elem) === pos;
-        });
-
-        rv.sort();
-        return rv.toString();
-    }
-})(Osgi || (Osgi = {}));
 /**
 * @module Osgi
 */
@@ -41143,6 +39222,2063 @@ var Osgi;
         return pid;
     }
     Osgi.removeFactoryPidPrefix = removeFactoryPidPrefix;
+})(Osgi || (Osgi = {}));
+/**
+* @module Osgi
+* @main Osgi
+*/
+/// <reference path="./osgiHelpers.ts"/>
+var Osgi;
+(function (Osgi) {
+    var pluginName = 'osgi';
+
+    Osgi._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore', 'hawtio-ui']);
+
+    Osgi._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/osgi/bundle-list', { templateUrl: 'app/osgi/html/bundle-list.html' }).when('/osgi/bundles', { templateUrl: 'app/osgi/html/bundles.html' }).when('/osgi/bundle/:bundleId', { templateUrl: 'app/osgi/html/bundle.html' }).when('/osgi/services', { templateUrl: 'app/osgi/html/services.html' }).when('/osgi/packages', { templateUrl: 'app/osgi/html/packages.html' }).when('/osgi/package/:package/:version', { templateUrl: 'app/osgi/html/package.html' }).when('/osgi/configurations', { templateUrl: 'app/osgi/html/configurations.html' }).when('/osgi/pid/:pid/:factoryPid', { templateUrl: 'app/osgi/html/pid.html' }).when('/osgi/pid/:pid', { templateUrl: 'app/osgi/html/pid.html' }).when('/osgi/fwk', { templateUrl: 'app/osgi/html/framework.html' }).when('/osgi/dependencies', { templateUrl: 'app/osgi/html/svc-dependencies.html', reloadOnSearch: false });
+        }]);
+
+    Osgi._module.run([
+        "workspace", "viewRegistry", "helpRegistry", function (workspace, viewRegistry, helpRegistry) {
+            viewRegistry['osgi'] = "app/osgi/html/layoutOsgi.html";
+            helpRegistry.addUserDoc('osgi', 'app/osgi/doc/help.md', function () {
+                return workspace.treeContainsDomainAndProperties("osgi.core");
+            });
+
+            workspace.topLevelTabs.push({
+                id: "osgi",
+                content: "OSGi",
+                title: "Visualise and manage the bundles and services in this OSGi container",
+                isValid: function (workspace) {
+                    return workspace.treeContainsDomainAndProperties("osgi.core");
+                },
+                href: function () {
+                    return "#/osgi/bundle-list";
+                },
+                isActive: function (workspace) {
+                    return workspace.isLinkActive("osgi");
+                }
+            });
+        }]);
+
+    Osgi._module.factory('osgiDataService', [
+        "workspace", "jolokia", function (workspace, jolokia) {
+            return new Osgi.OsgiDataService(workspace, jolokia);
+        }]);
+
+    hawtioPluginLoader.addModule(pluginName);
+})(Osgi || (Osgi = {}));
+/**
+* @module Osgi
+*/
+/// <reference path="./osgiPlugin.ts"/>
+var Osgi;
+(function (Osgi) {
+    Osgi._module.controller("Osgi.ServiceDependencyController", [
+        "$scope", "$location", "$routeParams", "workspace", "osgiDataService", function ($scope, $location, $routeParams, workspace, osgiDataService) {
+            $scope.init = function () {
+                if ($routeParams["bundleFilter"]) {
+                    $scope.bundleFilter = $routeParams["bundleFilter"];
+                } else {
+                    $scope.bundleFilter = "";
+                }
+
+                if ($routeParams["pkgFilter"]) {
+                    $scope.packageFilter = $routeParams["pkgFilter"];
+                } else {
+                    $scope.packageFilter = "";
+                }
+
+                if ($routeParams["view"] == "packages") {
+                    $scope.selectView = "packages";
+                } else {
+                    $scope.selectView = "services";
+                }
+
+                if ($routeParams['hideUnused']) {
+                    $scope.hideUnused = $routeParams['hideUnused'] == "true";
+                } else {
+                    $scope.hideUnused = true;
+                }
+            };
+
+            $scope.updateLink = function () {
+                var search = $location.search;
+
+                if ($scope.bundleFilter && $scope.bundleFilter != "") {
+                    search["bundleFilter"] = $scope.bundleFilter;
+                } else {
+                    delete search["bundleFilter"];
+                }
+
+                if ($scope.packageFilter && $scope.packageFilter != "") {
+                    search["pkgFilter"] = $scope.packageFilter;
+                } else {
+                    delete search["pkgFilter"];
+                }
+
+                search["view"] = $scope.selectView;
+
+                if ($scope.hideUnused) {
+                    search["hideUnused"] = "true";
+                } else {
+                    search["hideUnused"] = "false";
+                }
+
+                $location.search(search);
+            };
+
+            $scope.addToDashboardLink = function () {
+                var routeParams = angular.toJson($routeParams);
+
+                var href = "#/osgi/dependencies";
+                var title = "OSGi dependencies";
+
+                var size = angular.toJson({
+                    size_x: 2,
+                    size_y: 2
+                });
+
+                var addLink = "#/dashboard/add?tab=dashboard" + "&href=" + encodeURIComponent(href) + "&routeParams=" + encodeURIComponent(routeParams) + "&size=" + encodeURIComponent(size) + "&title=" + encodeURIComponent(title);
+
+                return addLink;
+            };
+
+            $scope.$on('$routeUpdate', function () {
+                var search = $location.search;
+
+                if (search["bundleFilter"]) {
+                    $scope.bundleFilter = $routeParams["bundleFilter"];
+                } else {
+                    $scope.bundleFilter = "";
+                }
+
+                if (search["pkgFilter"]) {
+                    $scope.packageFilter = $routeParams["pkgFilter"];
+                } else {
+                    $scope.packageFilter = "";
+                }
+
+                if (search["view"] == "packages") {
+                    $scope.selectView = "packages";
+                } else {
+                    $scope.selectView = "services";
+                }
+
+                if (search['hideUnused']) {
+                    $scope.hideUnused = $routeParams['hideUnused'] == "true";
+                } else {
+                    $scope.hideUnused = true;
+                }
+
+                $scope.updateLink();
+                $scope.updateGraph();
+            });
+
+            $scope.updateGraph = function () {
+                $scope.updateLink();
+                $scope.updatePkgFilter();
+
+                var graphBuilder = new Osgi.OsgiGraphBuilder(osgiDataService, $scope.bundleFilter, $scope.packageFilter, $scope.selectView == "services", $scope.selectView == "packages", $scope.hideUnused);
+
+                $scope.graph = graphBuilder.buildGraph();
+                Core.$apply($scope);
+            };
+
+            $scope.updatePkgFilter = function () {
+                if ($scope.packageFilter == null || $scope.packageFilter == "") {
+                    $scope.selectView = "services";
+                    $scope.disablePkg = true;
+                } else {
+                    $scope.disablePkg = false;
+                }
+            };
+
+            $scope.init();
+            $scope.updateGraph();
+        }]);
+})(Osgi || (Osgi = {}));
+/**
+* @module Osgi
+*/
+/// <reference path="./osgiPlugin.ts"/>
+var Osgi;
+(function (Osgi) {
+    Osgi._module.controller("Osgi.PackageController", [
+        "$scope", "$filter", "workspace", "$routeParams", function ($scope, $filter, workspace, $routeParams) {
+            $scope.package = $routeParams.package;
+            $scope.version = $routeParams.version;
+
+            updateTableContents();
+
+            function populateTable(response) {
+                var packages = Osgi.defaultPackageValues(workspace, $scope, response.value);
+                $scope.row = packages.filter({ "Name": $scope.package, "Version": $scope.version })[0];
+                Core.$apply($scope);
+            }
+            ;
+
+            function updateTableContents() {
+                var mbean = Osgi.getSelectionPackageMBean(workspace);
+                if (mbean) {
+                    var jolokia = workspace.jolokia;
+                    jolokia.request({ type: 'exec', mbean: mbean, operation: 'listPackages' }, onSuccess(populateTable));
+                }
+            }
+        }]);
+})(Osgi || (Osgi = {}));
+/**
+* @module Osgi
+*/
+/// <reference path="./osgiPlugin.ts"/>
+var Osgi;
+(function (Osgi) {
+    var OsgiDataService = (function () {
+        function OsgiDataService(workspace, jolokia) {
+            this.jolokia = jolokia;
+            this.workspace = workspace;
+        }
+        OsgiDataService.prototype.getBundles = function () {
+            var bundles = {};
+
+            // TODO make this async,especially given this returns lots of data
+            var response = this.jolokia.request({
+                type: 'exec',
+                mbean: Osgi.getSelectionBundleMBean(this.workspace),
+                operation: 'listBundles()'
+            }, onSuccess(null));
+
+            angular.forEach(response.value, function (value, key) {
+                var obj = {
+                    Identifier: value.Identifier,
+                    Name: "",
+                    SymbolicName: value.SymbolicName,
+                    Fragment: value.Fragment,
+                    State: value.State,
+                    Version: value.Version,
+                    LastModified: new Date(Number(value.LastModified)),
+                    Location: value.Location,
+                    StartLevel: undefined,
+                    RegisteredServices: value.RegisteredServices,
+                    ServicesInUse: value.ServicesInUse
+                };
+                if (value.Headers['Bundle-Name']) {
+                    obj.Name = value.Headers['Bundle-Name']['Value'];
+                }
+
+                bundles[value.Identifier] = obj;
+            });
+
+            return bundles;
+        };
+
+        OsgiDataService.prototype.getServices = function () {
+            var services = {};
+
+            var response = this.jolokia.request({
+                type: 'exec',
+                mbean: Osgi.getSelectionServiceMBean(this.workspace),
+                operation: 'listServices()'
+            }, onSuccess(null));
+
+            var answer = response.value;
+
+            angular.forEach(answer, function (value, key) {
+                services[value.Identifier] = value;
+            });
+
+            return services;
+        };
+
+        OsgiDataService.prototype.getPackages = function () {
+            var packages = {};
+
+            var response = this.jolokia.request({
+                type: 'exec',
+                mbean: Osgi.getSelectionPackageMBean(this.workspace),
+                operation: 'listPackages()'
+            }, onSuccess(null));
+
+            var answer = response.value.values;
+
+            answer.forEach(function (value) {
+                packages[value.Name + "-" + value.Version] = value;
+            });
+
+            return packages;
+        };
+        return OsgiDataService;
+    })();
+    Osgi.OsgiDataService = OsgiDataService;
+})(Osgi || (Osgi = {}));
+/**
+* @module Osgi
+*/
+/// <reference path="./osgiPlugin.ts"/>
+var Osgi;
+(function (Osgi) {
+    Osgi._module.controller("Osgi.FrameworkController", [
+        "$scope", "$dialog", "workspace", function ($scope, $dialog, workspace) {
+            $scope.editDialog = new UI.Dialog();
+
+            updateContents();
+
+            $scope.edit = function (attr, displayName) {
+                $scope.editAttr = attr;
+                $scope.editDisplayName = displayName;
+                $scope.editDialog.open();
+            };
+
+            $scope.edited = function (name, displayName, res) {
+                $scope.editDialog.close();
+
+                if (angular.isNumber(res)) {
+                    var mbean = Osgi.getSelectionFrameworkMBean(workspace);
+                    if (mbean) {
+                        var jolokia = workspace.jolokia;
+                        jolokia.request({
+                            type: 'write', mbean: mbean, attribute: name, value: res
+                        }, {
+                            error: function (response) {
+                                editWritten("error", response.error);
+                            },
+                            success: function (response) {
+                                editWritten("success", displayName + " changed to " + res);
+                            }
+                        });
+                    }
+                }
+            };
+
+            function editWritten(status, message) {
+                notification(status, message);
+                updateContents();
+            }
+
+            function populatePage(response) {
+                $scope.startLevel = response.value.FrameworkStartLevel;
+                $scope.initialBundleStartLevel = response.value.InitialBundleStartLevel;
+                Core.$apply($scope);
+            }
+
+            function updateContents() {
+                var mbean = Osgi.getSelectionFrameworkMBean(workspace);
+                if (mbean) {
+                    var jolokia = workspace.jolokia;
+                    jolokia.request({ type: 'read', mbean: mbean }, onSuccess(populatePage));
+                }
+            }
+        }]);
+})(Osgi || (Osgi = {}));
+/**
+* @module Osgi
+*/
+/// <reference path="./osgiPlugin.ts"/>
+var Osgi;
+(function (Osgi) {
+    Osgi._module.controller("Osgi.PackagesController", [
+        "$scope", "$filter", "workspace", "$templateCache", "$compile", function ($scope, $filter, workspace, $templateCache, $compile) {
+            var dateFilter = $filter('date');
+
+            $scope.widget = new DataTable.TableWidget($scope, $templateCache, $compile, [
+                {
+                    "mDataProp": null,
+                    "sClass": "control center",
+                    "sDefaultContent": '<i class="icon-plus"></i>'
+                },
+                { "mDataProp": "Name" },
+                { "mDataProp": "VersionLink" },
+                { "mDataProp": "RemovalPending" }
+            ], {
+                rowDetailTemplateId: 'packageBundlesTemplate',
+                disableAddColumns: true
+            });
+
+            $scope.$watch('workspace.selection', function () {
+                updateTableContents();
+            });
+
+            function populateTable(response) {
+                var packages = Osgi.defaultPackageValues(workspace, $scope, response.value);
+                $scope.widget.populateTable(packages);
+                Core.$apply($scope);
+            }
+
+            function updateTableContents() {
+                var mbean = Osgi.getSelectionPackageMBean(workspace);
+                if (mbean) {
+                    var jolokia = workspace.jolokia;
+                    jolokia.request({ type: 'exec', mbean: mbean, operation: 'listPackages' }, onSuccess(populateTable));
+                }
+            }
+        }]);
+})(Osgi || (Osgi = {}));
+/**
+* @module Osgi
+*/
+/// <reference path="./osgiPlugin.ts"/>
+var Osgi;
+(function (Osgi) {
+    Osgi._module.controller("Osgi.ConfigurationsController", [
+        "$scope", "$routeParams", "$location", "workspace", "jolokia", function ($scope, $routeParams, $location, workspace, jolokia) {
+            $scope.selectedItems = [];
+
+            $scope.grid = {
+                data: 'configurations',
+                showFilter: false,
+                showColumnMenu: false,
+                multiSelect: false,
+                filterOptions: {
+                    filterText: "",
+                    useExternalFilter: false
+                },
+                selectedItems: $scope.selectedItems,
+                showSelectionCheckbox: false,
+                displaySelectionCheckbox: false,
+                columnDefs: [
+                    {
+                        field: 'Pid',
+                        displayName: 'Configuration',
+                        cellTemplate: '<div class="ngCellText"><a ng-href="{{row.entity.pidLink}}" title="{{row.entity.description}}">{{row.entity.name}}</a></div>'
+                    }
+                ]
+            };
+
+            /** the kinds of config */
+            var configKinds = {
+                factory: {
+                    class: "badge badge-info",
+                    title: "Configuration factory used to create separate instances of the configuration"
+                },
+                pid: {
+                    class: "badge badge-success",
+                    title: "Configuration which has a set of properties associated with it"
+                },
+                pidNoValue: {
+                    class: "badge badge-warning",
+                    title: "Configuration which does not yet have any bound values"
+                }
+            };
+
+            $scope.addPidDialog = new UI.Dialog();
+
+            Osgi.initProfileScope($scope, $routeParams, $location, localStorage, jolokia, workspace, function () {
+                $scope.$watch('workspace.selection', function () {
+                    updateTableContents();
+                });
+
+                updateTableContents();
+            });
+
+            $scope.addPid = function (newPid) {
+                $scope.addPidDialog.close();
+                var mbean = Osgi.getHawtioConfigAdminMBean($scope.workspace);
+                if (mbean && newPid) {
+                    var json = JSON.stringify({});
+                    $scope.jolokia.execute(mbean, "configAdminUpdate", newPid, json, onSuccess(function (response) {
+                        notification("success", "Successfully created pid: " + newPid);
+                        updateTableContents();
+                    }));
+                }
+            };
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateTableContents, 50);
+            });
+
+            function onConfigPids(response) {
+                var pids = {};
+                angular.forEach(response, function (row) {
+                    var pid = row[0];
+                    var bundle = row[1];
+                    var config = createPidConfig(pid, bundle);
+                    config["hasValue"] = true;
+                    config["kind"] = configKinds.pid;
+                    pids[pid] = config;
+                });
+                $scope.pids = pids;
+
+                // lets load the factory pids
+                var mbean = Osgi.getSelectionConfigAdminMBean($scope.workspace);
+                if (mbean) {
+                    $scope.jolokia.execute(mbean, 'getConfigurations', '(service.factoryPid=*)', onSuccess(onConfigFactoryPids, errorHandler("Failed to load factory PID configurations: ")));
+                }
+                loadMetaType();
+            }
+
+            /**
+            * For each factory PID lets find the underlying PID to use to edit it, then lets make a link between them
+            */
+            function onConfigFactoryPids(response) {
+                var mbean = Osgi.getSelectionConfigAdminMBean($scope.workspace);
+                var pids = $scope.pids;
+                if (pids && mbean) {
+                    angular.forEach(response, function (row) {
+                        var pid = row[0];
+                        var bundle = row[1];
+                        if (pid) {
+                            var config = pids[pid];
+                            if (config) {
+                                config["isFactoryInstance"] = true;
+                                $scope.jolokia.execute(mbean, 'getFactoryPid', pid, onSuccess(function (factoryPid) {
+                                    config["factoryPid"] = factoryPid;
+                                    config["name"] = Osgi.removeFactoryPidPrefix(pid, factoryPid);
+                                    if (factoryPid) {
+                                        var factoryConfig = getOrCreatePidConfig(factoryPid, bundle);
+                                        if (factoryConfig) {
+                                            setFactoryPid(factoryConfig);
+                                            var children = factoryConfig.children;
+                                            if (!children) {
+                                                children = {};
+                                                factoryConfig["children"] = children;
+                                            }
+                                            children[pid] = config;
+                                            if ($scope.inFabricProfile) {
+                                                Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, pid, function (configValues) {
+                                                    var zkPid = Core.pathGet(configValues, ["fabric.zookeeper.pid", "Value"]);
+                                                    if (zkPid) {
+                                                        config["name"] = Osgi.removeFactoryPidPrefix(zkPid, factoryPid);
+                                                        config["zooKeeperPid"] = zkPid;
+                                                        Core.$apply($scope);
+                                                    }
+                                                });
+                                            }
+                                            Core.$apply($scope);
+                                        }
+                                    }
+                                }));
+                            }
+                        }
+                    });
+                }
+                updateMetaType();
+            }
+
+            function onMetaType(response) {
+                $scope.metaType = response;
+                updateMetaType();
+            }
+
+            function updateConfigurations() {
+                var pids = $scope.pids;
+                var configurations = [];
+                angular.forEach(pids, function (config, pid) {
+                    if (!config["isFactoryInstance"]) {
+                        configurations.push(config);
+                    }
+                });
+                $scope.configurations = configurations.sortBy("name");
+                Core.$apply($scope);
+            }
+
+            function updateMetaType() {
+                var metaType = $scope.metaType;
+                if (metaType) {
+                    angular.forEach(metaType.pids, function (value, pid) {
+                        var bundle = null;
+                        var config = getOrCreatePidConfig(pid, bundle);
+                        if (config) {
+                            var factoryPidBundleIds = value.factoryPidBundleIds;
+                            if (factoryPidBundleIds && factoryPidBundleIds.length) {
+                                setFactoryPid(config);
+                            }
+                            config["name"] = value.name || pid;
+                            var description = value.description;
+                            if (description) {
+                                config["description"] = description + "\n" + pidBundleDescription(pid, config.bundle);
+                            }
+                        }
+                    });
+                }
+                updateConfigurations();
+            }
+
+            function loadMetaType() {
+                var metaTypeMBean = Osgi.getMetaTypeMBean($scope.workspace);
+                if (metaTypeMBean && $scope.pids) {
+                    $scope.jolokia.execute(metaTypeMBean, "metaTypeSummary", onSuccess(onMetaType));
+                }
+            }
+
+            function updateTableContents() {
+                $scope.configurations = [];
+                if ($scope.jolokia) {
+                    var mbean = Osgi.getSelectionConfigAdminMBean($scope.workspace);
+                    if (mbean) {
+                        $scope.jolokia.execute(mbean, 'getConfigurations', '(service.pid=*)', onSuccess(onConfigPids, errorHandler("Failed to load PID configurations: ")));
+                    }
+                }
+            }
+
+            function pidBundleDescription(pid, bundle) {
+                return "pid: " + pid + "\nbundle: " + bundle;
+            }
+
+            function createPidConfig(pid, bundle) {
+                var config = {
+                    pid: pid,
+                    name: pid,
+                    class: 'pid',
+                    description: pidBundleDescription(pid, bundle),
+                    bundle: bundle,
+                    kind: configKinds.pidNoValue,
+                    pidLink: createPidLink(pid)
+                };
+                return config;
+            }
+
+            function getOrCreatePidConfig(pid, bundle) {
+                var pids = $scope.pids;
+                var factoryConfig = pids[pid];
+                if (!factoryConfig) {
+                    factoryConfig = createPidConfig(pid, bundle);
+                    pids[pid] = factoryConfig;
+                    updateConfigurations();
+                }
+                return factoryConfig;
+            }
+
+            function setFactoryPid(factoryConfig) {
+                factoryConfig["isFactory"] = true;
+                factoryConfig["class"] = "factoryPid";
+                factoryConfig["kind"] = configKinds.factory;
+                var factoryPid = factoryConfig["factoryPid"] || "";
+                var pid = factoryConfig["pid"] || "";
+                if (!factoryPid) {
+                    factoryPid = pid;
+                    pid = null;
+                }
+                factoryConfig["pidLink"] = createPidLink(pid, factoryPid);
+            }
+
+            function createPidLink(pid, factoryPid) {
+                if (typeof factoryPid === "undefined") { factoryPid = null; }
+                return Osgi.createConfigPidLink($scope, workspace, pid, factoryPid);
+            }
+
+            function errorHandler(message) {
+                return {
+                    error: function (response) {
+                        notification("error", message + response['error'] || response);
+                        Core.defaultJolokiaErrorHandler(response);
+                    }
+                };
+            }
+        }]);
+})(Osgi || (Osgi = {}));
+/**
+* @module Osgi
+*/
+/// <reference path="./osgiPlugin.ts"/>
+var Osgi;
+(function (Osgi) {
+    Osgi._module.controller("Osgi.BundleListController", [
+        "$scope", "workspace", "jolokia", "localStorage", function ($scope, workspace, jolokia, localStorage) {
+            $scope.result = {};
+            $scope.bundles = [];
+            $scope.bundleUrl = "";
+            $scope.display = {
+                bundleField: "Name",
+                sortField: "Identifier",
+                bundleFilter: "",
+                startLevelFilter: 0,
+                showPlatformBundles: false,
+                showCxfBundles: false,
+                showCamelBundles: true
+            };
+
+            if ('bundleList' in localStorage) {
+                $scope.display = angular.fromJson(localStorage['bundleList']);
+            }
+
+            $scope.$watch('display', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    localStorage['bundleList'] = angular.toJson(newValue);
+                }
+            }, true);
+
+            $scope.installDisabled = function () {
+                return $scope.bundleUrl === "";
+            };
+
+            $scope.install = function () {
+                jolokia.request({
+                    type: 'exec',
+                    mbean: Osgi.getSelectionFrameworkMBean(workspace),
+                    operation: "installBundle(java.lang.String)",
+                    arguments: [$scope.bundleUrl]
+                }, {
+                    success: function (response) {
+                        var bundleID = response.value;
+                        jolokia.request({
+                            type: 'exec',
+                            mbean: Osgi.getSelectionBundleMBean(workspace),
+                            operation: "isFragment(long)",
+                            arguments: [bundleID]
+                        }, {
+                            success: function (response) {
+                                var isFragment = response.value;
+                                if (isFragment) {
+                                    notification("success", "Fragment installed succesfully.");
+                                    $scope.bundleUrl = "";
+                                    Core.$apply($scope);
+                                } else {
+                                    jolokia.request({
+                                        type: 'exec',
+                                        mbean: Osgi.getSelectionFrameworkMBean(workspace),
+                                        operation: "startBundle(long)",
+                                        arguments: [bundleID]
+                                    }, {
+                                        success: function (response) {
+                                            notification("success", "Bundle installed and started successfully.");
+                                            $scope.bundleUrl = "";
+                                            Core.$apply($scope);
+                                        },
+                                        error: function (response) {
+                                            notification("error", response.error);
+                                        }
+                                    });
+                                }
+                            },
+                            error: function (response) {
+                                notification("error", response.error);
+                            }
+                        });
+                    },
+                    error: function (response) {
+                        notification("error", response.error);
+                    }
+                });
+            };
+
+            $scope.$watch('display.sortField', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    $scope.bundles = $scope.bundles.sortBy(newValue);
+                }
+            });
+
+            $scope.getStateStyle = function (state) {
+                return Osgi.getStateStyle("badge", state);
+            };
+
+            $scope.getLabel = function (bundleObject) {
+                var labelText;
+                if ($scope.display.bundleField === "Name") {
+                    labelText = bundleObject.Name;
+                    if (labelText === "") {
+                        labelText = bundleObject.SymbolicName;
+                    }
+                } else {
+                    labelText = bundleObject.SymbolicName;
+                }
+                return labelText;
+            };
+
+            $scope.filterBundle = function (bundle) {
+                if ($scope.display.startLevelFilter > 0 && bundle.StartLevel < $scope.display.startLevelFilter) {
+                    return false;
+                }
+                var labelText = $scope.getLabel(bundle);
+                if ($scope.display.bundleFilter && !labelText.toLowerCase().has($scope.display.bundleFilter.toLowerCase())) {
+                    return false;
+                }
+                if (Core.isBlank($scope.display.bundleFilter)) {
+                    var answer = true;
+                    if (!$scope.display.showPlatformBundles) {
+                        answer = !Karaf.isPlatformBundle(bundle['SymbolicName']);
+                    }
+                    if (answer && !$scope.display.showCxfBundles) {
+                        answer = !Karaf.isCxfBundle(bundle['SymbolicName']);
+                    }
+                    if (answer && !$scope.display.showCamelBundles) {
+                        answer = !Karaf.isCamelBundle(bundle['SymbolicName']);
+                    }
+                    return answer;
+                }
+
+                return true;
+            };
+
+            function processResponse(response) {
+                var value = response['value'];
+
+                var responseJson = angular.toJson(value);
+
+                if ($scope.responseJson !== responseJson) {
+                    $scope.responseJson = responseJson;
+                    $scope.bundles = [];
+                    angular.forEach(value, function (value, key) {
+                        var obj = {
+                            Identifier: value.Identifier,
+                            Name: "",
+                            SymbolicName: value.SymbolicName,
+                            Fragment: value.Fragment,
+                            State: value.State,
+                            Version: value.Version,
+                            LastModified: new Date(Number(value.LastModified)),
+                            Location: value.Location,
+                            StartLevel: undefined
+                        };
+                        if (value.Headers['Bundle-Name']) {
+                            obj.Name = value.Headers['Bundle-Name']['Value'];
+                        }
+                        $scope.bundles.push(obj);
+                    });
+
+                    $scope.bundles = $scope.bundles.sortBy($scope.display.sortField);
+
+                    Core.$apply($scope);
+
+                    // Obtain start level information for all the bundles, let's do this async though
+                    setTimeout(function () {
+                        var requests = [];
+
+                        for (var i = 0; i < $scope.bundles.length; i++) {
+                            var b = $scope.bundles[i];
+                            requests.push({
+                                type: 'exec', mbean: Osgi.getSelectionBundleMBean(workspace),
+                                operation: 'getStartLevel(long)',
+                                arguments: [b.Identifier]
+                            });
+                        }
+
+                        var outstanding = requests.length;
+
+                        jolokia.request(requests, onSuccess(function (response) {
+                            var id = response['request']['arguments'].first();
+                            if (angular.isDefined(id)) {
+                                var bundle = $scope.bundles[id];
+                                if (bundle) {
+                                    Osgi.log.debug("Setting bundle: ", bundle['Identifier'], " start level to: ", response['value']);
+                                    bundle['StartLevel'] = response['value'];
+                                }
+                            }
+                            outstanding = outstanding - 1;
+                            Osgi.log.debug("oustanding responses: ", outstanding);
+                            if (outstanding === 0) {
+                                Osgi.log.debug("Updating page...");
+                                Core.$apply($scope);
+                            }
+                        }));
+                    }, 500);
+                }
+            }
+
+            Core.register(jolokia, $scope, {
+                type: 'exec', mbean: Osgi.getSelectionBundleMBean(workspace),
+                operation: 'listBundles()'
+            }, onSuccess(processResponse));
+        }]);
+})(Osgi || (Osgi = {}));
+/**
+* @module Osgi
+*/
+/// <reference path="./osgiPlugin.ts"/>
+var Osgi;
+(function (Osgi) {
+    Osgi._module.controller("Osgi.ServiceController", [
+        "$scope", "$filter", "workspace", "$templateCache", "$compile", function ($scope, $filter, workspace, $templateCache, $compile) {
+            var dateFilter = $filter('date');
+
+            $scope.widget = new DataTable.TableWidget($scope, $templateCache, $compile, [
+                {
+                    "mDataProp": null,
+                    "sClass": "control center",
+                    "sDefaultContent": '<i class="icon-plus"></i>'
+                },
+                { "mDataProp": "Identifier" },
+                { "mDataProp": "BundleIdentifier" },
+                { "mDataProp": "objectClass" }
+            ], {
+                rowDetailTemplateId: 'osgiServiceTemplate',
+                disableAddColumns: true
+            });
+
+            $scope.$watch('workspace.selection', function () {
+                var mbean = Osgi.getSelectionServiceMBean(workspace);
+                if (mbean) {
+                    var jolokia = workspace.jolokia;
+                    jolokia.request({ type: 'exec', mbean: mbean, operation: 'listServices()' }, onSuccess(populateTable));
+                }
+            });
+
+            var populateTable = function (response) {
+                Osgi.defaultServiceValues(workspace, $scope, response.value);
+                $scope.widget.populateTable(response.value);
+                Core.$apply($scope);
+            };
+        }]);
+})(Osgi || (Osgi = {}));
+;
+/**
+* @module Osgi
+*/
+/// <reference path="./osgiPlugin.ts"/>
+var Osgi;
+(function (Osgi) {
+    Osgi._module.controller("Osgi.BundlesController", [
+        "$scope", "workspace", "jolokia", function ($scope, workspace, jolokia) {
+            $scope.result = {};
+            $scope.bundles = [];
+            $scope.selected = [];
+            $scope.loading = true;
+            $scope.bundleUrl = "";
+
+            $scope.installDisabled = function () {
+                return $scope.bundleUrl === "";
+            };
+
+            var columnDefs = [
+                {
+                    field: 'Identifier',
+                    displayName: 'Identifier',
+                    width: "48",
+                    headerCellTemplate: '<div ng-click="col.sort()" class="ngHeaderSortColumn {{col.headerClass}}" ng-style="{\'cursor\': col.cursor}" ng-class="{ \'ngSorted\': !noSortVisible }"><div class="ngHeaderText colt{{$index}} pagination-centered" title="Identifier"><i class="icon-tag"></i></div><div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div><div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div></div>'
+                },
+                {
+                    field: 'State',
+                    displayName: 'Bundle State',
+                    width: "24",
+                    headerCellTemplate: '<div ng-click="col.sort()" class="ngHeaderSortColumn {{col.headerClass}}" ng-style="{\'cursor\': col.cursor}" ng-class="{ \'ngSorted\': !noSortVisible }"><div class="ngHeaderText colt{{$index}} pagination-centered" title="State"><i class="icon-tasks"></i></div><div class="ngSortButtonDown" ng-show="col.showSortButtonDown()"></div><div class="ngSortButtonUp" ng-show="col.showSortButtonUp()"></div></div>',
+                    cellTemplate: '<div class="ngCellText" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field)}}"></i></div>'
+                },
+                {
+                    field: 'Name',
+                    displayName: 'Name',
+                    width: "***",
+                    cellTemplate: '<div class="ngCellText"><a href="#/osgi/bundle/{{row.entity.Identifier}}?p=container">{{row.getProperty(col.field)}}</a></div>'
+                },
+                {
+                    field: 'SymbolicName',
+                    displayName: 'Symbolic Name',
+                    width: "***",
+                    cellTemplate: '<div class="ngCellText"><a href="#/osgi/bundle/{{row.entity.Identifier}}?p=container">{{row.getProperty(col.field)}}</a></div>'
+                },
+                {
+                    field: 'Version',
+                    displayName: 'Version',
+                    width: "**"
+                },
+                {
+                    field: 'Location',
+                    displayName: 'Update Location',
+                    width: "***"
+                }
+            ];
+
+            $scope.gridOptions = {
+                data: 'bundles',
+                showFilter: false,
+                selectedItems: $scope.selected,
+                selectWithCheckboxOnly: true,
+                columnDefs: columnDefs,
+                filterOptions: {
+                    filterText: ''
+                }
+            };
+
+            $scope.onResponse = function () {
+                jolokia.request({
+                    type: 'exec',
+                    mbean: Osgi.getSelectionBundleMBean(workspace),
+                    operation: 'listBundles()'
+                }, {
+                    success: render,
+                    error: render
+                });
+            };
+
+            $scope.controlBundles = function (op) {
+                var startBundle = function (response) {
+                };
+                var ids = $scope.selected.map(function (b) {
+                    return b.Identifier;
+                });
+                if (!angular.isArray(ids)) {
+                    ids = [ids];
+                }
+                jolokia.request({
+                    type: 'exec',
+                    mbean: Osgi.getSelectionFrameworkMBean(workspace),
+                    operation: op,
+                    arguments: [ids]
+                }, {
+                    success: $scope.onResponse,
+                    error: $scope.onResponse
+                });
+            };
+
+            $scope.stop = function () {
+                $scope.controlBundles('stopBundles([J)');
+            };
+
+            $scope.start = function () {
+                $scope.controlBundles('startBundles([J)');
+            };
+
+            $scope.update = function () {
+                $scope.controlBundles('updateBundles([J)');
+            };
+
+            $scope.refresh = function () {
+                $scope.controlBundles('refreshBundles([J)');
+            };
+
+            $scope.uninstall = function () {
+                $scope.controlBundles('uninstallBundles([J)');
+            };
+
+            $scope.install = function () {
+                jolokia.request({
+                    type: 'exec',
+                    mbean: Osgi.getSelectionFrameworkMBean(workspace),
+                    operation: "installBundle(java.lang.String)",
+                    arguments: [$scope.bundleUrl]
+                }, {
+                    success: function (response) {
+                        console.log("Got: ", response);
+                        $scope.bundleUrl = "";
+                        jolokia.request({
+                            type: 'exec',
+                            mbean: Osgi.getSelectionFrameworkMBean(workspace),
+                            operation: "startBundle(long)",
+                            arguments: [response.value]
+                        }, {
+                            success: $scope.onResponse,
+                            error: $scope.onResponse
+                        });
+                    },
+                    error: function (response) {
+                        $scope.bundleUrl = "";
+                        $scope.onResponse();
+                    }
+                });
+            };
+
+            function render(response) {
+                if (!Object.equal($scope.result, response.value)) {
+                    $scope.selected.length = 0;
+                    $scope.result = response.value;
+                    $scope.bundles = [];
+                    angular.forEach($scope.result, function (value, key) {
+                        var obj = {
+                            Identifier: value.Identifier,
+                            Name: "",
+                            SymbolicName: value.SymbolicName,
+                            State: value.State,
+                            Version: value.Version,
+                            LastModified: value.LastModified,
+                            Location: value.Location
+                        };
+                        if (value.Headers['Bundle-Name']) {
+                            obj.Name = value.Headers['Bundle-Name']['Value'];
+                        }
+                        $scope.bundles.push(obj);
+                    });
+                    $scope.loading = false;
+                    Core.$apply($scope);
+                }
+            }
+
+            Core.register(jolokia, $scope, {
+                type: 'exec', mbean: Osgi.getSelectionBundleMBean(workspace),
+                operation: 'listBundles()'
+            }, onSuccess(render));
+        }]);
+})(Osgi || (Osgi = {}));
+/**
+* @module Osgi
+*/
+/// <reference path="./osgiPlugin.ts"/>
+var Osgi;
+(function (Osgi) {
+    Osgi._module.controller("Osgi.PidController", [
+        "$scope", "$timeout", "$routeParams", "$location", "workspace", "jolokia", function ($scope, $timeout, $routeParams, $location, workspace, jolokia) {
+            $scope.deletePropDialog = new UI.Dialog();
+            $scope.deletePidDialog = new UI.Dialog();
+            $scope.addPropertyDialog = new UI.Dialog();
+            $scope.factoryPid = $routeParams.factoryPid;
+            $scope.pid = $routeParams.pid || $scope.factoryPid;
+
+            $scope.selectValues = {};
+
+            $scope.modelLoaded = false;
+            $scope.canSave = false;
+
+            $scope.setEditMode = function (flag) {
+                $scope.editMode = flag;
+                $scope.formMode = flag ? "edit" : "view";
+                if (!flag || !$scope.entity) {
+                    $scope.entity = {};
+                    updateTableContents();
+                }
+            };
+            var startInEditMode = $scope.factoryPid && !$routeParams.pid;
+            $scope.setEditMode(startInEditMode);
+
+            $scope.$on("hawtio.form.modelChange", function () {
+                if ($scope.modelLoaded) {
+                    // TODO lets check if we've really changed the values!
+                    enableCanSave();
+                    Core.$apply($scope);
+                }
+            });
+
+            Osgi.initProfileScope($scope, $routeParams, $location, localStorage, jolokia, workspace, function () {
+                updateTableContents();
+            });
+
+            function updatePid(mbean, pid, data) {
+                var completeFn = function (response) {
+                    notification("success", "Successfully updated pid: " + pid);
+
+                    if (pid && $scope.factoryPid && !$routeParams.pid && !$scope.zkPid) {
+                        // we've just created a new pid so lets move to the full pid URL
+                        var newPath = Osgi.createConfigPidPath($scope, pid, $scope.factoryPid);
+                        $location.path(newPath);
+                    } else {
+                        $scope.setEditMode(false);
+                        $scope.canSave = false;
+                        $scope.saved = true;
+                    }
+                };
+                var callback = onSuccess(completeFn, errorHandler("Failed to update: " + pid));
+                if ($scope.inFabricProfile) {
+                    jolokia.execute(Fabric.managerMBean, "setProfileProperties", $scope.versionId, $scope.profileId, pid, data, callback);
+                } else {
+                    var json = JSON.stringify(data);
+                    $scope.jolokia.execute(mbean, "configAdminUpdate", pid, json, callback);
+                }
+            }
+
+            $scope.pidSave = function () {
+                var data = {};
+
+                angular.forEach($scope.entity, function (value, key) {
+                    var text = undefined;
+                    if (angular.isString(value)) {
+                        text = value;
+                    } else if (angular.isDefined(value)) {
+                        text = value.toString();
+                    }
+                    if (angular.isDefined(text)) {
+                        data[decodeKey(key)] = text;
+                    }
+                });
+
+                //log.info("about to update value " + angular.toJson(data));
+                var mbean = Osgi.getHawtioConfigAdminMBean(workspace);
+                if (mbean) {
+                    var pidMBean = Osgi.getSelectionConfigAdminMBean($scope.workspace);
+                    var pid = $scope.pid;
+                    var zkPid = $scope.zkPid;
+                    var factoryPid = $scope.factoryPid;
+                    if (factoryPid && pidMBean && !zkPid) {
+                        // lets generate a new pid
+                        $scope.jolokia.execute(pidMBean, "createFactoryConfiguration", factoryPid, onSuccess(function (response) {
+                            pid = response;
+                            if (pid) {
+                                updatePid(mbean, pid, data);
+                            }
+                        }, errorHandler("Failed to create new PID: ")));
+                    } else {
+                        if (zkPid) {
+                            pid = zkPid;
+                        }
+                        updatePid(mbean, pid, data);
+                    }
+                }
+            };
+
+            function errorHandler(message) {
+                return {
+                    error: function (response) {
+                        notification("error", message + "\n" + response['error'] || response);
+                        Core.defaultJolokiaErrorHandler(response);
+                    }
+                };
+            }
+
+            function enableCanSave() {
+                if ($scope.editMode) {
+                    $scope.canSave = true;
+                }
+            }
+
+            $scope.addPropertyConfirmed = function (key, value) {
+                $scope.addPropertyDialog.close();
+                $scope.configValues[key] = {
+                    Key: key,
+                    Value: value,
+                    Type: "String"
+                };
+                enableCanSave();
+                updateSchema();
+            };
+
+            $scope.deletePidProp = function (e) {
+                $scope.deleteKey = e.Key;
+                $scope.deletePropDialog.open();
+            };
+
+            $scope.deletePidPropConfirmed = function () {
+                $scope.deletePropDialog.close();
+                var cell = document.getElementById("pid." + $scope.deleteKey);
+                cell.parentElement.remove();
+                enableCanSave();
+            };
+
+            $scope.deletePidConfirmed = function () {
+                $scope.deletePidDialog.close();
+
+                var mbean = Osgi.getSelectionConfigAdminMBean($scope.workspace);
+                if (mbean) {
+                    $scope.jolokia.request({
+                        type: "exec",
+                        mbean: mbean,
+                        operation: 'delete',
+                        arguments: [$scope.pid]
+                    }, {
+                        error: function (response) {
+                            notification("error", response.error);
+                        },
+                        success: function (response) {
+                            notification("success", "Successfully deleted pid: " + $scope.pid);
+                            $location.path($scope.configurationsLink);
+                        }
+                    });
+                }
+            };
+
+            function populateTable(response) {
+                $scope.modelLoaded = true;
+                var configValues = response || {};
+                $scope.configValues = configValues;
+                $scope.zkPid = Core.pathGet(configValues, ["fabric.zookeeper.pid", "Value"]);
+
+                if ($scope.zkPid && $scope.saved) {
+                    // lets load the current properties direct from git
+                    // in case we have just saved them into git and config admin hasn't yet
+                    // quite caught up yet (to avoid freaking the user out that things look like
+                    // changes got reverted ;)
+                    function onProfileProperties(gitProperties) {
+                        angular.forEach(gitProperties, function (value, key) {
+                            var configProperty = configValues[key];
+                            if (configProperty) {
+                                configProperty.Value = value;
+                            }
+                        });
+                        updateSchemaAndLoadMetaType();
+                        Core.$apply($scope);
+                    }
+                    jolokia.execute(Fabric.managerMBean, "getProfileProperties", $scope.versionId, $scope.profileId, $scope.zkPid, onSuccess(onProfileProperties));
+                } else {
+                    updateSchemaAndLoadMetaType();
+                }
+            }
+
+            function updateSchemaAndLoadMetaType() {
+                updateSchema();
+                var metaTypeMBean = Osgi.getMetaTypeMBean($scope.workspace);
+                var configValues = $scope.configValues;
+                if (metaTypeMBean && configValues) {
+                    var locale = null;
+                    var pid = null;
+                    var factoryId = configValues["service.factoryPid"];
+                    if (factoryId) {
+                        pid = factoryId["Value"];
+                    }
+                    pid = pid || $scope.pid;
+                    $scope.jolokia.execute(metaTypeMBean, "getPidMetaTypeObject", pid, locale, onSuccess(onMetaType));
+                }
+                Core.$apply($scope);
+            }
+
+            function onMetaType(response) {
+                $scope.metaType = response;
+                updateSchema();
+                Core.$apply($scope);
+            }
+
+            /**
+            * Updates the JSON schema model
+            */
+            function updateSchema() {
+                var properties = {};
+                var required = [];
+                $scope.defaultValues = {};
+                var schema = {
+                    type: "object",
+                    required: required,
+                    properties: properties
+                };
+                $scope.schema = schema;
+                var inputClass = "span12";
+                var labelClass = "control-label";
+
+                var inputClassArray = "span11";
+                var labelClassArray = labelClass;
+
+                var metaType = $scope.metaType;
+                if (metaType) {
+                    schema["id"] = metaType.id;
+                    schema["name"] = metaType.name;
+                    schema["description"] = metaType.description;
+
+                    angular.forEach(metaType.attributes, function (attribute) {
+                        var id = attribute.id;
+                        if (isValidProperty(id)) {
+                            var key = encodeKey(id);
+                            var typeName = asJsonSchemaType(attribute.typeName, attribute.id);
+                            var attributeProperties = {
+                                title: attribute.name,
+                                tooltip: attribute.description,
+                                'input-attributes': {
+                                    class: inputClass
+                                },
+                                'label-attributes': {
+                                    class: labelClass
+                                },
+                                type: typeName
+                            };
+                            if (attribute.typeName === "char") {
+                                attributeProperties["maxLength"] = 1;
+                                attributeProperties["minLength"] = 1;
+                            }
+                            var cardinality = attribute.cardinality;
+                            if (cardinality) {
+                                attributeProperties.type = "array";
+                                attributeProperties["items"] = {
+                                    'input-attributes': {
+                                        class: inputClassArray
+                                    },
+                                    'label-attributes': {
+                                        class: labelClassArray
+                                    },
+                                    "type": typeName
+                                };
+                            }
+                            if (attribute.required) {
+                                required.push(id);
+                            }
+                            var defaultValue = attribute.defaultValue;
+                            if (defaultValue) {
+                                if (angular.isArray(defaultValue) && defaultValue.length === 1) {
+                                    defaultValue = defaultValue[0];
+                                }
+
+                                //attributeProperties["default"] = defaultValue;
+                                // TODO convert to boolean / number?
+                                $scope.defaultValues[key] = defaultValue;
+                            }
+                            var optionLabels = attribute.optionLabels;
+                            var optionValues = attribute.optionValues;
+                            if (optionLabels && optionLabels.length && optionValues && optionValues.length) {
+                                var enumObject = {};
+                                for (var i = 0; i < optionLabels.length; i++) {
+                                    var label = optionLabels[i];
+                                    var value = optionValues[i];
+                                    enumObject[value] = label;
+                                }
+                                $scope.selectValues[key] = enumObject;
+                                Core.pathSet(attributeProperties, ['input-element'], "select");
+                                Core.pathSet(attributeProperties, ['input-attributes', "ng-options"], "key as value for (key, value) in selectValues." + key);
+                            }
+                            properties[key] = attributeProperties;
+                        }
+                    });
+                }
+
+                // now add all the missing properties...
+                var entity = {};
+                angular.forEach($scope.configValues, function (value, rawKey) {
+                    if (isValidProperty(rawKey)) {
+                        var key = encodeKey(rawKey);
+                        var attrValue = value;
+                        var attrType = "string";
+                        if (angular.isObject(value)) {
+                            attrValue = value.Value;
+                            attrType = asJsonSchemaType(value.Type, rawKey);
+                        }
+                        var property = properties[key];
+                        if (!property) {
+                            properties[key] = {
+                                'input-attributes': {
+                                    class: inputClass
+                                },
+                                'label-attributes': {
+                                    class: labelClass
+                                },
+                                type: attrType
+                            };
+                        } else {
+                            var propertyType = property["type"];
+                            if ("array" === propertyType) {
+                                if (!angular.isArray(attrValue)) {
+                                    attrValue = attrValue ? attrValue.split(",") : [];
+                                }
+                            }
+                        }
+
+                        //comply with Forms.safeIdentifier in 'forms/js/formHelpers.ts'
+                        key = key.replace(/-/g, "_");
+                        entity[key] = attrValue;
+                    }
+                });
+
+                // add default values for missing values
+                angular.forEach($scope.defaultValues, function (value, key) {
+                    var current = entity[key];
+                    if (!angular.isDefined(current)) {
+                        //log.info("updating entity " + key + " with default: " + value + " as was: " + current);
+                        entity[key] = value;
+                    }
+                });
+
+                //log.info("default values: " + angular.toJson($scope.defaultValues));
+                $scope.entity = entity;
+            }
+
+            var ignorePropertyIds = ["service.pid", "service.factoryPid", "fabric.zookeeper.pid"];
+
+            function isValidProperty(id) {
+                return id && ignorePropertyIds.indexOf(id) < 0;
+            }
+
+            function encodeKey(key) {
+                return key.replace(/\./g, "__");
+            }
+
+            function decodeKey(key) {
+                return key.replace(/__/g, ".");
+            }
+
+            function asJsonSchemaType(typeName, id) {
+                if (typeName) {
+                    var lower = typeName.toLowerCase();
+                    if (lower.startsWith("int") || lower === "long" || lower === "short" || lower === "byte" || lower.endsWith("int")) {
+                        return "integer";
+                    }
+                    if (lower === "double" || lower === "float" || lower === "bigdecimal") {
+                        return "number";
+                    }
+                    if (lower === "string") {
+                        // TODO hack to try force password type on dodgy metadata such as pax web
+                        if (id && id.endsWith("password")) {
+                            return "password";
+                        }
+                        return "string";
+                    }
+                    return typeName;
+                } else {
+                    return "string";
+                }
+            }
+
+            function updateTableContents() {
+                $scope.modelLoaded = false;
+                Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, $scope.pid, populateTable);
+            }
+        }]);
+})(Osgi || (Osgi = {}));
+/**
+* @module Osgi
+*/
+var Osgi;
+(function (Osgi) {
+    var OsgiGraphBuilder = (function () {
+        function OsgiGraphBuilder(osgiDataService, bundleFilter, packageFilter, showServices, showPackages, hideUnused) {
+            this.filteredBundles = {};
+            this.bundles = null;
+            this.services = null;
+            this.packages = null;
+            this.PREFIX_BUNDLE = "Bundle-";
+            this.PREFIX_SVC = "Service-";
+            this.PREFIX_PKG = "Package-";
+            this.osgiDataService = osgiDataService;
+            this.bundleFilter = bundleFilter;
+            this.packageFilter = packageFilter;
+            this.showServices = showServices;
+            this.showPackages = showPackages;
+            this.hideUnused = hideUnused;
+
+            this.graphBuilder = new ForceGraph.GraphBuilder();
+        }
+        OsgiGraphBuilder.prototype.getBundles = function () {
+            if (this.bundles == null) {
+                this.bundles = this.osgiDataService.getBundles();
+            }
+            return this.bundles;
+        };
+
+        OsgiGraphBuilder.prototype.getServices = function () {
+            if (this.services == null) {
+                this.services = this.osgiDataService.getServices();
+            }
+            return this.services;
+        };
+
+        OsgiGraphBuilder.prototype.getPackages = function () {
+            if (this.packages == null) {
+                this.packages = this.osgiDataService.getPackages();
+            }
+            return this.packages;
+        };
+
+        OsgiGraphBuilder.prototype.bundleNodeId = function (bundle) {
+            return this.PREFIX_BUNDLE + bundle.Identifier;
+        };
+
+        OsgiGraphBuilder.prototype.serviceNodeId = function (service) {
+            return this.PREFIX_SVC + service.Identifier;
+        };
+
+        OsgiGraphBuilder.prototype.pkgNodeId = function (pkg) {
+            return this.PREFIX_PKG + pkg.Name + "-" + pkg.Version;
+        };
+
+        // Create a service node from a given service
+        OsgiGraphBuilder.prototype.buildSvcNode = function (service) {
+            return {
+                id: this.serviceNodeId(service),
+                name: "" + service.Identifier,
+                type: "service",
+                used: false,
+                //                image: {
+                //                    url: "/hawtio/img/icons/osgi/service.png",
+                //                    width: 32,
+                //                    height:32
+                //                },
+                popup: {
+                    title: "Service [" + service.Identifier + "]",
+                    content: (function () {
+                        var result = "";
+
+                        if (service != null) {
+                            service.objectClass.forEach(function (clazz) {
+                                if (result.length > 0) {
+                                    result = result + "<br/>";
+                                }
+                                result = result + clazz;
+                            });
+                        }
+
+                        return result;
+                    })
+                }
+            };
+        };
+
+        // Create a bundle node for a given bundle
+        OsgiGraphBuilder.prototype.buildBundleNode = function (bundle) {
+            return {
+                id: this.bundleNodeId(bundle),
+                name: bundle.SymbolicName,
+                type: "bundle",
+                used: false,
+                navUrl: "#/osgi/bundle/" + bundle.Identifier,
+                //                image: {
+                //                    url: "/hawtio/img/icons/osgi/bundle.png",
+                //                    width: 32,
+                //                    height:32
+                //                },
+                popup: {
+                    title: "Bundle [" + bundle.Identifier + "]",
+                    content: "<p>" + bundle.SymbolicName + "<br/>Version " + bundle.Version + "</p>"
+                }
+            };
+        };
+
+        OsgiGraphBuilder.prototype.buildPackageNode = function (pkg) {
+            return {
+                id: this.pkgNodeId(pkg),
+                name: pkg.Name,
+                type: "package",
+                used: false,
+                popup: {
+                    title: "Package [" + pkg.Name + "]",
+                    content: "<p>" + pkg.Version + "</p>"
+                }
+            };
+        };
+
+        OsgiGraphBuilder.prototype.exportingBundle = function (pkg) {
+            var _this = this;
+            var result = null;
+
+            pkg.ExportingBundles.forEach(function (bundleId) {
+                if (_this.filteredBundles[_this.PREFIX_BUNDLE + bundleId] != null) {
+                    result = bundleId;
+                }
+            });
+            return result;
+        };
+
+        OsgiGraphBuilder.prototype.addFilteredBundles = function () {
+            var _this = this;
+            d3.values(this.getBundles()).forEach(function (bundle) {
+                if (_this.bundleFilter == null || _this.bundleFilter == "" || bundle.SymbolicName.startsWith(_this.bundleFilter)) {
+                    var bundleNode = _this.buildBundleNode(bundle);
+
+                    _this.filteredBundles[bundleNode.id] = bundle;
+
+                    bundleNode.used = true;
+
+                    _this.graphBuilder.addNode(bundleNode);
+
+                    if (_this.showServices) {
+                        var services = _this.getServices();
+
+                        bundle.RegisteredServices.forEach(function (sid) {
+                            var svcNode = _this.buildSvcNode(services[sid]);
+                            _this.graphBuilder.addNode(svcNode);
+                            _this.graphBuilder.addLink(bundleNode.id, svcNode.id, "registered");
+                        });
+                    }
+                }
+            });
+        };
+
+        OsgiGraphBuilder.prototype.addFilteredServices = function () {
+            var _this = this;
+            if (this.showServices) {
+                d3.values(this.getBundles()).forEach(function (bundle) {
+                    bundle.ServicesInUse.forEach(function (sid) {
+                        var svcNodeId = _this.PREFIX_SVC + sid;
+
+                        if (_this.graphBuilder.getNode(svcNodeId) != null) {
+                            _this.graphBuilder.getNode(svcNodeId).used = true;
+
+                            var bundleNode = _this.graphBuilder.getNode(_this.bundleNodeId(bundle)) || _this.buildBundleNode(bundle);
+                            bundleNode.used = true;
+
+                            _this.graphBuilder.addNode(bundleNode);
+                            _this.graphBuilder.addLink(svcNodeId, bundleNode.id, "inuse");
+                        }
+                    });
+                });
+            }
+        };
+
+        OsgiGraphBuilder.prototype.addFilteredPackages = function () {
+            var _this = this;
+            if (this.showPackages) {
+                d3.values(this.getPackages()).forEach(function (pkg) {
+                    if (_this.packageFilter == null || _this.packageFilter == "" || pkg.Name.startsWith(_this.packageFilter)) {
+                        var exportingId = _this.exportingBundle(pkg);
+
+                        if (exportingId != null) {
+                            var bundleNode = _this.graphBuilder.getNode(_this.PREFIX_BUNDLE + exportingId);
+                            bundleNode.used = true;
+
+                            var pkgNode = _this.buildPackageNode(pkg);
+
+                            _this.graphBuilder.addNode(pkgNode);
+                            _this.graphBuilder.addLink(bundleNode.id, pkgNode.id, "registered");
+
+                            pkg.ImportingBundles.forEach(function (bundleId) {
+                                var bundleNode = _this.graphBuilder.getNode(_this.PREFIX_BUNDLE + bundleId) || _this.buildBundleNode(_this.getBundles()[bundleId]);
+                                bundleNode.used = true;
+                                pkgNode.used = true;
+
+                                _this.graphBuilder.addNode(bundleNode);
+                                _this.graphBuilder.addLink(bundleNode.id, pkgNode.id, "inuse");
+                            });
+                        }
+                    }
+                });
+            }
+        };
+
+        OsgiGraphBuilder.prototype.buildGraph = function () {
+            var _this = this;
+            this.addFilteredBundles();
+            this.addFilteredServices();
+            this.addFilteredPackages();
+
+            if (this.hideUnused) {
+                // this will filter out all nodes that are not marked as used in our data model
+                this.graphBuilder.filterNodes(function (node) {
+                    return node.used;
+                });
+
+                // this will remove all nodes that do not have connections after filtering the unused nodes
+                this.graphBuilder.filterNodes(function (node) {
+                    return _this.graphBuilder.hasLinks(node.id);
+                });
+            }
+
+            return this.graphBuilder.buildGraph();
+        };
+        return OsgiGraphBuilder;
+    })();
+    Osgi.OsgiGraphBuilder = OsgiGraphBuilder;
+})(Osgi || (Osgi = {}));
+/**
+* @module Osgi
+*/
+/// <reference path="./osgiPlugin.ts"/>
+var Osgi;
+(function (Osgi) {
+    // These functions are exported independently to facilitate unit testing
+    function readBSNHeaderData(header) {
+        var idx = header.indexOf(";");
+        if (idx <= 0) {
+            return "";
+        }
+        return header.substring(idx + 1).trim();
+    }
+    Osgi.readBSNHeaderData = readBSNHeaderData;
+
+    function formatAttributesAndDirectivesForPopover(data, skipVersion) {
+        var str = "";
+        var sortedKeys = Object.keys(data).sort();
+        for (var i = 0; i < sortedKeys.length; i++) {
+            var da = sortedKeys[i];
+            var type = da.charAt(0);
+
+            var separator = "";
+            var txtClass;
+            if (type === "A") {
+                separator = "=";
+                txtClass = "text-info";
+            }
+            if (type === "D") {
+                separator = ":=";
+                txtClass = "muted";
+            }
+
+            if (separator !== "") {
+                if (skipVersion) {
+                    if (da === "Aversion") {
+                        continue;
+                    }
+                }
+
+                var value = data[da];
+                if (value.length > 15) {
+                    value = value.replace(/[,]/g, ",<br/>&nbsp;&nbsp;");
+                }
+                str += "<tr><td><strong class='" + txtClass + "'>" + da.substring(1) + "</strong>" + separator + value + "</td></tr>";
+            }
+        }
+        return str;
+    }
+    Osgi.formatAttributesAndDirectivesForPopover = formatAttributesAndDirectivesForPopover;
+
+    function formatServiceName(objClass) {
+        if (Object.isArray(objClass)) {
+            return formatServiceNameArray(objClass);
+        }
+        var name = objClass.toString();
+        var idx = name.lastIndexOf('.');
+        return name.substring(idx + 1);
+    }
+    Osgi.formatServiceName = formatServiceName;
+
+    function formatServiceNameArray(objClass) {
+        var rv = [];
+        for (var i = 0; i < objClass.length; i++) {
+            rv.add(formatServiceName(objClass[i]));
+        }
+        rv = rv.filter(function (elem, pos, self) {
+            return self.indexOf(elem) === pos;
+        });
+
+        rv.sort();
+        return rv.toString();
+    }
+
+    Osgi._module.controller("Osgi.BundleController", [
+        "$scope", "$location", "workspace", "$routeParams", "jolokia", function ($scope, $location, workspace, $routeParams, jolokia) {
+            $scope.bundleId = $routeParams.bundleId;
+
+            updateTableContents();
+
+            $scope.showValue = function (key) {
+                switch (key) {
+                    case "Bundle-Name":
+                    case "Bundle-SymbolicName":
+                    case "Bundle-Version":
+                    case "Export-Package":
+                    case "Import-Package":
+                        return false;
+                    default:
+                        return true;
+                }
+            };
+
+            $scope.executeLoadClass = function (clazz) {
+                var mbean = Osgi.getHawtioOSGiToolsMBean(workspace);
+                if (mbean) {
+                    jolokia.request({ type: 'exec', mbean: mbean, operation: 'getLoadClassOrigin', arguments: [$scope.bundleId, clazz] }, {
+                        success: function (response) {
+                            var divEl = document.getElementById("loadClassResult");
+                            var resultBundle = response.value;
+                            var style;
+                            var resultTxt;
+                            if (resultBundle === -1) {
+                                style = "";
+                                resultTxt = "Class can not be loaded from this bundle.";
+                            } else {
+                                style = "alert-success";
+                                resultTxt = "Class is served from Bundle " + Osgi.bundleLinks(workspace, resultBundle);
+                            }
+                            divEl.innerHTML += "<div class='alert " + style + "'>" + "<button type='button' class='close' data-dismiss='alert'>&times;</button>" + "Loading class <strong>" + clazz + "</strong> in Bundle " + $scope.bundleId + ". " + resultTxt + "</div>";
+                        },
+                        error: function (response) {
+                            inspectReportError(response);
+                        }
+                    });
+                } else {
+                    inspectReportNoMBeanFound();
+                }
+            };
+
+            $scope.executeFindResource = function (resource) {
+                var mbean = Osgi.getHawtioOSGiToolsMBean(workspace);
+                if (mbean) {
+                    jolokia.request({ type: 'exec', mbean: mbean, operation: 'getResourceURL', arguments: [$scope.bundleId, resource] }, {
+                        success: function (response) {
+                            var divEl = document.getElementById("loadClassResult");
+                            var resultURL = response.value;
+                            var style;
+                            var resultTxt;
+                            if (resultURL === null) {
+                                style = "";
+                                resultTxt = "Resource can not be found from this bundle.";
+                            } else {
+                                style = "alert-success";
+                                resultTxt = "Resource is available from: " + resultURL;
+                            }
+                            divEl.innerHTML += "<div class='alert " + style + "'>" + "<button type='button' class='close' data-dismiss='alert'>&times;</button>" + "Finding resource <strong>" + resource + "</strong> in Bundle " + $scope.bundleId + ". " + resultTxt + "</div>";
+                        },
+                        error: function (response) {
+                            inspectReportError(response);
+                        }
+                    });
+                } else {
+                    inspectReportNoMBeanFound();
+                }
+            };
+
+            $scope.mavenLink = function (row) {
+                if (angular.isObject(row)) {
+                    return Maven.mavenLink(row.Location);
+                }
+
+                // TODO try using the LogQuery mbean to find the mvn coords for a bundle id?
+                return "";
+            };
+
+            $scope.startBundle = function (bundleId) {
+                jolokia.request([
+                    { type: 'exec', mbean: Osgi.getSelectionFrameworkMBean(workspace), operation: 'startBundle', arguments: [bundleId] }
+                ], onSuccess(updateTableContents));
+            };
+
+            $scope.stopBundle = function (bundleId) {
+                jolokia.request([
+                    { type: 'exec', mbean: Osgi.getSelectionFrameworkMBean(workspace), operation: 'stopBundle', arguments: [bundleId] }
+                ], onSuccess(updateTableContents));
+            };
+
+            $scope.updatehBundle = function (bundleId) {
+                jolokia.request([
+                    { type: 'exec', mbean: Osgi.getSelectionFrameworkMBean(workspace), operation: 'updateBundle', arguments: [bundleId] }
+                ], onSuccess(updateTableContents));
+            };
+
+            $scope.refreshBundle = function (bundleId) {
+                jolokia.request([
+                    { type: 'exec', mbean: Osgi.getSelectionFrameworkMBean(workspace), operation: 'refreshBundle', arguments: [bundleId] }
+                ], onSuccess(updateTableContents));
+            };
+
+            $scope.uninstallBundle = function (bundleId) {
+                jolokia.request([{
+                        type: 'exec',
+                        mbean: Osgi.getSelectionFrameworkMBean(workspace),
+                        operation: 'uninstallBundle',
+                        arguments: [bundleId]
+                    }], onSuccess(function () {
+                    $location.path("/osgi/bundle-list");
+                    Core.$apply($scope);
+                }));
+            };
+
+            function inspectReportNoMBeanFound() {
+                var divEl = document.getElementById("loadClassResult");
+                divEl.innerHTML += "<div class='alert alert-error'>" + "<button type='button' class='close' data-dismiss='alert'>&times;</button>" + "The hawtio.OSGiTools MBean is not available. Please contact technical support." + "</div>";
+            }
+
+            function inspectReportError(response) {
+                var divEl = document.getElementById("loadClassResult");
+                divEl.innerHTML += "<div class='alert alert-error'>" + "<button type='button' class='close' data-dismiss='alert'>&times;</button>" + "Problem invoking hawtio.OSGiTools MBean. " + response + "</div>";
+            }
+
+            function populateTable(response) {
+                var values = response.value;
+                $scope.bundles = values;
+
+                // now find the row based on the selection ui
+                Osgi.defaultBundleValues(workspace, $scope, values);
+                $scope.row = Osgi.findBundle($scope.bundleId, values);
+                Core.$apply($scope);
+
+                // This trick is to ensure that the popover is properly visible if it is
+                // smaller than the accordion
+                $('.accordion-body.collapse').hover(function () {
+                    $(this).css('overflow', 'visible');
+                }, function () {
+                    $(this).css('overflow', 'hidden');
+                });
+
+                // setup tooltips
+                $("#bsn").tooltip({
+                    title: readBSNHeaderData($scope.row.Headers["Bundle-SymbolicName"].Value),
+                    placement: "right" });
+
+                createImportPackageSection();
+                createExportPackageSection();
+                populateServicesSection();
+            }
+
+            function createImportPackageSection() {
+                // setup popovers
+                var importPackageHeaders = Osgi.parseManifestHeader($scope.row.Headers, "Import-Package");
+                for (var pkg in $scope.row.ImportData) {
+                    var data = importPackageHeaders[pkg];
+                    var po = "<small><table>" + "<tr><td><strong>Imported Version=</strong>" + $scope.row.ImportData[pkg].ReportedVersion + "</td></tr>";
+                    if (data !== undefined) {
+                        // This happens in case the package was imported due to a DynamicImport-Package
+                        po += formatAttributesAndDirectivesForPopover(data, false);
+                        if (importPackageHeaders[pkg]["Dresolution"] !== "optional") {
+                            $(document.getElementById("import." + pkg)).addClass("badge-info");
+                        }
+                    } else {
+                        // This is a dynamic import
+                        $(document.getElementById("import." + pkg)).addClass("badge-important");
+                        var reason = $scope.row.Headers["DynamicImport-Package"];
+                        if (reason !== undefined) {
+                            reason = reason.Value;
+                            po += "<tr><td>Dynamic Import. Imported due to:</td></tr>";
+                            po += "<tr><td><strong>DynamicImport-Package=</strong>" + reason + "</td></tr>";
+                        }
+                    }
+                    po += "</table></small>";
+                    $(document.getElementById("import." + pkg)).popover({ title: "attributes and directives", content: po, trigger: "hover", html: true });
+
+                    // Unset the value so that we can see whether there are any unbound optional imports left...
+                    importPackageHeaders[pkg] = undefined;
+                }
+
+                var unsatisfied = "";
+                for (var pkg in importPackageHeaders) {
+                    if (importPackageHeaders[pkg] === undefined) {
+                        continue;
+                    }
+                    if ($scope.row.ExportData[pkg] !== undefined) {
+                        continue;
+                    }
+                    unsatisfied += "<tr><td><div class='less-big badge badge-warning' id='unsatisfied." + pkg + "'>" + pkg + "</div></td></tr>";
+                }
+
+                if (unsatisfied !== "") {
+                    unsatisfied = "<p/><p class='text-warning'>The following optional imports were not satisfied:<table>" + unsatisfied + "</table></p>";
+                    document.getElementById("unsatisfiedOptionalImports").innerHTML = unsatisfied;
+                }
+
+                for (var pkg in importPackageHeaders) {
+                    if (importPackageHeaders[pkg] === undefined) {
+                        continue;
+                    }
+                    var po = "<small><table>";
+                    po += formatAttributesAndDirectivesForPopover(importPackageHeaders[pkg], false);
+                    po += "</table></small>";
+                    $(document.getElementById("unsatisfied." + pkg)).popover({ title: "attributes and directives", content: po, trigger: "hover", html: true });
+                }
+            }
+
+            function createExportPackageSection() {
+                // setup popovers
+                var exportPackageHeaders = Osgi.parseManifestHeader($scope.row.Headers, "Export-Package");
+                for (var pkg in $scope.row.ExportData) {
+                    var po = "<small><table>" + "<tr><td><strong>Exported Version=</strong>" + $scope.row.ExportData[pkg].ReportedVersion + "</td></tr>";
+                    po += formatAttributesAndDirectivesForPopover(exportPackageHeaders[pkg], true);
+                    po += "</table></small>";
+                    $(document.getElementById("export." + pkg)).popover({ title: "attributes and directives", content: po, trigger: "hover", html: true });
+                }
+            }
+
+            function populateServicesSection() {
+                if (($scope.row.RegisteredServices === undefined || $scope.row.RegisteredServices.length === 0) && ($scope.row.ServicesInUse === undefined || $scope.row.ServicesInUse === 0)) {
+                    // no services for this bundle
+                    return;
+                }
+
+                var mbean = Osgi.getSelectionServiceMBean(workspace);
+                if (mbean) {
+                    jolokia.request({ type: 'exec', mbean: mbean, operation: 'listServices()' }, onSuccess(updateServices));
+                }
+            }
+
+            function updateServices(result) {
+                var data = result.value;
+                for (var id in data) {
+                    var reg = document.getElementById("registers.service." + id);
+                    var uses = document.getElementById("uses.service." + id);
+
+                    if ((reg === undefined || reg === null) && (uses === undefined || uses === null)) {
+                        continue;
+                    }
+
+                    jolokia.request({
+                        type: 'exec', mbean: Osgi.getSelectionServiceMBean(workspace),
+                        operation: 'getProperties', arguments: [id] }, onSuccess(function (svcId, regEl, usesEl) {
+                        return function (resp) {
+                            var props = resp.value;
+                            var sortedKeys = Object.keys(props).sort();
+                            var po = "<small><table>";
+                            for (var i = 0; i < sortedKeys.length; i++) {
+                                var value = props[sortedKeys[i]];
+                                if (value !== undefined) {
+                                    var fval = value.Value;
+                                    if (fval.length > 15) {
+                                        fval = fval.replace(/[,]/g, ",<br/>&nbsp;&nbsp;");
+                                    }
+
+                                    po += "<tr><td valign='top'>" + sortedKeys[i] + "</td><td>" + fval + "</td></tr>";
+                                }
+                            }
+
+                            var regBID = data[svcId].BundleIdentifier;
+                            po += "<tr><td>Registered&nbsp;by</td><td>Bundle " + regBID + " <div class='less-big label'>" + $scope.bundles[regBID].SymbolicName + "</div></td></tr>";
+                            po += "</table></small>";
+
+                            if (regEl !== undefined && regEl !== null) {
+                                regEl.innerText = " " + formatServiceName(data[svcId].objectClass);
+                                $(regEl).popover({ title: "service properties", content: po, trigger: "hover", html: true });
+                            }
+                            if (usesEl !== undefined && usesEl !== null) {
+                                usesEl.innerText = " " + formatServiceName(data[svcId].objectClass);
+                                $(usesEl).popover({ title: "service properties", content: po, trigger: "hover", html: true });
+                            }
+                        };
+                    }(id, reg, uses)));
+                }
+            }
+
+            function updateTableContents() {
+                //console.log("Loading the bundles");
+                var mbean = Osgi.getSelectionBundleMBean(workspace);
+                if (mbean) {
+                    jolokia.request({ type: 'exec', mbean: mbean, operation: 'listBundles()' }, onSuccess(populateTable));
+                }
+            }
+        }]);
 })(Osgi || (Osgi = {}));
 var ForceGraph;
 (function (ForceGraph) {
@@ -41994,634 +42130,616 @@ var Quartz;
 })(Quartz || (Quartz = {}));
 /**
 * @module Quartz
-*/
-var Quartz;
-(function (Quartz) {
-    function QuartzController($scope, $location, workspace, jolokia) {
-        var log = Logger.get("Quartz");
-
-        var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.entity.state}}"><i class="{{row.entity.state | quartzIconClass}}"></i></div>';
-        var misfireTemplate = '<div class="ngCellText" title="{{row.entity.misfireInstruction}}">{{row.entity.misfireInstruction | quartzMisfire}}</div>';
-
-        $scope.valueDetails = new UI.Dialog();
-
-        $scope.selectedScheduler = null;
-        $scope.selectedSchedulerMBean = null;
-        $scope.triggers = [];
-        $scope.jobs = [];
-
-        $scope.misfireInstructions = [
-            { id: '-1', title: 'Ignore' },
-            { id: '0', title: 'Smart' },
-            { id: '1', title: 'Fire once now' },
-            { id: '2', title: 'Do nothing' }
-        ];
-        $scope.updatedTrigger = {};
-        $scope.triggerSchema = {
-            properties: {
-                'cron': {
-                    description: 'Cron expression',
-                    label: 'Cron expression',
-                    tooltip: 'Specify a cron expression for the trigger',
-                    type: 'string',
-                    hidden: false
-                },
-                'repeatCount': {
-                    description: 'Repeat count',
-                    tooltip: 'Number of times to repeat. Use -1 for forever.',
-                    type: 'integer',
-                    hidden: false
-                },
-                'repeatInterval': {
-                    description: 'Repeat interval',
-                    tooltip: 'Elapsed time in millis between triggering',
-                    type: 'integer',
-                    hidden: false
-                },
-                'misfireInstruction': {
-                    description: 'Misfire instruction',
-                    tooltip: 'What to do when misfiring happens',
-                    type: 'string',
-                    hidden: false,
-                    'input-element': 'select',
-                    'input-attributes': {
-                        'ng-options': "mi.id as mi.title for mi in misfireInstructions"
-                    }
-                }
-            }
-        };
-
-        $scope.gridOptions = {
-            selectedItems: [],
-            data: 'triggers',
-            showFilter: true,
-            filterOptions: {
-                filterText: ''
-            },
-            showSelectionCheckbox: false,
-            enableRowClickSelection: true,
-            multiSelect: false,
-            primaryKeyFn: function (entity, idx) {
-                return entity.group + "/" + entity.name;
-            },
-            columnDefs: [
-                {
-                    field: 'state',
-                    displayName: 'State',
-                    cellTemplate: stateTemplate,
-                    width: 56,
-                    minWidth: 56,
-                    maxWidth: 56,
-                    resizable: false
-                },
-                {
-                    field: 'group',
-                    displayName: 'Group',
-                    resizable: true,
-                    width: 150
-                },
-                {
-                    field: 'name',
-                    displayName: 'Name',
-                    resizable: true,
-                    width: 150
-                },
-                {
-                    field: 'type',
-                    displayName: 'Type',
-                    resizable: false,
-                    width: 70
-                },
-                {
-                    field: 'expression',
-                    displayName: 'Expression',
-                    resizable: true,
-                    width: 180
-                },
-                {
-                    field: 'misfireInstruction',
-                    displayName: 'Misfire Instruction',
-                    cellTemplate: misfireTemplate,
-                    width: 150
-                },
-                {
-                    field: 'previousFireTime',
-                    displayName: 'Previous Fire'
-                },
-                {
-                    field: 'nextFireTime',
-                    displayName: 'Next Fire'
-                },
-                {
-                    field: 'finalFireTime',
-                    displayName: 'Final Fire'
-                }
-            ]
-        };
-
-        $scope.jobsGridOptions = {
-            selectedItems: [],
-            data: 'jobs',
-            showFilter: true,
-            filterOptions: {
-                filterText: ''
-            },
-            showSelectionCheckbox: false,
-            enableRowClickSelection: true,
-            multiSelect: false,
-            primaryKeyFn: function (entity, idx) {
-                return entity.group + "/" + entity.name;
-            },
-            columnDefs: [
-                {
-                    field: 'group',
-                    displayName: 'Group',
-                    resizable: true,
-                    width: 150
-                },
-                {
-                    field: 'name',
-                    displayName: 'Name',
-                    resizable: true,
-                    width: 150
-                },
-                {
-                    field: 'durability',
-                    displayName: 'Durable',
-                    width: 70,
-                    resizable: false
-                },
-                {
-                    field: 'shouldRecover',
-                    displayName: 'Recover',
-                    width: 70,
-                    resizable: false
-                },
-                {
-                    field: 'jobClass',
-                    displayName: 'Job ClassName',
-                    width: 350
-                },
-                {
-                    field: 'description',
-                    displayName: 'Description',
-                    resizable: true
-                }
-            ]
-        };
-
-        $scope.openJobDetailView = function () {
-            if ($scope.jobsGridOptions.selectedItems.length === 1) {
-                $scope.valueDetails.open();
-            }
-        };
-
-        $scope.renderIcon = function (state) {
-            return Quartz.iconClass(state);
-        };
-
-        $scope.renderQuartz = function (response) {
-            $scope.selectedSchedulerDetails = [];
-
-            log.debug("Selected scheduler mbean " + $scope.selectedScheduler);
-            var obj = response.value;
-            if (obj) {
-                // redraw table
-                $scope.selectedScheduler = obj;
-                $scope.triggers = [];
-                $scope.job = [];
-
-                // grab state for all triggers which requires to call a JMX operation per trigger
-                obj.AllTriggers.forEach(function (t) {
-                    var state = jolokia.request({
-                        type: "exec", mbean: $scope.selectedSchedulerMBean,
-                        operation: "getTriggerState", arguments: [t.name, t.group] });
-                    if (state) {
-                        t.state = state.value;
-                    } else {
-                        t.state = "unknown";
-                    }
-
-                    // unique id of trigger
-                    t.id = t.name + "/" + t.group;
-
-                    // grab information about the trigger from the job map, as quartz does not have the information itself
-                    // so we had to enrich the job map in camel-quartz to include this information
-                    var job = obj.AllJobDetails[t.jobName];
-                    if (job) {
-                        job = job[t.group];
-                        if (job) {
-                            var repeatCounter;
-                            var repeatInterval;
-
-                            t.type = job.jobDataMap["CamelQuartzTriggerType"];
-                            if (t.type && t.type == "cron") {
-                                t.expression = job.jobDataMap["CamelQuartzTriggerCronExpression"];
-                            } else if (t.type && t.type == "simple") {
-                                t.expression = "every " + job.jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"] + " ms.";
-                                repeatCounter = job.jobDataMap["CamelQuartzTriggerSimpleRepeatCounter"];
-                                repeatInterval = job.jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"];
-                                if (repeatCounter > 0) {
-                                    t.expression += " (" + repeatCounter + " times)";
-                                } else {
-                                    t.expression += " (forever)";
-                                }
-                                t.repeatCounter = repeatCounter;
-                                t.repeatInterval = repeatInterval;
-                            } else {
-                                // fallback and grab from Camel endpoint if that is possible (supporting older Camel releases)
-                                var uri = job.jobDataMap["CamelQuartzEndpoint"];
-                                if (uri) {
-                                    var cron = Core.getQueryParameterValue(uri, "cron");
-                                    if (cron) {
-                                        t.type = "cron";
-
-                                        // replace + with space as Camel uses + as space in the cron when specifying in the uri
-                                        cron = cron.replace(/\++/g, ' ');
-                                        t.expression = cron;
-                                    }
-                                    repeatCounter = Core.getQueryParameterValue(uri, "trigger.repeatCount");
-                                    repeatInterval = Core.getQueryParameterValue(uri, "trigger.repeatInterval");
-                                    if (repeatCounter || repeatInterval) {
-                                        t.type = "simple";
-                                        t.expression = "every " + repeatInterval + " ms.";
-                                        if (repeatCounter && repeatCounter > 0) {
-                                            t.expression += " (" + repeatCounter + " times)";
-                                        } else {
-                                            t.expression += " (forever)";
-                                        }
-                                        t.repeatCounter = repeatCounter;
-                                        t.repeatInterval = repeatInterval;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    $scope.triggers.push(t);
-                });
-
-                // grab state for all triggers which requires to call a JMX operation per trigger
-                $scope.jobs = [];
-                $scope.triggers.forEach(function (t) {
-                    var job = obj.AllJobDetails[t.jobName];
-                    if (job) {
-                        job = job[t.group];
-                        if (job) {
-                            generateJobDataMapDetails(job);
-
-                            // unique id of jobs
-                            job.id = job.jobName + "/" + job.group;
-
-                            $scope.jobs.push(job);
-                        }
-                    }
-                });
-            }
-
-            Core.$apply($scope);
-        };
-
-        function generateJobDataMapDetails(data) {
-            var value = data.jobDataMap;
-            if (!angular.isArray(value) && angular.isObject(value)) {
-                var detailHtml = "<table class='table table-striped'>";
-                detailHtml += "<thead><th>Key</th><th>Value</th></thead>";
-                var object = value;
-                var keys = Object.keys(value).sort();
-                angular.forEach(keys, function (key) {
-                    var value = object[key];
-                    detailHtml += "<tr><td>" + safeNull(key) + "</td><td>" + safeNull(value) + "</td></tr>";
-                });
-                detailHtml += "</table>";
-                data.detailHtml = detailHtml;
-            }
-        }
-
-        $scope.pauseScheduler = function () {
-            if ($scope.selectedSchedulerMBean) {
-                jolokia.request({
-                    type: "exec", mbean: $scope.selectedSchedulerMBean,
-                    operation: "standby" }, onSuccess(function (response) {
-                    notification("success", "Paused scheduler " + $scope.selectedScheduler.SchedulerName);
-                }));
-            }
-        };
-
-        $scope.startScheduler = function () {
-            if ($scope.selectedSchedulerMBean) {
-                jolokia.request({
-                    type: "exec", mbean: $scope.selectedSchedulerMBean,
-                    operation: "start" }, onSuccess(function (response) {
-                    notification("success", "Started scheduler " + $scope.selectedScheduler.SchedulerName);
-                }));
-            }
-        };
-
-        $scope.enableSampleStatistics = function () {
-            if ($scope.selectedSchedulerMBean) {
-                jolokia.setAttribute($scope.selectedSchedulerMBean, "SampledStatisticsEnabled", true);
-            }
-        };
-
-        $scope.disableSampleStatistics = function () {
-            if ($scope.selectedSchedulerMBean) {
-                jolokia.setAttribute($scope.selectedSchedulerMBean, "SampledStatisticsEnabled", false);
-            }
-        };
-
-        $scope.pauseTrigger = function () {
-            if ($scope.gridOptions.selectedItems.length === 1) {
-                var groupName = $scope.gridOptions.selectedItems[0].group;
-                var triggerName = $scope.gridOptions.selectedItems[0].name;
-
-                jolokia.request({
-                    type: "exec", mbean: $scope.selectedSchedulerMBean,
-                    operation: "pauseTrigger", arguments: [triggerName, groupName] }, onSuccess(function (response) {
-                    notification("success", "Paused trigger " + groupName + "/" + triggerName);
-                }));
-            }
-        };
-
-        $scope.resumeTrigger = function () {
-            if ($scope.gridOptions.selectedItems.length === 1) {
-                var groupName = $scope.gridOptions.selectedItems[0].group;
-                var triggerName = $scope.gridOptions.selectedItems[0].name;
-
-                jolokia.request({
-                    type: "exec", mbean: $scope.selectedSchedulerMBean,
-                    operation: "resumeTrigger", arguments: [triggerName, groupName] }, onSuccess(function (response) {
-                    notification("success", "Resumed trigger " + groupName + "/" + triggerName);
-                }));
-            }
-        };
-
-        $scope.onBeforeUpdateTrigger = function () {
-            var row = $scope.gridOptions.selectedItems[0];
-            if (row && row.type === 'cron') {
-                $scope.updatedTrigger["type"] = 'cron';
-                $scope.updatedTrigger["cron"] = row.expression;
-                $scope.updatedTrigger["repeatCount"] = null;
-                $scope.updatedTrigger["repeatInterval"] = null;
-
-                // must be a string type for the select-box to select it
-                $scope.updatedTrigger["misfireInstruction"] = '' + row.misfireInstruction;
-                $scope.triggerSchema.properties["cron"].hidden = false;
-                $scope.triggerSchema.properties["repeatCount"].hidden = true;
-                $scope.triggerSchema.properties["repeatInterval"].hidden = true;
-                $scope.showTriggerDialog = true;
-            } else if (row && row.type === 'simple') {
-                $scope.updatedTrigger["type"] = 'simple';
-                $scope.updatedTrigger["cron"] = null;
-                $scope.updatedTrigger["repeatCount"] = row.repeatCounter;
-                $scope.updatedTrigger["repeatInterval"] = row.repeatInterval;
-
-                // must be a string type for the select-box to select it
-                $scope.updatedTrigger["misfireInstruction"] = '' + row.misfireInstruction;
-                $scope.triggerSchema.properties["cron"].hidden = true;
-                $scope.triggerSchema.properties["repeatCount"].hidden = false;
-                $scope.triggerSchema.properties["repeatInterval"].hidden = false;
-                $scope.showTriggerDialog = true;
-            } else {
-                $scope.updatedTrigger = {};
-                $scope.showTriggerDialog = false;
-            }
-        };
-
-        $scope.onUpdateTrigger = function () {
-            var cron = $scope.updatedTrigger["cron"];
-            var repeatCounter = $scope.updatedTrigger["repeatCount"];
-            var repeatInterval = $scope.updatedTrigger["repeatInterval"];
-            var misfireInstruction = parseInt($scope.updatedTrigger["misfireInstruction"]);
-            $scope.updatedTrigger = {};
-
-            var groupName = $scope.gridOptions.selectedItems[0].group;
-            var triggerName = $scope.gridOptions.selectedItems[0].name;
-
-            if (cron) {
-                log.info("Updating trigger " + groupName + "/" + triggerName + " with cron " + cron);
-
-                jolokia.request({
-                    type: "exec", mbean: "hawtio:type=QuartzFacade",
-                    operation: "updateCronTrigger", arguments: [
-                        $scope.selectedSchedulerMBean,
-                        triggerName,
-                        groupName,
-                        misfireInstruction,
-                        cron,
-                        null] }, onSuccess(function (response) {
-                    notification("success", "Updated trigger " + groupName + "/" + triggerName);
-                }));
-            } else if (repeatCounter || repeatInterval) {
-                if (repeatCounter == null) {
-                    repeatCounter = -1;
-                }
-                if (repeatInterval == null) {
-                    repeatInterval = 1000;
-                }
-
-                log.info("Updating trigger " + groupName + "/" + triggerName + " with interval " + repeatInterval + " ms. for " + repeatCounter + " times");
-
-                jolokia.request({
-                    type: "exec", mbean: "hawtio:type=QuartzFacade",
-                    operation: "updateSimpleTrigger", arguments: [
-                        $scope.selectedSchedulerMBean,
-                        triggerName,
-                        groupName,
-                        misfireInstruction,
-                        repeatCounter,
-                        repeatInterval] }, onSuccess(function (response) {
-                    notification("success", "Updated trigger " + groupName + "/" + triggerName);
-                }));
-            }
-        };
-
-        function reloadTree() {
-            log.debug("Reloading Quartz Tree");
-            var mbean = Quartz.getQuartzMBean(workspace);
-            var domain = "quartz";
-            var rootFolder = new Folder("Quartz Schedulers");
-            rootFolder.addClass = "quartz-folder";
-            rootFolder.typeName = "quartzSchedulers";
-            rootFolder.domain = domain;
-            rootFolder.key = "";
-            var children = [rootFolder];
-
-            if (mbean) {
-                function render(results) {
-                    angular.forEach(results, function (value, key) {
-                        var name = jolokia.request({
-                            type: "read", mbean: value,
-                            attribute: ["SchedulerName"] });
-
-                        var txt = name.value["SchedulerName"];
-                        var scheduler = new Folder(txt);
-                        scheduler.addClass = "quartz-scheduler";
-                        scheduler.typeName = "quartzScheduler";
-                        scheduler.domain = domain;
-                        scheduler.objectName = value;
-
-                        // use scheduler name as key as that is unique for us
-                        scheduler.key = txt;
-                        rootFolder.children.push(scheduler);
-                    });
-
-                    log.debug("Setitng up Quartz tree with nid " + $location.search()["nid"]);
-                    var nid = $location.search()["nid"];
-                    if (nid) {
-                        var data = rootFolder.children.filter(function (folder) {
-                            return folder.key === nid;
-                        });
-                        log.debug("Found nid in tree " + data);
-                        if (data && data.length === 1) {
-                            selectionChanged(data[0]);
-                        }
-                    }
-
-                    Core.$apply($scope);
-
-                    var treeElement = $("#quartztree");
-                    Jmx.enableTree($scope, $location, workspace, treeElement, children, true, function (selectedNode) {
-                        var data = selectedNode.data;
-                        selectionChanged(data);
-                        Core.$apply($scope);
-                    });
-
-                    // lets do this asynchronously to avoid Error: $digest already in progress
-                    setTimeout(updateSelectionFromURL, 50);
-                }
-
-                jolokia.search("quartz:type=QuartzScheduler,*", onSuccess(render));
-            }
-        }
-
-        function updateSelectionFromURL() {
-            Jmx.updateTreeSelectionFromURLAndAutoSelect($location, $("#quartztree"), function (first) {
-                // use function to auto select first scheduler if there is only one scheduler
-                var schedulers = first.getChildren();
-                if (schedulers && schedulers.length === 1) {
-                    first = schedulers[0];
-                    return first;
-                } else {
-                    return first;
-                }
-            }, true);
-        }
-
-        function selectionChanged(data) {
-            var selectionKey = data ? data.objectName : null;
-            log.debug("Selection is now: " + selectionKey);
-
-            if (selectionKey) {
-                // if we selected a scheduler then register a callback to get its trigger data updated in-real-time
-                // as the trigger has prev/next fire times that changes
-                $scope.selectedSchedulerMBean = selectionKey;
-
-                // TODO: is there a better way to add our nid to the uri parameter?
-                $location.search({ nid: data.key });
-
-                var request = [
-                    { type: "read", mbean: $scope.selectedSchedulerMBean }
-                ];
-
-                // unregister before registering new
-                Core.unregister(jolokia, $scope);
-                Core.register(jolokia, $scope, request, onSuccess($scope.renderQuartz));
-            } else {
-                Core.unregister(jolokia, $scope);
-                $scope.selectedSchedulerMBean = null;
-                $scope.selectedScheduler = null;
-                $scope.triggers = [];
-                $scope.jobs = [];
-                $scope.updatedTrigger = {};
-            }
-        }
-
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            // lets do this asynchronously to avoid Error: $digest already in progress
-            setTimeout(updateSelectionFromURL, 50);
-        });
-
-        $scope.$on('jmxTreeUpdated', function () {
-            reloadTree();
-        });
-
-        // reload tree on startup
-        reloadTree();
-    }
-    Quartz.QuartzController = QuartzController;
-})(Quartz || (Quartz = {}));
-/**
-* @module Quartz
 * @main Quartz
 */
+/// <reference path="./quartzHelpers.ts"/>
 var Quartz;
 (function (Quartz) {
     var pluginName = 'quartz';
     Quartz.jmxDomain = 'quartz';
 
-    angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(function ($routeProvider) {
-        $routeProvider.when('/quartz/scheduler', { templateUrl: 'app/quartz/html/scheduler.html' }).when('/quartz/triggers', { templateUrl: 'app/quartz/html/triggers.html' }).when('/quartz/jobs', { templateUrl: 'app/quartz/html/jobs.html' });
-    }).filter('quartzIconClass', function () {
-        return Quartz.iconClass;
-    }).filter('quartzMisfire', function () {
-        return Quartz.misfireText;
-    }).filter('quartzJobDataClassText', function () {
-        return Quartz.jobDataClassText;
-    }).run(function ($location, workspace, viewRegistry, layoutFull, helpRegistry) {
-        viewRegistry['quartz'] = 'app/quartz/html/layoutQuartzTree.html';
-        helpRegistry.addUserDoc('quartz', 'app/quartz/doc/help.md', function () {
-            return workspace.treeContainsDomainAndProperties(Quartz.jmxDomain);
-        });
+    Quartz._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']);
 
-        workspace.topLevelTabs.push({
-            id: "quartz",
-            content: "Quartz",
-            title: "Quartz Scheduler",
-            isValid: function (workspace) {
-                return workspace.treeContainsDomainAndProperties(Quartz.jmxDomain);
-            },
-            href: function () {
-                return "#/quartz/scheduler";
-            },
-            isActive: function (workspace) {
-                return workspace.isTopTabActive("quartz");
-            }
-        });
+    Quartz._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/quartz/scheduler', { templateUrl: 'app/quartz/html/scheduler.html' }).when('/quartz/triggers', { templateUrl: 'app/quartz/html/triggers.html' }).when('/quartz/jobs', { templateUrl: 'app/quartz/html/jobs.html' });
+        }]);
+
+    Quartz._module.filter('quartzIconClass', function () {
+        return Quartz.iconClass;
     });
+    Quartz._module.filter('quartzMisfire', function () {
+        return Quartz.misfireText;
+    });
+    Quartz._module.filter('quartzJobDataClassText', function () {
+        return Quartz.jobDataClassText;
+    });
+
+    Quartz._module.run([
+        "$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", function ($location, workspace, viewRegistry, layoutFull, helpRegistry) {
+            viewRegistry['quartz'] = 'app/quartz/html/layoutQuartzTree.html';
+            helpRegistry.addUserDoc('quartz', 'app/quartz/doc/help.md', function () {
+                return workspace.treeContainsDomainAndProperties(Quartz.jmxDomain);
+            });
+
+            workspace.topLevelTabs.push({
+                id: "quartz",
+                content: "Quartz",
+                title: "Quartz Scheduler",
+                isValid: function (workspace) {
+                    return workspace.treeContainsDomainAndProperties(Quartz.jmxDomain);
+                },
+                href: function () {
+                    return "#/quartz/scheduler";
+                },
+                isActive: function (workspace) {
+                    return workspace.isTopTabActive("quartz");
+                }
+            });
+        }]);
 
     hawtioPluginLoader.addModule(pluginName);
 })(Quartz || (Quartz = {}));
 /**
-*  @module Themes
+* @module Quartz
 */
-var Themes;
-(function (Themes) {
-    function PreferencesController($scope, localStorage, branding) {
-        $scope.availableThemes = Themes.getAvailableThemes();
-        $scope.availableBrandings = Themes.getAvailableBrandings();
+/// <reference path="./quartzPlugin.ts"/>
+var Quartz;
+(function (Quartz) {
+    Quartz._module.controller("Quartz.QuartzController", [
+        "$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+            var log = Logger.get("Quartz");
 
-        Core.initPreferenceScope($scope, localStorage, {
-            'theme': {
-                'value': Themes.currentTheme,
-                'override': function (newValue, oldValue) {
-                    if (newValue !== oldValue) {
-                        Themes.setTheme(newValue, branding);
+            var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.entity.state}}"><i class="{{row.entity.state | quartzIconClass}}"></i></div>';
+            var misfireTemplate = '<div class="ngCellText" title="{{row.entity.misfireInstruction}}">{{row.entity.misfireInstruction | quartzMisfire}}</div>';
+
+            $scope.valueDetails = new UI.Dialog();
+
+            $scope.selectedScheduler = null;
+            $scope.selectedSchedulerMBean = null;
+            $scope.triggers = [];
+            $scope.jobs = [];
+
+            $scope.misfireInstructions = [
+                { id: '-1', title: 'Ignore' },
+                { id: '0', title: 'Smart' },
+                { id: '1', title: 'Fire once now' },
+                { id: '2', title: 'Do nothing' }
+            ];
+            $scope.updatedTrigger = {};
+            $scope.triggerSchema = {
+                properties: {
+                    'cron': {
+                        description: 'Cron expression',
+                        label: 'Cron expression',
+                        tooltip: 'Specify a cron expression for the trigger',
+                        type: 'string',
+                        hidden: false
+                    },
+                    'repeatCount': {
+                        description: 'Repeat count',
+                        tooltip: 'Number of times to repeat. Use -1 for forever.',
+                        type: 'integer',
+                        hidden: false
+                    },
+                    'repeatInterval': {
+                        description: 'Repeat interval',
+                        tooltip: 'Elapsed time in millis between triggering',
+                        type: 'integer',
+                        hidden: false
+                    },
+                    'misfireInstruction': {
+                        description: 'Misfire instruction',
+                        tooltip: 'What to do when misfiring happens',
+                        type: 'string',
+                        hidden: false,
+                        'input-element': 'select',
+                        'input-attributes': {
+                            'ng-options': "mi.id as mi.title for mi in misfireInstructions"
+                        }
                     }
                 }
-            },
-            'branding': {
-                'value': Themes.currentBranding,
-                'override': function (newValue, oldValue) {
-                    if (newValue !== oldValue) {
-                        Themes.setBranding(newValue, branding);
+            };
+
+            $scope.gridOptions = {
+                selectedItems: [],
+                data: 'triggers',
+                showFilter: true,
+                filterOptions: {
+                    filterText: ''
+                },
+                showSelectionCheckbox: false,
+                enableRowClickSelection: true,
+                multiSelect: false,
+                primaryKeyFn: function (entity, idx) {
+                    return entity.group + "/" + entity.name;
+                },
+                columnDefs: [
+                    {
+                        field: 'state',
+                        displayName: 'State',
+                        cellTemplate: stateTemplate,
+                        width: 56,
+                        minWidth: 56,
+                        maxWidth: 56,
+                        resizable: false
+                    },
+                    {
+                        field: 'group',
+                        displayName: 'Group',
+                        resizable: true,
+                        width: 150
+                    },
+                    {
+                        field: 'name',
+                        displayName: 'Name',
+                        resizable: true,
+                        width: 150
+                    },
+                    {
+                        field: 'type',
+                        displayName: 'Type',
+                        resizable: false,
+                        width: 70
+                    },
+                    {
+                        field: 'expression',
+                        displayName: 'Expression',
+                        resizable: true,
+                        width: 180
+                    },
+                    {
+                        field: 'misfireInstruction',
+                        displayName: 'Misfire Instruction',
+                        cellTemplate: misfireTemplate,
+                        width: 150
+                    },
+                    {
+                        field: 'previousFireTime',
+                        displayName: 'Previous Fire'
+                    },
+                    {
+                        field: 'nextFireTime',
+                        displayName: 'Next Fire'
+                    },
+                    {
+                        field: 'finalFireTime',
+                        displayName: 'Final Fire'
                     }
+                ]
+            };
+
+            $scope.jobsGridOptions = {
+                selectedItems: [],
+                data: 'jobs',
+                showFilter: true,
+                filterOptions: {
+                    filterText: ''
+                },
+                showSelectionCheckbox: false,
+                enableRowClickSelection: true,
+                multiSelect: false,
+                primaryKeyFn: function (entity, idx) {
+                    return entity.group + "/" + entity.name;
+                },
+                columnDefs: [
+                    {
+                        field: 'group',
+                        displayName: 'Group',
+                        resizable: true,
+                        width: 150
+                    },
+                    {
+                        field: 'name',
+                        displayName: 'Name',
+                        resizable: true,
+                        width: 150
+                    },
+                    {
+                        field: 'durability',
+                        displayName: 'Durable',
+                        width: 70,
+                        resizable: false
+                    },
+                    {
+                        field: 'shouldRecover',
+                        displayName: 'Recover',
+                        width: 70,
+                        resizable: false
+                    },
+                    {
+                        field: 'jobClass',
+                        displayName: 'Job ClassName',
+                        width: 350
+                    },
+                    {
+                        field: 'description',
+                        displayName: 'Description',
+                        resizable: true
+                    }
+                ]
+            };
+
+            $scope.openJobDetailView = function () {
+                if ($scope.jobsGridOptions.selectedItems.length === 1) {
+                    $scope.valueDetails.open();
+                }
+            };
+
+            $scope.renderIcon = function (state) {
+                return Quartz.iconClass(state);
+            };
+
+            $scope.renderQuartz = function (response) {
+                $scope.selectedSchedulerDetails = [];
+
+                log.debug("Selected scheduler mbean " + $scope.selectedScheduler);
+                var obj = response.value;
+                if (obj) {
+                    // redraw table
+                    $scope.selectedScheduler = obj;
+                    $scope.triggers = [];
+                    $scope.job = [];
+
+                    // grab state for all triggers which requires to call a JMX operation per trigger
+                    obj.AllTriggers.forEach(function (t) {
+                        var state = jolokia.request({
+                            type: "exec", mbean: $scope.selectedSchedulerMBean,
+                            operation: "getTriggerState", arguments: [t.name, t.group] });
+                        if (state) {
+                            t.state = state.value;
+                        } else {
+                            t.state = "unknown";
+                        }
+
+                        // unique id of trigger
+                        t.id = t.name + "/" + t.group;
+
+                        // grab information about the trigger from the job map, as quartz does not have the information itself
+                        // so we had to enrich the job map in camel-quartz to include this information
+                        var job = obj.AllJobDetails[t.jobName];
+                        if (job) {
+                            job = job[t.group];
+                            if (job) {
+                                var repeatCounter;
+                                var repeatInterval;
+
+                                t.type = job.jobDataMap["CamelQuartzTriggerType"];
+                                if (t.type && t.type == "cron") {
+                                    t.expression = job.jobDataMap["CamelQuartzTriggerCronExpression"];
+                                } else if (t.type && t.type == "simple") {
+                                    t.expression = "every " + job.jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"] + " ms.";
+                                    repeatCounter = job.jobDataMap["CamelQuartzTriggerSimpleRepeatCounter"];
+                                    repeatInterval = job.jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"];
+                                    if (repeatCounter > 0) {
+                                        t.expression += " (" + repeatCounter + " times)";
+                                    } else {
+                                        t.expression += " (forever)";
+                                    }
+                                    t.repeatCounter = repeatCounter;
+                                    t.repeatInterval = repeatInterval;
+                                } else {
+                                    // fallback and grab from Camel endpoint if that is possible (supporting older Camel releases)
+                                    var uri = job.jobDataMap["CamelQuartzEndpoint"];
+                                    if (uri) {
+                                        var cron = Core.getQueryParameterValue(uri, "cron");
+                                        if (cron) {
+                                            t.type = "cron";
+
+                                            // replace + with space as Camel uses + as space in the cron when specifying in the uri
+                                            cron = cron.replace(/\++/g, ' ');
+                                            t.expression = cron;
+                                        }
+                                        repeatCounter = Core.getQueryParameterValue(uri, "trigger.repeatCount");
+                                        repeatInterval = Core.getQueryParameterValue(uri, "trigger.repeatInterval");
+                                        if (repeatCounter || repeatInterval) {
+                                            t.type = "simple";
+                                            t.expression = "every " + repeatInterval + " ms.";
+                                            if (repeatCounter && repeatCounter > 0) {
+                                                t.expression += " (" + repeatCounter + " times)";
+                                            } else {
+                                                t.expression += " (forever)";
+                                            }
+                                            t.repeatCounter = repeatCounter;
+                                            t.repeatInterval = repeatInterval;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        $scope.triggers.push(t);
+                    });
+
+                    // grab state for all triggers which requires to call a JMX operation per trigger
+                    $scope.jobs = [];
+                    $scope.triggers.forEach(function (t) {
+                        var job = obj.AllJobDetails[t.jobName];
+                        if (job) {
+                            job = job[t.group];
+                            if (job) {
+                                generateJobDataMapDetails(job);
+
+                                // unique id of jobs
+                                job.id = job.jobName + "/" + job.group;
+
+                                $scope.jobs.push(job);
+                            }
+                        }
+                    });
+                }
+
+                Core.$apply($scope);
+            };
+
+            function generateJobDataMapDetails(data) {
+                var value = data.jobDataMap;
+                if (!angular.isArray(value) && angular.isObject(value)) {
+                    var detailHtml = "<table class='table table-striped'>";
+                    detailHtml += "<thead><th>Key</th><th>Value</th></thead>";
+                    var object = value;
+                    var keys = Object.keys(value).sort();
+                    angular.forEach(keys, function (key) {
+                        var value = object[key];
+                        detailHtml += "<tr><td>" + safeNull(key) + "</td><td>" + safeNull(value) + "</td></tr>";
+                    });
+                    detailHtml += "</table>";
+                    data.detailHtml = detailHtml;
                 }
             }
-        });
-    }
-    Themes.PreferencesController = PreferencesController;
-})(Themes || (Themes = {}));
+
+            $scope.pauseScheduler = function () {
+                if ($scope.selectedSchedulerMBean) {
+                    jolokia.request({
+                        type: "exec", mbean: $scope.selectedSchedulerMBean,
+                        operation: "standby" }, onSuccess(function (response) {
+                        notification("success", "Paused scheduler " + $scope.selectedScheduler.SchedulerName);
+                    }));
+                }
+            };
+
+            $scope.startScheduler = function () {
+                if ($scope.selectedSchedulerMBean) {
+                    jolokia.request({
+                        type: "exec", mbean: $scope.selectedSchedulerMBean,
+                        operation: "start" }, onSuccess(function (response) {
+                        notification("success", "Started scheduler " + $scope.selectedScheduler.SchedulerName);
+                    }));
+                }
+            };
+
+            $scope.enableSampleStatistics = function () {
+                if ($scope.selectedSchedulerMBean) {
+                    jolokia.setAttribute($scope.selectedSchedulerMBean, "SampledStatisticsEnabled", true);
+                }
+            };
+
+            $scope.disableSampleStatistics = function () {
+                if ($scope.selectedSchedulerMBean) {
+                    jolokia.setAttribute($scope.selectedSchedulerMBean, "SampledStatisticsEnabled", false);
+                }
+            };
+
+            $scope.pauseTrigger = function () {
+                if ($scope.gridOptions.selectedItems.length === 1) {
+                    var groupName = $scope.gridOptions.selectedItems[0].group;
+                    var triggerName = $scope.gridOptions.selectedItems[0].name;
+
+                    jolokia.request({
+                        type: "exec", mbean: $scope.selectedSchedulerMBean,
+                        operation: "pauseTrigger", arguments: [triggerName, groupName] }, onSuccess(function (response) {
+                        notification("success", "Paused trigger " + groupName + "/" + triggerName);
+                    }));
+                }
+            };
+
+            $scope.resumeTrigger = function () {
+                if ($scope.gridOptions.selectedItems.length === 1) {
+                    var groupName = $scope.gridOptions.selectedItems[0].group;
+                    var triggerName = $scope.gridOptions.selectedItems[0].name;
+
+                    jolokia.request({
+                        type: "exec", mbean: $scope.selectedSchedulerMBean,
+                        operation: "resumeTrigger", arguments: [triggerName, groupName] }, onSuccess(function (response) {
+                        notification("success", "Resumed trigger " + groupName + "/" + triggerName);
+                    }));
+                }
+            };
+
+            $scope.onBeforeUpdateTrigger = function () {
+                var row = $scope.gridOptions.selectedItems[0];
+                if (row && row.type === 'cron') {
+                    $scope.updatedTrigger["type"] = 'cron';
+                    $scope.updatedTrigger["cron"] = row.expression;
+                    $scope.updatedTrigger["repeatCount"] = null;
+                    $scope.updatedTrigger["repeatInterval"] = null;
+
+                    // must be a string type for the select-box to select it
+                    $scope.updatedTrigger["misfireInstruction"] = '' + row.misfireInstruction;
+                    $scope.triggerSchema.properties["cron"].hidden = false;
+                    $scope.triggerSchema.properties["repeatCount"].hidden = true;
+                    $scope.triggerSchema.properties["repeatInterval"].hidden = true;
+                    $scope.showTriggerDialog = true;
+                } else if (row && row.type === 'simple') {
+                    $scope.updatedTrigger["type"] = 'simple';
+                    $scope.updatedTrigger["cron"] = null;
+                    $scope.updatedTrigger["repeatCount"] = row.repeatCounter;
+                    $scope.updatedTrigger["repeatInterval"] = row.repeatInterval;
+
+                    // must be a string type for the select-box to select it
+                    $scope.updatedTrigger["misfireInstruction"] = '' + row.misfireInstruction;
+                    $scope.triggerSchema.properties["cron"].hidden = true;
+                    $scope.triggerSchema.properties["repeatCount"].hidden = false;
+                    $scope.triggerSchema.properties["repeatInterval"].hidden = false;
+                    $scope.showTriggerDialog = true;
+                } else {
+                    $scope.updatedTrigger = {};
+                    $scope.showTriggerDialog = false;
+                }
+            };
+
+            $scope.onUpdateTrigger = function () {
+                var cron = $scope.updatedTrigger["cron"];
+                var repeatCounter = $scope.updatedTrigger["repeatCount"];
+                var repeatInterval = $scope.updatedTrigger["repeatInterval"];
+                var misfireInstruction = parseInt($scope.updatedTrigger["misfireInstruction"]);
+                $scope.updatedTrigger = {};
+
+                var groupName = $scope.gridOptions.selectedItems[0].group;
+                var triggerName = $scope.gridOptions.selectedItems[0].name;
+
+                if (cron) {
+                    log.info("Updating trigger " + groupName + "/" + triggerName + " with cron " + cron);
+
+                    jolokia.request({
+                        type: "exec", mbean: "hawtio:type=QuartzFacade",
+                        operation: "updateCronTrigger", arguments: [
+                            $scope.selectedSchedulerMBean,
+                            triggerName,
+                            groupName,
+                            misfireInstruction,
+                            cron,
+                            null] }, onSuccess(function (response) {
+                        notification("success", "Updated trigger " + groupName + "/" + triggerName);
+                    }));
+                } else if (repeatCounter || repeatInterval) {
+                    if (repeatCounter == null) {
+                        repeatCounter = -1;
+                    }
+                    if (repeatInterval == null) {
+                        repeatInterval = 1000;
+                    }
+
+                    log.info("Updating trigger " + groupName + "/" + triggerName + " with interval " + repeatInterval + " ms. for " + repeatCounter + " times");
+
+                    jolokia.request({
+                        type: "exec", mbean: "hawtio:type=QuartzFacade",
+                        operation: "updateSimpleTrigger", arguments: [
+                            $scope.selectedSchedulerMBean,
+                            triggerName,
+                            groupName,
+                            misfireInstruction,
+                            repeatCounter,
+                            repeatInterval] }, onSuccess(function (response) {
+                        notification("success", "Updated trigger " + groupName + "/" + triggerName);
+                    }));
+                }
+            };
+
+            function reloadTree() {
+                log.debug("Reloading Quartz Tree");
+                var mbean = Quartz.getQuartzMBean(workspace);
+                var domain = "quartz";
+                var rootFolder = new Folder("Quartz Schedulers");
+                rootFolder.addClass = "quartz-folder";
+                rootFolder.typeName = "quartzSchedulers";
+                rootFolder.domain = domain;
+                rootFolder.key = "";
+                var children = [rootFolder];
+
+                if (mbean) {
+                    function render(results) {
+                        angular.forEach(results, function (value, key) {
+                            var name = jolokia.request({
+                                type: "read", mbean: value,
+                                attribute: ["SchedulerName"] });
+
+                            var txt = name.value["SchedulerName"];
+                            var scheduler = new Folder(txt);
+                            scheduler.addClass = "quartz-scheduler";
+                            scheduler.typeName = "quartzScheduler";
+                            scheduler.domain = domain;
+                            scheduler.objectName = value;
+
+                            // use scheduler name as key as that is unique for us
+                            scheduler.key = txt;
+                            rootFolder.children.push(scheduler);
+                        });
+
+                        log.debug("Setitng up Quartz tree with nid " + $location.search()["nid"]);
+                        var nid = $location.search()["nid"];
+                        if (nid) {
+                            var data = rootFolder.children.filter(function (folder) {
+                                return folder.key === nid;
+                            });
+                            log.debug("Found nid in tree " + data);
+                            if (data && data.length === 1) {
+                                selectionChanged(data[0]);
+                            }
+                        }
+
+                        Core.$apply($scope);
+
+                        var treeElement = $("#quartztree");
+                        Jmx.enableTree($scope, $location, workspace, treeElement, children, true, function (selectedNode) {
+                            var data = selectedNode.data;
+                            selectionChanged(data);
+                            Core.$apply($scope);
+                        });
+
+                        // lets do this asynchronously to avoid Error: $digest already in progress
+                        setTimeout(updateSelectionFromURL, 50);
+                    }
+
+                    jolokia.search("quartz:type=QuartzScheduler,*", onSuccess(render));
+                }
+            }
+
+            function updateSelectionFromURL() {
+                Jmx.updateTreeSelectionFromURLAndAutoSelect($location, $("#quartztree"), function (first) {
+                    // use function to auto select first scheduler if there is only one scheduler
+                    var schedulers = first.getChildren();
+                    if (schedulers && schedulers.length === 1) {
+                        first = schedulers[0];
+                        return first;
+                    } else {
+                        return first;
+                    }
+                }, true);
+            }
+
+            function selectionChanged(data) {
+                var selectionKey = data ? data.objectName : null;
+                log.debug("Selection is now: " + selectionKey);
+
+                if (selectionKey) {
+                    // if we selected a scheduler then register a callback to get its trigger data updated in-real-time
+                    // as the trigger has prev/next fire times that changes
+                    $scope.selectedSchedulerMBean = selectionKey;
+
+                    // TODO: is there a better way to add our nid to the uri parameter?
+                    $location.search({ nid: data.key });
+
+                    var request = [
+                        { type: "read", mbean: $scope.selectedSchedulerMBean }
+                    ];
+
+                    // unregister before registering new
+                    Core.unregister(jolokia, $scope);
+                    Core.register(jolokia, $scope, request, onSuccess($scope.renderQuartz));
+                } else {
+                    Core.unregister(jolokia, $scope);
+                    $scope.selectedSchedulerMBean = null;
+                    $scope.selectedScheduler = null;
+                    $scope.triggers = [];
+                    $scope.jobs = [];
+                    $scope.updatedTrigger = {};
+                }
+            }
+
+            $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+                // lets do this asynchronously to avoid Error: $digest already in progress
+                setTimeout(updateSelectionFromURL, 50);
+            });
+
+            $scope.$on('jmxTreeUpdated', function () {
+                reloadTree();
+            });
+
+            // reload tree on startup
+            reloadTree();
+        }]);
+})(Quartz || (Quartz = {}));
 /**
 * @module Themes
 * @main Themes
@@ -42754,18 +42872,50 @@ var Themes;
     Themes.log = Logger.get("Themes");
     Themes._module = angular.module(Themes.pluginName, ["hawtioCore"]);
 
-    Themes._module.run(function (localStorage, branding, preferencesRegistry) {
-        var themeName = localStorage['theme'];
-        Themes.setTheme(themeName, branding);
+    Themes._module.run([
+        "localStorage", "branding", "preferencesRegistry", function (localStorage, branding, preferencesRegistry) {
+            var themeName = localStorage['theme'];
+            Themes.setTheme(themeName, branding);
 
-        var brandingName = localStorage['branding'];
-        Themes.setBranding(brandingName, branding);
+            var brandingName = localStorage['branding'];
+            Themes.setBranding(brandingName, branding);
 
-        preferencesRegistry.addTab("Theme", "app/themes/html/preferences.html");
-        Themes.log.debug("Loaded");
-    });
+            preferencesRegistry.addTab("Theme", "app/themes/html/preferences.html");
+            Themes.log.debug("Loaded");
+        }]);
 
     hawtioPluginLoader.addModule(Themes.pluginName);
+})(Themes || (Themes = {}));
+/**
+*  @module Themes
+*/
+/// <reference path="./themesPlugin.ts"/>
+var Themes;
+(function (Themes) {
+    Themes._module.controller("Themes.PreferencesController", [
+        "$scope", "localStorage", "branding", function ($scope, localStorage, branding) {
+            $scope.availableThemes = Themes.getAvailableThemes();
+            $scope.availableBrandings = Themes.getAvailableBrandings();
+
+            Core.initPreferenceScope($scope, localStorage, {
+                'theme': {
+                    'value': Themes.currentTheme,
+                    'override': function (newValue, oldValue) {
+                        if (newValue !== oldValue) {
+                            Themes.setTheme(newValue, branding);
+                        }
+                    }
+                },
+                'branding': {
+                    'value': Themes.currentBranding,
+                    'override': function (newValue, oldValue) {
+                        if (newValue !== oldValue) {
+                            Themes.setBranding(newValue, branding);
+                        }
+                    }
+                }
+            });
+        }]);
 })(Themes || (Themes = {}));
 /**
 * @module DataTable
@@ -44048,555 +44198,6 @@ var Infinispan;
 })(Infinispan || (Infinispan = {}));
 var SpringBatch;
 (function (SpringBatch) {
-    function JobOverviewExecListController($scope, $routeParams, $location, workspace, jolokia, $resource, $rootScope, $http) {
-        var springBatchServerOrigin = $rootScope.springBatchServer;
-        var springBatchServerPath = springBatchServerOrigin + 'jobs/:jobName';
-        var proxyUrl = $rootScope.proxyUrl;
-        var executionsListPath = '/:jobInstanceId/executions.json';
-        var paramsListPath = 'jobs/:jobName/:jobInstanceId';
-        var jobName = $routeParams.jobName;
-        $scope.jobName = $routeParams.jobName;
-        var jobInstances = null;
-        var jobList = $resource(proxyUrl + springBatchServerPath);
-        $scope.springBatchServer = encodeURIComponent(springBatchServerOrigin);
-
-        $scope.executionPredicate = 'name';
-        $scope.executionReverse = false;
-        $scope.stepPredicate = 'name';
-        $scope.stepReverse = false;
-
-        $scope.fetchAllExecutions = function (jobInstance) {
-            if (jobInstance != undefined) {
-                var jobList = $resource(proxyUrl + springBatchServerPath + executionsListPath);
-                jobList.get({ 'jobName': jobName, jobInstanceId: jobInstance.id }, function (data) {
-                    var jobExecutionList = new Array();
-                    for (var execution in data.jobInstance.jobExecutions) {
-                        data.jobInstance.jobExecutions[execution].id = execution;
-                        jobExecutionList.add(data.jobInstance.jobExecutions[execution]);
-                    }
-                    $scope.jobName = jobName;
-                    $scope.jobExecutionList = jobExecutionList;
-                });
-            }
-        };
-
-        $scope.fetchParams = function (jobName, jobInstanceId, executionId) {
-            var paramsResource = $resource(proxyUrl + springBatchServerPath + paramsListPath);
-            paramsResource.get({ 'jobName': jobName, 'jobInstanceId': jobInstanceId + '.json' }, function (data) {
-                var jobParams = new Array();
-                if (executionId) {
-                    for (var param in data.jobInstance.jobExecutions[executionId].jobParameters) {
-                        jobParams.add({ 'name': param, 'value': data.jobInstance.jobExecutions[executionId].jobParameters[param] });
-                    }
-                } else {
-                    for (var execution in data.jobInstance.jobExecutions) {
-                        for (var param in data.jobInstance.jobExecutions[execution].jobParameters) {
-                            jobParams.add({ 'name': param, 'value': data.jobInstance.jobExecutions[execution].jobParameters[param] });
-                        }
-                        break;
-                    }
-                    $scope.jobParams = jobParams;
-                }
-            });
-        };
-
-        $scope.removeParam = function (jobParams, index) {
-            jobParams.splice(index, 1);
-        };
-
-        $scope.addParam = function (jobParams, index) {
-            jobParams.add({ name: '', value: '' });
-        };
-
-        $scope.runJob = function (jobName, jobParams) {
-            if (jobName && jobParams) {
-                var springServerOrigin = springBatchServerOrigin.replace('\\', '');
-                var postUrl = proxyUrl + springServerOrigin + 'jobs/' + jobName + '.json';
-                $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-                var params = '';
-                for (var param in jobParams) {
-                    params = params + jobParams[param].name + '=' + jobParams[param].value;
-                    if ((param + 1) != jobParams.length) {
-                        params = params + ',';
-                    }
-                }
-                params = encodeURIComponent(params);
-                $http.post(postUrl, 'jobParameters=' + params).success(function (data) {
-                    if (data.jobExecution) {
-                        $rootScope.alert.content = 'Job started successfully.';
-                        $rootScope.alert.type = 'alert-success';
-                        $rootScope.alert.show();
-                    } else if (data.errors) {
-                        $rootScope.alert.content = '';
-                        for (var message in data.errors) {
-                            $rootScope.alert.content += data.errors[message] + '\n';
-                            $rootScope.alert.type = 'alert-error';
-                            $rootScope.alert.show();
-                        }
-                    }
-                }).error(function (data) {
-                    $rootScope.alert.content = 'Count not start the job';
-                    $rootScope.alert.type = 'alert-error';
-                    $rootScope.alert.show();
-                });
-            }
-        };
-
-        jobList.get({ 'jobName': jobName + '.json' }, function (data) {
-            for (var job in data.job.jobInstances) {
-                data.job.jobInstances[job].id = job;
-                jobInstances = data.job.jobInstances;
-            }
-            if ($routeParams.jobInstanceId == undefined) {
-                for (var job in data.job.jobInstances) {
-                    $scope.jobInstance = jobInstances[job];
-                    break;
-                }
-            } else {
-                if (jobInstances && jobInstances[$routeParams.jobInstanceId]) {
-                    $scope.jobInstance = jobInstances[$routeParams.jobInstanceId];
-                }
-            }
-            if ($scope.jobInstance) {
-                $scope.fetchAllExecutions($scope.jobInstance);
-                $scope.fetchParams(jobName, $scope.jobInstance.id);
-            } else {
-                $scope.jobParams = new Array();
-            }
-        });
-
-        $scope.refreshJobInstance = function (jobInstance) {
-            var jobList = $resource(proxyUrl + springBatchServerPath);
-            jobList.get({ 'jobName': jobName + '.json' }, function (data) {
-                for (var job in data.job.jobInstances) {
-                    data.job.jobInstances[job].id = job;
-                }
-                var jobInstanceId = null;
-                if (jobInstance && jobInstance.id) {
-                    jobInstanceId = jobInstance.id;
-                    $scope.jobInstance = data.job.jobInstances[jobInstanceId];
-                    $scope.fetchAllExecutions(data.job.jobInstances[jobInstanceId]);
-                    $scope.fetchParams(jobName, jobInstanceId);
-                } else {
-                    for (var job in data.job.jobInstances) {
-                        $scope.jobInstance = data.job.jobInstances[job];
-                        $scope.fetchAllExecutions(data.job.jobInstances[job]);
-                        $scope.fetchParams(jobName, job);
-                        break;
-                    }
-                }
-                $scope.stepExecutionList = null;
-            });
-        };
-        $scope.fetchNextJobInstance = function (jobInstance) {
-            var tempId = null;
-            var jobList = $resource(proxyUrl + springBatchServerPath);
-            jobList.get({ 'jobName': jobName + '.json' }, function (data) {
-                for (var job in data.job.jobInstances) {
-                    data.job.jobInstances[job].id = job;
-                    if (jobInstance && jobInstance.id && (parseInt(job) > parseInt(jobInstance.id))) {
-                        tempId = job;
-                        break;
-                    } else if (jobInstance && jobInstance.id) {
-                        tempId = jobInstance.id;
-                    }
-                }
-                if (jobInstance) {
-                    $scope.jobInstance = data.job.jobInstances[tempId];
-                } else {
-                    for (var job in data.job.jobInstances) {
-                        $scope.jobInstance = data.job.jobInstances[job];
-                        break;
-                    }
-                }
-                if ($scope.jobInstance) {
-                    $scope.fetchAllExecutions($scope.jobInstance);
-                    $scope.fetchParams(jobName, $scope.jobInstance.id);
-                }
-
-                $scope.stepExecutionList = null;
-            });
-        };
-        $scope.fetchPrevJobInstance = function (jobInstance) {
-            var tempId = null;
-            var jobList = $resource(proxyUrl + springBatchServerPath);
-            jobList.get({ 'jobName': jobName + '.json' }, function (data) {
-                for (var job in data.job.jobInstances) {
-                    data.job.jobInstances[job].id = job;
-                    if (jobInstance && jobInstance.id && (parseInt(job) < parseInt(jobInstance.id))) {
-                        tempId = job;
-                    }
-                }
-                if (jobInstance) {
-                    if ((tempId == null) && jobInstance.id) {
-                        tempId = jobInstance.id;
-                    }
-                    $scope.jobInstance = data.job.jobInstances[tempId];
-                } else {
-                    for (var job in data.job.jobInstances) {
-                        $scope.jobInstance = data.job.jobInstances[job];
-                        break;
-                    }
-                }
-                if ($scope.jobInstance) {
-                    $scope.fetchAllExecutions($scope.jobInstance);
-                    $scope.fetchParams(jobName, $scope.jobInstance.id);
-                }
-                $scope.stepExecutionList = null;
-            });
-        };
-
-        $scope.fetchStepsForExecution = function (executionId) {
-            var jobList = $resource(proxyUrl + springBatchServerOrigin + 'jobs/executions/:executionId');
-            jobList.get({ 'executionId': executionId + '.json' }, function (data) {
-                var stepList = new Array();
-                for (var execution in data.jobExecution.stepExecutions) {
-                    data.jobExecution.stepExecutions[execution].name = execution;
-                    stepList.add(data.jobExecution.stepExecutions[execution]);
-                }
-                $scope.executionId = executionId;
-                $scope.stepExecutionList = stepList;
-            });
-        };
-    }
-    SpringBatch.JobOverviewExecListController = JobOverviewExecListController;
-})(SpringBatch || (SpringBatch = {}));
-var SpringBatch;
-(function (SpringBatch) {
-    function stepExecutionContextController($scope, $routeParams, $http, $rootScope) {
-        var springBatchServerOrigin = $rootScope.springBatchServer;
-        var proxyUrl = '/hawtio';
-        var jobExecutionId = $routeParams.jobExecutionId;
-        var stepExecutionId = $routeParams.stepExecutionId;
-        var jobName = $routeParams.jobName;
-
-        var jobId = $routeParams.jobId;
-        $scope.springBatchServer = springBatchServerOrigin;
-        var stepExecutionContext = $http.get(proxyUrl + "/contextFormatter?jobExecutionId=" + jobExecutionId + "&stepExecutionId=" + stepExecutionId + "&server=" + springBatchServerOrigin + "&contextType=stepExecution").success(function (data) {
-            $scope.htmlView = data;
-        });
-        $scope.jobName = jobName;
-        $scope.jobId = jobId;
-    }
-    SpringBatch.stepExecutionContextController = stepExecutionContextController;
-})(SpringBatch || (SpringBatch = {}));
-var SpringBatch;
-(function (SpringBatch) {
-    function ConnectSpringBatchController($scope, $routeParams, $location, workspace, $rootScope, $resource, $http) {
-        $scope.host = 'localhost';
-        $scope.port = 8080;
-
-        $scope.connectSpringBatch = function () {
-            if ($scope.selectedSpringBatchServer) {
-                $rootScope.springBatchServer = $scope.selectedSpringBatchServer;
-                $rootScope.alert.content = 'Connected successfully.';
-                $rootScope.alert.type = 'alert-success';
-                $rootScope.alert.show();
-            }
-        };
-
-        $scope.addSpringBatchServerToGlobalList = function () {
-            var server = SpringBatch.getServerUrl($scope.host, $scope.port, $scope.path);
-            if ($rootScope.springBatchServerList.indexOf($scope.selectedSpringBatchServer) > 0) {
-                $rootScope.alert.content = 'Server already in the list.';
-                $rootScope.alert.type = 'alert-error';
-                $rootScope.alert.show();
-                return;
-            }
-            $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-            $http.post('/hawtio/springBatch', 'server=' + server).success(function (data) {
-                $rootScope.springBatchServerList.add(server);
-                $rootScope.springBatchServer = $scope.selectedSpringBatchServer;
-                $rootScope.alert.content = 'Server added.';
-                $rootScope.alert.type = 'alert-success';
-                $rootScope.alert.show();
-            }).error(function (data) {
-                $rootScope.alert.content = 'Could not add server.';
-                $rootScope.alert.type = 'alert-error';
-                $rootScope.alert.show();
-            });
-        };
-
-        $scope.removeServer = function (index) {
-            $http.delete('/hawtio/springBatch?server=' + encodeURIComponent($scope.selectedSpringBatchServer)).success(function (data) {
-                $scope.springBatchServerList.splice($scope.springBatchServerList.indexOf($scope.selectedSpringBatchServer), 1);
-                $rootScope.alert.content = 'Server deleted.';
-                $rootScope.alert.type = 'alert-info';
-                $rootScope.alert.show();
-            }).error(function (data) {
-                $rootScope.alert.content = 'Could not delete server.';
-                $rootScope.alert.type = 'alert-error';
-                $rootScope.alert.show();
-            });
-        };
-
-        $scope.editServer = function () {
-            $scope.host = SpringBatch.getHost($scope.selectedSpringBatchServer);
-            $scope.port = parseInt(SpringBatch.getPort($scope.selectedSpringBatchServer));
-            $scope.path = SpringBatch.getServerSuffix($scope.selectedSpringBatchServer);
-        };
-
-        $scope.updateServer = function () {
-            var server = SpringBatch.getServerUrl($scope.host, $scope.port, $scope.path);
-            var replaceServer = $scope.selectedSpringBatchServer;
-            $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-            $http.post('/hawtio/springBatch', 'server=' + server + '&replaceServer=' + replaceServer).success(function (data) {
-                $rootScope.springBatchServerList[$rootScope.springBatchServerList.indexOf($scope.selectedSpringBatchServer)] = server;
-                $rootScope.alert.content = 'Server updated.';
-                $rootScope.alert.type = 'alert-success';
-                $rootScope.alert.show();
-            }).error(function (data) {
-                $rootScope.alert.content = 'Could not add server.';
-                $rootScope.alert.type = 'alert-error';
-                $rootScope.alert.show();
-            });
-        };
-    }
-    SpringBatch.ConnectSpringBatchController = ConnectSpringBatchController;
-})(SpringBatch || (SpringBatch = {}));
-var SpringBatch;
-(function (SpringBatch) {
-    function ServerListController($scope, $location, workspace, jolokia, $resource, $rootScope, $http) {
-        var serverList = [];
-        var serverHref = '';
-        for (var server in $rootScope.springBatchServerList) {
-            serverHref += '#/springbatch/jobs/';
-            serverHref += SpringBatch.getHost($rootScope.springBatchServerList[server]) + '/';
-            serverHref += SpringBatch.getPort($rootScope.springBatchServerList[server]);
-            if (SpringBatch.getServerSuffix($rootScope.springBatchServerList[server]).length > 0)
-                serverHref += '/' + SpringBatch.getServerSuffix($rootScope.springBatchServerList[server]);
-            serverList.add({
-                href: serverHref,
-                hostname: SpringBatch.getHost($rootScope.springBatchServerList[server]),
-                port: SpringBatch.getPort($rootScope.springBatchServerList[server])
-            });
-            serverHref = '';
-        }
-        $scope.serverList = serverList;
-    }
-    SpringBatch.ServerListController = ServerListController;
-})(SpringBatch || (SpringBatch = {}));
-var SpringBatch;
-(function (SpringBatch) {
-    function JobListController($scope, $location, workspace, jolokia, $resource, $rootScope, $http, $routeParams) {
-        var targetServerHost = $routeParams.host;
-        var targetServerPort = $routeParams.port;
-        var targetServerSuffix = $routeParams.serverSuffix;
-
-        var targetServer = targetServerHost + '\\:' + targetServerPort + '/';
-        if ((targetServerSuffix != undefined) && (targetServerSuffix.length > 0))
-            targetServer += (targetServerSuffix + '/');
-        $rootScope.springBatchServer = targetServer;
-
-        var springBatchServerPath = $rootScope.springBatchServer + 'jobs.json';
-        var proxyUrl = $rootScope.proxyUrl;
-
-        $scope.predicate = 'name';
-        $scope.reverse = false;
-
-        $scope.getJobList = function () {
-            var jobList = $resource(proxyUrl + springBatchServerPath);
-            jobList.get(function (data) {
-                if (data.jobs && data.jobs.registrations) {
-                    var jobList = new Array();
-                    for (var job in data.jobs.registrations) {
-                        data.jobs.registrations[job].showLaunchForm = false;
-                        data.jobs.registrations[job].launchParams = '';
-                        jobList.add(data.jobs.registrations[job]);
-                    }
-                    $scope.jobList = jobList;
-                }
-            });
-        };
-
-        $scope.getJobList();
-
-        $scope.launchJob = function (jobName) {
-            var job;
-            for (var idx in $scope.jobList) {
-                if ($scope.jobList[idx].name == jobName)
-                    job = $scope.jobList[idx];
-            }
-            var params = job.launchParams;
-
-            if (jobName && params) {
-                var springServerOrigin = $rootScope.springBatchServer.replace('\\', '');
-                var postUrl = proxyUrl + springServerOrigin + 'jobs/' + jobName + '.json';
-                $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-                params = encodeURIComponent(params);
-                $http.post(postUrl, 'jobParameters=' + params).success(function (data) {
-                    if (data.jobExecution) {
-                        $rootScope.alert.content = 'Job started successfully.';
-                        $rootScope.alert.type = 'alert-success';
-                        $rootScope.alert.show();
-                        $scope.getJobList();
-                    } else if (data.errors) {
-                        $rootScope.alert.content = '';
-                        for (var message in data.errors) {
-                            $rootScope.alert.content += data.errors[message] + '\n';
-                            $rootScope.alert.type = 'alert-error';
-                            $rootScope.alert.show();
-                        }
-                    }
-                }).error(function (data) {
-                    $rootScope.alert.content = 'Count not start the job';
-                    $rootScope.alert.type = 'alert-error';
-                    $rootScope.alert.show();
-                });
-            }
-        };
-    }
-    SpringBatch.JobListController = JobListController;
-})(SpringBatch || (SpringBatch = {}));
-var SpringBatch;
-(function (SpringBatch) {
-    function NavBarController($scope, $routeParams, $location, workspace) {
-        var subLevelTabs = [
-            { uri: 'servers', name: 'Servers List' },
-            { uri: 'jobs/executions', name: 'Jobs Execution List' },
-            { uri: 'connect', name: 'Connect' }
-        ];
-
-        $scope.subLevelTabs = subLevelTabs;
-
-        $scope.isActive = function (tab) {
-            return ('/springbatch/' + tab.uri === $location.path());
-        };
-    }
-    SpringBatch.NavBarController = NavBarController;
-})(SpringBatch || (SpringBatch = {}));
-var SpringBatch;
-(function (SpringBatch) {
-    function jobExecutionContextController($scope, $routeParams, $http, $rootScope) {
-        var springBatchServerOrigin = $rootScope.springBatchServer;
-        var proxyUrl = '/hawtio';
-        var jobExecutionId = $routeParams.jobExecutionId;
-        var jobName = $routeParams.jobName;
-        var jobId = $routeParams.jobId;
-        $scope.springBatchServer = springBatchServerOrigin;
-        var jobExecutionContext = $http.get(proxyUrl + "/contextFormatter?jobExecutionId=" + jobExecutionId + "&server=" + springBatchServerOrigin + "&contextType=jobExecution").success(function (data) {
-            $scope.htmlView = data;
-        });
-        $scope.jobId = jobId;
-        $scope.jobName = jobName;
-    }
-    SpringBatch.jobExecutionContextController = jobExecutionContextController;
-})(SpringBatch || (SpringBatch = {}));
-var SpringBatch;
-(function (SpringBatch) {
-    function ExecutionHistoryController($scope, $routeParams, $location, workspace, $resource, $rootScope) {
-        var springBatchServerOrigin = $rootScope.springBatchServer;
-        var proxyUrl = '/hawtio/proxy/';
-        var executionHistoryPath = 'jobs/:jobName/executions.json';
-        $scope.predicate = 'id';
-        $scope.reverse = false;
-
-        var jobExecutionRes = $resource(proxyUrl + springBatchServerOrigin + executionHistoryPath);
-        jobExecutionRes.get({ 'jobName': $routeParams.jobName }, function (data) {
-            var executionList = new Array();
-            for (var execution in data.jobExecutions) {
-                data.jobExecutions[execution].id = execution;
-                executionList.add(data.jobExecutions[execution]);
-            }
-            $scope.executionHistory = executionList;
-            $scope.jobName = $routeParams.jobName;
-            $scope.jobId = $routeParams.jobId;
-        });
-    }
-    SpringBatch.ExecutionHistoryController = ExecutionHistoryController;
-})(SpringBatch || (SpringBatch = {}));
-var SpringBatch;
-(function (SpringBatch) {
-    function SpringBatchJobExecutionListController($scope, $resource, $rootScope) {
-        var springBatchServerOrigin = $rootScope.springBatchServer;
-        if (springBatchServerOrigin == undefined) {
-            $rootScope.alert.content = 'No Server selected. Please, use Connect or Server List screen to select one.';
-            $rootScope.alert.type = 'alert-error';
-            $rootScope.alert.show();
-            return;
-        }
-        var springBatchServerPath = springBatchServerOrigin + 'jobs';
-        var proxyUrl = $rootScope.proxyUrl;
-        var executionsListPath = '/executions.json';
-
-        $scope.predicate = 'name';
-        $scope.reverse = false;
-
-        var executionListRes = $resource(proxyUrl + springBatchServerPath + executionsListPath);
-        executionListRes.get(function (data) {
-            var executionList = new Array();
-            for (var execution in data.jobExecutions) {
-                data.jobExecutions[execution].id = execution;
-                executionList.add(data.jobExecutions[execution]);
-            }
-            $scope.jobExecutions = executionList;
-        });
-    }
-    SpringBatch.SpringBatchJobExecutionListController = SpringBatchJobExecutionListController;
-})(SpringBatch || (SpringBatch = {}));
-var SpringBatch;
-(function (SpringBatch) {
-    SpringBatch.templatePath = 'app/springbatch/html/';
-    SpringBatch.pluginName = 'SpringBatch';
-
-    angular.module(SpringBatch.pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'hawtio-ui']).config(function ($routeProvider) {
-        $routeProvider.when('/springbatch/servers', { templateUrl: SpringBatch.templatePath + 'serverList.html' }).when('/springbatch/jobs', { templateUrl: SpringBatch.templatePath + 'jobs.html' }).when('/springbatch/jobs/:jobName/executions', { templateUrl: SpringBatch.templatePath + 'overview.html' }).when('/springbatch/jobs/:jobName/executions/:jobInstanceId', { templateUrl: SpringBatch.templatePath + 'overview.html' }).when('/springbatch/jobs/executions', { templateUrl: SpringBatch.templatePath + 'jobsExecutionList.html' }).when('/springbatch/connect', { templateUrl: SpringBatch.templatePath + 'connectSpringBatch.html' }).when('/springbatch/jobs/:jobId/executions/:jobName/:jobExecutionId', { templateUrl: SpringBatch.templatePath + 'jobExecutionContext.html' }).when('/springbatch/jobs/:jobName/:jobId/history/executions', { templateUrl: SpringBatch.templatePath + 'executionHistory.html' }).when('/springbatch/jobs/:jobId/executions/:jobName/:jobExecutionId/steps/:stepExecutionId', { templateUrl: SpringBatch.templatePath + 'stepExecutionContext.html' }).when('/springbatch/jobs/:host/:port/:serverSuffix', { templateUrl: SpringBatch.templatePath + 'jobs.html' }).when('/springbatch/jobs/:host/:port', { templateUrl: SpringBatch.templatePath + 'jobs.html' });
-    }).value('ui.config', {
-        // The ui-jq directive namespace
-        jq: {
-            gridster: {
-                widget_margins: [10, 10],
-                widget_base_dimensions: [140, 140]
-            }
-        }
-    }).run(function ($location, workspace, viewRegistry, $rootScope, $resource) {
-        viewRegistry['springbatch'] = 'app/springbatch/html/layoutSpringBatch.html';
-
-        workspace.topLevelTabs.push({
-            id: "springbatch",
-            content: "SpringBatch",
-            title: "View Spring-Batch jobs",
-            // TODO: Need a way to figure out if spring batch is in the JVM
-            isValid: function (workspace) {
-                return false;
-            },
-            href: function () {
-                return "#/springbatch/servers";
-            },
-            isActive: function (workspace) {
-                return workspace.isTopTabActive("springbatch");
-            }
-        });
-
-        // TODO: server list should not be hardcoded
-        var serverListRes = $resource('/hawtio/springBatch');
-        serverListRes.get(function (data) {
-            $rootScope.springBatchServerList = data.springBatchServerList || [
-                'localhost\\:8080/spring-batch-admin-sample/',
-                'localhost\\:8181/'
-            ];
-            //                $rootScope.springBatchServer = $rootScope.springBatchServerList[0];
-        });
-
-        $rootScope.proxyUrl = '/hawtio/proxy/';
-
-        $rootScope.alert = {
-            enable: false,
-            content: '',
-            type: '',
-            hide: function () {
-                this.enable = false;
-            },
-            show: function () {
-                this.enable = true;
-            }
-        };
-    });
-
-    hawtioPluginLoader.addModule(SpringBatch.pluginName);
-})(SpringBatch || (SpringBatch = {}));
-var SpringBatch;
-(function (SpringBatch) {
     function getHost(link) {
         var endIdx;
         if (link.indexOf('\\') >= 0)
@@ -44636,11 +44237,706 @@ var SpringBatch;
     }
     SpringBatch.getServerUrl = getServerUrl;
 })(SpringBatch || (SpringBatch = {}));
+/// <reference path="./helpers.ts"/>
+var SpringBatch;
+(function (SpringBatch) {
+    SpringBatch.templatePath = 'app/springbatch/html/';
+    SpringBatch.pluginName = 'SpringBatch';
+
+    SpringBatch._module = angular.module(SpringBatch.pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'hawtio-ui']);
+
+    SpringBatch._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/springbatch/servers', { templateUrl: SpringBatch.templatePath + 'serverList.html' }).when('/springbatch/jobs', { templateUrl: SpringBatch.templatePath + 'jobs.html' }).when('/springbatch/jobs/:jobName/executions', { templateUrl: SpringBatch.templatePath + 'overview.html' }).when('/springbatch/jobs/:jobName/executions/:jobInstanceId', { templateUrl: SpringBatch.templatePath + 'overview.html' }).when('/springbatch/jobs/executions', { templateUrl: SpringBatch.templatePath + 'jobsExecutionList.html' }).when('/springbatch/connect', { templateUrl: SpringBatch.templatePath + 'connectSpringBatch.html' }).when('/springbatch/jobs/:jobId/executions/:jobName/:jobExecutionId', { templateUrl: SpringBatch.templatePath + 'jobExecutionContext.html' }).when('/springbatch/jobs/:jobName/:jobId/history/executions', { templateUrl: SpringBatch.templatePath + 'executionHistory.html' }).when('/springbatch/jobs/:jobId/executions/:jobName/:jobExecutionId/steps/:stepExecutionId', { templateUrl: SpringBatch.templatePath + 'stepExecutionContext.html' }).when('/springbatch/jobs/:host/:port/:serverSuffix', { templateUrl: SpringBatch.templatePath + 'jobs.html' }).when('/springbatch/jobs/:host/:port', { templateUrl: SpringBatch.templatePath + 'jobs.html' });
+        }]);
+
+    SpringBatch._module.value('ui.config', {
+        // The ui-jq directive namespace
+        jq: {
+            gridster: {
+                widget_margins: [10, 10],
+                widget_base_dimensions: [140, 140]
+            }
+        }
+    });
+
+    SpringBatch._module.run([
+        "$location", "workspace", "viewRegistry", "$rootScope", "$resource", function ($location, workspace, viewRegistry, $rootScope, $resource) {
+            viewRegistry['springbatch'] = 'app/springbatch/html/layoutSpringBatch.html';
+
+            workspace.topLevelTabs.push({
+                id: "springbatch",
+                content: "SpringBatch",
+                title: "View Spring-Batch jobs",
+                // TODO: Need a way to figure out if spring batch is in the JVM
+                isValid: function (workspace) {
+                    return false;
+                },
+                href: function () {
+                    return "#/springbatch/servers";
+                },
+                isActive: function (workspace) {
+                    return workspace.isTopTabActive("springbatch");
+                }
+            });
+
+            // TODO: server list should not be hardcoded
+            var serverListRes = $resource('/hawtio/springBatch');
+            serverListRes.get(function (data) {
+                $rootScope.springBatchServerList = data.springBatchServerList || [
+                    'localhost\\:8080/spring-batch-admin-sample/',
+                    'localhost\\:8181/'
+                ];
+                //                $rootScope.springBatchServer = $rootScope.springBatchServerList[0];
+            });
+
+            $rootScope.proxyUrl = '/hawtio/proxy/';
+
+            $rootScope.alert = {
+                enable: false,
+                content: '',
+                type: '',
+                hide: function () {
+                    this.enable = false;
+                },
+                show: function () {
+                    this.enable = true;
+                }
+            };
+        }]);
+
+    hawtioPluginLoader.addModule(SpringBatch.pluginName);
+})(SpringBatch || (SpringBatch = {}));
+/// <reference path="./springbatchPlugin.ts"/>
+var SpringBatch;
+(function (SpringBatch) {
+    SpringBatch._module.controller("SpringBatch.JobOverviewExecListController", [
+        "$scope", "$routeParams", "$location", "workspace", "jolokia", "$resource", "$rootScope", "$http", function ($scope, $routeParams, $location, workspace, jolokia, $resource, $rootScope, $http) {
+            var springBatchServerOrigin = $rootScope.springBatchServer;
+            var springBatchServerPath = springBatchServerOrigin + 'jobs/:jobName';
+            var proxyUrl = $rootScope.proxyUrl;
+            var executionsListPath = '/:jobInstanceId/executions.json';
+            var paramsListPath = 'jobs/:jobName/:jobInstanceId';
+            var jobName = $routeParams.jobName;
+            $scope.jobName = $routeParams.jobName;
+            var jobInstances = null;
+            var jobList = $resource(proxyUrl + springBatchServerPath);
+            $scope.springBatchServer = encodeURIComponent(springBatchServerOrigin);
+
+            $scope.executionPredicate = 'name';
+            $scope.executionReverse = false;
+            $scope.stepPredicate = 'name';
+            $scope.stepReverse = false;
+
+            $scope.fetchAllExecutions = function (jobInstance) {
+                if (jobInstance != undefined) {
+                    var jobList = $resource(proxyUrl + springBatchServerPath + executionsListPath);
+                    jobList.get({ 'jobName': jobName, jobInstanceId: jobInstance.id }, function (data) {
+                        var jobExecutionList = new Array();
+                        for (var execution in data.jobInstance.jobExecutions) {
+                            data.jobInstance.jobExecutions[execution].id = execution;
+                            jobExecutionList.add(data.jobInstance.jobExecutions[execution]);
+                        }
+                        $scope.jobName = jobName;
+                        $scope.jobExecutionList = jobExecutionList;
+                    });
+                }
+            };
+
+            $scope.fetchParams = function (jobName, jobInstanceId, executionId) {
+                var paramsResource = $resource(proxyUrl + springBatchServerPath + paramsListPath);
+                paramsResource.get({ 'jobName': jobName, 'jobInstanceId': jobInstanceId + '.json' }, function (data) {
+                    var jobParams = new Array();
+                    if (executionId) {
+                        for (var param in data.jobInstance.jobExecutions[executionId].jobParameters) {
+                            jobParams.add({ 'name': param, 'value': data.jobInstance.jobExecutions[executionId].jobParameters[param] });
+                        }
+                    } else {
+                        for (var execution in data.jobInstance.jobExecutions) {
+                            for (var param in data.jobInstance.jobExecutions[execution].jobParameters) {
+                                jobParams.add({ 'name': param, 'value': data.jobInstance.jobExecutions[execution].jobParameters[param] });
+                            }
+                            break;
+                        }
+                        $scope.jobParams = jobParams;
+                    }
+                });
+            };
+
+            $scope.removeParam = function (jobParams, index) {
+                jobParams.splice(index, 1);
+            };
+
+            $scope.addParam = function (jobParams, index) {
+                jobParams.add({ name: '', value: '' });
+            };
+
+            $scope.runJob = function (jobName, jobParams) {
+                if (jobName && jobParams) {
+                    var springServerOrigin = springBatchServerOrigin.replace('\\', '');
+                    var postUrl = proxyUrl + springServerOrigin + 'jobs/' + jobName + '.json';
+                    $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+                    var params = '';
+                    for (var param in jobParams) {
+                        params = params + jobParams[param].name + '=' + jobParams[param].value;
+                        if ((param + 1) != jobParams.length) {
+                            params = params + ',';
+                        }
+                    }
+                    params = encodeURIComponent(params);
+                    $http.post(postUrl, 'jobParameters=' + params).success(function (data) {
+                        if (data.jobExecution) {
+                            $rootScope.alert.content = 'Job started successfully.';
+                            $rootScope.alert.type = 'alert-success';
+                            $rootScope.alert.show();
+                        } else if (data.errors) {
+                            $rootScope.alert.content = '';
+                            for (var message in data.errors) {
+                                $rootScope.alert.content += data.errors[message] + '\n';
+                                $rootScope.alert.type = 'alert-error';
+                                $rootScope.alert.show();
+                            }
+                        }
+                    }).error(function (data) {
+                        $rootScope.alert.content = 'Count not start the job';
+                        $rootScope.alert.type = 'alert-error';
+                        $rootScope.alert.show();
+                    });
+                }
+            };
+
+            jobList.get({ 'jobName': jobName + '.json' }, function (data) {
+                for (var job in data.job.jobInstances) {
+                    data.job.jobInstances[job].id = job;
+                    jobInstances = data.job.jobInstances;
+                }
+                if ($routeParams.jobInstanceId == undefined) {
+                    for (var job in data.job.jobInstances) {
+                        $scope.jobInstance = jobInstances[job];
+                        break;
+                    }
+                } else {
+                    if (jobInstances && jobInstances[$routeParams.jobInstanceId]) {
+                        $scope.jobInstance = jobInstances[$routeParams.jobInstanceId];
+                    }
+                }
+                if ($scope.jobInstance) {
+                    $scope.fetchAllExecutions($scope.jobInstance);
+                    $scope.fetchParams(jobName, $scope.jobInstance.id);
+                } else {
+                    $scope.jobParams = new Array();
+                }
+            });
+
+            $scope.refreshJobInstance = function (jobInstance) {
+                var jobList = $resource(proxyUrl + springBatchServerPath);
+                jobList.get({ 'jobName': jobName + '.json' }, function (data) {
+                    for (var job in data.job.jobInstances) {
+                        data.job.jobInstances[job].id = job;
+                    }
+                    var jobInstanceId = null;
+                    if (jobInstance && jobInstance.id) {
+                        jobInstanceId = jobInstance.id;
+                        $scope.jobInstance = data.job.jobInstances[jobInstanceId];
+                        $scope.fetchAllExecutions(data.job.jobInstances[jobInstanceId]);
+                        $scope.fetchParams(jobName, jobInstanceId);
+                    } else {
+                        for (var job in data.job.jobInstances) {
+                            $scope.jobInstance = data.job.jobInstances[job];
+                            $scope.fetchAllExecutions(data.job.jobInstances[job]);
+                            $scope.fetchParams(jobName, job);
+                            break;
+                        }
+                    }
+                    $scope.stepExecutionList = null;
+                });
+            };
+            $scope.fetchNextJobInstance = function (jobInstance) {
+                var tempId = null;
+                var jobList = $resource(proxyUrl + springBatchServerPath);
+                jobList.get({ 'jobName': jobName + '.json' }, function (data) {
+                    for (var job in data.job.jobInstances) {
+                        data.job.jobInstances[job].id = job;
+                        if (jobInstance && jobInstance.id && (parseInt(job) > parseInt(jobInstance.id))) {
+                            tempId = job;
+                            break;
+                        } else if (jobInstance && jobInstance.id) {
+                            tempId = jobInstance.id;
+                        }
+                    }
+                    if (jobInstance) {
+                        $scope.jobInstance = data.job.jobInstances[tempId];
+                    } else {
+                        for (var job in data.job.jobInstances) {
+                            $scope.jobInstance = data.job.jobInstances[job];
+                            break;
+                        }
+                    }
+                    if ($scope.jobInstance) {
+                        $scope.fetchAllExecutions($scope.jobInstance);
+                        $scope.fetchParams(jobName, $scope.jobInstance.id);
+                    }
+
+                    $scope.stepExecutionList = null;
+                });
+            };
+            $scope.fetchPrevJobInstance = function (jobInstance) {
+                var tempId = null;
+                var jobList = $resource(proxyUrl + springBatchServerPath);
+                jobList.get({ 'jobName': jobName + '.json' }, function (data) {
+                    for (var job in data.job.jobInstances) {
+                        data.job.jobInstances[job].id = job;
+                        if (jobInstance && jobInstance.id && (parseInt(job) < parseInt(jobInstance.id))) {
+                            tempId = job;
+                        }
+                    }
+                    if (jobInstance) {
+                        if ((tempId == null) && jobInstance.id) {
+                            tempId = jobInstance.id;
+                        }
+                        $scope.jobInstance = data.job.jobInstances[tempId];
+                    } else {
+                        for (var job in data.job.jobInstances) {
+                            $scope.jobInstance = data.job.jobInstances[job];
+                            break;
+                        }
+                    }
+                    if ($scope.jobInstance) {
+                        $scope.fetchAllExecutions($scope.jobInstance);
+                        $scope.fetchParams(jobName, $scope.jobInstance.id);
+                    }
+                    $scope.stepExecutionList = null;
+                });
+            };
+
+            $scope.fetchStepsForExecution = function (executionId) {
+                var jobList = $resource(proxyUrl + springBatchServerOrigin + 'jobs/executions/:executionId');
+                jobList.get({ 'executionId': executionId + '.json' }, function (data) {
+                    var stepList = new Array();
+                    for (var execution in data.jobExecution.stepExecutions) {
+                        data.jobExecution.stepExecutions[execution].name = execution;
+                        stepList.add(data.jobExecution.stepExecutions[execution]);
+                    }
+                    $scope.executionId = executionId;
+                    $scope.stepExecutionList = stepList;
+                });
+            };
+        }]);
+})(SpringBatch || (SpringBatch = {}));
+/// <reference path="./springbatchPlugin.ts"/>
+var SpringBatch;
+(function (SpringBatch) {
+    SpringBatch._module.controller("SpringBatch.stepExecutionContextController", [
+        "$scope", "$routeParams", "$http", "$rootScope", function ($scope, $routeParams, $http, $rootScope) {
+            var springBatchServerOrigin = $rootScope.springBatchServer;
+            var proxyUrl = '/hawtio';
+            var jobExecutionId = $routeParams.jobExecutionId;
+            var stepExecutionId = $routeParams.stepExecutionId;
+            var jobName = $routeParams.jobName;
+
+            var jobId = $routeParams.jobId;
+            $scope.springBatchServer = springBatchServerOrigin;
+            var stepExecutionContext = $http.get(proxyUrl + "/contextFormatter?jobExecutionId=" + jobExecutionId + "&stepExecutionId=" + stepExecutionId + "&server=" + springBatchServerOrigin + "&contextType=stepExecution").success(function (data) {
+                $scope.htmlView = data;
+            });
+            $scope.jobName = jobName;
+            $scope.jobId = jobId;
+        }]);
+})(SpringBatch || (SpringBatch = {}));
+/// <reference path="./springbatchPlugin.ts"/>
+var SpringBatch;
+(function (SpringBatch) {
+    SpringBatch._module.controller("SpringBatch.ConnectSpringBatchController", [
+        "$scope", "$routeParams", "$location", "workspace", "$rootScope", "$resource", "$http", function ($scope, $routeParams, $location, workspace, $rootScope, $resource, $http) {
+            $scope.host = 'localhost';
+            $scope.port = 8080;
+
+            $scope.connectSpringBatch = function () {
+                if ($scope.selectedSpringBatchServer) {
+                    $rootScope.springBatchServer = $scope.selectedSpringBatchServer;
+                    $rootScope.alert.content = 'Connected successfully.';
+                    $rootScope.alert.type = 'alert-success';
+                    $rootScope.alert.show();
+                }
+            };
+
+            $scope.addSpringBatchServerToGlobalList = function () {
+                var server = SpringBatch.getServerUrl($scope.host, $scope.port, $scope.path);
+                if ($rootScope.springBatchServerList.indexOf($scope.selectedSpringBatchServer) > 0) {
+                    $rootScope.alert.content = 'Server already in the list.';
+                    $rootScope.alert.type = 'alert-error';
+                    $rootScope.alert.show();
+                    return;
+                }
+                $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+                $http.post('/hawtio/springBatch', 'server=' + server).success(function (data) {
+                    $rootScope.springBatchServerList.add(server);
+                    $rootScope.springBatchServer = $scope.selectedSpringBatchServer;
+                    $rootScope.alert.content = 'Server added.';
+                    $rootScope.alert.type = 'alert-success';
+                    $rootScope.alert.show();
+                }).error(function (data) {
+                    $rootScope.alert.content = 'Could not add server.';
+                    $rootScope.alert.type = 'alert-error';
+                    $rootScope.alert.show();
+                });
+            };
+
+            $scope.removeServer = function (index) {
+                $http.delete('/hawtio/springBatch?server=' + encodeURIComponent($scope.selectedSpringBatchServer)).success(function (data) {
+                    $scope.springBatchServerList.splice($scope.springBatchServerList.indexOf($scope.selectedSpringBatchServer), 1);
+                    $rootScope.alert.content = 'Server deleted.';
+                    $rootScope.alert.type = 'alert-info';
+                    $rootScope.alert.show();
+                }).error(function (data) {
+                    $rootScope.alert.content = 'Could not delete server.';
+                    $rootScope.alert.type = 'alert-error';
+                    $rootScope.alert.show();
+                });
+            };
+
+            $scope.editServer = function () {
+                $scope.host = SpringBatch.getHost($scope.selectedSpringBatchServer);
+                $scope.port = parseInt(SpringBatch.getPort($scope.selectedSpringBatchServer));
+                $scope.path = SpringBatch.getServerSuffix($scope.selectedSpringBatchServer);
+            };
+
+            $scope.updateServer = function () {
+                var server = SpringBatch.getServerUrl($scope.host, $scope.port, $scope.path);
+                var replaceServer = $scope.selectedSpringBatchServer;
+                $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+                $http.post('/hawtio/springBatch', 'server=' + server + '&replaceServer=' + replaceServer).success(function (data) {
+                    $rootScope.springBatchServerList[$rootScope.springBatchServerList.indexOf($scope.selectedSpringBatchServer)] = server;
+                    $rootScope.alert.content = 'Server updated.';
+                    $rootScope.alert.type = 'alert-success';
+                    $rootScope.alert.show();
+                }).error(function (data) {
+                    $rootScope.alert.content = 'Could not add server.';
+                    $rootScope.alert.type = 'alert-error';
+                    $rootScope.alert.show();
+                });
+            };
+        }]);
+})(SpringBatch || (SpringBatch = {}));
+/// <reference path="./springbatchPlugin.ts"/>
+var SpringBatch;
+(function (SpringBatch) {
+    SpringBatch._module.controller("SpringBatch.ServerListController", [
+        "$scope", "$location", "workspace", "jolokia", "$resource", "$rootScope", "$http", function ($scope, $location, workspace, jolokia, $resource, $rootScope, $http) {
+            var serverList = [];
+            var serverHref = '';
+            for (var server in $rootScope.springBatchServerList) {
+                serverHref += '#/springbatch/jobs/';
+                serverHref += SpringBatch.getHost($rootScope.springBatchServerList[server]) + '/';
+                serverHref += SpringBatch.getPort($rootScope.springBatchServerList[server]);
+                if (SpringBatch.getServerSuffix($rootScope.springBatchServerList[server]).length > 0)
+                    serverHref += '/' + SpringBatch.getServerSuffix($rootScope.springBatchServerList[server]);
+                serverList.add({
+                    href: serverHref,
+                    hostname: SpringBatch.getHost($rootScope.springBatchServerList[server]),
+                    port: SpringBatch.getPort($rootScope.springBatchServerList[server])
+                });
+                serverHref = '';
+            }
+            $scope.serverList = serverList;
+        }]);
+})(SpringBatch || (SpringBatch = {}));
+/// <reference path="./springbatchPlugin.ts"/>
+var SpringBatch;
+(function (SpringBatch) {
+    SpringBatch._module.controller("SpringBatch.JobListController", [
+        "$scope", "$location", "workspace", "jolokia", "$resource", "$rootScope", "$http", "$routeParams", function ($scope, $location, workspace, jolokia, $resource, $rootScope, $http, $routeParams) {
+            var targetServerHost = $routeParams.host;
+            var targetServerPort = $routeParams.port;
+            var targetServerSuffix = $routeParams.serverSuffix;
+
+            var targetServer = targetServerHost + '\\:' + targetServerPort + '/';
+            if ((targetServerSuffix != undefined) && (targetServerSuffix.length > 0))
+                targetServer += (targetServerSuffix + '/');
+            $rootScope.springBatchServer = targetServer;
+
+            var springBatchServerPath = $rootScope.springBatchServer + 'jobs.json';
+            var proxyUrl = $rootScope.proxyUrl;
+
+            $scope.predicate = 'name';
+            $scope.reverse = false;
+
+            $scope.getJobList = function () {
+                var jobList = $resource(proxyUrl + springBatchServerPath);
+                jobList.get(function (data) {
+                    if (data.jobs && data.jobs.registrations) {
+                        var jobList = new Array();
+                        for (var job in data.jobs.registrations) {
+                            data.jobs.registrations[job].showLaunchForm = false;
+                            data.jobs.registrations[job].launchParams = '';
+                            jobList.add(data.jobs.registrations[job]);
+                        }
+                        $scope.jobList = jobList;
+                    }
+                });
+            };
+
+            $scope.getJobList();
+
+            $scope.launchJob = function (jobName) {
+                var job;
+                for (var idx in $scope.jobList) {
+                    if ($scope.jobList[idx].name == jobName)
+                        job = $scope.jobList[idx];
+                }
+                var params = job.launchParams;
+
+                if (jobName && params) {
+                    var springServerOrigin = $rootScope.springBatchServer.replace('\\', '');
+                    var postUrl = proxyUrl + springServerOrigin + 'jobs/' + jobName + '.json';
+                    $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+                    params = encodeURIComponent(params);
+                    $http.post(postUrl, 'jobParameters=' + params).success(function (data) {
+                        if (data.jobExecution) {
+                            $rootScope.alert.content = 'Job started successfully.';
+                            $rootScope.alert.type = 'alert-success';
+                            $rootScope.alert.show();
+                            $scope.getJobList();
+                        } else if (data.errors) {
+                            $rootScope.alert.content = '';
+                            for (var message in data.errors) {
+                                $rootScope.alert.content += data.errors[message] + '\n';
+                                $rootScope.alert.type = 'alert-error';
+                                $rootScope.alert.show();
+                            }
+                        }
+                    }).error(function (data) {
+                        $rootScope.alert.content = 'Count not start the job';
+                        $rootScope.alert.type = 'alert-error';
+                        $rootScope.alert.show();
+                    });
+                }
+            };
+        }]);
+})(SpringBatch || (SpringBatch = {}));
+/// <reference path="./springbatchPlugin.ts"/>
+var SpringBatch;
+(function (SpringBatch) {
+    SpringBatch._module.controller("SpringBatch.NavBarController", [
+        "$scope", "$routeParams", "$location", "workspace", function ($scope, $routeParams, $location, workspace) {
+            var subLevelTabs = [
+                { uri: 'servers', name: 'Servers List' },
+                { uri: 'jobs/executions', name: 'Jobs Execution List' },
+                { uri: 'connect', name: 'Connect' }
+            ];
+
+            $scope.subLevelTabs = subLevelTabs;
+
+            $scope.isActive = function (tab) {
+                return ('/springbatch/' + tab.uri === $location.path());
+            };
+        }]);
+})(SpringBatch || (SpringBatch = {}));
+/// <reference path="./springbatchPlugin.ts"/>
+var SpringBatch;
+(function (SpringBatch) {
+    SpringBatch._module.controller("SpringBatch.jobExecutionContextController", [
+        "$scope", "$routeParams", "$http", "$rootScope", function ($scope, $routeParams, $http, $rootScope) {
+            var springBatchServerOrigin = $rootScope.springBatchServer;
+            var proxyUrl = '/hawtio';
+            var jobExecutionId = $routeParams.jobExecutionId;
+            var jobName = $routeParams.jobName;
+            var jobId = $routeParams.jobId;
+            $scope.springBatchServer = springBatchServerOrigin;
+            var jobExecutionContext = $http.get(proxyUrl + "/contextFormatter?jobExecutionId=" + jobExecutionId + "&server=" + springBatchServerOrigin + "&contextType=jobExecution").success(function (data) {
+                $scope.htmlView = data;
+            });
+            $scope.jobId = jobId;
+            $scope.jobName = jobName;
+        }]);
+})(SpringBatch || (SpringBatch = {}));
+/// <reference path="./springbatchPlugin.ts"/>
+var SpringBatch;
+(function (SpringBatch) {
+    SpringBatch._module.controller("SpringBatch.ExecutionHistoryController", [
+        "$scope", "$routeParams", "$location", "workspace", "$resource", "$rootScope", function ($scope, $routeParams, $location, workspace, $resource, $rootScope) {
+            var springBatchServerOrigin = $rootScope.springBatchServer;
+            var proxyUrl = '/hawtio/proxy/';
+            var executionHistoryPath = 'jobs/:jobName/executions.json';
+            $scope.predicate = 'id';
+            $scope.reverse = false;
+
+            var jobExecutionRes = $resource(proxyUrl + springBatchServerOrigin + executionHistoryPath);
+            jobExecutionRes.get({ 'jobName': $routeParams.jobName }, function (data) {
+                var executionList = new Array();
+                for (var execution in data.jobExecutions) {
+                    data.jobExecutions[execution].id = execution;
+                    executionList.add(data.jobExecutions[execution]);
+                }
+                $scope.executionHistory = executionList;
+                $scope.jobName = $routeParams.jobName;
+                $scope.jobId = $routeParams.jobId;
+            });
+        }]);
+})(SpringBatch || (SpringBatch = {}));
+/// <reference path="./springbatchPlugin.ts"/>
+var SpringBatch;
+(function (SpringBatch) {
+    SpringBatch._module.controller("SpringBatch.SpringBatchJobExecutionListController", [
+        "$scope", "$resource", "$rootScope", function ($scope, $resource, $rootScope) {
+            var springBatchServerOrigin = $rootScope.springBatchServer;
+            if (springBatchServerOrigin == undefined) {
+                $rootScope.alert.content = 'No Server selected. Please, use Connect or Server List screen to select one.';
+                $rootScope.alert.type = 'alert-error';
+                $rootScope.alert.show();
+                return;
+            }
+            var springBatchServerPath = springBatchServerOrigin + 'jobs';
+            var proxyUrl = $rootScope.proxyUrl;
+            var executionsListPath = '/executions.json';
+
+            $scope.predicate = 'name';
+            $scope.reverse = false;
+
+            var executionListRes = $resource(proxyUrl + springBatchServerPath + executionsListPath);
+            executionListRes.get(function (data) {
+                var executionList = new Array();
+                for (var execution in data.jobExecutions) {
+                    data.jobExecutions[execution].id = execution;
+                    executionList.add(data.jobExecutions[execution]);
+                }
+                $scope.jobExecutions = executionList;
+            });
+        }]);
+})(SpringBatch || (SpringBatch = {}));
 /**
 * @module UI
 */
 var UI;
 (function (UI) {
+    UI.log = Logger.get("UI");
+
+    UI.scrollBarWidth = null;
+
+    function findParentWith($scope, attribute) {
+        if (attribute in $scope) {
+            return $scope;
+        }
+        if (!$scope.$parent) {
+            return null;
+        }
+
+        // let's go up the scope tree
+        return findParentWith($scope.$parent, attribute);
+    }
+    UI.findParentWith = findParentWith;
+
+    function getIfSet(attribute, $attr, def) {
+        if (attribute in $attr) {
+            var wantedAnswer = $attr[attribute];
+            if (wantedAnswer && !wantedAnswer.isBlank()) {
+                return wantedAnswer;
+            }
+        }
+        return def;
+    }
+    UI.getIfSet = getIfSet;
+
+    /*
+    * Helper function to ensure a directive attribute has some default value
+    */
+    function observe($scope, $attrs, key, defValue, callbackFunc) {
+        if (typeof callbackFunc === "undefined") { callbackFunc = null; }
+        $attrs.$observe(key, function (value) {
+            if (!angular.isDefined(value)) {
+                $scope[key] = defValue;
+            } else {
+                $scope[key] = value;
+            }
+            if (angular.isDefined(callbackFunc) && callbackFunc) {
+                callbackFunc($scope[key]);
+            }
+        });
+    }
+    UI.observe = observe;
+
+    function getScrollbarWidth() {
+        if (!angular.isDefined(UI.scrollBarWidth)) {
+            var div = document.createElement('div');
+            div.innerHTML = '<div style="width:50px;height:50px;position:absolute;left:-50px;top:-50px;overflow:auto;"><div style="width:1px;height:100px;"></div></div>';
+            div = div.firstChild;
+            document.body.appendChild(div);
+            UI.scrollBarWidth = div.offsetWidth - div.clientWidth;
+            document.body.removeChild(div);
+        }
+        return UI.scrollBarWidth;
+    }
+    UI.getScrollbarWidth = getScrollbarWidth;
+})(UI || (UI = {}));
+/**
+* Module that contains a bunch of re-usable directives to assemble into pages in hawtio
+*
+* @module UI
+* @main UI
+*/
+/// <reference path="./uiHelpers.ts"/>
+var UI;
+(function (UI) {
+    UI.pluginName = 'hawtio-ui';
+
+    UI.templatePath = 'app/ui/html/';
+
+    UI._module = angular.module(UI.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap']);
+
+    UI._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/ui/developerPage', { templateUrl: UI.templatePath + 'developerPage.html', reloadOnSearch: false });
+        }]);
+
+    UI._module.factory('UI', function () {
+        return UI;
+    });
+
+    UI._module.factory('marked', function () {
+        marked.setOptions({
+            gfm: true,
+            tables: true,
+            breaks: false,
+            pedantic: true,
+            sanitize: false,
+            smartLists: true,
+            langPrefix: 'language-'
+        });
+        return marked;
+    });
+
+    UI._module.directive('compile', [
+        '$compile', function ($compile) {
+            return function (scope, element, attrs) {
+                scope.$watch(function (scope) {
+                    // watch the 'compile' expression for changes
+                    return scope.$eval(attrs.compile);
+                }, function (value) {
+                    // when the 'compile' expression changes
+                    // assign it into the current DOM
+                    element.html(value);
+
+                    // compile the new DOM and link it to the current
+                    // scope.
+                    // NOTE: we only compile .childNodes so that
+                    // we don't get into infinite loop compiling ourselves
+                    $compile(element.contents())(scope);
+                });
+            };
+        }]);
+
+    hawtioPluginLoader.addModule(UI.pluginName);
+})(UI || (UI = {}));
+/**
+* @module UI
+*/
+/// <reference path="./uiPlugin.ts"/>
+var UI;
+(function (UI) {
+    UI._module.directive('hawtioJsplumb', function () {
+        return new UI.JSPlumb();
+    });
+
     var JSPlumb = (function () {
         function JSPlumb() {
             this.restrict = 'A';
@@ -44859,8 +45155,13 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioPager', function () {
+        return new UI.TablePager();
+    });
+
     var TablePager = (function () {
         function TablePager() {
             var _this = this;
@@ -44943,6 +45244,7 @@ var UI;
     })();
     UI.TablePager = TablePager;
 })(UI || (UI = {}));
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
     function groupBy() {
@@ -44971,12 +45273,19 @@ var UI;
         };
     }
     UI.groupBy = groupBy;
+
+    UI._module.filter('hawtioGroupBy', UI.groupBy);
 })(UI || (UI = {}));
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioAutoDropdown', function () {
+        return UI.AutoDropDown;
+    });
+
     /**
     * TODO turn this into a normal directive function
     *
@@ -45062,8 +45371,14 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioEditor', [
+        "$parse", function ($parse) {
+            return UI.Editor($parse);
+        }]);
+
     function Editor($parse) {
         return {
             restrict: 'A',
@@ -45075,46 +45390,47 @@ var UI;
                 outputEditor: '@',
                 name: '@'
             },
-            controller: function ($scope, $element, $attrs) {
-                $scope.codeMirror = null;
-                $scope.doc = null;
-                $scope.options = [];
+            controller: [
+                "$scope", "$element", "$attrs", function ($scope, $element, $attrs) {
+                    $scope.codeMirror = null;
+                    $scope.doc = null;
+                    $scope.options = [];
 
-                UI.observe($scope, $attrs, 'name', 'editor');
+                    UI.observe($scope, $attrs, 'name', 'editor');
 
-                $scope.applyOptions = function () {
-                    if ($scope.codeMirror) {
-                        $scope.options.each(function (option) {
-                            $scope.codeMirror.setOption(option.key, option['value']);
-                        });
-                        $scope.options = [];
-                    }
-                };
-
-                $scope.$watch('doc', function () {
-                    if ($scope.doc) {
-                        $scope.codeMirror.on('change', function (changeObj) {
-                            $scope.text = $scope.doc.getValue();
-                            $scope.dirty = !$scope.doc.isClean();
-                            Core.$apply($scope);
-                        });
-                    }
-                });
-
-                $scope.$watch('codeMirror', function () {
-                    if ($scope.codeMirror) {
-                        $scope.doc = $scope.codeMirror.getDoc();
-                    }
-                });
-
-                $scope.$watch('text', function (oldValue, newValue) {
-                    if ($scope.codeMirror && $scope.doc) {
-                        if (!$scope.codeMirror.hasFocus()) {
-                            $scope.doc.setValue($scope.text || "");
+                    $scope.applyOptions = function () {
+                        if ($scope.codeMirror) {
+                            $scope.options.each(function (option) {
+                                $scope.codeMirror.setOption(option.key, option['value']);
+                            });
+                            $scope.options = [];
                         }
-                    }
-                });
-            },
+                    };
+
+                    $scope.$watch('doc', function () {
+                        if ($scope.doc) {
+                            $scope.codeMirror.on('change', function (changeObj) {
+                                $scope.text = $scope.doc.getValue();
+                                $scope.dirty = !$scope.doc.isClean();
+                                Core.$apply($scope);
+                            });
+                        }
+                    });
+
+                    $scope.$watch('codeMirror', function () {
+                        if ($scope.codeMirror) {
+                            $scope.doc = $scope.codeMirror.getDoc();
+                        }
+                    });
+
+                    $scope.$watch('text', function (oldValue, newValue) {
+                        if ($scope.codeMirror && $scope.doc) {
+                            if (!$scope.codeMirror.hasFocus()) {
+                                $scope.doc.setValue($scope.text || "");
+                            }
+                        }
+                    });
+                }],
             link: function ($scope, $element, $attrs) {
                 if ('dirty' in $attrs) {
                     $scope.dirtyTarget = $attrs['dirty'];
@@ -45209,8 +45525,13 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioViewport', function () {
+        return new UI.ViewportHeight();
+    });
+
     var ViewportHeight = (function () {
         function ViewportHeight() {
             this.restrict = 'A';
@@ -45254,6 +45575,10 @@ var UI;
     })();
     UI.ViewportHeight = ViewportHeight;
 
+    UI._module.directive('hawtioHorizontalViewport', function () {
+        return new UI.HorizontalViewport();
+    });
+
     var HorizontalViewport = (function () {
         function HorizontalViewport() {
             this.restrict = 'A';
@@ -45276,8 +45601,13 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioRow', function () {
+        return new UI.DivRow();
+    });
+
     // expand the element to accomodate a group of elements to prevent them from wrapping
     var DivRow = (function () {
         function DivRow() {
@@ -45306,6 +45636,7 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
     function hawtioBreadcrumbs() {
@@ -45445,63 +45776,19 @@ var UI;
         };
     }
     UI.hawtioBreadcrumbs = hawtioBreadcrumbs;
+
+    UI._module.directive('hawtioBreadcrumbs', UI.hawtioBreadcrumbs);
 })(UI || (UI = {}));
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
-    UI.log = Logger.get("UI");
+    UI._module.directive('hawtioMessagePanel', function () {
+        return new UI.MessagePanel();
+    });
 
-    UI.scrollBarWidth = null;
-
-    function getIfSet(attribute, $attr, def) {
-        if (attribute in $attr) {
-            var wantedAnswer = $attr[attribute];
-            if (wantedAnswer && !wantedAnswer.isBlank()) {
-                return wantedAnswer;
-            }
-        }
-        return def;
-    }
-    UI.getIfSet = getIfSet;
-
-    /*
-    * Helper function to ensure a directive attribute has some default value
-    */
-    function observe($scope, $attrs, key, defValue, callbackFunc) {
-        if (typeof callbackFunc === "undefined") { callbackFunc = null; }
-        $attrs.$observe(key, function (value) {
-            if (!angular.isDefined(value)) {
-                $scope[key] = defValue;
-            } else {
-                $scope[key] = value;
-            }
-            if (angular.isDefined(callbackFunc) && callbackFunc) {
-                callbackFunc($scope[key]);
-            }
-        });
-    }
-    UI.observe = observe;
-
-    function getScrollbarWidth() {
-        if (!angular.isDefined(UI.scrollBarWidth)) {
-            var div = document.createElement('div');
-            div.innerHTML = '<div style="width:50px;height:50px;position:absolute;left:-50px;top:-50px;overflow:auto;"><div style="width:1px;height:100px;"></div></div>';
-            div = div.firstChild;
-            document.body.appendChild(div);
-            UI.scrollBarWidth = div.offsetWidth - div.clientWidth;
-            document.body.removeChild(div);
-        }
-        return UI.scrollBarWidth;
-    }
-    UI.getScrollbarWidth = getScrollbarWidth;
-})(UI || (UI = {}));
-/**
-* @module UI
-*/
-var UI;
-(function (UI) {
     var MessagePanel = (function () {
         function MessagePanel() {
             this.restrict = 'A';
@@ -45548,6 +45835,10 @@ var UI;
         return MessagePanel;
     })();
     UI.MessagePanel = MessagePanel;
+
+    UI._module.directive('hawtioInfoPanel', function () {
+        return new UI.InfoPanel();
+    });
 
     var InfoPanel = (function () {
         function InfoPanel() {
@@ -45634,8 +45925,13 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioAutoColumns', function () {
+        return new UI.AutoColumns();
+    });
+
     /**
     * Directive class that organizes child elements into columns automatically
     *
@@ -45982,6 +46278,7 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
     function HawtioTocDisplay(marked, $location, $anchorScroll, $compile) {
@@ -45992,63 +46289,64 @@ var UI;
             scope: {
                 getContents: '&'
             },
-            controller: function ($scope, $element, $attrs) {
-                $scope.remaining = -1;
-                $scope.render = false;
-                $scope.chapters = [];
+            controller: [
+                "$scope", "$element", "$attrs", function ($scope, $element, $attrs) {
+                    $scope.remaining = -1;
+                    $scope.render = false;
+                    $scope.chapters = [];
 
-                $scope.addChapter = function (item) {
-                    console.log("Adding: ", item);
-                    $scope.chapters.push(item);
-                    if (!angular.isDefined(item['text'])) {
-                        $scope.fetchItemContent(item);
-                    }
-                };
-
-                $scope.getTarget = function (id) {
-                    if (!id) {
-                        return '';
-                    }
-                    return id.replace(".", "_");
-                };
-
-                $scope.getFilename = function (href, ext) {
-                    var filename = href.split('/').last();
-                    if (ext && !filename.endsWith(ext)) {
-                        filename = filename + '.' + ext;
-                    }
-                    return filename;
-                };
-
-                $scope.$watch('remaining', function (newValue, oldValue) {
-                    if (newValue !== oldValue) {
-                        var renderIfPageLoadFails = false;
-                        if (newValue === 0 || renderIfPageLoadFails) {
-                            $scope.render = true;
+                    $scope.addChapter = function (item) {
+                        console.log("Adding: ", item);
+                        $scope.chapters.push(item);
+                        if (!angular.isDefined(item['text'])) {
+                            $scope.fetchItemContent(item);
                         }
-                    }
-                });
+                    };
 
-                $scope.fetchItemContent = function (item) {
-                    var me = $scope;
-                    $scope.$eval(function (parent) {
-                        parent.getContents({
-                            filename: item['filename'],
-                            cb: function (data) {
-                                if (data) {
-                                    if (item['filename'].endsWith(".md")) {
-                                        item['text'] = marked(data);
-                                    } else {
-                                        item['text'] = data;
-                                    }
-                                    $scope.remaining--;
-                                    Core.$apply(me);
-                                }
+                    $scope.getTarget = function (id) {
+                        if (!id) {
+                            return '';
+                        }
+                        return id.replace(".", "_");
+                    };
+
+                    $scope.getFilename = function (href, ext) {
+                        var filename = href.split('/').last();
+                        if (ext && !filename.endsWith(ext)) {
+                            filename = filename + '.' + ext;
+                        }
+                        return filename;
+                    };
+
+                    $scope.$watch('remaining', function (newValue, oldValue) {
+                        if (newValue !== oldValue) {
+                            var renderIfPageLoadFails = false;
+                            if (newValue === 0 || renderIfPageLoadFails) {
+                                $scope.render = true;
                             }
-                        });
+                        }
                     });
-                };
-            },
+
+                    $scope.fetchItemContent = function (item) {
+                        var me = $scope;
+                        $scope.$eval(function (parent) {
+                            parent.getContents({
+                                filename: item['filename'],
+                                cb: function (data) {
+                                    if (data) {
+                                        if (item['filename'].endsWith(".md")) {
+                                            item['text'] = marked(data);
+                                        } else {
+                                            item['text'] = data;
+                                        }
+                                        $scope.remaining--;
+                                        Core.$apply(me);
+                                    }
+                                }
+                            });
+                        });
+                    };
+                }],
             link: function ($scope, $element, $attrs) {
                 var offsetTop = 0;
                 var logbar = $('.logbar');
@@ -46247,10 +46545,13 @@ var UI;
         };
     }
     UI.HawtioTocDisplay = HawtioTocDisplay;
+
+    UI._module.directive('hawtioTocDisplay', ["marked", "$location", "$anchorScroll", "$compile", UI.HawtioTocDisplay]);
 })(UI || (UI = {}));
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
     function hawtioPane() {
@@ -46362,12 +46663,20 @@ var UI;
         };
     }
     UI.hawtioPane = hawtioPane;
+
+    UI._module.directive('hawtioPane', UI.hawtioPane);
 })(UI || (UI = {}));
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('zeroClipboard', [
+        "$parse", function ($parse) {
+            return UI.ZeroClipboardDirective($parse);
+        }]);
+
     function ZeroClipboardDirective($parse) {
         return {
             restrict: 'A',
@@ -46397,8 +46706,13 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('expandable', function () {
+        return new UI.Expandable();
+    });
+
     var Expandable = (function () {
         function Expandable() {
             var _this = this;
@@ -46525,8 +46839,14 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('editableProperty', [
+        "$parse", function ($parse) {
+            return new UI.EditableProperty($parse);
+        }]);
+
     var EditableProperty = (function () {
         function EditableProperty($parse) {
             this.$parse = $parse;
@@ -46610,6 +46930,7 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
     function TemplatePopover($templateCache, $compile, $document) {
@@ -46689,12 +47010,19 @@ var UI;
         };
     }
     UI.TemplatePopover = TemplatePopover;
+
+    UI._module.directive('hawtioTemplatePopover', ["$templateCache", "$compile", "$document", UI.TemplatePopover]);
 })(UI || (UI = {}));
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioConfirmDialog', function () {
+        return new UI.ConfirmDialog();
+    });
+
     
 
     /**
@@ -46792,6 +47120,7 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
     /**
@@ -46800,16 +47129,16 @@ var UI;
     * @param $templateCache
     * @constructor
     */
-    function IconTestController($scope, $templateCache) {
-        $scope.exampleHtml = $templateCache.get('example-html');
-        $scope.exampleConfigJson = $templateCache.get('example-config-json');
+    UI._module.controller("UI.IconTestController", [
+        "$scope", "$templateCache", function ($scope, $templateCache) {
+            $scope.exampleHtml = $templateCache.get('example-html');
+            $scope.exampleConfigJson = $templateCache.get('example-config-json');
 
-        $scope.$watch('exampleConfigJson', function (newValue, oldValue) {
-            $scope.icons = angular.fromJson($scope.exampleConfigJson);
-            //log.debug("Icons: ", $scope.icons);
-        });
-    }
-    UI.IconTestController = IconTestController;
+            $scope.$watch('exampleConfigJson', function (newValue, oldValue) {
+                $scope.icons = angular.fromJson($scope.exampleConfigJson);
+                //log.debug("Icons: ", $scope.icons);
+            });
+        }]);
 
     /**
     * The hawtio-icon directive
@@ -46840,6 +47169,7 @@ var UI;
         };
     }
     UI.hawtioIcon = hawtioIcon;
+    UI._module.directive('hawtioIcon', UI.hawtioIcon);
 })(UI || (UI = {}));
 /**
 * Module that contains several helper functions related to hawtio's code editor
@@ -47020,21 +47350,9 @@ var CodeEditor;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
-    function findParentWith($scope, attribute) {
-        if (attribute in $scope) {
-            return $scope;
-        }
-        if (!$scope.$parent) {
-            return null;
-        }
-
-        // let's go up the scope tree
-        return findParentWith($scope.$parent, attribute);
-    }
-    UI.findParentWith = findParentWith;
-
     function hawtioList($templateCache, $compile) {
         return {
             restrict: '',
@@ -47115,7 +47433,7 @@ var UI;
                 };
 
                 // find the parent scope that has our configuration
-                var parentScope = findParentWith($scope, configName);
+                var parentScope = UI.findParentWith($scope, configName);
                 if (parentScope) {
                     $scope.parentScope = parentScope;
                     parentScope.$watch(dataName, $scope.setRows, true);
@@ -47124,12 +47442,19 @@ var UI;
         };
     }
     UI.hawtioList = hawtioList;
+
+    UI._module.directive('hawtioList', ["$templateCache", "$compile", UI.hawtioList]);
 })(UI || (UI = {}));
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioSlideout', function () {
+        return new UI.SlideOut();
+    });
+
     var SlideOut = (function () {
         function SlideOut() {
             this.restrict = 'A';
@@ -47143,29 +47468,30 @@ var UI;
                 height: '@',
                 title: '@'
             };
-            this.controller = function ($scope, $element, $attrs, $transclude, $compile) {
-                $scope.clone = null;
+            this.controller = [
+                "$scope", "$element", "$attrs", "$transclude", "$compile", function ($scope, $element, $attrs, $transclude, $compile) {
+                    $scope.clone = null;
 
-                $transclude(function (clone) {
-                    $scope.clone = $(clone).filter('.dialog-body');
-                });
+                    $transclude(function (clone) {
+                        $scope.clone = $(clone).filter('.dialog-body');
+                    });
 
-                UI.observe($scope, $attrs, 'direction', 'right');
-                UI.observe($scope, $attrs, 'top', '10%', function (value) {
-                    $element.css('top', value);
-                });
-                UI.observe($scope, $attrs, 'height', '80%', function (value) {
-                    $element.css('height', value);
-                });
-                UI.observe($scope, $attrs, 'title', '');
+                    UI.observe($scope, $attrs, 'direction', 'right');
+                    UI.observe($scope, $attrs, 'top', '10%', function (value) {
+                        $element.css('top', value);
+                    });
+                    UI.observe($scope, $attrs, 'height', '80%', function (value) {
+                        $element.css('height', value);
+                    });
+                    UI.observe($scope, $attrs, 'title', '');
 
-                $scope.$watch('show', function () {
-                    if ($scope.show) {
-                        $scope.body = $element.find('.slideout-body');
-                        $scope.body.html($compile($scope.clone.html())($scope.$parent));
-                    }
-                });
-            };
+                    $scope.$watch('show', function () {
+                        if ($scope.show) {
+                            $scope.body = $element.find('.slideout-body');
+                            $scope.body.html($compile($scope.clone.html())($scope.$parent));
+                        }
+                    });
+                }];
             this.link = function ($scope, $element, $attrs) {
                 $scope.element = $($element);
 
@@ -47192,8 +47518,13 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioColorPicker', function () {
+        return new UI.ColorPicker();
+    });
+
     UI.selected = "selected";
     UI.unselected = "unselected";
 
@@ -47274,6 +47605,7 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
     function hawtioDropDown($templateCache) {
@@ -47284,64 +47616,65 @@ var UI;
             scope: {
                 config: '=hawtioDropDown'
             },
-            controller: function ($scope, $element, $attrs) {
-                if (!$scope.config) {
-                    $scope.config = {};
-                }
+            controller: [
+                "$scope", "$element", "$attrs", function ($scope, $element, $attrs) {
+                    if (!$scope.config) {
+                        $scope.config = {};
+                    }
 
-                if (!('open' in $scope.config)) {
-                    $scope.config['open'] = false;
-                }
+                    if (!('open' in $scope.config)) {
+                        $scope.config['open'] = false;
+                    }
 
-                $scope.action = function (config, $event) {
-                    //log.debug("doAction on : ", config, "event: ", $event);
-                    if ('items' in config && !('action' in config)) {
-                        config.open = !config.open;
-                        $event.preventDefault();
-                        $event.stopPropagation();
-                    } else if ('action' in config) {
-                        //log.debug("executing action: ", config.action);
-                        var action = config['action'];
-                        if (angular.isFunction(action)) {
-                            action.apply();
-                        } else if (angular.isString(action)) {
-                            $scope.$parent.$eval(action, {
-                                config: config,
-                                '$event': $event
-                            });
+                    $scope.action = function (config, $event) {
+                        //log.debug("doAction on : ", config, "event: ", $event);
+                        if ('items' in config && !('action' in config)) {
+                            config.open = !config.open;
+                            $event.preventDefault();
+                            $event.stopPropagation();
+                        } else if ('action' in config) {
+                            //log.debug("executing action: ", config.action);
+                            var action = config['action'];
+                            if (angular.isFunction(action)) {
+                                action.apply();
+                            } else if (angular.isString(action)) {
+                                $scope.$parent.$eval(action, {
+                                    config: config,
+                                    '$event': $event
+                                });
+                            }
                         }
-                    }
-                };
+                    };
 
-                $scope.$watch('config.items', function (newValue, oldValue) {
-                    if (newValue !== oldValue) {
-                        // just add some space to force a redraw
-                        $scope.menuStyle = $scope.menuStyle + " ";
-                    }
-                }, true);
+                    $scope.$watch('config.items', function (newValue, oldValue) {
+                        if (newValue !== oldValue) {
+                            // just add some space to force a redraw
+                            $scope.menuStyle = $scope.menuStyle + " ";
+                        }
+                    }, true);
 
-                $scope.submenu = function (config) {
-                    if (config && config.submenu) {
-                        return "sub-menu";
-                    }
-                    return "";
-                };
+                    $scope.submenu = function (config) {
+                        if (config && config.submenu) {
+                            return "sub-menu";
+                        }
+                        return "";
+                    };
 
-                $scope.icon = function (config) {
-                    if (config && !Core.isBlank(config.icon)) {
-                        return config.icon;
-                    } else {
-                        return 'icon-spacer';
-                    }
-                };
+                    $scope.icon = function (config) {
+                        if (config && !Core.isBlank(config.icon)) {
+                            return config.icon;
+                        } else {
+                            return 'icon-spacer';
+                        }
+                    };
 
-                $scope.open = function (config) {
-                    if (config && !config.open) {
-                        return '';
-                    }
-                    return 'open';
-                };
-            },
+                    $scope.open = function (config) {
+                        if (config && !config.open) {
+                            return '';
+                        }
+                        return 'open';
+                    };
+                }],
             link: function ($scope, $element, $attrs) {
                 $scope.menuStyle = $templateCache.get("withsubmenus.html");
 
@@ -47354,105 +47687,8 @@ var UI;
         };
     }
     UI.hawtioDropDown = hawtioDropDown;
-})(UI || (UI = {}));
-/**
-* Module that contains a bunch of re-usable directives to assemble into pages in hawtio
-*
-* @module UI
-* @main UI
-*/
-var UI;
-(function (UI) {
-    UI.pluginName = 'hawtio-ui';
 
-    UI.templatePath = 'app/ui/html/';
-
-    angular.module(UI.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap']).config(function ($routeProvider) {
-        $routeProvider.when('/ui/developerPage', { templateUrl: UI.templatePath + 'developerPage.html', reloadOnSearch: false });
-    }).factory('UI', function () {
-        return UI;
-    }).factory('marked', function () {
-        marked.setOptions({
-            gfm: true,
-            tables: true,
-            breaks: false,
-            pedantic: true,
-            sanitize: false,
-            smartLists: true,
-            langPrefix: 'language-'
-        });
-        return marked;
-    }).directive('hawtioConfirmDialog', function () {
-        return new UI.ConfirmDialog();
-    }).directive('hawtioSlideout', function () {
-        return new UI.SlideOut();
-    }).directive('hawtioPager', function () {
-        return new UI.TablePager();
-    }).directive('hawtioEditor', function ($parse) {
-        return UI.Editor($parse);
-    }).directive('hawtioColorPicker', function () {
-        return new UI.ColorPicker();
-    }).directive('expandable', function () {
-        return new UI.Expandable();
-    }).directive('gridster', function () {
-        return new UI.GridsterDirective();
-    }).directive('editableProperty', function ($parse) {
-        return new UI.EditableProperty($parse);
-    }).directive('hawtioViewport', function () {
-        return new UI.ViewportHeight();
-    }).directive('hawtioHorizontalViewport', function () {
-        return new UI.HorizontalViewport();
-    }).directive('hawtioRow', function () {
-        return new UI.DivRow();
-    }).directive('hawtioJsplumb', function () {
-        return new UI.JSPlumb();
-    }).directive('zeroClipboard', function ($parse) {
-        return UI.ZeroClipboardDirective($parse);
-    }).directive('hawtioAutoDropdown', function () {
-        return UI.AutoDropDown;
-    }).directive('hawtioMessagePanel', function () {
-        return new UI.MessagePanel();
-    }).directive('hawtioInfoPanel', function () {
-        return new UI.InfoPanel();
-    }).directive('hawtioAutoColumns', function () {
-        return new UI.AutoColumns();
-    }).directive('hawtioTemplatePopover', function ($templateCache, $compile, $document) {
-        return UI.TemplatePopover($templateCache, $compile, $document);
-    }).directive('hawtioTocDisplay', function (marked, $location, $anchorScroll, $compile) {
-        return UI.HawtioTocDisplay(marked, $location, $anchorScroll, $compile);
-    }).directive('hawtioDropDown', function ($templateCache) {
-        return UI.hawtioDropDown($templateCache);
-    }).directive('hawtioBreadcrumbs', function () {
-        return UI.hawtioBreadcrumbs();
-    }).directive('hawtioIcon', function () {
-        return UI.hawtioIcon();
-    }).directive('hawtioPane', function () {
-        return UI.hawtioPane();
-    }).directive('hawtioList', function ($templateCache, $compile) {
-        return UI.hawtioList($templateCache, $compile);
-    }).filter('hawtioGroupBy', function () {
-        return UI.groupBy();
-    }).directive('compile', [
-        '$compile', function ($compile) {
-            return function (scope, element, attrs) {
-                scope.$watch(function (scope) {
-                    // watch the 'compile' expression for changes
-                    return scope.$eval(attrs.compile);
-                }, function (value) {
-                    // when the 'compile' expression changes
-                    // assign it into the current DOM
-                    element.html(value);
-
-                    // compile the new DOM and link it to the current
-                    // scope.
-                    // NOTE: we only compile .childNodes so that
-                    // we don't get into infinite loop compiling ourselves
-                    $compile(element.contents())(scope);
-                });
-            };
-        }]);
-
-    hawtioPluginLoader.addModule(UI.pluginName);
+    UI._module.directive('hawtioDropDown', ["$templateCache", UI.hawtioDropDown]);
 })(UI || (UI = {}));
 /**
 * @module UI
@@ -47474,8 +47710,13 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('gridster', function () {
+        return new UI.GridsterDirective();
+    });
+
     var GridsterDirective = (function () {
         function GridsterDirective() {
             this.restrict = 'A';
@@ -49763,681 +50004,694 @@ var Karaf;
 * @module Karaf
 * @main Karaf
 */
+/// <reference path="karafHelpers.ts"/>
 var Karaf;
 (function (Karaf) {
     var pluginName = 'karaf';
-    angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']).config(function ($routeProvider) {
-        $routeProvider.when('/osgi/server', { templateUrl: 'app/karaf/html/server.html' }).when('/osgi/features', { templateUrl: 'app/karaf/html/features.html', reloadOnSearch: false }).when('/osgi/scr-components', { templateUrl: 'app/karaf/html/scr-components.html' }).when('/osgi/scr-component/:name', { templateUrl: 'app/karaf/html/scr-component.html' }).when('/osgi/feature/:name/:version', { templateUrl: 'app/karaf/html/feature.html' });
-    }).run(function (workspace, viewRegistry, helpRegistry) {
-        helpRegistry.addUserDoc('karaf', 'app/karaf/doc/help.md', function () {
-            return workspace.treeContainsDomainAndProperties('org.apache.karaf');
-        });
-    });
+    Karaf._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']);
+
+    Karaf._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/osgi/server', { templateUrl: 'app/karaf/html/server.html' }).when('/osgi/features', { templateUrl: 'app/karaf/html/features.html', reloadOnSearch: false }).when('/osgi/scr-components', { templateUrl: 'app/karaf/html/scr-components.html' }).when('/osgi/scr-component/:name', { templateUrl: 'app/karaf/html/scr-component.html' }).when('/osgi/feature/:name/:version', { templateUrl: 'app/karaf/html/feature.html' });
+        }]);
+
+    Karaf._module.run([
+        "workspace", "viewRegistry", "helpRegistry", function (workspace, viewRegistry, helpRegistry) {
+            helpRegistry.addUserDoc('karaf', 'app/karaf/doc/help.md', function () {
+                return workspace.treeContainsDomainAndProperties('org.apache.karaf');
+            });
+        }]);
 
     hawtioPluginLoader.addModule(pluginName);
 })(Karaf || (Karaf = {}));
 /**
 * @module Karaf
 */
+/// <reference path="./karafPlugin.ts"/>
 var Karaf;
 (function (Karaf) {
-    function ServerController($scope, $location, workspace, jolokia) {
-        $scope.data = {
-            name: "",
-            version: "",
-            state: "",
-            root: "",
-            startLevel: "",
-            framework: "",
-            frameworkVersion: "",
-            location: "",
-            sshPort: "",
-            rmiRegistryPort: "",
-            rmiServerPort: "",
-            pid: "" };
+    Karaf._module.controller("Karaf.ServerController", [
+        "$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+            $scope.data = {
+                name: "",
+                version: "",
+                state: "",
+                root: "",
+                startLevel: "",
+                framework: "",
+                frameworkVersion: "",
+                location: "",
+                sshPort: "",
+                rmiRegistryPort: "",
+                rmiServerPort: "",
+                pid: "" };
 
-        $scope.$on('jmxTreeUpdated', reloadFunction);
-        $scope.$watch('workspace.tree', reloadFunction);
+            $scope.$on('jmxTreeUpdated', reloadFunction);
+            $scope.$watch('workspace.tree', reloadFunction);
 
-        function reloadFunction() {
-            // if the JMX tree is reloaded its probably because a new MBean has been added or removed
-            // so lets reload, asynchronously just in case
-            setTimeout(loadData, 50);
-        }
-
-        function loadData() {
-            console.log("Loading Karaf data...");
-            jolokia.search("org.apache.karaf:type=admin,*", onSuccess(render));
-        }
-
-        function render(response) {
-            // grab the first mbean as there should ideally only be one karaf in the JVM
-            if (angular.isArray(response)) {
-                var mbean = response[0];
-                if (mbean) {
-                    jolokia.getAttribute(mbean, "Instances", onSuccess(function (response) {
-                        onInstances(response, mbean);
-                    }));
-                }
+            function reloadFunction() {
+                // if the JMX tree is reloaded its probably because a new MBean has been added or removed
+                // so lets reload, asynchronously just in case
+                setTimeout(loadData, 50);
             }
-        }
 
-        function onInstances(instances, mbean) {
-            if (instances) {
-                var parsedMBean = Core.parseMBean(mbean);
-                var instanceName = 'root';
-                if ('attributes' in parsedMBean) {
-                    if ('name' in parsedMBean['attributes']) {
-                        instanceName = parsedMBean['attributes']['name'];
+            function loadData() {
+                console.log("Loading Karaf data...");
+                jolokia.search("org.apache.karaf:type=admin,*", onSuccess(render));
+            }
+
+            function render(response) {
+                // grab the first mbean as there should ideally only be one karaf in the JVM
+                if (angular.isArray(response)) {
+                    var mbean = response[0];
+                    if (mbean) {
+                        jolokia.getAttribute(mbean, "Instances", onSuccess(function (response) {
+                            onInstances(response, mbean);
+                        }));
                     }
                 }
+            }
 
-                //log.debug("mbean: ", Core.parseMBean(mbean));
-                //log.debug("Instances: ", instances);
-                // the name is the first child
-                var rootInstance = instances[instanceName];
-                $scope.data.name = rootInstance.Name;
-                $scope.data.state = rootInstance.State;
-                $scope.data.root = rootInstance["Is Root"];
-                $scope.data.location = rootInstance.Location;
-                $scope.data.sshPort = rootInstance["SSH Port"];
-                $scope.data.rmiRegistryPort = rootInstance["RMI Registry Port"];
-                $scope.data.rmiServerPort = rootInstance["RMI Server Port"];
-                $scope.data.pid = rootInstance.Pid;
+            function onInstances(instances, mbean) {
+                if (instances) {
+                    var parsedMBean = Core.parseMBean(mbean);
+                    var instanceName = 'root';
+                    if ('attributes' in parsedMBean) {
+                        if ('name' in parsedMBean['attributes']) {
+                            instanceName = parsedMBean['attributes']['name'];
+                        }
+                    }
 
-                // we need to get these data from the system mbean
-                $scope.data.version = "?";
-                $scope.data.startLevel = "?";
-                $scope.data.framework = "?";
-                $scope.data.frameworkVersion = "?";
+                    //log.debug("mbean: ", Core.parseMBean(mbean));
+                    //log.debug("Instances: ", instances);
+                    // the name is the first child
+                    var rootInstance = instances[instanceName];
+                    $scope.data.name = rootInstance.Name;
+                    $scope.data.state = rootInstance.State;
+                    $scope.data.root = rootInstance["Is Root"];
+                    $scope.data.location = rootInstance.Location;
+                    $scope.data.sshPort = rootInstance["SSH Port"];
+                    $scope.data.rmiRegistryPort = rootInstance["RMI Registry Port"];
+                    $scope.data.rmiServerPort = rootInstance["RMI Server Port"];
+                    $scope.data.pid = rootInstance.Pid;
 
-                var systemMbean = "org.apache.karaf:type=system,name=" + rootInstance.Name;
+                    // we need to get these data from the system mbean
+                    $scope.data.version = "?";
+                    $scope.data.startLevel = "?";
+                    $scope.data.framework = "?";
+                    $scope.data.frameworkVersion = "?";
 
-                // get more data, and its okay to do this synchronously
-                var response = jolokia.request({
-                    type: "read", mbean: systemMbean,
-                    attribute: ["StartLevel", "Framework", "Version"] }, onSuccess(null));
+                    var systemMbean = "org.apache.karaf:type=system,name=" + rootInstance.Name;
 
-                var obj = response.value;
-                if (obj) {
-                    $scope.data.version = obj.Version;
-                    $scope.data.startLevel = obj.StartLevel;
-                    $scope.data.framework = obj.Framework;
-                }
+                    // get more data, and its okay to do this synchronously
+                    var response = jolokia.request({
+                        type: "read", mbean: systemMbean,
+                        attribute: ["StartLevel", "Framework", "Version"] }, onSuccess(null));
 
-                // and the osgi framework version is the bundle version
-                var response2 = jolokia.search("osgi.core:type=bundleState,*", onSuccess(null));
-                if (angular.isArray(response2)) {
-                    var mbean = response2[0];
-                    if (mbean) {
-                        // get more data, and its okay to do this synchronously
-                        var response3 = jolokia.request({ type: 'exec', mbean: mbean, operation: 'getVersion(long)', arguments: [0] }, onSuccess(null));
-                        var obj3 = response3.value;
-                        if (obj3) {
-                            $scope.data.frameworkVersion = obj3;
+                    var obj = response.value;
+                    if (obj) {
+                        $scope.data.version = obj.Version;
+                        $scope.data.startLevel = obj.StartLevel;
+                        $scope.data.framework = obj.Framework;
+                    }
+
+                    // and the osgi framework version is the bundle version
+                    var response2 = jolokia.search("osgi.core:type=bundleState,*", onSuccess(null));
+                    if (angular.isArray(response2)) {
+                        var mbean = response2[0];
+                        if (mbean) {
+                            // get more data, and its okay to do this synchronously
+                            var response3 = jolokia.request({ type: 'exec', mbean: mbean, operation: 'getVersion(long)', arguments: [0] }, onSuccess(null));
+                            var obj3 = response3.value;
+                            if (obj3) {
+                                $scope.data.frameworkVersion = obj3;
+                            }
                         }
                     }
                 }
-            }
 
-            // ensure web page is updated
-            Core.$apply($scope);
-        }
-    }
-    Karaf.ServerController = ServerController;
+                // ensure web page is updated
+                Core.$apply($scope);
+            }
+        }]);
 })(Karaf || (Karaf = {}));
 /**
 * @module Karaf
 */
+/// <reference path="./karafPlugin.ts"/>
 var Karaf;
 (function (Karaf) {
-    function ScrComponentsController($scope, $location, workspace, jolokia) {
-        $scope.component = empty();
+    Karaf._module.controller("Karaf.ScrComponentsController", [
+        "$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+            $scope.component = empty();
 
-        // caches last jolokia result
-        $scope.result = [];
+            // caches last jolokia result
+            $scope.result = [];
 
-        // rows in components table
-        $scope.components = [];
+            // rows in components table
+            $scope.components = [];
 
-        // selected components
-        $scope.selectedComponents = [];
+            // selected components
+            $scope.selectedComponents = [];
 
-        $scope.scrOptions = {
-            //plugins: [searchProvider],
-            data: 'components',
-            showFilter: false,
-            showColumnMenu: false,
-            filterOptions: {
-                useExternalFilter: false
-            },
-            sortInfo: { fields: ['Name'], directions: ['asc'] },
-            selectedItems: $scope.selectedComponents,
-            rowHeight: 32,
-            selectWithCheckboxOnly: true,
-            columnDefs: [
-                {
-                    field: 'Name',
-                    displayName: 'Name',
-                    cellTemplate: '<div class="ngCellText"><a href="#/osgi/scr-component/{{row.entity.Name}}?p=container">{{row.getProperty(col.field)}}</a></div>',
-                    width: 400
+            $scope.scrOptions = {
+                //plugins: [searchProvider],
+                data: 'components',
+                showFilter: false,
+                showColumnMenu: false,
+                filterOptions: {
+                    useExternalFilter: false
                 },
-                {
-                    field: 'State',
-                    displayName: 'State',
-                    cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
-                    width: 200
+                sortInfo: { fields: ['Name'], directions: ['asc'] },
+                selectedItems: $scope.selectedComponents,
+                rowHeight: 32,
+                selectWithCheckboxOnly: true,
+                columnDefs: [
+                    {
+                        field: 'Name',
+                        displayName: 'Name',
+                        cellTemplate: '<div class="ngCellText"><a href="#/osgi/scr-component/{{row.entity.Name}}?p=container">{{row.getProperty(col.field)}}</a></div>',
+                        width: 400
+                    },
+                    {
+                        field: 'State',
+                        displayName: 'State',
+                        cellTemplate: '<div class="ngCellText">{{row.getProperty(col.field)}}</div>',
+                        width: 200
+                    }
+                ]
+            };
+
+            var scrMBean = Karaf.getSelectionScrMBean(workspace);
+            if (scrMBean) {
+                render(Karaf.getAllComponents(workspace, jolokia));
+            }
+
+            $scope.activate = function () {
+                $scope.selectedComponents.forEach(function (component) {
+                    Karaf.activateComponent(workspace, jolokia, component.Name, function () {
+                        console.log("Activated!");
+                    }, function () {
+                        console.log("Failed to activate!");
+                    });
+                });
+            };
+
+            $scope.deactivate = function () {
+                $scope.selectedComponents.forEach(function (component) {
+                    Karaf.deactivateComponent(workspace, jolokia, component.Name, function () {
+                        console.log("Deactivated!");
+                    }, function () {
+                        console.log("Failed to deactivate!");
+                    });
+                });
+            };
+
+            function empty() {
+                return [
+                    {
+                        Name: "",
+                        Status: false }
+                ];
+            }
+
+            function render(components) {
+                if (!Object.equal($scope.result, components)) {
+                    $scope.components = components;
+                    $scope.result = $scope.components;
+                    Core.$apply($scope);
                 }
-            ]
-        };
+            }
+        }]);
+})(Karaf || (Karaf = {}));
+/**
+* @module Karaf
+*/
+/// <reference path="./karafPlugin.ts"/>
+var Karaf;
+(function (Karaf) {
+    Karaf._module.controller("Karaf.FeatureController", [
+        "$scope", "jolokia", "workspace", "$routeParams", function ($scope, jolokia, workspace, $routeParams) {
+            $scope.hasFabric = Fabric.hasFabric(workspace);
+            $scope.name = $routeParams.name;
+            $scope.version = $routeParams.version;
+            $scope.bundlesByLocation = {};
+            $scope.props = "properties";
 
-        var scrMBean = Karaf.getSelectionScrMBean(workspace);
-        if (scrMBean) {
-            render(Karaf.getAllComponents(workspace, jolokia));
-        }
+            updateTableContents();
 
-        $scope.activate = function () {
-            $scope.selectedComponents.forEach(function (component) {
-                Karaf.activateComponent(workspace, jolokia, component.Name, function () {
+            $scope.install = function () {
+                Karaf.installFeature(workspace, jolokia, $scope.name, $scope.version, function () {
+                    notification('success', 'Installed feature ' + $scope.name);
+                }, function (response) {
+                    notification('error', 'Failed to install feature ' + $scope.name + ' due to ' + response.error);
+                });
+            };
+
+            $scope.uninstall = function () {
+                Karaf.uninstallFeature(workspace, jolokia, $scope.name, $scope.version, function () {
+                    notification('success', 'Uninstalled feature ' + $scope.name);
+                }, function (response) {
+                    notification('error', 'Failed to uninstall feature ' + $scope.name + ' due to ' + response.error);
+                });
+            };
+
+            $scope.toProperties = function (elements) {
+                var answer = '';
+                angular.forEach(elements, function (value, name) {
+                    answer += value['Key'] + " = " + value['Value'] + "\n";
+                });
+                return answer.trim();
+            };
+
+            function populateTable(response) {
+                $scope.row = Karaf.extractFeature(response.value, $scope.name, $scope.version);
+                if ($scope.row) {
+                    addBundleDetails($scope.row);
+                    var dependencies = [];
+
+                    //TODO - if the version isn't set or is 0.0.0 then maybe we show the highest available?
+                    angular.forEach($scope.row.Dependencies, function (version, name) {
+                        angular.forEach(version, function (data, version) {
+                            dependencies.push({
+                                Name: name,
+                                Version: version
+                            });
+                        });
+                    });
+                    $scope.row.Dependencies = dependencies;
+                }
+
+                //console.log("row: ", $scope.row);
+                Core.$apply($scope);
+            }
+
+            function setBundles(response) {
+                var bundleMap = {};
+                Osgi.defaultBundleValues(workspace, $scope, response.values);
+                angular.forEach(response.value, function (bundle) {
+                    var location = bundle["Location"];
+                    $scope.bundlesByLocation[location] = bundle;
+                });
+            }
+            ;
+
+            function updateTableContents() {
+                var featureMbean = Karaf.getSelectionFeaturesMBean(workspace);
+                var bundleMbean = Osgi.getSelectionBundleMBean(workspace);
+                var jolokia = workspace.jolokia;
+
+                if (bundleMbean) {
+                    setBundles(jolokia.request({ type: 'exec', mbean: bundleMbean, operation: 'listBundles()' }));
+                }
+
+                if (featureMbean) {
+                    jolokia.request({ type: 'read', mbean: featureMbean }, onSuccess(populateTable));
+                }
+            }
+
+            function addBundleDetails(feature) {
+                var bundleDetails = [];
+                angular.forEach(feature["Bundles"], function (bundleLocation) {
+                    var bundle = $scope.bundlesByLocation[bundleLocation];
+                    if (bundle) {
+                        bundle["Installed"] = true;
+                        bundleDetails.push(bundle);
+                    } else {
+                        bundleDetails.push({
+                            "Location": bundleLocation,
+                            "Installed": false
+                        });
+                    }
+                });
+                feature["BundleDetails"] = bundleDetails;
+            }
+        }]);
+})(Karaf || (Karaf = {}));
+/**
+* @module Karaf
+*/
+/// <reference path="./karafPlugin.ts"/>
+var Karaf;
+(function (Karaf) {
+    Karaf._module.controller("Karaf.ScrComponentController", [
+        "$scope", "$location", "workspace", "jolokia", "$routeParams", function ($scope, $location, workspace, jolokia, $routeParams) {
+            $scope.name = $routeParams.name;
+            populateTable();
+
+            function populateTable() {
+                $scope.row = Karaf.getComponentByName(workspace, jolokia, $scope.name);
+                Core.$apply($scope);
+            }
+
+            $scope.activate = function () {
+                Karaf.activateComponent(workspace, jolokia, $scope.row['Name'], function () {
                     console.log("Activated!");
                 }, function () {
                     console.log("Failed to activate!");
                 });
-            });
-        };
+            };
 
-        $scope.deactivate = function () {
-            $scope.selectedComponents.forEach(function (component) {
-                Karaf.deactivateComponent(workspace, jolokia, component.Name, function () {
+            $scope.deactivate = function () {
+                Karaf.deactivateComponent(workspace, jolokia, $scope.row['Name'], function () {
                     console.log("Deactivated!");
                 }, function () {
                     console.log("Failed to deactivate!");
                 });
-            });
-        };
-
-        function empty() {
-            return [
-                {
-                    Name: "",
-                    Status: false }
-            ];
-        }
-
-        function render(components) {
-            if (!Object.equal($scope.result, components)) {
-                $scope.components = components;
-                $scope.result = $scope.components;
-                Core.$apply($scope);
-            }
-        }
-    }
-    Karaf.ScrComponentsController = ScrComponentsController;
+            };
+        }]);
 })(Karaf || (Karaf = {}));
 /**
 * @module Karaf
 */
+/// <reference path="./karafPlugin.ts"/>
 var Karaf;
 (function (Karaf) {
-    function FeatureController($scope, jolokia, workspace, $routeParams) {
-        $scope.hasFabric = Fabric.hasFabric(workspace);
-        $scope.name = $routeParams.name;
-        $scope.version = $routeParams.version;
-        $scope.bundlesByLocation = {};
-        $scope.props = "properties";
+    Karaf._module.controller("Karaf.NavBarController", [
+        "$scope", "workspace", function ($scope, workspace) {
+            $scope.hash = workspace.hash();
 
-        updateTableContents();
+            $scope.isKarafEnabled = workspace.treeContainsDomainAndProperties("org.apache.karaf");
+            $scope.isFeaturesEnabled = Karaf.getSelectionFeaturesMBean(workspace);
+            $scope.isScrEnabled = Karaf.getSelectionScrMBean(workspace);
 
-        $scope.install = function () {
-            Karaf.installFeature(workspace, jolokia, $scope.name, $scope.version, function () {
-                notification('success', 'Installed feature ' + $scope.name);
-            }, function (response) {
-                notification('error', 'Failed to install feature ' + $scope.name + ' due to ' + response.error);
+            $scope.$on('$routeChangeSuccess', function () {
+                $scope.hash = workspace.hash();
             });
-        };
 
-        $scope.uninstall = function () {
-            Karaf.uninstallFeature(workspace, jolokia, $scope.name, $scope.version, function () {
-                notification('success', 'Uninstalled feature ' + $scope.name);
-            }, function (response) {
-                notification('error', 'Failed to uninstall feature ' + $scope.name + ' due to ' + response.error);
+            $scope.isActive = function (nav) {
+                return workspace.isLinkActive(nav);
+            };
+
+            $scope.isPrefixActive = function (nav) {
+                return workspace.isLinkPrefixActive(nav);
+            };
+        }]);
+})(Karaf || (Karaf = {}));
+/**
+* @module Karaf
+*/
+/// <reference path="./karafPlugin.ts"/>
+var Karaf;
+(function (Karaf) {
+    Karaf._module.controller("Karaf.FeaturesController", [
+        "$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+            $scope.hasFabric = Fabric.hasFabric(workspace);
+            $scope.responseJson = '';
+            $scope.filter = '';
+
+            $scope.installedFeatures = [];
+
+            $scope.features = [];
+            $scope.repositories = [];
+            $scope.selectedRepositoryId = '';
+            $scope.selectedRepository = {};
+
+            $scope.newRepositoryURI = '';
+
+            $scope.init = function () {
+                var selectedRepositoryId = $location.search()['repositoryId'];
+                if (selectedRepositoryId) {
+                    $scope.selectedRepositoryId = selectedRepositoryId;
+                }
+
+                var filter = $location.search()['filter'];
+                if (filter) {
+                    $scope.filter = filter;
+                }
+            };
+
+            $scope.init();
+
+            $scope.$watch('selectedRepository', function (newValue, oldValue) {
+                //log.debug("selectedRepository: ", $scope.selectedRepository);
+                if (newValue !== oldValue) {
+                    if (!newValue) {
+                        $scope.selectedRepositoryId = '';
+                    } else {
+                        $scope.selectedRepositoryId = newValue['repository'];
+                    }
+                    $location.search('repositoryId', $scope.selectedRepositoryId);
+                }
+            }, true);
+
+            $scope.$watch('filter', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    $location.search('filter', newValue);
+                }
             });
-        };
 
-        $scope.toProperties = function (elements) {
-            var answer = '';
-            angular.forEach(elements, function (value, name) {
-                answer += value['Key'] + " = " + value['Value'] + "\n";
-            });
-            return answer.trim();
-        };
+            var featuresMBean = Karaf.getSelectionFeaturesMBean(workspace);
 
-        function populateTable(response) {
-            $scope.row = Karaf.extractFeature(response.value, $scope.name, $scope.version);
-            if ($scope.row) {
-                addBundleDetails($scope.row);
-                var dependencies = [];
+            Karaf.log.debug("Features mbean: ", featuresMBean);
 
-                //TODO - if the version isn't set or is 0.0.0 then maybe we show the highest available?
-                angular.forEach($scope.row.Dependencies, function (version, name) {
-                    angular.forEach(version, function (data, version) {
-                        dependencies.push({
-                            Name: name,
-                            Version: version
+            if (featuresMBean) {
+                Core.register(jolokia, $scope, {
+                    type: 'read', mbean: featuresMBean
+                }, onSuccess(render));
+            }
+
+            $scope.inSelectedRepository = function (feature) {
+                if (!$scope.selectedRepository || !('repository' in $scope.selectedRepository)) {
+                    return "";
+                }
+                if (!feature || !('RepositoryName' in feature)) {
+                    return "";
+                }
+                if (feature['RepositoryName'] === $scope.selectedRepository['repository']) {
+                    return "in-selected-repository";
+                }
+                return "";
+            };
+
+            $scope.isValidRepository = function () {
+                return Core.isBlank($scope.newRepositoryURI);
+            };
+
+            $scope.installRepository = function () {
+                var repoURL = $scope.newRepositoryURI;
+                notification('info', 'Adding feature repository URL');
+                Karaf.installRepository(workspace, jolokia, repoURL, function () {
+                    notification('success', 'Added feature repository URL');
+                    $scope.selectedRepository = {};
+                    $scope.selectedRepositoryId = '';
+                    $scope.responseJson = null;
+                    $scope.triggerRefresh();
+                }, function (response) {
+                    Karaf.log.error('Failed to add feature repository URL ', repoURL, ' due to ', response.error);
+                    Karaf.log.info('stack trace: ', response.stacktrace);
+                    Core.$apply($scope);
+                });
+            };
+
+            $scope.uninstallRepository = function () {
+                var repoURI = $scope.selectedRepository['uri'];
+                notification('info', 'Removing feature repository ' + repoURI);
+                Karaf.uninstallRepository(workspace, jolokia, repoURI, function () {
+                    notification('success', 'Removed feature repository ' + repoURI);
+                    $scope.responseJson = null;
+                    $scope.selectedRepositoryId = '';
+                    $scope.selectedRepository = {};
+                    $scope.triggerRefresh();
+                }, function (response) {
+                    Karaf.log.error('Failed to remove feature repository ', repoURI, ' due to ', response.error);
+                    Karaf.log.info('stack trace: ', response.stacktrace);
+                    Core.$apply($scope);
+                });
+            };
+
+            $scope.triggerRefresh = function () {
+                jolokia.request({
+                    type: 'read',
+                    method: 'POST',
+                    mbean: featuresMBean
+                }, onSuccess(render));
+            };
+
+            $scope.install = function (feature) {
+                if ($scope.hasFabric) {
+                    return;
+                }
+
+                //$('.popover').remove();
+                notification('info', 'Installing feature ' + feature.Name);
+                Karaf.installFeature(workspace, jolokia, feature.Name, feature.Version, function () {
+                    notification('success', 'Installed feature ' + feature.Name);
+                    $scope.installedFeatures.add(feature);
+                    $scope.responseJson = null;
+                    $scope.triggerRefresh();
+                    //Core.$apply($scope);
+                }, function (response) {
+                    Karaf.log.error('Failed to install feature ', feature.Name, ' due to ', response.error);
+                    Karaf.log.info('stack trace: ', response.stacktrace);
+                    Core.$apply($scope);
+                });
+            };
+
+            $scope.uninstall = function (feature) {
+                if ($scope.hasFabric) {
+                    return;
+                }
+
+                //$('.popover').remove();
+                notification('info', 'Uninstalling feature ' + feature.Name);
+                Karaf.uninstallFeature(workspace, jolokia, feature.Name, feature.Version, function () {
+                    notification('success', 'Uninstalled feature ' + feature.Name);
+                    $scope.installedFeatures.remove(feature);
+                    $scope.responseJson = null;
+                    $scope.triggerRefresh();
+                    //Core.$apply($scope);
+                }, function (response) {
+                    Karaf.log.error('Failed to uninstall feature ', feature.Name, ' due to ', response.error);
+                    Karaf.log.info('stack trace: ', response.stacktrace);
+                    Core.$apply($scope);
+                });
+            };
+
+            $scope.filteredRows = ['Bundles', 'Configurations', 'Configuration Files', 'Dependencies'];
+
+            $scope.showRow = function (key, value) {
+                if ($scope.filteredRows.any(key)) {
+                    return false;
+                }
+
+                if (angular.isArray(value)) {
+                    if (value.length === 0) {
+                        return false;
+                    }
+                }
+
+                if (angular.isString(value)) {
+                    if (Core.isBlank(value)) {
+                        return false;
+                    }
+                }
+
+                if (angular.isObject(value)) {
+                    if (!value || Object.equal(value, {})) {
+                        return false;
+                    }
+                }
+
+                return true;
+            };
+
+            $scope.installed = function (installed) {
+                var answer = Core.parseBooleanValue(installed);
+                return answer;
+            };
+
+            $scope.showValue = function (value) {
+                if (angular.isArray(value)) {
+                    var answer = ['<ul class="zebra-list">'];
+                    value.forEach(function (v) {
+                        answer.push('<li>' + v + '</li>');
+                    });
+                    answer.push('</ul>');
+                    return answer.join('\n');
+                }
+                if (angular.isObject(value)) {
+                    var answer = ['<table class="table">', '<tbody>'];
+
+                    angular.forEach(value, function (value, key) {
+                        answer.push('<tr>');
+                        answer.push('<td>' + key + '</td>');
+                        answer.push('<td>' + value + '</td>');
+                        answer.push('</tr>');
+                    });
+
+                    answer.push('</tbody>');
+                    answer.push('</table>');
+
+                    return answer.join('\n');
+                }
+                return "" + value;
+            };
+
+            $scope.getStateStyle = function (feature) {
+                if (Core.parseBooleanValue(feature.Installed)) {
+                    return "badge badge-success";
+                }
+                return "badge";
+            };
+
+            $scope.filterFeature = function (feature) {
+                if (Core.isBlank($scope.filter)) {
+                    return true;
+                }
+                if (feature.Id.has($scope.filter)) {
+                    return true;
+                }
+                return false;
+            };
+
+            function render(response) {
+                var responseJson = angular.toJson(response.value);
+                if ($scope.responseJson !== responseJson) {
+                    $scope.responseJson = responseJson;
+
+                    //log.debug("Got response: ", response.value);
+                    if (response['value']['Features'] === null) {
+                        $scope.featuresError = true;
+                    } else {
+                        $scope.featuresError = false;
+                    }
+
+                    $scope.features = [];
+                    $scope.repositories = [];
+
+                    var features = [];
+                    var repositories = [];
+
+                    Karaf.populateFeaturesAndRepos(response.value, features, repositories);
+
+                    var installedFeatures = features.filter(function (f) {
+                        return Core.parseBooleanValue(f.Installed);
+                    });
+                    var uninstalledFeatures = features.filter(function (f) {
+                        return !Core.parseBooleanValue(f.Installed);
+                    });
+
+                    //log.debug("repositories: ", repositories);
+                    $scope.installedFeatures = installedFeatures.sortBy(function (f) {
+                        return f['Name'];
+                    });
+                    uninstalledFeatures = uninstalledFeatures.sortBy(function (f) {
+                        return f['Name'];
+                    });
+
+                    repositories.sortBy('id').forEach(function (repo) {
+                        $scope.repositories.push({
+                            repository: repo['id'],
+                            uri: repo['uri'],
+                            features: uninstalledFeatures.filter(function (f) {
+                                return f['RepositoryName'] === repo['id'];
+                            })
                         });
                     });
-                });
-                $scope.row.Dependencies = dependencies;
-            }
 
-            //console.log("row: ", $scope.row);
-            Core.$apply($scope);
-        }
-
-        function setBundles(response) {
-            var bundleMap = {};
-            Osgi.defaultBundleValues(workspace, $scope, response.values);
-            angular.forEach(response.value, function (bundle) {
-                var location = bundle["Location"];
-                $scope.bundlesByLocation[location] = bundle;
-            });
-        }
-        ;
-
-        function updateTableContents() {
-            var featureMbean = Karaf.getSelectionFeaturesMBean(workspace);
-            var bundleMbean = Osgi.getSelectionBundleMBean(workspace);
-            var jolokia = workspace.jolokia;
-
-            if (bundleMbean) {
-                setBundles(jolokia.request({ type: 'exec', mbean: bundleMbean, operation: 'listBundles()' }));
-            }
-
-            if (featureMbean) {
-                jolokia.request({ type: 'read', mbean: featureMbean }, onSuccess(populateTable));
-            }
-        }
-
-        function addBundleDetails(feature) {
-            var bundleDetails = [];
-            angular.forEach(feature["Bundles"], function (bundleLocation) {
-                var bundle = $scope.bundlesByLocation[bundleLocation];
-                if (bundle) {
-                    bundle["Installed"] = true;
-                    bundleDetails.push(bundle);
-                } else {
-                    bundleDetails.push({
-                        "Location": bundleLocation,
-                        "Installed": false
-                    });
-                }
-            });
-            feature["BundleDetails"] = bundleDetails;
-        }
-    }
-    Karaf.FeatureController = FeatureController;
-})(Karaf || (Karaf = {}));
-/**
-* @module Karaf
-*/
-var Karaf;
-(function (Karaf) {
-    function ScrComponentController($scope, $location, workspace, jolokia, $routeParams) {
-        $scope.name = $routeParams.name;
-        populateTable();
-
-        function populateTable() {
-            $scope.row = Karaf.getComponentByName(workspace, jolokia, $scope.name);
-            Core.$apply($scope);
-        }
-
-        $scope.activate = function () {
-            Karaf.activateComponent(workspace, jolokia, $scope.row['Name'], function () {
-                console.log("Activated!");
-            }, function () {
-                console.log("Failed to activate!");
-            });
-        };
-
-        $scope.deactivate = function () {
-            Karaf.deactivateComponent(workspace, jolokia, $scope.row['Name'], function () {
-                console.log("Deactivated!");
-            }, function () {
-                console.log("Failed to deactivate!");
-            });
-        };
-    }
-    Karaf.ScrComponentController = ScrComponentController;
-})(Karaf || (Karaf = {}));
-/**
-* @module Karaf
-*/
-var Karaf;
-(function (Karaf) {
-    function NavBarController($scope, workspace) {
-        $scope.hash = workspace.hash();
-
-        $scope.isKarafEnabled = workspace.treeContainsDomainAndProperties("org.apache.karaf");
-        $scope.isFeaturesEnabled = Karaf.getSelectionFeaturesMBean(workspace);
-        $scope.isScrEnabled = Karaf.getSelectionScrMBean(workspace);
-
-        $scope.$on('$routeChangeSuccess', function () {
-            $scope.hash = workspace.hash();
-        });
-
-        $scope.isActive = function (nav) {
-            return workspace.isLinkActive(nav);
-        };
-
-        $scope.isPrefixActive = function (nav) {
-            return workspace.isLinkPrefixActive(nav);
-        };
-    }
-    Karaf.NavBarController = NavBarController;
-})(Karaf || (Karaf = {}));
-/**
-* @module Karaf
-*/
-var Karaf;
-(function (Karaf) {
-    function FeaturesController($scope, $location, workspace, jolokia) {
-        $scope.hasFabric = Fabric.hasFabric(workspace);
-        $scope.responseJson = '';
-        $scope.filter = '';
-
-        $scope.installedFeatures = [];
-
-        $scope.features = [];
-        $scope.repositories = [];
-        $scope.selectedRepositoryId = '';
-        $scope.selectedRepository = {};
-
-        $scope.newRepositoryURI = '';
-
-        $scope.init = function () {
-            var selectedRepositoryId = $location.search()['repositoryId'];
-            if (selectedRepositoryId) {
-                $scope.selectedRepositoryId = selectedRepositoryId;
-            }
-
-            var filter = $location.search()['filter'];
-            if (filter) {
-                $scope.filter = filter;
-            }
-        };
-
-        $scope.init();
-
-        $scope.$watch('selectedRepository', function (newValue, oldValue) {
-            //log.debug("selectedRepository: ", $scope.selectedRepository);
-            if (newValue !== oldValue) {
-                if (!newValue) {
-                    $scope.selectedRepositoryId = '';
-                } else {
-                    $scope.selectedRepositoryId = newValue['repository'];
-                }
-                $location.search('repositoryId', $scope.selectedRepositoryId);
-            }
-        }, true);
-
-        $scope.$watch('filter', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                $location.search('filter', newValue);
-            }
-        });
-
-        var featuresMBean = Karaf.getSelectionFeaturesMBean(workspace);
-
-        Karaf.log.debug("Features mbean: ", featuresMBean);
-
-        if (featuresMBean) {
-            Core.register(jolokia, $scope, {
-                type: 'read', mbean: featuresMBean
-            }, onSuccess(render));
-        }
-
-        $scope.inSelectedRepository = function (feature) {
-            if (!$scope.selectedRepository || !('repository' in $scope.selectedRepository)) {
-                return "";
-            }
-            if (!feature || !('RepositoryName' in feature)) {
-                return "";
-            }
-            if (feature['RepositoryName'] === $scope.selectedRepository['repository']) {
-                return "in-selected-repository";
-            }
-            return "";
-        };
-
-        $scope.isValidRepository = function () {
-            return Core.isBlank($scope.newRepositoryURI);
-        };
-
-        $scope.installRepository = function () {
-            var repoURL = $scope.newRepositoryURI;
-            notification('info', 'Adding feature repository URL');
-            Karaf.installRepository(workspace, jolokia, repoURL, function () {
-                notification('success', 'Added feature repository URL');
-                $scope.selectedRepository = {};
-                $scope.selectedRepositoryId = '';
-                $scope.responseJson = null;
-                $scope.triggerRefresh();
-            }, function (response) {
-                Karaf.log.error('Failed to add feature repository URL ', repoURL, ' due to ', response.error);
-                Karaf.log.info('stack trace: ', response.stacktrace);
-                Core.$apply($scope);
-            });
-        };
-
-        $scope.uninstallRepository = function () {
-            var repoURI = $scope.selectedRepository['uri'];
-            notification('info', 'Removing feature repository ' + repoURI);
-            Karaf.uninstallRepository(workspace, jolokia, repoURI, function () {
-                notification('success', 'Removed feature repository ' + repoURI);
-                $scope.responseJson = null;
-                $scope.selectedRepositoryId = '';
-                $scope.selectedRepository = {};
-                $scope.triggerRefresh();
-            }, function (response) {
-                Karaf.log.error('Failed to remove feature repository ', repoURI, ' due to ', response.error);
-                Karaf.log.info('stack trace: ', response.stacktrace);
-                Core.$apply($scope);
-            });
-        };
-
-        $scope.triggerRefresh = function () {
-            jolokia.request({
-                type: 'read',
-                method: 'POST',
-                mbean: featuresMBean
-            }, onSuccess(render));
-        };
-
-        $scope.install = function (feature) {
-            if ($scope.hasFabric) {
-                return;
-            }
-
-            //$('.popover').remove();
-            notification('info', 'Installing feature ' + feature.Name);
-            Karaf.installFeature(workspace, jolokia, feature.Name, feature.Version, function () {
-                notification('success', 'Installed feature ' + feature.Name);
-                $scope.installedFeatures.add(feature);
-                $scope.responseJson = null;
-                $scope.triggerRefresh();
-                //Core.$apply($scope);
-            }, function (response) {
-                Karaf.log.error('Failed to install feature ', feature.Name, ' due to ', response.error);
-                Karaf.log.info('stack trace: ', response.stacktrace);
-                Core.$apply($scope);
-            });
-        };
-
-        $scope.uninstall = function (feature) {
-            if ($scope.hasFabric) {
-                return;
-            }
-
-            //$('.popover').remove();
-            notification('info', 'Uninstalling feature ' + feature.Name);
-            Karaf.uninstallFeature(workspace, jolokia, feature.Name, feature.Version, function () {
-                notification('success', 'Uninstalled feature ' + feature.Name);
-                $scope.installedFeatures.remove(feature);
-                $scope.responseJson = null;
-                $scope.triggerRefresh();
-                //Core.$apply($scope);
-            }, function (response) {
-                Karaf.log.error('Failed to uninstall feature ', feature.Name, ' due to ', response.error);
-                Karaf.log.info('stack trace: ', response.stacktrace);
-                Core.$apply($scope);
-            });
-        };
-
-        $scope.filteredRows = ['Bundles', 'Configurations', 'Configuration Files', 'Dependencies'];
-
-        $scope.showRow = function (key, value) {
-            if ($scope.filteredRows.any(key)) {
-                return false;
-            }
-
-            if (angular.isArray(value)) {
-                if (value.length === 0) {
-                    return false;
-                }
-            }
-
-            if (angular.isString(value)) {
-                if (Core.isBlank(value)) {
-                    return false;
-                }
-            }
-
-            if (angular.isObject(value)) {
-                if (!value || Object.equal(value, {})) {
-                    return false;
-                }
-            }
-
-            return true;
-        };
-
-        $scope.installed = function (installed) {
-            var answer = Core.parseBooleanValue(installed);
-            return answer;
-        };
-
-        $scope.showValue = function (value) {
-            if (angular.isArray(value)) {
-                var answer = ['<ul class="zebra-list">'];
-                value.forEach(function (v) {
-                    answer.push('<li>' + v + '</li>');
-                });
-                answer.push('</ul>');
-                return answer.join('\n');
-            }
-            if (angular.isObject(value)) {
-                var answer = ['<table class="table">', '<tbody>'];
-
-                angular.forEach(value, function (value, key) {
-                    answer.push('<tr>');
-                    answer.push('<td>' + key + '</td>');
-                    answer.push('<td>' + value + '</td>');
-                    answer.push('</tr>');
-                });
-
-                answer.push('</tbody>');
-                answer.push('</table>');
-
-                return answer.join('\n');
-            }
-            return "" + value;
-        };
-
-        $scope.getStateStyle = function (feature) {
-            if (Core.parseBooleanValue(feature.Installed)) {
-                return "badge badge-success";
-            }
-            return "badge";
-        };
-
-        $scope.filterFeature = function (feature) {
-            if (Core.isBlank($scope.filter)) {
-                return true;
-            }
-            if (feature.Id.has($scope.filter)) {
-                return true;
-            }
-            return false;
-        };
-
-        function render(response) {
-            var responseJson = angular.toJson(response.value);
-            if ($scope.responseJson !== responseJson) {
-                $scope.responseJson = responseJson;
-
-                //log.debug("Got response: ", response.value);
-                if (response['value']['Features'] === null) {
-                    $scope.featuresError = true;
-                } else {
-                    $scope.featuresError = false;
-                }
-
-                $scope.features = [];
-                $scope.repositories = [];
-
-                var features = [];
-                var repositories = [];
-
-                Karaf.populateFeaturesAndRepos(response.value, features, repositories);
-
-                var installedFeatures = features.filter(function (f) {
-                    return Core.parseBooleanValue(f.Installed);
-                });
-                var uninstalledFeatures = features.filter(function (f) {
-                    return !Core.parseBooleanValue(f.Installed);
-                });
-
-                //log.debug("repositories: ", repositories);
-                $scope.installedFeatures = installedFeatures.sortBy(function (f) {
-                    return f['Name'];
-                });
-                uninstalledFeatures = uninstalledFeatures.sortBy(function (f) {
-                    return f['Name'];
-                });
-
-                repositories.sortBy('id').forEach(function (repo) {
-                    $scope.repositories.push({
-                        repository: repo['id'],
-                        uri: repo['uri'],
-                        features: uninstalledFeatures.filter(function (f) {
-                            return f['RepositoryName'] === repo['id'];
-                        })
-                    });
-                });
-
-                if (!Core.isBlank($scope.newRepositoryURI)) {
-                    var selectedRepo = repositories.find(function (r) {
-                        return r['uri'] === $scope.newRepositoryURI;
-                    });
-                    if (selectedRepo) {
-                        $scope.selectedRepositoryId = selectedRepo['id'];
+                    if (!Core.isBlank($scope.newRepositoryURI)) {
+                        var selectedRepo = repositories.find(function (r) {
+                            return r['uri'] === $scope.newRepositoryURI;
+                        });
+                        if (selectedRepo) {
+                            $scope.selectedRepositoryId = selectedRepo['id'];
+                        }
+                        $scope.newRepositoryURI = '';
                     }
-                    $scope.newRepositoryURI = '';
-                }
 
-                if (Core.isBlank($scope.selectedRepositoryId)) {
-                    $scope.selectedRepository = $scope.repositories.first();
-                } else {
-                    $scope.selectedRepository = $scope.repositories.find(function (r) {
-                        return r.repository === $scope.selectedRepositoryId;
-                    });
-                }
+                    if (Core.isBlank($scope.selectedRepositoryId)) {
+                        $scope.selectedRepository = $scope.repositories.first();
+                    } else {
+                        $scope.selectedRepository = $scope.repositories.find(function (r) {
+                            return r.repository === $scope.selectedRepositoryId;
+                        });
+                    }
 
-                Core.$apply($scope);
+                    Core.$apply($scope);
+                }
             }
-        }
-    }
-    Karaf.FeaturesController = FeaturesController;
+        }]);
 })(Karaf || (Karaf = {}));
 /**
 * @module Dozer
@@ -51029,323 +51283,325 @@ var Threads;
     Threads.mbeanType = 'Threading';
     Threads.mbean = Threads.jmxDomain + ":type=" + Threads.mbeanType;
 
-    Threads.angularModule = angular.module(Threads.pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'ui']);
+    Threads._module = angular.module(Threads.pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'ui']);
 
-    Threads.angularModule.config(function ($routeProvider) {
-        $routeProvider.when('/threads', { templateUrl: Threads.templatePath + 'index.html' });
-    });
+    Threads._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/threads', { templateUrl: Threads.templatePath + 'index.html' });
+        }]);
 
-    Threads.angularModule.run(function ($location, workspace, viewRegistry, layoutFull, helpRegistry) {
-        viewRegistry['threads'] = layoutFull;
-        helpRegistry.addUserDoc('threads', 'app/threads/doc/help.md');
-
-        workspace.topLevelTabs.push({
-            id: "threads",
-            content: "Threads",
-            title: "JVM Threads",
-            isValid: function (workspace) {
-                return workspace.treeContainsDomainAndProperties(Threads.jmxDomain, { type: Threads.mbeanType });
-            },
-            href: function () {
-                return "#/threads";
-            },
-            isActive: function (workspace) {
-                return workspace.isTopTabActive("threads");
-            }
-        });
-    });
+    Threads._module.run([
+        "$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", function ($location, workspace, viewRegistry, layoutFull, helpRegistry) {
+            viewRegistry['threads'] = layoutFull;
+            helpRegistry.addUserDoc('threads', 'app/threads/doc/help.md');
+            workspace.topLevelTabs.push({
+                id: "threads",
+                content: "Threads",
+                title: "JVM Threads",
+                isValid: function (workspace) {
+                    return workspace.treeContainsDomainAndProperties(Threads.jmxDomain, { type: Threads.mbeanType });
+                },
+                href: function () {
+                    return "#/threads";
+                },
+                isActive: function (workspace) {
+                    return workspace.isTopTabActive("threads");
+                }
+            });
+        }]);
 
     hawtioPluginLoader.addModule(Threads.pluginName);
 })(Threads || (Threads = {}));
 /**
 * @module Threads
 */
+/// <reference path="./threadsPlugin.ts"/>
 var Threads;
 (function (Threads) {
-    function ThreadsController($scope, $routeParams, $templateCache, jolokia) {
-        $scope.selectedRowJson = '';
+    Threads._module.controller("Threads.ThreadsController", [
+        "$scope", "$routeParams", "$templateCache", "jolokia", function ($scope, $routeParams, $templateCache, jolokia) {
+            $scope.selectedRowJson = '';
 
-        $scope.lastThreadJson = '';
-        $scope.getThreadInfoResponseJson = '';
-        $scope.threads = [];
-        $scope.totals = {};
-        $scope.support = {};
+            $scope.lastThreadJson = '';
+            $scope.getThreadInfoResponseJson = '';
+            $scope.threads = [];
+            $scope.totals = {};
+            $scope.support = {};
 
-        $scope.row = {};
-        $scope.threadSelected = false;
-        $scope.selectedRowIndex = -1;
+            $scope.row = {};
+            $scope.threadSelected = false;
+            $scope.selectedRowIndex = -1;
 
-        $scope.stateFilter = 'NONE';
+            $scope.stateFilter = 'NONE';
 
-        $scope.showRaw = {
-            expanded: false
-        };
+            $scope.showRaw = {
+                expanded: false
+            };
 
-        $scope.addToDashboardLink = function () {
-            var href = "#/threads";
-            var size = angular.toJson({
-                size_x: 8,
-                size_y: 2
-            });
-            var title = "Threads";
-            return "#/dashboard/add?tab=dashboard&href=" + encodeURIComponent(href) + "&title=" + encodeURIComponent(title) + "&size=" + encodeURIComponent(size);
-        };
+            $scope.addToDashboardLink = function () {
+                var href = "#/threads";
+                var size = angular.toJson({
+                    size_x: 8,
+                    size_y: 2
+                });
+                var title = "Threads";
+                return "#/dashboard/add?tab=dashboard&href=" + encodeURIComponent(href) + "&title=" + encodeURIComponent(title) + "&size=" + encodeURIComponent(size);
+            };
 
-        $scope.isInDashboardClass = function () {
-            if (angular.isDefined($scope.inDashboard && $scope.inDashboard)) {
-                return "threads-dashboard";
-            }
-            return "threads logbar";
-        };
-
-        $scope.$watch('searchFilter', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                $scope.threadGridOptions.filterOptions.filterText = newValue;
-            }
-        });
-
-        $scope.$watch('stateFilter', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                if ($scope.stateFilter === 'NONE') {
-                    $scope.threads = $scope.unfilteredThreads;
-                } else {
-                    $scope.threads = $scope.filterThreads($scope.stateFilter, $scope.unfilteredThreads);
+            $scope.isInDashboardClass = function () {
+                if (angular.isDefined($scope.inDashboard && $scope.inDashboard)) {
+                    return "threads-dashboard";
                 }
-            }
-        });
+                return "threads logbar";
+            };
 
-        $scope.threadGridOptions = {
-            selectedItems: [],
-            data: 'threads',
-            showSelectionCheckbox: false,
-            enableRowClickSelection: true,
-            multiSelect: false,
-            primaryKeyFn: function (entity, idx) {
-                return entity.threadId;
-            },
-            filterOptions: {
-                filterText: ''
-            },
-            sortInfo: {
-                sortBy: 'threadId',
-                ascending: false
-            },
-            columnDefs: [
-                {
-                    field: 'threadId',
-                    displayName: 'ID'
-                },
-                {
-                    field: 'threadState',
-                    displayName: 'State',
-                    cellTemplate: $templateCache.get("threadStateTemplate")
-                },
-                {
-                    field: 'threadName',
-                    displayName: 'Name'
-                },
-                {
-                    field: 'waitedTime',
-                    displayName: 'Waited Time',
-                    cellTemplate: '<div class="ngCellText" ng-show="row.entity.waitedTime > 0">{{row.entity.waitedTime | humanizeMs}}</div>'
-                },
-                {
-                    field: 'blockedTime',
-                    displayName: 'Blocked Time',
-                    cellTemplate: '<div class="ngCellText" ng-show="row.entity.blockedTime > 0">{{row.entity.blockedTime | humanizeMs}}</div>'
-                },
-                {
-                    field: 'inNative',
-                    displayName: 'Native',
-                    cellTemplate: '<div class="ngCellText"><span ng-show="row.entity.inNative" class="orange">(in native)</span></div>'
-                },
-                {
-                    field: 'suspended',
-                    displayName: 'Suspended',
-                    cellTemplate: '<div class="ngCellText"><span ng-show="row.entity.suspended" class="red">(suspended)</span></div>'
+            $scope.$watch('searchFilter', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    $scope.threadGridOptions.filterOptions.filterText = newValue;
                 }
-            ]
-        };
+            });
 
-        $scope.$watch('threadGridOptions.selectedItems', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                if (newValue.length === 0) {
-                    $scope.row = {};
-                    $scope.threadSelected = false;
-                    $scope.selectedRowIndex = -1;
-                } else {
-                    $scope.row = newValue.first();
-                    $scope.threadSelected = true;
-                    $scope.selectedRowIndex = Core.pathGet($scope, ['hawtioSimpleTable', 'threads', 'rows']).findIndex(function (t) {
-                        return t.entity['threadId'] === $scope.row['threadId'];
-                    });
+            $scope.$watch('stateFilter', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    if ($scope.stateFilter === 'NONE') {
+                        $scope.threads = $scope.unfilteredThreads;
+                    } else {
+                        $scope.threads = $scope.filterThreads($scope.stateFilter, $scope.unfilteredThreads);
+                    }
                 }
-                $scope.selectedRowJson = angular.toJson($scope.row, true);
-            }
-        }, true);
-
-        $scope.filterOn = function (state) {
-            $scope.stateFilter = state;
-        };
-
-        $scope.filterThreads = function (state, threads) {
-            Threads.log.debug("Filtering threads by: ", state);
-            if (state === 'NONE') {
-                return threads;
-            }
-            return threads.filter(function (t) {
-                return t && t['threadState'] === state;
             });
-        };
 
-        $scope.selectedFilterClass = function (state) {
-            if (state === $scope.stateFilter) {
-                return "active";
-            } else {
-                return "";
-            }
-        };
-
-        $scope.deselect = function () {
-            $scope.threadGridOptions.selectedItems = [];
-        };
-
-        $scope.selectThreadById = function (id) {
-            $scope.threadGridOptions.selectedItems = $scope.threads.filter(function (t) {
-                return t.threadId === id;
-            });
-        };
-
-        $scope.selectThreadByIndex = function (idx) {
-            var selectedThread = Core.pathGet($scope, ['hawtioSimpleTable', 'threads', 'rows'])[idx];
-            $scope.threadGridOptions.selectedItems = $scope.threads.filter(function (t) {
-                return t && t['threadId'] == selectedThread.entity['threadId'];
-            });
-        };
-
-        $scope.init = function () {
-            jolokia.request([
-                {
-                    type: 'read',
-                    mbean: Threads.mbean,
-                    attribute: 'ThreadContentionMonitoringSupported'
-                }, {
-                    type: 'read',
-                    mbean: Threads.mbean,
-                    attribute: 'ObjectMonitorUsageSupported'
-                }, {
-                    type: 'read',
-                    mbean: Threads.mbean,
-                    attribute: 'SynchronizerUsageSupported'
-                }], {
-                method: 'post',
-                success: [
-                    function (response) {
-                        $scope.support.threadContentionMonitoringSupported = response.value;
-                        Threads.log.debug("ThreadContentionMonitoringSupported: ", $scope.support.threadContentionMonitoringSupported);
-                        $scope.maybeRegister();
+            $scope.threadGridOptions = {
+                selectedItems: [],
+                data: 'threads',
+                showSelectionCheckbox: false,
+                enableRowClickSelection: true,
+                multiSelect: false,
+                primaryKeyFn: function (entity, idx) {
+                    return entity.threadId;
+                },
+                filterOptions: {
+                    filterText: ''
+                },
+                sortInfo: {
+                    sortBy: 'threadId',
+                    ascending: false
+                },
+                columnDefs: [
+                    {
+                        field: 'threadId',
+                        displayName: 'ID'
                     },
-                    function (response) {
-                        $scope.support.objectMonitorUsageSupported = response.value;
-                        Threads.log.debug("ObjectMonitorUsageSupported: ", $scope.support.objectMonitorUsageSupported);
-                        $scope.maybeRegister();
+                    {
+                        field: 'threadState',
+                        displayName: 'State',
+                        cellTemplate: $templateCache.get("threadStateTemplate")
                     },
-                    function (response) {
-                        $scope.support.synchronizerUsageSupported = response.value;
-                        Threads.log.debug("SynchronizerUsageSupported: ", $scope.support.synchronizerUsageSupported);
-                        $scope.maybeRegister();
-                    }],
-                error: function (response) {
-                    Threads.log.error('Failed to query for supported usages: ', response.error);
+                    {
+                        field: 'threadName',
+                        displayName: 'Name'
+                    },
+                    {
+                        field: 'waitedTime',
+                        displayName: 'Waited Time',
+                        cellTemplate: '<div class="ngCellText" ng-show="row.entity.waitedTime > 0">{{row.entity.waitedTime | humanizeMs}}</div>'
+                    },
+                    {
+                        field: 'blockedTime',
+                        displayName: 'Blocked Time',
+                        cellTemplate: '<div class="ngCellText" ng-show="row.entity.blockedTime > 0">{{row.entity.blockedTime | humanizeMs}}</div>'
+                    },
+                    {
+                        field: 'inNative',
+                        displayName: 'Native',
+                        cellTemplate: '<div class="ngCellText"><span ng-show="row.entity.inNative" class="orange">(in native)</span></div>'
+                    },
+                    {
+                        field: 'suspended',
+                        displayName: 'Suspended',
+                        cellTemplate: '<div class="ngCellText"><span ng-show="row.entity.suspended" class="red">(suspended)</span></div>'
+                    }
+                ]
+            };
+
+            $scope.$watch('threadGridOptions.selectedItems', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    if (newValue.length === 0) {
+                        $scope.row = {};
+                        $scope.threadSelected = false;
+                        $scope.selectedRowIndex = -1;
+                    } else {
+                        $scope.row = newValue.first();
+                        $scope.threadSelected = true;
+                        $scope.selectedRowIndex = Core.pathGet($scope, ['hawtioSimpleTable', 'threads', 'rows']).findIndex(function (t) {
+                            return t.entity['threadId'] === $scope.row['threadId'];
+                        });
+                    }
+                    $scope.selectedRowJson = angular.toJson($scope.row, true);
                 }
-            });
-        };
+            }, true);
 
-        var initFunc = Core.throttled($scope.init, 500);
+            $scope.filterOn = function (state) {
+                $scope.stateFilter = state;
+            };
 
-        $scope.maybeRegister = function () {
-            if ('objectMonitorUsageSupported' in $scope.support && 'synchronizerUsageSupported' in $scope.support && 'threadContentionMonitoringSupported' in $scope.support) {
-                Threads.log.debug("Registering dumpAllThreads polling");
-                Core.register(jolokia, $scope, {
-                    type: 'exec',
-                    mbean: Threads.mbean,
-                    operation: 'dumpAllThreads',
-                    arguments: [$scope.support.objectMonitorUsageSupported, $scope.support.synchronizerUsageSupported]
-                }, onSuccess(render));
+            $scope.filterThreads = function (state, threads) {
+                Threads.log.debug("Filtering threads by: ", state);
+                if (state === 'NONE') {
+                    return threads;
+                }
+                return threads.filter(function (t) {
+                    return t && t['threadState'] === state;
+                });
+            };
 
-                if ($scope.support.threadContentionMonitoringSupported) {
-                    // check and see if it's actually turned on, if not
-                    // enable it
-                    jolokia.request({
+            $scope.selectedFilterClass = function (state) {
+                if (state === $scope.stateFilter) {
+                    return "active";
+                } else {
+                    return "";
+                }
+            };
+
+            $scope.deselect = function () {
+                $scope.threadGridOptions.selectedItems = [];
+            };
+
+            $scope.selectThreadById = function (id) {
+                $scope.threadGridOptions.selectedItems = $scope.threads.filter(function (t) {
+                    return t.threadId === id;
+                });
+            };
+
+            $scope.selectThreadByIndex = function (idx) {
+                var selectedThread = Core.pathGet($scope, ['hawtioSimpleTable', 'threads', 'rows'])[idx];
+                $scope.threadGridOptions.selectedItems = $scope.threads.filter(function (t) {
+                    return t && t['threadId'] == selectedThread.entity['threadId'];
+                });
+            };
+
+            $scope.init = function () {
+                jolokia.request([
+                    {
                         type: 'read',
                         mbean: Threads.mbean,
-                        attribute: 'ThreadContentionMonitoringEnabled'
-                    }, onSuccess($scope.maybeEnableThreadContentionMonitoring));
-                }
-            }
-        };
-
-        function disabledContentionMonitoring(response) {
-            Threads.log.info("Disabled contention monitoring: ", response);
-            Core.$apply($scope);
-        }
-
-        function enabledContentionMonitoring(response) {
-            $scope.$on('$routeChangeStart', function () {
-                jolokia.setAttribute(Threads.mbean, 'ThreadContentionMonitoringEnabled', false, onSuccess(disabledContentionMonitoring));
-            });
-            Threads.log.info("Enabled contention monitoring");
-            Core.$apply($scope);
-        }
-
-        $scope.maybeEnableThreadContentionMonitoring = function (response) {
-            if (response.value === false) {
-                Threads.log.info("Thread contention monitoring not enabled, enabling");
-                jolokia.setAttribute(Threads.mbean, 'ThreadContentionMonitoringEnabled', true, onSuccess(enabledContentionMonitoring));
-            } else {
-                Threads.log.info("Thread contention monitoring already enabled");
-            }
-            Core.$apply($scope);
-        };
-
-        $scope.getMonitorClass = function (name, value) {
-            return value.toString();
-        };
-
-        $scope.getMonitorName = function (name) {
-            name = name.replace('Supported', '');
-            return name.titleize();
-        };
-
-        function render(response) {
-            var responseJson = angular.toJson(response.value, true);
-            if ($scope.getThreadInfoResponseJson !== responseJson) {
-                $scope.getThreadInfoResponseJson = responseJson;
-
-                var threads = response.value.exclude(function (t) {
-                    return t === null;
-                });
-
-                $scope.unfilteredThreads = threads;
-                $scope.totals = {};
-                threads.forEach(function (t) {
-                    // calculate totals
-                    var state = t.threadState;
-                    if (!(state in $scope.totals)) {
-                        $scope.totals[state] = 1;
-                    } else {
-                        $scope.totals[state]++;
+                        attribute: 'ThreadContentionMonitoringSupported'
+                    }, {
+                        type: 'read',
+                        mbean: Threads.mbean,
+                        attribute: 'ObjectMonitorUsageSupported'
+                    }, {
+                        type: 'read',
+                        mbean: Threads.mbean,
+                        attribute: 'SynchronizerUsageSupported'
+                    }], {
+                    method: 'post',
+                    success: [
+                        function (response) {
+                            $scope.support.threadContentionMonitoringSupported = response.value;
+                            Threads.log.debug("ThreadContentionMonitoringSupported: ", $scope.support.threadContentionMonitoringSupported);
+                            $scope.maybeRegister();
+                        },
+                        function (response) {
+                            $scope.support.objectMonitorUsageSupported = response.value;
+                            Threads.log.debug("ObjectMonitorUsageSupported: ", $scope.support.objectMonitorUsageSupported);
+                            $scope.maybeRegister();
+                        },
+                        function (response) {
+                            $scope.support.synchronizerUsageSupported = response.value;
+                            Threads.log.debug("SynchronizerUsageSupported: ", $scope.support.synchronizerUsageSupported);
+                            $scope.maybeRegister();
+                        }],
+                    error: function (response) {
+                        Threads.log.error('Failed to query for supported usages: ', response.error);
                     }
                 });
+            };
 
-                threads = $scope.filterThreads($scope.stateFilter, threads);
+            var initFunc = Core.throttled($scope.init, 500);
 
-                $scope.threads = threads;
+            $scope.maybeRegister = function () {
+                if ('objectMonitorUsageSupported' in $scope.support && 'synchronizerUsageSupported' in $scope.support && 'threadContentionMonitoringSupported' in $scope.support) {
+                    Threads.log.debug("Registering dumpAllThreads polling");
+                    Core.register(jolokia, $scope, {
+                        type: 'exec',
+                        mbean: Threads.mbean,
+                        operation: 'dumpAllThreads',
+                        arguments: [$scope.support.objectMonitorUsageSupported, $scope.support.synchronizerUsageSupported]
+                    }, onSuccess(render));
+
+                    if ($scope.support.threadContentionMonitoringSupported) {
+                        // check and see if it's actually turned on, if not
+                        // enable it
+                        jolokia.request({
+                            type: 'read',
+                            mbean: Threads.mbean,
+                            attribute: 'ThreadContentionMonitoringEnabled'
+                        }, onSuccess($scope.maybeEnableThreadContentionMonitoring));
+                    }
+                }
+            };
+
+            function disabledContentionMonitoring(response) {
+                Threads.log.info("Disabled contention monitoring: ", response);
                 Core.$apply($scope);
             }
-        }
 
-        initFunc();
-    }
-    Threads.ThreadsController = ThreadsController;
+            function enabledContentionMonitoring(response) {
+                $scope.$on('$routeChangeStart', function () {
+                    jolokia.setAttribute(Threads.mbean, 'ThreadContentionMonitoringEnabled', false, onSuccess(disabledContentionMonitoring));
+                });
+                Threads.log.info("Enabled contention monitoring");
+                Core.$apply($scope);
+            }
+
+            $scope.maybeEnableThreadContentionMonitoring = function (response) {
+                if (response.value === false) {
+                    Threads.log.info("Thread contention monitoring not enabled, enabling");
+                    jolokia.setAttribute(Threads.mbean, 'ThreadContentionMonitoringEnabled', true, onSuccess(enabledContentionMonitoring));
+                } else {
+                    Threads.log.info("Thread contention monitoring already enabled");
+                }
+                Core.$apply($scope);
+            };
+
+            $scope.getMonitorClass = function (name, value) {
+                return value.toString();
+            };
+
+            $scope.getMonitorName = function (name) {
+                name = name.replace('Supported', '');
+                return name.titleize();
+            };
+
+            function render(response) {
+                var responseJson = angular.toJson(response.value, true);
+                if ($scope.getThreadInfoResponseJson !== responseJson) {
+                    $scope.getThreadInfoResponseJson = responseJson;
+
+                    var threads = response.value.exclude(function (t) {
+                        return t === null;
+                    });
+
+                    $scope.unfilteredThreads = threads;
+                    $scope.totals = {};
+                    threads.forEach(function (t) {
+                        // calculate totals
+                        var state = t.threadState;
+                        if (!(state in $scope.totals)) {
+                            $scope.totals[state] = 1;
+                        } else {
+                            $scope.totals[state]++;
+                        }
+                    });
+
+                    threads = $scope.filterThreads($scope.stateFilter, threads);
+
+                    $scope.threads = threads;
+                    Core.$apply($scope);
+                }
+            }
+
+            initFunc();
+        }]);
 })(Threads || (Threads = {}));

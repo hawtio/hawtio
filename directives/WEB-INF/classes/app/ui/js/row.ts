@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('hawtioRow', () => {
+    return new UI.DivRow();
+  });
 
   // expand the element to accomodate a group of elements to prevent them from wrapping
   export class DivRow {

@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('expandable', () => {
+    return new UI.Expandable();
+  });
 
   export class Expandable {
 

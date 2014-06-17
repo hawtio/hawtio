@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('hawtioJsplumb', () => {
+    return new UI.JSPlumb();
+  });
 
   export class JSPlumb {
     public restrict = 'A';

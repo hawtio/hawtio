@@ -4,8 +4,7 @@
 
 @font-face {
     font-family: 'DroidSansMonoRegular';
-    src: url('DroidSansMono-webfont.eot');
-    src: url('DroidSansMono-webfont.eot?#iefix') format('embedded-opentype'),
+    src: url('DroidSansMono-webfont.eot') format('embedded-opentype'),
          url('DroidSansMono-webfont.woff') format('woff'),
          url('DroidSansMono-webfont.ttf') format('truetype'),
          url('DroidSansMono-webfont.svg#DroidSansMonoRegular') format('svg');

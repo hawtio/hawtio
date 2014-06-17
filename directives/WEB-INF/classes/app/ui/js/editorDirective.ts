@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('hawtioEditor', ["$parse", ($parse) => {
+    return UI.Editor($parse);
+  }]);
 
   export function Editor($parse) {
 
@@ -19,7 +24,7 @@ module UI {
         name: '@'
       },
 
-      controller: ($scope, $element, $attrs) => {
+      controller: ["$scope", "$element", "$attrs", ($scope, $element, $attrs) => {
         
         $scope.codeMirror = null;
         $scope.doc = null;
@@ -60,7 +65,7 @@ module UI {
           }
         });
 
-      },
+      }],
 
       link: ($scope, $element, $attrs) => {
 

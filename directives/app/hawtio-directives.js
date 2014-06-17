@@ -1717,6 +1717,134 @@ var DataTable;
 */
 var UI;
 (function (UI) {
+    UI.log = Logger.get("UI");
+
+    UI.scrollBarWidth = null;
+
+    function findParentWith($scope, attribute) {
+        if (attribute in $scope) {
+            return $scope;
+        }
+        if (!$scope.$parent) {
+            return null;
+        }
+
+        // let's go up the scope tree
+        return findParentWith($scope.$parent, attribute);
+    }
+    UI.findParentWith = findParentWith;
+
+    function getIfSet(attribute, $attr, def) {
+        if (attribute in $attr) {
+            var wantedAnswer = $attr[attribute];
+            if (wantedAnswer && !wantedAnswer.isBlank()) {
+                return wantedAnswer;
+            }
+        }
+        return def;
+    }
+    UI.getIfSet = getIfSet;
+
+    /*
+    * Helper function to ensure a directive attribute has some default value
+    */
+    function observe($scope, $attrs, key, defValue, callbackFunc) {
+        if (typeof callbackFunc === "undefined") { callbackFunc = null; }
+        $attrs.$observe(key, function (value) {
+            if (!angular.isDefined(value)) {
+                $scope[key] = defValue;
+            } else {
+                $scope[key] = value;
+            }
+            if (angular.isDefined(callbackFunc) && callbackFunc) {
+                callbackFunc($scope[key]);
+            }
+        });
+    }
+    UI.observe = observe;
+
+    function getScrollbarWidth() {
+        if (!angular.isDefined(UI.scrollBarWidth)) {
+            var div = document.createElement('div');
+            div.innerHTML = '<div style="width:50px;height:50px;position:absolute;left:-50px;top:-50px;overflow:auto;"><div style="width:1px;height:100px;"></div></div>';
+            div = div.firstChild;
+            document.body.appendChild(div);
+            UI.scrollBarWidth = div.offsetWidth - div.clientWidth;
+            document.body.removeChild(div);
+        }
+        return UI.scrollBarWidth;
+    }
+    UI.getScrollbarWidth = getScrollbarWidth;
+})(UI || (UI = {}));
+/**
+* Module that contains a bunch of re-usable directives to assemble into pages in hawtio
+*
+* @module UI
+* @main UI
+*/
+/// <reference path="./uiHelpers.ts"/>
+var UI;
+(function (UI) {
+    UI.pluginName = 'hawtio-ui';
+
+    UI.templatePath = 'app/ui/html/';
+
+    UI._module = angular.module(UI.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap']);
+
+    UI._module.config([
+        "$routeProvider", function ($routeProvider) {
+            $routeProvider.when('/ui/developerPage', { templateUrl: UI.templatePath + 'developerPage.html', reloadOnSearch: false });
+        }]);
+
+    UI._module.factory('UI', function () {
+        return UI;
+    });
+
+    UI._module.factory('marked', function () {
+        marked.setOptions({
+            gfm: true,
+            tables: true,
+            breaks: false,
+            pedantic: true,
+            sanitize: false,
+            smartLists: true,
+            langPrefix: 'language-'
+        });
+        return marked;
+    });
+
+    UI._module.directive('compile', [
+        '$compile', function ($compile) {
+            return function (scope, element, attrs) {
+                scope.$watch(function (scope) {
+                    // watch the 'compile' expression for changes
+                    return scope.$eval(attrs.compile);
+                }, function (value) {
+                    // when the 'compile' expression changes
+                    // assign it into the current DOM
+                    element.html(value);
+
+                    // compile the new DOM and link it to the current
+                    // scope.
+                    // NOTE: we only compile .childNodes so that
+                    // we don't get into infinite loop compiling ourselves
+                    $compile(element.contents())(scope);
+                });
+            };
+        }]);
+
+    hawtioPluginLoader.addModule(UI.pluginName);
+})(UI || (UI = {}));
+/**
+* @module UI
+*/
+/// <reference path="./uiPlugin.ts"/>
+var UI;
+(function (UI) {
+    UI._module.directive('hawtioJsplumb', function () {
+        return new UI.JSPlumb();
+    });
+
     var JSPlumb = (function () {
         function JSPlumb() {
             this.restrict = 'A';
@@ -1935,8 +2063,13 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioPager', function () {
+        return new UI.TablePager();
+    });
+
     var TablePager = (function () {
         function TablePager() {
             var _this = this;
@@ -2019,6 +2152,7 @@ var UI;
     })();
     UI.TablePager = TablePager;
 })(UI || (UI = {}));
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
     function groupBy() {
@@ -2047,12 +2181,19 @@ var UI;
         };
     }
     UI.groupBy = groupBy;
+
+    UI._module.filter('hawtioGroupBy', UI.groupBy);
 })(UI || (UI = {}));
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioAutoDropdown', function () {
+        return UI.AutoDropDown;
+    });
+
     /**
     * TODO turn this into a normal directive function
     *
@@ -2138,8 +2279,14 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioEditor', [
+        "$parse", function ($parse) {
+            return UI.Editor($parse);
+        }]);
+
     function Editor($parse) {
         return {
             restrict: 'A',
@@ -2151,46 +2298,47 @@ var UI;
                 outputEditor: '@',
                 name: '@'
             },
-            controller: function ($scope, $element, $attrs) {
-                $scope.codeMirror = null;
-                $scope.doc = null;
-                $scope.options = [];
+            controller: [
+                "$scope", "$element", "$attrs", function ($scope, $element, $attrs) {
+                    $scope.codeMirror = null;
+                    $scope.doc = null;
+                    $scope.options = [];
 
-                UI.observe($scope, $attrs, 'name', 'editor');
+                    UI.observe($scope, $attrs, 'name', 'editor');
 
-                $scope.applyOptions = function () {
-                    if ($scope.codeMirror) {
-                        $scope.options.each(function (option) {
-                            $scope.codeMirror.setOption(option.key, option['value']);
-                        });
-                        $scope.options = [];
-                    }
-                };
-
-                $scope.$watch('doc', function () {
-                    if ($scope.doc) {
-                        $scope.codeMirror.on('change', function (changeObj) {
-                            $scope.text = $scope.doc.getValue();
-                            $scope.dirty = !$scope.doc.isClean();
-                            Core.$apply($scope);
-                        });
-                    }
-                });
-
-                $scope.$watch('codeMirror', function () {
-                    if ($scope.codeMirror) {
-                        $scope.doc = $scope.codeMirror.getDoc();
-                    }
-                });
-
-                $scope.$watch('text', function (oldValue, newValue) {
-                    if ($scope.codeMirror && $scope.doc) {
-                        if (!$scope.codeMirror.hasFocus()) {
-                            $scope.doc.setValue($scope.text || "");
+                    $scope.applyOptions = function () {
+                        if ($scope.codeMirror) {
+                            $scope.options.each(function (option) {
+                                $scope.codeMirror.setOption(option.key, option['value']);
+                            });
+                            $scope.options = [];
                         }
-                    }
-                });
-            },
+                    };
+
+                    $scope.$watch('doc', function () {
+                        if ($scope.doc) {
+                            $scope.codeMirror.on('change', function (changeObj) {
+                                $scope.text = $scope.doc.getValue();
+                                $scope.dirty = !$scope.doc.isClean();
+                                Core.$apply($scope);
+                            });
+                        }
+                    });
+
+                    $scope.$watch('codeMirror', function () {
+                        if ($scope.codeMirror) {
+                            $scope.doc = $scope.codeMirror.getDoc();
+                        }
+                    });
+
+                    $scope.$watch('text', function (oldValue, newValue) {
+                        if ($scope.codeMirror && $scope.doc) {
+                            if (!$scope.codeMirror.hasFocus()) {
+                                $scope.doc.setValue($scope.text || "");
+                            }
+                        }
+                    });
+                }],
             link: function ($scope, $element, $attrs) {
                 if ('dirty' in $attrs) {
                     $scope.dirtyTarget = $attrs['dirty'];
@@ -2285,8 +2433,13 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioViewport', function () {
+        return new UI.ViewportHeight();
+    });
+
     var ViewportHeight = (function () {
         function ViewportHeight() {
             this.restrict = 'A';
@@ -2330,6 +2483,10 @@ var UI;
     })();
     UI.ViewportHeight = ViewportHeight;
 
+    UI._module.directive('hawtioHorizontalViewport', function () {
+        return new UI.HorizontalViewport();
+    });
+
     var HorizontalViewport = (function () {
         function HorizontalViewport() {
             this.restrict = 'A';
@@ -2352,8 +2509,13 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioRow', function () {
+        return new UI.DivRow();
+    });
+
     // expand the element to accomodate a group of elements to prevent them from wrapping
     var DivRow = (function () {
         function DivRow() {
@@ -2382,6 +2544,7 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
     function hawtioBreadcrumbs() {
@@ -2521,63 +2684,19 @@ var UI;
         };
     }
     UI.hawtioBreadcrumbs = hawtioBreadcrumbs;
+
+    UI._module.directive('hawtioBreadcrumbs', UI.hawtioBreadcrumbs);
 })(UI || (UI = {}));
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
-    UI.log = Logger.get("UI");
+    UI._module.directive('hawtioMessagePanel', function () {
+        return new UI.MessagePanel();
+    });
 
-    UI.scrollBarWidth = null;
-
-    function getIfSet(attribute, $attr, def) {
-        if (attribute in $attr) {
-            var wantedAnswer = $attr[attribute];
-            if (wantedAnswer && !wantedAnswer.isBlank()) {
-                return wantedAnswer;
-            }
-        }
-        return def;
-    }
-    UI.getIfSet = getIfSet;
-
-    /*
-    * Helper function to ensure a directive attribute has some default value
-    */
-    function observe($scope, $attrs, key, defValue, callbackFunc) {
-        if (typeof callbackFunc === "undefined") { callbackFunc = null; }
-        $attrs.$observe(key, function (value) {
-            if (!angular.isDefined(value)) {
-                $scope[key] = defValue;
-            } else {
-                $scope[key] = value;
-            }
-            if (angular.isDefined(callbackFunc) && callbackFunc) {
-                callbackFunc($scope[key]);
-            }
-        });
-    }
-    UI.observe = observe;
-
-    function getScrollbarWidth() {
-        if (!angular.isDefined(UI.scrollBarWidth)) {
-            var div = document.createElement('div');
-            div.innerHTML = '<div style="width:50px;height:50px;position:absolute;left:-50px;top:-50px;overflow:auto;"><div style="width:1px;height:100px;"></div></div>';
-            div = div.firstChild;
-            document.body.appendChild(div);
-            UI.scrollBarWidth = div.offsetWidth - div.clientWidth;
-            document.body.removeChild(div);
-        }
-        return UI.scrollBarWidth;
-    }
-    UI.getScrollbarWidth = getScrollbarWidth;
-})(UI || (UI = {}));
-/**
-* @module UI
-*/
-var UI;
-(function (UI) {
     var MessagePanel = (function () {
         function MessagePanel() {
             this.restrict = 'A';
@@ -2624,6 +2743,10 @@ var UI;
         return MessagePanel;
     })();
     UI.MessagePanel = MessagePanel;
+
+    UI._module.directive('hawtioInfoPanel', function () {
+        return new UI.InfoPanel();
+    });
 
     var InfoPanel = (function () {
         function InfoPanel() {
@@ -2710,8 +2833,13 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioAutoColumns', function () {
+        return new UI.AutoColumns();
+    });
+
     /**
     * Directive class that organizes child elements into columns automatically
     *
@@ -3058,6 +3186,7 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
     function HawtioTocDisplay(marked, $location, $anchorScroll, $compile) {
@@ -3068,63 +3197,64 @@ var UI;
             scope: {
                 getContents: '&'
             },
-            controller: function ($scope, $element, $attrs) {
-                $scope.remaining = -1;
-                $scope.render = false;
-                $scope.chapters = [];
+            controller: [
+                "$scope", "$element", "$attrs", function ($scope, $element, $attrs) {
+                    $scope.remaining = -1;
+                    $scope.render = false;
+                    $scope.chapters = [];
 
-                $scope.addChapter = function (item) {
-                    console.log("Adding: ", item);
-                    $scope.chapters.push(item);
-                    if (!angular.isDefined(item['text'])) {
-                        $scope.fetchItemContent(item);
-                    }
-                };
-
-                $scope.getTarget = function (id) {
-                    if (!id) {
-                        return '';
-                    }
-                    return id.replace(".", "_");
-                };
-
-                $scope.getFilename = function (href, ext) {
-                    var filename = href.split('/').last();
-                    if (ext && !filename.endsWith(ext)) {
-                        filename = filename + '.' + ext;
-                    }
-                    return filename;
-                };
-
-                $scope.$watch('remaining', function (newValue, oldValue) {
-                    if (newValue !== oldValue) {
-                        var renderIfPageLoadFails = false;
-                        if (newValue === 0 || renderIfPageLoadFails) {
-                            $scope.render = true;
+                    $scope.addChapter = function (item) {
+                        console.log("Adding: ", item);
+                        $scope.chapters.push(item);
+                        if (!angular.isDefined(item['text'])) {
+                            $scope.fetchItemContent(item);
                         }
-                    }
-                });
+                    };
 
-                $scope.fetchItemContent = function (item) {
-                    var me = $scope;
-                    $scope.$eval(function (parent) {
-                        parent.getContents({
-                            filename: item['filename'],
-                            cb: function (data) {
-                                if (data) {
-                                    if (item['filename'].endsWith(".md")) {
-                                        item['text'] = marked(data);
-                                    } else {
-                                        item['text'] = data;
-                                    }
-                                    $scope.remaining--;
-                                    Core.$apply(me);
-                                }
+                    $scope.getTarget = function (id) {
+                        if (!id) {
+                            return '';
+                        }
+                        return id.replace(".", "_");
+                    };
+
+                    $scope.getFilename = function (href, ext) {
+                        var filename = href.split('/').last();
+                        if (ext && !filename.endsWith(ext)) {
+                            filename = filename + '.' + ext;
+                        }
+                        return filename;
+                    };
+
+                    $scope.$watch('remaining', function (newValue, oldValue) {
+                        if (newValue !== oldValue) {
+                            var renderIfPageLoadFails = false;
+                            if (newValue === 0 || renderIfPageLoadFails) {
+                                $scope.render = true;
                             }
-                        });
+                        }
                     });
-                };
-            },
+
+                    $scope.fetchItemContent = function (item) {
+                        var me = $scope;
+                        $scope.$eval(function (parent) {
+                            parent.getContents({
+                                filename: item['filename'],
+                                cb: function (data) {
+                                    if (data) {
+                                        if (item['filename'].endsWith(".md")) {
+                                            item['text'] = marked(data);
+                                        } else {
+                                            item['text'] = data;
+                                        }
+                                        $scope.remaining--;
+                                        Core.$apply(me);
+                                    }
+                                }
+                            });
+                        });
+                    };
+                }],
             link: function ($scope, $element, $attrs) {
                 var offsetTop = 0;
                 var logbar = $('.logbar');
@@ -3323,10 +3453,13 @@ var UI;
         };
     }
     UI.HawtioTocDisplay = HawtioTocDisplay;
+
+    UI._module.directive('hawtioTocDisplay', ["marked", "$location", "$anchorScroll", "$compile", UI.HawtioTocDisplay]);
 })(UI || (UI = {}));
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
     function hawtioPane() {
@@ -3438,12 +3571,20 @@ var UI;
         };
     }
     UI.hawtioPane = hawtioPane;
+
+    UI._module.directive('hawtioPane', UI.hawtioPane);
 })(UI || (UI = {}));
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('zeroClipboard', [
+        "$parse", function ($parse) {
+            return UI.ZeroClipboardDirective($parse);
+        }]);
+
     function ZeroClipboardDirective($parse) {
         return {
             restrict: 'A',
@@ -3473,8 +3614,13 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('expandable', function () {
+        return new UI.Expandable();
+    });
+
     var Expandable = (function () {
         function Expandable() {
             var _this = this;
@@ -3601,8 +3747,14 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('editableProperty', [
+        "$parse", function ($parse) {
+            return new UI.EditableProperty($parse);
+        }]);
+
     var EditableProperty = (function () {
         function EditableProperty($parse) {
             this.$parse = $parse;
@@ -3686,6 +3838,7 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
     function TemplatePopover($templateCache, $compile, $document) {
@@ -3765,12 +3918,19 @@ var UI;
         };
     }
     UI.TemplatePopover = TemplatePopover;
+
+    UI._module.directive('hawtioTemplatePopover', ["$templateCache", "$compile", "$document", UI.TemplatePopover]);
 })(UI || (UI = {}));
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioConfirmDialog', function () {
+        return new UI.ConfirmDialog();
+    });
+
     
 
     /**
@@ -3868,6 +4028,7 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
     /**
@@ -3876,16 +4037,16 @@ var UI;
     * @param $templateCache
     * @constructor
     */
-    function IconTestController($scope, $templateCache) {
-        $scope.exampleHtml = $templateCache.get('example-html');
-        $scope.exampleConfigJson = $templateCache.get('example-config-json');
+    UI._module.controller("UI.IconTestController", [
+        "$scope", "$templateCache", function ($scope, $templateCache) {
+            $scope.exampleHtml = $templateCache.get('example-html');
+            $scope.exampleConfigJson = $templateCache.get('example-config-json');
 
-        $scope.$watch('exampleConfigJson', function (newValue, oldValue) {
-            $scope.icons = angular.fromJson($scope.exampleConfigJson);
-            //log.debug("Icons: ", $scope.icons);
-        });
-    }
-    UI.IconTestController = IconTestController;
+            $scope.$watch('exampleConfigJson', function (newValue, oldValue) {
+                $scope.icons = angular.fromJson($scope.exampleConfigJson);
+                //log.debug("Icons: ", $scope.icons);
+            });
+        }]);
 
     /**
     * The hawtio-icon directive
@@ -3916,6 +4077,7 @@ var UI;
         };
     }
     UI.hawtioIcon = hawtioIcon;
+    UI._module.directive('hawtioIcon', UI.hawtioIcon);
 })(UI || (UI = {}));
 /**
 * Module that contains several helper functions related to hawtio's code editor
@@ -4096,21 +4258,9 @@ var CodeEditor;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
-    function findParentWith($scope, attribute) {
-        if (attribute in $scope) {
-            return $scope;
-        }
-        if (!$scope.$parent) {
-            return null;
-        }
-
-        // let's go up the scope tree
-        return findParentWith($scope.$parent, attribute);
-    }
-    UI.findParentWith = findParentWith;
-
     function hawtioList($templateCache, $compile) {
         return {
             restrict: '',
@@ -4191,7 +4341,7 @@ var UI;
                 };
 
                 // find the parent scope that has our configuration
-                var parentScope = findParentWith($scope, configName);
+                var parentScope = UI.findParentWith($scope, configName);
                 if (parentScope) {
                     $scope.parentScope = parentScope;
                     parentScope.$watch(dataName, $scope.setRows, true);
@@ -4200,12 +4350,19 @@ var UI;
         };
     }
     UI.hawtioList = hawtioList;
+
+    UI._module.directive('hawtioList', ["$templateCache", "$compile", UI.hawtioList]);
 })(UI || (UI = {}));
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioSlideout', function () {
+        return new UI.SlideOut();
+    });
+
     var SlideOut = (function () {
         function SlideOut() {
             this.restrict = 'A';
@@ -4219,29 +4376,30 @@ var UI;
                 height: '@',
                 title: '@'
             };
-            this.controller = function ($scope, $element, $attrs, $transclude, $compile) {
-                $scope.clone = null;
+            this.controller = [
+                "$scope", "$element", "$attrs", "$transclude", "$compile", function ($scope, $element, $attrs, $transclude, $compile) {
+                    $scope.clone = null;
 
-                $transclude(function (clone) {
-                    $scope.clone = $(clone).filter('.dialog-body');
-                });
+                    $transclude(function (clone) {
+                        $scope.clone = $(clone).filter('.dialog-body');
+                    });
 
-                UI.observe($scope, $attrs, 'direction', 'right');
-                UI.observe($scope, $attrs, 'top', '10%', function (value) {
-                    $element.css('top', value);
-                });
-                UI.observe($scope, $attrs, 'height', '80%', function (value) {
-                    $element.css('height', value);
-                });
-                UI.observe($scope, $attrs, 'title', '');
+                    UI.observe($scope, $attrs, 'direction', 'right');
+                    UI.observe($scope, $attrs, 'top', '10%', function (value) {
+                        $element.css('top', value);
+                    });
+                    UI.observe($scope, $attrs, 'height', '80%', function (value) {
+                        $element.css('height', value);
+                    });
+                    UI.observe($scope, $attrs, 'title', '');
 
-                $scope.$watch('show', function () {
-                    if ($scope.show) {
-                        $scope.body = $element.find('.slideout-body');
-                        $scope.body.html($compile($scope.clone.html())($scope.$parent));
-                    }
-                });
-            };
+                    $scope.$watch('show', function () {
+                        if ($scope.show) {
+                            $scope.body = $element.find('.slideout-body');
+                            $scope.body.html($compile($scope.clone.html())($scope.$parent));
+                        }
+                    });
+                }];
             this.link = function ($scope, $element, $attrs) {
                 $scope.element = $($element);
 
@@ -4268,8 +4426,13 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('hawtioColorPicker', function () {
+        return new UI.ColorPicker();
+    });
+
     UI.selected = "selected";
     UI.unselected = "unselected";
 
@@ -4350,6 +4513,7 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
     function hawtioDropDown($templateCache) {
@@ -4360,64 +4524,65 @@ var UI;
             scope: {
                 config: '=hawtioDropDown'
             },
-            controller: function ($scope, $element, $attrs) {
-                if (!$scope.config) {
-                    $scope.config = {};
-                }
+            controller: [
+                "$scope", "$element", "$attrs", function ($scope, $element, $attrs) {
+                    if (!$scope.config) {
+                        $scope.config = {};
+                    }
 
-                if (!('open' in $scope.config)) {
-                    $scope.config['open'] = false;
-                }
+                    if (!('open' in $scope.config)) {
+                        $scope.config['open'] = false;
+                    }
 
-                $scope.action = function (config, $event) {
-                    //log.debug("doAction on : ", config, "event: ", $event);
-                    if ('items' in config && !('action' in config)) {
-                        config.open = !config.open;
-                        $event.preventDefault();
-                        $event.stopPropagation();
-                    } else if ('action' in config) {
-                        //log.debug("executing action: ", config.action);
-                        var action = config['action'];
-                        if (angular.isFunction(action)) {
-                            action.apply();
-                        } else if (angular.isString(action)) {
-                            $scope.$parent.$eval(action, {
-                                config: config,
-                                '$event': $event
-                            });
+                    $scope.action = function (config, $event) {
+                        //log.debug("doAction on : ", config, "event: ", $event);
+                        if ('items' in config && !('action' in config)) {
+                            config.open = !config.open;
+                            $event.preventDefault();
+                            $event.stopPropagation();
+                        } else if ('action' in config) {
+                            //log.debug("executing action: ", config.action);
+                            var action = config['action'];
+                            if (angular.isFunction(action)) {
+                                action.apply();
+                            } else if (angular.isString(action)) {
+                                $scope.$parent.$eval(action, {
+                                    config: config,
+                                    '$event': $event
+                                });
+                            }
                         }
-                    }
-                };
+                    };
 
-                $scope.$watch('config.items', function (newValue, oldValue) {
-                    if (newValue !== oldValue) {
-                        // just add some space to force a redraw
-                        $scope.menuStyle = $scope.menuStyle + " ";
-                    }
-                }, true);
+                    $scope.$watch('config.items', function (newValue, oldValue) {
+                        if (newValue !== oldValue) {
+                            // just add some space to force a redraw
+                            $scope.menuStyle = $scope.menuStyle + " ";
+                        }
+                    }, true);
 
-                $scope.submenu = function (config) {
-                    if (config && config.submenu) {
-                        return "sub-menu";
-                    }
-                    return "";
-                };
+                    $scope.submenu = function (config) {
+                        if (config && config.submenu) {
+                            return "sub-menu";
+                        }
+                        return "";
+                    };
 
-                $scope.icon = function (config) {
-                    if (config && !Core.isBlank(config.icon)) {
-                        return config.icon;
-                    } else {
-                        return 'icon-spacer';
-                    }
-                };
+                    $scope.icon = function (config) {
+                        if (config && !Core.isBlank(config.icon)) {
+                            return config.icon;
+                        } else {
+                            return 'icon-spacer';
+                        }
+                    };
 
-                $scope.open = function (config) {
-                    if (config && !config.open) {
-                        return '';
-                    }
-                    return 'open';
-                };
-            },
+                    $scope.open = function (config) {
+                        if (config && !config.open) {
+                            return '';
+                        }
+                        return 'open';
+                    };
+                }],
             link: function ($scope, $element, $attrs) {
                 $scope.menuStyle = $templateCache.get("withsubmenus.html");
 
@@ -4430,105 +4595,8 @@ var UI;
         };
     }
     UI.hawtioDropDown = hawtioDropDown;
-})(UI || (UI = {}));
-/**
-* Module that contains a bunch of re-usable directives to assemble into pages in hawtio
-*
-* @module UI
-* @main UI
-*/
-var UI;
-(function (UI) {
-    UI.pluginName = 'hawtio-ui';
 
-    UI.templatePath = 'app/ui/html/';
-
-    angular.module(UI.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap']).config(function ($routeProvider) {
-        $routeProvider.when('/ui/developerPage', { templateUrl: UI.templatePath + 'developerPage.html', reloadOnSearch: false });
-    }).factory('UI', function () {
-        return UI;
-    }).factory('marked', function () {
-        marked.setOptions({
-            gfm: true,
-            tables: true,
-            breaks: false,
-            pedantic: true,
-            sanitize: false,
-            smartLists: true,
-            langPrefix: 'language-'
-        });
-        return marked;
-    }).directive('hawtioConfirmDialog', function () {
-        return new UI.ConfirmDialog();
-    }).directive('hawtioSlideout', function () {
-        return new UI.SlideOut();
-    }).directive('hawtioPager', function () {
-        return new UI.TablePager();
-    }).directive('hawtioEditor', function ($parse) {
-        return UI.Editor($parse);
-    }).directive('hawtioColorPicker', function () {
-        return new UI.ColorPicker();
-    }).directive('expandable', function () {
-        return new UI.Expandable();
-    }).directive('gridster', function () {
-        return new UI.GridsterDirective();
-    }).directive('editableProperty', function ($parse) {
-        return new UI.EditableProperty($parse);
-    }).directive('hawtioViewport', function () {
-        return new UI.ViewportHeight();
-    }).directive('hawtioHorizontalViewport', function () {
-        return new UI.HorizontalViewport();
-    }).directive('hawtioRow', function () {
-        return new UI.DivRow();
-    }).directive('hawtioJsplumb', function () {
-        return new UI.JSPlumb();
-    }).directive('zeroClipboard', function ($parse) {
-        return UI.ZeroClipboardDirective($parse);
-    }).directive('hawtioAutoDropdown', function () {
-        return UI.AutoDropDown;
-    }).directive('hawtioMessagePanel', function () {
-        return new UI.MessagePanel();
-    }).directive('hawtioInfoPanel', function () {
-        return new UI.InfoPanel();
-    }).directive('hawtioAutoColumns', function () {
-        return new UI.AutoColumns();
-    }).directive('hawtioTemplatePopover', function ($templateCache, $compile, $document) {
-        return UI.TemplatePopover($templateCache, $compile, $document);
-    }).directive('hawtioTocDisplay', function (marked, $location, $anchorScroll, $compile) {
-        return UI.HawtioTocDisplay(marked, $location, $anchorScroll, $compile);
-    }).directive('hawtioDropDown', function ($templateCache) {
-        return UI.hawtioDropDown($templateCache);
-    }).directive('hawtioBreadcrumbs', function () {
-        return UI.hawtioBreadcrumbs();
-    }).directive('hawtioIcon', function () {
-        return UI.hawtioIcon();
-    }).directive('hawtioPane', function () {
-        return UI.hawtioPane();
-    }).directive('hawtioList', function ($templateCache, $compile) {
-        return UI.hawtioList($templateCache, $compile);
-    }).filter('hawtioGroupBy', function () {
-        return UI.groupBy();
-    }).directive('compile', [
-        '$compile', function ($compile) {
-            return function (scope, element, attrs) {
-                scope.$watch(function (scope) {
-                    // watch the 'compile' expression for changes
-                    return scope.$eval(attrs.compile);
-                }, function (value) {
-                    // when the 'compile' expression changes
-                    // assign it into the current DOM
-                    element.html(value);
-
-                    // compile the new DOM and link it to the current
-                    // scope.
-                    // NOTE: we only compile .childNodes so that
-                    // we don't get into infinite loop compiling ourselves
-                    $compile(element.contents())(scope);
-                });
-            };
-        }]);
-
-    hawtioPluginLoader.addModule(UI.pluginName);
+    UI._module.directive('hawtioDropDown', ["$templateCache", UI.hawtioDropDown]);
 })(UI || (UI = {}));
 /**
 * @module UI
@@ -4550,8 +4618,13 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI._module.directive('gridster', function () {
+        return new UI.GridsterDirective();
+    });
+
     var GridsterDirective = (function () {
         function GridsterDirective() {
             this.restrict = 'A';
