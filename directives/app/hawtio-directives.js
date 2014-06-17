@@ -2954,234 +2954,235 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
-    function UITestController2($scope, $templateCache) {
-        $scope.fileUploadExMode = 'text/html';
+    UI._module.controller("UI.UITestController2", [
+        "$scope", "$templateCache", function ($scope, $templateCache) {
+            $scope.fileUploadExMode = 'text/html';
 
-        $scope.menuItems = [];
-        $scope.divs = [];
+            $scope.menuItems = [];
+            $scope.divs = [];
 
-        for (var i = 0; i < 20; i++) {
-            $scope.menuItems.push("Some Item " + i);
-        }
-
-        for (var i = 0; i < 20; i++) {
-            $scope.divs.push(i + 1);
-        }
-
-        $scope.things = [
-            {
-                'name': 'stuff1',
-                'foo1': 'bar1',
-                'foo2': 'bar2'
-            },
-            {
-                'name': 'stuff2',
-                'foo3': 'bar3',
-                'foo4': 'bar4'
+            for (var i = 0; i < 20; i++) {
+                $scope.menuItems.push("Some Item " + i);
             }
-        ];
 
-        $scope.someVal = 1;
+            for (var i = 0; i < 20; i++) {
+                $scope.divs.push(i + 1);
+            }
 
-        $scope.dropDownConfig = {
-            icon: 'icon-cogs',
-            title: 'My Awesome Menu',
-            items: [
+            $scope.things = [
                 {
-                    title: 'Some Item',
-                    action: 'someVal=2'
-                }, {
-                    title: 'Some other stuff',
-                    icon: 'icon-twitter',
-                    action: 'someVal=3'
-                }, {
-                    title: "I've got children",
-                    icon: 'icon-file-text',
-                    items: [
-                        {
-                            title: 'Hi!',
-                            action: 'someVal=4'
-                        }, {
-                            title: 'Yo!',
-                            items: [
-                                {
-                                    title: 'More!',
-                                    action: 'someVal=5'
-                                }, {
-                                    title: 'Child',
-                                    action: 'someVal=6'
-                                }, {
-                                    title: 'Menus!',
-                                    action: 'someVal=7'
-                                }]
-                        }]
-                }, {
-                    title: "Call a function!",
-                    action: function () {
-                        notification("info", "Function called!");
-                    }
-                }]
-        };
-        $scope.dropDownConfigTxt = angular.toJson($scope.dropDownConfig, true);
-
-        $scope.$watch('dropDownConfigTxt', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                $scope.dropDownConfig = angular.fromJson($scope.dropDownConfigTxt);
-            }
-        });
-
-        $scope.breadcrumbSelection = 1;
-
-        $scope.breadcrumbConfig = {
-            path: '/root/first child',
-            icon: 'icon-cogs',
-            title: 'root',
-            items: [
+                    'name': 'stuff1',
+                    'foo1': 'bar1',
+                    'foo2': 'bar2'
+                },
                 {
-                    title: 'first child',
-                    icon: 'icon-folder-close-alt',
-                    items: [{
-                            title: "first child's first child",
-                            icon: 'icon-file-text'
-                        }]
-                }, {
-                    title: 'second child',
-                    icon: 'icon-file'
-                }, {
-                    title: "third child",
-                    icon: 'icon-folder-close-alt',
-                    items: [
-                        {
-                            title: "third child's first child",
-                            icon: 'icon-file-text'
-                        }, {
-                            title: "third child's second child",
-                            icon: 'icon-file-text'
-                        }, {
-                            title: "third child's third child",
-                            icon: 'icon-folder-close-alt',
-                            items: [
-                                {
-                                    title: 'More!',
-                                    icon: 'icon-file-text'
-                                }, {
-                                    title: 'Child',
-                                    icon: 'icon-file-text'
-                                }, {
-                                    title: 'Menus!',
-                                    icon: 'icon-file-text'
-                                }]
-                        }]
-                }]
-        };
-
-        $scope.breadcrumbConfigTxt = angular.toJson($scope.breadcrumbConfig, true);
-
-        $scope.$watch('breadcrumbConfigTxt', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                $scope.breadcrumbconfig = angular.toJson($scope.breadcrumbConfigTxt);
-            }
-        });
-
-        $scope.breadcrumbEx = $templateCache.get("breadcrumbTemplate");
-
-        $scope.dropDownEx = $templateCache.get("dropDownTemplate");
-
-        $scope.autoDropDown = $templateCache.get("autoDropDownTemplate");
-        $scope.zeroClipboard = $templateCache.get("zeroClipboardTemplate");
-
-        $scope.popoverEx = $templateCache.get("myTemplate");
-        $scope.popoverUsageEx = $templateCache.get("popoverExTemplate");
-
-        $scope.autoColumnEx = $templateCache.get("autoColumnTemplate");
-    }
-    UI.UITestController2 = UITestController2;
-
-    function UITestController1($scope, $templateCache) {
-        $scope.jsplumbEx = $templateCache.get("jsplumbTemplate");
-
-        $scope.nodes = ["node1", "node2"];
-        $scope.otherNodes = ["node4", "node5", "node6"];
-
-        $scope.anchors = ["Top", "Right", "Bottom", "Left"];
-
-        $scope.createEndpoint = function (nodeId) {
-            var node = $scope.jsPlumbNodesById[nodeId];
-            if (node) {
-                var anchors = $scope.anchors.subtract(node.anchors);
-                console.log("anchors: ", anchors);
-                if (anchors && anchors.length > 0) {
-                    var anchor = anchors.first();
-                    node.anchors.push(anchor);
-                    node.endpoints.push($scope.jsPlumb.addEndpoint(node.el, {
-                        anchor: anchor,
-                        isSource: true,
-                        isTarget: true,
-                        maxConnections: -1
-                    }));
+                    'name': 'stuff2',
+                    'foo3': 'bar3',
+                    'foo4': 'bar4'
                 }
-            }
-        };
+            ];
 
-        $scope.expandableEx = '' + '<div class="expandable closed">\n' + '   <div title="The title" class="title">\n' + '     <i class="expandable-indicator"></i> Expandable title\n' + '   </div>\n' + '   <div class="expandable-body well">\n' + '     This is the expandable content...  Note that adding the "well" class isn\'t necessary but makes for a nice inset look\n' + '   </div>\n' + '</div>';
+            $scope.someVal = 1;
 
-        $scope.editablePropertyEx1 = '<editable-property ng-model="editablePropertyModelEx1" property="property"></editable-property>';
+            $scope.dropDownConfig = {
+                icon: 'icon-cogs',
+                title: 'My Awesome Menu',
+                items: [
+                    {
+                        title: 'Some Item',
+                        action: 'someVal=2'
+                    }, {
+                        title: 'Some other stuff',
+                        icon: 'icon-twitter',
+                        action: 'someVal=3'
+                    }, {
+                        title: "I've got children",
+                        icon: 'icon-file-text',
+                        items: [
+                            {
+                                title: 'Hi!',
+                                action: 'someVal=4'
+                            }, {
+                                title: 'Yo!',
+                                items: [
+                                    {
+                                        title: 'More!',
+                                        action: 'someVal=5'
+                                    }, {
+                                        title: 'Child',
+                                        action: 'someVal=6'
+                                    }, {
+                                        title: 'Menus!',
+                                        action: 'someVal=7'
+                                    }]
+                            }]
+                    }, {
+                        title: "Call a function!",
+                        action: function () {
+                            notification("info", "Function called!");
+                        }
+                    }]
+            };
+            $scope.dropDownConfigTxt = angular.toJson($scope.dropDownConfig, true);
 
-        $scope.editablePropertyModelEx1 = {
-            property: "This is editable (hover to edit)"
-        };
+            $scope.$watch('dropDownConfigTxt', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    $scope.dropDownConfig = angular.fromJson($scope.dropDownConfigTxt);
+                }
+            });
 
-        $scope.showDeleteOne = new UI.Dialog();
-        $scope.showDeleteTwo = new UI.Dialog();
+            $scope.breadcrumbSelection = 1;
 
-        $scope.fileUploadEx1 = '<div hawtio-file-upload="files" target="test1"></div>';
-        $scope.fileUploadEx2 = '<div hawtio-file-upload="files" target="test2" show-files="false"></div>';
-        $scope.fileUploadExMode = 'text/html';
+            $scope.breadcrumbConfig = {
+                path: '/root/first child',
+                icon: 'icon-cogs',
+                title: 'root',
+                items: [
+                    {
+                        title: 'first child',
+                        icon: 'icon-folder-close-alt',
+                        items: [{
+                                title: "first child's first child",
+                                icon: 'icon-file-text'
+                            }]
+                    }, {
+                        title: 'second child',
+                        icon: 'icon-file'
+                    }, {
+                        title: "third child",
+                        icon: 'icon-folder-close-alt',
+                        items: [
+                            {
+                                title: "third child's first child",
+                                icon: 'icon-file-text'
+                            }, {
+                                title: "third child's second child",
+                                icon: 'icon-file-text'
+                            }, {
+                                title: "third child's third child",
+                                icon: 'icon-folder-close-alt',
+                                items: [
+                                    {
+                                        title: 'More!',
+                                        icon: 'icon-file-text'
+                                    }, {
+                                        title: 'Child',
+                                        icon: 'icon-file-text'
+                                    }, {
+                                        title: 'Menus!',
+                                        icon: 'icon-file-text'
+                                    }]
+                            }]
+                    }]
+            };
 
-        $scope.colorPickerEx = 'My Color ({{myColor}}): <div hawtio-color-picker="myColor"></div>';
+            $scope.breadcrumbConfigTxt = angular.toJson($scope.breadcrumbConfig, true);
 
-        $scope.confirmationEx1 = '' + '<button class="btn" ng-click="showDeleteOne.open()">Delete stuff</button>\n' + '\n' + '<div hawtio-confirm-dialog="showDeleteOne.show"\n' + 'title="Delete stuff?"\n' + 'ok-button-text="Yes, Delete the Stuff"\n' + 'cancel-button-text="No, Keep the Stuff"\n' + 'on-cancel="onCancelled(\'One\')"\n' + 'on-ok="onOk(\'One\')">\n' + '  <div class="dialog-body">\n' + '    <p>\n' + '        Are you sure you want to delete all the stuff?\n' + '    </p>\n' + '  </div>\n' + '</div>\n';
+            $scope.$watch('breadcrumbConfigTxt', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    $scope.breadcrumbconfig = angular.toJson($scope.breadcrumbConfigTxt);
+                }
+            });
 
-        $scope.confirmationEx2 = '' + '<button class="btn" ng-click="showDeleteTwo.open()">Delete other stuff</button>\n' + '\n' + '<!-- Use more defaults -->\n' + '<div hawtio-confirm-dialog="showDeleteTwo.show\n"' + '  on-cancel="onCancelled(\'Two\')"\n' + '  on-ok="onOk(\'Two\')">\n' + '  <div class="dialog-body">\n' + '    <p>\n' + '      Are you sure you want to delete all the other stuff?\n' + '    </p>\n' + '  </div>\n' + '</div>';
+            $scope.breadcrumbEx = $templateCache.get("breadcrumbTemplate");
 
-        $scope.sliderEx1 = '' + '<button class="btn" ng-click="showSlideoutRight = !showSlideoutRight">Show slideout right</button>\n' + '<div hawtio-slideout="showSlideoutRight" title="Hey look a slider!">\n' + '   <div class="dialog-body">\n' + '     <div>\n' + '       Here is some content or whatever {{transcludedValue}}\n' + '     </div>\n' + '   </div>\n' + '</div>';
+            $scope.dropDownEx = $templateCache.get("dropDownTemplate");
 
-        $scope.sliderEx2 = '' + '<button class="btn" ng-click="showSlideoutLeft = !showSlideoutLeft">Show slideout left</button>\n' + '<div hawtio-slideout="showSlideoutLeft" direction="left" title="Hey, another slider!">\n' + '   <div class="dialog-body">\n' + '     <div hawtio-editor="someText" mode="javascript"></div>\n' + '   </div>\n' + '</div>\n';
+            $scope.autoDropDown = $templateCache.get("autoDropDownTemplate");
+            $scope.zeroClipboard = $templateCache.get("zeroClipboardTemplate");
 
-        $scope.editorEx1 = '' + 'Instance 1\n' + '<div class="row-fluid">\n' + '   <div hawtio-editor="someText" mode="mode" dirty="dirty"></div>\n' + '   <div>Text : {{someText}}</div>\n' + '</div>\n' + '\n' + 'Instance 2 (readonly)\n' + '<div class="row-fluid">\n' + '   <div hawtio-editor="someText" read-only="true" mode="mode" dirty="dirty"></div>\n' + '   <div>Text : {{someText}}</div>\n' + '</div>';
+            $scope.popoverEx = $templateCache.get("myTemplate");
+            $scope.popoverUsageEx = $templateCache.get("popoverExTemplate");
 
-        $scope.transcludedValue = "and this is transcluded";
+            $scope.autoColumnEx = $templateCache.get("autoColumnTemplate");
+        }]);
 
-        $scope.onCancelled = function (number) {
-            notification('info', 'cancelled ' + number);
-        };
+    UI._module.controller("UI.UITestController1", [
+        "$scope", "$templateCache", function ($scope, $templateCache) {
+            $scope.jsplumbEx = $templateCache.get("jsplumbTemplate");
 
-        $scope.onOk = function (number) {
-            notification('info', number + ' ok!');
-        };
+            $scope.nodes = ["node1", "node2"];
+            $scope.otherNodes = ["node4", "node5", "node6"];
 
-        $scope.showSlideoutRight = false;
-        $scope.showSlideoutLeft = false;
+            $scope.anchors = ["Top", "Right", "Bottom", "Left"];
 
-        $scope.dirty = false;
-        $scope.mode = 'javascript';
+            $scope.createEndpoint = function (nodeId) {
+                var node = $scope.jsPlumbNodesById[nodeId];
+                if (node) {
+                    var anchors = $scope.anchors.subtract(node.anchors);
+                    console.log("anchors: ", anchors);
+                    if (anchors && anchors.length > 0) {
+                        var anchor = anchors.first();
+                        node.anchors.push(anchor);
+                        node.endpoints.push($scope.jsPlumb.addEndpoint(node.el, {
+                            anchor: anchor,
+                            isSource: true,
+                            isTarget: true,
+                            maxConnections: -1
+                        }));
+                    }
+                }
+            };
 
-        $scope.someText = "var someValue = 0;\n" + "var someFunc = function() {\n" + "  return \"Hello World!\";\n" + "}\n";
+            $scope.expandableEx = '' + '<div class="expandable closed">\n' + '   <div title="The title" class="title">\n' + '     <i class="expandable-indicator"></i> Expandable title\n' + '   </div>\n' + '   <div class="expandable-body well">\n' + '     This is the expandable content...  Note that adding the "well" class isn\'t necessary but makes for a nice inset look\n' + '   </div>\n' + '</div>';
 
-        $scope.myColor = "#FF887C";
-        $scope.showColorDialog = false;
+            $scope.editablePropertyEx1 = '<editable-property ng-model="editablePropertyModelEx1" property="property"></editable-property>';
 
-        $scope.files = [];
+            $scope.editablePropertyModelEx1 = {
+                property: "This is editable (hover to edit)"
+            };
 
-        $scope.$watch('files', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                console.log("Files: ", $scope.files);
-            }
-        }, true);
-    }
-    UI.UITestController1 = UITestController1;
+            $scope.showDeleteOne = new UI.Dialog();
+            $scope.showDeleteTwo = new UI.Dialog();
+
+            $scope.fileUploadEx1 = '<div hawtio-file-upload="files" target="test1"></div>';
+            $scope.fileUploadEx2 = '<div hawtio-file-upload="files" target="test2" show-files="false"></div>';
+            $scope.fileUploadExMode = 'text/html';
+
+            $scope.colorPickerEx = 'My Color ({{myColor}}): <div hawtio-color-picker="myColor"></div>';
+
+            $scope.confirmationEx1 = '' + '<button class="btn" ng-click="showDeleteOne.open()">Delete stuff</button>\n' + '\n' + '<div hawtio-confirm-dialog="showDeleteOne.show"\n' + 'title="Delete stuff?"\n' + 'ok-button-text="Yes, Delete the Stuff"\n' + 'cancel-button-text="No, Keep the Stuff"\n' + 'on-cancel="onCancelled(\'One\')"\n' + 'on-ok="onOk(\'One\')">\n' + '  <div class="dialog-body">\n' + '    <p>\n' + '        Are you sure you want to delete all the stuff?\n' + '    </p>\n' + '  </div>\n' + '</div>\n';
+
+            $scope.confirmationEx2 = '' + '<button class="btn" ng-click="showDeleteTwo.open()">Delete other stuff</button>\n' + '\n' + '<!-- Use more defaults -->\n' + '<div hawtio-confirm-dialog="showDeleteTwo.show\n"' + '  on-cancel="onCancelled(\'Two\')"\n' + '  on-ok="onOk(\'Two\')">\n' + '  <div class="dialog-body">\n' + '    <p>\n' + '      Are you sure you want to delete all the other stuff?\n' + '    </p>\n' + '  </div>\n' + '</div>';
+
+            $scope.sliderEx1 = '' + '<button class="btn" ng-click="showSlideoutRight = !showSlideoutRight">Show slideout right</button>\n' + '<div hawtio-slideout="showSlideoutRight" title="Hey look a slider!">\n' + '   <div class="dialog-body">\n' + '     <div>\n' + '       Here is some content or whatever {{transcludedValue}}\n' + '     </div>\n' + '   </div>\n' + '</div>';
+
+            $scope.sliderEx2 = '' + '<button class="btn" ng-click="showSlideoutLeft = !showSlideoutLeft">Show slideout left</button>\n' + '<div hawtio-slideout="showSlideoutLeft" direction="left" title="Hey, another slider!">\n' + '   <div class="dialog-body">\n' + '     <div hawtio-editor="someText" mode="javascript"></div>\n' + '   </div>\n' + '</div>\n';
+
+            $scope.editorEx1 = '' + 'Instance 1\n' + '<div class="row-fluid">\n' + '   <div hawtio-editor="someText" mode="mode" dirty="dirty"></div>\n' + '   <div>Text : {{someText}}</div>\n' + '</div>\n' + '\n' + 'Instance 2 (readonly)\n' + '<div class="row-fluid">\n' + '   <div hawtio-editor="someText" read-only="true" mode="mode" dirty="dirty"></div>\n' + '   <div>Text : {{someText}}</div>\n' + '</div>';
+
+            $scope.transcludedValue = "and this is transcluded";
+
+            $scope.onCancelled = function (number) {
+                notification('info', 'cancelled ' + number);
+            };
+
+            $scope.onOk = function (number) {
+                notification('info', number + ' ok!');
+            };
+
+            $scope.showSlideoutRight = false;
+            $scope.showSlideoutLeft = false;
+
+            $scope.dirty = false;
+            $scope.mode = 'javascript';
+
+            $scope.someText = "var someValue = 0;\n" + "var someFunc = function() {\n" + "  return \"Hello World!\";\n" + "}\n";
+
+            $scope.myColor = "#FF887C";
+            $scope.showColorDialog = false;
+
+            $scope.files = [];
+
+            $scope.$watch('files', function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    console.log("Files: ", $scope.files);
+                }
+            }, true);
+        }]);
 })(UI || (UI = {}));
 /**
 * @module UI
@@ -4085,6 +4086,7 @@ var UI;
 * @module CodeEditor
 * @main CodeEditor
 */
+/// <reference path="./uiPlugin.ts"/>
 var CodeEditor;
 (function (CodeEditor) {
     
@@ -4113,23 +4115,23 @@ var CodeEditor;
     * @param localStorage
     * @param $templateCache
     */
-    function PreferencesController($scope, localStorage, $templateCache) {
-        $scope.exampleText = $templateCache.get("exampleText");
-        $scope.codeMirrorEx = $templateCache.get("codeMirrorExTemplate");
-        $scope.javascript = "javascript";
+    UI._module.controller("CodeEditor.PreferencesController", [
+        "$scope", "localStorage", "$templateCache", function ($scope, localStorage, $templateCache) {
+            $scope.exampleText = $templateCache.get("exampleText");
+            $scope.codeMirrorEx = $templateCache.get("codeMirrorExTemplate");
+            $scope.javascript = "javascript";
 
-        $scope.preferences = CodeEditor.GlobalCodeMirrorOptions;
+            $scope.preferences = CodeEditor.GlobalCodeMirrorOptions;
 
-        // If any of the preferences change, make sure to save them automatically
-        $scope.$watch("preferences", function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                // such a cheap and easy way to update the example view :-)
-                $scope.codeMirrorEx += " ";
-                localStorage['CodeMirrorOptions'] = angular.toJson(angular.extend(CodeEditor.GlobalCodeMirrorOptions, $scope.preferences));
-            }
-        }, true);
-    }
-    CodeEditor.PreferencesController = PreferencesController;
+            // If any of the preferences change, make sure to save them automatically
+            $scope.$watch("preferences", function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    // such a cheap and easy way to update the example view :-)
+                    $scope.codeMirrorEx += " ";
+                    localStorage['CodeMirrorOptions'] = angular.toJson(angular.extend(CodeEditor.GlobalCodeMirrorOptions, $scope.preferences));
+                }
+            }, true);
+        }]);
 
     /**
     * Tries to figure out what kind of text we're going to render in the editor, either
@@ -4601,19 +4603,20 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
-    function DeveloperPageController($scope, $http) {
-        $scope.getContents = function (filename, cb) {
-            var fullUrl = "app/ui/html/test/" + filename;
-            $http({ method: 'GET', url: fullUrl }).success(function (data, status, headers, config) {
-                cb(data);
-            }).error(function (data, status, headers, config) {
-                cb("Failed to fetch " + filename + ": " + data);
-            });
-        };
-    }
-    UI.DeveloperPageController = DeveloperPageController;
+    UI._module.controller("UI.DeveloperPageController", [
+        "$scope", "$http", function ($scope, $http) {
+            $scope.getContents = function (filename, cb) {
+                var fullUrl = "app/ui/html/test/" + filename;
+                $http({ method: 'GET', url: fullUrl }).success(function (data, status, headers, config) {
+                    cb(data);
+                }).error(function (data, status, headers, config) {
+                    cb("Failed to fetch " + filename + ": " + data);
+                });
+            };
+        }]);
 })(UI || (UI = {}));
 /**
 * @module UI

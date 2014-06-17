@@ -4,6 +4,7 @@
  * @module CodeEditor
  * @main CodeEditor
  */
+/// <reference path="./uiPlugin.ts"/>
 module CodeEditor {
   // TODO break this out into a separate plugin and maybe combine with hawtio-editor directive?
 
@@ -69,7 +70,7 @@ module CodeEditor {
    * @param localStorage
    * @param $templateCache
    */
-  export function PreferencesController($scope, localStorage, $templateCache) {
+  UI._module.controller("CodeEditor.PreferencesController", ["$scope", "localStorage", "$templateCache", ($scope, localStorage, $templateCache) => {
     $scope.exampleText = $templateCache.get("exampleText");
     $scope.codeMirrorEx = $templateCache.get("codeMirrorExTemplate");
     $scope.javascript = "javascript";
@@ -85,7 +86,7 @@ module CodeEditor {
       }
     }, true);
 
-  }
+  }]);
 
   /**
    * Tries to figure out what kind of text we're going to render in the editor, either
