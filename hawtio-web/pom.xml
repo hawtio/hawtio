@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.4.6</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -460,7 +460,7 @@
             <configuration>
               <target>
                 <echo>Copying generated app.js</echo>
-                <copy tofile="${webapp-outdir}/app/app.js" file="${basedir}/src/main/webapp/app/app.js"/>
+                <copy tofile="${webapp-outdir}/app/app.js" file="${basedir}/src/main/webapp/app/app.js" />
               </target>
             </configuration>
           </execution>
