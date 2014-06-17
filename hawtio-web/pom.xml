@@ -296,6 +296,13 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>ro.isdc.wro4j</groupId>
+      <artifactId>wro4j-extensions</artifactId>
+      <version>1.6.3</version>
+      <scope>compile</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -443,6 +450,7 @@
             </configuration>
           </execution>
 
+          <!--
           <execution>
             <id>compile</id>
             <phase>compile</phase>
@@ -456,6 +464,7 @@
               </target>
             </configuration>
           </execution>
+          -->
 
           <execution>
             <id>generate-sources</id>
@@ -533,6 +542,27 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>ro.isdc.wro4j</groupId>
+        <artifactId>wro4j-maven-plugin</artifactId>
+        <version>1.6.3</version>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
+          <targetGroups>app</targetGroups>
+          <minimize>true</minimize>
+          <jsDestinationFolder>${webapp-outdir}/app/</jsDestinationFolder>
+          <contextFolder>${basedir}/src/main/webapp/</contextFolder>
+          <ignoreMissingResources>false</ignoreMissingResources>
+        </configuration>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.felix</groupId>

@@ -1,9 +1,10 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
 
-    export function UITestController2($scope, $templateCache) {
+    _module.controller("UI.UITestController2", ["$scope", "$templateCache", ($scope, $templateCache) => {
 
       $scope.fileUploadExMode = 'text/html';
 
@@ -140,10 +141,10 @@ module UI {
       $scope.autoColumnEx = $templateCache.get("autoColumnTemplate");
 
 
-    }
+    }]);
 
 
-    export function UITestController1($scope, $templateCache) {
+    _module.controller("UI.UITestController1", ["$scope", "$templateCache", ($scope, $templateCache) => {
 
 
     $scope.jsplumbEx = $templateCache.get("jsplumbTemplate");
@@ -296,6 +297,6 @@ module UI {
     }, true);
 
 
-  }
+  }]);
 
 }

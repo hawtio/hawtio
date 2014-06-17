@@ -1,9 +1,10 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
 
-  export function DeveloperPageController($scope, $http) {
+  _module.controller("UI.DeveloperPageController", ["$scope", "$http", ($scope, $http) => {
 
     $scope.getContents = function(filename, cb) {
       var fullUrl = "app/ui/html/test/" + filename;
@@ -15,5 +16,5 @@ module UI {
             cb("Failed to fetch " + filename + ": " + data);
           });
     };
-  }
+  }]);
 }
