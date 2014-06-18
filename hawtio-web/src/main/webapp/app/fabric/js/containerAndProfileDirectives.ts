@@ -314,7 +314,7 @@ module Fabric {
       };
 
       $scope.dispatch = (response) => {
-        log.debug("dispatch, got response: ", response);
+        // log.debug("dispatch, got response: ", response);
         switch (response.request.operation) {
           case($scope.containersOp):
             $scope.updateContainers(response.value);
@@ -460,7 +460,7 @@ module Fabric {
       };
 
       function onRequirements(response) {
-        log.debug("onRequirements, got response: ", response);
+        // log.debug("onRequirements, got response: ", response);
         var responseJson = angular.toJson(response.value);
 
         if (responseJson !== $scope.requirementsResponse) {
