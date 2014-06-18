@@ -203,13 +203,13 @@ module Fabric {
           };
         });
         $scope.changeParentsDialog = true;
-      }
+      };
 
       $scope.removeParentProfile = (parent) => {
         $scope.markedForDeletion = parent;
         $scope.removeParentDialog = true;
 
-      }
+      };
 
       $scope.doRemoveParentProfile = () => {
         var parents = $scope.row.parentIds.exclude($scope.markedForDeletion);
@@ -318,7 +318,7 @@ module Fabric {
       $scope.doDeleteThing = () => {
         $scope.currentThing.remove($scope.currentThingItem);
         $scope.callSetProfileThing('Deleted', 'delete', $scope.currentThingItem);
-      }
+      };
 
 
       $scope.doAddThing = () => {
@@ -331,7 +331,7 @@ module Fabric {
         } else {
           notification('error', 'There is already a ' + $scope.thingName + ' with the name ' + $scope.newThingName);
         }
-      }
+      };
 
 
       $scope.deleteFile = (file) => {
@@ -398,6 +398,19 @@ module Fabric {
           $scope.row = response.value;
           var id = $scope.row.id;
           var version = $scope.row.version;
+
+          // extract system properties
+          $scope.row.systemProperties = [];
+          angular.forEach($scope.row.containerConfiguration, (v, k) => {
+            if (k.startsWith("system.")) {
+              $scope.row.systemProperties.push({ name: k.substring(7), value: v });
+            }
+          });
+
+          $scope.sysPropsTableData = {
+            rows: $scope.row.systemProperties
+          };
+
           $scope.configFolderLink = null;
           if ($scope.hasFabricWiki() && id && version) {
             $scope.configFolderLink = "#/wiki/branch/" + version + "/view/fabric/profiles/" + Fabric.profilePath(id);
@@ -405,6 +418,33 @@ module Fabric {
           Core.$apply($scope);
         }
       }
+
+      $scope.sysPropsTableConfig = {
+        data: "sysPropsTableData.rows",
+        properties: {
+          'rows' : {
+            items: {
+              properties: {
+                'name': {
+                  description: 'System property name',
+                  type: 'java.lang.String'
+                },
+                'value': {
+                  description: 'System property value',
+                  type: 'java.lang.String'
+                }
+              }
+            }
+          }
+        },
+        displayFooter: false,
+        showFilter: false,
+        columnDefs: [
+          { field: "name", displayName: "Name" },
+          { field: "value", displayName: "Value" }
+        ]
+      };
+
     }];
 
   }
