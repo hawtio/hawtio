@@ -185,8 +185,8 @@ module Camel {
         properties = properties.sortBy("key");
 
         if (containerId && isFmc) {
-          var containerModel = "selectedNode.container";
-          properties.splice(0, 0, {key: "Container", value: $compile('<div fabric-container-link="' + containerModel + '"></div>')($scope)});
+          //var containerModel = "selectedNode.container";
+          properties.splice(0, 0, {key: "Container", value: $compile('<div fabric-container-link="' + selectedNode['container']['id'] + '"></div>')($scope)});
         }
 
 
