@@ -1,7 +1,7 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.BrowseEndpointController", ["$scope, $routeParams", "workspace", "jolokia", ($scope, $routeParams, workspace:Workspace, jolokia) => {
+  _module.controller("Camel.BrowseEndpointController", ["$scope", "$routeParams", "workspace", "jolokia", ($scope, $routeParams, workspace:Workspace, jolokia) => {
     $scope.workspace = workspace;
 
     $scope.forwardDialog = new UI.Dialog();
