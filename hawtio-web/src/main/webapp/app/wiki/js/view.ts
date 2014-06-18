@@ -12,7 +12,7 @@ module Wiki {
     }, 100);
   }
 
-  _module.controller("Wiki.ViewController", ["$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", ($scope, $location, $routeParams, $route, $http, $timeout, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile, $templateCache, jolokia) => {
+  _module.controller("Wiki.ViewController", ["$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", ($scope, $location, $routeParams, $route, $http, $timeout, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile, $templateCache, jolokia) => {
 
     Wiki.initScope($scope, $routeParams, $location);
 
@@ -121,11 +121,11 @@ module Wiki {
     $scope.parentLink = () => {
       var start = startLink($scope.branch);
       var prefix = start + "/view";
-      //console.log("pageId: ", $scope.pageId)
+      //log.debug("pageId: ", $scope.pageId)
       var parts = $scope.pageId.split("/");
-      //console.log("parts: ", parts);
+      //log.debug("parts: ", parts);
       var path = "/" + parts.first(parts.length - 1).join("/");
-      //console.log("path: ", path);
+      //log.debug("path: ", path);
       return Core.createHref($location, prefix + path, []);
     };
 
@@ -156,7 +156,7 @@ module Wiki {
           } else if (xmlNamespaces.any((ns) => Wiki.dozerNamespaces.any(ns))) {
             prefix = start + "/dozer/mappings";
           } else {
-            console.log("child " + path + " has namespaces " + xmlNamespaces);
+            log.debug("child " + path + " has namespaces " + xmlNamespaces);
           }
         }
         if (child.path.endsWith(".form")) {
@@ -219,7 +219,7 @@ module Wiki {
     /*
      // TODO this doesn't work for some reason!
      $scope.$on('jmxTreeUpdated', function () {
-     console.log("view: jmx tree updated!");
+     log.debug("view: jmx tree updated!");
      });
      */
 
@@ -306,18 +306,18 @@ module Wiki {
 
         Fabric.createProfile(workspace.jolokia, $scope.branch, profileName, ['default'], () => {
 
-          notification('success', 'Created profile ' + profileName);
+          // notification('success', 'Created profile ' + profileName);
           Core.$apply($scope);
 
           Fabric.newConfigFile(workspace.jolokia, $scope.branch, profileName, 'ReadMe.md', () => {
 
-            notification('info', 'Created empty Readme.md in profile ' + profileName);
+            // notification('info', 'Created empty Readme.md in profile ' + profileName);
             Core.$apply($scope);
 
             var contents = "Here's an empty ReadMe.md for '" + profileName + "', please update!";
 
             Fabric.saveConfigFile(workspace.jolokia, $scope.branch, profileName, 'ReadMe.md', contents.encodeBase64(), () => {
-              notification('info', 'Updated Readme.md in profile ' + profileName);
+              // notification('info', 'Updated Readme.md in profile ' + profileName);
               Core.$apply($scope);
               var link = Wiki.viewLink($scope.branch, targetPath, $location);
               goToLink(link, $timeout, $location);
@@ -353,7 +353,7 @@ module Wiki {
           template.generated.generate(workspace, $scope.formData, (contents)=> {
             generateDialog.close();
             wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, (status) => {
-              console.log("Created file " + name);
+              log.debug("Created file " + name);
               Wiki.onComplete(status);
               $scope.generateDialog.close();
               updateView();
@@ -366,13 +366,13 @@ module Wiki {
         generateDialog.open();
 
       } else {
-        notification("success", "Creating new document " + name);
+        // notification("success", "Creating new document " + name);
 
         $http.get(exemplarUri).success((contents) => {
 
           // TODO lets check this page does not exist - if it does lets keep adding a new post fix...
           wikiRepository.putPage($scope.branch, path, contents, commitMessage, (status) => {
-            console.log("Created file " + name);
+            log.debug("Created file " + name);
             Wiki.onComplete(status);
 
             // lets navigate to the edit link
@@ -381,16 +381,16 @@ module Wiki {
               // lets find the child entry so we can calculate its correct edit link
               var link = null;
               if (details && details.children) {
-                console.log("scanned the directory " + details.children.length + " children");
+                log.debug("scanned the directory " + details.children.length + " children");
                 var child = details.children.find(c => c.name === fileName);
                 if (child) {
                   link = $scope.childLink(child);
                 } else {
-                  console.log("Could not find name '" + fileName + "' in the list of file names " + JSON.stringify(details.children.map(c => c.name)));
+                  log.debug("Could not find name '" + fileName + "' in the list of file names " + JSON.stringify(details.children.map(c => c.name)));
                 }
               }
               if (!link) {
-                console.log("WARNING: could not find the childLink so reverting to the wiki edit page!");
+                log.debug("WARNING: could not find the childLink so reverting to the wiki edit page!");
                 link = Wiki.editLink($scope.branch, path, $location);
               }
               $scope.addDialog.close();
@@ -409,17 +409,17 @@ module Wiki {
         $scope.selectedFileHtml = "<ul>" + $scope.gridOptions.selectedItems.map(file => "<li>" + file.name + "</li>").sort().join("") + "</ul>";
         $scope.deleteDialog.open();
       } else {
-        console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
+        log.debug("No items selected right now! " + $scope.gridOptions.selectedItems);
       }
     };
 
     $scope.deleteAndCloseDialog = () => {
       var files = $scope.gridOptions.selectedItems;
       var fileCount = files.length;
-      console.log("Deleting selection: " + files);
+      log.debug("Deleting selection: " + files);
       angular.forEach(files, (file, idx) => {
         var path = $scope.pageId + "/" + file.name;
-        console.log("About to delete " + path);
+        log.debug("About to delete " + path);
         $scope.git = wikiRepository.removePage($scope.branch, path, null, (result) => {
           if (idx + 1 === fileCount) {
             $scope.gridOptions.selectedItems.splice(0, fileCount);
@@ -457,7 +457,7 @@ module Wiki {
           $('#renameFileName').focus();
         }, 50);
       } else {
-        console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
+        log.debug("No items selected right now! " + $scope.gridOptions.selectedItems);
       }
     };
 
@@ -469,7 +469,7 @@ module Wiki {
           var oldName = selected.name;
           var newName = Wiki.fileName(newPath);
           var oldPath = $scope.pageId + "/" + oldName;
-          console.log("About to rename file " + oldPath + " to " + newPath);
+          log.debug("About to rename file " + oldPath + " to " + newPath);
           $scope.git = wikiRepository.rename($scope.branch, oldPath, newPath, null, (result) => {
             notification("success", "Renamed file to  " + newName);
             $scope.gridOptions.selectedItems.splice(0, 1);
@@ -490,7 +490,7 @@ module Wiki {
           $('#moveFolder').focus();
         }, 50);
       } else {
-        console.log("No items selected right now! " + $scope.gridOptions.selectedItems);
+        log.debug("No items selected right now! " + $scope.gridOptions.selectedItems);
       }
     };
 
@@ -500,11 +500,11 @@ module Wiki {
       var moveFolder = $scope.move.moveFolder;
       var oldFolder = $scope.pageId;
       if (moveFolder && fileCount && moveFolder !== oldFolder) {
-        console.log("Moving " + fileCount + " file(s) to " + moveFolder);
+        log.debug("Moving " + fileCount + " file(s) to " + moveFolder);
         angular.forEach(files, (file, idx) => {
           var oldPath = oldFolder + "/" + file.name;
           var newPath = moveFolder + "/" + file.name;
-          console.log("About to move " + oldPath + " to " + newPath);
+          log.debug("About to move " + oldPath + " to " + newPath);
           $scope.git = wikiRepository.rename($scope.branch, oldPath, newPath, null, (result) => {
             if (idx + 1 === fileCount) {
               $scope.gridOptions.selectedItems.splice(0, fileCount);
@@ -602,7 +602,7 @@ module Wiki {
         $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
       }
       $scope.codeMirrorOptions.mode.name = $scope.format;
-      //console.log("format is '" + $scope.format + "'");
+      //log.debug("format is '" + $scope.format + "'");
 
       $scope.children = null;
 
@@ -673,12 +673,12 @@ module Wiki {
         wikiRepository.exists($scope.branch, path, (result) => {
           // filter old results
           if ($scope.operationCounter === counter) {
-            console.log("for path " + path + " got result " + result);
+            log.debug("for path " + path + " got result " + result);
             $scope.fileExists.exists = result ? true : false;
             $scope.fileExists.name = result ? result.name : null;
             Core.$apply($scope);
           } else {
-            // console.log("Ignoring old results for " + path);
+            // log.debug("Ignoring old results for " + path);
           }
         });
       }
@@ -707,7 +707,7 @@ module Wiki {
     function getNewDocumentPath() {
       var template = $scope.selectedCreateDocumentTemplate;
       if (!template) {
-        console.log("No template selected.");
+        log.debug("No template selected.");
         return null;
       }
       var exemplar = template.exemplar || "";

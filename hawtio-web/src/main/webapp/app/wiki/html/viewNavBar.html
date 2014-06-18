@@ -152,7 +152,6 @@
     <div class="modal-footer">
       <input class="btn btn-primary add"
              type="submit"
-             ng-click="addAndCloseDialog(newDocumentName)"
              ng-disabled="!selectedCreateDocumentTemplate.exemplar || fileExists.exists || !createForm.$valid"
              value="Create">
       <button class="btn btn-warning cancel" type="button" ng-click="addDialog.close()">Cancel</button>
