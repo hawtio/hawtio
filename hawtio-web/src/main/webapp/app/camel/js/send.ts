@@ -230,8 +230,11 @@ module Camel {
 
     function onFabricConfigFiles(response) {
       $scope.profileFileNameToProfileId = response;
-      $scope.profileFileNames = Object.keys(response).sort();
-      $scope.showChoose = $scope.profileFileNames.length ? true : false;
+      // we only want files from the data dir
+      $scope.profileFileNames = Object.keys(response).filter(key => {
+        return key.toLowerCase().startsWith('data/');
+      }).sort();
+       $scope.showChoose = $scope.profileFileNames.length ? true : false;
       $scope.selectedFiles = {};
       Core.$apply($scope);
     }
