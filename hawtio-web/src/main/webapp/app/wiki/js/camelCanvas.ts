@@ -3,7 +3,7 @@
  */
 /// <reference path="./wikiPlugin.ts"/>
 module Wiki {
-  _module.controller("Wiki.CamelCanvasController", ["$scope", "$element", "workspace", "jolokia", "wikiRepository", "templateCache", "$interpolate", ($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache, $interpolate) => {
+  _module.controller("Wiki.CamelCanvasController", ["$scope", "$element", "workspace", "jolokia", "wikiRepository", "$templateCache", "$interpolate", ($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache, $interpolate) => {
     $scope.addDialog = new UI.Dialog();
     $scope.propertiesDialog = new UI.Dialog();
     $scope.modified = false;
