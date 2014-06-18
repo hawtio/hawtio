@@ -494,7 +494,10 @@ module Core {
       Core.log.debug("Calling register from anonymous scope");
     }
     if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
+      log.debug("No existing handle set, creating one");
       scope.$jhandle = [];
+    } else {
+      log.debug("Using existing handle set");
     }
     if (angular.isDefined(scope.$on)) {
       scope.$on('$destroy', function (event) {

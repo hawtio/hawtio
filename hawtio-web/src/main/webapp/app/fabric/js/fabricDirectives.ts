@@ -8,13 +8,27 @@ module Fabric {
     return new Fabric.ProfileSelector();
   });
   _module.directive('fabricContainerList', () => {
-    return new Fabric.ContainerList();
+    return {
+      restrict: 'A',
+      replace: true,
+      templateUrl: Fabric.templatePath + "containerList.html",
+      scope: false,
+      controller: ["$scope", "$element", "$attrs", "jolokia", "$location", "workspace", "$templateCache", ContainerListDirectiveController],
+      link: ["$scope", "$element", "$attrs", ContainerListDirectiveLink]
+    }
   });
   _module.directive('fabricProfileDetails', () => {
     return new Fabric.ProfileDetails();
   });
   _module.directive('fabricActiveProfileList', () => {
-    return new Fabric.ActiveProfileList();
+    return {
+      restrict: 'A',
+      replace: true,
+      templateUrl: Fabric.templatePath + "activeProfileList.html",
+      scope: false,
+      controller: ["$scope", "$element", "$attrs", "jolokia", "$location", "workspace", "$templateCache", "$timeout", ActiveProfileListController],
+      link: ["$scope", "$element", "$attrs", ContainerListDirectiveLink]
+    }
   });
   _module.directive('fabricProfileLink', ["workspace", "jolokia", "localStorage", (workspace, jolokia, localStorage) => {
     return {

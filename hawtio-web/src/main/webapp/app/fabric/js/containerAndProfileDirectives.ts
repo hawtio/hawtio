@@ -1,16 +1,8 @@
 /// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
-  export class ContainerList {
-
-    public restrict = 'A';
-    public replace = true;
-    public templateUrl = Fabric.templatePath + "containerList.html";
-
-    public scope = false;
-
-    public controller = ["$scope", "$element", "$attrs", "jolokia", "$location", "workspace", "$templateCache", ($scope, $element, $attrs, jolokia, $location, workspace, $templateCache) => {
-
+  // this is only referenced by the directive definition below
+  export function ContainerListDirectiveController($scope, $element, $attrs, jolokia, $location, workspace, $templateCache) {
       $scope.containerArgs = ["id", "alive", "parentId", "profileIds", "versionId", "provisionResult", "jolokiaUrl", "root", 'jmxDomains', "type", "metadata", "location"];
       $scope.profileFields = ["id", "hidden"];
       $scope.containersOp = 'containers(java.util.List, java.util.List)';
@@ -22,6 +14,7 @@ module Fabric {
       $scope.selectedContainerIds = [];
       $scope.showSelect = true;
       $scope.requirements = null;
+      $scope.name = "ContainerListDirectiveController";
 
       Fabric.initScope($scope, $location, jolokia, workspace);
 
@@ -174,9 +167,9 @@ module Fabric {
 
       // invoked regularly by Jolokia after detecting new response from requirements()
       // from object io.fabric:type=Fabric
-      $scope.updateActiveContainers = () => {
+      $scope.updateActiveProfiles = () => {
         var activeProfiles = $scope.activeProfiles;
-        $scope.activeProfiles = $scope.currentActiveProfiles();
+        $scope.activeProfiles = $scope.getActiveProfiles();
         $scope.activeProfiles.each((activeProfile) => {
 
           var ap = activeProfiles.find((ap) => { return ap.id === activeProfile.id && ap.versionId === activeProfile.versionId });
@@ -238,20 +231,20 @@ module Fabric {
           });
 
           $scope.containers = newContainers;
-          $scope.updateActiveContainers();
+          $scope.updateActiveProfiles();
           Core.$apply($scope);
         }
       };
 
 
-      $scope.currentActiveProfiles = () => {
+      $scope.getActiveProfiles = () => {
         var answer = [];
 
         $scope.containers.each((container) => {
           container.profileIds.each((profile) => {
 
             var p = container.profiles.find((p) => { return p.id === profile; });
-            if (p && p.hidden) {
+            if (p && Core.parseBooleanValue(p.hidden)) {
               return;
             }
 
@@ -259,7 +252,6 @@ module Fabric {
 
             if (activeProfile) {
               activeProfile['containers'] = activeProfile['containers'].include(container.id).unique();
-
               activeProfile.count = activeProfile['containers'].length;
             } else {
               answer.push({
@@ -312,7 +304,6 @@ module Fabric {
         return answer;
       };
 
-
       $scope.updateEnsembleContainerIdList = (ids) => {
         var response = angular.toJson(ids);
         if ($scope.ensembleContainerIdsResponse !== response) {
@@ -322,8 +313,8 @@ module Fabric {
         }
       };
 
-
       $scope.dispatch = (response) => {
+        log.debug("dispatch, got response: ", response);
         switch (response.request.operation) {
           case($scope.containersOp):
             $scope.updateContainers(response.value);
@@ -340,7 +331,6 @@ module Fabric {
         group.each((item) => { item.selected = false; });
       };
 
-
       $scope.setActiveProfile = (profile) => {
         $scope.clearSelection($scope.activeProfiles);
         if (!profile || profile === null) {
@@ -349,7 +339,6 @@ module Fabric {
         profile.selected = true;
       };
 
-
       $scope.selectAllContainers = () => {
         $scope.containers.each((container) => {
           if ($scope.filterContainer(container)) {
@@ -357,7 +346,6 @@ module Fabric {
           }
         });
       };
-
 
       $scope.setActiveContainer = (container) => {
         $scope.clearSelection($scope.containers);
@@ -373,7 +361,6 @@ module Fabric {
         });
       };
 
-
       $scope.stopSelectedContainers = () => {
         $scope.selectedContainers.each((c) => {
           $scope.stopContainer(c.id);
@@ -384,32 +371,28 @@ module Fabric {
         doStartContainer($scope, jolokia, name);
       };
 
-
       $scope.stopContainer = (name) => {
         doStopContainer($scope, jolokia, name);
       };
-
 
       $scope.anySelectionAlive = (state) => {
         var selected = $scope.selectedContainers;
         return selected.length > 0 && selected.any((s) => s.alive === state);
       };
 
-
       $scope.everySelectionAlive = (state) => {
         var selected = $scope.selectedContainers;
         return selected.length > 0 && selected.every((s) => s.alive === state);
       };
 
-
       Core.register(jolokia, $scope, [
         {type: 'exec', mbean: Fabric.managerMBean, operation: $scope.containersOp, arguments: [$scope.containerArgs, $scope.profileFields]},
         {type: 'read', mbean: Fabric.clusterManagerMBean, attribute: $scope.ensembleContainerIdListOp}
       ], onSuccess($scope.dispatch, { silent: true }));
-    }];
+    }; //end ContainerListDirectiveController
 
 
-    public link = ($scope, $element, $attrs) => {
+  export function ContainerListDirectiveLink($scope, $element, $attrs) {
       $scope.showSelect = Core.parseBooleanValue(UI.getIfSet('showSelect', $attrs, 'true'));
 
       var atVersion = UI.getIfSet('atVersion', $attrs, null);
@@ -423,24 +406,13 @@ module Fabric {
         $scope.withoutProfile = $scope.$eval(withoutProfile);
       }
 
-      /*
-      log.debug("atVersion: ", $scope.atVersion);
-      log.debug("withoutProfile: ", $scope.withoutProfile);
-
-      log.debug("container list attributes: ", $attrs);
-      */
     };
-  }
 
 
-  export class ActiveProfileList extends Fabric.ContainerList {
-
-    public templateUrl = Fabric.templatePath + "activeProfileList.html";
-
-    public controller2 = ["$scope", "$element", "$attrs", "jolokia", "$location", "workspace", "$templateCache", ($scope, $element, $attrs, jolokia, $location, workspace, $templateCache) => {
-
-      // TODO - maybe it'd be better to refactor these into normal looking directives
-      this.controller.last()($scope, $element, $attrs, jolokia, $location, workspace, $templateCache);
+  // controller for ActiveProfileList directive
+  export function ActiveProfileListController($scope, $element, $attrs, jolokia, $location, workspace, $templateCache, $timeout) {
+      ContainerListDirectiveController($scope, $element, $attrs, jolokia, $location, workspace, $templateCache);
+      $scope.name = "ActiveProfileListController";
 
       $scope.searchFilter = '';
 
@@ -474,7 +446,7 @@ module Fabric {
         function onRequirementsSaved(response) {
           $scope.requirements = requirements;
           notification("success", "Updated the requirements");
-          $scope.updateActiveContainers();
+          $scope.updateActiveProfiles();
           Core.$apply($scope);
         };
 
@@ -488,17 +460,18 @@ module Fabric {
       };
 
       function onRequirements(response) {
+        log.debug("onRequirements, got response: ", response);
         var responseJson = angular.toJson(response.value);
 
         if (responseJson !== $scope.requirementsResponse) {
           $scope.requirementsResponse = responseJson;
           $scope.requirements = response.value;
-          $scope.updateActiveContainers();
+          $scope.updateActiveProfiles();
           Core.$apply($scope);
         }
       }
-
+      
       Core.register(jolokia, $scope, {type: 'exec', mbean: Fabric.managerMBean, operation: "requirements()"}, onSuccess(onRequirements));
-    }];
-  }
+    }; // end ActiveProfileListController
+
 }
