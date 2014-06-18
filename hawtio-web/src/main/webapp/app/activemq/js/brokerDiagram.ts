@@ -153,16 +153,19 @@ module ActiveMQ {
         }
         var dummyResponse = {value: node.panelProperties || {}};
         if (mbean && nodeJolokia) {
+          log.debug("reading ", mbean, " on remote container");
           $scope.unregisterFn = Core.register(nodeJolokia, $scope, {
             type: 'read', mbean: mbean
-          }, onSuccess(renderNodeAttributes, {error: (response) => {
-            // probably we've got a wrong mbean name?
-            // so lets render at least
-            renderNodeAttributes(dummyResponse);
-            Core.defaultJolokiaErrorHandler(response);
-          }}));
-
+          }, onSuccess(renderNodeAttributes, {
+             error: (response) => {
+               // probably we've got a wrong mbean name?
+               // so lets render at least
+               renderNodeAttributes(dummyResponse);
+               Core.defaultJolokiaErrorHandler(response);
+             }
+          }));
         } else {
+          log.debug("no mbean or jolokia available, using dummy response");
           renderNodeAttributes(dummyResponse);
         }
       }
@@ -238,8 +241,8 @@ module ActiveMQ {
         }
 
         if (containerId) {
-          var containerModel = "selectedNode" + (selectedNode['brokerContainer'] ? ".brokerContainer" : "");
-          properties.splice(0, 0, {key: "Container", value: $compile('<div fabric-container-link="' + containerModel + '"></div>')($scope)});
+          //var containerModel = "selectedNode" + (selectedNode['brokerContainer'] ? ".brokerContainer" : "");
+          properties.splice(0, 0, {key: "Container", value: $compile('<div fabric-container-link="' + selectedNode['container'] + '"></div>')($scope)});
         }
 
         var destinationName = value["DestinationName"] || selectedNode["destinationName"];
