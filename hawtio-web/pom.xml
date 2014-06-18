@@ -302,6 +302,13 @@
       <version>1.6.3</version>
       <scope>provided</scope>
     </dependency>
+    <!-- fix bad transient dependency of wro4j -->
+    <dependency>
+      <groupId>me.n4u.sass</groupId>
+      <artifactId>sass-gems</artifactId>
+      <version>3.2.1</version>
+      <scope>provided</scope>
+    </dependency>
 
   </dependencies>
 
