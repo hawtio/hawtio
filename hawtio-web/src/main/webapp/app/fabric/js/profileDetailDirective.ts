@@ -421,6 +421,10 @@ module Fabric {
 
       $scope.sysPropsTableConfig = {
         data: "sysPropsTableData.rows",
+        multiSelect: false,
+        showSelectionCheckbox: false,
+        enableRowClickSelection: true,
+        primaryKeyProperty: 'name',
         properties: {
           'rows' : {
             items: {
@@ -444,6 +448,30 @@ module Fabric {
           { field: "value", displayName: "Value" }
         ]
       };
+
+      $scope.$on("hawtio.datatable.sysPropsTableData.rows", (ev, data) => {
+        // TODO perform sane validation - or better during adding/updating the properties in hawtio-input-table...
+        var props = {};
+        angular.forEach(data, (v) => {
+          props[v.name] = v.value;
+        });
+        jolokia.request({
+          type: 'exec',
+          mbean: managerMBean,
+          operation: "setProfileSystemProperties(java.lang.String, java.lang.String, java.util.Map)",
+          arguments: [$scope.versionId, $scope.profileId, props]
+        }, {
+          method: 'POST',
+          success: () => {
+            notification('success', "System properties updated");
+            Core.$apply($scope);
+          },
+          error: (response) => {
+            notification('error', 'Failed to update system properties due to ' + response.error);
+            Core.$apply($scope);
+          }
+        });
+      });
 
     }];
 

@@ -134,6 +134,9 @@ module Forms {
       data: 'inputTableData.rows',
       displayFooter: false,
       showFilter: false,
+      showSelectionCheckbox: false,
+      enableRowClickSelection: true,
+      primaryKeyProperty: 'id',
       properties: {
         'rows': { items: { type: 'string', properties: {
           'id': {

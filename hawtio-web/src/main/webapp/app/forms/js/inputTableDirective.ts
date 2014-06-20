@@ -41,6 +41,7 @@ module Forms {
     public onedit = 'onedit';
     public onremove = 'onRemove';
 
+    public primaryKeyProperty = undefined;
     // TODO - add toggles to turn off add or edit buttons
 
     public getTableConfig() {
@@ -78,6 +79,8 @@ module Forms {
       var propertyName = attrs["property"] || "arrayData";
       var entityPath = entityName + "." + propertyName;
 
+      var primaryKeyProperty = config.primaryKeyProperty;
+
       // TODO better name?
       var tableName = config["title"] || entityName;
 
@@ -87,8 +90,6 @@ module Forms {
         config.data = scope[config.data];
       }
 
-      scope.selectedItems = [];
-
       var div = $("<div></div>");
 
       // TODO lets ensure we have some default columns in the column configuration?
@@ -96,7 +97,11 @@ module Forms {
       if (!tableConfig) {
         console.log("No table configuration for table " + tableName);
       } else {
-        tableConfig["selectedItems"] = scope.selectedItems;
+        // TOCHECK: it seems that we can't do tableConfig['selectedItems'] = scope.selectedItems = []
+        // and operate on scope.selectedItems here...
+        // the nested simple-data-table operates on different selectedItems then...
+        tableConfig["selectedItems"] = [];
+        scope.config = tableConfig;
       }
 
       var table = this.createTable(config, configName);
@@ -125,7 +130,7 @@ module Forms {
       }
 
       function removeSelected(data) {
-        angular.forEach(scope.selectedItems, (selected) => {
+        angular.forEach(scope.config.selectedItems, (selected) => {
           var id = selected["_id"];
           if (angular.isArray(data)) {
             data = data.remove((value) => Object.equal(value, selected));
@@ -213,6 +218,11 @@ module Forms {
           if (newData) {
             updateData((data) => {
               // TODO deal with non arrays
+              // find by primary key
+              // TODO something better than replace by primary key
+              if (primaryKeyProperty) {
+                data.remove((entity) => entity[primaryKeyProperty] === newData[primaryKeyProperty]);
+              }
               data.push(newData);
               return data;
             });
@@ -229,7 +239,7 @@ module Forms {
         scope.showEditDialog = false;
 
         scope.openEditDialog = () => {
-          var selected = scope.selectedItems;
+          var selected = scope.config.selectedItems;
           // lets make a deep copy for the value being edited
           var editObject = {};
           if (selected && selected.length) {
@@ -355,18 +365,18 @@ module Forms {
     }
 
     private getEditButton(config) {
-      return $('<button type="button" class="btn edit" ng-disabled="!selectedItems.length"><i class="' + config.editicon + '"></i> ' + config.edittext + '</button>');
+      return $('<button type="button" class="btn edit" ng-disabled="!config.selectedItems.length"><i class="' + config.editicon + '"></i> ' + config.edittext + '</button>');
     }
 
     private getRemoveButton(config) {
-      return $('<button type="remove" class="btn remove" ng-disabled="!selectedItems.length"><i class="' + config.removeicon + '"></i> ' + config.removetext + '</button>');
+      return $('<button type="remove" class="btn remove" ng-disabled="!config.selectedItems.length"><i class="' + config.removeicon + '"></i> ' + config.removetext + '</button>');
     }
 
 
     private createTable(config, tableConfig) {
       //var tableType = "hawtio-datatable";
       var tableType = "hawtio-simple-table";
-      var table = $('<div class="' + config.tableclass + '" ' + tableType + '="' + tableConfig + '">');
+      var table = $('<table class="' + config.tableclass + '" ' + tableType + '="' + tableConfig + '"></table>');
       //table.find('fieldset').append(this.getLegend(config));
       return table;
     }
