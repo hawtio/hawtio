@@ -1,4 +1,3 @@
-
 /// <reference path="../../baseHelpers.ts"/>
 
 // TODO Get these functions and variables out of the global namespace
@@ -1149,6 +1148,7 @@ module Core {
         connectUrl = connectUrl.replace(":", "/");
         connectUrl = Core.trimLeading(connectUrl, "/");
         connectUrl = Core.trimTrailing(connectUrl, "/");
+        connectUrl = options.scheme + "://" + connectUrl;
         connectUrl = url("/proxy/" + connectUrl);
       } else {
         if (connectUrl.indexOf("://") < 0) {
@@ -1174,12 +1174,13 @@ module Core {
       }
       var connectUrl = host + "/" + path;
       localStorage[connectUrl] = json;
+
+      if (connectUrl.indexOf("://") < 0) {
+        connectUrl = options.scheme + "://" + connectUrl;
+      }
+
       if (useProxy) {
         connectUrl = url("/proxy/" + connectUrl);
-      } else {
-        if (connectUrl.indexOf("://") < 0) {
-          connectUrl = options.scheme + "://" + connectUrl;
-        }
       }
       console.log("going to server: " + connectUrl + " as user " + options.userName);
       localStorage[connectUrl] = json;

@@ -26,6 +26,7 @@ public class ProxyDetails {
 
     private String stringProxyURL;
     private String hostAndPort;
+    private String scheme = "http";
     private String path = "";
     private String userName;
     private String password;
@@ -102,6 +103,11 @@ public class ProxyDetails {
             }
         }
         host = hostAndPort;
+        int schemeIdx = indexOf(hostAndPort, "://");
+        if (schemeIdx > 0) {
+            scheme = hostAndPort.substring(0, schemeIdx);
+            hostAndPort = hostAndPort.substring(schemeIdx + 3);
+        }
         idx = indexOf(hostAndPort, ":", "/");
         if (idx > 0) {
             host = hostAndPort.substring(0, idx);
@@ -128,7 +134,7 @@ public class ProxyDetails {
             }
         }
 
-        stringProxyURL = "http://" + hostAndPort + path;
+        stringProxyURL = scheme + "://" + hostAndPort + path;
 
         // we do not support query parameters
 
@@ -183,6 +189,10 @@ public class ProxyDetails {
 
     public String getProxyPath() {
         return path;
+    }
+
+    public String getScheme() {
+        return scheme;
     }
 
     public String getHost() {
