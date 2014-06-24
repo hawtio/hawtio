@@ -15,6 +15,7 @@ public class ProxyDetailsTest {
         assertEquals("getHostAndPort()", "localhost:8181", details.getHostAndPort());
         assertEquals("getPort()", 8181, details.getPort());
         assertEquals("getProxyPath()", "/jolokia/", details.getProxyPath());
+        assertEquals("getScheme()", "http", details.getScheme());
         assertEquals("getStringProxyURL()", "http://localhost:8181/jolokia/", details.getStringProxyURL());
     }
 
@@ -27,6 +28,7 @@ public class ProxyDetailsTest {
         assertEquals("getHostAndPort()", "localhost", details.getHostAndPort());
         assertEquals("getPort()", 80, details.getPort());
         assertEquals("getProxyPath()", "/jolokia/", details.getProxyPath());
+        assertEquals("getScheme()", "http", details.getScheme());
         assertEquals("getStringProxyURL()", "http://localhost/jolokia/", details.getStringProxyURL());
     }
 
@@ -39,6 +41,7 @@ public class ProxyDetailsTest {
         assertEquals("getHostAndPort()", "localhost", details.getHostAndPort());
         assertEquals("getPort()", 80, details.getPort());
         assertEquals("getProxyPath()", "/jolokia/", details.getProxyPath());
+        assertEquals("getScheme()", "http", details.getScheme());
         assertEquals("getStringProxyURL()", "http://localhost/jolokia/", details.getStringProxyURL());
     }
 
@@ -51,6 +54,7 @@ public class ProxyDetailsTest {
         assertEquals("getHostAndPort()", "localhost:90", details.getHostAndPort());
         assertEquals("getPort()", 90, details.getPort());
         assertEquals("getProxyPath()", "/jolokia/", details.getProxyPath());
+        assertEquals("getScheme()", "http", details.getScheme());
         assertEquals("getStringProxyURL()", "http://localhost:90/jolokia/", details.getStringProxyURL());
     }
 
@@ -63,7 +67,21 @@ public class ProxyDetailsTest {
         assertEquals("getHostAndPort()", "somerest-davsclaus2.rhcloud.com", details.getHostAndPort());
         assertEquals("getPort()", 80, details.getPort());
         assertEquals("getProxyPath()", "/cxf/crm/customerservice/customers/123", details.getProxyPath());
+        assertEquals("getScheme()", "http", details.getScheme());
         assertEquals("getStringProxyURL()", "http://somerest-davsclaus2.rhcloud.com/cxf/crm/customerservice/customers/123", details.getStringProxyURL());
+    }
+
+    @Test
+    public void testHttpsUrl() throws Exception {
+        ProxyDetails details = new ProxyDetails("/https://www.myhost.com/443/myApp/jolokia/");
+        assertEquals("getUserName()", null, details.getUserName());
+        assertEquals("getPassword()", null, details.getPassword());
+        assertEquals("getHost()", "www.myhost.com", details.getHost());
+        assertEquals("getHostAndPort()", "www.myhost.com:443", details.getHostAndPort());
+        assertEquals("getPort()", 443, details.getPort());
+        assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
+        assertEquals("getScheme()", "https", details.getScheme());
+        assertEquals("getStringProxyURL()", "https://www.myhost.com:443/myApp/jolokia/", details.getStringProxyURL());
     }
 
 }
