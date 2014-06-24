@@ -197,7 +197,8 @@ span {
   color: #000;
 }
 
-.dropdown.perspective-selector .dropdown-menu > div > p {
+.dropdown.perspective-selector .dropdown-menu > div > p,
+.hawtio-dropdown p {
   color: #000;
   background-color: #fff;
 }

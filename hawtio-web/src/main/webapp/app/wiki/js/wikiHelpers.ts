@@ -348,7 +348,7 @@ module Wiki {
   export function createLink(branch:string, pageId:string, $location, $scope) {
     var path = $location.path();
     var start = startLink(branch);
-    var link = null;
+    var link = '';
     if (pageId) {
       link = start + "/create/" + encodePath(pageId);
     } else {
@@ -548,6 +548,7 @@ module Wiki {
       })) {
         $scope.branch = "master";
       }
+      Core.$apply($scope);
     });
   }
 

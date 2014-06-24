@@ -278,6 +278,17 @@ function logLevelClass(level:string) {
  */
 module Core {
 
+  export function toPath(hashUrl:string) {
+    if (Core.isBlank(hashUrl)) {
+      return hashUrl;
+    }
+    if (hashUrl.startsWith("#")) {
+      return hashUrl.substring(1);
+    } else {
+      return hashUrl;
+    }
+  }
+
   export function parseMBean(mbean) {
     var answer = {};
     var parts = mbean.split(":");

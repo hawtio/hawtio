@@ -2314,7 +2314,8 @@ div[ng-controller="Log.LogController"] .logbar .logbar-container {
   border-top: none;
 }
 
-.dropdown.perspective-selector .dropdown-menu > div > p {
+.dropdown.perspective-selector .dropdown-menu > div > p,
+.hawtio-dropdown p {
   color: #333333;
 }
 
@@ -2349,7 +2350,8 @@ div[ng-controller="Log.LogController"] .logbar .logbar-container {
   border: none;
 }
 
-.dropdown.perspective-selector .dropdown-menu > div > p {
+.dropdown.perspective-selector .dropdown-menu > div > p,
+.hawtio-dropdown p {
   border-top: 1px solid #d4d4d4;
   border-bottom: 1px solid #d4d4d4;
   background-image: linear-gradient(to bottom, #fff, #e5e5e5);

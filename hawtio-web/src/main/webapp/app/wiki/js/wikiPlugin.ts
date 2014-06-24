@@ -41,6 +41,35 @@ module Wiki {
     return new GitWikiRepository(() => Git.createGitRepository(workspace, jolokia, localStorage));
   }]);
 
+  interface MenuExtension {
+    title:string;
+    valid: () => boolean;
+    action: () => void;
+  }
+
+  _module.factory('wikiBranchMenu', () => {
+    var self = {
+      items: [],
+      addExtension: (item:MenuExtension) => {
+        self.items.push(item);
+      },
+      applyMenuExtensions: (menuArray:any[]) => {
+        if (self.items.length === 0) {
+          return;
+        }
+        menuArray.push({
+          heading: "Actions"
+        });
+        self.items.forEach((item:MenuExtension) => {
+          if (item.valid()) {
+            menuArray.push(item);
+          }
+        });
+      }
+    };
+    return self;
+  });
+
   _module.factory('fileExtensionTypeRegistry', () => {
     return {
       "markdown": ["md", "markdown", "mdown", "mkdn", "mkd"],

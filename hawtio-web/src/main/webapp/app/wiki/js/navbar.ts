@@ -3,9 +3,45 @@
  */
 /// <reference path="./wikiPlugin.ts"/>
 module Wiki {
-  _module.controller("Wiki.NavBarController", ["$scope", "$location", "$routeParams", "workspace", "wikiRepository", ($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) => {
+  _module.controller("Wiki.NavBarController", ["$scope", "$location", "$routeParams", "workspace", "wikiRepository", "wikiBranchMenu", ($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository, wikiBranchMenu) => {
 
     Wiki.initScope($scope, $routeParams, $location);
+    $scope.branchMenuConfig = {
+      title: $scope.branch,
+      items: []
+    };
+
+    wikiBranchMenu.applyMenuExtensions($scope.branchMenuConfig.items);
+
+    $scope.$watch('branches', (newValue, oldValue) => {
+      if (newValue === oldValue || !newValue) {
+        return;
+      }
+      $scope.branchMenuConfig.items = [];
+      if (newValue.length > 0) {
+        $scope.branchMenuConfig.items.push({
+          heading: "Branches"
+        });
+      }
+      newValue.sort().forEach((item) => {
+        var menuItem = {
+          title: item,
+          icon: '',
+          action: () => {}
+        };
+        if (item === $scope.branch) {
+          menuItem.icon = "icon-ok";
+        } else {
+          menuItem.action = () => {
+            var targetUrl = branchLink(item, $scope.pageId, $location);
+            $location.path(Core.toPath(targetUrl));
+            Core.$apply($scope);
+          }
+        }
+        $scope.branchMenuConfig.items.push(menuItem);
+      });
+      wikiBranchMenu.applyMenuExtensions($scope.branchMenuConfig.items);
+    }, true);
 
     $scope.createLink = () => {
       var pageId = Wiki.pageId($routeParams, $location);
@@ -41,7 +77,6 @@ module Wiki {
     });
 
     loadBreadcrumbs();
-
 
     function switchFromViewToCustomLink(breadcrumb, link) {
       var href = breadcrumb.href;

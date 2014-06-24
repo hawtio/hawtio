@@ -53,7 +53,7 @@ module Fabric {
     return Fabric.containerIconRegistry;
   });
 
-  _module.run(["$location", "workspace", "jolokia", "viewRegistry", "pageTitle", "helpRegistry", "$rootScope", "postLoginTasks", "preferencesRegistry", ($location: ng.ILocationService,
+  _module.run(["$location", "workspace", "jolokia", "viewRegistry", "pageTitle", "helpRegistry", "$rootScope", "postLoginTasks", "preferencesRegistry", "wikiBranchMenu", ($location: ng.ILocationService,
                workspace: Workspace,
                jolokia,
                viewRegistry,
@@ -61,12 +61,32 @@ module Fabric {
                helpRegistry,
                $rootScope,
                postLoginTasks:Core.Tasks,
-               preferencesRegistry) => {
+               preferencesRegistry,
+               wikiBranchMenu) => {
 
     viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
 
     pageTitle.addTitleElement(() => {
       return Fabric.currentContainerId;
+    });
+
+    wikiBranchMenu.addExtension({
+      title: "Delete Version",
+      valid: () => {
+        return Fabric.isFMCContainer(workspace);
+      },
+      action: () => {
+        log.debug("Delete version");
+      }
+    });
+    wikiBranchMenu.addExtension({
+      title: "Patch Version",
+      valid: () => {
+        return Fabric.isFMCContainer(workspace);
+      },
+      action: () => {
+        log.debug("Patch version");
+      }
     });
 
     postLoginTasks.addTask('fabricFetchContainerName', () => {
