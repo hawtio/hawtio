@@ -1,11 +1,11 @@
 <!-- start box -->
 <div class="box" 
      ng-class="getSelectedClass(container)" 
-     ng-click="container.selected = !container.selected">
+     ng-click="select(containers, container, $event)">
   <div class="box-left">
     <div class="container-controls" >
       <div class="container-status">
-        <i title="{{getStatusTitle(container)}}" ng-class='statusIcon(container)' ng-click="container.selected = !container.selected"></i>
+        <i title="{{getStatusTitle(container)}}" ng-class='statusIcon(container)'></i>
       </div>
       <div class="container-type" title="Container type">
         <hawtio-icon config="container.icon"/>

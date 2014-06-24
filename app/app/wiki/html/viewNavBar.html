@@ -1,21 +1,8 @@
 <div ng-hide="inDashboard" class="logbar" ng-controller="Wiki.NavBarController">
   <div class="wiki logbar-container">
     <ul class="nav nav-tabs">
-      <li ng-show="branches.length || branch" class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-           title="The branch to view">
-          <span class="contained c-medium">{{branch || 'branch'}}</span>
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-          <li ng-repeat="otherBranch in branches">
-            <a ng-href="{{branchLink(otherBranch)}}{{hash}}"
-               ng-hide="otherBranch === branch"
-               title="Switch to the {{otherBranch}} branch"
-               data-placement="bottom">
-              {{otherBranch}}</a>
-          </li>
-        </ul>
+      <li ng-show="branches.length || branch">
+        <div hawtio-drop-down="branchMenuConfig"></div>
       </li>
       <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href) && !objectId}'>
         <a class="breadcrumb-link" ng-href="{{link.href}}{{hash}}">

@@ -726,7 +726,8 @@ div#main div ul.nav {
   margin-right: 0px;
 }
 
-div#main div ul.nav li a {
+div#main div ul.nav li a,
+div#main div ul.nav li span {
   padding-bottom: 2px;
   padding-top: 2px;
 }
@@ -3405,7 +3406,8 @@ th > .indicator:before {
   display: block;
 }
 
-.dropdown.perspective-selector .dropdown-menu > div > p {
+.dropdown.perspective-selector .dropdown-menu > div > p,
+.hawtio-dropdown p {
   font-size: smaller;
   padding-left: 3px;
   padding-right: 3px;
