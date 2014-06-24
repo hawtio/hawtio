@@ -17,6 +17,7 @@ module Fabric {
       $scope.name = "ContainerListDirectiveController";
 
       Fabric.initScope($scope, $location, jolokia, workspace);
+      SelectionHelpers.decorate($scope);
 
       $scope.currentPage = $templateCache.get("addProfileRequirements");
 
@@ -327,10 +328,6 @@ module Fabric {
         }
       };
 
-      $scope.clearSelection = (group) => {
-        group.each((item) => { item.selected = false; });
-      };
-
       $scope.setActiveProfile = (profile) => {
         $scope.clearSelection($scope.activeProfiles);
         if (!profile || profile === null) {
@@ -339,21 +336,6 @@ module Fabric {
         profile.selected = true;
       };
 
-      $scope.selectAllContainers = () => {
-        $scope.containers.each((container) => {
-          if ($scope.filterContainer(container)) {
-            container.selected = true;
-          }
-        });
-      };
-
-      $scope.setActiveContainer = (container) => {
-        $scope.clearSelection($scope.containers);
-        if (!container || container === null) {
-          return;
-        }
-        container.selected = true;
-      };
 
       $scope.startSelectedContainers = () => {
         $scope.selectedContainers.each((c) => {
