@@ -236,7 +236,7 @@ module Tree {
             }
             // select and activate first child if we have not activated any others
             if (!activatedNode) {
-              var children = root['getChildren']();
+              var children = <any[]>root['getChildren']();
               if (children && children.length) {
                 var child = children[0];
                 child.expand(true);

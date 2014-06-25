@@ -2,7 +2,13 @@
  * @module Fabric
  * @main Fabric
  */
+/// <reference path="../../core/js/corePlugin.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
+/// <reference path="../../perspective/js/perspectiveHelpers.ts"/>
+/// <reference path="../../perspective/js/metadata.ts"/>
+/// <reference path="../../insight/js/insightHelpers.ts"/>
 /// <reference path="fabricHelpers.ts"/>
+/// <reference path="./iconRegistry.ts"/>
 module Fabric {
 
   export var templatePath = 'app/fabric/html/';
@@ -70,6 +76,15 @@ module Fabric {
       return Fabric.currentContainerId;
     });
 
+    wikiBranchMenu.addExtension({
+      title: "Create Version",
+      valid: () => {
+        return Fabric.isFMCContainer(workspace);
+      },
+      action: () => {
+        log.debug("Create version");
+      }
+    });
     wikiBranchMenu.addExtension({
       title: "Delete Version",
       valid: () => {

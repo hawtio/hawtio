@@ -42,7 +42,7 @@ module Perspective {
    * @param {any} localStorage
    * @return {String}
    */
-  export function currentPerspectiveId($location, workspace, jolokia, localStorage) {
+  export function currentPerspectiveId($location:ng.ILocationService, workspace:Core.Workspace, jolokia, localStorage:Storage) {
     var perspective = $location.search()[perspectiveSearchId];
     if (!perspective) {
       perspective = Perspective.choosePerspective($location, workspace, jolokia, localStorage);

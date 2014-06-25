@@ -4,6 +4,8 @@
  * @module UI
  * @main UI
  */
+/// <reference path="../../core/js/corePlugin.ts"/>
+/// <reference path="./CodeEditor.ts"/>
 /// <reference path="./uiHelpers.ts"/>
 module UI {
 
@@ -55,6 +57,32 @@ module UI {
         }
       );
     };
+  }]);
+
+  UI._module.controller("CodeEditor.PreferencesController", ["$scope", "localStorage", "$templateCache", ($scope, localStorage, $templateCache) => {
+    $scope.exampleText = $templateCache.get("exampleText");
+    $scope.codeMirrorEx = $templateCache.get("codeMirrorExTemplate");
+    $scope.javascript = "javascript";
+
+    $scope.preferences = CodeEditor.GlobalCodeMirrorOptions;
+
+    // If any of the preferences change, make sure to save them automatically
+    $scope.$watch("preferences", function(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        // such a cheap and easy way to update the example view :-)
+        $scope.codeMirrorEx += " ";
+        localStorage['CodeMirrorOptions'] = angular.toJson(angular.extend(CodeEditor.GlobalCodeMirrorOptions, $scope.preferences));
+      }
+    }, true);
+
+  }]);
+
+  _module.run(["localStorage", (localStorage) => {
+    var opts = localStorage['CodeMirrorOptions'];
+    if (opts) {
+      opts = angular.fromJson(opts);
+      CodeEditor.GlobalCodeMirrorOptions = angular.extend(CodeEditor.GlobalCodeMirrorOptions, opts);
+    }
   }]);
 
   hawtioPluginLoader.addModule(pluginName);

@@ -3,10 +3,10 @@
  */
 /// <reference path="./wikiPlugin.ts"/>
 module Wiki {
-  _module.controller("Wiki.NavBarController", ["$scope", "$location", "$routeParams", "workspace", "wikiRepository", "wikiBranchMenu", ($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository, wikiBranchMenu) => {
+  _module.controller("Wiki.NavBarController", ["$scope", "$location", "$routeParams", "workspace", "wikiRepository", "wikiBranchMenu", ($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository, wikiBranchMenu:BranchMenu) => {
 
     Wiki.initScope($scope, $routeParams, $location);
-    $scope.branchMenuConfig = {
+    $scope.branchMenuConfig = <UI.MenuItem>{
       title: $scope.branch,
       items: []
     };
@@ -33,7 +33,7 @@ module Wiki {
           menuItem.icon = "icon-ok";
         } else {
           menuItem.action = () => {
-            var targetUrl = branchLink(item, $scope.pageId, $location);
+            var targetUrl = branchLink(item, <string>$scope.pageId, $location);
             $location.path(Core.toPath(targetUrl));
             Core.$apply($scope);
           }
@@ -52,10 +52,10 @@ module Wiki {
 
     $scope.sourceLink = () => {
       var path = $location.path();
-      var answer = null;
+      var answer = <string>null;
       angular.forEach(Wiki.customViewLinks($scope), (link) => {
         if (path.startsWith(link)) {
-          answer = Core.createHref($location, Wiki.startLink($scope.branch) + "/view" + path.substring(link.length))
+          answer = <string>Core.createHref($location, Wiki.startLink($scope.branch) + "/view" + path.substring(link.length))
         }
       });
       // remove the form parameter on view/edit links

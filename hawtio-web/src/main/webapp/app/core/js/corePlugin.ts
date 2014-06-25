@@ -5,7 +5,9 @@
  * @main Core
  */
 
-/// <reference path="coreHelpers.ts"/>
+/// <reference path="./coreHelpers.ts"/>
+/// <reference path="./tasks.ts"/>
+/// <reference path="./pageTitle.ts"/>
 module Core {
 
   /**
@@ -196,13 +198,6 @@ module Core {
 
 
     //helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());
-
-    var opts = localStorage['CodeMirrorOptions'];
-    if (opts) {
-      opts = angular.fromJson(opts);
-      CodeEditor.GlobalCodeMirrorOptions = angular.extend(CodeEditor.GlobalCodeMirrorOptions, opts);
-    }
-
 
     toastr.options = {
       'closeButton': true,

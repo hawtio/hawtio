@@ -3,6 +3,11 @@
  * @main Wiki
  */
 /// <reference path="./wikiHelpers.ts"/>
+/// <reference path="../../ui/js/dropDown.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
+/// <reference path="../../git/js/git.ts"/>
+/// <reference path="../../git/js/gitHelpers.ts"/>
+/// <reference path="./wikiRepository.ts"/>
 module Wiki {
 
   var pluginName = 'wiki';
@@ -41,30 +46,35 @@ module Wiki {
     return new GitWikiRepository(() => Git.createGitRepository(workspace, jolokia, localStorage));
   }]);
 
-  interface MenuExtension {
-    title:string;
-    valid: () => boolean;
-    action: () => void;
+  /**
+   * Branch Menu service
+   */
+  export interface BranchMenu {
+    addExtension: (item:UI.MenuItem) => void;
+    applyMenuExtensions: (menu:UI.MenuItem[]) => void;
   }
 
   _module.factory('wikiBranchMenu', () => {
     var self = {
       items: [],
-      addExtension: (item:MenuExtension) => {
+      addExtension: (item:UI.MenuItem) => {
         self.items.push(item);
       },
-      applyMenuExtensions: (menuArray:any[]) => {
+      applyMenuExtensions: (menu:UI.MenuItem[]) => {
         if (self.items.length === 0) {
           return;
         }
-        menuArray.push({
+        var extendedMenu:UI.MenuItem[] = [{
           heading: "Actions"
-        });
-        self.items.forEach((item:MenuExtension) => {
+        }];
+        self.items.forEach((item:UI.MenuItem) => {
           if (item.valid()) {
-            menuArray.push(item);
+            extendedMenu.push(item);
           }
         });
+        if (extendedMenu.length > 1) {
+          menu.add(extendedMenu);
+        }
       }
     };
     return self;
