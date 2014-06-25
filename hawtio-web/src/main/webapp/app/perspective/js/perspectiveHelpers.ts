@@ -280,7 +280,11 @@ module Perspective {
    * @return {String}
    */
   export function defaultPage($location, workspace: Workspace, jolokia, localStorage) {
-    if (shouldShowWelcomePage(localStorage) && !Core.isChromeApp()) {
+    // we should not show welcome screen from proxy or form chrome app
+    var isProxy = Core.isProxyUrl($location);
+    var isChomeApp = Core.isChromeApp();
+
+    if (!isProxy && !isChomeApp && shouldShowWelcomePage(localStorage)) {
       return "/welcome/";
     }
 

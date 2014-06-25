@@ -1264,6 +1264,13 @@ module Core {
     return url;
   }
 
+  /**
+   * Returns true if the $location is from the hawtio proxy
+   */
+  export function isProxyUrl($location) {
+    var url = $location.url();
+    return url.indexOf('/hawtio/proxy/') > 0;
+  }
 
   /**
    * Binds a $location.search() property to a model on a scope; so that its initialised correctly on startup
