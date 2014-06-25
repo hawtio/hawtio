@@ -12,10 +12,10 @@ module Osgi {
       sortField: "Identifier",
       bundleFilter: "",
       startLevelFilter: 0,
-      showPlatformBundles: false,
       showActiveMQBundles: false,
+      showCamelBundles: false,
       showCxfBundles: false,
-      showCamelBundles: true
+      showPlatformBundles: false
     };
 
     if ('bundleList' in localStorage) {
