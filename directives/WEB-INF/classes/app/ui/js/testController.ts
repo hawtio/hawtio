@@ -2,6 +2,8 @@
  * @module UI
  */
 /// <reference path="./uiPlugin.ts"/>
+/// <reference path="./dropDown.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
 module UI {
 
     _module.controller("UI.UITestController2", ["$scope", "$templateCache", ($scope, $templateCache) => {
@@ -34,7 +36,7 @@ module UI {
 
       $scope.someVal = 1;
 
-      $scope.dropDownConfig = {
+      $scope.dropDownConfig = <UI.MenuItem>{
         icon: 'icon-cogs',
         title: 'My Awesome Menu',
         items: [{
@@ -66,7 +68,7 @@ module UI {
         }, {
           title: "Call a function!",
           action: () => {
-            notification("info", "Function called!");
+            Core.notification("info", "Function called!");
           }
         }]
       };

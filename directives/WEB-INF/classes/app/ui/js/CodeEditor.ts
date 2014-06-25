@@ -4,7 +4,6 @@
  * @module CodeEditor
  * @main CodeEditor
  */
-/// <reference path="./uiPlugin.ts"/>
 module CodeEditor {
   // TODO break this out into a separate plugin and maybe combine with hawtio-editor directive?
 
@@ -59,34 +58,6 @@ module CodeEditor {
     lineWrapping: true,
     autoCloseTags: true
   };
-
-  /**
-   * Controller used on the preferences page to configure the editor
-   *
-   * @method PreferencesController
-   * @for CodeEditor
-   * @static
-   * @param $scope
-   * @param localStorage
-   * @param $templateCache
-   */
-  UI._module.controller("CodeEditor.PreferencesController", ["$scope", "localStorage", "$templateCache", ($scope, localStorage, $templateCache) => {
-    $scope.exampleText = $templateCache.get("exampleText");
-    $scope.codeMirrorEx = $templateCache.get("codeMirrorExTemplate");
-    $scope.javascript = "javascript";
-
-    $scope.preferences = GlobalCodeMirrorOptions;
-
-    // If any of the preferences change, make sure to save them automatically
-    $scope.$watch("preferences", function(newValue, oldValue) {
-      if (newValue !== oldValue) {
-        // such a cheap and easy way to update the example view :-)
-        $scope.codeMirrorEx += " ";
-        localStorage['CodeMirrorOptions'] = angular.toJson(angular.extend(GlobalCodeMirrorOptions, $scope.preferences));
-      }
-    }, true);
-
-  }]);
 
   /**
    * Tries to figure out what kind of text we're going to render in the editor, either

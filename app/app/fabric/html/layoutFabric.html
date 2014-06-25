@@ -7,10 +7,6 @@
           title="View the currently active profiles (groups of containers) in this Fabric. Try the Wiki tab to see all the available profiles.">
     <a ng-href="#/fabric/activeProfiles{{hash}}">Profiles</a>
   </li>
-  <li ng-show="hasFabric" ng-class='{active : isActive("#/fabric/view")}'
-          title="Advanced Fabric management view for managing versions, profiles, containers and to perform Rolling Upgrades">
-    <a ng-href="#/fabric/view{{hash}}">Manage</a>
-  </li>
   <li ng-show="hasMQManager" ng-class='{active : isActive("#/fabric/mq")}'>
     <a ng-href="#/fabric/mq/brokers{{hash}}" title="View the Fabric based MQ brokers">MQ</a>
   </li>

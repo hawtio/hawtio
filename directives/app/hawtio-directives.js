@@ -1,6 +1,28 @@
 ﻿/**
 * @module Core
 */
+/// <reference path="../../d.ts/angular.d.ts"/>
+/// <reference path="../../d.ts/angular-resource.d.ts"/>
+/// <reference path="../../d.ts/bootstrap-2.1.d.ts"/>
+/// <reference path="../../d.ts/camel.d.ts"/>
+/// <reference path="../../d.ts/chrome.d.ts"/>
+/// <reference path="../../d.ts/codemirror-additional.d.ts"/>
+/// <reference path="../../d.ts/codemirror.d.ts"/>
+/// <reference path="../../d.ts/dagre.d.ts"/>
+/// <reference path="../../d.ts/dmr.d.ts"/>
+/// <reference path="../../d.ts/google.d.ts"/>
+/// <reference path="../../d.ts/hawtio-plugin-loader.d.ts"/>
+/// <reference path="../../d.ts/jolokia-1.0.d.ts"/>
+/// <reference path="../../d.ts/jquery-datatable.d.ts"/>
+/// <reference path="../../d.ts/jquery-datatable-extra.d.ts"/>
+/// <reference path="../../d.ts/jquery.d.ts"/>
+/// <reference path="../../d.ts/jquery.dynatree-1.2.d.ts"/>
+/// <reference path="../../d.ts/jquery.gridster.d.ts"/>
+/// <reference path="../../d.ts/jquery.jsPlumb.d.ts"/>
+/// <reference path="../../d.ts/logger.d.ts"/>
+/// <reference path="../../d.ts/marked.d.ts"/>
+/// <reference path="../../d.ts/schemas.d.ts"/>
+/// <reference path="../../d.ts/sugar-1.3.d.ts"/>
 var Core;
 (function (Core) {
     // use a better implementation of unescapeHTML
@@ -1713,6 +1735,154 @@ var DataTable;
     DataTable.TableWidget = TableWidget;
 })(DataTable || (DataTable = {}));
 /**
+* Module that contains several helper functions related to hawtio's code editor
+*
+* @module CodeEditor
+* @main CodeEditor
+*/
+var CodeEditor;
+(function (CodeEditor) {
+    
+
+    /**
+    * @property GlobalCodeMirrorOptions
+    * @for CodeEditor
+    * @type CodeMirrorOptions
+    */
+    CodeEditor.GlobalCodeMirrorOptions = {
+        theme: "default",
+        tabSize: 4,
+        lineNumbers: true,
+        indentWithTabs: true,
+        lineWrapping: true,
+        autoCloseTags: true
+    };
+
+    /**
+    * Tries to figure out what kind of text we're going to render in the editor, either
+    * text, javascript or XML.
+    *
+    * @method detectTextFormat
+    * @for CodeEditor
+    * @static
+    * @param value
+    * @returns {string}
+    */
+    function detectTextFormat(value) {
+        var answer = "text";
+        if (value) {
+            answer = "javascript";
+            var trimmed = value.toString().trimLeft().trimRight();
+            if (trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
+                answer = "xml";
+            }
+        }
+        return answer;
+    }
+    CodeEditor.detectTextFormat = detectTextFormat;
+
+    /**
+    * Auto formats the CodeMirror editor content to pretty print
+    *
+    * @method autoFormatEditor
+    * @for CodeEditor
+    * @static
+    * @param {CodeMirrorEditor} editor
+    * @return {void}
+    */
+    function autoFormatEditor(editor) {
+        if (editor) {
+            var totalLines = editor.lineCount();
+
+            //var totalChars = editor.getValue().length;
+            var start = { line: 0, ch: 0 };
+            var end = { line: totalLines - 1, ch: editor.getLine(totalLines - 1).length };
+            editor.autoFormatRange(start, end);
+            editor.setSelection(start, start);
+        }
+    }
+    CodeEditor.autoFormatEditor = autoFormatEditor;
+
+    /**
+    * Used to configures the default editor settings (per Editor Instance)
+    *
+    * @method createEditorSettings
+    * @for CodeEditor
+    * @static
+    * @param {Object} options
+    * @return {Object}
+    */
+    function createEditorSettings(options) {
+        if (typeof options === "undefined") { options = {}; }
+        options.extraKeys = options.extraKeys || {};
+
+        // Handle Mode
+        (function (mode) {
+            mode = mode || { name: "text" };
+
+            if (typeof mode !== "object") {
+                mode = { name: mode };
+            }
+
+            var modeName = mode.name;
+            if (modeName === "javascript") {
+                angular.extend(mode, {
+                    "json": true
+                });
+            }
+        })(options.mode);
+
+        // Handle Code folding folding
+        (function (options) {
+            var javascriptFolding = CodeMirror.newFoldFunction(CodeMirror.braceRangeFinder);
+            var xmlFolding = CodeMirror.newFoldFunction(CodeMirror.tagRangeFinder);
+
+            // Mode logic inside foldFunction to allow for dynamic changing of the mode.
+            // So don't have to listen to the options model and deal with re-attaching events etc...
+            var foldFunction = function (codeMirror, line) {
+                var mode = codeMirror.getOption("mode");
+                var modeName = mode["name"];
+                if (!mode || !modeName)
+                    return;
+                if (modeName === 'javascript') {
+                    javascriptFolding(codeMirror, line);
+                } else if (modeName === "xml" || modeName.startsWith("html")) {
+                    xmlFolding(codeMirror, line);
+                }
+                ;
+            };
+
+            options.onGutterClick = foldFunction;
+            options.extraKeys = angular.extend(options.extraKeys, {
+                "Ctrl-Q": function (codeMirror) {
+                    foldFunction(codeMirror, codeMirror.getCursor().line);
+                }
+            });
+        })(options);
+
+        var readOnly = options.readOnly;
+        if (!readOnly) {
+            /*
+            options.extraKeys = angular.extend(options.extraKeys, {
+            "'>'": function (codeMirror) {
+            codeMirror.closeTag(codeMirror, '>');
+            },
+            "'/'": function (codeMirror) {
+            codeMirror.closeTag(codeMirror, '/');
+            }
+            });
+            */
+            options.matchBrackets = true;
+        }
+
+        // Merge the global config in to this instance of CodeMirror
+        angular.extend(options, CodeEditor.GlobalCodeMirrorOptions);
+
+        return options;
+    }
+    CodeEditor.createEditorSettings = createEditorSettings;
+})(CodeEditor || (CodeEditor = {}));
+/**
 * @module UI
 */
 var UI;
@@ -1782,6 +1952,8 @@ var UI;
 * @module UI
 * @main UI
 */
+/// <reference path="../../core/js/corePlugin.ts"/>
+/// <reference path="./CodeEditor.ts"/>
 /// <reference path="./uiHelpers.ts"/>
 var UI;
 (function (UI) {
@@ -1831,6 +2003,33 @@ var UI;
                     $compile(element.contents())(scope);
                 });
             };
+        }]);
+
+    UI._module.controller("CodeEditor.PreferencesController", [
+        "$scope", "localStorage", "$templateCache", function ($scope, localStorage, $templateCache) {
+            $scope.exampleText = $templateCache.get("exampleText");
+            $scope.codeMirrorEx = $templateCache.get("codeMirrorExTemplate");
+            $scope.javascript = "javascript";
+
+            $scope.preferences = CodeEditor.GlobalCodeMirrorOptions;
+
+            // If any of the preferences change, make sure to save them automatically
+            $scope.$watch("preferences", function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    // such a cheap and easy way to update the example view :-)
+                    $scope.codeMirrorEx += " ";
+                    localStorage['CodeMirrorOptions'] = angular.toJson(angular.extend(CodeEditor.GlobalCodeMirrorOptions, $scope.preferences));
+                }
+            }, true);
+        }]);
+
+    UI._module.run([
+        "localStorage", function (localStorage) {
+            var opts = localStorage['CodeMirrorOptions'];
+            if (opts) {
+                opts = angular.fromJson(opts);
+                CodeEditor.GlobalCodeMirrorOptions = angular.extend(CodeEditor.GlobalCodeMirrorOptions, opts);
+            }
         }]);
 
     hawtioPluginLoader.addModule(UI.pluginName);
@@ -2955,6 +3154,97 @@ var UI;
 * @module UI
 */
 /// <reference path="./uiPlugin.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
+var UI;
+(function (UI) {
+    function hawtioDropDown($templateCache) {
+        return {
+            restrict: 'A',
+            replace: true,
+            templateUrl: UI.templatePath + 'dropDown.html',
+            scope: {
+                config: '=hawtioDropDown'
+            },
+            controller: [
+                "$scope", "$element", "$attrs", function ($scope, $element, $attrs) {
+                    if (!$scope.config) {
+                        $scope.config = {};
+                    }
+
+                    if (!('open' in $scope.config)) {
+                        $scope.config['open'] = false;
+                    }
+
+                    $scope.action = function (config, $event) {
+                        //log.debug("doAction on : ", config, "event: ", $event);
+                        if ('items' in config && !('action' in config)) {
+                            config.open = !config.open;
+                            $event.preventDefault();
+                            $event.stopPropagation();
+                        } else if ('action' in config) {
+                            //log.debug("executing action: ", config.action);
+                            var action = config['action'];
+                            if (angular.isFunction(action)) {
+                                action.apply();
+                            } else if (angular.isString(action)) {
+                                $scope.$parent.$eval(action, {
+                                    config: config,
+                                    '$event': $event
+                                });
+                            }
+                        }
+                    };
+
+                    $scope.$watch('config.items', function (newValue, oldValue) {
+                        if (newValue !== oldValue) {
+                            // just add some space to force a redraw
+                            $scope.menuStyle = $scope.menuStyle + " ";
+                        }
+                    }, true);
+
+                    $scope.submenu = function (config) {
+                        if (config && config.submenu) {
+                            return "sub-menu";
+                        }
+                        return "";
+                    };
+
+                    $scope.icon = function (config) {
+                        if (config && !Core.isBlank(config.icon)) {
+                            return config.icon;
+                        } else {
+                            return 'icon-spacer';
+                        }
+                    };
+
+                    $scope.open = function (config) {
+                        if (config && !config.open) {
+                            return '';
+                        }
+                        return 'open';
+                    };
+                }],
+            link: function ($scope, $element, $attrs) {
+                $scope.menuStyle = $templateCache.get("withsubmenus.html");
+
+                if ('processSubmenus' in $attrs) {
+                    if (!Core.parseBooleanValue($attrs['processSubmenus'])) {
+                        $scope.menuStyle = $templateCache.get("withoutsubmenus.html");
+                    }
+                }
+            }
+        };
+    }
+    UI.hawtioDropDown = hawtioDropDown;
+
+    UI._module.directive('hawtioDropDown', ["$templateCache", UI.hawtioDropDown]);
+})(UI || (UI = {}));
+/**
+* @module UI
+*/
+/// <reference path="./uiPlugin.ts"/>
+/// <reference path="./dropDown.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
 var UI;
 (function (UI) {
     UI._module.controller("UI.UITestController2", [
@@ -3022,7 +3312,7 @@ var UI;
                     }, {
                         title: "Call a function!",
                         action: function () {
-                            notification("info", "Function called!");
+                            Core.notification("info", "Function called!");
                         }
                     }]
             };
@@ -4081,183 +4371,6 @@ var UI;
     UI._module.directive('hawtioIcon', UI.hawtioIcon);
 })(UI || (UI = {}));
 /**
-* Module that contains several helper functions related to hawtio's code editor
-*
-* @module CodeEditor
-* @main CodeEditor
-*/
-/// <reference path="./uiPlugin.ts"/>
-var CodeEditor;
-(function (CodeEditor) {
-    
-
-    /**
-    * @property GlobalCodeMirrorOptions
-    * @for CodeEditor
-    * @type CodeMirrorOptions
-    */
-    CodeEditor.GlobalCodeMirrorOptions = {
-        theme: "default",
-        tabSize: 4,
-        lineNumbers: true,
-        indentWithTabs: true,
-        lineWrapping: true,
-        autoCloseTags: true
-    };
-
-    /**
-    * Controller used on the preferences page to configure the editor
-    *
-    * @method PreferencesController
-    * @for CodeEditor
-    * @static
-    * @param $scope
-    * @param localStorage
-    * @param $templateCache
-    */
-    UI._module.controller("CodeEditor.PreferencesController", [
-        "$scope", "localStorage", "$templateCache", function ($scope, localStorage, $templateCache) {
-            $scope.exampleText = $templateCache.get("exampleText");
-            $scope.codeMirrorEx = $templateCache.get("codeMirrorExTemplate");
-            $scope.javascript = "javascript";
-
-            $scope.preferences = CodeEditor.GlobalCodeMirrorOptions;
-
-            // If any of the preferences change, make sure to save them automatically
-            $scope.$watch("preferences", function (newValue, oldValue) {
-                if (newValue !== oldValue) {
-                    // such a cheap and easy way to update the example view :-)
-                    $scope.codeMirrorEx += " ";
-                    localStorage['CodeMirrorOptions'] = angular.toJson(angular.extend(CodeEditor.GlobalCodeMirrorOptions, $scope.preferences));
-                }
-            }, true);
-        }]);
-
-    /**
-    * Tries to figure out what kind of text we're going to render in the editor, either
-    * text, javascript or XML.
-    *
-    * @method detectTextFormat
-    * @for CodeEditor
-    * @static
-    * @param value
-    * @returns {string}
-    */
-    function detectTextFormat(value) {
-        var answer = "text";
-        if (value) {
-            answer = "javascript";
-            var trimmed = value.toString().trimLeft().trimRight();
-            if (trimmed && trimmed.first() === '<' && trimmed.last() === '>') {
-                answer = "xml";
-            }
-        }
-        return answer;
-    }
-    CodeEditor.detectTextFormat = detectTextFormat;
-
-    /**
-    * Auto formats the CodeMirror editor content to pretty print
-    *
-    * @method autoFormatEditor
-    * @for CodeEditor
-    * @static
-    * @param {CodeMirrorEditor} editor
-    * @return {void}
-    */
-    function autoFormatEditor(editor) {
-        if (editor) {
-            var totalLines = editor.lineCount();
-
-            //var totalChars = editor.getValue().length;
-            var start = { line: 0, ch: 0 };
-            var end = { line: totalLines - 1, ch: editor.getLine(totalLines - 1).length };
-            editor.autoFormatRange(start, end);
-            editor.setSelection(start, start);
-        }
-    }
-    CodeEditor.autoFormatEditor = autoFormatEditor;
-
-    /**
-    * Used to configures the default editor settings (per Editor Instance)
-    *
-    * @method createEditorSettings
-    * @for CodeEditor
-    * @static
-    * @param {Object} options
-    * @return {Object}
-    */
-    function createEditorSettings(options) {
-        if (typeof options === "undefined") { options = {}; }
-        options.extraKeys = options.extraKeys || {};
-
-        // Handle Mode
-        (function (mode) {
-            mode = mode || { name: "text" };
-
-            if (typeof mode !== "object") {
-                mode = { name: mode };
-            }
-
-            var modeName = mode.name;
-            if (modeName === "javascript") {
-                angular.extend(mode, {
-                    "json": true
-                });
-            }
-        })(options.mode);
-
-        // Handle Code folding folding
-        (function (options) {
-            var javascriptFolding = CodeMirror.newFoldFunction(CodeMirror.braceRangeFinder);
-            var xmlFolding = CodeMirror.newFoldFunction(CodeMirror.tagRangeFinder);
-
-            // Mode logic inside foldFunction to allow for dynamic changing of the mode.
-            // So don't have to listen to the options model and deal with re-attaching events etc...
-            var foldFunction = function (codeMirror, line) {
-                var mode = codeMirror.getOption("mode");
-                var modeName = mode["name"];
-                if (!mode || !modeName)
-                    return;
-                if (modeName === 'javascript') {
-                    javascriptFolding(codeMirror, line);
-                } else if (modeName === "xml" || modeName.startsWith("html")) {
-                    xmlFolding(codeMirror, line);
-                }
-                ;
-            };
-
-            options.onGutterClick = foldFunction;
-            options.extraKeys = angular.extend(options.extraKeys, {
-                "Ctrl-Q": function (codeMirror) {
-                    foldFunction(codeMirror, codeMirror.getCursor().line);
-                }
-            });
-        })(options);
-
-        var readOnly = options.readOnly;
-        if (!readOnly) {
-            /*
-            options.extraKeys = angular.extend(options.extraKeys, {
-            "'>'": function (codeMirror) {
-            codeMirror.closeTag(codeMirror, '>');
-            },
-            "'/'": function (codeMirror) {
-            codeMirror.closeTag(codeMirror, '/');
-            }
-            });
-            */
-            options.matchBrackets = true;
-        }
-
-        // Merge the global config in to this instance of CodeMirror
-        angular.extend(options, CodeEditor.GlobalCodeMirrorOptions);
-
-        return options;
-    }
-    CodeEditor.createEditorSettings = createEditorSettings;
-})(CodeEditor || (CodeEditor = {}));
-/**
 * @module UI
 */
 /// <reference path="./uiPlugin.ts"/>
@@ -4511,94 +4624,6 @@ var UI;
         return ColorPicker;
     })();
     UI.ColorPicker = ColorPicker;
-})(UI || (UI = {}));
-/**
-* @module UI
-*/
-/// <reference path="./uiPlugin.ts"/>
-var UI;
-(function (UI) {
-    function hawtioDropDown($templateCache) {
-        return {
-            restrict: 'A',
-            replace: true,
-            templateUrl: UI.templatePath + 'dropDown.html',
-            scope: {
-                config: '=hawtioDropDown'
-            },
-            controller: [
-                "$scope", "$element", "$attrs", function ($scope, $element, $attrs) {
-                    if (!$scope.config) {
-                        $scope.config = {};
-                    }
-
-                    if (!('open' in $scope.config)) {
-                        $scope.config['open'] = false;
-                    }
-
-                    $scope.action = function (config, $event) {
-                        //log.debug("doAction on : ", config, "event: ", $event);
-                        if ('items' in config && !('action' in config)) {
-                            config.open = !config.open;
-                            $event.preventDefault();
-                            $event.stopPropagation();
-                        } else if ('action' in config) {
-                            //log.debug("executing action: ", config.action);
-                            var action = config['action'];
-                            if (angular.isFunction(action)) {
-                                action.apply();
-                            } else if (angular.isString(action)) {
-                                $scope.$parent.$eval(action, {
-                                    config: config,
-                                    '$event': $event
-                                });
-                            }
-                        }
-                    };
-
-                    $scope.$watch('config.items', function (newValue, oldValue) {
-                        if (newValue !== oldValue) {
-                            // just add some space to force a redraw
-                            $scope.menuStyle = $scope.menuStyle + " ";
-                        }
-                    }, true);
-
-                    $scope.submenu = function (config) {
-                        if (config && config.submenu) {
-                            return "sub-menu";
-                        }
-                        return "";
-                    };
-
-                    $scope.icon = function (config) {
-                        if (config && !Core.isBlank(config.icon)) {
-                            return config.icon;
-                        } else {
-                            return 'icon-spacer';
-                        }
-                    };
-
-                    $scope.open = function (config) {
-                        if (config && !config.open) {
-                            return '';
-                        }
-                        return 'open';
-                    };
-                }],
-            link: function ($scope, $element, $attrs) {
-                $scope.menuStyle = $templateCache.get("withsubmenus.html");
-
-                if ('processSubmenus' in $attrs) {
-                    if (!Core.parseBooleanValue($attrs['processSubmenus'])) {
-                        $scope.menuStyle = $templateCache.get("withoutsubmenus.html");
-                    }
-                }
-            }
-        };
-    }
-    UI.hawtioDropDown = hawtioDropDown;
-
-    UI._module.directive('hawtioDropDown', ["$templateCache", UI.hawtioDropDown]);
 })(UI || (UI = {}));
 /**
 * @module UI
