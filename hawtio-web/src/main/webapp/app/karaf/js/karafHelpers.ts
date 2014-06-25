@@ -111,7 +111,9 @@ module Karaf {
     "^org.objectweb.asm",
     "^io.hawt",
     "^javax.mail",
+    "^javax",
     "^org.jvnet",
+    "^org.mvel2",
     "^org.apache.mina.core",
     "^org.apache.sshd.core",
     "^org.apache.neethi",
@@ -122,6 +124,7 @@ module Karaf {
     "^groovy-all",
     "^com.google.guava",
     "jackson-\\w+-asl",
+    "^com.fasterxml.jackson",
     "^org.ops4j",
     "^org.springframework",
     "^bcprov$",
@@ -143,14 +146,21 @@ module Karaf {
 
   var platformBundleRegex = new RegExp(platformBundlePatterns.join('|'));
 
-  var camelBundlePatterns = ["^org.apache.camel", "activemq-camel$"];
+  var camelBundlePatterns = ["^org.apache.camel", "camel-karaf-commands$", "activemq-camel$"];
   var camelBundleRegex = new RegExp(camelBundlePatterns.join('|'));
 
   var cxfBundlePatterns = ["^org.apache.cxf"];
   var cxfBundleRegex = new RegExp(cxfBundlePatterns.join('|'));
 
+  var activemqBundlePatterns = ["^org.apache.activemq", "activemq-camel$"];
+  var activemqBundleRegex = new RegExp(activemqBundlePatterns.join('|'));
+
   export function isPlatformBundle(symbolicName:string):boolean {
     return platformBundleRegex.test(symbolicName);
+  }
+
+  export function isActiveMQBundle(symbolicName:string):boolean {
+    return activemqBundleRegex.test(symbolicName);
   }
 
   export function isCamelBundle(symbolicName:string):boolean {

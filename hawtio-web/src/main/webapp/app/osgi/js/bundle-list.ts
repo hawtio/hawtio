@@ -13,6 +13,7 @@ module Osgi {
       bundleFilter: "",
       startLevelFilter: 0,
       showPlatformBundles: false,
+      showActiveMQBundles: false,
       showCxfBundles: false,
       showCamelBundles: true
     };
@@ -116,6 +117,9 @@ module Osgi {
         var answer = true;
         if (!$scope.display.showPlatformBundles) {
           answer = !Karaf.isPlatformBundle(bundle['SymbolicName']);
+        }
+        if (answer && !$scope.display.showActiveMQBundles) {
+          answer = !Karaf.isActiveMQBundle(bundle['SymbolicName']);
         }
         if (answer && !$scope.display.showCxfBundles) {
           answer = !Karaf.isCxfBundle(bundle['SymbolicName']);
