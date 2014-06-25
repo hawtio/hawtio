@@ -8,7 +8,9 @@
 /// <reference path="../../perspective/js/metadata.ts"/>
 /// <reference path="../../insight/js/insightHelpers.ts"/>
 /// <reference path="fabricHelpers.ts"/>
+/// <reference path="fabricDialogs.ts"/>
 /// <reference path="./iconRegistry.ts"/>
+/// <reference path="../../wiki/js/wikiPlugin.ts"/>
 module Fabric {
 
   export var templatePath = 'app/fabric/html/';
@@ -59,7 +61,7 @@ module Fabric {
     return Fabric.containerIconRegistry;
   });
 
-  _module.run(["$location", "workspace", "jolokia", "viewRegistry", "pageTitle", "helpRegistry", "$rootScope", "postLoginTasks", "preferencesRegistry", "wikiBranchMenu", ($location: ng.ILocationService,
+  _module.run(["$location", "workspace", "jolokia", "viewRegistry", "pageTitle", "helpRegistry", "$rootScope", "postLoginTasks", "preferencesRegistry", "wikiBranchMenu", "$dialog", ($location: ng.ILocationService,
                workspace: Workspace,
                jolokia,
                viewRegistry,
@@ -68,7 +70,8 @@ module Fabric {
                $rootScope,
                postLoginTasks:Core.Tasks,
                preferencesRegistry,
-               wikiBranchMenu) => {
+               wikiBranchMenu:Wiki.BranchMenu,
+               $dialog) => {
 
     viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
 
@@ -76,33 +79,7 @@ module Fabric {
       return Fabric.currentContainerId;
     });
 
-    wikiBranchMenu.addExtension({
-      title: "Create Version",
-      valid: () => {
-        return Fabric.isFMCContainer(workspace);
-      },
-      action: () => {
-        log.debug("Create version");
-      }
-    });
-    wikiBranchMenu.addExtension({
-      title: "Delete Version",
-      valid: () => {
-        return Fabric.isFMCContainer(workspace);
-      },
-      action: () => {
-        log.debug("Delete version");
-      }
-    });
-    wikiBranchMenu.addExtension({
-      title: "Patch Version",
-      valid: () => {
-        return Fabric.isFMCContainer(workspace);
-      },
-      action: () => {
-        log.debug("Patch version");
-      }
-    });
+    addWikiBranchMenuExtensions(wikiBranchMenu, $dialog, workspace);
 
     postLoginTasks.addTask('fabricFetchContainerName', () => {
       if (Fabric.currentContainerId === '' && Fabric.fabricCreated(workspace)) {

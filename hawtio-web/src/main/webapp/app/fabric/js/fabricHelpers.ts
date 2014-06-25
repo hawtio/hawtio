@@ -68,6 +68,7 @@ module Fabric {
     // Too noisy...
     // log.debug("is FMC container, hasFabric: ", hasFabric, " hasSchemaMBean:", hasSchemaMBean, " hasGitMBean:", hasGitMBean);
 
+
     return hasFabric &&
            hasSchemaMBean &&
            hasGitMBean;
@@ -394,28 +395,29 @@ module Fabric {
     $scope.fabricVerboseNotifications = verbose && verbose !== "false";
   }
 
+  export function viewVersion(versionId, $location, $scope) {
+    var defaultTarget = '/wiki/branch/' + versionId + '/view/fabric/profiles';
+    var path = $location.path();
+    var branch = $scope.branch || $scope.$parent.branch;
+    if (!path.startsWith('/wiki/branch/') || !branch) {
+      $location.path(defaultTarget);
+    } else {
+      path = path.replace('/branch/' + branch, '/branch/' + versionId);
+      $location.path(path);
+    }
+  }
 
   export function doCreateVersion($scope, jolokia, $location, newVersionName) {
     var success = function (response) {
-      notification('success', "Created version <strong>" + response.value.id + "</strong>, switching to this new version");
+      var newVersion = response.value.id;
+      notification('success', "Created version <strong>" + newVersion + "</strong>, switching to this new version");
 
       // broadcast events to force reloads
       var $rootScope = $scope.$root || $scope.$rootScope || $scope;
       if ($rootScope) {
         $rootScope.$broadcast('wikiBranchesUpdated');
       }
-
-      var defaultTarget = '/wiki/branch/' + response.value.id + '/view/fabric/profiles';
-
-      var path = $location.path();
-      var branch = $scope.branch || $scope.$parent.branch;
-
-      if (!path.startsWith('/wiki/branch/') || !branch) {
-        $location.path(defaultTarget);
-      } else {
-        path = path.replace('/branch/' + branch, '/branch/' + response.value.id);
-        $location.path(path);
-      }
+      viewVersion(newVersion, $location, $scope);
       Core.$apply($scope);
     };
 
@@ -432,9 +434,6 @@ module Fabric {
     }
 
   }
-
-
-
 
   export function sortVersions(versions, order:boolean) {
     return (versions || []).sortBy((v) => {
@@ -666,6 +665,19 @@ module Fabric {
     doAction('profileWebAppURL', jolokia, [webAppId, profileId, versionId], success, error);
   }
 
+  export function getVersionsInUse(jolokia, callback:(used:string[]) => void) {
+    doAction('containers(java.util.List, java.util.List)', jolokia, [["versionId"], []],
+     (response) => {
+       var versionIds = response.value.map((el) => {
+         return el['versionId'];
+       }).unique();
+       callback(versionIds);
+     }, (response) => {
+       log.debug("Failed to get versions in use: ", response);
+       log.debug("Stack Trace: ", response.stacktrace);
+     });
+  }
+
   function onJolokiaUrlCreateJolokia(response, fn) {
     var jolokia = null;
     if (response) {
@@ -796,7 +808,20 @@ module Fabric {
     return jolokia.execute(managerMBean, "defaultVersion()");
   }
 
+  export function getDefaultVersionIdAsync(jolokia, callback:(defaultVersion:string) => void) {
+    doAction('defaultVersion', jolokia, [], (response) => {
+      callback(response.value['id']);
+    }, (response) => {
+      log.debug("Failed to fetch default version: ", response.error);
+      log.debug("Stack trace: ", response.stacktrace);
+    });
+  }
 
+  export function setDefaultVersion(jolokia, newVersion, callback:() => void) {
+    jolokia.setAttribute(Fabric.managerMBean, "DefaultVersion", newVersion, onSuccess((response) => {
+      callback();
+    }));
+  }
   /**
    * Default the values that are missing in the returned JSON
    * @method defaultContainerValues

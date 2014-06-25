@@ -335,13 +335,6 @@ module Wiki {
           Core.$apply($scope);
         })
 
-      } else if (template.version) {
-
-        if (name === exemplar) {
-          name = '';
-        }
-        Fabric.doCreateVersion($scope, jolokia, $location, name);
-
       } else if (template.generated) {
 
         $scope.addDialog.close();

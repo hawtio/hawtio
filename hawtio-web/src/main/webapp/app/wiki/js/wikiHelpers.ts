@@ -49,15 +49,15 @@ module Wiki {
       exemplar: "user-profile",
       fabricOnly: true
     },
-    {
-      label: "Fabric8 Version",
-      tooltip: "Create a new Fabric8 version based on the latest available version.  Leave the name blank to use the next available version name.  Version names must be in the form of x.y.z, for example 1.2.foo is okay, 1.2-foo is not",
-      version: true,
-      addClass: "icon-code-fork green",
-      exemplar: "1.1.MyVersion",
-      fabricOnly: true,
-      regex: /[1-9][0-9]*(\\.[0-9]+)*/
-    },
+//    {
+//      label: "Fabric8 Version",
+//      tooltip: "Create a new Fabric8 version based on the latest available version.  Leave the name blank to use the next available version name.  Version names must be in the form of x.y.z, for example 1.2.foo is okay, 1.2-foo is not",
+//      version: true,
+//      addClass: "icon-code-fork green",
+//      exemplar: "1.1.MyVersion",
+//      fabricOnly: true,
+//      regex: /[1-9][0-9]*(\\.[0-9]+)*/
+//    },
     {
       label: "Properties File",
       tooltip: "A properties file typically used to configure Java classes",
