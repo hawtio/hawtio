@@ -33,7 +33,6 @@ module Fabric {
             //when('/fabric/profile/:versionId/:profileId', {templateUrl: templatePath + 'profile.html'}).
             when('/wiki/profile/:versionId/:profileId/editFeatures', {templateUrl: templatePath + 'editFeatures.html'}).
             when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: templatePath + 'pid.html'}).
-            when('/fabric/view', { templateUrl: templatePath + 'fabricView.html', reloadOnSearch: false }).
             when('/fabric/migrate', { templateUrl: templatePath + 'migrateVersions.html' }).
             when('/fabric/patching', { templateUrl: templatePath + 'patching.html' }).
             when('/fabric/configurations/:versionId/:profileId', { templateUrl: 'app/osgi/html/configurations.html' }).
