@@ -2,6 +2,9 @@
 * @module Jmx
 */
 /// <reference path="./jmxPlugin.ts"/>
+/// <reference path="../../core/js/corePlugin.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
+/// <reference path="../../ui/js/CodeEditor.ts"/>
 module Jmx {
 
   // IOperationControllerScope

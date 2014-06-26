@@ -132,8 +132,8 @@ module Forms {
    * @param {String} property
    * @param {any} schema
    */
-  export function findArrayItemsSchema(property, schema) {
-    var items = null;
+  export function findArrayItemsSchema(property, schema):any {
+    var items:any = null;
     if (property && schema) {
       items = property.items;
       if (items) {

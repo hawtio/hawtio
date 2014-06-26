@@ -391,6 +391,10 @@ module Forms {
           if (typeName && typeName === "string") {
             return "hawtio-form-string-array";
           }
+        } else {
+          // let's use the string array if no type is set,
+          // at least that provides a form of some kind
+          return "hawtio-form-string-array";
         }
         return "hawtio-form-array";
       case "boolean":

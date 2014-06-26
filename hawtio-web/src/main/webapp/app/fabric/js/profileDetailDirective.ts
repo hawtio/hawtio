@@ -1,4 +1,5 @@
 /// <reference path="fabricPlugin.ts"/>
+/// <reference path="../../maven/js/mavenHelpers.ts"/>
 module Fabric {
 
   export class ProfileDetails {

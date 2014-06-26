@@ -3,6 +3,9 @@
  */
 
 /// <reference path="corePlugin.ts"/>
+/// <reference path="./helpRegistry.ts"/>
+/// <reference path="./preferencesRegistry.ts"/>
+/// <reference path="../../themes/js/themesPlugin.ts"/>
 module Core {
 
   // local storage service to wrap the HTML5 browser storage
@@ -75,10 +78,9 @@ module Core {
     };
   });
 
-  export var DEFAULT_MAX_DEPTH = 5;
+  export var DEFAULT_MAX_DEPTH = 6;
   export var DEFAULT_MAX_COLLECTION_SIZE = 500;
 
-  // jolokia settings, probably could be a constant
   _module.factory('jolokiaParams', ["jolokiaUrl", "localStorage", (jolokiaUrl, localStorage) => {
     var answer = {
       canonicalNaming: false,
