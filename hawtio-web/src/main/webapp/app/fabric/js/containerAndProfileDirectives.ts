@@ -357,9 +357,29 @@ module Fabric {
         doStopContainer($scope, jolokia, name);
       };
 
-      $scope.anySelectionAlive = (state) => {
+      $scope.anySelectionStartable = () => {
+        var startableStates = ["stopped", ""]
         var selected = $scope.selectedContainers;
-        return selected.length > 0 && selected.any((s) => s.alive === state);
+        return selected.length > 0 && selected.any((s) => {
+          var answer = false;
+          if (!s.alive) {
+            answer = true;
+            switch (s.provisionResult) {
+              case 'downloading':
+              case 'installing':
+              case 'analyzing':
+              case 'finalizing':
+              case 'resolving':
+                answer = false;
+            }
+          }
+          return answer;
+        });
+      };
+
+      $scope.anySelectionStoppable = () => {
+        var selected = $scope.selectedContainers;
+        return selected.length > 0 && selected.any((s) => s.alive === true);
       };
 
       $scope.everySelectionAlive = (state) => {

@@ -947,23 +947,26 @@ module Fabric {
 
   export function statusIcon(row) {
     if (row) {
-      if (row.alive) {
-        switch(row.provisionResult) {
-          case 'success':
+      switch(row.provisionResult) {
+        case 'success':
+          if (row.alive) {
             return "green icon-play-circle";
-          case 'downloading':
-            return "icon-download-alt";
-          case 'installing':
-            return "icon-hdd";
-          case 'analyzing':
-          case 'finalizing':
-            return "icon-refresh icon-spin";
-          case 'resolving':
-            return "icon-sitemap";
-          case 'error':
-            return "red icon-warning-sign";
-        }
-      } else {
+          } else {
+            return "orange icon-off";
+          }
+        case 'downloading':
+          return "icon-download-alt";
+        case 'installing':
+          return "icon-hdd";
+        case 'analyzing':
+        case 'finalizing':
+          return "icon-refresh icon-spin";
+        case 'resolving':
+          return "icon-sitemap";
+        case 'error':
+          return "red icon-warning-sign";
+      }
+      if (!row.alive) {
         return "orange icon-off";
       }
     }
