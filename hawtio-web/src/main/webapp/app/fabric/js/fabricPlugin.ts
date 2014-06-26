@@ -49,7 +49,8 @@ module Fabric {
             when('/fabric/api/wsdl', {templateUrl: 'app/api/html/wsdl.html'}).
             when('/fabric/api/wadl', {templateUrl: 'app/api/html/wadl.html'}).
 
-            when('/fabric/test', { templateUrl: templatePath + 'test.html' });
+            when('/fabric/test', { templateUrl: templatePath + 'test.html' }).
+            when('/apps', { templateUrl: templatePath + 'appView.html' });
   }]);
 
 
@@ -73,6 +74,7 @@ module Fabric {
                $dialog) => {
 
     viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
+    viewRegistry['apps'] = templatePath + 'layoutApps.html';
 
     pageTitle.addTitleElement(() => {
       return Fabric.currentContainerId;
@@ -115,6 +117,16 @@ module Fabric {
       href: () => "#/fabric/containers",
       isActive: (workspace: Workspace) => workspace.isLinkActive("fabric")
     });
+
+    workspace.topLevelTabs.push({
+      id: "fabric.apps",
+      content: "Apps",
+      title: "Select and deploy apps into this fabric",
+      isValid: (workspace) => Fabric.isFMCContainer(workspace),
+      href: () => "#/apps",
+      isActive: (workspace) => workspace.isLinkActive("apps")
+    });
+
     workspace.topLevelTabs.push( {
       id: "fabric.configuration",
       content: "Wiki",

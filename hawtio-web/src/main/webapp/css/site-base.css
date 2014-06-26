@@ -2948,7 +2948,8 @@ fs-donut svg g text.units {
   width: 100%;
 }
 
-.health-displays .health-display {
+.health-displays .health-display,
+.column-box {
   position: relative;
   display: inline-block;
   width: 300px;
@@ -2957,6 +2958,37 @@ fs-donut svg g text.units {
   margin-right: 0;
   margin-bottom: 10px;
   overflow: hidden;
+}
+
+.column-box {
+  height: 175px;
+}
+
+.column-box > div {
+  position: relative;
+  height: 100%;
+  margin: 10px;
+}
+
+.column-box h3 {
+  line-height: normal;
+  margin-bottom: 0;
+}
+
+.bottom-anchored {
+  position: absolute;
+  bottom: 0;
+  margin-top: -3em;
+}
+
+.label-list > li > .badge {
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+.label-list > .inline-block > .badge {
+  margin-left: 3px;
+  margin-right: 3px;
 }
 
 .health-details {

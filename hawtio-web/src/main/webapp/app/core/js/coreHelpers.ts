@@ -487,6 +487,32 @@ module Core {
   }
 
   /**
+   * Register a JMX operation to poll for changes, only
+   * calls back when a change occurs
+   *
+   * @param jolokia
+   * @param scope
+   * @param arguments
+   * @param callback
+   * @param options
+   * @returns Object
+   */
+  export function registerForChanges(jolokia, $scope, arguments, callback:(response:any) => void, options?:any):() => void {
+    var decorated = {
+      responseJson: '',
+      success: (response) => {
+        var json = angular.toJson(response.value);
+        if (decorated.responseJson !== json) {
+          decorated.responseJson = json;
+          callback(response);
+        }
+      }
+    };
+    angular.extend(decorated, options);
+    return Core.register(jolokia, $scope, arguments, onSuccess(undefined, decorated));
+  }
+
+  /**
    * Register a JMX operation to poll for changes
    * @method register
    * @for Core

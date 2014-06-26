@@ -27,6 +27,9 @@ module Perspective {
             href: "#/fabric"
           },
           {
+            id: "fabric.apps"
+          },
+          {
             href: "#/docker"
           },
           {
