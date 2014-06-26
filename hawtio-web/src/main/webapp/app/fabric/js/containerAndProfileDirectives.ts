@@ -358,7 +358,6 @@ module Fabric {
       };
 
       $scope.anySelectionStartable = () => {
-        var startableStates = ["stopped", ""]
         var selected = $scope.selectedContainers;
         return selected.length > 0 && selected.any((s) => {
           var answer = false;
