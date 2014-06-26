@@ -53,12 +53,12 @@
                  desc
                  exclude='{{getVersionsToExclude()}}'></span>
           </span>
-          <a ng-click="startSelectedContainers()" ng-show="anySelectionAlive(false)"
+          <a ng-click="startSelectedContainers()" ng-show="anySelectionStartable()"
              title="Start containers">
             <i class="icon-play-circle clickable"></i>
             Start
           </a>
-          <a ng-click="stopSelectedContainers()" ng-show="anySelectionAlive(true)"
+          <a ng-click="stopSelectedContainers()" ng-show="anySelectionStoppable()"
              title="Stop containers">
             <i class="icon-off"></i>
             Stop
