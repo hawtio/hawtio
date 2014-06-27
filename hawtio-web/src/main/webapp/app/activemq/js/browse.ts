@@ -1,6 +1,6 @@
 /// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
-  _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", ($scope, workspace:Workspace, jolokia, localStorage) => {
+  export var BrowseQueueController = _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", ($scope, workspace:Workspace, jolokia, localStorage) => {
 
     $scope.searchText = '';
 
@@ -83,7 +83,8 @@ module ActiveMQ {
 
     $scope.openMessageDialog = (message) => {
       var idx = Core.pathGet(message, ["rowIndex"]);
-      $scope.selectRowIndex(idx);
+      var jmsMessageId = Core.pathGet(message, ["entity", "JMSMessageID"]);
+      $scope.selectRowByJMSId(idx, jmsMessageId);
       if ($scope.row) {
         $scope.mode = CodeEditor.detectTextFormat($scope.row.Text);
         $scope.showMessageDetails = true;
@@ -98,6 +99,20 @@ module ActiveMQ {
       selected.splice(0, selected.length);
       if (idx >= 0 && idx < $scope.messages.length) {
         $scope.row = $scope.messages[idx];
+        if ($scope.row) {
+          selected.push($scope.row);
+        }
+      } else {
+        $scope.row = null;
+      }
+    };
+
+    $scope.selectRowByJMSId = (idx, jmsMessageId) => {
+      $scope.rowIndex = idx;
+      var selected = $scope.gridOptions.selectedItems;
+      selected.splice(0, selected.length);
+      if (idx >= 0 && idx < $scope.messages.length) {
+        $scope.row = $scope.messages.find((msg) => msg["JMSMessageID"] === jmsMessageId);
         if ($scope.row) {
           selected.push($scope.row);
         }
