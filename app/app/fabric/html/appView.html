@@ -1,0 +1,112 @@
+<div class="row-fluid" ng-controller="Fabric.AppViewController">
+
+  <script type="text/ng-template" id="cartItem.html">
+    <div class="ngCellText">
+      {{row.entity.id}}
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="profileBox.html">
+    <div ng-controller="Fabric.ProfileBoxController"
+         ng-class="isInGroup(cartItems, profile, 'column-box-selected', 'column-box-unselected')">
+      <div class="row-fluid mouse-pointer"
+           ng-click="toggleSelectionFromGroup(cartItems, profile)">
+        <div class="span11">
+          <h3>{{profile.name}}</h3>
+        </div>
+        <div class="span1">
+          <h3 ng-show="isInGroup(cartItems, profile)">
+            <i class="icon-ok"></i>
+          </h3>
+        </div>
+      </div>
+      <div class="row-fluid">
+        <div class="span12">
+          <ul class="unstyled label-list">
+            <li class="inline-block" ng-repeat="tag in profile.tags">
+              <span class="badge">{{tag}}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="row-fluid">
+        <div class="span11">
+          <div ng-hide="profile.summary != undefined" class="centered">
+            <i class="icon-spinner icon-spin"></i>
+          </div>
+          <div ng-show="profile.summary != undefined">{{profile.summary}}</div>
+        </div>
+        <div class="span1">
+          <span class="mouse-pointer" ng-click="viewProfile(profile)"><i class="icon-info-sign"></i></span>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <div>
+    <div class="row-fluid">
+      <div class="span1">
+        <div class="row-fluid">
+          <div class="span12">
+            <p></p>
+            <p></p>
+            <ul class="unstyled label-list">
+              <li ng-repeat="tag in tags"
+                  class="mouse-pointer"
+                  ng-click="toggleSelectionFromGroup(selectedTags, tag)">
+              <span class="badge"
+                    ng-class="isInGroup(selectedTags, tag, 'badge-success', '')"
+                      >{{tag}}</span>
+              </li>
+            </ul>
+            <div class="mouse-pointer"
+                 ng-show="selectedTags.length"
+                 ng-click="clearGroup(selectedTags)">
+              <i class="icon-remove" ></i> Clear Tags
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="span11">
+        <div class="row-fluid centered">
+          <p></p>
+          <div fabric-version-selector="selectedVersion"></div>
+        </div>
+        <div class="row-fluid centered" ng-show="profiles.length == 0">
+          <i class="icon-spinner icon-spin"></i>
+        </div>
+        <div class="row-fluid" ng-hide="profiles.length == 0">
+          <ul hawtio-auto-columns=".column-box">
+            <li class="column-box" ng-repeat="profile in profiles | filter:filterProfiles" ng-include="'profileBox.html'">{{profile}}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="panel bottom deploy"
+         ng-show="cartItems.length">
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="alert alert-success">
+            <span>Using the profiles </span>
+            <span class="profile-list-item" ng-repeat="profile in cartItems">{{profile.name}}</span>
+            <button class="btn btn-primary"
+                    ng-click="deploy()">
+              <i class="icon-truck"
+                 title="Deploy the selected apps to new containers"></i> Create
+            </button>
+            <button class="btn btn-primary"
+                    ng-click="assign()">
+              <i class="icon-truck"
+                 title="Deploy the selected apps to existing containers"></i> Assign
+            </button>
+            <span>, or </span>
+            <button class="btn"
+                    title="Clear selected apps"
+                    ng-click="clearGroup(cartItems)"> Clear Selection
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

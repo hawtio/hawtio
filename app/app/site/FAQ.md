@@ -97,6 +97,11 @@ Here are some [sample](https://github.com/hawtio/hawtio/issues/103) [issues](htt
 
 So whether the hawtio wiki is used for documentation, to link to various hawtio and external resources, to create custom mashups or happy pages or to provide new plugin views--all the content of the wiki is audited, versioned and stored in git so it's easy to see who changed what, when and to roll back changes, etc.
 
+#### How to I install hawtio as web console for Apache ActiveMQ
+
+You can use hawtio to remote manage any ActiveMQ brokers without the need to co-install hawtio together with the ActiveMQ broker. However you can also install hawtio with the broker if you want. Dejan Bosanac [blogged how to do this](http://sensatic.net/activemq/activemq-and-hawtio.html). 
+
+
 ### Problems/General Questions about using hawtio
 
 Questions relating to errors you get while using hawtio or other general questions:
