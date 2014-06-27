@@ -1,7 +1,8 @@
 /// <reference path="fabricPlugin.ts"/>
+/// <reference path="../../helpers/js/selectionHelpers.ts"/>
 module Fabric {
 
-  _module.controller("Fabric.CreateContainerController", ["$scope", "$element", "$compile", "$location", "workspace", "jolokia", "localStorage", "userDetails", ($scope, $element, $compile, $location, workspace, jolokia, localStorage, userDetails) => {
+  _module.controller("Fabric.CreateContainerController", ["$scope", "$element", "$compile", "$location", "workspace", "jolokia", "localStorage", "userDetails", "ProfileCart", ($scope, $element, $compile, $location, workspace, jolokia, localStorage, userDetails, ProfileCart:Profile[]) => {
 
     var log:Logging.Logger = Logger.get("Fabric");
 
@@ -253,7 +254,7 @@ module Fabric {
         return 'containerName';
       }
       return str;
-    }
+    };
 
 
     $scope.rootContainers = () => {
@@ -277,11 +278,17 @@ module Fabric {
         $scope.selectedVersion = {
           id: versionId
         };
+      } else if (ProfileCart.length > 0) {
+        $scope.selectedVersion = {
+          id: (<Profile>ProfileCart.first()).versionId
+        }
       }
 
       var profileIds = $location.search()['profileIds'];
       if (profileIds) {
         $scope.selectedProfileIds = profileIds;
+      } else if (ProfileCart.length > 0) {
+        $scope.selectedProfileIds = ProfileCart.map((p:Profile) => { return p.id; }).join(',');
       }
 
       var count = $location.search()['number'];
@@ -373,6 +380,7 @@ module Fabric {
               notification('error', "Creating container " + key + " failed: " + value);
             });
             if (!error) {
+              SelectionHelpers.clearGroup(ProfileCart);
               notification('success', "Successfully created containers");
             }
             Core.$apply($scope);

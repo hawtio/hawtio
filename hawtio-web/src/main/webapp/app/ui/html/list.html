@@ -11,7 +11,10 @@
   <!-- begin row template -->
   <script type="text/ng-template" id="rowTemplate.html">
 <div class="list-row">
-  <div class="list-row-select"><input type="checkbox" ng-model="row.selected"></div>
+  <div ng-show="config.showSelectionCheckbox"
+       class="list-row-select">
+    <input type="checkbox" ng-model="row.selected">
+  </div>
   <div class="list-row-contents"></div>
 </div>
   </script>

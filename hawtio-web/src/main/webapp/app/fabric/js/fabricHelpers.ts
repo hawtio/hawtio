@@ -24,6 +24,26 @@ module Fabric {
 
   export var jolokiaWebAppGroupId = jmxDomain + ".fabric-jolokia";
 
+  // nicer to have type info...
+  export interface Profile {
+    id?: string;
+    name?: string;
+    tags?: string[];
+    versionId?: string;
+    summary?: string;
+
+    abstract?: boolean;
+    hidden?: boolean;
+    overlay?: boolean;
+    containerCount?: number;
+    // is really a map
+    attributes?: any;
+    // think this is an array
+    associatedContainers?: any;
+    // an array
+    fileConfigurations?: any;
+  }
+
   export function fabricCreated(workspace) {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"});
   }

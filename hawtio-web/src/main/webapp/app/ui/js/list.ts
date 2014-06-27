@@ -53,7 +53,7 @@ module UI {
 
         $scope.listRoot = () => {
           return $element.find('.list-root');
-        }
+        };
 
         $scope.getContents = (row) => {
           //first make our row
@@ -68,7 +68,7 @@ module UI {
           var cellEl = $compile($scope.cellTemplate)(innerParentScope);
           $(rowEl).find('.list-row-contents').append(cellEl);
           return rowEl;
-        }
+        };
 
 
         $scope.setRows = (data) => {
@@ -84,7 +84,7 @@ module UI {
               $scope.rows.push(newRow);
             });
           }
-        }
+        };
 
         // find the parent scope that has our configuration
         var parentScope = findParentWith($scope, configName);

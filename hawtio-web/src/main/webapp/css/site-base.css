@@ -2952,6 +2952,26 @@ fs-donut svg g text.units {
   width: 100%;
 }
 
+.panel {
+  position: fixed;
+}
+
+.panel.bottom {
+  bottom: 0;
+}
+
+.deploy {
+  right: 0;
+}
+
+.profile-list-item:after {
+  content: ", ";
+}
+
+.profile-list-item:last-child:after {
+  content: " ";
+}
+
 .health-displays .health-display,
 .column-box {
   position: relative;

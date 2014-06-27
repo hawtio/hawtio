@@ -2,29 +2,13 @@
 /// <reference path="../../helpers/js/selectionHelpers.ts"/>
 module Fabric {
 
-  // nicer to have type info...
-  interface Profile {
-    id?: string;
-    name?: string;
-    tags?: string[];
-    versionId?: string;
-    summary?: string;
-
-    abstract?: boolean;
-    hidden?: boolean;
-    overlay?: boolean;
-    containerCount?: number;
-    // is really a map
-    attributes?: any;
-    // think this is an array
-    associatedContainers?: any;
-    // an array
-    fileConfigurations?: any;
-  }
-
+  // simple service to share our cart with other views
+  _module.service("ProfileCart", () => {
+    return [];
+  });
 
   // ProfileBox controller
-  _module.controller("Fabric.ProfileBox", ['$scope', 'jolokia', 'workspace', '$location', ($scope, jolokia, workspace:Workspace, $location) => {
+  export var ProfileBoxController = _module.controller("Fabric.ProfileBoxController", ['$scope', 'jolokia', 'workspace', '$location', ($scope, jolokia, workspace:Workspace, $location) => {
     var profile = <Profile>$scope.profile;
     var responseJson = '';
 
@@ -43,20 +27,19 @@ module Fabric {
       Core.$apply($scope);
     });
 
-    $scope.viewProfile = (profile:Profile, $event) => {
+    $scope.viewProfile = (profile:Profile) => {
       Fabric.gotoProfile(workspace, jolokia, workspace.localStorage, $location, profile.versionId, profile.id);
-      $event.stopPropagation();
     };
 
   }]);
 
 
   // AppView controller
-  _module.controller("Fabric.AppView", ["$scope", 'jolokia', "$templateCache", ($scope, jolokia, $templateCache) => {
+  export var AppViewController = _module.controller("Fabric.AppViewController", ["$scope", 'jolokia', "$templateCache", "ProfileCart", "$location", ($scope, jolokia, $templateCache, ProfileCart:Profile[], $location) => {
 
     $scope.selectedVersion = {};
     $scope.profiles = <Profile[]>[];
-    $scope.cartItems = <Profile[]>[];
+    $scope.cartItems = ProfileCart;
     $scope.tags = [];
     $scope.selectedTags = [];
 
@@ -66,19 +49,6 @@ module Fabric {
       var answer = $scope.filterByGroup($scope.selectedTags, profile.tags);
       //log.debug("Returning ", answer, " for profile: ", profile.id);
       return answer;
-    };
-
-    $scope.cart = {
-      data: 'cartItems',
-      selectedItems: [],
-      showSelectionCheckbox: true,
-      columnDefs: [
-        {
-          field: 'id',
-          displayName: 'Name',
-          cellTemplate: $templateCache.get('cartItem.html')
-        }
-      ]
     };
 
     var profileFields = ['id', 'abstract', 'hidden', 'attributes', 'overlay', 'containerCount', 'associatedContainers', 'fileConfigurations'];
@@ -100,8 +70,17 @@ module Fabric {
       }
     });
 
-    $scope.filter = (profile) => {
+    $scope.deploy = () => {
+      $location.url('/fabric/containers/createContainer').search({
+        vid: '',
+        pid: ''
+      });
+      Core.$apply($scope);
+    };
 
+    $scope.assign = () => {
+      $location.url('/fabric/assignProfile');
+      Core.$apply($scope);
     };
 
     function render(response) {
@@ -129,7 +108,9 @@ module Fabric {
         });
       });
       $scope.profiles = $scope.profiles.sortBy('name');
+      SelectionHelpers.syncGroupSelection($scope.cartItems, $scope.profiles, 'id');
       $scope.tags = $scope.tags.unique().sort();
+      SelectionHelpers.syncGroupSelection($scope.selectedTags, $scope.tags);
       Core.$apply($scope);
     }
 

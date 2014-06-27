@@ -101,6 +101,31 @@ module SelectionHelpers {
     }
   }
 
+  export function syncGroupSelection(group:any, collection:any, attribute?:string) {
+    var newGroup = [];
+    if (attribute) {
+      group.forEach((groupItem) => {
+        var first = collection.find((collectionItem) => {
+          return groupItem[attribute] === collectionItem[attribute];
+        });
+        if (first) {
+          newGroup.push(first);
+        }
+      });
+    } else {
+      group.forEach((groupItem) => {
+        var first = collection.find((collectionItem) => {
+          return Object.equal(groupItem, collectionItem);
+        });
+        if (first) {
+          newGroup.push(first);
+        }
+      });
+    }
+    clearGroup(group);
+    group.add(newGroup);
+  }
+
   export function decorate($scope) {
     $scope.selectNone = selectNone;
     $scope.selectAll = selectAll;
