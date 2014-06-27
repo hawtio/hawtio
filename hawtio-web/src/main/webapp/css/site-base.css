@@ -1195,6 +1195,10 @@ li.stacktrace {
   margin-bottom: inherit;
 }
 
+.mouse-pointer {
+  cursor: pointer;
+}
+
 .clickable {
   cursor: pointer;
   opacity: 0.6;
@@ -2971,6 +2975,7 @@ fs-donut svg g text.units {
 }
 
 .column-box h3 {
+  text-overflow: ellipsis;
   line-height: normal;
   margin-bottom: 0;
 }

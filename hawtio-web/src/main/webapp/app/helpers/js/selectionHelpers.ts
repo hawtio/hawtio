@@ -1,6 +1,9 @@
 
 module SelectionHelpers {
 
+  var log:Logging.Logger = Logger.get("SelectionHelpers");
+
+  // these functions deal with adding/using a 'selected' item on a group of objects
   export function selectNone(group:any[]):void {
     group.forEach((item:any):void => { item['selected'] = false; });
   }
@@ -39,12 +42,77 @@ module SelectionHelpers {
     }
   }
 
+  export function isSelected(item:any, yes:string, no:string):any {
+    return maybe(item['selected'], yes, no);
+  }
+
+  // these functions deal with using a separate selection array
+  export function clearGroup(group:any):void {
+    group.length = 0;
+  }
+
+  export function toggleSelectionFromGroup(group:any[], item:any, search?:(item:any) => boolean):void {
+    var searchMethod = search || item;
+    if (group.any(searchMethod)) {
+      group.remove(searchMethod);
+    } else {
+      group.add(item);
+    }
+  }
+
+  function stringOrBoolean(str:string, bool:boolean):any {
+    if (angular.isDefined(str)) {
+      return str;
+    } else {
+      return bool;
+    }
+  }
+
+  function nope(str:string) {
+    return stringOrBoolean(str, false);
+  }
+
+  function yup(str:string) {
+    return stringOrBoolean(str, true);
+  }
+
+  function maybe(bool:boolean, yes:string, no:string) {
+    if (bool) {
+      return yup(yes);
+    } else {
+      return nope(no);
+    }
+  }
+
+  export function isInGroup(group:any[], item:any, yes:string, no:string, search?:(item:any) => boolean):any {
+    var searchMethod = search || item;
+    return maybe(group.any(searchMethod), yes, no);
+  }
+
+  export function filterByGroup(group:any, item:any, yes:string, no:string, search?:(item:any) => boolean):any {
+    if (group.length === 0) {
+      return yup(yes);
+    }
+    var searchMethod = search || item;
+    if (angular.isArray(item)) {
+      return maybe(group.intersect(item).length > 0, yes, no);
+    } else {
+      return maybe(group.any(searchMethod), yes, no);
+    }
+  }
+
   export function decorate($scope) {
     $scope.selectNone = selectNone;
     $scope.selectAll = selectAll;
     $scope.toggleSelection = toggleSelection;
     $scope.selectOne = selectOne;
     $scope.select = select;
+    $scope.clearGroup = clearGroup;
+    $scope.toggleSelectionFromGroup = toggleSelectionFromGroup;
+    $scope.isInGroup = isInGroup;
+    $scope.filterByGroup = filterByGroup;
   }
+
+
 }
 

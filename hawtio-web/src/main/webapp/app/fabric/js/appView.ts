@@ -1,4 +1,5 @@
 /// <reference path="./fabricPlugin.ts"/>
+/// <reference path="../../helpers/js/selectionHelpers.ts"/>
 module Fabric {
 
   // nicer to have type info...
@@ -23,7 +24,7 @@ module Fabric {
 
 
   // ProfileBox controller
-  _module.controller("Fabric.ProfileBox", ['$scope', 'jolokia', ($scope, jolokia) => {
+  _module.controller("Fabric.ProfileBox", ['$scope', 'jolokia', 'workspace', '$location', ($scope, jolokia, workspace:Workspace, $location) => {
     var profile = <Profile>$scope.profile;
     var responseJson = '';
 
@@ -42,6 +43,11 @@ module Fabric {
       Core.$apply($scope);
     });
 
+    $scope.viewProfile = (profile:Profile, $event) => {
+      Fabric.gotoProfile(workspace, jolokia, workspace.localStorage, $location, profile.versionId, profile.id);
+      $event.stopPropagation();
+    };
+
   }]);
 
 
@@ -52,6 +58,15 @@ module Fabric {
     $scope.profiles = <Profile[]>[];
     $scope.cartItems = <Profile[]>[];
     $scope.tags = [];
+    $scope.selectedTags = [];
+
+    SelectionHelpers.decorate($scope);
+
+    $scope.filterProfiles = (profile:Profile) => {
+      var answer = $scope.filterByGroup($scope.selectedTags, profile.tags);
+      //log.debug("Returning ", answer, " for profile: ", profile.id);
+      return answer;
+    };
 
     $scope.cart = {
       data: 'cartItems',
@@ -85,13 +100,8 @@ module Fabric {
       }
     });
 
-    $scope.viewProfile = (profile) => {
-      log.debug("view profile: ", profile);
-    };
+    $scope.filter = (profile) => {
 
-    $scope.addProfileToCart = (profile) => {
-      log.debug("Add profile to cart: ", profile);
-      $scope.cartItems = $scope.cartItems.include(profile);
     };
 
     function render(response) {
