@@ -79,4 +79,26 @@ module ActiveMQ {
     }
   }
 
+  /**
+   * Adds functions needed for message browsing with details
+   * TODO: export these functions too?
+   *
+   * @param $scope
+   */
+  export function decorate($scope) {
+    $scope.selectRowIndex = (idx) => {
+      $scope.rowIndex = idx;
+      var selected = $scope.gridOptions.selectedItems;
+      selected.splice(0, selected.length);
+      if (idx >= 0 && idx < $scope.messages.length) {
+        $scope.row = $scope.messages[idx];
+        if ($scope.row) {
+          selected.push($scope.row);
+        }
+      } else {
+        $scope.row = null;
+      }
+    };
+  }
+
 }

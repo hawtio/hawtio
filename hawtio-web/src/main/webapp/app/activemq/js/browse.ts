@@ -91,19 +91,7 @@ module ActiveMQ {
 
     $scope.refresh = loadTable;
 
-    $scope.selectRowIndex = (idx) => {
-      $scope.rowIndex = idx;
-      var selected = $scope.gridOptions.selectedItems;
-      selected.splice(0, selected.length);
-      if (idx >= 0 && idx < $scope.messages.length) {
-        $scope.row = $scope.messages[idx];
-        if ($scope.row) {
-          selected.push($scope.row);
-        }
-      } else {
-        $scope.row = null;
-      }
-    };
+    ActiveMQ.decorate($scope);
 
     $scope.moveMessages = () => {
         var selection = workspace.selection;

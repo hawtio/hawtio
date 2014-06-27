@@ -21,7 +21,6 @@ module Camel {
       loadData();
     });
 
-
     // TODO can we share these 2 methods from activemq browse / camel browse / came trace?
     $scope.openMessageDialog = (message) => {
       ActiveMQ.selectCurrentMessage(message, "id", $scope);
@@ -31,20 +30,7 @@ module Camel {
       }
     };
 
-    $scope.selectRowIndex = (idx) => {
-      $scope.rowIndex = idx;
-      var selected = $scope.gridOptions.selectedItems;
-      selected.splice(0, selected.length);
-      if (idx >= 0 && idx < $scope.messages.length) {
-        $scope.row = $scope.messages[idx];
-        if ($scope.row) {
-          selected.push($scope.row);
-        }
-      } else {
-        $scope.row = null;
-      }
-    };
-
+    ActiveMQ.decorate($scope);
 
     $scope.forwardMessagesAndCloseForwardDialog = () => {
       var mbean = getSelectionCamelContextMBean(workspace);
