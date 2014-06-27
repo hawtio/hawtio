@@ -24,6 +24,7 @@ The following articles have been found on the web about hawtio. If you find any 
 * [Hawtio, la console web polyvalente](http://blog.zenika.com/index.php?post/2014/01/07/HawtIO-la-console-web-polyvalente) by Gérald Quintana (in French) with a great overview of hawtio (note: Google can translate the page into readable english)
 * [Hawtio, écrire un plugin](http://blog.zenika.com/index.php?post/2014/01/14/HawtIO-ecrire-un-plugin) by Gérald Quintana (in French) the second part on writing a plugin (note: Google can translate the page into readable english)
 * [Hawtio authentication with LDAP](http://jcordes73.blogspot.de/2014/03/hawtio-authentication-with-ldap-on.html) by Jochen Cordes with a blog series how to use LDAP authentication with hawtio running on Tomcat 7, JBoss Fuse, and JBoss EAP.
+* [Installing hawtio as web console for ActiveMQ](http://sensatic.net/activemq/activemq-and-hawtio.html) by Dejan Bosanac shows how to install hawtio as the web console in Apache ActiveMQ. Dejan also demonstrates how you can remote connect from hawtio to any ActiveMQ broker.
 
 
 ## Developer articles
