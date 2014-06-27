@@ -82,9 +82,7 @@ module ActiveMQ {
     });
 
     $scope.openMessageDialog = (message) => {
-      var idx = Core.pathGet(message, ["rowIndex"]);
-      var jmsMessageId = Core.pathGet(message, ["entity", "JMSMessageID"]);
-      $scope.selectRowByJMSId(idx, jmsMessageId);
+      ActiveMQ.selectCurrentMessage(message, "JMSMessageID", $scope);
       if ($scope.row) {
         $scope.mode = CodeEditor.detectTextFormat($scope.row.Text);
         $scope.showMessageDetails = true;
@@ -99,20 +97,6 @@ module ActiveMQ {
       selected.splice(0, selected.length);
       if (idx >= 0 && idx < $scope.messages.length) {
         $scope.row = $scope.messages[idx];
-        if ($scope.row) {
-          selected.push($scope.row);
-        }
-      } else {
-        $scope.row = null;
-      }
-    };
-
-    $scope.selectRowByJMSId = (idx, jmsMessageId) => {
-      $scope.rowIndex = idx;
-      var selected = $scope.gridOptions.selectedItems;
-      selected.splice(0, selected.length);
-      if (idx >= 0 && idx < $scope.messages.length) {
-        $scope.row = $scope.messages.find((msg) => msg["JMSMessageID"] === jmsMessageId);
         if ($scope.row) {
           selected.push($scope.row);
         }

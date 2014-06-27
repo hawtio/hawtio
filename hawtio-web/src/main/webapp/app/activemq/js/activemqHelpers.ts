@@ -26,7 +26,7 @@ module ActiveMQ {
 
   export function getSelectionTopicsFolder(workspace) {
     function findTopicsFolder(node) {
-      var answer = null
+      var answer = null;
       if (node) {
         if (node.title === "Topics" || node.title === "Topic") {
           answer = node;
@@ -49,6 +49,34 @@ module ActiveMQ {
       return findTopicsFolder(selection);
     }
     return null;
+  }
+
+  /**
+   * Sets $scope.row to currently selected JMS message.
+   * Used in:
+   *  - activemq/js/browse.ts
+   *  - camel/js/browseEndpoint.ts
+   *
+   * TODO: remove $scope argument and operate directly on other variables. but it's too much side effects here...
+   *
+   * @param message
+   * @param key unique key inside message that distinguishes between values
+   * @param $scope
+   */
+  export function selectCurrentMessage(message:any, key:string, $scope) {
+    var idx = Core.pathGet(message, ["rowIndex"]);
+    var jmsMessageID = Core.pathGet(message, ["entity", key]);
+    $scope.rowIndex = idx;
+    var selected = $scope.gridOptions.selectedItems;
+    selected.splice(0, selected.length);
+    if (idx >= 0 && idx < $scope.messages.length) {
+      $scope.row = $scope.messages.find((msg) => msg[key] === jmsMessageID);
+      if ($scope.row) {
+        selected.push($scope.row);
+      }
+    } else {
+      $scope.row = null;
+    }
   }
 
 }

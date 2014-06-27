@@ -1,7 +1,7 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.BrowseEndpointController", ["$scope", "$routeParams", "workspace", "jolokia", ($scope, $routeParams, workspace:Workspace, jolokia) => {
+  export var BrowseEndpointController = _module.controller("Camel.BrowseEndpointController", ["$scope", "$routeParams", "workspace", "jolokia", ($scope, $routeParams, workspace:Workspace, jolokia) => {
     $scope.workspace = workspace;
 
     $scope.forwardDialog = new UI.Dialog();
@@ -24,8 +24,7 @@ module Camel {
 
     // TODO can we share these 2 methods from activemq browse / camel browse / came trace?
     $scope.openMessageDialog = (message) => {
-      var idx = Core.pathGet(message, ["rowIndex"]);
-      $scope.selectRowIndex(idx);
+      ActiveMQ.selectCurrentMessage(message, "id", $scope);
       if ($scope.row) {
         $scope.mode = CodeEditor.detectTextFormat($scope.row.body);
         $scope.showMessageDetails = true;
