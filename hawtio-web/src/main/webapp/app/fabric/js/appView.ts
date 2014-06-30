@@ -10,7 +10,6 @@ module Fabric {
   // ProfileBox controller
   export var ProfileBoxController = _module.controller("Fabric.ProfileBoxController", ['$scope', 'jolokia', 'workspace', '$location', ($scope, jolokia, workspace:Workspace, $location) => {
     var profile = <Profile>$scope.profile;
-    var responseJson = '';
 
     Core.registerForChanges(jolokia, $scope, {
       type: 'exec',
@@ -27,15 +26,11 @@ module Fabric {
       Core.$apply($scope);
     });
 
-    $scope.viewProfile = (profile:Profile) => {
-      Fabric.gotoProfile(workspace, jolokia, workspace.localStorage, $location, profile.versionId, profile.id);
-    };
-
   }]);
 
 
   // AppView controller
-  export var AppViewController = _module.controller("Fabric.AppViewController", ["$scope", 'jolokia', "$templateCache", "ProfileCart", "$location", ($scope, jolokia, $templateCache, ProfileCart:Profile[], $location) => {
+  export var AppViewController = _module.controller("Fabric.AppViewController", ["$scope", 'jolokia', "$templateCache", "ProfileCart", "$location", "workspace", ($scope, jolokia, $templateCache, ProfileCart:Profile[], $location, workspace:Workspace) => {
 
     $scope.selectedVersion = {};
     $scope.profiles = <Profile[]>[];
@@ -56,7 +51,6 @@ module Fabric {
     var unreg:() => void = null;
 
     $scope.$watch('selectedVersion.id', (newValue, oldValue) => {
-      log.debug("selectedVersion.id: ", newValue);
       if (!Core.isBlank(newValue)) {
         if (unreg) {
           unreg();
@@ -81,6 +75,10 @@ module Fabric {
     $scope.assign = () => {
       $location.url('/fabric/assignProfile');
       Core.$apply($scope);
+    };
+
+    $scope.viewProfile = (profile:Profile) => {
+      Fabric.gotoProfile(workspace, jolokia, workspace.localStorage, $location, profile.versionId, profile.id);
     };
 
     function render(response) {
@@ -112,6 +110,24 @@ module Fabric {
       $scope.tags = $scope.tags.unique().sort();
       SelectionHelpers.syncGroupSelection($scope.selectedTags, $scope.tags);
       Core.$apply($scope);
+      jolokia.request({
+        type: 'exec',
+        mbean: Fabric.managerMBean,
+        operation: "getConfigurationFiles(java.lang.String,java.util.List,java.lang.String)",
+        arguments: [$scope.selectedVersion.id, $scope.profiles.map((p) => { return p.id; }), '.*']
+      }, onSuccess((response) => {
+        angular.forEach(response.value, (configs, id) => {
+          usingProfile($scope.profiles, id, (profile) => {
+            var encodedSummary = configs['Summary.md'];
+            if (encodedSummary) {
+              profile.summary = encodedSummary.decodeBase64();
+            } else {
+              profile.summary = '';
+            }
+          });
+        });
+        Core.$apply($scope);
+      }));
     }
 
   }]);

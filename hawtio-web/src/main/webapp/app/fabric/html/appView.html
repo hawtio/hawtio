@@ -7,8 +7,7 @@
   </script>
 
   <script type="text/ng-template" id="profileBox.html">
-    <div ng-controller="Fabric.ProfileBoxController"
-         ng-class="isInGroup(cartItems, profile, 'column-box-selected', 'column-box-unselected')">
+    <div ng-class="isInGroup(cartItems, profile, 'column-box-selected', 'column-box-unselected')">
       <div class="row-fluid mouse-pointer"
            ng-click="toggleSelectionFromGroup(cartItems, profile)">
         <div class="span11">

@@ -810,6 +810,13 @@ module Fabric {
     }
   }
 
+  export function usingProfile(group:Profile[], targetId:string, action:(profile:Profile) => void):void {
+    var profile:Profile = group.find((p:Profile) => { return p.id === targetId; });
+    if (profile) {
+      action(profile);
+    }
+  }
+
   /**
    * Returns the default version ID for the current fabric
    * @param jolokia
