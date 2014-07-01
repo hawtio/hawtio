@@ -14,47 +14,52 @@ module UI {
         selected: '=',
         tags: '=',
         collection: '=?',
-        collectionProperty: '@'
+        collectionProperty: '@',
+        saveAs: '@'
       },
-      controller: ["$scope", "$element", "$attrs", ($scope, $element, $attrs) => {
-        log.debug("$scope: ", $scope);
+      controller: ["$scope", "localStorage", ($scope, localStorage) => {
         SelectionHelpers.decorate($scope);
-        $scope.$watch('collection', (newValue, oldValue) => {
-          if (newValue !== oldValue) {
-            log.debug("Collection property: ", $scope.collectionProperty);
+        if (!Core.isBlank($scope.saveAs)) {
+          if ($scope.saveAs in localStorage) {
+            $scope.selected.add(angular.fromJson(localStorage[$scope.saveAs]));
           }
-        });
-        $scope.$watch('selected', (newValue, oldValue) => {
-          if ($scope.collection && $scope.collectionProperty) {
-            if ($scope.selected.length === 0) {
+        }
+
+        function maybeFilterVisibleTags() {
+          if($scope.collection && $scope.collectionProperty) {
+            if (!$scope.selected.length) {
               $scope.visibleTags = $scope.tags;
             } else {
-              var filtered = $scope.collection.filter((c) => {
-                return SelectionHelpers.filterByGroup($scope.selected, c[$scope.collectionProperty]);
-              });
-              $scope.visibleTags = [];
-              filtered.forEach((c) => {
-                $scope.visibleTags = $scope.visibleTags.union(c[$scope.collectionProperty]);
-              });
+              filterVisibleTags();
             }
-
+          } else {
+            $scope.visibleTags = $scope.tags;
           }
-        }, true);
-      }],
-      link: ($scope, $element, $attrs) => {
+        }
+
+        function filterVisibleTags() {
+          var filtered = $scope.collection.filter((c) => {
+            return SelectionHelpers.filterByGroup($scope.selected, c[$scope.collectionProperty]);
+          });
+          $scope.visibleTags = [];
+          filtered.forEach((c) => {
+            $scope.visibleTags = $scope.visibleTags.union(c[$scope.collectionProperty]);
+          });
+        }
+
         $scope.$watch('tags', (newValue, oldValue) => {
           if (newValue !== oldValue) {
             SelectionHelpers.syncGroupSelection($scope.selected, $scope.tags);
-            if($scope.collection && $scope.collectionProperty) {
-              if (!$scope.selected.length) {
-                $scope.visibleTags = $scope.tags;
-              }
-            } else {
-              $scope.visibleTags = $scope.tags;
-            }
+            maybeFilterVisibleTags();
           }
         });
-      }
+        $scope.$watch('selected', (newValue, oldValue) => {
+          if (!Core.isBlank($scope.saveAs)) {
+            localStorage[$scope.saveAs] = angular.toJson($scope.selected);
+          }
+          maybeFilterVisibleTags();
+        }, true);
+      }]
     }
   }]);
 

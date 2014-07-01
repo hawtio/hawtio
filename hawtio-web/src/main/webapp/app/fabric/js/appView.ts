@@ -15,20 +15,16 @@ module Fabric {
     $scope.cartItems = ProfileCart;
     $scope.tags = [];
     $scope.selectedTags = [];
+    $scope.textFilter = '';
 
     SelectionHelpers.decorate($scope);
 
     $scope.filterProfiles = (profile:Profile) => {
-      //log.debug("selected tags: ", $scope.selectedTags);
       var answer = $scope.filterByGroup($scope.selectedTags, profile.tags);
       if (!Core.isBlank($scope.textFilter)) {
         var filter = $scope.textFilter.toLowerCase();
-        return answer.all((profile:Profile) => {
-          var json = angular.toJson(profile).toLowerCase();
-          return json.has(filter);
-        });
+        return angular.toJson(profile).toLowerCase().has(filter)
       }
-      //log.debug("Returning ", answer, " for profile: ", profile.id);
       return answer;
     };
 

@@ -15,7 +15,7 @@ module UI {
         width: '@',
         header: '@'
       },
-      controller: ($scope, $element, $attrs, $transclude, $document, $timeout, $compile, $templateCache) => {
+      controller: ["$scope", "$element", "$attrs", "$transclude", "$document", "$timeout", "$compile", "$templateCache", ($scope, $element, $attrs, $transclude, $document, $timeout, $compile, $templateCache) => {
 
         $scope.moving = false;
 
@@ -47,12 +47,12 @@ module UI {
 
         $scope.open = () => {
           $scope.setWidth($scope.width);
-        }
+        };
 
         $scope.close = () => {
           $scope.width = $element.width();
           $scope.setWidth(6);
-        }
+        };
 
         $scope.$on('pane.close', $scope.close);
         $scope.$on('pane.open', $scope.open);
@@ -94,7 +94,7 @@ module UI {
           });
         }
 
-      },
+      }],
       link: ($scope, $element, $attr) => {
 
         var parent = $element.parent();
