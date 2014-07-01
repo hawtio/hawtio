@@ -7,28 +7,6 @@ module Fabric {
     return [];
   });
 
-  // ProfileBox controller
-  export var ProfileBoxController = _module.controller("Fabric.ProfileBoxController", ['$scope', 'jolokia', 'workspace', '$location', ($scope, jolokia, workspace:Workspace, $location) => {
-    var profile = <Profile>$scope.profile;
-
-    Core.registerForChanges(jolokia, $scope, {
-      type: 'exec',
-      mbean: Fabric.managerMBean,
-      operation: 'getConfigurationFile(java.lang.String,java.lang.String,java.lang.String)',
-      arguments: [profile.versionId, profile.id, 'Summary.md']
-    }, (response) => {
-      var base64Encoded = <string>response.value;
-      if (Core.isBlank(base64Encoded)) {
-        profile.summary = '';
-        return;
-      }
-      profile.summary = base64Encoded.decodeBase64();
-      Core.$apply($scope);
-    });
-
-  }]);
-
-
   // AppView controller
   export var AppViewController = _module.controller("Fabric.AppViewController", ["$scope", 'jolokia', "$templateCache", "ProfileCart", "$location", "workspace", ($scope, jolokia, $templateCache, ProfileCart:Profile[], $location, workspace:Workspace) => {
 
