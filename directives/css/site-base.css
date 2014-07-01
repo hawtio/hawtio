@@ -2986,6 +2986,7 @@ fs-donut svg g text.units {
 
 .column-box {
   height: 175px;
+  width: 500px;
 }
 
 .column-box > div {
@@ -4160,3 +4161,7 @@ ul.dynatree-container {
   margin-top: 10px;
 }
 
+.search-query.has-text {
+  background: #55ddff;
+  color: #333333;
+}

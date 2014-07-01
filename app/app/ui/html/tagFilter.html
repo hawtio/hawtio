@@ -1,0 +1,16 @@
+<div>
+  <ul class="unstyled label-list">
+    <li ng-repeat="tag in visibleTags | orderBy"
+        class="mouse-pointer"
+        ng-click="toggleSelectionFromGroup(selected, tag)">
+              <span class="badge"
+                    ng-class="isInGroup(selected, tag, 'badge-success', '')"
+                      >{{tag}}</span>
+    </li>
+  </ul>
+  <div class="mouse-pointer"
+       ng-show="selected.length"
+       ng-click="clearGroup(selected)">
+    <i class="icon-remove" ></i> Clear Tags
+  </div>
+</div>

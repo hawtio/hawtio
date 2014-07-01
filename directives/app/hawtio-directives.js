@@ -3058,7 +3058,7 @@ var UI;
                     var children = $element.children(selector);
 
                     if (children.length === 0) {
-                        UI.log.debug("No children, skipping calculating column margins");
+                        //log.debug("No children, skipping calculating column margins");
                         return;
                     }
 
@@ -3764,82 +3764,83 @@ var UI;
                 width: '@',
                 header: '@'
             },
-            controller: function ($scope, $element, $attrs, $transclude, $document, $timeout, $compile, $templateCache) {
-                $scope.moving = false;
+            controller: [
+                "$scope", "$element", "$attrs", "$transclude", "$document", "$timeout", "$compile", "$templateCache", function ($scope, $element, $attrs, $transclude, $document, $timeout, $compile, $templateCache) {
+                    $scope.moving = false;
 
-                $transclude(function (clone) {
-                    $element.find(".pane-content").append(clone);
+                    $transclude(function (clone) {
+                        $element.find(".pane-content").append(clone);
 
-                    if (Core.isBlank($scope.header)) {
-                        return;
-                    }
+                        if (Core.isBlank($scope.header)) {
+                            return;
+                        }
 
-                    var headerTemplate = $templateCache.get($scope.header);
+                        var headerTemplate = $templateCache.get($scope.header);
 
-                    var wrapper = $element.find(".pane-header-wrapper");
-                    wrapper.html($compile(headerTemplate)($scope));
-                    $timeout(function () {
-                        $element.find(".pane-viewport").css("top", wrapper.height());
-                    }, 500);
-                });
-
-                $scope.setWidth = function (width) {
-                    if (width < 6) {
-                        return;
-                    }
-                    $element.width(width);
-                    $element.parent().css($scope.padding, $element.width() + "px");
-                };
-
-                $scope.open = function () {
-                    $scope.setWidth($scope.width);
-                };
-
-                $scope.close = function () {
-                    $scope.width = $element.width();
-                    $scope.setWidth(6);
-                };
-
-                $scope.$on('pane.close', $scope.close);
-                $scope.$on('pane.open', $scope.open);
-
-                $scope.toggle = function () {
-                    if ($scope.moving) {
-                        return;
-                    }
-                    if ($element.width() > 6) {
-                        $scope.close();
-                    } else {
-                        $scope.open();
-                    }
-                };
-
-                $scope.startMoving = function ($event) {
-                    $event.stopPropagation();
-                    $event.preventDefault();
-                    $event.stopImmediatePropagation();
-
-                    $document.on("mouseup.hawtio-pane", function ($event) {
+                        var wrapper = $element.find(".pane-header-wrapper");
+                        wrapper.html($compile(headerTemplate)($scope));
                         $timeout(function () {
-                            $scope.moving = false;
-                        }, 250);
-                        $event.stopPropagation();
-                        $event.preventDefault();
-                        $event.stopImmediatePropagation();
-                        $document.off(".hawtio-pane");
-                        Core.$apply($scope);
+                            $element.find(".pane-viewport").css("top", wrapper.height());
+                        }, 500);
                     });
 
-                    $document.on("mousemove.hawtio-pane", function ($event) {
-                        $scope.moving = true;
+                    $scope.setWidth = function (width) {
+                        if (width < 6) {
+                            return;
+                        }
+                        $element.width(width);
+                        $element.parent().css($scope.padding, $element.width() + "px");
+                    };
+
+                    $scope.open = function () {
+                        $scope.setWidth($scope.width);
+                    };
+
+                    $scope.close = function () {
+                        $scope.width = $element.width();
+                        $scope.setWidth(6);
+                    };
+
+                    $scope.$on('pane.close', $scope.close);
+                    $scope.$on('pane.open', $scope.open);
+
+                    $scope.toggle = function () {
+                        if ($scope.moving) {
+                            return;
+                        }
+                        if ($element.width() > 6) {
+                            $scope.close();
+                        } else {
+                            $scope.open();
+                        }
+                    };
+
+                    $scope.startMoving = function ($event) {
                         $event.stopPropagation();
                         $event.preventDefault();
                         $event.stopImmediatePropagation();
-                        $scope.setWidth($event.pageX + 2);
-                        Core.$apply($scope);
-                    });
-                };
-            },
+
+                        $document.on("mouseup.hawtio-pane", function ($event) {
+                            $timeout(function () {
+                                $scope.moving = false;
+                            }, 250);
+                            $event.stopPropagation();
+                            $event.preventDefault();
+                            $event.stopImmediatePropagation();
+                            $document.off(".hawtio-pane");
+                            Core.$apply($scope);
+                        });
+
+                        $document.on("mousemove.hawtio-pane", function ($event) {
+                            $scope.moving = true;
+                            $event.stopPropagation();
+                            $event.preventDefault();
+                            $event.stopImmediatePropagation();
+                            $scope.setWidth($event.pageX + 2);
+                            Core.$apply($scope);
+                        });
+                    };
+                }],
             link: function ($scope, $element, $attr) {
                 var parent = $element.parent();
 
@@ -4322,6 +4323,48 @@ var UI;
 /// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
+    UI.hawtioFilter = UI._module.directive("hawtioFilter", [function () {
+            return {
+                restrict: 'E',
+                replace: true,
+                transclude: true,
+                templateUrl: UI.templatePath + 'filter.html',
+                scope: {
+                    placeholder: '@',
+                    cssClass: '@',
+                    saveAs: '@?',
+                    ngModel: '='
+                },
+                controller: [
+                    "$scope", "localStorage", function ($scope, localStorage) {
+                        $scope.getClass = function () {
+                            var answer = [];
+                            if (!Core.isBlank($scope.cssClass)) {
+                                answer.push($scope.cssClass);
+                            }
+                            if (!Core.isBlank($scope.ngModel)) {
+                                answer.push("has-text");
+                            }
+                            return answer.join(' ');
+                        };
+                        if (!Core.isBlank($scope.saveAs)) {
+                            if ($scope.saveAs in localStorage) {
+                                $scope.ngModel = localStorage[$scope.saveAs];
+                            }
+                            $scope.$watch('ngModel', function (newValue) {
+                                localStorage[$scope.saveAs] = newValue;
+                            });
+                        }
+                    }]
+            };
+        }]);
+})(UI || (UI = {}));
+/**
+* @module UI
+*/
+/// <reference path="./uiPlugin.ts"/>
+var UI;
+(function (UI) {
     /**
     * Test controller for the icon help page
     * @param $scope
@@ -4624,6 +4667,72 @@ var UI;
         return ColorPicker;
     })();
     UI.ColorPicker = ColorPicker;
+})(UI || (UI = {}));
+/**
+* @module UI
+*/
+/// <reference path="./uiPlugin.ts"/>
+/// <reference path="../../helpers/js/selectionHelpers.ts"/>
+var UI;
+(function (UI) {
+    UI.hawtioTagFilter = UI._module.directive("hawtioTagFilter", [function () {
+            return {
+                restrict: 'E',
+                replace: true,
+                templateUrl: UI.templatePath + 'tagFilter.html',
+                scope: {
+                    selected: '=',
+                    tags: '=',
+                    collection: '=?',
+                    collectionProperty: '@',
+                    saveAs: '@'
+                },
+                controller: [
+                    "$scope", "localStorage", function ($scope, localStorage) {
+                        SelectionHelpers.decorate($scope);
+                        if (!Core.isBlank($scope.saveAs)) {
+                            if ($scope.saveAs in localStorage) {
+                                $scope.selected.add(angular.fromJson(localStorage[$scope.saveAs]));
+                            }
+                        }
+
+                        function maybeFilterVisibleTags() {
+                            if ($scope.collection && $scope.collectionProperty) {
+                                if (!$scope.selected.length) {
+                                    $scope.visibleTags = $scope.tags;
+                                } else {
+                                    filterVisibleTags();
+                                }
+                            } else {
+                                $scope.visibleTags = $scope.tags;
+                            }
+                        }
+
+                        function filterVisibleTags() {
+                            var filtered = $scope.collection.filter(function (c) {
+                                return SelectionHelpers.filterByGroup($scope.selected, c[$scope.collectionProperty]);
+                            });
+                            $scope.visibleTags = [];
+                            filtered.forEach(function (c) {
+                                $scope.visibleTags = $scope.visibleTags.union(c[$scope.collectionProperty]);
+                            });
+                        }
+
+                        $scope.$watch('tags', function (newValue, oldValue) {
+                            if (newValue !== oldValue) {
+                                SelectionHelpers.syncGroupSelection($scope.selected, $scope.tags);
+                                maybeFilterVisibleTags();
+                            }
+                        });
+                        $scope.$watch('selected', function (newValue, oldValue) {
+                            if (!Core.isBlank($scope.saveAs)) {
+                                localStorage[$scope.saveAs] = angular.toJson($scope.selected);
+                            }
+                            maybeFilterVisibleTags();
+                        }, true);
+                    }]
+            };
+        }]);
 })(UI || (UI = {}));
 /**
 * @module UI

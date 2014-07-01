@@ -28,7 +28,7 @@ module UI {
         var children = $element.children(selector);
 
         if (children.length === 0) {
-          log.debug("No children, skipping calculating column margins");
+          //log.debug("No children, skipping calculating column margins");
           return;
         }
 
