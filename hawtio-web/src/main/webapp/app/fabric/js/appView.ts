@@ -90,7 +90,6 @@ module Fabric {
       $scope.profiles = $scope.profiles.sortBy('name');
       SelectionHelpers.syncGroupSelection($scope.cartItems, $scope.profiles, 'id');
       $scope.tags = $scope.tags.unique().sort();
-      //SelectionHelpers.syncGroupSelection($scope.selectedTags, $scope.tags);
       Core.$apply($scope);
       jolokia.request({
         type: 'exec',
