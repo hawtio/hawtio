@@ -42,6 +42,13 @@ module Fabric {
 
     $scope.filterProfiles = (profile:Profile) => {
       var answer = $scope.filterByGroup($scope.selectedTags, profile.tags);
+      if (!Core.isBlank($scope.textFilter)) {
+        var filter = $scope.textFilter.toLowerCase();
+        return answer.all((profile:Profile) => {
+          var json = angular.toJson(profile).toLowerCase();
+          return json.has(filter);
+        });
+      }
       //log.debug("Returning ", answer, " for profile: ", profile.id);
       return answer;
     };

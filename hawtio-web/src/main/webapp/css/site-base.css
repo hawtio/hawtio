@@ -2986,6 +2986,7 @@ fs-donut svg g text.units {
 
 .column-box {
   height: 175px;
+  width: 500px;
 }
 
 .column-box > div {
