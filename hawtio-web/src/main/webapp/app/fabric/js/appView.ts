@@ -41,6 +41,7 @@ module Fabric {
     SelectionHelpers.decorate($scope);
 
     $scope.filterProfiles = (profile:Profile) => {
+      //log.debug("selected tags: ", $scope.selectedTags);
       var answer = $scope.filterByGroup($scope.selectedTags, profile.tags);
       if (!Core.isBlank($scope.textFilter)) {
         var filter = $scope.textFilter.toLowerCase();
@@ -115,7 +116,7 @@ module Fabric {
       $scope.profiles = $scope.profiles.sortBy('name');
       SelectionHelpers.syncGroupSelection($scope.cartItems, $scope.profiles, 'id');
       $scope.tags = $scope.tags.unique().sort();
-      SelectionHelpers.syncGroupSelection($scope.selectedTags, $scope.tags);
+      //SelectionHelpers.syncGroupSelection($scope.selectedTags, $scope.tags);
       Core.$apply($scope);
       jolokia.request({
         type: 'exec',

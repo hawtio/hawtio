@@ -22,8 +22,11 @@
       <div class="row-fluid">
         <div class="span12">
           <ul class="unstyled label-list">
-            <li class="inline-block" ng-repeat="tag in profile.tags">
-              <span class="badge">{{tag}}</span>
+            <li class="inline-block mouse-pointer"
+                ng-repeat="tag in profile.tags | orderBy"
+                ng-click="toggleSelectionFromGroup(selectedTags, tag)">
+              <span class="badge"
+                    ng-class="isInGroup(selectedTags, tag, 'badge-success', '')">{{tag}}</span>
             </li>
           </ul>
         </div>
@@ -70,6 +73,11 @@
           <input type="text" ng-model="textFilter" placeholder="Filter Apps...">
           -->
           <p></p>
+          <hawtio-tag-filter tags="tags"
+                             selected="selectedTags"
+                             collection="profiles"
+                             collection-property="tags"></hawtio-tag-filter>
+          <!--
           <ul class="unstyled label-list">
             <li ng-repeat="tag in tags"
                 class="mouse-pointer"
@@ -84,6 +92,7 @@
                ng-click="clearGroup(selectedTags)">
             <i class="icon-remove" ></i> Clear Tags
           </div>
+          -->
         </div>
       </div>
     </hawtio-pane>

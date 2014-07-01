@@ -68,15 +68,15 @@ module SelectionHelpers {
     }
   }
 
-  function nope(str:string) {
+  function nope(str?:string) {
     return stringOrBoolean(str, false);
   }
 
-  function yup(str:string) {
+  function yup(str?:string) {
     return stringOrBoolean(str, true);
   }
 
-  function maybe(bool:boolean, yes:string, no:string) {
+  function maybe(bool:boolean, yes?:string, no?:string) {
     if (bool) {
       return yup(yes);
     } else {
@@ -84,12 +84,15 @@ module SelectionHelpers {
     }
   }
 
-  export function isInGroup(group:any[], item:any, yes:string, no:string, search?:(item:any) => boolean):any {
+  export function isInGroup(group:any[], item:any, yes?:string, no?:string, search?:(item:any) => boolean):any {
+    if (!group) {
+      return nope(no);
+    }
     var searchMethod = search || item;
     return maybe(group.any(searchMethod), yes, no);
   }
 
-  export function filterByGroup(group:any, item:any, yes:string, no:string, search?:(item:any) => boolean):any {
+  export function filterByGroup(group:any, item:any, yes?:string, no?:string, search?:(item:any) => boolean):any {
     if (group.length === 0) {
       return yup(yes);
     }
