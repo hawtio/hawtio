@@ -205,15 +205,24 @@ module Core {
       'hideMethod': 'slideUp'
     };
 
+    var throttledError = {
+      level: <string>null,
+      message: <string>null,
+      action: Core.throttled(() => {
+        if (throttledError.level === "WARN") {
+          notification('warning', throttledError.message);
+        }
+        if (throttledError.level === "ERROR") {
+          notification('error', throttledError.message);
+        }
+
+      }, 500)
+    };
 
     window['logInterceptors'].push((level, message) => {
-        if (level === "WARN") {
-          notification('warning', message);
-        }
-        if (level === "ERROR") {
-          notification('error', message);
-        }
-
+      throttledError.level = level;
+      throttledError.message = message;
+      throttledError.action();
     });
 
     setTimeout(() => {
@@ -224,7 +233,7 @@ module Core {
       });
     }, 500);
   }]); // end _module.run
-}; // end module Core
+} // end module Core
 
 // bootstrap plugin loader
 hawtioPluginLoader.addUrl(url("/plugin"));

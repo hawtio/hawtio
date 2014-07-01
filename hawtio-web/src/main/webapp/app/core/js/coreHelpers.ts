@@ -1404,7 +1404,7 @@ module Core {
         nextInvokeTime = now + millis;
         lastAnswer = fn();
       } else {
-        log.debug("Not invoking function as we did call " + (now - (nextInvokeTime - millis)) + " ms ago");
+        //log.debug("Not invoking function as we did call " + (now - (nextInvokeTime - millis)) + " ms ago");
       }
       return lastAnswer;
     }
