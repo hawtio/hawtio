@@ -64,6 +64,8 @@ module ActiveMQ {
    * @param $scope
    */
   export function selectCurrentMessage(message:any, key:string, $scope) {
+    // clicking on message's link would interfere with messages selected with checkboxes
+    $scope.gridOptions.selectAll(false);
     var idx = Core.pathGet(message, ["rowIndex"]);
     var jmsMessageID = Core.pathGet(message, ["entity", key]);
     $scope.rowIndex = idx;
@@ -80,7 +82,8 @@ module ActiveMQ {
   }
 
   /**
-   * Adds functions needed for message browsing with details
+   * - Adds functions needed for message browsing with details
+   * - Adds a watch to deselect all rows after closing the slideout with message details
    * TODO: export these functions too?
    *
    * @param $scope
@@ -99,6 +102,13 @@ module ActiveMQ {
         $scope.row = null;
       }
     };
+
+    $scope.$watch("showMessageDetails", () => {
+      if (!$scope.showMessageDetails) {
+        $scope.row = null;
+        $scope.gridOptions.selectedItems.splice(0, $scope.gridOptions.selectedItems.length);
+      }
+    });
   }
 
 }
