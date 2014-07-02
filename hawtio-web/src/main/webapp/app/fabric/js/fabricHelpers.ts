@@ -690,6 +690,29 @@ module Fabric {
     doAction('restApiUrl', jolokia, [], success, error);
   }
 
+  /**
+   * Loads the restApiUrl property into the given $scope and added the helper function
+   */
+  export function loadRestApi(jolokia, $scope) {
+    Fabric.restApiUrl(jolokia, (response) => {
+      $scope.restApiUrl = response.value;
+      log.debug("got REST API: " + $scope.restApiUrl);
+      Core.$apply($scope);
+    });
+  }
+
+  /**
+   * Returns the fully qualified iconURL from the relative link
+   */
+  export function toIconURL($scope, iconURL) {
+    var restApiUrl = $scope.restApiUrl;
+    if (!restApiUrl || !iconURL) {
+      return null;
+    } else {
+      return restApiUrl + iconURL;
+    }
+  }
+
   export function getVersionsInUse(jolokia, callback:(used:string[]) => void) {
     doAction('containers(java.util.List, java.util.List)', jolokia, [["versionId"], []],
      (response) => {

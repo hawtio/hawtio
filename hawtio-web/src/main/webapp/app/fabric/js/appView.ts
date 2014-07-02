@@ -19,11 +19,7 @@ module Fabric {
 
     SelectionHelpers.decorate($scope);
 
-    Fabric.restApiUrl(jolokia, (response) => {
-      $scope.restApiUrl = response.value;
-      log.debug("got REST API: " + $scope.restApiUrl);
-      Core.$apply($scope);
-    });
+    Fabric.loadRestApi(jolokia, $scope);
 
     $scope.filterProfiles = (profile:Profile) => {
       var answer = $scope.filterByGroup($scope.selectedTags, profile.tags);
@@ -77,12 +73,6 @@ module Fabric {
         if (profile.abstract || profile.hidden || profile.overlay) {
           return;
         }
-        var iconURL = profile.iconURL;
-        if (!$scope.restApiUrl || !iconURL) {
-          iconURL = null;
-        } else {
-          iconURL = $scope.restApiUrl + iconURL;
-        }
         var summaryMarkdown = profile["summaryMarkdown"];
         var tags = profile.tags;
         if (!tags || !tags.length) {
@@ -98,7 +88,7 @@ module Fabric {
           // TODO should we sort tags?
           //tags: tags.sort(),
           tags: tags,
-          iconURL: iconURL,
+          iconURL: Fabric.toIconURL($scope, profile.iconURL),
           summary: summaryMarkdown ? marked(summaryMarkdown) : "",
           containerCount: profile.containerCount,
           associatedContainers: profile.associatedContainers

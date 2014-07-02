@@ -17,6 +17,7 @@ module Fabric {
       $scope.inDirective = true;
 
       Fabric.initScope($scope, $location, jolokia, workspace);
+      Fabric.loadRestApi(jolokia, $scope);
 
       $scope.loading = true;
 
@@ -416,6 +417,8 @@ module Fabric {
           if ($scope.hasFabricWiki() && id && version) {
             $scope.configFolderLink = "#/wiki/branch/" + version + "/view/fabric/profiles/" + Fabric.profilePath(id);
           }
+          // lets resolve the icon to a fully qualified URL
+          $scope.row.iconURL = Fabric.toIconURL($scope, response.value.iconURL);
           Core.$apply($scope);
         }
       }
