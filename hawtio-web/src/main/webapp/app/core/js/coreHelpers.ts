@@ -77,7 +77,7 @@ function safeNullAsString(value:any, type:string):string {
   } else if (typeof value === 'string') {
     // its a string
     return "" + value;
-  } else if (type === 'javax.management.openmbean.CompositeData' || type === '[Ljavax.management.openmbean.CompositeData;') {
+  } else if (type === 'javax.management.openmbean.CompositeData' || type === '[Ljavax.management.openmbean.CompositeData;' || type === 'java.util.Map') {
     // composite data or composite data array, we just display as json
     // use json representation
     var data = angular.toJson(value, true);
