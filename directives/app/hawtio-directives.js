@@ -4067,13 +4067,11 @@ var UI;
                     return propertyName;
                 };
 
-                scope.propertyName = scope.getPropertyName();
-
                 ngModel.$render = function () {
                     if (!ngModel.$viewValue) {
                         return;
                     }
-                    scope.text = ngModel.$viewValue[scope.propertyName];
+                    scope.text = ngModel.$viewValue[scope.getPropertyName()];
                 };
 
                 scope.getInputStyle = function () {
@@ -4106,7 +4104,7 @@ var UI;
                 };
 
                 scope.stopEdit = function () {
-                    $(element.find(":input[type=text]")[0]).val(ngModel.$viewValue[scope.propertyName]);
+                    $(element.find(":input[type=text]")[0]).val(ngModel.$viewValue[scope.getPropertyName()]);
                     scope.editing = false;
                 };
 
@@ -4114,7 +4112,7 @@ var UI;
                     var value = $(element.find(":input[type=text]")[0]).val();
                     var obj = ngModel.$viewValue;
 
-                    obj[scope.propertyName] = value;
+                    obj[scope.getPropertyName()] = value;
 
                     ngModel.$setViewValue(obj);
                     ngModel.$render();
@@ -4336,7 +4334,7 @@ var UI;
                     ngModel: '='
                 },
                 controller: [
-                    "$scope", "localStorage", function ($scope, localStorage) {
+                    "$scope", "localStorage", "$location", function ($scope, localStorage, $location) {
                         $scope.getClass = function () {
                             var answer = [];
                             if (!Core.isBlank($scope.cssClass)) {
@@ -4347,12 +4345,19 @@ var UI;
                             }
                             return answer.join(' ');
                         };
+
+                        // sync with local storage and the location bar, maybe could refactor this into a helper function
                         if (!Core.isBlank($scope.saveAs)) {
                             if ($scope.saveAs in localStorage) {
                                 $scope.ngModel = localStorage[$scope.saveAs];
                             }
+                            var search = $location.search();
+                            if ($scope.saveAs in search) {
+                                $scope.ngModel = search[$scope.saveAs];
+                            }
                             $scope.$watch('ngModel', function (newValue) {
                                 localStorage[$scope.saveAs] = newValue;
+                                $location.search($scope.saveAs, newValue);
                             });
                         }
                     }]
@@ -4688,10 +4693,14 @@ var UI;
                     saveAs: '@'
                 },
                 controller: [
-                    "$scope", "localStorage", function ($scope, localStorage) {
+                    "$scope", "localStorage", "$location", function ($scope, localStorage, $location) {
                         SelectionHelpers.decorate($scope);
+
                         if (!Core.isBlank($scope.saveAs)) {
-                            if ($scope.saveAs in localStorage) {
+                            var search = $location.search();
+                            if ($scope.saveAs in search) {
+                                $scope.selected.add(angular.fromJson(search[$scope.saveAs]));
+                            } else if ($scope.saveAs in localStorage) {
                                 $scope.selected.add(angular.fromJson(localStorage[$scope.saveAs]));
                             }
                         }
@@ -4703,6 +4712,19 @@ var UI;
                                 } else {
                                     filterVisibleTags();
                                 }
+                                $scope.visibleTags = $scope.visibleTags.map(function (t) {
+                                    return {
+                                        id: t,
+                                        count: $scope.collection.map(function (c) {
+                                            return c[$scope.collectionProperty];
+                                        }).reduce(function (count, c) {
+                                            if (c.any(t)) {
+                                                return count + 1;
+                                            }
+                                            return count;
+                                        }, 0)
+                                    };
+                                });
                             } else {
                                 $scope.visibleTags = $scope.tags;
                             }
@@ -4726,7 +4748,9 @@ var UI;
                         });
                         $scope.$watch('selected', function (newValue, oldValue) {
                             if (!Core.isBlank($scope.saveAs)) {
-                                localStorage[$scope.saveAs] = angular.toJson($scope.selected);
+                                var saveAs = angular.toJson($scope.selected);
+                                localStorage[$scope.saveAs] = saveAs;
+                                $location.search($scope.saveAs, saveAs);
                             }
                             maybeFilterVisibleTags();
                         }, true);

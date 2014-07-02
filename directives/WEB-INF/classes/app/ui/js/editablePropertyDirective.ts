@@ -14,7 +14,7 @@ module UI {
     public scope = true;
     public templateUrl = UI.templatePath + 'editableProperty.html';
     public require = 'ngModel';
-    public link = null;
+    public link:any = null;
 
     constructor(private $parse) {
 
@@ -30,13 +30,11 @@ module UI {
           return propertyName;
         };
 
-        scope.propertyName = scope.getPropertyName();
-
         ngModel.$render = function () {
           if (!ngModel.$viewValue) {
             return;
           }
-          scope.text = ngModel.$viewValue[scope.propertyName];
+          scope.text = ngModel.$viewValue[scope.getPropertyName()];
         };
 
         scope.getInputStyle = () => {
@@ -69,7 +67,7 @@ module UI {
         };
 
         scope.stopEdit = function () {
-          $(element.find(":input[type=text]")[0]).val(ngModel.$viewValue[scope.propertyName]);
+          $(element.find(":input[type=text]")[0]).val(ngModel.$viewValue[scope.getPropertyName()]);
           scope.editing = false;
         };
 
@@ -77,7 +75,7 @@ module UI {
           var value = $(element.find(":input[type=text]")[0]).val();
           var obj = ngModel.$viewValue;
 
-          obj[scope.propertyName] = value;
+          obj[scope.getPropertyName()] = value;
 
           ngModel.$setViewValue(obj);
           ngModel.$render();

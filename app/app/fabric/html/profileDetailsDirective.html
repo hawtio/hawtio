@@ -6,7 +6,12 @@
     <div class="fabric-page-header row-fluid">
 
       <div class="pull-left">
-        <h2 class="inline" title="Profile: {{row.id}}"><span class="contained c-wide">{{row.id}}</span></h2>
+        <div class="app-logo">
+          <img ng-src="{{row.iconURL}}" ng-show="row.iconURL">&nbsp;
+        </div>
+      </div>
+      <div class="pull-left">
+          <h2 class="inline" title="Profile: {{row.id}}"><span class="contained c-wide">{{row.id}}</span></h2>
       </div>
 
       <div class="pull-right" ng-show="inDirective">

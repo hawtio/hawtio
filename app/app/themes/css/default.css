@@ -764,10 +764,6 @@ input[type="checkbox"].ng-invalid {
   background-color: #f3f3f3;
 }
 
-.fabric-page-header {
-  border-bottom: 1px solid #d4d4d4;
-}
-
 pre.stack-line {
   color: #333333;
   background: inherit;
@@ -1392,18 +1388,36 @@ img.nodeIcon:hover {
 }
 
 .pane-bar {
-  border-left: 1px solid #d4d4d4;
-  border-right: 1px solid #d4d4d4;
   background: white;
+}
+
+.pane-viewport {
+  border-top: 1px solid #d4d4d4;
+}
+
+.pane.right .pane-bar {
+  border-left: 1px solid #d4d4d4;
+}
+
+.pane.left .pane-bar {
+  border-right: 1px solid #d4d4d4;
 }
 
 .pane {
   background: #fff;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.05);
+  /* box-shadow: 0 0 50px rgba(0, 0, 0, 0.05); */
 }
 
 .pane-header-wrapper {
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 0 50px rgba(0, 0, 0, 0.2); */ 
+}
+
+.column-box.column-box-unselected {
+  border: 1px solid transparent;
+}
+
+.column-box.column-box-selected {
+  border: 1px solid #d4d4d4;
 }
 
 .navbar .nav > li > .dropdown-menu:before,
@@ -1438,4 +1452,8 @@ img.nodeIcon:hover {
 
 .prefs .tabbable > .nav > li > a:hover {
   background-color: #EEEEEE    
+}
+
+.column-box {
+  /* border: 1px solid #d4d4d4; */
 }

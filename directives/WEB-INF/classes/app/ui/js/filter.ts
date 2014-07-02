@@ -16,7 +16,8 @@ module UI {
         saveAs: '@?',
         ngModel: '='
       },
-      controller: ["$scope", "localStorage", ($scope, localStorage) => {
+      controller: ["$scope", "localStorage", "$location", ($scope, localStorage, $location) => {
+
         $scope.getClass = () => {
           var answer = [];
           if (!Core.isBlank($scope.cssClass)) {
@@ -27,12 +28,19 @@ module UI {
           }
           return answer.join(' ');
         };
+
+        // sync with local storage and the location bar, maybe could refactor this into a helper function
         if (!Core.isBlank($scope.saveAs)) {
           if ($scope.saveAs in localStorage) {
             $scope.ngModel = localStorage[$scope.saveAs];
           }
+          var search = $location.search();
+          if ($scope.saveAs in search) {
+            $scope.ngModel = search[$scope.saveAs];
+          }
           $scope.$watch('ngModel', (newValue) => {
             localStorage[$scope.saveAs] = newValue;
+            $location.search($scope.saveAs, newValue);
           })
         }
       }]

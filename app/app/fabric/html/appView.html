@@ -7,42 +7,56 @@
   </script>
 
   <script type="text/ng-template" id="profileBox.html">
-    <div ng-class="isInGroup(cartItems, profile, 'column-box-selected', 'column-box-unselected')">
-      <div class="row-fluid mouse-pointer"
-           ng-click="toggleSelectionFromGroup(cartItems, profile)">
-        <div class="span11">
-          <h4>{{profile.id}}</h4>
-        </div>
-        <div class="span1">
-          <h3 ng-show="isInGroup(cartItems, profile)">
-            <i class="icon-ok"></i>
-          </h3>
-        </div>
-      </div>
-      <div class="row-fluid">
-        <div class="span12">
-          <ul class="unstyled label-list">
-            <li class="inline-block mouse-pointer"
-                ng-repeat="tag in profile.tags | orderBy"
-                ng-click="toggleSelectionFromGroup(selectedTags, tag)">
-              <span class="badge"
-                    ng-class="isInGroup(selectedTags, tag, 'badge-success', '')">{{tag}}</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="row-fluid">
-        <div class="span12">
-          <div ng-hide="profile.summary != undefined" class="centered">
-            <i class="icon-spinner icon-spin"></i>
+    <div class="row-fluid">
+      <div class="span10">
+        <div class="row-fluid">
+          <div class="span2">
+            <div class="app-logo mouse-pointer" ng-click="viewProfile(profile)">
+              <img ng-src="{{profile.iconURL}}" ng-show="profile.iconURL">
+              <img src="img/icons/fabric8_icon.svg" ng-hide="profile.iconURL">
+            </div>
           </div>
-          <div ng-show="profile.summary != undefined">{{profile.summary}}</div>
+          <div class="span10">
+            <div class="row-fluid mouse-pointer"
+                 ng-click="toggleSelectionFromGroup(cartItems, profile)">
+              <div class="span12">
+                <h4>{{profile.id}}</h4>
+              </div>
+            </div>
+            <div class="row-fluid">
+              <div class="span11">
+                <ul class="unstyled label-list">
+                  <li class="inline-block mouse-pointer"
+                      ng-repeat="tag in profile.tags | orderBy"
+                      ng-click="toggleSelectionFromGroup(selectedTags, tag)">
+                    <span class="badge"
+                          ng-class="isInGroup(selectedTags, tag, 'badge-success', '')">{{tag}}</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="span1">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row-fluid">
+          <div class="span12" 
+               ng-show="profile.summary" 
+               ng-bind-html-unsafe="profile.summary"></div>
+        </div>
+        <div class="row-fluid">
+          <div class="span12">
+            <a href="" 
+               ng-click="viewProfile(profile)">Details...</a>
+          </div>
         </div>
       </div>
-      <div class="row-fluid">
-        <div class="span12">
-          <button class="btn" ng-click="viewProfile(profile)"><i class="icon-info-sign"></i> Details</button>
-        </div>
+      <div class="span2 ok-container mouse-pointer"
+           ng-click="toggleSelectionFromGroup(cartItems, profile)">
+        <i class="icon-check-empty"
+           ng-hide="isInGroup(cartItems, profile)"></i>
+        <i class="icon-check"
+            ng-show="isInGroup(cartItems, profile)"></i>
       </div>
     </div>
   </script>
@@ -52,13 +66,8 @@
       <div class="span12">
         <div class="row-fluid">
           <p></p>
-          <div class="span6 centered">
+          <div class="span12 centered">
             <div fabric-version-selector="selectedVersion"></div>
-          </div>
-          <div class="span6 centered">
-            <hawtio-filter ng-model="textFilter"
-                           placeholder="Filter Apps..."
-                           save-as="fabric-appview-text-filter"></hawtio-filter>
           </div>
         </div>
         <div class="row-fluid centered" ng-show="profiles.length == 0">
@@ -66,15 +75,62 @@
         </div>
         <div class="row-fluid" ng-hide="profiles.length == 0">
           <ul hawtio-auto-columns=".column-box">
-            <li class="column-box" ng-repeat="profile in profiles | filter:filterProfiles" ng-include="'profileBox.html'">{{profile}}</li>
+            <li class="column-box" 
+                ng-repeat="profile in profiles" 
+                ng-class="isInGroup(cartItems, profile, 'column-box-selected', 'column-box-unselected')" 
+                ng-show="filterProfiles(profile)" 
+                ng-include="'profileBox.html'">{{profile}}</li>
           </ul>
         </div>
       </div>
     </div>
 
-    <hawtio-pane position="right">
+    <script type="text/ng-template" id="headerTemplate.html">
+      <div class="tree-header fabric-app-view-header" ng-controller="Fabric.AppViewPaneHeaderController">
+        <div class="row-fluid">
+          <div class="span12 centered">
+            <p></p>
+            <hawtio-filter ng-model="filter"
+                           placeholder="Filter Apps..."
+                           save-as="fabric-appview-text-filter"></hawtio-filter>
+          </div>
+        </div>
+        <div class="row-fluid">
+          <p></p>
+          <div class="pull-left">
+            <div class="alert alert-info">
+              Selected: {{cartItems.length}} 
+            </div>
+          </div>
+          <div class="pull-right">
+            <button class="btn btn-success"
+                    ng-disabled="!cartItems.length"
+                    ng-click="deploy()">
+              <i class="icon-ok"
+                 title="Deploy the selected apps ({{getNames()}}) to new containers"></i>
+            </button>
+            <button class="btn btn-primary"
+                    ng-disabled="!cartItems.length"
+                    ng-click="assign()">
+              <i class="icon-truck"
+                 title="Deploy the selected apps ({{getNames()}}) to existing containers"></i>
+            </button>
+            <button class="btn"
+                    ng-disabled="!cartItems.length"
+                    title="Clear selected apps"
+                    ng-click="clearGroup(cartItems)">
+              <i class="icon-remove"
+                 title="Deploy the selected apps ({{getNames()}}) to existing containers"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </script>
+
+
+    <hawtio-pane position="right" header="headerTemplate.html">
       <div class="row-fluid">
-        <div class="span11 offset1">
+        <div class="span12">
           <p></p>
           <hawtio-tag-filter tags="tags"
                              selected="selectedTags"
@@ -85,31 +141,5 @@
       </div>
     </hawtio-pane>
 
-    <div class="panel bottom deploy"
-         ng-show="cartItems.length">
-      <div class="row-fluid">
-        <div class="span12">
-          <div class="alert alert-success">
-            <span>Using the profiles </span>
-            <span class="profile-list-item" ng-repeat="profile in cartItems">{{profile.name}}</span>
-            <button class="btn btn-primary"
-                    ng-click="deploy()">
-              <i class="icon-truck"
-                 title="Deploy the selected apps to new containers"></i> Create
-            </button>
-            <button class="btn btn-primary"
-                    ng-click="assign()">
-              <i class="icon-truck"
-                 title="Deploy the selected apps to existing containers"></i> Assign
-            </button>
-            <span>, or </span>
-            <button class="btn"
-                    title="Clear selected apps"
-                    ng-click="clearGroup(cartItems)"> Clear Selection
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>

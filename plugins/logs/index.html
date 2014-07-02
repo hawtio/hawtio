@@ -120,7 +120,7 @@
 
 <p>If you are not using OSGi then you just need to ensure you have <a href="https://github.com/fusesource/fuse/tree/master/insight/insight-log4j">insight-log4j</a> in your WAR when you deploy hawtio; which is already included in the <a href="https://github.com/hawtio/hawtio/tree/master/sample">hawtio sample war</a>.</p>
 
-<p>Then you need to ensure that the LogQuery bean is instantiated in whatever dependency injection framework you choose. For example this is <a href="https://github.com/hawtio/hawtio/blob/master/sample/src/main/webapp/WEB-INF/applicationContext.xml#L12">how we initialise LogQuery</a> in the <a href="https://github.com/hawtio/hawtio/tree/master/sample">sample war</a> using spring XML:</p>
+<p>Then you need to ensure that the LogQuery bean is instantiated in whatever dependency injection framework you choose. For example this is <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/test/resources/applicationContext.xml#L18">how we initialise LogQuery</a> in the <a href="https://github.com/hawtio/hawtio/tree/master/sample">sample war</a> using spring XML:</p>
 
 <pre><code>&lt;bean id="logQuery" class="org.fusesource.insight.log.log4j.Log4jLogQuery"
       lazy-init="false" scope="singleton"
