@@ -9,7 +9,7 @@ module Jmx {
       field: 'name',
       displayName: 'Property',
       width: "27%",
-      cellTemplate: '<div class="ngCellText" title="{{row.entity.attrDesc}}" ' +
+      cellTemplate: '<div class="ngCellText" ng-click="row.entity.onViewAttribute()"  title="{{row.entity.attrDesc}}" ' +
         'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="row.entity.getDashboardWidgets()"></div>{{row.entity.name}}</div>'},
     {
       field: 'value',
@@ -26,7 +26,7 @@ module Jmx {
     }
   ];
 
-  _module.controller("Jmx.AttributesController", ["$scope", "$element", "$location", "workspace", "jolokia", "jmxWidgets", "jmxWidgetTypes", "$templateCache", ($scope,
+  export var AttributesController = _module.controller("Jmx.AttributesController", ["$scope", "$element", "$location", "workspace", "jolokia", "jmxWidgets", "jmxWidgetTypes", "$templateCache", ($scope,
                                        $element,
                                        $location,
                                        workspace:Workspace,
