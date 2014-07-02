@@ -112,6 +112,12 @@ module Fabric {
   }, "Catalina", "Tomcat");
 
   serviceIconRegistry.addIcons({
+    title: "WildFly",
+    type: "img",
+    src: "img/icons/wildfly.svg"
+  }, "jboss", "wildfly");
+
+  serviceIconRegistry.addIcons({
     title: "Apache Cassandra",
     type: "img",
     src: "img/icons/cassandra.svg",
@@ -153,6 +159,12 @@ module Fabric {
     type: "img",
     src: "img/icons/jetty.svg"
   }, "Jetty");
+
+  containerIconRegistry.addIcons({
+    title: "WildFly",
+    type: "img",
+    src: "img/icons/wildfly.svg"
+  }, "WildFly");
 
   // TODO - placeholder for Java containers
   containerIconRegistry.addIcons(javaIcon, "java");
