@@ -694,9 +694,13 @@ module Fabric {
    * Loads the restApiUrl property into the given $scope and added the helper function
    */
   export function loadRestApi(jolokia, $scope) {
+    var defaultApi = "/api/fabric8";
+    if (!$scope.restApiUrl) {
+      $scope.restApiUrl = defaultApi;
+    }
     Fabric.restApiUrl(jolokia, (response) => {
-      $scope.restApiUrl = response.value;
-      log.debug("got REST API: " + $scope.restApiUrl);
+      $scope.restApiUrl = response.value || defaultApi;
+      log.info("got REST API: " + $scope.restApiUrl);
       Core.$apply($scope);
     });
   }
