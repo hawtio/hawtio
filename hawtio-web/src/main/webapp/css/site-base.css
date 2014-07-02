@@ -4106,6 +4106,10 @@ ul.dynatree-container {
   height: 26px;
 }
 
+.fabric-app-view-header {
+  height: 50px;
+}
+
 .tree-header > .left,
 .tree-header > .right {
   position: absolute;

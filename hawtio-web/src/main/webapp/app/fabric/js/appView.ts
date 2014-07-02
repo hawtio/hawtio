@@ -7,6 +7,14 @@ module Fabric {
     return [];
   });
 
+  export var AppViewPaneHeaderController = _module.controller("Fabric.AppViewPaneHeaderController", ["$scope", ($scope) => {
+    $scope.$watch('filter', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.$emit("Fabric.AppViewPaneController.filter", newValue);
+      }
+    });
+  }]);
+
   // AppView controller
   export var AppViewController = _module.controller("Fabric.AppViewController", ["$scope", 'jolokia', "$templateCache", "ProfileCart", "$location", "workspace", ($scope, jolokia, $templateCache, ProfileCart:Profile[], $location, workspace:Workspace) => {
 
@@ -20,6 +28,10 @@ module Fabric {
     SelectionHelpers.decorate($scope);
 
     Fabric.loadRestApi(jolokia, $scope);
+
+    $scope.$on('Fabric.AppViewPaneController.filter', ($event, newValue) => {
+      $scope.textFilter = newValue;
+    });
 
     $scope.filterProfiles = (profile:Profile) => {
       var answer = $scope.filterByGroup($scope.selectedTags, profile.tags);

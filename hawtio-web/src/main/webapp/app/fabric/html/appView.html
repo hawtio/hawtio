@@ -58,13 +58,8 @@
       <div class="span12">
         <div class="row-fluid">
           <p></p>
-          <div class="span6 centered">
+          <div class="span12 centered">
             <div fabric-version-selector="selectedVersion"></div>
-          </div>
-          <div class="span6 centered">
-            <hawtio-filter ng-model="textFilter"
-                           placeholder="Filter Apps..."
-                           save-as="fabric-appview-text-filter"></hawtio-filter>
           </div>
         </div>
         <div class="row-fluid centered" ng-show="profiles.length == 0">
@@ -72,13 +67,27 @@
         </div>
         <div class="row-fluid" ng-hide="profiles.length == 0">
           <ul hawtio-auto-columns=".column-box">
-            <li class="column-box" ng-repeat="profile in profiles | filter:filterProfiles" ng-include="'profileBox.html'">{{profile}}</li>
+            <li class="column-box" ng-repeat="profile in profiles" ng-show="filterProfiles(profile)" ng-include="'profileBox.html'">{{profile}}</li>
           </ul>
         </div>
       </div>
     </div>
 
-    <hawtio-pane position="right">
+    <script type="text/ng-template" id="headerTemplate.html">
+      <div class="tree-header fabric-app-view-header" ng-controller="Fabric.AppViewPaneHeaderController">
+        <div class="row-fluid">
+          <div class="span12 centered">
+            <p></p>
+            <hawtio-filter ng-model="filter"
+                           placeholder="Filter Apps..."
+                           save-as="fabric-appview-text-filter"></hawtio-filter>
+          </div>
+        </div>
+      </div>
+    </script>
+
+
+    <hawtio-pane position="right" header="headerTemplate.html">
       <div class="row-fluid">
         <div class="span11 offset1">
           <p></p>
