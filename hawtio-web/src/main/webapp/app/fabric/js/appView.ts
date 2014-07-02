@@ -34,7 +34,7 @@ module Fabric {
       return answer;
     };
 
-    var profileFields = ['id', 'abstract', 'hidden', 'attributes', 'overlay', 'containerCount', 'associatedContainers', 'fileConfigurations', 'iconURL', 'summaryMarkdown'];
+    var profileFields = ['id', 'abstract', 'hidden', 'attributes', 'overlay', 'containerCount', 'associatedContainers', 'fileConfigurations', 'iconURL', 'summaryMarkdown', 'tags'];
 
     var unreg:() => void = null;
 
@@ -84,15 +84,20 @@ module Fabric {
           iconURL = $scope.restApiUrl + iconURL;
         }
         var summaryMarkdown = profile["summaryMarkdown"];
-        var tags = profile.id.split('-');
-        var name = tags.last();
-        tags = tags.first(tags.length - 1);
+        var tags = profile.tags;
+        if (!tags || !tags.length) {
+          tags = profile.id.split('-');
+          var name = tags.last();
+          tags = tags.first(tags.length - 1);
+        }
         $scope.tags.add(tags);
         $scope.profiles.push(<Profile>{
           id: profile.id,
           versionId: $scope.selectedVersion.id,
           name: name,
-          tags: tags.sort(),
+          // TODO should we sort tags?
+          //tags: tags.sort(),
+          tags: tags,
           iconURL: iconURL,
           summary: summaryMarkdown ? marked(summaryMarkdown) : "",
           containerCount: profile.containerCount,
