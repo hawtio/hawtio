@@ -82,6 +82,8 @@ function safeNullAsString(value:any, type:string):string {
     // use json representation
     var data = angular.toJson(value, true);
     return data;
+  } else if (type === 'javax.management.ObjectName') {
+    return "" + value.canonicalName;;
   } else if (type === 'javax.management.openmbean.TabularData') {
     // tabular data is a key/value structure so loop each field and convert to array we can
     // turn into a String
