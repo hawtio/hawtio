@@ -1269,6 +1269,11 @@ module Core {
         // after proxy we have host and optional port (if port is not 80)
         if (idx > 0) {
           value = value.substr(idx + 7);
+          // if the path has http:// or some other scheme in it lets trim that off
+          idx = value.indexOf("://");
+          if (idx > 0) {
+            value = value.substr(idx + 3);
+          }
           var data = value.split("/");
           if (data.length >= 1) {
             host = data[0];

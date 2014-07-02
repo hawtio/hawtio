@@ -77,7 +77,26 @@ module JBoss {
 
                   // compute the url for the webapp, and we want to use http as scheme
                   var hostname = Core.extractTargetUrl($location, $scope.httpScheme, $scope.httpPort);
-                  obj.url = hostname + obj['contextPath'];
+
+                  function updateUrl() {
+                    obj.url = hostname + obj['contextPath'];
+                  }
+
+                  updateUrl();
+
+                  // lets try find the undertow contextPath
+                  var undertowMBean = mbean + ",subsystem=undertow";
+                  jolokia.request( {type: "read", mbean: undertowMBean, attribute: ["contextRoot"]}, onSuccess((response) => {
+                    var value = response.value;
+                    if (value) {
+                      var contextPath = value["contextRoot"];
+                      if (contextPath) {
+                        obj.contextPath = contextPath;
+                        updateUrl();
+                        Core.$apply($scope);
+                      }
+                    }
+                  }));
 
                   var idx = $scope.mbeanIndex[mbean];
                   if (angular.isDefined(idx)) {
