@@ -3958,6 +3958,23 @@ img.nodeIcon:hover {
   width: 16px;
 }
 
+.app-logo {
+  width: 64px;
+}
+
+.app-logo img {
+  vertical-align: middle;
+  font-size: 64px;
+  height: 64px;
+  width: auto;
+  line-height: 64px;
+}
+
+.app-logo img.girthy {
+  height: auto;
+  width: 64px;
+}
+
 .service-list i:before,
 .service-list img {
   height: 16px;

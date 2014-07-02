@@ -19,6 +19,12 @@ module Fabric {
 
     SelectionHelpers.decorate($scope);
 
+    Fabric.restApiUrl(jolokia, (response) => {
+      $scope.restApiUrl = response.value;
+      log.debug("got REST API: " + $scope.restApiUrl);
+      Core.$apply($scope);
+    });
+
     $scope.filterProfiles = (profile:Profile) => {
       var answer = $scope.filterByGroup($scope.selectedTags, profile.tags);
       if (!Core.isBlank($scope.textFilter)) {
@@ -28,7 +34,7 @@ module Fabric {
       return answer;
     };
 
-    var profileFields = ['id', 'abstract', 'hidden', 'attributes', 'overlay', 'containerCount', 'associatedContainers', 'fileConfigurations'];
+    var profileFields = ['id', 'abstract', 'hidden', 'attributes', 'overlay', 'containerCount', 'associatedContainers', 'fileConfigurations', 'iconURL', 'summaryMarkdown'];
 
     var unreg:() => void = null;
 
@@ -71,9 +77,13 @@ module Fabric {
         if (profile.abstract || profile.hidden || profile.overlay) {
           return;
         }
-        if (!profile.fileConfigurations.any('Summary.md')) {
-          return;
+        var iconURL = profile.iconURL;
+        if (!$scope.restApiUrl || !iconURL) {
+          iconURL = null;
+        } else {
+          iconURL = $scope.restApiUrl + iconURL;
         }
+        var summaryMarkdown = profile["summaryMarkdown"];
         var tags = profile.id.split('-');
         var name = tags.last();
         tags = tags.first(tags.length - 1);
@@ -83,6 +93,8 @@ module Fabric {
           versionId: $scope.selectedVersion.id,
           name: name,
           tags: tags.sort(),
+          iconURL: iconURL,
+          summary: summaryMarkdown ? marked(summaryMarkdown) : "",
           containerCount: profile.containerCount,
           associatedContainers: profile.associatedContainers
         });
@@ -91,26 +103,6 @@ module Fabric {
       SelectionHelpers.syncGroupSelection($scope.cartItems, $scope.profiles, 'id');
       $scope.tags = $scope.tags.unique().sort();
       Core.$apply($scope);
-      jolokia.request({
-        type: 'exec',
-        mbean: Fabric.managerMBean,
-        operation: "getConfigurationFiles(java.lang.String,java.util.List,java.lang.String)",
-        arguments: [$scope.selectedVersion.id, $scope.profiles.map((p) => { return p.id; }), '.*']
-      }, onSuccess((response) => {
-        angular.forEach(response.value, (configs, id) => {
-          usingProfile($scope.profiles, id, (profile) => {
-            var encodedSummary = configs['Summary.md'];
-            if (encodedSummary) {
-              profile.summary = encodedSummary.decodeBase64();
-            } else {
-              profile.summary = '';
-            }
-          });
-        });
-        Core.$apply($scope);
-      }));
     }
-
   }]);
-
 }

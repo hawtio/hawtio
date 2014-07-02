@@ -31,6 +31,7 @@ module Fabric {
     tags?: string[];
     versionId?: string;
     summary?: string;
+    iconURL?: string;
 
     abstract?: boolean;
     hidden?: boolean;
@@ -683,6 +684,10 @@ module Fabric {
 
   export function profileWebAppURL(jolokia, webAppId, profileId, versionId, success, error) {
     doAction('profileWebAppURL', jolokia, [webAppId, profileId, versionId], success, error);
+  }
+
+  export function restApiUrl(jolokia, success, error = Core.defaultJolokiaErrorHandler) {
+    doAction('restApiUrl', jolokia, [], success, error);
   }
 
   export function getVersionsInUse(jolokia, callback:(used:string[]) => void) {
