@@ -7,13 +7,37 @@ module Fabric {
     return [];
   });
 
-  export var AppViewPaneHeaderController = _module.controller("Fabric.AppViewPaneHeaderController", ["$scope", ($scope) => {
+  export var AppViewPaneHeaderController = _module.controller("Fabric.AppViewPaneHeaderController", ["$scope", "ProfileCart", "$location", ($scope, ProfileCart, $location) => {
+
+    SelectionHelpers.decorate($scope);
+
+    $scope.cartItems = ProfileCart;
+
+    $scope.getName = () => {
+      return $scope.cartItems.map((p) => { return p.id; }).join(", ");
+    }
+
+    $scope.deploy = () => {
+      $location.url('/fabric/containers/createContainer').search({
+        vid: '',
+        pid: ''
+      });
+      Core.$apply($scope);
+    };
+
+    $scope.assign = () => {
+      $location.url('/fabric/assignProfile');
+      Core.$apply($scope);
+    };
+
+
     $scope.$watch('filter', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         $scope.$emit("Fabric.AppViewPaneController.filter", newValue);
       }
     });
   }]);
+
 
   // AppView controller
   export var AppViewController = _module.controller("Fabric.AppViewController", ["$scope", 'jolokia', "$templateCache", "ProfileCart", "$location", "workspace", ($scope, jolokia, $templateCache, ProfileCart:Profile[], $location, workspace:Workspace) => {
@@ -59,19 +83,6 @@ module Fabric {
         }, render);
       }
     });
-
-    $scope.deploy = () => {
-      $location.url('/fabric/containers/createContainer').search({
-        vid: '',
-        pid: ''
-      });
-      Core.$apply($scope);
-    };
-
-    $scope.assign = () => {
-      $location.url('/fabric/assignProfile');
-      Core.$apply($scope);
-    };
 
     $scope.viewProfile = (profile:Profile) => {
       Fabric.gotoProfile(workspace, jolokia, workspace.localStorage, $location, profile.versionId, profile.id);

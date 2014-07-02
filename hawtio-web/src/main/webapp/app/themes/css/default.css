@@ -764,10 +764,6 @@ input[type="checkbox"].ng-invalid {
   background-color: #f3f3f3;
 }
 
-.fabric-page-header {
-  border-bottom: 1px solid #d4d4d4;
-}
-
 pre.stack-line {
   color: #333333;
   background: inherit;
@@ -1395,6 +1391,10 @@ img.nodeIcon:hover {
   background: white;
 }
 
+.pane-viewport {
+  border-top: 1px solid #d4d4d4;
+}
+
 .pane.right .pane-bar {
   border-left: 1px solid #d4d4d4;
 }
@@ -1410,6 +1410,14 @@ img.nodeIcon:hover {
 
 .pane-header-wrapper {
   /* box-shadow: 0 0 50px rgba(0, 0, 0, 0.2); */ 
+}
+
+.column-box.column-box-unselected {
+  border: 1px solid transparent;
+}
+
+.column-box.column-box-selected {
+  border: 1px solid #d4d4d4;
 }
 
 .navbar .nav > li > .dropdown-menu:before,

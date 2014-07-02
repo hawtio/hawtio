@@ -2989,6 +2989,18 @@ fs-donut svg g text.units {
   width: 500px;
 }
 
+.column-box .ok-container {
+  height: 100%;
+  vertical-align: middle;
+  text-align: center;
+  line-height: 155px;
+}
+
+.ok-container > i {
+  font-size: 32px;
+  color: #a4a4a4;
+}
+
 .column-box > div {
   position: relative;
   height: 100%;
@@ -4056,6 +4068,7 @@ ul.dynatree-container {
   bottom: 0;
   left: 0;
   overflow: auto;
+  margin-right: 10px;
 }
 
 .pane-content {
@@ -4082,7 +4095,9 @@ ul.dynatree-container {
 }
 
 .pane.left .pane-viewport {
-  right: 5px
+  margin-left: 10px;
+  right: 5px;
+  margin-right: 0;
 }
 
 .pane.left .pane-bar {
@@ -4094,11 +4109,18 @@ ul.dynatree-container {
 }
 
 .pane.right .pane-viewport {
+  margin-left: 10px;
+  margin-right: 5px;
   right: 5px;
 }
 
 .pane.right .pane-bar {
   left: 0;
+}
+
+.pane-header-wrapper {
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .tree-header {
@@ -4107,7 +4129,11 @@ ul.dynatree-container {
 }
 
 .fabric-app-view-header {
-  height: 50px;
+  height: 92px;
+}
+
+.fabric-app-view-header > * {
+  line-height: 12px;
 }
 
 .tree-header > .left,
