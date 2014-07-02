@@ -50,7 +50,7 @@ module Fabric {
             when('/fabric/api/wadl', {templateUrl: 'app/api/html/wadl.html'}).
 
             when('/fabric/test', { templateUrl: templatePath + 'test.html' }).
-            when('/apps', { templateUrl: templatePath + 'appView.html' });
+            when('/apps', { templateUrl: templatePath + 'appView.html', reloadOnSearch: false });
   }]);
 
 

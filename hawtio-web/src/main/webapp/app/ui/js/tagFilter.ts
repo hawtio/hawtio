@@ -17,10 +17,15 @@ module UI {
         collectionProperty: '@',
         saveAs: '@'
       },
-      controller: ["$scope", "localStorage", ($scope, localStorage) => {
+      controller: ["$scope", "localStorage", "$location", ($scope, localStorage, $location) => {
+
         SelectionHelpers.decorate($scope);
+
         if (!Core.isBlank($scope.saveAs)) {
-          if ($scope.saveAs in localStorage) {
+          var search = $location.search();
+          if ($scope.saveAs in search) {
+            $scope.selected.add(angular.fromJson(search[$scope.saveAs]));
+          } else if ($scope.saveAs in localStorage) {
             $scope.selected.add(angular.fromJson(localStorage[$scope.saveAs]));
           }
         }
@@ -55,7 +60,9 @@ module UI {
         });
         $scope.$watch('selected', (newValue, oldValue) => {
           if (!Core.isBlank($scope.saveAs)) {
-            localStorage[$scope.saveAs] = angular.toJson($scope.selected);
+            var saveAs = angular.toJson($scope.selected);
+            localStorage[$scope.saveAs] = saveAs;
+            $location.search($scope.saveAs, saveAs);
           }
           maybeFilterVisibleTags();
         }, true);
