@@ -37,6 +37,19 @@ module UI {
             } else {
               filterVisibleTags();
             }
+            $scope.visibleTags = $scope.visibleTags.map((t) => {
+              return {
+                id: t,
+                count: $scope.collection.map((c) => { 
+                    return c[$scope.collectionProperty]; 
+                  }).reduce((count, c) => {
+                    if (c.any(t)) {
+                      return count + 1;
+                    }
+                    return count;
+                  }, 0)
+              };
+            });
           } else {
             $scope.visibleTags = $scope.tags;
           }
