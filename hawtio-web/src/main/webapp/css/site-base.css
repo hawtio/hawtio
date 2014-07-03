@@ -317,10 +317,19 @@ ol.inline > li {
   font-size: 1.5em;
 }
 
-.centered {
+.centered,
+.align-center {
   margin-left: auto !important;
   margin-right: auto !important;
   text-align: center;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.align-left {
+  text-align: left;
 }
 
 .inline {

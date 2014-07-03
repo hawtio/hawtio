@@ -64,11 +64,18 @@ module Fabric {
     $scope.selectedVersionId = '';
     $scope.profileIdFilter = '';
 
+    $scope.hideProfileSelector = false;
+    $scope.returnTo = '/fabric/containers';
+    $scope.nextPage = '/fabric/containers';
+
+    Core.bindModelToSearchParam($scope, $location, 'hideProfileSelector', 'hideProfileSelector', $scope.hideProfileSelector, Core.parseBooleanValue);
+    Core.bindModelToSearchParam($scope, $location, 'returnTo', 'returnTo', $scope.returnTo);
+    Core.bindModelToSearchParam($scope, $location, 'nextPage', 'nextPage', $scope.nextPage);
+
     // referenced static data for child
     $scope.child = {
       rootContainers: []
     };
-
 
     // referenced static data for openshift
     $scope.openShift = {
@@ -323,6 +330,14 @@ module Fabric {
       });
     }
 
+    $scope.goBack = () => {
+      $location.path($scope.returnTo);
+    }
+
+    $scope.goForward = () => {
+      $location.path($scope.nextPage);
+    }
+
     $scope.onSubmit = (json, form) => {
 
       var providerId = $scope.entity['providerType'];
@@ -394,7 +409,7 @@ module Fabric {
       }, 10);
 
       //notification('info', "Requesting that new container(s) be created");
-      $location.url('/fabric/containers');
+      $scope.goForward();
     }
   }]);
 }

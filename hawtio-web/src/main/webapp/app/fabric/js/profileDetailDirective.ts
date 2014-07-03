@@ -45,6 +45,16 @@ module Fabric {
       $scope.profilePath = Fabric.profilePath;
       $scope.pageId = fabricTopLevel + Fabric.profilePath($scope.profileId);
 
+      $scope.gotoCreateContainer = () => {
+        var me = $location.url();
+        $location.url('/fabric/containers/createContainer').search({
+          versionId: $scope.versionId,
+          profileIds: $scope.profileId,
+          hideProfileSelector: true,
+          returnTo: me
+        });
+      };
+
       var versionId = $scope.versionId;
       var profileId = $scope.profileId;
       if (versionId && versionId) {
@@ -95,12 +105,7 @@ module Fabric {
             name: "Assign to Container"
           });
           actions.push({
-            doAction: () => {
-              $location.url('/fabric/containers/createContainer').search({
-                versionId: $scope.versionId,
-                profileIds: $scope.profileId
-              });
-            },
+            doAction: $scope.gotoCreateContainer,
             title: "Create a new container with this profile",
             icon: "icon-truck",
             name: "New Container"

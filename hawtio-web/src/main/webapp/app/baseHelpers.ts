@@ -192,11 +192,13 @@ module Core {
     }
 
     throw new Error("Can't convert value " + value + " to boolean");
-
   }
 
+  export function booleanToString(value:boolean):string {
+    return "" + value;
+  }
 
-  export function parseIntValue(value, description: string) {
+  export function parseIntValue(value, description: string = "integer") {
     if (angular.isString(value)) {
       try {
         return parseInt(value);
@@ -207,8 +209,11 @@ module Core {
     return null;
   }
 
+  export function numberToString(value:number):string {
+    return "" + value;
+  }
 
-  export function parseFloatValue(value, description: string) {
+  export function parseFloatValue(value, description: string = "float") {
     if (angular.isString(value)) {
       try {
         return parseFloat(value);
@@ -218,8 +223,6 @@ module Core {
     }
     return null;
   }
-
-
 
 
   /**

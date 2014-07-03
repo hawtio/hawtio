@@ -18,15 +18,18 @@ module Fabric {
     }
 
     $scope.deploy = () => {
-      $location.url('/fabric/containers/createContainer').search({
+      $location.path('/fabric/containers/createContainer').search({
+        p: 'fabric',
         vid: '',
-        pid: ''
+        pid: '',
+        hideProfileSelector: true,
+        returnTo: '/apps'
       });
       Core.$apply($scope);
     };
 
     $scope.assign = () => {
-      $location.url('/fabric/assignProfile');
+      $location.path('/fabric/assignProfile');
       Core.$apply($scope);
     };
 

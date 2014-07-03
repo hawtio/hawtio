@@ -8,9 +8,9 @@
     -->
   </div>
 
-  <div class="create-container-body" hawtio-auto-columns=".create-column">
+  <div class="create-container-body centered" hawtio-auto-columns=".create-column">
 
-    <div class="create-column">
+    <div class="create-column align-left">
       <p ng-hide="forms.create_container.$valid">The following fields must be corrected before this container can be created and started.</p>
       <h4 ng-show="forms.create_container.$error.required">Required Fields</h4>
       <ol class="zebra-list">
@@ -42,19 +42,30 @@
           </button>
         </p>
       </div>
+      <div>
+        <p class="centered">
+          <button class='btn'
+                  ng-click='goBack()'>
+            <i class="icon-remove"></i> Cancel</button>
+        </p>
+      </div>
       <h4>Selected Profiles</h4>
       <p class="alert" ng-hide="selectedProfiles.length > 0">
         No profiles selected
       </p>
       <ol class="zebra-list" ng-show="selectedProfiles.length > 0">
         <li ng-repeat="profile in selectedProfiles">
-            <strong class="green">{{profile.id}}</strong> [<i class="red clickable icon-remove" title="Remove profile" ng-click="deselect(profile)"></i>]
+            <strong class="green">{{profile.id}}</strong>
+            <i class="red clickable icon-remove pull-right"
+               ng-hide="hideProfileSelector"
+               title="Remove profile" 
+               ng-click="deselect(profile)"></i>
         </li>
       </ol>
     </div>
 
 
-    <div class="create-column">
+    <div class="create-column align-left">
       <form id="container-create-form" class="form-inline">
         <label class="control-label">Container type: </label>
         <select ng-model="selectedProvider" ng-options="key for (key, value) in providers"></select>
@@ -65,7 +76,8 @@
     </div>
 
 
-    <div class="create-column">
+    <div class="create-column align-left"
+         ng-hide="hideProfileSelector">
       <div class="control-group">
         <form class="form-inline">
           <label class="control-label">Version: </label>

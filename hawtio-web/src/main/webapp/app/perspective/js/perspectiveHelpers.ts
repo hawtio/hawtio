@@ -251,10 +251,13 @@ module Perspective {
       // noisy!
       //log.debug("Checking url: ", url);
 
+      // TODO - this needs to be refactored so that plugins can extend how the perspective is chosen, as this breaks really easily
+
       // we want first time users on welcome/index/default page to be in the fabric perspective
       if (url.startsWith("/perspective/defaultPage") || url.startsWith("/login") || url.startsWith("/welcome") || url.startsWith("/index") ||
           // see metadata.ts for the fabric configuration for which plugins we want to be in the fabric perspective
           url.startsWith("/fabric") ||
+          url.startsWith("/apps") ||
           url.startsWith("/dashboard") ||
           url.startsWith("/health") ||
           (url.startsWith("/wiki") && url.has("/fabric/profiles")) ||

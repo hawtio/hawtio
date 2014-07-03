@@ -1308,6 +1308,11 @@ module Core {
   }
 
   /**
+   * handy do nothing converter for the below function
+   **/
+  export function doNothing(value:any) { return value; }
+
+  /**
    * Binds a $location.search() property to a model on a scope; so that its initialised correctly on startup
    * and its then watched so as the model changes, the $location.search() is updated to reflect its new value
    * @method bindModelToSearchParam
@@ -1319,23 +1324,28 @@ module Core {
    * @param {String} paramName
    * @param {Object} initialValue
    */
-  export function bindModelToSearchParam($scope, $location, modelName, paramName, initialValue = null) {
+  export function bindModelToSearchParam($scope, $location, modelName:string, paramName:string, initialValue:any = null, to: (value:any) => any = undefined, from: (value:any) => any = undefined) {
+
+    var toConverter = to || Core.doNothing
+    var fromConverter = from || Core.doNothing;
+
     function currentValue() {
-      return $location.search()[paramName] || initialValue;
+      return fromConverter($location.search()[paramName] || initialValue);
     }
 
     var value = currentValue();
     Core.pathSet($scope, modelName, value);
+
     $scope.$watch(modelName, () => {
       var current = Core.pathGet($scope, modelName);
       if (current) {
-        var params = $location.search();
+        var params = fromConverter($location.search());
         var old = currentValue();
         if (current !== old) {
-          $location.search(paramName, current);
+          $location.search(paramName, toConverter(current));
         }
       } else {
-        $location.search(paramName, null);
+        $location.search(paramName, toConverter(null));
       }
     });
   }
