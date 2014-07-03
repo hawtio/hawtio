@@ -16,7 +16,7 @@ Note, if you are using Ubuntu then you may need to use the `sudo` command:
 
     sudo npm install -g typescript
 
-To build the API documentation you also need to install typedoc:
+To build the API documentation you also need to install [typedoc](http://sebastian-lenz.github.io/typedoc/):
 
     sudo npm -g install typedoc
 
