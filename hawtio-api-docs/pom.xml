@@ -50,7 +50,11 @@
               <arguments>
                 <argument>--out</argument>
                 <argument>${webapp-outdir}</argument>
-                <argument>../hawtio-web/src/main/webapp/</argument>
+                <argument>--target</argument>
+                <argument>ES5</argument>
+                <argument>--includeDeclarations</argument>
+                <argument>--verbose</argument>
+                <argument>../hawtio-web/src/main/</argument>
               </arguments>
             </configuration>
           </execution>
