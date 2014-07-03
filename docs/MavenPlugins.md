@@ -5,7 +5,7 @@
 
 ## Maven Goals
 
-**hawtio** offers the following Maven Goals, and each goal is futther documented below:
+**hawtio** offers the following Maven Goals, and each goal is further documented below:
 
 <table class="table">
   <tr>

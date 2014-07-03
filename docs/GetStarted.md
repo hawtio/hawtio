@@ -1,7 +1,14 @@
 You can use hawtio from a Chrome Extension or in many different containers - or outside a container in a stand alone executable jar. Below are all the various options for running hawtio. To see whats changed lately check out the <a class="btn btn-default" href="http://hawt.io/changelog.html">change log</a>
 
+The Hawtio platform consists of 2 parts, the backend which is running in a Java Web Container the Jolokia gateway (JMX to JSON) and the front end containing the Angular, D3, ... Javascript to do the rendering of the JSON responses in a very nice way. 
+Depending how you plan to use Hawtio for your project in your environment, you can run the backend using a [java standalone jar](#standalone), [a servlet engine](#web-container), [application server](#jee) or [an OSGI container](#osgi).
+If you do not use a servlet container or application server, you can also embed the hawtio backend [inside your process](#embedded).
+ 
+The front end could be accessed using the **HTML5 web console** or from [Google Browser](#chrome-ext)
+
 The out of the box defaults try to do the right thing for most folks but if you want to configure things then please check out the <a class="btn btn-default" href="http://hawt.io/configuration/index.html">configuration guide</a>
 
+<a name="chrome-ext"></a>
 ## Using the Chrome Extension
 
 <a class="btn btn-large btn-primary" href="http://central.maven.org/maven2/io/hawt/hawtio-crx/1.4.4/hawtio-crx-1.4.4.crx">Download the hawtio Chrome Extension version 1.4.4</a>
@@ -22,6 +29,7 @@ The out of the box defaults try to do the right thing for most folks but if you 
 
 * have fun and profit! Please share with us your <a href="http://hawt.io/community/index.html">feedback!</a> or <a href="https://twitter.com/hawtio">tweet us!</a>
 
+<a name="standalone"></a>
 ## Using the executable jar
 
 You can startup hawtio on your machine using the hawtio-app executable jar.
@@ -42,6 +50,7 @@ hawtio supports other options which you can get listed by running from command l
 
     java -jar hawtio-app-1.4.4.jar --help
 
+<a name="web-container"></a>
 ## Using a Servlet Engine or Application Server
 
 If you are running Tomcat 5/6/7, Jetty 7/8 or you could just deploy a WAR:
@@ -80,7 +89,7 @@ If you are working offline and have no access to the internet on the machines yo
 
 If you don't see a Tomcat / Jetty tab for your container you may need to enable JMX.
 
-
+<a name="osgi"></a>
 ## Using Fuse, Fabric8, Apache Karaf or Apache Servicemix
 
 If you are using 6.1 or later of [JBoss Fuse](http://www.jboss.org/products/fuse), then hawtio is installed out of the box
@@ -124,6 +133,7 @@ If you're still struggling getting your HTTP proxy to work with Fuse, try jump o
 
 The following section gives details of other containers
 
+<a name="jee"></a>
 ### If you use JBoss AS or Wildfly
 
 You may have issues with slf4j JARs in WAR deployments on JBoss AS or Wildfly. To resolve this you must use <a class="btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.4.4/hawtio-no-slf4j-1.4.4.war">Download hawtio-no-slf4j.war</a>.
@@ -148,6 +158,7 @@ If you are using Jetty 8.x then JMX may not enabled by default, so make sure the
     etc/jetty-jmx.xml
 
 
+<a name="embedded"></a>
 ## Using hawtio inside a stand alone Java application
 
 If you do not use a servlet container or application server and wish to embed hawtio inside your process try the following:
