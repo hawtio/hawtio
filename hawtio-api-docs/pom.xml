@@ -5,7 +5,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>hawtio-api-docs</artifactId>
@@ -17,7 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
-    <gendocs>./genDocs</gendocs>
+    <typedoc-exe>typedoc</typedoc-exe>
   </properties>
 
   <dependencies>
@@ -46,9 +46,11 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>${gendocs}</executable>
+              <executable>typedoc</executable>
               <arguments>
-                <argument>-g</argument>
+                <argument>--out</argument>
+                <argument>${webapp-outdir}</argument>
+                <argument>../hawtio-web/src/main/webapp/</argument>
               </arguments>
             </configuration>
           </execution>
@@ -102,31 +104,15 @@
 
   <profiles>
     <profile>
-    <id>watch</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${exec-maven-plugin-version}</version>
-            <executions>
-              <execution>
-                <id>docs-watch</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-                <configuration>
-                  <executable>${gendocs}</executable>
-                  <arguments>
-                    <argument>-s</argument>
-                  </arguments>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
+      <id>Windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <typedoc-exe>typedoc.cmd</typedoc-exe>
+      </properties>
     </profile>
   </profiles>
 
