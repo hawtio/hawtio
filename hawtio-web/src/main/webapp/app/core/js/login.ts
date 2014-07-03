@@ -47,16 +47,13 @@ module Core {
       }
     });
 
-    jQuery(window).bind(
-      "beforeunload",
-      function() {
-        // auto logout if we should not remember me
-        if (!userDetails.rememberMe) {
-          console.log("Auto logging out as remember me is off");
-          logout(jolokiaUrl, userDetails, localStorage, $scope);
-        }
+    window.onbeforeunload = function() {
+      // auto logout if we should not remember me
+      if (!userDetails.rememberMe) {
+        console.log("Auto logging out as remember me is off");
+        logout(jolokiaUrl, userDetails, localStorage, $scope);
       }
-    );
+    };
 
     $scope.doLogin = () => {
       if (jolokiaUrl) {
