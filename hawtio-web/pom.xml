@@ -301,6 +301,12 @@
       <artifactId>wro4j-extensions</artifactId>
       <version>1.6.3</version>
       <scope>provided</scope>
+        <exclusions>
+            <exclusion>
+                <groupId>me.n4u.sass</groupId>
+                <artifactId>sass-gems</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
     <!-- fix bad transient dependency of wro4j -->
     <dependency>
