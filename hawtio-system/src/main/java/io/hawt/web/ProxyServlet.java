@@ -331,12 +331,9 @@ public class ProxyServlet extends HttpServlet {
         boolean noData = code == HttpStatus.SC_NO_CONTENT;
         if (!noData) {
             String length = httpMethodProxyRequest.getResponseHeader(STRING_CONTENT_LENGTH_HEADER_NAME).getValue();
-            if (length != null) {
-                int ilength = Integer.parseInt(length);
-                if (ilength <= 2) {
-                    // unmapped web contexts in OSGi do not return 404, but empty (or containing \r\n) pages
-                    noData = true;
-                }
+            if (length != null && "0".equals(length.trim())) {
+                // unmapped web contexts in OSGi do not return 404, but empty (or containing \r\n) pages
+                noData = true;
             }
         }
         LOG.trace("Response has data? {}", !noData);
@@ -351,6 +348,10 @@ public class ProxyServlet extends HttpServlet {
                 outputStreamClientResponse.write(intNextByte);
             }
         } else {
+            // There seems to be a problem with connection to running Fabric8/Karaf - we can use any invalid (unmapped) URL
+            // and receive HTTP 200 code with empty response (Content-Length: 0).
+            // this is a way to detect this and show an error dialog in hawt.io instead
+            // TODO probably we should make OSGi HTTP Service actually return HTTP 404 instead of HTTP 200 + Content-Length: 0
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             httpServletResponse.setHeader("Content-Type", "text/plain");
             String remoteUrl = proxyDetails.getHostAndPort() + proxyDetails.getPath();
