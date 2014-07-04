@@ -53,7 +53,7 @@ module Jmx {
       }
     };
 
-    var doRender = Core.throttled(render, 200);
+    var doRender:()=>any = Core.throttled(render, 200);
 
     $scope.deregRouteChange = $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -70,6 +70,10 @@ module Jmx {
     function render() {
 
       var node = workspace.selection;
+      if (node == null) {
+        return;
+      }
+
       if (!angular.isDefined(node) || !angular.isDefined($scope.updateRate) || $scope.updateRate === 0) {
         // Called render too early, let's retry
         setTimeout(doRender, 500);
