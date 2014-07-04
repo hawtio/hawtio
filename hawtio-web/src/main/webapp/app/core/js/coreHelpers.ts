@@ -367,6 +367,9 @@ module Core {
               case 403:
                 log.error('Failed to log out, ', error);
                 break;
+              case 0:
+                // this may happen during onbeforeunload -> logout, when XHR is cancelled
+                break;
               default:
                 log.error('Failed to log out, ', error);
                 break;
