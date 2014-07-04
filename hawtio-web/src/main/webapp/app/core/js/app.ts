@@ -15,7 +15,7 @@ module Core {
    * @param {*} $element
    * @param {*} $templateCache
    */
-  _module.controller("Core.ConsoleController", ["$scope", "$element", "$templateCache", ($scope, $element, $templateCache) => {
+  export var ConsoleController = _module.controller("Core.ConsoleController", ["$scope", "$element", "$templateCache", ($scope, $element, $templateCache) => {
 
     $scope.setHandler = (clip) => {
 
@@ -75,7 +75,7 @@ module Core {
    * @param {*} jolokiaUrl
    * @param {*} branding
    */
-  _module.controller("Core.AppController", ["$scope", "$location", "workspace", "jolokia", "jolokiaStatus", "$document", "pageTitle", "localStorage", "userDetails", "lastLocation", "jolokiaUrl", "branding", ($scope, $location, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding) => {
+  export var AppController = _module.controller("Core.AppController", ["$scope", "$location", "workspace", "jolokia", "jolokiaStatus", "$document", "pageTitle", "localStorage", "userDetails", "lastLocation", "jolokiaUrl", "branding", ($scope, $location, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding) => {
     if (!userDetails) {
       userDetails = {};
     }
