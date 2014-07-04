@@ -168,7 +168,7 @@ module Core {
    * @return {Boolean}
    */
   export function parseBooleanValue(value:any):boolean {
-    if (!angular.isDefined(value)) {
+    if (!angular.isDefined(value) || !value) {
       return false;
     }
 
