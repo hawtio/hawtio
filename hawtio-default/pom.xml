@@ -73,6 +73,12 @@
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-maven-indexer</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.hawt</groupId>
