@@ -330,9 +330,13 @@ public class ProxyServlet extends HttpServlet {
         int code = httpMethodProxyRequest.getStatusCode();
         boolean noData = code == HttpStatus.SC_NO_CONTENT;
         if (!noData) {
-            String length = httpServletRequest.getHeader(STRING_CONTENT_LENGTH_HEADER_NAME);
-            if (length != null && "0".equals(length.trim())) {
-                noData = true;
+            String length = httpMethodProxyRequest.getResponseHeader(STRING_CONTENT_LENGTH_HEADER_NAME).getValue();
+            if (length != null) {
+                int ilength = Integer.parseInt(length);
+                if (ilength <= 2) {
+                    // unmapped web contexts in OSGi do not return 404, but empty (or containing \r\n) pages
+                    noData = true;
+                }
             }
         }
         LOG.trace("Response has data? {}", !noData);
@@ -346,6 +350,13 @@ public class ProxyServlet extends HttpServlet {
             while ((intNextByte = bufferedInputStream.read()) != -1) {
                 outputStreamClientResponse.write(intNextByte);
             }
+        } else {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            httpServletResponse.setHeader("Content-Type", "text/plain");
+            String remoteUrl = proxyDetails.getHostAndPort() + proxyDetails.getPath();
+            byte[] emptyResponse = ("{message: \"No content retrieved from " + remoteUrl + "\"}").getBytes();
+            httpServletResponse.setHeader(STRING_CONTENT_LENGTH_HEADER_NAME, Integer.toString(emptyResponse.length));
+            httpServletResponse.getOutputStream().write(emptyResponse);
         }
     }
 
