@@ -9,13 +9,13 @@ module Jmx {
       field: 'name',
       displayName: 'Property',
       width: "27%",
-      cellTemplate: '<div class="ngCellText" ng-click="row.entity.onViewAttribute()"  title="{{row.entity.attrDesc}}" ' +
-        'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="row.entity.getDashboardWidgets()"></div>{{row.entity.name}}</div>'},
+      cellTemplate: '<div class="ngCellText" title="{{row.entity.attrDesc}}" ' +
+        'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="row.entity.getDashboardWidgets()"></div><a href="" ng-click="row.entity.onViewAttribute()">{{row.entity.name}}</a></div>'},
     {
       field: 'value',
       displayName: 'Value',
       width: "70%",
-      cellTemplate: '<div class="ngCellText" ng-click="row.entity.onViewAttribute()" title="{{row.entity.tooltip}}" ng-bind-html-unsafe="row.entity.summary"></div>'
+      cellTemplate: '<div class="ngCellText mouse-pointer" ng-click="row.entity.onViewAttribute()" title="{{row.entity.tooltip}}" ng-bind-html-unsafe="row.entity.summary"></div>'
     }
   ];
 
@@ -385,7 +385,7 @@ module Jmx {
       $scope.gridData = [];
       $scope.mbeanIndex = null;
       var mbean = workspace.getSelectedMBeanName();
-      var request = null;
+      var request = <any>null;
       var node = workspace.selection;
       if (node === null || angular.isUndefined(node) || node.key !== $scope.lastKey) {
         // cache attributes info, so we know if the attribute is read-only or read-write, and also the attribute description
@@ -555,7 +555,7 @@ module Jmx {
         $scope.gridOptions.enableRowClickSelection = false;
         var showAllAttributes = true;
         if (angular.isObject(data)) {
-          var properties = [];
+          var properties = Array();
           angular.forEach(data, (value, key) => {
             if (showAllAttributes || includePropertyValue(key, value)) {
               // always skip keys which start with _
