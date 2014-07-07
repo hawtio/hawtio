@@ -4,11 +4,11 @@
 @import url("../../../hawtio/app/themes/fonts/Droid-Sans-Mono/stylesheet.css");
 
 * {
-  font-family: OpenSansRegular;
+  font-family: OpenSans;
 }
 
 body {
-  font-family: OpenSansRegular;
+  font-family: OpenSans;
 }
 
 #log-panel-statements li {
