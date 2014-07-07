@@ -28,7 +28,7 @@ module Fabric {
     }
 
     if (!valid) {
-      $location.path("/apps");
+      $location.path("/profiles");
     }
 
     $scope.gotoCreate = () => {

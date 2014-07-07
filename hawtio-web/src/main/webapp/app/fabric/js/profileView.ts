@@ -23,7 +23,7 @@ module Fabric {
         vid: '',
         pid: '',
         hideProfileSelector: true,
-        returnTo: '/apps'
+        returnTo: '/profiles'
       });
       Core.$apply($scope);
     };

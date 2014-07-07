@@ -50,7 +50,7 @@ module Fabric {
             when('/fabric/api/wadl', {templateUrl: 'app/api/html/wadl.html'}).
 
             when('/fabric/test', { templateUrl: templatePath + 'test.html' }).
-            when('/apps', { templateUrl: templatePath + 'appView.html', reloadOnSearch: false });
+            when('/profiles', { templateUrl: templatePath + 'profileView.html', reloadOnSearch: false });
   }]);
 
 
@@ -61,7 +61,7 @@ module Fabric {
     return Fabric.containerIconRegistry;
   });
 
-  _module.run(["$location", "workspace", "jolokia", "viewRegistry", "pageTitle", "helpRegistry", "$rootScope", "postLoginTasks", "preferencesRegistry", "wikiBranchMenu", "$dialog", ($location: ng.ILocationService,
+  _module.run(["$location", "workspace", "jolokia", "viewRegistry", "pageTitle", "helpRegistry", "$rootScope", "postLoginTasks", "preferencesRegistry", "wikiBranchMenu", "$dialog", "layoutFull", ($location: ng.ILocationService,
                workspace: Workspace,
                jolokia,
                viewRegistry,
@@ -71,10 +71,10 @@ module Fabric {
                postLoginTasks:Core.Tasks,
                preferencesRegistry,
                wikiBranchMenu:Wiki.BranchMenu,
-               $dialog) => {
+               $dialog, layoutFull) => {
 
     viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
-    viewRegistry['apps'] = templatePath + 'layoutApps.html';
+    viewRegistry['profiles'] = layoutFull;
 
     pageTitle.addTitleElement(() => {
       return Fabric.currentContainerId;
@@ -109,7 +109,7 @@ module Fabric {
       return Fabric.isFMCContainer(workspace);
     });
 
-    workspace.topLevelTabs.push( {
+    workspace.topLevelTabs.push({
       id: "fabric.runtime",
       content: "Runtime",
       title: "Manage your containers in this fabric",
@@ -119,12 +119,12 @@ module Fabric {
     });
 
     workspace.topLevelTabs.push({
-      id: "fabric.apps",
-      content: "Apps",
+      id: "fabric.profiles",
+      content: "Profiles",
       title: "Select and deploy apps into this fabric",
       isValid: (workspace) => Fabric.isFMCContainer(workspace),
-      href: () => "#/apps",
-      isActive: (workspace) => workspace.isLinkActive("apps")
+      href: () => "#/profiles",
+      isActive: (workspace) => workspace.isLinkActive("profiles")
     });
 
     workspace.topLevelTabs.push( {

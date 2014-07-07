@@ -27,7 +27,7 @@ module Perspective {
             href: "#/fabric"
           },
           {
-            id: "fabric.apps"
+            id: "fabric.profiles"
           },
           {
             href: "#/docker"
@@ -93,7 +93,7 @@ module Perspective {
             href: "#/fabric"
           },
           {
-            id: "fabric.apps"
+            id: "fabric.profiles"
           },
           {
             href: "#/insight"
