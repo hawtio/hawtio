@@ -330,10 +330,13 @@ public class ProxyServlet extends HttpServlet {
         int code = httpMethodProxyRequest.getStatusCode();
         boolean noData = code == HttpStatus.SC_NO_CONTENT;
         if (!noData) {
-            String length = httpMethodProxyRequest.getResponseHeader(STRING_CONTENT_LENGTH_HEADER_NAME).getValue();
-            if (length != null && "0".equals(length.trim())) {
-                // unmapped web contexts in OSGi do not return 404, but empty (or containing \r\n) pages
-                noData = true;
+            Header contentLengthHeader = httpMethodProxyRequest.getResponseHeader(STRING_CONTENT_LENGTH_HEADER_NAME);
+            if (contentLengthHeader != null) {
+                String length = contentLengthHeader.getValue();
+                if (length != null && "0".equals(length.trim())) {
+                    // unmapped web contexts in OSGi do not return 404, but empty (or containing \r\n) pages
+                    noData = true;
+                }
             }
         }
         LOG.trace("Response has data? {}", !noData);
