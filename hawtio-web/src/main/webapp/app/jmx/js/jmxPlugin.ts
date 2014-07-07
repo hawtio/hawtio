@@ -2,13 +2,17 @@
  * @module Jmx
  * @main Jmx
  */
+/// <reference path="../../baseHelpers.ts"/>
 /// <reference path="./jmxHelpers.ts"/>
+/// <reference path="./widgetRepository.ts"/>
+/// <reference path="../../core/js/pageTitle.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
 module Jmx {
   var pluginName = 'jmx';
 
   export var currentProcessId = '';
 
-  export var _module = angular.module(pluginName, ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.modal', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-ui', 'hawtioRbac']);
+  export var _module = angular.module(pluginName, ['bootstrap', 'dangle', 'ui.bootstrap', 'ui.bootstrap.modal', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-ui', 'hawtioRbac']);
 
   _module.config(["$routeProvider", ($routeProvider) => {
     $routeProvider.
@@ -33,7 +37,7 @@ module Jmx {
     return Jmx.jmxWidgets;
   });
 
-  _module.run(["$location", "workspace", "viewRegistry", "layoutTree", "jolokia", "pageTitle", "helpRegistry", ($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutTree, jolokia, pageTitle:Core.PageTitle, helpRegistry) => {
+  _module.run(["$location", "workspace", "viewRegistry", "layoutTree", "jolokia", "pageTitle", "helpRegistry", ($location: ng.ILocationService, workspace:Core.Workspace, viewRegistry, layoutTree, jolokia, pageTitle:Core.PageTitle, helpRegistry) => {
 
     viewRegistry['jmx'] = layoutTree;
     helpRegistry.addUserDoc('jmx', 'app/jmx/doc/help.md');

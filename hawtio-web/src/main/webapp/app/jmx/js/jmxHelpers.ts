@@ -1,6 +1,8 @@
 /**
  * @module Jmx
  */
+/// <reference path="../../core/js/folder.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
 module Jmx {
 
   export var log:Logging.Logger = Logger.get("JMX");
@@ -23,7 +25,7 @@ module Jmx {
   }
 
 
-  export function registerLazyLoadHandler(domain: string, lazyLoaderFactory: (folder: Folder) => any) {
+  export function registerLazyLoadHandler(domain: string, lazyLoaderFactory: (folder: Core.Folder) => any) {
     if (!lazyLoaders) {
       lazyLoaders = {};
     }
@@ -35,7 +37,7 @@ module Jmx {
     array.push(lazyLoaderFactory);
   }
 
-  export function unregisterLazyLoadHandler(domain: string, lazyLoaderFactory: (folder: Folder) => any) {
+  export function unregisterLazyLoadHandler(domain: string, lazyLoaderFactory: (folder: Core.Folder) => any) {
     if (lazyLoaders) {
       var array = lazyLoaders[domain];
       if (array) {
@@ -90,13 +92,13 @@ module Jmx {
   }
 
   export function updateTreeSelectionFromURLAndAutoSelect($location, treeElement, autoSelect, activateIfNoneSelected = false) {
-    var dtree = treeElement.dynatree("getTree");
+    var dtree = <any>treeElement.dynatree("getTree");
     if (dtree) {
-      var node = null;
+      var node = <any>null;
       var key = $location.search()['nid'];
       if (key) {
         try {
-          node = dtree.activateKey(key);
+          node = <any>dtree.activateKey(key);
         } catch (e) {
           // tree not visible we suspect!
         }
@@ -151,7 +153,7 @@ module Jmx {
     return typeNames;
   }
 
-  export function enableTree($scope, $location: ng.ILocationService, workspace: Workspace, treeElement, children, redraw = false, onActivateFn = null) {
+  export function enableTree($scope, $location: ng.ILocationService, workspace: Core.Workspace, treeElement, children, redraw = false, onActivateFn = null) {
     //$scope.workspace = workspace;
     if (treeElement.length) {
       if (!onActivateFn) {
@@ -170,7 +172,7 @@ module Jmx {
         onActivate: onActivateFn,
         onLazyRead: function(treeNode) {
           var folder = treeNode.data;
-          var plugin = null;
+          var plugin = <(workspace:Core.Workspace, folder:Core.Folder, func:() => void) => void> null;
           if (folder) {
             plugin = Jmx.findLazyLoadingFunction(workspace, folder);
           }
