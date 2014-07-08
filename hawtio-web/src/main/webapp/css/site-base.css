@@ -3073,7 +3073,7 @@ fs-donut svg g text.units {
   width: 16px;
   height: 16px;
   right: 2px;
-  top: 20px;
+  top: 0px;
 }
 
 .health-details-wrap {
@@ -3081,6 +3081,10 @@ fs-donut svg g text.units {
   height: 300px;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+.health-details-wrap a {
+  color: #d4d4d4;
 }
 
 .health-details-wrap dl {

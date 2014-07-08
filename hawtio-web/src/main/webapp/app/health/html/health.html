@@ -42,14 +42,19 @@
              speed="0.5s"
              toggle="showDetails">
           <div class="health-details-wrap">
+            <div class="align-right" style="padding-right: 4px">
+              <a href="" ng-click="showDetails = false" title="Close panel">
+                <i class="icon-remove"></i>
+              </a>
+            </div>
             <table class="zebra-list">
-              <body>
+              <tbody>
                 <tr ng-repeat="(k, v) in sanitize(value) track by $index">
                   <td>{{k | humanize}}</td>
                   <td title="{{v}}" ng-if="isPercentage(k)">{{ v * 100 | number:0}}%</td>
                   <td title="{{v}}" ng-if="!isPercentage(k)">{{v}}</td>
                 </tr>
-              </body>
+              </tbody>
             </table>
           </div>
         </div>

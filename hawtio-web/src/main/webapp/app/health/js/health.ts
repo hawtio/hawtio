@@ -4,7 +4,7 @@
 /// <reference path="healthPlugin.ts"/>
 module Health {
 
-    _module.controller("Health.HealthController", ["$scope", "jolokia", "workspace", "$templateCache", ($scope, jolokia, workspace:Workspace, $templateCache) => {
+    export var HealthController = _module.controller("Health.HealthController", ["$scope", "jolokia", "workspace", "$templateCache", ($scope, jolokia, workspace:Workspace, $templateCache) => {
 
       $scope.levelSorting = {
         'ERROR': 0,
@@ -195,7 +195,7 @@ module Health {
           return $scope.levelSorting[value.level];
         });
 
-        values.forEach((value) => {
+        values.forEach((value:any) => {
 
           var healthPercentCurrent = 0;
           var healthPercentRemaining = 1;
