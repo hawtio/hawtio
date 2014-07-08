@@ -818,6 +818,11 @@ module Fabric {
     doAction('startContainer(java.lang.String)', jolokia, [id], success, error);
   }
 
+  /**
+   * Get a list of icons for the container's JMX domains
+   * @param container
+   * @returns {Array}
+   */
   export function getServiceList(container) {
     var answer = [];
     var javaContainer = true;
@@ -827,6 +832,11 @@ module Fabric {
     return answer;
   }
 
+  /**
+   * Get an icon that represents the type of the container
+   * @param container
+   * @returns {*}
+   */
   export function getTypeIcon(container) {
     var type = container.type;
     // use the type in the metadata if it's there...
@@ -842,6 +852,12 @@ module Fabric {
     }
   }
 
+  /**
+   * Perform an action on a profile if it's found in the group
+   * @param group
+   * @param targetId
+   * @param action
+   */
   export function usingProfile(group:Profile[], targetId:string, action:(profile:Profile) => void):void {
     var profile:Profile = group.find((p:Profile) => { return p.id === targetId; });
     if (profile) {
