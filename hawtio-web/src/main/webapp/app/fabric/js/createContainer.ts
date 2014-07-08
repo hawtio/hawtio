@@ -2,7 +2,7 @@
 /// <reference path="../../helpers/js/selectionHelpers.ts"/>
 module Fabric {
 
-  _module.controller("Fabric.CreateContainerController", ["$scope", "$element", "$compile", "$location", "workspace", "jolokia", "localStorage", "userDetails", "ProfileCart", ($scope, $element, $compile, $location, workspace, jolokia, localStorage, userDetails, ProfileCart:Profile[]) => {
+  export var CreateContainerController = _module.controller("Fabric.CreateContainerController", ["$scope", "$element", "$compile", "$location", "workspace", "jolokia", "localStorage", "userDetails", "ProfileCart", ($scope, $element, $compile, $location, workspace, jolokia, localStorage, userDetails, ProfileCart:Profile[]) => {
 
     var log:Logging.Logger = Logger.get("Fabric");
 

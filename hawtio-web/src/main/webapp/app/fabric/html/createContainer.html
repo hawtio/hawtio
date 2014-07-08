@@ -2,10 +2,6 @@
 
   <div class="fabric-page-header row-fluid">
     <h2 class="inline-block">Create New Container</h2>
-    <!--
-    <div class="pull-right">
-    </div>
-    -->
   </div>
 
   <div class="create-container-body centered" hawtio-auto-columns=".create-column">
@@ -33,22 +29,6 @@
             </span>
         </li>
       </ol>
-      <div ng-show="forms.create_container.$valid">
-        <p>Clicking this button will configure and start the container.  It may take some time for the new container to appear on the container list page depending on the creation method.</p>
-        <p class="centered">
-          <button class='btn btn-success' hawtio-submit='create_container'
-                  ng-disabled="!forms.create_container.$valid">
-            <i class="icon-ok"></i> Create and start container
-          </button>
-        </p>
-      </div>
-      <div>
-        <p class="centered">
-          <button class='btn'
-                  ng-click='goBack()'>
-            <i class="icon-remove"></i> Cancel</button>
-        </p>
-      </div>
       <h4>Selected Profiles</h4>
       <p class="alert" ng-hide="selectedProfiles.length > 0">
         No profiles selected
@@ -72,9 +52,18 @@
       </form>
       <div id="create-form">
         <div simple-form name="create_container" data="schema" entity="entity"></div>
+        <p></p>
+        <div class="align-right">
+          <button class='btn btn-success' hawtio-submit='create_container'
+              ng-disabled="!forms.create_container.$valid" title="Clicking this button will configure and start the container.  It may take some time for the new container to appear on the container list page depending on the creation method.">
+            <i class="icon-ok"></i> Create and start container
+          </button>
+          <button class='btn'
+              ng-click='goBack()'>
+            <i class="icon-remove"></i> Cancel</button>
+        </div>
       </div>
     </div>
-
 
     <div class="create-column align-left"
          ng-hide="hideProfileSelector">

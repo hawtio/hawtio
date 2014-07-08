@@ -1,7 +1,7 @@
 /// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
-  _module.controller("Fabric.CreateBrokerController", ["$scope", "localStorage", "$routeParams", "$location", "jolokia", "workspace", "$compile", "$templateCache", ($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache) => {
+  export var CreateBrokerController = _module.controller("Fabric.CreateBrokerController", ["$scope", "localStorage", "$routeParams", "$location", "jolokia", "workspace", "$compile", "$templateCache", ($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache) => {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
