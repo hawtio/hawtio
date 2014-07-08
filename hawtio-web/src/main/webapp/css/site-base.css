@@ -2111,14 +2111,15 @@ dd.file-list {
 }
 
 .active-profile-count-title {
-  position: absolute;
-  right: 18px;
+  padding: 5px;
+  text-align: right;
+  font-weight: bold;
 }
 
 .active-profile-titles .section-controls {
   position: absolute;
-  top: 9px !important;
-  right: 62px;
+  top: 10px !important;
+  right: 10px;
 }
 
 .active-profile-titles .section-controls a {
@@ -2376,7 +2377,7 @@ a.dashboard-link:hover {
 .dashboard-link {
   position: absolute;
   top: 15px;
-  right: 242px;
+  right: 76px;
   z-index: 500;
 }
 
