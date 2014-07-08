@@ -414,10 +414,15 @@ module Core {
    * @return {Boolean}
    */
   export function isBlank(str:string) {
-    if (!str) {
+    if (str === undefined || str === null) {
       return true;
     }
-    return str.isBlank();
+    if (angular.isString(str)) {
+      return str.isBlank();
+    } else {
+      // TODO - not undefined but also not a string...
+      return false;
+    }
   }
 
   /**

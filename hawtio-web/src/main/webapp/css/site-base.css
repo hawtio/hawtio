@@ -4143,11 +4143,19 @@ ul.dynatree-container {
 }
 
 .fabric-app-view-header {
-  height: 92px;
+  height: auto;
 }
 
 .fabric-app-view-header > * {
   line-height: 12px;
+}
+
+.fabric-app-view-header .alert {
+  margin-bottom: 0;
+}
+
+.fabric-app-view-header .row-fluid:last-child {
+  padding-bottom: 8px;
 }
 
 .tree-header > .left,

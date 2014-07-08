@@ -11,7 +11,7 @@ module Fabric {
       return "#/dashboard/add?tab=dashboard" +
           "&href=" + encodeURIComponent(href) +
           "&size=" + encodeURIComponent(size) +
-          "&title=" + encodeURIComponent(title);
+          "&title=" + encodeURIComponent(title);         
     }
   }]);
 }
