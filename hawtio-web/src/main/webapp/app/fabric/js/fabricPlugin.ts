@@ -50,7 +50,9 @@ module Fabric {
             when('/fabric/api/wadl', {templateUrl: 'app/api/html/wadl.html'}).
 
             when('/fabric/test', { templateUrl: templatePath + 'test.html' }).
-            when('/profiles', { templateUrl: templatePath + 'profileView.html', reloadOnSearch: false });
+            when('/profiles', { templateUrl: templatePath + 'profileView.html', reloadOnSearch: false }).
+            when('/containers', { templateUrl: templatePath + 'containerView.html', reloadOnSearch: false });
+
   }]);
 
 
@@ -75,6 +77,7 @@ module Fabric {
 
     viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
     viewRegistry['profiles'] = layoutFull;
+    viewRegistry['containers'] = layoutFull;
 
     pageTitle.addTitleElement(() => {
       return Fabric.currentContainerId;
@@ -121,10 +124,19 @@ module Fabric {
     workspace.topLevelTabs.push({
       id: "fabric.profiles",
       content: "Profiles",
-      title: "Select and deploy apps into this fabric",
+      title: "Select and deploy profiles into this fabric",
       isValid: (workspace) => Fabric.isFMCContainer(workspace),
       href: () => "#/profiles",
       isActive: (workspace) => workspace.isLinkActive("profiles")
+    });
+
+    workspace.topLevelTabs.push({
+      id: 'fabric.containers',
+      content: 'Containers',
+      title: 'View and manage containers in this fabric',
+      isValid: (workspace) => Fabric.isFMCContainer(workspace),
+      href: () => '#/containers',
+      isActive: (workspace) => workspace.isLinkActive('containers')
     });
 
     workspace.topLevelTabs.push( {

@@ -1,4 +1,5 @@
 /// <reference path="../../baseHelpers.ts"/>
+/// <reference path="../../helpers/js/controllerHelpers.ts"/>
 
 // TODO Get these functions and variables out of the global namespace
 var _urlPrefix: string = null;
@@ -1315,74 +1316,9 @@ module Core {
    **/
   export function doNothing(value:any) { return value; }
 
-  /**
-   * Binds a $location.search() property to a model on a scope; so that its initialised correctly on startup
-   * and its then watched so as the model changes, the $location.search() is updated to reflect its new value
-   * @method bindModelToSearchParam
-   * @for Core
-   * @static
-   * @param {*} $scope
-   * @param {ng.ILocationService} $location
-   * @param {String} modelName
-   * @param {String} paramName
-   * @param {Object} initialValue
-   */
-  export function bindModelToSearchParam($scope, $location, modelName:string, paramName:string, initialValue:any = null, to: (value:any) => any = undefined, from: (value:any) => any = undefined) {
-
-    var toConverter = to || Core.doNothing
-    var fromConverter = from || Core.doNothing;
-
-    function currentValue() {
-      return fromConverter($location.search()[paramName] || initialValue);
-    }
-
-    var value = currentValue();
-    Core.pathSet($scope, modelName, value);
-
-    $scope.$watch(modelName, () => {
-      var current = Core.pathGet($scope, modelName);
-      if (current) {
-        var params = fromConverter($location.search());
-        var old = currentValue();
-        if (current !== old) {
-          $location.search(paramName, toConverter(current));
-        }
-      } else {
-        $location.search(paramName, toConverter(null));
-      }
-    });
-  }
-
-
-  /**
-   * For controllers where reloading is disabled via "reloadOnSearch: false" on the registration; lets pick which
-   * query parameters need to change to force the reload. We default to the JMX selection parameter 'nid'
-   * @method reloadWhenParametersChange
-   * @for Core
-   * @static
-   * @param {Object} $route
-   * @param {*} $scope
-   * @param {ng.ILocationService} $location
-   * @param {Array[String]} parameters
-   */
-  export function reloadWhenParametersChange($route, $scope, $location, parameters = ["nid"]) {
-    var initial = angular.copy($location.search());
-    $scope.$on('$routeUpdate', () => {
-      // lets check if any of the parameters changed
-      var current = $location.search();
-      var changed = [];
-      angular.forEach(parameters, (param) => {
-        if (current[param] !== initial[param]) {
-          changed.push(param);
-        }
-      });
-      if (changed.length) {
-        log.info("Reloading page due to change to parameters: " + changed);
-        $route.reload();
-      }
-    });
-  }
-
+  // moved these into their own helper file
+  export var bindModelToSearchParam = ControllerHelpers.bindModelToSearchParam;
+  export var reloadWhenParametersChange = ControllerHelpers.reloadWhenParametersChange;
 
   /**
    * Creates a jolokia object for connecting to the container with the given remote jolokia URL,

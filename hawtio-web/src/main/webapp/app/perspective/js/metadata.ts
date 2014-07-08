@@ -30,6 +30,9 @@ module Perspective {
             id: "fabric.profiles"
           },
           {
+            id: "fabric.containers"
+          },
+          {
             href: "#/docker"
           },
           {
@@ -94,6 +97,9 @@ module Perspective {
           },
           {
             id: "fabric.profiles"
+          },
+          {
+            id: "fabric.containers"
           },
           {
             href: "#/insight"
