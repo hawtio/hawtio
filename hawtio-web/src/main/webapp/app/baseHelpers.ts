@@ -497,3 +497,24 @@ var notification = Core.notification;
 var clearNotifications = Core.clearNotifications;
 var humanizeValue = Core.humanizeValue;
 var trimQuotes = Core.trimQuotes;
+
+// TODO Get these functions and variables out of the global namespace
+var _urlPrefix: string = null;
+
+function url(path: string): string {
+  if (path) {
+    if (path.startsWith && path.startsWith("/")) {
+      if (!_urlPrefix) {
+        _urlPrefix = window.location.pathname || "";
+        var idx = _urlPrefix.lastIndexOf("/");
+        if (idx >= 0) {
+          _urlPrefix = _urlPrefix.substring(0, idx);
+        }
+      }
+      if (_urlPrefix) {
+        return _urlPrefix + path;
+      }
+    }
+  }
+  return path;
+}

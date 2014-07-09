@@ -1,9 +1,6 @@
 /// <reference path="../../baseHelpers.ts"/>
 /// <reference path="../../helpers/js/controllerHelpers.ts"/>
 
-// TODO Get these functions and variables out of the global namespace
-var _urlPrefix: string = null;
-
 var numberTypeNames = {
   'byte': true,
   'short': true,
@@ -35,24 +32,6 @@ function lineCount(value): number {
     value.toString().each(/\n/, () => rows++);
   }
   return rows;
-}
-
-function url(path: string): string {
-  if (path) {
-    if (path.startsWith && path.startsWith("/")) {
-      if (!_urlPrefix) {
-        _urlPrefix = window.location.pathname || "";
-        var idx = _urlPrefix.lastIndexOf("/");
-        if (idx >= 0) {
-          _urlPrefix = _urlPrefix.substring(0, idx);
-        }
-      }
-      if (_urlPrefix) {
-        return _urlPrefix + path;
-      }
-    }
-  }
-  return path;
 }
 
 function safeNull(value:any):string {

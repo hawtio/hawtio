@@ -1,5 +1,5 @@
 /// <reference path="../d.ts/jasmine.d.ts" />
-/// <reference path="./testHelpers.ts" />
+/// <reference path="./../lib/utils/testHelpers.ts" />
 describe("Test", function () {
 
   it("Shows used Jasmine version", function() {
