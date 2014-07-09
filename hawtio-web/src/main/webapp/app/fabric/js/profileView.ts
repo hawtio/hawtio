@@ -1,5 +1,6 @@
 /// <reference path="./fabricPlugin.ts"/>
 /// <reference path="../../helpers/js/selectionHelpers.ts"/>
+/// <reference path="../../helpers/js/filterHelpers.ts"/>
 module Fabric {
 
   // simple service to share our cart with other views
@@ -51,6 +52,7 @@ module Fabric {
     $scope.tags = [];
     $scope.selectedTags = [];
     $scope.textFilter = '';
+    $scope.lowercaseTextFilter = '';
 
     SelectionHelpers.decorate($scope);
 
@@ -61,10 +63,10 @@ module Fabric {
     });
 
     $scope.filterProfiles = (profile:Profile) => {
-      var answer = $scope.filterByGroup($scope.selectedTags, profile.tags);
-      if (!Core.isBlank($scope.textFilter)) {
+      var answer = <boolean>$scope.filterByGroup($scope.selectedTags, profile.tags);
+      if (answer && !Core.isBlank($scope.textFilter)) {
         var filter = $scope.textFilter.toLowerCase();
-        return angular.toJson(profile).toLowerCase().has(filter)
+        return FilterHelpers.searchObject(profile, filter);
       }
       return answer;
     };
