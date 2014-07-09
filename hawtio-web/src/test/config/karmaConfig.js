@@ -1,5 +1,5 @@
 // Karma configuration
-// Generated on Mon Jun 30 2014 16:00:12 GMT-0400 (EDT)
+// Generated on Wed Jul 09 2014 10:49:52 GMT+0200 (CEST)
 
 module.exports = function(config) {
   var basedir = 'src/main/webapp/';
@@ -34,12 +34,10 @@ module.exports = function(config) {
       libdir + 'angular-bootstrap.min.js',
       libdir + 'angular-resource.min.js',
       libdir + 'ng-grid.min.js',
-      libdir + 'jquery-ui-custom.min.js',
       libdir + 'jquery.cookie.js',
-      libdir + 'jquery.dynatree.min.js',
+      //libdir + 'jquery.dynatree.min.js',
       libdir + 'jquery.gridster.min.js',
       libdir + 'jquery.dataTables.min.js',
-      libdir + 'jquery.datatable-bootstrapp.js',
       libdir + 'ColReorder.min.js',
       libdir + 'KeyTable.js',
       libdir + 'jquery.xml2json.js',
@@ -83,7 +81,8 @@ module.exports = function(config) {
       libdir + 'ZeroClipboard.min.js',
       //'src/main/webapp/lib/hawtio-plugin-loader.js',
       'src/main/webapp/app/app.js',
-      'src/test/specs/spec/*.js'
+      'src/test/specs/spec/*.js',
+      'src/test/specs/*.html'
     ],
 
 
@@ -96,7 +95,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-    
+      '**/*.html': ['html2js']
     },
 
 
