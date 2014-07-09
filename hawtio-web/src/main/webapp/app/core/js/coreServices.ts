@@ -8,6 +8,15 @@
 /// <reference path="../../themes/js/themesPlugin.ts"/>
 module Core {
 
+  // Create the workspace object used in all kinds of places
+  _module.factory('workspace',["$location", "jmxTreeLazyLoadRegistry","$compile", "$templateCache", "localStorage", "jolokia", "jolokiaStatus", "$rootScope", "userDetails", ($location:ng.ILocationService,jmxTreeLazyLoadRegistry, $compile:ng.ICompileService,$templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia, jolokiaStatus, $rootScope, userDetails) => {
+
+      var answer = new Workspace(jolokia, jolokiaStatus, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope, userDetails);
+      answer.loadTree();
+      return answer;
+  }]);
+
+
   // local storage service to wrap the HTML5 browser storage
   _module.service('localStorage',() => {
     return Core.getLocalStorage();

@@ -3,13 +3,12 @@
  */
 /// <reference path="../../core/js/folder.ts"/>
 /// <reference path="../../core/js/workspace.ts"/>
+/// <reference path="./lazyLoaders.ts"/>
 module Jmx {
 
   export var log:Logging.Logger = Logger.get("JMX");
 
   var attributesToolBars = {};
-
-  export var lazyLoaders = {};
 
   export function findLazyLoadingFunction(workspace, folder) {
     var factories = workspace.jmxTreeLazyLoadRegistry[folder.domain];

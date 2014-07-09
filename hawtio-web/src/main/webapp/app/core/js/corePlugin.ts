@@ -6,7 +6,6 @@
  */
 
 /// <reference path="./coreHelpers.ts"/>
-/// <reference path="./tasks.ts"/>
 /// <reference path="./pageTitle.ts"/>
 module Core {
 
@@ -35,7 +34,7 @@ module Core {
    */
   // TODO - maybe we can make discovering this async before we call hawtioPluginLoader.loadPlugins() to avoid the blocking HTTP requests it makes currently
   export var jolokiaUrl = getJolokiaUrl();
-  log.debug("jolokiaUrl " + jolokiaUrl);
+  Logger.get("Core").debug("jolokiaUrl " + jolokiaUrl);
 
   /**
    * The main hawtio core App module
@@ -150,7 +149,7 @@ module Core {
       if (rate > 0) {
         jolokia.start(rate);
       }
-      log.debug("Set update rate to: ", rate);
+      Logger.get("Core").debug("Set update rate to: ", rate);
     });
 
     $rootScope.$emit('UpdateRate', localStorage['updateRate']);
@@ -227,7 +226,7 @@ module Core {
 
     setTimeout(() => {
       $("#main-body").fadeIn(2000).after(() => {
-        log.info(branding.appName + " started");
+        Logger.get("Core").info(branding.appName + " started");
         Core.$apply($rootScope);
         $(window).trigger('resize');
       });
@@ -274,16 +273,3 @@ hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
   }
   nextTask();
 });
-
-
-// bootstrap the whole app here
-$(() => {
-  hawtioPluginLoader.loadPlugins(() => {
-    var doc = $(document);
-    angular.bootstrap(doc, hawtioPluginLoader.getModules());
-    $(document.documentElement).attr('xmlns:ng', "http://angularjs.org");
-    $(document.documentElement).attr('ng-app', 'hawtioCore');
-  });
-});
-
-

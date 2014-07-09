@@ -2,8 +2,11 @@
 // Generated on Wed Jul 09 2014 10:49:52 GMT+0200 (CEST)
 
 module.exports = function(config) {
-  var basedir = 'src/main/webapp/';
-  var libdir = basedir + 'lib/';
+  var basedir = 'src/main/';
+  var interfacedir = basedir + 'd.ts/';
+  var webappdir = basedir + "webapp/";
+  var libdir = webappdir + 'lib/';
+  var appdir = webappdir + "app/";
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -17,18 +20,78 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'src/main/webapp/lib/angular.min.js',
-      'src/main/webapp/lib/jquery-1.8.2.min.js',
+      libdir + 'rainbow.js',
+      libdir + 'language/javascript.js',
+      libdir + 'language/generic.js',
+      libdir + 'logger.min.js',
+      libdir + 'loggingInit.js',
+      libdir + 'hawtio-plugin-loader.js',
+      libdir + 'd3.v3.min.js',
+      libdir + 'jquery-1.8.2.min.js',
+      libdir + 'jolokia-min.js',
+      libdir + 'cubism.v1.min.js',
+      libdir + 'jolokia-cubism-min.js',
+      libdir + 'jolokia-simple-min.js',
+      libdir + 'bootstrap.min.js',
+      libdir + 'angular.js',
+      libdir + 'angular-bootstrap.min.js',
+      libdir + 'angular-resource.min.js',
+      libdir + 'ng-grid.min.js',
+      libdir + 'jquery.cookie.js',
+      //libdir + 'jquery.dynatree.min.js',
+      libdir + 'jquery.gridster.min.js',
+      libdir + 'jquery.dataTables.min.js',
+      libdir + 'ColReorder.min.js',
+      libdir + 'KeyTable.js',
+      libdir + 'jquery.xml2json.js',
+      libdir + 'jquery.backstretch.min.js',
+      libdir + 'toastr.js',
+      libdir + 'dagre.min.js',
+      libdir + 'jquery.jsPlumb-1.4.1-all-min.js',
+      libdir + 'elastic-angular-client.min.js',
+      libdir + 'elastic.min.js',
+      libdir + 'd3.min.js',
+      libdir + 'dangle.min.js',
+      libdir + 'codemirror/codemirror.js',
+      libdir + 'codemirror/addon/edit/closetag.js',
+      libdir + 'codemirror/addon/edit/continuecomment.js',
+      libdir + 'codemirror/addon/edit/continuelist.js',
+      libdir + 'codemirror/addon/edit/matchbrackets.js',
+      libdir + 'codemirror/addon/fold/foldcode.js',
+      libdir + 'codemirror/addon/format/formatting.js',
+      libdir + 'codemirror/mode/javascript/javascript.js',
+      libdir + 'codemirror/mode/xml/xml.js',
+      libdir + 'codemirror/mode/css/css.js',
+      libdir + 'codemirror/mode/htmlmixed/htmlmixed.js',
+      libdir + 'codemirror/mode/markdown/markdown.js',
+      libdir + 'codemirror/mode/diff/diff.js',
+      libdir + 'codemirror/mode/properties/properties.js',
+      libdir + 'codemirror/mode/clike/clike.js',
+      libdir + 'codemirror/mode/yaml/yaml.js',
+      libdir + 'angular-ui.js',
+      libdir + 'ui-bootstrap-0.4.0.min.js',
+      libdir + 'ui-bootstrap-tpls-0.4.0.min.js',
+      libdir + 'sugar-1.3.6-custom.min.js',
+      libdir + 'camelModel.js',
+      libdir + 'jsonschema.js',
+      libdir + 'dozerMapping.js',
+      libdir + 'dozerField.js',
+      libdir + 'dozerMappings.js',
+      libdir + 'dozerFieldExclude.js',
+      libdir + 'marked.js',
+      libdir + 'angular-dragdrop.min.js',
+      libdir + 'dmr.js.nocache.js',
+      libdir + 'ZeroClipboard.min.js',
+      libdir + 'hawtio-plugin-loader.js',
       'src/test/specs/lib/utils/testHelpers.ts',
       'src/test/specs/lib/angular-mocks.js',
-      'src/main/webapp/app/baseHelpers.ts',
       'src/test/specs/spec-ts/*.ts'
     ],
 
 
     // list of files to exclude
     exclude: [
-      
+      appdir + 'core/js/bootstrap.ts' // let's prevent the app from bootstrapping
     ],
 
 

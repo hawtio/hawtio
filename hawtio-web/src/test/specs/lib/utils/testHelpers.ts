@@ -1,3 +1,4 @@
+/// <reference path="../../d.ts/jasmine.d.ts" />
 
 module Test {
 

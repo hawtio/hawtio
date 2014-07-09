@@ -1,4 +1,3 @@
-/// <reference path="../d.ts/jasmine.d.ts" />
 /// <reference path="./../lib/utils/testHelpers.ts" />
 describe("Test", function () {
 

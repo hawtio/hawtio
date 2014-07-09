@@ -1,3 +1,4 @@
+/// <reference path="../../baseHelpers.ts"/>
 module FilterHelpers {
 
   /**

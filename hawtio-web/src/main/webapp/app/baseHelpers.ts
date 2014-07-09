@@ -25,6 +25,26 @@
 /// <reference path="../../d.ts/sugar-1.3.d.ts"/>
 module Core {
 
+  var _urlPrefix: string = null;
+
+  export function url(path: string): string {
+    if (path) {
+      if (path.startsWith && path.startsWith("/")) {
+        if (!_urlPrefix) {
+          _urlPrefix = window.location.pathname || "";
+          var idx = _urlPrefix.lastIndexOf("/");
+          if (idx >= 0) {
+            _urlPrefix = _urlPrefix.substring(0, idx);
+          }
+        }
+        if (_urlPrefix) {
+          return _urlPrefix + path;
+        }
+      }
+    }
+    return path;
+  }
+
   // use a better implementation of unescapeHTML
   String.prototype.unescapeHTML = function() {
       var txt = document.createElement("textarea");
@@ -235,7 +255,7 @@ module Core {
    * @param {Array} paths an array of path names to navigate or a string of dot separated paths to navigate
    * @return {*} the last step on the path which is updated
    */
-  export function pathGet(object, paths) {
+  export function pathGet(object:any, paths:any) {
     var pathArray = (angular.isArray(paths)) ? paths : (paths || "").split(".");
     var value = object;
     angular.forEach(pathArray, (name):any => {
@@ -265,7 +285,7 @@ module Core {
    * @param {Object} newValue the value to update
    * @return {*} the last step on the path which is updated
    */
-  export function pathSet(object, paths, newValue) {
+  export function pathSet(object:any, paths:any, newValue:any) {
     var pathArray = (angular.isArray(paths)) ? paths : (paths || "").split(".");
     var value = object;
     var lastIndex = pathArray.length - 1;
@@ -493,28 +513,9 @@ module Core {
 }
 
 // Lots of code refers to these functions in the global namespace
+// TODO - need to get these out of the global namespace
 var notification = Core.notification;
 var clearNotifications = Core.clearNotifications;
 var humanizeValue = Core.humanizeValue;
 var trimQuotes = Core.trimQuotes;
-
-// TODO Get these functions and variables out of the global namespace
-var _urlPrefix: string = null;
-
-function url(path: string): string {
-  if (path) {
-    if (path.startsWith && path.startsWith("/")) {
-      if (!_urlPrefix) {
-        _urlPrefix = window.location.pathname || "";
-        var idx = _urlPrefix.lastIndexOf("/");
-        if (idx >= 0) {
-          _urlPrefix = _urlPrefix.substring(0, idx);
-        }
-      }
-      if (_urlPrefix) {
-        return _urlPrefix + path;
-      }
-    }
-  }
-  return path;
-}
+var url = Core.url;

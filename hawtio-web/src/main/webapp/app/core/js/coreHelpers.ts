@@ -1,5 +1,14 @@
 /// <reference path="../../baseHelpers.ts"/>
 /// <reference path="../../helpers/js/controllerHelpers.ts"/>
+/// <reference path="./tasks.ts"/>
+/// <reference path="./workspace.ts"/>
+/// <reference path="./folder.ts"/>
+/// <reference path="../../ui/js/colors.ts"/>
+/// <reference path="../../jmx/js/lazyLoaders.ts"/>
+
+module Core {
+  export var log:Logging.Logger = Logger.get("Core");
+}
 
 var numberTypeNames = {
   'byte': true,
@@ -367,8 +376,6 @@ module Core {
     }
 
   }
-
-  export var log:Logging.Logger = Logger.get("Core");
 
   /**
    * Creates a link by appending the current $location.search() hash to the given href link,

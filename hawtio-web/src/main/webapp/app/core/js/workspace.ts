@@ -2,8 +2,11 @@
  * @module Core
  */
 
-/// <reference path="corePlugin.ts"/>
+/// <reference path="./corePlugin.ts"/>
+/// <reference path="../../jmx/js/jmxHelpers.ts"/>
 module Core {
+
+  var log:Logging.Logger = Logger.get("Core");
   /**
    * @class MenuItem
    */
@@ -14,39 +17,6 @@ module Core {
     isActive?: (Workspace) => boolean;
     href: () => any;
   }
-
-  // these have to match up, so a little easier to grok formatted like this
-  _module.factory('workspace',["$location", 
-                               "jmxTreeLazyLoadRegistry", 
-                               "$compile", 
-                               "$templateCache", 
-                               "localStorage", 
-                               "jolokia", 
-                               "jolokiaStatus", 
-                               "$rootScope", 
-                               "userDetails", 
-                               ($location:ng.ILocationService, 
-                                jmxTreeLazyLoadRegistry, 
-                                $compile:ng.ICompileService, 
-                                $templateCache:ng.ITemplateCacheService, 
-                                localStorage:WindowLocalStorage, 
-                                jolokia, 
-                                jolokiaStatus,
-                                $rootScope, 
-                                userDetails) => {
-
-    var answer = new Workspace(jolokia, 
-                               jolokiaStatus, 
-                               jmxTreeLazyLoadRegistry, 
-                               $location, 
-                               $compile, 
-                               $templateCache, 
-                               localStorage, 
-                               $rootScope, 
-                               userDetails);
-    answer.loadTree();
-    return answer;
-  }]);
 
   /**
    * @class Workspace
@@ -212,7 +182,7 @@ module Core {
         try {
           return folder.getOrElse(value);
         } catch (e) {
-          Core.log.warn("Failed to find value " + value + " on folder " + folder);
+          log.warn("Failed to find value " + value + " on folder " + folder);
         }
       }
       return null;
@@ -221,7 +191,7 @@ module Core {
     public populateTree(response) {
       if (!Object.equal(this.treeResponse, response.value)) {
         this.treeResponse = response.value;
-        Core.log.debug("JMX tree has been loaded!");
+        log.debug("JMX tree has been loaded!");
 
         var rootId = 'root';
         var separator = '-';
@@ -361,7 +331,7 @@ module Core {
                 }
               }
             } else {
-              Core.log.info("No folder found for lastPath: " + lastPath);
+              log.info("No folder found for lastPath: " + lastPath);
             }
           }
         }
@@ -546,7 +516,7 @@ module Core {
         var validFn = tab['isValid'];
         return !angular.isDefined(validFn) || validFn(workspace);
       } else {
-        Core.log.info("Could not find tab for " + uri);
+        log.info("Could not find tab for " + uri);
         return false;
       }
   /*
@@ -642,7 +612,7 @@ module Core {
           this.setLocalStorage(key, uri);
           return false;
         } else {
-          Core.log.info("the uri '" + uri + "' is not valid for this selection");
+          log.info("the uri '" + uri + "' is not valid for this selection");
           // lets look up the previous preferred value for this type
           var defaultPath = this.getLocalStorage(key);
           if (!defaultPath || !this.validSelection(defaultPath)) {
@@ -658,7 +628,7 @@ module Core {
           if (!defaultPath) {
             defaultPath = "#/jmx/help";
           }
-          Core.log.info("moving the URL to be " + defaultPath);
+          log.info("moving the URL to be " + defaultPath);
           if (defaultPath.startsWith("#")) {
             defaultPath = defaultPath.substring(1);
           }

@@ -1,5 +1,7 @@
 module Core {
 
+  var log:Logging.Logger = Logger.get("Core");
+
   export interface Tasks {
     addTask: (name:string, task:() => void) => void;
     execute: () => void;
