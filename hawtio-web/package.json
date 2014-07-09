@@ -1,0 +1,15 @@
+{
+  "name": "hawtio-web",
+  "version": "1.5.0",
+  "description": "hawtio :: hawtio-web",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "karma-cli": "0.0.4",
+    "karma": "~0.12.16",
+    "karma-chrome-launcher": "~0.1.4",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-jasmine": "~0.1.5",
+    "karma-phantomjs-launcher": "~0.1.4",
+    "karma-typescript-preprocessor": "0.0.7"
+  }
+}
