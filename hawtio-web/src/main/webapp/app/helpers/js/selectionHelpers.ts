@@ -1,4 +1,4 @@
-
+/// <reference path="../../baseHelpers.ts"/>
 module SelectionHelpers {
 
   var log:Logging.Logger = Logger.get("SelectionHelpers");
@@ -32,7 +32,7 @@ module SelectionHelpers {
   export function select(group:any[], item:any, $event:any):void {
     var ctrlKey = $event.ctrlKey;
     if (!ctrlKey) {
-      if (item.selected) {
+      if (item['selected']) {
         toggleSelection(item);
       } else {
         selectOne(group, item);
@@ -98,7 +98,7 @@ module SelectionHelpers {
     }
     var searchMethod = search || item;
     if (angular.isArray(item)) {
-      return maybe(group.intersect(item).length > 0, yes, no);
+      return maybe(group.intersect(item).length === group.length, yes, no);
     } else {
       return maybe(group.any(searchMethod), yes, no);
     }
