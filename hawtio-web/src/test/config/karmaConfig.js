@@ -79,7 +79,7 @@ module.exports = function(config) {
       libdir + 'angular-dragdrop.min.js',
       libdir + 'dmr.js.nocache.js',
       libdir + 'ZeroClipboard.min.js',
-      libdir + 'src/main/webapp/lib/hawtio-plugin-loader.js',
+      libdir + 'hawtio-plugin-loader.js',
       'src/main/webapp/app/app.js',
       'src/test/specs/spec/*.js',
       'src/test/specs/*.html'

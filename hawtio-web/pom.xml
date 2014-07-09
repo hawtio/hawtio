@@ -15,7 +15,9 @@
   <properties>
     <!-- when not doing a release lets use a dummy version number to test out the replacement in the manifest.json -->
     <chrome-version>1.0.1</chrome-version>
+    <!--
     <phantomjs-executable>/usr/local/bin/phantomjs</phantomjs-executable>
+    -->
     <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
     <watch>false</watch>
   </properties>
@@ -444,42 +446,6 @@
         <executions>
 
           <execution>
-            <id>test</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-
-                <echo>Copying stuff to src/test/unit</echo>
-                <copy todir="src/test/unit">
-                  <fileset dir="${webapp-outdir}">
-                    <include name="**" />
-                  </fileset>
-                </copy>
-
-              </target>
-            </configuration>
-          </execution>
-
-          <!--
-          <execution>
-            <id>compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-                <echo>Copying generated app.js</echo>
-                <copy tofile="${webapp-outdir}/app/app.js" file="${basedir}/src/main/webapp/app/app.js" />
-              </target>
-            </configuration>
-          </execution>
-          -->
-
-          <execution>
             <id>generate-sources</id>
             <phase>generate-sources</phase>
             <configuration>
@@ -874,7 +840,9 @@
       </activation>
       <properties>
         <tsc-executable>tsc.cmd</tsc-executable>
+        <!--
         <phantomjs-executable>phantomjs.cmd</phantomjs-executable>
+        -->
         <jetty-use-file-lock>false</jetty-use-file-lock>
       </properties>
     </profile>
@@ -1085,10 +1053,6 @@
 
     </profile>
 
-    <!--
-    this profile is here so we disable the jasmine profile when releasing
-    as for some reason it fails when ran inside mvn release:prepare
-    -->
     <profile>
       <id>release</id>
       <properties>
@@ -1096,39 +1060,5 @@
       </properties>
     </profile>
 
-    <profile>
-      <id>jasmine-test</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-        <file><exists>${phantomjs-executable}</exists></file>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${exec-maven-plugin-version}</version>
-            <executions>
-              <execution>
-                <id>PhantomJS Unit Testing</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>exec</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <executable>${phantomjs-executable}</executable>
-              <workingDirectory>src/test/specs</workingDirectory>
-              <arguments>
-                <argument>phantomjs_jasminexml_runner.js</argument>
-                <argument>SpecRunner.html</argument>
-                <argument>${project.build.directory}/surefire-reports</argument>
-              </arguments>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
 </project>
