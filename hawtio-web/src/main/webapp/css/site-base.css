@@ -3006,6 +3006,23 @@ fs-donut svg g text.units {
   line-height: 155px;
 }
 
+.column-row {
+  float: left;
+}
+
+.column-newline {
+
+}
+
+/*
+.column-newline:after {
+  display: block;
+  float: none;
+  clear: both;
+  content: ' ';
+}
+*/
+
 .ok-container > i {
   font-size: 32px;
   color: #a4a4a4;

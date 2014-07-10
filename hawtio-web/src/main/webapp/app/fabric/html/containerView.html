@@ -4,35 +4,44 @@
     <div class="row-fluid">
       <div class="span12">
         <h3>{{container.id}}</h3>
+        <p>{{container}}</p>
       </div>
     </div>
   </script>
 
   <div class="row-fluid">
     <div class="span12">
+      <p></p>
       <div class="pull-left">
         Group by:
         <div class="btn-group">
           <button class="btn"
-                  ng-class="groupByClass('profiles', groupBy)"
-                  ng-click="groupBy='profiles'">Profiles</button>
+                  ng-class="groupByClass('profileIds', groupBy)"
+                  ng-click="groupBy='profileIds'">Profiles</button>
           <button class="btn"
                   ng-class="groupByClass('location', groupBy)"
                   ng-click="groupBy='location'">Location</button>
         </div>
       </div>
       <div class="pull-right">
+        <hawtio-filter ng-model="filter"
+                       placeholder="Filter Containers..."
+                       save-as="fabric-container-view-text-filter"></hawtio-filter>
       </div>
     </div>
   </div>
 
   <div class="row-fluid">
     <div class="span12">
-      <ul hawtio-auto-columns=".column-box">
-        <li class="column-box"
-            ng-repeat="container in containers"
-            ng-include="'containerBox.html'"></li>
-      </ul>
+      <div class="align-left"
+           ng-repeat="container in containers | filter:filterContainers | orderBy:[groupBy, 'id'] | hawtioGroupBy:groupBy"
+           ng-class="addNewlineClass(booleanToString(container.endGroup))">
+         <div class="container-group-header">
+           <span ng-show="container.newGroup">{{container[groupBy]}}</span>
+           <span ng-hide="container.newGroup">&nbsp;</span>
+         </div>
+        <div class="column-box" ng-include="'containerBox.html'"></div>
+      </div>
     </div>
   </div>
 

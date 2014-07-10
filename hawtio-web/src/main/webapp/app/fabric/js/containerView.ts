@@ -1,17 +1,18 @@
 /// <reference path="./fabricPlugin.ts"/>
 /// <reference path="../../helpers/js/storageHelpers.ts"/>
 /// <reference path="../../helpers/js/controllerHelpers.ts"/>
+/// <reference path="../../helpers/js/filterHelpers.ts"/>
 module Fabric {
 
   export var ContainerViewController = _module.controller("Fabric.ContainerViewController", ["$scope", "jolokia", "$location", "localStorage", "$route", ($scope, jolokia, $location, localStorage, $route) => {
 
     $scope.name = ContainerViewController.name;
-    $scope.containerGroups = {};
     $scope.containers = <Container[]>Array();
-    $scope.groupBy = 'profiles';
+    $scope.groupBy = 'profileIds';
+    $scope.filter = '';
 
-    var containerFields = ['id', 'profileIds', 'versionId', 'location'];
-    var profileFields = ['id'];
+    var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location'];
+    var profileFields = ['id', 'hidden'];
 
     StorageHelpers.bindModelToLocalStorage({
       $scope: $scope,
@@ -19,38 +20,41 @@ module Fabric {
       localStorage: localStorage,
       modelName: 'groupBy',
       paramName: 'groupBy',
-      intialValue: $scope.groupBy,
-      onChange: (groupBy) => {
-        if (Core.isBlank(groupBy)) {
-          return;
-        }
-        $scope.containerGroups = buildGroup(groupMapping, groupBy, $scope.containers);
-      }
-    });
-
-    $scope.$watch('containerGroups', (newValue, oldValue) => {
-      log.debug("Container groups: ", newValue);
+      intialValue: $scope.groupBy
     });
 
     $scope.groupByClass = ControllerHelpers.createClassSelector({
-      'profiles': 'btn-primary',
+      'profileIds': 'btn-primary',
       'location': 'btn-primary'
     });
 
-    var groupMapping = {
-      profiles: 'profileIds',
-      location: 'location'
-    };
+    $scope.addNewlineClass = ControllerHelpers.createValueClassSelector({
+      'true': '',
+      'false': 'column-row'
+    });
 
-    function buildGroup(groupMapping:any, groupBy:string, containers:Container[]):any {
-      return containers.groupBy((c) => {
-        return c[groupMapping[groupBy]];
-      });
+    $scope.filterContainers = (container) => {
+      return FilterHelpers.searchObject(container, $scope.filter);
     }
+
+    $scope.booleanToString = Core.booleanToString;
 
     function render(response) {
       $scope.containers = response.value;
-      $scope.containerGroups = buildGroup(groupMapping, $scope.groupBy, $scope.containers);
+      // massage the returned data a bit
+      $scope.containers.forEach((container) => {
+        if (Core.isBlank(container.location)) {
+          container.location = Fabric.NO_LOCATION;
+        }
+        container.profileIds = container.profileIds.filter((id) => {
+          var profile = container.profiles.find((p) => { return p.id === id; });
+          if (profile && profile.hidden) {
+            return false;
+          } else {
+            return true;
+          }
+        });
+      });
       Core.$apply($scope);
     }
 

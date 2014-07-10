@@ -1,5 +1,6 @@
 /// <reference path="./uiPlugin.ts"/>
 module UI {
+
   export function groupBy() {
     return (list, group) => {
 
@@ -12,14 +13,37 @@ module UI {
       }
 
       var newGroup = 'newGroup';
+      var endGroup = 'endGroup';
+      var currentGroup:any = undefined;
 
-      var currentGroup = list.first()[group];
-      list.first()[newGroup] = true;
+      function createNewGroup(list, item, index) {
+        item[newGroup] = true;
+        item[endGroup] = false;
+        currentGroup = item[group];
+        if (index > 0) {
+          list[index - 1][endGroup] = true;
+        }
+      }
+
+      function addItemToExistingGroup(item) {
+        item[newGroup] = false;
+        item[endGroup] = false;
+      }
       
-      list.forEach((item) => {
-        if (item[group] !== currentGroup) {
-          item[newGroup] = true;
-          currentGroup = item[group];
+      list.forEach((item, index) => {
+        var createGroup = item[group] !== currentGroup;
+        if (angular.isArray(item[group])) {
+          if (currentGroup === undefined) {
+            createGroup = true; 
+          } else {
+            var intersection = item[group].intersect(currentGroup);
+            createGroup = intersection.length !== currentGroup.length;
+          }
+        }
+        if (createGroup) {
+          createNewGroup(list, item, index);
+        } else {
+          addItemToExistingGroup(item);
         }
       });
 
@@ -28,4 +52,5 @@ module UI {
   }
 
   _module.filter('hawtioGroupBy', UI.groupBy);
+
 }

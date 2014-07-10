@@ -4,10 +4,20 @@ module ControllerHelpers {
 
   export function createClassSelector(config:any): (selection:any, model:any) => string {
     return (selector:string, model:any):string => {
-      if (selector === model) {
-        return config[selector] || '';
+      if (selector === model && selector in config) {
+        return config[selector];
       }
       return '';
+    }
+  }
+
+  export function createValueClassSelector(config:any): (model:any) => string {
+    return (model:any):string => {
+      if (model in config) {
+        return config[model]
+      } else {
+        return '';
+      }
     }
   }
 

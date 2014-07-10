@@ -91,7 +91,7 @@
           <div class="span12 centered">
             <p></p>
             <hawtio-filter ng-model="filter"
-                           placeholder="Filter Apps..."
+                           placeholder="Filter Profiles..."
                            save-as="fabric-appview-text-filter"></hawtio-filter>
           </div>
         </div>
@@ -107,20 +107,20 @@
                     ng-disabled="!cartItems.length"
                     ng-click="deploy()">
               <i class="icon-ok"
-                 title="Deploy the selected apps ({{getNames()}}) to new containers"></i>
+                 title="Deploy the selected Profiles ({{getNames()}}) to new containers"></i>
             </button>
             <button class="btn btn-primary"
                     ng-disabled="!cartItems.length"
                     ng-click="assign()">
               <i class="icon-truck"
-                 title="Deploy the selected apps ({{getNames()}}) to existing containers"></i>
+                 title="Deploy the selected Profiles ({{getNames()}}) to existing containers"></i>
             </button>
             <button class="btn"
                     ng-disabled="!cartItems.length"
-                    title="Clear selected apps"
+                    title="Clear selected Profiles"
                     ng-click="clearGroup(cartItems)">
               <i class="icon-remove"
-                 title="Deploy the selected apps ({{getNames()}}) to existing containers"></i>
+                 title="Deploy the selected Profiles ({{getNames()}}) to existing containers"></i>
             </button>
           </div>
         </div>

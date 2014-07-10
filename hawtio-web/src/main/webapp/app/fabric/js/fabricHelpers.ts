@@ -5,8 +5,8 @@ module Fabric {
 
   export var log:Logging.Logger = Logger.get("Fabric");
 
+  // TODO - maybe a separate fabricConstants.ts would be good
   export var jmxDomain = 'io.fabric8';
-
   export var managerMBean = Fabric.jmxDomain + ":type=Fabric";
   export var clusterManagerMBean = Fabric.jmxDomain + ":type=ClusterServiceManager";
   export var clusterBootstrapManagerMBean = Fabric.jmxDomain + ":type=ClusterBootstrapManager";
@@ -17,12 +17,12 @@ module Fabric {
   var schemaLookupType = "SchemaLookup";
 
   export var schemaLookupMBean = schemaLookupDomain + ":type=" + schemaLookupType;
-
   export var useDirectoriesInGit = true;
   export var fabricTopLevel = "fabric/profiles/";
   export var profileSuffix = ".profile";
-
   export var jolokiaWebAppGroupId = jmxDomain + ".fabric-jolokia";
+
+  export var NO_LOCATION = "No location"
 
   // nicer to have type info...
   export interface Profile {
