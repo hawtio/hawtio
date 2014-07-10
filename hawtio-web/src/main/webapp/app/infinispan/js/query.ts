@@ -66,11 +66,11 @@ module Infinispan {
           if (stackTrace) {
             error += "\n" + stackTrace;
           }
-          notification("error", error);
+          Core.notification("error", error);
         } else {
           var output = results["OUTPUT"];
           if (!output) {
-            notification("error", "No results!");
+            Core.notification("error", "No results!");
           } else {
             $scope.output = output;
             console.log("==== output: " + output);

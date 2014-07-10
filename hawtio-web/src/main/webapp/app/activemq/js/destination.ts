@@ -26,7 +26,7 @@ module ActiveMQ {
       $scope.destinationName = "";
       $scope.workspace.operationCounter += 1;
       Core.$apply($scope);
-      notification("success", $scope.message);
+      Core.notification("success", $scope.message);
       $scope.workspace.loadTree();
     }
 
@@ -35,7 +35,7 @@ module ActiveMQ {
       workspace.removeAndSelectParentNode();
       $scope.workspace.operationCounter += 1;
       Core.$apply($scope);
-      notification("success", $scope.message);
+      Core.notification("success", $scope.message);
       $scope.workspace.loadTree();
     }
 
@@ -76,7 +76,7 @@ module ActiveMQ {
         if (mbean) {
           jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
         } else {
-          notification("error", "Could not find the Broker MBean!");
+          Core.notification("error", "Could not find the Broker MBean!");
         }
       }
     };

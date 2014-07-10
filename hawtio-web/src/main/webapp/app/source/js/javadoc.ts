@@ -36,7 +36,7 @@ module Source {
         var time = new Date().getTime();
         if (!$scope.lastErrorTime || time - $scope.lastErrorTime > 3000) {
           $scope.lastErrorTime = time;
-          notification("error", "Could not download the source code for the maven artifacts: " + mavenCoords);
+          Core.notification("error", "Could not download the source code for the maven artifacts: " + mavenCoords);
         }
       }
       Core.$apply($scope);

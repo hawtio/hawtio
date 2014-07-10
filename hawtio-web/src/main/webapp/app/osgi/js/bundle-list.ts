@@ -50,7 +50,7 @@ module Osgi {
             success: function (response) {
               var isFragment = response.value;
               if (isFragment) {
-                notification("success", "Fragment installed succesfully.");
+                Core.notification("success", "Fragment installed succesfully.");
                 $scope.bundleUrl = "";
                 Core.$apply($scope);
               } else {
@@ -61,23 +61,23 @@ module Osgi {
                   arguments: [bundleID]
                 }, {
                   success: function (response) {
-                    notification("success", "Bundle installed and started successfully.");
+                    Core.notification("success", "Bundle installed and started successfully.");
                     $scope.bundleUrl = "";
                     Core.$apply($scope);
                   },
                   error: function (response) {
-                    notification("error", response.error)
+                    Core.notification("error", response.error)
                   }
                 });
               }
             },
             error: function (response) {
-              notification("error", response.error)
+              Core.notification("error", response.error)
             }
           });
         },
         error: function (response) {
-          notification("error", response.error);
+          Core.notification("error", response.error);
         }
       });
     };

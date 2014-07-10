@@ -3,7 +3,7 @@
 // Definitions by: Diego Vilar <http://github.com/diegovilar>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-/// <reference path="../../../main/d.ts/angular.d.ts" />
+/// <reference path="../../main/d.ts/angular.d.ts" />
 
 ///////////////////////////////////////////////////////////////////////////////
 // functions attached to global object (window)

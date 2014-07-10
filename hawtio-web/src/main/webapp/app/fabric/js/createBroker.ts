@@ -27,7 +27,7 @@ module Fabric {
 
     $scope.onSubmit = (json, form) => {
       $scope.message = ($scope.entity.brokerName || "unknown") + " in group " + ($scope.entity.group || "unknown");
-      notification("info", "Creating broker " + $scope.message);
+      Core.notification("info", "Creating broker " + $scope.message);
       var tmpJson = JSON.stringify($scope.entity, null, '  ');
       jolokia.execute(Fabric.mqManagerMBean, "saveBrokerConfigurationJSON", tmpJson, onSuccess(onSave));
 
@@ -169,7 +169,7 @@ module Fabric {
     }
 
     function onSave(response) {
-      notification("success", "Created broker " + $scope.message);
+      Core.notification("success", "Created broker " + $scope.message);
       Core.$apply($scope);
     }
   }]);

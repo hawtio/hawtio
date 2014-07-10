@@ -20,7 +20,7 @@ module JVM {
 
     function doConnect(agent) {
       if (!agent.url) {
-        notification('warning', 'No URL available to connect to agent');
+        Core.notification('warning', 'No URL available to connect to agent');
         return;
       }
       var options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions();

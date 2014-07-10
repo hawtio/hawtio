@@ -15,17 +15,17 @@ module Karaf {
 
         $scope.install = () => {
           installFeature(workspace, jolokia, $scope.name, $scope.version, function () {
-            notification('success', 'Installed feature ' + $scope.name);
+            Core.notification('success', 'Installed feature ' + $scope.name);
           }, function (response) {
-            notification('error', 'Failed to install feature ' + $scope.name + ' due to ' + response.error);
+            Core.notification('error', 'Failed to install feature ' + $scope.name + ' due to ' + response.error);
           });
         }
 
         $scope.uninstall = () => {
           uninstallFeature(workspace, jolokia, $scope.name, $scope.version, function () {
-            notification('success', 'Uninstalled feature ' + $scope.name);
+            Core.notification('success', 'Uninstalled feature ' + $scope.name);
           }, function (response) {
-            notification('error', 'Failed to uninstall feature ' + $scope.name + ' due to ' + response.error);
+            Core.notification('error', 'Failed to uninstall feature ' + $scope.name + ' due to ' + response.error);
           });
         }
 

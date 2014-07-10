@@ -130,7 +130,7 @@ module DataTable {
                 angular.forEach(value, (value, key) => checkForNewColumn(value, key, childPrefix));
               }
             } else {
-              addColumn(prefix + key, humanizeValue(key))
+              addColumn(prefix + key, Core.humanizeValue(key))
             }
           }
         };

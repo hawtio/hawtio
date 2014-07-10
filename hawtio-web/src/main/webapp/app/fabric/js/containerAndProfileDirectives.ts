@@ -446,7 +446,7 @@ module Fabric {
       $scope.updateRequirements = (requirements) => {
         function onRequirementsSaved(response) {
           $scope.requirements = requirements;
-          notification("success", "Updated the requirements");
+          Core.notification("success", "Updated the requirements");
           $scope.updateActiveProfiles();
           Core.$apply($scope);
         };

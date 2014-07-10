@@ -206,7 +206,7 @@ module Camel {
     }
     if (nodeSettings) {
       var imageName = nodeSettings["icon"] || "generic24.png";
-      return url("/img/icons/camel/" + imageName);
+      return Core.url("/img/icons/camel/" + imageName);
     } else {
       return null;
     }
@@ -847,7 +847,7 @@ module Camel {
         var typeName = selection.entries["type"];
         var name = selection.entries["name"];
         if ("routes" === typeName && name) {
-          selectedRouteId = trimQuotes(name);
+          selectedRouteId = Core.trimQuotes(name);
         }
       }
     }
@@ -1048,7 +1048,7 @@ module Camel {
             if (componentScheme) {
               var value = Camel.getEndpointIcon(componentScheme);
               if (value) {
-                imageUrl = url(value);
+                imageUrl = Core.url(value);
               }
             }
           }

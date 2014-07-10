@@ -22,7 +22,7 @@ module Dashboard {
       try {
         json = JSON.parse($scope.source);
       } catch (e) {
-        notification("error", "Could not parse the JSON\n" + e);
+        Core.notification("error", "Could not parse the JSON\n" + e);
         json = [];
       }
       var array = [];

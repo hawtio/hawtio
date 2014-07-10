@@ -67,7 +67,7 @@ module Karaf {
   }
 
   export function featureLinks(workspace, name, version) {
-    return  "<a href='" + url("#/karaf/feature/" + name + "/" + version + workspace.hash()) + "'>" + version + "</a>";
+    return  "<a href='" + Core.url("#/karaf/feature/" + name + "/" + version + workspace.hash()) + "'>" + version + "</a>";
   }
 
   export function extractFeature(attributes, name, version) {

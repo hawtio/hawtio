@@ -1,7 +1,7 @@
 /// <reference path="fabricPlugin.ts"/>
 /// <reference path="../../helpers/js/selectionHelpers.ts"/>
 module Fabric {
-  _module.controller("Fabric.AssignProfileController", ["$scope", "jolokia", "$location", "$routeParams", "workspace", "ProfileCart", ($scope, jolokia, $location, $routeParams, workspace, ProfileCart:Profile[]) => {
+  export var AssignProfileController = _module.controller("Fabric.AssignProfileController", ["$scope", "jolokia", "$location", "$routeParams", "workspace", "ProfileCart", ($scope, jolokia, $location, $routeParams, workspace, ProfileCart:Profile[]) => {
 
     $scope.profileId = $routeParams['pid'];
     $scope.versionId = $routeParams['vid'];
@@ -66,7 +66,7 @@ module Fabric {
       jolokia.request(requests, onSuccess(() => {
         outstanding = outstanding - 1;
         if (outstanding === 0) {
-          notification('success', "Applied " + $scope.profileId);
+          Core.notification('success', "Applied " + $scope.profileId);
           SelectionHelpers.clearGroup(ProfileCart);
           Core.$apply($scope);
         }

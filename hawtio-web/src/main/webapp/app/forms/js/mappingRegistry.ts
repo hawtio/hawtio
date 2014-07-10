@@ -85,7 +85,7 @@ module Forms {
       // figure out which things to not wrap in a group and label etc...
       if (input.attr("type") !== "hidden" && wrapInGroup) {
         group = this.getControlGroup(config, config, id);
-        var labelElement = Forms.getLabel(config, config, property.title || property.label || humanizeValue(defaultLabel));
+        var labelElement = Forms.getLabel(config, config, property.title || property.label || Core.humanizeValue(defaultLabel));
         if (title) {
           labelElement.attr('title', title);
         }

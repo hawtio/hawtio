@@ -235,7 +235,7 @@ module Core {
 } // end module Core
 
 // bootstrap plugin loader
-hawtioPluginLoader.addUrl(url("/plugin"));
+hawtioPluginLoader.addUrl(Core.url("/plugin"));
 
 // add our module
 hawtioPluginLoader.addModule(Core.pluginName);

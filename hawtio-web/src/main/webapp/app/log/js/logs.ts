@@ -414,7 +414,7 @@ module Log {
       if (value) {
         updateValues(value);
       } else {
-        notification("error", "Failed to get a response! " + JSON.stringify(response, null, 4));
+        Core.notification("error", "Failed to get a response! " + JSON.stringify(response, null, 4));
       }
     };
 

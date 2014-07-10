@@ -242,7 +242,7 @@ module Fabric {
       }, {
         method: 'POST',
         success: () => {
-          notification('success', 'Triggered refresh of profile ' + profileId + '/' + versionId);
+          Core.notification('success', 'Triggered refresh of profile ' + profileId + '/' + versionId);
           Core.$apply($scope);
         },
         error: (response) => {
@@ -470,7 +470,7 @@ module Fabric {
       log.info("Setting version to " + version + " on containers: " + containerIds);
 
       Fabric.migrateContainers(jolokia, version, containerIds, () => {
-        notification('success', "Initiated container migration to version <strong>" + version + "</strong>, changes make take some time to complete");
+        Core.notification('success', "Initiated container migration to version <strong>" + version + "</strong>, changes make take some time to complete");
         Core.$apply($scope);
       }, (response) => {
         log.error("Failed to migrate containers due to ", response.error);
@@ -498,7 +498,7 @@ module Fabric {
   export function doCreateVersion($scope, jolokia, $location, newVersionName) {
     var success = function (response) {
       var newVersion = response.value.id;
-      notification('success', "Created version <strong>" + newVersion + "</strong>, switching to this new version");
+      Core.notification('success', "Created version <strong>" + newVersion + "</strong>, switching to this new version");
 
       // broadcast events to force reloads
       var $rootScope = $scope.$root || $scope.$rootScope || $scope;
@@ -623,15 +623,15 @@ module Fabric {
   }
 
   export function doDeleteContainer($scope, jolokia, name, onDelete:() => any = null) {
-    notification('info', "Deleting " + name);
+    Core.notification('info', "Deleting " + name);
     destroyContainer(jolokia, name, () => {
-      notification('success', "Deleted " + name);
+      Core.notification('success', "Deleted " + name);
       if (onDelete) {
         onDelete();
       }
       Core.$apply($scope);
     }, (response) => {
-      notification('error', "Failed to delete " + name + " due to " + response.error);
+      Core.notification('error', "Failed to delete " + name + " due to " + response.error);
       Core.logJolokiaStackTrace(response);
       Core.$apply($scope);
     });
@@ -639,13 +639,13 @@ module Fabric {
 
   export function doStartContainer($scope, jolokia, name) {
     if ($scope.fabricVerboseNotifications) {
-      notification('info', "Starting " + name);
+      Core.notification('info', "Starting " + name);
     }
     startContainer(jolokia, name, () => {
-      notification('success', "Started " + name);
+      Core.notification('success', "Started " + name);
       Core.$apply($scope);
     }, (response) => {
-      notification('error', "Failed to start " + name + " due to " + response.error);
+      Core.notification('error', "Failed to start " + name + " due to " + response.error);
       Core.logJolokiaStackTrace(response);
       Core.$apply($scope);
     });
@@ -653,13 +653,13 @@ module Fabric {
 
   export function doStopContainer($scope, jolokia, name) {
     if ($scope.fabricVerboseNotifications) {
-      notification('info', "Stopping " + name);
+      Core.notification('info', "Stopping " + name);
     }
     stopContainer(jolokia, name, () => {
-      notification('success', "Stopped " + name);
+      Core.notification('success', "Stopped " + name);
       Core.$apply($scope);
     }, (response) => {
-      notification('error', "Failed to stop " + name + " due to " + response.error);
+      Core.notification('error', "Failed to stop " + name + " due to " + response.error);
       Core.logJolokiaStackTrace(response);
       Core.$apply($scope);
     });
@@ -991,7 +991,7 @@ module Fabric {
 
 
       var versionId = row["versionId"];
-      var versionHref = url("#/fabric/profiles?v=" + versionId);
+      var versionHref = Core.url("#/fabric/profiles?v=" + versionId);
       var versionLink =  "<a href='" + versionHref + "'>" + versionId + "</a>"
       row["versionHref"] = versionHref;
       row["versionLink"] = versionLink;
@@ -1031,7 +1031,7 @@ module Fabric {
       if (answer.length > 0) {
         prefix = " ";
       }
-      answer += prefix + "<a href='" + url("#/fabric/container/" + value + workspace.hash()) + "'>" + value + "</a>";
+      answer += prefix + "<a href='" + Core.url("#/fabric/container/" + value + workspace.hash()) + "'>" + value + "</a>";
     });
     return answer;
   }
@@ -1043,7 +1043,7 @@ module Fabric {
       if (answer.length > 0) {
         prefix = " ";
       }
-      answer += prefix + "<a href='" + url("#/fabric/profile/" + versionId + "/" + value + workspace.hash()) + "'>" + value + "</a>";
+      answer += prefix + "<a href='" + Core.url("#/fabric/profile/" + versionId + "/" + value + workspace.hash()) + "'>" + value + "</a>";
     });
     return answer;
   }
@@ -1060,7 +1060,7 @@ module Fabric {
       var id = row["id"];
       row["link"] = profileLinks(workspace, versionId, id);
       row["parentLinks"] = profileLinks(workspace, versionId, row["parentIds"]);
-      var containersHref = url("#/fabric/containers?p=" + id);
+      var containersHref = Core.url("#/fabric/containers?p=" + id);
       var containerCount = row["containerCount"];
       var containersLink = "";
       if (containerCount) {
@@ -1082,7 +1082,7 @@ module Fabric {
     if (!container.alive) {
       answer = 'Not Running';
     } else {
-      answer += ' - ' + humanizeValue(container.provisionResult);
+      answer += ' - ' + Core.humanizeValue(container.provisionResult);
     }
     return answer;
   }

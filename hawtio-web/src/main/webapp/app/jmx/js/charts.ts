@@ -148,7 +148,7 @@ module Jmx {
                 type: 'read',
                 mbean: mbean,
                 attribute: key
-              }, humanizeValue(key));
+              }, Core.humanizeValue(key));
               if (metric) {
                 $scope.metrics.push(metric);
               }
@@ -178,7 +178,7 @@ module Jmx {
           // lets create the metrics
           attributeNames.forEach((key) => {
             angular.forEach(mbeans, (mbean, name) => {
-              var attributeTitle = humanizeValue(key);
+              var attributeTitle = Core.humanizeValue(key);
               // for now lets always be verbose
               var title = name + ": " + attributeTitle;
 

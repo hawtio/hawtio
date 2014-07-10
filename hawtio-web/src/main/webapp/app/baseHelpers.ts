@@ -23,6 +23,7 @@
 /// <reference path="../../d.ts/marked.d.ts"/>
 /// <reference path="../../d.ts/schemas.d.ts"/>
 /// <reference path="../../d.ts/sugar-1.3.d.ts"/>
+/// <reference path="../../d.ts/toastr.d.ts"/>
 module Core {
 
   var _urlPrefix: string = null;
@@ -112,7 +113,7 @@ module Core {
     var headerHeight = $("#main-nav").height();
     var containerHeight = windowHeight - headerHeight;
     $("#main").css("min-height", "" + containerHeight + "px");
-  };
+  }
 
 
   /**
@@ -308,7 +309,7 @@ module Core {
    * @static
    * @param {*} $scope
    */
-  export function $applyNowOrLater($scope) {
+  export function $applyNowOrLater($scope:ng.IScope) {
     if ($scope.$$phase || $scope.$root.$$phase) {
       setTimeout(() => {
         Core.$apply($scope);
@@ -340,14 +341,14 @@ module Core {
    * @static
    * @param {*} $scope
    */
-  export function $apply($scope) {
+  export function $apply($scope:ng.IScope) {
     var phase = $scope.$$phase || $scope.$root.$$phase;
     if (!phase) {
       $scope.$apply();
     }
   }
 
-  export function $digest($scope) {
+  export function $digest($scope:ng.IScope) {
     var phase = $scope.$$phase || $scope.$root.$$phase;
     if (!phase) {
       $scope.$digest();
@@ -468,7 +469,7 @@ module Core {
       }
     }
 
-    w.toastr[type](message, '', options);
+    toastr[type](message, '', options);
   }
 
   /**
@@ -478,7 +479,7 @@ module Core {
    */
   export function clearNotifications() {
     var w:any = window;
-    w.toastr.clear();
+    toastr.clear();
   }
 
   export function humanizeValue(value:any):string {
@@ -511,11 +512,3 @@ module Core {
     return text;
   }
 }
-
-// Lots of code refers to these functions in the global namespace
-// TODO - need to get these out of the global namespace
-var notification = Core.notification;
-var clearNotifications = Core.clearNotifications;
-var humanizeValue = Core.humanizeValue;
-var trimQuotes = Core.trimQuotes;
-var url = Core.url;

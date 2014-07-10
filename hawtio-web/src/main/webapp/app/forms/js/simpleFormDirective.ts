@@ -205,7 +205,7 @@ module Forms {
 
         if (onSubmit === null) {
           onSubmit = function (json, form) {
-            notification('error', 'No submit handler defined for form ' + form.get(0).name);
+            Core.notification('error', 'No submit handler defined for form ' + form.get(0).name);
           }
         }
 

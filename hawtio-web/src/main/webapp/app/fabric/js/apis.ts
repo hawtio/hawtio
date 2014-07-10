@@ -125,7 +125,7 @@ module Fabric {
 
             // lets use proxy if external URL
             url = Core.useProxyIfExternal(url);
-            value["serviceName"] = trimQuotes(value["service"]);
+            value["serviceName"] = Core.trimQuotes(value["service"]);
             var apidocs = value["apidocs"];
             var wadl = value["wadl"];
             var wsdl = value["wsdl"];

@@ -333,7 +333,7 @@ module ActiveMQ {
     function operationSuccess() {
       $scope.messageDialog = false;
       $scope.gridOptions.selectedItems.splice(0);
-      notification("success", $scope.message);
+      Core.notification("success", $scope.message);
       setTimeout(loadTable, 50);
     }
 

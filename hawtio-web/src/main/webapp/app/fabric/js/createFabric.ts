@@ -44,16 +44,16 @@ module Fabric {
         jolokia.execute(Fabric.clusterBootstrapManagerMBean, 'createCluster(java.util.Map)', angular.toJson(json), {
           method: 'post',
           success: (response) => {
-            notification('success', "Created fabric!");
+            Core.notification('success', "Created fabric!");
             $location.url("/fabric/containers");
             Core.$apply($scope);
           },
           error: (response) => {
-            notification('error', "Error creating fabric: " + response.error);
+            Core.notification('error', "Error creating fabric: " + response.error);
             Core.$apply($scope);
           }
         });
-        notification('info', "Creating fabric, please wait...");
+        Core.notification('info', "Creating fabric, please wait...");
         $location.url("/openlogs");
         Core.$apply($scope);
       }, 30);

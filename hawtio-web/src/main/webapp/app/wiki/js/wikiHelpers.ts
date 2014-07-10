@@ -268,7 +268,7 @@ module Wiki {
       node.key = parentKey ? parentKey + "_" + key : key;
       var icon = template.icon;
       if (icon) {
-        node.icon = url(icon);
+        node.icon = Core.url(icon);
       }
       // compiler was complaining about 'label' had no idea where it's coming from
       // var tooltip = value["tooltip"] || value["description"] || label;
@@ -492,7 +492,7 @@ module Wiki {
       }
     }
     if (icon) {
-      return "<img src='" + url(icon) + "'>";
+      return "<img src='" + Core.url(icon) + "'>";
     } else {
       return "<i class='" + css + "'></i>";
     }
@@ -622,7 +622,7 @@ module Wiki {
       try {
         return JSON.parse(text);
       } catch (e) {
-        notification("error", "Failed to parse JSON: " + e);
+        Core.notification("error", "Failed to parse JSON: " + e);
       }
     }
     return null;

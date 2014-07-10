@@ -2,7 +2,7 @@
  * @module ActiveMQ
  * @main ActiveMQ
  */
-/// <reference path="activemqHelpers.ts"/>
+/// <reference path="./activemqHelpers.ts"/>
 module ActiveMQ {
 
   export var pluginName = 'activemq';
@@ -187,7 +187,7 @@ module ActiveMQ {
       }
     }
 
-    function setConsumerType(node) {
+    function setConsumerType(node:Core.Folder) {
       if (node) {
         var parent = node.parent;
         var entries = node.entries;
@@ -200,7 +200,7 @@ module ActiveMQ {
           var connectorName = entries["connectorName"];
           if (connectorName && !node.icon) {
             // lets default a connector icon
-            node.icon = url("/img/icons/activemq/connector.png");
+            node.icon = Core.url("/img/icons/activemq/connector.png");
           }
         }
         angular.forEach(node.children, (child) => setConsumerType(child));

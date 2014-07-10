@@ -12,7 +12,7 @@ module JVM {
     $scope.status = '';
 
     $scope.fetch = () => {
-      notification('info', 'Discovering local JVM processes, please wait...');
+      Core.notification('info', 'Discovering local JVM processes, please wait...');
       jolokia.request({
         type: 'exec', mbean: mbeanName,
         operation: 'listLocalJVMs()',
@@ -28,25 +28,25 @@ module JVM {
     }
 
     $scope.stopAgent = (pid) => {
-      notification('info', "Attempting to detach agent from PID " + pid);
+      Core.notification('info', "Attempting to detach agent from PID " + pid);
       jolokia.request({
         type: 'exec', mbean: mbeanName,
         operation: 'stopAgent(java.lang.String)',
         arguments: [pid]
       }, onSuccess(function() {
-        notification('success', "Detached agent from PID " + pid);
+        Core.notification('success', "Detached agent from PID " + pid);
         $scope.fetch()
       }));
     }
 
     $scope.startAgent = (pid) => {
-      notification('info', "Attempting to attach agent to PID " + pid);
+      Core.notification('info', "Attempting to attach agent to PID " + pid);
       jolokia.request({
         type: 'exec', mbean: mbeanName,
         operation: 'startAgent(java.lang.String)',
         arguments: [pid]
       }, onSuccess(function() {
-        notification('success', "Attached agent to PID " + pid);
+        Core.notification('success', "Attached agent to PID " + pid);
         $scope.fetch()
       }));
     }

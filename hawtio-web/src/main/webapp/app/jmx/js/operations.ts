@@ -214,7 +214,7 @@ module Jmx {
       for (var item in value) {
         item = "" + item;
         value[item].name = item;
-        value[item].humanReadable = humanizeValue(item);
+        value[item].humanReadable = Core.humanizeValue(item);
       }
       return value;
     }

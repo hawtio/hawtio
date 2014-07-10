@@ -69,7 +69,7 @@ module Fabric {
       $location.search(q);
 
       if (oldValue === newValue) {
-        notification('info', "Please wait, fetching profile data for version " + $scope.version.id);
+        Core.notification('info', "Please wait, fetching profile data for version " + $scope.version.id);
       }
       
       Core.unregister(jolokia, $scope);
@@ -180,11 +180,11 @@ module Fabric {
       $scope.createProfileDialog = false;
       var parents = $scope.selectedParents.map(function(profile) {return profile.id});
       createProfile(jolokia, $scope.version.id, $scope.newProfileName, parents, function() {
-        notification('success', "Created profile " + $scope.newProfileName);
+        Core.notification('success', "Created profile " + $scope.newProfileName);
         $scope.newProfileName = "";
         Core.$apply($scope);
       }, function(response) {
-        notification('error', "Failed to create profile " + $scope.newProfileName + " due to " + response.error);
+        Core.notification('error', "Failed to create profile " + $scope.newProfileName + " due to " + response.error);
       });
     };
 
@@ -192,7 +192,7 @@ module Fabric {
       $scope.createVersionDialog = false;
 
       var success = function (response) {
-        notification('success', "Created version " + response.value.id);
+        Core.notification('success', "Created version " + response.value.id);
         $scope.newVersionName = '';
         $scope.version = response.value;
         Core.$apply($scope);
@@ -203,7 +203,7 @@ module Fabric {
         if ($scope.newVersionName !== '') {
           msg = "Error creating " + $scope.newVersionName + " : " + response.error;
         }
-        notification('error', msg);
+        Core.notification('error', msg);
       };
 
       if ($scope.selectedParentVersion.length > 0 && $scope.newVersionName !== '') {
@@ -220,11 +220,11 @@ module Fabric {
       Core.unregister(jolokia, $scope);
 
       deleteVersion(jolokia, $scope.version.id, function() {
-        notification('success', "Deleted version " + $scope.version.id);
+        Core.notification('success', "Deleted version " + $scope.version.id);
         $scope.version = $scope.defaultVersion;
         Core.$apply($scope);
       }, function(response) {
-        notification('error', "Failed to delete version " + $scope.version.id + " due to " + response.error);
+        Core.notification('error', "Failed to delete version " + $scope.version.id + " due to " + response.error);
         $scope.version = $scope.defaultVersion;
         Core.$apply($scope);
       });
@@ -233,9 +233,9 @@ module Fabric {
     $scope.deleteSelected = () => {
       $scope.selected.each(function(profile) {
         deleteProfile(jolokia, $scope.version.id, profile.id, function() {
-          notification('success', "Deleted profile " + profile.id);
+          Core.notification('success', "Deleted profile " + profile.id);
         }, function(response) {
-          notification('error', "Failed to delete profile " + profile.id + ' due to ' + response.error);
+          Core.notification('error', "Failed to delete profile " + profile.id + ' due to ' + response.error);
         })
       });
     };
@@ -251,7 +251,7 @@ module Fabric {
     }
 
     function render(response) {
-      clearNotifications();
+      Core.clearNotifications();
 
       if (response.request.operation === 'versions()') {
         

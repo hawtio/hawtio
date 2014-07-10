@@ -107,7 +107,7 @@ module Camel {
 
     var sendWorked = () => {
       $scope.message = "";
-      notification("success", "Message sent!");
+      Core.notification("success", "Message sent!");
     };
 
     $scope.autoFormat = () => {
@@ -152,9 +152,9 @@ module Camel {
               }
             } else {
               if (!mbean) {
-                notification("error", "Could not find CamelContext MBean!");
+                Core.notification("error", "Could not find CamelContext MBean!");
               } else {
-                notification("error", "Failed to determine endpoint name!");
+                Core.notification("error", "Failed to determine endpoint name!");
               }
               log.debug("Parsed context and endpoint: ", target);
             }
@@ -203,7 +203,7 @@ module Camel {
           }
         } else {
           var text = Core.maybePlural(fileCount, "Message") + " sent!";
-          notification("success", text);
+          Core.notification("success", text);
         }
       }
 

@@ -75,7 +75,7 @@ module Wiki {
           wikiRepository.revertTo($scope.branch, objectId, $scope.pageId, commitMessage, (result) => {
             Wiki.onComplete(result);
             // now lets update the view
-            notification('success', "Successfully reverted " + $scope.pageId);
+            Core.notification('success', "Successfully reverted " + $scope.pageId);
             updateView();
           });
         }

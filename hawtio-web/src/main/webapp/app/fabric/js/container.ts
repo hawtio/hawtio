@@ -129,7 +129,7 @@ module Fabric {
       setContainerProperty(jolokia, row.id, propertyName, row[propertyName], () => {
         Core.$apply($scope);
       }, (response) => {
-        notification('error', 'Failed to set container property due to : ' + response.error);
+        Core.notification('error', 'Failed to set container property due to : ' + response.error);
         Core.$apply($scope); 
       });
     }
@@ -158,12 +158,12 @@ module Fabric {
       var addedProfiles = $scope.selectedProfilesDialog.map((p) => { return p.id });
       var text = Core.maybePlural(addedProfiles.length, "profile");
       addProfilesToContainer(jolokia, $scope.row.id, addedProfiles, () => {
-        notification('success', "Successfully added " + text);
+        Core.notification('success', "Successfully added " + text);
         $scope.selectedProfilesDialog = [];
         $scope.$broadcast('fabricProfileRefresh');
         Core.$apply($scope);
       }, (response) => {
-        notification('error', "Failed to add " + text + " due to " + response.error);
+        Core.notification('error', "Failed to add " + text + " due to " + response.error);
         $scope.selectedProfilesDialog = [];
         Core.$apply($scope);
       });
@@ -182,12 +182,12 @@ module Fabric {
       var removedProfiles = $scope.selectedProfiles.map((p) => { return p.id });
       var text = Core.maybePlural(removedProfiles.length, "profile");
       removeProfilesFromContainer(jolokia, $scope.row.id, removedProfiles, () => {
-        notification('success', "Successfully removed " + text);
+        Core.notification('success', "Successfully removed " + text);
         $scope.selectedProfiles = [];
         $scope.$broadcast('fabricProfileRefresh');
         Core.$apply($scope);
       }, (response) => {
-        notification('error', "Failed to remove " + text + " due to " + response.error);
+        Core.notification('error', "Failed to remove " + text + " due to " + response.error);
         $scope.selectedProfiles = [];
         Core.$apply($scope);
       });

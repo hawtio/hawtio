@@ -15,7 +15,7 @@ describe("API", function () {
   });
 
   it("the embedded '" + wadlId + "' element loaded and parsed to valid WADL", function () {
-    var doc = window.__html__['src/test/specs/div-with-wadl.html'];
+    var doc = window.__html__['src/test/fixtures/div-with-wadl.html'];
     $(doc).appendTo('body');
     var div = $(wadlId);
     var object = null;

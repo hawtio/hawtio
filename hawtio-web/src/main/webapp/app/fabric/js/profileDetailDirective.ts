@@ -221,10 +221,10 @@ module Fabric {
       $scope.doRemoveParentProfile = () => {
         var parents = $scope.row.parentIds.exclude($scope.markedForDeletion);
         changeProfileParents(jolokia, $scope.versionId, $scope.profileId, parents, () => {
-          notification('success', 'Removed parent profile ' + $scope.markedForDeletion + ' from ' + $scope.profileId);
+          Core.notification('success', 'Removed parent profile ' + $scope.markedForDeletion + ' from ' + $scope.profileId);
           Core.$apply($scope);
         }, (response) => {
-          notification('error', 'Failed to change parent profiles of ' + $scope.profileId + ' due to ' + response.error);
+          Core.notification('error', 'Failed to change parent profiles of ' + $scope.profileId + ' due to ' + response.error);
           Core.$apply($scope);
         });
       };
@@ -258,10 +258,10 @@ module Fabric {
           return parent.id;
         });
         changeProfileParents(jolokia, $scope.versionId, $scope.profileId, parents, () => {
-          notification('success', 'Successfully changed parent profiles of ' + $scope.profileId);
+          Core.notification('success', 'Successfully changed parent profiles of ' + $scope.profileId);
           Core.$apply($scope);
         }, (response) => {
-          notification('error', 'Failed to change parent profiles of ' + $scope.profileId + ' due to ' + response.error);
+          Core.notification('error', 'Failed to change parent profiles of ' + $scope.profileId + ' due to ' + response.error);
           Core.$apply($scope);
         });
       };
@@ -310,12 +310,12 @@ module Fabric {
         }, {
           method: 'POST',
           success: () => {
-            notification('success', success + ' ' + thing);
+            Core.notification('success', success + ' ' + thing);
             $scope.newThingName = '';
             Core.$apply($scope);
           },
           error: (response) => {
-            notification('error', 'Failed to ' + error + ' ' + thing + ' due to ' + response.error);
+            Core.notification('error', 'Failed to ' + error + ' ' + thing + ' due to ' + response.error);
             Core.$apply($scope);
           }
         });
@@ -336,7 +336,7 @@ module Fabric {
           $scope.callSetProfileThing('Added', 'add', $scope.newThingName);
 
         } else {
-          notification('error', 'There is already a ' + $scope.thingName + ' with the name ' + $scope.newThingName);
+          Core.notification('error', 'There is already a ' + $scope.thingName + ' with the name ' + $scope.newThingName);
         }
       };
 
@@ -349,11 +349,11 @@ module Fabric {
       $scope.doDeleteFile = () => {
         $scope.deleteFileDialog = false;
         deleteConfigFile(jolokia, $scope.versionId, $scope.profileId, $scope.markedForDeletion, () => {
-          notification('success', 'Deleted file ' + $scope.markedForDeletion);
+          Core.notification('success', 'Deleted file ' + $scope.markedForDeletion);
           $scope.markedForDeletion = '';
           Core.$apply($scope);
         }, (response) => {
-          notification('error', 'Failed to delete file ' + $scope.markedForDeletion + ' due to ' + response.error);
+          Core.notification('error', 'Failed to delete file ' + $scope.markedForDeletion + ' due to ' + response.error);
           $scope.markedForDeletion = '';
           Core.$apply($scope);
         });
@@ -362,10 +362,10 @@ module Fabric {
       $scope.doCreateFile = () => {
         $scope.newFileDialog = false;
         newConfigFile(jolokia, $scope.versionId, $scope.profileId, $scope.newFileName, () => {
-          notification('success', 'Created new configuration file ' + $scope.newFileName);
+          Core.notification('success', 'Created new configuration file ' + $scope.newFileName);
           $location.path("/fabric/profile/" + $scope.versionId + "/" + $scope.profileId + "/" + $scope.newFileName);
         }, (response) => {
-          notification('error', 'Failed to create ' + $scope.newFileName + ' due to ' + response.error);
+          Core.notification('error', 'Failed to create ' + $scope.newFileName + ' due to ' + response.error);
         })
       };
 
@@ -379,14 +379,14 @@ module Fabric {
           $scope.newProfileName = parts.join('-');
         }
 
-        notification('info', 'Copying ' + $scope.profileId + ' to ' + $scope.newProfileName);
+        Core.notification('info', 'Copying ' + $scope.profileId + ' to ' + $scope.newProfileName);
 
         copyProfile(jolokia, $scope.versionId, $scope.profileId, $scope.newProfileName, true, () => {
-          notification('success', 'Created new profile ' + $scope.newProfileName);
+          Core.notification('success', 'Created new profile ' + $scope.newProfileName);
           Fabric.gotoProfile(workspace, jolokia, localStorage, $location, $scope.versionId, {id: $scope.newProfileName });
           Core.$apply($scope);
         }, (response) => {
-          notification('error', 'Failed to create new profile ' + $scope.newProfileName + ' due to ' + response.error);
+          Core.notification('error', 'Failed to create new profile ' + $scope.newProfileName + ' due to ' + response.error);
           Core.$apply($scope);
         });
       };
@@ -472,11 +472,11 @@ module Fabric {
         }, {
           method: 'POST',
           success: () => {
-            notification('success', "System properties updated");
+            Core.notification('success', "System properties updated");
             Core.$apply($scope);
           },
           error: (response) => {
-            notification('error', 'Failed to update system properties due to ' + response.error);
+            Core.notification('error', 'Failed to update system properties due to ' + response.error);
             Core.$apply($scope);
           }
         });

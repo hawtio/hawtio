@@ -268,11 +268,11 @@ module UI {
     $scope.transcludedValue = "and this is transcluded";
 
     $scope.onCancelled = (number) => {
-      notification('info', 'cancelled ' + number);
+      Core.notification('info', 'cancelled ' + number);
     }
 
     $scope.onOk = (number) => {
-      notification('info', number + ' ok!');
+      Core.notification('info', number + ' ok!');
     }
 
     $scope.showSlideoutRight = false;

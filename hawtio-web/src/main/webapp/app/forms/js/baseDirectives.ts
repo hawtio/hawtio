@@ -104,7 +104,7 @@ module Forms {
           defaultLabel = id.substring(idx + 1);
         }
       }
-      group.append(Forms.getLabel(config, config, attrs["title"] || humanizeValue(defaultLabel)));
+      group.append(Forms.getLabel(config, config, attrs["title"] || Core.humanizeValue(defaultLabel)));
       var controlDiv = Forms.getControlDiv(config);
       controlDiv.append(this.getInput(config, config, id, modelName));
       controlDiv.append(Forms.getHelpSpan(config, config, id));
@@ -456,7 +456,7 @@ module Forms {
         // TODO ideally we should merge this config with whatever folks have hand-defined
         var tableConfigScopeName = tableConfigPaths.join(".");
         //var cellDescription = a["description"] || humanizeValue(id);
-        var cellDescription = humanizeValue(id);
+        var cellDescription = Core.humanizeValue(id);
         tableConfig = {
           formConfig: config,
           title: cellDescription,

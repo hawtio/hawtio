@@ -82,7 +82,7 @@ module Camel {
     };
     
     var saveWorked = () => {
-      notification("success", "Route updated!");
+      Core.notification("success", "Route updated!");
       // lets clear the cached route XML so we reload the new value
       clearSelectedRouteNode(workspace);
       updateRoutes();
@@ -98,7 +98,7 @@ module Camel {
         if (mbean) {
           jolokia.execute(mbean, "addOrUpdateRoutesFromXml(java.lang.String)", decoded, onSuccess(saveWorked));
         } else {
-          notification("error", "Could not find CamelContext MBean!");
+          Core.notification("error", "Could not find CamelContext MBean!");
         }
       }
     };

@@ -32,7 +32,7 @@ module Osgi {
         }
 
         function editWritten(status : string, message : string) {
-            notification(status, message);
+            Core.notification(status, message);
             updateContents();
         }
 

@@ -191,7 +191,7 @@ module Camel {
     }
 
     function tidyJmxName(jmxName) {
-      return jmxName ? trimQuotes(jmxName) : jmxName;
+      return jmxName ? Core.trimQuotes(jmxName) : jmxName;
     }
   }]);
 }

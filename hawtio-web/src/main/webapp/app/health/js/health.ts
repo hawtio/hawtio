@@ -295,7 +295,7 @@ module Health {
                 }
                 var kind = aData["kind"];
                 if (!kind) {
-                  kind = humanizeValue(id.substring(idx + 1));
+                  kind = Core.humanizeValue(id.substring(idx + 1));
                   aData["kind"] = kind;
                 }
               }

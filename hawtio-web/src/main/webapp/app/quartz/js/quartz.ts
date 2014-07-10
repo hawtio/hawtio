@@ -306,7 +306,7 @@ module Quartz {
         jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
           operation: "standby"},
         onSuccess((response) => {
-          notification("success", "Paused scheduler " + $scope.selectedScheduler.SchedulerName);
+          Core.notification("success", "Paused scheduler " + $scope.selectedScheduler.SchedulerName);
         }
         ));
       }
@@ -317,7 +317,7 @@ module Quartz {
         jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
           operation: "start"},
         onSuccess((response) => {
-          notification("success", "Started scheduler " + $scope.selectedScheduler.SchedulerName);
+          Core.notification("success", "Started scheduler " + $scope.selectedScheduler.SchedulerName);
         }
         ));
       }
@@ -343,7 +343,7 @@ module Quartz {
         jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
           operation: "pauseTrigger", arguments: [triggerName, groupName]},
           onSuccess((response) => {
-            notification("success", "Paused trigger " + groupName + "/" + triggerName);
+            Core.notification("success", "Paused trigger " + groupName + "/" + triggerName);
           }
         ));
       }
@@ -357,7 +357,7 @@ module Quartz {
         jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
           operation: "resumeTrigger", arguments: [triggerName, groupName]},
           onSuccess((response) => {
-            notification("success", "Resumed trigger " + groupName + "/" + triggerName);
+            Core.notification("success", "Resumed trigger " + groupName + "/" + triggerName);
           }
         ));
       }
@@ -415,7 +415,7 @@ module Quartz {
             cron,
             null]},
           onSuccess((response) => {
-            notification("success", "Updated trigger " + groupName + "/" + triggerName);
+            Core.notification("success", "Updated trigger " + groupName + "/" + triggerName);
           }
         ));
       } else if (repeatCounter || repeatInterval) {
@@ -438,7 +438,7 @@ module Quartz {
               repeatCounter,
               repeatInterval]},
           onSuccess((response) => {
-              notification("success", "Updated trigger " + groupName + "/" + triggerName);
+              Core.notification("success", "Updated trigger " + groupName + "/" + triggerName);
             }
           ));
       }

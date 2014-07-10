@@ -38,10 +38,10 @@ module Fabric {
     $scope.save = () => {
       saveConfigFile(jolokia, $scope.versionId, $scope.profileId, $scope.fname, $scope.data.encodeBase64(), () => {
         $scope.dirty = false;
-        notification('success', "Saved " + $scope.fname);
+        Core.notification('success', "Saved " + $scope.fname);
         $location.path("/fabric/profile/" + $scope.versionId + "/" + $scope.profileId);
       }, (response) => {
-        notification('error', "Failed to save " + $scope.fname + " due to " + response.error);
+        Core.notification('error', "Failed to save " + $scope.fname + " due to " + response.error);
       });
     };
 

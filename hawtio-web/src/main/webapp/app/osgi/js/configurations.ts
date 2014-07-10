@@ -61,7 +61,7 @@ module Osgi {
       if (mbean && newPid) {
         var json = JSON.stringify({});
         $scope.jolokia.execute(mbean, "configAdminUpdate", newPid, json, onSuccess(response => {
-          notification("success", "Successfully created pid: " + newPid);
+          Core.notification("success", "Successfully created pid: " + newPid);
           updateTableContents();
         }));
       }
@@ -247,7 +247,7 @@ module Osgi {
     function errorHandler(message) {
       return {
         error: (response) => {
-          notification("error", message + response['error'] || response);
+          Core.notification("error", message + response['error'] || response);
           Core.defaultJolokiaErrorHandler(response);
         }
       };

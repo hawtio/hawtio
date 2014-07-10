@@ -64,7 +64,7 @@ module Fabric {
       var responseJson = angular.toJson(response.value);
       if (responseJson !== $scope.responseJson) {
         if (angular.isDefined($scope.responseJson)) {
-          notification('info', "Profile feature definitions updated");
+          Core.notification('info', "Profile feature definitions updated");
         }
         $scope.responseJson = responseJson;
         $scope.features = response.value.featureDefinitions;
@@ -160,10 +160,10 @@ module Fabric {
       configFile = lines.join('\n');
 
       saveConfigFile(jolokia, $scope.versionId, $scope.profileId, 'io.fabric8.agent.properties', configFile.encodeBase64(), () => {
-          notification('success', "Updated feature definitions...");
+          Core.notification('success', "Updated feature definitions...");
           Core.$apply($scope);
         }, (response) => {
-          notification('error', "Failed to save feature definitions due to " + response.error);
+          Core.notification('error', "Failed to save feature definitions due to " + response.error);
           Core.$apply($scope);
         });
     };

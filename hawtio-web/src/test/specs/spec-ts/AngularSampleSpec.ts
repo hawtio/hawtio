@@ -1,6 +1,6 @@
-/// <reference path="../d.ts/jasmine.d.ts" />
+/// <reference path="../../d.ts/jasmine.d.ts" />
 /// <reference path="../../../main/d.ts/angular.d.ts" />
-/// <reference path="../d.ts/angular-mocks.d.ts" />
+/// <reference path="../../d.ts/angular-mocks.d.ts" />
 describe("Angular Mocks", function () {
 
   var $rootScope;

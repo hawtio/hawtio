@@ -158,7 +158,7 @@ module Jmx {
       if (mbean) {
         jolokia.setAttribute(mbean, key, value,
           onSuccess((response) => {
-              notification("success", "Updated attribute " + key);
+              Core.notification("success", "Updated attribute " + key);
             }
           ));
       }
@@ -507,7 +507,7 @@ module Jmx {
                   if (!map[key]) {
                     extraDefs.push({
                       field: key,
-                      displayName: key === '_id' ? 'Object name' : humanizeValue(key),
+                      displayName: key === '_id' ? 'Object name' : Core.humanizeValue(key),
                       visible: defaultSize === 0
                     });
                   }
@@ -573,7 +573,7 @@ module Jmx {
                 }
                 // the value must be string as the sorting/filtering of the table relies on that
                 var type = lookupAttributeType(key);
-                var data = {key: key, name: humanizeValue(key), value: safeNullAsString(value, type)};
+                var data = {key: key, name: Core.humanizeValue(key), value: safeNullAsString(value, type)};
 
                 generateSummaryAndDetail(key, data);
                 properties.push(data);
@@ -640,8 +640,8 @@ module Jmx {
         angular.forEach(keys, (key) => {
           var value = object[key];
           detailHtml += "<tr><td>"
-            + humanizeValue(key) + "</td><td>" + value + "</td></tr>";
-          summary += "" + humanizeValue(key) + ": " + value + "  "
+            + Core.humanizeValue(key) + "</td><td>" + value + "</td></tr>";
+          summary += "" + Core.humanizeValue(key) + ": " + value + "  "
         });
         detailHtml += "</table>";
         data.summary = summary;

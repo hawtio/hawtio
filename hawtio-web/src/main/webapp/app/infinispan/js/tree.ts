@@ -43,7 +43,7 @@ module Infinispan {
           angular.forEach(folder.children, (value, key) => {
             if (value.objectName && value.title === "Statistics") {
               var cacheName = value.parent.parent.title || value.title;
-              var name = humanizeValue(cacheName);
+              var name = Core.humanizeValue(cacheName);
               var cacheFolder = new Folder(name);
               cacheFolder.addClass = "org-infinispn-cache";
               cacheFolder.typeName = "Cache";

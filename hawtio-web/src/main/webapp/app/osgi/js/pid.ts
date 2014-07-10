@@ -40,7 +40,7 @@ module Osgi {
 
     function updatePid(mbean, pid, data) {
       var completeFn = (response) => {
-        notification("success", "Successfully updated pid: " + pid);
+        Core.notification("success", "Successfully updated pid: " + pid);
 
         if (pid && $scope.factoryPid && !$routeParams.pid && !$scope.zkPid) {
           // we've just created a new pid so lets move to the full pid URL
@@ -104,7 +104,7 @@ module Osgi {
     function errorHandler(message) {
        return {
          error: (response) => {
-           notification("error", message + "\n" + response['error'] || response);
+           Core.notification("error", message + "\n" + response['error'] || response);
            Core.defaultJolokiaErrorHandler(response);
          }
        }
@@ -151,10 +151,10 @@ module Osgi {
           arguments: [$scope.pid]
         }, {
           error: function (response) {
-            notification("error", response.error);
+            Core.notification("error", response.error);
           },
           success: function (response) {
-            notification("success", "Successfully deleted pid: " + $scope.pid);
+            Core.notification("success", "Successfully deleted pid: " + $scope.pid);
             $location.path($scope.configurationsLink);
           }
         });

@@ -230,11 +230,11 @@ module Wiki {
     });
 
     $scope.onSubmit = (json, form) => {
-      notification("success", "Submitted form :" + form.get(0).name + " data: " + JSON.stringify(json));
+      Core.notification("success", "Submitted form :" + form.get(0).name + " data: " + JSON.stringify(json));
     };
 
     $scope.onCancel = (form) => {
-      notification("success", "Clicked cancel!");
+      Core.notification("success", "Clicked cancel!");
     };
 
 
@@ -266,10 +266,10 @@ module Wiki {
       var exemplar = template.exemplar;
 
       var commitMessage = "Created " + template.label;
-      var exemplarUri = url("/app/wiki/exemplar/" + exemplar);
+      var exemplarUri = Core.url("/app/wiki/exemplar/" + exemplar);
 
       if (template.folder) {
-        notification("success", "Creating new folder " + name);
+        Core.notification("success", "Creating new folder " + name);
 
         wikiRepository.createDirectory($scope.branch, path, commitMessage, (status) => {
           $scope.addDialog.close();
@@ -322,16 +322,16 @@ module Wiki {
               var link = Wiki.viewLink($scope.branch, targetPath, $location);
               goToLink(link, $timeout, $location);
             }, (response) => {
-              notification('error', 'Failed to set ReadMe.md data in profile ' + profileName + ' due to ' + response.error);
+              Core.notification('error', 'Failed to set ReadMe.md data in profile ' + profileName + ' due to ' + response.error);
               Core.$apply($scope);
             });
           }, (response) => {
-            notification('error', 'Failed to create ReadMe.md in profile ' + profileName + ' due to ' + response.error);
+            Core.notification('error', 'Failed to create ReadMe.md in profile ' + profileName + ' due to ' + response.error);
             Core.$apply($scope);
           });
 
         }, (response) => {
-          notification('error', 'Failed to create profile ' + profileName + ' due to ' + response.error);
+          Core.notification('error', 'Failed to create profile ' + profileName + ' due to ' + response.error);
           Core.$apply($scope);
         })
 
@@ -353,7 +353,7 @@ module Wiki {
             });
           }, (error)=> {
             generateDialog.close();
-            notification('error', error);
+            Core.notification('error', error);
           });
         };
         generateDialog.open();
@@ -417,7 +417,7 @@ module Wiki {
           if (idx + 1 === fileCount) {
             $scope.gridOptions.selectedItems.splice(0, fileCount);
             var message = Core.maybePlural(fileCount, "document");
-            notification("success", "Deleted " + message);
+            Core.notification("success", "Deleted " + message);
             Core.$apply($scope);
             updateView();
           }
@@ -464,7 +464,7 @@ module Wiki {
           var oldPath = $scope.pageId + "/" + oldName;
           log.debug("About to rename file " + oldPath + " to " + newPath);
           $scope.git = wikiRepository.rename($scope.branch, oldPath, newPath, null, (result) => {
-            notification("success", "Renamed file to  " + newName);
+            Core.notification("success", "Renamed file to  " + newName);
             $scope.gridOptions.selectedItems.splice(0, 1);
             $scope.renameDialog.close();
             Core.$apply($scope);
@@ -502,7 +502,7 @@ module Wiki {
             if (idx + 1 === fileCount) {
               $scope.gridOptions.selectedItems.splice(0, fileCount);
               var message = Core.maybePlural(fileCount, "document");
-              notification("success", "Moved " + message + " to " + newPath);
+              Core.notification("success", "Moved " + message + " to " + newPath);
               $scope.moveDialog.close();
               Core.$apply($scope);
               updateView();

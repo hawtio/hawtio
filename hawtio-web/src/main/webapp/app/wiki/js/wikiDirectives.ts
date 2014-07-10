@@ -31,7 +31,7 @@ module Wiki {
             var href = (a.attr('src') || "").trim();
             if (href) {
               if (href.startsWith("/")) {
-                href = url(href);
+                href = Core.url(href);
                 a.attr('src', href);
 
                 // lets avoid this element being reprocessed

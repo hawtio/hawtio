@@ -379,7 +379,7 @@ module Fabric {
                 if (json.number) {
                   cont = Core.maybePlural(json.number, "container");
                 }
-                notification('error', "Creating " + cont  + " failed: " + message);
+                Core.notification('error', "Creating " + cont  + " failed: " + message);
               }
             }
 
@@ -387,21 +387,21 @@ module Fabric {
             var text = response[json.name];
             if (text && text.toLowerCase().has('already exists')) {
               error = true;
-              notification('error', "Creating container " + json.name + " failed as a container with that name already exists.");
+              Core.notification('error', "Creating container " + json.name + " failed as a container with that name already exists.");
             }
 
             angular.forEach(response.value, function(value, key) {
               error = true;
-              notification('error', "Creating container " + key + " failed: " + value);
+              Core.notification('error', "Creating container " + key + " failed: " + value);
             });
             if (!error) {
               SelectionHelpers.clearGroup(ProfileCart);
-              notification('success', "Successfully created containers");
+              Core.notification('success', "Successfully created containers");
             }
             Core.$apply($scope);
           },
           error: (response) => {
-            notification('error', "Error creating containers: " + response.error);
+            Core.notification('error', "Error creating containers: " + response.error);
             Core.$apply($scope);
           }
         });
