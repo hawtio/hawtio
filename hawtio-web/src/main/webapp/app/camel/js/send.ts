@@ -1,6 +1,6 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
-  _module.controller("Camel.SendMessageController", ["$route", "$scope", "$element", "$timeout", "workspace", "jolokia", "localStorage", "$location", ($route, $scope, $element, $timeout, workspace:Workspace, jolokia, localStorage, $location) => {
+  _module.controller("Camel.SendMessageController", ["$route", "$scope", "$element", "$timeout", "workspace", "jolokia", "localStorage", "$location", "activeMQMessage", ($route, $scope, $element, $timeout, workspace:Workspace, jolokia, localStorage, $location, activeMQMessage) => {
     var log:Logging.Logger = Logger.get("Camel");
 
     log.info("Loaded page!");
@@ -11,6 +11,9 @@ module Camel {
     $scope.profileFileNameToProfileId = {};
     $scope.selectedFiles = {};
     $scope.container = {};
+    $scope.message = "\n\n\n\n";
+    $scope.headers = [];
+
 
     // bind model values to search params...
     Core.bindModelToSearchParam($scope, $location, "tab", "subtab", "compose");
@@ -27,6 +30,18 @@ module Camel {
       $scope.localStorage = localStorage;
       $scope.$watch('localStorage.activemqUserName', $scope.checkCredentials);
       $scope.$watch('localStorage.activemqPassword', $scope.checkCredentials);
+
+        //prefill if it's a resent
+        if(activeMQMessage.message !== null){
+           $scope.message = activeMQMessage.message.bodyText;
+           if( activeMQMessage.message.PropertiesText !== null){
+               for( var p in activeMQMessage.message.StringProperties){
+                   $scope.headers.push({name: p, value: activeMQMessage.message.StringProperties[p]});
+               }
+           }
+        }
+        // always reset at the end
+        activeMQMessage.message = null;
     }
 
     $scope.openPrefs = () => {
@@ -36,7 +51,7 @@ module Camel {
 
     var LANGUAGE_FORMAT_PREFERENCE = "defaultLanguageFormat";
     var sourceFormat = workspace.getLocalStorage(LANGUAGE_FORMAT_PREFERENCE) || "javascript";
-    $scope.message = "\n\n\n\n";
+
     // TODO Remove this if possible
     $scope.codeMirror = undefined;
     var options = {
@@ -51,8 +66,6 @@ module Camel {
       }
     };
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
-
-    $scope.headers = [];
 
     $scope.addHeader = () => {
       $scope.headers.push({name: "", value: ""});

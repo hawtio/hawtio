@@ -41,6 +41,10 @@ module Camel {
 
   _module.filter('camelIconClass', () => iconClass);
 
+  _module.factory('activeMQMessage', () => {
+      return { 'message' : null}
+  });
+
   _module.run(["workspace", "jolokia", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry", (workspace:Workspace, jolokia, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) => {
 
     viewRegistry['camel/endpoint/'] = layoutFull;
