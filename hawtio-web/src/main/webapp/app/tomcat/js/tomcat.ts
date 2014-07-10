@@ -258,7 +258,7 @@ module Tomcat {
                 var data = jolokia.request({type: "read", mbean: mbean, attribute: ["port", "scheme", "protocol"]});
                 if (data && data.value) {
                   function isHttp(value) {
-                    return value && value.toString().toLowerCase().startsWith("http");
+                    return value && value.toString().toLowerCase().indexOf("http") >= 0;
                   }
 
                   // protocol must be http
