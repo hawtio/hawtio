@@ -1,6 +1,6 @@
 /// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
-  export var BrowseQueueController = _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", ($scope, workspace:Workspace, jolokia, localStorage) => {
+  export var BrowseQueueController = _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", ($scope, workspace:Workspace, jolokia, localStorage, location, activeMQMessage) => {
 
     $scope.searchText = '';
 
@@ -93,22 +93,33 @@ module ActiveMQ {
 
     ActiveMQ.decorate($scope);
 
-    $scope.moveMessages = () => {
-        var selection = workspace.selection;
-        var mbean = selection.objectName;
-        if (mbean && selection) {
-          var selectedItems = $scope.gridOptions.selectedItems;
-          $scope.message = "Moved " + Core.maybePlural(selectedItems.length, "message" + " to " + $scope.queueName);
-            var operation = "moveMessageTo(java.lang.String, java.lang.String)";
-            angular.forEach(selectedItems, (item, idx) => {
-                var id = item.JMSMessageID;
-                if (id) {
-                    var callback = (idx + 1 < selectedItems.length) ? intermediateResult : moveSuccess;
-                    jolokia.execute(mbean, operation, id, $scope.queueName, onSuccess(callback));
-                }
-            });
-        }
-    };
+      $scope.moveMessages = () => {
+          var selection = workspace.selection;
+          var mbean = selection.objectName;
+          if (mbean && selection) {
+              var selectedItems = $scope.gridOptions.selectedItems;
+              $scope.message = "Moved " + Core.maybePlural(selectedItems.length, "message" + " to " + $scope.queueName);
+              var operation = "moveMessageTo(java.lang.String, java.lang.String)";
+              angular.forEach(selectedItems, (item, idx) => {
+                  var id = item.JMSMessageID;
+                  if (id) {
+                      var callback = (idx + 1 < selectedItems.length) ? intermediateResult : moveSuccess;
+                      jolokia.execute(mbean, operation, id, $scope.queueName, onSuccess(callback));
+                  }
+              });
+          }
+      };
+
+      $scope.resendMessage = () => {
+          var selection = workspace.selection;
+          var mbean = selection.objectName;
+          if (mbean && selection) {
+              var selectedItems = $scope.gridOptions.selectedItems;
+              //always assume a single message
+              activeMQMessage.message = selectedItems[0];
+              location.path('activemq/sendMessage');
+          }
+      };
 
     $scope.deleteMessages = () => {
       var selection = workspace.selection;
