@@ -1119,7 +1119,7 @@ module Core {
         connectUrl = connectUrl.replace(":", "/");
         connectUrl = Core.trimLeading(connectUrl, "/");
         connectUrl = Core.trimTrailing(connectUrl, "/");
-        connectUrl = url("/proxy/" + connectUrl);
+        connectUrl = Core.url("/proxy/" + connectUrl);
     }
     return connectUrl;
   }
@@ -1180,7 +1180,7 @@ module Core {
         connectUrl = Core.trimLeading(connectUrl, "/");
         connectUrl = Core.trimTrailing(connectUrl, "/");
         connectUrl = options.scheme + "://" + connectUrl;
-        connectUrl = url("/proxy/" + connectUrl);
+        connectUrl = Core.url("/proxy/" + connectUrl);
       } else {
         if (connectUrl.indexOf("://") < 0) {
           connectUrl = options.scheme + "://" + connectUrl;
@@ -1211,7 +1211,7 @@ module Core {
       }
 
       if (useProxy) {
-        connectUrl = url("/proxy/" + connectUrl);
+        connectUrl = Core.url("/proxy/" + connectUrl);
       }
       console.log("going to server: " + connectUrl + " as user " + options.userName);
       localStorage[connectUrl] = json;

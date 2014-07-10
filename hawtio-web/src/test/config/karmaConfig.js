@@ -81,7 +81,7 @@ module.exports = function(config) {
       libdir + 'ZeroClipboard.min.js',
       libdir + 'hawtio-plugin-loader.js',
       'src/main/webapp/app/app.js',
-      'src/test/specs/spec-js/*.js',
+      'src/test/specs/spec-js/**/*.js',
       'src/test/fixtures/*.html'
     ],
 

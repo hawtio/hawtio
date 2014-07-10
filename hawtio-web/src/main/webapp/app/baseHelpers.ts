@@ -1,6 +1,3 @@
-/**
- * @module Core
- */
 /// <reference path="../../d.ts/angular.d.ts"/>
 /// <reference path="../../d.ts/angular-resource.d.ts"/>
 /// <reference path="../../d.ts/bootstrap-2.1.d.ts"/>
@@ -24,15 +21,33 @@
 /// <reference path="../../d.ts/schemas.d.ts"/>
 /// <reference path="../../d.ts/sugar-1.3.d.ts"/>
 /// <reference path="../../d.ts/toastr.d.ts"/>
+/**
+ * @module Core
+ */
 module Core {
 
-  var _urlPrefix: string = null;
+  var _urlPrefix:string = null;
 
-  export function url(path: string): string {
+  /**
+   * Private method to support testing.
+   *
+   * @private
+   */
+  export function _resetUrlPrefix() {
+    _urlPrefix = null;
+  }
+
+  /**
+   * Prefixes absolute URLs with current window.location.pathname
+   *
+   * @param path
+   * @returns {string}
+   */
+  export function url(path:string):string {
     if (path) {
       if (path.startsWith && path.startsWith("/")) {
         if (!_urlPrefix) {
-          _urlPrefix = window.location.pathname || "";
+          _urlPrefix = Core.windowLocation().pathname || "";
           var idx = _urlPrefix.lastIndexOf("/");
           if (idx >= 0) {
             _urlPrefix = _urlPrefix.substring(0, idx);
@@ -46,19 +61,29 @@ module Core {
     return path;
   }
 
+  /**
+   * Returns location of the global window
+   *
+   * @returns {string}
+   */
+  export function windowLocation():Location {
+    return window.location;
+  }
+
   // use a better implementation of unescapeHTML
   String.prototype.unescapeHTML = function() {
-      var txt = document.createElement("textarea");
-      txt.innerHTML = this;
-      return txt.value;
+    var txt = document.createElement("textarea");
+    txt.innerHTML = this;
+    return txt.value;
   };
 
   // add object.keys if we don't have it, used
   // in a few places
   if (!Object.keys) {
+    console.debug("Creating hawt.io version of Object.keys()");
     Object.keys = function(obj) {
       var keys = [],
-          k;
+        k;
       for (k in obj) {
         if (Object.prototype.hasOwnProperty.call(obj, k)) {
           keys.push(k);
@@ -68,13 +93,27 @@ module Core {
     };
   }
 
+  /**
+   * Private method to support testing.
+   *
+   * @private
+   */
+  export function _resetJolokiaUrls():string[] {
+    // Add any other known possible jolokia URLs here
+    jolokiaUrls = [
+      Core.url("jolokia"), // instance configured by hawtio-web war file
+      "/jolokia" // instance that's already installed in a karaf container for example
+    ];
+    return jolokiaUrls;
+  }
 
-  // Add any other known possible jolokia URLs here
-  var jolokiaUrls:string[] = [
-    url("jolokia"),    // instance configured by hawtio-web war file
-    "/jolokia"         // instance that's already installed in a karaf container for example
-  ];
-  
+  var jolokiaUrls:string[] = Core._resetJolokiaUrls();
+
+  /**
+   * Returns Jolokia URL by checking its availability if not in local mode
+   *
+   * @returns {*}
+   */
   export function getJolokiaUrl():any {
     var query = hawtioPluginLoader.parseQueryString();
     var localMode = query['localMode'];
@@ -89,7 +128,7 @@ module Core {
     }
     var answer:any = uri ? decodeURIComponent(uri) : null;
     if (!answer) {
-      answer = jolokiaUrls.find(function (url) {
+      answer = jolokiaUrls.find(function(url) {
         var jqxhr = $.ajax(url, {
           async: false,
           username: 'public',
@@ -100,9 +139,6 @@ module Core {
     }
     return answer;
   }
-
-
-
 
   /**
    * Ensure our main app container takes up at least the viewport
@@ -115,9 +151,8 @@ module Core {
     $("#main").css("min-height", "" + containerHeight + "px");
   }
 
-
   /**
-   * Returns true if we are running inside a Chrome app or extension
+   * Returns true if we are running inside a Chrome app or (and?) extension
    */
   export function isChromeApp() {
     var answer = false;
@@ -133,6 +168,7 @@ module Core {
   /**
    * Adds the specified CSS file to the document's head, handy
    * for external plugins that might bring along their own CSS
+   *
    * @param path
    */
   export function addCSS(path) {
@@ -156,11 +192,12 @@ module Core {
 
   /**
    * Wrapper to get the window local storage object
+   *
    * @returns {WindowLocalStorage}
    */
   export function getLocalStorage() {
     // TODO Create correct implementation of windowLocalStorage
-    var storage:WindowLocalStorage = window.localStorage || <any> (function () {
+    var storage:WindowLocalStorage = window.localStorage || <any> (function() {
       return dummyStorage;
     })();
     return storage;
@@ -168,6 +205,7 @@ module Core {
 
   /**
    * If the value is not an array then wrap it in one
+   *
    * @method asArray
    * @for Core
    * @static
@@ -198,7 +236,7 @@ module Core {
     }
 
     if (angular.isString(value)) {
-      switch(value.toLowerCase()) {
+      switch (value.toLowerCase()) {
         case "true":
         case "1":
         case "yes":
@@ -215,40 +253,70 @@ module Core {
     throw new Error("Can't convert value " + value + " to boolean");
   }
 
+  /**
+   * Converts boolean value to string "true" or "false"
+   *
+   * @param value
+   * @returns {string}
+   */
   export function booleanToString(value:boolean):string {
     return "" + value;
   }
 
-  export function parseIntValue(value, description: string = "integer") {
+  /**
+   * object to integer converter
+   *
+   * @param value
+   * @param description
+   * @returns {*}
+   */
+  export function parseIntValue(value, description:string = "integer") {
     if (angular.isString(value)) {
       try {
         return parseInt(value);
       } catch (e) {
         console.log("Failed to parse " + description + " with text '" + value + "'");
       }
+    } else if (angular.isNumber(value)) {
+      return value;
     }
     return null;
   }
 
+  /**
+   * Formats numbers as Strings.
+   *
+   * @param value
+   * @returns {string}
+   */
   export function numberToString(value:number):string {
     return "" + value;
   }
 
-  export function parseFloatValue(value, description: string = "float") {
+  /**
+   * object to integer converter
+   *
+   * @param value
+   * @param description
+   * @returns {*}
+   */
+  export function parseFloatValue(value, description:string = "float") {
     if (angular.isString(value)) {
       try {
         return parseFloat(value);
       } catch (e) {
         console.log("Failed to parse " + description + " with text '" + value + "'");
       }
+    } else if (angular.isNumber(value)) {
+      return value;
     }
     return null;
   }
 
-
   /**
    * Navigates the given set of paths in turn on the source object
    * and returns the last most value of the path or null if it could not be found.
+   *
    * @method pathGet
    * @for Core
    * @static
@@ -274,10 +342,10 @@ module Core {
     return value;
   }
 
-
   /**
    * Navigates the given set of paths in turn on the source object
    * and updates the last path value to the given newValue
+   *
    * @method pathSet
    * @for Core
    * @static
@@ -301,9 +369,9 @@ module Core {
     return value;
   }
 
-
   /**
    * Performs a $scope.$apply() if not in a digest right now otherwise it will fire a digest later
+   *
    * @method $applyNowOrLater
    * @for Core
    * @static
@@ -321,6 +389,7 @@ module Core {
 
   /**
    * Performs a $scope.$apply() after the given timeout period
+   *
    * @method $applyLater
    * @for Core
    * @static
@@ -333,9 +402,9 @@ module Core {
     }, timeout);
   }
 
-
   /**
    * Performs a $scope.$apply() if not in a digest or apply phase on the given scope
+   *
    * @method $apply
    * @for Core
    * @static
@@ -348,6 +417,14 @@ module Core {
     }
   }
 
+  /**
+   * Performs a $scope.$digest() if not in a digest or apply phase on the given scope
+   *
+   * @method $apply
+   * @for Core
+   * @static
+   * @param {*} $scope
+   */
   export function $digest($scope:ng.IScope) {
     var phase = $scope.$$phase || $scope.$root.$$phase;
     if (!phase) {
@@ -392,6 +469,12 @@ module Core {
     "\"": "&quot;"
   };
 
+  /**
+   * static unescapeHtml
+   *
+   * @param str
+   * @returns {any}
+   */
   export function unescapeHtml(str) {
     angular.forEach(_escapeHtmlChars, (value, key) => {
       var regex = new RegExp(value, "g");
@@ -401,6 +484,12 @@ module Core {
     return str;
   }
 
+  /**
+   * static escapeHtml method
+   *
+   * @param str
+   * @returns {*}
+   */
   export function escapeHtml(str) {
     if (angular.isString(str)) {
       var newStr = "";
@@ -455,10 +544,7 @@ module Core {
    * @param message the text to display
    *
    */
-
-  export function notification (type:string, message:string, options:any = null) {
-    var w:any = window;
-
+  export function notification(type:string, message:string, options:any = null) {
     if (options === null) {
       options = {};
     }
@@ -478,10 +564,33 @@ module Core {
    * @static
    */
   export function clearNotifications() {
-    var w:any = window;
     toastr.clear();
   }
 
+  /**
+   * removes all quotes/apostrophes from beginning and end of string
+   *
+   * @param text
+   * @returns {string}
+   */
+  export function trimQuotes(text:string) {
+    if (text) {
+      while (text.endsWith('"') || text.endsWith("'")) {
+        text = text.substring(0, text.length - 1);
+      }
+      while (text.startsWith('"') || text.startsWith("'")) {
+        text = text.substring(1, text.length);
+      }
+    }
+    return text;
+  }
+
+  /**
+   * Converts camel-case and dash-separated strings into Human readable forms
+   *
+   * @param value
+   * @returns {*}
+   */
   export function humanizeValue(value:any):string {
     if (value) {
       var text = value.toString();
@@ -500,15 +609,4 @@ module Core {
     return value;
   }
 
-  export function trimQuotes(text:string) {
-    if (text) {
-      while (text.endsWith('"') || text.endsWith("'")) {
-        text = text.substring(0, text.length - 1);
-      }
-      while (text.startsWith('"') || text.startsWith("'")) {
-        text = text.substring(1, text.length);
-      }
-    }
-    return text;
-  }
 }

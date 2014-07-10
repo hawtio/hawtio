@@ -1,5 +1,5 @@
-/// <reference path="../lib/utils/testHelpers.ts"/>
-/// <reference path="../../../main/webapp/app/core/js/coreHelpers.ts"/>
+/// <reference path="../../lib/utils/testHelpers.ts"/>
+/// <reference path="../../../../main/webapp/app/core/js/coreHelpers.ts"/>
 describe("CoreHelpers", () => {
 
   it("parse version numbers", function () {

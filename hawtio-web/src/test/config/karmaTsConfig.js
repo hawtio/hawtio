@@ -83,8 +83,10 @@ module.exports = function(config) {
       libdir + 'dmr.js.nocache.js',
       libdir + 'ZeroClipboard.min.js',
       libdir + 'hawtio-plugin-loader.js',
-      'src/test/specs/lib/utils/testHelpers.ts',
+      'src/test/specs/lib/utils/testHelpers.ts', // only for a start
       'src/test/specs/lib/angular-mocks.js',
+      // our application
+      appdir + "baseHelpers.ts",
       'src/test/specs/spec-ts/*.ts'
     ],
 

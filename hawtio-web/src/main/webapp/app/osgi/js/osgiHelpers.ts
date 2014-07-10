@@ -359,7 +359,7 @@ module Osgi {
    * Creates a link to the given configuration pid and/or factoryPid
    */
     export function createConfigPidLink($scope, workspace, pid, factoryPid = null) {
-      return url("#" + createConfigPidPath($scope, pid, factoryPid) + workspace.hash())
+      return Core.url("#" + createConfigPidPath($scope, pid, factoryPid) + workspace.hash())
     }
 
   /**
