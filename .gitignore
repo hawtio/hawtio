@@ -18,3 +18,4 @@ runtime-EclipseApplication-m2eclipse
 tags
 node_modules
 hawtio-config
+.tscache

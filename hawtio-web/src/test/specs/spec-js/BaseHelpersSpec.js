@@ -1,6 +1,6 @@
 
-describe("BaseHelpers", function () {
-  beforeEach(function () {
+describe("BaseHelpers", function() {
+  beforeEach(function() {
     Core._resetUrlPrefix();
     Core._resetJolokiaUrls();
   });
@@ -21,7 +21,7 @@ describe("BaseHelpers", function () {
     expect(Core.url("/a/b/c")).toBe("/a/b/c");
   });
 
-  it("pathGet and pathSet work in nested structures with paths or arrays of paths", function () {
+  it("pathGet and pathSet work in nested structures with paths or arrays of paths", function() {
     var data = {
       "foo": {
         "a": {
@@ -50,7 +50,7 @@ describe("BaseHelpers", function () {
     expect("&lt;&amp;&quot&apos;&gt;".unescapeHTML()).toBe("<&\"'>");
   });
 
-  it("find correct object keys (actually it should use sugar.js version)", function () {
+  it("find correct object keys (actually it should use sugar.js version)", function() {
     expect(Object.keys(Object).length).toBe(0);
     try {
       Object.keys("");
@@ -63,25 +63,25 @@ describe("BaseHelpers", function () {
     expect(Object.keys({ a: "value", b: { c: "value" } }).length).toBe(2);
   });
 
-  it("Should get null jolokia url for localMode", function () {
+  it("Should get null jolokia url for localMode", function() {
     spyOn(hawtioPluginLoader, 'parseQueryString').andReturn({ localMode: true });
     spyOn(Core, 'windowLocation').andReturn({ pathname: "/a/b" });
     expect(Core.getJolokiaUrl()).toBeNull();
   });
 
-  it("Should get correct jolokia url for non-localMode", function () {
+  it("Should get correct jolokia url for non-localMode", function() {
     spyOn(hawtioPluginLoader, 'parseQueryString').andReturn({ localMode: false, url: [ "a%20b", "b" ] });
     expect(Core.getJolokiaUrl()).toBe("a b");
   });
 
-  it("Should get correct, relative jolokia url for non-localMode", function () {
+  it("Should get correct, relative jolokia url for non-localMode", function() {
     spyOn(hawtioPluginLoader, 'parseQueryString').andReturn({ localMode: false });
     spyOn(Core, 'windowLocation').andReturn({ pathname: "/a/b" });
     spyOn($, 'ajax').andReturn({ status: 200 });
     expect(Core.getJolokiaUrl()).toBe("jolokia");
   });
 
-  it("Should get correct, absolute jolokia url for non-localMode", function () {
+  it("Should get correct, absolute jolokia url for non-localMode", function() {
     spyOn(hawtioPluginLoader, 'parseQueryString').andReturn({ localMode: false });
     spyOn(Core, 'windowLocation').andReturn({ pathname: "/a/b" });
     spyOn($, 'ajax').andCallFake(function(url, params) {
@@ -102,14 +102,14 @@ describe("BaseHelpers", function () {
     expect(Core.isChromeApp()).toBeFalsy();// shouldn't we use app || extension instead of app && extension?
   });
 
-  it("Checks whether we have array or not", function () {
+  it("Checks whether we have array or not", function() {
     expect(Core.asArray("a").length).toBe(1);
     expect(Core.asArray(["a"]).length).toBe(1);
     expect(Core.asArray(["a", "b"]).length).toBe(2);
     expect(Core.asArray({ tab: ["a", "b"]}).length).toBe(1);
   });
 
-  it("parses boolean values", function () {
+  it("parses boolean values", function() {
     expect(Core.parseBooleanValue("TrUe")).toBeTruthy();
     expect(Core.parseBooleanValue("1")).toBeTruthy();
     expect(Core.parseBooleanValue("YES")).toBeTruthy();
@@ -130,12 +130,12 @@ describe("BaseHelpers", function () {
     }
   });
 
-  it("converts boolean values to strings", function () {
+  it("converts boolean values to strings", function() {
     expect(Core.booleanToString(true)).toBe("true");
     expect(Core.booleanToString(false)).toBe("false");
   });
 
-  it("converts values to integers", function () {
+  it("converts values to integers", function() {
     expect(Core.parseIntValue("13")).toBe(13);
     expect(Core.parseIntValue("13a")).toBe(13);
     expect(Core.parseIntValue("a13a")).toBeNaN();
@@ -143,12 +143,12 @@ describe("BaseHelpers", function () {
     expect(Core.parseIntValue(1)).toBe(1);
   });
 
-  it("converts integer values to strings", function () {
+  it("converts integer values to strings", function() {
     expect(Core.numberToString(1)).toBe("1");
     expect(Core.numberToString({})).toBe("[object Object]"); // TODO check this
   });
 
-  it("converts values to floats", function () {
+  it("converts values to floats", function() {
     expect(Core.parseFloatValue("13")).toBe(13);
     expect(Core.parseFloatValue("1.3a")).toBe(1.3);
     expect(Core.parseFloatValue("a13a")).toBeNaN();
@@ -166,11 +166,11 @@ describe("BaseHelpers", function () {
     expect($("span>b", div).length).toBe(1);
   });
 
-  it("escapes different htmls", function () {
+  it("escapes different htmls", function() {
     expect(Core.escapeHtml("<&\"'>")).toBe("&lt;&&quot;&#39;&gt;")
   });
 
-  it("checks the emptiness of strings", function () {
+  it("checks the emptiness of strings", function() {
     expect(Core.isBlank(null)).toBeTruthy();
     expect(Core.isBlank(undefined)).toBeTruthy();
     expect(Core.isBlank(" ")).toBeTruthy();
@@ -180,13 +180,13 @@ describe("BaseHelpers", function () {
     expect(Core.isBlank(1)).toBeFalsy();
   });
 
-  it("leaves a string without leading and trailing quites/apos", function () {
+  it("leaves a string without leading and trailing quites/apos", function() {
     expect(Core.trimQuotes("\"'''\"aaa")).toBe("aaa");
     expect(Core.trimQuotes("\"'''\"aaa''''\"''")).toBe("aaa");
     expect(Core.trimQuotes("a\"'''\"aaa''''\"''")).toBe("a\"'''\"aaa");
   });
 
-  it("Converts camel-case and dash-separated strings into Human readable forms", function () {
+  it("Converts camel-case and dash-separated strings into Human readable forms", function() {
     expect(Core.humanizeValue("\"aa-b-c\"")).toBe("Aa b c");
     expect(Core.humanizeValue("aB-c")).toBe("A b c");
   });
