@@ -96,6 +96,7 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       '**/*.html': ['html2js']
+      //'**/*.ts': ['typescript'] // too slow
     },
 
 
@@ -130,5 +131,15 @@ module.exports = function(config) {
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: false
+
+//    typescriptPreprocessor: {
+//      options: {
+//        target: 'ES5'
+//      },
+//      transformPath: function(path) {
+//        return path.replace(/\.ts$/, '.js');
+//      }
+//    }
+
   });
 };
