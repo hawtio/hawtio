@@ -40,8 +40,8 @@ module.exports = function(grunt) {
     typescript: {
       base: {
         src: [ "src/main/d.ts/*.d.ts", "src/main/webapp/app/**/*.ts" ],
-//        dest: "src/main/webapp/app/app.js",
-        dest: ".tscache/tsc",
+        dest: "src/main/webapp/app/app.js",
+//        dest: ".tscache/tsc",
         options: {
           comments: true,
           module: "commonjs",
@@ -49,9 +49,24 @@ module.exports = function(grunt) {
           declaration: false,
           watch: grunt.option("watch") ? {
             path: "src/main/webapp/app",
-            after: [ "concat:appjs" ],
+//            after: [ "concat:appjs" ],
             atBegin: true
           } : false
+        }
+      }
+    },
+
+    // grunt-ts (~10 seconds)
+    ts: {
+      build: {
+        src: [ "src/main/d.ts/*.d.ts", "src/main/webapp/app/**/*.ts" ],
+        out: "src/main/webapp/app/app.js",
+        watch: grunt.option("watch") ? "src/main/webapp/app" : false,
+        options: {
+          removeComments: false,
+          module: "commonjs",
+          target: "ES5",
+          declaration: false
         }
       }
     },
@@ -61,6 +76,7 @@ module.exports = function(grunt) {
       tsc: {
         files: [ "src/main/webapp/app/**/*.ts" ],
         tasks: [ "typescript:base" ]
+//        tasks: [ "ts:build" ]
       }
     },
 
@@ -71,6 +87,7 @@ module.exports = function(grunt) {
       },
       appjs: {
         src: [ ".tscache/tsc/**/*.js" ],
+        // it produces app.js in wrong order
         dest: "src/main/webapp/app/app.js"
       }
     }
@@ -82,6 +99,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-typescript');
+  grunt.loadNpmTasks('grunt-ts');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
 
@@ -95,8 +113,10 @@ module.exports = function(grunt) {
   grunt.registerTask("test-chrome", "Runs unit tests continuously with autowatching", [ "karma:chrome" ]);
 
   if (grunt.option("watch")) {
+//    grunt.registerTask("tsc", "Runs TypeScript compiler", [ "ts:build", "watch:tsc" ]);
     grunt.registerTask("tsc", "Runs TypeScript compiler", [ "typescript:base", "watch:tsc" ]);
   } else {
+//    grunt.registerTask("tsc", "Runs TypeScript compiler", [ "ts:build" ]);
     grunt.registerTask("tsc", "Runs TypeScript compiler", [ "typescript:base" ]);
   }
 
