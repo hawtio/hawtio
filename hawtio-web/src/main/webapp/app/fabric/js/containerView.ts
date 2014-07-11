@@ -7,12 +7,14 @@ module Fabric {
   export var ContainerViewController = _module.controller("Fabric.ContainerViewController", ["$scope", "jolokia", "$location", "localStorage", "$route", ($scope, jolokia, $location, localStorage, $route) => {
 
     $scope.name = ContainerViewController.name;
-    $scope.containers = <Container[]>Array();
+    $scope.containers = <Array<Container>>[];
     $scope.groupBy = 'profileIds';
     $scope.filter = '';
 
     var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location', 'alive', 'type', 'ensembleServer', 'provisionResult'];
-    var profileFields = ['id', 'hidden'];
+    var profileFields = ['id', 'hidden', 'version', 'summaryMarkdown', 'iconURL'];
+
+    Fabric.loadRestApi(jolokia, $scope);
 
     StorageHelpers.bindModelToLocalStorage({
       $scope: $scope,
@@ -25,51 +27,47 @@ module Fabric {
 
     $scope.groupByClass = ControllerHelpers.createClassSelector({
       'profileIds': 'btn-primary',
-      'location': 'btn-primary'
-    });
-
-    $scope.addNewlineClass = ControllerHelpers.createValueClassSelector({
-      'true': '',
-      'false': 'column-row'
+      'location': 'btn-primary',
+      'none': 'btn-primary'
     });
 
     $scope.filterContainers = (container) => {
       return FilterHelpers.searchObject(container, $scope.filter);
     }
 
-    $scope.booleanToString = Core.booleanToString;
-    $scope.statusIcon = Fabric.statusIcon;
+    $scope.toString = Core.toString;
 
-    $scope.getGroupHeader = (header) => {
-      switch($scope.groupBy) {
-        case 'profileIds':
-          return header;
-          break;
-        case 'location':
-        default:
-          return [header];
-          break;
+    function maybeAdd(group: Array<any>, thing:any, index:string) {
+      if (angular.isArray(thing)) {
+        thing.forEach((i) => { maybeAdd(group, i, index); });
+      } else {
+        if (!group.any((item) => { return thing[index] === item[index] })) {
+          group.add(thing);
+        }
       }
     }
 
-    function render(response) {
-      $scope.containers = response.value;
-      // massage the returned data a bit
-      $scope.containers.forEach((container) => {
-        if (Core.isBlank(container.location)) {
-          container.location = Fabric.NO_LOCATION;
-        }
-        container.profileIds = container.profileIds.filter((id) => {
-          var profile = container.profiles.find((p) => { return p.id === id; });
-          if (profile && profile.hidden) {
-            return false;
-          } else {
-            return true;
-          }
-        }).sort();
-        container.icon = Fabric.getTypeIcon(container);
+    function groupByVersions(containers:Array<Container>) {
+      var answer = {};
+      containers.forEach((container) => {
+        var versionId = container.versionId;
+        var version = answer[versionId] || { containers: <Array<Container>>[], profiles: <Array<Profile>>[] };
+        maybeAdd(version.containers, container, 'id');
+        maybeAdd(version.profiles, container.profiles, 'id');
+        answer[versionId] = version;
       });
-      Core.$apply($scope);
+      return answer;
+    }
+
+    function groupByLocation(containers:Array<Container>) {
+      var answer = {};
+      containers.forEach((container) => {
+        var location = container.location;
+        var loc = answer[location] || { containers: Array<Container>() };
+        maybeAdd(loc.containers, container, 'id');
+        answer[location] = loc;
+      });
+      return answer;
     }
 
     Core.registerForChanges(jolokia, $scope, {
@@ -77,7 +75,34 @@ module Fabric {
       mbean: Fabric.managerMBean,
       operation: 'containers(java.util.List, java.util.List)',
       arguments:[containerFields, profileFields]
-    }, render);
+    }, (response) => {
+      var containers = response.value;
+      var versions = {};
+      var locations = {};
+      // massage the returned data a bit first
+      containers.forEach((container) => {
+        if (Core.isBlank(container.location)) {
+          container.location = Fabric.NO_LOCATION;
+        }
+        container.profiles = container.profiles.filter((p) => { return !p.hidden });
+        container.icon = Fabric.getTypeIcon(container);
+      });
+      var versions = groupByVersions(containers);
+      angular.forEach(versions, (version, versionId) => {
+        version.profiles.forEach((profile) => {
+          var containers = version.containers.filter((c) => { return c.profileIds.some(profile.id); });
+          profile.aliveCount = containers.count((c) => { return c.alive; });
+          profile.deadCount = containers.length - profile.aliveCount;
+          profile.summary = profile.summaryMarkdown ? marked(profile.summaryMarkdown) : '';
+          profile.iconURL = Fabric.toIconURL($scope, profile.iconURL);
+        });
+      });
+      var locations = groupByLocation(containers);
+      $scope.locations = locations;
+      $scope.versions = versions;
+      $scope.containers = containers;
+      Core.$apply($scope);
+    });
 
   }]);
 }

@@ -35,7 +35,6 @@ module Fabric {
     }
 
     public getIcon(thing:string) {
-      log.debug("Returning icon for: ", thing);
       return this.icons[thing];
     }
 

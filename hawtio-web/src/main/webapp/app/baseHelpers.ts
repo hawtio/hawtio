@@ -237,6 +237,14 @@ module Core {
     throw new Error("Can't convert value " + value + " to boolean");
   }
 
+  export function toString(value:any):string {
+    if (angular.isNumber(value)) {
+      return numberToString(value);
+    } else {
+      return angular.toJson(value, true);
+    } 
+  } 
+
   /**
    * Converts boolean value to string "true" or "false"
    *
