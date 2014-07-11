@@ -36,8 +36,17 @@ module UI {
           if (currentGroup === undefined) {
             createGroup = true; 
           } else {
-            var intersection = item[group].intersect(currentGroup);
-            createGroup = intersection.length !== currentGroup.length;
+            var targetGroup = item[group];
+            if (targetGroup.length !== currentGroup.length) {
+              createGroup = true;
+            } else {
+              createGroup = false;
+              targetGroup.forEach((item) => {
+                if (!createGroup && !currentGroup.any((i) => { return i === item; })) {
+                  createGroup = true;
+                }
+              });
+            }
           }
         }
         if (createGroup) {

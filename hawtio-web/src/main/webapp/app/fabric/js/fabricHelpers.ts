@@ -904,14 +904,13 @@ module Fabric {
    * @param container
    * @returns {*}
    */
-  export function getTypeIcon(container) {
+  export function getTypeIcon(container:Container) {
     var type = container.type;
     // use the type in the metadata if it's there...
     if (container.metadata && container.metadata.containerType) {
       type = container.metadata.containerType;
     }
     var answer = Fabric.containerIconRegistry.getIcon(type);
-    log.debug("Icon for ", container, " : ", answer);
     if (!answer) {
       return Fabric.javaIcon;
     } else {
@@ -1087,7 +1086,7 @@ module Fabric {
     return answer;
   }
 
-  export function statusIcon(row) {
+  export function statusIcon(row:Container) {
     if (row) {
       switch(row.provisionResult) {
         case 'success':

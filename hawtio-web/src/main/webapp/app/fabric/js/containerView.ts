@@ -11,7 +11,7 @@ module Fabric {
     $scope.groupBy = 'profileIds';
     $scope.filter = '';
 
-    var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location'];
+    var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location', 'alive', 'type', 'ensembleServer', 'provisionResult'];
     var profileFields = ['id', 'hidden'];
 
     StorageHelpers.bindModelToLocalStorage({
@@ -38,6 +38,19 @@ module Fabric {
     }
 
     $scope.booleanToString = Core.booleanToString;
+    $scope.statusIcon = Fabric.statusIcon;
+
+    $scope.getGroupHeader = (header) => {
+      switch($scope.groupBy) {
+        case 'profileIds':
+          return header;
+          break;
+        case 'location':
+        default:
+          return [header];
+          break;
+      }
+    }
 
     function render(response) {
       $scope.containers = response.value;
@@ -53,7 +66,8 @@ module Fabric {
           } else {
             return true;
           }
-        });
+        }).sort();
+        container.icon = Fabric.getTypeIcon(container);
       });
       Core.$apply($scope);
     }
