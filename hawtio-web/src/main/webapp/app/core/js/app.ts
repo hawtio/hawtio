@@ -40,9 +40,11 @@ module Core {
 
       function copyToClipboard() {
         var text = $templateCache.get("logClipboardTemplate").lines();
+        // remove start/end comment tags
         text.removeAt(0);
         text.removeAt(text.length - 1);
-        $element.find('#log-panel-statements').children().each(function(index, child) {
+        text.push('<ul>');
+        $element.find('#log-panel-statements').children().each(function(index, child:HTMLElement) {
           text.push('  <li>' + child.innerHTML + '</li>');
         });
         text.push('</ul>');
@@ -75,7 +77,7 @@ module Core {
    * @param {*} jolokiaUrl
    * @param {*} branding
    */
-  export var AppController = _module.controller("Core.AppController", ["$scope", "$location", "workspace", "jolokia", "jolokiaStatus", "$document", "pageTitle", "localStorage", "userDetails", "lastLocation", "jolokiaUrl", "branding", ($scope, $location, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding) => {
+  export var AppController = _module.controller("Core.AppController", ["$scope", "$location", "workspace", "jolokia", "jolokiaStatus", "$document", "pageTitle", "localStorage", "userDetails", "lastLocation", "jolokiaUrl", "branding", ($scope, $location:ng.ILocationService, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation:{ url:string }, jolokiaUrl, branding) => {
     if (!userDetails) {
       userDetails = {};
     }
@@ -137,7 +139,7 @@ module Core {
             }
             // lets tone down the size of the headers
             html.each((idx, e) => {
-              var name = e.localName;
+              var name:string = e.localName;
               if (name && name.startsWith("h")) {
                 $(e).addClass("ajaxError");
               }
@@ -234,7 +236,7 @@ module Core {
         }
       } else {
         if ($location.url().startsWith('/login')) {
-          var url:Object = defaultPage();
+          var url:string = defaultPage();
           if (angular.isDefined(lastLocation.url)) {
             url = lastLocation.url;
           }
@@ -276,11 +278,11 @@ module Core {
         return tab === "fullscreen";
       }
       return false;
-    }
+    };
 
     $scope.login = () => {
       return $location.url().startsWith("/login");
-    }
+    };
 
     function defaultPage() {
       return Perspective.defaultPage($location, workspace, jolokia, localStorage);

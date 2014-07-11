@@ -42,7 +42,7 @@ module Core {
   export var _module = angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dialog', 'hawtio-ui']);
 
   // configure the module
-  _module.config(["$routeProvider", "$dialogProvider", ($routeProvider, $dialogProvider) => {
+  _module.config(["$routeProvider", "$dialogProvider", ($routeProvider:ng.route.IRouteProvider, $dialogProvider) => {
     $dialogProvider.options({
       backdropFade: true,
       dialogFade: true
@@ -264,7 +264,7 @@ hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
   if (Core._module && Core.isChromeApp()) {
     Core._module.config([
       '$compileProvider',
-      function ($compileProvider) {
+      function ($compileProvider:ng.ICompileProvider) {
         //$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
         $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
         // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
