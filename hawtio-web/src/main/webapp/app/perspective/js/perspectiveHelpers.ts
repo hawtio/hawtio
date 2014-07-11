@@ -30,7 +30,6 @@ module Perspective {
    */
   export var defaultPageLocation: string = null;
 
-
   /**
    * Returns the current perspective ID based on the query parameter or the current
    * discovered perspective
@@ -117,7 +116,7 @@ module Perspective {
           var metaTab = metaData.topLevelTabs.excludes.find(et => {
             var etid = et.id;
             return etid && etid === t.id;
-          })
+          });
           if (metaTab != null && angular.isFunction(metaTab.onCondition)) {
             // not all tabs has on condition function, so use try .. catch
             var answer = metaTab.onCondition(workspace);

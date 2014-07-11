@@ -25,10 +25,10 @@ module.exports = function(grunt) {
     // grunt-karma
     karma: {
       unit: {
-        configFile: "src/test/config/karma.conf.js",
         // override karmaConfig.js settings here:
-        singleRun: true,
-        autoWatch: false
+//        singleRun: true,
+//        autoWatch: false,
+        configFile: "src/test/config/karma.conf.js"
       },
       chrome: {
         configFile: "src/test/config/karma.conf.js",
@@ -90,6 +90,25 @@ module.exports = function(grunt) {
         // it produces app.js in wrong order
         dest: "src/main/webapp/app/app.js"
       }
+    },
+
+    'modules-graph': {
+      options: {
+        // Task-specific options go here.
+      },
+      generate: {
+        files: {
+          'target/graph.dot': [ 'src/main/webapp/app/app.js' ]
+        }
+      }
+    },
+
+    graphviz: {
+      graph: {
+        files: {
+          'target/dependencies-graph.png': 'target/graph.dot'
+        }
+      }
     }
 
   });
@@ -102,6 +121,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-ts');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-angular-modules-graph');
+  grunt.loadNpmTasks('grunt-graphviz');
+
 
   /* task aliases */
 

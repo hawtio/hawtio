@@ -22,7 +22,6 @@ module.exports = function(config) {
       libdir + 'language/generic.js',
       libdir + 'logger.min.js',
       libdir + 'loggingInit.js',
-      libdir + 'hawtio-plugin-loader.js',
       libdir + 'd3.v3.min.js',
       libdir + 'jquery-1.8.2.min.js',
       libdir + 'jolokia-min.js',
@@ -80,6 +79,7 @@ module.exports = function(config) {
       libdir + 'dmr.js.nocache.js',
       libdir + 'ZeroClipboard.min.js',
       libdir + 'hawtio-plugin-loader.js',
+      'src/test/specs/lib/angular-mocks.js',
       'src/main/webapp/app/app.js',
       'src/test/specs/spec-js/**/*.js',
       'src/test/fixtures/*.html'
