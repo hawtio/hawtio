@@ -139,6 +139,7 @@ module Karaf {
     "^stax2-api$",
     "^woodstox-core-asl",
     "^org.jboss.amq.mq-fabric",
+    "^gravia-",
     "^joda-time$",
     "^org.apache.ws",
     "-commands$",
