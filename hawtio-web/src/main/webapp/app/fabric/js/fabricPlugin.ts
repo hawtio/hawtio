@@ -50,7 +50,7 @@ module Fabric {
             when('/fabric/api/wadl', {templateUrl: 'app/api/html/wadl.html'}).
 
             when('/fabric/test', { templateUrl: templatePath + 'test.html' }).
-            when('/profiles', { templateUrl: templatePath + 'profileView.html', reloadOnSearch: false }).
+            when('/fabric/profileView', { templateUrl: templatePath + 'profileView.html', reloadOnSearch: false }).
             when('/containers', { templateUrl: templatePath + 'containerView.html', reloadOnSearch: false });
 
   }]);
@@ -118,7 +118,7 @@ module Fabric {
       title: "Manage your containers in this fabric",
       isValid: (workspace) => Fabric.isFMCContainer(workspace),
       href: () => "#/fabric/containers",
-      isActive: (workspace: Workspace) => workspace.isLinkActive("fabric")
+      isActive: (workspace: Workspace) => workspace.isLinkActive("fabric") && !workspace.isLinkActive("fabric/profileView")
     });
 
     workspace.topLevelTabs.push({
@@ -126,10 +126,11 @@ module Fabric {
       content: "Profiles",
       title: "Select and deploy profiles into this fabric",
       isValid: (workspace) => Fabric.isFMCContainer(workspace),
-      href: () => "#/profiles",
-      isActive: (workspace) => workspace.isLinkActive("profiles")
+      href: () => "#/fabric/profileView",
+      isActive: (workspace) => workspace.isLinkActive("fabric/profileView")
     });
 
+/*
     workspace.topLevelTabs.push({
       id: 'fabric.containers',
       content: 'Containers',
@@ -138,6 +139,7 @@ module Fabric {
       href: () => '#/containers',
       isActive: (workspace) => workspace.isLinkActive('containers')
     });
+*/
 
     workspace.topLevelTabs.push( {
       id: "fabric.configuration",
