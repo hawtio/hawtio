@@ -19,8 +19,8 @@
            title="View the configurations of this profile"><i class="icon-edit"></i> Configuration</a>
         <a class="btn" href="" title="Manually trigger provisioning of this profile on all associated containers" ng-click="refreshProfile(versionId, profileId)"><i class="icon-refresh"></i> Refresh</a>
         <a class="btn" href="" title="Create a new profile that is a copy of this one" ng-click="copyProfileDialog = true"><i class="icon-copy"></i> Copy</a>
-        <a class="btn" ng-href="#/fabric/assignProfile?vid={{versionId}}&pid={{profileId}}" title="Assign this this profile to an existing container"><i class="icon-truck"></i> Assign</a>
-        <a class="btn" ng-href="#/fabric/containers/createContainer?versionId={{versionId}}&profileIds={{profileId}}" title="Deploy this profile to a new container"><i class="icon-truck"></i> New</a>
+        <a class="btn" ng-href="#/fabric/assignProfile?vid={{versionId}}&pid={{profileId}}" title="Assign this profile to an existing container"><i class="icon-truck"></i> Assign</a>
+        <a class="btn" href="" ng-click="gotoCreateContainer()" title="Deploy this profile to a new container"><i class="icon-truck"></i> New</a>
       </div>
       <div class="pull-right" ng-hide="inDirective">
         <a class="btn" ng-href="#/fabric/containers/createContainer?versionId={{versionId}}&profileIds={{profileId}}" title="Deploy this profile to a new container"><i class="icon-truck"></i> Create Container</a>

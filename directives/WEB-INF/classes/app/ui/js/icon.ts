@@ -10,7 +10,7 @@ module UI {
    * @param $templateCache
    * @constructor
    */
-  _module.controller("UI.IconTestController", ["$scope", "$templateCache", ($scope, $templateCache) => {
+  export var IconTestController = _module.controller("UI.IconTestController", ["$scope", "$templateCache", ($scope, $templateCache) => {
     $scope.exampleHtml = $templateCache.get('example-html');
     $scope.exampleConfigJson = $templateCache.get('example-config-json');
 

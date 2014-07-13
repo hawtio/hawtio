@@ -1,30 +1,61 @@
-﻿/**
+﻿/// <reference path="../../d.ts/sugar-1.3.d.ts" />
+/// <reference path="../../d.ts/hawtio-plugin-loader.d.ts" />
+/// <reference path="../../d.ts/jquery.d.ts" />
+/// <reference path="../../d.ts/angular.d.ts" />
+/// <reference path="../../d.ts/chrome.d.ts" />
+/// <reference path="../../d.ts/toastr.d.ts" />
+/**
 * @module Core
 */
-/// <reference path="../../d.ts/angular.d.ts"/>
-/// <reference path="../../d.ts/angular-resource.d.ts"/>
-/// <reference path="../../d.ts/bootstrap-2.1.d.ts"/>
-/// <reference path="../../d.ts/camel.d.ts"/>
-/// <reference path="../../d.ts/chrome.d.ts"/>
-/// <reference path="../../d.ts/codemirror-additional.d.ts"/>
-/// <reference path="../../d.ts/codemirror.d.ts"/>
-/// <reference path="../../d.ts/dagre.d.ts"/>
-/// <reference path="../../d.ts/dmr.d.ts"/>
-/// <reference path="../../d.ts/google.d.ts"/>
-/// <reference path="../../d.ts/hawtio-plugin-loader.d.ts"/>
-/// <reference path="../../d.ts/jolokia-1.0.d.ts"/>
-/// <reference path="../../d.ts/jquery-datatable.d.ts"/>
-/// <reference path="../../d.ts/jquery-datatable-extra.d.ts"/>
-/// <reference path="../../d.ts/jquery.d.ts"/>
-/// <reference path="../../d.ts/jquery.dynatree-1.2.d.ts"/>
-/// <reference path="../../d.ts/jquery.gridster.d.ts"/>
-/// <reference path="../../d.ts/jquery.jsPlumb.d.ts"/>
-/// <reference path="../../d.ts/logger.d.ts"/>
-/// <reference path="../../d.ts/marked.d.ts"/>
-/// <reference path="../../d.ts/schemas.d.ts"/>
-/// <reference path="../../d.ts/sugar-1.3.d.ts"/>
 var Core;
 (function (Core) {
+    var _urlPrefix = null;
+
+    /**
+    * Private method to support testing.
+    *
+    * @private
+    */
+    function _resetUrlPrefix() {
+        _urlPrefix = null;
+    }
+    Core._resetUrlPrefix = _resetUrlPrefix;
+
+    /**
+    * Prefixes absolute URLs with current window.location.pathname
+    *
+    * @param path
+    * @returns {string}
+    */
+    function url(path) {
+        if (path) {
+            if (path.startsWith && path.startsWith("/")) {
+                if (!_urlPrefix) {
+                    _urlPrefix = Core.windowLocation().pathname || "";
+                    var idx = _urlPrefix.lastIndexOf("/");
+                    if (idx >= 0) {
+                        _urlPrefix = _urlPrefix.substring(0, idx);
+                    }
+                }
+                if (_urlPrefix) {
+                    return _urlPrefix + path;
+                }
+            }
+        }
+        return path;
+    }
+    Core.url = url;
+
+    /**
+    * Returns location of the global window
+    *
+    * @returns {string}
+    */
+    function windowLocation() {
+        return window.location;
+    }
+    Core.windowLocation = windowLocation;
+
     // use a better implementation of unescapeHTML
     String.prototype.unescapeHTML = function () {
         var txt = document.createElement("textarea");
@@ -35,6 +66,7 @@ var Core;
     // add object.keys if we don't have it, used
     // in a few places
     if (!Object.keys) {
+        console.debug("Creating hawt.io version of Object.keys()");
         Object.keys = function (obj) {
             var keys = [], k;
             for (k in obj) {
@@ -46,12 +78,28 @@ var Core;
         };
     }
 
-    // Add any other known possible jolokia URLs here
-    var jolokiaUrls = [
-        url("jolokia"),
-        "/jolokia"
-    ];
+    /**
+    * Private method to support testing.
+    *
+    * @private
+    */
+    function _resetJolokiaUrls() {
+        // Add any other known possible jolokia URLs here
+        jolokiaUrls = [
+            Core.url("jolokia"),
+            "/jolokia"
+        ];
+        return jolokiaUrls;
+    }
+    Core._resetJolokiaUrls = _resetJolokiaUrls;
 
+    var jolokiaUrls = Core._resetJolokiaUrls();
+
+    /**
+    * Returns Jolokia URL by checking its availability if not in local mode
+    *
+    * @returns {*}
+    */
     function getJolokiaUrl() {
         var query = hawtioPluginLoader.parseQueryString();
         var localMode = query['localMode'];
@@ -90,10 +138,9 @@ var Core;
         $("#main").css("min-height", "" + containerHeight + "px");
     }
     Core.adjustHeight = adjustHeight;
-    ;
 
     /**
-    * Returns true if we are running inside a Chrome app or extension
+    * Returns true if we are running inside a Chrome app or (and?) extension
     */
     function isChromeApp() {
         var answer = false;
@@ -111,6 +158,7 @@ var Core;
     /**
     * Adds the specified CSS file to the document's head, handy
     * for external plugins that might bring along their own CSS
+    *
     * @param path
     */
     function addCSS(path) {
@@ -135,6 +183,7 @@ var Core;
 
     /**
     * Wrapper to get the window local storage object
+    *
     * @returns {WindowLocalStorage}
     */
     function getLocalStorage() {
@@ -148,6 +197,7 @@ var Core;
 
     /**
     * If the value is not an array then wrap it in one
+    *
     * @method asArray
     * @for Core
     * @static
@@ -170,7 +220,7 @@ var Core;
     * @return {Boolean}
     */
     function parseBooleanValue(value) {
-        if (!angular.isDefined(value)) {
+        if (!angular.isDefined(value) || !value) {
             return false;
         }
 
@@ -197,25 +247,76 @@ var Core;
     }
     Core.parseBooleanValue = parseBooleanValue;
 
+    function toString(value) {
+        if (angular.isNumber(value)) {
+            return numberToString(value);
+        } else {
+            return angular.toJson(value, true);
+        }
+    }
+    Core.toString = toString;
+
+    /**
+    * Converts boolean value to string "true" or "false"
+    *
+    * @param value
+    * @returns {string}
+    */
+    function booleanToString(value) {
+        return "" + value;
+    }
+    Core.booleanToString = booleanToString;
+
+    /**
+    * object to integer converter
+    *
+    * @param value
+    * @param description
+    * @returns {*}
+    */
     function parseIntValue(value, description) {
+        if (typeof description === "undefined") { description = "integer"; }
         if (angular.isString(value)) {
             try  {
                 return parseInt(value);
             } catch (e) {
                 console.log("Failed to parse " + description + " with text '" + value + "'");
             }
+        } else if (angular.isNumber(value)) {
+            return value;
         }
         return null;
     }
     Core.parseIntValue = parseIntValue;
 
+    /**
+    * Formats numbers as Strings.
+    *
+    * @param value
+    * @returns {string}
+    */
+    function numberToString(value) {
+        return "" + value;
+    }
+    Core.numberToString = numberToString;
+
+    /**
+    * object to integer converter
+    *
+    * @param value
+    * @param description
+    * @returns {*}
+    */
     function parseFloatValue(value, description) {
+        if (typeof description === "undefined") { description = "float"; }
         if (angular.isString(value)) {
             try  {
                 return parseFloat(value);
             } catch (e) {
                 console.log("Failed to parse " + description + " with text '" + value + "'");
             }
+        } else if (angular.isNumber(value)) {
+            return value;
         }
         return null;
     }
@@ -224,6 +325,7 @@ var Core;
     /**
     * Navigates the given set of paths in turn on the source object
     * and returns the last most value of the path or null if it could not be found.
+    *
     * @method pathGet
     * @for Core
     * @static
@@ -253,6 +355,7 @@ var Core;
     /**
     * Navigates the given set of paths in turn on the source object
     * and updates the last path value to the given newValue
+    *
     * @method pathSet
     * @for Core
     * @static
@@ -279,6 +382,7 @@ var Core;
 
     /**
     * Performs a $scope.$apply() if not in a digest right now otherwise it will fire a digest later
+    *
     * @method $applyNowOrLater
     * @for Core
     * @static
@@ -297,6 +401,7 @@ var Core;
 
     /**
     * Performs a $scope.$apply() after the given timeout period
+    *
     * @method $applyLater
     * @for Core
     * @static
@@ -313,6 +418,7 @@ var Core;
 
     /**
     * Performs a $scope.$apply() if not in a digest or apply phase on the given scope
+    *
     * @method $apply
     * @for Core
     * @static
@@ -326,6 +432,14 @@ var Core;
     }
     Core.$apply = $apply;
 
+    /**
+    * Performs a $scope.$digest() if not in a digest or apply phase on the given scope
+    *
+    * @method $apply
+    * @for Core
+    * @static
+    * @param {*} $scope
+    */
     function $digest($scope) {
         var phase = $scope.$$phase || $scope.$root.$$phase;
         if (!phase) {
@@ -372,6 +486,12 @@ var Core;
         "\"": "&quot;"
     };
 
+    /**
+    * static unescapeHtml
+    *
+    * @param str
+    * @returns {any}
+    */
     function unescapeHtml(str) {
         angular.forEach(_escapeHtmlChars, function (value, key) {
             var regex = new RegExp(value, "g");
@@ -382,6 +502,12 @@ var Core;
     }
     Core.unescapeHtml = unescapeHtml;
 
+    /**
+    * static escapeHtml method
+    *
+    * @param str
+    * @returns {*}
+    */
     function escapeHtml(str) {
         if (angular.isString(str)) {
             var newStr = "";
@@ -416,10 +542,15 @@ var Core;
     * @return {Boolean}
     */
     function isBlank(str) {
-        if (!str) {
+        if (str === undefined || str === null) {
             return true;
         }
-        return str.isBlank();
+        if (angular.isString(str)) {
+            return str.isBlank();
+        } else {
+            // TODO - not undefined but also not a string...
+            return false;
+        }
     }
     Core.isBlank = isBlank;
 
@@ -434,8 +565,6 @@ var Core;
     */
     function notification(type, message, options) {
         if (typeof options === "undefined") { options = null; }
-        var w = window;
-
         if (options === null) {
             options = {};
         }
@@ -446,7 +575,7 @@ var Core;
             }
         }
 
-        w.toastr[type](message, '', options);
+        toastr[type](message, '', options);
     }
     Core.notification = notification;
 
@@ -456,11 +585,35 @@ var Core;
     * @static
     */
     function clearNotifications() {
-        var w = window;
-        w.toastr.clear();
+        toastr.clear();
     }
     Core.clearNotifications = clearNotifications;
 
+    /**
+    * removes all quotes/apostrophes from beginning and end of string
+    *
+    * @param text
+    * @returns {string}
+    */
+    function trimQuotes(text) {
+        if (text) {
+            while (text.endsWith('"') || text.endsWith("'")) {
+                text = text.substring(0, text.length - 1);
+            }
+            while (text.startsWith('"') || text.startsWith("'")) {
+                text = text.substring(1, text.length);
+            }
+        }
+        return text;
+    }
+    Core.trimQuotes = trimQuotes;
+
+    /**
+    * Converts camel-case and dash-separated strings into Human readable forms
+    *
+    * @param value
+    * @returns {*}
+    */
     function humanizeValue(value) {
         if (value) {
             var text = value.toString();
@@ -479,26 +632,7 @@ var Core;
         return value;
     }
     Core.humanizeValue = humanizeValue;
-
-    function trimQuotes(text) {
-        if (text) {
-            while (text.endsWith('"') || text.endsWith("'")) {
-                text = text.substring(0, text.length - 1);
-            }
-            while (text.startsWith('"') || text.startsWith("'")) {
-                text = text.substring(1, text.length);
-            }
-        }
-        return text;
-    }
-    Core.trimQuotes = trimQuotes;
 })(Core || (Core = {}));
-
-// Lots of code refers to these functions in the global namespace
-var notification = Core.notification;
-var clearNotifications = Core.clearNotifications;
-var humanizeValue = Core.humanizeValue;
-var trimQuotes = Core.trimQuotes;
 var ForceGraph;
 (function (ForceGraph) {
     /**
@@ -1559,7 +1693,7 @@ var DataTable;
                                 });
                             }
                         } else {
-                            addColumn(prefix + key, humanizeValue(key));
+                            addColumn(prefix + key, Core.humanizeValue(key));
                         }
                     }
                 };
@@ -2365,14 +2499,48 @@ var UI;
             }
 
             var newGroup = 'newGroup';
+            var endGroup = 'endGroup';
+            var currentGroup = undefined;
 
-            var currentGroup = list.first()[group];
-            list.first()[newGroup] = true;
+            function createNewGroup(list, item, index) {
+                item[newGroup] = true;
+                item[endGroup] = false;
+                currentGroup = item[group];
+                if (index > 0) {
+                    list[index - 1][endGroup] = true;
+                }
+            }
 
-            list.forEach(function (item) {
-                if (item[group] !== currentGroup) {
-                    item[newGroup] = true;
-                    currentGroup = item[group];
+            function addItemToExistingGroup(item) {
+                item[newGroup] = false;
+                item[endGroup] = false;
+            }
+
+            list.forEach(function (item, index) {
+                var createGroup = item[group] !== currentGroup;
+                if (angular.isArray(item[group])) {
+                    if (currentGroup === undefined) {
+                        createGroup = true;
+                    } else {
+                        var targetGroup = item[group];
+                        if (targetGroup.length !== currentGroup.length) {
+                            createGroup = true;
+                        } else {
+                            createGroup = false;
+                            targetGroup.forEach(function (item) {
+                                if (!createGroup && !currentGroup.any(function (i) {
+                                    return i === item;
+                                })) {
+                                    createGroup = true;
+                                }
+                            });
+                        }
+                    }
+                }
+                if (createGroup) {
+                    createNewGroup(list, item, index);
+                } else {
+                    addItemToExistingGroup(item);
                 }
             });
 
@@ -3447,11 +3615,11 @@ var UI;
             $scope.transcludedValue = "and this is transcluded";
 
             $scope.onCancelled = function (number) {
-                notification('info', 'cancelled ' + number);
+                Core.notification('info', 'cancelled ' + number);
             };
 
             $scope.onOk = function (number) {
-                notification('info', number + ' ok!');
+                Core.notification('info', number + ' ok!');
             };
 
             $scope.showSlideoutRight = false;
@@ -3765,18 +3933,15 @@ var UI;
                 header: '@'
             },
             controller: [
-                "$scope", "$element", "$attrs", "$transclude", "$document", "$timeout", "$compile", "$templateCache", function ($scope, $element, $attrs, $transclude, $document, $timeout, $compile, $templateCache) {
+                "$scope", "$element", "$attrs", "$transclude", "$document", "$timeout", "$compile", "$templateCache", "$window", function ($scope, $element, $attrs, $transclude, $document, $timeout, $compile, $templateCache, $window) {
                     $scope.moving = false;
 
                     $transclude(function (clone) {
                         $element.find(".pane-content").append(clone);
-
                         if (Core.isBlank($scope.header)) {
                             return;
                         }
-
                         var headerTemplate = $templateCache.get($scope.header);
-
                         var wrapper = $element.find(".pane-header-wrapper");
                         wrapper.html($compile(headerTemplate)($scope));
                         $timeout(function () {
@@ -3784,12 +3949,20 @@ var UI;
                         }, 500);
                     });
 
+                    $scope.setViewportTop = function () {
+                        var wrapper = $element.find(".pane-header-wrapper");
+                        $timeout(function () {
+                            $element.find(".pane-viewport").css("top", wrapper.height());
+                        }, 10);
+                    };
+
                     $scope.setWidth = function (width) {
                         if (width < 6) {
                             return;
                         }
                         $element.width(width);
                         $element.parent().css($scope.padding, $element.width() + "px");
+                        $scope.setViewportTop();
                     };
 
                     $scope.open = function () {
@@ -3836,7 +4009,11 @@ var UI;
                             $event.stopPropagation();
                             $event.preventDefault();
                             $event.stopImmediatePropagation();
-                            $scope.setWidth($event.pageX + 2);
+                            if ($scope.position === 'left') {
+                                $scope.setWidth($event.pageX + 2);
+                            } else {
+                                $scope.setWidth($window.innerWidth - $event.pageX + 2);
+                            }
                             Core.$apply($scope);
                         });
                     };
@@ -3887,7 +4064,7 @@ var UI;
 
                 clip.on('complete', function (client, args) {
                     if (args.text && angular.isString(args.text)) {
-                        notification('info', "Copied text to clipboard: " + args.text.truncate(20));
+                        Core.notification('info', "Copied text to clipboard: " + args.text.truncate(20));
                     }
                     Core.$apply($scope);
                 });
@@ -4376,7 +4553,7 @@ var UI;
     * @param $templateCache
     * @constructor
     */
-    UI._module.controller("UI.IconTestController", [
+    UI.IconTestController = UI._module.controller("UI.IconTestController", [
         "$scope", "$templateCache", function ($scope, $templateCache) {
             $scope.exampleHtml = $templateCache.get('example-html');
             $scope.exampleConfigJson = $templateCache.get('example-config-json');
@@ -4417,6 +4594,19 @@ var UI;
     }
     UI.hawtioIcon = hawtioIcon;
     UI._module.directive('hawtioIcon', UI.hawtioIcon);
+})(UI || (UI = {}));
+var UI;
+(function (UI) {
+    /**
+    * Pre defined colors used in the color picker
+    * @property colors
+    * @for UI
+    * @type Array
+    */
+    UI.colors = [
+        "#5484ED", "#A4BDFC", "#46D6DB", "#7AE7BF",
+        "#51B749", "#FBD75B", "#FFB878", "#FF887C", "#DC2127",
+        "#DBADFF", "#E1E1E1"];
 })(UI || (UI = {}));
 /**
 * @module UI
@@ -4589,6 +4779,7 @@ var UI;
 /**
 * @module UI
 */
+/// <reference path="./colors.ts"/>
 /// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {
@@ -4598,17 +4789,6 @@ var UI;
 
     UI.selected = "selected";
     UI.unselected = "unselected";
-
-    /**
-    * Pre defined colors used in the color picker
-    * @property colors
-    * @for UI
-    * @type Array
-    */
-    UI.colors = [
-        "#5484ED", "#A4BDFC", "#46D6DB", "#7AE7BF",
-        "#51B749", "#FBD75B", "#FFB878", "#FF887C", "#DC2127",
-        "#DBADFF", "#E1E1E1"];
 
     /**
     Directive that allows the user to pick a color from a pre-defined pallete of colors.
@@ -4709,13 +4889,14 @@ var UI;
                             if ($scope.collection && $scope.collectionProperty) {
                                 if (!$scope.selected.length) {
                                     $scope.visibleTags = $scope.tags;
+                                    $scope.filteredCollection = $scope.collection;
                                 } else {
                                     filterVisibleTags();
                                 }
                                 $scope.visibleTags = $scope.visibleTags.map(function (t) {
                                     return {
                                         id: t,
-                                        count: $scope.collection.map(function (c) {
+                                        count: $scope.filteredCollection.map(function (c) {
                                             return c[$scope.collectionProperty];
                                         }).reduce(function (count, c) {
                                             if (c.any(t)) {
@@ -4731,11 +4912,11 @@ var UI;
                         }
 
                         function filterVisibleTags() {
-                            var filtered = $scope.collection.filter(function (c) {
+                            $scope.filteredCollection = $scope.collection.filter(function (c) {
                                 return SelectionHelpers.filterByGroup($scope.selected, c[$scope.collectionProperty]);
                             });
                             $scope.visibleTags = [];
-                            filtered.forEach(function (c) {
+                            $scope.filteredCollection.forEach(function (c) {
                                 $scope.visibleTags = $scope.visibleTags.union(c[$scope.collectionProperty]);
                             });
                         }

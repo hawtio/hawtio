@@ -34,13 +34,14 @@ module UI {
           if($scope.collection && $scope.collectionProperty) {
             if (!$scope.selected.length) {
               $scope.visibleTags = $scope.tags;
+              $scope.filteredCollection = $scope.collection;
             } else {
               filterVisibleTags();
             }
             $scope.visibleTags = $scope.visibleTags.map((t) => {
               return {
                 id: t,
-                count: $scope.collection.map((c) => { 
+                count: $scope.filteredCollection.map((c) => {
                     return c[$scope.collectionProperty]; 
                   }).reduce((count, c) => {
                     if (c.any(t)) {
@@ -56,11 +57,11 @@ module UI {
         }
 
         function filterVisibleTags() {
-          var filtered = $scope.collection.filter((c) => {
+          $scope.filteredCollection = $scope.collection.filter((c) => {
             return SelectionHelpers.filterByGroup($scope.selected, c[$scope.collectionProperty]);
           });
           $scope.visibleTags = [];
-          filtered.forEach((c) => {
+          $scope.filteredCollection.forEach((c) => {
             $scope.visibleTags = $scope.visibleTags.union(c[$scope.collectionProperty]);
           });
         }

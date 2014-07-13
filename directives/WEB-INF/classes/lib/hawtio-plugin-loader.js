@@ -49,7 +49,7 @@ var hawtioPluginLoader = (function(self, window, undefined) {
   /**
    * Parses the given query search string of the form "?foo=bar&whatnot"
    * @param text
-   * @return a map of key/values
+   * @return {*} a map of key/values
    */
   self.parseQueryString = function(text) {
       var query = (text || window.location.search || '?');
@@ -177,7 +177,7 @@ var hawtioPluginLoader = (function(self, window, undefined) {
         $.ajaxSetup({async:true});
         bootstrap();
       }
-    }
+    };
 
     if (urlsToLoad == 0) {
       loadScripts();
@@ -201,7 +201,7 @@ var hawtioPluginLoader = (function(self, window, undefined) {
           parts = parts.reverse();
           parts.pop();
 
-          var url = parts.pop();
+          url = parts.pop();
           var attribute = parts.reverse().join(':');
           var jolokia = new Jolokia(url);
 

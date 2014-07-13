@@ -105,7 +105,15 @@
         <h1>Get Started</h1>
 You can use hawtio from a Chrome Extension or in many different containers - or outside a container in a stand alone executable jar. Below are all the various options for running hawtio. To see whats changed lately check out the <a class="btn btn-default" href="http://hawt.io/changelog.html">change log</a></p>
 
+<p>The Hawtio platform consists of 2 parts, the backend which is running in a Java Web Container the Jolokia gateway (JMX to JSON) and the front end containing the Angular, D3, &hellip; Javascript to do the rendering of the JSON responses in a very nice way. 
+Depending how you plan to use Hawtio for your project in your environment, you can run the backend using a <a href="#standalone">java standalone jar</a>, <a href="#web-container">a servlet engine</a>, <a href="#jee">application server</a> or <a href="#osgi">an OSGI container</a>.
+If you do not use a servlet container or application server, you can also embed the hawtio backend <a href="#embedded">inside your process</a>.</p>
+
+<p>The front end could be accessed using the <strong>HTML5 web console</strong> or from <a href="#chrome-ext">Google Browser</a></p>
+
 <p>The out of the box defaults try to do the right thing for most folks but if you want to configure things then please check out the <a class="btn btn-default" href="http://hawt.io/configuration/index.html">configuration guide</a></p>
+
+<p><a name="chrome-ext"></a></p>
 
 <h2 id = "Using_the_Chrome_Extension">Using the Chrome Extension</h2>
 
@@ -121,6 +129,8 @@ You can use hawtio from a Chrome Extension or in many different containers - or 
 <li><p>the <b>Connect</b> page should appear where you can then connect to any processes which are running a <a href="http://jolokia.org/">jolokia agent</a>.</p></li>
 <li><p>have fun and profit! Please share with us your <a href="http://hawt.io/community/index.html">feedback!</a> or <a href="https://twitter.com/hawtio">tweet us!</a></p></li>
 </ul>
+
+<p><a name="standalone"></a></p>
 
 <h2 id = "Using_the_executable_jar">Using the executable jar</h2>
 
@@ -141,6 +151,8 @@ You can use hawtio from a Chrome Extension or in many different containers - or 
 <p>hawtio supports other options which you can get listed by running from command line:</p>
 
 <pre><code>java -jar hawtio-app-1.4.4.jar --help</code></pre>
+
+<p><a name="web-container"></a></p>
 
 <h2 id = "Using_a_Servlet_Engine_or_Application_Server">Using a Servlet Engine or Application Server</h2>
 
@@ -179,6 +191,8 @@ You can use hawtio from a Chrome Extension or in many different containers - or 
  <a class="btn btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.4.4/hawtio-default-offline-1.4.4.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).</p>
 
 <p>If you don't see a Tomcat / Jetty tab for your container you may need to enable JMX.</p>
+
+<p><a name="osgi"></a></p>
 
 <h2 id = "Using_Fuse__Fabric8__Apache_Karaf_or_Apache_Servicemix">Using Fuse, Fabric8, Apache Karaf or Apache Servicemix</h2>
 
@@ -223,6 +237,8 @@ features:install hawtio-core</code></pre>
 
 <p>The following section gives details of other containers</p>
 
+<p><a name="jee"></a></p>
+
 <h3 id = "If_you_use_JBoss_AS_or_Wildfly">If you use JBoss AS or Wildfly</h3>
 
 <p>You may have issues with slf4j JARs in WAR deployments on JBoss AS or Wildfly. To resolve this you must use <a class="btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.4.4/hawtio-no-slf4j-1.4.4.war">Download hawtio-no-slf4j.war</a>.</p>
@@ -244,6 +260,8 @@ features:install hawtio-core</code></pre>
 <p>If you are using Jetty 8.x then JMX may not enabled by default, so make sure the following line is not commented out in <strong>jetty-distribution/start.ini</strong> (you may have to uncomment it to enable JMX).</p>
 
 <pre><code>etc/jetty-jmx.xml</code></pre>
+
+<p><a name="embedded"></a></p>
 
 <h2 id = "Using_hawtio_inside_a_stand_alone_Java_application">Using hawtio inside a stand alone Java application</h2>
 

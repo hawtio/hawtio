@@ -1,57 +1,56 @@
 
 /* fonts */
-
 @import url("../fonts/Open-Sans/stylesheet.css");
 @import url("../fonts/Droid-Sans-Mono/stylesheet.css");
 
 * {
-  font-family: OpenSansRegular;
+  font-family: OpenSans;
 }
 
 body {
-  font-family: OpenSansRegular;
+  font-family: OpenSans;
 }
 
 #log-panel-statements li {
-  font-family: DroidSansMonoRegular;
+  font-family: OpenSans;
 }
 
 #log-panel-statements li pre span {
-  font-family: DroidSansMonoRegular;
+  font-family: OpenSans;
 }
 
 div.log-stack-trace {
-  font-family: DroidSansMonoRegular;
+  font-family: OpenSans;
 }
 
 div.log-stack-trace p {
-  font-family: DroidSansMonoRegular;
+  font-family: OpenSans;
 }
 
 .log-stack-trace > dd > ul > li > .stack-line * {
-  font-family: DroidSansMonoRegular;
+  font-family: OpenSans;
 }
 
 pre.stack-line {
-  font-family: DroidSansMonoRegular;
+  font-family: OpenSans;
   font-size: 12px;
 }
 
 div.stack-line {
-  font-family: DroidSansMonoRegular;
+  font-family: OpenSans;
   font-size: 12px;
 }
 
 .log-table *:not('.icon*') {
-  font-family: DroidSansMonoRegular;
+  font-family: OpenSans;
 }
 
 .log-table > li > div > div {
-  font-family: DroidSansMonoRegular;
+  font-family: OpenSans;
 }
 
 fs-donut svg g text.units {
-  font-family: DroidSansMonoRegular;
+  font-family: OpenSans;
 }
 
 /* colors */

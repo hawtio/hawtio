@@ -15,20 +15,16 @@ module UI {
         width: '@',
         header: '@'
       },
-      controller: ["$scope", "$element", "$attrs", "$transclude", "$document", "$timeout", "$compile", "$templateCache", ($scope, $element, $attrs, $transclude, $document, $timeout, $compile, $templateCache) => {
+      controller: ["$scope", "$element", "$attrs", "$transclude", "$document", "$timeout", "$compile", "$templateCache", "$window", ($scope, $element, $attrs, $transclude, $document, $timeout, $compile, $templateCache, $window) => {
 
         $scope.moving = false;
 
         $transclude((clone) => {
-
           $element.find(".pane-content").append(clone);
-
           if (Core.isBlank($scope.header)) {
             return;
           }
-
           var headerTemplate = $templateCache.get($scope.header);
-
           var wrapper = $element.find(".pane-header-wrapper");
           wrapper.html($compile(headerTemplate)($scope));
           $timeout(() => {
@@ -36,12 +32,20 @@ module UI {
           }, 500);
         });
 
+        $scope.setViewportTop = () => {
+          var wrapper = $element.find(".pane-header-wrapper");
+          $timeout(() => {
+            $element.find(".pane-viewport").css("top", wrapper.height());
+          }, 10);
+        };
+
         $scope.setWidth = (width) => {
           if (width < 6) {
             return;
           }
           $element.width(width);
           $element.parent().css($scope.padding, $element.width() + "px");
+          $scope.setViewportTop();
         };
 
 
@@ -89,7 +93,11 @@ module UI {
             $event.stopPropagation();
             $event.preventDefault();
             $event.stopImmediatePropagation();
-            $scope.setWidth($event.pageX + 2);
+            if ($scope.position === 'left') {
+              $scope.setWidth($event.pageX + 2);
+            } else {
+              $scope.setWidth($window.innerWidth - $event.pageX + 2);
+            }
             Core.$apply($scope);
           });
         }

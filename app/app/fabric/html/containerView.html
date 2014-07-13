@@ -1,0 +1,48 @@
+<div class="row-fluid" ng-controller="Fabric.ContainerViewController">
+
+  <div class="row-fluid">
+    <div class="span12">
+      <p></p>
+      <div class="pull-left">
+        Group by:
+        <div class="btn-group">
+          <button class="btn"
+                  ng-class="groupByClass('profileIds', groupBy)"
+                  ng-click="groupBy='profileIds'">Profiles</button>
+          <button class="btn"
+                  ng-class="groupByClass('location', groupBy)"
+                  ng-click="groupBy='location'">Location</button>
+        </div>
+        <button class="btn"
+                ng-class="groupByClass('none', groupBy)"
+                ng-click="groupBy='none'">Show List</button>
+      </div>
+      <div class="pull-right">
+        <hawtio-filter ng-model="filter"
+                       placeholder="Filter Containers..."
+                       save-as="fabric-container-view-text-filter"></hawtio-filter>
+      </div>
+    </div>
+  </div>
+  <div class="row-fluid"
+       ng-show="groupBy=='profileIds'">
+    <div class="span12">
+      <p></p>
+      <div hawtio-editor="toString(versions)"></div>
+    </div>
+  </div>
+  <div class="row-fluid"
+       ng-show="groupBy=='location'">
+    <div class="span12">
+      <p></p>
+      <div hawtio-editor="toString(locations)"></div>
+    </div>
+  </div>
+  <div class="row-fluid"
+      ng-show="groupBy=='none'">
+    <div class="span12">
+      <p></p>
+      <div hawtio-editor="toString(containers)"></div>
+    </div>
+  </div>
+</div>
