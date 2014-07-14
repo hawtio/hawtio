@@ -1,4 +1,5 @@
 /// <reference path="./fabricPlugin.ts"/>
+/// <reference path="./profileHelpers.ts"/>
 /// <reference path="../../helpers/js/storageHelpers.ts"/>
 /// <reference path="../../helpers/js/controllerHelpers.ts"/>
 /// <reference path="../../helpers/js/selectionHelpers.ts"/>
@@ -13,7 +14,7 @@ module Fabric {
     $scope.filter = '';
 
     var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location', 'alive', 'type', 'ensembleServer', 'provisionResult', 'root', 'jolokiaUrl', 'jmxDomains', 'metadata'];
-    var profileFields = ['id', 'hidden', 'version', 'summaryMarkdown', 'iconURL'];
+    var profileFields = ['id', 'hidden', 'version', 'summaryMarkdown', 'iconURL', 'tags'];
 
     Fabric.loadRestApi(jolokia, $scope);
     Fabric.initScope($scope, $location, jolokia, workspace);
@@ -38,6 +39,7 @@ module Fabric {
       return FilterHelpers.searchObject(container, $scope.filter);
     }
 
+    $scope.hasCounts = true;
     $scope.filterContainer = $scope.filterContainers;
     $scope.toString = Core.toString;
 
@@ -100,6 +102,7 @@ module Fabric {
           profile.deadCount = containers.length - profile.aliveCount;
           profile.summary = profile.summaryMarkdown ? marked(profile.summaryMarkdown) : '';
           profile.iconURL = Fabric.toIconURL($scope, profile.iconURL);
+          profile.tags = ProfileHelpers.getTags(profile);
         });
       });
       var locations = groupByLocation(containers);

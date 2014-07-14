@@ -1,6 +1,7 @@
 /// <reference path="./fabricPlugin.ts"/>
 /// <reference path="../../helpers/js/selectionHelpers.ts"/>
 /// <reference path="../../helpers/js/filterHelpers.ts"/>
+/// <reference path="./profileHelpers.ts"/>
 module Fabric {
 
   // simple service to share our cart with other views
@@ -44,7 +45,7 @@ module Fabric {
 
 
   // AppView controller
-  export var AppViewController = _module.controller("Fabric.AppViewController", ["$scope", 'jolokia', "$templateCache", "ProfileCart", "$location", "workspace", ($scope, jolokia, $templateCache, ProfileCart:Profile[], $location, workspace:Workspace) => {
+  export var AppViewController = _module.controller("Fabric.AppViewController", ["$scope", 'jolokia', "$templateCache", "ProfileCart", "$location", "workspace", "marked", ($scope, jolokia, $templateCache, ProfileCart:Profile[], $location, workspace:Workspace, marked) => {
 
     $scope.selectedVersion = {};
     $scope.profiles = <Profile[]>[];
@@ -102,17 +103,12 @@ module Fabric {
           return;
         }
         var summaryMarkdown = profile["summaryMarkdown"];
-        var tags = profile.tags;
-        if (!tags || !tags.length) {
-          tags = profile.id.split('-');
-          var name = tags.last();
-          tags = tags.first(tags.length - 1);
-        }
+        var tags = ProfileHelpers.getTags(profile);
         $scope.tags.add(tags);
         $scope.profiles.push(<Profile>{
           id: profile.id,
           versionId: $scope.selectedVersion.id,
-          name: name,
+          name: profile.id,
           // TODO should we sort tags?
           //tags: tags.sort(),
           tags: tags,
