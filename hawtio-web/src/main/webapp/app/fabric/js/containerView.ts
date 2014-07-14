@@ -1,20 +1,23 @@
 /// <reference path="./fabricPlugin.ts"/>
 /// <reference path="../../helpers/js/storageHelpers.ts"/>
 /// <reference path="../../helpers/js/controllerHelpers.ts"/>
+/// <reference path="../../helpers/js/selectionHelpers.ts"/>
 /// <reference path="../../helpers/js/filterHelpers.ts"/>
 module Fabric {
 
-  export var ContainerViewController = _module.controller("Fabric.ContainerViewController", ["$scope", "jolokia", "$location", "localStorage", "$route", ($scope, jolokia, $location, localStorage, $route) => {
+  export var ContainerViewController = _module.controller("Fabric.ContainerViewController", ["$scope", "jolokia", "$location", "localStorage", "$route", "workspace", "marked", ($scope, jolokia, $location, localStorage, $route, workspace:Workspace, marked) => {
 
     $scope.name = ContainerViewController.name;
     $scope.containers = <Array<Container>>[];
     $scope.groupBy = 'profileIds';
     $scope.filter = '';
 
-    var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location', 'alive', 'type', 'ensembleServer', 'provisionResult'];
+    var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location', 'alive', 'type', 'ensembleServer', 'provisionResult', 'root', 'jolokiaUrl', 'jmxDomains', 'metadata'];
     var profileFields = ['id', 'hidden', 'version', 'summaryMarkdown', 'iconURL'];
 
     Fabric.loadRestApi(jolokia, $scope);
+    Fabric.initScope($scope, $location, jolokia, workspace);
+    SelectionHelpers.decorate($scope);
 
     StorageHelpers.bindModelToLocalStorage({
       $scope: $scope,
@@ -35,6 +38,7 @@ module Fabric {
       return FilterHelpers.searchObject(container, $scope.filter);
     }
 
+    $scope.filterContainer = $scope.filterContainers;
     $scope.toString = Core.toString;
 
     function maybeAdd(group: Array<any>, thing:any, index:string) {
@@ -86,6 +90,7 @@ module Fabric {
         }
         container.profiles = container.profiles.filter((p) => { return !p.hidden });
         container.icon = Fabric.getTypeIcon(container);
+        container.services = Fabric.getServiceList(container);
       });
       var versions = groupByVersions(containers);
       angular.forEach(versions, (version, versionId) => {
@@ -98,9 +103,21 @@ module Fabric {
         });
       });
       var locations = groupByLocation(containers);
+      // grouped by location
       $scope.locations = locations;
+      // grouped by version/profile
       $scope.versions = versions;
+      // list view
       $scope.containers = containers;
+      Core.$apply($scope);
+    });
+
+    Core.registerForChanges(jolokia, $scope, {
+      type: 'read',
+      mbean: Fabric.clusterManagerMBean,
+      attribute: 'EnsembleContainers'
+    }, (response) => {
+      $scope.ensembleContainerIds = response.value;
       Core.$apply($scope);
     });
 

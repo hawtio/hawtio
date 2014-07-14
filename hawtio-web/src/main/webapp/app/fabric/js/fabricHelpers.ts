@@ -341,7 +341,7 @@ module Fabric {
 
 
     $scope.isEnsembleContainer = (containerId) => {
-      if ($scope.ensembleContainerIds) {
+      if (angular.isArray($scope.ensembleContainerIds)) {
         return $scope.ensembleContainerIds.any(containerId);
       }
       return false;
