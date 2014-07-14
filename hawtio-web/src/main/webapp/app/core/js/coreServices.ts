@@ -87,7 +87,7 @@ module Core {
     };
   });
 
-  export var DEFAULT_MAX_DEPTH = 6;
+  export var DEFAULT_MAX_DEPTH = 7;
   export var DEFAULT_MAX_COLLECTION_SIZE = 500;
 
   _module.factory('jolokiaParams', ["jolokiaUrl", "localStorage", (jolokiaUrl, localStorage) => {
