@@ -1726,6 +1726,10 @@ var DataTable;
                     this.dataTableConfig["aaSorting"] = this.sortColumns;
                 }
 
+                this.dataTableConfig["oLanguage"] = {
+                    "sSearch": "Filter:"
+                };
+
                 if (this.dataTable) {
                     this.dataTable.fnClearTable(false);
                     this.dataTable.fnAddData(array);
