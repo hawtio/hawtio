@@ -4259,3 +4259,7 @@ ul.dynatree-container {
   background: #55ddff;
   color: #333333;
 }
+
+.dataTables_filter input {
+    border-radius: 15px
+}
