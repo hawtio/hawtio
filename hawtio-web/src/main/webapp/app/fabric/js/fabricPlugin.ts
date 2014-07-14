@@ -51,7 +51,7 @@ module Fabric {
 
             when('/fabric/test', { templateUrl: templatePath + 'test.html' }).
             when('/fabric/profileView', { templateUrl: templatePath + 'profileView.html', reloadOnSearch: false }).
-            when('/containers', { templateUrl: templatePath + 'containerView.html', reloadOnSearch: false });
+            when('/fabric/containerView', { templateUrl: templatePath + 'containerView.html', reloadOnSearch: false });
 
   }]);
 
@@ -75,9 +75,9 @@ module Fabric {
                wikiBranchMenu:Wiki.BranchMenu,
                $dialog, layoutFull) => {
 
+    viewRegistry['fabric/profileView'] = layoutFull;
+    viewRegistry['fabric/containerView'] = layoutFull;
     viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
-    viewRegistry['profiles'] = layoutFull;
-    viewRegistry['containers'] = layoutFull;
 
     pageTitle.addTitleElement(() => {
       return Fabric.currentContainerId;
@@ -118,7 +118,7 @@ module Fabric {
       title: "Manage your containers in this fabric",
       isValid: (workspace) => Fabric.isFMCContainer(workspace),
       href: () => "#/fabric/containers",
-      isActive: (workspace: Workspace) => workspace.isLinkActive("fabric") && !workspace.isLinkActive("fabric/profileView")
+      isActive: (workspace: Workspace) => workspace.isLinkActive("fabric") && !workspace.isLinkActive("fabric/profileView") && !workspace.isLinkActive("fabric/containerView")
     });
 
     workspace.topLevelTabs.push({
@@ -130,16 +130,14 @@ module Fabric {
       isActive: (workspace) => workspace.isLinkActive("fabric/profileView")
     });
 
-/*
     workspace.topLevelTabs.push({
       id: 'fabric.containers',
       content: 'Containers',
       title: 'View and manage containers in this fabric',
       isValid: (workspace) => Fabric.isFMCContainer(workspace),
-      href: () => '#/containers',
-      isActive: (workspace) => workspace.isLinkActive('containers')
+      href: () => '#/fabric/containerView',
+      isActive: (workspace) => workspace.isLinkActive('fabric/containerView')
     });
-*/
 
     workspace.topLevelTabs.push( {
       id: "fabric.configuration",
