@@ -1,18 +1,22 @@
 /// <reference path="./fabricPlugin.ts"/>
 /// <reference path="./profileHelpers.ts"/>
+/// <reference path="./containerHelpers.ts"/>
 /// <reference path="../../helpers/js/storageHelpers.ts"/>
 /// <reference path="../../helpers/js/controllerHelpers.ts"/>
 /// <reference path="../../helpers/js/selectionHelpers.ts"/>
 /// <reference path="../../helpers/js/filterHelpers.ts"/>
 module Fabric {
 
-  export var ContainerViewController = _module.controller("Fabric.ContainerViewController", ["$scope", "jolokia", "$location", "localStorage", "$route", "workspace", "marked", "ProfileCart", ($scope, jolokia, $location, localStorage, $route, workspace:Workspace, marked, ProfileCart) => {
+  export var ContainerViewController = _module.controller("Fabric.ContainerViewController", ["$scope", "jolokia", "$location", "localStorage", "$route", "workspace", "marked", "ProfileCart", "$dialog", ($scope, jolokia, $location, localStorage, $route, workspace:Workspace, marked, ProfileCart, $dialog) => {
 
     $scope.name = ContainerViewController.name;
     $scope.containers = <Array<Container>>[];
+    $scope.selectedContainers = <Array<Container>>[];
     $scope.groupBy = 'profileIds';
     $scope.filter = '';
     $scope.cartItems = ProfileCart;
+
+    $scope.createLocationDialog = ContainerHelpers.getCreateLocationDialog($scope, $dialog);
 
     var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location', 'alive', 'type', 'ensembleServer', 'provisionResult', 'root', 'jolokiaUrl', 'jmxDomains', 'metadata'];
     var profileFields = ['id', 'hidden', 'version', 'summaryMarkdown', 'iconURL', 'tags'];
@@ -35,6 +39,16 @@ module Fabric {
       'location': 'btn-primary',
       'none': 'btn-primary'
     });
+
+    $scope.$watch('containers', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.selectedContainers = $scope.containers.filter((container) => { return container['selected']; });
+      }
+    }, true);
+
+    $scope.maybeShowLocation = () => {
+      return ($scope.groupBy === 'location' || $scope.groupBy === 'none') && $scope.selectedContainers > 0;
+    }
 
     $scope.filterContainers = (container) => {
       return FilterHelpers.searchObject(container, $scope.filter);
@@ -84,6 +98,7 @@ module Fabric {
       arguments:[containerFields, profileFields]
     }, (response) => {
       var containers = response.value;
+      SelectionHelpers.sync($scope.selectedContainers, containers, 'id');
       var versions = {};
       var locations = {};
       // massage the returned data a bit first
@@ -107,6 +122,8 @@ module Fabric {
         });
       });
       var locations = groupByLocation(containers);
+      var locationIds = ContainerHelpers.extractLocations(containers);
+      $scope.locationMenu = ContainerHelpers.buildLocationMenu($scope, jolokia, locationIds);
       // grouped by location
       $scope.locations = locations;
       // grouped by version/profile

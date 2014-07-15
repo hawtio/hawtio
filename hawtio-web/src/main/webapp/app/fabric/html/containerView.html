@@ -18,6 +18,10 @@
                 ng-click="groupBy='none'">Show List</button>
       </div>
       <div class="pull-right">
+        <span class="inline-block"
+              ng-show="maybeShowLocation()">
+              <div hawtio-drop-down="locationMenu"></div>
+        </span>
         <hawtio-filter ng-model="filter"
                        placeholder="Filter Containers..."
                        save-as="fabric-container-view-text-filter"></hawtio-filter>

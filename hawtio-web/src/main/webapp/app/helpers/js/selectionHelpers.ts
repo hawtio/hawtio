@@ -29,6 +29,15 @@ module SelectionHelpers {
     toggleSelection(item);
   }
 
+  export function sync(selections:Array<any>, group:Array<any>, index:string):Array<any> {
+    group.forEach((item) => {
+      item['selected'] = selections.any((selection) => {
+        return selection[index] === item[index];
+      })
+    });
+    return group.filter((item) => { return item['selected'] });
+  }
+
   export function select(group:any[], item:any, $event:any):void {
     var ctrlKey = $event.ctrlKey;
     if (!ctrlKey) {
