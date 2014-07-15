@@ -3,10 +3,51 @@ var graph = "";
 var htmlDeps = "";
 
 graph += "digraph G {\n";
-htmlDeps += "<table><thead><tr><th>Module</th><th>Controllers</th><th>Services</th><th>Factories</th><th>Directives</th><th>Filters</th><th>Values</th><th>Constants</th></tr></thead><tbody>";
+htmlDeps += "<table><thead><tr><th>Module</th><th>Dependencies</th></th><th>Controllers</th><th>Services</th><th>Factories</th><th>Directives</th><th>Filters</th><th>Values</th><th>Constants</th></tr></thead><tbody>";
+
+// deps and reverse-deps between modules (m -> {m:1, m:1, ...})
+var _m2m = {};
+var _m2mr = {};
+
+angular.forEach(_modules, function(v, k) {
+  _m2m[v.moduleName] = {};
+  _m2mr[v.moduleName] = {};
+  angular.forEach(v.dependencies, function (d, dk) {
+    _m2m[v.moduleName][d] = 1;
+  });
+  angular.forEach(v.otherDependencies, function (od, odk) {
+    if (_definingModules[od] !== undefined) {
+      // found indirect module->module dependency
+      if (v.moduleName !== _definingModules[od].moduleName) {
+      _m2m[v.moduleName][_definingModules[od].moduleName] = 1;
+      }
+    }
+  });
+});
+angular.forEach(_m2m, function (v, k) {
+  angular.forEach(v, function (v1, k1) {
+    if (_m2mr[k1] === undefined) {
+      _m2mr[k1] = {};
+    }
+    _m2mr[k1][k] = 1;
+  });
+});
 
 angular.forEach(_modules, function(v, k) {
   htmlDeps += "<tr><td class='module-name'>" + v.moduleName + "</td>";
+  htmlDeps += "<td><b>Uses</b>";
+  htmlDeps += "<ul>";
+  angular.forEach(_m2m[v.moduleName], function (v, k) {
+    htmlDeps += "<li>" + k + "</li>";
+  });
+  htmlDeps += "</ul>";
+  htmlDeps += "<b>Used by</b>";
+  htmlDeps += "<ul>";
+  angular.forEach(_m2mr[v.moduleName], function (v, k) {
+    htmlDeps += "<li>" + k + "</li>";
+  });
+  htmlDeps += "</ul>";
+  htmlDeps += "</td>";
   htmlDeps += "<td><ul>";
   angular.forEach(v.controllers, function(v, k) {
     htmlDeps += "<li>" + v + "</li>";
