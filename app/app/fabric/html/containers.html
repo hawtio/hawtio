@@ -1,24 +1,5 @@
 <div ng-controller="Fabric.ContainersController">
 
-  <div modal="newLocationDialog.dialog.show">
-    <div class="modal-header">
-      <span>Assign new location</span>
-    </div>
-    <div class="modal-body">
-      <p>Please enter a new location to assign to these containers</p>
-      <div class="control-group">
-        <label class="control-label">Location: </label>
-        <div class="controls">
-          <input name="location" ng-model="newLocationName" type="text" class="input">
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" ng-click="newLocationDialog.onOk()">Assign</button>
-      <button class="btn" ng-click="newLocationDialog.close()">Cancel</button>
-    </div>
-  </div>
-
   <div class="row-fluid">
     <div class="span12 page-padded container-list-main">
 

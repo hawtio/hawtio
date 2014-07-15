@@ -3006,6 +3006,9 @@ fs-donut svg g text.units {
 .column-box-square {
   height: 32px;
   width: 32px;
+  line-height: 28px;
+  vertical-align: middle;
+  text-align: center;
 }
 
 .column-box-variable {
@@ -3016,6 +3019,10 @@ fs-donut svg g text.units {
   max-width: 500px;
 }
 
+.column-box-variable > h3 {
+  margin-bottom: 0;
+}
+
 .location-box {
   margin: 12px;
 }
@@ -3023,12 +3030,21 @@ fs-donut svg g text.units {
 .column-box-square > i {
   font-size: 24px;
   height: 24px;
-
+  vertical-align: middle;
 }
 
 .container-groups .column-box {
   height: 125px;
   width: auto;
+}
+
+.container-header-version,
+.container-header-version + hr {
+  margin-bottom: 0;
+}
+
+.container-header-version + hr {
+  margin-top: 0;
 }
 
 .container-groups .container-group-header {
