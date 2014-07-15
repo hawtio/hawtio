@@ -6,6 +6,7 @@
  */
 
 /// <reference path="./coreHelpers.ts"/>
+/// <reference path="../../ide/js/idePlugin.ts"/>
 /// <reference path="./pageTitle.ts"/>
 module Core {
 

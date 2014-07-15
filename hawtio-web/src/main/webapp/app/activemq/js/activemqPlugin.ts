@@ -3,6 +3,7 @@
  * @main ActiveMQ
  */
 /// <reference path="./activemqHelpers.ts"/>
+/// <reference path="../../core/js/corePlugin.ts"/>
 module ActiveMQ {
 
   export var pluginName = 'activemq';

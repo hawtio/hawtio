@@ -4,6 +4,7 @@
  * @module IDE
  */
 /// <reference path="ideHelpers.ts"/>
+/// <reference path="../../core/js/corePlugin.ts"/>
 module IDE {
     var pluginName = 'ide';
 

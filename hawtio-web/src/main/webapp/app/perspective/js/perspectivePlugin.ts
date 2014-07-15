@@ -3,6 +3,7 @@
  * @main Perspective
  */
 /// <reference path="./perspectiveHelpers.ts"/>
+/// <reference path="../../core/js/corePlugin.ts"/>
 module Perspective {
   var pluginName = 'perspective';
 
