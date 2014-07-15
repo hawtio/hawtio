@@ -65,8 +65,24 @@ var Gogo = (function(Gogo) {
 
           div.remove();
 
-          // compensate for internal horizontal padding
-          var cssWidth = width * charWidth + 20;
+          div = $('<div><div style="height: 300px">AAA</div></div>').css({
+            position: 'absolute',
+            left: -1000,
+            top: -1000,
+            display: 'block',
+            padding: 0,
+            margin: 0,
+            'font-family': 'monospace',
+            'overflow-y': 'scroll',
+            'max-height': '100px'
+          }).appendTo($('body'));
+
+          var scrollWidth = div.width() - $("div", div).width();
+
+          div.remove();
+
+          // compensate for internal horizontal padding (10px for Firefox...)
+          var cssWidth = width * charWidth + 20 + scrollWidth + 10;
           // Add an extra line for the status bar and divider
           var cssHeight = (height * charHeight) + charHeight + 2;
 
@@ -78,7 +94,8 @@ var Gogo = (function(Gogo) {
             width: cssWidth,
             height: cssHeight,
             'min-width': cssWidth,
-            'min-height': cssHeight
+            'min-height': cssHeight,
+            'margin-bottom': '3em'
           });
 
           var authHeader = Core.getBasicAuthHeader(userDetails.username, userDetails.password);
@@ -99,7 +116,7 @@ var Gogo = (function(Gogo) {
                 document.onkeydown = null;
                 delete scope.term;
               }
-              scope.term = gogo.Terminal(element.get(0), width, height, response['token']);
+              scope.term = gogo.Terminal(element.get(0), width, height, cssWidth, cssHeight, scrollWidth, charHeight, response['token']);
               Core.$apply(scope);
 
             },

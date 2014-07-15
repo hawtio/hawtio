@@ -24,7 +24,7 @@ import java.util.zip.GZIPOutputStream;
 public class TerminalServlet extends HttpServlet {
 
     public static final int TERM_WIDTH = 120;
-    public static final int TERM_HEIGHT = 39;
+    public static final int TERM_HEIGHT = 400;
     private final static Logger LOG = LoggerFactory.getLogger(TerminalServlet.class);
     /**
      * Pseudo class version ID to keep the IDE quite.
@@ -129,7 +129,7 @@ public class TerminalServlet extends HttpServlet {
                 session.put("APPLICATION", System.getProperty("karaf.name", "root"));
                 session.put("USER", "karaf");
                 session.put("COLUMNS", Integer.toString(TERM_WIDTH));
-                session.put("LINES", Integer.toString(TERM_HEIGHT));
+                session.put("LINES", Integer.toString(/*TERM_HEIGHT*/39));
             } catch (IOException e) {
                 LOG.info("Exception attaching to console", e);
                 throw e;
