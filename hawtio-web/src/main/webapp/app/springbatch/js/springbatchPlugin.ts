@@ -21,16 +21,6 @@ module SpringBatch {
             .when('/springbatch/jobs/:host/:port', {templateUrl: SpringBatch.templatePath + 'jobs.html'})
     }]);
 
-    _module.value('ui.config', {
-        // The ui-jq directive namespace
-        jq: {
-            gridster: {
-                widget_margins: [10, 10],
-                widget_base_dimensions: [140, 140]
-            }
-        }
-    });
-
     _module.run(["$location", "workspace", "viewRegistry", "$rootScope", "$resource", ($location:ng.ILocationService, workspace:Workspace, viewRegistry, $rootScope, $resource ) => {
 
         viewRegistry['springbatch'] = 'app/springbatch/html/layoutSpringBatch.html';
