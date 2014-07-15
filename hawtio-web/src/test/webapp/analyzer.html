@@ -8,6 +8,19 @@
   </head>
 
   <body>
+    <div>
+      <h5>Legend</h5>
+      <ul>
+        <li>Ovals - modules (black: from hawt.io, red: external)</li>
+        <!--<li>Rectangles - services/factories/values</li>-->
+        <li>Black arrows - explicit module dependencies</li>
+        <li>Green arrows - implicit module dependencies (when module declares e.g., service, which depends on e.g., services from other modules)</li>
+      </ul>
+    </div>
+    <div style="border: 1px dashed gray; padding: 5px">
+      To create a diagram, copy&paste the bellow definition into <code>&lt;filename&gt;.dot</code> and then issue:<br />
+      <code>dot -Tpng &lt;filename&gt;.dot > &lt;filename&gt;.png</code>
+    </div>
     <pre id="graph" style="font-size: 10px"></pre>
 
     <!--<script type="text/javascript" src="lib/rainbow.js?v=@VERSION@"></script>-->

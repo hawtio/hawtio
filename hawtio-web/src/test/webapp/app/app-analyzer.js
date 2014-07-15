@@ -25,6 +25,9 @@ var _controllersMap = {};
 var _directivesMap = {};
 var _filtersMap = {};
 
+// mapping of service/factory/controller/directive/filter to its defining module
+var _definingModules = {};
+
 function _validateProviderMethod(module, type, name, dependencies, map) {
 //  console.info(" - Creating " + type + " \"" + name + "\" in module \"" + module.moduleName + "\" with " + dependencies.length + " dependencies");
   if (_angular.isFunction(dependencies)) {
@@ -41,6 +44,9 @@ function _validateProviderMethod(module, type, name, dependencies, map) {
     for (var idx = 0; idx<dependencies.length-1; idx++) {
       if (typeof dependencies[idx] !== "string") {
         console.error("Wrong definition of " + type + " \"" + name + "\". Array element #" + idx + "should be of type string.");
+      } else {
+        // module depends on service/factory/controller/value/ which may add new indirect module->module dependency
+        module.otherDependencies[dependencies[idx]] = dependencies[idx];
       }
     }
     if (!_angular.isFunction(dependencies[dependencies.length-1])) {
@@ -54,7 +60,8 @@ function _validateProviderMethod(module, type, name, dependencies, map) {
   if (map[name] !== undefined) {
     console.error(type + " \"" + name + "\" already exists!");
   }
-  map[name] = name;
+  map[name] = module;
+  _definingModules[name] = module;
 }
 
 function _validateNonProviderMethod(module, type, dependencies) {
@@ -92,12 +99,16 @@ function Module(moduleName, dependencies) {
   }
 
   this.moduleName = moduleName;
-  this.dependencies = dependencies;
+  this.dependencies = {}; // direct module dependencies to other modules
+  this.otherDependencies = {}; // direct module dependencies to services/values/factories
+  this.otherExternalDependencies = {}; // indirect module dependencies (from services/values/factories) to other services/values/factories (which modules aren't known)
 
   if (dependencies.length > 0) {
     for (var idx = 0; idx<dependencies.length; idx++) {
       if (typeof dependencies[idx] !== "string") {
         console.error("Wrong definition of module \"" + moduleName + "\". Array element #" + idx + "should be of type string.");
+      } else {
+        this.dependencies[dependencies[idx]] = dependencies[idx];
       }
     }
   }
