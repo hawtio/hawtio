@@ -1,5 +1,10 @@
 module Fabric {
 
+  export interface JolokiaCallbacks {
+    success: (response:any) => void;
+    error: (response:any) => void;
+  }
+
   // nicer to have type info...
   export interface Profile {
     id?: string;

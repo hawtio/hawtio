@@ -6,11 +6,6 @@ module Fabric {
   // this holds lazily created dialog configs
   var dialogConfigs = {};
 
-  export interface JolokiaCallbacks {
-    success: (response:any) => void;
-    error: (response:any) => void;
-  }
-
   export interface CreateLocationDialogOptions {
     selectedContainers: () => Array<Container>;
     callbacks: () => JolokiaCallbacks;
