@@ -6,12 +6,13 @@
 /// <reference path="../../helpers/js/filterHelpers.ts"/>
 module Fabric {
 
-  export var ContainerViewController = _module.controller("Fabric.ContainerViewController", ["$scope", "jolokia", "$location", "localStorage", "$route", "workspace", "marked", ($scope, jolokia, $location, localStorage, $route, workspace:Workspace, marked) => {
+  export var ContainerViewController = _module.controller("Fabric.ContainerViewController", ["$scope", "jolokia", "$location", "localStorage", "$route", "workspace", "marked", "ProfileCart", ($scope, jolokia, $location, localStorage, $route, workspace:Workspace, marked, ProfileCart) => {
 
     $scope.name = ContainerViewController.name;
     $scope.containers = <Array<Container>>[];
     $scope.groupBy = 'profileIds';
     $scope.filter = '';
+    $scope.cartItems = ProfileCart;
 
     var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location', 'alive', 'type', 'ensembleServer', 'provisionResult', 'root', 'jolokiaUrl', 'jmxDomains', 'metadata'];
     var profileFields = ['id', 'hidden', 'version', 'summaryMarkdown', 'iconURL', 'tags'];

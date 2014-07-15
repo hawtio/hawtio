@@ -29,8 +29,9 @@
     <div class="span12">
       <p></p>
       <div ng-repeat="(versionId, version) in versions">
-        {{versionId}}
-        <div hawtio-auto-columns=".column-box">
+        <strong class="container-header-version">Version: {{versionId}}</strong>
+        <hr>
+        <div>
           <div class="column-box" 
                ng-repeat="profile in version.profiles"
                ng-include="'app/fabric/html/profileBox.html'">
@@ -42,19 +43,17 @@
   <div class="row-fluid"
        ng-show="groupBy=='location'">
     <div class="span12">
-      <p></p>
       <div class="column-box-variable location-box"
            ng-repeat="(locationId, location) in locations">
-
-        <h3>{{locationId}}</h3>
+        <strong>{{locationId}}</strong>
         <div>
-          <div class="column-box-square" 
-            ng-repeat="container in location.containers | orderBy:['id', 'alive']">
+          <div class="column-box-square mouse-pointer" 
+            ng-repeat="container in location.containers | orderBy:['id', 'alive']"
+            ng-class="getSelectedClass(container)"
+            ng-click="select(containers, container, $event)">
             <i title="{{container.id}} / {{container.versionId}}" ng-class='statusIcon(container)'></i>
           </div>
         </div>
-
-
       </div>
     </div>
   </div>

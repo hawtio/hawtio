@@ -1456,3 +1456,11 @@ img.nodeIcon:hover {
 .column-box {
   /* border: 1px solid #d4d4d4; */
 }
+
+.column-box-square {
+  border: 1px solid #d4d4d4;
+}
+
+.column-box-square.selected {
+  background-color: #f0f0ff;
+}
