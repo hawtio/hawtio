@@ -1,9 +1,27 @@
 /// <reference path="fabricPlugin.ts"/>
+/// <reference path="fabricInterfaces.ts"/>
 module Fabric {
 
-  _module.controller("Fabric.ContainersController", ["$scope", "$location", "$route", "jolokia", "workspace", ($scope, $location, $route, jolokia, workspace) => {
+  _module.controller("Fabric.ContainersController", ["$scope", "$location", "$route", "jolokia", "workspace", "$dialog", ($scope, $location, $route, jolokia, workspace, $dialog) => {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
+
+    $scope.selectedContainers = <Array<Container>>[];
+    $scope.createLocationDialog = Fabric.getCreateLocationDialog($dialog, <CreateLocationDialogOptions>{ 
+      selectedContainers: () => { 
+        return $scope.selectedContainers; 
+      },
+      callbacks: () => { 
+        return <JolokiaCallbacks>{
+          success: (response) => {
+            Core.$apply($scope);
+          },
+          error: (response) => {
+            Core.$apply($scope);
+          }
+        };
+      }
+    });
 
     // bind model values to search params...
     Core.bindModelToSearchParam($scope, $location, "containerIdFilter", "q", "");
@@ -16,28 +34,6 @@ module Fabric {
       title: 'Set Location',
       items: []
     };
-
-    $scope.noLocation = "(No Location)";
-    $scope.newLocationDialog = {
-      dialog: new UI.Dialog(),
-      onOk: () => {
-        $scope.newLocationDialog.close();
-        $scope.selectedContainers.each((container) => {
-          Fabric.setContainerProperty(jolokia, container.id, 'location', $scope.newLocationName, () => {
-              Core.$apply($scope);
-            }, () => {
-              Core.$apply($scope);
-            });
-        });
-      },
-      open: () => {
-        $scope.newLocationDialog.dialog.open();
-      },
-      close: () => {
-        $scope.newLocationDialog.dialog.close();
-      }
-    };
-    $scope.newLocationName = "";
 
     $scope.addToDashboardLink = () => {
       var href = "#/fabric/containers";
@@ -91,8 +87,7 @@ module Fabric {
         menuItems.push({
           title: "New...",
           action: () => {
-            $scope.newLocationName = "";
-            $scope.newLocationDialog.open();
+            $scope.createLocationDialog.open();
           }
         });
 

@@ -1,0 +1,27 @@
+<div>
+  <form name="createLocation" class="no-bottom-margin">
+    <div class="modal-header">
+      <span>Assign new location</span>
+    </div>
+    <div class="modal-body">
+      <p>Please enter a new location to assign to these containers</p>
+      <div class="control-group">
+        <label class="control-label">Location: </label>
+        <div class="controls">
+          <input name="location" 
+                 ng-model="newLocationName" 
+                 required
+                 type="text" 
+                 class="input">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" 
+              ng-disabled="!createLocation.$valid" 
+              ng-click="close(true)">Assign</button>
+      <button class="btn" 
+              ng-click="close(false)">Cancel</button>
+    </div>
+  </form>
+</div>

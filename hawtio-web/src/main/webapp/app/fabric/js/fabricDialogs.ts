@@ -1,8 +1,38 @@
-/// <referencePath="./fabricHelpers.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
+/// <reference path="./fabricInterfaces.ts"/>
+/// <reference path="./fabricHelpers.ts"/>
 module Fabric {
 
   // this holds lazily created dialog configs
   var dialogConfigs = {};
+
+  export interface JolokiaCallbacks {
+    success: (response:any) => void;
+    error: (response:any) => void;
+  }
+
+  export interface CreateLocationDialogOptions {
+    selectedContainers: () => Array<Container>;
+    callbacks: () => JolokiaCallbacks;
+  }
+
+  export function getCreateLocationDialog($dialog, resolve:CreateLocationDialogOptions) {
+    return $dialog.dialog({
+      resolve: resolve,
+      templateUrl: 'app/fabric/html/newLocation.html',
+      controller: ["$scope", "dialog", "jolokia", "selectedContainers", "callbacks", ($scope, dialog, jolokia, selectedContainers, callbacks) => {
+        $scope.newLocationName = "";
+        $scope.close = (result) => {
+          dialog.close();
+          if (result) {
+            selectedContainers.each((container) => {
+              Fabric.setContainerProperty(jolokia, container.id, 'location', $scope.newLocationName, callbacks.successs, callbacks.error);
+            });
+          }
+        } 
+      }]
+    });
+  }
 
   export function getVersionCreateDialog($dialog) {
     var key = 'createVersion';
@@ -14,7 +44,7 @@ module Fabric {
           $scope.close = (result) => {
             dialog.close();
             if (result) {
-              doCreateVersion($scope, jolokia, $location, name);
+              Fabric.doCreateVersion($scope, jolokia, $location, name);
             }
           }
         }]
