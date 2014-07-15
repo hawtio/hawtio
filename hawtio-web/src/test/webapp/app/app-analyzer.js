@@ -28,7 +28,7 @@ var _filtersMap = {};
 // mapping of service/factory/controller/directive/filter to its defining module
 var _definingModules = {};
 
-function _validateProviderMethod(module, type, name, dependencies, map) {
+function _validateProviderMethod(module, type, name, dependencies, map, collection) {
 //  console.info(" - Creating " + type + " \"" + name + "\" in module \"" + module.moduleName + "\" with " + dependencies.length + " dependencies");
   if (_angular.isFunction(dependencies)) {
     // "dependencies" function should be no-arg
@@ -62,6 +62,7 @@ function _validateProviderMethod(module, type, name, dependencies, map) {
   }
   map[name] = module;
   _definingModules[name] = module;
+  collection.push(name);
 }
 
 function _validateNonProviderMethod(module, type, dependencies) {
@@ -103,6 +104,14 @@ function Module(moduleName, dependencies) {
   this.otherDependencies = {}; // direct module dependencies to services/values/factories
   this.otherExternalDependencies = {}; // indirect module dependencies (from services/values/factories) to other services/values/factories (which modules aren't known)
 
+  this.controllers = [];
+  this.services = [];
+  this.factories = [];
+  this.directives = [];
+  this.filters = [];
+  this.valuesTab = [];
+  this.constants = [];
+
   if (dependencies.length > 0) {
     for (var idx = 0; idx<dependencies.length; idx++) {
       if (typeof dependencies[idx] !== "string") {
@@ -131,6 +140,7 @@ Module.prototype.value = function(valueName, value) {
     console.error("Value \"" + valueName + "\" already exist!");
   }
   _valuesMap[valueName] = valueName;
+  this.valuesTab.push(valueName);
 };
 Module.prototype.constant = function(constantName, value) {
 //  console.info(" - Creating constant \"" + constantName + "\" in module \"" + this.moduleName + "\"");
@@ -141,23 +151,24 @@ Module.prototype.constant = function(constantName, value) {
     console.error("Constant \"" + constantName + "\" already exist!");
   }
   _constantsMap[constantName] = constantName;
+  this.constants.push(constantName);
 };
 
 Module.prototype.factory = function(factoryName, dependencies) {
-  _validateProviderMethod(this, "factory", factoryName, dependencies, _factoriesMap);
+  _validateProviderMethod(this, "factory", factoryName, dependencies, _factoriesMap, this.factories);
 };
 Module.prototype.service = function(serviceName, dependencies) {
-  _validateProviderMethod(this, "service", serviceName, dependencies, _servicesMap);
+  _validateProviderMethod(this, "service", serviceName, dependencies, _servicesMap, this.services);
 };
 
 Module.prototype.controller = function(controllerName, dependencies) {
-  _validateProviderMethod(this, "controller", controllerName, dependencies, _controllersMap);
+  _validateProviderMethod(this, "controller", controllerName, dependencies, _controllersMap, this.controllers);
 };
 Module.prototype.directive = function(directiveName, dependencies) {
-  _validateProviderMethod(this, "directive", directiveName, dependencies, _directivesMap);
+  _validateProviderMethod(this, "directive", directiveName, dependencies, _directivesMap, this.directives);
 };
 Module.prototype.filter = function(filterName, dependencies) {
-  _validateProviderMethod(this, "filter", filterName, dependencies, _filtersMap);
+  _validateProviderMethod(this, "filter", filterName, dependencies, _filtersMap, this.filters);
 };
 
 Module.prototype.run = function(dependencies) {

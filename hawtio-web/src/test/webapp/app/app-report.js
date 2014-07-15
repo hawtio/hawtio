@@ -1,7 +1,49 @@
 
 var graph = "";
+var htmlDeps = "";
 
 graph += "digraph G {\n";
+htmlDeps += "<table><thead><tr><th>Module</th><th>Controllers</th><th>Services</th><th>Factories</th><th>Directives</th><th>Filters</th><th>Values</th><th>Constants</th></tr></thead><tbody>";
+
+angular.forEach(_modules, function(v, k) {
+  htmlDeps += "<tr><td class='module-name'>" + v.moduleName + "</td>";
+  htmlDeps += "<td><ul>";
+  angular.forEach(v.controllers, function(v, k) {
+    htmlDeps += "<li>" + v + "</li>";
+  });
+  htmlDeps += "</ul></td>";
+  htmlDeps += "<td><ul>";
+  angular.forEach(v.services, function(v, k) {
+    htmlDeps += "<li>" + v + "</li>";
+  });
+  htmlDeps += "</ul></td>";
+  htmlDeps += "<td><ul>";
+  angular.forEach(v.factories, function(v, k) {
+    htmlDeps += "<li>" + v + "</li>";
+  });
+  htmlDeps += "</ul></td>";
+  htmlDeps += "<td><ul>";
+  angular.forEach(v.directives, function(v, k) {
+    htmlDeps += "<li>" + v + "</li>";
+  });
+  htmlDeps += "</ul></td>";
+  htmlDeps += "<td><ul>";
+  angular.forEach(v.filters, function(v, k) {
+    htmlDeps += "<li>" + v + "</li>";
+  });
+  htmlDeps += "</ul></td>";
+  htmlDeps += "<td><ul>";
+  angular.forEach(v.valuesTab, function(v, k) {
+    htmlDeps += "<li>" + v + "</li>";
+  });
+  htmlDeps += "</ul></td>";
+  htmlDeps += "<td><ul>";
+  angular.forEach(v.constants, function(v, k) {
+    htmlDeps += "<li>" + v + "</li>";
+  });
+  htmlDeps += "</ul></td>";
+  htmlDeps += "</tr>";
+});
 
 var _externalModules = {};
 
@@ -54,6 +96,8 @@ angular.forEach(_modules, function(v, k) {
   });
 });
 
+htmlDeps += "</tbody></table>";
 graph += "}\n";
 
 $("#graph").html(graph);
+$("#report").html(htmlDeps);
