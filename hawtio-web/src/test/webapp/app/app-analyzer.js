@@ -87,12 +87,26 @@ function _validateNonProviderMethod(module, type, dependencies) {
 
 /* Mocking Angular.js module */
 function Module(moduleName, dependencies) {
-  console.info("Creating module \"" + moduleName + "\" with " + dependencies.length + " dependencies");
   if (typeof moduleName !== "string" || !angular.isArray(dependencies)) {
     console.error("Wrong definition of module \"" + moduleName + "\"");
   }
+
   this.moduleName = moduleName;
   this.dependencies = dependencies;
+
+  if (dependencies.length > 0) {
+    for (var idx = 0; idx<dependencies.length; idx++) {
+      if (typeof dependencies[idx] !== "string") {
+        console.error("Wrong definition of module \"" + moduleName + "\". Array element #" + idx + "should be of type string.");
+      }
+    }
+  }
+  if (_modulesMap[moduleName] !== undefined) {
+    console.error("Module \"" + moduleName + "\" already exists!");
+  }
+
+  console.info("Module \"" + moduleName + "\" <- " + _angular.toJson(dependencies));
+
   _modules.push(this);
   _modulesMap[this.moduleName] = this;
 }
