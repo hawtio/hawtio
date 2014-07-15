@@ -253,7 +253,6 @@
     <module>hawtio-redhat-amq-branding</module>
     <module>hawtio-fabric8-branding</module>
     <module>hawtio-karaf</module>
-    <module>hawtio-api-docs</module>
   </modules>
 
   <build>
@@ -644,6 +643,13 @@
         </plugins>
       </build>
     </profile>
+
+      <profile>
+          <id>apidocs</id>
+          <modules>
+              <module>hawtio-api-docs</module>
+          </modules>
+      </profile>
 
   </profiles>
 </project>
