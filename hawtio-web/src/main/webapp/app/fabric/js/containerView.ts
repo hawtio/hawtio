@@ -14,9 +14,12 @@ module Fabric {
     $scope.selectedContainers = <Array<Container>>[];
     $scope.groupBy = 'profileIds';
     $scope.filter = '';
-    $scope.cartItems = ProfileCart;
+    $scope.cartItems = [];
     $scope.versionIdFilter = '';
     $scope.profileIdFilter = '';
+    $scope.locationIdFilter = '';
+    $scope.hasCounts = true;
+    $scope.toString = Core.toString;
 
     $scope.createLocationDialog = ContainerHelpers.getCreateLocationDialog($scope, $dialog);
 
@@ -54,6 +57,15 @@ module Fabric {
       intialValue: $scope.profileIdFilter
     });
 
+    StorageHelpers.bindModelToLocalStorage({
+      $scope: $scope,
+      $location: $location,
+      localStorage: localStorage,
+      modelName: 'locationIdFilter',
+      paramName: 'locationIdFilter',
+      intialValue: $scope.locationIdFilter
+    });
+
     $scope.groupByClass = ControllerHelpers.createClassSelector({
       'profileIds': 'btn-primary',
       'location': 'btn-primary',
@@ -71,9 +83,13 @@ module Fabric {
       return ($scope.groupBy === 'location' || $scope.groupBy === 'none') && $scope.selectedContainers.length > 0;
     }
 
-    $scope.showContainersFor = (profile) => {
-      $scope.profileIdFilter = profile.id;
-      $scope.versionIdFilter = profile.version;
+    $scope.showContainersFor = (thing) => {
+      if (angular.isString(thing)) {
+        $scope.locationIdFilter = thing;
+      } else {
+        $scope.profileIdFilter = thing.id;
+        $scope.versionIdFilter = thing.version;
+      }
       $scope.groupBy = 'none';
     }
 
@@ -84,12 +100,13 @@ module Fabric {
       if (!Core.isBlank($scope.profileIdFilter) && !container.profileIds.any($scope.profileIdFilter)) {
         return false;
       }
+      if (!Core.isBlank($scope.locationIdFilter) && container.location !== $scope.locationIdFilter) {
+        return false;
+      }
       return FilterHelpers.searchObject(container, $scope.filter);
     }
 
-    $scope.hasCounts = true;
     $scope.filterContainer = $scope.filterContainers;
-    $scope.toString = Core.toString;
 
     function maybeAdd(group: Array<any>, thing:any, index:string) {
       if (angular.isArray(thing)) {
@@ -137,7 +154,7 @@ module Fabric {
       // massage the returned data a bit first
       containers.forEach((container) => {
         if (Core.isBlank(container.location)) {
-          container.location = Fabric.NO_LOCATION;
+          container.location = ContainerHelpers.NO_LOCATION;
         }
         container.profiles = container.profiles.filter((p) => { return !p.hidden });
         container.icon = Fabric.getTypeIcon(container);

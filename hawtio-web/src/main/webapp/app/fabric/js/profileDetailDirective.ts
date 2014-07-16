@@ -111,19 +111,6 @@ module Fabric {
             name: "New Container"
           });
         }
-        /*
-        var createVersionDialog = $scope.createVersionDialog;
-        if (createVersionDialog) {
-          actions.push({
-            doAction: () => {
-              $scope.createVersionDialog.open();
-            },
-            title: "Create a new version of this configuration so you can edit it and then perform rolling upgrades",
-            icon: "icon-plus",
-            name: "New Version"
-          });
-        }
-        */
       }
 
       $scope.$watch('activeTab', (newValue, oldValue) => {

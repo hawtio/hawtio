@@ -1,4 +1,5 @@
 /// <reference path="activemqPlugin.ts"/>
+/// <reference path="../../fabric/js/fabricHelpers.ts"/>
 module ActiveMQ {
 
   _module.controller("ActiveMQ.BrokerDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", ($scope, $compile, $location, localStorage, jolokia, workspace) => {

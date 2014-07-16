@@ -1,4 +1,7 @@
 /// <reference path="fabricPlugin.ts"/>
+/// <reference path="containerHelpers.ts"/>
+/// <reference path="../../log/js/logHelpers.ts"/>
+/// <reference path="../../ui/js/dialog.ts"/>
 module Fabric {
 
   _module.controller("Fabric.ContainerController", ["$scope", "$routeParams", "$location", "jolokia", "workspace", "userDetails", ($scope, $routeParams, $location, jolokia, workspace, userDetails) => {
@@ -68,11 +71,11 @@ module Fabric {
     }, true);
 
     $scope.stop = () => {
-      doStopContainer($scope, jolokia, $scope.containerId);
+      ContainerHelpers.doStopContainer($scope, jolokia, $scope.containerId);
     };
 
     $scope.start = () => {
-      doStartContainer($scope, jolokia, $scope.containerId);
+      ContainerHelpers.doStartContainer($scope, jolokia, $scope.containerId);
     };
 
     $scope.statusIcon = () => {

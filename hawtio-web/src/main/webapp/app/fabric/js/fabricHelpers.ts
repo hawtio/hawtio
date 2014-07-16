@@ -2,28 +2,10 @@
  * @module Fabric
  */
 /// <reference path="./fabricInterfaces.ts"/>
+/// <reference path="fabricGlobals.ts"/>
+/// <reference path="jolokiaHelpers.ts"/>
+/// <reference path="containerHelpers.ts"/>
 module Fabric {
-
-  export var log:Logging.Logger = Logger.get("Fabric");
-
-  // TODO - maybe a separate fabricConstants.ts would be good
-  export var jmxDomain = 'io.fabric8';
-  export var managerMBean = Fabric.jmxDomain + ":type=Fabric";
-  export var clusterManagerMBean = Fabric.jmxDomain + ":type=ClusterServiceManager";
-  export var clusterBootstrapManagerMBean = Fabric.jmxDomain + ":type=ClusterBootstrapManager";
-  export var openShiftFabricMBean = Fabric.jmxDomain + ":type=OpenShift";
-  export var mqManagerMBean = Fabric.jmxDomain + ":type=MQManager";
-
-  var schemaLookupDomain = "hawtio";
-  var schemaLookupType = "SchemaLookup";
-
-  export var schemaLookupMBean = schemaLookupDomain + ":type=" + schemaLookupType;
-  export var useDirectoriesInGit = true;
-  export var fabricTopLevel = "fabric/profiles/";
-  export var profileSuffix = ".profile";
-  export var jolokiaWebAppGroupId = jmxDomain + ".fabric-jolokia";
-
-  export var NO_LOCATION = "No location"
 
   export function fabricCreated(workspace) {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"});
@@ -103,43 +85,10 @@ module Fabric {
       $scope.fabricInitialized = true;
     }
 
+    ContainerHelpers.decorate($scope, $location, jolokia);
+
     $scope.gotoProfile = (versionId:string, profileId:string) => {
       Fabric.gotoProfile(workspace, jolokia, workspace.localStorage, $location, versionId, profileId);
-    };
-
-    $scope.getStatusTitle = (container) => {
-      return Fabric.statusTitle(container);
-    };
-
-    $scope.isCurrentContainer = (container) => {
-      if (!container) {
-        return false;
-      }
-      if (Core.isBlank(Fabric.currentContainerId)) {
-        return false;
-      }
-      if (angular.isObject(container)) {
-        return container['id'] === Fabric.currentContainerId;
-      }
-      if (angular.isString(container)) {
-        return container === Fabric.currentContainerId;
-      }
-
-      return false;
-    };
-
-    $scope.canConnect = (container) => {
-      if (!container) {
-        return false;
-      }
-      if (Core.isBlank(container['jolokiaUrl'])) {
-        return false;
-      }
-
-      if (!Core.parseBooleanValue(container['alive'])) {
-        return false;
-      }
-      return true;
     };
 
     $scope.refreshProfile = (versionId, profileId) => {
@@ -155,7 +104,7 @@ module Fabric {
       }, {
         method: 'POST',
         success: () => {
-          Core.notification('success', 'Triggered refresh of profile ' + profileId + '/' + versionId);
+          // Core.notification('success', 'Triggered refresh of profile ' + profileId + '/' + versionId);
           Core.$apply($scope);
         },
         error: (response) => {
@@ -181,10 +130,6 @@ module Fabric {
 
     $scope.hasFabricWiki = () => {
       return Git.isGitMBeanFabric(workspace);
-    };
-
-    $scope.showContainer = (container) => {
-      $location.path('/fabric/container/' + container.id);
     };
 
     $scope.createRequiredContainers = (profile) => {
@@ -248,18 +193,12 @@ module Fabric {
       return answer.join(' ');
     };
 
-    $scope.statusIcon = (row) => {
-      return Fabric.statusIcon(row);
-    };
-
-
     $scope.isEnsembleContainer = (containerId) => {
       if (angular.isArray($scope.ensembleContainerIds)) {
         return $scope.ensembleContainerIds.any(containerId);
       }
       return false;
     };
-
 
     // for connection dialog
     $scope.connect = {
@@ -324,14 +263,12 @@ module Fabric {
           Core.unregister(jolokia, $scope);
           $location.path('/fabric/containers');
 
-          Fabric.doDeleteContainer($scope, jolokia, $scope.containerId);
+          ContainerHelpers.doDeleteContainer($scope, jolokia, $scope.containerId);
 
         } else if (angular.isDefined($scope.selectedContainers)) {
-
           $scope.selectedContainers.each((c) => {
-            doDeleteContainer($scope, jolokia, c.id);
+            ContainerHelpers.doDeleteContainer($scope, jolokia, c.id);
           });
-
         } else {
           // bail...
           log.info("Asked to delete containers but no containerId or selectedContainers attributes available");
@@ -342,22 +279,6 @@ module Fabric {
       },
       close: () => {
         $scope.confirmDeleteDialog.dialog.close();
-      }
-    };
-
-    $scope.createVersionDialog = {
-      dialog: new UI.Dialog(),
-      newVersionName: "",
-
-      open: () => {
-        log.debug("Opening version dialog, $scope: ", $scope);
-        $scope.createVersionDialog.newVersionName = "";
-        $scope.createVersionDialog.dialog.open();
-      },
-      onOk: () => {
-        Fabric.doCreateVersion($scope, jolokia, $location, $scope.createVersionDialog.newVersionName);
-        $scope.createVersionDialog.newVersionName = "";
-        $scope.createVersionDialog.dialog.close();
       }
     };
 
@@ -535,49 +456,6 @@ module Fabric {
     }
   }
 
-  export function doDeleteContainer($scope, jolokia, name, onDelete:() => any = null) {
-    Core.notification('info', "Deleting " + name);
-    destroyContainer(jolokia, name, () => {
-      Core.notification('success', "Deleted " + name);
-      if (onDelete) {
-        onDelete();
-      }
-      Core.$apply($scope);
-    }, (response) => {
-      Core.notification('error', "Failed to delete " + name + " due to " + response.error);
-      Core.logJolokiaStackTrace(response);
-      Core.$apply($scope);
-    });
-  }
-
-  export function doStartContainer($scope, jolokia, name) {
-    if ($scope.fabricVerboseNotifications) {
-      Core.notification('info', "Starting " + name);
-    }
-    startContainer(jolokia, name, () => {
-      Core.notification('success', "Started " + name);
-      Core.$apply($scope);
-    }, (response) => {
-      Core.notification('error', "Failed to start " + name + " due to " + response.error);
-      Core.logJolokiaStackTrace(response);
-      Core.$apply($scope);
-    });
-  }
-
-  export function doStopContainer($scope, jolokia, name) {
-    if ($scope.fabricVerboseNotifications) {
-      Core.notification('info', "Stopping " + name);
-    }
-    stopContainer(jolokia, name, () => {
-      Core.notification('success', "Stopped " + name);
-      Core.$apply($scope);
-    }, (response) => {
-      Core.notification('error', "Failed to stop " + name + " due to " + response.error);
-      Core.logJolokiaStackTrace(response);
-      Core.$apply($scope);
-    });
-  }
-
   export var urlResolvers = ['http:', 'ftp:', 'mvn:'];
 
   export function completeUri ($q, $scope, workspace, jolokia, something) {
@@ -585,89 +463,9 @@ module Fabric {
 
   }
 
-  export function applyPatches(jolokia, files, targetVersion, newVersionName, proxyUser, proxyPass, success, error) {
-    doAction('applyPatches(java.util.List,java.lang.String,java.lang.String,java.lang.String,java.lang.String)', jolokia, [files, targetVersion, newVersionName, proxyUser, proxyPass], success, error);
-  }
-
-  export function setContainerProperty(jolokia, containerId, property, value, success, error) {
-    doAction('setContainerProperty(java.lang.String, java.lang.String, java.lang.Object)', jolokia, [containerId, property, value], success, error);
-  }
-
-  export function deleteConfigFile(jolokia, version, profile, pid, success, error) {
-    doAction('deleteConfigurationFile(java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, pid], success, error);
-  }
-
-  export function newConfigFile(jolokia, version, profile, pid, success, error) {
-    doAction('setConfigurationFile(java.lang.String, java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, pid, ''], success, error);
-  }
-
-  export function saveConfigFile(jolokia, version, profile, pid, data, success, error) {
-    doAction('setConfigurationFile(java.lang.String, java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, pid, data], success, error);
-  }
-
-  export function addProfilesToContainer(jolokia, container, profiles, success, error) {
-    doAction('addProfilesToContainer(java.lang.String, java.util.List)', jolokia, [container, profiles], success, error);
-  }
-
-  export function removeProfilesFromContainer(jolokia, container, profiles, success, error) {
-    doAction('removeProfilesFromContainer(java.lang.String, java.util.List)', jolokia, [container, profiles], success, error);
-  }
-
-  export function applyProfiles(jolokia, version, profiles, containers, success, error) {
-    doAction('applyProfilesToContainers(java.lang.String, java.util.List, java.util.List)', jolokia, [version, profiles, containers], success, error);
-  }
-
-  export function migrateContainers(jolokia, version, containers, success, error) {
-    doAction('applyVersionToContainers(java.lang.String, java.util.List)', jolokia, [version, containers], success, error);
-  }
-
-  export function changeProfileParents(jolokia, version, id, parents, success, error) {
-    doAction('changeProfileParents(java.lang.String, java.lang.String, java.util.List)', jolokia, [version, id, parents], success, error);
-  }
-
-  export function createProfile(jolokia, version, id, parents, success, error) {
-    doAction('createProfile(java.lang.String, java.lang.String, java.util.List)', jolokia, [version, id, parents], success, error);
-  }
-
-  export function copyProfile(jolokia, version, sourceName, targetName, force, success, error) {
-    doAction('copyProfile(java.lang.String, java.lang.String, java.lang.String, boolean)', jolokia, [version, sourceName, targetName, force], success, error);
-  }
-
-  export function createVersionWithParentAndId(jolokia, base, id, success, error) {
-    doAction('createVersion(java.lang.String, java.lang.String)', jolokia, [base, id], success, error);
-  }
-
-  export function createVersionWithId(jolokia, id, success, error) {
-    doAction('createVersion(java.lang.String)', jolokia, [id], success, error);
-  }
-
-  export function createVersion(jolokia, success, error) {
-    doAction('createVersion()', jolokia, [], success, error);
-  }
-
-  export function deleteVersion(jolokia, id, success, error) {
-    doAction('deleteVersion(java.lang.String)', jolokia, [id], success, error);
-  }
-
   // TODO cache the current active version? Then clear the cached value if we delete it
   export function getActiveVersion($location) {
     return $location.search()['cv'] || "1.0";
-  }
-
-  export function getContainerIdsForProfile(jolokia, version, profileId) {
-    return jolokia.execute(Fabric.managerMBean, "containerIdsForProfile", version, profileId, { method: 'POST' });
-  }
-
-  export function deleteProfile(jolokia, version, id, success, error) {
-    doAction('deleteProfile(java.lang.String, java.lang.String)', jolokia, [version, id], success, error);
-  }
-
-  export function profileWebAppURL(jolokia, webAppId, profileId, versionId, success, error) {
-    doAction('profileWebAppURL', jolokia, [webAppId, profileId, versionId], success, error);
-  }
-
-  export function restApiUrl(jolokia, success, error = Core.defaultJolokiaErrorHandler) {
-    doAction('restApiUrl', jolokia, [], success, error);
   }
 
   /**
@@ -768,36 +566,6 @@ module Fabric {
     return Fabric.containerWebAppURL(jolokia, jolokiaWebAppGroupId, containerId, onJolokiaUrl, onJolokiaUrl);
   }
 
-  export function containerWebAppURL(jolokia, webAppId, containerId, success, error) {
-    doAction('containerWebAppURL', jolokia, [webAppId, containerId], success, error);
-  }
-
-  export function doAction(action, jolokia, arguments, success, error) {
-    jolokia.request(
-        {
-          type: 'exec', mbean: managerMBean,
-          operation: action,
-          arguments: arguments
-        },
-        {
-          method: 'POST',
-          success: success,
-          error: error
-        });
-  }
-  
-  export function stopContainer(jolokia, id, success, error) {
-    doAction('stopContainer(java.lang.String)', jolokia, [id], success, error);
-  }
-
-  export function destroyContainer(jolokia, id, success, error) {
-    doAction('destroyContainer(java.lang.String)', jolokia, [id], success, error);
-  }
-
-  export function startContainer(jolokia, id, success, error) {
-    doAction('startContainer(java.lang.String)', jolokia, [id], success, error);
-  }
-
   /**
    * Get a list of icons for the container's JMX domains
    * @param container
@@ -860,15 +628,6 @@ module Fabric {
    */
   export function getDefaultVersion(jolokia) {
     return jolokia.execute(managerMBean, "defaultVersion()");
-  }
-
-  export function getDefaultVersionIdAsync(jolokia, callback:(defaultVersion:string) => void) {
-    doAction('defaultVersion', jolokia, [], (response) => {
-      callback(response.value['id']);
-    }, (response) => {
-      log.debug("Failed to fetch default version: ", response.error);
-      log.debug("Stack trace: ", response.stacktrace);
-    });
   }
 
   export function setDefaultVersion(jolokia, newVersion, callback:() => void) {
@@ -989,43 +748,9 @@ module Fabric {
     return Core.pathGet(folder, "objectName");
   }
 
-  export function statusTitle(container) {
-    var answer = 'Alive';
-    if (!container.alive) {
-      answer = 'Not Running';
-    } else {
-      answer += ' - ' + Core.humanizeValue(container.provisionResult);
-    }
-    return answer;
-  }
+  export var statusTitle = ContainerHelpers.statusTitle;
+  export var statusIcon = ContainerHelpers.statusIcon;
 
-  export function statusIcon(row:Container) {
-    if (row) {
-      switch(row.provisionResult) {
-        case 'success':
-          if (row.alive) {
-            return "green icon-play-circle";
-          } else {
-            return "orange icon-off";
-          }
-        case 'downloading':
-          return "icon-download-alt";
-        case 'installing':
-          return "icon-hdd";
-        case 'analyzing':
-        case 'finalizing':
-          return "icon-refresh icon-spin";
-        case 'resolving':
-          return "icon-sitemap";
-        case 'error':
-          return "red icon-warning-sign";
-      }
-      if (!row.alive) {
-        return "orange icon-off";
-      }
-    }
-    return "icon-refresh icon-spin";
-  }
 
   /**
    * Opens a window connecting to the given container row details if the jolokiaUrl is available
