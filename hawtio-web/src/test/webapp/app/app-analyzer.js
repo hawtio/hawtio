@@ -1,6 +1,6 @@
 
 /* We have to delegate some calls to real Angular.js */
-var _angular = angular.noConflict();
+var _angular = angular;
 
 /* Mocking hawt.io loader */
 var hawtioPluginLoader = {
@@ -24,6 +24,7 @@ var _constantsMap = {};
 var _controllersMap = {};
 var _directivesMap = {};
 var _filtersMap = {};
+var _providersMap = {};
 
 // mapping of service/factory/controller/directive/filter to its defining module
 var _definingModules = {};
@@ -111,6 +112,7 @@ function Module(moduleName, dependencies) {
   this.filters = [];
   this.valuesTab = [];
   this.constants = [];
+  this.providers = [];
 
   if (dependencies.length > 0) {
     for (var idx = 0; idx<dependencies.length; idx++) {
@@ -141,6 +143,7 @@ Module.prototype.value = function(valueName, value) {
   }
   _valuesMap[valueName] = valueName;
   this.valuesTab.push(valueName);
+  return this;
 };
 Module.prototype.constant = function(constantName, value) {
 //  console.info(" - Creating constant \"" + constantName + "\" in module \"" + this.moduleName + "\"");
@@ -152,23 +155,33 @@ Module.prototype.constant = function(constantName, value) {
   }
   _constantsMap[constantName] = constantName;
   this.constants.push(constantName);
+  return this;
 };
 
 Module.prototype.factory = function(factoryName, dependencies) {
   _validateProviderMethod(this, "factory", factoryName, dependencies, _factoriesMap, this.factories);
+  return this;
 };
 Module.prototype.service = function(serviceName, dependencies) {
   _validateProviderMethod(this, "service", serviceName, dependencies, _servicesMap, this.services);
+  return this;
 };
 
 Module.prototype.controller = function(controllerName, dependencies) {
   _validateProviderMethod(this, "controller", controllerName, dependencies, _controllersMap, this.controllers);
+  return this;
 };
 Module.prototype.directive = function(directiveName, dependencies) {
   _validateProviderMethod(this, "directive", directiveName, dependencies, _directivesMap, this.directives);
+  return this;
 };
 Module.prototype.filter = function(filterName, dependencies) {
   _validateProviderMethod(this, "filter", filterName, dependencies, _filtersMap, this.filters);
+  return this;
+};
+Module.prototype.provider = function(providerName, dependencies) {
+  _validateProviderMethod(this, "provider", providerName, dependencies, _providersMap, this.providers);
+  return this;
 };
 
 Module.prototype.run = function(dependencies) {
@@ -181,7 +194,11 @@ Module.prototype.config = function(dependencies) {
 /* Mocking&delegating Angular.js static methods */
 var angular = {
   module: function(moduleName, dependencies) {
-    return new Module(moduleName, dependencies);
+    if (dependencies === undefined) {
+      return _modulesMap[moduleName];
+    } else {
+      return new Module(moduleName, dependencies);
+    }
   },
   isArray: function(v) {
     return _angular.isArray(v);

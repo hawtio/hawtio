@@ -3,7 +3,7 @@ var graph = "";
 var htmlDeps = "";
 
 graph += "digraph G {\n";
-htmlDeps += "<table><thead><tr><th>Module</th><th>Dependencies</th></th><th>Controllers</th><th>Services</th><th>Factories</th><th>Directives</th><th>Filters</th><th>Values</th><th>Constants</th></tr></thead><tbody>";
+htmlDeps += "<table><thead><tr><th>Module</th><th>Dependencies</th></th><th>Controllers</th><th>Providers</th><th>Services</th><th>Factories</th><th>Directives</th><th>Filters</th><th>Values</th><th>Constants</th></tr></thead><tbody>";
 
 // deps and reverse-deps between modules (m -> {m:1, m:1, ...})
 var _m2m = {};
@@ -50,6 +50,11 @@ angular.forEach(_modules, function(v, k) {
   htmlDeps += "</td>";
   htmlDeps += "<td><ul>";
   angular.forEach(v.controllers, function(v, k) {
+    htmlDeps += "<li>" + v + "</li>";
+  });
+  htmlDeps += "</ul></td>";
+  htmlDeps += "<td><ul>";
+  angular.forEach(v.providers, function(v, k) {
     htmlDeps += "<li>" + v + "</li>";
   });
   htmlDeps += "</ul></td>";
