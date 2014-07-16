@@ -16,6 +16,12 @@
         <button class="btn"
                 ng-class="groupByClass('none', groupBy)"
                 ng-click="groupBy='none'">Show List</button>
+        <span class="badge badge-success mouse-pointer" 
+          ng-show="versionIdFilter || profileIdFilter"
+          ng-click="versionIdFilter=''; profileIdFilter='';">
+          {{versionIdFilter}} {{profileIdFilter}}
+          <i class="icon-remove mouse-pointer"></i>
+        </span>
       </div>
       <div class="pull-right">
         <span class="inline-block"
@@ -53,6 +59,7 @@
         <div>
           <div class="column-box-square mouse-pointer" 
             ng-repeat="container in location.containers | orderBy:['!alive', 'provisionResult', 'id']"
+            ng-show="filterContainer(container)"
             ng-class="getSelectedClass(container)"
             ng-click="select(containers, container, $event)">
             <i title="{{container.id}} / {{container.versionId}}" ng-class='statusIcon(container)'></i>

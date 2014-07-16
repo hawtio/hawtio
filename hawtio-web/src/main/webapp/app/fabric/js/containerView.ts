@@ -15,6 +15,8 @@ module Fabric {
     $scope.groupBy = 'profileIds';
     $scope.filter = '';
     $scope.cartItems = ProfileCart;
+    $scope.versionIdFilter = '';
+    $scope.profileIdFilter = '';
 
     $scope.createLocationDialog = ContainerHelpers.getCreateLocationDialog($scope, $dialog);
 
@@ -34,6 +36,24 @@ module Fabric {
       intialValue: $scope.groupBy
     });
 
+    StorageHelpers.bindModelToLocalStorage({
+      $scope: $scope,
+      $location: $location,
+      localStorage: localStorage,
+      modelName: 'versionIdFilter',
+      paramName: 'versionIdFilter',
+      intialValue: $scope.versionIdFilter
+    });
+
+    StorageHelpers.bindModelToLocalStorage({
+      $scope: $scope,
+      $location: $location,
+      localStorage: localStorage,
+      modelName: 'profileIdFilter',
+      paramName: 'profileIdFilter',
+      intialValue: $scope.profileIdFilter
+    });
+
     $scope.groupByClass = ControllerHelpers.createClassSelector({
       'profileIds': 'btn-primary',
       'location': 'btn-primary',
@@ -46,11 +66,24 @@ module Fabric {
       }
     }, true);
 
+
     $scope.maybeShowLocation = () => {
-      return ($scope.groupBy === 'location' || $scope.groupBy === 'none') && $scope.selectedContainers > 0;
+      return ($scope.groupBy === 'location' || $scope.groupBy === 'none') && $scope.selectedContainers.length > 0;
+    }
+
+    $scope.showContainersFor = (profile) => {
+      $scope.profileIdFilter = profile.id;
+      $scope.versionIdFilter = profile.version;
+      $scope.groupBy = 'none';
     }
 
     $scope.filterContainers = (container) => {
+      if (!Core.isBlank($scope.versionIdFilter) && container.versionId !== $scope.versionIdFilter) {
+        return false;
+      }
+      if (!Core.isBlank($scope.profileIdFilter) && !container.profileIds.any($scope.profileIdFilter)) {
+        return false;
+      }
       return FilterHelpers.searchObject(container, $scope.filter);
     }
 
