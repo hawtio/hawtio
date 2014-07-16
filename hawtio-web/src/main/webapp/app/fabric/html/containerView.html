@@ -52,7 +52,7 @@
         <strong>{{locationId}}</strong>
         <div>
           <div class="column-box-square mouse-pointer" 
-            ng-repeat="container in location.containers | orderBy:['id', 'alive']"
+            ng-repeat="container in location.containers | orderBy:['!alive', 'provisionResult', 'id']"
             ng-class="getSelectedClass(container)"
             ng-click="select(containers, container, $event)">
             <i title="{{container.id}} / {{container.versionId}}" ng-class='statusIcon(container)'></i>
