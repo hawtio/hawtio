@@ -51,7 +51,7 @@ module SelectionHelpers {
     }
   }
 
-  export function isSelected(item:any, yes:string, no:string):any {
+  export function isSelected(item:any, yes?:string, no?:string):any {
     return maybe(item['selected'], yes, no);
   }
 
@@ -69,11 +69,11 @@ module SelectionHelpers {
     }
   }
 
-  function stringOrBoolean(str:string, bool:boolean):any {
+  function stringOrBoolean(str:string, answer:boolean):any {
     if (angular.isDefined(str)) {
       return str;
     } else {
-      return bool;
+      return answer;
     }
   }
 
@@ -85,8 +85,8 @@ module SelectionHelpers {
     return stringOrBoolean(str, true);
   }
 
-  function maybe(bool:boolean, yes?:string, no?:string) {
-    if (bool) {
+  function maybe(answer:boolean, yes?:string, no?:string) {
+    if (answer) {
       return yup(yes);
     } else {
       return nope(no);

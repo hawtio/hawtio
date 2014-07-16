@@ -701,11 +701,12 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
   border-top: 1px solid transparent;
 }
 
+.selected,
 .box.selected,
 .box.selected a,
 .box.selected i {
-  color: #333333;
-  background: #A3C7D9;  
+  color: #333333 !important;
+  background: #A3C7D9 !important;  
 }
 
 .box.selected .box-right i {

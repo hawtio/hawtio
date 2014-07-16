@@ -379,6 +379,7 @@ span.dynatree-focused a:link {
   border-bottom: 1px solid #00f;
 }
 
+.selected,
 .box.selected {
   border: 1px solid #ff0;
 }

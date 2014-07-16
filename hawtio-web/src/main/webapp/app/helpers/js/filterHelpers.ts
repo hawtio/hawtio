@@ -9,18 +9,23 @@ module FilterHelpers {
    * @param filter
    * @returns {boolean}
    */
-  export function searchObject(object:any, filter:string):boolean {
+  export function searchObject(object:any, filter:string, maxDepth = -1, depth = 0):boolean {
+    // avoid inifinite recursion...
+    if ((maxDepth > 0 && depth >= maxDepth) || depth > 50) {
+      return false;
+    }
+    var f = filter.toLowerCase();
     var answer = false;
     if (angular.isString(object)) {
-      answer = (<string>object).has(filter);
+      answer = (<string>object).toLowerCase().has(f);
     } else if (angular.isNumber(object)) {
-      answer = ("" + object).has(filter);
+      answer = ("" + object).toLowerCase().has(f);
     } else if (angular.isArray(object)) {
       answer = (<Array<any>>object).some((item) => {
-        return searchObject(item, filter);
+        return searchObject(item, f, maxDepth, depth + 1);
       });
     } else if (angular.isObject(object)) {
-      answer = searchObject(Object.extended(object).values(), filter);
+      answer = searchObject(Object.extended(object).values(), f, maxDepth, depth);
     }
     return answer;
   }
