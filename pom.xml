@@ -158,7 +158,7 @@
     <repository>
         <id>jboss-fs-public-repository-group</id>
         <name>JBoss FS Public Repository Group</name>
-        <url>https://repo.fusesource.com/nexus/content/groups/public</url>
+        <url>https://repo.fusesource.com/nexus/content/groups/fs-public</url>
         <layout>default</layout>
         <releases>
             <enabled>true</enabled>
