@@ -1,4 +1,4 @@
-getSelectedClass(feature)/* fonts */
+/* fonts */
 @import url("../fonts/Open-Sans/stylesheet.css");
 @import url("../fonts/Droid-Sans-Mono/stylesheet.css");
 
@@ -15,41 +15,41 @@ body {
 }
 
 #log-panel-statements li pre span {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
 }
 
 div.log-stack-trace {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
 }
 
 div.log-stack-trace p {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
 }
 
 .log-stack-trace > dd > ul > li > .stack-line * {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
 }
 
 pre.stack-line {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
   font-size: 12px;
 }
 
 div.stack-line {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
   font-size: 12px;
 }
 
-.log-table *:not('.icon*') {
-  font-family: OpenSans;
+.log-table *:not(i) {
+  font-family: DroidSansMonoRegular;
 }
 
 .log-table > li > div > div {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
 }
 
 fs-donut svg g text.units {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
 }
 
 /* colors */
