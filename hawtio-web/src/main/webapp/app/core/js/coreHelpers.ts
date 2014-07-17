@@ -504,6 +504,87 @@ module Core {
     return Core.register(jolokia, $scope, arguments, onSuccess(undefined, decorated));
   }
 
+  // Jolokia caching stuff, try and cache responses so we don't always have to wait
+  // for the server
+
+  var responseHistory:any = null;
+
+  export function getOrInitObjectFromLocalStorage(key:string):any {
+    var answer:any = undefined;
+    if (!(key in localStorage)) {
+      localStorage[key] = angular.toJson({});
+    }
+    return angular.fromJson(localStorage[key]);
+  }
+
+  function keyForArgument(argument:any) {
+    var answer = <string>argument['type'];
+    switch(answer.toLowerCase()) {
+      case 'exec':
+        answer += ':' + argument['mbean'] + ':' + argument['operation'];
+        break;
+      case 'read':
+        answer += ':' + argument['mbean'] + ':' + argument['attribute'];
+        break;
+      default:
+        return null;
+    }
+    return answer;
+
+  }
+
+  function createResponseKey(arguments:any) {
+    var answer = '';
+    if (angular.isArray(arguments)) {
+      answer = arguments.map((arg) => { return keyForArgument(arg); }).join(':');
+    } else {
+      answer = keyForArgument(arguments);
+    }
+    return answer;
+  }
+
+  function getResponseHistory():any {
+    if (responseHistory === null) {
+      //responseHistory = getOrInitObjectFromLocalStorage('responseHistory');
+      responseHistory = {};
+      log.debug("Created response history from local storage: ", responseHistory);
+    }
+    return responseHistory;
+  }
+
+  function addResponse(arguments:any, value:any) {
+    var responseHistory = getResponseHistory();
+    var key = createResponseKey(arguments);
+    if (key === null) {
+      log.debug("key for arguments is null: ", arguments);
+      return;
+    }
+    //log.debug("Adding response to history, key: ", key, " value: ", value);
+    responseHistory[key] = value;
+    //localStorage['responseHistory'] = angular.toJson(responseHistory);
+  }
+
+  function getResponse(jolokia, arguments:any, callback:any) {
+    var responseHistory = getResponseHistory();
+    var key = createResponseKey(arguments);
+    if (key === null) {
+      jolokia.request(arguments, callback);
+      return;
+    }
+    if (key in responseHistory && 'success' in callback) {
+      var value = responseHistory[key];
+      // do this async, the controller might not handle us immediately calling back
+      setTimeout(() => {
+        callback['success'](value);
+      }, 10);
+    } else {
+      log.debug("Unable to find existing response for key: ", key);
+      jolokia.request(arguments, callback);
+    }
+  }
+  // end jolokia caching stuff
+
+
   /**
    * Register a JMX operation to poll for changes
    * @method register
@@ -537,23 +618,34 @@ module Core {
 
     var handle = null;
 
+    var responseHistory = getResponseHistory();
+
+    if ('success' in callback) {
+      var cb = callback.success;
+      var args = arguments;
+      callback.success = (response) => {
+        addResponse(args, response);
+        cb(response);
+      }
+    }
+
     if (angular.isArray(arguments)) {
       if (arguments.length >= 1) {
         // TODO can't get this to compile in typescript :)
         //var args = [callback].concat(arguments);
-        var args = [callback];
+        var args = <any>[callback];
         angular.forEach(arguments, (value) => args.push(value));
         //var args = [callback];
         //args.push(arguments);
         var registerFn = jolokia.register;
         handle = registerFn.apply(jolokia, args);
         scope.$jhandle.push(handle);
-        jolokia.request(arguments, callback);
+        getResponse(jolokia, arguments, callback);
       }
     } else {
       handle = jolokia.register(callback, arguments);
       scope.$jhandle.push(handle);
-      jolokia.request(arguments, callback);
+      getResponse(jolokia, arguments, callback);
     }
     return () => {
       if (handle !== null) {
