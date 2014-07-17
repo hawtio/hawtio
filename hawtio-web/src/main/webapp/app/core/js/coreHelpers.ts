@@ -518,6 +518,9 @@ module Core {
   }
 
   function keyForArgument(argument:any) {
+    if (!('type' in argument)) {
+      return null;
+    }
     var answer = <string>argument['type'];
     switch(answer.toLowerCase()) {
       case 'exec':
