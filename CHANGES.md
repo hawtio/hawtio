@@ -1,10 +1,14 @@
 ### Change Log
 
+#### 1.5
+* Hawtio requires Java 1.7 onwards
+
 #### 1.4.11
 * [fabric8](http://fabric8.io/) plugin has a nice funky 'App Store' style Profiles tab for selecting profiles
 * ActiveMQ plugin can now edit and resend messages
 * Minimised the generated JS to reduce the size
 * Fixes [these 14 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=15&state=closed)
+* Support for Java 1.6 is deprecated
 
 #### 1.4.4
 * the Chrome Extension build worked, so we've a shiny new Chrome Extension!
