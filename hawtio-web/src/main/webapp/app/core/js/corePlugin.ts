@@ -43,7 +43,9 @@ module Core {
   export var _module = angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dialog', 'hawtio-ui']);
 
   // configure the module
-  _module.config(["$routeProvider", "$dialogProvider", ($routeProvider:ng.route.IRouteProvider, $dialogProvider) => {
+  _module.config(["$locationProvider", "$routeProvider", "$dialogProvider", ($locationProvider: ng.ILocationProvider, $routeProvider:ng.route.IRouteProvider, $dialogProvider) => {
+    $locationProvider.html5Mode(true);
+
     $dialogProvider.options({
       backdropFade: true,
       dialogFade: true

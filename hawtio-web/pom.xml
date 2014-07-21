@@ -397,7 +397,7 @@
         <configuration>
           <filesets>
             <fileset>
-              <directory>src/main/webapp/app</directory>
+              <directory>${basedir}/src/main/webapp/app</directory>
               <includes>
                 <include>app.js</include>
               </includes>
@@ -420,8 +420,8 @@
           </execution>
         </executions>
         <configuration>
-          <sourceDirectory>src/main/webapp/app</sourceDirectory>
-          <libraryDirectory>src/main/d.ts</libraryDirectory>
+          <sourceDirectory>${basedir}/src/main/webapp/app</sourceDirectory>
+          <libraryDirectory>${basedir}/src/main/d.ts</libraryDirectory>
           <noStandardLib>false</noStandardLib>
           <useTsc>true</useTsc>
           <targetVersion>ES5</targetVersion>
@@ -682,7 +682,7 @@
           <webAppConfig>
             <contextPath>${context}</contextPath>
             <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-              <resourcesAsCSV>src/main/webapp,${webapp-outdir}</resourcesAsCSV>
+              <resourcesAsCSV>${basedir}/src/main/webapp,${webapp-outdir}</resourcesAsCSV>
             </baseResource>
           </webAppConfig>
           <scanIntervalSeconds>0</scanIntervalSeconds>

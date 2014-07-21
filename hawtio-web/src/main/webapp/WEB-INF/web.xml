@@ -240,6 +240,7 @@
         <servlet-name>contextFormatter</servlet-name>
         <url-pattern>/contextFormatter/*</url-pattern>
     </servlet-mapping>
+
     <listener>
         <listener-class>io.hawt.HawtioContextListener</listener-class>
     </listener>
@@ -251,5 +252,11 @@
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+
+    <!-- Send root page as 404 page & let Angular do it's stuff -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/index.html</location>
+    </error-page>
 </web-app>
 
