@@ -122,6 +122,7 @@ public class TerminalServlet extends HttpServlet {
                             pipedOut,
                             new WebTerminal(TERM_WIDTH, TERM_HEIGHT),
                             null,
+                            null,
                             null);
                 }
 
