@@ -25,7 +25,7 @@ public class ConfigManager {
         }
 
         try {
-            envContext = (Context) new InitialContext().lookup("java:/comp/env");
+            envContext = (Context) new InitialContext().lookup("java:comp/env");
             LOG.info("Configuration will be discovered via JNDI");
         } catch (NamingException e) {
             LOG.debug("Failed to look up environment context: ", e);
