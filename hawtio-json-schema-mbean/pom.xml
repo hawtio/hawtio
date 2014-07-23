@@ -79,6 +79,12 @@
       <version>${jackson-version}</version>
     </dependency>
 
+      <dependency>
+        <groupId>com.fasterxml.jackson.module</groupId>
+        <artifactId>jackson-module-jsonSchema</artifactId>
+        <version>${jackson-version}</version>
+      </dependency>
+
     <!-- testing -->
     <dependency>
       <groupId>io.hawt.example.services</groupId>

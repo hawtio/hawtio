@@ -3,6 +3,9 @@ package io.hawt.jsonschema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
+import io.hawt.jsonschema.internal.customizers.JsonSchemaCustomizer;
 import io.hawt.util.MBeanSupport;
 import io.hawt.jsonschema.internal.BeanValidationAnnotationModule;
 import io.hawt.jsonschema.internal.IgnorePropertiesBackedByTransientFields;
@@ -99,10 +102,32 @@ public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
         String name = clazz.getName();
         try {
             ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
-            return writer.writeValueAsString(mapper.generateJsonSchema(clazz));
+            SchemaFactoryWrapper schemaFactoryWrapper = new SchemaFactoryWrapper();
+            mapper.acceptJsonFormatVisitor(mapper.constructType(clazz), schemaFactoryWrapper);
+            com.fasterxml.jackson.module.jsonSchema.JsonSchema jsonSchema = schemaFactoryWrapper.finalSchema();
+            customizeSchema(clazz, jsonSchema);
+            return writer.writeValueAsString(jsonSchema);
         } catch (Exception e) {
             LOG.warn("Failed to generate JSON schema for class " + name, e);
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * If there's schema customizer, use it to alter generated schema.
+     * Customizer is looked in io.hawt.jsonschema.internal.customizers.&lt;fullClazzName&gt;SchemaCustomizer class
+     *
+     * @param clazz
+     * @param jsonSchema
+     * @return
+     */
+    private JsonSchema customizeSchema(Class<?> clazz, JsonSchema jsonSchema) {
+        String customizerClassName = String.format("%s.internal.customizers.%sSchemaCustomizer", getClass().getPackage().getName(), clazz.getName());
+        try {
+            Class<?> customizerClass = getClass(customizerClassName);
+            return ((JsonSchemaCustomizer)customizerClass.newInstance()).customize(jsonSchema);
+        } catch (Exception ignored) {
+            return jsonSchema;
         }
     }
 

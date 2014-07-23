@@ -145,7 +145,7 @@ module Fabric {
         delete schema.properties['hostNameContext'];
         delete schema.properties['resolver'];
 
-        schema.properties['serverUrl']['default'] = 'openshift.redhat.com';
+//        schema.properties['serverUrl']['default'] = 'openshift.redhat.com';
 
         // openshift must select publichostname as the resolver
         Core.pathSet(schema.properties, ['resolver', 'default'], 'publichostname');
