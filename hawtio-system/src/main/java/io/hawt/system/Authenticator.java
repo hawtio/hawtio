@@ -1,7 +1,11 @@
 package io.hawt.system;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.Principal;
+import java.util.List;
+
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -131,27 +135,13 @@ public class Authenticator {
             }
 
             String[] rolePrincipalClazzes = rolePrincipalClasses.split(",");
-            boolean found = false;
-            for (String clazz : rolePrincipalClazzes) {
-                LOG.debug("Looking for rolePrincipalClass: {}", clazz);
-                for (Principal p : subject.getPrincipals()) {
-                    LOG.debug("Checking principal, classname: {} toString: {}", p.getClass().getName(), p);
-                    if (!p.getClass().getName().equals(clazz.trim())) {
-                        LOG.debug("principal class {} doesn't match {}, continuing", p.getClass().getName(), clazz.trim());
-                        continue;
-                    }
-                    if (!p.getName().equals(role)) {
-                        LOG.debug("role {} doesn't match {}, continuing", p.getName(), role);
-                        continue;
-                    }
-                    LOG.debug("Matched role and role principal class");
-                    found = true;
-                    break;
-                }
-                if (found) {
-                    break;
-                }
+            boolean found;
+            if (isRunningOnWebsphere(subject)) {
+            	found = checkIfSubjectHasRequiredRoleOnWebsphere(subject, role);
+            } else {
+            	found= checkIfSubjectHasRequiredRole(subject, role,rolePrincipalClazzes);
             }
+					
             if (!found) {
                 LOG.debug("User " + username + " does not have the required role " + role);
                 return null;
@@ -172,6 +162,88 @@ public class Authenticator {
 
         return null;
     }
+    
+	private static boolean checkIfSubjectHasRequiredRole(Subject subject,
+			String role, String[] rolePrincipalClazzes) {
+		boolean found = false;
+		for (String clazz : rolePrincipalClazzes) {
+		    LOG.debug("Looking for rolePrincipalClass: {}", clazz);
+		    for (Principal p : subject.getPrincipals()) {
+		        LOG.debug("Checking principal, classname: {} toString: {}", p.getClass().getName(), p);
+		        if (!p.getClass().getName().equals(clazz.trim())) {
+		            LOG.debug("principal class {} doesn't match {}, continuing", p.getClass().getName(), clazz.trim());
+		            continue;
+		        }
+		        if (!p.getName().equals(role)) {
+		            LOG.debug("role {} doesn't match {}, continuing", p.getName(), role);
+		            continue;
+		        }
+		        LOG.debug("Matched role and role principal class");
+		        found = true;
+		        break;
+		    }
+		    if (found) {
+		        break;
+		    }
+		}
+		return found;
+	}
+
+	private static boolean isRunningOnWebsphere(Subject subject) {
+    	boolean onWebsphere = false;
+    	for (Principal p : subject.getPrincipals()) {
+    		onWebsphere = implementsInterface(p, "com.ibm.websphere.security.auth.WSPrincipal" );
+    	}
+    	LOG.trace("Checking if we are running using a IBM Websphere specific LoginModule: {}", onWebsphere);
+    	return onWebsphere;
+    }
+
+    private static boolean checkIfSubjectHasRequiredRoleOnWebsphere(Subject subject, String role) {
+    	boolean found = false;
+    	
+    	LOG.debug("Running on websphere: checking if the Role {} is in the set of groups in WSCredential", role);
+    	for (final Object cred : subject.getPublicCredentials()) {
+    		LOG.debug("Checking credential {} if it is a WebSphere specific WSCredential containing group info", cred);
+    		if (implementsInterface(cred, "com.ibm.websphere.security.auth.WSCredential")) {
+    			try {
+					Method groupsMethod = cred.getClass().getMethod("getGroupIds");
+					@SuppressWarnings("unchecked")
+					final List<Object> groups = (List<Object>) groupsMethod.invoke(cred);
+					
+					if (groups != null) {
+						LOG.debug("Found a total of {} groups in the IBM WebSphere Credentials", groups.size());
+						
+						for (Object group : groups) {
+							LOG.debug("Matching IBM Websphere group name {} to required role {}", group, role);
+							
+							if (role.equals(group.toString())) {
+								found = true;
+							}
+						}
+					} else {
+						LOG.debug("The IBM Websphere groups list is null");
+					}
+					
+				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					// ignored
+					LOG.debug("Caught exception trying to read groups from WebSphere specific WSCredentials class", e);
+				}
+    		}
+    	}
+    	
+		return found;
+	}
+
+	private static boolean implementsInterface(Object o, String interfaceName) {
+		boolean implementsIf = false;
+		for (Class<?> pif : o.getClass().getInterfaces()) {
+			if (pif.getName().equals(interfaceName)) {
+				implementsIf = true;
+				break;
+			}
+		}
+		return implementsIf;
+	}
 
     private static final class AuthenticationCallbackHandler implements CallbackHandler {
 
