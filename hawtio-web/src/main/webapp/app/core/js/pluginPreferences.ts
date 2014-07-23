@@ -5,16 +5,16 @@
 /// <reference path="preferenceHelpers.ts"/>
 module Core {
 
-	_module.controller("Core.PluginPreferences", ["$scope", "localStorage", "$location", "workspace", "jolokia", ($scope, localStorage, $location, workspace, jolokia) => {
+  export var PluginPreferences = _module.controller("Core.PluginPreferences", ["$scope", "localStorage", "$location", "workspace", "jolokia", ($scope, localStorage, $location, workspace, jolokia) => {
 
-		Core.initPreferenceScope($scope, localStorage, {
-			'autoRefresh': {
-				'value': true,
-				'converter': Core.parseBooleanValue
-			}
-		});
+    Core.initPreferenceScope($scope, localStorage, {
+      'autoRefresh': {
+        'value': true,
+        'converter': Core.parseBooleanValue
+      }
+    });
 
-    $scope.perspectiveId;
+    $scope.perspectiveId = null;
     $scope.perspectives = [];
 
     $scope.plugins = [];
@@ -36,8 +36,16 @@ module Core {
 
     $scope.pluginDisable = (index) => {
       $scope.pluginDirty = true;
-      $scope.plugins[index].enabled = false;
-      $scope.plugins[index].isDefault = false;
+      var atLeastOneEnabled = false;
+      $scope.plugins.forEach((p:any, idx) => {
+        if (idx != index && p.enabled) {
+          atLeastOneEnabled = true;
+        }
+      });
+      if (atLeastOneEnabled) {
+        $scope.plugins[index].enabled = false;
+        $scope.plugins[index].isDefault = false;
+      }
     };
 
     $scope.pluginEnable = (index) => {
@@ -47,19 +55,30 @@ module Core {
 
     $scope.pluginDefault = (index) => {
       $scope.pluginDirty = true;
-      $scope.plugins.forEach((p) => {
+      $scope.plugins.forEach((p:any) => {
         p.isDefault = false;
       });
       $scope.plugins[index].isDefault = true;
+      $scope.plugins[index].enabled = true;
     };
 
     $scope.pluginApply = () => {
       $scope.pluginDirty = false;
 
       // set index before saving
-      $scope.plugins.forEach((p, idx) => {
+      // if no plugin is default, set first enabled as default
+      var noDefault = true;
+      $scope.plugins.forEach((p:any, idx) => {
+        if (p.isDefault) {
+          noDefault = false;
+        }
         p.index = idx;
       });
+      if (noDefault) {
+        $scope.plugins.find((p:any) => {
+          return p.enabled == true;
+        }).isDefault = true;
+      }
 
       var json = angular.toJson($scope.plugins);
       if (json) {
@@ -70,9 +89,9 @@ module Core {
 
       // force UI to update by reloading the page which works
       setTimeout(() => {
-        window.location.reload();
+        window.location.hash = "#";
       }, 10);
-    }
+    };
 
     $scope.$watch('perspectiveId', (newValue, oldValue) => {
       if (newValue === oldValue) {
@@ -112,5 +131,5 @@ module Core {
     // and force update the ui
     Core.$apply($scope);
 
-	}]);
+  }]);
 }
