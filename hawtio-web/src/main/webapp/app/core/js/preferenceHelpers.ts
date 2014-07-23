@@ -29,7 +29,7 @@ module Core {
       // exclude invalid tabs at first
       topLevelTabs = topLevelTabs.filter(tab => {
         var href = tab.href();
-        return href && isValidFunction(workspace, tab.isValid);
+        return href && isValidFunction(workspace, tab.isValid, perspectiveId);
       });
       log.debug("After filtering there are " + topLevelTabs.length + " plugins");
 
@@ -171,10 +171,11 @@ module Core {
    * @for Perspective
    * @param {Core.Workspace} workspace
    * @param {Function} validFn
+   * @param {string} perspectiveId
    * @return {Boolean}
    */
-  export function isValidFunction(workspace, validFn) {
-    return !validFn || validFn(workspace);
+  export function isValidFunction(workspace, validFn, perspectiveId) {
+    return !validFn || validFn(workspace, perspectiveId);
   }
 
   /**

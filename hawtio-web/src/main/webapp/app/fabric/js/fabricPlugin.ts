@@ -140,12 +140,13 @@ module Fabric {
       id: "fabric.configuration",
       content: "Wiki",
       title: "View the documentation and configuration of your profiles in Fabric",
-      isValid: (workspace) => {
+      isValid: (workspace, perspectiveId) => {
         var answer = Fabric.isFMCContainer(workspace);
         if (answer) {
           // must be in fabric perspective as we have wiki in container perspective as well which is not this plugin
+          // [ENTESB-1701] special case when checking what plugins to show in Preferences -> Plugins page
           var currentId = Perspective.currentPerspectiveId($location, workspace, jolokia, localStorage);
-          answer = "fabric" === currentId;
+          answer = "fabric" === (perspectiveId === undefined ? currentId : perspectiveId);
         }
         return answer;
       },
