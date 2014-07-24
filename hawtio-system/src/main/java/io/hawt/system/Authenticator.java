@@ -224,7 +224,9 @@ public class Authenticator {
 							LOG.debug("Matching IBM Websphere group name {} to required role {}", group, role);
 							
 							if (role.equals(group.toString())) {
+								LOG.debug("Required role {} found in IBM specific credentials", role);
 								found = true;
+								break;
 							}
 						}
 					} else {
@@ -235,6 +237,10 @@ public class Authenticator {
 					// ignored
 					LOG.debug("Caught exception trying to read groups from WebSphere specific WSCredentials class", e);
 				}
+    		}
+    		
+    		if (found) {
+    			break;
     		}
     	}
     	
