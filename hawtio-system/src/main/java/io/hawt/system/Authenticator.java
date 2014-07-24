@@ -192,6 +192,7 @@ public class Authenticator {
 	private static boolean isRunningOnWebsphere(Subject subject) {
     	boolean onWebsphere = false;
     	for (Principal p : subject.getPrincipals()) {
+    		LOG.trace("Checking principal for IBM specific interfaces: {}" , p);
     		onWebsphere = implementsInterface(p, "com.ibm.websphere.security.auth.WSPrincipal" );
     	}
     	LOG.trace("Checking if we are running using a IBM Websphere specific LoginModule: {}", onWebsphere);
@@ -204,7 +205,7 @@ public class Authenticator {
     	LOG.debug("Running on websphere: checking if the Role {} is in the set of groups in WSCredential", role);
     	for (final Object cred : subject.getPublicCredentials()) {
     		LOG.debug("Checking credential {} if it is a WebSphere specific WSCredential containing group info", cred);
-    		if (implementsInterface(cred, "com.ibm.websphere.security.auth.WSCredential")) {
+    		if (implementsInterface(cred, "com.ibm.websphere.security.cred.WSCredential")) {
     			try {
 					Method groupsMethod = cred.getClass().getMethod("getGroupIds");
 					@SuppressWarnings("unchecked")
@@ -237,6 +238,7 @@ public class Authenticator {
 	private static boolean implementsInterface(Object o, String interfaceName) {
 		boolean implementsIf = false;
 		for (Class<?> pif : o.getClass().getInterfaces()) {
+			LOG.trace("Checking interface {} if it matches {}", pif, interfaceName);
 			if (pif.getName().equals(interfaceName)) {
 				implementsIf = true;
 				break;
