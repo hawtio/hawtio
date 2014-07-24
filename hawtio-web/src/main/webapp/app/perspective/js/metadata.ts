@@ -33,6 +33,9 @@ module Perspective {
             id: "fabric.containers"
           },
           {
+            id: "fabric.deploy"
+          },
+          {
             href: "#/docker"
           },
           {
@@ -100,6 +103,9 @@ module Perspective {
           },
           {
             id: "fabric.containers"
+          },
+          {
+            id: "fabric.deploy"
           },
           {
             href: "#/insight"

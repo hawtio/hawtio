@@ -72,9 +72,21 @@ module Fabric {
                wikiBranchMenu:Wiki.BranchMenu,
                $dialog, layoutFull) => {
 
+    // let's not take up the whole /fabric with the fabric sub-tabs
+    // other plugins might want to hang stuff off of /fabric
     viewRegistry['fabric/profileView'] = layoutFull;
     viewRegistry['fabric/containerView'] = layoutFull;
-    viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
+    viewRegistry['fabric/migrate'] = layoutFull;
+    viewRegistry['fabric/patching'] = layoutFull;
+    viewRegistry['fabric/container'] = layoutFull;
+    viewRegistry['fabric/map'] = templatePath + 'layoutFabric.html';
+    viewRegistry['fabric/clusters'] = templatePath + 'layoutFabric.html';
+    viewRegistry['fabric/containers'] = templatePath + 'layoutFabric.html';
+    viewRegistry['fabric/configurations'] = templatePath + 'layoutFabric.html';
+    viewRegistry['fabric/configuration'] = templatePath + 'layoutFabric.html';
+    viewRegistry['fabric/mq'] = templatePath + 'layoutFabric.html';
+    viewRegistry['fabric/camel'] = templatePath + 'layoutFabric.html';
+    viewRegistry['fabric/api'] = templatePath + 'layoutFabric.html';
 
     pageTitle.addTitleElement(() => {
       return Fabric.currentContainerId;
@@ -115,7 +127,10 @@ module Fabric {
       title: "Manage your containers in this fabric",
       isValid: (workspace) => Fabric.isFMCContainer(workspace),
       href: () => "#/fabric/containers",
-      isActive: (workspace: Workspace) => workspace.isLinkActive("fabric") && !workspace.isLinkActive("fabric/profileView") && !workspace.isLinkActive("fabric/containerView")
+      isActive: (workspace: Workspace) => workspace.isLinkActive("fabric") 
+                                       && !workspace.isLinkActive("fabric/profileView") 
+                                       && !workspace.isLinkActive("fabric/containerView")
+                                       && !workspace.isLinkActive("fabric/deploy")
     });
 
     workspace.topLevelTabs.push({
