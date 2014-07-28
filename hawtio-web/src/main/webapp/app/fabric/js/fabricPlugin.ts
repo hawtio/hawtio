@@ -106,7 +106,6 @@ module Fabric {
             return;
           }
           Fabric.currentContainer = response.value;
-
           Fabric.currentContainerId = currentContainer['id'];
           if ('container' in Perspective.metadata) {
             Core.pathSet(Perspective.metadata, ['container', 'label'], Fabric.currentContainerId);

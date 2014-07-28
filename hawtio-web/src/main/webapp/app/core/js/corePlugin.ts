@@ -109,8 +109,6 @@ module Core {
       postLoginTasks.reset();
     });
 
-    $.support.cors = true;
-
     /*
       * Count the number of lines in the given text
       */

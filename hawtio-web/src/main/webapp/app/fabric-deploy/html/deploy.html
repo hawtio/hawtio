@@ -1,3 +1,40 @@
-<div>
+<div ng-controller="FabricDeploy.DeployController">
+
+  <script type="text/ng-template" id="fileUpload.html">
+    <div ng-show="uploader.isHTML5">
+      <div class="well file-drop-zone" nv-file-drop="" uploader="uploader"></div>
+    </div>
+    <div>
+      <input type="file" nv-file-select="" uploader="uploader" multiple>
+    </div>
+    <div ng-repeat="item in uploader.queue">
+      <div>{{item.file.name}}</div>
+      <div ng-show="uploader.isHTML5">{{item.file.size/1024/1024|number:2}} MB</div>
+      <div ng-show="uploader.isHTML5">
+        <div class="progress" style="margin-bottom: 0;">
+          <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div>
+        Queue progress:
+        <div class="progress" style="">
+          <div class="progress-bar" role="progressbar" ng-style="{ 'width': uploader.progress + '%' }"></div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-success btn-s" ng-click="doUpload()" ng-disabled="!uploader.getNotUploadedItems().length">
+        <span class="glyphicon glyphicon-upload"></span> Upload all
+      </button>
+      <button type="button" class="btn btn-warning btn-s" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading">
+        <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
+      </button>
+      <button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">
+        <span class="glyphicon glyphicon-trash"></span> Remove all
+      </button>
+    </div>
+  </script>
+
+  <div compile="template"></div>
 
 </div>
