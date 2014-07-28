@@ -140,6 +140,35 @@ You may have issues with slf4j JARs in WAR deployments on JBoss AS or Wildfly. T
 
 See more details [here](http://totalprogus.blogspot.co.uk/2011/06/javalanglinkageerror-loader-constraint.html).
 
+Additionally related to logging, you can remove the log4j.properties from the root of the classpath so that Wildlfy
+uses its logging mechanisms instead of trying to use the embedded log4j. From the command line, you can
+try:
+
+    zip -d hawtio.war WEB-INF/classes/log4j.properties
+    
+Since hawtio does use some CDI beans, but does not deploy a beans.xml CDI descriptor, you can also relax
+Wildfly's [implicit CDI detection](https://docs.jboss.org/author/display/WFLY8/CDI+Reference) by changing the 
+Weld config to look like this:
+
+        <system-properties>
+            <property name="hawtio.authenticationEnabled" value="false" />
+        </system-properties>
+        
+To enable security, you'll need to set you configuration up like this:
+
+    <extensions>
+        ...
+    </extensions>
+    
+    <system-properties>
+        <property name="hawtio.authenticationEnabled" value="true" />
+        <property name="hawtio.realm" value="jboss-web-policy" />
+        <property name="hawtio.role" value="admin" />
+    </system-properties>
+    
+You can follow the [steps outlined in this blog](http://www.christianposta.com/blog/?p=403) for a more comprehensive
+look at enabling security in Wildfly with hawtio.
+
 If you experience problems with security, you would need to disable security in hawtio by [configure the system properties](http://www.mastertheboss.com/jboss-configuration/how-to-inject-system-properties-into-jboss) by adding the following to your **jboss-as/server/default/deploy/properties-service.xml** file (which probably has the mbean definition already but commented out):
 
     <mbean code="org.jboss.varia.property.SystemPropertiesService"
@@ -150,6 +179,15 @@ If you experience problems with security, you would need to disable security in 
       </attribute>
     </mbean>
 
+Or in newer versions (Wildfly 8.1) you'll want to add this to standalone/configuration/standalone.xml:
+
+    <extensions>
+        ...
+    </extensions>
+    
+    <system-properties>
+        <property name="hawtio.authenticationEnabled" value="false" />
+    </system-properties>
 
 ### Enable JMX on Jetty 8.x
 
