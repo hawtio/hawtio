@@ -72,7 +72,7 @@ div.log-stack-trace p:nth-child(odd) {
     </script>
   </head>
 
-  <body>
+  <body nv-file-drop="">
     <div id="log-panel" style="bottom: 110%" ng-controller="Core.ConsoleController">
       <div>
         <ul id="log-panel-statements"></ul>
@@ -466,6 +466,7 @@ div.log-stack-trace p:nth-child(odd) {
 
     <!-- zeroclipboard -->
     <script type="text/javascript" src="lib/ZeroClipboard.min.js?v=@VERSION@"></script>
+    <script type="text/javascript" src="lib/angular-file-upload.min.js?v=@VERSION@"></script>
 
     <!-- And finally the main app -->
     <script type="text/javascript" src="app/app.js?v=@VERSION@"></script>

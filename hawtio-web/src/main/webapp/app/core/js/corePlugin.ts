@@ -238,8 +238,9 @@ module Core {
 // bootstrap plugin loader
 hawtioPluginLoader.addUrl(Core.url("/plugin"));
 
-// add our module
+// add our module and any dependant third party modules
 hawtioPluginLoader.addModule(Core.pluginName);
+hawtioPluginLoader.addModule('angularFileUpload');
 
 // register some tasks to run before bootstrap
 
