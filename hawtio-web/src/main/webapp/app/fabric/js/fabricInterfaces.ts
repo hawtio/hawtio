@@ -6,6 +6,13 @@ module Fabric {
   }
 
   // nicer to have type info...
+
+  export interface Version {
+    name?: string;
+    id?: string;
+    _default?: boolean;
+  }
+
   export interface Profile {
     id?: string;
     name?: string;

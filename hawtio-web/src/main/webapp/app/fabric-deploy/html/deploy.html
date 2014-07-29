@@ -1,40 +1,61 @@
-<div ng-controller="FabricDeploy.DeployController">
+<div class="row-fluid" ng-controller="FabricDeploy.DeployController">
 
   <script type="text/ng-template" id="fileUpload.html">
-    <div ng-show="uploader.isHTML5">
-      <div class="well file-drop-zone" nv-file-drop="" uploader="uploader"></div>
+    <div ng-hide="artifactUploader.isHTML5">
+      <input type="file" nv-file-select="" uploader="artifactUploader" multiple>
     </div>
-    <div>
-      <input type="file" nv-file-select="" uploader="uploader" multiple>
-    </div>
-    <div ng-repeat="item in uploader.queue">
-      <div>{{item.file.name}}</div>
-      <div ng-show="uploader.isHTML5">{{item.file.size/1024/1024|number:2}} MB</div>
-      <div ng-show="uploader.isHTML5">
-        <div class="progress" style="margin-bottom: 0;">
-          <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+    <div class="file-drop-zone" nv-file-drop="" uploader="artifactUploader">
+      <div class="alert alert-info" ng-show="artifactUploader.queue.length == 0">
+        Drag artifacts (.jar or .war) here to prepare them for uploading.
+      </div>
+      <div ng-repeat="item in artifactUploader.queue">
+        <div>{{item.file.name}}
+          <span ng-show="artifactUploader.isHTML5">{{item.file.size/1024/1024|number:2}} MB</span>
+          <span ng-show="artifactUploader.isHTML5">
+            <span class="progress" style="margin-bottom: 0;">
+              <span class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></span>
+            </span>
+          </span>
         </div>
       </div>
     </div>
     <div>
+      <!--
       <div>
         Queue progress:
         <div class="progress" style="">
-          <div class="progress-bar" role="progressbar" ng-style="{ 'width': uploader.progress + '%' }"></div>
+          <div class="progress-bar" role="progressbar" ng-style="{ 'width': artifactUploader.progress + '%' }"></div>
         </div>
       </div>
-      <button type="button" class="btn btn-success btn-s" ng-click="doUpload()" ng-disabled="!uploader.getNotUploadedItems().length">
-        <span class="glyphicon glyphicon-upload"></span> Upload all
-      </button>
-      <button type="button" class="btn btn-warning btn-s" ng-click="uploader.cancelAll()" ng-disabled="!uploader.isUploading">
+      -->
+      <button type="button" class="btn btn-warning btn-s" ng-click="artifactUploader.cancelAll()" ng-disabled="!artifactUploader.isUploading">
         <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
       </button>
-      <button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">
+      <button type="button" class="btn btn-danger btn-s" ng-click="artifactUploader.clearQueue()" ng-disabled="!artifactUploader.queue.length">
         <span class="glyphicon glyphicon-trash"></span> Remove all
+      </button>
+      <button type="button" class="btn btn-success btn-s" ng-click="doUpload()" ng-disabled="!artifactUploader.getNotUploadedItems().length">
+        <span class="glyphicon glyphicon-upload"></span> Upload all
       </button>
     </div>
   </script>
 
-  <div compile="template"></div>
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="pull-right">
+      </div>
+    </div>
+  </div>
 
+  <div class="row-fluid">
+    <div class="span4">
+      <div simple-form data="formConfig" entity="entity">
+      </div> 
+    </div>
+    <div class="span4">
+      <div compile="artifactTemplate"></div>
+    </div>
+    <div class="span4">
+    </div>
+  </div>
 </div>

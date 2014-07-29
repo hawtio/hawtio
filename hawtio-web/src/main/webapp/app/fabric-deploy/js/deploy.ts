@@ -2,7 +2,32 @@
 module FabricDeploy {
   export var DeployController = _module.controller("FabricDeploy.DeployController", ["$scope", "FileUploader", "jolokiaUrl", "$templateCache", "jolokia", "userDetails", ($scope, FileUploader:any, jolokiaUrl, $templateCache, jolokia, userDetails:Core.UserDetails) => {
 
-    $scope.template = '';
+    $scope.artifactTemplate = '';
+
+    var formValues = $scope.entity = {
+      profileId: '',
+      version: { id: '' } 
+    };
+
+    $scope.formConfig = {
+      properties: {
+        'version': {
+          'label': 'Version',
+          'type': 'string',
+          'formTemplate': '<div fabric-version-selector="entity.version"></div>'
+        },
+        'profileId': {
+          'label': 'Profile Name',
+          'type': 'string'
+        }
+      }
+    }
+
+    $scope.$watch('entity', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        log.debug("formValues: ", newValue);
+      }
+    }, true);
 
     function addFileName(url:string, filename:string) {
       if (url.endsWith('/')) {
@@ -27,13 +52,11 @@ module FabricDeploy {
 
       log.debug("Maven upload URI: ", uploadURI);
 
-      var uploader = $scope.uploader = new FileUploader({
+      var uploader = $scope.artifactUploader = new FileUploader({
         headers: {
           'Authorization': Core.authHeaderValue(userDetails)
         },
         withCredentials: true,
-        removeAfterUpload: true,
-        autoUpload: true,
         method: 'PUT',
         url: uploadURI
       });
@@ -52,7 +75,7 @@ module FabricDeploy {
         console.info('onAfterAddingAll', addedFileItems);
       };
       uploader.onBeforeUploadItem = function(item) {
-        item.url = addFileName(uploadURI, item.file.name);
+        item.url = addFileName(uploadURI, item.file.name) + '?profile=' + formValues.profileId + '&version=' + formValues.version.id;
         console.info('onBeforeUploadItem', item);
       };
       uploader.onProgressItem = function(fileItem, progress) {
@@ -78,7 +101,7 @@ module FabricDeploy {
       };
 
       console.info('uploader', uploader);
-      $scope.template = $templateCache.get('fileUpload.html');
+      $scope.artifactTemplate = $templateCache.get('fileUpload.html');
       Core.$apply($scope);
 
     }));
