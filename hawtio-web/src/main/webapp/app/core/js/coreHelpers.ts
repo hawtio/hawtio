@@ -1,5 +1,6 @@
 /// <reference path="../../baseHelpers.ts"/>
 /// <reference path="../../helpers/js/controllerHelpers.ts"/>
+/// <reference path="coreInterfaces.ts"/>
 /// <reference path="./tasks.ts"/>
 /// <reference path="./workspace.ts"/>
 /// <reference path="./folder.ts"/>
@@ -1111,7 +1112,11 @@ module Core {
     return answer;
   }
 
-  export function getBasicAuthHeader(username, password) {
+  export function authHeaderValue(userDetails:UserDetails) {
+    return getBasicAuthHeader(userDetails.username, userDetails.password);
+  }
+
+  export function getBasicAuthHeader(username:string, password:string) {
     var authInfo = username + ":" + password;
     authInfo = authInfo.encodeBase64();
     return "Basic " + authInfo;

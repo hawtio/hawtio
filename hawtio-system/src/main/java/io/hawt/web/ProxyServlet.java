@@ -10,16 +10,14 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.commons.httpclient.methods.*;
 import org.apache.commons.httpclient.methods.multipart.ByteArrayPartSource;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
 import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,6 +119,34 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /**
+     * Performs an HTTP PUT request
+     *
+     * @param httpServletRequest  The {@link HttpServletRequest} object passed
+     *                            in by the servlet engine representing the
+     *                            client request to be proxied
+     * @param httpServletResponse The {@link HttpServletResponse} object by which
+     *                            we can send a proxied response to the client
+     */
+    public void doPut(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)            throws IOException, ServletException {
+      ProxyDetails proxyDetails = new ProxyDetails(httpServletRequest);
+        if (!proxyDetails.isValid()) {
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "Context-Path should contain the proxy hostname to use");
+        } else {
+            PutMethod putMethodProxyRequest= new PutMethod(proxyDetails.getStringProxyURL());
+            // Forward the request headers
+            setProxyRequestHeaders(proxyDetails, httpServletRequest, putMethodProxyRequest);
+            // Execute the proxy request
+            // Check if this is a mulitpart (file upload) PUT
+            if (ServletFileUpload.isMultipartContent(httpServletRequest)) {
+                this.handleMultipartPost(putMethodProxyRequest, httpServletRequest);
+            } else {
+                this.handleStandardPost(putMethodProxyRequest, httpServletRequest);
+            }
+            this.executeProxyRequest(proxyDetails, putMethodProxyRequest, httpServletRequest, httpServletResponse);
+        }
+    }
+
+    /**
      * Performs an HTTP POST request
      *
      * @param httpServletRequest  The {@link HttpServletRequest} object passed
@@ -159,7 +185,7 @@ public class ProxyServlet extends HttpServlet {
      * @param httpServletRequest     The {@link HttpServletRequest} that contains
      *                               the mutlipart POST data to be sent via the {@link PostMethod}
      */
-    private void handleMultipartPost(PostMethod postMethodProxyRequest, HttpServletRequest httpServletRequest)
+    private void handleMultipartPost(EntityEnclosingMethod postMethodProxyRequest, HttpServletRequest httpServletRequest)
             throws ServletException {
         // Create a factory for disk-based file items
         DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
@@ -226,7 +252,7 @@ public class ProxyServlet extends HttpServlet {
      *                               the POST data to be sent via the {@link PostMethod}
      */
     @SuppressWarnings("unchecked")
-    private void handleStandardPost(PostMethod postMethodProxyRequest, HttpServletRequest httpServletRequest) throws IOException {
+    private void handleStandardPost(EntityEnclosingMethod postMethodProxyRequest, HttpServletRequest httpServletRequest) throws IOException {
         // Get the client POST data as a Map
         Map<String, String[]> mapPostParameters = (Map<String, String[]>) httpServletRequest.getParameterMap();
         // Create a List to hold the NameValuePairs to be passed to the PostMethod
@@ -244,20 +270,28 @@ public class ProxyServlet extends HttpServlet {
         RequestEntity entity = null;
         String contentType = httpServletRequest.getContentType();
         if (contentType != null) {
-            contentType = contentType.toLowerCase();
-            if (contentType.contains("json") || contentType.contains("xml") || contentType.contains("application") || contentType.contains("text")) {
+            String contentTypeLC = contentType.toLowerCase();
+            if (contentTypeLC.contains("json") || contentTypeLC.contains("xml") || contentTypeLC.contains("application") || contentTypeLC.contains("text")) {
                 String body = IOHelper.readFully(httpServletRequest.getReader());
                 entity = new StringRequestEntity(body, contentType, httpServletRequest.getCharacterEncoding());
                 postMethodProxyRequest.setRequestEntity(entity);
             }
         }
-        NameValuePair[] parameters = listNameValuePairs.toArray(new NameValuePair[]{});
-        if (entity != null) {
-            // TODO add as URL parameters?
-            //postMethodProxyRequest.addParameters(parameters);
+
+        if (postMethodProxyRequest instanceof PostMethod) {
+          NameValuePair[] parameters = listNameValuePairs.toArray(new NameValuePair[]{});
+          if (entity != null) {
+              // TODO add as URL parameters?
+              //postMethodProxyRequest.addParameters(parameters);
+          } else {
+              // Set the proxy request POST data
+              ((PostMethod)postMethodProxyRequest).setRequestBody(parameters);
+          }
         } else {
-            // Set the proxy request POST data
-            postMethodProxyRequest.setRequestBody(parameters);
+            if (entity == null) {
+                entity = new InputStreamRequestEntity(httpServletRequest.getInputStream());
+                postMethodProxyRequest.setRequestEntity(entity);
+            }
         }
     }
 
@@ -325,43 +359,10 @@ public class ProxyServlet extends HttpServlet {
             httpServletResponse.setHeader(header.getName(), header.getValue());
         }
 
-        // check if we got data, that is either the Content-Length > 0
-        // or the response code != 204
-        int code = httpMethodProxyRequest.getStatusCode();
-        boolean noData = code == HttpStatus.SC_NO_CONTENT;
-        if (!noData) {
-            Header contentLengthHeader = httpMethodProxyRequest.getResponseHeader(STRING_CONTENT_LENGTH_HEADER_NAME);
-            if (contentLengthHeader != null) {
-                String length = contentLengthHeader.getValue();
-                if (length != null && "0".equals(length.trim())) {
-                    // unmapped web contexts in OSGi do not return 404, but empty (or containing \r\n) pages
-                    noData = true;
-                }
-            }
-        }
-        LOG.trace("Response has data? {}", !noData);
-
-        if (!noData) {
-            // Send the content to the client
-            InputStream inputStreamProxyResponse = httpMethodProxyRequest.getResponseBodyAsStream();
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStreamProxyResponse);
-            OutputStream outputStreamClientResponse = httpServletResponse.getOutputStream();
-            int intNextByte;
-            while ((intNextByte = bufferedInputStream.read()) != -1) {
-                outputStreamClientResponse.write(intNextByte);
-            }
-        } else {
-            // There seems to be a problem with connection to running Fabric8/Karaf - we can use any invalid (unmapped) URL
-            // and receive HTTP 200 code with empty response (Content-Length: 0).
-            // this is a way to detect this and show an error dialog in hawt.io instead
-            // TODO probably we should make OSGi HTTP Service actually return HTTP 404 instead of HTTP 200 + Content-Length: 0
-            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            httpServletResponse.setHeader("Content-Type", "text/plain");
-            String remoteUrl = proxyDetails.getHostAndPort() + proxyDetails.getPath();
-            byte[] emptyResponse = ("{message: \"No content retrieved from " + remoteUrl + "\"}").getBytes();
-            httpServletResponse.setHeader(STRING_CONTENT_LENGTH_HEADER_NAME, Integer.toString(emptyResponse.length));
-            httpServletResponse.getOutputStream().write(emptyResponse);
-        }
+        // Send the content to the client
+        InputStream inputStreamProxyResponse = httpMethodProxyRequest.getResponseBodyAsStream();
+        OutputStream outputStreamClientResponse = httpServletResponse.getOutputStream();
+        IOUtils.copy(inputStreamProxyResponse, outputStreamClientResponse);
     }
 
     public String getServletInfo() {

@@ -124,7 +124,7 @@ module Core {
   _module.factory('userDetails', ["jolokiaUrl", "localStorage", (jolokiaUrl, localStorage)  => {
     var answer = angular.fromJson(localStorage[jolokiaUrl]);
     if (!angular.isDefined(answer) && jolokiaUrl) {
-      answer = {
+      answer = <UserDetails>{
         username: '',
         password: ''
       };

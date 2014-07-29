@@ -1,8 +1,16 @@
 /// <reference path="fabricDeployPlugin.ts"/>
 module FabricDeploy {
-  export var DeployController = _module.controller("FabricDeploy.DeployController", ["$scope", "FileUploader", "jolokiaUrl", "$templateCache", "jolokia", ($scope, FileUploader:any, jolokiaUrl, $templateCache, jolokia) => {
+  export var DeployController = _module.controller("FabricDeploy.DeployController", ["$scope", "FileUploader", "jolokiaUrl", "$templateCache", "jolokia", "userDetails", ($scope, FileUploader:any, jolokiaUrl, $templateCache, jolokia, userDetails:Core.UserDetails) => {
 
     $scope.template = '';
+
+    function addFileName(url:string, filename:string) {
+      if (url.endsWith('/')) {
+        return url + filename;
+      } else {
+        return url + '/' + filename;
+      } 
+    }
 
     jolokia.request({
       type: 'read',
@@ -20,6 +28,13 @@ module FabricDeploy {
       log.debug("Maven upload URI: ", uploadURI);
 
       var uploader = $scope.uploader = new FileUploader({
+        headers: {
+          'Authorization': Core.authHeaderValue(userDetails)
+        },
+        withCredentials: true,
+        removeAfterUpload: true,
+        autoUpload: true,
+        method: 'PUT',
         url: uploadURI
       });
 
@@ -37,6 +52,7 @@ module FabricDeploy {
         console.info('onAfterAddingAll', addedFileItems);
       };
       uploader.onBeforeUploadItem = function(item) {
+        item.url = addFileName(uploadURI, item.file.name);
         console.info('onBeforeUploadItem', item);
       };
       uploader.onProgressItem = function(fileItem, progress) {
