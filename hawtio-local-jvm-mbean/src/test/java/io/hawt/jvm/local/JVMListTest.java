@@ -3,6 +3,7 @@ package io.hawt.jvm.local;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runners.MethodSorters;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class JVMListTest {
     }
 
     @Test
+    @Ignore
     public void test02StopAgent() {
         JVMList list = getJVMList();
         List<VMDescriptorDTO> jvms = list.listLocalJVMs();
@@ -70,6 +72,7 @@ public class JVMListTest {
     }
 
     @Test
+    @Ignore
     public void test01StartAgent() {
         JVMList list = getJVMList();
         List<VMDescriptorDTO> jvms = list.listLocalJVMs();
