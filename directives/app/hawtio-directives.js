@@ -1,4 +1,5 @@
-﻿/// <reference path="../../d.ts/sugar-1.3.d.ts" />
+﻿/// <reference path="../../d.ts/logger.d.ts" />
+/// <reference path="../../d.ts/sugar-1.3.d.ts" />
 /// <reference path="../../d.ts/hawtio-plugin-loader.d.ts" />
 /// <reference path="../../d.ts/jquery.d.ts" />
 /// <reference path="../../d.ts/angular.d.ts" />

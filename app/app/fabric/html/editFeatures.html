@@ -1,5 +1,27 @@
 <div class="controller-section" ng-controller="Fabric.FeatureEditController">
 
+  <script type="text/ng-template" id="featureCellTemplate.html">
+    <div class="ngCellText"
+         title="">
+      <a href="">{{row.entity.name}</a>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="featureColumnTemplate.html">
+    <div class="ngHeaderSortColumn {{col.headerClass}}"
+         ng-style="{'cursor': col.cursor}"
+         ng-class="{ 'ngSorted': !noSortVisible }">
+      <div class="ngHeaderText" ng-hide="pageId === '/'">
+        <a ng-href="{{parentLink()}}"
+           class="wiki-file-list-up"
+           title="Open the parent folder">
+          <i class="icon-level-up"></i> Up a directory
+        </a>
+      </div>
+    </div>
+  </script>
+
+
   <div class="features fabric-page-header row-fluid">
       <div class="pull-left">
         <h2 class="inline">Edit {{profileId}} Features</h2>
@@ -29,7 +51,18 @@
           </div>
         </div>
 
-        <div style="height: 450px" ng-grid="featureGridOptions"></div>
+        <!--
+        <div style="height: 450px" ng-grid="featureGridOptions"></div>-->
+        <ul class="zebra-list">
+          <li class="mouse-pointer"
+              ng-repeat="feature in selectedRepoFeatures"
+              ng-show="filter(feature)"
+              ng-class="getSelectedClass(feature)">
+              <div ng-click="selectFeature(feature, $event)">
+                {{feature.name}} / {{feature.version}}
+              </div>
+          </li>
+        </ul>
       </p>
 
 

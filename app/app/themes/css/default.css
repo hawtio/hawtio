@@ -1,4 +1,3 @@
-
 /* fonts */
 @import url("../fonts/Open-Sans/stylesheet.css");
 @import url("../fonts/Droid-Sans-Mono/stylesheet.css");
@@ -16,41 +15,41 @@ body {
 }
 
 #log-panel-statements li pre span {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
 }
 
 div.log-stack-trace {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
 }
 
 div.log-stack-trace p {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
 }
 
 .log-stack-trace > dd > ul > li > .stack-line * {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
 }
 
 pre.stack-line {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
   font-size: 12px;
 }
 
 div.stack-line {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
   font-size: 12px;
 }
 
-.log-table *:not('.icon*') {
-  font-family: OpenSans;
+.log-table *:not(i) {
+  font-family: DroidSansMonoRegular;
 }
 
 .log-table > li > div > div {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
 }
 
 fs-donut svg g text.units {
-  font-family: OpenSans;
+  font-family: DroidSansMonoRegular;
 }
 
 /* colors */
@@ -685,9 +684,10 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
   border-top: 1px solid transparent;
 }
 
+.selected, 
 .box.selected {
   color: normal;
-  background-color: #f0f0ff;
+  background-color: #f0f0ff !important;
   text-shadow: none;
 }
 
@@ -941,12 +941,20 @@ a.dashboard-link {
 }
 
 .provision-list ul li:nth-child(even) {
-  background-color: #f3f3f3;
+  background-color: #f9f9f9;
+}
+
+.zebra-list > li,
+ol.zebra-list > li {
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
 }
 
 .zebra-list > li:nth-child(even),
 ol.zebra-list > li:nth-child(even):before {
-  background-color: #f3f3f3;
+  border-top: 1px solid #d4d4d4;
+  border-bottom: 1px solid #d4d4d4;
+  background-color: #f9f9f9;
 }
 
 .add-link {

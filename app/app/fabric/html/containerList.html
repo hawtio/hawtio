@@ -1,6 +1,6 @@
 <div>
 
-  <div ng-repeat="container in containers | orderBy:['location', 'id', '!alive'] | hawtioGroupBy:'location'" 
+  <div ng-repeat="container in containers | orderBy:['location', '!alive', 'provisionResult', 'id'] | hawtioGroupBy:'location'" 
        ng-show="filterContainer(container)">
        <div class="container-group-header"
             ng-show="container.newGroup && container.location">{{container.location}}</div>

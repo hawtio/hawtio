@@ -1,55 +1,12 @@
 var io_hawt_dozer_schema_FieldExclude = {
   "type" : "object",
   "properties" : {
-    "a" : {
-      "type" : "object",
-      "properties" : {
-        "value" : {
-          "type" : "string"
-        },
-        "date-format" : {
-          "type" : "string"
-        },
-        "type" : {
-          "type" : "string",
-          "enum" : [ "ITERATE", "GENERIC" ]
-        },
-        "set-method" : {
-          "type" : "string"
-        },
-        "get-method" : {
-          "type" : "string"
-        },
-        "key" : {
-          "type" : "string"
-        },
-        "map-set-method" : {
-          "type" : "string"
-        },
-        "map-get-method" : {
-          "type" : "string"
-        },
-        "is-accessible" : {
-          "type" : "boolean"
-        },
-        "create-method" : {
-          "type" : "string"
-        }
-      },
-      "required" : true
-    },
     "b" : {
       "type" : "object",
+      "required" : true,
       "properties" : {
-        "value" : {
-          "type" : "string"
-        },
-        "date-format" : {
-          "type" : "string"
-        },
-        "type" : {
-          "type" : "string",
-          "enum" : [ "ITERATE", "GENERIC" ]
+        "is-accessible" : {
+          "type" : "boolean"
         },
         "set-method" : {
           "type" : "string"
@@ -57,23 +14,66 @@ var io_hawt_dozer_schema_FieldExclude = {
         "get-method" : {
           "type" : "string"
         },
-        "key" : {
+        "date-format" : {
           "type" : "string"
         },
-        "map-set-method" : {
+        "value" : {
+          "type" : "string"
+        },
+        "create-method" : {
           "type" : "string"
         },
         "map-get-method" : {
           "type" : "string"
         },
+        "map-set-method" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : [ "ITERATE", "GENERIC" ]
+        },
+        "key" : {
+          "type" : "string"
+        }
+      }
+    },
+    "a" : {
+      "type" : "object",
+      "required" : true,
+      "properties" : {
         "is-accessible" : {
           "type" : "boolean"
         },
+        "set-method" : {
+          "type" : "string"
+        },
+        "get-method" : {
+          "type" : "string"
+        },
+        "date-format" : {
+          "type" : "string"
+        },
+        "value" : {
+          "type" : "string"
+        },
         "create-method" : {
           "type" : "string"
+        },
+        "map-get-method" : {
+          "type" : "string"
+        },
+        "map-set-method" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : [ "ITERATE", "GENERIC" ]
+        },
+        "key" : {
+          "type" : "string"
         }
-      },
-      "required" : true
+      }
     },
     "type" : {
       "type" : "string",

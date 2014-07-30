@@ -1,55 +1,12 @@
 var io_hawt_dozer_schema_Field = {
   "type" : "object",
   "properties" : {
-    "a" : {
-      "type" : "object",
-      "properties" : {
-        "value" : {
-          "type" : "string"
-        },
-        "date-format" : {
-          "type" : "string"
-        },
-        "type" : {
-          "type" : "string",
-          "enum" : [ "ITERATE", "GENERIC" ]
-        },
-        "set-method" : {
-          "type" : "string"
-        },
-        "get-method" : {
-          "type" : "string"
-        },
-        "key" : {
-          "type" : "string"
-        },
-        "map-set-method" : {
-          "type" : "string"
-        },
-        "map-get-method" : {
-          "type" : "string"
-        },
-        "is-accessible" : {
-          "type" : "boolean"
-        },
-        "create-method" : {
-          "type" : "string"
-        }
-      },
-      "required" : true
-    },
     "b" : {
       "type" : "object",
+      "required" : true,
       "properties" : {
-        "value" : {
-          "type" : "string"
-        },
-        "date-format" : {
-          "type" : "string"
-        },
-        "type" : {
-          "type" : "string",
-          "enum" : [ "ITERATE", "GENERIC" ]
+        "is-accessible" : {
+          "type" : "boolean"
         },
         "set-method" : {
           "type" : "string"
@@ -57,60 +14,103 @@ var io_hawt_dozer_schema_Field = {
         "get-method" : {
           "type" : "string"
         },
-        "key" : {
+        "date-format" : {
           "type" : "string"
         },
-        "map-set-method" : {
+        "value" : {
+          "type" : "string"
+        },
+        "create-method" : {
           "type" : "string"
         },
         "map-get-method" : {
           "type" : "string"
         },
-        "is-accessible" : {
-          "type" : "boolean"
+        "map-set-method" : {
+          "type" : "string"
         },
-        "create-method" : {
+        "type" : {
+          "type" : "string",
+          "enum" : [ "ITERATE", "GENERIC" ]
+        },
+        "key" : {
           "type" : "string"
         }
-      },
-      "required" : true
+      }
     },
     "a-hint" : {
-      "type" : "string"
-    },
-    "b-hint" : {
       "type" : "string"
     },
     "a-deep-index-hint" : {
       "type" : "string"
     },
-    "b-deep-index-hint" : {
-      "type" : "string"
+    "copy-by-reference" : {
+      "type" : "boolean"
+    },
+    "a" : {
+      "type" : "object",
+      "required" : true,
+      "properties" : {
+        "is-accessible" : {
+          "type" : "boolean"
+        },
+        "set-method" : {
+          "type" : "string"
+        },
+        "get-method" : {
+          "type" : "string"
+        },
+        "date-format" : {
+          "type" : "string"
+        },
+        "value" : {
+          "type" : "string"
+        },
+        "create-method" : {
+          "type" : "string"
+        },
+        "map-get-method" : {
+          "type" : "string"
+        },
+        "map-set-method" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : [ "ITERATE", "GENERIC" ]
+        },
+        "key" : {
+          "type" : "string"
+        }
+      }
     },
     "relationship-type" : {
       "type" : "string",
       "enum" : [ "CUMULATIVE", "NON_CUMULATIVE" ]
     },
-    "remove-orphans" : {
-      "type" : "boolean"
+    "custom-converter-param" : {
+      "type" : "string"
     },
     "type" : {
       "type" : "string",
       "enum" : [ "ONE_WAY", "BI_DIRECTIONAL" ]
     },
-    "map-id" : {
-      "type" : "string"
-    },
-    "copy-by-reference" : {
-      "type" : "boolean"
-    },
-    "custom-converter" : {
+    "b-deep-index-hint" : {
       "type" : "string"
     },
     "custom-converter-id" : {
       "type" : "string"
     },
-    "custom-converter-param" : {
+    "custom-converter" : {
+      "type" : "string"
+    },
+    "remove-orphans" : {
+      "type" : "boolean"
+    },
+    "b-hint" : {
+      "type" : "string"
+    },
+    "map-id" : {
       "type" : "string"
     }
   }
