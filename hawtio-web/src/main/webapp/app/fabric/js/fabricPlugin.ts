@@ -78,9 +78,10 @@ module Fabric {
     viewRegistry['fabric/containerView'] = layoutFull;
     viewRegistry['fabric/migrate'] = layoutFull;
     viewRegistry['fabric/patching'] = layoutFull;
-    viewRegistry['fabric/container'] = layoutFull;
     viewRegistry['fabric/map'] = templatePath + 'layoutFabric.html';
     viewRegistry['fabric/clusters'] = templatePath + 'layoutFabric.html';
+    viewRegistry['fabric/container'] = templatePath + 'layoutFabric.html';
+    viewRegistry['fabric/activeProfiles'] = templatePath + 'layoutFabric.html';
     viewRegistry['fabric/containers'] = templatePath + 'layoutFabric.html';
     viewRegistry['fabric/configurations'] = templatePath + 'layoutFabric.html';
     viewRegistry['fabric/configuration'] = templatePath + 'layoutFabric.html';
