@@ -1,4 +1,4 @@
-<div class="row-fluid" ng-controller="FabricDeploy.DeployController">
+<div>
 
   <script type="text/ng-template" id="fileUpload.html">
     <div ng-hide="artifactUploader.isHTML5">
@@ -9,14 +9,20 @@
         Drag artifacts (.jar or .war) here to prepare them for uploading.
       </div>
       <div ng-repeat="item in artifactUploader.queue">
-        <div>{{item.file.name}}
-          <span ng-show="artifactUploader.isHTML5">{{item.file.size/1024/1024|number:2}} MB</span>
-          <span ng-show="artifactUploader.isHTML5">
-            <span class="progress" style="margin-bottom: 0;">
-              <span class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></span>
-            </span>
-          </span>
+      <div>
+        <i ng-show="item.isUploading" class="icon-spinner icon-spin"></i>
+        <i ng-show="item.isUploaded" class="icon-ok"></i>
+        {{item.file.name}}
+        <span ng-show="artifactUploader.isHTML5 && item.progress"> - {{(item.fileSizeMB/item.progress)*100|number:2}}MB / {{item.fileSizeMB}}MB</span>
+
         </div>
+        <!--
+        <div ng-show="artifactUploader.isHTML5" 
+             class="inline-block progress progress-striped no-bottom-margin" 
+             ng-class="{ 'active': item.isUploading }">
+          <div class="bar" ng-style="{ 'width': item.progress + '%' }"></div>
+          </div>
+          -->
       </div>
     </div>
     <div>
@@ -28,6 +34,7 @@
         </div>
       </div>
       -->
+      <!--
       <button type="button" class="btn btn-warning btn-s" ng-click="artifactUploader.cancelAll()" ng-disabled="!artifactUploader.isUploading">
         <span class="glyphicon glyphicon-ban-circle"></span> Cancel all
       </button>
@@ -37,25 +44,10 @@
       <button type="button" class="btn btn-success btn-s" ng-click="doUpload()" ng-disabled="!artifactUploader.getNotUploadedItems().length">
         <span class="glyphicon glyphicon-upload"></span> Upload all
       </button>
+      -->
     </div>
   </script>
 
-  <div class="row-fluid">
-    <div class="span12">
-      <div class="pull-right">
-      </div>
-    </div>
-  </div>
+  <div compile="artifactTemplate"></div>
 
-  <div class="row-fluid">
-    <div class="span4">
-      <div simple-form data="formConfig" entity="entity">
-      </div> 
-    </div>
-    <div class="span4">
-      <div compile="artifactTemplate"></div>
-    </div>
-    <div class="span4">
-    </div>
-  </div>
 </div>

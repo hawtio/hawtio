@@ -150,14 +150,19 @@ So they are for implementation inheritance rather like Abstract Base Classes in 
                 </a>
               </li>
               <li class="add">
-                <form ng-submit="addNewThing('Bundle', 'Bundles', row.bundles)">
-                  <span><strong>Add: </strong></span>
-                  <input class="input-xxlarge" type="text" ng-model="newThingName" typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue" typeahead-wait-ms="200">
-                  <i class="clickable icon-plus green" ng-click="addNewThing('Bundle', 'Bundles', row.bundles)" title="Add Bundle"></i>
-                  <span class="help-block">
-                    example: "mvn:group.id/artifact.id/version"
-                  </span>
-                </form>
+                <div>
+                  <form ng-submit="addNewThing('Bundle', 'Bundles', row.bundles)">
+                    <span><strong>Add: </strong></span>
+                    <input class="input-xxlarge" type="text" ng-model="newThingName" typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue" typeahead-wait-ms="200">
+                    <i class="clickable icon-plus green" ng-click="addNewThing('Bundle', 'Bundles', row.bundles)" title="Add Bundle"></i>
+                    <span class="help-block">
+                      example: "mvn:group.id/artifact.id/version"
+                    </span>
+                  </form>
+                </div>
+                <div>
+                  <div fabric-deploy-artifact version-id="{{versionId}}" profile-id="{{row.id}}"></div>
+                </div>
               </li>
             </ul>
           </div>

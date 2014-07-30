@@ -15,8 +15,9 @@ module FabricDeploy {
 
   _module.run(['viewRegistry', 'layoutFull', 'workspace', (viewRegistry, layoutFull, workspace) => {
 
-    viewRegistry['fabric/deploy'] = layoutFull;
+    //viewRegistry['fabric/deploy'] = layoutFull;
 
+    /*
     workspace.topLevelTabs.push({
       id: 'fabric.deploy',
       content: 'Deploy',
@@ -25,6 +26,7 @@ module FabricDeploy {
       href: () => '#/fabric/deploy',
       isActive: (workspace:Workspace) => workspace.isLinkActive('fabric/deploy')
     });
+    */
   
     log.debug("started");
   }]);
