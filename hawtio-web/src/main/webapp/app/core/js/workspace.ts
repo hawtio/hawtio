@@ -6,18 +6,20 @@
 /// <reference path="../../jmx/js/jmxHelpers.ts"/>
 module Core {
 
-  var log:Logging.Logger = Logger.get("Core");
   /**
-   * @class MenuItem
+   * @class NavMenuItem
    */
-  export interface MenuItem {
+  export interface NavMenuItem {
+    id: string;
     content: string;
     title?: string;
-    isValid?: (Workspace) => any;
-    isActive?: (Workspace) => boolean;
+    isValid?: (workspace:Core.Workspace, perspectiveId?:string) => any;
+    isActive?: (worksace:Core.Workspace) => boolean;
     href: () => any;
   }
 
+
+  var log:Logging.Logger = Logger.get("Core");
   /**
    * @class Workspace
    */
@@ -30,7 +32,7 @@ module Core {
     public mbeanServicesToDomain = {};
     public attributeColumnDefs = {};
     public treePostProcessors = [];
-    public topLevelTabs = [];
+    public topLevelTabs = <Array<NavMenuItem>>[];
     public subLevelTabs = [];
     public keyToNodeMap = {};
     public pluginRegisterHandle = null;
@@ -880,4 +882,3 @@ module Core {
 
 // TODO refactor other code to use Core.Workspace
 class Workspace extends Core.Workspace {};
-interface MenuItem extends Core.MenuItem {};

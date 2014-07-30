@@ -131,6 +131,7 @@ module Fabric {
                                        && !workspace.isLinkActive("fabric/profileView") 
                                        && !workspace.isLinkActive("fabric/containerView")
                                        && !workspace.isLinkActive("fabric/deploy")
+                                       && !workspace.isLinkActive("fabric/requirements")
     });
 
     workspace.topLevelTabs.push({

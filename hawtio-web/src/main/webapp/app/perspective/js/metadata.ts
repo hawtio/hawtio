@@ -1,6 +1,9 @@
 /**
  * @module Perspective
  */
+/// <reference path="../../insight/js/insightHelpers.ts"/>
+/// <reference path="../../fabric/js/fabricHelpers.ts"/>
+/// <reference path="../../site/js/siteHelpers.ts"/>
 module Perspective {
 
   export var containerPerspectiveEnabled = true;
@@ -33,7 +36,7 @@ module Perspective {
             id: "fabric.profiles"
           },
           {
-            id: "fabric.deploy"
+            id: "fabric.requirements"
           },
           {
             href: "#/docker"
@@ -105,7 +108,7 @@ module Perspective {
             id: "fabric.containers"
           },
           {
-            id: "fabric.deploy"
+            id: "fabric.requirements"
           },
           {
             href: "#/insight"
