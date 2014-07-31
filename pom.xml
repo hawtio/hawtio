@@ -100,7 +100,7 @@
 
     <!-- TODO until build 16 is done we need snapshot to get maven coords on stack frames -->
     <insight-log4j.version>${fabric-test-version}</insight-log4j.version>
-    <jackson-version>2.3.3</jackson-version>
+    <jackson-version>2.4.1</jackson-version>
     <javaewah-version>0.5.6</javaewah-version>
     <jaxb-version>2.1.13</jaxb-version>
     <jcraft-version>0.1.49</jcraft-version>
