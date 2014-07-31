@@ -1,5 +1,8 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
+
+   DELIVERY_PERSISTENT = "2";
+
   _module.controller("Camel.SendMessageController", ["$route", "$scope", "$element", "$timeout", "workspace", "jolokia", "localStorage", "$location", "activeMQMessage", ($route, $scope, $element, $timeout, workspace:Workspace, jolokia, localStorage, $location, activeMQMessage) => {
     var log:Logging.Logger = Logger.get("Camel");
 
@@ -174,11 +177,16 @@ module Camel {
           } else {
             var user = localStorage["activemqUserName"];
             var pwd = localStorage["activemqPassword"];
-            if (headers) {
-              jolokia.execute(mbean, "sendTextMessage(java.util.Map, java.lang.String, java.lang.String, java.lang.String)", headers, body, user, pwd, callback);
-            } else {
-              jolokia.execute(mbean, "sendTextMessage(java.lang.String, java.lang.String, java.lang.String)", body, user, pwd, callback);
+
+            // AMQ is sending non persistent by default, so make sure we tell to sent persistent by default
+            if (!headers) {
+              headers = {};
             }
+            if (!headers["JMSDeliveryMode"]) {
+              headers["JMSDeliveryMode"] = DELIVERY_PERSISTENT;
+            }
+
+            jolokia.execute(mbean, "sendTextMessage(java.util.Map, java.lang.String, java.lang.String, java.lang.String)", headers, body, user, pwd, callback);
           }
         }
       }
