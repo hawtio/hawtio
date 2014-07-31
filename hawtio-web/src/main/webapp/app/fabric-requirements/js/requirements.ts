@@ -5,7 +5,7 @@ module FabricRequirements {
 
   export var RequirementsController = controller("RequirementsController", ["$scope", "jolokia", "ProfileCart", "$templateCache", "FileUploader", "userDetails", "jolokiaUrl", ($scope, jolokia, ProfileCart, $templateCache, FileUploader, userDetails, jolokiaUrl) => {
 
-    $scope.requirements = {};
+    $scope.requirements = <Fabric.FabricRequirements> null;
     $scope.template = '';
 
     Fabric.loadRestApi(jolokia, undefined, (response) => {
@@ -37,7 +37,7 @@ module FabricRequirements {
         mbean: Fabric.managerMBean,
         operation: "requirements()"
       }, (response) => {
-        $scope.requirements = response.value;
+        $scope.requirements = <Fabric.FabricRequirements>response.value;
         log.debug("Got requirements: ", $scope.requirements);
         if (Core.isBlank($scope.template)) {
           $scope.template = $templateCache.get('pageTemplate.html');

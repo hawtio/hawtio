@@ -5,7 +5,86 @@ module Fabric {
     error: (response:any) => void;
   }
 
-  // nicer to have type info...
+  // It's nicer to have type info, maybe we should start auto
+  // generating these...
+
+  export interface HostScalingRequirements {
+    hostPatterns:Array<String>;
+    hostTags:Array<String>;
+  }
+
+  export interface ChildScalingRequirements {
+    rootcontainerPatterns:Array<String>;
+  }
+
+  export interface SshScalingRequirements extends HostScalingRequirements {
+    
+  }
+
+  export interface DockerScalingRequirements extends HostScalingRequirements {
+
+  }
+
+  export interface OpenShiftScalingRequirements {
+
+  }
+
+  export interface ProfileRequirements {
+    profile:String;
+    minimumInstances:number;
+    maximumInstances:number;
+    dependentProfiles:Array<string>;
+    maximumInstancesPerHost:number;
+    childScalingRequirements:ChildScalingRequirements;
+    sshScalingRequirements:SshScalingRequirements;
+    dockerScalingRequirements:DockerScalingRequirements;
+    openShiftScalingRequirements:OpenShiftScalingRequirements;
+  }
+
+  export interface HostConfiguration {
+    hostname:String;
+    port:Number;
+    username:String;
+    password:String;
+    maximumContainerCount:Number;
+    tags:Array<String>;
+  }
+
+  export interface SshHostConfiguration extends HostConfiguration {
+    path:String;
+    passPhrase:String;
+    privateKeyFile:String;
+    preferredAddress:String
+  }
+
+  export interface SshConfiguration {
+    hosts:Array<SshHostConfiguration>;
+    defaultPath:String;
+    defaultPort:Number;
+    defaultUsername:String;
+    defaultPassword:String;
+    fallbackRepositories:Array<String>;
+    defaultPassPhrase:String;                         
+    defaultPrivateKeyFile:String;
+  }
+
+  export interface DockerHostConfiguration extends HostConfiguration {
+    path:String;
+    passPhrase:String;
+    privateKeyFile:String;
+    preferredAddress:String
+  }
+
+  export interface DockerConfiguration {
+    hosts:Array<DockerHostConfiguration>;
+  }
+
+  export interface FabricRequirements {
+    profileRequirements:Array<ProfileRequirements>
+    sshConfiguration:SshConfiguration;
+    dockerConfiguration:DockerConfiguration;
+    version:string
+  }
 
   export interface Version {
     name?: string;
