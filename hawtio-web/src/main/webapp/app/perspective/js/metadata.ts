@@ -27,10 +27,10 @@ module Perspective {
             href: "#/fabric"
           },
           {
-            id: "fabric.profiles"
+            id: "fabric.containers"
           },
           {
-            id: "fabric.containers"
+            id: "fabric.profiles"
           },
           {
             id: "fabric.deploy"
