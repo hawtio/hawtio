@@ -1,5 +1,6 @@
 var io_hawt_dozer_schema_Mapping = {
   "type" : "object",
+  "id" : "urn:jsonschema:io:hawt:dozer:schema:Mapping",
   "properties" : {
     "wildcard" : {
       "type" : "boolean"
@@ -26,67 +27,11 @@ var io_hawt_dozer_schema_Mapping = {
     },
     "class-a" : {
       "type" : "object",
-      "properties" : {
-        "factory-bean-id" : {
-          "type" : "string"
-        },
-        "is-accessible" : {
-          "type" : "boolean"
-        },
-        "map-null" : {
-          "type" : "boolean"
-        },
-        "bean-factory" : {
-          "type" : "string"
-        },
-        "value" : {
-          "type" : "string"
-        },
-        "create-method" : {
-          "type" : "string"
-        },
-        "map-get-method" : {
-          "type" : "string"
-        },
-        "map-set-method" : {
-          "type" : "string"
-        },
-        "map-empty-string" : {
-          "type" : "boolean"
-        }
-      }
+      "$ref" : "urn:jsonschema:io:hawt:dozer:schema:Class"
     },
     "class-b" : {
       "type" : "object",
-      "properties" : {
-        "factory-bean-id" : {
-          "type" : "string"
-        },
-        "is-accessible" : {
-          "type" : "boolean"
-        },
-        "map-null" : {
-          "type" : "boolean"
-        },
-        "bean-factory" : {
-          "type" : "string"
-        },
-        "value" : {
-          "type" : "string"
-        },
-        "create-method" : {
-          "type" : "string"
-        },
-        "map-get-method" : {
-          "type" : "string"
-        },
-        "map-set-method" : {
-          "type" : "string"
-        },
-        "map-empty-string" : {
-          "type" : "boolean"
-        }
-      }
+      "$ref" : "urn:jsonschema:io:hawt:dozer:schema:Class"
     },
     "fieldOrFieldExclude" : {
       "type" : "array"

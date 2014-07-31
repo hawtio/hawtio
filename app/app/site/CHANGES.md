@@ -3,6 +3,10 @@
 #### 1.5
 * Hawtio requires Java 1.7 onwards
 
+#### 1.4.14
+* upgrades to jaxb, jackson, dozer and spring to play nicer with the latest [fabric8](http://fabric8.io/) distro
+* Fixes [these 5 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.14+is%3Aclosed)
+
 #### 1.4.12
 * [fabric8](http://fabric8.io/) plugin has an improved Containers page and the start of a nice deploy UI with draggy droppy
 * Fixes [these 10 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.12+is%3Aclosed)

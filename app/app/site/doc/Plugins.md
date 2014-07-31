@@ -4,7 +4,7 @@ For more details see the [Configuration Guide](http://hawt.io/configuration/inde
 
 ## Included Plugins
 
-The following plugins are all included by default in the [hawtio-web.war](https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-web/1.4.12/hawtio-web-1.4.12.war) distro. You can see the [source for the all default plugins here](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app).
+The following plugins are all included by default in the [hawtio-web.war](https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-web/1.4.14/hawtio-web-1.4.14.war) distro. You can see the [source for the all default plugins here](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app).
 
 
 <table class="table">

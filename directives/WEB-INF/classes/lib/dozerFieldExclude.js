@@ -1,79 +1,16 @@
 var io_hawt_dozer_schema_FieldExclude = {
   "type" : "object",
+  "id" : "urn:jsonschema:io:hawt:dozer:schema:FieldExclude",
   "properties" : {
     "b" : {
       "type" : "object",
-      "required" : true,
-      "properties" : {
-        "is-accessible" : {
-          "type" : "boolean"
-        },
-        "set-method" : {
-          "type" : "string"
-        },
-        "get-method" : {
-          "type" : "string"
-        },
-        "date-format" : {
-          "type" : "string"
-        },
-        "value" : {
-          "type" : "string"
-        },
-        "create-method" : {
-          "type" : "string"
-        },
-        "map-get-method" : {
-          "type" : "string"
-        },
-        "map-set-method" : {
-          "type" : "string"
-        },
-        "type" : {
-          "type" : "string",
-          "enum" : [ "ITERATE", "GENERIC" ]
-        },
-        "key" : {
-          "type" : "string"
-        }
-      }
+      "$ref" : "urn:jsonschema:io:hawt:dozer:schema:FieldDefinition",
+      "required" : true
     },
     "a" : {
       "type" : "object",
-      "required" : true,
-      "properties" : {
-        "is-accessible" : {
-          "type" : "boolean"
-        },
-        "set-method" : {
-          "type" : "string"
-        },
-        "get-method" : {
-          "type" : "string"
-        },
-        "date-format" : {
-          "type" : "string"
-        },
-        "value" : {
-          "type" : "string"
-        },
-        "create-method" : {
-          "type" : "string"
-        },
-        "map-get-method" : {
-          "type" : "string"
-        },
-        "map-set-method" : {
-          "type" : "string"
-        },
-        "type" : {
-          "type" : "string",
-          "enum" : [ "ITERATE", "GENERIC" ]
-        },
-        "key" : {
-          "type" : "string"
-        }
-      }
+      "$ref" : "urn:jsonschema:io:hawt:dozer:schema:FieldDefinition",
+      "required" : true
     },
     "type" : {
       "type" : "string",
