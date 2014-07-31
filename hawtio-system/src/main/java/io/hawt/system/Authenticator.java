@@ -33,6 +33,7 @@ public class Authenticator {
     public static final String AUTHENTICATION_SCHEME_BASIC = "Basic";
     
     private static Boolean websphereDetected;
+    private static Method websphereGetGroupsMethod;
 
     public static void extractAuthInfo(String authHeader, ExtractAuthInfoCallback cb) {
         authHeader = authHeader.trim();
@@ -212,7 +213,7 @@ public class Authenticator {
     		LOG.debug("Checking credential {} if it is a WebSphere specific WSCredential containing group info", cred);
     		if (implementsInterface(cred, "com.ibm.websphere.security.cred.WSCredential")) {
     			try {
-					Method groupsMethod = cred.getClass().getMethod("getGroupIds");
+					Method groupsMethod = getWebSphereGetGroupsMethod(cred);
 					@SuppressWarnings("unchecked")
 					final List<Object> groups = (List<Object>) groupsMethod.invoke(cred);
 					
@@ -244,6 +245,13 @@ public class Authenticator {
     	}
     	
 		return found;
+	}
+
+	private static Method getWebSphereGetGroupsMethod(final Object cred) throws NoSuchMethodException {
+		if (websphereGetGroupsMethod == null) {
+			websphereGetGroupsMethod = cred.getClass().getMethod("getGroupIds"); 
+		}
+		return websphereGetGroupsMethod;
 	}
 
 	private static boolean implementsInterface(Object o, String interfaceName) {
