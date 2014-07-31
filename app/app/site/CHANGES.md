@@ -3,6 +3,10 @@
 #### 1.5
 * Hawtio requires Java 1.7 onwards
 
+#### 1.4.12
+* [fabric8](http://fabric8.io/) plugin has an improved Containers page and the start of a nice deploy UI with draggy droppy
+* Fixes [these 10 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.12+is%3Aclosed)
+
 #### 1.4.11
 * [fabric8](http://fabric8.io/) plugin has a nice funky 'App Store' style Profiles tab for selecting profiles
 * ActiveMQ plugin can now edit and resend messages
