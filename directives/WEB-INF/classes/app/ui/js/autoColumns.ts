@@ -20,7 +20,7 @@ module UI {
       var selector = getIfSet('hawtioAutoColumns', $attr, 'div');
       var minMargin = getIfSet('minMargin', $attr, '3').toNumber();
 
-      var go = function() {
+      var go = Core.throttled(function() {
 
         var containerWidth = $element.innerWidth();
         var childWidth = 0;
@@ -67,7 +67,7 @@ module UI {
           });
         });
 
-      };
+      }, 500);
 
       setTimeout(go, 300);
       $scope.$watch(go);

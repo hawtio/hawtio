@@ -3224,7 +3224,7 @@ var UI;
                 var selector = UI.getIfSet('hawtioAutoColumns', $attr, 'div');
                 var minMargin = UI.getIfSet('minMargin', $attr, '3').toNumber();
 
-                var go = function () {
+                var go = Core.throttled(function () {
                     var containerWidth = $element.innerWidth();
                     var childWidth = 0;
 
@@ -3268,7 +3268,7 @@ var UI;
                             'margin-right': margin
                         });
                     });
-                };
+                }, 500);
 
                 setTimeout(go, 300);
                 $scope.$watch(go);
