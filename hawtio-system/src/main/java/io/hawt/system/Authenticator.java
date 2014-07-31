@@ -31,6 +31,8 @@ public class Authenticator {
 
     public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String AUTHENTICATION_SCHEME_BASIC = "Basic";
+    
+    private static Boolean websphereDetected;
 
     public static void extractAuthInfo(String authHeader, ExtractAuthInfoCallback cb) {
         authHeader = authHeader.trim();
@@ -196,13 +198,16 @@ public class Authenticator {
 	}
 
 	private static boolean isRunningOnWebsphere(Subject subject) {
-    	boolean onWebsphere = false;
-    	for (Principal p : subject.getPrincipals()) {
-    		LOG.trace("Checking principal for IBM specific interfaces: {}" , p);
-    		onWebsphere = implementsInterface(p, "com.ibm.websphere.security.auth.WSPrincipal" );
-    	}
-    	LOG.trace("Checking if we are running using a IBM Websphere specific LoginModule: {}", onWebsphere);
-    	return onWebsphere;
+		if (websphereDetected == null) {
+	    	boolean onWebsphere = false;
+	    	for (Principal p : subject.getPrincipals()) {
+	    		LOG.trace("Checking principal for IBM specific interfaces: {}" , p);
+	    		onWebsphere = implementsInterface(p, "com.ibm.websphere.security.auth.WSPrincipal" );
+	    	}
+	    	LOG.trace("Checking if we are running using a IBM Websphere specific LoginModule: {}", onWebsphere);
+	    	websphereDetected = onWebsphere;
+		}
+		return websphereDetected;
     }
 
     private static boolean checkIfSubjectHasRequiredRoleOnWebsphere(Subject subject, String role) {
