@@ -1,7 +1,7 @@
 /**
  * @module Fabric
  */
-/// <reference path="./fabricInterfaces.ts"/>
+/// <reference path="fabricInterfaces.ts"/>
 /// <reference path="fabricGlobals.ts"/>
 /// <reference path="jolokiaHelpers.ts"/>
 /// <reference path="containerHelpers.ts"/>
@@ -471,15 +471,18 @@ module Fabric {
   /**
    * Loads the restApiUrl property into the given $scope and added the helper function
    */
-  export function loadRestApi(jolokia, $scope) {
-    var defaultApi = "/api/fabric8";
-    if (!$scope.restApiUrl) {
-      $scope.restApiUrl = defaultApi;
+  export function loadRestApi(jolokia, $scope, callback:(response:any) => void = undefined) {
+    if ($scope && !$scope.restApiUrl) {
+      $scope.restApiUrl = DEFAULT_REST_API;
     }
     Fabric.restApiUrl(jolokia, (response) => {
-      $scope.restApiUrl = response.value || defaultApi;
-      log.info("got REST API: " + $scope.restApiUrl);
-      Core.$apply($scope);
+      if ($scope) {
+        $scope.restApiUrl = response.value || DEFAULT_REST_API;
+        log.info("got REST API: " + $scope.restApiUrl);
+        Core.$apply($scope);
+      } if (callback) {
+        callback(response);
+      }
     });
   }
 

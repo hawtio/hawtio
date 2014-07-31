@@ -1,3 +1,4 @@
+/// <reference path="../../baseIncludes.ts"/>
 module Fabric {
 
   export var log:Logging.Logger = Logger.get("Fabric");
@@ -20,5 +21,7 @@ module Fabric {
 
   export var currentContainerId = '';
   export var currentContainer = {};
+
+  export var DEFAULT_REST_API = "/api/fabric8";
 
 }
