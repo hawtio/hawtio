@@ -43,13 +43,13 @@ By default the security in hawtio uses these system properties when running in A
   </tr>
   <tr>
     <td>
-      hawtio.role
+      hawtio.role or hawtio.roles
     </td>
     <td>
       admin
     </td>
     <td>
-      The user role required to be able to login to the console
+      The user role or roles required to be able to login to the console.  Multiple roles to allow can be separated by a comma.  Set to * or an empty value to disable role checking when hawtio authenticates a user.
     </td>
   </tr>
   <tr>
@@ -60,7 +60,7 @@ By default the security in hawtio uses these system properties when running in A
       
     </td>
     <td>
-      Principal fully qualified classname(s). Multiple classes can be separated by comma.
+      Principal fully qualified classname(s). Multiple classes can be separated by a comma.  Leave unset or set to an empty value to disable role checking when hawtio authenticates a user.
     </td>
   </tr>
   <tr>
