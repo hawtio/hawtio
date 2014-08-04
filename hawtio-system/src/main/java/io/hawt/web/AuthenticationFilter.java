@@ -3,6 +3,8 @@ package io.hawt.web;
 import java.io.IOException;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
+import java.util.List;
 import javax.security.auth.Subject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -34,6 +36,7 @@ public class AuthenticationFilter implements Filter {
     public static final String HAWTIO_AUTHENTICATION_ENABLED = "hawtio.authenticationEnabled";
     public static final String HAWTIO_REALM = "hawtio.realm";
     public static final String HAWTIO_ROLE = "hawtio.role";
+    public static final String HAWTIO_ROLES = "hawtio.roles";
     public static final String HAWTIO_ROLE_PRINCIPAL_CLASSES = "hawtio.rolePrincipalClasses";
 
     private final AuthenticationConfiguration configuration = new AuthenticationConfiguration();
@@ -56,6 +59,7 @@ public class AuthenticationFilter implements Filter {
         if (config != null) {
             configuration.setRealm(config.get("realm", "karaf"));
             configuration.setRole(config.get("role", "admin"));
+            configuration.setRole(config.get("roles", "admin"));
             configuration.setRolePrincipalClasses(config.get("rolePrincipalClasses", defaultRolePrincipalClasses));
             configuration.setEnabled(Boolean.parseBoolean(config.get("authenticationEnabled", "true")));
             configuration.setNoCredentials401(Boolean.parseBoolean(config.get("noCredentials401", "false")));
@@ -74,6 +78,9 @@ public class AuthenticationFilter implements Filter {
         if (System.getProperty(HAWTIO_ROLE) != null) {
             configuration.setRole(System.getProperty(HAWTIO_ROLE));
         }
+        if (System.getProperty(HAWTIO_ROLES) != null) {
+            configuration.setRole(System.getProperty(HAWTIO_ROLES));
+        }
         if (System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES) != null) {
             configuration.setRolePrincipalClasses(System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES));
         }
@@ -88,7 +95,7 @@ public class AuthenticationFilter implements Filter {
         }
 
         if (configuration.isEnabled()) {
-            LOG.info("Starting hawtio authentication filter, JAAS realm: \"{}\" authorized role: \"{}\" role principal classes: \"{}\"",
+            LOG.info("Starting hawtio authentication filter, JAAS realm: \"{}\" authorized role(s): \"{}\" role principal classes: \"{}\"",
                     new Object[]{configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses()});
         } else {
             LOG.info("Starting hawtio authentication filter, JAAS authentication disabled");

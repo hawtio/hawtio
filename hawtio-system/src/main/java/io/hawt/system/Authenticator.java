@@ -130,6 +130,7 @@ public class Authenticator {
                 return subject;
             }
 
+            String[] roleArray = role.split(",");
             String[] rolePrincipalClazzes = rolePrincipalClasses.split(",");
             boolean found = false;
             for (String clazz : rolePrincipalClazzes) {
@@ -140,13 +141,18 @@ public class Authenticator {
                         LOG.debug("principal class {} doesn't match {}, continuing", p.getClass().getName(), clazz.trim());
                         continue;
                     }
-                    if (!p.getName().equals(role)) {
-                        LOG.debug("role {} doesn't match {}, continuing", p.getName(), role);
-                        continue;
+                    for (String r : roleArray) {
+                        if (r == null || !p.getName().equals(r.trim())) {
+                            LOG.debug("role {} doesn't match {}, continuing", p.getName(), r);
+                            continue;
+                        }
+                        LOG.debug("Matched role and role principal class");
+                        found = true;
+                        break;
                     }
-                    LOG.debug("Matched role and role principal class");
-                    found = true;
-                    break;
+                    if (found) {
+                        break;
+                    }
                 }
                 if (found) {
                     break;

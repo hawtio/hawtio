@@ -1,6 +1,7 @@
 package io.hawt.web;
 
 import javax.security.auth.login.Configuration;
+import java.util.List;
 
 public class AuthenticationConfiguration {
 
@@ -65,7 +66,7 @@ public class AuthenticationConfiguration {
                 "enabled=" + enabled +
                 ", noCredentials401=" + noCredentials401 +
                 ", realm='" + realm + '\'' +
-                ", role='" + role + '\'' +
+                ", role(s)='" + role + '\'' +
                 ", rolePrincipalClasses='" + rolePrincipalClasses + '\'' +
                 ", configuration=" + configuration +
                 ']';
