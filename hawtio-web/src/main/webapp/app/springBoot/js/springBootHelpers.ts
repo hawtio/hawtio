@@ -1,11 +1,11 @@
 module SpringBoot {
 
     export function springBootAppUrl() {
-        var url = unescape(document.URL).match(/\/http.*/);
-        if (!url) {
+        var urls = decodeURI(document.URL).match(/\/http.*/);
+        if (!urls) {
             return '';
         }
-        url = url[0].substring(1);
+        var url = urls[0].substring(1);
         var hashIndex = url.lastIndexOf('#');
         return url.substring(0, hashIndex)
     }

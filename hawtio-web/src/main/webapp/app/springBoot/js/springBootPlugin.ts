@@ -37,7 +37,8 @@ module SpringBoot {
             when('/springBoot', {templateUrl: 'app/springBoot/html/springBoot.html'});
     }]);
 
-    _module.filter('tomcatIconClass', () => iconClass);
+    // TODO not required?
+    //_module.filter('tomcatIconClass', () => iconClass);
 
     _module.run(["$location", "$http", "workspace", "viewRegistry", "helpRegistry", ($location:ng.ILocationService, $http, workspace:Workspace, viewRegistry, helpRegistry) => {
 
