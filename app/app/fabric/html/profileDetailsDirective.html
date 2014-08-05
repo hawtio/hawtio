@@ -15,7 +15,7 @@
       </div>
 
       <div class="pull-right" ng-show="inDirective">
-        <a class="btn" ng-href="#/wiki/branch/{{versionId}}/configurations/{{pageId}}" ng-show="profileJolokia"
+        <a class="btn" ng-href="#/wiki/branch/{{versionId}}/configurations/{{pageId}}" ng-show="profileJolokia || profileMetadataMBean"
            title="View the configurations of this profile"><i class="icon-edit"></i> Configuration</a>
         <a class="btn" href="" title="Manually trigger provisioning of this profile on all associated containers" ng-click="refreshProfile(versionId, profileId)"><i class="icon-refresh"></i> Refresh</a>
         <a class="btn" href="" title="Create a new profile that is a copy of this one" ng-click="copyProfileDialog = true"><i class="icon-copy"></i> Copy</a>

@@ -93,18 +93,26 @@ I spotted a handy tip on [this issue](http://youtrack.jetbrains.com/issue/IDEA-7
 
 The LiveReload support allows you to edit the code and for the browser to automatically reload once things are compiled. This makes for a much more fun and RAD development environment!!
 
-Here's how to do it:
+The easiest method to run with LiveReload support is to cd into the "hawtio-web" module and run the following:
 
-Install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)
+mvn test-compile exec:java
 
-When you run "mvn test-compile exec:java" the sample server runs an embedded Live Reload server that's already configured to look at src/main/webapp for file changes.  The Live Reload server implementation is provided by [livereload-jvm](https://github.com/davidB/livereload-jvm).  When using other methods run run hawtio like "mvn jetty:run" or "mvn tomcat:run" you can run [livereload-jvm](https://github.com/davidB/livereload-jvm) directly, for example from the hawtio-web directory:
+The sample server runs an embedded LiveReload server that's all set up to look at src/main/webapp for file changes.  If you don't want to load all of the sample apps because you're connecting to another JVM you don't have to:
+
+mvn test-compile exec:java -DloadApps=false
+
+
+The Live Reload server implementation is provided by [livereload-jvm](https://github.com/davidB/livereload-jvm).  When using other methods run run hawtio like "mvn jetty:run" or "mvn tomcat:run" you can run [livereload-jvm](https://github.com/davidB/livereload-jvm) directly, for example from the hawtio-web directory:
 
     java -jar livereload-jvm-0.2.0-SNAPSHOT-onejar.jar -d src/main/webapp/ -e .*\.ts$
+
+Install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar).  There is also a LiveReload plugin for Firefox, you can get it straight from the [LiveReload site](http://livereload.com).
+
 
 In another shell (as mentioned above in the "Incrementally compile TypeScript" section you probably want to auto-recompile all the TypeScript files into app.js in *another shell* via this command:
 
     cd hawtio-web
-    ./watchTsc
+    mvn compile -Pwatch
 
 Enable Live Reload in your browser (open [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) then click on the Live Reload icon to the right of the location bar).
 
