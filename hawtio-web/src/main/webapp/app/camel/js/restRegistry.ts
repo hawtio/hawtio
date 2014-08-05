@@ -70,11 +70,16 @@ module Camel {
       var obj = response.value;
       if (obj) {
 
+        // the JMX tabular data has 2 indexes so we need to dive 2 levels down to grab the data
         var arr = [];
         for (var key in obj) {
-          var data = obj[key];
-          arr.push({url: key, method: data.method, uriTemplate: data['uri template'], consumes: data.consumes, produces: data.produces, state: data.state});
+          var values = obj[key];
+          for (var v in values) {
+            var entry = values[v];
+            arr.push({url: entry.url, method: entry.method, uriTemplate: entry.uriTemplate, consumes: entry.consumes, produces: entry.produces, state: entry.state});
+          }
         }
+
         arr = arr.sortBy("url");
         $scope.data = arr;
 
