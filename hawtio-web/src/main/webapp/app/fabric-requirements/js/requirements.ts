@@ -3,7 +3,7 @@
 /// <reference path="../../helpers/js/urlHelpers.ts"/>
 module FabricRequirements {
 
-  export var RequirementsController = controller("RequirementsController", ["$scope", "jolokia", "ProfileCart", "$templateCache", "FileUploader", "userDetails", "jolokiaUrl", "$location", ($scope, jolokia, ProfileCart, $templateCache, FileUploader, userDetails, jolokiaUrl, $location) => {
+  export var RequirementsController = controller("RequirementsController", ["$scope", "jolokia", "ProfileCart", "$templateCache", "FileUploader", "userDetails", "jolokiaUrl", "$location", "$timeout", ($scope, jolokia, ProfileCart, $templateCache, FileUploader, userDetails, jolokiaUrl, $location, $timeout) => {
 
     $scope.tabs = {
       '0': {
@@ -26,6 +26,28 @@ module FabricRequirements {
 
     $scope.requirements = <Fabric.FabricRequirements> null;
     $scope.template = '';
+
+    $scope.cancelChanges = () => {
+      if ($scope.requirements.$dirty) {
+        log.debug("Cancelling changes");
+        $timeout(() => {
+          $scope.requirements = <Fabric.FabricRequirements>Object.extended($scope.requirementsFromServer).clone();
+        }, 20);
+      }
+    };
+
+    $scope.saveChanges = () => {
+      if ($scope.requirements.$dirty) {
+        log.debug("Saving requirementS: ", angular.toJson($scope.requirements));
+        $scope.requirements.$dirty = false;
+
+      }
+    };
+
+    // used by child scopes when they change the requirements object
+    $scope.onChange = () => {
+      $scope.requirements.$dirty = true;
+    };
 
     Fabric.loadRestApi(jolokia, undefined, (response) => {
       var restApiUrl = response.value || Fabric.DEFAULT_REST_API;
@@ -57,7 +79,8 @@ module FabricRequirements {
         mbean: Fabric.managerMBean,
         operation: "requirements()"
       }, (response) => {
-        $scope.requirements = <Fabric.FabricRequirements>response.value;
+        $scope.requirementsFromServer = <Fabric.FabricRequirements>response.value;
+        $scope.requirements = <Fabric.FabricRequirements>Object.extended($scope.requirementsFromServer).clone();
         if (Core.isBlank($scope.template)) {
           $scope.template = $templateCache.get('pageTemplate.html');
         }
