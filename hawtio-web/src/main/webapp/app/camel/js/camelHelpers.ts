@@ -793,6 +793,27 @@ module Camel {
     return null;
   }
 
+  export function getSelectionCamelRestRegistry(workspace) {
+    if (workspace) {
+      var contextId = getContextId(workspace);
+      var selection = workspace.selection;
+      var tree = workspace.tree;
+      if (tree && selection) {
+        var domain = selection.domain;
+        if (domain && contextId) {
+          var result = tree.navigate(domain, contextId, "services");
+          if (result && result.children) {
+            var mbean = result.children.find(m => m.title.startsWith("DefaultRestRegistry"));
+            if (mbean) {
+              return mbean.objectName;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   // TODO should be a service
   export function getContextId(workspace:Workspace) {
     var selection = workspace.selection;
