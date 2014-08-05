@@ -1,4 +1,5 @@
 /// <reference path="fabricDeployPlugin.ts"/>
+/// <reference path="../../helpers/js/urlHelpers.ts"/>
 module FabricDeploy {
 
   export var DeployArtifact = _module.directive("fabricDeployArtifact", [() => {
@@ -14,14 +15,6 @@ module FabricDeploy {
       controller: ["$scope", "$element", "FileUploader", "jolokiaUrl", "$templateCache", "jolokia", "userDetails", ($scope, $element, FileUploader:any, jolokiaUrl, $templateCache, jolokia, userDetails:Core.UserDetails) => {
 
         $scope.artifactTemplate = '';
-
-        function addFileName(url:string, filename:string) {
-          if (url.endsWith('/')) {
-            return url + filename;
-          } else {
-            return url + '/' + filename;
-          } 
-        }
 
         jolokia.request({
           type: 'read',
@@ -50,7 +43,7 @@ module FabricDeploy {
 
           $scope.doUpload = () => {
             uploader.uploadAll();
-          }
+          };
 
           uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
             console.info('onWhenAddingFileFailed', item, filter, options);
@@ -67,7 +60,7 @@ module FabricDeploy {
             } else {
               item.fileSizeMB = 0;
             }
-            item.url = addFileName(uploadURI, item.file.name) + '?profile=' + $scope.profileId + '&version=' + $scope.versionId;
+            item.url = UrlHelpers.join(uploadURI, item.file.name) + '?profile=' + $scope.profileId + '&version=' + $scope.versionId;
             console.info('onBeforeUploadItem', item);
           };
           uploader.onProgressItem = function(fileItem, progress) {

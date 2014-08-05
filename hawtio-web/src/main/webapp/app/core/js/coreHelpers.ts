@@ -1112,7 +1112,7 @@ module Core {
     return answer;
   }
 
-  export function authHeaderValue(userDetails:UserDetails) {
+  export function authHeaderValue(userDetails:Core.UserDetails) {
     return getBasicAuthHeader(userDetails.username, userDetails.password);
   }
 

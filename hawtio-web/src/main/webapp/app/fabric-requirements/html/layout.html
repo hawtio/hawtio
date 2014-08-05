@@ -1,0 +1,15 @@
+<div ng-controller="FabricRequirements.RequirementsController">
+  <script type="text/ng-template" id="pageTemplate.html">
+    <ul class="nav nav-tabs connected">
+      <li ng-repeat="(index, tab) in tabs track by $index | orderBy:index"
+          ng-class="{active : tab.isActive()}">
+        <a ng-href="{{tab.href()}}">{{tab.name}}</a>
+      </li>
+    </ul>
+
+    <div nv-file-drop="" uploader="uploader">
+      <div ng-view></div>
+    </div>
+  </script>
+  <div compile="template"></div>
+</div>

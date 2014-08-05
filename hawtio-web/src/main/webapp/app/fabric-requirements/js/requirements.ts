@@ -3,7 +3,26 @@
 /// <reference path="../../helpers/js/urlHelpers.ts"/>
 module FabricRequirements {
 
-  export var RequirementsController = controller("RequirementsController", ["$scope", "jolokia", "ProfileCart", "$templateCache", "FileUploader", "userDetails", "jolokiaUrl", ($scope, jolokia, ProfileCart, $templateCache, FileUploader, userDetails, jolokiaUrl) => {
+  export var RequirementsController = controller("RequirementsController", ["$scope", "jolokia", "ProfileCart", "$templateCache", "FileUploader", "userDetails", "jolokiaUrl", "$location", ($scope, jolokia, ProfileCart, $templateCache, FileUploader, userDetails, jolokiaUrl, $location) => {
+
+    $scope.tabs = {
+      '0': {
+        name: 'Profile Requirements',
+        href: () => FabricRequirements.requirementsHash + '/profile',
+        isActive: () => UrlHelpers.contextActive($location.url(), 'profile')
+
+      },
+      '1': {
+        name: 'SSH Configuration',
+        href: () => FabricRequirements.requirementsHash + '/sshConfig',
+        isActive: () => UrlHelpers.contextActive($location.url(), 'sshConfig')
+      },
+      '2': {
+        name: 'Docker Configuration',
+        href: () => FabricRequirements.requirementsHash + '/dockerConfig',
+        isActive: () => UrlHelpers.contextActive($location.url(), 'dockerConfig')
+      }
+    };
 
     $scope.requirements = <Fabric.FabricRequirements> null;
     $scope.template = '';
@@ -25,12 +44,13 @@ module FabricRequirements {
       });
 
       $scope.uploader.onBeforeUploadItem = (item) => {
+        item.alias = 'requirements';
         Core.notification('info', 'Uploading ' + item);
-      }
+      };
 
       $scope.uploader.onCompleteAll = () => {
         Core.notification('success', 'Imported requirements');
-      }
+      };
 
       Core.registerForChanges(jolokia, $scope, {
         type: 'exec',
@@ -38,7 +58,6 @@ module FabricRequirements {
         operation: "requirements()"
       }, (response) => {
         $scope.requirements = <Fabric.FabricRequirements>response.value;
-        log.debug("Got requirements: ", $scope.requirements);
         if (Core.isBlank($scope.template)) {
           $scope.template = $templateCache.get('pageTemplate.html');
         }
