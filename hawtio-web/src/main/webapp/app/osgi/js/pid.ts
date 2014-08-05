@@ -190,9 +190,8 @@ module Osgi {
 
     function updateSchemaAndLoadMetaType() {
       updateSchema();
-      var metaTypeMBean = getMetaTypeMBean($scope.workspace);
       var configValues = $scope.configValues;
-      if (metaTypeMBean && configValues) {
+      if (configValues) {
         var locale = null;
         var pid = null;
         var factoryId = configValues["service.factoryPid"];
@@ -200,7 +199,15 @@ module Osgi {
           pid = factoryId["Value"];
         }
         pid = pid || $scope.pid;
-        $scope.jolokia.execute(metaTypeMBean, "getPidMetaTypeObject", pid, locale, onSuccess(onMetaType));
+
+        if ($scope.profileNotRunning && $scope.profileMetadataMBean && $scope.versionId && $scope.profileId) {
+          jolokia.execute($scope.profileMetadataMBean, "getPidMetaTypeObject", $scope.versionId, $scope.profileId, pid, onSuccess(onMetaType));
+        } else {
+          var metaTypeMBean = getMetaTypeMBean($scope.workspace);
+          if (metaTypeMBean) {
+            $scope.jolokia.execute(metaTypeMBean, "getPidMetaTypeObject", pid, locale, onSuccess(onMetaType));
+          }
+        }
       }
       Core.$apply($scope);
     }
@@ -387,9 +394,29 @@ module Osgi {
       }
     }
 
+    function onProfilePropertiesLoaded(response) {
+      $scope.modelLoaded = true;
+      var configValues = {};
+      $scope.configValues = configValues;
+      angular.forEach(response, (value, key) => {
+        configValues[key] = {
+          Key: key,
+          Value: value
+        };
+      });
+      $scope.zkPid = Core.pathGet(configValues, ["fabric.zookeeper.pid", "Value"]);
+      updateSchemaAndLoadMetaType();
+      Core.$apply($scope);
+    }
+
+
     function updateTableContents() {
       $scope.modelLoaded = false;
-      Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, $scope.pid, populateTable);
+      if ($scope.inFabricProfile || $scope.profileNotRunning) {
+          jolokia.execute(Fabric.managerMBean, "getProfileProperties", $scope.versionId, $scope.profileId, $scope.pid, onSuccess(onProfilePropertiesLoaded));
+      } else {
+        Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, $scope.pid, populateTable);
+      }
     }
   }]);
 }

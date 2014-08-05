@@ -335,6 +335,16 @@ module Osgi {
         return null;
     }
 
+    export function getProfileMetadataMBean(workspace:Workspace):string {
+        if (workspace) {
+          var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
+          var typeFolder = mbeanTypesToDomain["ProfileMetadata"] || {};
+          var mbeanFolder = typeFolder["io.fabric8"] || {};
+          return mbeanFolder["objectName"];
+        }
+        return null;
+    }
+
     export function getHawtioOSGiToolsMBean(workspace:Workspace):string {
         if (workspace) {
             var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
@@ -399,14 +409,23 @@ module Osgi {
     }
     var versionId = $scope.versionId;
     var profileId = $scope.profileId;
+    $scope.profileNotRunning = false;
+    $scope.profileMetadataMBean = null;
     if (versionId && versionId) {
       $scope.inFabricProfile = true;
       $scope.configurationsLink = "/wiki/branch/" + versionId + "/configurations/" + $scope.pageId;
 
       Fabric.profileJolokia(jolokia, profileId, versionId, (profileJolokia) => {
-        $scope.jolokia = profileJolokia;
         if (profileJolokia) {
+          $scope.jolokia = profileJolokia;
           $scope.workspace = Core.createRemoteWorkspace(profileJolokia, $location, localStorage);
+        } else {
+          // lets deal with the case we have no profile running right now so we have to have a plan B
+          // for fetching the profile configuration metadata
+          $scope.jolokia = jolokia;
+          $scope.workspace = workspace;
+          $scope.profileNotRunning = true;
+          $scope.profileMetadataMBean = getProfileMetadataMBean(workspace);
         }
         initFn();
       });

@@ -182,21 +182,62 @@ module Osgi {
     }
 
     function loadMetaType() {
-      var metaTypeMBean = getMetaTypeMBean($scope.workspace);
-      if (metaTypeMBean && $scope.pids) {
-        $scope.jolokia.execute(metaTypeMBean, "metaTypeSummary", onSuccess(onMetaType));
+      if ($scope.pids) {
+        if ($scope.profileNotRunning && $scope.profileMetadataMBean && $scope.versionId && $scope.profileId) {
+          jolokia.execute($scope.profileMetadataMBean, "metaTypeSummary", $scope.versionId, $scope.profileId, onSuccess(onMetaType));
+        } else {
+          var metaTypeMBean = getMetaTypeMBean($scope.workspace);
+          if (metaTypeMBean) {
+            $scope.jolokia.execute(metaTypeMBean, "metaTypeSummary", onSuccess(onMetaType));
+          }
+        }
       }
     }
 
     function updateTableContents() {
       $scope.configurations = [];
-      if ($scope.jolokia) {
-        var mbean = getSelectionConfigAdminMBean($scope.workspace);
-        if (mbean) {
-          $scope.jolokia.execute(mbean, 'getConfigurations', '(service.pid=*)', onSuccess(onConfigPids, errorHandler("Failed to load PID configurations: ")));
+      if ($scope.profileNotRunning && $scope.profileMetadataMBean && $scope.versionId && $scope.profileId) {
+        jolokia.execute($scope.profileMetadataMBean, "metaTypeSummary",
+          $scope.versionId, $scope.profileId, onSuccess(onProfileMetaType, {silent: false}));
+      } else {
+        if ($scope.jolokia) {
+          var mbean = getSelectionConfigAdminMBean($scope.workspace);
+          if (mbean) {
+            $scope.jolokia.execute(mbean, 'getConfigurations', '(service.pid=*)', onSuccess(onConfigPids, errorHandler("Failed to load PID configurations: ")));
+          }
         }
       }
     }
+
+    function onProfileMetaType(response) {
+      var metaType = response;
+      if (metaType) {
+        var pids = {};
+        angular.forEach(metaType.pids, (value, pid) => {
+          if (value) {
+            // TODO we don't have a bundle ID
+            var bundle = "mvn:" + pid;
+            var config = {
+              pid: pid,
+              name: value.name,
+              class: 'pid',
+              description: value.description,
+              bundle: bundle,
+              kind: configKinds.pid,
+              pidLink: createPidLink(pid)
+            };
+            pids[pid] = config;
+          }
+        });
+        $scope.pids = pids;
+        updateConfigurations();
+      }
+      // now lets process the response and replicate the getConfigurations / getProperties API
+      // calls on the OSGi API
+      // to get the tree of factory pids or pids
+      onMetaType(response);
+    }
+
 
     function pidBundleDescription(pid, bundle) {
       return  "pid: " + pid + "\nbundle: " + bundle;

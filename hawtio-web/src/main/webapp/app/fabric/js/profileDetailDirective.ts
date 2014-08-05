@@ -60,6 +60,12 @@ module Fabric {
       if (versionId && versionId) {
         Fabric.profileJolokia(jolokia, profileId, versionId, (profileJolokia) => {
           $scope.profileJolokia = profileJolokia;
+          if (!profileJolokia) {
+            // lets deal with the case we have no profile running right now so we have to have a plan B
+            // for fetching the profile configuration metadata
+            $scope.profileNotRunning = true;
+            $scope.profileMetadataMBean = Osgi.getProfileMetadataMBean(workspace);
+          }
         });
       }
 
