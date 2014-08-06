@@ -36,11 +36,19 @@ module FabricRequirements {
       }
     };
 
+
     $scope.saveChanges = () => {
       if ($scope.requirements.$dirty) {
-        log.debug("Saving requirementS: ", angular.toJson($scope.requirements));
-        $scope.requirements.$dirty = false;
+        function onRequirementsSaved() {
+          Core.notification("success", "Saved the requirements");
+          Core.$apply($scope);
+        }
 
+        var json = angular.toJson($scope.requirements);
+        log.debug("Saving requirementS: ", json);
+        $scope.requirements.$dirty = false;
+        jolokia.execute(Fabric.managerMBean, "requirementsJson",
+                json, onSuccess(onRequirementsSaved));
       }
     };
 
