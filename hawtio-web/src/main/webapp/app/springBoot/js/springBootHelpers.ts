@@ -13,13 +13,10 @@ module SpringBoot {
         return decodedUrl.substring(0, hashIndex)
     }
 
-    export function callIfSpringBootAppAvailable(http, url, callbackFunc) {
-        http({
-            method: 'GET',
-            url: url + '/beans'
-        }).success(function (data) {
-            callbackFunc();
-        });
+    export function callIfSpringBootAppAvailable(jolokia, callbackFunc) {
+        jolokia.execute('org.springframework.boot:type=Endpoint,name=metricsEndpoint', "getData()", onSuccess(function (data) {
+            callbackFunc()
+        }));
     }
 
 }
