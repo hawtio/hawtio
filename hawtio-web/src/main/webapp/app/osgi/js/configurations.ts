@@ -162,6 +162,7 @@ module Osgi {
     function updateMetaType() {
       var metaType = $scope.metaType;
       if (metaType) {
+        var pidMetadata = Osgi.configuration.pidMetadata || {};
         angular.forEach(metaType.pids, (value, pid) => {
           var bundle = null;
           var config = getOrCreatePidConfig(pid, bundle);
@@ -170,8 +171,8 @@ module Osgi {
             if (factoryPidBundleIds && factoryPidBundleIds.length) {
               setFactoryPid(config);
             }
-            config["name"] = value.name || pid;
-            var description = value.description;
+            config["name"] = value.name || Core.pathGet(pidMetadata, [pid, "name"]) || pid;
+            var description = value.description || Core.pathGet(pidMetadata, [pid, "description"]);
             if (description) {
               config["description"] = description + "\n" + pidBundleDescription(pid, config.bundle);
             }
