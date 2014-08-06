@@ -182,6 +182,89 @@ Now the user must be in the manager role to be able to login, which we can setup
     <user username="scott" password="tiger" roles="tomcat,manager"/>
 
 
+##### Configuring security in Jetty
+
+
+
+To use security in jetty you first have to setup some users with roles. To do that navigate to the etc folder of your jetty installation and create the following file etc/login.properties and enter something like this:
+
+    scott=tiger, user
+    admin=CRYPT:adpexzg3FUZAk,admin,user
+
+You have added two users. The first one named scott with the password tiger. He has the role user assigned to it. The second user admin with password admin which is obfuscated (see jetty realms for possible encryption methods). This one has the admin and user role assigned.
+
+Now create a second file in the same directory called login.conf. This is the login configuration file.
+
+    hawtio {
+      org.eclipse.jetty.jaas.spi.PropertyFileLoginModule required 
+      debug="true"
+      file="${jetty.base}/etc/login.properties";
+    };
+
+Next you have to change the hawtio configuration:
+    
+<table class="buttonTable table table-striped">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>
+      hawtio.authenticationEnabled
+    </td>
+    <td>
+      true
+    </td>
+    <td>
+      Whether or not security is enabled
+    </td>
+  </tr>
+  <tr>
+    <td>
+      hawtio.realm
+    </td>
+    <td>
+      hawtio
+    </td>
+    <td>
+      The security realm used to login
+    </td>
+  </tr>
+  <tr>
+    <td>
+      hawtio.role
+    </td>
+    <td>
+    admin
+    </td>
+    <td>
+      The user role required to be able to login to the console
+    </td>
+  </tr>
+  <tr>
+    <td>
+      hawtio.rolePrincipalClasses
+    </td>
+    <td>
+    </td>
+    <td>
+      Principal fully qualified classname(s). Multiple classes can be separated by comma.
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+You have now enabled security for hawtio. Only users with role "admin" are allowed.
+
+At last enable the jaas module in jetty. This is done by adding the following line to the start.ini which is located in the jetty.base folder:
+
+    # Enable security via jaas, and configure it
+    --module=jaas
+
 ## Configuration Properties
 
 The following table contains the various configuration settings for the various hawtio plugins.
