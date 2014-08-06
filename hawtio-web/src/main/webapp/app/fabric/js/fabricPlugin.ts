@@ -152,11 +152,11 @@ module Fabric {
       isActive: (workspace) => workspace.isLinkActive('fabric/containerView')
     });
 
-    workspace.topLevelTabs.push( {
+    workspace.topLevelTabs.push(<Core.NavMenuItem>{
       id: "fabric.configuration",
       content: "Wiki",
       title: "View the documentation and configuration of your profiles in Fabric",
-      isValid: (workspace, perspectiveId) => {
+      isValid: (workspace: Workspace, perspectiveId: string) => {
         var answer = Fabric.isFMCContainer(workspace);
         if (answer) {
           // must be in fabric perspective as we have wiki in container perspective as well which is not this plugin
@@ -171,6 +171,7 @@ module Fabric {
       },
       isActive: (workspace: Workspace) => workspace.isLinkActive("/wiki") && (workspace.linkContains("fabric", "profiles") || workspace.linkContains("editFeatures"))
     });
+
     workspace.topLevelTabs.push( {
       id: "fabric.insight",
       content: "Insight",
