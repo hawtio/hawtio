@@ -11,6 +11,10 @@ module Osgi {
         name: "Environment Variables",
         description: "The operating system Environment Variables which are exported into any child processes"
       },
+      "io.fabric8.mq.fabric.server": {
+        name: "ActiveMQ Fabric8 Server",
+        description: "The configuration of the Apache ActiveMQ server configured via the fabric"
+      },
       "io.fabric8.ports": {
         name: "Ports",
         description: "The network ports exported by the container"
@@ -26,7 +30,13 @@ module Osgi {
     },
 
     // pids to ignore from the config UI
-    ignorePids: ["io.fabric8.agent", "jmx.acl", "org.apache.karaf.command.acl.", "org.apache.karaf.service.acl."],
+    ignorePids: [
+      "jmx.acl",
+      "io.fabric8.agent",
+      "io.fabric8.mq.fabric.template",
+      "org.apache.karaf.command.acl.",
+      "org.apache.karaf.service.acl."
+    ],
 
     // UI tabs
     tabs: {
