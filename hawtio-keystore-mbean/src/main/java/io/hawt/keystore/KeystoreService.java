@@ -84,6 +84,7 @@ public class KeystoreService implements KeystoreServiceMBean {
         return org.apache.commons.codec.binary.Base64.encodeBase64String(createKeyStore(r));
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public byte[] createKeyStore(CreateKeyStoreRequestDTO request) throws IOException {
 
@@ -91,9 +92,10 @@ public class KeystoreService implements KeystoreServiceMBean {
         keystoreFile.delete();
         LOG.info("Generating ssl keystore...");
 
-        int rc = 0;
+        String keytool = System.getProperty("java.home") + File.separator + "bin" + File.separator + "keytool";
+        int rc;
         if( request.createPrivateKey ) {
-            rc = system("keytool", "-genkey",
+            rc = system(keytool, "-genkey",
                     "-storetype", request.storeType,
                     "-storepass", request.storePassword,
                     "-keystore", keystoreFile.getCanonicalPath(),
@@ -106,7 +108,7 @@ public class KeystoreService implements KeystoreServiceMBean {
 
         } else {
 
-            rc = system("keytool", "-genkey",
+            rc = system(keytool, "-genkey",
                     "-storetype", request.storeType,
                     "-storepass", request.storePassword,
                     "-keystore", keystoreFile.getCanonicalPath(),
@@ -118,7 +120,7 @@ public class KeystoreService implements KeystoreServiceMBean {
               throw new IOException("keytool failed with exit code: "+rc);
             }
 
-            rc = system("keytool", "-delete",
+            rc = system(keytool, "-delete",
                     "-storetype", request.storeType,
                     "-storepass", request.storePassword,
                     "-keystore", keystoreFile.getCanonicalPath(),
@@ -153,7 +155,6 @@ public class KeystoreService implements KeystoreServiceMBean {
         new Thread("system command output processor") {
             @Override
             public void run() {
-                StringBuffer buffer = new StringBuffer();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 try {
                     while (true) {
@@ -162,7 +163,7 @@ public class KeystoreService implements KeystoreServiceMBean {
                         LOG.info(String.format("%s: %s", args[0], line));
                         // System.out.println(String.format("%s: %s", args[0], line));
                     }
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                 } finally {
                     close(reader);
                 }
@@ -171,7 +172,6 @@ public class KeystoreService implements KeystoreServiceMBean {
         }.start();
 
         // wait for command to exit
-        int exitCode = 0;
         try {
             return process.waitFor();
         } catch (InterruptedException e) {
@@ -185,7 +185,7 @@ public class KeystoreService implements KeystoreServiceMBean {
     private static void close(Closeable reader) {
         try {
             reader.close();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
