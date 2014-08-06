@@ -58,23 +58,43 @@ module FabricRequirements {
     };
 
     Fabric.loadRestApi(jolokia, undefined, (response) => {
-      var restApiUrl = response.value || Fabric.DEFAULT_REST_API;
-      var uploadUrl = UrlHelpers.join(restApiUrl, 'requirements');
-      log.debug("Upload URL: ", uploadUrl);
-      uploadUrl = UrlHelpers.maybeProxy(jolokiaUrl, uploadUrl);
+      var uploadUrl = jolokiaUrl;
 
       $scope.uploader = new FileUploader({
-        headers: {
-          'Authorization': Core.authHeaderValue(userDetails)
-        },
         autoUpload: true,
-        withCredentials: true,
-        method: 'POST',
+        removeAfterUpload: true,
         url: uploadUrl
       });
 
+      // extend the uploader with a new transport that can post a
+      // jolokia request
+      $scope.uploader._xhrTransport = (item) => {
+        var reader = new FileReader();
+        reader.onload = () => {
+          // should be FileReader.DONE
+          if (reader.readyState === 2) {
+            var json = reader.result;
+            jolokia.request({
+              'type': 'exec',
+              mbean: Fabric.managerMBean,
+              operation: 'requirementsJson',
+              arguments: [json]
+            }, onSuccess((response) => {
+              $scope.requirements = angular.fromJson(json);
+              $scope.uploader._onSuccessItem(item, response, response.status, {});
+              $scope.uploader._onCompleteItem(item, response, response.status, {});
+            }, {
+              error: (response) => {
+                $scope.uploader._onErrorItem(item, response, response.status, {});
+                $scope.uploader._onCompleteItem(item, response, response.status, {});
+              }
+            }));
+          }
+        };
+        reader.readAsText(item._file);
+      };
+
       $scope.uploader.onBeforeUploadItem = (item) => {
-        item.alias = 'requirements';
         Core.notification('info', 'Uploading ' + item);
       };
 
@@ -87,6 +107,7 @@ module FabricRequirements {
         mbean: Fabric.managerMBean,
         operation: "requirements()"
       }, (response) => {
+        log.debug("Got updated requirements object: ", response.value);
         $scope.requirementsFromServer = <Fabric.FabricRequirements>response.value;
         $scope.requirements = <Fabric.FabricRequirements>Object.extended($scope.requirementsFromServer).clone();
         if (Core.isBlank($scope.template)) {

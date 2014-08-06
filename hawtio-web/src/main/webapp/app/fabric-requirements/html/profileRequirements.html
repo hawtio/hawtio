@@ -2,9 +2,11 @@
   <div class="column-box"
        ng-repeat="profileRequirement in requirements.profileRequirements">
     <div class="row-fluid">
-      <div class="span12">
+      <div class="span11">
         <h4>{{profileRequirement.profile}}</h4>
-
+      </div>
+      <div class="span1">
+        <i class="mouse-pointer red icon-remove" ng-click="remove(profileRequirement)"></i>
       </div>
     </div>
     <div class="row-fluid">
@@ -23,7 +25,6 @@
                ng-change="onChange()">
       </div>
     </div>
-
   </div>
 
   <div hawtio-editor="profileRequirementsString"></div>

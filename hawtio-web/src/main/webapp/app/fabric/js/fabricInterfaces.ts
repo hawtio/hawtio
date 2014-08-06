@@ -29,7 +29,7 @@ module Fabric {
 
   }
 
-  export interface ProfileRequirements {
+  export interface ProfileRequirement {
     profile:String;
     minimumInstances:number;
     maximumInstances:number;
@@ -80,7 +80,7 @@ module Fabric {
   }
 
   export interface FabricRequirements {
-    profileRequirements:Array<ProfileRequirements>
+    profileRequirements:Array<ProfileRequirement>
     sshConfiguration:SshConfiguration;
     dockerConfiguration:DockerConfiguration;
     version:string
