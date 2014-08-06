@@ -413,7 +413,7 @@ module Osgi {
     function updateTableContents() {
       $scope.modelLoaded = false;
       if ($scope.inFabricProfile || $scope.profileNotRunning) {
-          jolokia.execute(Fabric.managerMBean, "getProfileProperties", $scope.versionId, $scope.profileId, $scope.pid, onSuccess(onProfilePropertiesLoaded));
+          jolokia.execute(Fabric.managerMBean, "getOverlayProfileProperties", $scope.versionId, $scope.profileId, $scope.pid, onSuccess(onProfilePropertiesLoaded));
       } else {
         Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, $scope.pid, populateTable);
       }
