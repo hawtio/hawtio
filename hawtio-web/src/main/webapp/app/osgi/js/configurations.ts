@@ -79,9 +79,11 @@ module Osgi {
         var pid = row[0];
         var bundle = row[1];
         var config = createPidConfig(pid, bundle);
-        config["hasValue"] = true;
-        config["kind"] = configKinds.pid;
-        pids[pid] = config;
+        if (!ignorePid(pid)) {
+          config["hasValue"] = true;
+          config["kind"] = configKinds.pid;
+          pids[pid] = config;
+        }
       });
       $scope.pids = pids;
 
@@ -104,7 +106,7 @@ module Osgi {
         angular.forEach(response, (row) => {
           var pid = row[0];
           var bundle = row[1];
-          if (pid) {
+          if (pid && !ignorePid(pid)) {
             var config = pids[pid];
             if (config) {
               config["isFactoryInstance"] = true;
@@ -162,7 +164,7 @@ module Osgi {
     function updateMetaType() {
       var metaType = $scope.metaType;
       if (metaType) {
-        var pidMetadata = Osgi.configuration.pidMetadata || {};
+        var pidMetadata = Osgi.configuration.pidMetadata;
         angular.forEach(metaType.pids, (value, pid) => {
           var bundle = null;
           var config = getOrCreatePidConfig(pid, bundle);
@@ -215,7 +217,7 @@ module Osgi {
       if (metaType) {
         var pids = {};
         angular.forEach(metaType.pids, (value, pid) => {
-          if (value) {
+          if (value && !ignorePid(pid)) {
             // TODO we don't have a bundle ID
             var bundle = "mvn:" + pid;
             var config = {
@@ -241,13 +243,15 @@ module Osgi {
 
 
     function pidBundleDescription(pid, bundle) {
-      return  "pid: " + pid + "\nbundle: " + bundle;
+      var pidMetadata = Osgi.configuration.pidMetadata;
+      return Core.pathGet(pidMetadata, [pid, "description"]) || "pid: " + pid + "\nbundle: " + bundle;
     }
 
     function createPidConfig(pid, bundle) {
+      var pidMetadata = Osgi.configuration.pidMetadata;
       var config = {
         pid: pid,
-        name: pid,
+        name: Core.pathGet(pidMetadata, [pid, "name"]) || pid,
         class: 'pid',
         description: pidBundleDescription(pid, bundle),
         bundle: bundle,
@@ -257,16 +261,30 @@ module Osgi {
       return config;
     }
 
+    function ignorePid(pid) {
+      var answer = false;
+      angular.forEach(Osgi.configuration.ignorePids, (pattern) => {
+        if (pid.startsWith(pattern)) {
+          answer = true;
+        }
+      });
+      return answer;
+    }
 
     function getOrCreatePidConfig(pid, bundle) {
-      var pids = $scope.pids;
-      var factoryConfig = pids[pid];
-      if (!factoryConfig) {
-        factoryConfig = createPidConfig(pid, bundle);
-        pids[pid] = factoryConfig;
-        updateConfigurations();
+      if (ignorePid(pid)) {
+        log.info("ignoring pid " + pid);
+        return null;
+      } else {
+        var pids = $scope.pids;
+        var factoryConfig = pids[pid];
+        if (!factoryConfig) {
+          factoryConfig = createPidConfig(pid, bundle);
+          pids[pid] = factoryConfig;
+          updateConfigurations();
+        }
+        return factoryConfig;
       }
-      return factoryConfig;
     }
 
     function setFactoryPid(factoryConfig) {

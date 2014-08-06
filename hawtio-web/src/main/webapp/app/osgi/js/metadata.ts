@@ -26,7 +26,7 @@ module Osgi {
     },
 
     // pids to ignore from the config UI
-    ignorePids: ["io.fabric8.agent", "jmx.acl", "org.apache.karaf.service.acl."],
+    ignorePids: ["io.fabric8.agent", "jmx.acl", "org.apache.karaf.command.acl.", "org.apache.karaf.service.acl."],
 
     // UI tabs
     tabs: {
