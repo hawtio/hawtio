@@ -7,13 +7,15 @@ module SpringBoot {
     var metricsFriendlyNames = {
         'counter.status.200.favicon.ico': 'Successful Favicon requests',
         'counter.status.200.jolokia': 'Successful Jolokia requests',
+        'counter.status.200.jolokia.exec.org.springframework.boot:type=Endpoint,name=metricsEndpoint.getData()': 'Successful metrics Jolokia requests',
         'counter.status.200.jolokia.read.java.lang:type=Runtime.Name': 'Successful Jolokia Runtime.Name reads',
         'counter.status.200.jolokia.root': 'Successful Jolokia root requests',
         'counter.status.200.jolokia.search.*:type=Connector,*': 'Successful Jolokia connectors search queries',
-        'counter.status.200.metrics': 'Successful metrics requests',
+        'counter.status.200.metrics': 'Successful metrics REST requests',
         'counter.status.405.auth.login.root': '"Method Not Allowed (405)" login responses',
         'gauge.response.auth.login.root': 'Authentication time (ms)',
         'gauge.response.jolokia': 'Jolokia response time (ms)',
+        'gauge.response.jolokia.exec.org.springframework.boot:type=Endpoint,name=metricsEndpoint.getData()': 'Metrics Jolokia response time (ms)',
         'gauge.response.jolokia.root': 'Jolokia root response time (ms)',
         'gauge.response.metrics': 'Metrics response time (ms)',
         'mem': 'Memory used (bytes)',
@@ -21,10 +23,10 @@ module SpringBoot {
         'processors': 'Processors number',
         'uptime': 'Node uptime (ms)',
         'instance.uptime': 'Service uptime (ms)',
-        'heap.committed (bytes)': 'Heap committed (bytes)',
-        'heap.init (bytes)': 'Initial hep (bytes)',
-        'heap.used (bytes)': 'Heap used (bytes)',
-        'heap (bytes)': 'Total Heap (bytes)',
+        'heap.committed': 'Heap committed (bytes)',
+        'heap.init': 'Initial hep (bytes)',
+        'heap.used': 'Heap used (bytes)',
+        'heap': 'Total Heap (bytes)',
         'classes': 'Classes',
         'classes.loaded': 'Classes loaded',
         'classes.unloaded': 'Classes unloaded'
@@ -40,11 +42,11 @@ module SpringBoot {
     // TODO not required?
     //_module.filter('tomcatIconClass', () => iconClass);
 
-    _module.run(["$location", "$http", "workspace", "viewRegistry", "helpRegistry", ($location:ng.ILocationService, $http, workspace:Workspace, viewRegistry, helpRegistry) => {
+    _module.run(["$location", "$http", "workspace", "viewRegistry", "helpRegistry", "jolokia", ($location:ng.ILocationService, $http, workspace:Workspace, viewRegistry, helpRegistry, jolokia) => {
 
         viewRegistry['springBoot'] = "app/springBoot/html/springBoot.html";
 
-        callIfSpringBootAppAvailable($http, springBootAppUrl(), function () {
+        callIfSpringBootAppAvailable(jolokia, function () {
             workspace.topLevelTabs.push({
                 id: "springBoot",
                 content: "Spring Boot",
@@ -64,10 +66,7 @@ module SpringBoot {
     }]);
 
     _module.controller("SpringBoot.MainController", ["$scope", "$http", "$location", "workspace", "jolokia", ($scope, $http, $location, workspace:Workspace, jolokia) => {
-        $http({
-            method: 'GET',
-            url: springBootAppUrl().replace('/jolokia', '/metrics')
-        }).success(function (data) {
+        jolokia.execute('org.springframework.boot:type=Endpoint,name=metricsEndpoint', "getData()", onSuccess(function (data) {
             var userFriendlyData = [];
             var key;
             for (key in Object.keys(data)) {
@@ -81,9 +80,11 @@ module SpringBoot {
             }
             $scope.metricsValues = userFriendlyData;
             $scope.metrics = Object.keys(userFriendlyData);
-        }).error(function () {
-            $scope.loadingError = 'Cannot read metrics data.'
-        });
+            $scope.$apply();
+        }, {error: function(){
+            $scope.loadingError = 'Cannot read metrics data.';
+            $scope.$apply();
+        }}));
     }]);
 
     hawtioPluginLoader.addModule(pluginName);
