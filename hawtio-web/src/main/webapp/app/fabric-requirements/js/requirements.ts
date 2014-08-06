@@ -1,6 +1,7 @@
 /// <reference path="../../fabric/js/jolokiaHelpers.ts"/>
 /// <reference path="fabricRequirementsPlugin.ts"/>
 /// <reference path="../../helpers/js/urlHelpers.ts"/>
+/// <reference path="../../helpers/js/fileUploadHelpers.ts"/>
 module FabricRequirements {
 
   export var RequirementsController = controller("RequirementsController", ["$scope", "jolokia", "ProfileCart", "$templateCache", "FileUploader", "userDetails", "jolokiaUrl", "$location", "$timeout", ($scope, jolokia, ProfileCart, $templateCache, FileUploader, userDetails, jolokiaUrl, $location, $timeout) => {
@@ -60,42 +61,27 @@ module FabricRequirements {
     Fabric.loadRestApi(jolokia, undefined, (response) => {
       var uploadUrl = jolokiaUrl;
 
-      $scope.uploader = new FileUploader({
+      $scope.uploader = <FileUpload.FileUploader> new FileUploader(<FileUpload.IOptions>{
         autoUpload: true,
         removeAfterUpload: true,
         url: uploadUrl
       });
 
-      // extend the uploader with a new transport that can post a
-      // jolokia request
-      $scope.uploader._xhrTransport = (item) => {
-        var reader = new FileReader();
-        reader.onload = () => {
-          // should be FileReader.DONE
-          if (reader.readyState === 2) {
-            var json = reader.result;
-            jolokia.request({
-              'type': 'exec',
-              mbean: Fabric.managerMBean,
-              operation: 'requirementsJson',
-              arguments: [json]
-            }, onSuccess((response) => {
-              $scope.requirements = angular.fromJson(json);
-              $scope.uploader._onSuccessItem(item, response, response.status, {});
-              $scope.uploader._onCompleteItem(item, response, response.status, {});
-            }, {
-              error: (response) => {
-                $scope.uploader._onErrorItem(item, response, response.status, {});
-                $scope.uploader._onCompleteItem(item, response, response.status, {});
-              }
-            }));
-          }
+      FileUpload.useJolokiaTransport($scope.uploader, jolokia, (json) => {
+        return {
+          'type': 'exec',
+          mbean: Fabric.managerMBean,
+          operation: 'requirementsJson',
+          arguments: [json]
         };
-        reader.readAsText(item._file);
-      };
+      });
 
       $scope.uploader.onBeforeUploadItem = (item) => {
         Core.notification('info', 'Uploading ' + item);
+      };
+
+      $scope.uploader.onSuccessItem = (item:FileUpload.IFileItem) => {
+        $scope.requirements = angular.fromJson(item.json);
       };
 
       $scope.uploader.onCompleteAll = () => {
