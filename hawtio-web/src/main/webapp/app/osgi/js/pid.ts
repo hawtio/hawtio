@@ -398,7 +398,9 @@ module Osgi {
       $scope.modelLoaded = true;
       var configValues = {};
       $scope.configValues = configValues;
-      angular.forEach(response, (value, key) => {
+      angular.forEach(response, (value, oKey) => {
+        // lets remove any dodgy characters
+        var key = oKey.replace(/:/g, '_').replace(/\//g, '_');
         configValues[key] = {
           Key: key,
           Value: value
