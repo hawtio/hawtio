@@ -45,6 +45,20 @@ module Camel {
         resizable: true
       },
       {
+        field: 'inType',
+        displayName: 'Input Type',
+        cellFilter: null,
+        width: "*",
+        resizable: true
+      },
+      {
+        field: 'outType',
+        displayName: 'Output Type',
+        cellFilter: null,
+        width: "*",
+        resizable: true
+      },
+      {
         field: 'state',
         displayName: 'State',
         cellFilter: null,
@@ -76,7 +90,8 @@ module Camel {
           var values = obj[key];
           for (var v in values) {
             var entry = values[v];
-            arr.push({url: entry.url, method: entry.method, uriTemplate: entry.uriTemplate, consumes: entry.consumes, produces: entry.produces, state: entry.state});
+            arr.push({url: entry.url, method: entry.method, uriTemplate: entry.uriTemplate, consumes: entry.consumes, produces: entry.produces,
+              inType: entry.inType, outType: entry.outType, state: entry.state});
           }
         }
 
