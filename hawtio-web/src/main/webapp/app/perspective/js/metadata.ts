@@ -36,16 +36,16 @@ module Perspective {
             id: "fabric.profiles"
           },
           {
-            id: "fabric.requirements"
-          },
-          {
-            href: "#/docker"
-          },
-          {
             href: "#/wiki/branch/"
           },
           {
+            id: "fabric.requirements"
+          },
+          {
             href: "#/wiki/profile"
+          },
+          {
+            href: "#/docker"
           },
           {
             href: "#/dashboard"
