@@ -246,6 +246,8 @@ module Osgi {
         schema["name"] = Core.pathGet(pidMetadata, [pid, "name"]) || metaType.name;
         schema["description"] = Core.pathGet(pidMetadata, [pid, "description"]) || metaType.description;
 
+        var disableHumanizeLabel = Core.pathGet(pidMetadata, [pid, "schemaExtensions", "disableHumanizeLabel"]);
+
         angular.forEach(metaType.attributes, (attribute) => {
           var id = attribute.id;
           if (isValidProperty(id)) {
@@ -263,6 +265,9 @@ module Osgi {
               type: typeName
 
             };
+            if (disableHumanizeLabel) {
+              attributeProperties.title = id;
+            }
             if (attribute.typeName === "char") {
               attributeProperties["maxLength"] = 1;
               attributeProperties["minLength"] = 1;
@@ -330,7 +335,7 @@ module Osgi {
           }
           var property = properties[key];
           if (!property) {
-            properties[key] = {
+            property = {
               'input-attributes': {
                 class: inputClass
               },
@@ -338,7 +343,8 @@ module Osgi {
                 class: labelClass
               },
               type: attrType
-            }
+            };
+            properties[key] = property;
           } else {
             var propertyType = property["type"];
             if ("array" === propertyType) {
@@ -346,6 +352,9 @@ module Osgi {
                 attrValue = attrValue ? attrValue.split(",") : [];
               }
             }
+          }
+          if (disableHumanizeLabel) {
+            property.title = rawKey;
           }
 
           //comply with Forms.safeIdentifier in 'forms/js/formHelpers.ts'
@@ -399,21 +408,11 @@ module Osgi {
     }
 
     function encodeKey(key, pid) {
-      var avoidEscapeKey = Core.pathGet(Osgi.configuration.pidMetadata, [pid, "avoidEscapeKey"]);
-      if (avoidEscapeKey) {
-        return key;
-      } else {
         return key.replace(/\./g, "__");
-      }
     }
 
     function decodeKey(key, pid) {
-      var avoidEscapeKey = Core.pathGet(Osgi.configuration.pidMetadata, [pid, "avoidEscapeKey"]);
-      if (avoidEscapeKey) {
-        return key;
-      } else {
         return key.replace(/__/g, ".");
-      }
     }
 
     function asJsonSchemaType(typeName, id) {

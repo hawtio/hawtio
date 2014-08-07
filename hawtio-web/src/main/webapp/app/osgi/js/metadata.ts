@@ -9,7 +9,10 @@ module Osgi {
     pidMetadata: {
       "io.fabric8.container.process.overlay.resources": {
         name: "Container Overlay Resources",
-        description: "The resources overlaid over the distribution of the process"
+        description: "The resources overlaid over the distribution of the process",
+        schemaExtensions: {
+          disableHumanizeLabel: true
+        }
       },
       "io.fabric8.environment": {
         name: "Environment Variables",
@@ -32,7 +35,6 @@ module Osgi {
       "io.fabric8.system": {
         name: "System Properties",
         description: "The Java System Properties which are exported into any child Java processes",
-        avoidEscapeKey: true,
         schemaExtensions: {
           disableHumanizeLabel: true
         }
