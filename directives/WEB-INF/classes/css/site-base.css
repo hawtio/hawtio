@@ -2985,7 +2985,8 @@ fs-donut svg g text.units {
 .health-displays .health-display,
 .column-box,
 .column-box-variable,
-.column-box-square {
+.column-box-square,
+.column-box-half-screen {
   position: relative;
   display: inline-block;
   width: 300px;
@@ -3001,6 +3002,12 @@ fs-donut svg g text.units {
   height: auto;
   min-height: 175px;
   width: 500px;
+}
+
+.column-box-half-screen {
+  width: 50%;
+  min-width: auto;
+  height: auto;
 }
 
 .column-box-square {

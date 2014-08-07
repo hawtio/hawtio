@@ -159,6 +159,21 @@ e.g.</p>
 
 <p>The <strong>label</strong> and <strong>tooltip</strong> properties are not part of JSON Schema; but an extension like the <strong>tabs</strong> property above.</p>
 
+<h3 id = "Disabling_the__humanize__of_default_labels">Disabling the 'humanize' of default labels</h3>
+
+<p>If your schema doesn't have actual labels the default behaviour is to take the property keys and to <em>humanize</em> them; to turn camelCaseWords into &ldquo;Camel case words&rdquo; and so forth.</p>
+
+<p>However if you wish to preserve exactly the keys/ids of the model on the form, you can specify the <strong>disableHumanizeLabel</strong> flag on the schema&hellip;</p>
+
+<pre><code>    schema: {
+      disableHumanizeLabel: true
+      properties: {
+        foo: {
+          type: "string",
+        }
+      }
+    }</code></pre>
+
 <h2 id = "Customising_the_element_or_attributes_of_the_control">Customising the element or attributes of the control</h2>
 
 <p>There are various extra directives you can add to &lt;input&gt; controls like <a href="http://docs.angularjs.org/api/ng.directive:ngHide">ng-hide</a>, <a href="http://angular-ui.github.io/bootstrap/#/typeahead">typeahead</a> and so forth which you can do using a nested <strong>input-attributes</strong> object.</p>

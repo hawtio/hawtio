@@ -54,6 +54,21 @@ If you wish to specify a custom label for a property (as by default it will just
 
 The **label** and **tooltip** properties are not part of JSON Schema; but an extension like the **tabs** property above.
 
+### Disabling the 'humanize' of default labels
+
+If your schema doesn't have actual labels the default behaviour is to take the property keys and to _humanize_ them; to turn camelCaseWords into "Camel case words" and so forth.
+
+However if you wish to preserve exactly the keys/ids of the model on the form, you can specify the **disableHumanizeLabel** flag on the schema...
+
+        schema: {
+          disableHumanizeLabel: true
+          properties: {
+            foo: {
+              type: "string",
+            }
+          }
+        }
+
 ## Customising the element or attributes of the control
 
 There are various extra directives you can add to &lt;input&gt; controls like [ng-hide](http://docs.angularjs.org/api/ng.directive:ngHide), [typeahead](http://angular-ui.github.io/bootstrap/#/typeahead) and so forth which you can do using a nested **input-attributes** object.

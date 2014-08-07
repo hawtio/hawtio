@@ -1,6 +1,5 @@
 <div ng-controller="FabricRequirements.ProfileRequirementsController">
-  <div class="column-box"
-       ng-repeat="profileRequirement in requirements.profileRequirements">
+  <div class="column-box-half-screen" ng-repeat="profileRequirement in requirements.profileRequirements">
     <div class="row-fluid">
       <div class="span11">
         <h4>{{profileRequirement.profile}}</h4>
@@ -9,23 +8,76 @@
         <i class="mouse-pointer red icon-remove" ng-click="remove(profileRequirement)"></i>
       </div>
     </div>
+    <div class="row-fluid" ng-show="profileRequirement.dependentProfiles">
+      <div class="span12">
+        <h6>Dependent Profiles</h6>
+        <p ng-repeat="profile in profileRequirement.dependentProfiles">{{profile}}</p>
+      </div>
+    </div>
     <div class="row-fluid">
-      <div class="span6">
-        Minimum Instances:
+      <div class="span4">
+        <label>Minimum Instances:</label>
         <input type="number"
                ng-model="profileRequirement.minimumInstances"
                min="0"
                ng-change="onChange()">
       </div>
-      <div class="span6">
-        Maximum Instances:
+      <div class="span4">
+        <label>Maximum Instances:</label>
         <input type="number"
                ng-model="profileRequirement.maximumInstances"
                min="0"
                ng-change="onChange()">
       </div>
+      <div class="span4">
+        <label>Maximum Instances Per Host:</label>
+        <input type="number"
+               ng-model="profileRequirement.maximumInstancesPerHost"
+               min="0"
+               ng-change="onChange()">
+      </div>
     </div>
+    <div class="row-fluid" ng-show="profileRequirement.sshScalingRequirements">
+      <div class="span12">
+        <div class="row-fluid">
+          <div class="span12">
+            <h5>SSH Scaling Requirements:</h5>
+          </div>
+        </div>
+        <div class="row-fluid">
+          <div class="span6" ng-show="profileRequirement.sshScalingRequirements.hostPatterns">
+            <h6>Host Patterns</h6>
+            <p ng-repeat="pattern in profileRequirement.sshScalingRequirements.hostPatterns">{{pattern}}</p>
+          </div>
+          <div class="span6" ng-show="profileRequirement.sshScalingRequirements.hostTags">
+            <h6>Host Tags</h6>
+            <p ng-repeat="tag in profileRequirement.sshScalingRequirements.hostTags">{{tag}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row-fluid" ng-show="profileRequirement.dockerScalingRequirements">
+      <div class="span12">
+        <div class="row-fluid">
+          <div class="span12">
+            <h5>Docker Scaling Requirements:</h5>
+          </div>
+        </div>
+        <div class="row-fluid">
+          <div class="span6" ng-show="profileRequirement.dockerScalingRequirements.hostPatterns">
+            <h6>Host Patterns</h6>
+            <p ng-repeat="pattern in profileRequirement.dockerScalingRequirements.hostPatterns">{{pattern}}</p>
+          </div>
+          <div class="span6" ng-show="profileRequirement.dockerScalingRequirements.hostTags">
+            <h6>Host Tags</h6>
+            <p ng-repeat="tag in profileRequirement.dockerScalingRequirements.hostTags">{{tag}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
   </div>
 
-  <div hawtio-editor="profileRequirementsString"></div>
+  <!-- <div hawtio-editor="profileRequirementsString"></div> -->
 </div>

@@ -6,6 +6,9 @@ module Core {
 
   var _urlPrefix:string = null;
 
+  export var connectionSettingsKey = "jvmConnect";
+
+
   /**
    * Private method to support testing.
    *
@@ -25,10 +28,10 @@ module Core {
     if (path) {
       if (path.startsWith && path.startsWith("/")) {
         if (!_urlPrefix) {
-          _urlPrefix = Core.windowLocation().pathname || "";
-          var idx = _urlPrefix.lastIndexOf("/");
-          if (idx >= 0) {
-            _urlPrefix = _urlPrefix.substring(0, idx);
+          // lets discover the base url via the base html element
+          _urlPrefix = $('base').attr('href') || "";
+          if (_urlPrefix.endsWith && _urlPrefix.endsWith('/')) {
+              _urlPrefix = _urlPrefix.substring(0, _urlPrefix.length - 1);
           }
         }
         if (_urlPrefix) {
@@ -88,6 +91,178 @@ module Core {
   var jolokiaUrls:string[] = Core._resetJolokiaUrls();
 
   /**
+   * Trims the leading prefix from a string if its present
+   * @method trimLeading
+   * @for Core
+   * @static
+   * @param {String} text
+   * @param {String} prefix
+   * @return {String}
+   */
+  export function trimLeading(text:string, prefix:string) {
+    if (text && prefix) {
+      if (text.startsWith(prefix)) {
+        return text.substring(prefix.length);
+      }
+    }
+    return text;
+  }
+
+  /**
+   * Trims the trailing postfix from a string if its present
+   * @method trimTrailing
+   * @for Core
+   * @static
+   * @param {String} trim
+   * @param {String} postfix
+   * @return {String}
+   */
+  export function trimTrailing(text:string, postfix:string) {
+    if (text && postfix) {
+      if (text.endsWith(postfix)) {
+        return text.substring(0, text.length - postfix.length);
+      }
+    }
+    return text;
+  }
+
+
+  export function getJvmConnections(localStorage):any {
+    if (connectionSettingsKey in localStorage) {
+      try {
+        return angular.fromJson(localStorage[connectionSettingsKey]);
+      } catch (e) {
+        // corrupt config
+        delete localStorage[connectionSettingsKey];
+        return {};
+      }
+    }
+  }
+
+  /**
+   * Returns the connection options for the given connection name from localStorage
+   */
+  export function getJvmConnectionOptions(connectionName, localStorage = Core.getLocalStorage()) {
+    var connectOptions = null;
+    if (angular.isArray(connectionName)) {
+      connectionName = connectionName[0];
+    }
+    if (connectionName && angular.isString(connectionName)) {
+      var jvmConnections = Core.getJvmConnections(localStorage);
+      if (jvmConnections) {
+        connectOptions = jvmConnections[connectionName];
+      }
+    }
+    return connectOptions;
+  }
+
+  /**
+   * Returns the current connection name using the given search parameters
+   */
+  export function getConnectionNameParameter(search) {
+    var connectionName = search["con"];
+    if (angular.isArray(connectionName)) {
+      connectionName = connectionName[0];
+    }
+    if (connectionName) {
+      connectionName = connectionName.unescapeURL();
+    }
+    return connectionName;
+  }
+
+  /**
+   * Appends the ?con=NameOfConnection to the given  URI
+   */
+  export function appendConnectionNameToUrl(path, search) {
+    var connectionName = getConnectionNameParameter(search);
+    if (connectionName) {
+      var separator = path.indexOf("?") >= 0 ? "&" : "?";
+      return path + separator + "con=" + connectionName;
+    } else {
+      return path;
+    }
+  }
+
+  /**
+   * Creates the Jolokia URL string for the given connection options
+   */
+  export function createServerConnectionUrl(localStorage, options) {
+    log.debug("Connect to server, options: ", options);
+
+    var connectUrl = options.jolokiaUrl;
+
+    var userDetails = {
+      username: options['userName'],
+      password: options['password']
+    };
+
+    var connectionName = options.name;
+    var connectionNameQuery = (connectionName ? "?con=" + connectionName + "&" : "?");
+
+    var json = angular.toJson(userDetails);
+    if (connectUrl) {
+      localStorage[connectUrl] = json;
+    }
+    var view = options.view;
+    var full = "";
+    var useProxy = options.useProxy && !Core.isChromeApp();
+    if (connectUrl) {
+      if (useProxy) {
+        // lets remove the http stuff
+        var idx = connectUrl.indexOf("://");
+        if (idx > 0) {
+          connectUrl = connectUrl.substring(idx + 3);
+        }
+        // lets replace the : with a /
+        connectUrl = connectUrl.replace(":", "/");
+        connectUrl = Core.trimLeading(connectUrl, "/");
+        connectUrl = Core.trimTrailing(connectUrl, "/");
+        connectUrl = options.scheme + "://" + connectUrl;
+        connectUrl = Core.url("/proxy/" + connectUrl);
+      } else {
+        if (connectUrl.indexOf("://") < 0) {
+          connectUrl = options.scheme + "://" + connectUrl;
+        }
+      }
+      console.log("going to server: " + connectUrl + " as user " + options.userName);
+      localStorage[connectUrl] = json;
+
+      full = connectionNameQuery + "url=" + encodeURIComponent(connectUrl);
+      if (view) {
+        full += "#" + view;
+      }
+    } else {
+      var host = options.host || "localhost";
+      var port = options.port;
+      var path = Core.trimLeading(options.path || "jolokia", "/");
+      path = Core.trimTrailing(path, "/");
+
+      if (port > 0) {
+        var portSeparator = ":";
+        host += portSeparator + port;
+      }
+      connectUrl = host + "/" + path;
+      localStorage[connectUrl] = json;
+
+      if (connectUrl.indexOf("://") < 0) {
+        connectUrl = options.scheme + "://" + connectUrl;
+      }
+
+      if (useProxy) {
+        connectUrl = Core.url("/proxy/" + connectUrl);
+      }
+      console.log("going to server: " + connectUrl + " as user " + options.userName);
+      localStorage[connectUrl] = json;
+
+      full = connectionNameQuery + "url=" + encodeURIComponent(connectUrl);
+      if (view) {
+        full += "#" + view;
+      }
+    }
+    return full;
+  }
+
+  /**
    * Returns Jolokia URL by checking its availability if not in local mode
    *
    * @returns {*}
@@ -100,7 +275,22 @@ module Core {
       jolokiaUrls = <string[]>[];
       return null;
     }
-    var uri = query['url'];
+    var uri: any = null;
+    var connectionName = Core.getConnectionNameParameter(query);
+    var localStorage = Core.getLocalStorage();
+    var connectOptions = getJvmConnectionOptions(connectionName, localStorage);
+    if (connectOptions) {
+      uri = createServerConnectionUrl(localStorage, connectOptions);
+      // lets find the uri parameter
+      var idx = uri.indexOf("url=");
+      if (idx >= 0) {
+        uri = uri.substring(idx + 4);
+      }
+      console.log("Using localStorage connection URL: " + uri);
+    }
+    if (!uri) {
+      uri = query['url'];
+    }
     if (angular.isArray(uri)) {
       uri = uri[0];
     }
