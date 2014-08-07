@@ -28,11 +28,18 @@ module Core {
     if (path) {
       if (path.startsWith && path.startsWith("/")) {
         if (!_urlPrefix) {
+          // lets discover the base url via the base html element
+          _urlPrefix = $('base').attr('href') || "";
+          if (_urlPrefix.endsWith && _urlPrefix.endsWith('/')) {
+              _urlPrefix = _urlPrefix.substring(0, _urlPrefix.length - 1);
+          }
+          /*
           _urlPrefix = Core.windowLocation().pathname || "";
           var idx = _urlPrefix.lastIndexOf("/");
           if (idx >= 0) {
             _urlPrefix = _urlPrefix.substring(0, idx);
           }
+*/
         }
         if (_urlPrefix) {
           return _urlPrefix + path;
