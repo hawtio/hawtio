@@ -10,14 +10,21 @@ module Core {
     log.debug("Jolokia URL is " + jolokiaUrl);
     if (jolokiaUrl) {
 
+      var connectionName = Core.getConnectionNameParameter($location.search());
+      var connectionOptions = getJvmConnectionOptions(connectionName);
+
       var credentials = hawtioPluginLoader.getCredentials(jolokiaUrl);
       // pass basic auth credentials down to jolokia if set
-      var username = null;
-      var password = null;
+      var username: string = null;
+      var password: string = null;
 
       //var userDetails = angular.fromJson(localStorage[jolokiaUrl]);
 
-      if (credentials.length === 2) {
+      if (connectionOptions) {
+        username = connectionOptions.userName;
+        password = connectionOptions.password;
+
+      } else if (credentials.length === 2) {
         username = credentials[0];
         password = credentials[1];
 

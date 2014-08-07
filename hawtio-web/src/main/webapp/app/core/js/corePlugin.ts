@@ -61,7 +61,10 @@ module Core {
             when('/help/:topic/', {templateUrl: Core.templatePath + 'help.html'}).
             when('/help/:topic/:subtopic', {templateUrl: Core.templatePath + 'help.html'}).
 
-            otherwise({redirectTo: '/perspective/defaultPage'});
+            otherwise({
+        redirectTo: (parameters, path, search) => {
+          return appendConnectionNameToUrl('/perspective/defaultPage', search);
+        }});
   }]);
 
   _module.constant('layoutTree', Core.templatePath + 'layoutTree.html');

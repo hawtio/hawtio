@@ -6,6 +6,9 @@ module Core {
 
   var _urlPrefix:string = null;
 
+  export var connectionSettingsKey = "jvmConnect";
+
+
   /**
    * Private method to support testing.
    *
@@ -87,6 +90,36 @@ module Core {
 
   var jolokiaUrls:string[] = Core._resetJolokiaUrls();
 
+
+  export function getJvmConnections(localStorage) {
+    if (connectionSettingsKey in localStorage) {
+      try {
+        return angular.fromJson(localStorage[connectionSettingsKey]);
+      } catch (e) {
+        // corrupt config
+        delete localStorage[connectionSettingsKey];
+        return {};
+      }
+    }
+  }
+
+  /**
+   * Returns the connection options for the given connection name from localStorage
+   */
+  export function getJvmConnectionOptions(connectionName, localStorage = Core.getLocalStorage()) {
+    var connectOptions = null;
+    if (angular.isArray(connectionName)) {
+      connectionName = connectionName[0];
+    }
+    if (connectionName && angular.isString(connectionName)) {
+      var jvmConnections = Core.getJvmConnections(localStorage);
+      if (jvmConnections) {
+        connectOptions = jvmConnections[connectionName];
+      }
+    }
+    return connectOptions;
+  }
+
   /**
    * Returns Jolokia URL by checking its availability if not in local mode
    *
@@ -100,7 +133,22 @@ module Core {
       jolokiaUrls = <string[]>[];
       return null;
     }
-    var uri = query['url'];
+    var uri: any = null;
+    var connectionName = Core.getConnectionNameParameter(query);
+    var localStorage = Core.getLocalStorage();
+    var connectOptions = getJvmConnectionOptions(connectionName, localStorage);
+    if (connectOptions) {
+      uri = createServerConnectionUrl(localStorage, connectOptions);
+      // lets find the uri parameter
+      var idx = uri.indexOf("url=");
+      if (idx >= 0) {
+        uri = uri.substring(idx + 4);
+      }
+      console.log("Using localStorage connection URL: " + uri);
+    }
+    if (!uri) {
+      uri = query['url'];
+    }
     if (angular.isArray(uri)) {
       uri = uri[0];
     }

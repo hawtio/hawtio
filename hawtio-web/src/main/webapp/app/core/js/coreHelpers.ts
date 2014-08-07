@@ -1250,8 +1250,10 @@ module Core {
     localStorage['recentConnections'] = '[]';
   }
 
-  export function connectToServer(localStorage, options:ConnectToServerOptions) {
-
+  /**
+   * Creates the Jolokia URL string for the given connection options
+   */
+  export function createServerConnectionUrl(localStorage, options) {
     log.debug("Connect to server, options: ", options);
 
     var connectUrl = options.jolokiaUrl;
@@ -1260,6 +1262,9 @@ module Core {
       username: options['userName'],
       password: options['password']
     };
+
+    var connectionName = options.name;
+    var connectionNameQuery = (connectionName ? "?con=" + connectionName + "&" : "?");
 
     var json = angular.toJson(userDetails);
     if (connectUrl) {
@@ -1289,21 +1294,21 @@ module Core {
       console.log("going to server: " + connectUrl + " as user " + options.userName);
       localStorage[connectUrl] = json;
 
-      full = "?url=" + encodeURIComponent(connectUrl);
+      full = connectionNameQuery + "url=" + encodeURIComponent(connectUrl);
       if (view) {
         full += "#" + view;
       }
     } else {
-
       var host = options.host || "localhost";
       var port = options.port;
       var path = Core.trimLeading(options.path || "jolokia", "/");
       path = Core.trimTrailing(path, "/");
 
       if (port > 0) {
-        host += ":" + port;
+        var portSeparator = ":";
+        host += portSeparator + port;
       }
-      var connectUrl = host + "/" + path;
+      connectUrl = host + "/" + path;
       localStorage[connectUrl] = json;
 
       if (connectUrl.indexOf("://") < 0) {
@@ -1316,18 +1321,48 @@ module Core {
       console.log("going to server: " + connectUrl + " as user " + options.userName);
       localStorage[connectUrl] = json;
 
-      full = "?url=" + encodeURIComponent(connectUrl);
+      full = connectionNameQuery + "url=" + encodeURIComponent(connectUrl);
       if (view) {
         full += "#" + view;
       }
     }
+    return full;
+  }
+
+  export function connectToServer(localStorage, options:ConnectToServerOptions) {
+    var full = createServerConnectionUrl(localStorage, options);
     if (full) {
       log.info("Full URL is: " + full);
+      console.log("Full URL is: " + full);
       Core.addRecentConnection(localStorage, options.name, full);
       window.open(full);
     }
-
   }
+
+  /**
+   * Returns the current connection name using the given search parameters
+   */
+  export function getConnectionNameParameter(search) {
+    var connectionName = search["con"];
+    if (angular.isArray(connectionName)) {
+      connectionName = connectionName[0];
+    }
+    return connectionName;
+  }
+
+  /**
+   * Appends the ?con=NameOfConnection to the given  URI
+   */
+  export function appendConnectionNameToUrl(path, search) {
+    var connectionName = getConnectionNameParameter(search);
+    if (connectionName) {
+      var separator = path.indexOf("?") >= 0 ? "&" : "?";
+      return path + separator + "con=" + connectionName;
+    } else {
+      return path;
+    }
+  }
+
 
   /**
    * Extracts the url of the target, eg usually http://localhost:port, but if we use fabric to proxy to another host,
