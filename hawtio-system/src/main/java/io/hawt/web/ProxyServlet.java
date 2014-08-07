@@ -85,12 +85,19 @@ public class ProxyServlet extends HttpServlet {
      */
     public void init(ServletConfig servletConfig) {
 
+        // The OpenShiftProtocolSocketFactory avoids binding to a specifc local host/port
         OpenShiftProtocolSocketFactory socketFactory = OpenShiftProtocolSocketFactory.getSocketFactory();
+
         Protocol http = new Protocol("http", socketFactory, 80);
         Protocol.registerProtocol("http", http);
-
         if (LOG.isDebugEnabled())  {
             LOG.debug("Registered OpenShiftProtocolSocketFactory Protocol for http: " + Protocol.getProtocol("http").getSocketFactory());
+        }
+
+        Protocol https = new Protocol("https", socketFactory, 443);
+        Protocol.registerProtocol("https", https);
+        if (LOG.isDebugEnabled())  {
+            LOG.debug("Registered OpenShiftProtocolSocketFactory Protocol for https: " + Protocol.getProtocol("https").getSocketFactory());
         }
     }
 
