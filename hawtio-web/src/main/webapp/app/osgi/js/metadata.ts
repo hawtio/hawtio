@@ -7,9 +7,16 @@ module Osgi {
 
     // extra metadata per config admin PID
     pidMetadata: {
+      "io.fabric8.container.process.overlay.resources": {
+        name: "Container Overlay Resources",
+        description: "The resources overlaid over the distribution of the process"
+      },
       "io.fabric8.environment": {
         name: "Environment Variables",
-        description: "The operating system Environment Variables which are exported into any child processes"
+        description: "The operating system Environment Variables which are exported into any child processes",
+        schemaExtensions: {
+          disableHumanizeLabel: true
+        }
       },
       "io.fabric8.mq.fabric.server": {
         name: "ActiveMQ Fabric8 Server",
@@ -17,11 +24,17 @@ module Osgi {
       },
       "io.fabric8.ports": {
         name: "Ports",
-        description: "The network ports exported by the container"
+        description: "The network ports exported by the container",
+        schemaExtensions: {
+          disableHumanizeLabel: true
+        }
       },
       "io.fabric8.system": {
         name: "System Properties",
-        description: "The Java System Properties which are exported into any child Java processes"
+        description: "The Java System Properties which are exported into any child Java processes",
+        schemaExtensions: {
+          disableHumanizeLabel: true
+        }
       },
       "org.ops4j.pax.logging": {
         name: "Logging",

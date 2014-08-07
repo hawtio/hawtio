@@ -232,7 +232,6 @@ module Osgi {
         required: required,
         properties: properties
       };
-      $scope.schema = schema;
       var inputClass = "span12";
       var labelClass = "control-label";
 
@@ -241,9 +240,11 @@ module Osgi {
 
       var metaType = $scope.metaType;
       if (metaType) {
-        schema["id"] = metaType.id;
-        schema["name"] = metaType.name;
-        schema["description"] = metaType.description;
+        var pidMetadata = Osgi.configuration.pidMetadata;
+        var pid = metaType.id;
+        schema["id"] = pid;
+        schema["name"] = Core.pathGet(pidMetadata, [pid, "name"]) || metaType.name;
+        schema["description"] = Core.pathGet(pidMetadata, [pid, "description"]) || metaType.description;
 
         angular.forEach(metaType.attributes, (attribute) => {
           var id = attribute.id;
@@ -307,6 +308,13 @@ module Osgi {
             properties[key] = attributeProperties;
           }
         });
+
+        // now lets override anything from the custom metadata
+        var schemaExtensions = Core.pathGet(Osgi.configuration.pidMetadata, [pid, "schemaExtensions"]);
+        if (schemaExtensions) {
+          // now lets copy over the schema extensions
+          overlayProperties(schema, schemaExtensions);
+        }
       }
 
       // now add all the missing properties...
@@ -354,8 +362,34 @@ module Osgi {
           entity[key] = value;
         }
       });
+
       //log.info("default values: " + angular.toJson($scope.defaultValues));
       $scope.entity = entity;
+      $scope.schema = schema;
+      $scope.fullSchema = schema;
+    }
+
+    /**
+     * Recursively overlays the properties in the overlay into the object; so any atttributes are added into the object
+     * and any nested objects in the overlay are inserted into the object at the correct path.
+     */
+    function overlayProperties(object, overlay) {
+      if (angular.isObject(object)) {
+        if (angular.isObject(overlay)) {
+          angular.forEach(overlay, (value, key) => {
+            if (angular.isObject(value)) {
+              var child = object[key];
+              if (!child) {
+                child = {};
+                object[key] = child;
+              }
+              overlayProperties(child, value);
+            } else {
+              object[key] = value;
+            }
+          });
+        }
+      }
     }
 
     var ignorePropertyIds = ["service.pid", "service.factoryPid", "fabric.zookeeper.pid"];
