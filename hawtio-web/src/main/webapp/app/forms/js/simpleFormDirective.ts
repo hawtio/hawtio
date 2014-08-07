@@ -312,6 +312,7 @@ module Forms {
         if (!propSchema) {
           propSchema = Forms.lookupDefinition(propTypeName, fullSchema);
         }
+        var disableHumanizeLabel = schema ? schema.disableHumanizeLabel : false;
 
         // lets ignore fields marked as hidden from the generated form
         if (property.hidden) {
@@ -332,7 +333,8 @@ module Forms {
             addProperty(newId, childProp, property.ignorePrefixInLabel);
           });
         } else {
-          var input = Forms.createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName);
+          var wrapInGroup = true;
+          var input = Forms.createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName, wrapInGroup, disableHumanizeLabel);
 
           if (tabs.use) {
             var tabkey = findTabKey(id);

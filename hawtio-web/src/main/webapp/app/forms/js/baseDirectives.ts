@@ -104,7 +104,9 @@ module Forms {
           defaultLabel = id.substring(idx + 1);
         }
       }
-      group.append(Forms.getLabel(config, config, attrs["title"] || Core.humanizeValue(defaultLabel)));
+      var disableHumanizeLabel = "true" === attrs["disableHumanizeLabel"];
+      var labelText = attrs["title"] || (disableHumanizeLabel ? defaultLabel : Core.humanizeValue(defaultLabel));
+      group.append(Forms.getLabel(config, config, labelText));
       var controlDiv = Forms.getControlDiv(config);
       controlDiv.append(this.getInput(config, config, id, modelName));
       controlDiv.append(Forms.getHelpSpan(config, config, id));
@@ -357,6 +359,7 @@ module Forms {
         var property = arrayProperty["items"] || {};
         var propTypeName = property.type;
         var ignorePrefixInLabel = true;
+        var disableHumanizeLabel = property.disableHumanizeLabel;
         var configScopeName = null;
 
         // lets create an empty array if its not yet set
@@ -400,7 +403,7 @@ module Forms {
         var itemsConfig = {
           model: itemId
         };
-        var widget = Forms.createWidget(propTypeName, property, schema, itemsConfig, itemId, ignorePrefixInLabel, configScopeName, false);
+        var widget = Forms.createWidget(propTypeName, property, schema, itemsConfig, itemId, ignorePrefixInLabel, configScopeName, disableHumanizeLabel);
         if (!widget) {
           widget = $(readOnlyWidget);
         }
@@ -456,7 +459,8 @@ module Forms {
         // TODO ideally we should merge this config with whatever folks have hand-defined
         var tableConfigScopeName = tableConfigPaths.join(".");
         //var cellDescription = a["description"] || humanizeValue(id);
-        var cellDescription = Core.humanizeValue(id);
+        var disableHumanizeLabel = "true" === attrs["disableHumanizeLabel"];
+        var cellDescription = disableHumanizeLabel ? id : Core.humanizeValue(id);
         tableConfig = {
           formConfig: config,
           title: cellDescription,

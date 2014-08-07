@@ -9,7 +9,7 @@ module Forms {
    *
    * This will include either the standard AngularJS widgets or custom widgets
    */
-  export function createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName, wrapInGroup = true) {
+  export function createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName, wrapInGroup = true, disableHumanizeLabel = false) {
     var input = null;
     var group = null;
 
@@ -73,6 +73,7 @@ module Forms {
       if (title) {
         input.attr('title', title);
       }
+      var disableHumanizeLabelValue = disableHumanizeLabel || property.disableHumanizeLabel;
 
       // allow the prefix to be trimmed from the label if enabled
       var defaultLabel = id;
@@ -85,7 +86,9 @@ module Forms {
       // figure out which things to not wrap in a group and label etc...
       if (input.attr("type") !== "hidden" && wrapInGroup) {
         group = this.getControlGroup(config, config, id);
-        var labelElement = Forms.getLabel(config, config, property.title || property.label || Core.humanizeValue(defaultLabel));
+        var labelText = property.title || property.label ||
+          (disableHumanizeLabelValue ? defaultLabel : Core.humanizeValue(defaultLabel));
+        var labelElement = Forms.getLabel(config, config, labelText);
         if (title) {
           labelElement.attr('title', title);
         }
@@ -140,6 +143,9 @@ module Forms {
 
       if (ignorePrefixInLabel || property.ignorePrefixInLabel) {
         input.attr('ignore-prefix-in-label', true);
+      }
+      if (disableHumanizeLabel || property.disableHumanizeLabel) {
+        input.attr('disable-humanize-label', true);
       }
       input.attr('name', id);
     }
