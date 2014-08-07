@@ -94,11 +94,6 @@ public class ProxyServlet extends HttpServlet {
             LOG.debug("Registered OpenShiftProtocolSocketFactory Protocol for http: " + Protocol.getProtocol("http").getSocketFactory());
         }
 
-        Protocol https = new Protocol("https", socketFactory, 443);
-        Protocol.registerProtocol("https", https);
-        if (LOG.isDebugEnabled())  {
-            LOG.debug("Registered OpenShiftProtocolSocketFactory Protocol for https: " + Protocol.getProtocol("https").getSocketFactory());
-        }
     }
 
     /**
