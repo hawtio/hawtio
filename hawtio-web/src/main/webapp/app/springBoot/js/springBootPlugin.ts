@@ -36,7 +36,7 @@ module SpringBoot {
 
     }]);
 
-    _module.controller("SpringBoot.MainController", ["$scope", "$http", "$location", "workspace", "jolokia", ($scope, $http, $location, workspace:Workspace, jolokia) => {
+    _module.controller("SpringBoot.MainController", ["$scope", "jolokia", ($scope, jolokia) => {
         jolokia.execute(metricsMBean, metricsMBeanOperation, onSuccess(function (data) {
             convertRawMetricsToUserFriendlyFormat($scope, data)
         }, {error: function(){
