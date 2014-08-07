@@ -14,6 +14,14 @@ module UrlHelpers {
     }
   }
 
+  export function extractPath(url:string):string {
+    if (url.has('?')) {
+      return url.split('?')[0];
+    } else {
+      return url;
+    }
+  }
+
   /**
    * Returns whether or not the context is in the supplied URL.  If the search string starts/ends with '/' then the entire URL is checked.  If the search string doesn't start with '/' then the search string is compared against the end of the URL.  If the search string starts with '/' but doesn't end with '/' then the start of the URL is checked, excluding any '#'
    * @param url
@@ -21,13 +29,14 @@ module UrlHelpers {
    * @returns {boolean}
    */
   export function contextActive(url:string, thingICareAbout:string):boolean {
+    var cleanUrl = extractPath(url);
     if (thingICareAbout.endsWith('/') && thingICareAbout.startsWith("/")) {
-      return url.has(thingICareAbout);
+      return cleanUrl.has(thingICareAbout);
     }
     if (thingICareAbout.startsWith("/")) {
-      return noHash(url).startsWith(thingICareAbout);
+      return noHash(cleanUrl).startsWith(thingICareAbout);
     }
-    return url.endsWith(thingICareAbout);
+    return cleanUrl.endsWith(thingICareAbout);
   }
 
   /**
