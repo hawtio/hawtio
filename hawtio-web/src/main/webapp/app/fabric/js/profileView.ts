@@ -9,32 +9,69 @@ module Fabric {
     return [];
   });
 
-  export var AppViewPaneHeaderController = _module.controller("Fabric.AppViewPaneHeaderController", ["$scope", "ProfileCart", "$location", ($scope, ProfileCart, $location) => {
+  export interface ProfileViewAction {
+    index: Number;
+    icon: String;
+    name?: String;
+    buttonClass?: String;
+    title: String;
+    action: () => void;
+  }
+
+  export interface ProfileViewActions {
+    [name:string]:ProfileViewAction;
+  }
+
+  // service that can be used by other modules to add additional actions
+  // that can be performed on the selected profiles
+  _module.service("ProfileViewActions", ['$location', '$rootScope', ($location, $rootScope) => {
+    return <ProfileViewActions>{
+      'Deploy': {
+        index: 0,
+        icon: 'icon-ok',
+        buttonClass: 'btn-success',
+        title: 'Deploy the selected profiles to new containers',
+        action: () => {
+          $location.path('/fabric/containers/createContainer').search({
+            p: 'fabric',
+            vid: '',
+            pid: '',
+            hideProfileSelector: true,
+            returnTo: '/profiles'
+          });
+          Core.$apply($rootScope);
+        }
+      },
+      'Assign': {
+        index: 2,
+        icon: 'icon-truck',
+        buttonClass: 'btn-primary',
+        title: 'Deploy the selected profiles to existing containers',
+        action: () => {
+          $location.path('/fabric/assignProfile');
+          Core.$apply($rootScope);
+        }
+
+      }
+    }
+  }]);
+
+  export var AppViewPaneHeaderController = _module.controller("Fabric.AppViewPaneHeaderController", ["$scope", "ProfileCart", "ProfileViewActions", ($scope, ProfileCart, ProfileViewActions) => {
 
     SelectionHelpers.decorate($scope);
+    var lastIndex:Number = null;
+    var buttons:Array<ProfileViewAction> = [];
+    angular.forEach(ProfileViewActions, (value, key) => {
+      value['name'] = key;
+      buttons.add(value);
+    });
+    $scope.actionButtons = buttons;
 
     $scope.cartItems = ProfileCart;
 
     $scope.getName = () => {
       return $scope.cartItems.map((p) => { return p.id; }).join(", ");
-    }
-
-    $scope.deploy = () => {
-      $location.path('/fabric/containers/createContainer').search({
-        p: 'fabric',
-        vid: '',
-        pid: '',
-        hideProfileSelector: true,
-        returnTo: '/profiles'
-      });
-      Core.$apply($scope);
     };
-
-    $scope.assign = () => {
-      $location.path('/fabric/assignProfile');
-      Core.$apply($scope);
-    };
-
 
     $scope.$watch('filter', (newValue, oldValue) => {
       if (newValue !== oldValue) {

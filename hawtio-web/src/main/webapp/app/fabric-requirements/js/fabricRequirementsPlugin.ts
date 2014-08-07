@@ -1,6 +1,7 @@
 /// <reference path="../../helpers/js/pluginHelpers.ts"/>
 /// <reference path="../../fabric/js/fabricPlugin.ts"/>
 /// <reference path="../../helpers/js/urlHelpers.ts"/>
+/// <reference path="../../fabric/js/profileView.ts"/>
 module FabricRequirements {
 
   export var requirementsContext = '/fabric/requirements';
@@ -8,7 +9,7 @@ module FabricRequirements {
   export var pluginName = "FabricRequirements";
   export var templatePath = 'app/fabric-requirements/html/';
   export var log:Logging.Logger = Logger.get(pluginName);
-  export var _module = angular.module(pluginName, ["hawtioCore"]);
+  export var _module = angular.module(pluginName, ['hawtioCore', 'fabric']);
 
   // little shortcut function we can easily prefix all of the controllers in this module
   export var controller = PluginHelpers.createControllerFunction(_module, pluginName);
@@ -20,7 +21,7 @@ module FabricRequirements {
                   .when(UrlHelpers.join(requirementsContext, 'dockerConfig'), route('dockerConfig.html'));
   }]);
 
-  _module.run(['viewRegistry', 'layoutFull', 'workspace', (viewRegistry, layoutFull, workspace:Core.Workspace) => {
+  _module.run(['viewRegistry', 'layoutFull', 'workspace', 'ProfileViewActions', '$location', '$rootScope', (viewRegistry, layoutFull, workspace:Core.Workspace, ProfileViewActions:Fabric.ProfileViewActions, $location, $rootScope) => {
     viewRegistry['fabric/requirements'] = templatePath + 'layout.html';
 
     workspace.topLevelTabs.push({
@@ -30,6 +31,18 @@ module FabricRequirements {
       isActive: (workspace:Core.Workspace) => workspace.isLinkActive('fabric/requirements'),
       href: () => '#/fabric/requirements/profile'
     });
+
+    ProfileViewActions['Add Requirements'] = <Fabric.ProfileViewAction>{
+      index: 3,
+      icon: 'icon-cog',
+      buttonClass: 'btn-primary',
+      title: 'Create requirements for the selected profiles',
+      action: () => {
+        $location.path('/fabric/requirements/profile');
+        Core.$apply($rootScope);
+      }
+    };
+
   }]);
 
   hawtioPluginLoader.addModule(pluginName);

@@ -34,11 +34,11 @@ module Fabric {
     minimumInstances:number;
     maximumInstances:number;
     dependentProfiles:Array<string>;
-    maximumInstancesPerHost:number;
-    childScalingRequirements:ChildScalingRequirements;
-    sshScalingRequirements:SshScalingRequirements;
-    dockerScalingRequirements:DockerScalingRequirements;
-    openShiftScalingRequirements:OpenShiftScalingRequirements;
+    maximumInstancesPerHost?:number;
+    childScalingRequirements?:ChildScalingRequirements;
+    sshScalingRequirements?:SshScalingRequirements;
+    dockerScalingRequirements?:DockerScalingRequirements;
+    openShiftScalingRequirements?:OpenShiftScalingRequirements;
   }
 
   export interface HostConfiguration {
@@ -80,10 +80,10 @@ module Fabric {
   }
 
   export interface FabricRequirements {
-    profileRequirements:Array<ProfileRequirement>
-    sshConfiguration:SshConfiguration;
-    dockerConfiguration:DockerConfiguration;
-    version:string
+    profileRequirements?:Array<ProfileRequirement>
+    sshConfiguration?:SshConfiguration;
+    dockerConfiguration?:DockerConfiguration;
+    version?:string
   }
 
   export interface Version {

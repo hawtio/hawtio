@@ -4,35 +4,48 @@
 /// <reference path="../../helpers/js/fileUploadHelpers.ts"/>
 module FabricRequirements {
 
-  export var RequirementsController = controller("RequirementsController", ["$scope", "jolokia", "ProfileCart", "$templateCache", "FileUploader", "userDetails", "jolokiaUrl", "$location", "$timeout", ($scope, jolokia, ProfileCart, $templateCache, FileUploader, userDetails, jolokiaUrl, $location, $timeout) => {
+  export interface CurrentRequirements extends Fabric.FabricRequirements {
+    $dirty?: boolean;
+  }
+
+  // a service that holds the current requirements that the user is working
+  // on, allows us to change between views without losing the user's current
+  // changes
+  _module.service("CurrentRequirements", () => {
+    return <CurrentRequirements>{
+      $dirty: false
+    };
+  });
+
+  export var RequirementsController = controller("RequirementsController", ["$scope", "jolokia", "ProfileCart", "$templateCache", "FileUploader", "userDetails", "jolokiaUrl", "$location", "$timeout", "CurrentRequirements", ($scope, jolokia, ProfileCart:Array<Fabric.Profile>, $templateCache, FileUploader, userDetails, jolokiaUrl, $location, $timeout, CurrentRequirements:FabricRequirements.CurrentRequirements) => {
 
     $scope.tabs = {
       '0': {
         name: 'Profile Requirements',
         href: () => FabricRequirements.requirementsHash + '/profile',
-        isActive: () => UrlHelpers.contextActive($location.url(), 'profile')
+        isActive: () => UrlHelpers.contextActive($location.path(), 'profile')
 
       },
       '1': {
         name: 'SSH Configuration',
         href: () => FabricRequirements.requirementsHash + '/sshConfig',
-        isActive: () => UrlHelpers.contextActive($location.url(), 'sshConfig')
+        isActive: () => UrlHelpers.contextActive($location.path(), 'sshConfig')
       },
       '2': {
         name: 'Docker Configuration',
         href: () => FabricRequirements.requirementsHash + '/dockerConfig',
-        isActive: () => UrlHelpers.contextActive($location.url(), 'dockerConfig')
+        isActive: () => UrlHelpers.contextActive($location.path(), 'dockerConfig')
       }
     };
 
-    $scope.requirements = <Fabric.FabricRequirements> null;
+    $scope.requirements = CurrentRequirements;
     $scope.template = '';
 
     $scope.cancelChanges = () => {
       if ($scope.requirements.$dirty) {
         log.debug("Cancelling changes");
         $timeout(() => {
-          $scope.requirements = <Fabric.FabricRequirements>Object.extended($scope.requirementsFromServer).clone();
+          Object.merge($scope.requirements, $scope.requirementsFromServer, true);
         }, 20);
       }
     };
@@ -93,9 +106,30 @@ module FabricRequirements {
         mbean: Fabric.managerMBean,
         operation: "requirements()"
       }, (response) => {
-        log.debug("Got updated requirements object: ", response.value);
+        //log.debug("Got updated requirements object: ", response.value);
+        //log.debug("Profile cart: ", ProfileCart);
         $scope.requirementsFromServer = <Fabric.FabricRequirements>response.value;
-        $scope.requirements = <Fabric.FabricRequirements>Object.extended($scope.requirementsFromServer).clone();
+        if (!$scope.requirements.$dirty) {
+          Object.merge($scope.requirements, $scope.requirementsFromServer, true);
+        }
+        var profileRequirements:Array<Fabric.ProfileRequirement> = $scope.requirements.profileRequirements;
+        ProfileCart.forEach((profile:Fabric.Profile) => {
+          var id = profile.id;
+          if (!profileRequirements.some((r) => { return r.profile === id; })) {
+            profileRequirements.push({
+              profile: id,
+              minimumInstances:<number>null,
+              maximumInstances:<number>null,
+              dependentProfiles:[]
+            });
+            if (!$scope.requirements.$dirty) {
+              $scope.requirements.$dirty = true;
+            }
+          }
+        });
+        // now we've pulled 'em in we can clear the profile cart
+        ProfileCart.length = 0;
+
         if (Core.isBlank($scope.template)) {
           $scope.template = $templateCache.get('pageTemplate.html');
         }
