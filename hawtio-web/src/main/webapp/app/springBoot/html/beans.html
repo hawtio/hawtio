@@ -1,0 +1,18 @@
+<div class="row-fluid" ng-controller="SpringBoot.BeansController">
+
+    <p>
+        {{loadingError}}
+    </p>
+
+    <table class="table table-condensed table-striped">
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+        </tr>
+        <tr ng-repeat="bean in beans">
+            <td title="Scope: {{bean.scope}}&#013;Resource: {{bean.resource}}">{{bean.bean}}</td>
+            <td title="Scope: {{bean.scope}}&#013;Resource: {{bean.resource}}">{{bean.type}}</td>
+        </tr>
+    </table>
+
+</div>
