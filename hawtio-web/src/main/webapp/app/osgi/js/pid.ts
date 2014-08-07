@@ -72,7 +72,7 @@ module Osgi {
           text = value.toString();
         }
         if (angular.isDefined(text)) {
-          data[decodeKey(key)] = text;
+          data[decodeKey(key, $scope.pid)] = text;
         }
       });
 
@@ -249,7 +249,7 @@ module Osgi {
         angular.forEach(metaType.attributes, (attribute) => {
           var id = attribute.id;
           if (isValidProperty(id)) {
-            var key = encodeKey(id);
+            var key = encodeKey(id, pid);
             var typeName = asJsonSchemaType(attribute.typeName, attribute.id);
             var attributeProperties = {
               title: attribute.name,
@@ -321,7 +321,7 @@ module Osgi {
       var entity = {};
       angular.forEach($scope.configValues, (value, rawKey) => {
         if (isValidProperty(rawKey)) {
-          var key = encodeKey(rawKey);
+          var key = encodeKey(rawKey, pid);
           var attrValue = value;
           var attrType = "string";
           if (angular.isObject(value)) {
@@ -398,12 +398,22 @@ module Osgi {
       return id && ignorePropertyIds.indexOf(id) < 0;
     }
 
-    function encodeKey(key) {
-      return key.replace(/\./g, "__");
+    function encodeKey(key, pid) {
+      var avoidEscapeKey = Core.pathGet(Osgi.configuration.pidMetadata, [pid, "avoidEscapeKey"]);
+      if (avoidEscapeKey) {
+        return key;
+      } else {
+        return key.replace(/\./g, "__");
+      }
     }
 
-    function decodeKey(key) {
-      return key.replace(/__/g, ".");
+    function decodeKey(key, pid) {
+      var avoidEscapeKey = Core.pathGet(Osgi.configuration.pidMetadata, [pid, "avoidEscapeKey"]);
+      if (avoidEscapeKey) {
+        return key;
+      } else {
+        return key.replace(/__/g, ".");
+      }
     }
 
     function asJsonSchemaType(typeName, id) {

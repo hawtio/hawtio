@@ -32,6 +32,7 @@ module Osgi {
       "io.fabric8.system": {
         name: "System Properties",
         description: "The Java System Properties which are exported into any child Java processes",
+        avoidEscapeKey: true,
         schemaExtensions: {
           disableHumanizeLabel: true
         }
