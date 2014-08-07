@@ -404,42 +404,6 @@ module Core {
   }
 
   /**
-   * Trims the leading prefix from a string if its present
-   * @method trimLeading
-   * @for Core
-   * @static
-   * @param {String} text
-   * @param {String} prefix
-   * @return {String}
-   */
-  export function trimLeading(text:string, prefix:string) {
-    if (text && prefix) {
-      if (text.startsWith(prefix)) {
-        return text.substring(prefix.length);
-      }
-    }
-    return text;
-  }
-
-  /**
-   * Trims the trailing postfix from a string if its present
-   * @method trimTrailing
-   * @for Core
-   * @static
-   * @param {String} trim
-   * @param {String} postfix
-   * @return {String}
-   */
-  export function trimTrailing(text:string, postfix:string) {
-    if (text && postfix) {
-      if (text.endsWith(postfix)) {
-        return text.substring(0, text.length - postfix.length);
-      }
-    }
-    return text;
-  }
-
-  /**
    * Turns the given search hash into a URI style query string
    * @method hashToString
    * @for Core
@@ -1250,85 +1214,6 @@ module Core {
     localStorage['recentConnections'] = '[]';
   }
 
-  /**
-   * Creates the Jolokia URL string for the given connection options
-   */
-  export function createServerConnectionUrl(localStorage, options) {
-    log.debug("Connect to server, options: ", options);
-
-    var connectUrl = options.jolokiaUrl;
-
-    var userDetails = {
-      username: options['userName'],
-      password: options['password']
-    };
-
-    var connectionName = options.name;
-    var connectionNameQuery = (connectionName ? "?con=" + connectionName + "&" : "?");
-
-    var json = angular.toJson(userDetails);
-    if (connectUrl) {
-      localStorage[connectUrl] = json;
-    }
-    var view = options.view;
-    var full = "";
-    var useProxy = options.useProxy && !Core.isChromeApp();
-    if (connectUrl) {
-      if (useProxy) {
-        // lets remove the http stuff
-        var idx = connectUrl.indexOf("://");
-        if (idx > 0) {
-          connectUrl = connectUrl.substring(idx + 3);
-        }
-        // lets replace the : with a /
-        connectUrl = connectUrl.replace(":", "/");
-        connectUrl = Core.trimLeading(connectUrl, "/");
-        connectUrl = Core.trimTrailing(connectUrl, "/");
-        connectUrl = options.scheme + "://" + connectUrl;
-        connectUrl = Core.url("/proxy/" + connectUrl);
-      } else {
-        if (connectUrl.indexOf("://") < 0) {
-          connectUrl = options.scheme + "://" + connectUrl;
-        }
-      }
-      console.log("going to server: " + connectUrl + " as user " + options.userName);
-      localStorage[connectUrl] = json;
-
-      full = connectionNameQuery + "url=" + encodeURIComponent(connectUrl);
-      if (view) {
-        full += "#" + view;
-      }
-    } else {
-      var host = options.host || "localhost";
-      var port = options.port;
-      var path = Core.trimLeading(options.path || "jolokia", "/");
-      path = Core.trimTrailing(path, "/");
-
-      if (port > 0) {
-        var portSeparator = ":";
-        host += portSeparator + port;
-      }
-      connectUrl = host + "/" + path;
-      localStorage[connectUrl] = json;
-
-      if (connectUrl.indexOf("://") < 0) {
-        connectUrl = options.scheme + "://" + connectUrl;
-      }
-
-      if (useProxy) {
-        connectUrl = Core.url("/proxy/" + connectUrl);
-      }
-      console.log("going to server: " + connectUrl + " as user " + options.userName);
-      localStorage[connectUrl] = json;
-
-      full = connectionNameQuery + "url=" + encodeURIComponent(connectUrl);
-      if (view) {
-        full += "#" + view;
-      }
-    }
-    return full;
-  }
-
   export function connectToServer(localStorage, options:ConnectToServerOptions) {
     var full = createServerConnectionUrl(localStorage, options);
     if (full) {
@@ -1338,31 +1223,6 @@ module Core {
       window.open(full);
     }
   }
-
-  /**
-   * Returns the current connection name using the given search parameters
-   */
-  export function getConnectionNameParameter(search) {
-    var connectionName = search["con"];
-    if (angular.isArray(connectionName)) {
-      connectionName = connectionName[0];
-    }
-    return connectionName;
-  }
-
-  /**
-   * Appends the ?con=NameOfConnection to the given  URI
-   */
-  export function appendConnectionNameToUrl(path, search) {
-    var connectionName = getConnectionNameParameter(search);
-    if (connectionName) {
-      var separator = path.indexOf("?") >= 0 ? "&" : "?";
-      return path + separator + "con=" + connectionName;
-    } else {
-      return path;
-    }
-  }
-
 
   /**
    * Extracts the url of the target, eg usually http://localhost:port, but if we use fabric to proxy to another host,

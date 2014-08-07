@@ -7,6 +7,7 @@
 
 /// <reference path="./coreHelpers.ts"/>
 /// <reference path="../../ide/js/idePlugin.ts"/>
+/// <reference path="../../helpers/js/urlHelpers.ts"/>
 /// <reference path="./pageTitle.ts"/>
 module Core {
 
@@ -89,7 +90,8 @@ module Core {
                "userDetails", 
                "preferencesRegistry", 
                "postLoginTasks", 
-               "preLogoutTasks", 
+               "preLogoutTasks",
+               "$location",
                ($rootScope,
                $routeParams,
                jolokia,
@@ -104,7 +106,8 @@ module Core {
                userDetails,
                preferencesRegistry,
                postLoginTasks:Core.Tasks,
-               preLogoutTasks:Core.Tasks) => {
+               preLogoutTasks:Core.Tasks,
+               $location) => {
 
     postLoginTasks.addTask("ResetPreLogoutTasks", () => {
       preLogoutTasks.reset();
@@ -157,6 +160,15 @@ module Core {
     });
 
     $rootScope.$emit('UpdateRate', localStorage['updateRate']);
+
+    // ensure that if the connection parameter is present, that we keep it
+    $rootScope.$on('$locationChangeStart', ($event, newUrl, oldUrl) => {
+      var oldQuery = UrlHelpers.parseQueryString(oldUrl);
+      var newQuery = UrlHelpers.parseQueryString(newUrl);
+      if ('con' in oldQuery && !('con' in newQuery)) {
+        $location.search({'con': Core.getConnectionNameParameter(oldQuery)});
+      }
+    });
 
     /*
       * Debugging Tools

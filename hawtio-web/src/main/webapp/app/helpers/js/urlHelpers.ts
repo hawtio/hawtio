@@ -51,6 +51,8 @@ module UrlHelpers {
     }
   }
 
+  export var parseQueryString = hawtioPluginLoader.parseQueryString;
+
   /**
    * Apply a proxy to the supplied URL if the jolokiaUrl is using the proxy
    * @param jolokiaUrl
