@@ -39,6 +39,10 @@ module SpringBoot {
         'gauge.response.jolokia.exec.org.springframework.boot:type=Endpoint,name=metricsEndpoint.getData()': 'Metrics Jolokia response time (ms)',
         'gauge.response.jolokia.root': 'Jolokia root response time (ms)',
         'gauge.response.metrics': 'Metrics response time (ms)',
+        'gc.ps_marksweep.count': 'Parallel scavenge mark-sweep collector count',
+        'gc.ps_marksweep.time':	'Parallel scavenge mark-sweep collector time (ms)',
+        'gc.ps_scavenge.count':	'Parallel scavenge collector count',
+        'gc.ps_scavenge.time': 'Parallel scavenge collector time (ms)',
         'mem': 'Memory used (bytes)',
         'mem.free': 'Memory available (bytes)',
         'processors': 'Processors number',
@@ -63,9 +67,9 @@ module SpringBoot {
             key = Object.keys(data)[key];
             var friendlyName = metricsFriendlyNames[key];
             if (!friendlyName) {
-                userFriendlyData[key] = data[key]
+                userFriendlyData[key] = {key: key, value: data[key]}
             } else {
-                userFriendlyData[friendlyName] = data[key]
+                userFriendlyData[key] = {key: friendlyName, value: data[key]}
             }
         }
         scope.metricsValues = userFriendlyData;
