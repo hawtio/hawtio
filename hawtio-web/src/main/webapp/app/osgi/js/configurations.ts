@@ -173,7 +173,7 @@ module Osgi {
             if (factoryPidBundleIds && factoryPidBundleIds.length) {
               setFactoryPid(config);
             }
-            config["name"] = Core.pathGet(pidMetadata, [pid, "name"]) || value.name || pid;
+            config["name"] = Core.pathGet(pidMetadata, [pid, "name"]) || trimUnnecessaryPrefixes(value.name) || pid;
             var description = Core.pathGet(pidMetadata, [pid, "description"]) || value.description;
 /*
             if (description) {
@@ -244,6 +244,14 @@ module Osgi {
       onMetaType(response);
     }
 
+    function trimUnnecessaryPrefixes(name) {
+      angular.forEach(["Fabric8 ", "Apache "], (prefix) => {
+        if (name && name.startsWith(prefix) && name.length > prefix.length) {
+          name = name.substring(prefix.length);
+        }
+      });
+      return name;
+    }
 
     function pidBundleDescription(pid, bundle) {
       var pidMetadata = Osgi.configuration.pidMetadata;
