@@ -175,9 +175,12 @@ module Osgi {
             }
             config["name"] = value.name || Core.pathGet(pidMetadata, [pid, "name"]) || pid;
             var description = value.description || Core.pathGet(pidMetadata, [pid, "description"]);
+/*
             if (description) {
-              config["description"] = description + "\n" + pidBundleDescription(pid, config.bundle);
+              description = description + "\n" + pidBundleDescription(pid, config.bundle);
             }
+*/
+            config["description"] = description;
           }
         });
       }
@@ -253,7 +256,7 @@ module Osgi {
         pid: pid,
         name: Core.pathGet(pidMetadata, [pid, "name"]) || pid,
         class: 'pid',
-        description: pidBundleDescription(pid, bundle),
+        description: Core.pathGet(pidMetadata, [pid, "description"]) || pidBundleDescription(pid, bundle),
         bundle: bundle,
         kind: configKinds.pidNoValue,
         pidLink: createPidLink(pid)

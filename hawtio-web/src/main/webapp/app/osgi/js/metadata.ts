@@ -14,6 +14,10 @@ module Osgi {
           disableHumanizeLabel: true
         }
       },
+      "io.fabric8.dosgi": {
+        name: "Fabric8 DOSGi",
+        description: "The configuration for the Distributed OSGi implementation in Fabric8"
+      },
       "io.fabric8.environment": {
         name: "Environment Variables",
         description: "The operating system Environment Variables which are exported into any child processes",

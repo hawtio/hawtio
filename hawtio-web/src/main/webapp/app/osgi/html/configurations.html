@@ -46,12 +46,12 @@
   <ul class="configurations">
     <li ng-repeat='config in configurations | filter:filterText' class='{{config.class}} bundle-item'>
       <a ng-href="{{config.pidLink}}" title="{{config.description}}">
-        <span class="{{config.kind.class}}" title="{{config.kind.title}}">{{config.name}}</span>
+        <span class="{{config.kind.class}}">{{config.name}}</span>
       </a>
       <ul ng-show="config.isFactory">
         <li ng-repeat="child in config.children" class='{{child.class}} bundle-item'>
           <a ng-href="{{child.pidLink}}" title="{{child.description}}">
-            <span class="{{child.kind.class}}" title="{{child.kind.title}}">{{child.name}}</span>
+            <span class="{{child.kind.class}}">{{child.name}}</span>
           </a>
         </li>
       </ul>
