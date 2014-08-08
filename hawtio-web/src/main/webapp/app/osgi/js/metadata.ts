@@ -87,6 +87,7 @@ module Osgi {
       "io.fabric8.git",
       "io.fabric8.mq.fabric.template",
       "io.fabric8.openshift.agent",
+      "io.fabric8.service.ZkDataStoreImpl",
       "org.apache.felix.fileinstall",
       "org.apache.karaf.command.acl.",
       "org.apache.karaf.service.acl."

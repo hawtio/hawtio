@@ -235,7 +235,8 @@ module Osgi {
       var inputClass = "span12";
       var labelClass = "control-label";
 
-      var inputClassArray = "span11";
+      //var inputClassArray = "span11";
+      var inputClassArray = "";
       var labelClassArray = labelClass;
 
       var metaType = $scope.metaType;
@@ -274,6 +275,8 @@ module Osgi {
             }
             var cardinality = attribute.cardinality;
             if (cardinality) {
+              // lets clear the span on arrays to fix layout issues
+              attributeProperties['input-attributes']['class'] = null;
               attributeProperties.type = "array";
               attributeProperties["items"] = {
                 'input-attributes': {

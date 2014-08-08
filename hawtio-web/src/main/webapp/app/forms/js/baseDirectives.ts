@@ -403,7 +403,9 @@ module Forms {
         var itemsConfig = {
           model: itemId
         };
-        var widget = Forms.createWidget(propTypeName, property, schema, itemsConfig, itemId, ignorePrefixInLabel, configScopeName, disableHumanizeLabel);
+        var wrapInGroup = false;
+
+        var widget = Forms.createWidget(propTypeName, property, schema, itemsConfig, itemId, ignorePrefixInLabel, configScopeName, wrapInGroup, disableHumanizeLabel);
         if (!widget) {
           widget = $(readOnlyWidget);
         }
