@@ -35,24 +35,5 @@ module SpringBoot {
 
     }]);
 
-    _module.controller("SpringBoot.MetricsController", ["$scope", "jolokia", ($scope, jolokia) => {
-        jolokia.execute(metricsMBean, metricsMBeanOperation, onSuccess(function (data) {
-            convertRawMetricsToUserFriendlyFormat($scope, data)
-        }, {error: function(){
-            $scope.loadingError = 'Cannot read metrics data.';
-            $scope.$apply();
-        }}));
-    }]);
-
-    _module.controller("SpringBoot.BeansController", ["$scope", "jolokia", ($scope, jolokia) => {
-        jolokia.execute('org.springframework.boot:type=Endpoint,name=beansEndpoint', metricsMBeanOperation, onSuccess(function (data) {
-            $scope.beans = data[0]['beans'];
-            $scope.$apply();
-        }, {error: function(){
-            $scope.loadingError = 'Cannot read beans data.';
-            $scope.$apply();
-        }}));
-    }]);
-
     hawtioPluginLoader.addModule(pluginName);
 }
