@@ -49,7 +49,9 @@ module Osgi {
     ignorePids: [
       "jmx.acl",
       "io.fabric8.agent",
+      "io.fabric8.git",
       "io.fabric8.mq.fabric.template",
+      "org.apache.felix.fileinstall",
       "org.apache.karaf.command.acl.",
       "org.apache.karaf.service.acl."
     ],
