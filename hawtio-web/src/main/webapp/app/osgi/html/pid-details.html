@@ -6,7 +6,7 @@
       <button class="btn" ng-click="setEditMode(true)" title="Edit this configuration"><i class="icon-edit"></i> Edit</button>
       <button class="btn btn-danger pull-right" ng-click="deletePidDialog.open()" title="Delete this configuration"><i class="icon-remove"></i> Delete</button>
     </div>
-    <div class="row-fluid">
+    <div class="row-fluid config-admin-form view">
       <div simple-form name="pidEditor" mode='view' entity='entity' data='schema' schema="fullSchema"></div>
     </div>
   </div>
@@ -16,7 +16,7 @@
       <button class="btn btn-warning" ng-click="setEditMode(false)"><i class="icon-remove"></i> Cancel</button>
       <button class="btn pull-right" ng-click="addPropertyDialog.open()" title="Add a new property value to this configuration"><i class="icon-plus"></i> Property</button>
     </div>
-    <div class="row-fluid">
+    <div class="row-fluid config-admin-form edit">
       <div simple-form name="pidEditor" mode='edit' entity='entity' data='schema' schema="fullSchema" onSubmit="pidSave()"></div>
     </div>
   </div>
