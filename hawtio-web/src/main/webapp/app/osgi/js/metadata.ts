@@ -31,9 +31,16 @@ module Osgi {
           disableHumanizeLabel: true
         }
       },
+      "io.fabric8.fab.osgi.url": {
+        name: "FAB URL",
+        description: "Configures the 'fab:' URL handler for deploying JARs as bundles"
+      },
       "io.fabric8.mq.fabric.server": {
         name: "ActiveMQ Broker",
         description: "The configuration of the Apache ActiveMQ server configured via the fabric"
+      },
+      "io.fabric8.openshift": {
+        name: "OpenShift"
       },
       "io.fabric8.ports": {
         name: "Ports",
@@ -49,9 +56,27 @@ module Osgi {
           disableHumanizeLabel: true
         }
       },
+      "io.fabric8.version": {
+        name: "Versions",
+        schemaExtensions: {
+          disableHumanizeLabel: true
+        }
+      },
       "org.ops4j.pax.logging": {
         name: "Logging",
         description: "The configuration of the logging subsystem"
+      },
+      "org.ops4j.pax.url.mvn": {
+        name: "Maven URL",
+        description: "Configures the Maven 'mvn:' URL handler for referencing maven artifacts"
+      },
+      "org.ops4j.pax.url.war": {
+        name: "WAR URL",
+        description: "Configures the 'war:' URL handler for referencing WAR deployments"
+      },
+      "org.ops4j.pax.url.wrap": {
+        name: "Wrap URL",
+        description: "Configures the 'wrap:' URL handler for wrapping JARs as bundles"
       }
     },
 
@@ -61,6 +86,7 @@ module Osgi {
       "io.fabric8.agent",
       "io.fabric8.git",
       "io.fabric8.mq.fabric.template",
+      "io.fabric8.openshift.agent",
       "org.apache.felix.fileinstall",
       "org.apache.karaf.command.acl.",
       "org.apache.karaf.service.acl."
