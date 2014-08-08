@@ -4313,3 +4313,10 @@ ul.dynatree-container {
 .dataTables_filter input {
     border-radius: 15px
 }
+
+.config-admin-form .form-horizontal .control-label {
+    width: 260px;
+}
+.config-admin-form .form-horizontal .controls {
+    margin-left: 280px;
+}

@@ -10,8 +10,8 @@
             <th>Metric value</th>
         </tr>
         <tr ng-repeat="metric in metrics">
-            <td>{{metric}}</td>
-            <td>{{metricsValues[metric]}}</td>
+            <td>{{metricsValues[metric].key}}</td>
+            <td>{{metricsValues[metric].value}}</td>
         </tr>
     </table>
 
