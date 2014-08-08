@@ -114,15 +114,9 @@ module Osgi {
                 config["factoryPid"] = factoryPid;
                 config["name"] = removeFactoryPidPrefix(pid, factoryPid);
                 if (factoryPid) {
-                  var factoryConfig = getOrCreatePidConfig(factoryPid, bundle);
+                  var factoryConfig = getOrCreatePidConfig(factoryPid, bundle, pids);
                   if (factoryConfig) {
-                    setFactoryPid(factoryConfig);
-                    var children = factoryConfig.children;
-                    if (!children) {
-                      children = {};
-                      factoryConfig["children"] = children;
-                    }
-                    children[pid] = config;
+                    configureFactoryPidConfig(pid, factoryConfig, config);
                     if ($scope.inFabricProfile) {
                       Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, pid, (configValues) => {
                         var zkPid = Core.pathGet(configValues, ["fabric.zookeeper.pid", "Value"]);
@@ -161,13 +155,14 @@ module Osgi {
       Core.$apply($scope);
     }
 
-    function updateMetaType() {
+    function updateMetaType(laziyCreateConfigs = true) {
       var metaType = $scope.metaType;
       if (metaType) {
         var pidMetadata = Osgi.configuration.pidMetadata;
+        var pids = $scope.pids || {};
         angular.forEach(metaType.pids, (value, pid) => {
           var bundle = null;
-          var config = getOrCreatePidConfig(pid, bundle);
+          var config = laziyCreateConfigs ? getOrCreatePidConfig(pid, bundle) : pids[pid];
           if (config) {
             var factoryPidBundleIds = value.factoryPidBundleIds;
             if (factoryPidBundleIds && factoryPidBundleIds.length) {
@@ -235,13 +230,34 @@ module Osgi {
             pids[pid] = config;
           }
         });
+        angular.forEach(pids, (config, pid) => {
+          var idx = pid.indexOf('-');
+          if (idx > 0) {
+            var factoryPid = pid.substring(0, idx);
+            var name = pid.substring(idx + 1, pid.length);
+            var factoryConfig = pids[factoryPid];
+            if (!factoryConfig) {
+              var bundle = config.bundle;
+              factoryConfig = getOrCreatePidConfig(factoryPid, bundle, pids);
+            }
+            if (factoryConfig) {
+              configureFactoryPidConfig(pid, factoryConfig, config, factoryPid);
+              config.name = name;
+              pids[factoryPid] = factoryConfig;
+
+              // lets remove the pid instance as its now a child of the factory
+              delete pids[pid];
+            }
+          }
+        });
         $scope.pids = pids;
-        updateConfigurations();
       }
+
       // now lets process the response and replicate the getConfigurations / getProperties API
       // calls on the OSGi API
       // to get the tree of factory pids or pids
-      onMetaType(response);
+      $scope.metaType = metaType;
+      updateMetaType(false);
     }
 
     function trimUnnecessaryPrefixes(name) {
@@ -282,12 +298,14 @@ module Osgi {
       return answer;
     }
 
-    function getOrCreatePidConfig(pid, bundle) {
+    function getOrCreatePidConfig(pid, bundle, pids = null) {
       if (ignorePid(pid)) {
         log.info("ignoring pid " + pid);
         return null;
       } else {
-        var pids = $scope.pids;
+        if (!pids) {
+          pids = $scope.pids;
+        }
         var factoryConfig = pids[pid];
         if (!factoryConfig) {
           factoryConfig = createPidConfig(pid, bundle);
@@ -298,12 +316,27 @@ module Osgi {
       }
     }
 
-    function setFactoryPid(factoryConfig) {
+    function configureFactoryPidConfig(pid, factoryConfig, config, factoryPid = null) {
+      setFactoryPid(factoryConfig, factoryPid, pid);
+      var children = factoryConfig.children;
+      if (!children) {
+        children = {};
+        factoryConfig["children"] = children;
+      }
+      children[pid] = config;
+    }
+
+
+    function setFactoryPid(factoryConfig, factoryPid = null, pid = null) {
       factoryConfig["isFactory"] = true;
       factoryConfig["class"] = "factoryPid";
       factoryConfig["kind"] = configKinds.factory;
-      var factoryPid = factoryConfig["factoryPid"] || "";
-      var pid = factoryConfig["pid"] || "";
+      if (!factoryPid) {
+        factoryPid = factoryConfig["factoryPid"] || "";
+      }
+      if (!pid) {
+        pid = factoryConfig["pid"] || "";
+      }
       if (!factoryPid) {
         factoryPid = pid;
         pid = null;
