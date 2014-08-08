@@ -1,3 +1,5 @@
+/// <reference path="springBootPlugin.ts"/>
+/// <reference path="springBootHelpers.ts"/>
 module SpringBoot {
 
     _module.controller("SpringBoot.BeansController", ["$scope", "jolokia", ($scope, jolokia) => {
