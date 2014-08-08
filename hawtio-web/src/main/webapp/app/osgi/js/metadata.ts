@@ -7,12 +7,22 @@ module Osgi {
 
     // extra metadata per config admin PID
     pidMetadata: {
+      "io.fabric8.container.java": {
+        name: "Java Container"
+      },
+      "io.fabric8.container.process": {
+        name: "Process Container"
+      },
       "io.fabric8.container.process.overlay.resources": {
         name: "Container Overlay Resources",
         description: "The resources overlaid over the distribution of the process",
         schemaExtensions: {
           disableHumanizeLabel: true
         }
+      },
+      "io.fabric8.dosgi": {
+        name: "Fabric8 DOSGi",
+        description: "The configuration for the Distributed OSGi implementation in Fabric8"
       },
       "io.fabric8.environment": {
         name: "Environment Variables",
@@ -22,7 +32,7 @@ module Osgi {
         }
       },
       "io.fabric8.mq.fabric.server": {
-        name: "ActiveMQ Fabric8 Server",
+        name: "ActiveMQ Broker",
         description: "The configuration of the Apache ActiveMQ server configured via the fabric"
       },
       "io.fabric8.ports": {
