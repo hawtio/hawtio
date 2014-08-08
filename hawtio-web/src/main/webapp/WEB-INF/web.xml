@@ -113,6 +113,15 @@
     <url-pattern>/javadoc/*</url-pattern>
   </filter-mapping>
 
+  <filter>
+    <filter-name>RedirectFilter</filter-name>
+    <filter-class>io.hawt.web.RedirectFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>RedirectFilter</filter-name>
+    <url-pattern>*</url-pattern>
+  </filter-mapping>
+
   <servlet>
     <servlet-name>jolokia-agent</servlet-name>
     <servlet-class>org.jolokia.http.AgentServlet</servlet-class>
@@ -253,10 +262,5 @@
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
-    <!-- Send root page as 404 page & let Angular do it's stuff -->
-    <error-page>
-        <error-code>404</error-code>
-        <location>/index.html</location>
-    </error-page>
 </web-app>
 

@@ -22,7 +22,6 @@
     <watch>false</watch>
   </properties>
 
-
   <dependencies>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -30,7 +29,6 @@
       <version>${servlet-api-version}</version>
       <scope>provided</scope>
     </dependency>
-
 
     <dependency>
       <groupId>org.jolokia</groupId>
@@ -43,6 +41,7 @@
       <artifactId>hawtio-core</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-system</artifactId>
