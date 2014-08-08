@@ -39,6 +39,10 @@
     </div>
   </div>
 
+  <div class="row-fluid centered" ng-hide="configurations.length">
+    <i class="icon-spinner icon-spin"></i>
+  </div>
+
   <ul class="configurations">
     <li ng-repeat='config in configurations | filter:filterText' class='{{config.class}} bundle-item'>
       <a ng-href="{{config.pidLink}}" title="{{config.description}}">
