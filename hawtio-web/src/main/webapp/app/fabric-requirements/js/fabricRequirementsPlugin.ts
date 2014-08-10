@@ -14,11 +14,13 @@ module FabricRequirements {
   // little shortcut function we can easily prefix all of the controllers in this module
   export var controller = PluginHelpers.createControllerFunction(_module, pluginName);
   export var route = PluginHelpers.createRoutingFunction(templatePath);
+  var fabricRoute = PluginHelpers.createRoutingFunction('app/fabric/html/');
 
   _module.config(['$routeProvider', ($routeProvider:ng.route.IRouteProvider) => {
     $routeProvider.when(UrlHelpers.join(requirementsContext, 'profile'), route('profileRequirements.html'))
                   .when(UrlHelpers.join(requirementsContext, 'sshConfig'), route('sshConfig.html'))
-                  .when(UrlHelpers.join(requirementsContext, 'dockerConfig'), route('dockerConfig.html'));
+                  .when(UrlHelpers.join(requirementsContext, 'dockerConfig'), route('dockerConfig.html'))
+                  .when(UrlHelpers.join(requirementsContext, 'status'), fabricRoute('activeProfiles.html'));
   }]);
 
   _module.run(['viewRegistry', 'layoutFull', 'workspace', 'ProfileViewActions', '$location', '$rootScope', (viewRegistry, layoutFull, workspace:Core.Workspace, ProfileViewActions:Fabric.ProfileViewActions, $location, $rootScope) => {
