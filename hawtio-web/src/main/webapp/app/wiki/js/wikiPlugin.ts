@@ -35,7 +35,7 @@ module Wiki {
               when('/wiki' + path + '/dozer/mappings/*page', {templateUrl: 'app/wiki/html/dozerMappings.html'}).
               when('/wiki' + path + '/configurations/*page', { templateUrl: 'app/wiki/html/configurations.html' }).
               when('/wiki' + path + '/configuration/:pid/*page', { templateUrl: 'app/wiki/html/configuration.html' }).
-              when('/wiki' + path + '/configuration/:pid/:factoryPid/*page', { templateUrl: 'app/wiki/html/configuration.html' }).
+              //when('/wiki' + path + '/configuration/:pid/:factoryPid/*page', { templateUrl: 'app/wiki/html/configuration.html' }).
               when('/wiki' + path + '/camel/diagram/*page', {templateUrl: 'app/wiki/html/camelDiagram.html'}).
               when('/wiki' + path + '/camel/canvas/*page', {templateUrl: 'app/wiki/html/camelCanvas.html'}).
               when('/wiki' + path + '/camel/properties/*page', {templateUrl: 'app/wiki/html/camelProperties.html'});

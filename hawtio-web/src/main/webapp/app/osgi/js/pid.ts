@@ -9,6 +9,15 @@ module Osgi {
     $scope.addPropertyDialog = new UI.Dialog();
     $scope.factoryPid = $routeParams.factoryPid;
     $scope.pid = $routeParams.pid || $scope.factoryPid;
+    $scope.factoryInstanceName = null;
+
+    if ($scope.pid && !$scope.factoryPid) {
+      var idx = $scope.pid.indexOf("-");
+      if (idx > 0) {
+        $scope.factoryPid = $scope.pid.substring(0, idx);
+        $scope.factoryInstanceName = $scope.pid.substring(idx + 1, $scope.pid.length);
+      }
+    }
 
     $scope.selectValues = {};
 
@@ -79,12 +88,12 @@ module Osgi {
       //log.info("about to update value " + angular.toJson(data));
 
       var mbean = getHawtioConfigAdminMBean(workspace);
-      if (mbean) {
+      if (mbean || $scope.inFabricProfile) {
         var pidMBean = getSelectionConfigAdminMBean($scope.workspace);
         var pid = $scope.pid;
         var zkPid = $scope.zkPid;
         var factoryPid = $scope.factoryPid;
-        if (factoryPid && pidMBean && !zkPid) {
+        if (!$scope.inFabricProfile && factoryPid && pidMBean && !zkPid) {
           // lets generate a new pid
           $scope.jolokia.execute(pidMBean, "createFactoryConfiguration", factoryPid, onSuccess((response) => {
             pid = response;
@@ -192,17 +201,17 @@ module Osgi {
       updateSchema();
       var configValues = $scope.configValues;
       if (configValues) {
-        var locale = null;
-        var pid = null;
-        var factoryId = configValues["service.factoryPid"];
-        if (factoryId) {
-          pid = factoryId["Value"];
-        }
-        pid = pid || $scope.pid;
-
         if ($scope.profileNotRunning && $scope.profileMetadataMBean && $scope.versionId && $scope.profileId) {
+          var pid = $scope.factoryPid || $scope.pid;
           jolokia.execute($scope.profileMetadataMBean, "getPidMetaTypeObject", $scope.versionId, $scope.profileId, pid, onSuccess(onMetaType));
         } else {
+          var locale = null;
+          var pid = null;
+          var factoryId = configValues["service.factoryPid"];
+          if (factoryId && !pid) {
+            pid = factoryId["Value"];
+          }
+
           var metaTypeMBean = getMetaTypeMBean($scope.workspace);
           if (metaTypeMBean) {
             $scope.jolokia.execute(metaTypeMBean, "getPidMetaTypeObject", pid, locale, onSuccess(onMetaType));
@@ -461,7 +470,7 @@ module Osgi {
     function updateTableContents() {
       $scope.modelLoaded = false;
       if ($scope.inFabricProfile || $scope.profileNotRunning) {
-          jolokia.execute(Fabric.managerMBean, "getOverlayProfileProperties", $scope.versionId, $scope.profileId, $scope.pid, onSuccess(onProfilePropertiesLoaded));
+        jolokia.execute(Fabric.managerMBean, "getOverlayProfileProperties", $scope.versionId, $scope.profileId, $scope.pid, onSuccess(onProfilePropertiesLoaded));
       } else {
         Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, $scope.pid, populateTable);
       }

@@ -318,6 +318,7 @@ module Osgi {
 
     function configureFactoryPidConfig(pid, factoryConfig, config, factoryPid = null) {
       setFactoryPid(factoryConfig, factoryPid, pid);
+      //config["pidLink"] = createPidLink(pid, factoryPid);
       var children = factoryConfig.children;
       if (!children) {
         children = {};
@@ -341,7 +342,7 @@ module Osgi {
         factoryPid = pid;
         pid = null;
       }
-      factoryConfig["pidLink"] = createPidLink(pid, factoryPid);
+      factoryConfig["pidLink"] = createPidLink(factoryPid);
     }
 
     function createPidLink(pid, factoryPid = null) {
