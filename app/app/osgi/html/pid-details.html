@@ -1,5 +1,7 @@
 <div>
-  <h4 title="{{metaType.description}}">{{zkPid || metaType.name || pid}}</h4>
+  <h4 title="{{metaType.description}}">{{zkPid || metaType.name || pid}}
+    <span ng-show="factoryInstanceName">: {{factoryInstanceName}}</span>
+  </h4>
 
   <div ng-hide="editMode">
     <div class="row-fluid">
