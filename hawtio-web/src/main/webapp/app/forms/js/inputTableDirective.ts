@@ -90,7 +90,7 @@ module Forms {
         config.data = scope[config.data];
       }
 
-      var div = $("<div></div>");
+      var div = (<any>$)("<div></div>");
 
       // TODO lets ensure we have some default columns in the column configuration?
       var tableConfig = Core.pathGet(scope, configName);
@@ -160,11 +160,11 @@ module Forms {
         return data;
       }
 
-      var add = null;
-      var edit = null;
-      var remove = null;
-      var addDialog = null;
-      var editDialog = null;
+      var add:any = null;
+      var edit:any = null;
+      var remove:any = null;
+      var addDialog:any = null;
+      var editDialog:any = null;
       var readOnly = attrs["readonly"];
       if (!readOnly) {
         var property = null;
@@ -192,7 +192,7 @@ module Forms {
           var childDataModelName = "addFormConfig";
           if (!addDialog) {
             var title = "Add " + tableName;
-            addDialog = $('<div modal="showAddDialog" close="closeAddDialog()" options="addDialogOptions">\n' +
+            addDialog = (<any>$)('<div modal="showAddDialog" close="closeAddDialog()" options="addDialogOptions">\n' +
               '<div class="modal-header"><h4>' + title + '</h4></div>\n' +
               '<div class="modal-body"><div simple-form="addFormConfig" entity="addEntity" data="'
               + childDataModelName + '" schema="' + schemaName + '"></div></div>\n' +
@@ -251,7 +251,7 @@ module Forms {
           // lets lazily create the edit dialog
           if (!editDialog) {
             var title = "Edit " + tableName;
-            editDialog = $('<div modal="showEditDialog" close="closeEditDialog()" options="editDialogOptions">\n' +
+            editDialog = (<any>$)('<div modal="showEditDialog" close="closeEditDialog()" options="editDialogOptions">\n' +
                     '<div class="modal-header"><h4>' + title + '</h4></div>\n' +
                     '<div class="modal-body"><div simple-form="editFormConfig" entity="editEntity"></div></div>\n' +
                     '<div class="modal-footer">' +
@@ -352,31 +352,31 @@ module Forms {
         controlDiv.append(remove);
       }
 
-      $(div).append(group);
-      $(div).append(table);
-      $(element).append(div);
+      (<any>$)(div).append(group);
+      (<any>$)(div).append(table);
+      (<any>$)(element).append(div);
 
       // compile the template
       this.$compile(div)(scope);
     }
 
     private getAddButton(config) {
-      return $('<button type="button" class="btn add"><i class="' + config.addicon + '"></i> ' + config.addtext + '</button>');
+      return (<any>$)('<button type="button" class="btn add"><i class="' + config.addicon + '"></i> ' + config.addtext + '</button>');
     }
 
     private getEditButton(config) {
-      return $('<button type="button" class="btn edit" ng-disabled="!config.selectedItems.length"><i class="' + config.editicon + '"></i> ' + config.edittext + '</button>');
+      return (<any>$)('<button type="button" class="btn edit" ng-disabled="!config.selectedItems.length"><i class="' + config.editicon + '"></i> ' + config.edittext + '</button>');
     }
 
     private getRemoveButton(config) {
-      return $('<button type="remove" class="btn remove" ng-disabled="!config.selectedItems.length"><i class="' + config.removeicon + '"></i> ' + config.removetext + '</button>');
+      return (<any>$)('<button type="remove" class="btn remove" ng-disabled="!config.selectedItems.length"><i class="' + config.removeicon + '"></i> ' + config.removetext + '</button>');
     }
 
 
     private createTable(config, tableConfig) {
       //var tableType = "hawtio-datatable";
       var tableType = "hawtio-simple-table";
-      var table = $('<table class="' + config.tableclass + '" ' + tableType + '="' + tableConfig + '"></table>');
+      var table = (<any>$)('<table class="' + config.tableclass + '" ' + tableType + '="' + tableConfig + '"></table>');
       //table.find('fieldset').append(this.getLegend(config));
       return table;
     }
@@ -392,7 +392,7 @@ module Forms {
 
 
     private getControlGroup(config, arg, id) {
-      var rc = $('<div class="' + config.controlgroupclass + '"></div>');
+      var rc = (<any>$)('<div class="' + config.controlgroupclass + '"></div>');
       if (angular.isDefined(arg.description)) {
         rc.attr('title', arg.description);
       }
@@ -400,12 +400,12 @@ module Forms {
     }
 
     private getControlDiv(config) {
-      return $('<div class="' + config.controlclass + '"></div>');
+      return (<any>$)('<div class="' + config.controlclass + '"></div>');
     }
 
 
     private getHelpSpan(config, arg, id) {
-      var rc = $('<span class="help-block"></span>');
+      var rc = (<any>$)('<span class="help-block"></span>');
       if (angular.isDefined(arg.type) && config.showtypes !== 'false') {
         rc.append('Type: ' + arg.type);
       }

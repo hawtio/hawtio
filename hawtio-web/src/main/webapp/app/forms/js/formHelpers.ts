@@ -1,3 +1,4 @@
+/// <reference path="../../core/js/coreHelpers.ts"/>
 /// <reference path="../../baseIncludes.ts"/>
 /**
  * @module Forms
@@ -195,7 +196,7 @@ module Forms {
   }
 
   export function getControlGroup(config, arg, id) {
-    var rc = $('<div class="' + config.controlgroupclass + '"></div>');
+    var rc = (<any>$)('<div class="' + config.controlgroupclass + '"></div>');
     if (angular.isDefined(arg.description)) {
       rc.attr('title', arg.description);
     }
@@ -215,19 +216,19 @@ module Forms {
   }
 
   export function getLabel(config, arg, label) {
-    return $('<label class="' + config.labelclass + '">' + label + ': </label>');
+    return (<any>$)('<label class="' + config.labelclass + '">' + label + ': </label>');
   }
 
   export function getControlDiv(config) {
-    return $('<div class="' + config.controlclass + '"></div>');
+    return (<any>$)('<div class="' + config.controlclass + '"></div>');
   }
 
   export function getHelpSpan(config, arg, id) {
     var help = Core.pathGet(config.data, ['properties', id, 'help']);
     if (!Core.isBlank(help)) {
-      return $('<span class="help-block">' + help + '</span>');
+      return (<any>$)('<span class="help-block">' + help + '</span>');
     } else {
-      return $('<span class="help-block"></span>');
+      return (<any>$)('<span class="help-block"></span>');
     }
   }
 
