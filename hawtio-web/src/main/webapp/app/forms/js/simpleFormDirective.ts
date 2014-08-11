@@ -5,7 +5,7 @@ module Forms {
     public name = 'form';
     public method = 'post';
 
-    // the name of the attribute in the scope which is the data to be editted
+    // the name of the attribute in the scope which is the data to be edited
     public entity = 'entity';
 
     // the name of the full schema
@@ -45,6 +45,7 @@ module Forms {
     }
 
     public isReadOnly() {
+      // Aargh, why is this highlighted!  Editor seems to think this is an assignment
       return this.getMode() === "view";
     }
   }
@@ -77,11 +78,11 @@ module Forms {
       var fullSchemaName = attrs["schema"];
       var fullSchema = fullSchemaName ? scope[fullSchemaName] : null;
 
-      var compiledNode = null;
-      var childScope = null;
-      var tabs = null;
-      var fieldset = null;
-      var schema = null;
+      var compiledNode:any = null;
+      var childScope:any = null;
+      var tabs:any = null;
+      var fieldset:any = null;
+      var schema:any = null;
       var configScopeName = attrs[this.attributeName] || attrs["data"];
 
       var firstControl = null;
@@ -120,10 +121,10 @@ module Forms {
 
         if (schema && angular.isDefined(schema.tabs)) {
           tabs.use = true;
-          tabs['div'] = $('<div class="tabbable hawtio-form-tabs"></div>');
+          tabs['div'] = (<any>$)('<div class="tabbable hawtio-form-tabs"></div>');
 
           angular.forEach(schema.tabs, function (value, key) {
-            tabs.elements[key] = $('<div class="tab-pane" title="' + key + '"></div>');
+            tabs.elements[key] = (<any>$)('<div class="tab-pane" title="' + key + '"></div>');
             tabs['div'].append(tabs.elements[key]);
             value.forEach(function (val) {
               tabs.locations[val] = key;
@@ -238,7 +239,7 @@ module Forms {
 
 
         if (compiledNode) {
-          $(compiledNode).remove();
+          (<any>$)(compiledNode).remove();
         }
         if (childScope) {
           childScope.$destroy();
@@ -264,7 +265,7 @@ module Forms {
           var formScope = formName += "$scope";
           forms[formScope] = childScope;
         }
-        $(element).append(compiledNode);
+        (<any>$)(element).append(compiledNode);
 
 
       }
@@ -286,7 +287,7 @@ module Forms {
       }
 
       function findTabOrderValue(id) {
-        var answer = null;
+        var answer:any = null;
         angular.forEach(schema.tabs, function (value, key) {
           value.forEach(function (val) {
             if (!answer && val !== "*" && id.match(val)) {
@@ -295,7 +296,7 @@ module Forms {
           });
         });
         if (!answer) {
-          answer = '*'
+          answer = '*';
         }
         return answer;
       }
@@ -357,7 +358,7 @@ module Forms {
     }
 
     private createForm(config) {
-      var form = $('<form class="' + config.formclass + '" novalidate><fieldset></fieldset></form>');
+      var form = (<any>$)('<form class="' + config.formclass + '" novalidate><fieldset></fieldset></form>');
       form.attr('name', config.name);
       form.attr('action', config.action);
       form.attr('method', config.method);

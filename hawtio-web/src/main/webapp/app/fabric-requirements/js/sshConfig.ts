@@ -1,4 +1,5 @@
 /// <reference path="requirements.ts"/>
+/// <reference path="../../forms/js/inputTableDirective.ts"/>
 module FabricRequirements {
 
   export var SshConfigController = controller("SshConfigController", ["$scope", "jolokia", ($scope, jolokia) => {
@@ -7,7 +8,13 @@ module FabricRequirements {
 
     Fabric.getDtoSchema(undefined, "io.fabric8.api.SshConfiguration", jolokia, (sshConfigurationSchema) => {
       Fabric.getDtoSchema(undefined, "io.fabric8.api.SshHostConfiguration", jolokia, (hostConfigurationSchema) => {
-        Core.pathSet(sshConfigurationSchema, ['properties', 'hosts', 'inputTable'], hostConfigurationSchema);
+
+        var inputTableConfig = new Forms.InputTableConfig();
+        inputTableConfig.data = hostConfigurationSchema;
+        inputTableConfig.json = $scope.requirements.sshConfiguration.hosts;
+
+        Core.pathSet(sshConfigurationSchema, ['properties', 'hosts', 'inputTable'], inputTableConfig);
+
         sshConfigurationSchema['tabs'] = {
           'Hosts': ['hosts'],
           'Defaults': ['defaultUsername', 'defaultPassword', 'defaultPort', 'defaultPrivateKeyFile', 'defaultPassPhrase', 'defaultPath', '*']
