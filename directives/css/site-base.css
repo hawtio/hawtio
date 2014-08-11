@@ -446,10 +446,6 @@ li.attr-column {
   opacity: 1;
 }
 
-.widget-title > div > div .ep {
-  top: -1px;
-}
-
 .widget-body {
   position: absolute;
   top: 20px;
@@ -508,16 +504,25 @@ editable-property {
   position: relative;
 }
 
-.ep[ng-show=editing] {
+.ep.editing {
   position: absolute;
-  top: -20px;
+  top: -10px;
   padding: 0;
   z-index: 10000;
   border: 1px solid #cecdcd;
   white-space: nowrap;
 }
 
-.ep[ng-show=editing] > form > fieldset > i {
+/*
+.widget-title > div > div .ep[ng-show=editing] {
+  top: -1px;
+}
+
+table .ep.editing {
+  top: 12px;
+}
+  */
+.ep.editing > form > fieldset > i {
   position: relative;
   top: 2px;
 }

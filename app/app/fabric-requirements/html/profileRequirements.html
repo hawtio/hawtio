@@ -1,4 +1,11 @@
 <div ng-controller="FabricRequirements.ProfileRequirementsController">
+  <div ng-hide="requirements.profileRequirements.length > 0">
+    <div class="hero-unit">
+      <h3>No profile requirements set</h3>
+      <p>Head over to the <a href="#/fabric/profileView"><strong>profiles</strong></a> page and select some profiles, then click "Add Requirements" to configure the fabric8 auto scaler.</p>
+      <p>Or, you can drag and drop a requirements JSON file here to import your requirements.</p>
+    </div>
+  </div>
   <div class="column-box-half-screen" ng-repeat="profileRequirement in requirements.profileRequirements">
     <div class="row-fluid">
       <div class="span11">

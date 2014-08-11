@@ -4430,6 +4430,23 @@ var UI;
             this.require = 'ngModel';
             this.link = null;
             this.link = function (scope, element, attrs, ngModel) {
+                scope.inputType = attrs['type'] || 'text';
+                scope.min = attrs['min'];
+                scope.max = attrs['max'];
+
+                scope.getText = function () {
+                    if (!scope.text) {
+                        return '';
+                    }
+                    if (scope.inputType === 'password') {
+                        return scope.text.chars().map(function (c) {
+                            return '*';
+                        }).join('');
+                    } else {
+                        return scope.text;
+                    }
+                };
+
                 scope.editing = false;
                 $(element.find(".icon-pencil")[0]).hide();
 
@@ -4452,8 +4469,12 @@ var UI;
                     if (!scope.text) {
                         return {};
                     }
+                    var calculatedWidth = (scope.text + "").length / 1.2;
+                    if (calculatedWidth < 5) {
+                        calculatedWidth = 5;
+                    }
                     return {
-                        width: (scope.text + "").length / 1.5 + 'em'
+                        width: calculatedWidth + 'em'
                     };
                 };
 
@@ -4465,10 +4486,14 @@ var UI;
                     $(element.find(".icon-pencil")[0]).hide();
                 };
 
+                function inputSelector() {
+                    return ':input[type=' + scope.inputType + ']';
+                }
+
                 scope.$watch('editing', function (newValue, oldValue) {
                     if (newValue !== oldValue) {
                         if (newValue) {
-                            $(element.find('input[type=text]')).focus();
+                            $(element.find(inputSelector())).focus();
                         }
                     }
                 });
@@ -4478,12 +4503,12 @@ var UI;
                 };
 
                 scope.stopEdit = function () {
-                    $(element.find(":input[type=text]")[0]).val(ngModel.$viewValue[scope.getPropertyName()]);
+                    $(element.find(inputSelector())[0]).val(ngModel.$viewValue[scope.getPropertyName()]);
                     scope.editing = false;
                 };
 
                 scope.saveEdit = function () {
-                    var value = $(element.find(":input[type=text]")[0]).val();
+                    var value = $(element.find(inputSelector())[0]).val();
                     var obj = ngModel.$viewValue;
 
                     obj[scope.getPropertyName()] = value;
