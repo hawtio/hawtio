@@ -5,6 +5,10 @@
 /// <reference path="fabricGlobals.ts"/>
 /// <reference path="jolokiaHelpers.ts"/>
 /// <reference path="containerHelpers.ts"/>
+/// <reference path="schemaConfigure.ts"/>
+/// <reference path="../../git/js/gitHelpers.ts"/>
+/// <reference path="../../ui/js/dialog.ts"/>
+/// <reference path="../../wiki/js/wikiHelpers.ts"/>
 module Fabric {
 
   export function fabricCreated(workspace) {
