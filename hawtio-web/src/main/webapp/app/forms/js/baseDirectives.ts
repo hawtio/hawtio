@@ -1,7 +1,9 @@
 /**
  * @module Forms
  */
-///<reference path="formHelpers.ts"/>
+/// <reference path="../../baseIncludes.ts"/>
+/// <reference path="mappingRegistry.ts"/>
+
 module Forms {
 
     /**
@@ -15,7 +17,7 @@ module Forms {
     public scope = null;
 
     // Can also be 'view'
-    public mode = 'edit';
+    public mode:string = 'edit';
 
     // the name of the full schema
     public schemaName = "schema";
@@ -51,7 +53,7 @@ module Forms {
       return this.entity || "entity";
     }
 
-    public getMode() {
+    public getMode():string {
       return this.mode || "edit";
     }
 
@@ -111,7 +113,7 @@ module Forms {
       controlDiv.append(this.getInput(config, config, id, modelName));
       controlDiv.append(Forms.getHelpSpan(config, config, id));
       group.append(controlDiv);
-      $(element).append(this.$compile(group)(scope));
+      (<JQueryStatic>$)(element).append(this.$compile(group)(scope));
 
       if (scope && modelName) {
         scope.$watch(modelName, onModelChange);
@@ -126,7 +128,7 @@ module Forms {
     }
 
     public getInput(config, arg, id, modelName) {
-      var rc = $('<span class="form-data"></span>');
+      var rc =(<JQueryStatic>$)('<span class="form-data"></span>');
       if (modelName) {
         rc.attr('ng-model', modelName);
         rc.append('{{' + modelName + '}}')
@@ -138,7 +140,7 @@ module Forms {
 
   export class TextInput extends InputBase {
 
-    public type = "text";
+    public type:string = "text";
 
     constructor(public workspace, public $compile) {
       super(workspace, $compile);
@@ -152,7 +154,7 @@ module Forms {
       if (config.isReadOnly()) {
         return super.getInput(config, arg, id, modelName);
       }
-      var rc = $('<input type="' + this.type + '">');
+      var rc =(<JQueryStatic>$)('<input type="' + this.type + '">');
       rc.attr('name', id);
       if (modelName) {
         rc.attr('ng-model', modelName);
@@ -212,7 +214,7 @@ module Forms {
     public getInput(config, arg, id, modelName) {
       var template = arg.formtemplate;
       template = Core.unescapeHtml(template);
-      var rc = $(template);
+      var rc =(<JQueryStatic>$)(template);
       if (!rc.attr("name")) {
         rc.attr('name', id);
       }
@@ -241,7 +243,7 @@ module Forms {
 
       // TODO we could configure the null option...
       var defaultOption = required ? "" : '<option value=""></option>';
-      var rc = $('<select>' + defaultOption + '</select>');
+      var rc =(<JQueryStatic>$)('<select>' + defaultOption + '</select>');
       rc.attr('name', id);
 
       var scope = config.scope;
@@ -288,7 +290,7 @@ module Forms {
       if (config.isReadOnly()) {
         return super.getInput(config, arg, id, modelName);
       }
-      var rc = $('<input type="number">');
+      var rc =(<JQueryStatic>$)('<input type="number">');
       rc.attr('name', id);
 
       if (angular.isDefined(arg.def)) {
@@ -344,7 +346,7 @@ module Forms {
 
       var readOnlyWidget = '{{' + rowScopeName + '}}';
       if (config.isReadOnly()) {
-        return $('<ul><li ng-repeat="' + rowScopeName + ' in ' + modelName + '">' +
+        return(<JQueryStatic>$)('<ul><li ng-repeat="' + rowScopeName + ' in ' + modelName + '">' +
                 readOnlyWidget +
                 '</li></ul>');
       } else {
@@ -407,12 +409,12 @@ module Forms {
 
         var widget = Forms.createWidget(propTypeName, property, schema, itemsConfig, itemId, ignorePrefixInLabel, configScopeName, wrapInGroup, disableHumanizeLabel);
         if (!widget) {
-          widget = $(readOnlyWidget);
+          widget =(<JQueryStatic>$)(readOnlyWidget);
         }
-        var markup = $('<div style="white-space: nowrap" ng-repeat="' + rowScopeName + ' in ' + itemKeys + '"></div>');
+        var markup =(<JQueryStatic>$)('<div style="white-space: nowrap" ng-repeat="' + rowScopeName + ' in ' + itemKeys + '"></div>');
         markup.append(widget);
-        markup.append($('<a ng-click="' + removeMethod + '(' + rowScopeName + ')" title="Remove this value"><i class="red icon-remove"></i></a>'));
-        markup.after($('<a ng-click="' + addMethod + '()" title="Add a new value"><i class="icon-plus"></i></a>'));
+        markup.append((<JQueryStatic>$)('<a ng-click="' + removeMethod + '(' + rowScopeName + ')" title="Remove this value"><i class="red icon-remove"></i></a>'));
+        markup.after((<JQueryStatic>$)('<a ng-click="' + addMethod + '()" title="Add a new value"><i class="icon-plus"></i></a>'));
         return markup;
       }
 
@@ -455,7 +457,8 @@ module Forms {
       // create a table UI!
       var tableConfigPaths = ["properties", id, "inputTable"];
       //var scope = config.scope;
-      var tableConfig = null; Core.pathGet(scope, tableConfigPaths);
+      var tableConfig:any = null;
+      Core.pathGet(scope, tableConfigPaths);
       // lets auto-create a default configuration if there is none
       if (!tableConfig) {
         // TODO ideally we should merge this config with whatever folks have hand-defined
@@ -480,13 +483,13 @@ module Forms {
         };
         Core.pathSet(scope, tableConfigPaths, tableConfig);
       }
-      var table = $('<div hawtio-input-table="' + tableConfigScopeName + '" data="' + dataName
+      var table =(<JQueryStatic>$)('<div hawtio-input-table="' + tableConfigScopeName + '" data="' + dataName
         + '" property="' + id + '" entity="' + entityName
         + '" schema="' + schemaName + '"></div>');
       if (config.isReadOnly()) {
         table.attr("readonly", "true");
       }
-      $(element).append(this.$compile(table)(scope));
+     (<JQueryStatic>$)(element).append(this.$compile(table)(scope));
 
     }
   }
@@ -501,7 +504,7 @@ module Forms {
 
     public getInput(config, arg, id, modelName) {
 
-      var rc = $('<input class="hawtio-checkbox" type="checkbox">');
+      var rc =(<JQueryStatic>$)('<input class="hawtio-checkbox" type="checkbox">');
       rc.attr('name', id);
 
       if (config.isReadOnly()) {

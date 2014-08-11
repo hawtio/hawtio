@@ -9,11 +9,7 @@ module FabricRequirements {
     Fabric.getDtoSchema(undefined, "io.fabric8.api.SshConfiguration", jolokia, (sshConfigurationSchema) => {
       Fabric.getDtoSchema(undefined, "io.fabric8.api.SshHostConfiguration", jolokia, (hostConfigurationSchema) => {
 
-        var inputTableConfig = new Forms.InputTableConfig();
-        inputTableConfig.data = hostConfigurationSchema;
-        inputTableConfig.json = $scope.requirements.sshConfiguration.hosts;
-
-        Core.pathSet(sshConfigurationSchema, ['properties', 'hosts', 'inputTable'], inputTableConfig);
+        Core.pathSet(sshConfigurationSchema, ['definitions', 'hosts'], hostConfigurationSchema);
 
         sshConfigurationSchema['tabs'] = {
           'Hosts': ['hosts'],

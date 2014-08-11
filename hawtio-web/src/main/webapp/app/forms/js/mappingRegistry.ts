@@ -10,8 +10,8 @@ module Forms {
    * This will include either the standard AngularJS widgets or custom widgets
    */
   export function createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName, wrapInGroup = true, disableHumanizeLabel = false) {
-    var input = null;
-    var group = null;
+    var input:JQuery = null;
+    var group:JQuery = null;
 
     function copyElementAttributes(element, propertyName) {
       var propertyAttributes = property[propertyName];
@@ -48,7 +48,7 @@ module Forms {
     // inputMarkup = null;
 
     if (inputMarkup) {
-      input = $(inputMarkup);
+      input = (<JQueryStatic>$)(inputMarkup);
 
       copyAttributes();
 
@@ -112,7 +112,7 @@ module Forms {
           };
           var fn = onModelChange;
           // allow custom converters
-          var converterFn = options.valueConverter;
+          var converterFn:(scope, modelName) => void = options.valueConverter;
           if (converterFn) {
             fn = function() {
               converterFn(scope, modelName);
@@ -124,7 +124,7 @@ module Forms {
         }
       }
     } else {
-      input = $('<div></div>');
+      input = (<JQueryStatic>$)('<div></div>');
       input.attr(Forms.normalize(propTypeName, property, schema), '');
 
       copyAttributes();
@@ -248,11 +248,11 @@ module Forms {
     if (!angular.isString(type)) {
       return null;
     }
-    var defaultValueConverter = null;
+    var defaultValueConverter:(scope:any, modelName:string) => void = null;
     var defaultValue = property.default;
     if (defaultValue) {
         // lets add a default value
-        defaultValueConverter = function (scope, modelName) {
+        defaultValueConverter = (scope, modelName):void => {
           var value = Core.pathGet(scope, modelName);
           if (!value)  {
             Core.pathSet(scope, modelName, property.default);
@@ -303,13 +303,7 @@ module Forms {
       case "java.util.iterator":
       case "java.util.set":
       case "object[]":
-
-        // TODO hack for now - objects should not really use the table, thats only really for arrays...
-        /*
-         case "object":
-         case "java.lang.object":
-         */
-        //return "hawtio-form-array";
+        // no standard markup for these types
         return null;
 
       case "boolean":
@@ -330,13 +324,14 @@ module Forms {
 
       case "hidden":
         return '<input type="hidden"/>';
+
       default:
         // lets check if this name is an alias to a definition in the schema
         return '<input type="text"/>';
     }
   }
 
-  export function normalize(type, property, schema) {
+  export function normalize(type, property:any, schema) {
     type = Forms.resolveTypeNameAlias(type, schema);
     if (!type) {
       return "hawtio-form-text";
@@ -385,13 +380,7 @@ module Forms {
       case "java.util.iterator":
       case "java.util.set":
       case "object[]":
-
-        // TODO hack for now - objects should not really use the table, thats only really for arrays...
-        /*
-         case "object":
-         case "java.lang.object":
-         */
-        var items = property.items;
+        var items:any = property.items;
         if (items) {
           var typeName = items.type;
           if (typeName && typeName === "string") {
@@ -402,6 +391,7 @@ module Forms {
           // at least that provides a form of some kind
           return "hawtio-form-string-array";
         }
+        log.debug("Returning hawtio-form-array for : ", property);
         return "hawtio-form-array";
       case "boolean":
       case "bool":

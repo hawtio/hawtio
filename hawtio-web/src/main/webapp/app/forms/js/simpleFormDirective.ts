@@ -12,7 +12,7 @@ module Forms {
     public schemaName = 'schema';
 
     // set to 'view' or 'create' for different modes
-    public mode = 'edit';
+    public mode:string = 'edit';
 
     // the definition of the form
     public data:any = {};
@@ -36,7 +36,7 @@ module Forms {
 
     public onsubmit = 'onSubmit';
 
-    public getMode() {
+    public getMode():string {
       return this.mode || "edit";
     }
 
@@ -45,7 +45,6 @@ module Forms {
     }
 
     public isReadOnly() {
-      // Aargh, why is this highlighted!  Editor seems to think this is an assignment
       return this.getMode() === "view";
     }
   }
