@@ -42,7 +42,7 @@ module Fabric {
   }
 
   export interface HostConfiguration {
-    hostname:String;
+    hostName:String;
     port:Number;
     username:String;
     password:String;

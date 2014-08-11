@@ -1,3 +1,91 @@
 <div ng-controller="FabricRequirements.SshConfigController">
-  <div hawtio-form name="sshConfig" data="formConfig" entity="requirements.sshConfiguration" schema="formConfig"></div>
+  <div class="row-fluid">
+    <div class="span12">
+      <h3>Defaults</h3>
+      <div hawtio-form
+           name="sshConfig"
+           data="formConfig"
+           entity="requirements.sshConfiguration"
+           onSubmit="noop()"></div>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <h3>Hosts</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Hostname</th>
+            <th>User</th>
+            <th>Password</th>
+            <th>Port</th>
+            <th>Private Key</th>
+            <th>Pass Phrase</th>
+            <th>Maximum</th>
+            <th>Path</th>
+            <th>Address</th>
+            <th>Tags</th>
+            <th><i class="icon-plus-sign green mouse-pointer" ng-click="addHost()"></i></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="host in requirements.sshConfiguration.hosts track by $index">
+            <td>
+              <editable-property ng-model="host"
+                                 property="hostName"
+                                 on-save="onChange()"></editable-property>
+            </td>
+            <td>
+              <editable-property ng-model="host"
+                                 property="username"
+                                 on-save="onChange()"></editable-property>
+            </td>
+            <td>
+              <editable-property ng-model="host"
+                                 type="password"
+                                 property="password"
+                                 on-save="onChange()"></editable-property>
+            </td>
+            <td>
+              <editable-property ng-model="host"
+                                 property="port"
+                                 type="number"
+                                 min="0"
+                                 on-save="onChange()"></editable-property>
+            </td>
+            <td>
+              <editable-property ng-model="host"
+                                 property="privateKeyFile"
+                                 on-save="onChange()"></editable-property>
+            </td>
+            <td>
+              <editable-property ng-model="host"
+                                 type="password"
+                                 property="passPhrase"
+                                 on-save="onChange()"></editable-property>
+            </td>
+            <td>
+              <editable-property ng-model="host"
+                                 type="number"
+                                 min="0"
+                                 property="maximumContainerCount"
+                                 on-save="onChange()"></editable-property>
+            </td>
+            <td>
+              <editable-property ng-model="host"
+                                 property="path"
+                                 on-save="onChange()"></editable-property>
+            </td>
+            <td>
+              <editable-property ng-model="host"
+                                 property="preferredAddress"
+                                 on-save="onChange()"></editable-property>
+            </td>
+            <td>{{host.tags}}</td>
+            <td><i class="icon-remove red mouse-pointer" ng-click="removeHost(host)"></i></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

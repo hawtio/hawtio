@@ -241,10 +241,10 @@ module Core {
     });
 
     setTimeout(() => {
-      $("#main-body").fadeIn(2000).after(() => {
+      (<JQueryStatic>$)("#main-body").fadeIn(2000).after(() => {
         Logger.get("Core").info(branding.appName + " started");
         Core.$apply($rootScope);
-        $(window).trigger('resize');
+        (<JQueryStatic>$)(window).trigger('resize');
       });
     }, 500);
   }]); // end _module.run
@@ -261,7 +261,7 @@ hawtioPluginLoader.addModule('angularFileUpload');
 
 // add bootstrap style tooltips
 hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
-  $("a[title]").tooltip({
+  (<JQueryStatic>$)("a[title]").tooltip({
     selector: '',
     delay: { show: 1000, hide: 100 }
   });
@@ -272,7 +272,7 @@ hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
 // viewport
 hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
   Core.adjustHeight();
-  $(window).resize(Core.adjustHeight);
+  (<JQueryStatic>$)(window).resize(Core.adjustHeight);
   nextTask();
 });
 
