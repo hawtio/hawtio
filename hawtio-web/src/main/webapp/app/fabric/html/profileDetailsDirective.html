@@ -130,6 +130,41 @@ So they are for implementation inheritance rather like Abstract Base Classes in 
           </ul>
         </div>
         <div>
+          <h4>Artifacts ({{row.bundles.length + row.fabs.length}})</h4>
+          <ul class="unstyled">
+            <li ng-repeat="bundle in row.bundles">
+              <i class="red clickable icon-remove" title="Delete {{bundle}}"
+                 ng-click="deleteThing('Bundle', 'Bundles', row.bundles, bundle)"></i>
+              <a ng-href="{{mavenLink(bundle)}}">
+                <editable-property ng-model="row.bundles" property="$index"
+                                   on-save="updateThing('Bundle', 'Bundles',  row.bundles)"></editable-property>
+              </a>
+            </li>
+            <li ng-repeat="fab in row.fabs">
+              <i class="red clickable icon-remove" title="Delete {{fab}}"
+                 ng-click="deleteThing('Fuse Application Bundle', 'Fabs', row.fabs, fab)"></i>
+              <editable-property ng-model="row.fabs" property="$index"
+                                 on-save="updateThing('Fuse Application Bundle', 'Fabs',  row.fabs)"></editable-property>
+
+            </li>
+            <li class="add">
+              <div>
+                <form ng-submit="addNewThing('Bundle', 'Bundles', row.bundles)">
+                  <span><strong>Add: </strong></span>
+                  <input class="input-xxlarge" type="text" ng-model="newThingName"
+                         typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue"
+                         typeahead-wait-ms="200">
+                  <i class="clickable icon-plus green" ng-click="addNewThing('Bundle', 'Bundles', row.bundles)"
+                     title="Add Bundle"></i>
+                            <span class="help-block">
+                              example: "mvn:group.id/artifact.id/version"
+                            </span>
+                </form>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div>
           <h4>Features ({{row.features.length}})</h4>
           <ul class="unstyled">
             <li ng-repeat="feature in row.features">
@@ -170,54 +205,7 @@ So they are for implementation inheritance rather like Abstract Base Classes in 
           </ul>
         </div>
 
-        <div>
-          <h4>Bundles ({{row.bundles.length}})</h4>
-          <ul class="unstyled">
-            <li ng-repeat="bundle in row.bundles">
-              <i class="red clickable icon-remove" title="Delete {{bundle}}"
-                 ng-click="deleteThing('Bundle', 'Bundles', row.bundles, bundle)"></i>
-              <a ng-href="{{mavenLink(bundle)}}">
-                <editable-property ng-model="row.bundles" property="$index"
-                                   on-save="updateThing('Bundle', 'Bundles',  row.bundles)"></editable-property>
-              </a>
-            </li>
-              <li class="add">
-                <div>
-                  <form ng-submit="addNewThing('Bundle', 'Bundles', row.bundles)">
-                    <span><strong>Add: </strong></span>
-                    <input class="input-xxlarge" type="text" ng-model="newThingName" typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue" typeahead-wait-ms="200">
-                    <i class="clickable icon-plus green" ng-click="addNewThing('Bundle', 'Bundles', row.bundles)" title="Add Bundle"></i>
-                    <span class="help-block">
-                      example: "mvn:group.id/artifact.id/version"
-                    </span>
-                  </form>
-                </div>
-              </li>
-          </ul>
-        </div>
 
-        <div>
-          <h4>FABs ({{row.fabs.length}})</h4>
-          <ul class="unstyled">
-            <li ng-repeat="fab in row.fabs">
-              <i class="red clickable icon-remove" title="Delete {{fab}}"
-                 ng-click="deleteThing('Fuse Application Bundle', 'Fabs', row.fabs, fab)"></i>
-              <editable-property ng-model="row.fabs" property="$index"
-                                 on-save="updateThing('Fuse Application Bundle', 'Fabs',  row.fabs)"></editable-property>
-
-            </li>
-              <li class="add">
-                <form ng-submit="addNewThing('Fuse Application Bundle', 'Fabs', row.fabs)">
-                  <span><strong>Add: </strong></span>
-                  <input class="input-xxlarge" type="text" ng-model="newThingName" typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue" typeahead-wait-ms="200">
-                  <i class="clickable icon-plus green" ng-click="addNewThing('Fuse Application Bundle', 'Fabs', row.fabs)" title="Add Fuse Application Bundle"></i>
-                  <span class="help-block">
-                    example: "mvn:group.id/artifact.id/version"
-                  </span>
-                </form>
-              </li>
-          </ul>
-        </div>
       </div>
     </div>
   </div>
