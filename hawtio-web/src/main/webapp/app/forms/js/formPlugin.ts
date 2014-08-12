@@ -7,6 +7,7 @@
 module Forms {
 
   export var pluginName = 'hawtio-forms';
+  export var templateUrl = 'app/forms/html/';
 
   export var _module = angular.module(Forms.pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'datatable', 'ui.bootstrap', 'ui.bootstrap.dialog', 'hawtio-ui']);
 

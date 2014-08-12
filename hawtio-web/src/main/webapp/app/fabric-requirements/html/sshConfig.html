@@ -9,94 +9,18 @@
            onSubmit="noop()"></div>
     </div>
   </div>
-  <div ng-show="!requirements.sshConfiguration || !requirements.sshConfiguration.hosts || requirements.sshConfiguration.hosts.length == 0" class="row-fluid">
-    <div class="span12">
-      <div class="hero-unit">
-        <h5>No SSH Hosts Configured</h5>
-        <p><a href="" ng-click="addHost()">Add a host</a> to configure the SSH hosts that the fabric8 auto-scaler can use to deploy containers on.</p>
-      </div>
+  <script type="text/ng-template" id="noDataTemplate">
+    <div class="hero-unit">
+      <h5>No SSH Hosts Configured</h5>
+      <p><a href="" ng-click="addThing()">Add a host</a> to configure the SSH hosts that the fabric8 auto-scaler can use to deploy containers on.</p>
     </div>
-  </div>
-  <div ng-hide="!requirements.sshConfiguration || !requirements.sshConfiguration.hosts || requirements.sshConfiguration.hosts.length == 0" class="row-fluid">
-    <div class="span12">
-      <h3>Hosts</h3>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Hostname</th>
-            <th>User</th>
-            <th>Password</th>
-            <th>Port</th>
-            <th>Private Key</th>
-            <th>Pass Phrase</th>
-            <th>Maximum</th>
-            <th>Path</th>
-            <th>Address</th>
-            <th>Tags</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="host in requirements.sshConfiguration.hosts track by $index">
-            <td>
-              <editable-property ng-model="host"
-                                 property="hostName"
-                                 on-save="onChange()"></editable-property>
-            </td>
-            <td>
-              <editable-property ng-model="host"
-                                 property="username"
-                                 on-save="onChange()"></editable-property>
-            </td>
-            <td>
-              <editable-property ng-model="host"
-                                 type="password"
-                                 property="password"
-                                 on-save="onChange()"></editable-property>
-            </td>
-            <td>
-              <editable-property ng-model="host"
-                                 property="port"
-                                 type="number"
-                                 min="0"
-                                 on-save="onChange()"></editable-property>
-            </td>
-            <td>
-              <editable-property ng-model="host"
-                                 property="privateKeyFile"
-                                 on-save="onChange()"></editable-property>
-            </td>
-            <td>
-              <editable-property ng-model="host"
-                                 type="password"
-                                 property="passPhrase"
-                                 on-save="onChange()"></editable-property>
-            </td>
-            <td>
-              <editable-property ng-model="host"
-                                 type="number"
-                                 min="0"
-                                 property="maximumContainerCount"
-                                 on-save="onChange()"></editable-property>
-            </td>
-            <td>
-              <editable-property ng-model="host"
-                                 property="path"
-                                 on-save="onChange()"></editable-property>
-            </td>
-            <td>
-              <editable-property ng-model="host"
-                                 property="preferredAddress"
-                                 on-save="onChange()"></editable-property>
-            </td>
-            <td>{{host.tags}}</td>
-            <td><i class="icon-remove red mouse-pointer" ng-click="removeHost($index)"></i></td>
-          </tr>
-        </tbody>
-      </table>
-      <div ng-click="addHost()" class="centered mouse-pointer">
-        <i class="icon-plus green" ng-click="addHost()"></i> Add Host
-      </div>
-    </div>
-  </div>
+  </script>
+
+  <script type="text/ng-template" id="tableTemplate">
+    <div hawtio-form-grid="gridConfig"></div>
+  </script>
+
+  <div compile="tableTemplate"></div>
+
+
 </div>

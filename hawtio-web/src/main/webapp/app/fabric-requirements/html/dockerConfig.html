@@ -1,3 +1,14 @@
 <div ng-controller="FabricRequirements.DockerConfigController">
-  <div hawtio-form name="dockerConfig" data="formConfig" entity="requirements.dockerConfiguration"></div>
+  <script type="text/ng-template" id="noDataTemplate">
+    <div class="hero-unit">
+      <h5>No Docker Hosts Configured</h5>
+      <p><a href="" ng-click="addThing()">Add a host</a> to configure Docker hosts that the fabric8 auto-scaler can use to deploy containers on.</p>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="tableTemplate">
+    <div hawtio-form-grid="gridConfig"></div>
+  </script>
+
+  <div compile="tableTemplate"></div>
 </div>

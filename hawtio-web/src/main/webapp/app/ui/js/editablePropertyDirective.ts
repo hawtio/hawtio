@@ -81,7 +81,7 @@ module UI {
         scope.$watch('editing', (newValue, oldValue) => {
           if (newValue !== oldValue) {
             if (newValue) {
-              (<JQueryStatic>$)(element.find(inputSelector())).focus();
+              (<JQueryStatic>$)(element.find(inputSelector())).focus().select();
             }
           }
         });

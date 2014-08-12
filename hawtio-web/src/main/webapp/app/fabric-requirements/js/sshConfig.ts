@@ -1,6 +1,5 @@
 /// <reference path="requirements.ts"/>
-/// <reference path="../../forms/js/baseDirectives.ts"/>
-/// <reference path="../../forms/js/inputTableDirective.ts"/>
+/// <reference path="../../forms/js/formGrid.ts"/>
 module FabricRequirements {
 
   export var SshConfigController = controller("SshConfigController", ["$scope", "jolokia", "$templateCache", ($scope, jolokia, $templateCache) => {
@@ -11,63 +10,67 @@ module FabricRequirements {
       }
     };
 
+    $scope.tableTemplate = '';
+
+    if (!$scope.requirements.sshConfiguration) {
+      $scope.requirements.sshConfiguration = Fabric.createSshConfiguration();
+    }
+    if (!$scope.requirements.sshConfiguration.hosts) {
+      $scope.requirements.sshConfiguration.hosts = <Array<Fabric.SshHostConfiguration>> [];
+    }
+
+    $scope.gridConfig = Forms.createFormGridConfiguration();
+
+    $scope.$watch("requirements.sshConfiguration.hosts", (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.requirements.$dirty = true;
+      }
+    }, true);
+
     $scope.$watch("forms.sshConfig.$dirty", (newValue) => {
       if (newValue) {
         $scope.requirements.$dirty = true;
       }
     });
 
-    $scope.removeHost = ($index) => {
-      $scope.requirements.sshConfiguration.hosts.removeAt($index);
-      $scope.requirements.$dirty = true;
-    };
-
     $scope.noop = () => {};
-
-    $scope.addHost = () => {
-      if (!$scope.requirements.sshConfiguration) {
-        $scope.requirements.sshConfiguration = Fabric.createSshConfiguration();
-      }
-      if (!$scope.requirements.sshConfiguration.hosts) {
-        $scope.requirements.sshConfiguration.hosts = <Array<Fabric.SshHostConfiguration>> [];
-      }
-      var newHost = Fabric.createSshHostConfiguration();
-      newHost.hostName = 'newHost';
-      $scope.requirements.sshConfiguration.hosts.push(newHost);
-      $scope.requirements.$dirty = true;
-    };
 
     Fabric.getDtoSchema(undefined, "io.fabric8.api.SshConfiguration", jolokia, (sshConfigurationSchema) => {
       Fabric.getDtoSchema(undefined, "io.fabric8.api.SshHostConfiguration", jolokia, (hostConfigurationSchema) => {
 
-        Core.pathSet(sshConfigurationSchema, ['properties', 'hosts', 'formTemplate'], $templateCache.get("hostsTemplate.html"));
+        // Override these elements since they're passwords
+        ['defaultPassword', 'defaultPassPhrase'].forEach((s) => {
+          Core.pathSet(sshConfigurationSchema, ['properties', s, 'type'], 'password');
+        });
+        ['password', 'passPhrase'].forEach((s) => {
+          Core.pathSet(hostConfigurationSchema, ['properties', s, 'type'], 'password');
+        });
 
-        Core.pathSet(sshConfigurationSchema, ['properties', 'defaultPassword', 'type'], 'password');
-        Core.pathSet(sshConfigurationSchema, ['properties', 'defaultPassPhrase', 'type'], 'password');
-
+        // Order the form elements nicely
         sshConfigurationSchema['tabs'] = {
           'Defaults': ['defaultUsername', 'defaultPassword', 'defaultPort', 'defaultPrivateKeyFile', 'defaultPassPhrase', 'defaultPath', '*']
         };
 
+        // We don't want the form plugin to handle this guy
         delete sshConfigurationSchema.properties.hosts;
 
-        var hostsTableConfig = {
-          selectedItems: [],
-          data: 'requirements.sshConfiguration.hosts',
-          columnDefs: <Array<any>>[]
+        $scope.gridConfig.rowSchema = hostConfigurationSchema;
+
+        // Order the columns in the hosts config nicely
+        $scope.gridConfig.rowName = "host";
+        $scope.gridConfig.heading = true;
+        $scope.gridConfig.noDataTemplate = $templateCache.get('noDataTemplate');
+        $scope.gridConfig.rowSchema.columnOrder = ['hostName', 'port', 'username', 'password', 'privateKeyFile', 'passPhrase', 'path', 'preferredAddress', 'tags'];
+        $scope.gridConfig.rows = $scope.requirements.sshConfiguration.hosts;
+        $scope.gridConfig.onAdd = () => {
+          var answer = Fabric.createSshHostConfiguration();
+          answer.hostName = 'New Host';
+          return answer;
         };
 
-        angular.forEach(hostConfigurationSchema.properties, (value, key) => {
-          log.debug("hostConfigSchema, key:", key, " value:", value);
-          hostsTableConfig.columnDefs.push({
-            field: key,
-            displayName: key
-          });
-        });
-
-        $scope.hostsTableConfig = hostsTableConfig;
-        log.debug("Schema: ", sshConfigurationSchema);
         $scope.formConfig = sshConfigurationSchema;
+
+        $scope.tableTemplate = $templateCache.get('tableTemplate');
         Core.$apply($scope);
       });
     });

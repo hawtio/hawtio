@@ -331,6 +331,41 @@ module Forms {
     }
   }
 
+  export function mapType(type:String):String {
+    switch (type.toLowerCase()) {
+      case "int":
+      case "integer":
+      case "long":
+      case "short":
+      case "java.lang.integer":
+      case "java.lang.long":
+      case "float":
+      case "double":
+      case "java.lang.float":
+      case "java.lang.double":
+        return "number";
+      case "array":
+      case "java.lang.array":
+      case "java.lang.iterable":
+      case "java.util.list":
+      case "java.util.collection":
+      case "java.util.iterator":
+      case "java.util.set":
+      case "object[]":
+        return "text";
+      case "boolean":
+      case "bool":
+      case "java.lang.boolean":
+        return "checkbox";
+      case "password":
+        return "password";
+      case "hidden":
+        return "hidden";
+      default:
+        return "text";
+    }
+  }
+
   export function normalize(type, property:any, schema) {
     type = Forms.resolveTypeNameAlias(type, schema);
     if (!type) {
