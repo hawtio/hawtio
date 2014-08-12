@@ -56,7 +56,11 @@ public class RedirectFilter implements Filter {
         String myContext = uriParts[0];
         // pass along (hopefully) any files
         String lastPart = uriParts[uriParts.length - 1];
-        if (lastPart.contains(".")) {
+        if (lastPart.contains(".") && !lastPart.endsWith(".profile")) {
+            // TODO if we get a 404 and we know its not a standard
+            // file like a .css / .js / image then should we still
+            // return the index.html?
+            // e.g. what if we are viewing a properties file inside the wiki?
             chain.doFilter(request, response);
             return;
         }
