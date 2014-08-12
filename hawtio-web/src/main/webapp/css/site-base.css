@@ -1690,21 +1690,25 @@ input[type="checkbox"].ng-invalid {
   top: -5px;
 }
 
-.profile-details div .tab-pane ul li i {
+.deployment-pane h3 {
+  margin-top: 0px;
+}
+
+.deployment-pane ul li i {
   display: inline-block;
   white-space: nowrap;
 }
 
-.profile-details div .tab-pane ul li {
+.deployment-pane ul li {
   white-space: nowrap;
   padding: 7px;
 }
 
-.profile-details div .tab-pane ul li editable-property {
+.deployment-pane ul li editable-property {
   display: inline-block;
 }
 
-.profile-details div .tab-pane ul li .ep {
+.deployment-pane ul li .ep {
   display: inline-block;
 }
 

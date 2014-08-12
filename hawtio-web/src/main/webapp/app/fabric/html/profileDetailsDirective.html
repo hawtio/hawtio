@@ -105,50 +105,82 @@ So they are for implementation inheritance rather like Abstract Base Classes in 
       </div>
 
 
-      <div class="span9">
-
-        <div class="tabbable hawtio-form-tabs" ng-model="activeTab">
-
-          <div class="tab-pane" value="features" title="Features ({{row.features.length}})">
-            <ul class="unstyled">
-              <li ng-repeat="feature in row.features">
-                <i class="red clickable icon-remove" title="Delete {{feature}}" ng-click="deleteThing('Feature', 'Features', row.features, feature)"></i>
-                <editable-property ng-model="row.features" property="$index" on-save="updateThing('Feature', 'Features',  row.features)"></editable-property>
-              </li>
-              <li class="add green">
-                <i class="clickable icon-edit green" ng-click="goto('/wiki/profile/{{versionId}}/{{profileId}}/editFeatures')" title="Edit features"></i>
-              </li>
-            </ul>
-          </div>
-
-
-          <div class="tab-pane" value="repos" title="Feature Repositories ({{row.repositories.length}})">
-            <ul class="unstyled">
-              <li ng-repeat="repository in row.repositories">
-                <i class="red clickable icon-remove" title="Delete {{repository}}" ng-click="deleteThing('Feature Repository', 'Repositories', row.repositories, repository)"></i>
-                <editable-property ng-model="row.repositories" property="$index" on-save="updateThing('Feature Repository', 'Repositories',  row.repositories)"></editable-property>
-              </li>
-              <li class="add">
-                <form ng-submit="addNewThing('Feature Repository', 'Repositories', row.repositories)">
+      <div class="span9 deployment-pane">
+        <div>
+          <h3>Deployments</h3>
+          <ul class="unstyled">
+            <li class="add">
+              <div>
+                <form ng-submit="addNewThing('Bundle', 'Bundles', row.bundles)">
                   <span><strong>Add: </strong></span>
-                  <input class="input-xxlarge" type="text" ng-model="newThingName" typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue" typeahead-wait-ms="200">
-                  <i class="clickable icon-plus green" ng-click="addNewThing('Feature Repository', 'Repositories', row.repositories)" title="Add Feature Repository"></i>
+                  <input class="input-xxlarge" type="text" ng-model="newThingName"
+                         typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue"
+                         typeahead-wait-ms="200">
+                  <i class="clickable icon-plus green" ng-click="addNewThing('Bundle', 'Bundles', row.bundles)"
+                     title="Add Bundle"></i>
+                                <span class="help-block">
+                                  example: "mvn:group.id/artifact.id/version"
+                                </span>
+                </form>
+              </div>
+              <div>
+                <div fabric-deploy-artifact version-id="{{versionId}}" profile-id="{{row.id}}"></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Features ({{row.features.length}})</h4>
+          <ul class="unstyled">
+            <li ng-repeat="feature in row.features">
+              <i class="red clickable icon-remove" title="Delete {{feature}}"
+                 ng-click="deleteThing('Feature', 'Features', row.features, feature)"></i>
+              <editable-property ng-model="row.features" property="$index"
+                                 on-save="updateThing('Feature', 'Features',  row.features)"></editable-property>
+            </li>
+            <li class="add green">
+              <i class="clickable icon-edit green"
+                 ng-click="goto('/wiki/profile/{{versionId}}/{{profileId}}/editFeatures')" title="Edit features"></i>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Feature Repositories ({{row.repositories.length}})</h4>
+          <ul class="unstyled">
+            <li ng-repeat="repository in row.repositories">
+              <i class="red clickable icon-remove" title="Delete {{repository}}"
+                 ng-click="deleteThing('Feature Repository', 'Repositories', row.repositories, repository)"></i>
+              <editable-property ng-model="row.repositories" property="$index"
+                                 on-save="updateThing('Feature Repository', 'Repositories',  row.repositories)"></editable-property>
+            </li>
+            <li class="add">
+              <form ng-submit="addNewThing('Feature Repository', 'Repositories', row.repositories)">
+                <span><strong>Add: </strong></span>
+                <input class="input-xxlarge" type="text" ng-model="newThingName"
+                       typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue"
+                       typeahead-wait-ms="200">
+                <i class="clickable icon-plus green"
+                   ng-click="addNewThing('Feature Repository', 'Repositories', row.repositories)"
+                   title="Add Feature Repository"></i>
                   <span class="help-block">
                     example: "mvn:group.id/artifact.id/version/xml/features"
                   </span>
-                </form>
-              </li>
-            </ul>
-          </div>
+              </form>
+            </li>
+          </ul>
+        </div>
 
-          <div class="tab-pane" value="bundles" title="Bundles ({{row.bundles.length}})">
-            <ul class="unstyled">
-              <li ng-repeat="bundle in row.bundles">
-                <i class="red clickable icon-remove" title="Delete {{bundle}}" ng-click="deleteThing('Bundle', 'Bundles', row.bundles, bundle)"></i>
-                <a ng-href="{{mavenLink(bundle)}}">
-                  <editable-property ng-model="row.bundles" property="$index" on-save="updateThing('Bundle', 'Bundles',  row.bundles)"></editable-property>
-                </a>
-              </li>
+        <div>
+          <h4>Bundles ({{row.bundles.length}})</h4>
+          <ul class="unstyled">
+            <li ng-repeat="bundle in row.bundles">
+              <i class="red clickable icon-remove" title="Delete {{bundle}}"
+                 ng-click="deleteThing('Bundle', 'Bundles', row.bundles, bundle)"></i>
+              <a ng-href="{{mavenLink(bundle)}}">
+                <editable-property ng-model="row.bundles" property="$index"
+                                   on-save="updateThing('Bundle', 'Bundles',  row.bundles)"></editable-property>
+              </a>
+            </li>
               <li class="add">
                 <div>
                   <form ng-submit="addNewThing('Bundle', 'Bundles', row.bundles)">
@@ -160,20 +192,20 @@ So they are for implementation inheritance rather like Abstract Base Classes in 
                     </span>
                   </form>
                 </div>
-                <div>
-                  <div fabric-deploy-artifact version-id="{{versionId}}" profile-id="{{row.id}}"></div>
-                </div>
               </li>
-            </ul>
-          </div>
+          </ul>
+        </div>
 
-          <div class="tab-pane" value="fabs" title="FABs ({{row.fabs.length}})">
-            <ul class="unstyled">
-              <li ng-repeat="fab in row.fabs">
-                <i class="red clickable icon-remove" title="Delete {{fab}}" ng-click="deleteThing('Fuse Application Bundle', 'Fabs', row.fabs, fab)"></i>
-                <editable-property ng-model="row.fabs" property="$index" on-save="updateThing('Fuse Application Bundle', 'Fabs',  row.fabs)"></editable-property>
+        <div>
+          <h4>FABs ({{row.fabs.length}})</h4>
+          <ul class="unstyled">
+            <li ng-repeat="fab in row.fabs">
+              <i class="red clickable icon-remove" title="Delete {{fab}}"
+                 ng-click="deleteThing('Fuse Application Bundle', 'Fabs', row.fabs, fab)"></i>
+              <editable-property ng-model="row.fabs" property="$index"
+                                 on-save="updateThing('Fuse Application Bundle', 'Fabs',  row.fabs)"></editable-property>
 
-              </li>
+            </li>
               <li class="add">
                 <form ng-submit="addNewThing('Fuse Application Bundle', 'Fabs', row.fabs)">
                   <span><strong>Add: </strong></span>
@@ -184,13 +216,7 @@ So they are for implementation inheritance rather like Abstract Base Classes in 
                   </span>
                 </form>
               </li>
-            </ul>
-          </div>
-
-          <div class="tab-pane" value="systemProperties" title="System Properties ({{row.systemProperties.length}})">
-            <div hawtio-input-table="sysPropsTableConfig" entity="sysPropsTableData" data="sysPropsTableConfig" property="rows"></div>
-          </div>
-
+          </ul>
         </div>
       </div>
     </div>
