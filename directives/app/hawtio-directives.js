@@ -4493,7 +4493,7 @@ var UI;
                 scope.$watch('editing', function (newValue, oldValue) {
                     if (newValue !== oldValue) {
                         if (newValue) {
-                            $(element.find(inputSelector())).focus();
+                            $(element.find(inputSelector())).focus().select();
                         }
                     }
                 });
