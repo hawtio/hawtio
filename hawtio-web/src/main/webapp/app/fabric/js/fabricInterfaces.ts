@@ -68,6 +68,34 @@ module Fabric {
     defaultPrivateKeyFile:String;
   }
 
+  export function createSshHostConfiguration():SshHostConfiguration {
+    return <SshHostConfiguration> {
+      hostName: <String> null,
+      port: <Number> null,
+      username: <String> null,
+      password: <String> null,
+      maximumContainerCount: <Number> null,
+      tags: <Array<String>> [],
+      path: <String> null,
+      passPhrase: <String> null,
+      privateKeyFile: <String> null,
+      preferredAddress: <String> null
+    };
+  }
+
+  export function createSshConfiguration():SshConfiguration {
+    return <SshConfiguration> {
+      hosts: <Array<SshHostConfiguration>> [],
+      defaultPath: <String> null,
+      defaultPort: <Number> null,
+      defaultUsername: <String> null,
+      defaultPassword: <String> null,
+      fallbackRepositories: <Array<String>> [],
+      defaultPassPhrase: <String> null,
+      defaultPrivateKeyFile: <String> null
+    }
+  }
+
   export interface DockerHostConfiguration extends HostConfiguration {
     path:String;
     passPhrase:String;
@@ -75,8 +103,29 @@ module Fabric {
     preferredAddress:String
   }
 
+  export function createDockerHostConfiguration():DockerHostConfiguration {
+    return <DockerHostConfiguration> {
+      hostName: <String> null,
+      port: <Number> null,
+      username: <String> null,
+      password: <String> null,
+      maximumContainerCount: <Number> null,
+      tags: <Array<String>> [],
+      path: <String> null,
+      passPhrase: <String> null,
+      privateKeyFile: <String> null,
+      preferredAddress: <String> null
+    };
+  }
+
   export interface DockerConfiguration {
     hosts:Array<DockerHostConfiguration>;
+  }
+
+  export function createDockerConfiguration():DockerConfiguration {
+    return <DockerConfiguration> {
+      hosts: <Array<DockerHostConfiguration>> []
+    };
   }
 
   export interface FabricRequirements {

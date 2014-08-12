@@ -17,31 +17,23 @@ module FabricRequirements {
       }
     });
 
-    $scope.removeHost = (host:Fabric.SshHostConfiguration) => {
-      var removed = $scope.requirements.sshConfiguration.hosts.remove((h:Fabric.SshHostConfiguration) => {
-        var answer = h.hostName === host.hostName;
-        if (answer) {
-          $scope.requirements.$dirty = true;
-        }
-        return answer;
-      });
+    $scope.removeHost = ($index) => {
+      $scope.requirements.sshConfiguration.hosts.removeAt($index);
+      $scope.requirements.$dirty = true;
     };
 
     $scope.noop = () => {};
 
     $scope.addHost = () => {
-      $scope.requirements.sshConfiguration.hosts.push({
-        hostName: 'newHost',
-        username: null,
-        password: null,
-        port: null,
-        privateKeyFile: null,
-        passPhrase: null,
-        maximumContainerCount: null,
-        path: null,
-        preferredAddress: null,
-        tags: []
-      });
+      if (!$scope.requirements.sshConfiguration) {
+        $scope.requirements.sshConfiguration = Fabric.createSshConfiguration();
+      }
+      if (!$scope.requirements.sshConfiguration.hosts) {
+        $scope.requirements.sshConfiguration.hosts = <Array<Fabric.SshHostConfiguration>> [];
+      }
+      var newHost = Fabric.createSshHostConfiguration();
+      newHost.hostName = 'newHost';
+      $scope.requirements.sshConfiguration.hosts.push(newHost);
       $scope.requirements.$dirty = true;
     };
 
@@ -49,6 +41,9 @@ module FabricRequirements {
       Fabric.getDtoSchema(undefined, "io.fabric8.api.SshHostConfiguration", jolokia, (hostConfigurationSchema) => {
 
         Core.pathSet(sshConfigurationSchema, ['properties', 'hosts', 'formTemplate'], $templateCache.get("hostsTemplate.html"));
+
+        Core.pathSet(sshConfigurationSchema, ['properties', 'defaultPassword', 'type'], 'password');
+        Core.pathSet(sshConfigurationSchema, ['properties', 'defaultPassPhrase', 'type'], 'password');
 
         sshConfigurationSchema['tabs'] = {
           'Defaults': ['defaultUsername', 'defaultPassword', 'defaultPort', 'defaultPrivateKeyFile', 'defaultPassPhrase', 'defaultPath', '*']
