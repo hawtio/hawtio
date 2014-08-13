@@ -72,22 +72,25 @@ module Fabric {
                wikiBranchMenu:Wiki.BranchMenu,
                $dialog, layoutFull) => {
 
+    var layoutFabric = templatePath + 'layoutFabric.html';
+
     // let's not take up the whole /fabric with the fabric sub-tabs
     // other plugins might want to hang stuff off of /fabric
+    viewRegistry['fabric/assignProfile'] = layoutFabric;
     viewRegistry['fabric/profileView'] = layoutFull;
     viewRegistry['fabric/containerView'] = layoutFull;
     viewRegistry['fabric/migrate'] = layoutFull;
     viewRegistry['fabric/patching'] = layoutFull;
-    viewRegistry['fabric/map'] = templatePath + 'layoutFabric.html';
-    viewRegistry['fabric/clusters'] = templatePath + 'layoutFabric.html';
-    viewRegistry['fabric/container'] = templatePath + 'layoutFabric.html';
-    viewRegistry['fabric/activeProfiles'] = templatePath + 'layoutFabric.html';
-    viewRegistry['fabric/containers'] = templatePath + 'layoutFabric.html';
-    viewRegistry['fabric/configurations'] = templatePath + 'layoutFabric.html';
-    viewRegistry['fabric/configuration'] = templatePath + 'layoutFabric.html';
-    viewRegistry['fabric/mq'] = templatePath + 'layoutFabric.html';
-    viewRegistry['fabric/camel'] = templatePath + 'layoutFabric.html';
-    viewRegistry['fabric/api'] = templatePath + 'layoutFabric.html';
+    viewRegistry['fabric/map'] = layoutFabric;
+    viewRegistry['fabric/clusters'] = layoutFabric;
+    viewRegistry['fabric/container'] = layoutFabric;
+    viewRegistry['fabric/activeProfiles'] = layoutFabric;
+    viewRegistry['fabric/containers'] = layoutFabric;
+    viewRegistry['fabric/configurations'] = layoutFabric;
+    viewRegistry['fabric/configuration'] = layoutFabric;
+    viewRegistry['fabric/mq'] = layoutFabric;
+    viewRegistry['fabric/camel'] = layoutFabric;
+    viewRegistry['fabric/api'] = layoutFabric;
 
     pageTitle.addTitleElement(() => {
       return Fabric.currentContainerId;
