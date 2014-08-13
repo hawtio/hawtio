@@ -231,6 +231,7 @@ module Fabric {
         console.log("Connecting as user " + userName);
         var options =  new Core.ConnectToServerOptions();
         options.view = $scope.connect.view;
+        options.name = (container || {}).id;
         Fabric.connect(localStorage, container, userName, password, true, options);
         $scope.connect.container = {};
         setTimeout(() => {
