@@ -8,8 +8,15 @@ module Osgi {
     $scope.deletePidDialog = new UI.Dialog();
     $scope.addPropertyDialog = new UI.Dialog();
     $scope.factoryPid = $routeParams.factoryPid;
-    $scope.pid = $routeParams.pid || $scope.factoryPid;
-    $scope.factoryInstanceName = null;
+    $scope.pid = $routeParams.pid;
+    $scope.createForm = {
+      pidInstanceName: null
+    };
+    $scope.newPid = $scope.factoryPid && !$scope.pid;
+    if ($scope.newPid) {
+      log.info("Creating a new pid for factory " + $scope.factoryPid);
+      $scope.editMode = true;
+    }
 
     if ($scope.pid && !$scope.factoryPid) {
       var idx = $scope.pid.indexOf("-");
@@ -51,9 +58,9 @@ module Osgi {
       var completeFn = (response) => {
         Core.notification("success", "Successfully updated pid: " + pid);
 
-        if (pid && $scope.factoryPid && !$routeParams.pid && !$scope.zkPid) {
+        if (pid && $scope.factoryPid && $scope.newPid) {
           // we've just created a new pid so lets move to the full pid URL
-          var newPath = createConfigPidPath($scope, pid, $scope.factoryPid);
+          var newPath = createConfigPidPath($scope, pid);
           $location.path(newPath);
         } else {
           $scope.setEditMode(false);
@@ -102,7 +109,13 @@ module Osgi {
             }
           }, errorHandler("Failed to create new PID: ")));
         } else {
-          if (zkPid) {
+          if ($scope.newPid) {
+            var pidInstanceName = $scope.createForm.pidInstanceName;
+            if (!pidInstanceName || !factoryPid) {
+              return;
+            }
+            pid = factoryPid + "-" + pidInstanceName;
+          } else if (zkPid) {
             pid = zkPid;
           }
           updatePid(mbean, pid, data);

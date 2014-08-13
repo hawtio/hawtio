@@ -368,25 +368,20 @@ module Osgi {
   /**
    * Creates a link to the given configuration pid and/or factoryPid
    */
-    export function createConfigPidLink($scope, workspace, pid, factoryPid = null) {
-      return Core.url("#" + createConfigPidPath($scope, pid, factoryPid) + workspace.hash())
+    export function createConfigPidLink($scope, workspace, pid, isFactory = false) {
+      return Core.url("#" + createConfigPidPath($scope, pid, isFactory) + workspace.hash())
     }
 
   /**
    * Creates a path to the given configuration pid and/or factoryPid
    */
-    export function createConfigPidPath($scope, pid, factoryPid = null) {
-    var link;
-    pid = pid || "";
-    if (factoryPid) {
-      link = pid + "/" + factoryPid;
-    } else {
-      link = pid;
-    }
+    export function createConfigPidPath($scope, pid, isFactory = false) {
+    var link = pid;
     var versionId = $scope.versionId;
     var profileId = $scope.profileId;
     if (versionId && versionId) {
-      return "/wiki/branch/" + versionId + "/configuration/" + link + "/" + $scope.pageId;
+      var configPage = isFactory ? "/newConfiguration/" : "/configuration/";
+      return "/wiki/branch/" + versionId + configPage + link + "/" + $scope.pageId;
     } else {
       return "/osgi/pid/" + link;
     }

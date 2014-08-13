@@ -320,6 +320,9 @@ module Osgi {
       setFactoryPid(factoryConfig, factoryPid, pid);
       //config["pidLink"] = createPidLink(pid, factoryPid);
       var children = factoryConfig.children;
+      if (factoryPid) {
+        factoryConfig.pidLink = createPidLink(factoryPid, true);
+      }
       if (!children) {
         children = {};
         factoryConfig["children"] = children;
@@ -345,8 +348,8 @@ module Osgi {
       factoryConfig["pidLink"] = createPidLink(factoryPid);
     }
 
-    function createPidLink(pid, factoryPid = null) {
-      return createConfigPidLink($scope, workspace, pid, factoryPid);
+    function createPidLink(pid, isFactory = false) {
+      return createConfigPidLink($scope, workspace, pid, isFactory);
     }
 
     function errorHandler(message) {

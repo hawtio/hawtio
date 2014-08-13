@@ -14,11 +14,29 @@
   </div>
   <div ng-show="editMode">
     <div class="row-fluid">
-      <button class="btn btn-primary" ng-disabled="!canSave" ng-click="pidSave()"><i class="icon-save"></i> Save</button>
+      <button ng-show="newPid" class="btn btn-primary" ng-disabled="!canSave || !createForm.pidInstanceName" ng-click="pidSave()"><i class="icon-save"></i> Create</button>
+      <button ng-hide="newPid" class="btn btn-primary" ng-disabled="!canSave" ng-click="pidSave()"><i class="icon-save"></i> Save</button>
       <button class="btn btn-warning" ng-click="setEditMode(false)"><i class="icon-remove"></i> Cancel</button>
       <button class="btn pull-right" ng-click="addPropertyDialog.open()" title="Add a new property value to this configuration"><i class="icon-plus"></i> Property</button>
     </div>
     <div class="row-fluid config-admin-form edit">
+      <div ng-show="newPid" class="new-config-name-form">
+        <form class="form-horizontal" action="">
+          <fieldset>
+            <div class="control-group">
+              <label class="control-label" title="The name of the configuration file">Configuration name: </label>
+              <div class="controls">
+                <input type="text" class="span12"
+                       title="The name of the configuration file"
+                       ng-required="true"
+                       ng-model="createForm.pidInstanceName" name="path"
+                       autofocus="autofocus">
+              </div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+
       <div simple-form name="pidEditor" mode='edit' entity='entity' data='schema' schema="fullSchema" onSubmit="pidSave()"></div>
     </div>
   </div>
