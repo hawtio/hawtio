@@ -1,7 +1,8 @@
 /**
  * @module UI
  */
-/// <reference path="./uiPlugin.ts"/>
+/// <reference path="../../helpers/js/stringHelpers.ts"/>
+/// <reference path="uiPlugin.ts"/>
 module UI {
 
   _module.directive('editableProperty', ["$parse", ($parse) => {
@@ -29,7 +30,7 @@ module UI {
             return '';
           }
           if (scope.inputType === 'password') {
-            return scope.text.chars().map((c) => { return '*'; }).join('');
+            return StringHelpers.obfusicate(scope.text);
           } else {
             return scope.text;
           }

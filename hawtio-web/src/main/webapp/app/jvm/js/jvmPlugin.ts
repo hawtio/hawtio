@@ -2,7 +2,7 @@
  * @module JVM
  * @main JVM
  */
-/// <reference path="./jvmHelpers.ts"/>
+/// <reference path="jvmHelpers.ts"/>
 module JVM {
 
   export var rootPath = 'app/jvm';

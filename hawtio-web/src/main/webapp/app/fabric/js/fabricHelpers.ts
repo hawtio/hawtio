@@ -9,6 +9,8 @@
 /// <reference path="../../git/js/gitHelpers.ts"/>
 /// <reference path="../../ui/js/dialog.ts"/>
 /// <reference path="../../wiki/js/wikiHelpers.ts"/>
+/// <reference path="iconRegistry.ts"/>
+/// <reference path="../../core/js/login.ts"/>
 module Fabric {
 
   export function fabricCreated(workspace) {
@@ -79,7 +81,7 @@ module Fabric {
    * @paran {*} jolokia
    * @param {Workspace} workspace
    */
-  export function initScope($scope, $location, jolokia, workspace) {
+  export function initScope($scope:any, $location, jolokia, workspace) {
 
     // Let's avoid re-defining everything if the $scope
     // has already been initialized here
@@ -160,7 +162,7 @@ module Fabric {
     };
 
     $scope.createContainer = () => {
-      var kind = null;
+      var kind:string = null;
       // lets see if there is an openshift option
       var providers = registeredProviders(jolokia);
       angular.forEach(["openshift", "docker", "jclouds"], (value) => {
@@ -216,9 +218,7 @@ module Fabric {
       onOK: () => {
         var userName = $scope.connect.userName;
         var password = $scope.connect.password;
-        var container = $scope.connect.container;
-        log.info("Logging into container " + container + " with user " + userName);
-
+        var container = <Fabric.Container>$scope.connect.container;
         if ($scope.connect.saveCredentials) {
           $scope.connect.saveCredentials = false;
           if (userName) {
@@ -229,10 +229,20 @@ module Fabric {
           }
         }
         console.log("Connecting as user " + userName);
-        var options =  new Core.ConnectToServerOptions();
-        options.view = $scope.connect.view;
-        options.name = (container || {}).id;
-        Fabric.connect(localStorage, container, userName, password, true, options);
+        var options = Core.createConnectOptions({
+          jolokiaUrl: container.jolokiaUrl,
+          userName: userName,
+          password: password,
+          useProxy: true,
+          view: $scope.connect.view,
+          name: container.id
+        });
+
+        var connectionMap = Core.loadConnectionMap();
+        connectionMap[<string>options.name] = options;
+        Core.saveConnectionMap(connectionMap);
+        Core.connectToServer(localStorage, options);
+
         $scope.connect.container = {};
         setTimeout(() => {
           $scope.connect.dialog.close();
@@ -245,11 +255,10 @@ module Fabric {
       if (!$scope.canConnect(container)) {
         return;
       }
-      // TODO at least obfusicate this
       $scope.connect.userName = Core.username || localStorage['fabric.userName'];
       $scope.connect.password = Core.password || localStorage['fabric.password'];
       $scope.connect.container = container;
-      $scope.connect.view = view || "/openlogs";
+      $scope.connect.view = view || "#/openlogs";
 
       var alwaysPrompt = localStorage['fabricAlwaysPrompt'];
       if ((alwaysPrompt && alwaysPrompt !== "false") || !$scope.connect.userName || !$scope.connect.password) {
@@ -517,7 +526,7 @@ module Fabric {
   }
 
   function onJolokiaUrlCreateJolokia(response, fn) {
-    var jolokia = null;
+    var jolokia:any = null;
     if (response) {
       var url = response.value;
       if (url) {
@@ -548,7 +557,7 @@ module Fabric {
    * @param {String} versionId
    * @param {Function} onJolokia a function to receive the jolokia object or null if one cannot be created
    */
-  export function profileJolokia(jolokia, profileId, versionId, onJolokia) {
+  export function profileJolokia(jolokia, profileId, versionId, onJolokia):any {
     function onJolokiaUrl(response) {
       return onJolokiaUrlCreateJolokia(response, onJolokia);
     }
@@ -556,6 +565,7 @@ module Fabric {
       return Fabric.profileWebAppURL(jolokia, jolokiaWebAppGroupId, profileId, versionId, onJolokiaUrl, onJolokiaUrl);
     } else {
       onJolokia(null);
+      return null;
     }
   }
 
@@ -677,7 +687,7 @@ module Fabric {
 
       var id = row['id'] || "";
       var title = "container " + id + " ";
-      var img = "red-dot.png";
+      var img:string = "red-dot.png";
       if (row['managed'] === false) {
         img = "spacer.gif";
       } else if (!row['alive']) {
@@ -706,7 +716,7 @@ module Fabric {
   export function containerLinks(workspace, values) {
     var answer = "";
     angular.forEach(toCollection(values), function (value, key) {
-      var prefix = "";
+      var prefix:string = "";
       if (answer.length > 0) {
         prefix = " ";
       }
@@ -718,7 +728,7 @@ module Fabric {
   export function profileLinks(workspace, versionId, values) {
     var answer = "";
     angular.forEach(toCollection(values), function (value, key) {
-      var prefix = "";
+      var prefix:string = "";
       if (answer.length > 0) {
         prefix = " ";
       }
@@ -758,28 +768,6 @@ module Fabric {
 
   export var statusTitle = ContainerHelpers.statusTitle;
   export var statusIcon = ContainerHelpers.statusIcon;
-
-
-  /**
-   * Opens a window connecting to the given container row details if the jolokiaUrl is available
-   * @method connect
-   * @param {any} localStorage
-   * @param {any} row
-   * @param {String} userName
-   * @param {String} password
-   * @param {Boolean} useProxy
-   * @param {ConnectToServerOptions} options
-   */
-  export function connect(localStorage, row, userName = "", password = "", useProxy = true, options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions()) {
-    options.name = row.id;
-    options.jolokiaUrl = row.jolokiaUrl;
-    options.userName = userName;
-    options.password = password;
-    options.useProxy = useProxy;
-
-    Core.connectToServer(localStorage, options);
-
-  }
 
   /**
    * Creates a jolokia object for connecting to the container with the given remote jolokia URL
@@ -849,8 +837,8 @@ module Fabric {
 
   export function getRootContainers(jolokia) {
     var fields = ["id", "root"];
-    var answer = jolokia.execute(Fabric.managerMBean, "containers(java.util.List)", fields, { method: 'POST' });
-    return answer.filter({root: true}).map(v => v["id"]);
+    var answer:Array<Container> = jolokia.execute(Fabric.managerMBean, "containers(java.util.List)", fields, { method: 'POST' });
+    return answer.filter((c) => { return c.root }).map(v => v["id"]);
   }
 
   /**

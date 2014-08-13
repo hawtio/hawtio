@@ -1,4 +1,7 @@
 /// <reference path="baseIncludes.ts"/>
+/// <reference path="core/js/coreInterfaces.ts"/>
+/// <reference path="helpers/js/stringHelpers.ts"/>
+/// <reference path="helpers/js/urlHelpers.ts"/>
 /**
  * @module Core
  */
@@ -29,7 +32,7 @@ module Core {
       if (path.startsWith && path.startsWith("/")) {
         if (!_urlPrefix) {
           // lets discover the base url via the base html element
-          _urlPrefix = $('base').attr('href') || "";
+          _urlPrefix = (<JQueryStatic>$)('base').attr('href') || "";
           if (_urlPrefix.endsWith && _urlPrefix.endsWith('/')) {
               _urlPrefix = _urlPrefix.substring(0, _urlPrefix.length - 1);
           }
@@ -79,7 +82,7 @@ module Core {
    *
    * @private
    */
-  export function _resetJolokiaUrls():string[] {
+  export function _resetJolokiaUrls():Array<String> {
     // Add any other known possible jolokia URLs here
     jolokiaUrls = [
       Core.url("jolokia"), // instance configured by hawtio-web war file
@@ -88,7 +91,7 @@ module Core {
     return jolokiaUrls;
   }
 
-  var jolokiaUrls:string[] = Core._resetJolokiaUrls();
+  var jolokiaUrls:Array<String> = Core._resetJolokiaUrls();
 
   /**
    * Trims the leading prefix from a string if its present
@@ -126,34 +129,34 @@ module Core {
     return text;
   }
 
-
-  export function getJvmConnections(localStorage):any {
-    if (connectionSettingsKey in localStorage) {
-      try {
-        return angular.fromJson(localStorage[connectionSettingsKey]);
-      } catch (e) {
-        // corrupt config
-        delete localStorage[connectionSettingsKey];
-        return {};
-      }
+  /**
+   * Loads all of the available connections from local storage
+   * @returns {Core.ConnectionMap}
+   */
+  export function loadConnectionMap():Core.ConnectionMap {
+    var localStorage = Core.getLocalStorage();
+    try {
+      return <Core.ConnectionMap> angular.fromJson(localStorage[Core.connectionSettingsKey]);
+    } catch (e) {
+      // corrupt config
+      delete localStorage[Core.connectionSettingsKey];
+      return <Core.ConnectionMap> {};
     }
+  }
+
+  /**
+   * Saves the connection map to local storage
+   * @param map
+   */
+  export function saveConnectionMap(map:Core.ConnectionMap) {
+    localStorage[Core.connectionSettingsKey] = angular.toJson(map);
   }
 
   /**
    * Returns the connection options for the given connection name from localStorage
    */
-  export function getJvmConnectionOptions(connectionName, localStorage = Core.getLocalStorage()) {
-    var connectOptions = null;
-    if (angular.isArray(connectionName)) {
-      connectionName = connectionName[0];
-    }
-    if (connectionName && angular.isString(connectionName)) {
-      var jvmConnections = Core.getJvmConnections(localStorage);
-      if (jvmConnections) {
-        connectOptions = jvmConnections[connectionName];
-      }
-    }
-    return connectOptions;
+  export function getConnectOptions(name:string, localStorage = Core.getLocalStorage()) {
+    return Core.loadConnectionMap()[name];
   }
 
   /**
@@ -186,80 +189,27 @@ module Core {
   /**
    * Creates the Jolokia URL string for the given connection options
    */
-  export function createServerConnectionUrl(localStorage, options) {
-    log.debug("Connect to server, options: ", options);
-
-    var connectUrl = options.jolokiaUrl;
-
-    var userDetails = {
-      username: options['userName'],
-      password: options['password']
-    };
-
-    var connectionName = options.name;
-    var connectionNameQuery = (connectionName ? "?con=" + connectionName + "&" : "?");
-
-    var json = angular.toJson(userDetails);
-    if (connectUrl) {
-      localStorage[connectUrl] = json;
+  export function createServerConnectionUrl(options:Core.ConnectOptions) {
+    log.debug("Connect to server, options: ", StringHelpers.toString(options));
+    var answer:String = null;
+    if (options.jolokiaUrl) {
+      answer = options.jolokiaUrl;
     }
-    var view = options.view;
-    var full = "";
-    var useProxy = options.useProxy && !Core.isChromeApp();
-    if (connectUrl) {
-      if (useProxy) {
-        // lets remove the http stuff
-        var idx = connectUrl.indexOf("://");
-        if (idx > 0) {
-          connectUrl = connectUrl.substring(idx + 3);
-        }
-        // lets replace the : with a /
-        connectUrl = connectUrl.replace(":", "/");
-        connectUrl = Core.trimLeading(connectUrl, "/");
-        connectUrl = Core.trimTrailing(connectUrl, "/");
-        connectUrl = options.scheme + "://" + connectUrl;
-        connectUrl = Core.url("/proxy/" + connectUrl);
-      } else {
-        if (connectUrl.indexOf("://") < 0) {
-          connectUrl = options.scheme + "://" + connectUrl;
-        }
+    if (answer === null) {
+      answer = options.scheme || 'http';
+      answer += '://' + (options.host || 'localhost');
+      if (options.port) {
+        answer += ':' + options.port;
       }
-      console.log("going to server: " + connectUrl + " as user " + options.userName);
-      localStorage[connectUrl] = json;
-
-      full = connectionNameQuery + "url=" + encodeURIComponent(connectUrl);
-      if (view) {
-        full += "#" + view;
-      }
-    } else {
-      var host = options.host || "localhost";
-      var port = options.port;
-      var path = Core.trimLeading(options.path || "jolokia", "/");
-      path = Core.trimTrailing(path, "/");
-
-      if (port > 0) {
-        var portSeparator = ":";
-        host += portSeparator + port;
-      }
-      connectUrl = host + "/" + path;
-      localStorage[connectUrl] = json;
-
-      if (connectUrl.indexOf("://") < 0) {
-        connectUrl = options.scheme + "://" + connectUrl;
-      }
-
-      if (useProxy) {
-        connectUrl = Core.url("/proxy/" + connectUrl);
-      }
-      console.log("going to server: " + connectUrl + " as user " + options.userName);
-      localStorage[connectUrl] = json;
-
-      full = connectionNameQuery + "url=" + encodeURIComponent(connectUrl);
-      if (view) {
-        full += "#" + view;
+      if (options.path) {
+        answer = UrlHelpers.join(<string>answer, <string>options.path);
       }
     }
-    return full;
+    if (options.useProxy) {
+      answer = UrlHelpers.join('proxy', <string>answer);
+    }
+    Logger.get("Core").debug("Using URL: ", answer);
+    return answer;
   }
 
   /**
@@ -267,7 +217,7 @@ module Core {
    *
    * @returns {*}
    */
-  export function getJolokiaUrl():any {
+  export function getJolokiaUrl():String {
     var query = hawtioPluginLoader.parseQueryString();
     var localMode = query['localMode'];
     if (localMode) {
@@ -275,37 +225,29 @@ module Core {
       jolokiaUrls = <string[]>[];
       return null;
     }
-    var uri: any = null;
+    var uri:String = null;
     var connectionName = Core.getConnectionNameParameter(query);
-    var localStorage = Core.getLocalStorage();
-    var connectOptions = getJvmConnectionOptions(connectionName, localStorage);
-    if (connectOptions) {
-      uri = createServerConnectionUrl(localStorage, connectOptions);
-      // lets find the uri parameter
-      var idx = uri.indexOf("url=");
-      if (idx >= 0) {
-        uri = uri.substring(idx + 4);
+    if (connectionName) {
+      var connectOptions = Core.getConnectOptions(connectionName);
+      if (connectOptions) {
+        uri = createServerConnectionUrl(connectOptions);
+        Logger.get("Core").debug("Using jolokia URI: ", uri, " from local storage");
+      } else {
+        Logger.get("Core").debug("Connection parameter found but no stored connections under name: ", connectionName);
       }
-      console.log("Using localStorage connection URL: " + uri);
     }
     if (!uri) {
-      uri = query['url'];
-    }
-    if (angular.isArray(uri)) {
-      uri = uri[0];
-    }
-    var answer:any = uri ? decodeURIComponent(uri) : null;
-    if (!answer) {
-      answer = jolokiaUrls.find(function(url) {
-        var jqxhr = $.ajax(url, {
+      uri = <String> jolokiaUrls.find((url:String):boolean => {
+        var jqxhr = (<JQueryStatic>$).ajax(<string>url, {
           async: false,
           username: 'public',
           password: 'biscuit'
         });
         return jqxhr.status === 200 || jqxhr.status === 401 || jqxhr.status === 403;
       });
+      Logger.get("Core").debug("Using jolokia URI: ", uri, " via discovery");
     }
-    return answer;
+    return uri;
   }
 
   /**
@@ -313,15 +255,22 @@ module Core {
    * height
    */
   export function adjustHeight() {
-    var windowHeight = $(window).height();
-    var headerHeight = $("#main-nav").height();
+    var windowHeight = (<JQueryStatic>$)(window).height();
+    var headerHeight = (<JQueryStatic>$)("#main-nav").height();
     var containerHeight = windowHeight - headerHeight;
-    $("#main").css("min-height", "" + containerHeight + "px");
+    (<JQueryStatic>$)("#main").css("min-height", "" + containerHeight + "px");
   }
 
   /**
    * Returns true if we are running inside a Chrome app or (and?) extension
    */
+  interface Chrome {
+    app: any;
+    extension: any;
+  }
+
+  declare var chrome:Chrome;
+
   export function isChromeApp() {
     var answer = false;
     try {
@@ -345,8 +294,8 @@ module Core {
       document.createStyleSheet(path);
     } else {
       // Everyone else
-      var link = $("<link>");
-      $("head").append(link);
+      var link = (<JQueryStatic>$)("<link>");
+      (<JQueryStatic>$)("head").append(link);
 
       link.attr({
         rel: 'stylesheet',
@@ -626,10 +575,10 @@ module Core {
     var element = domElement;
     angular.forEach(arrayOfElementNames, name => {
       if (element) {
-        var children = $(element).children(name);
+        var children = (<JQueryStatic>$)(element).children(name);
         if (!children || !children.length) {
-          $("<" + name + "></" + name + ">").appendTo(element);
-          children = $(element).children(name);
+          (<JQueryStatic>$)("<" + name + "></" + name + ">").appendTo(element);
+          children = (<JQueryStatic>$)(element).children(name);
         }
         element = children;
       }
@@ -769,7 +718,7 @@ module Core {
    */
   export function humanizeValue(value:any):string {
     if (value) {
-      var text = value.toString();
+      var text = value + '';
       try {
         text = text.underscore();
       } catch (e) {

@@ -163,10 +163,11 @@ module Core {
 
     // ensure that if the connection parameter is present, that we keep it
     $rootScope.$on('$locationChangeStart', ($event, newUrl, oldUrl) => {
-      var oldQuery = UrlHelpers.parseQueryString(oldUrl);
-      var newQuery = UrlHelpers.parseQueryString(newUrl);
-      if ('con' in oldQuery && !('con' in newQuery)) {
-        $location.search({'con': Core.getConnectionNameParameter(oldQuery)});
+      var oldQuery:any = UrlHelpers.parseQueryString(oldUrl);
+      var newQuery:any = UrlHelpers.parseQueryString(newUrl);
+      if (oldQuery.con && !newQuery.con) {
+        log.debug("Lost connection parameter: ", oldQuery.con, " resetting");
+        $location.search({ 'con': oldQuery.con });
       }
     });
 

@@ -1,7 +1,8 @@
 /**
  * @module JVM
  */
-/// <reference path="./jvmPlugin.ts"/>
+/// <reference path="../../core/js/coreInterfaces.ts"/>
+/// <reference path="jvmPlugin.ts"/>
 module JVM {
 
   _module.controller("JVM.DiscoveryController", ["$scope", "localStorage", "jolokia", ($scope, localStorage, jolokia) => {
@@ -15,7 +16,7 @@ module JVM {
     }, true);
 
     $scope.closePopover = ($event) => {
-      $($event.currentTarget).parents('.popover').prev().popover('hide');
+      (<JQueryStatic>$)($event.currentTarget).parents('.popover').prev().popover('hide');
     };
 
     function doConnect(agent) {
@@ -23,7 +24,7 @@ module JVM {
         Core.notification('warning', 'No URL available to connect to agent');
         return;
       }
-      var options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions();
+      var options:Core.ConnectToServerOptions = Core.createConnectOptions();
 
       var urlObject = Core.parseUrl(agent.url);
       angular.extend(options, urlObject);
@@ -40,7 +41,7 @@ module JVM {
 
     $scope.gotoServer = ($event, agent) => {
       if (agent.secured) {
-        $($event.currentTarget).popover('show');
+        (<JQueryStatic>$)($event.currentTarget).popover('show');
       } else {
         doConnect(agent);
       }

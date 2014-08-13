@@ -1077,7 +1077,7 @@ module Core {
   }
 
   export function authHeaderValue(userDetails:Core.UserDetails) {
-    return getBasicAuthHeader(userDetails.username, userDetails.password);
+    return getBasicAuthHeader(<string>userDetails.username, <string>userDetails.password);
   }
 
   export function getBasicAuthHeader(username:string, password:string) {
@@ -1134,19 +1134,6 @@ module Core {
       port: port,
       path: path
     }
-  }
-
-  export class ConnectToServerOptions {
-    public scheme:string = "http";
-    public host:string;
-    public port:number;
-    public path:string;
-    public useProxy:boolean = true;
-    public jolokiaUrl:string;
-    public userName:string;
-    public password:string;
-    public view:string;
-    public name:string;
   }
 
   export function getDocHeight() {
@@ -1214,14 +1201,16 @@ module Core {
     localStorage['recentConnections'] = '[]';
   }
 
-  export function connectToServer(localStorage, options:ConnectToServerOptions) {
-    var full = createServerConnectionUrl(localStorage, options);
-    if (full) {
-      log.info("Full URL is: " + full);
-      console.log("Full URL is: " + full);
-      Core.addRecentConnection(localStorage, options.name, full);
-      window.open(full);
-    }
+  export function saveConnection(options: Core.ConnectOptions) {
+    var connectionMap = Core.loadConnectionMap();
+    connectionMap[<string>options.name] = options;
+    Core.saveConnectionMap(connectionMap);
+  }
+
+  export function connectToServer(localStorage, options:Core.ConnectToServerOptions) {
+    log.debug("Connecting with options: ", StringHelpers.toString(options));
+    saveConnection(options);
+    window.open((options.view || '#/welcome') + '?con=' + options.name);
   }
 
   /**

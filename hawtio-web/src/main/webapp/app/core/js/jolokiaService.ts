@@ -2,48 +2,30 @@
  * @module Core
  */
 /// <reference path="corePlugin.ts"/>
+/// <reference path="coreInterfaces.ts"/>
 module Core {
 
-  _module.factory('jolokia',["$location", "localStorage", "jolokiaStatus", "$rootScope", "userDetails", "jolokiaParams", ($location:ng.ILocationService, localStorage, jolokiaStatus, $rootScope, userDetails, jolokiaParams) => {
+  _module.factory('jolokia',["$location", "localStorage", "jolokiaStatus", "$rootScope", "userDetails", "jolokiaParams", "jolokiaUrl", ($location:ng.ILocationService, localStorage, jolokiaStatus, $rootScope, userDetails:Core.UserDetails, jolokiaParams, jolokiaUrl) => {
     // TODO - Maybe have separate URLs or even jolokia instances for loading plugins vs. application stuff
     // var jolokiaUrl = $location.search()['url'] || Core.url("/jolokia");
     log.info("Jolokia URL is " + jolokiaUrl);
     if (jolokiaUrl) {
 
       var connectionName = Core.getConnectionNameParameter($location.search());
-      var connectionOptions = getJvmConnectionOptions(connectionName);
+      var connectionOptions = Core.getConnectOptions(connectionName);
 
-      var credentials = hawtioPluginLoader.getCredentials(jolokiaUrl);
       // pass basic auth credentials down to jolokia if set
-      var username: string = null;
-      var password: string = null;
-
-      //var userDetails = angular.fromJson(localStorage[jolokiaUrl]);
+      var username:String = null;
+      var password:String = null;
 
       if (connectionOptions) {
         username = connectionOptions.userName;
         password = connectionOptions.password;
-
-      } else if (credentials.length === 2) {
-        username = credentials[0];
-        password = credentials[1];
-
-        // TODO we should try avoid both permutations of username / userName :)
-
       } else if (angular.isDefined(userDetails) &&
                   angular.isDefined(userDetails.username) &&
                   angular.isDefined(userDetails.password)) {
-
         username = userDetails.username;
         password = userDetails.password;
-
-      } else if (angular.isDefined(userDetails) &&
-                  angular.isDefined(userDetails.userName) &&
-                  angular.isDefined(userDetails.password)) {
-
-        username = userDetails.userName;
-        password = userDetails.password;
-
       } else {
         // lets see if they are passed in via request parameter...
         var search = hawtioPluginLoader.parseQueryString();
@@ -54,21 +36,12 @@ module Core {
       }
 
       if (username && password) {
-
-        /*
-        TODO can't use this, sets the username/password in the URL on every request, plus jolokia passes them on to $.ajax() which causes a fatal exception in firefox
-        jolokiaParams['username'] = username;
-        jolokiaParams['password'] = password;
-        */
-
-        //console.log("Using user / pwd " + username + " / " + password);
-
         userDetails.username = username;
         userDetails.password = password;
 
         $.ajaxSetup({
           beforeSend: (xhr) => {
-            xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(userDetails.username, userDetails.password));
+            xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(<string>userDetails.username, <string>userDetails.password));
           }
         });
 
