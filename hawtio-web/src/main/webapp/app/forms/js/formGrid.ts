@@ -115,7 +115,7 @@ module Forms {
 
         scope.$watch('configuration.noDataTemplate', (newValue, oldValue) => {
           var noDataTemplate = scope.configuration.noDataTemplate || $templateCache.get('heroUnitTemplate.html');
-          element.find('.nodata').html($compile(noDataTemplate)(scope));
+          element.find('.nodata').html(<any>$compile(noDataTemplate)(scope));
         });
 
         scope.$watch('configuration.rowSchema', (newValue, oldValue) => {
