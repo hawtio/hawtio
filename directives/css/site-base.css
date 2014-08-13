@@ -4329,3 +4329,7 @@ ul.dynatree-container {
 .config-admin-form .form-horizontal .controls {
     margin-left: 280px;
 }
+
+.new-config-name-form {
+    margin-top: 30px;
+}
