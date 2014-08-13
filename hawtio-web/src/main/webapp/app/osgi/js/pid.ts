@@ -14,7 +14,6 @@ module Osgi {
     };
     $scope.newPid = $scope.factoryPid && !$scope.pid;
     if ($scope.newPid) {
-      log.info("Creating a new pid for factory " + $scope.factoryPid);
       $scope.editMode = true;
     }
 
@@ -164,22 +163,35 @@ module Osgi {
     $scope.deletePidConfirmed = () => {
       $scope.deletePidDialog.close();
 
-      var mbean = getSelectionConfigAdminMBean($scope.workspace);
-      if (mbean) {
-        $scope.jolokia.request({
-          type: "exec",
-          mbean: mbean,
-          operation: 'delete',
-          arguments: [$scope.pid]
-        }, {
-          error: function (response) {
-            Core.notification("error", response.error);
-          },
-          success: function (response) {
-            Core.notification("success", "Successfully deleted pid: " + $scope.pid);
-            $location.path($scope.configurationsLink);
-          }
-        });
+      function errorFn(response) {
+        Core.notification("error", response.error);
+      }
+
+      function successFn(response) {
+        Core.notification("success", "Successfully deleted pid: " + $scope.pid);
+        $location.path($scope.configurationsLink);
+      }
+
+      if ($scope.inFabricProfile) {
+        if ($scope.pid) {
+          var configFile = $scope.pid + ".properties";
+          jolokia.execute(Fabric.managerMBean, "deleteConfigurationFile",
+            $scope.versionId, $scope.profileId, configFile,
+            onSuccess(successFn, {error: errorFn}));
+        }
+      } else {
+        var mbean = getSelectionConfigAdminMBean($scope.workspace);
+        if (mbean) {
+          $scope.jolokia.request({
+            type: "exec",
+            mbean: mbean,
+            operation: 'delete',
+            arguments: [$scope.pid]
+          }, {
+            error: errorFn,
+            success: successFn
+          });
+        }
       }
     };
 
