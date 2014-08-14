@@ -63,7 +63,7 @@ module Fabric {
            hasGitMBean;
   }
 
-  export function hasFabric(workspace):boolean{
+  export function hasFabric(workspace):boolean {
     // lets make sure we only have a fabric if we have
     // the ClusterServiceManager or ClusterBootstrapManager available
     // so that we hide Fabric for 6.0 or earlier of JBoss Fuse

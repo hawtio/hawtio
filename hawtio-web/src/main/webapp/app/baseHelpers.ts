@@ -7,6 +7,12 @@
  */
 module Core {
 
+  /**
+   * The instance of this app's Angular injector, set once bootstrap has completed, helper functions can use this to grab angular services so they don't need them as arguments
+   * @type {null}
+   */
+  export var injector:ng.auto.IInjectorService = null;
+
   var _urlPrefix:string = null;
 
   export var connectionSettingsKey = "jvmConnect";
