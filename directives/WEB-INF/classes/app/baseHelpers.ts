@@ -7,6 +7,12 @@
  */
 module Core {
 
+  /**
+   * The instance of this app's Angular injector, set once bootstrap has completed, helper functions can use this to grab angular services so they don't need them as arguments
+   * @type {null}
+   */
+  export var injector:ng.auto.IInjectorService = null;
+
   var _urlPrefix:string = null;
 
   export var connectionSettingsKey = "jvmConnect";
@@ -136,7 +142,12 @@ module Core {
   export function loadConnectionMap():Core.ConnectionMap {
     var localStorage = Core.getLocalStorage();
     try {
-      return <Core.ConnectionMap> angular.fromJson(localStorage[Core.connectionSettingsKey]);
+      var answer = <Core.ConnectionMap> angular.fromJson(localStorage[Core.connectionSettingsKey]);
+      if (!answer) {
+        return <Core.ConnectionMap> {};
+      } else {
+        return answer;
+      }
     } catch (e) {
       // corrupt config
       delete localStorage[Core.connectionSettingsKey];
@@ -149,6 +160,8 @@ module Core {
    * @param map
    */
   export function saveConnectionMap(map:Core.ConnectionMap) {
+    Logger.get("Core").debug("Saving connection map: ", StringHelpers.toString(map));
+
     localStorage[Core.connectionSettingsKey] = angular.toJson(map);
   }
 
@@ -156,6 +169,9 @@ module Core {
    * Returns the connection options for the given connection name from localStorage
    */
   export function getConnectOptions(name:string, localStorage = Core.getLocalStorage()) {
+    if (!name) {
+      return null;
+    }
     return Core.loadConnectionMap()[name];
   }
 
