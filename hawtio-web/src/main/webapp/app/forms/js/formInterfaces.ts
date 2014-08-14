@@ -7,19 +7,20 @@ module Forms {
    * Map of name/value pairs that get mapped to element attributes
    */
   export interface AttributeMap {
-    [key:string]: String;
+    [key:string]: string;
   }
 
   /**
    * Element in a FormConfiguration's 'properties' attribute
    */
   export interface FormElement {
-    type: String;
-    label?: String;
+    type: string;
+    tooltip?: string;
+    label?: string;
     hidden?: boolean;
     'input-attributes'?: AttributeMap;
     'control-group-attributes'?: AttributeMap;
-    'formTemplate': String;
+    formTemplate?: string;
   }
 
   /**
@@ -43,7 +44,7 @@ module Forms {
    * Type for the FormConfiguration's 'tabs' attribute
    */
   export interface FormTabs {
-    [name:string]: Array<String>;
+    [name:string]: Array<string>;
   }
 
   /**
@@ -58,8 +59,8 @@ module Forms {
    * Interface that describes the configuration object for hawtio forms
    */
   export interface FormConfiguration {
-    id?: String;
-    type?: String;
+    id?: string;
+    type?: string;
     disableHumanizeLabel?: boolean
     ignorePrefixInLabel?: boolean
     properties: FormProperties;
@@ -77,9 +78,9 @@ module Forms {
   }
 
   export interface FormGridElement extends FormElement {
-    key?: String;
-    headerTemplate: String;
-    template: String;
+    key?: string;
+    headerTemplate: string;
+    template: string;
   }
 
   export interface FormGridProperties {
@@ -88,16 +89,16 @@ module Forms {
 
   export interface FormGridRowConfiguration extends FormConfiguration {
     properties: FormGridProperties;
-    columnOrder: Array<String>;
+    columnOrder: Array<string>;
   }
 
   export interface FormGridConfiguration {
     heading?: boolean;
-    rowName?: String;
+    rowName?: string;
     rowSchema: FormGridRowConfiguration;
     rows: Array<any>;
     onAdd: () => any;
-    noDataTemplate: String;
+    noDataTemplate: string;
   }
 
   export function createFormGridConfiguration():FormGridConfiguration {

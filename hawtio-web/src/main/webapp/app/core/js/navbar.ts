@@ -19,7 +19,10 @@ module Core {
     });
 
     $scope.openConnection = (connection) => {
-      window.open(connection.url);
+      var connectOptions = Core.getConnectOptions(connection);
+      if (connectOptions) {
+        Core.connectToServer(localStorage, connectOptions);
+      }
     };
 
     $scope.goHome = () => {

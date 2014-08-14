@@ -1182,18 +1182,15 @@ module Core {
     return angular.fromJson(localStorage['recentConnections']);    
   }
 
-  export function addRecentConnection(localStorage, name, url) {
+  export function addRecentConnection(localStorage, name) {
     var recent = getRecentConnections(localStorage);
-    recent = recent.add({
-      'name': name,
-      'url': url  
-    }).unique((c) => { return c.name; }).first(5);
+    recent = recent.add(name).unique().first(5);
     localStorage['recentConnections'] = angular.toJson(recent);
   }
 
   export function removeRecentConnection(localStorage, name) {
     var recent = getRecentConnections(localStorage);
-    recent = recent.exclude((conn) => { return conn.name === name; });
+    recent = recent.exclude((n) => { return n === name; });
     localStorage['recentConnections'] = angular.toJson(recent);
   }
 
@@ -1209,6 +1206,7 @@ module Core {
 
   export function connectToServer(localStorage, options:Core.ConnectToServerOptions) {
     log.debug("Connecting with options: ", StringHelpers.toString(options));
+    addRecentConnection(localStorage, options.name);
     saveConnection(options);
     window.open((options.view || '#/welcome') + '?con=' + options.name);
   }

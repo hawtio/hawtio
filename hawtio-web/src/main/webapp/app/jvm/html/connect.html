@@ -50,22 +50,22 @@
               <div class="control-group">
                 <label class="control-label">Connections: </label>
                 <div class="controls">
-                  <select ng-model="settings.lastConnection"
-                          ng-options="value.connectionName as key for (key, value) in connectionConfigs">
+                  <select ng-model="lastConnection"
+                          ng-options="value.name as key for (key, value) in connectionConfigs">
                     <option value=""
-                            ng-hide="settings.lastConnection">New connection...</option>
+                            ng-hide="lastConnection">New connection...</option>
                   </select>
                   <button class="btn btn-success"
                           title="Connect to this server"
-                          ng-disabled="!settings.lastConnection"
+                          ng-disabled="!lastConnection"
                           ng-click="gotoServer()"><i class="icon-share"></i></button>
                   <button class="btn btn-danger"
                           title="Delete this connection"
-                          ng-disabled="!settings.lastConnection"
+                          ng-disabled="!lastConnection"
                           ng-click="deleteConnection()"><i class="icon-minus"></i></button>
                   <button class="btn btn-primary"
                           title="Create a new connection"
-                          ng-disabled="!settings.lastConnection"
+                          ng-disabled="!lastConnection"
                           ng-click="newConnection()"><i class="icon-plus"></i></button>
                 </div>
               </div>
