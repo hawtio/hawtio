@@ -132,13 +132,19 @@ module Core {
   });
 
   // user detail service, contains username/password
-  _module.factory('userDetails', ["jolokiaUrl", "localStorage", (jolokiaUrl, localStorage)  => {
+  _module.factory('userDetails', ["jolokiaUrl", "localStorage", "ConnectOptions", (jolokiaUrl, localStorage, ConnectOptions:Core.ConnectOptions)  => {
     var answer = angular.fromJson(localStorage[jolokiaUrl]);
     if (!angular.isDefined(answer) && jolokiaUrl) {
-      answer = <UserDetails>{
+
+      answer = <UserDetails> {
         username: '',
         password: ''
       };
+
+      if (ConnectOptions !== null) {
+        answer.username = ConnectOptions.userName;
+        answer.password = ConnectOptions.password;
+      }
 
       log.debug("No username set, checking if we have a session");
       // fetch the username if we've already got a session at the server
@@ -164,8 +170,11 @@ module Core {
           // silently ignore, we could be using the proxy
         }
       });
+      log.debug("Created UserDetails: ", answer);
       return answer;
     } else {
+      log.debug("Created UserDetails: ", answer);
+      // TODO - Do we need to execute post login tasks here too...
       return answer;
     }
 
