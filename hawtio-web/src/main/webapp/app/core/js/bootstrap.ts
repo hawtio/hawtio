@@ -1,7 +1,7 @@
 /// <reference path="../../baseIncludes.ts"/>
 /// <reference path="../../baseHelpers.ts"/>
 // bootstrap the whole app here
-$(() => {
+(<JQueryStatic>$)(() => {
   hawtioPluginLoader.loadPlugins(() => {
     var doc = angular.element(document);
     var docEl = angular.element(document.documentElement);

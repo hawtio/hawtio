@@ -92,6 +92,7 @@ module Core {
                "postLoginTasks", 
                "preLogoutTasks",
                "$location",
+               "ConnectOptions",
                ($rootScope,
                $routeParams,
                jolokia,
@@ -103,11 +104,12 @@ module Core {
                pageTitle:Core.PageTitle,
                branding,
                toastr,
-               userDetails,
+               userDetails:Core.UserDetails,
                preferencesRegistry,
                postLoginTasks:Core.Tasks,
                preLogoutTasks:Core.Tasks,
-               $location) => {
+               $location:ng.ILocationService,
+               ConnectOptions:Core.ConnectOptions) => {
 
     postLoginTasks.addTask("ResetPreLogoutTasks", () => {
       preLogoutTasks.reset();
@@ -163,11 +165,13 @@ module Core {
 
     // ensure that if the connection parameter is present, that we keep it
     $rootScope.$on('$locationChangeStart', ($event, newUrl, oldUrl) => {
-      var oldQuery:any = UrlHelpers.parseQueryString(oldUrl);
+      if (ConnectOptions === null) {
+        return;
+      }
       var newQuery:any = UrlHelpers.parseQueryString(newUrl);
-      if (oldQuery.con && !newQuery.con) {
-        log.debug("Lost connection parameter: ", oldQuery.con, " resetting");
-        $location.search({ 'con': oldQuery.con });
+      if (!newQuery.con) {
+        log.debug("Lost connection parameter: ", ConnectOptions.name, " resetting");
+        $location.search({ 'con': ConnectOptions.name });
       }
     });
 

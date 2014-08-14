@@ -16,6 +16,17 @@ module Core {
       return answer;
   }]);
 
+  _module.service('ConnectOptions', ['$location', ($location:ng.ILocationService) => {
+    var search = $location.search();
+    var connectionName = Core.getConnectionNameParameter(search);
+    if (!Core.isBlank(connectionName)) {
+      var answer = Core.getConnectOptions(connectionName);
+      log.debug("ConnectOptions: ", answer);
+      return answer;
+    }
+    log.debug("No connection options, connected to local JVM");
+    return null;
+  }]);
 
   // local storage service to wrap the HTML5 browser storage
   _module.service('localStorage',() => {

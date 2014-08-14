@@ -255,8 +255,9 @@ module Fabric {
       if (!$scope.canConnect(container)) {
         return;
       }
-      $scope.connect.userName = Core.username || localStorage['fabric.userName'];
-      $scope.connect.password = Core.password || localStorage['fabric.password'];
+      var userDetails = <Core.UserDetails> Core.injector.get('UserDetails');
+      $scope.connect.userName = userDetails.username || localStorage['fabric.userName'];
+      $scope.connect.password = userDetails.password || localStorage['fabric.password'];
       $scope.connect.container = container;
       $scope.connect.view = view || "#/openlogs";
 
@@ -776,22 +777,9 @@ module Fabric {
    */
   export function createJolokia(url: string) {
     // lets default to the user/pwd for the login
-    // TODO maybe allow these to be configured to other values?
-    var username = Core.username;
-    var password = Core.password;
-    if (!username) {
-      // lets try reverse engineer the user/pwd from the stored user/pwd
-      var jsonText = localStorage[url];
-      if (jsonText) {
-        var obj = Wiki.parseJson(jsonText);
-        if (obj) {
-          username = obj["username"];
-          password = obj["password"];
-        }
-      }
-    }
-    log.info("Logging into remote jolokia " + url + " using username: " + username);
-    return Core.createJolokia(url, username, password);
+    var userDetails = <Core.UserDetails> Core.injector.get("UserDetails");
+    log.info("Logging into remote jolokia " + url + " using user details: " + StringHelpers.toString(userDetails));
+    return Core.createJolokia(url, <string> userDetails.username, <string> userDetails.password);
   }
 
   export function registeredProviders(jolokia) {

@@ -4,10 +4,6 @@
 /// <reference path="corePlugin.ts"/>
 module Core {
 
-  // TODO - these need to go in favor of having them in userDetails
-  export var username: string = null;
-  export var password: string = null;
-
   /**
    * Controller that handles the login page and actually logging in
    *
@@ -68,8 +64,6 @@ module Core {
               userDetails.rememberMe = $scope.rememberMe;
               userDetails.loginDetails = response;
 
-              Core.username = $scope.entity.username;
-              Core.password = $scope.entity.password;
               if ($scope.rememberMe) {
                 localStorage[jolokiaUrl] = angular.toJson(userDetails);
               } else {
@@ -99,9 +93,6 @@ module Core {
             beforeSend: (xhr) => {
               xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader($scope.entity.username, $scope.entity.password));
             }
-
-            //username: $scope.entity.username,
-            //password: $scope.entity.password
           });
         }
       }
