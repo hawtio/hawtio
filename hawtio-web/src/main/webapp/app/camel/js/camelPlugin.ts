@@ -231,7 +231,7 @@ module Camel {
       href: () => "#/camel/typeConverter"
     });
     workspace.subLevelTabs.push({
-      content: '<i class="icon-list"></i> Rest Registry',
+      content: '<i class="icon-list"></i> Rest Services',
       title: "List all the REST services registered in the context",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel") && !workspace.isRoute() && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia),
       href: () => "#/camel/restRegistry"
