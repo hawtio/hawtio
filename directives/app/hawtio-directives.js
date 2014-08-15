@@ -183,10 +183,17 @@ var Core;
     }
     Core.getConnectOptions = getConnectOptions;
 
+    Core.ConnectionName = null;
+
     /**
     * Returns the current connection name using the given search parameters
     */
     function getConnectionNameParameter(search) {
+        if (Core.ConnectionName) {
+            return Core.ConnectionName;
+        }
+
+        // Store the connection name once we've parsed it
         var connectionName = search["con"];
         if (angular.isArray(connectionName)) {
             connectionName = connectionName[0];
@@ -194,6 +201,7 @@ var Core;
         if (connectionName) {
             connectionName = connectionName.unescapeURL();
         }
+        Core.ConnectionName = connectionName;
         return connectionName;
     }
     Core.getConnectionNameParameter = getConnectionNameParameter;
