@@ -264,6 +264,12 @@ hawtioPluginLoader.addModule('angularFileUpload');
 
 // register some tasks to run before bootstrap
 
+// enable CORS support
+hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
+  (<JQueryStatic>$).support.cors = true;
+  nextTask();
+});
+
 // add bootstrap style tooltips
 hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
   (<JQueryStatic>$)("a[title]").tooltip({
