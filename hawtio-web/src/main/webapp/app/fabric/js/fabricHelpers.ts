@@ -255,7 +255,7 @@ module Fabric {
       if (!$scope.canConnect(container)) {
         return;
       }
-      var userDetails = <Core.UserDetails> Core.injector.get('UserDetails');
+      var userDetails = <Core.UserDetails> Core.injector.get('userDetails');
       $scope.connect.userName = userDetails.username || localStorage['fabric.userName'];
       $scope.connect.password = userDetails.password || localStorage['fabric.password'];
       $scope.connect.container = container;
@@ -777,7 +777,7 @@ module Fabric {
    */
   export function createJolokia(url: string) {
     // lets default to the user/pwd for the login
-    var userDetails = <Core.UserDetails> Core.injector.get("UserDetails");
+    var userDetails = <Core.UserDetails> Core.injector.get("userDetails");
     log.info("Logging into remote jolokia " + url + " using user details: " + StringHelpers.toString(userDetails));
     return Core.createJolokia(url, <string> userDetails.username, <string> userDetails.password);
   }
