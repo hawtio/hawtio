@@ -64,7 +64,7 @@ module Core {
 
             otherwise({
         redirectTo: (parameters, path, search) => {
-          return appendConnectionNameToUrl('/perspective/defaultPage', search);
+          return '/perspective/defaultPage';
         }});
   }]);
 
@@ -164,13 +164,13 @@ module Core {
     $rootScope.$emit('UpdateRate', localStorage['updateRate']);
 
     // ensure that if the connection parameter is present, that we keep it
-    $rootScope.$on('$locationChangeStart', ($event, newUrl, oldUrl) => {
-      if (ConnectOptions === null) {
+    $rootScope.$on('$locationChangeStart', ($event, newUrl) => {
+      if (!ConnectOptions.name) {
         return;
       }
       var newQuery:any = UrlHelpers.parseQueryString(newUrl);
       if (!newQuery.con) {
-        log.debug("Lost connection parameter: ", ConnectOptions.name, " resetting");
+        log.debug("Lost connection parameter (", ConnectOptions.name, ") from query params: ", newQuery, " resetting");
         $location.search({ 'con': ConnectOptions.name });
       }
     });

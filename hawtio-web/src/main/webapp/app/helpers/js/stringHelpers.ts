@@ -26,7 +26,7 @@ module StringHelpers {
     var answer = <Array<String>>[];
     angular.forEach(obj, (value:any, key:String) => {
       var val = value;
-      if (key.toLowerCase() === 'password') {
+      if (('' + key).toLowerCase() === 'password') {
         val = StringHelpers.obfusicate(value);
       } else if (angular.isObject(val)) {
         val = toString(val);

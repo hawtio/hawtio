@@ -17,8 +17,7 @@ module Core {
   }]);
 
   _module.service('ConnectOptions', ['$location', ($location:ng.ILocationService) => {
-    var search = $location.search();
-    var connectionName = Core.getConnectionNameParameter(search);
+    var connectionName = Core.ConnectionName;
     if (!Core.isBlank(connectionName)) {
       var answer = Core.getConnectOptions(connectionName);
       log.debug("ConnectOptions: ", answer);
@@ -170,10 +169,10 @@ module Core {
           // silently ignore, we could be using the proxy
         }
       });
-      log.debug("Created UserDetails: ", answer);
+      log.debug("Created UserDetails: ", StringHelpers.toString(answer));
       return answer;
     } else {
-      log.debug("Created UserDetails: ", answer);
+      log.debug("Created UserDetails: ", StringHelpers.toString(answer));
       // TODO - Do we need to execute post login tasks here too...
       return answer;
     }

@@ -240,8 +240,6 @@ module Core {
           if (angular.isDefined(lastLocation.url)) {
             url = lastLocation.url;
           }
-          // lets perserve the connection name
-          url = Core.appendConnectionNameToUrl(url, $location.search());
           $location.url(url);
         }
       }

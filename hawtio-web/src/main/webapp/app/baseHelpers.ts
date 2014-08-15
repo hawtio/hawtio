@@ -175,10 +175,16 @@ module Core {
     return Core.loadConnectionMap()[name];
   }
 
+  export var ConnectionName:string = null;
+
   /**
    * Returns the current connection name using the given search parameters
    */
   export function getConnectionNameParameter(search) {
+    if (ConnectionName) {
+      return ConnectionName;
+    }
+    // Store the connection name once we've parsed it
     var connectionName = search["con"];
     if (angular.isArray(connectionName)) {
       connectionName = connectionName[0];
@@ -186,6 +192,7 @@ module Core {
     if (connectionName) {
       connectionName = connectionName.unescapeURL();
     }
+    ConnectionName = connectionName;
     return connectionName;
   }
 
