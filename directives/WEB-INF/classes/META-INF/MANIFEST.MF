@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1408146077439
+Bnd-LastModified: 1408270929535
 Build-Jdk: 1.7.0_55
-Build-Timestamp: Fri, 15 Aug 2014 23:38:04 +0000
+Build-Timestamp: Sun, 17 Aug 2014 10:19:02 +0000
 Built-By: jenkins
 Bundle-ClassPath: .
 Bundle-Description: hawtio :: hawtio-directives
