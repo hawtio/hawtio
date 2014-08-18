@@ -20,7 +20,7 @@ module Fabric {
     // console.log("Schema: ", schema);
 
     Core.pathSet(schema, ["properties", "name", "required"], true);
-    Core.pathSet(schema, ['properties', 'name', 'input-attributes', 'ng-pattern'], "/^[a-zA-Z0-9_-]*$/");
+    Core.pathSet(schema, ['properties', 'name', 'input-attributes', 'ng-pattern'], "/^[a-z0-9_-]*$/");
 
     delete schema.properties['metadataMap'];
     delete schema.properties['zookeeperUrl'];
