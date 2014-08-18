@@ -22,6 +22,7 @@ module Fabric {
       },
       selectedItems: $scope.selectedApis,
       rowHeight: 32,
+      showSelectionCheckbox: false,
       selectWithCheckboxOnly: true,
       columnDefs: [
         {
