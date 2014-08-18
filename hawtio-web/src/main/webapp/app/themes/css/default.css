@@ -1294,6 +1294,13 @@ strong.new,
   fill: lightgrey;
 }
 
+.window,
+.node.selected > rect {
+    stroke-width: 2px;
+    stroke-dasharray: 10,5;
+    stroke: red;
+}
+
 .window-inner.from,
 .node > .from {
   background-color: lightsteelblue;
