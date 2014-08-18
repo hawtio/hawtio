@@ -130,6 +130,12 @@ module Core {
     return branding;
   });
 
+  // service that holds cached jolokia responses, indexed by mbean name
+  _module.factory('ResponseHistory', () => {
+    var answer = Core.getResponseHistory();
+    return answer;
+  });
+
   // user detail service, contains username/password
   _module.factory('userDetails', ["jolokiaUrl", "localStorage", "ConnectOptions", (jolokiaUrl, localStorage, ConnectOptions:Core.ConnectOptions)  => {
     var answer = angular.fromJson(localStorage[jolokiaUrl]);

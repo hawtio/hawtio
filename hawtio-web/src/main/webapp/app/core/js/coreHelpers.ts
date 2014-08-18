@@ -472,7 +472,11 @@ module Core {
   // Jolokia caching stuff, try and cache responses so we don't always have to wait
   // for the server
 
-  var responseHistory:any = null;
+  export interface IResponseHistory {
+    [name:string]:any;
+  }
+
+  var responseHistory:IResponseHistory = null;
 
   export function getOrInitObjectFromLocalStorage(key:string):any {
     var answer:any = undefined;
@@ -480,6 +484,10 @@ module Core {
       localStorage[key] = angular.toJson({});
     }
     return angular.fromJson(localStorage[key]);
+  }
+
+  function argumentsToString(arguments:Array<any>) {
+    return StringHelpers.toString(arguments);
   }
 
   function keyForArgument(argument:any) {
@@ -490,6 +498,10 @@ module Core {
     switch(answer.toLowerCase()) {
       case 'exec':
         answer += ':' + argument['mbean'] + ':' + argument['operation'];
+        var argString = argumentsToString(argument['arguments']);
+        if (!Core.isBlank(argString)) {
+          answer += ':' + argString;
+        }
         break;
       case 'read':
         answer += ':' + argument['mbean'] + ':' + argument['attribute'];
@@ -498,7 +510,6 @@ module Core {
         return null;
     }
     return answer;
-
   }
 
   function createResponseKey(arguments:any) {
@@ -511,23 +522,62 @@ module Core {
     return answer;
   }
 
-  function getResponseHistory():any {
+  export function getResponseHistory():any {
     if (responseHistory === null) {
       //responseHistory = getOrInitObjectFromLocalStorage('responseHistory');
       responseHistory = {};
-      log.debug("Created response history from local storage: ", responseHistory);
+      log.debug("Created response history", responseHistory);
     }
     return responseHistory;
+  }
+
+  export var MAX_RESPONSE_CACHE_SIZE = 20;
+
+  function getOldestKey(responseHistory:IResponseHistory) {
+    var oldest:number = null;
+    var oldestKey:string = null;
+    angular.forEach(responseHistory, (value:any, key:string) => {
+      //log.debug("Checking entry: ", key);
+      //log.debug("Oldest timestamp: ", oldest, " key: ", key, " value: ", value);
+      if (!value || !value.timestamp) {
+        // null value is an excellent candidate for deletion
+        oldest = 0;
+        oldestKey = key;
+      } else if (oldest === null || value.timestamp < oldest) {
+        oldest = value.timestamp;
+        oldestKey = key;
+      }
+    });
+    return oldestKey;
   }
 
   function addResponse(arguments:any, value:any) {
     var responseHistory = getResponseHistory();
     var key = createResponseKey(arguments);
     if (key === null) {
-      log.debug("key for arguments is null: ", arguments);
+      log.debug("key for arguments is null, not caching: ", StringHelpers.toString(arguments));
       return;
     }
     //log.debug("Adding response to history, key: ", key, " value: ", value);
+    // trim the cache if needed
+    var keys = Object.extended(responseHistory).keys();
+    //log.debug("Number of stored responses: ", keys.length);
+    if (keys.length >= MAX_RESPONSE_CACHE_SIZE) {
+      log.debug("Cache limit (", MAX_RESPONSE_CACHE_SIZE, ") met or  exceeded (", keys.length, "), trimming oldest response");
+      var oldestKey = getOldestKey(responseHistory);
+      if (oldestKey !== null) {
+        // delete the oldest entry
+        log.debug("Deleting key: ", oldestKey);
+        delete responseHistory[oldestKey];
+      } else {
+        log.debug("Got null key, could be a cache problem, wiping cache");
+        keys.forEach((key) => {
+          log.debug("Deleting key: ", key);
+          delete responseHistory[key];
+        });
+      }
+    }
+
     responseHistory[key] = value;
     //localStorage['responseHistory'] = angular.toJson(responseHistory);
   }
@@ -585,8 +635,6 @@ module Core {
     }
 
     var handle = null;
-
-    var responseHistory = getResponseHistory();
 
     if ('success' in callback) {
       var cb = callback.success;
