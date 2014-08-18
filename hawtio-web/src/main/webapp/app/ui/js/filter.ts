@@ -16,7 +16,7 @@ module UI {
         saveAs: '@?',
         ngModel: '='
       },
-      controller: ["$scope", "localStorage", "$location", ($scope, localStorage, $location) => {
+      controller: ["$scope", "localStorage", "$location", "$element", ($scope, localStorage, $location, $element) => {
 
         $scope.getClass = () => {
           var answer = [];
@@ -34,14 +34,21 @@ module UI {
           if ($scope.saveAs in localStorage) {
             $scope.ngModel = localStorage[$scope.saveAs];
           }
+          /*
+           // input loses focus when we muck with the search, at least on firefox
           var search = $location.search();
           if ($scope.saveAs in search) {
             $scope.ngModel = search[$scope.saveAs];
           }
-          $scope.$watch('ngModel', (newValue) => {
-            localStorage[$scope.saveAs] = newValue;
-            $location.search($scope.saveAs, newValue);
-          })
+          */
+
+          var updateFunc = Core.throttled(() => {
+            localStorage[$scope.saveAs] = $scope.ngModel;
+            // input loses focus when we do this
+            //$location.search($scope.saveAs, $scope.ngModel);
+            Core.$apply($scope);
+          }, 500);
+          $scope.$watch('ngModel', updateFunc);
         }
       }]
     };
