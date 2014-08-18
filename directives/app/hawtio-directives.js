@@ -4697,7 +4697,7 @@ var UI;
                     ngModel: '='
                 },
                 controller: [
-                    "$scope", "localStorage", "$location", function ($scope, localStorage, $location) {
+                    "$scope", "localStorage", "$location", "$element", function ($scope, localStorage, $location, $element) {
                         $scope.getClass = function () {
                             var answer = [];
                             if (!Core.isBlank($scope.cssClass)) {
@@ -4714,14 +4714,22 @@ var UI;
                             if ($scope.saveAs in localStorage) {
                                 $scope.ngModel = localStorage[$scope.saveAs];
                             }
+
+                            /*
+                            // input loses focus when we muck with the search, at least on firefox
                             var search = $location.search();
                             if ($scope.saveAs in search) {
-                                $scope.ngModel = search[$scope.saveAs];
+                            $scope.ngModel = search[$scope.saveAs];
                             }
-                            $scope.$watch('ngModel', function (newValue) {
-                                localStorage[$scope.saveAs] = newValue;
-                                $location.search($scope.saveAs, newValue);
-                            });
+                            */
+                            var updateFunc = Core.throttled(function () {
+                                localStorage[$scope.saveAs] = $scope.ngModel;
+
+                                // input loses focus when we do this
+                                //$location.search($scope.saveAs, $scope.ngModel);
+                                Core.$apply($scope);
+                            }, 500);
+                            $scope.$watch('ngModel', updateFunc);
                         }
                     }]
             };
@@ -4832,8 +4840,12 @@ var UI;
                 $scope.rowTemplate = $templateCache.get('rowTemplate.html');
 
                 var columnDefs = $scope.config['columnDefs'];
+                var fieldName = 'name';
+                var displayName = 'Name';
                 if (columnDefs && columnDefs.length > 0) {
                     var def = columnDefs.first();
+                    fieldName = def['field'] || fieldName;
+                    displayName = def['displayName'] || displayName;
                     if (def['cellTemplate']) {
                         $scope.cellTemplate = def['cellTemplate'];
                     }
@@ -4859,6 +4871,9 @@ var UI;
                     //now compile the cell but use the parent scope
                     var innerParentScope = $scope.parentScope.$new();
                     innerParentScope.row = row;
+                    innerParentScope.col = {
+                        field: fieldName
+                    };
                     var cellEl = $compile($scope.cellTemplate)(innerParentScope);
                     $(rowEl).find('.list-row-contents').append(cellEl);
                     return rowEl;
@@ -4871,7 +4886,13 @@ var UI;
                     if (data) {
                         data.forEach(function (row) {
                             var newRow = {
-                                entity: row
+                                entity: row,
+                                getProperty: function (name) {
+                                    if (!angular.isDefined(name)) {
+                                        return null;
+                                    }
+                                    return row[name];
+                                }
                             };
                             list.append($scope.getContents(newRow));
                             $scope.rows.push(newRow);

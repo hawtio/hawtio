@@ -13,10 +13,21 @@
     </ul>
   </div>
 
+  <script type="text/ng-template" id="fileCellTemplate.html">
+    <div class="ngCellText">
+      <a href="{{childLink(row.entity)}}">
+      <i class="{{row | fileIconClass}}"></i> {{row.getProperty(col.field)}}</a>
+    </div>
+  </script>
+
+  <script type="text/ng-template" id="fileColumnTemplate.html">
+    <div></div>
+  </script>
+
   <div class="wiki-fixed form-horizontal">
     <div ng-hide="!children.length">
       <div class="row-fluid">
-        <div class="gridStyle" ng-grid="gridOptions"></div>
+        <div class="wiki-grid" hawtio-list="gridOptions"></div>
       </div>
     </div>
 

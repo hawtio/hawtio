@@ -15,7 +15,7 @@
     <div ng-class="isInDashboardClass()">
       <div class="row-fluid">
         <div ng-show="apis.length">
-          <div class="gridStyle" ng-grid="apiOptions"></div>
+          <table class="table table-striped" hawtio-simple-table="apiOptions"></table>
         </div>
         <div class="hero-unit" ng-show="apis.length === 0">
           <p>There are currently no endpoints running in this fabric exposing APIs</p>
