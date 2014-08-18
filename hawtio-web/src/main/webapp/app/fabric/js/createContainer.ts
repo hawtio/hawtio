@@ -77,6 +77,9 @@ module Fabric {
       rootContainers: []
     };
 
+    // referenced static data for all providers
+    $scope.allContainers = []
+
     // referenced static data for openshift
     $scope.openShift = {
       loginDataKey: "openshift.loginData",
@@ -184,6 +187,9 @@ module Fabric {
         }
 
         Forms.defaultValues($scope.entity, $scope.schema);
+
+        // load all container ids
+        $scope.allContainers = Fabric.getContainerIds(jolokia);
 
         if ($scope.selectedProvider.id === 'child') {
           // load the root containers and default the parent if its not set

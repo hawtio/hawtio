@@ -84,6 +84,10 @@ module Fabric {
     return jolokia.execute(Fabric.managerMBean, "containerIdsForProfile", version, profileId, { method: 'POST' });
   }
 
+  export function getContainerIds(jolokia) {
+    return jolokia.execute(Fabric.managerMBean, "containerIds", { method: 'POST' });
+  }
+
   export function deleteProfile(jolokia, version, id, success, error = Core.defaultJolokiaErrorHandler) {
     doAction('deleteProfile(java.lang.String, java.lang.String)', jolokia, [version, id], success, error);
   }
