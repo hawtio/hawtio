@@ -213,7 +213,7 @@ module Core {
    * Creates the Jolokia URL string for the given connection options
    */
   export function createServerConnectionUrl(options:Core.ConnectOptions) {
-    log.debug("Connect to server, options: ", StringHelpers.toString(options));
+    Logger.get("Core").debug("Connect to server, options: ", StringHelpers.toString(options));
     var answer:String = null;
     if (options.jolokiaUrl) {
       answer = options.jolokiaUrl;
@@ -244,7 +244,7 @@ module Core {
     var query = hawtioPluginLoader.parseQueryString();
     var localMode = query['localMode'];
     if (localMode) {
-      console.log("local mode so not using jolokia URL");
+      Logger.get("Core").debug("local mode so not using jolokia URL");
       jolokiaUrls = <string[]>[];
       return null;
     }
