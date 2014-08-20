@@ -101,12 +101,12 @@ var connectionName=search["con"];if(angular.isArray(connectionName)){connectionN
 if(connectionName){connectionName=connectionName.unescapeURL();}
 Core.ConnectionName=connectionName;return connectionName;}
 Core.getConnectionNameParameter=getConnectionNameParameter;function appendConnectionNameToUrl(path,search){var connectionName=getConnectionNameParameter(search);if(connectionName){var separator=path.indexOf("?")>=0?"&":"?";return path+separator+"con="+connectionName;}else{return path;}}
-Core.appendConnectionNameToUrl=appendConnectionNameToUrl;function createServerConnectionUrl(options){Core.log.debug("Connect to server, options: ",StringHelpers.toString(options));var answer=null;if(options.jolokiaUrl){answer=options.jolokiaUrl;}
+Core.appendConnectionNameToUrl=appendConnectionNameToUrl;function createServerConnectionUrl(options){Logger.get("Core").debug("Connect to server, options: ",StringHelpers.toString(options));var answer=null;if(options.jolokiaUrl){answer=options.jolokiaUrl;}
 if(answer===null){answer=options.scheme||'http';answer+='://'+(options.host||'localhost');if(options.port){answer+=':'+options.port;}
 if(options.path){answer=UrlHelpers.join(answer,options.path);}}
 if(options.useProxy){answer=UrlHelpers.join('proxy',answer);}
 Logger.get("Core").debug("Using URL: ",answer);return answer;}
-Core.createServerConnectionUrl=createServerConnectionUrl;function getJolokiaUrl(){var query=hawtioPluginLoader.parseQueryString();var localMode=query['localMode'];if(localMode){console.log("local mode so not using jolokia URL");jolokiaUrls=[];return null;}
+Core.createServerConnectionUrl=createServerConnectionUrl;function getJolokiaUrl(){var query=hawtioPluginLoader.parseQueryString();var localMode=query['localMode'];if(localMode){Logger.get("Core").debug("local mode so not using jolokia URL");jolokiaUrls=[];return null;}
 var uri=null;var connectionName=Core.getConnectionNameParameter(query);if(connectionName){var connectOptions=Core.getConnectOptions(connectionName);if(connectOptions){uri=createServerConnectionUrl(connectOptions);Logger.get("Core").debug("Using jolokia URI: ",uri," from local storage");}else{Logger.get("Core").debug("Connection parameter found but no stored connections under name: ",connectionName);}}
 if(!uri){uri=jolokiaUrls.find(function(url){var jqxhr=$.ajax(url,{async:false,username:'public',password:'biscuit'});return jqxhr.status===200||jqxhr.status===401||jqxhr.status===403;});Logger.get("Core").debug("Using jolokia URI: ",uri," via discovery");}
 return uri;}
