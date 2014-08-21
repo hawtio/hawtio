@@ -62,7 +62,7 @@ module ContainerHelpers {
    */
   export function buildLocationMenu($scope:WithCreateLocationDialog, jolokia, locations:Array<string>):UI.MenuItem {
     var locationMenu = <UI.MenuItem>{
-      icon: 'icon-beer',
+      icon: 'icon-location-arrow',
       title: 'Set Location',
       items: []
     };
