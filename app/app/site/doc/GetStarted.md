@@ -8,47 +8,26 @@ The front end could be accessed using the **HTML5 web console** or from [Google 
 
 The out of the box defaults try to do the right thing for most folks but if you want to configure things then please check out the <a class="btn btn-default" href="http://hawt.io/configuration/index.html">configuration guide</a>
 
-<a name="chrome-ext"></a>
-## Using the Chrome Extension
-
-<a class="btn btn-large btn-primary" href="http://central.maven.org/maven2/io/hawt/hawtio-crx/1.4.16/hawtio-crx-1.4.16.crx">Download the hawtio Chrome Extension version 1.4.16</a>
-
-* Then you'll need to open the folder that the CRX file got downloaded to. On a Mac in Chrome you right click the downloaded file and click <b>Show in Finder</b>
-
-* now in <a href="https://www.google.com/intl/en/chrome/browser/">Google Chrome</a> open the <a class="btn btn-default btn-large" href="chrome://extensions/">Extensions Page</a> at <b>chrome://extensions/</b> or <b>Window pull down menu -&gt; Extensions</b>
-
-* now drop the downloaded CRX file (from Finder or Windows Explorer) onto Chrome's <a href="chrome://extensions/">Extensions Page</a> at <b>chrome://extensions/</b> or <b>Window pull down menu -&gt; Extensions</b> and it should install the hawtio extension for Chrome.
-
-* now to open a <a href="http://hawt.io/">hawtio</a> tab or window at any point, just open a new tab / window in Chrome, click the <b>Apps</b> button on the left hand of the bookmark bar which should open a window with all your extensions in there....
-
-* you should see a <a href="http://hawt.io/">hawtio icon</a> in the apps page. If not <a href="http://hawt.io/community/index.html">let us know!</a>.
-
-* Click the <a href="http://hawt.io/">hawtio icon</a>
-
-* the <b>Connect</b> page should appear where you can then connect to any processes which are running a <a href="http://jolokia.org/">jolokia agent</a>.
-
-* have fun and profit! Please share with us your <a href="http://hawt.io/community/index.html">feedback!</a> or <a href="https://twitter.com/hawtio">tweet us!</a>
-
 <a name="standalone"></a>
 ## Using the executable jar
 
 You can startup hawtio on your machine using the hawtio-app executable jar.
 
-<a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-app/1.4.16/hawtio-app-1.4.16.jar">Download the executable hawtio-app-1.4.16.jar</a>
+<a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-app/1.4.17/hawtio-app-1.4.17.jar">Download the executable hawtio-app-1.4.17.jar</a>
 
 Once you have downloaded it, just run this from the command line:
 
-    java -jar hawtio-app-1.4.16.jar
+    java -jar hawtio-app-1.4.17.jar
 
 And the console should show you which URL to open to view hawtio; which by default is [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/)
 
 You can specify the port number to use, for example to use port 8090 run from the command line:
 
-    java -jar hawtio-app-1.4.16.jar --port 8090
+    java -jar hawtio-app-1.4.17.jar --port 8090
 
 hawtio supports other options which you can get listed by running from command line:
 
-    java -jar hawtio-app-1.4.16.jar --help
+    java -jar hawtio-app-1.4.17.jar --help
 
 <a name="web-container"></a>
 ## Using a Servlet Engine or Application Server
@@ -59,7 +38,7 @@ If you are running Tomcat 5/6/7, Jetty 7/8 or you could just deploy a WAR:
 <div class="row">
   <div class="col-md-6 span6 text-center">
     <p>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.4.16/hawtio-default-1.4.16.war">Download hawtio-default.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.4.17/hawtio-default-1.4.17.war">Download hawtio-default.war</a>
     </p>
     <p>
       a bare hawtio web application with minimal dependencies
@@ -67,7 +46,7 @@ If you are running Tomcat 5/6/7, Jetty 7/8 or you could just deploy a WAR:
   </div>
   <div class="col-md-6 span6 text-center">
     <p>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.4.16/sample-1.4.16.war">Download sample.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.4.17/sample-1.4.17.war">Download sample.war</a>
     </p>
     <p>
       a hawtio web application which comes with some <a href="http://activemq.apache.org/">Apache ActiveMQ</a> and
@@ -80,12 +59,12 @@ Copy the WAR file to your deploy directory in your container.
 
 If you rename the downloaded file to _hawtio.war_ then drop it into your deploy directory then open [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) and you should have your hawtio console to play with.
 
-Otherwise you will need to use either [http://localhost:8080/hawtio-default-1.4.16/](http://localhost:8080/hawtio-default-1.4.16/) or [http://localhost:8080/sample-1.4.16/](http://localhost:8080/sample-1.4.16/)  depending on the file name you downloaded.
+Otherwise you will need to use either [http://localhost:8080/hawtio-default-1.4.17/](http://localhost:8080/hawtio-default-1.4.17/) or [http://localhost:8080/sample-1.4.17/](http://localhost:8080/sample-1.4.17/)  depending on the file name you downloaded.
 
 Please check [the configuration guide](http://hawt.io/configuration/index.html) to see how to configure things; in particular security.
 
 If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to
- <a class="btn btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.4.16/hawtio-default-offline-1.4.16.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).
+ <a class="btn btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.4.17/hawtio-default-offline-1.4.17.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).
 
 If you don't see a Tomcat / Jetty tab for your container you may need to enable JMX.
 
@@ -96,19 +75,19 @@ If you are using 6.1 or later of [JBoss Fuse](http://www.jboss.org/products/fuse
 
 Otherwise if you are using 6.0 or earlier of [Fuse](http://www.jboss.org/products/fuse) or a vanilla [Apache Karaf](http://karaf.apache.org/) or [Apache ServiceMix](http://servicemix.apache.org/) then try the following:
 
-    features:addurl mvn:io.hawt/hawtio-karaf/1.4.16/xml/features
+    features:addurl mvn:io.hawt/hawtio-karaf/1.4.17/xml/features
     features:install hawtio
 
 If you are using [Apache Karaf](http://karaf.apache.org/) 2.3.3 or newer then you can use 'features:chooseurl' which is simpler to do:
 
-    features:chooseurl hawtio 1.4.16
+    features:chooseurl hawtio 1.4.17
     features:install hawtio
 
 The hawtio console can then be viewed at [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/). The default login for Karaf is karaf/karaf, and for ServiceMix its smx/smx.
 
 **NOTE** if you are on ServiceMix 4.5 then you should install hawtio-core instead of hawtio, eg
 
-    features:addurl mvn:io.hawt/hawtio-karaf/1.4.16/xml/features
+    features:addurl mvn:io.hawt/hawtio-karaf/1.4.17/xml/features
     features:install hawtio-core
 
 ### If you use a HTTP proxy
@@ -136,7 +115,7 @@ The following section gives details of other containers
 <a name="jee"></a>
 ### If you use JBoss AS or Wildfly
 
-You may have issues with slf4j JARs in WAR deployments on JBoss AS or Wildfly. To resolve this you must use <a class="btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.4.16/hawtio-no-slf4j-1.4.16.war">Download hawtio-no-slf4j.war</a>.
+You may have issues with slf4j JARs in WAR deployments on JBoss AS or Wildfly. To resolve this you must use <a class="btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.4.17/hawtio-no-slf4j-1.4.17.war">Download hawtio-no-slf4j.war</a>.
 
 See more details [here](http://totalprogus.blogspot.co.uk/2011/06/javalanglinkageerror-loader-constraint.html).
 
@@ -219,6 +198,29 @@ Then in your application run the following code:
     main.run();
 
 If you wish to do anything fancy it should be easy to override the Main class to find the hawtio-web.war in whatever place you wish to locate it (such as your local maven repo or download it from some server etc).
+
+<a name="chrome-ext"></a>
+## Using the Chrome Extension (currently not working)
+
+> Chrome Extension currently does not work, as Google requires extensions to be installed using their app store, and hawtio are not yet published to the app store. This may change in the future.
+
+<a class="btn btn-large btn-primary" href="http://central.maven.org/maven2/io/hawt/hawtio-crx/1.4.17/hawtio-crx-1.4.17.crx">Download the hawtio Chrome Extension version 1.4.17</a>
+
+* Then you'll need to open the folder that the CRX file got downloaded to. On a Mac in Chrome you right click the downloaded file and click <b>Show in Finder</b>
+
+* now in <a href="https://www.google.com/intl/en/chrome/browser/">Google Chrome</a> open the <a class="btn btn-default btn-large" href="chrome://extensions/">Extensions Page</a> at <b>chrome://extensions/</b> or <b>Window pull down menu -&gt; Extensions</b>
+
+* now drop the downloaded CRX file (from Finder or Windows Explorer) onto Chrome's <a href="chrome://extensions/">Extensions Page</a> at <b>chrome://extensions/</b> or <b>Window pull down menu -&gt; Extensions</b> and it should install the hawtio extension for Chrome.
+
+* now to open a <a href="http://hawt.io/">hawtio</a> tab or window at any point, just open a new tab / window in Chrome, click the <b>Apps</b> button on the left hand of the bookmark bar which should open a window with all your extensions in there....
+
+* you should see a <a href="http://hawt.io/">hawtio icon</a> in the apps page. If not <a href="http://hawt.io/community/index.html">let us know!</a>.
+
+* Click the <a href="http://hawt.io/">hawtio icon</a>
+
+* the <b>Connect</b> page should appear where you can then connect to any processes which are running a <a href="http://jolokia.org/">jolokia agent</a>.
+
+* have fun and profit! Please share with us your <a href="http://hawt.io/community/index.html">feedback!</a> or <a href="https://twitter.com/hawtio">tweet us!</a>
 
 ## Using a git Clone
 
