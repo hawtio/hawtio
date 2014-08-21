@@ -1,9 +1,8 @@
 <style type="text/css">
 
-  .span6.node-panel {
+  .span5.node-panel {
     margin-top: 5px;
     margin-left: 5px;
-    width: 50%;
   }
 
   .node-attributes dl {
@@ -268,13 +267,13 @@
 
   <div class="row-fluid">
     <div ng-show="containerCount">
-      <div class="{{viewSettings.panel ? 'span6' : 'span12'}} canvas context-canvas">
+      <div class="{{viewSettings.panel ? 'span7' : 'span12'}} canvas context-canvas">
         <div hawtio-force-graph graph="graph" selected-model="selectedNode" link-distance="150" charge="-600"
              nodesize="10" marker-kind="marker-end"
              style="min-height: 800px">
         </div>
       </div>
-      <div ng-show="viewSettings.panel" class="span6 node-panel">
+      <div ng-show="viewSettings.panel" class="span5 node-panel">
         <div ng-show="selectedNode" class="node-attributes">
           <dl ng-repeat="property in selectedNodeProperties" class="dl-horizontal">
             <dt title="{{property.key}}">{{property.key}}:</dt>
