@@ -3,6 +3,9 @@
 #### 1.5
 * Hawtio requires Java 1.7 onwards
 
+#### 1.4.17
+* bug fixes
+
 #### 1.4.16
 * bug fixes
 
