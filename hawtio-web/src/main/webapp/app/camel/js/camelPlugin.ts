@@ -107,9 +107,11 @@ module Camel {
       {field: 'MinProcessingTime', displayName: 'Min Time'},
       {field: 'MaxProcessingTime', displayName: 'Max Time'},
       {field: 'TotalProcessingTime', displayName: 'Total Time', visible: false},
-      {field: 'DeltaProcessingTime', displayName: 'Delta Time', visible: false},
+      {field: 'LastProcessingTime', displayName: 'Last Time', visible: false},
       {field: 'LastExchangeCompletedTimestamp', displayName: 'Last completed', visible: false},
-      {field: 'LastExchangeFailedTimestamp', displayName: 'Last failed', visible: false}
+      {field: 'LastExchangeFailedTimestamp', displayName: 'Last failed', visible: false},
+      {field: 'Redeliveries', displayName: 'Redelivery #', visible: false},
+      {field: 'ExternalRedeliveries', displayName: 'External Redelivery #', visible: false}
     ];
     attributes[jmxDomain + "/routes/folder"] = [
       stateColumn,
@@ -125,8 +127,11 @@ module Camel {
       {field: 'MaxProcessingTime', displayName: 'Max Time'},
       {field: 'TotalProcessingTime', displayName: 'Total Time', visible: false},
       {field: 'DeltaProcessingTime', displayName: 'Delta Time', visible: false},
+      {field: 'LastProcessingTime', displayName: 'Last Time', visible: false},
       {field: 'LastExchangeCompletedTimestamp', displayName: 'Last completed', visible: false},
-      {field: 'LastExchangeFailedTimestamp', displayName: 'Last failed', visible: false}
+      {field: 'LastExchangeFailedTimestamp', displayName: 'Last failed', visible: false},
+      {field: 'Redeliveries', displayName: 'Redelivery #', visible: false},
+      {field: 'ExternalRedeliveries', displayName: 'External Redelivery #', visible: false}
     ];
     attributes[jmxDomain + "/processors/folder"] = [
       stateColumn,
@@ -142,9 +147,11 @@ module Camel {
       {field: 'MinProcessingTime', displayName: 'Min Time'},
       {field: 'MaxProcessingTime', displayName: 'Max Time'},
       {field: 'TotalProcessingTime', displayName: 'Total Time', visible: false},
-      {field: 'DeltaProcessingTime', displayName: 'Delta Time', visible: false},
+      {field: 'LastProcessingTime', displayName: 'Last Time', visible: false},
       {field: 'LastExchangeCompletedTimestamp', displayName: 'Last completed', visible: false},
-      {field: 'LastExchangeFailedTimestamp', displayName: 'Last failed', visible: false}
+      {field: 'LastExchangeFailedTimestamp', displayName: 'Last failed', visible: false},
+      {field: 'Redeliveries', displayName: 'Redelivery #', visible: false},
+      {field: 'ExternalRedeliveries', displayName: 'External Redelivery #', visible: false}
     ];
     attributes[jmxDomain + "/components/folder"] = [
       stateColumn,

@@ -110,7 +110,7 @@ module Fabric {
       }, {
         method: 'POST',
         success: () => {
-          // Core.notification('success', 'Triggered refresh of profile ' + profileId + '/' + versionId);
+          Core.notification('success', 'Triggered refresh of profile ' + profileId + '/' + versionId);
           Core.$apply($scope);
         },
         error: (response) => {
