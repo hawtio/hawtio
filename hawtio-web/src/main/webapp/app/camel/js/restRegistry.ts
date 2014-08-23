@@ -127,9 +127,14 @@ module Camel {
         // okay we have the data then set the selected mbean which allows UI to display data
         $scope.selectedMBean = response.request.mbean;
 
-        // ensure web page is updated
-        Core.$apply($scope);
+      } else {
+
+        // set the mbean to a value so the ui can get updated
+        $scope.selectedMBean = "true";
       }
+
+      // ensure web page is updated
+      Core.$apply($scope);
     }
 
     $scope.renderIcon = (state) => {
