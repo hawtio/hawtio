@@ -2647,6 +2647,55 @@ var UI;
     })();
     UI.TablePager = TablePager;
 })(UI || (UI = {}));
+/// <reference path="uiPlugin.ts"/>
+var UI;
+(function (UI) {
+    UI.hawtioTagList = UI._module.directive("hawtioTagList", [
+        '$interpolate', '$compile', function ($interpolate, $compile) {
+            return {
+                restrict: 'E',
+                replace: true,
+                scope: {
+                    ngModel: '=?',
+                    property: '@',
+                    onChange: '&'
+                },
+                link: function (scope, $element, attr) {
+                    if (!scope.ngModel || !scope.property || !scope.ngModel[scope.property]) {
+                        // bail out
+                        return;
+                    }
+
+                    scope.collection = scope.ngModel[scope.property];
+
+                    scope.removeTag = function (tag) {
+                        //log.debug("Removing: ", tag);
+                        scope.ngModel[scope.property].remove(tag);
+                        if (scope.onChange) {
+                            scope.$eval(scope.onChange);
+                        }
+                    };
+                    scope.$watch('collection', function (newValue, oldValue) {
+                        if (!scope.ngModel || !scope.property || !scope.ngModel[scope.property]) {
+                            // bail out
+                            return;
+                        }
+                        var tags = scope.ngModel[scope.property];
+
+                        //log.debug("Collection changed: ", tags);
+                        var tmp = angular.element("<div></div>");
+                        tags.forEach(function (tag) {
+                            var func = $interpolate('<span class="badge badge-success mouse-pointer">{{tag}} <i class="icon-remove" ng-click="removeTag(\'{{tag}}\')"></i></span>&nbsp;');
+                            tmp.append(func({
+                                tag: tag
+                            }));
+                        });
+                        $element.html($compile(tmp.children())(scope));
+                    }, true);
+                }
+            };
+        }]);
+})(UI || (UI = {}));
 /// <reference path="./uiPlugin.ts"/>
 var UI;
 (function (UI) {

@@ -19,7 +19,10 @@
         <li ng-repeat="field in forms.create_container.$error.pattern">
           <strong class="red">{{massage(field.$name) | humanize}}</strong>
             <span ng-switch="field.$name">
-              <span ng-switch-when="name">can only contain letters, numbers, '-' and '_'</span>
+              <span ng-switch-when="name">
+                <span ng-show="selectedProvider.id == 'openshift'">can only contain lowercase letters and numbers</span>
+                <span ng-hide="selectedProvider.id == 'openshift'">can only contain letters, numbers, '-' and '_'</span>
+              </span>
             </span>
         </li>
         <li ng-repeat="field in forms.create_container.$error.taken">
