@@ -25,6 +25,7 @@ module Camel {
             when('/camel/fabricDiagram', {templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false}).
             when('/camel/typeConverter', {templateUrl: 'app/camel/html/typeConverter.html', reloadOnSearch: false}).
             when('/camel/restRegistry', {templateUrl: 'app/camel/html/restRegistry.html', reloadOnSearch: false}).
+            when('/camel/routeMetrics', {templateUrl: 'app/camel/html/routeMetrics.html', reloadOnSearch: false}).
             when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false}).
             when('/camel/source', {templateUrl: 'app/camel/html/source.html'}).
             when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html'}).
@@ -218,6 +219,12 @@ module Camel {
       title: "View the entire JVMs Camel flows",
       isValid: (workspace: Workspace) =>  workspace.isTopTabActive("camel") && !workspace.isRoute(),
       href: () => "#/camel/fabricDiagram"
+    });
+    workspace.subLevelTabs.push({
+      content: '<i class="icon-bar-chart"></i> Route Metrics',
+      title: "View the entire JVMs Camel route metrics",
+      isValid: (workspace: Workspace) => workspace.isTopTabActive("camel") && !workspace.isRoute() && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia),
+      href: () => "#/camel/routeMetrics"
     });
     workspace.subLevelTabs.push({
       content: '<i class=" icon-file-alt"></i> Source',
