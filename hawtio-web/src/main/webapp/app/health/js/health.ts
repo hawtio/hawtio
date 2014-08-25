@@ -6,26 +6,7 @@ module Health {
 
     export var HealthController = _module.controller("Health.HealthController", ["$scope", "jolokia", "workspace", "$templateCache", ($scope, jolokia, workspace:Workspace, $templateCache) => {
 
-      $scope.levelSorting = {
-        'ERROR': 0,
-        'WARNING': 1,
-        'INFO': 2
-      };
-
-      $scope.colorMaps = {
-        'ERROR': {
-          'Health': '#ff0a47',
-          'Remaining': '#e92614'
-        },
-        'WARNING': {
-          'Health': '#33cc00',
-          'Remaining': '#f7ee09'
-        },
-        'INFO': {
-          'Health': '#33cc00',
-          'Remaining': '#00cc33'
-        }
-      };
+      Health.decorate($scope);
 
       $scope.results = [];
       $scope.responses = {};
@@ -150,7 +131,6 @@ module Health {
         }
       };
 
-
       $scope.$on('jmxTreeUpdated', () => {
         $scope.mbeans = $scope.getMBeans();
       });
@@ -160,7 +140,6 @@ module Health {
       });
 
       $scope.mbeans = $scope.getMBeans();
-
 
       $scope.render = (response) => {
         /*
@@ -195,30 +174,7 @@ module Health {
           return $scope.levelSorting[value.level];
         });
 
-        values.forEach((value:any) => {
-
-          var healthPercentCurrent = 0;
-          var healthPercentRemaining = 1;
-
-          if ('healthPercent' in value) {
-            var healthPercent = <number>value['healthPercent'];
-            healthPercentCurrent = healthPercent.round(3);
-            healthPercentRemaining = 1 - healthPercentCurrent;
-            healthPercentRemaining = healthPercentRemaining.round(3);
-          }
-
-          value.data = {
-              total: 1,
-              terms: [{
-                term: 'Health',
-                count: healthPercentCurrent
-              }, {
-                term: 'Remaining',
-                count: healthPercentRemaining
-              }]
-            };
-            value.colorMap = $scope.colorMaps[value.level];
-        });
+        values.forEach($scope.generateChartData);
 
         if (!display) {
           $scope.displays.push({
@@ -241,32 +197,6 @@ module Health {
       $scope.filterValues = (value) => {
         var json = angular.toJson(value);
         return json.has($scope.pageFilter);
-      };
-
-
-      $scope.sanitize = (value) => {
-        var answer = {};
-        Object.extended(value).keys().forEach((key) => {
-          if ($scope.showKey(key) && value[key]) {
-            answer[key] = value[key];
-          }
-        });
-        return answer;
-      };
-
-
-      $scope.showKey = (key) => {
-        if ( key === "colorMap" || key === "data") {
-          return false;
-        }
-        return true;
-      };
-
-      $scope.getTitle = (value) => {
-        if (value['healthId'].endsWith('profileHealth')) {
-          return 'Profile: <strong>' + value['profile'] + '</strong>';
-        }
-        return 'HealthID: <strong>' + value['healthId'] + '</strong>';
       };
 
 

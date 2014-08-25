@@ -334,7 +334,7 @@ module Fabric {
 
   export function viewVersion(versionId, $location, $scope) {
     var defaultTarget = '/wiki/branch/' + versionId + '/view/fabric/profiles';
-    var path = $location.path();
+    var path:string = $location.path();
     var branch = $scope.branch || $scope.$parent.branch;
     if (!path.startsWith('/wiki/branch/') || !branch) {
       $location.path(defaultTarget);
@@ -483,10 +483,14 @@ module Fabric {
     return $location.search()['cv'] || "1.0";
   }
 
+  export interface IScopeWithApiURL extends ng.IScope {
+    restApiUrl:string;
+  };
+
   /**
    * Loads the restApiUrl property into the given $scope and added the helper function
    */
-  export function loadRestApi(jolokia, $scope, callback:(response:any) => void = undefined) {
+  export function loadRestApi(jolokia, $scope:IScopeWithApiURL, callback:(response:any) => void = undefined) {
     if ($scope && !$scope.restApiUrl) {
       $scope.restApiUrl = DEFAULT_REST_API;
     }

@@ -1,3 +1,4 @@
+/// <reference path="../../helpers/js/objectHelpers.ts"/>
 /// <reference path="../../fabric/js/jolokiaHelpers.ts"/>
 /// <reference path="fabricRequirementsPlugin.ts"/>
 /// <reference path="../../helpers/js/urlHelpers.ts"/>
