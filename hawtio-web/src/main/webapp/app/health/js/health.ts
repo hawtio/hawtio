@@ -100,7 +100,7 @@ module Health {
         if (!display.values || display.values.length === 0) {
           return "ok";
         }
-        var answer = "ok";
+        var answer:string = "ok";
         display.values.forEach((value) => {
           if (answer !== "warning" && value.level && value.level.toLowerCase() !== 'info') {
             answer = "warning";
@@ -135,7 +135,7 @@ module Health {
 
 
       $scope.getMBeans = () => {
-        var healthMap = getHealthMBeans(workspace);
+        var healthMap:any = getHealthMBeans(workspace);
         log.debug("HealthMap: ", healthMap);
         if (healthMap) {
           if (!angular.isArray(healthMap)) {

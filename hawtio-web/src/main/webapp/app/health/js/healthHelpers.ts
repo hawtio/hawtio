@@ -1,6 +1,8 @@
 /**
  * @module Health
  */
+/// <reference path="../../baseIncludes.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
 module Health {
 
   export var log:Logging.Logger = Logger.get("Health");
@@ -27,7 +29,7 @@ module Health {
    * @param {Workspace} workspace
    * @return {String}
    */
-  export function getHealthMBeans(workspace:Workspace) {
+  export function getHealthMBeans(workspace:Workspace):any {
     if (workspace) {
       var healthMap = workspace.mbeanServicesToDomain["Health"] || {};
       var selection = workspace.selection;
