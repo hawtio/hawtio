@@ -4,6 +4,7 @@ module FabricRequirements {
 
   interface IProfileRequirementsController extends Health.HealthMixins {
     hideTitle: boolean;
+    hideTagInput: boolean;
     healthTemplate:string;
     profileRequirementsString:string;
     fabricHealth: any;
@@ -14,7 +15,8 @@ module FabricRequirements {
   export var ProfileRequirementsController = controller("ProfileRequirementsController", ["$scope", "jolokia", "$templateCache", ($scope:IProfileRequirementsController, jolokia, $templateCache:ng.ITemplateCacheService) => {
 
     Health.decorate($scope);
-    $scope.hideTitle=true;
+    $scope.hideTitle = true;
+    $scope.hideTagInput = true;
     $scope.healthTemplate = '';
 
     Core.registerForChanges(jolokia, $scope, {

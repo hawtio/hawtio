@@ -1,4 +1,9 @@
 <div ng-controller="FabricRequirements.RequirementsController">
+  <script type="text/ng-template" id="tagCell.html">
+    <td class="td-fixed-width-150">
+      <hawtio-tag-list ng-model="{{row}}" property="{{key}}"></hawtio-droppable-tag-list>
+    </td>
+  </script>
   <script type="text/ng-template" id="pageTemplate.html">
     <div>
       <ul class="nav nav-tabs connected">

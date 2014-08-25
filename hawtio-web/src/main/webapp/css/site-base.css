@@ -4333,3 +4333,8 @@ ul.dynatree-container {
 .new-config-name-form {
     margin-top: 30px;
 }
+
+.td-fixed-width-150 {
+  white-space: normal;
+  width: 150px;
+}

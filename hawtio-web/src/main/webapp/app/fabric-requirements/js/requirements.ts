@@ -6,6 +6,7 @@
 module FabricRequirements {
 
   export interface CurrentRequirements extends Fabric.FabricRequirements {
+    $tags?: Array<string>;
     $dirty?: boolean;
   }
 
@@ -18,7 +19,7 @@ module FabricRequirements {
     };
   });
 
-  export var RequirementsController = controller("RequirementsController", ["$scope", "jolokia", "ProfileCart", "$templateCache", "FileUploader", "userDetails", "jolokiaUrl", "$location", "$timeout", "CurrentRequirements", ($scope, jolokia, ProfileCart:Array<Fabric.Profile>, $templateCache, FileUploader, userDetails, jolokiaUrl, $location, $timeout, CurrentRequirements:FabricRequirements.CurrentRequirements) => {
+  export var RequirementsController = controller("RequirementsController", ["$scope", "jolokia", "ProfileCart", "$templateCache", "FileUploader", "userDetails", "jolokiaUrl", "$location", "$timeout", "CurrentRequirements", "$element", ($scope, jolokia, ProfileCart:Array<Fabric.Profile>, $templateCache, FileUploader, userDetails, jolokiaUrl, $location, $timeout, CurrentRequirements:FabricRequirements.CurrentRequirements, $element:ng.IAugmentedJQuery) => {
 
     $scope.tabs = {
       '0': {
@@ -46,6 +47,15 @@ module FabricRequirements {
 
     $scope.requirements = CurrentRequirements;
     $scope.template = '';
+    $scope.newTag = '';
+
+    $scope.addTag = (tag:string) => {
+      if (!$scope.requirements.$tags.any(tag)) {
+        $scope.requirements.$tags.push(tag);
+        $scope.newTag = '';
+        $element.find('.input-mini').val('');
+      }
+    };
 
     $scope.cancelChanges = () => {
       if ($scope.requirements.$dirty) {
@@ -107,6 +117,19 @@ module FabricRequirements {
         Core.notification('success', 'Imported requirements');
       };
 
+      function createTagList(profileRequirements:CurrentRequirements) {
+        var tags = [];
+        ['sshConfiguration', 'dockerConfiguration'].forEach((config) => {
+          if (profileRequirements[config] && profileRequirements[config].hosts) {
+            profileRequirements.sshConfiguration.hosts.forEach((host:Fabric.SshHostConfiguration) => {
+              tags.add(host.tags);
+            });
+          }
+        });
+        profileRequirements.$tags = tags.unique().sort();
+        //log.debug("Tags: ", profileRequirements.$tags);
+      }
+
       Core.registerForChanges(jolokia, $scope, {
         type: 'exec',
         mbean: Fabric.managerMBean,
@@ -135,10 +158,10 @@ module FabricRequirements {
         });
         // now we've pulled 'em in we can clear the profile cart
         ProfileCart.length = 0;
-
         if (Core.isBlank($scope.template)) {
           $scope.template = $templateCache.get('pageTemplate.html');
         }
+        createTagList($scope.requirements);
         Core.$apply($scope);
       });
     });
