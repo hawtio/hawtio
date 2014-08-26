@@ -787,7 +787,7 @@ module Fabric {
   }
 
   export function registeredProviders(jolokia) {
-    var providers = jolokia.execute(Fabric.managerMBean, 'registeredProviders()');
+    var providers = jolokia.execute(Fabric.managerMBean, 'registeredValidProviders()');
     var answer = {};
     angular.forEach(providers, (value, key) => {
       answer[key] = {
