@@ -16,7 +16,7 @@ module FabricRequirements {
 
     Health.decorate($scope);
     $scope.hideTitle = true;
-    $scope.hideTagInput = true;
+    //$scope.hideTagInput = true;
     $scope.healthTemplate = '';
 
     Core.registerForChanges(jolokia, $scope, {

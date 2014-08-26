@@ -73,9 +73,11 @@
                 <h6>Host Patterns</h6>
                 <p ng-repeat="pattern in profileRequirement.sshScalingRequirements.hostPatterns">{{pattern}}</p>
               </div>
-              <div class="span6" ng-show="profileRequirement.sshScalingRequirements.hostTags">
-                <h6>Host Tags</h6>
-                <hawtio-tag-list ng-model="profileRequirement.sshScalingRequirements" property="hostTags" on-change="onChange()"></hawtio-tag-list>
+              <div class="span6" hawtio-drop ng-model="profileRequirement.sshScalingRequirements" property="hostTags">
+                <div ng-show="profileRequirement.sshScalingRequirements.hostTags">
+                  <h6>Host Tags</h6>
+                  <hawtio-tag-list ng-model="profileRequirement.sshScalingRequirements" property="hostTags" on-change="onChange()"></hawtio-tag-list>
+                </div>
               </div>
             </div>
           </div>
@@ -93,9 +95,11 @@
                 <h6>Host Patterns</h6>
                 <p ng-repeat="pattern in profileRequirement.dockerScalingRequirements.hostPatterns">{{pattern}}</p>
               </div>
-              <div class="span6" ng-show="profileRequirement.dockerScalingRequirements.hostTags">
-                <h6>Host Tags</h6>
-                <hawtio-tag-list ng-model="profileRequirement.dockerScalingRequirements" property="hostTags" on-change="onChange()"></hawtio-tag-list>
+              <div class="span6" hawtio-drop ng-model="profileRequirement.dockerScalingRequirements" property="hostTags">
+                <div ng-show="profileRequirement.dockerScalingRequirements.hostTags">
+                  <h6>Host Tags</h6>
+                  <hawtio-tag-list ng-model="profileRequirement.dockerScalingRequirements" property="hostTags" on-change="onChange()"></hawtio-tag-list>
+                </div>
               </div>
             </div>
           </div>

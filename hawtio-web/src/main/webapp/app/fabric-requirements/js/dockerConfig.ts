@@ -36,6 +36,7 @@ module FabricRequirements {
         $scope.gridConfig.heading = true;
         $scope.gridConfig.noDataTemplate = $templateCache.get('noDataTemplate');
         $scope.gridConfig.rowSchema.columnOrder = ['hostName', 'port', 'username', 'password', 'privateKeyFile', 'passPhrase', 'path', 'preferredAddress', 'tags'];
+        Core.pathSet($scope.gridConfig, ['rowSchema', 'properties', 'tags', 'template'], $templateCache.get('tagCell.html'));
         $scope.gridConfig.rows = $scope.requirements.dockerConfiguration.hosts;
         $scope.gridConfig.onAdd = () => {
           var answer = Fabric.createDockerHostConfiguration();

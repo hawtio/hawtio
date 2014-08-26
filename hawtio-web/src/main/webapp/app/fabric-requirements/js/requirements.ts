@@ -66,6 +66,20 @@ module FabricRequirements {
       }
     };
 
+    $scope.onDrop = (data, model, property) => {
+      log.debug("On drop - data: ", data, " model: ", model, " property: ", property);
+      if (!model[property]) {
+        model[property] = [];
+      }
+      if (!model[property].any(data)) {
+        model[property].push(data);
+        $scope.requirements.$dirty = true;
+      }
+    };
+
+    $scope.$on('hawtio-drop', ($event, data) => {
+      $scope.onDrop(data.data, data.model, data.property);
+    });
 
     $scope.saveChanges = () => {
       if ($scope.requirements.$dirty) {
@@ -117,16 +131,23 @@ module FabricRequirements {
         Core.notification('success', 'Imported requirements');
       };
 
-      function createTagList(profileRequirements:CurrentRequirements) {
+      function createTagList(requirements:CurrentRequirements) {
         var tags = [];
         ['sshConfiguration', 'dockerConfiguration'].forEach((config) => {
-          if (profileRequirements[config] && profileRequirements[config].hosts) {
-            profileRequirements.sshConfiguration.hosts.forEach((host:Fabric.SshHostConfiguration) => {
+          if (requirements[config] && requirements[config].hosts) {
+            requirements.sshConfiguration.hosts.forEach((host:Fabric.SshHostConfiguration) => {
               tags.add(host.tags);
             });
           }
         });
-        profileRequirements.$tags = tags.unique().sort();
+        requirements.profileRequirements.forEach((p:Fabric.ProfileRequirement) => {
+          ['sshScalingRequirements', 'dockerScalingRequirements'].forEach((req) => {
+            if (p[req] && p[req].hostTags) {
+              tags.add(p[req].hostTags);
+            }
+          });
+        });
+        requirements.$tags = tags.unique().sort();
         //log.debug("Tags: ", profileRequirements.$tags);
       }
 

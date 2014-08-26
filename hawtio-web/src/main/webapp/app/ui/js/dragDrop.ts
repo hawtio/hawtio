@@ -38,7 +38,8 @@ module UI {
       scope: {
         onDrop: '&?hawtioDrop',
         ngModel: '=',
-        property: '@'
+        property: '@',
+        prefix: '@'
       },
       link: (scope, element, attrs) => {
         log.debug("hawtioDrop, onDrop: ", scope.onDrop);
@@ -73,8 +74,12 @@ module UI {
               property: scope.property
             });
           }
+          var eventName = 'hawtio-drop';
+          if (!Core.isBlank(scope.prefix)) {
+            eventName = scope.prefix + '-' + eventName;
+          }
           // let's emit this too so parent scopes can watch for the data
-          scope.$emit('hawtio-drop', {
+          scope.$emit(eventName, {
             data: data,
             model: scope.ngModel,
             property: scope.property
