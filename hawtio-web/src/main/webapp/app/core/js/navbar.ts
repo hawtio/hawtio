@@ -4,7 +4,19 @@
 /// <reference path="corePlugin.ts"/>
 module Core {
 
-  export var NavBarController = _module.controller("Core.NavBarController", ["$scope", "$location", "workspace", "$route", "jolokia", "localStorage", ($scope, $location:ng.ILocationService, workspace:Workspace, $route, jolokia, localStorage) => {
+
+  export interface NavBarViewCustomLink {
+    title: String;
+    icon: String;
+    action: () => void;
+  }
+
+  export interface NavBarViewCustomLinks {
+    [name:string]:NavBarViewCustomLink;
+  }
+
+
+  export var NavBarController = _module.controller("Core.NavBarController", ["$scope", "$location", "workspace", "$route", "jolokia", "localStorage", "NavBarViewCustomLinks", ($scope, $location:ng.ILocationService, workspace:Workspace, $route, jolokia, localStorage, navBarViewCustomLinks:NavBarViewCustomLinks) => {
 
     $scope.hash = workspace.hash();
     $scope.topLevelTabs = [];
@@ -13,9 +25,14 @@ module Core {
     $scope.localStorage = localStorage;
     $scope.recentConnections = [];
 
+    $scope.goTo = (destination) => {
+      Logger.debug("going to: " + destination);
+      $location.url(destination);
+    };
+
     $scope.$watch('localStorage.recentConnections', (newValue, oldValue) => {
       $scope.recentConnections = Core.getRecentConnections(localStorage);
-      log.debug("recent containers: ", $scope.recentConnections);
+      Logger.debug("recent containers: ", $scope.recentConnections);
     });
 
     $scope.openConnection = (connection) => {
@@ -188,6 +205,12 @@ module Core {
       return tab ? tab['content'] : "";
     };
 
+    $scope.navBarViewCustomLinks = navBarViewCustomLinks;
+
+    $scope.isCustomLinkSet = () => {
+      return Object.keys($scope.navBarViewCustomLinks).length;
+    }
+
     function reloadPerspective() {
       var perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
       var currentId = Perspective.currentPerspectiveId($location, workspace, jolokia, localStorage);
@@ -212,6 +235,12 @@ module Core {
         Core.$apply($scope);
       }
     }
+  }]);
+
+  // service that can be used by other modules to add additional links in top right corner
+  _module.service("NavBarViewCustomLinks", ['$location', '$rootScope', ($location, $rootScope) => {
+    //return a Map<String, Core.NavBarViewCustomLink>
+    return <NavBarViewCustomLinks>{}
   }]);
 
 }

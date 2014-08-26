@@ -113,6 +113,26 @@ div.log-stack-trace p:nth-child(odd) {
 
             <div class="pull-right">
               <ul class="nav nav-tabs pull-right">
+                <!-- dynamic links, hook for plugins-->
+                <li ng-show="loggedIn() && isCustomLinkSet() > 0 " class="dropdown">
+                  <a ng-href="#"
+                     title="Red Hat Access"
+                     data-placement="bottom"
+                     class="dropdown-toggle"
+                     data-toggle="dropdown">
+                    <i class="icon-user fixme"></i>&nbsp;&nbsp;<span>Red Hat Access</span>&nbsp;<span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu right">
+                    <li ng-repeat="entry in navBarViewCustomLinks">
+                      <a ng-href="http://localhost:8181/hawtio/rhaccess_plugin"
+                         ng-click="entry.action()"
+                         title="{{entry.title}}">
+                        <i class="{{entry.icon}}"></i>&nbsp;&nbsp;{{entry.title}}
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+
                 <li ng-show="loggedIn()">
                   <a ng-href=""
                      title="Show the logging console"
