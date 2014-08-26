@@ -33,6 +33,14 @@ module FabricRequirements {
       }
     });
 
+    $scope.onDrop = (data, model, property) => {
+      log.debug("On drop - data: ", data, " model: ", model, " property: ", property);
+    };
+
+    $scope.$on('hawtio-drop', ($event, data) => {
+      $scope.onDrop(data.data, data.model, data.property);
+    });
+
     $scope.noop = () => {};
 
     Fabric.getDtoSchema(undefined, "io.fabric8.api.SshConfiguration", jolokia, (sshConfigurationSchema) => {
