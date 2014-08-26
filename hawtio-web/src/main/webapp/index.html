@@ -116,15 +116,15 @@ div.log-stack-trace p:nth-child(odd) {
                 <!-- dynamic links, hook for plugins-->
                 <li ng-show="loggedIn() && isCustomLinkSet() > 0 " class="dropdown">
                   <a ng-href="#"
-                     title="Red Hat Access"
+                     title="{{navBarViewCustomLinks.dropDownLabel}}"
                      data-placement="bottom"
                      class="dropdown-toggle"
                      data-toggle="dropdown">
-                    <i class="icon-user fixme"></i>&nbsp;&nbsp;<span>Red Hat Access</span>&nbsp;<span class="caret"></span>
+                    <i class="icon-user fixme"></i>&nbsp;&nbsp;<span>{{navBarViewCustomLinks.dropDownLabel}}</span>&nbsp;<span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu right">
-                    <li ng-repeat="entry in navBarViewCustomLinks">
-                      <a ng-href="http://localhost:8181/hawtio/rhaccess_plugin"
+                    <li ng-repeat="entry in navBarViewCustomLinks.list">
+                      <a ng-href="{{entry.href}}"
                          ng-click="entry.action()"
                          title="{{entry.title}}">
                         <i class="{{entry.icon}}"></i>&nbsp;&nbsp;{{entry.title}}

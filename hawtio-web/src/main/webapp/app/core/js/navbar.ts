@@ -8,11 +8,13 @@ module Core {
   export interface NavBarViewCustomLink {
     title: String;
     icon: String;
+    href: String;
     action: () => void;
   }
 
   export interface NavBarViewCustomLinks {
-    [name:string]:NavBarViewCustomLink;
+    list:NavBarViewCustomLink[];
+    dropDownLabel: String;
   }
 
 
@@ -208,7 +210,7 @@ module Core {
     $scope.navBarViewCustomLinks = navBarViewCustomLinks;
 
     $scope.isCustomLinkSet = () => {
-      return Object.keys($scope.navBarViewCustomLinks).length;
+      return $scope.navBarViewCustomLinks.list.length;
     }
 
     function reloadPerspective() {
@@ -240,7 +242,10 @@ module Core {
   // service that can be used by other modules to add additional links in top right corner
   _module.service("NavBarViewCustomLinks", ['$location', '$rootScope', ($location, $rootScope) => {
     //return a Map<String, Core.NavBarViewCustomLink>
-    return <NavBarViewCustomLinks>{}
+    return <NavBarViewCustomLinks>{
+      list: [],
+      label: "Extra"
+    }
   }]);
 
 }
