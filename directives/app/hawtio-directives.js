@@ -3265,6 +3265,99 @@ var UI;
 
     UI._module.directive('hawtioBreadcrumbs', UI.hawtioBreadcrumbs);
 })(UI || (UI = {}));
+///<reference path="uiPlugin.ts"/>
+var UI;
+(function (UI) {
+    UI.hawtioDrag = UI._module.directive("hawtioDrag", [function () {
+            return {
+                replace: false,
+                transclude: true,
+                restrict: 'A',
+                template: '<span ng-transclude></span>',
+                scope: {
+                    data: '=hawtioDrag'
+                },
+                link: function (scope, element, attrs) {
+                    UI.log.debug("hawtioDrag, data: ", scope.data);
+                    var el = element[0];
+                    el.draggable = true;
+                    el.addEventListener('dragstart', function (event) {
+                        event.dataTransfer.effectAllowed = 'move';
+                        event.dataTransfer.setData('data', scope.data);
+                        element.addClass('drag-started');
+                        return false;
+                    }, false);
+
+                    el.addEventListener('dragend', function (event) {
+                        element.removeClass('drag-started');
+                    }, false);
+                }
+            };
+        }]);
+
+    UI.hawtioDrop = UI._module.directive("hawtioDrop", [function () {
+            return {
+                replace: false,
+                transclude: true,
+                restrict: 'A',
+                template: '<span ng-transclude></span>',
+                scope: {
+                    onDrop: '&?hawtioDrop',
+                    ngModel: '=',
+                    property: '@',
+                    prefix: '@'
+                },
+                link: function (scope, element, attrs) {
+                    UI.log.debug("hawtioDrop, onDrop: ", scope.onDrop);
+                    UI.log.debug("hawtioDrop, ngModel: ", scope.ngModel);
+                    UI.log.debug("hawtioDrop, property: ", scope.property);
+
+                    var dragEnter = function (event) {
+                        if (event.preventDefault) {
+                            event.preventDefault();
+                        }
+                        element.addClass('drag-over');
+                        return false;
+                    };
+
+                    var el = element[0];
+                    el.addEventListener('dragenter', dragEnter, false);
+                    el.addEventListener('dragover', dragEnter, false);
+                    el.addEventListener('dragleave', function (event) {
+                        element.removeClass('drag-over');
+                        return false;
+                    }, false);
+                    el.addEventListener('drop', function (event) {
+                        if (event.stopPropagation) {
+                            event.stopPropagation();
+                        }
+                        element.removeClass('drag-over');
+                        var data = event.dataTransfer.getData('data');
+                        if (scope.onDrop) {
+                            scope.$eval(scope.onDrop, {
+                                data: data,
+                                model: scope.ngModel,
+                                property: scope.property
+                            });
+                        }
+                        var eventName = 'hawtio-drop';
+                        if (!Core.isBlank(scope.prefix)) {
+                            eventName = scope.prefix + '-' + eventName;
+                        }
+
+                        // let's emit this too so parent scopes can watch for the data
+                        scope.$emit(eventName, {
+                            data: data,
+                            model: scope.ngModel,
+                            property: scope.property
+                        });
+                        Core.$apply(scope);
+                        return false;
+                    }, false);
+                }
+            };
+        }]);
+})(UI || (UI = {}));
 /**
 * @module UI
 */
