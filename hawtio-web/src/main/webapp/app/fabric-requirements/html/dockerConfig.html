@@ -7,7 +7,14 @@
   </script>
 
   <script type="text/ng-template" id="tableTemplate">
-    <div hawtio-form-grid="gridConfig"></div>
+    <div class="row-fluid">
+      <div class="span10">
+        <div hawtio-form-grid="gridConfig"></div>
+      </div>
+      <div class="span2">
+        <div ng-include="'app/fabric-requirements/html/hostTags.html'"></div>
+      </div>
+    </div>
   </script>
 
   <div compile="tableTemplate"></div>

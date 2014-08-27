@@ -261,7 +261,6 @@ hawtioPluginLoader.addUrl(Core.url("/plugin"));
 // add our module and any dependant third party modules
 hawtioPluginLoader.addModule(Core.pluginName);
 hawtioPluginLoader.addModule('angularFileUpload');
-hawtioPluginLoader.addModule('ngDragDrop');
 
 // register some tasks to run before bootstrap
 

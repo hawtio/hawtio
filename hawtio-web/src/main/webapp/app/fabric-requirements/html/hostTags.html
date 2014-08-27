@@ -2,7 +2,8 @@
   <h6>Host Tags</h6>
   <ul class=unstyled>
     <li ng-repeat="tag in requirements.$tags">
-      <span class="badge mouse-pointer">{{tag}}</span>
+      <span class="badge mouse-pointer"
+            hawtio-drag="tag">{{tag}}</span>
     </li>
     <li ng-hide="hideTagInput">
       <input class="input-mini"

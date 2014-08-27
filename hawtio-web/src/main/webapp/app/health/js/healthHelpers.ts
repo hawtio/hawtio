@@ -120,6 +120,9 @@ module Health {
     };
 
     $scope.getTitle = (value) => {
+      if (!value) {
+        return '';
+      }
       if (value['healthId'].endsWith('profileHealth')) {
         return 'Profile: <strong>' + value['profile'] + '</strong>';
       }

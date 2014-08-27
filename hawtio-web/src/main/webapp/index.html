@@ -113,6 +113,26 @@ div.log-stack-trace p:nth-child(odd) {
 
             <div class="pull-right">
               <ul class="nav nav-tabs pull-right">
+                <!-- dynamic links, hook for plugins-->
+                <li ng-show="loggedIn() && isCustomLinkSet() > 0 " class="dropdown">
+                  <a ng-href="#"
+                     title="{{navBarViewCustomLinks.dropDownLabel}}"
+                     data-placement="bottom"
+                     class="dropdown-toggle"
+                     data-toggle="dropdown">
+                    <i class="icon-user fixme"></i>&nbsp;&nbsp;<span>{{navBarViewCustomLinks.dropDownLabel}}</span>&nbsp;<span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu right">
+                    <li ng-repeat="entry in navBarViewCustomLinks.list">
+                      <a ng-href="{{entry.href}}"
+                         ng-click="entry.action()"
+                         title="{{entry.title}}">
+                        <i class="{{entry.icon}}"></i>&nbsp;&nbsp;{{entry.title}}
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+
                 <li ng-show="loggedIn()">
                   <a ng-href=""
                      title="Show the logging console"
@@ -463,8 +483,6 @@ div.log-stack-trace p:nth-child(odd) {
     <!--
     <script type="text/javascript" src="lib/prefixfree.min.js?v=@VERSION@"></script> -->
     <!-- <![endif]-->
-    <!-- angular drag/drop directives -->
-    <script type="text/javascript" src="lib/angular-dragdrop.min.js?v=@VERSION@"></script>
 
     <!-- JBoss DMR -->
     <script type="text/javascript" src="lib/dmr.js.nocache.js?v=@VERSION@"></script>

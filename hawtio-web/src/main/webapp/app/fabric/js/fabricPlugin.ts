@@ -16,7 +16,7 @@ module Fabric {
   export var templatePath = 'app/fabric/html/';
   export var activeMQTemplatePath = 'app/activemq/html/';
 
-  export var _module = angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'ngDragDrop', 'wiki']);
+  export var _module = angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'wiki']);
 
   _module.config(["$routeProvider", ($routeProvider) => {
     $routeProvider.
