@@ -31,11 +31,17 @@
       </div>
       <div class="pull-right">
         <span class="inline-block"
-              ng-show="maybeShowLocation()">
+              ng-show="maybeShowLocation()"
+              hawtio-show
+              object-name="{{managerMBean}}"
+              method-name="setContainerProperty">
           <div hawtio-drop-down="locationMenu"></div>
         </span>
         <span ng-show="selectedContainers.length != 0"
-              title="Migrate the selected containers to a different version">
+              title="Migrate the selected containers to a different version"
+              hawtio-show
+              object-name="{{managerMBean}}"
+              method-name="applyVersionToContainers">
           <span class="inline-block"
                fabric-version-selector="targetVersion"
                use-menu="true"
@@ -46,19 +52,28 @@
                exclude='{{getVersionsToExclude()}}'></span>
         </span>
         <a class="btn" ng-click="startSelectedContainers()" ng-show="anySelectionStartable()"
-           title="Start containers">
+           title="Start containers"
+           hawtio-show
+           object-name="{{managerMBean}}"
+           method-name="startContainer">
           <i class="icon-play-circle clickable"></i>
           Start
         </a>
         <a class="btn" ng-click="stopSelectedContainers()" ng-show="anySelectionStoppable()"
-           title="Stop containers">
+           title="Stop containers"
+           hawtio-show
+           object-name="{{managerMBean}}"
+           method-name="stopContainer">
           <i class="icon-off"></i>
           Stop
         </a>
         <a class="btn"
            ng-click="confirmDeleteDialog.open()"
            ng-show="selectedContainers.length != 0"
-           title="Delete container">
+           title="Delete container"
+           hawtio-show
+           object-name="{{managerMBean}}"
+           method-name="destroyContainer">
           <i class="icon-minus"></i> Delete
         </a>
         <hawtio-filter ng-model="filter"

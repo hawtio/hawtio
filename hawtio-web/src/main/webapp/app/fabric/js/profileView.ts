@@ -12,6 +12,9 @@ module Fabric {
   export interface ProfileViewAction {
     index: Number;
     icon: String;
+    objectName?: string;
+    methodName?: string;
+    argumentTypes?: string;
     name?: String;
     buttonClass?: String;
     title: String;
@@ -30,6 +33,8 @@ module Fabric {
         index: 0,
         icon: 'icon-ok',
         buttonClass: 'btn-success',
+        objectName: Fabric.managerMBean,
+        methodName: 'createContainers',
         title: 'Deploy the selected profiles to new containers',
         action: () => {
           $location.path('/fabric/containers/createContainer').search({
@@ -46,6 +51,8 @@ module Fabric {
         index: 2,
         icon: 'icon-truck',
         buttonClass: 'btn-primary',
+        objectName: Fabric.managerMBean,
+        methodName: 'assignProfilesToContainer',
         title: 'Deploy the selected profiles to existing containers',
         action: () => {
           $location.path('/fabric/assignProfile');

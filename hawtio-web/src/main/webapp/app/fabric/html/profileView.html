@@ -47,7 +47,11 @@
                       ng-disabled="!cartItems.length"
                       ng-class="button.buttonClass"
                       ng-click="button.action()"
-                      title="{{button.title}}">
+                      title="{{button.title}}"
+                      hawtio-show
+                      object-name="{{button.objectName}}"
+                      method-name="{{button.methodName}}"
+                      argument-types="{{button.argumentTypes}}">
                 <i ng-class="button.icon"></i> {{button.name}}
               </button>
             </p>

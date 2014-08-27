@@ -2,14 +2,21 @@
  * @module RBAC
  * @main RBAC
  */
-/// <reference path="./rbacHelpers.ts"/>
+/// <reference path="../../baseIncludes.ts"/>
+/// <reference path="../../baseHelpers.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
+/// <reference path="rbacHelpers.ts"/>
+/// <reference path="rbacTasks.ts"/>
 module RBAC {
 
   export var pluginName:string = "hawtioRbac";
   export var log:Logging.Logger = Logger.get("RBAC");
   export var _module = angular.module(pluginName, ["hawtioCore"]);
 
-  _module.factory('rbacTasks', ["postLoginTasks", "jolokia", (postLoginTasks:Core.Tasks, jolokia) => {
+  _module.factory('rbacTasks', ["postLoginTasks", "jolokia", "$q",  (postLoginTasks:Core.Tasks, jolokia, $q:ng.IQService) => {
+
+    RBAC.rbacTasks = new RBAC.RBACTasksImpl($q.defer());
+
     postLoginTasks.addTask("FetchJMXSecurityMBeans", () => {
       jolokia.request({
         type: 'search',
@@ -61,10 +68,6 @@ module RBAC {
       rbacTasks.reset();
     });
 
-    rbacTasks.addTask("init", () => {
-      log.info("Initializing role based access support using mbean: ", rbacTasks.getACLMBean());
-    });
-
     // add info to the JMX tree if we have access to invoke on mbeans
     // or not
     rbacTasks.addTask("JMXTreePostProcess", () => {
@@ -72,42 +75,44 @@ module RBAC {
         var mbeans = {};
         flattenMBeanTree(mbeans, tree);
         var requests = [];
-        angular.forEach(mbeans, (value, key) => {
-          if (!('canInvoke' in value)) {
-            requests.push({
-              type: 'exec',
-              mbean: rbacTasks.getACLMBean(),
-              operation: 'canInvoke(java.lang.String)',
-              arguments: [key]
-            });
-          }
-        });
-        var numResponses:number = 0;
-        var maybeRedraw = () => {
-          numResponses = numResponses + 1;
-          if (numResponses >= requests.length) {
-            workspace.redrawTree();
-            Core.$apply($rootScope);
-          }
-        };
-        jolokia.request(requests, onSuccess((response) => {
-          var mbean = response.request.arguments[0];
-          if (mbean) {
-            mbeans[mbean]['canInvoke'] = response.value;
-            var toAdd:string = "cant-invoke";
-            if (response.value) {
-              toAdd = "can-invoke";
+        rbacTasks.getACLMBean().then((mbean) => {
+          angular.forEach(mbeans, (value, key) => {
+            if (!('canInvoke' in value)) {
+              requests.push({
+                type: 'exec',
+                mbean: mbean,
+                operation: 'canInvoke(java.lang.String)',
+                arguments: [key]
+              });
             }
-            mbeans[mbean]['addClass'] = stripClasses(mbeans[mbean]['addClass']);
-            mbeans[mbean]['addClass'] = addClass(mbeans[mbean]['addClass'], toAdd);
-            maybeRedraw();
-          }
-        }, {
-          error: (response) => {
-            // silently ignore, but still track if we need to redraw
-            maybeRedraw();
-          }
-        }));
+          });
+          var numResponses:number = 0;
+          var maybeRedraw = () => {
+            numResponses = numResponses + 1;
+            if (numResponses >= requests.length) {
+              workspace.redrawTree();
+              Core.$apply($rootScope);
+            }
+          };
+          jolokia.request(requests, onSuccess((response) => {
+            var mbean = response.request.arguments[0];
+            if (mbean) {
+              mbeans[mbean]['canInvoke'] = response.value;
+              var toAdd:string = "cant-invoke";
+              if (response.value) {
+                toAdd = "can-invoke";
+              }
+              mbeans[mbean]['addClass'] = stripClasses(mbeans[mbean]['addClass']);
+              mbeans[mbean]['addClass'] = addClass(mbeans[mbean]['addClass'], toAdd);
+              maybeRedraw();
+            }
+          }, {
+            error: (response) => {
+              // silently ignore, but still track if we need to redraw
+              maybeRedraw();
+            }
+          }));
+        });
       });
     });
   }]);

@@ -73,14 +73,15 @@ module Fabric {
                $dialog, layoutFull) => {
 
     var layoutFabric = templatePath + 'layoutFabric.html';
+    var layoutNoTabs = templatePath + 'layoutNoTabs.html';
 
     // let's not take up the whole /fabric with the fabric sub-tabs
     // other plugins might want to hang stuff off of /fabric
     viewRegistry['fabric/assignProfile'] = layoutFabric;
-    viewRegistry['fabric/profileView'] = layoutFull;
-    viewRegistry['fabric/containerView'] = layoutFull;
-    viewRegistry['fabric/migrate'] = layoutFull;
-    viewRegistry['fabric/patching'] = layoutFull;
+    viewRegistry['fabric/profileView'] = layoutNoTabs;
+    viewRegistry['fabric/containerView'] = layoutNoTabs;
+    viewRegistry['fabric/migrate'] = layoutNoTabs;
+    viewRegistry['fabric/patching'] = layoutNoTabs;
     viewRegistry['fabric/map'] = layoutFabric;
     viewRegistry['fabric/clusters'] = layoutFabric;
     viewRegistry['fabric/container'] = layoutFabric;

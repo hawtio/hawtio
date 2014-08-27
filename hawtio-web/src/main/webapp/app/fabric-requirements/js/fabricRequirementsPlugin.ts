@@ -38,6 +38,8 @@ module FabricRequirements {
       index: 3,
       icon: 'icon-cog',
       buttonClass: 'btn-primary',
+      objectName: Fabric.managerMBean,
+      methodName: 'requirementsJson',
       title: 'Create requirements for the selected profiles',
       action: () => {
         $location.path('/fabric/requirements/profile');
