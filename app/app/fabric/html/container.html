@@ -10,8 +10,8 @@
         </div>
         <div class="pull-right">
           <button class="btn" ng-show="row.jolokiaUrl" title="Open" ng-click="doConnect(container)"><i class="icon-signin"></i></button>
-          <button class="btn" ng-show="row.alive" ng-click="stop()" title="Stop"><i class="icon-off"></i></button>
-          <button class="btn" ng-hide="row.alive" ng-click="start()" title="Start"><i class="icon-play-circle"></i></button>
+          <button class="btn" ng-show="row.alive" ng-click="stop()" title="Stop" hawtio-show object-name="{{managerMBean}}" method-name="stopContainer"><i class="icon-off"></i></button>
+          <button class="btn" ng-hide="row.alive" ng-click="start()" title="Start" hawtio-show object-name="{{managerMBean}}" method-name="startContainer"><i class="icon-play-circle"></i></button>
         </div>
       </div>
       <div class="row-fluid container-dashboard-status-table">
@@ -59,7 +59,7 @@
             <i class="icon-signin"></i> Open
           </button>
           <span class="btn"
-                ng-show="availableVersions && availableVersions.length > 0">
+                ng-show="availableVersions && availableVersions.length > 0" hawtio-show object-name="{{managerMBean}}" method-name="applyVersionToContainers">
             <span fabric-version-selector="targetVersion"
                   available-versions="availableVersions"
                   menu-bind="versionTitle"
@@ -71,9 +71,9 @@
 
           </span>
 
-          <button class="btn" ng-show="row.alive" ng-click="stop()"><i class="icon-off"></i> Stop</button>
-          <button class="btn" ng-hide="row.alive" ng-click="start()"><i class="icon-play-circle"></i> Start</button>
-          <button class="btn" ng-click="confirmDeleteDialog.open()"><i class="icon-remove"></i> Delete</button>
+          <button class="btn" ng-show="row.alive" ng-click="stop()" hawtio-show object-name="{{managerMBean}}" method-name="stopContainer"><i class="icon-off"></i> Stop</button>
+          <button class="btn" ng-hide="row.alive" ng-click="start()" hawtio-show object-name="{{managerMBean}}" method-name="startContainer"><i class="icon-play-circle"></i> Start</button>
+          <button class="btn" ng-click="confirmDeleteDialog.open()" hawtio-show object-name="{{managerMBean}}" method-name="destroyContainer"><i class="icon-remove"></i> Delete</button>
           <a class="btn" ng-href="{{addToDashboardLink()}}" title="Add this view to a dashboard" data-placement="bottom">
             <i class="icon-share"></i></a>
         </div>
@@ -88,9 +88,9 @@
 
           <div class="container-detail-profiles">
             <div class="pull-right container-detail-profile-buttons">
-              <button class="btn" ng-click="addProfileDialog.open()" title="Add new profiles to this container"><i class="icon-plus"></i> Add</button>
+              <button class="btn" ng-click="addProfileDialog.open()" title="Add new profiles to this container" hawtio-show object-name="{{managerMBean}}" method-name="addProfilesToContainer"><i class="icon-plus"></i> Add</button>
               <button class="btn" ng-click="deleteProfileDialog.open()" ng-disabled="selectedProfiles.length == 0"
-                title="Removes the selected profiles from this container"><i class="icon-remove"></i> Remove</button>
+                title="Removes the selected profiles from this container" hawtio-show object-name="{{managerMBean}}" method-name="removeProfilesFromContainer"><i class="icon-remove"></i> Remove</button>
             </div>
           </div>
           <div fabric-profile-selector="selectedProfiles" version-id="row.versionId" included-profiles="row.profileIds" show-links="true" expanded="true"></div>
@@ -181,55 +181,79 @@
               <p>This tab has various settings for the container.  Below are the detected hostnames, as well as any manually configure IP/hostname.  Select the desired hostname that this container should advertise using the radio buttons.  Changes are effective immediately.</p>
               <dl class="dl-horizontal">
                 <dt>Location:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="location" on-save="updateContainerProperty('location', row)"></editable-property>
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.location}}
                 </dd>
               </dl>
               <dl class="dl-horizontal" title="Advertise services using the local IP address">
                 <dt>Local IP:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="localIp" on-save="updateContainerProperty('localIp', row)"></editable-property>
                   <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="localip">
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.localIp}}
                 </dd>
               </dl>
               <dl class="dl-horizontal" title="Advertise services using the local hostname">
                 <dt>Local Hostname:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="localHostname" on-save="updateContainerProperty('localHostname', row)"></editable-property>
                   <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="localhostname">
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.localHostname}}
                 </dd>
               </dl>
               <dl class="dl-horizontal" title="Advertise services using the public IP address">
                 <dt>Public IP:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="publicIp" on-save="updateContainerProperty('publicIp', row)"></editable-property>
                   <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="publicip">
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.publicIp}}
                 </dd>
               </dl>
               <dl class="dl-horizontal" title="Advertise services using the public hostname">
                 <dt>Public Hostname:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="publicHostname" on-save="updateContainerProperty('publicHostname', row)"></editable-property>
                   <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="publichostname">
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.publicHostname}}
                 </dd>
               </dl>
               <dl class="dl-horizontal" title="Advertise services using a custom IP address or hostname">
                 <dt>Manual IP:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="manualIp" on-save="updateContainerProperty('manualIp', row)"></editable-property>
                   <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="manualip">
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.manualIp}}
                 </dd>
               </dl>
               <dl class="dl-horizontal">
                 <dt>Minimum Port:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="minimumPort" on-save="updateContainerProperty('minimumPort', row)"></editable-property>
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.minimumPort}}
                 </dd>
               </dl>
               <dl class="dl-horizontal">
                 <dt>Maximum Port:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="maximumPort" on-save="updateContainerProperty('maximumPort', row)"></editable-property>
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.maximumPort}}
                 </dd>
               </dl>
             </div>

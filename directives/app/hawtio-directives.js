@@ -3278,7 +3278,11 @@ var UI;
                     data: '=hawtioDrag'
                 },
                 link: function (scope, element, attrs) {
-                    UI.log.debug("hawtioDrag, data: ", scope.data);
+                    element.attr({
+                        draggable: 'true'
+                    });
+
+                    //log.debug("hawtioDrag, data: ", scope.data);
                     var el = element[0];
                     el.draggable = true;
                     el.addEventListener('dragstart', function (event) {
@@ -3308,10 +3312,9 @@ var UI;
                     prefix: '@'
                 },
                 link: function (scope, element, attrs) {
-                    UI.log.debug("hawtioDrop, onDrop: ", scope.onDrop);
-                    UI.log.debug("hawtioDrop, ngModel: ", scope.ngModel);
-                    UI.log.debug("hawtioDrop, property: ", scope.property);
-
+                    //log.debug("hawtioDrop, onDrop: ", scope.onDrop);
+                    //log.debug("hawtioDrop, ngModel: ", scope.ngModel);
+                    //log.debug("hawtioDrop, property: ", scope.property);
                     var dragEnter = function (event) {
                         if (event.preventDefault) {
                             event.preventDefault();

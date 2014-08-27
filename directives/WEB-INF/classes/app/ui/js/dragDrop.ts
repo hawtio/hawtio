@@ -11,8 +11,11 @@ module UI {
       scope: {
         data: '=hawtioDrag'
       },
-      link: (scope, element, attrs) => {
-        log.debug("hawtioDrag, data: ", scope.data);
+      link: (scope, element:ng.IAugmentedJQuery, attrs) => {
+        element.attr({
+          draggable: 'true'
+        });
+        //log.debug("hawtioDrag, data: ", scope.data);
         var el = element[0];
         el.draggable = true;
         el.addEventListener('dragstart', (event:DragEvent) => {
@@ -42,9 +45,9 @@ module UI {
         prefix: '@'
       },
       link: (scope, element, attrs) => {
-        log.debug("hawtioDrop, onDrop: ", scope.onDrop);
-        log.debug("hawtioDrop, ngModel: ", scope.ngModel);
-        log.debug("hawtioDrop, property: ", scope.property);
+        //log.debug("hawtioDrop, onDrop: ", scope.onDrop);
+        //log.debug("hawtioDrop, ngModel: ", scope.ngModel);
+        //log.debug("hawtioDrop, property: ", scope.property);
 
         var dragEnter = (event:DragEvent) => {
           if (event.preventDefault) {
