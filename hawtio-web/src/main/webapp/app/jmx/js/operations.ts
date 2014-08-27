@@ -151,7 +151,7 @@ module Jmx {
   _module.controller("Jmx.OperationsController", ["$scope", "workspace", "jolokia", "rbacACLMBean", "$templateCache", ($scope,
                                        workspace:Workspace,
                                        jolokia,
-                                       rbacACLMBean,
+                                       rbacACLMBean:ng.IPromise<string>,
                                        $templateCache) => {
 
     $scope.operations = {};
@@ -189,7 +189,7 @@ module Jmx {
       }
     });
 
-    var fetch = Core.throttled(() => {
+    var fetch = <() => void>Core.throttled(() => {
       var node = workspace.selection;
       if (!node) {
         return;
@@ -265,24 +265,27 @@ module Jmx {
         map[objectName].push(value.name);
       });
 
-      jolokia.request({
-        type: 'exec',
-        mbean: rbacACLMBean,
-        operation: 'canInvoke(java.util.Map)',
-        arguments: [map]
-      }, onSuccess((response) => {
-        var map = response.value;
-        angular.forEach(map[objectName], (value, key) => {
-          operations[key]['canInvoke'] = value['CanInvoke'];
-        });
-        //log.debug("Got operations: ", $scope.operations);
-        Core.$apply($scope);
-      }, {
-        error: (response) => {
-          // silently ignore
+      rbacACLMBean.then((rbacACLMBean) => {
+        jolokia.request({
+          type: 'exec',
+          mbean: rbacACLMBean,
+          operation: 'canInvoke(java.util.Map)',
+          arguments: [map]
+        }, onSuccess((response) => {
+          var map = response.value;
+          angular.forEach(map[objectName], (value, key) => {
+            operations[key]['canInvoke'] = value['CanInvoke'];
+          });
+          //log.debug("Got operations: ", $scope.operations);
           Core.$apply($scope);
-        }
-      }));
+        }, {
+          error: (response) => {
+            // silently ignore
+            Core.$apply($scope);
+          }
+        }));
+      });
+
     }
 
     function render(response) {
@@ -299,9 +302,8 @@ module Jmx {
         }
       });
       $scope.operations = sanitize(answer);
-      if (Core.isBlank(rbacACLMBean) || $scope.isOperationsEmpty()) {
+      if ($scope.isOperationsEmpty()) {
         Core.$apply($scope);
-        return;
       } else {
         fetchPermissions($scope.objectName, $scope.operations);
       }
