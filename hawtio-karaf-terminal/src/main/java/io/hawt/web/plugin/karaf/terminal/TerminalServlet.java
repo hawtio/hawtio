@@ -6,6 +6,9 @@ import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
 import org.apache.felix.service.threadio.ThreadIO;
 import org.apache.karaf.shell.console.jline.Console;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +87,15 @@ public class TerminalServlet extends HttpServlet {
         }
     }
 
+    private BundleContext getBundleContext() {
+        BundleContext bundleContext = null;
+        Bundle currentBundle = FrameworkUtil.getBundle(getClass());
+        if (currentBundle != null) {
+            bundleContext = currentBundle.getBundleContext();
+        }
+        return bundleContext;
+    }
+    
     public class SessionTerminal implements Runnable {
 
         private Terminal terminal;
@@ -111,7 +123,7 @@ public class TerminalServlet extends HttpServlet {
                             pipedOut,
                             new WebTerminal(TERM_WIDTH, TERM_HEIGHT),
                             null,
-                            null);
+                            getBundleContext());
                 } else {
                     LOG.debug("Using new Karaf Console API");
                     // use the new api directly which we compile against
@@ -123,7 +135,7 @@ public class TerminalServlet extends HttpServlet {
                             new WebTerminal(TERM_WIDTH, TERM_HEIGHT),
                             null,
                             null,
-                            null);
+                            getBundleContext());
                 }
 
                 CommandSession session = console.getSession();
