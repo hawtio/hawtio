@@ -52,7 +52,7 @@ module Fabric {
         icon: 'icon-truck',
         buttonClass: 'btn-primary',
         objectName: Fabric.managerMBean,
-        methodName: 'assignProfilesToContainer',
+        methodName: 'addProfilesToContainer',
         title: 'Deploy the selected profiles to existing containers',
         action: () => {
           $location.path('/fabric/assignProfile');

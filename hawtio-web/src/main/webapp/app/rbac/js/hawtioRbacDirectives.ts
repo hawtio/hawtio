@@ -5,6 +5,10 @@ module RBAC {
   var OVERLOADED_METHOD = 'canInvoke(java.lang.String,java.lang.String)';
   var EXACT_METHOD = 'canInvoke(java.lang.String,java.lang.String,[Ljava.lang.String;)';
 
+  var HIDE='hide';
+  var REMOVE='remove';
+  var INVERSE='inverse';
+
   function getOp(objectName:string, methodName:string, argumentTypes:string) {
     var answer:string = MBEAN_ONLY;
     if (!Core.isBlank(methodName)) {
@@ -14,6 +18,21 @@ module RBAC {
       answer = EXACT_METHOD;
     }
     return answer;
+  }
+
+  function getArguments(op, objectName, methodName, argumentTypes) {
+    var arguments = [];
+    if (op === MBEAN_ONLY) {
+      arguments.push(objectName);
+    } else if (op === OVERLOADED_METHOD) {
+      arguments.push(objectName);
+      arguments.push(methodName);
+    } else if (op === EXACT_METHOD) {
+      arguments.push(objectName);
+      arguments.push(methodName);
+      arguments.push(argumentTypes.split(',').map((s) => { return s.trim(); }));
+    }
+    return arguments;
   }
 
   /**
@@ -32,18 +51,10 @@ module RBAC {
           }
           var methodName = attr['methodName'];
           var argumentTypes = attr['argumentTypes'];
+          var mode = attr['mode'] || HIDE;
           var op = getOp(objectName, methodName, argumentTypes);
-          var arguments = [];
-          if (op === MBEAN_ONLY) {
-            arguments.push(objectName);
-          } else if (op === OVERLOADED_METHOD) {
-            arguments.push(objectName);
-            arguments.push(methodName);
-          } else if (op === EXACT_METHOD) {
-            arguments.push(objectName);
-            arguments.push(methodName);
-            arguments.push(argumentTypes.split(',').map((s) => { return s.trim(); }));
-          }
+          var arguments = getArguments(op, objectName, methodName, argumentTypes);
+
           log.debug("Arguments for operation: ", arguments);
           log.debug("ACL MBean: ", rbacACLMBean);
 
@@ -51,11 +62,22 @@ module RBAC {
             var value = <boolean>response.value;
             if (value) {
               log.debug("User can invoke: ", response.request.arguments);
+              if (mode === INVERSE) {
+                element.css({
+                  display: 'none'
+                });
+              }
             } else {
               log.debug("User cannot invoke: ", response.request.arguments);
-              element.css({
-                visibility: 'hidden'
-              });
+              if (mode === REMOVE) {
+                element.css({
+                  display: 'none'
+                });
+              } else if (mode === HIDE) {
+                element.css({
+                  visibility: 'hidden'
+                });
+              }
             }
           };
 
