@@ -50,7 +50,7 @@ module FabricRequirements {
     $scope.newTag = '';
 
     $scope.addTag = (tag:string) => {
-      if (!$scope.requirements.$tags.any(tag)) {
+      if (!$scope.requirements.$tags.some((t) => { return t === tag; })) {
         $scope.requirements.$tags.push(tag);
         $scope.newTag = '';
         $element.find('.input-mini').val('');
