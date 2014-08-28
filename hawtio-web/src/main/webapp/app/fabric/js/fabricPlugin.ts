@@ -27,7 +27,6 @@ module Fabric {
             when('/fabric/container/:containerId', {templateUrl: templatePath + 'container.html', reloadOnSearch: false}).
             when('/fabric/assignProfile', {templateUrl: templatePath + 'assignProfile.html'}).
             when('/fabric/activeProfiles', {templateUrl: templatePath + 'activeProfiles.html'}).
-            //when('/fabric/profile/:versionId/:profileId', {templateUrl: templatePath + 'profile.html'}).
             when('/wiki/profile/:versionId/:profileId/editFeatures', {templateUrl: templatePath + 'editFeatures.html'}).
             when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: templatePath + 'pid.html'}).
             when('/fabric/migrate', { templateUrl: templatePath + 'migrateVersions.html' }).
