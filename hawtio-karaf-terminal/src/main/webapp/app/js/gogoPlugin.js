@@ -90,6 +90,12 @@ var Gogo = (function(Gogo) {
           log.debug("console size in pixels, width: ", cssWidth, " height: ", cssHeight);
           log.debug("character size in pixels, width: ", charWidth, " height: ", charHeight);
 
+          // make sure it has minimum width of 1024 + 26 (some slack is needed), otherwise the terminal has interlaced empty lines
+          if (cssWidth < 1050) {
+            log.debug("Minimum width changed from " + cssWidth + " to 1050");
+            cssWidth = 1050;
+          }
+
           element.css({
             width: cssWidth,
             height: cssHeight,
