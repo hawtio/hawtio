@@ -5,7 +5,11 @@
 /// <reference path="coreInterfaces.ts"/>
 module Core {
 
-  _module.factory('jolokia',["$location", "localStorage", "jolokiaStatus", "$rootScope", "userDetails", "jolokiaParams", "jolokiaUrl", ($location:ng.ILocationService, localStorage, jolokiaStatus, $rootScope, userDetails:Core.UserDetails, jolokiaParams, jolokiaUrl) => {
+  export interface DummyJolokia extends Jolokia.IJolokia {
+    running:boolean;
+  }
+
+  _module.factory('jolokia',["$location", "localStorage", "jolokiaStatus", "$rootScope", "userDetails", "jolokiaParams", "jolokiaUrl", ($location:ng.ILocationService, localStorage, jolokiaStatus, $rootScope, userDetails:Core.UserDetails, jolokiaParams, jolokiaUrl):Jolokia.IJolokia => {
     // TODO - Maybe have separate URLs or even jolokia instances for loading plugins vs. application stuff
     // var jolokiaUrl = $location.search()['url'] || Core.url("/jolokia");
     log.info("Jolokia URL is " + jolokiaUrl);
@@ -90,22 +94,21 @@ module Core {
       return jolokia;
     } else {
 
-      var answer = {
+      var answer = <DummyJolokia> {
         running: false,
-        request: () => null,
-        register: () => null,
-        list: () => null,
-        search: () => null,
-        read: () => null,
-        execute: () => null,
-
-        start: () => {
+        request: (req:any, opts?:Jolokia.IParams) => null,
+        register: (req:any, opts?:Jolokia.IParams) => <number>null,
+        list: (path, opts?) => null,
+        search: (mBeanPatter, opts?) => null,
+        getAttribute: (mbean, attribute, path?, opts?) => null,
+        setAttribute: (mbean, attribute, value, path?, opts?) => {},
+        version: (opts?) => <Jolokia.IVersion>null,
+        execute: (mbean, operation, ...args) => null,
+        start: (period) => {
           answer.running = true;
-          return null;
         },
         stop: () => {
           answer.running = false;
-          return null;
         },
         isRunning: () => answer.running,
         jobs: () => []

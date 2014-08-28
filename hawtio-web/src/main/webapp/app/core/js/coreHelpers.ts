@@ -1348,7 +1348,7 @@ module Core {
    * @return {Object}
    */
   export function createJolokia(url: string, username: string, password: string) {
-    var jolokiaParams = {
+    var jolokiaParams:Jolokia.IParams = {
       url: url,
       username: username,
       password: password,
