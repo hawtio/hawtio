@@ -10,7 +10,7 @@ module Camel {
     $scope.metricDivs = "";
 
     // TODO: figure out how to init this better
-    $scope.metricsWatcher = window.metricsWatcher;
+    $scope.metricsWatcher = metricsWatcher;
 
     function populateRouteStatistics(response) {
       var obj = response.value;
@@ -23,7 +23,7 @@ module Camel {
 
         if (!$scope.initDone) {
           // figure out which routes we have
-          var meters = json['timers']
+          var meters = json['timers'];
 
           var counter = 0;
           if (meters != null) {
