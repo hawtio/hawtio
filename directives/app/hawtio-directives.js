@@ -3660,7 +3660,7 @@ var UI;
                             //log.debug("executing action: ", config.action);
                             var action = config['action'];
                             if (angular.isFunction(action)) {
-                                action.apply();
+                                action();
                             } else if (angular.isString(action)) {
                                 $scope.$parent.$eval(action, {
                                     config: config,

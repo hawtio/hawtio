@@ -32,7 +32,7 @@
       <div class="configuration-filter">
         <input type="text" class="span8 search-query" placeholder="Filter..." ng-model="filterText">
         <i class="icon-remove clickable" title="Clear filter" ng-click="filterText = ''"></i>
-        <button class="btn pull-right" ng-click="addPidDialog.open()" title="Add a new configuration"><i
+        <button class="btn pull-right" ng-click="addPidDialog.open()" title="Add a new configuration" hawtio-show object-name="{{configAdminMBean}}" method-name="configAdminUpdate"><i
                 class="icon-plus"></i> Configuration
         </button>
       </div>

@@ -1,0 +1,107 @@
+.metricsWatcher .heading1 {
+	font-size: 30px;
+	line-height: 36px;
+	margin: 0;
+}
+.metricsWatcher .heading3 {
+	font-size: 18px;
+	line-height: 27px;
+	margin: 0;
+}
+.metricsWatcher .heading4 {
+	font-size: 14px;
+	line-height: 18px;
+	margin: 0;
+}
+.metricsWatcher .heading5 {
+	font-size: 18px;
+	line-height: 18px;
+	margin: 0;
+}
+.metricsWatcher p {
+	font-size: 13px;
+	line-height: 18px;
+}
+.metricsWatcher fieldset legend {
+	margin-bottom: 5px;
+	border-bottom: none;
+	color: inherit;
+}
+.metricsWatcher .activeRequestsGraph {
+	vertical-align: top;
+}
+.metricsWatcher .activeRequestsGraph .counter .histogram {
+	width: 95%;
+}
+
+.metricsWatcher .nested {
+	margin: 0 10px 10px 0;
+}
+.metricsWatcher .nested h1 {
+	font-size: 24px;
+}
+
+.metricsWatcher .progressLabel {
+	text-align: right;
+	color: #666;
+}
+
+.metricsWatcher.histogram .histogramContainer td,
+.metricsWatcher.timer .timerContainer td,
+.metricsWatcher .progressLabel,
+.metricsWatcher .progressValue {
+	vertical-align: top;
+	padding: 0px 5px;
+}
+.metricsWatcher .progressValue {
+	font-size: 13px;
+	line-height: 18px;
+	color: #666;
+}
+.metricsWatcher .progress {
+	height: 18px;
+	margin-bottom: 17px;
+}
+
+.metricsWatcher.timer table,
+.metricsWatcher.histogram table,
+.metricsWatcher.web table,
+.metricsWatcher.log4j table,
+.metricsWatcher.cache table,
+.metricsWatcher.jvm table,
+.metricsWatcher .progressBar,
+.metricsWatcher .progressBar,
+.metricsWatcher .progressTable {
+	width: 100%;
+	font-size: 13px;
+}
+
+.metricsWatcher.histogram .histogramContainer,
+.metricsWatcher.jvm .jvmContainer,
+.metricsWatcher.web .webContainer,
+.metricsWatcher.log4j .log4jContainer,
+.metricsWatcher.cache .cacheContainer,
+.metricsWatcher.timer .timerContainer,
+.metricsWatcher.cache .gaugeTableContainer {
+	border-style: solid;
+	border-width: 1px;
+	padding: 10px 0;
+	margin-left: 0;
+	padding: 10px;
+}
+
+.metricsWatcher.cache table.gaugeTable td h5,
+.metricsWatcher.jvm table.jvmTable td h5 {
+	font-size: 15px;
+	font-weight: normal;
+	text-align: left;
+}
+.metricsWatcher table.gaugeTable td,
+.metricsWatcher table.jvmTable td {
+	font-size: 14px;
+	text-align: right;
+}
+
+caption{
+	font-weight: bold;
+}

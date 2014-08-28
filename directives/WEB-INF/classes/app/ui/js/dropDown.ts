@@ -36,6 +36,21 @@ module UI {
      * A submenu for this item
      */
     items?:MenuItem[];
+
+    /**
+     * Object name for RBAC checking
+     */
+    objectName?: string;
+
+    /**
+     * method name for RBAC checking
+     */
+    methodName?: string;
+
+    /**
+     * argument types for RBAC checking
+     */
+    argumentTypes?: string;
   }
 
   export function hawtioDropDown($templateCache) {
@@ -64,9 +79,9 @@ module UI {
             $event.stopPropagation();
           } else if ('action' in config) {
             //log.debug("executing action: ", config.action);
-            var action = config['action'];
+            var action:() => void = config['action'];
             if (angular.isFunction(action)) {
-              action.apply();
+              action();
             } else if (angular.isString(action)) {
               $scope.$parent.$eval(action, {
                 config: config,

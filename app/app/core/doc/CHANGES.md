@@ -2,6 +2,7 @@
 
 #### 1.5
 * Hawtio requires Java 1.7 onwards
+* Authentication now detects if running on WebSphere, and adapts authentication to WebSphere specific credentials and APIs
 
 #### 1.4.17
 * bug fixes
