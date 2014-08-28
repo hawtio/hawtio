@@ -35,13 +35,13 @@
           <li class="divider">
           </li>
           -->
-          <li ng-hide="gridOptions.selectedItems.length !== 1">
+          <li ng-hide="gridOptions.selectedItems.length !== 1" hawtio-show object-name="{{gitMBean}}" method-name="rename">
             <a ng-click="openRenameDialog()"
                title="Rename the selected document"
                data-placement="bottom">
               <i class="icon-adjust"></i> Rename</a>
           </li>
-          <li ng-hide="!gridOptions.selectedItems.length">
+          <li ng-hide="!gridOptions.selectedItems.length" hawtio-show object-name="{{gitMBean}}" method-name="rename">
             <a ng-click="openMoveDialog()"
                title="move the selected documents to a new folder"
                data-placement="bottom">
@@ -51,7 +51,7 @@
           <li class="divider">
           </li>
           -->
-          <li ng-hide="!gridOptions.selectedItems.length">
+          <li ng-hide="!gridOptions.selectedItems.length" hawtio-show object-name="{{gitMBean}}" method-name="remove">
             <a ng-click="openDeleteDialog()"
                title="Delete the selected document(s)"
                data-placement="bottom">
@@ -67,12 +67,12 @@
           </li>
         </ul>
       </li>
-      <li class="pull-right">
+      <li class="pull-right" hawtio-show object-name="{{gitMBean}}" method-name="write">
         <a ng-href="{{editLink()}}{{hash}}" ng-hide="!editLink()" title="Edit this page"
            data-placement="bottom">
           <i class="icon-edit"></i> Edit</a>
       </li>
-      <li class="pull-right">
+      <li class="pull-right" hawtio-show object-name="{{gitMBean}}" method-name="write">
         <a href=""
            title="Create new page" ng-click="openAddDialog()"
            data-placement="bottom">

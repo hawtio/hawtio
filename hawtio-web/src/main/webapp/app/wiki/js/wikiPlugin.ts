@@ -106,7 +106,7 @@ module Wiki {
         postLoginTasks,
         $rootScope) => {
 
-    viewRegistry['wiki'] = layoutFull;
+    viewRegistry['wiki'] = templatePath + 'layoutWiki.html';
     helpRegistry.addUserDoc('wiki', 'app/wiki/doc/help.md', () => {
       return Wiki.isWikiEnabled(workspace, jolokia, localStorage);
     });

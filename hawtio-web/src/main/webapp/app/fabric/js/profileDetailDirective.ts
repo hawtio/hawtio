@@ -1,4 +1,5 @@
 /// <reference path="fabricPlugin.ts"/>
+/// <reference path="../../osgi/js/osgiHelpers.ts"/>
 /// <reference path="../../maven/js/mavenHelpers.ts"/>
 module Fabric {
 
@@ -15,6 +16,7 @@ module Fabric {
     public controller = ["$scope", "$element", "$attrs", "$routeParams", "jolokia", "$location", "workspace", "$q", ($scope, $element, $attrs, $routeParams, jolokia, $location, workspace, $q) => {
 
       $scope.inDirective = true;
+      $scope.managerMBean = Fabric.managerMBean;
 
       Fabric.initScope($scope, $location, jolokia, workspace);
       Fabric.loadRestApi(jolokia, $scope);

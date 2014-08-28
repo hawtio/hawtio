@@ -159,7 +159,9 @@ module Fabric {
       },
       action: () => {
         getVersionCreateDialog($dialog).open();
-      }
+      },
+      objectName: Fabric.managerMBean,
+      methodName: 'createVersion'
     });
 
     wikiBranchMenu.addExtension({
@@ -169,7 +171,9 @@ module Fabric {
       },
       action: () => {
         getVersionDeleteDialog($dialog).open();
-      }
+      },
+      objectName: Fabric.managerMBean,
+      methodName: 'deleteVersion'
     });
 
     wikiBranchMenu.addExtension({
@@ -179,7 +183,9 @@ module Fabric {
       },
       action: () => {
         getChangeDefaultVersionDialog($dialog).open();
-      }
+      },
+      objectName: Fabric.managerMBean,
+      methodName: 'setDefaultVersion'
     });
 
     wikiBranchMenu.addExtension({
@@ -189,7 +195,10 @@ module Fabric {
       },
       action: () => {
         getVersionPatchDialog($dialog).open();
-      }
+      },
+      objectName: Fabric.managerMBean,
+      methodName: 'applyPatches',
+      argumentTypes: 'java.util.List,java.lang.String,java.lang.String,java.lang.String,java.lang.String'
     });
   }
 
