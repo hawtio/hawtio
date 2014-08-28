@@ -1,9 +1,13 @@
 /**
  * @module Osgi
  */
-/// <reference path="./osgiPlugin.ts"/>
+/// <reference path="osgiPlugin.ts"/>
+/// <reference path="metadata.ts"/>
+/// <reference path="../../ui/js/dialog.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
+/// <reference path="../../fabric/js/fabricGlobals.ts"/>
 module Osgi {
-  _module.controller("Osgi.PidController", ["$scope", "$timeout", "$routeParams", "$location", "workspace", "jolokia", ($scope, $timeout, $routeParams, $location, workspace:Workspace, jolokia) => {
+  _module.controller("Osgi.PidController", ["$scope", "$timeout", "$routeParams", "$location", "workspace", "jolokia", ($scope, $timeout, $routeParams, $location, workspace:Core.Workspace, jolokia) => {
     $scope.deletePropDialog = new UI.Dialog();
     $scope.deletePidDialog = new UI.Dialog();
     $scope.addPropertyDialog = new UI.Dialog();

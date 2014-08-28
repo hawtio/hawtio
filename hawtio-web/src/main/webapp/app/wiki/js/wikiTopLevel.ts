@@ -2,6 +2,7 @@
 /// <reference path="../../fabric/js/fabricGlobals.ts"/>
 /// <reference path="../../git/js/gitHelpers.ts"/>
 /// <reference path="../../core/js/workspace.ts"/>
+/// <reference path="../../osgi/js/osgiHelpers.ts"/>
 module Wiki {
 
   export var TopLevelController = _module.controller("Wiki.TopLevelController", ['$scope', 'workspace', ($scope, workspace:Core.Workspace) => {
@@ -13,6 +14,7 @@ module Wiki {
     $scope.healthMBean = Fabric.healthMBean;
     $scope.schemaLookupMBean = Fabric.schemaLookupMBean;
     $scope.gitMBean = Git.getGitMBean(workspace);
+    $scope.configAdminMBean = Osgi.getHawtioConfigAdminMBean(workspace);
   }]);
 
 }

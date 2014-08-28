@@ -1,10 +1,13 @@
+/// <reference path="osgiPlugin.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
+/// <reference path="../../ui/js/dialog.ts"/>
+/// <reference path="metadata.ts"/>
 /**
  * @module Osgi
  */
-/// <reference path="./osgiPlugin.ts"/>
 module Osgi {
 
-  _module.controller("Osgi.ConfigurationsController", ["$scope", "$routeParams", "$location", "workspace", "jolokia", ($scope, $routeParams, $location, workspace:Workspace, jolokia) => {
+  _module.controller("Osgi.ConfigurationsController", ["$scope", "$routeParams", "$location", "workspace", "jolokia", ($scope, $routeParams, $location, workspace:Core.Workspace, jolokia) => {
     $scope.selectedItems = [];
 
     $scope.grid = {
@@ -155,14 +158,14 @@ module Osgi {
       Core.$apply($scope);
     }
 
-    function updateMetaType(laziyCreateConfigs = true) {
+    function updateMetaType(lazilyCreateConfigs = true) {
       var metaType = $scope.metaType;
       if (metaType) {
         var pidMetadata = Osgi.configuration.pidMetadata;
         var pids = $scope.pids || {};
         angular.forEach(metaType.pids, (value, pid) => {
           var bundle = null;
-          var config = laziyCreateConfigs ? getOrCreatePidConfig(pid, bundle) : pids[pid];
+          var config = lazilyCreateConfigs ? getOrCreatePidConfig(pid, bundle) : pids[pid];
           if (config) {
             var factoryPidBundleIds = value.factoryPidBundleIds;
             if (factoryPidBundleIds && factoryPidBundleIds.length) {
@@ -199,7 +202,7 @@ module Osgi {
       $scope.configurations = [];
       if ($scope.profileNotRunning && $scope.profileMetadataMBean && $scope.versionId && $scope.profileId) {
         jolokia.execute($scope.profileMetadataMBean, "metaTypeSummary",
-          $scope.versionId, $scope.profileId, onSuccess(onProfileMetaType, {silent: false}));
+          $scope.versionId, $scope.profileId, onSuccess(onProfileMetaType, {silent: true}));
       } else {
         if ($scope.jolokia) {
           var mbean = getSelectionConfigAdminMBean($scope.workspace);

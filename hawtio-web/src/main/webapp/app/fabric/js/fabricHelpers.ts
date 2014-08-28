@@ -540,7 +540,8 @@ module Fabric {
         jolokia = Fabric.createJolokia(url);
       } else {
         if (response.error) {
-          log.warn(response.error, response.stacktrace);
+          log.debug("Failed to fetch remote jolokia URL: ", response.error);
+          log.debug("Stack trace: ", response.stacktrace);
         }
       }
       if (fn) {
