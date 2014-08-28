@@ -283,7 +283,7 @@ module Core {
 
   export function parseMBean(mbean) {
     var answer = {};
-    var parts = mbean.split(":");
+    var parts:any = mbean.split(":");
     if (parts.length > 1) {
       answer['domain'] = parts.first();
       parts = parts.exclude(parts.first());
@@ -292,7 +292,7 @@ module Core {
       var nameValues = parts.split(",");
       nameValues.forEach((str) => {
         var nameValue = str.split('=');
-        var name = nameValue.first().trim();
+        var name = (<string>nameValue.first()).trim();
         nameValue = nameValue.exclude(nameValue.first());
         answer['attributes'][name] = nameValue.join('=').trim();
       });
@@ -614,7 +614,7 @@ module Core {
    * @param {Object} arguments
    * @param {Function} callback
    */
-  export function register(jolokia, scope, arguments: any, callback) {
+  export function register(jolokia:Jolokia.IJolokia, scope, arguments: any, callback) {
     /*
     if (scope && !Core.isBlank(scope.name)) {
       Core.log.debug("Calling register from scope: ", scope.name);
@@ -634,7 +634,7 @@ module Core {
       });
     }
 
-    var handle = null;
+    var handle:number = null;
 
     if ('success' in callback) {
       var cb = callback.success;
@@ -671,53 +671,56 @@ module Core {
     };
   }
 
-    /**
-     * Register a JMX operation to poll for changes using a jolokia search using the given mbean pattern
-     * @method registerSearch
-     * @for Core
-     * @static
-     * @paran {*} jolokia
-     * @param {*} scope
-     * @param {String} mbeanPattern
-     * @param {Function} callback
-     */
-    export function registerSearch(jolokia, scope, mbeanPattern:string, callback) {
-        if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
-            scope.$jhandle = [];
-        }
-        if (angular.isDefined(scope.$on)) {
-            scope.$on('$destroy', function (event) {
-                unregister(jolokia, scope);
-            });
-        }
-        if (angular.isArray(arguments)) {
-            if (arguments.length >= 1) {
-                // TODO can't get this to compile in typescript :)
-                //var args = [callback].concat(arguments);
-                var args = [callback];
-                angular.forEach(arguments, (value) => args.push(value));
-                //var args = [callback];
-                //args.push(arguments);
-                var registerFn = jolokia.register;
-                var handle = registerFn.apply(jolokia, args);
-                scope.$jhandle.push(handle);
-                jolokia.search(mbeanPattern, callback);
-            }
-        } else {
-            var handle = jolokia.register(callback, arguments);
-            scope.$jhandle.push(handle);
-            jolokia.search(mbeanPattern, callback);
-        }
-    }
-
-    export function unregister(jolokia, scope) {
-      if (angular.isDefined(scope.$jhandle)) {
-        scope.$jhandle.forEach(function (handle) {
-          jolokia.unregister(handle);
-        });
-        delete scope.$jhandle;
+  /**
+   * Register a JMX operation to poll for changes using a jolokia search using the given mbean pattern
+   * @method registerSearch
+   * @for Core
+   * @static
+   * @paran {*} jolokia
+   * @param {*} scope
+   * @param {String} mbeanPattern
+   * @param {Function} callback
+   */
+  /*
+  TODO - won't compile, and where is 'arguments' coming from?
+  export function registerSearch(jolokia:Jolokia.IJolokia, scope, mbeanPattern:string, callback) {
+      if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
+          scope.$jhandle = [];
       }
+      if (angular.isDefined(scope.$on)) {
+          scope.$on('$destroy', function (event) {
+              unregister(jolokia, scope);
+          });
+      }
+      if (angular.isArray(arguments)) {
+          if (arguments.length >= 1) {
+              // TODO can't get this to compile in typescript :)
+              //var args = [callback].concat(arguments);
+              var args = [callback];
+              angular.forEach(arguments, (value) => args.push(value));
+              //var args = [callback];
+              //args.push(arguments);
+              var registerFn = jolokia.register;
+              var handle = registerFn.apply(jolokia, args);
+              scope.$jhandle.push(handle);
+              jolokia.search(mbeanPattern, callback);
+          }
+      } else {
+          var handle = jolokia.register(callback, arguments);
+          scope.$jhandle.push(handle);
+          jolokia.search(mbeanPattern, callback);
+      }
+  }
+  */
+
+  export function unregister(jolokia:Jolokia.IJolokia, scope) {
+    if (angular.isDefined(scope.$jhandle)) {
+      scope.$jhandle.forEach(function (handle) {
+        jolokia.unregister(handle);
+      });
+      delete scope.$jhandle;
     }
+  }
 
   /**
    * The default error handler which logs errors either using debug or log level logging based on the silent setting
@@ -1322,7 +1325,7 @@ module Core {
   /**
    * Returns true if the $location is from the hawtio proxy
    */
-  export function isProxyUrl($location) {
+  export function isProxyUrl($location:ng.ILocationService) {
     var url = $location.url();
     return url.indexOf('/hawtio/proxy/') > 0;
   }
@@ -1403,7 +1406,7 @@ module Core {
    * Returns the humanized markup of the given value
    */
   export function humanizeValueHtml(value:any):string {
-    var formattedValue = "";
+    var formattedValue:string = "";
     if (value === true) {
       formattedValue = '<i class="icon-check"></i>';
     } else if (value === false) {
@@ -1501,7 +1504,7 @@ module Core {
 
   export function storeConnectionRegex(regexs, name, json) {
     if (!regexs.any((r) => { r['name'] === name })) {
-      var regex = '';
+      var regex:string = '';
 
       if (json['useProxy']) {
         regex = '/hawtio/proxy/';
@@ -1542,9 +1545,9 @@ module Core {
     localStorage['regexs'] = angular.toJson(regexs);
   }
 
-  export function maskPassword(value) {
+  export function maskPassword(value:any) {
     if (value) {
-      var text = value.toString();
+      var text = '' + value;
       // we use the same patterns as in Apache Camel in its
       // org.apache.camel.util.URISupport.sanitizeUri
       var userInfoPattern = "(.*://.*:)(.*)(@)";
@@ -1565,7 +1568,7 @@ module Core {
    * @param filter the filter
    * @return true if matched, false if not.
    */
-  export function matchFilterIgnoreCase(text, filter) {
+  export function matchFilterIgnoreCase(text, filter):any {
     if (angular.isUndefined(text) || angular.isUndefined(filter)) {
       return true;
     }
