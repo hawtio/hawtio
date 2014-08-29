@@ -643,6 +643,14 @@ module Wiki {
           var ext = fileExtension(name);
           return name && ext && ((name.startsWith("readme.") || name === "readme") || (name.startsWith("index.") || name === "index"));
         });
+        // if we do not have readme then try summary as fallback
+        if (!item) {
+          item = $scope.children.find((info) => {
+            var name = (info.name || "").toLowerCase();
+            var ext = fileExtension(name);
+            return name && ext && ((name.startsWith("summary.") || name === "summary"));
+          });
+        }
         if (item) {
           var pageName = item.path;
           $scope.readMePath = pageName;
