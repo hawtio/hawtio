@@ -1354,6 +1354,14 @@ h4 > .contained {
   max-width: 15em;
 }
 
+.c-wide2 {
+  max-width: 20em;
+}
+
+.c-wide3 {
+  max-width: 25em;
+}
+
 .c-max {
   width: 100%;
 }
