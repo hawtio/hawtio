@@ -13,7 +13,7 @@ module Fabric {
       profileId: '='
     };
 
-    public controller = ["$scope", "$element", "$attrs", "$routeParams", "jolokia", "$location", "workspace", "$q", ($scope, $element, $attrs, $routeParams, jolokia, $location, workspace, $q) => {
+    public controller = ["$scope", "$element", "$attrs", "$routeParams", "jolokia", "$location", "workspace", "marked", "$q", ($scope, $element, $attrs, $routeParams, jolokia, $location, workspace, marked, $q) => {
 
       $scope.inDirective = true;
       $scope.managerMBean = Fabric.managerMBean;
@@ -350,6 +350,13 @@ module Fabric {
           $scope.row = response.value;
           var id = $scope.row.id;
           var version = $scope.row.version;
+
+          // make sure the summary markdown is rendered
+          if (angular.isDefined($scope.row.summaryMarkdown)) {
+            $scope.summaryHtml = marked($scope.row.summaryMarkdown);
+          } else {
+            $scope.summaryHtml = null;
+          }
 
           // extract system properties
           $scope.row.systemProperties = [];
