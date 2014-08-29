@@ -53,15 +53,17 @@ public class UploadServlet extends HttpServlet {
 
             upload.setProgressListener(new ProgressListener() {
 
-                private long kBytesRead = 0;
+                private long mBytesRead = 0;
 
                 @Override
                 public void update(long pBytesRead, long pContentLength, int pItems) {
-                    long nowkBytesRead = pBytesRead / 1024;
-                    if (nowkBytesRead > kBytesRead) {
-                        kBytesRead = nowkBytesRead;
-                        LOG.debug("On item {}, read {}Kb, total: {}Kb", new Object[]{pItems, kBytesRead, pContentLength / 1024});
-                        out.write("<p>item: " + pItems + " read:" + kBytesRead + "Kb total: " + (pContentLength / 1024) + "Kb</p>");
+                    long nowMBytesRead = pBytesRead / 1024 / 1024;
+                    long lengthMBytes = pContentLength / 1024 / 1024;
+                    long anEighth = lengthMBytes / 8;
+                    if (nowMBytesRead > mBytesRead && nowMBytesRead % anEighth == 0) {
+                        mBytesRead = nowMBytesRead;
+                        LOG.debug("On item {}, read {}mb, total: {}mb", new Object[]{pItems, mBytesRead, lengthMBytes});
+                        out.write("<p>item: " + pItems + " read:" + mBytesRead + "mb total: " + lengthMBytes + "mb</p>");
                     }
                 }
             });
