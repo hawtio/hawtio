@@ -12,6 +12,8 @@
       </div>
       <div class="pull-left">
           <h2 class="inline" title="Profile: {{row.id}}"><span class="contained c-wide3">{{row.id}}</span></h2>
+          <br/>
+          <span class="contained c-wide3">{{row.summaryMarkdown}}</span>
       </div>
 
       <div class="pull-right" ng-show="inDirective">
@@ -22,6 +24,7 @@
         <a class="btn" ng-href="#/fabric/assignProfile?vid={{versionId}}&pid={{profileId}}" title="Assign this profile to an existing container" hawtio-show object-name="{{managerMBean}}" method-name="addProfilesToContainer"><i class="icon-truck"></i> Assign</a>
         <a class="btn" href="" ng-click="gotoCreateContainer()" title="Deploy this profile to a new container" hawtio-show object-name="{{managerMBean}}" method-name="createContainers"><i class="icon-truck"></i> New</a>
       </div>
+
     </div>
 
     <div class="row-fluid">

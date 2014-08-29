@@ -173,6 +173,11 @@ module Wiki {
       return Wiki.hideFineNameExtensions(entity.name);
     };
 
+    $scope.renderHtml = (entity) => {
+      return "I was here";
+      //return $compile(entity)($scope);
+    };
+
     $scope.fileClass = (entity) => {
       if (entity.name.has(".profile")) {
         return "green";
