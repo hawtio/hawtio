@@ -62,18 +62,17 @@ module SpringBoot {
 
     export function convertRawMetricsToUserFriendlyFormat(scope, data) {
         var userFriendlyData = [];
-        var key;
-        for (key in Object.keys(data)) {
-            key = Object.keys(data)[key];
-            var friendlyName = metricsFriendlyNames[key];
+        var metricIndex;
+        for (metricIndex in Object.keys(data)) {
+            var metric = Object.keys(data)[metricIndex];
+            var friendlyName = metricsFriendlyNames[metric];
             if (!friendlyName) {
-                userFriendlyData[key] = {key: key, value: data[key]}
+                userFriendlyData[metricIndex] = {key: metric, value: data[metric]}
             } else {
-                userFriendlyData[key] = {key: friendlyName, value: data[key]}
+                userFriendlyData[metricIndex] = {key: friendlyName, value: data[metric]}
             }
         }
-        scope.metricsValues = userFriendlyData;
-        scope.metrics = Object.keys(userFriendlyData).sort();
+        scope.metrics = userFriendlyData;
         scope.$apply();
     }
 

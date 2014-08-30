@@ -4,15 +4,6 @@
         {{loadingError}}
     </p>
 
-    <table class="table table-condensed table-striped">
-        <tr>
-            <th>Metric</th>
-            <th>Metric value</th>
-        </tr>
-        <tr ng-repeat="metric in metrics">
-            <td>{{metricsValues[metric].key}}</td>
-            <td>{{metricsValues[metric].value}}</td>
-        </tr>
-    </table>
+    <table class="table table-condensed table-striped" hawtio-simple-table="metricsGridOptions"></table>
 
 </div>

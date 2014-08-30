@@ -9,6 +9,25 @@ module SpringBoot {
             $scope.loadingError = 'Cannot read metrics data.';
             $scope.$apply();
         }}));
+
+        $scope.metricsGridOptions = {
+            data: 'metrics',
+            showSelectionCheckbox: false,
+            sortInfo: {
+                sortBy: 'key',
+                ascending: true
+            },
+            columnDefs: [
+            {
+                field: 'key',
+                displayName: 'Metric'
+            },
+            {
+                field: 'value',
+                displayName: 'Metric value'
+            }
+        ]
+        }
     }]);
 
 }
