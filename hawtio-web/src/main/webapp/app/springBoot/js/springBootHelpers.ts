@@ -54,9 +54,9 @@ module SpringBoot {
             var metric = Object.keys(data)[metricIndex];
             var friendlyName = metricsFriendlyNames[metric];
             if (!friendlyName) {
-                userFriendlyData[metricIndex] = {key: metric, value: data[metric]}
+                userFriendlyData[metricIndex] = {code: metric, name: metric, value: data[metric]}
             } else {
-                userFriendlyData[metricIndex] = {key: friendlyName, value: data[metric]}
+                userFriendlyData[metricIndex] = {code: metric, name: friendlyName, value: data[metric]}
             }
         }
         scope.metrics = userFriendlyData;

@@ -14,13 +14,14 @@ module SpringBoot {
             data: 'metrics',
             showSelectionCheckbox: false,
             sortInfo: {
-                sortBy: 'key',
+                sortBy: 'name',
                 ascending: true
             },
             columnDefs: [
             {
-                field: 'key',
-                displayName: 'Metric'
+                field: 'name',
+                displayName: 'Metric',
+                cellTemplate: '<div class="ngCellText" hawtio-template-popover content="metricDetails" title="Metric details">{{row.entity.name}}</div>'
             },
             {
                 field: 'value',
