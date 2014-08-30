@@ -79,6 +79,17 @@ module Core {
     return answer;
   }]);
 
+  // service for the codehale metrics
+  _module.factory('metricsWatcher', ["$window", ($window) => {
+    var answer: any = $window.metricsWatcher;
+    if (!answer) {
+      // lets avoid any NPEs
+      answer = {};
+      $window.metricsWatcher = metricsWatcher;
+    }
+    return answer;
+  }]);
+
   // service for xml2json, should replace with angular.to/from json functions
   _module.factory('xml2json', () => {
     var jquery:any = $;

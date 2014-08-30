@@ -1,16 +1,14 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.RouteMetricsController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
+  _module.controller("Camel.RouteMetricsController", ["$scope", "$location", "workspace", "jolokia", "metricsWatcher", ($scope, $location, workspace:Workspace, jolokia, metricsWatcher) => {
+
+    var log:Logging.Logger = Logger.get("Camel");
 
     $scope.filterText = null;
-
     $scope.data = null;
     $scope.initDone = false;
     $scope.metricDivs = "";
-
-    // TODO: figure out how to init this better
-    $scope.metricsWatcher = metricsWatcher;
 
     function populateRouteStatistics(response) {
       var obj = response.value;
@@ -29,23 +27,32 @@ module Camel {
           if (meters != null) {
             for (var v in meters) {
               var key = v;
+
+              var lastDot = key.lastIndexOf(".");
+              var className = key.substr(0, lastDot);
+              var metricsName = key.substr(lastDot + 1);
+              var firstColon = key.indexOf(":");
+              var routeId = key.substr(firstColon + 1, lastDot);
+
               var entry = meters[v];
               var div = "meter-" + counter;
               counter++;
 
-              metricsWatcher.addTimer(div, key, "responses", 1, key, "responses", 1);
+              log.info("Added timer: " + div + " (" + className + "." + metricsName + ") for route: " + routeId);
+              metricsWatcher.addTimer(div, className, metricsName, 100, className, metricsName, 100);
 
               $scope.metricDivs += "<div id=\"" + div + "\" class=\"row\"></div>";
             }
           }
 
-          $scope.metricsWatcher.initGraphs();
+          log.info("Init graphs")
+          metricsWatcher.initGraphs();
           $scope.initDone = true;
         }
 
         // update graphs
-        console.log("Updating graphs")
-        $scope.metricsWatcher.updateGraphs(json)
+        log.debug("Updating graphs on " + metricsWatcher)
+        metricsWatcher.updateGraphs(json)
 
         // ensure web page is updated
         Core.$apply($scope);
@@ -64,7 +71,7 @@ module Camel {
     });
 
     function loadData() {
-      console.log("Loading RouteMetrics data...");
+      log.info("Loading RouteMetrics data...");
       var mbean = getSelectionCamelRouteMetrics(workspace);
       if (mbean) {
         var query = {type: 'exec', mbean: mbean, operation: 'dumpStatisticsAsJson'};
