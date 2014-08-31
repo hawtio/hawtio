@@ -434,7 +434,8 @@ module Log {
         Core.register(jolokia, $scope, $scope.queryJSON, callbackOptions);
       };
 
-      jolokia.execute(logQueryMBean, "getLogResults(int)", $scope.logBatchSize, onSuccess(firstCallback));
+      // load more log lines at initial load, so we load the 1st 1000 log lines
+      jolokia.execute(logQueryMBean, "getLogResults(int)", 1000, onSuccess(firstCallback));
     }
   }]);
 }

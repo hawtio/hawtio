@@ -16,6 +16,10 @@
       'logAutoScroll': {
         'value': true,
         'converter': Core.parseBooleanValue
+      },
+      'logBatchSize': {
+        'value': 20,
+        'converter': parseInt
       }
     });
   }]);
