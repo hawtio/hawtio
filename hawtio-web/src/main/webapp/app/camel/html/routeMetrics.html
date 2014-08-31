@@ -17,7 +17,9 @@
   </div>
 
   <!-- div to contain the graphs -->
-  <div class="metricsWatcher container mainContent" ng-bind-html-unsafe="metricDivs"></div>
+  <div class="metricsWatcher container mainContent">
+    <div id="{{metric}}" class="row" ng-repeat="metric in metricDivs track by $index"></div>
+  </div>
 
 </div>
 
