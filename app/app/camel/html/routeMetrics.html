@@ -16,15 +16,9 @@
     Loading...
   </div>
 
-  <div class="row-fluid" ng-show="data">
-    {{data}}
-  </div>
-
-  <!-- TODO: either repeat or some div compile stuff -->
-  <div class="container mainContent">
-    <div class="row" id="meter-0"></div>
-    <div class="row" id="meter-1"></div>
-    <div class="row" id="meter-2"></div>
+  <!-- div to contain the graphs -->
+  <div class="metricsWatcher container mainContent">
+    <div id="{{metric}}" class="row" ng-repeat="metric in metricDivs track by $index"></div>
   </div>
 
 </div>

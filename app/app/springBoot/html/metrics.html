@@ -4,15 +4,25 @@
         {{loadingError}}
     </p>
 
-    <table class="table table-condensed table-striped">
-        <tr>
-            <th>Metric</th>
-            <th>Metric value</th>
-        </tr>
-        <tr ng-repeat="metric in metrics">
-            <td>{{metricsValues[metric].key}}</td>
-            <td>{{metricsValues[metric].value}}</td>
-        </tr>
-    </table>
+    <script type="text/ng-template" id="metricDetails">
+        <table>
+            <tbody>
+            <tr>
+                <td>Metric code</td>
+                <td>{{row.entity.code}}</td>
+            </tr>
+            <tr>
+                <td>Metric name</td>
+                <td>{{row.entity.name}}</td>
+            </tr>
+            <tr>
+                <td>Current value</td>
+                <td>{{row.entity.value}}</td>
+            </tr>
+            </tbody>
+            </table>
+    </script>
+
+    <table class="table table-condensed table-striped" hawtio-simple-table="metricsGridOptions"></table>
 
 </div>

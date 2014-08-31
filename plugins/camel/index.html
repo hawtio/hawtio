@@ -263,6 +263,18 @@ uses an XPath expression which means the majority of processing time is spent ev
 <li>Self = Total time in ms. for processing message in this processor only.</li>
 </ul>
 
+<h5 id = "Route_Metrics">Route Metrics</h5>
+
+<p>This page shows a summary for each route about the performance.</p>
+
+<ul>
+<li>Frequency - Shows number of messages processed per second</li>
+<li>Duration - Shows how long time to process a message</li>
+<li>Percentiles - Shows the statistics distribution of the time to process messages</li>
+</ul>
+
+<p>This information requires Camel 2.14 onwards, and using the camel-metrics route policy.</p>
+
 <h4 id = "Endpoint_Tree">Endpoint Tree</h4>
 
 <p>On the left hand side is the Camel Tree which lists all the running Camel applications in the JVM.</p>
