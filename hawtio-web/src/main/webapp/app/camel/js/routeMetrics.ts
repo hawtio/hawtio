@@ -5,6 +5,9 @@ module Camel {
 
     var log:Logging.Logger = Logger.get("Camel");
 
+    // TODO: filterText should filter per route name in the UI
+    // TODO: dropdown to select timer/counter
+
     $scope.filterText = null;
     $scope.data = null;
     $scope.initDone = false;
@@ -35,14 +38,19 @@ module Camel {
               var routeId = key.substr(firstColon + 1, lastDot);
 
               var entry = meters[v];
-              var div = "meter-" + counter;
+              var div = "timer-" + counter;
               counter++;
 
               log.info("Added timer: " + div + " (" + className + "." + metricsName + ") for route: " + routeId);
-              metricsWatcher.addTimer(div, className, metricsName, 100, className, metricsName, 100);
+              metricsWatcher.addTimer(div, className, metricsName, 10, className, metricsName, 10000);
 
+              // need to generate html for the divs to include
               $scope.metricDivs += "<div id=\"" + div + "\" class=\"row\"></div>";
             }
+
+            // ensure web page is updated at this point, as we need the metricDivs in the HTML before we call init graphs later
+            log.info("Pre-init graphs")
+            Core.$apply($scope);
           }
 
           log.info("Init graphs")
@@ -51,7 +59,7 @@ module Camel {
         }
 
         // update graphs
-        log.debug("Updating graphs on " + metricsWatcher)
+        log.debug("Updating graphs: " + json)
         metricsWatcher.updateGraphs(json)
 
         // ensure web page is updated
