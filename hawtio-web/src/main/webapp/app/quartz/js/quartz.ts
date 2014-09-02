@@ -217,14 +217,14 @@ module Quartz {
             if (job) {
               var repeatCounter;
               var repeatInterval;
-
-              t.type = job.jobDataMap["CamelQuartzTriggerType"];
+              var jobDataMap = job.jobDataMap || {};
+              t.type = jobDataMap["CamelQuartzTriggerType"];
               if (t.type && t.type == "cron") {
-                t.expression = job.jobDataMap["CamelQuartzTriggerCronExpression"];
+                t.expression = jobDataMap["CamelQuartzTriggerCronExpression"];
               } else if (t.type && t.type == "simple") {
-                t.expression = "every " + job.jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"] + " ms.";
-                repeatCounter = job.jobDataMap["CamelQuartzTriggerSimpleRepeatCounter"];
-                repeatInterval = job.jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"];
+                t.expression = "every " + jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"] + " ms.";
+                repeatCounter = jobDataMap["CamelQuartzTriggerSimpleRepeatCounter"];
+                repeatInterval = jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"];
                 if (repeatCounter > 0) {
                   t.expression += " (" + repeatCounter + " times)";
                 } else {
@@ -234,7 +234,7 @@ module Quartz {
                 t.repeatInterval = repeatInterval;
               } else {
                 // fallback and grab from Camel endpoint if that is possible (supporting older Camel releases)
-                var uri = job.jobDataMap["CamelQuartzEndpoint"];
+                var uri = jobDataMap["CamelQuartzEndpoint"];
                 if (uri) {
                   var cron = Core.getQueryParameterValue(uri, "cron");
                   if (cron) {
