@@ -524,7 +524,7 @@ module Quartz {
         $scope.selectedSchedulerMBean = selectionKey;
 
         // TODO: is there a better way to add our nid to the uri parameter?
-        $location.search({nid: data.key});
+        $location.search("nid", data.key);
 
         var request = [
           {type: "read", mbean: $scope.selectedSchedulerMBean}
