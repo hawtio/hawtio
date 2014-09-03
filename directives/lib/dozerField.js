@@ -18,8 +18,41 @@ var io_hawt_dozer_schema_Field = {
     },
     "a" : {
       "type" : "object",
-      "$ref" : "urn:jsonschema:io:hawt:dozer:schema:FieldDefinition",
-      "required" : true
+      "id" : "urn:jsonschema:io:hawt:dozer:schema:FieldDefinition",
+      "required" : true,
+      "properties" : {
+        "is-accessible" : {
+          "type" : "boolean"
+        },
+        "set-method" : {
+          "type" : "string"
+        },
+        "get-method" : {
+          "type" : "string"
+        },
+        "date-format" : {
+          "type" : "string"
+        },
+        "value" : {
+          "type" : "string"
+        },
+        "create-method" : {
+          "type" : "string"
+        },
+        "map-get-method" : {
+          "type" : "string"
+        },
+        "map-set-method" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : [ "ITERATE", "GENERIC" ]
+        },
+        "key" : {
+          "type" : "string"
+        }
+      }
     },
     "relationship-type" : {
       "type" : "string",

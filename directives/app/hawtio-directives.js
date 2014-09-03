@@ -166,7 +166,6 @@ var Core;
     */
     function saveConnectionMap(map) {
         Logger.get("Core").debug("Saving connection map: ", StringHelpers.toString(map));
-
         localStorage[Core.connectionSettingsKey] = angular.toJson(map);
     }
     Core.saveConnectionMap = saveConnectionMap;
@@ -272,11 +271,20 @@ var Core;
             }
         }
         if (!uri) {
+            var fakeCredentials = {
+                username: 'public',
+                password: 'biscuit'
+            };
+            var localStorage = getLocalStorage();
+            if ('userDetails' in localStorage) {
+                // user checked 'rememberMe'
+                fakeCredentials = angular.fromJson(localStorage['userDetails']);
+            }
             uri = jolokiaUrls.find(function (url) {
                 var jqxhr = $.ajax(url, {
                     async: false,
-                    username: 'public',
-                    password: 'biscuit'
+                    username: fakeCredentials.username,
+                    password: fakeCredentials.password
                 });
                 return jqxhr.status === 200 || jqxhr.status === 401 || jqxhr.status === 403;
             });

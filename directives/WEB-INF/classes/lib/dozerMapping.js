@@ -27,7 +27,36 @@ var io_hawt_dozer_schema_Mapping = {
     },
     "class-a" : {
       "type" : "object",
-      "$ref" : "urn:jsonschema:io:hawt:dozer:schema:Class"
+      "id" : "urn:jsonschema:io:hawt:dozer:schema:Class",
+      "properties" : {
+        "factory-bean-id" : {
+          "type" : "string"
+        },
+        "is-accessible" : {
+          "type" : "boolean"
+        },
+        "map-null" : {
+          "type" : "boolean"
+        },
+        "bean-factory" : {
+          "type" : "string"
+        },
+        "value" : {
+          "type" : "string"
+        },
+        "create-method" : {
+          "type" : "string"
+        },
+        "map-get-method" : {
+          "type" : "string"
+        },
+        "map-set-method" : {
+          "type" : "string"
+        },
+        "map-empty-string" : {
+          "type" : "boolean"
+        }
+      }
     },
     "class-b" : {
       "type" : "object",
