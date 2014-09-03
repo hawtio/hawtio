@@ -2,7 +2,7 @@
   <div class="span10">
     <div class="row-fluid">
       <div class="span2">
-        <div class="app-logo mouse-pointer" ng-click="viewProfile(profile)">
+        <div class="app-logo mouse-pointer" ng-click="toggleSelectionFromGroup(cartItems, profile)">
           <img ng-src="{{profile.iconURL}}" ng-show="profile.iconURL">
           <img src="img/icons/fabric8_icon.svg" ng-hide="profile.iconURL">
         </div>
