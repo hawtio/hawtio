@@ -1,5 +1,8 @@
 package io.hawt.web;
 
+import io.hawt.system.ConfigManager;
+
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -9,14 +12,30 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- *
+ *  Returns the username associated with the current session, if any
  */
 public class UserServlet extends HttpServlet {
+
+    protected ConfigManager config;
+    private boolean authenticationEnabled = true;
+
+    @Override
+    public void init(ServletConfig servletConfig) throws ServletException {
+        config = (ConfigManager) servletConfig.getServletContext().getAttribute("ConfigManager");
+        this.authenticationEnabled = Boolean.parseBoolean(config.get("authenticationEnabled", "true"));
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
         final PrintWriter out = resp.getWriter();
+
+        if (!authenticationEnabled) {
+            out.write("\"user\"");
+            out.flush();
+            out.close();
+            return;
+        }
 
         HttpSession session = req.getSession(false);
 

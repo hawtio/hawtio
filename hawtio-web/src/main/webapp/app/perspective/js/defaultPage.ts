@@ -1,7 +1,7 @@
 /**
  * @module Perspective
  */
-/// <reference path="./perspectivePlugin.ts"/>
+/// <reference path="perspectivePlugin.ts"/>
 module Perspective {
 
   /**
@@ -19,10 +19,10 @@ module Perspective {
     var path = Core.trimLeading(url, "#");
     if (path) {
       path = Core.appendConnectionNameToUrl(path, params);
-      console.log("redirecting to default page: " + path + " when had params: " + angular.toJson(params));
+      log.debug("Redirecting to default page: ", path, " page params: ", params);
       $location.url(path);
     } else {
-      console.log("No default page could be chosen!");
+      log.debug("No default page could be chosen");
     }
   }
 

@@ -2,6 +2,7 @@
  * @module Core
  */
 /// <reference path="corePlugin.ts"/>
+/// <reference path="../../perspective/js/perspectiveHelpers.ts"/>
 module Core {
 
   /**
@@ -77,13 +78,7 @@ module Core {
    * @param {*} jolokiaUrl
    * @param {*} branding
    */
-  export var AppController = _module.controller("Core.AppController", ["$scope", "$location", "workspace", "jolokia", "jolokiaStatus", "$document", "pageTitle", "localStorage", "userDetails", "lastLocation", "jolokiaUrl", "branding", ($scope, $location:ng.ILocationService, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation:{ url:string }, jolokiaUrl, branding) => {
-    if (!userDetails) {
-      userDetails = {};
-    }
-    if (userDetails.username === null) {
-      $location.url(defaultPage());
-    }
+  export var AppController = _module.controller("Core.AppController", ["$scope", "$location", "workspace", "jolokia", "jolokiaStatus", "$document", "pageTitle", "localStorage", "userDetails", "lastLocation", "jolokiaUrl", "branding", "ConnectOptions", "$timeout", "locationChangeStartTasks", "$route", ($scope, $location:ng.ILocationService, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation:{ url:string }, jolokiaUrl, branding, ConnectOptions:Core.ConnectOptions, $timeout:ng.ITimeoutService, locationChangeStartTasks:Core.ParameterizedTasks, $route:ng.route.IRouteService) => {
 
     $scope.collapse = '';
     $scope.match = null;
@@ -104,10 +99,9 @@ module Core {
       }
     };
 
-    setTimeout(() => {
+    $timeout(() => {
       if ('showPrefs' in localStorage) {
         $scope.showPrefs = Core.parseBooleanValue(localStorage['showPrefs']);
-        Core.$apply($scope);
       }
     }, 500);
 
@@ -173,7 +167,7 @@ module Core {
 
     $scope.setPageTitle = () => {
       $scope.pageTitle = pageTitle.getTitleArrayExcluding([branding.appName]);
-      var tab = workspace.getActiveTab();
+      var tab:any = workspace.getActiveTab();
       if (tab && tab.content) {
         setPageTitleWithTab($document, pageTitle, tab.content);
       } else {
@@ -227,12 +221,20 @@ module Core {
 
     $scope.$watch(() => { return localStorage['regexs'] }, $scope.setRegexIndicator);
 
+    $scope.reloaded = false;
+
     $scope.maybeRedirect = () => {
       if (userDetails.username === null) {
         var currentUrl = $location.url();
         if (!currentUrl.startsWith('/login')) {
           lastLocation.url = currentUrl;
           $location.url('/login');
+        } else {
+          // ensures that the login page loads correctly if the user happens to click refresh
+          if (!$scope.reloaded) {
+            $route.reload();
+            $scope.reloaded = true;
+          }
         }
       } else {
         if ($location.url().startsWith('/login')) {
@@ -264,13 +266,13 @@ module Core {
       $scope.maybeRedirect();
     });
 
-    $scope.$on('$routeChangeSuccess', function() {
-      $scope.setPageTitle();
-      $scope.setRegexIndicator();
+    $scope.$on('$routeChangeSuccess', () => {
+      $scope.setPageTitle($document, PageTitle);
+      $scope.maybeRedirect();
     });
 
     $scope.fullScreen = () => {
-      if ($location.url().startsWith("/login")) {
+      if ($location.path().startsWith("/login")) {
         return branding.fullscreenLogin;
       }
       var tab = $location.search()['tab'];
@@ -281,7 +283,7 @@ module Core {
     };
 
     $scope.login = () => {
-      return $location.url().startsWith("/login");
+      return $location.path().startsWith("/login");
     };
 
     function defaultPage() {

@@ -675,8 +675,8 @@ module Core {
      * @method redrawTree
      */
     public redrawTree() {
-      var treeElement = this.treeElement;
-      if (treeElement) {
+      var treeElement:any = this.treeElement;
+      if (treeElement && angular.isDefined(treeElement.dynatree) && angular.isFunction(treeElement.dynatree)) {
         treeElement.dynatree("getTree").reload();
       }
     }

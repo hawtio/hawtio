@@ -326,13 +326,13 @@ module Core {
    */
   export function logout(jolokiaUrl,
                   userDetails,
-                  localStorage,
+                  localStorage:WindowLocalStorage,
                   $scope,
                   successCB: () => void = null,
                   errorCB: () => void = null) {
 
     if (jolokiaUrl) {
-      var url = jolokiaUrl.replace("jolokia", "auth/logout/");
+      var url = "auth/logout/";
 
       Core.executePreLogoutTasks(() => {
         $.ajax(url, {
@@ -342,26 +342,31 @@ module Core {
             userDetails.password = null;
             userDetails.loginDetails = null;
             userDetails.rememberMe = false;
-            localStorage[jolokiaUrl] = angular.toJson(userDetails);
+            delete localStorage['userDetails'];
             if (successCB && angular.isFunction(successCB)) {
               successCB();
             }
             Core.$apply($scope);
           },
           error: (xhr, textStatus, error) => {
+            userDetails.username = null;
+            userDetails.password = null;
+            userDetails.loginDetails = null;
+            userDetails.rememberMe = false;
+            delete localStorage['userDetails'];
             // TODO, more feedback
             switch (xhr.status) {
               case 401:
-                log.error('Failed to log out, ', error);
+                log.debug('Failed to log out, ', error);
                 break;
               case 403:
-                log.error('Failed to log out, ', error);
+                log.debug('Failed to log out, ', error);
                 break;
               case 0:
                 // this may happen during onbeforeunload -> logout, when XHR is cancelled
                 break;
               default:
-                log.error('Failed to log out, ', error);
+                log.debug('Failed to log out, ', error);
                 break;
             }
             if (errorCB && angular.isFunction(errorCB)) {
@@ -370,10 +375,7 @@ module Core {
             Core.$apply($scope);
           }
         });
-
       });
-
-
     }
 
   }
@@ -1251,15 +1253,30 @@ module Core {
 
   export function saveConnection(options: Core.ConnectOptions) {
     var connectionMap = Core.loadConnectionMap();
-    connectionMap[<string>options.name] = options;
+    // use a copy so we can leave the original one alone
+    var clone = <Core.ConnectOptions>Object.clone(options);
+    delete clone.userName;
+    delete clone.password;
+    connectionMap[<string>options.name] = clone;
     Core.saveConnectionMap(connectionMap);
   }
 
   export function connectToServer(localStorage, options:Core.ConnectToServerOptions) {
     log.debug("Connecting with options: ", StringHelpers.toString(options));
     addRecentConnection(localStorage, options.name);
+    if (!('userName' in options)) {
+      var userDetails = <Core.UserDetails> Core.injector.get('userDetails');
+      options.userName = userDetails.username;
+      options.password = userDetails.password;
+    }
     saveConnection(options);
-    window.open((options.view || '#/welcome') + '?con=' + options.name);
+    var $window:ng.IWindowService = Core.injector.get('$window');
+    var newWindow = $window.open((options.view || '#/welcome') + '?con=' + options.name);
+    newWindow['userDetails'] = {
+      username: options.userName,
+      password: options.password,
+      loginDetails: {}
+    };
   }
 
   /**

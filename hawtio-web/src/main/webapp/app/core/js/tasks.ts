@@ -9,11 +9,24 @@ module Core {
     onComplete: (cb:() => void) => void;
   }
 
+  export interface ParameterizedTasks extends Tasks {
+    addTask: (name:string, task:(...params:any[]) => void) => void;
+    execute: (...params:any[]) => void;
+  }
+
+  export interface TaskMap {
+    [name:string]: () => void;
+  }
+
+  export interface ParameterizedTaskMap {
+    [name:string]: (...params:any[]) => void;
+  }
+
   export class TasksImpl implements Tasks {
 
-    private tasks:any = {};
-    private tasksExecuted = false;
-    private _onComplete: () => void = null;
+    public tasks:TaskMap = {};
+    public tasksExecuted = false;
+    public _onComplete: () => void = null;
 
     public addTask(name:string, task:() => void):void {
       this.tasks[name] = task;
@@ -52,6 +65,45 @@ module Core {
 
     public reset() {
       this.tasksExecuted = false;
+    }
+  }
+
+
+  export class ParameterizedTasksImpl extends TasksImpl implements ParameterizedTasks {
+    public tasks:ParameterizedTaskMap = {};
+
+    public constructor() {
+      super();
+      this.onComplete(() => {
+        this.reset();
+      });
+    }
+
+    public addTask(name:string, task:(...params:any[]) => void):void {
+      this.tasks[name] = task;
+    }
+
+    public execute(...params:any[]) {
+      if (this.tasksExecuted) {
+        return;
+      }
+      var theArgs:any[] = params;
+      var keys = Object.keys(this.tasks);
+      keys.forEach((name:string) => {
+        var task = this.tasks[name];
+        if (angular.isFunction(task)) {
+          log.debug("Executing task: ", name, " with parameters: ", theArgs);
+          try {
+            task.apply(task, theArgs);
+          } catch(e) {
+            log.debug("Failed to execute task: ", name, " error: ", e);
+          }
+        }
+      });
+      this.tasksExecuted = true;
+      if (angular.isFunction(this._onComplete)) {
+        this._onComplete();
+      }
     }
   }
 

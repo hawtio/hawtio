@@ -218,6 +218,11 @@ module Fabric {
       onOK: () => {
         var userName = $scope.connect.userName;
         var password = $scope.connect.password;
+        var userDetails = <Core.UserDetails> Core.injector.get('userDetails');
+        if (!userDetails.password) {
+          // this can get unset if the user happens to refresh and hasn't checked rememberMe
+          userDetails.password = password;
+        }
         var container = <Fabric.Container>$scope.connect.container;
         if ($scope.connect.saveCredentials) {
           $scope.connect.saveCredentials = false;
@@ -228,7 +233,6 @@ module Fabric {
             localStorage['fabric.password'] = password;
           }
         }
-        console.log("Connecting as user " + userName);
         var options = Core.createConnectOptions({
           jolokiaUrl: container.jolokiaUrl,
           userName: userName,
@@ -237,12 +241,7 @@ module Fabric {
           view: $scope.connect.view,
           name: container.id
         });
-
-        var connectionMap = Core.loadConnectionMap();
-        connectionMap[<string>options.name] = options;
-        Core.saveConnectionMap(connectionMap);
         Core.connectToServer(localStorage, options);
-
         $scope.connect.container = {};
         setTimeout(() => {
           $scope.connect.dialog.close();

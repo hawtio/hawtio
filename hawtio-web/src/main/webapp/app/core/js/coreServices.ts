@@ -48,6 +48,10 @@ module Core {
     return {};
   });
 
+  _module.factory('locationChangeStartTasks', () => {
+    return new Core.ParameterizedTasksImpl();
+  });
+
   // service to register stuff that should happen when the user logs in
   _module.factory('postLoginTasks', () => {
     return Core.postLoginTasks;
@@ -148,20 +152,20 @@ module Core {
   });
 
   // user detail service, contains username/password
-  _module.factory('userDetails', ["jolokiaUrl", "localStorage", "ConnectOptions", (jolokiaUrl, localStorage, ConnectOptions:Core.ConnectOptions)  => {
-    var answer = angular.fromJson(localStorage[jolokiaUrl]);
-    if (!angular.isDefined(answer) && jolokiaUrl) {
-
-      answer = <UserDetails> {
-        username: '',
-        password: ''
-      };
-
-      if (ConnectOptions !== null) {
-        answer.username = ConnectOptions.userName;
-        answer.password = ConnectOptions.password;
-      }
-
+  _module.factory('userDetails', ["jolokiaUrl", "ConnectOptions", "localStorage", "$window", "$rootScope", (jolokiaUrl, ConnectOptions:Core.ConnectOptions, localStorage:WindowLocalStorage, $window:ng.IWindowService, $rootScope:ng.IRootScopeService)  => {
+    var answer = <UserDetails> {
+      username: null,
+      password: null
+    };
+    if('userDetails' in $window) {
+      answer = $window['userDetails'];
+      log.debug("User details loaded from parent window: ", StringHelpers.toString(answer));
+      executePostLoginTasks();
+    } else if ('userDetails' in localStorage) {
+      answer = angular.fromJson(localStorage['userDetails']);
+      log.debug("User details loaded from local storage: ", StringHelpers.toString(answer));
+      executePostLoginTasks();
+    } else {
       log.debug("No username set, checking if we have a session");
       // fetch the username if we've already got a session at the server
       var userUrl = jolokiaUrl.replace("jolokia", "user");
@@ -169,30 +173,35 @@ module Core {
         type: "GET",
         success: (response) => {
           log.debug("Got user response: ", response);
-          executePostLoginTasks();
-          /*
-          // We'll only touch these if they're not set
-          if (response !== '' && response !== null) {
-            answer.username = response;
-            if (!('loginDetails' in answer)) {
-              answer['loginDetails'] = {};
-            }
+          if (response === null) {
+            answer.username = null;
+            answer.password = null;
+            log.debug("user response was null, no session available");
+            Core.$apply($rootScope);
+            return;
           }
-          */
+          answer.username = response;
+          // 'user' is what the UserServlet returns if authenticationEnabled is off
+          if (response !== 'user') {
+            // use a dummy login details
+            answer.loginDetails = {};
+          }
+          log.debug("User details loaded from existing session: ", StringHelpers.toString(answer));
+          executePostLoginTasks();
+          Core.$apply($rootScope);
         },
         error: (xhr, textStatus, error) => {
+          answer.username = null;
+          answer.password = null;
           log.debug("Failed to get session username: ", error);
-          executePostLoginTasks();
+          Core.$apply($rootScope);
+          //executePostLoginTasks();
           // silently ignore, we could be using the proxy
         }
       });
-      log.debug("Created UserDetails: ", StringHelpers.toString(answer));
-      return answer;
-    } else {
-      log.debug("Created UserDetails: ", StringHelpers.toString(answer));
-      // TODO - Do we need to execute post login tasks here too...
-      return answer;
+      log.debug("Created empty user details to be filled in: ", StringHelpers.toString(answer));
     }
+    return answer;
 
   }]);
 }

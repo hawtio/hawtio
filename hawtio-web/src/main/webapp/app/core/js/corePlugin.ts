@@ -45,6 +45,7 @@ module Core {
 
   // configure the module
   _module.config(["$locationProvider", "$routeProvider", "$dialogProvider", ($locationProvider: ng.ILocationProvider, $routeProvider:ng.route.IRouteProvider, $dialogProvider) => {
+
     $locationProvider.html5Mode(true);
 
     $dialogProvider.options({
@@ -53,19 +54,14 @@ module Core {
     });
 
     $routeProvider.
-            when('/login', {templateUrl: Core.templatePath + 'login.html'}).
-            when('/welcome', {templateUrl: Core.templatePath + 'welcome.html'}).
-            when('/about', {templateUrl: Core.templatePath + 'about.html'}).
             when('/help', {
               redirectTo: '/help/index'
             }).
+            when('/login', {templateUrl: Core.templatePath + 'login.html'}).
+            when('/welcome', {templateUrl: Core.templatePath + 'welcome.html'}).
+            when('/about', {templateUrl: Core.templatePath + 'about.html'}).
             when('/help/:topic/', {templateUrl: Core.templatePath + 'help.html'}).
-            when('/help/:topic/:subtopic', {templateUrl: Core.templatePath + 'help.html'}).
-
-            otherwise({
-        redirectTo: (parameters, path, search) => {
-          return '/perspective/defaultPage';
-        }});
+            when('/help/:topic/:subtopic', {templateUrl: Core.templatePath + 'help.html'});
   }]);
 
   _module.constant('layoutTree', Core.templatePath + 'layoutTree.html');
@@ -94,6 +90,7 @@ module Core {
                "preLogoutTasks",
                "$location",
                "ConnectOptions",
+               "locationChangeStartTasks",
                ($rootScope,
                $routeParams,
                jolokia,
@@ -111,7 +108,8 @@ module Core {
                postLoginTasks:Core.Tasks,
                preLogoutTasks:Core.Tasks,
                $location:ng.ILocationService,
-               ConnectOptions:Core.ConnectOptions) => {
+               ConnectOptions:Core.ConnectOptions,
+               locationChangeStartTasks:Core.ParameterizedTasks) => {
 
     postLoginTasks.addTask("ResetPreLogoutTasks", () => {
       preLogoutTasks.reset();
@@ -164,10 +162,20 @@ module Core {
     });
 
     $rootScope.$emit('UpdateRate', localStorage['updateRate']);
+    $rootScope.$on('$locationChangeStart', ($event, newUrl, oldUrl) => {
+      locationChangeStartTasks.execute($event, newUrl, oldUrl);
+    });
 
     // ensure that if the connection parameter is present, that we keep it
-    $rootScope.$on('$locationChangeStart', ($event, newUrl) => {
-      if (!ConnectOptions.name) {
+    locationChangeStartTasks.addTask('ConParam', ($event:ng.IAngularEvent, newUrl:string, oldUrl:string) => {
+      // we can't execute until the app is initialized...
+      if (!Core.injector) {
+        return;
+      }
+      var $location:ng.ILocationService = Core.injector.get('$location');
+      var ConnectOptions:Core.ConnectOptions = Core.injector.get('ConnectOptions');
+      //log.debug("ConParam task firing, newUrl: ", newUrl, " oldUrl: ", oldUrl, " ConnectOptions: ", ConnectOptions);
+      if (!ConnectOptions.name || !newUrl) {
         return;
       }
       var newQuery:any = UrlHelpers.parseQueryString(newUrl);
@@ -258,7 +266,7 @@ module Core {
 } // end module Core
 
 // bootstrap plugin loader
-hawtioPluginLoader.addUrl(Core.url("/plugin"));
+hawtioPluginLoader.addUrl("plugin");
 
 // add our module and any dependant third party modules
 hawtioPluginLoader.addModule(Core.pluginName);

@@ -196,93 +196,60 @@ div.log-stack-trace p:nth-child(odd) {
 
         <div class="navbar-inner main-nav-lower" ng-show="!login()">
           <div class="container">
-            <!--
-            <a class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
-              <span>{{activeLink()}}</span>
-            </a>
-            -->
-
-            <!--
-            <div class="nav-collapse collapsed">
-            -->
-
-              <ul ng-show="loggedIn()" class="nav" hawtio-auto-dropdown>
-
-                <li ng-show="loggedIn() && (perspectives.length > 1 || recentConnections.length)"
-                    class="dropdown perspective-selector">
-                  <a href="#" class="dropdown-toggle">
-                    <hawtio-icon config="perspectiveDetails.perspective.icon"></hawtio-icon>
-                    <span ng-bind="perspectiveDetails.perspective.label || 'Perspective'"></span>
-                    <span ng-show="perspectives.length > 1" class="caret"></span>
-                  </a>
-                  <div class="dropdown-menu">
-                    <div ng-show="perspectives.length > 1">
-                      <p>Perspectives</p>
-                      <ul class="unstyled">
-                        <li ng-repeat="perspective in perspectives track by $index">
-                          <a href=""
-                             ng-click="switchPerspective(perspective)"
-                             ng-hide="perspectiveDetails.perspective.id === perspective.id"
-                             data-placement="bottom">
-                            <hawtio-icon config="perspective.icon"></hawtio-icon>
-                            {{perspective.label}}</a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div ng-show="recentConnections.length">
-                      <p>Recent Connections</p>
-                      <ul class="unstyled">
-                        <li>
-                          <a href=""
-                             ng-click="goHome()">Console</a>
-                       </li>
-                        <li ng-repeat="connection in recentConnections track by $index">
-                          <a href=""
-                             ng-click="openConnection(connection)">{{connection}}</a>
-                        </li>
-                        <li>
-                          <a href=""
-                             ng-click="clearConnections()">Clear Recent</a>
-                        </li>
-                      </ul>
-                    </div>
+            <ul ng-show="loggedIn()" class="nav" hawtio-auto-dropdown>
+              <li ng-show="loggedIn() && (perspectives.length > 1 || recentConnections.length)"
+                  class="dropdown perspective-selector">
+                <a href="#" class="dropdown-toggle">
+                  <hawtio-icon config="perspectiveDetails.perspective.icon"></hawtio-icon>
+                  <span ng-bind="perspectiveDetails.perspective.label || 'Perspective'"></span>
+                  <span ng-show="perspectives.length > 1" class="caret"></span>
+                </a>
+                <div class="dropdown-menu">
+                  <div ng-show="perspectives.length > 1">
+                    <p>Perspectives</p>
+                    <ul class="unstyled">
+                      <li ng-repeat="perspective in perspectives track by $index">
+                        <a href=""
+                           ng-click="switchPerspective(perspective)"
+                           ng-hide="perspectiveDetails.perspective.id === perspective.id"
+                           data-placement="bottom">
+                          <hawtio-icon config="perspective.icon"></hawtio-icon>
+                          {{perspective.label}}</a>
+                      </li>
+                    </ul>
                   </div>
-                  <!--
-                  <ul class="dropdown-menu">
-                    <li ng-repeat="perspective in perspectives track by $index">
-                      <a ng-click="switchPerspective(perspective)"
-                         ng-hide="perspectiveDetails.perspective.id === perspective.id"
-                         data-placement="bottom">
-                        {{perspective.label}}</a>
-                    </li>
+                  <div ng-show="recentConnections.length">
+                    <p>Recent Connections</p>
+                    <ul class="unstyled">
+                      <li>
+                        <a href=""
+                           ng-click="goHome()">Console</a>
+                     </li>
+                      <li ng-repeat="connection in recentConnections track by $index">
+                        <a href=""
+                           ng-click="openConnection(connection)">{{connection}}</a>
+                      </li>
+                      <li>
+                        <a href=""
+                           ng-click="clearConnections()">Clear Recent</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </li>
 
-                  </ul>
-                -->
-                </li>
+              <li ng-repeat="nav in topLevelTabs track by $index"
+                  ng-class="{active : isActive(nav)}"
+                  ng-show="isValid(nav)">
+                <a ng-href="{{link(nav)}}" title="{{nav.title}}" data-placement="bottom" ng-bind="nav.content">
+                </a>
+              </li>
+              <li class="dropdown overflow" style="float: right !important; visibility: hidden;">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-chevron-down"></i></a>
+                <ul class="dropdown-menu right"></ul>
+              </li>
+            </ul>
 
-              <!--
-                <li ng-show="loggedIn()">
-                  <a href="">
-                    <div hawtio-drop-down="menu"></div>
-                  </a>
-                </li>
-              -->
-
-                <li ng-repeat="nav in topLevelTabs track by $index" 
-                    ng-class="{active : isActive(nav)}" 
-                    ng-show="isValid(nav)">
-                  <a ng-href="{{link(nav)}}" title="{{nav.title}}" data-placement="bottom" ng-bind="nav.content">
-                  </a>
-                </li>
-                <li class="dropdown overflow" style="float: right !important; visibility: hidden;">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-chevron-down"></i></a>
-                  <ul class="dropdown-menu right"></ul>
-                </li>
-              </ul>
-
-            <!--
-            </div>
-            -->
           </div>
         </div>
       </div>
@@ -297,19 +264,6 @@ div.log-stack-trace p:nth-child(odd) {
       <div id="main" class="container-fluid ng-cloak" ng-controller="Core.ViewController">
         <div ng-include src="viewPartial"></div>
       </div>
-
-      <!--
-      <div class='instance-name clearfix ng-cloak' ng-show="loggedIn()">
-        <i ng-show="collapse === ''" class="clickable icon-caret-right" title="Hide" ng-click="collapse = 'instance-name-collapse'"></i>
-        <i ng-show="collapse === 'instance-name-collapse'" class="clickable icon-caret-left" title="Show" ng-click="collapse = ''"></i>
-        <div class='collapse-target' ng-class='collapse'>
-          <div ng-show="match" class="host-indicator" style="background: {{match.color}}">{{match.name}}</div>
-          <ul class='unstyled inline'>
-            <li ng-repeat='title in pageTitle'>{{title}}</li>
-          </ul>
-        </div>
-      </div>
-      -->
 
       <div class="ng-cloak">
         <div modal="confirmLogout">
