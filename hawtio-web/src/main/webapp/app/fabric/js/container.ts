@@ -20,11 +20,15 @@ module Fabric {
     $scope.username = userDetails.username;
     $scope.password = userDetails.password;
 
+    $scope.knownTabs = ["Status", "Settings", "URLs", "Provision list"];
+
     $scope.tab = $routeParams['tab'];
     if (!$scope.tab) {
       $scope.tab = 'Status';
+    } else if (!$scope.knownTabs.any( t => t == $scope.tab)) {
+      // this is not a known tab so switch to status
+      $scope.tab = 'Status';
     }
-
 
     $scope.$watch('tab', (newValue, oldValue) => {
       if (newValue !== oldValue) {
