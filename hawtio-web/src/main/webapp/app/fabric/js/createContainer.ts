@@ -341,6 +341,10 @@ module Fabric {
     }
 
     $scope.goForward = () => {
+      // remove some no longer needed query parameters
+      $location.search('tab', null)
+      $location.search('profileIds', null)
+      $location.search('versionId', null)
       $location.path($scope.nextPage);
     }
 
