@@ -249,6 +249,7 @@
     <module>hawtio-osgi-devmode</module>
     <module>hawtio-plugin-examples</module>
     <module>sample</module>
+    <module>hawtio-springboot</module>
     <module>hawtio-sample-springboot</module>
     <module>hawtio-karaf-terminal</module>
     <module>hawtio-karaf-git</module>
