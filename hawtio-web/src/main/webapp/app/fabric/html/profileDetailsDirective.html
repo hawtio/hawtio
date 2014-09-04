@@ -53,9 +53,7 @@
             <strong>Abstract: </strong> {{row.abstract}}
           </li>
           <li hawtio-show object-name="{{managerMBean}}" method-name="setProfileAttribute" mode="remove">
-            <div class="switch-container" title="Abstract profiles cannot be directly instantiated; they must be inherited by other profiles.
-
-So they are for implementation inheritance rather like Abstract Base Classes in Java">
+            <div class="switch-container" title="Abstract profiles cannot be directly instantiated; they must be inherited by other profiles. So they are for implementation inheritance rather like Abstract Base Classes in Java">
               <label class="switch-light switch-ios" ng-click="changeAttribute('abstract', !row.abstract)">
                 <input type="checkbox" ng-checked="row.abstract">
                 <span>Abstract
