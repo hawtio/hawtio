@@ -46,13 +46,13 @@ module FabricDeploy {
           };
 
           uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
-            console.info('onWhenAddingFileFailed', item, filter, options);
+            log.debug('onWhenAddingFileFailed', item, filter, options);
           };
           uploader.onAfterAddingFile = function(fileItem) {
-            console.info('onAfterAddingFile', fileItem);
+            log.debug('onAfterAddingFile', fileItem);
           };
           uploader.onAfterAddingAll = function(addedFileItems) {
-            console.info('onAfterAddingAll', addedFileItems);
+            log.debug('onAfterAddingAll', addedFileItems);
           };
           uploader.onBeforeUploadItem = function(item) {
             if ('file' in item) {
@@ -61,32 +61,32 @@ module FabricDeploy {
               item.fileSizeMB = 0;
             }
             item.url = UrlHelpers.join(uploadURI, item.file.name) + '?profile=' + $scope.profileId + '&version=' + $scope.versionId;
-            console.info('onBeforeUploadItem', item);
+            log.debug('onBeforeUploadItem', item);
           };
           uploader.onProgressItem = function(fileItem, progress) {
-            console.info('onProgressItem', fileItem, progress);
+            log.debug('onProgressItem', fileItem, progress);
           };
           uploader.onProgressAll = function(progress) {
-            console.info('onProgressAll', progress);
+            log.debug('onProgressAll', progress);
           };
           uploader.onSuccessItem = function(fileItem, response, status, headers) {
-            console.info('onSuccessItem', fileItem, response, status, headers);
+            log.debug('onSuccessItem', fileItem, response, status, headers);
           };
           uploader.onErrorItem = function(fileItem, response, status, headers) {
-            console.info('onErrorItem', fileItem, response, status, headers);
+            log.debug('onErrorItem', fileItem, response, status, headers);
           };
           uploader.onCancelItem = function(fileItem, response, status, headers) {
-            console.info('onCancelItem', fileItem, response, status, headers);
+            log.debug('onCancelItem', fileItem, response, status, headers);
           };
           uploader.onCompleteItem = function(fileItem, response, status, headers) {
-            console.info('onCompleteItem', fileItem, response, status, headers);
+            log.debug('onCompleteItem', fileItem, response, status, headers);
           };
           uploader.onCompleteAll = function() {
-            console.info('onCompleteAll');
+            log.debug('onCompleteAll');
             uploader.clearQueue();
           };
 
-          console.info('uploader', uploader);
+          log.debug('uploader', uploader);
           $scope.artifactTemplate = $templateCache.get('fileUpload.html');
           Core.$apply($scope);
 
