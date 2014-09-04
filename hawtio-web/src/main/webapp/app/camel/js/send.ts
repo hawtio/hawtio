@@ -161,10 +161,23 @@ module Camel {
             var uri = target['uri'];
             mbean = target['mbean'];
             if (mbean && uri) {
-              if (headers) {
-                jolokia.execute(mbean, "sendBodyAndHeaders(java.lang.String, java.lang.Object, java.util.Map)", uri, body, headers, callback);
-              } else {
-                jolokia.execute(mbean, "sendStringBody(java.lang.String, java.lang.String)", uri, body, callback);
+
+              // if we are running Camel 2.14 we can check if its posible to send to the endppoint
+              var ok = true;
+              if (Camel.isCamelVersionEQGT(2, 14, workspace, jolokia)) {
+                var reply = jolokia.execute(mbean, "canSendToEndpoint(java.lang.String)", uri);
+                if (!reply) {
+                  Core.notification("warning", "Camel does not support sending to this endpoint.");
+                  ok = false;
+                }
+              }
+
+              if (ok) {
+                if (headers) {
+                  jolokia.execute(mbean, "sendBodyAndHeaders(java.lang.String, java.lang.Object, java.util.Map)", uri, body, headers, callback);
+                } else {
+                  jolokia.execute(mbean, "sendStringBody(java.lang.String, java.lang.String)", uri, body, callback);
+                }
               }
             } else {
               if (!mbean) {
