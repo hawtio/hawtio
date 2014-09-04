@@ -11,13 +11,8 @@
         </div>
       </div>
       <div class="pull-left">
-          <h2 class="inline" title="Profile: {{row.id}}"><span class="contained c-wide3">{{row.id}}</span></h2>
-          <br/>
-          <div class="contained profile-summary-wide"
-             ng-show="row.summaryMarkdown"
-             ng-bind-html-unsafe="row.summaryMarkdown"></div>
+          <h2 class="inline" title="Profile: {{row.id}}"><span class="contained c-wide3">&nbsp;{{row.id}}</span></h2>
       </div>
-
       <div class="pull-right" ng-show="inDirective">
         <a class="btn" ng-href="#/wiki/branch/{{versionId}}/configurations/{{pageId}}" ng-show="profileJolokia || profileMetadataMBean"
            title="View the configurations of this profile"><i class="icon-edit"></i> Configuration</a>
@@ -26,7 +21,11 @@
         <a class="btn" ng-href="#/fabric/assignProfile?vid={{versionId}}&pid={{profileId}}" title="Assign this profile to an existing container" hawtio-show object-name="{{managerMBean}}" method-name="addProfilesToContainer"><i class="icon-truck"></i> Assign</a>
         <a class="btn" href="" ng-click="gotoCreateContainer()" title="Deploy this profile to a new container" hawtio-show object-name="{{managerMBean}}" method-name="createContainers"><i class="icon-truck"></i> New</a>
       </div>
-
+      <div class="pull-left span10 profile-summary-wide">
+        <div
+             ng-show="summaryHtml"
+             ng-bind-html-unsafe="summaryHtml"></div>
+      </div>
     </div>
 
     <div class="row-fluid">
@@ -54,9 +53,7 @@
             <strong>Abstract: </strong> {{row.abstract}}
           </li>
           <li hawtio-show object-name="{{managerMBean}}" method-name="setProfileAttribute" mode="remove">
-            <div class="switch-container" title="Abstract profiles cannot be directly instantiated; they must be inherited by other profiles.
-
-So they are for implementation inheritance rather like Abstract Base Classes in Java">
+            <div class="switch-container" title="Abstract profiles cannot be directly instantiated; they must be inherited by other profiles. So they are for implementation inheritance rather like Abstract Base Classes in Java">
               <label class="switch-light switch-ios" ng-click="changeAttribute('abstract', !row.abstract)">
                 <input type="checkbox" ng-checked="row.abstract">
                 <span>Abstract

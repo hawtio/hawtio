@@ -12,19 +12,19 @@
 
         <p>
           If the process you wish to connect to does not have a jolokia agent inside, please refer to the <a
-                href="http://jolokia.org/agent.html">jolokia documentation</a> for how to add a JVM, servlet or OSGI
+                href="http://jolokia.org/agent.html">jolokia documentation</a> for how to add a JVM, servlet or OSGi
           based agent inside it.
         </p>
 
         <p>
-          If you are using <a href="http://www.jboss.org/products/fuse">JBoss Fuse</a>; then a jolokia agent is
-          included by default. Or you can always just deploy hawtio inside the process (which includes the jolokia
-          agent).
+          If you are using <a href="http://fabric8.io/">Fabric8</a> or <a href="http://www.jboss.org/products/fuse">JBoss Fuse</a>;
+          then a jolokia agent is included by default. Or you can always just deploy hawtio inside the process (which includes the jolokia agent).
         </p>
 
         <p>
           <strong>Use Proxy</strong>:
-          hawtio is running in your browser; usually due to CORS; you cannot open a different host or port from your browser (due to browse security restrictions); so we have to use a proxy servlet inside the hawtio web app to proxy all requests for a different jolokia server - so we can communicate with a different jolokia agent.
+          hawtio is running in your browser; usually due to CORS; you cannot open a different host or port from your browser (due to browse security restrictions);
+          so we have to use a proxy servlet inside the hawtio web app to proxy all requests for a different jolokia server - so we can communicate with a different jolokia agent.
           If you use the hawtio Chrome Extension this isn’t required; since Chrome Extensions are allowed to connect to any host/port.
         </p>
 

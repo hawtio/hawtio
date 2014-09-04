@@ -12,7 +12,7 @@ You can do this by running:
 
     npm install -g typescript
 
-Note, if you are using Ubuntu then you may need to use the `sudo` command:
+Note, if you are using Ubuntu or OSX then you may need to use the `sudo` command:
 
     sudo npm install -g typescript
 
@@ -24,6 +24,21 @@ To run the tests you'll also need to install phantomjs:
 
     sudo npm install -g phantomjs
 
+### Upgrading TypeScript
+
+You can check which version of typescript you are using by
+
+    tsc -version
+
+Note: You should be using version 1.0 or better.
+
+To upgrade typescript run the following
+
+    npm update -g typescript
+
+Note, if you are using Ubuntu or OSX then you may need to use the `sudo` command:
+
+    sudo npm update -g typescript
 
 ## Building
 

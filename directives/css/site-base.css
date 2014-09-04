@@ -1360,14 +1360,16 @@ h4 > .contained {
 
 .c-wide3 {
   max-width: 25em;
+  min-width: 10em;
 }
 
 .c-max {
   width: 100%;
 }
 
-.profile-summary-wide {
-    max-width: 800px;
+.fabric-page-header > .profile-summary-wide {
+  margin-left: 10px;
+  line-height: 22px;
 }
 
 .profile-selector-name > .contained {
@@ -4082,6 +4084,7 @@ img.nodeIcon:hover {
 
 .app-logo {
   width: 64px;
+  margin-right: 10px;
 }
 
 .app-logo img {
