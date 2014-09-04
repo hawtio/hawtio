@@ -352,7 +352,7 @@ module Fabric {
           var version = $scope.row.version;
 
           // make sure the summary markdown is rendered
-          if (angular.isDefined($scope.row.summaryMarkdown)) {
+          if (angular.isDefined($scope.row) && $scope.row.summaryMarkdown != null) {
             $scope.summaryHtml = marked($scope.row.summaryMarkdown);
           } else {
             $scope.summaryHtml = null;
@@ -376,6 +376,7 @@ module Fabric {
           }
           // lets resolve the icon to a fully qualified URL
           $scope.row.iconURL = Fabric.toIconURL($scope, response.value.iconURL);
+          log.info("Icon URL " + $scope.row.iconURL);
           Core.$apply($scope);
         }
       }
