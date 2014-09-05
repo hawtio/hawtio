@@ -126,6 +126,15 @@
   </servlet-mapping>
 
   <servlet>
+    <servlet-name>user</servlet-name>
+    <servlet-class>io.hawt.web.UserServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>user</servlet-name>
+    <url-pattern>/user/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>login</servlet-name>
     <servlet-class>io.hawt.web.LoginServlet</servlet-class>
   </servlet>
