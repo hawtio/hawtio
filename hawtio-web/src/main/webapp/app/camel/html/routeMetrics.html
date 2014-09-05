@@ -18,7 +18,7 @@
 
   <!-- div to contain the graphs -->
   <div class="metricsWatcher container mainContent">
-    <div id="{{metric}}" class="row" ng-repeat="metric in metricDivs track by $index"></div>
+    <div id="{{metric.id}}" class="row" ng-repeat="metric in metricDivs track by $index" style="{{filterByRoute(metric)}}"></div>
   </div>
 
 </div>
