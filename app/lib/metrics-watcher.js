@@ -22,7 +22,7 @@
 	 * @param title The user-displayed title of this graph
 	 */
 	metricsWatcher.addGauge = function(divId, className, metricName, title) {
-		var metricInfo = new MetricInfo(divId, className, metricName, null, title, 'gauges');
+		var metricInfo = new MetricInfo(divId, className, metricName, null, title, 'gauges', null);
 		graphs.push(metricInfo);
 	};
 
@@ -37,7 +37,7 @@
 	 */
 	metricsWatcher.addMeter = function(divId, className, metricName, max, title, eventType) {
 		if (eventType == undefined) eventType = 'Calls';
-		var metricInfo = new MetricInfo(divId, className, metricName, max, title, 'meters');
+		var metricInfo = new MetricInfo(divId, className, metricName, max, title, 'meters', eventType);
 		metricInfo.eventType = eventType;
 		graphs.push(metricInfo);
 	};
@@ -52,7 +52,7 @@
 	 * @param title The user-displayed title of this graph
 	 */
 	metricsWatcher.addCounter = function(divId, className, metricName, max, title) {
-		var metricInfo = new MetricInfo(divId, className, metricName, max, title, 'counters');
+		var metricInfo = new MetricInfo(divId, className, metricName, max, title, 'counters', null);
 		graphs.push(metricInfo);
 	};
 
@@ -66,7 +66,7 @@
 	 * @param title The user-displayed title of this graph
 	 */
 	metricsWatcher.addHistogram = function(divId, className, metricName, max, title){
-		var metricInfo = new MetricInfo(divId, className, metricName, (!max ? 1: max), title, 'histograms');
+		var metricInfo = new MetricInfo(divId, className, metricName, (!max ? 1: max), title, 'histograms', null);
 		graphs.push(metricInfo);
 	};
 
@@ -82,9 +82,9 @@
 	 * @param title The user-displayed title of this graph
 	 */
 	metricsWatcher.addLinkedCounter = function(divId, className, metricName, maxClassName, maxMetricName, title) {
-		var metricInfo = new MetricInfo(divId, className, metricName, null, title, "counters");
+		var metricInfo = new MetricInfo(divId, className, metricName, null, title, "counters", null);
 		if(!metricInfo)
-			metricInfo = new MetricInfo(divId, className, metricName, null, title, "timers");
+			metricInfo = new MetricInfo(divId, className, metricName, null, title, "timers", null);
 		
 		metricInfo.maxClassName = maxClassName;
 		metricInfo.maxMetricName = maxMetricName;
@@ -131,28 +131,28 @@
 	 * @param title The user-displayed title of this graph
 	 */
 	metricsWatcher.addCache = function(divId, className, title) {
-		var metricInfo = new MetricInfo(divId, className, null, null, title, "caches");
+		var metricInfo = new MetricInfo(divId, className, null, null, title, "caches", null);
 
 		metricInfo.components = {
 			gauges : [
-				new MetricInfo(null, className, "hits", null, "Hits", "gauges"),
-				new MetricInfo(null, className, "misses", null, "Misses", "gauges"),
-				new MetricInfo(null, className, "objects", null, "Objects", "gauges"),
-				new MetricInfo(null, className, "eviction-count", null, "Eviction Count", "gauges"),
-				new MetricInfo(null, className, "in-memory-hits", null, "In Memory Hits", "gauges"),
-				new MetricInfo(null, className, "in-memory-misses", null, "In Memory Misses", "gauges"),
-				new MetricInfo(null, className, "in-memory-objects", null, "In Memory Objects", "gauges"),
-				new MetricInfo(null, className, "off-heap-hits", null, "Off Heap Hits", "gauges"),
-				new MetricInfo(null, className, "off-heap-misses", null, "Off Heap Misses", "gauges"),
-				new MetricInfo(null, className, "off-heap-objects", null, "Off Heap Objects", "gauges"),
-				new MetricInfo(null, className, "on-disk-hits", null, "On Disk Hits", "gauges"),
-				new MetricInfo(null, className, "on-disk-misses", null, "On Disk Misses", "gauges"),
-				new MetricInfo(null, className, "on-disk-objects", null, "On Disk Objects", "gauges"),
-				new MetricInfo(null, className, "mean-get-time", null, "Mean Get Time", "gauges"),
-				new MetricInfo(null, className, "mean-search-time", null, "Mean Search Time", "gauges"),
-				new MetricInfo(null, className, "searches-per-second", null, "Searches Per Sec", "gauges"),
-				new MetricInfo(null, className, "writer-queue-size", null, "Writer Queue Size", "gauges"),
-				new MetricInfo(null, className, "accuracy", null, "Accuracy", "gauges")
+				new MetricInfo(null, className, "hits", null, "Hits", "gauges", null),
+				new MetricInfo(null, className, "misses", null, "Misses", "gauges", null),
+				new MetricInfo(null, className, "objects", null, "Objects", "gauges", null),
+				new MetricInfo(null, className, "eviction-count", null, "Eviction Count", "gauges", null),
+				new MetricInfo(null, className, "in-memory-hits", null, "In Memory Hits", "gauges", null),
+				new MetricInfo(null, className, "in-memory-misses", null, "In Memory Misses", "gauges", null),
+				new MetricInfo(null, className, "in-memory-objects", null, "In Memory Objects", "gauges", null),
+				new MetricInfo(null, className, "off-heap-hits", null, "Off Heap Hits", "gauges", null),
+				new MetricInfo(null, className, "off-heap-misses", null, "Off Heap Misses", "gauges", null),
+				new MetricInfo(null, className, "off-heap-objects", null, "Off Heap Objects", "gauges", null),
+				new MetricInfo(null, className, "on-disk-hits", null, "On Disk Hits", "gauges", null),
+				new MetricInfo(null, className, "on-disk-misses", null, "On Disk Misses", "gauges", null),
+				new MetricInfo(null, className, "on-disk-objects", null, "On Disk Objects", "gauges", null),
+				new MetricInfo(null, className, "mean-get-time", null, "Mean Get Time", "gauges", null),
+				new MetricInfo(null, className, "mean-search-time", null, "Mean Search Time", "gauges", null),
+				new MetricInfo(null, className, "searches-per-second", null, "Searches Per Sec", "gauges", null),
+				new MetricInfo(null, className, "writer-queue-size", null, "Writer Queue Size", "gauges", null),
+				new MetricInfo(null, className, "accuracy", null, "Accuracy", "gauges", null)
 			]
 		};
 		metricInfo.getTimer = addTimerInternal(divId + "gettimer", className, "gets", 5, "Get", "get", 1, true);
@@ -169,7 +169,7 @@
 	 * @param title The user-displayed title of this graph
 	 */
 	metricsWatcher.addJvm = function(divId, className, title) {
-		var metricInfo = new MetricInfo(divId, className, null, null, title, "jvms");
+		var metricInfo = new MetricInfo(divId, className, null, null, title, "jvms", null);
 		graphs.push(metricInfo);
 	};
 
@@ -181,19 +181,19 @@
 	 * @param title The user-displayed title of this graph
 	 */
 	metricsWatcher.addWeb = function(divId, className, title) {
-		var metricInfo = new MetricInfo(divId, className, null, null, title, "webs");
+		var metricInfo = new MetricInfo(divId, className, null, null, title, "webs", null);
 
 		metricInfo.components = {
 			meters : [
-				new MetricInfo(divId + " td.responseCodesOkGraph", className, "responseCodes.ok", 10, "OK Responses", "meters"),
-				new MetricInfo(divId + " td.responseCodesBadRequestGraph", className, "responseCodes.badRequest", 10, "Bad Requests", "meters"),
-				new MetricInfo(divId + " td.responseCodesCreatedGraph", className, "responseCodes.created", 10, "Created Responses", "meters"),
-				new MetricInfo(divId + " td.responseCodesNoContentGraph", className, "responseCodes.noContent", 10, "No Content Responses", "meters"),
-				new MetricInfo(divId + " td.responseCodesNotFoundGraph", className, "responseCodes.notFound", 10, "Not Found Responses", "meters"),
-				new MetricInfo(divId + " td.responseCodesOtherGraph", className, "responseCodes.other", 10, "Other Responses", "meters"),
-				new MetricInfo(divId + " td.responseCodesServerErrorGraph", className, "responseCodes.serverError", 10, "Server Error Responses", "meters")
+				new MetricInfo(divId + " td.responseCodesOkGraph", className, "responseCodes.ok", 10, "OK Responses", "meters", null),
+				new MetricInfo(divId + " td.responseCodesBadRequestGraph", className, "responseCodes.badRequest", 10, "Bad Requests", "meters", null),
+				new MetricInfo(divId + " td.responseCodesCreatedGraph", className, "responseCodes.created", 10, "Created Responses", "meters", null),
+				new MetricInfo(divId + " td.responseCodesNoContentGraph", className, "responseCodes.noContent", 10, "No Content Responses", "meters", null),
+				new MetricInfo(divId + " td.responseCodesNotFoundGraph", className, "responseCodes.notFound", 10, "Not Found Responses", "meters", null),
+				new MetricInfo(divId + " td.responseCodesOtherGraph", className, "responseCodes.other", 10, "Other Responses", "meters", null),
+				new MetricInfo(divId + " td.responseCodesServerErrorGraph", className, "responseCodes.serverError", 10, "Server Error Responses", "meters", null)
 			],
-			activeRequestsInfo : new MetricInfo(divId + " td.activeRequestsGraph", className, "activeRequests", 10, "Active Requests", "counters"),
+			activeRequestsInfo : new MetricInfo(divId + " td.activeRequestsGraph", className, "activeRequests", 10, "Active Requests", "counters", null),
 			requestsInfo : addTimerInternal(divId + " td.requestsGraph", className, "requests", 100, "Requests", "requests", 100, true)
 		};
 
@@ -208,17 +208,17 @@
 	 * @param title The user-displayed title of this graph
 	 */
 	metricsWatcher.addLog4j = function(divId, className, title) {
-		var metricInfo = new MetricInfo(divId, className, null, null, title, "log4js");
+		var metricInfo = new MetricInfo(divId, className, null, null, title, "log4js", null);
 
 		metricInfo.components = {
 			meters : [
-				new MetricInfo(divId + " td.all", className, "all", 100, "all", "meters"),
-				new MetricInfo(divId + " td.fatal", className, "fatal", 100, "fatal", "meters"),
-				new MetricInfo(divId + " td.error", className, "error", 100, "error", "meters"),
-				new MetricInfo(divId + " td.warn", className, "warn", 100, "warn", "meters"),
-				new MetricInfo(divId + " td.info", className, "info", 100, "info", "meters"),
-				new MetricInfo(divId + " td.debug", className, "debug", 100, "debug", "meters"),
-				new MetricInfo(divId + " td.trace", className, "trace", 100, "trace", "meters")
+				new MetricInfo(divId + " td.all", className, "all", 100, "all", "meters", null),
+				new MetricInfo(divId + " td.fatal", className, "fatal", 100, "fatal", "meters", null),
+				new MetricInfo(divId + " td.error", className, "error", 100, "error", "meters", null),
+				new MetricInfo(divId + " td.warn", className, "warn", 100, "warn", "meters", null),
+				new MetricInfo(divId + " td.info", className, "info", 100, "info", "meters", null),
+				new MetricInfo(divId + " td.debug", className, "debug", 100, "debug", "meters", null),
+				new MetricInfo(divId + " td.trace", className, "trace", 100, "trace", "meters", null)
 			]
 		};
 
@@ -291,13 +291,14 @@
 	 */
 	var graphs = [];
 
-	function MetricInfo(divId, className, metricName, max, title, type) {
+  function MetricInfo(divId, className, metricName, max, title, type, subTitle) {
 		this.divId = divId;
 		this.className = className;
 		this.metricName = metricName;
 		this.max = max;
 		this.title = title;
 		this.type = type;
+    this.subTitle = subTitle;
 
 		this.getMax = function(json) {
 			return this.max;
@@ -305,6 +306,15 @@
 		this.getMetricNode = function getMetricNode(className, metricName, jsonRoot) {
 			return !(jsonRoot[type][className+'.'+metricName]) ? null : jsonRoot[type][className+'.'+metricName];
 		};
+
+    this.getSubTitle = function() {
+      if (this.subTitle != null) {
+        return this.subTitle;
+      } else {
+        // fallback and use title
+        return this.title;
+      }
+    }
 	}
 
 	function calculatePercentage(currentVal, maxVal) {
@@ -323,11 +333,11 @@
 	}
 
 	function addTimerInternal(divId, className, metricName, max, title, eventType, durationMax, isNested) {
-		var metricInfo = new MetricInfo(divId, className, metricName, max, title, 'timers');
+		var metricInfo = new MetricInfo(divId, className, metricName, max, title, 'timers', eventType);
 
 		metricInfo.getMeterInfo = function() {
 			var myDivId = this.divId + " div.timerGraph td.meterGraph";
-			var retVal = new MetricInfo(myDivId, this.className, this.metricName, this.max, "Frequency", 'timers');
+			var retVal = new MetricInfo(myDivId, this.className, this.metricName, this.max, "Frequency", 'timers', null);
 
 			retVal.getMetricNode = function(className, metricName, jsonRoot) {
 				return !jsonRoot['timers'][className+'.'+metricName] ? null : jsonRoot['timers'][className+'.'+metricName];
@@ -402,7 +412,7 @@
 	}
 
 	function drawDurationHistogram(timerInfo) {
-		var html = "<div class='heading3'> " +(timerInfo.isNested?  "Histogram" :timerInfo.title) + "</div><p>Percentiles</p><div class='metricGraph'><table class='progressTable'>"
+		var html = "<div class='heading3'> " +(timerInfo.isNested?  "Histogram" :timerInfo.getSubTitle()) + "</div><p>Percentiles</p><div class='metricGraph'><table class='progressTable'>"
 			+ addMeterRow("99.9%", "p999")
 			+ addMeterRow("99%", "p99")
 			+ addMeterRow("98%", "p98")

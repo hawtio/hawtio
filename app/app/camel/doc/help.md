@@ -168,9 +168,11 @@ This page shows a summary for each route about the performance.
 
 * Frequency - Shows number of messages processed per second
 * Duration - Shows how long time to process a message
-* Percentiles - Shows the statistics distribution of the time to process messages
+* Histogram - Shows the statistics distribution of the time to process messages
 
 This information requires Camel 2.14 onwards, and using the camel-metrics route policy.
+
+![Route Metrics](app/camel/doc/img/route-metrics.jpg "Route Metrics")
 
 
 #### Endpoint Tree ####

@@ -1,8 +1,11 @@
 ### Change Log
 
-#### 1.5
+#### 1.4.18
 * Hawtio requires Java 1.7 onwards
 * Authentication now detects if running on WebSphere, and adapts authentication to WebSphere specific credentials and APIs
+* Filter now allow to filter by multi values separated by comma
+* Camel sub tab for route metrics when using the new camel-metrics component
+* bug fixes
 
 #### 1.4.17
 * bug fixes

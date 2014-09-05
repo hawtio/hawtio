@@ -1344,8 +1344,30 @@ var DataTable;
                 if (Core.isBlank(filter)) {
                     return true;
                 }
-                var rowJson = angular.toJson(row);
-                return rowJson.toLowerCase().has(filter.toLowerCase());
+
+                var data = null;
+
+                try  {
+                    data = row['entity']['title'];
+                } catch (e) {
+                    // ignore
+                }
+
+                if (!data) {
+                    try  {
+                        data = angular.toJson(row);
+                    } catch (e) {
+                        // its maybe a Folder en
+                    }
+                }
+                if (!data) {
+                    // use the row as-is
+                    data = row;
+                }
+
+                // use the core filter matcher
+                var match = Core.matchFilterIgnoreCase(data, filter);
+                return match;
             };
 
             $scope.isSelected = function (row) {

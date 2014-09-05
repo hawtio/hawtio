@@ -1,5 +1,5 @@
 <ul class="nav nav-tabs" ng-controller="Core.NavBarController" hawtio-auto-dropdown>
-  <li ng-repeat="nav in subLevelTabs" ng-show="isValid(nav)" ng-class="{active : isActive(nav)}">
+  <li ng-repeat="nav in subLevelTabs track by $index | orderBy:index" ng-show="isValid(nav)" ng-class="{active : isActive(nav)}">
     <a ng-href="{{nav.href()}}{{hash}}" title="{{nav.title}}"
        data-placement="bottom" ng-bind-html-unsafe="nav.content">
     </a>
