@@ -4,7 +4,11 @@
   <head>
     <script type="text/javascript">
         var base = window.location.pathname.split('/', 2)[1];
-        document.write("<base href='/" + base + "/' />");
+        if (base == "") {
+          document.write("<base href='/'/>");
+        } else {
+          document.write("<base href='/" + base + "/' />");
+        }
     </script>
 
     <meta charset="utf-8"/>
