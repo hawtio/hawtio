@@ -103,7 +103,7 @@ module Fabric {
               log.debug("found openshift gears: " + $scope.openShift.gearProfiles);
 
               // save these in-memory
-              Fabric.OpenShiftCredentials.username = username;
+              Fabric.OpenShiftCredentials.username = login;
               Fabric.OpenShiftCredentials.password = password;
               // now lets store the current settings so they can be defaulted next time without a login
               savePropertiesInLocalStorage();
