@@ -1589,6 +1589,9 @@ module Core {
     if (angular.isUndefined(text) || angular.isUndefined(filter)) {
       return true;
     }
+    if (text == null || filter == null) {
+      return true;
+    }
 
     text = text.toString().trim().toLowerCase();
     filter = filter.toString().trim().toLowerCase();
@@ -1597,7 +1600,22 @@ module Core {
       return true;
     }
 
-    return text.indexOf(filter) > -1;
+    // there can be more tokens separated by comma
+    var tokens = filter.split(",");
+
+    // filter out empty tokens, and make sure its trimmed
+    tokens = tokens.filter(t => {
+      return t.length > 0;
+    }).map(t => {
+      return t.trim();
+    });
+    // match if any of the tokens matches the text
+    var answer = tokens.some(t => {
+      var bool = text.indexOf(t) > -1;
+      return bool;
+    });
+
+    return answer;
   }
 
 }
