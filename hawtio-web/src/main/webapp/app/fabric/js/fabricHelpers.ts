@@ -13,6 +13,11 @@
 /// <reference path="../../core/js/login.ts"/>
 module Fabric {
 
+  export var OpenShiftCredentials = <Core.UserDetails> {
+    username: null,
+    password: null
+  };
+
   export function fabricCreated(workspace) {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"});
   }
@@ -255,8 +260,8 @@ module Fabric {
         return;
       }
       var userDetails = <Core.UserDetails> Core.injector.get('userDetails');
-      $scope.connect.userName = userDetails.username || localStorage['fabric.userName'];
-      $scope.connect.password = userDetails.password || localStorage['fabric.password'];
+      $scope.connect.userName = userDetails.username;
+      $scope.connect.password = userDetails.password;
       $scope.connect.container = container;
       $scope.connect.view = view || "#/openlogs";
 

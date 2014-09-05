@@ -2,14 +2,9 @@
 /// <reference path="../../helpers/js/selectionHelpers.ts"/>
 module Fabric {
 
-  export var CreateContainerController = _module.controller("Fabric.CreateContainerController", ["$scope", "$element", "$compile", "$location", "workspace", "jolokia", "localStorage", "userDetails", "ProfileCart", ($scope, $element, $compile, $location, workspace, jolokia, localStorage, userDetails, ProfileCart:Profile[]) => {
+  export var CreateContainerController = _module.controller("Fabric.CreateContainerController", ["$scope", "$element", "$compile", "$location", "workspace", "jolokia", "localStorage", "userDetails", "ProfileCart", ($scope, $element, $compile, $location, workspace, jolokia, localStorage, userDetails:Core.UserDetails, ProfileCart:Profile[]) => {
 
     var log:Logging.Logger = Logger.get("Fabric");
-
-    if (!('fabric.userName' in localStorage)) {
-      localStorage['fabric.userName'] = userDetails.username;
-      localStorage['fabric.password'] = userDetails.password;
-    }
 
     $scope.versionsOp = 'versions()';
 
@@ -24,13 +19,10 @@ module Fabric {
     // which we then default when creating a new container
     var localStorageProperties = {
       child: {
-        jmxUser: 'fabric.userName',
-        jmxPassword: 'fabric.password'
+
       },
       openshift: {
         serverUrl: 'openshift.serverUrl',
-        login: 'openshift.login',
-        password: 'openshift.password',
         domain: 'openshift.domain',
         gearProfile: 'openshift.gearProfile'
       },
@@ -110,6 +102,9 @@ module Fabric {
               $scope.openShift.gearProfiles = results;
               log.debug("found openshift gears: " + $scope.openShift.gearProfiles);
 
+              // save these in-memory
+              Fabric.OpenShiftCredentials.username = username;
+              Fabric.OpenShiftCredentials.password = password;
               // now lets store the current settings so they can be defaulted next time without a login
               savePropertiesInLocalStorage();
               var loginData = {
@@ -170,6 +165,8 @@ module Fabric {
         });
 
         if (providerId === "openshift") {
+          Core.pathSet($scope.entity, ['login'], Fabric.OpenShiftCredentials.username);
+          Core.pathSet($scope.entity, ['password'], Fabric.OpenShiftCredentials.password);
           var loginDataText = localStorage[$scope.openShift.loginDataKey];
           if (loginDataText) {
             log.debug("Loaded openshift login details: " + loginDataText);
@@ -198,6 +195,9 @@ module Fabric {
           if (rootContainers && rootContainers.length === 1 && !$scope.entity["parent"]) {
             $scope.entity["parent"] = rootContainers[0];
           }
+          // Use the current user's credentials
+          Core.pathSet($scope.entity, ['jmxUser'], userDetails.username);
+          Core.pathSet($scope.entity, ['jmxPassword'], userDetails.password);
         } else {
           if ('parent' in $scope.entity) {
             delete $scope.entity["parent"];
@@ -323,9 +323,6 @@ module Fabric {
      */
     function savePropertiesInLocalStorage() {
       var providerId = $scope.entity['providerType'];
-      // e.g. key = jmxUser, value = fabric.userName
-      //    localStorage['fabric.userName'] = $scope.entity.jmxUser;
-      //    localStorage['fabric.password'] = $scope.entity.jmxPassword;
       var properties = localStorageProperties[providerId];
 
       angular.forEach(properties, (value, key) => {
@@ -338,7 +335,7 @@ module Fabric {
 
     $scope.goBack = () => {
       $location.path($scope.returnTo);
-    }
+    };
 
     $scope.goForward = () => {
       // remove some no longer needed query parameters
@@ -346,18 +343,12 @@ module Fabric {
       $location.search('profileIds', null)
       $location.search('versionId', null)
       $location.path($scope.nextPage);
-    }
+    };
 
     $scope.onSubmit = (json, form) => {
-
       var providerId = $scope.entity['providerType'];
-      if (json.saveJmxCredentials || 'child' !== providerId) {
-        savePropertiesInLocalStorage();
-      }
-
       // remove possibly dodgy values if they are blank
       json = Fabric.sanitizeJson(json);
-      delete json.saveJmxCredentials;
 
       if ( json.number === 1 ) {
         delete json.number;

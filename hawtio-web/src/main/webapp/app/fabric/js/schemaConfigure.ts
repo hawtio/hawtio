@@ -89,10 +89,12 @@ module Fabric {
         delete schema.properties['minimumPort'];
         delete schema.properties['maximumPort'];
         schema.properties['jmxPassword']['type'] = 'password';
+        /*
         schema.properties['saveJmxCredentials'] = {
           'type': 'boolean'
         };
         Core.pathSet(schema.properties, ['saveJmxCredentials', 'tooltip'], 'Remember credentials when connecting to container (avoid prompting user to enter credentials)');
+        */
 
         Core.pathSet(schema.properties, ['parent', 'label'], 'Parent Container');
         Core.pathSet(schema.properties, ['parent', 'tooltip'], 'The name of the parent container used to create the child container');
@@ -101,7 +103,7 @@ module Fabric {
 
         bulkSet(schema, ["jmxUser", "jmxPassword", "parent"], 'required', true);
         schema['tabs'] = {
-          'Common': ['name', 'parent', 'jmxUser', 'jmxPassword', 'saveJmxCredentials', 'number'],
+          'Common': ['name', 'parent', 'jmxUser', 'jmxPassword', 'number'],
           'Advanced': ['*']
         };
         break;
