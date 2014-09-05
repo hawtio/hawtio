@@ -165,6 +165,13 @@ module Core {
       answer = angular.fromJson(localStorage['userDetails']);
       log.debug("User details loaded from local storage: ", StringHelpers.toString(answer));
       executePostLoginTasks();
+    } else if (Core.isChromeApp()) {
+      answer = <Core.UserDetails> {
+        username: 'user',
+        password: ''
+      };
+      log.debug("Running as a Chrome app, using fake UserDetails: ");
+      executePostLoginTasks();
     } else {
       log.debug("No username set, checking if we have a session");
       // fetch the username if we've already got a session at the server
@@ -202,6 +209,5 @@ module Core {
       log.debug("Created empty user details to be filled in: ", StringHelpers.toString(answer));
     }
     return answer;
-
   }]);
 }
