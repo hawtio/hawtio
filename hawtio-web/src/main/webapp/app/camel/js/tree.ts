@@ -90,7 +90,8 @@ module Camel {
                 var contextNode = contextsFolder.children[0];
                 if (contextNode) {
                   var title = contextNode.title;
-                  if (!contextFilterText || (title && title.indexOf(contextFilterText) >= 0)) {
+                  var match = Core.matchFilterIgnoreCase(title, contextFilterText);
+                  if (match) {
                     var folder = new Folder(title);
                     folder.addClass = "org-apache-camel-context";
                     folder.domain = domainName;
