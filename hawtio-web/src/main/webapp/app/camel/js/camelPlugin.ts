@@ -208,23 +208,20 @@ module Camel {
     });
 
     // add sub level tabs
+
+    // special for route diagram as we want this to be the 1st
     workspace.subLevelTabs.push({
-      content: '<i class="icon-picture"></i> Diagram',
+      content: '<i class="icon-picture"></i> Route Diagram',
       title: "View a diagram of the Camel routes",
       isValid: (workspace: Workspace) => workspace.isRoute(),
-      href: () => "#/camel/routes"
-    });
-    workspace.subLevelTabs.push({
-      content: '<i class="icon-picture"></i> Diagram',
-      title: "View the entire JVMs Camel flows",
-      isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
-        && !workspace.isRoute(),
-      href: () => "#/camel/fabricDiagram"
+      href: () => "#/camel/routes",
+      // make sure we have route diagram shown first
+      index: -2
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-bar-chart"></i> Route Metrics',
       title: "View the entire JVMs Camel route metrics",
-      isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
+      isValid: (workspace: Workspace) => !workspace.isEndpointsFolder()
         && (workspace.isRoute() || workspace.isRoutesFolder() || workspace.isCamelContext())
         && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia),
       href: () => "#/camel/routeMetrics"
@@ -246,7 +243,7 @@ module Camel {
       content: '<i class="icon-list"></i> Type Converters',
       title: "List all the type converters registered in the context",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
-        && !workspace.isRoute()
+        && !workspace.isEndpointsFolder() && !workspace.isRoute()
         && Camel.isCamelVersionEQGT(2, 13, workspace, jolokia),
       href: () => "#/camel/typeConverter"
     });
@@ -254,7 +251,7 @@ module Camel {
       content: '<i class="icon-list"></i> Rest Services',
       title: "List all the REST services registered in the context",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
-        && !workspace.isRoute()
+        && !workspace.isEndpointsFolder() && !workspace.isRoute()
         && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia),
       href: () => "#/camel/restRegistry"
     });

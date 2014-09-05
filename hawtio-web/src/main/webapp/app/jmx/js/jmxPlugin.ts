@@ -66,13 +66,14 @@ module Jmx {
       isActive: (workspace: Workspace) => workspace.isTopTabActive("jmx")
     });
 
-
-    workspace.subLevelTabs.push( {
+    // we want attributes to be listed first, so add it at index 0
+    workspace.subLevelTabs.add( {
       content: '<i class="icon-list"></i> Attributes',
       title: "View the attribute values on your selection",
       isValid: (workspace: Workspace) => true,
-      href: () => "#/jmx/attributes"
-    });
+      href: () => "#/jmx/attributes",
+      index: -1
+    }, 0);
     workspace.subLevelTabs.push( {
       content: '<i class="icon-leaf"></i> Operations',
       title: "Execute operations on your selection",
