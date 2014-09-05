@@ -191,7 +191,7 @@ module Fabric {
     wikiBranchMenu.addExtension({
       title: "Patch Version",
       valid: () => {
-        return Fabric.isFMCContainer(workspace);
+        return Fabric.isFMCContainer(workspace) && !Fabric.hasOpenShiftFabric(workspace);
       },
       action: () => {
         getVersionPatchDialog($dialog).open();
