@@ -53,7 +53,7 @@ module Camel {
               counter++;
 
               log.info("Added timer: " + div + " (" + className + "." + metricsName + ") for route: " + routeId);
-              metricsWatcher.addTimer(div, className, metricsName, maxSeconds, routeId, "responses", maxSeconds * 1000);
+              metricsWatcher.addTimer(div, className, metricsName, maxSeconds, routeId, "Histogram", maxSeconds * 1000);
             }
 
             // ensure web page is updated at this point, as we need the metricDivs in the HTML before we call init graphs later
