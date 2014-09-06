@@ -6,13 +6,11 @@ module Camel {
     var log:Logging.Logger = Logger.get("Camel");
 
     // TODO: allow to configure the max value in seconds, and also show the setting in the ui etc
-    // TODO: if there is no routes, show some kind of no routes message
     // TODO: if clicking a single route, then filter by that route
 
     var maxSeconds = 5;
 
     $scope.filterText = null;
-    $scope.data = null;
     $scope.initDone = false;
     $scope.metricDivs = [];
 
@@ -34,9 +32,6 @@ module Camel {
       if (obj) {
         // turn into json javascript object which metrics watcher requires
         var json = JSON.parse(obj);
-
-        // so we can see the json string
-        $scope.data = obj;
 
         if (!$scope.initDone) {
           // figure out which routes we have
@@ -79,16 +74,19 @@ module Camel {
 
           log.info("Init graphs")
           metricsWatcher.initGraphs();
-          $scope.initDone = true;
         }
+
+        $scope.initDone = true;
 
         // update graphs
         log.debug("Updating graphs: " + json)
         metricsWatcher.updateGraphs(json)
-
-        // ensure web page is updated
-        Core.$apply($scope);
       }
+
+      $scope.initDone = true;
+
+      // ensure web page is updated
+      Core.$apply($scope);
     }
 
     // function to trigger reloading page
@@ -108,6 +106,11 @@ module Camel {
       if (mbean) {
         var query = {type: 'exec', mbean: mbean, operation: 'dumpStatisticsAsJson'};
         scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(populateRouteStatistics, query));
+      } else {
+        $scope.initDone = true;
+
+        // ensure web page is updated
+        Core.$apply($scope);
       }
     }
 

@@ -12,8 +12,14 @@
     </div>
   </div>
 
-  <div class="row-fluid" ng-hide="data">
+  <div class="row-fluid" ng-show="!initDone">
     Loading...
+  </div>
+
+  <div class="span8 centered well" ng-show="initDone && metricDivs.length === 0">
+    <form>
+      This Camel context has no route metrics data.
+    </form>
   </div>
 
   <!-- div to contain the graphs -->
