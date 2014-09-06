@@ -6,7 +6,6 @@ module Camel {
     var log:Logging.Logger = Logger.get("Camel");
 
     // TODO: allow to configure the max value in seconds, and also show the setting in the ui etc
-    // TODO: if clicking a single route, then filter by that route
 
     var maxSeconds = 5;
 
@@ -102,6 +101,13 @@ module Camel {
 
     function loadData() {
       log.info("Loading RouteMetrics data...");
+
+      // pre-select filter if we have selected a route
+      var routeId = getSelectedRouteId(workspace);
+      if (routeId != null) {
+        $scope.filterText = routeId;
+      }
+
       var mbean = getSelectionCamelRouteMetrics(workspace);
       if (mbean) {
         var query = {type: 'exec', mbean: mbean, operation: 'dumpStatisticsAsJson'};
