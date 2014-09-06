@@ -7,10 +7,12 @@ module Camel {
     $scope.routes = [];
     $scope.routeNodes = {};
 
-    $scope.contextId = $routeParams["contextId"];
-    $scope.routeId = Core.trimQuotes($routeParams["routeId"]);
-
-    $scope.isJmxTab = !$routeParams["contextId"] || !$routeParams["routeId"];
+    // if we are in dashboard then $routeParams may be null
+    if ($routeParams != null) {
+      $scope.contextId = $routeParams["contextId"];
+      $scope.routeId = Core.trimQuotes($routeParams["routeId"]);
+      $scope.isJmxTab = !$routeParams["contextId"] || !$routeParams["routeId"];
+    }
 
     $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
     $scope.camelMaximumLabelWidth = Camel.maximumLabelWidth(localStorage);
