@@ -67,6 +67,12 @@ module Core {
      */
     isFolder?: () => boolean;
     /**
+     * @property version
+     * @type string
+     * @optional
+     */
+    version?: string;
+    /**
      * @method get
      * @param {String} key
      * @return {NodeSelection}
@@ -104,12 +110,13 @@ module Core {
     objectName:string = null;
     map = {};
     entries = {};
-    addClass = null;
-    parent: Folder = null;
-    isLazy: boolean = false;
-    icon: string = null;
-    tooltip: string = null;
-    entity: any = null;
+    addClass:string = null;
+    parent:Folder = null;
+    isLazy:boolean = false;
+    icon:string = null;
+    tooltip:string = null;
+    entity:any = null;
+    version:string = null;
 
     get(key:string):NodeSelection {
       return this.map[key];

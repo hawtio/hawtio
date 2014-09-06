@@ -923,13 +923,35 @@ module Camel {
   }
 
   export function getCamelVersion(workspace:Workspace, jolokia) {
-    var mbean = getSelectionCamelContextMBean(workspace);
-    if (mbean) {
-      // must use onSuccess(null) that means sync as we need the version asap
-      return jolokia.getAttribute(mbean, "CamelVersion", onSuccess(null));
-    } else {
-      return null;
+    if (workspace) {
+      var contextId = getContextId(workspace);
+      var selection = workspace.selection;
+      var tree = workspace.tree;
+      if (tree && selection) {
+        var domain = selection.domain;
+        if (domain && contextId) {
+          var result = tree.navigate(domain, contextId, "context");
+          if (result && result.children) {
+            var contextBean = result.children.first();
+            if (contextBean.version) {
+              // read the cached version
+              return contextBean.version;
+            }
+            if (contextBean.title) {
+              // okay no version cached, so need to get the version using jolokia
+              var contextName = contextBean.title;
+              var mbean = "" + domain + ":context=" + contextId + ',type=context,name="' + contextName + '"';
+              // must use onSuccess(null) that means sync as we need the version asap
+              var version = jolokia.getAttribute(mbean, "CamelVersion", onSuccess(null));
+              // cache version so we do not need to read it again using jolokia
+              contextBean.version = version;
+              return version;
+            }
+          }
+        }
+      }
     }
+    return null;
   }
 
   export function createMessageFromXml(exchange) {

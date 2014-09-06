@@ -99,6 +99,7 @@ module Camel {
                     folder.entries = contextNode.entries;
                     folder.typeName = contextNode.typeName;
                     folder.key = contextNode.key;
+                    folder.version = contextNode.version
                     if (routesNode) {
                       var routesFolder = new Folder("Routes");
                       routesFolder.addClass = "org-apache-camel-routes-folder";
