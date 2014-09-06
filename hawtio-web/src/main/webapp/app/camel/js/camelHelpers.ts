@@ -9,6 +9,7 @@ module Camel {
 
   export var defaultMaximumLabelWidth = 34;
   export var defaultCamelMaximumTraceOrDebugBodyLength = 5000;
+  export var defaultCamelRouteMetricMaxSeconds = 10;
 
   /**
    * Looks up the route XML for the given context and selected route and
@@ -1408,6 +1409,21 @@ module Camel {
     }
     if (!value) {
       value = Camel.defaultCamelMaximumTraceOrDebugBodyLength;
+    }
+    return value;
+  }
+
+  /**
+   * Returns the max value for seconds in the route metrics UI
+   * @method
+   */
+  export function routeMetricMaxSeconds(localStorage) {
+    var value = localStorage["camelRouteMetricMaxSeconds"];
+    if (angular.isString(value)) {
+      value = parseInt(value);
+    }
+    if (!value) {
+      value = Camel.defaultCamelRouteMetricMaxSeconds;
     }
     return value;
   }

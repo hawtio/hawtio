@@ -5,16 +5,14 @@ module Camel {
 
     var log:Logging.Logger = Logger.get("Camel");
 
-    // TODO: allow to configure the max value in seconds, and also show the setting in the ui etc
-
-    var maxSeconds = 5;
+    $scope.maxSeconds = Camel.routeMetricMaxSeconds(localStorage);
 
     $scope.filterText = null;
     $scope.initDone = false;
     $scope.metricDivs = [];
 
     $scope.filterByRoute = (div) => {
-      log.info("Filter by route " + div);
+      log.debug("Filter by route " + div);
 
       var match = Core.matchFilterIgnoreCase(div.routeId, $scope.filterText);
 
@@ -62,8 +60,8 @@ module Camel {
 
               counter++;
 
-              log.info("Added timer: " + div + " (" + className + "." + metricsName + ") for route: " + routeId);
-              metricsWatcher.addTimer(div, className, metricsName, maxSeconds, routeId, "Histogram", maxSeconds * 1000);
+              log.info("Added timer: " + div + " (" + className + "." + metricsName + ") for route: " + routeId + " with max seconds: " + $scope.maxSeconds);
+              metricsWatcher.addTimer(div, className, metricsName, $scope.maxSeconds, routeId, "Histogram", $scope.maxSeconds * 1000);
             }
 
             // ensure web page is updated at this point, as we need the metricDivs in the HTML before we call init graphs later

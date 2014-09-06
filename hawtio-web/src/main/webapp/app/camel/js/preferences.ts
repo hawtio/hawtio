@@ -16,6 +16,10 @@ module Camel {
       'camelMaximumTraceOrDebugBodyLength': {
         'value': Camel.defaultCamelMaximumTraceOrDebugBodyLength,
         'converter': parseInt
+      },
+      'camelRouteMetricMaxSeconds': {
+        'value': Camel.defaultCamelRouteMetricMaxSeconds,
+        'converter': parseInt
       }
     });
   }]);
