@@ -839,15 +839,21 @@ module Camel {
   export function getContextId(workspace:Workspace) {
     var selection = workspace.selection;
     if (selection) {
-      var tree = workspace.tree;
-      var folderNames = selection.folderNames;
-      var entries = selection.entries;
-      var contextId;
-      if (tree) {
-        if (folderNames && folderNames.length > 1) {
-          contextId = folderNames[1];
-        } else if (entries) {
-          contextId = entries["context"];
+      // get parent if we currently selected routes
+      while (selection != null && selection.typeName === "routes") {
+        selection = selection.parent;
+      }
+      if (selection) {
+        var tree = workspace.tree;
+        var folderNames = selection.folderNames;
+        var entries = selection.entries;
+        var contextId;
+        if (tree) {
+          if (folderNames && folderNames.length > 1) {
+            contextId = folderNames[1];
+          } else if (entries) {
+            contextId = entries["context"];
+          }
         }
       }
     }
