@@ -839,10 +839,9 @@ module Camel {
   export function getContextId(workspace:Workspace) {
     var selection = workspace.selection;
     if (selection) {
-      // get parent if we currently selected routes
-      while (selection != null && selection.typeName === "routes") {
-        selection = selection.parent;
-      }
+      // find the camel context and find ancestors in the tree until we find the camel context selection
+      // this is either if the title is 'context' or if the parent title is 'org.apache.camel' (the Camel tree is a bit special)
+      selection = selection.findAncestor(s => s.title === 'context' || s.parent != null && s.parent.title === 'org.apache.camel');
       if (selection) {
         var tree = workspace.tree;
         var folderNames = selection.folderNames;

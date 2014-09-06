@@ -91,6 +91,20 @@ module Core {
      * @return {Boolean}
      */
     ancestorHasEntry(key:string, value): boolean;
+
+    /**
+     * @method findDescendant
+     * @param {Function} filter
+     * @return {NodeSelection}
+     */
+    findDescendant(filter): NodeSelection
+
+    /**
+     * @method findAncestor
+     * @param {Function} filter
+     * @return {NodeSelection}
+     */
+    findAncestor(filter): NodeSelection
   }
 
   /**
@@ -247,6 +261,25 @@ module Core {
         }
       });
       return answer;
+    }
+
+    /**
+     * Searches this folder and all its ancestors for the first folder to match the filter
+     * @method findDescendant
+     * @for Folder
+     * @param {Function} filter
+     * @return {Folder}
+     */
+    public findAncestor(filter) {
+      if (filter(this)) {
+        return this;
+      }
+
+      if (this.parent != null) {
+        return this.parent.findAncestor(filter);
+      } else {
+        return null;
+      }
     }
 
   }
