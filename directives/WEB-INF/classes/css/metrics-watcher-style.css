@@ -1,7 +1,7 @@
 .metricsWatcher .heading1 {
-	font-size: 30px;
-	line-height: 36px;
-	margin: 0;
+	font-size: 24px;
+	line-height: 30px;
+    margin: 0;
 }
 .metricsWatcher .heading3 {
 	font-size: 18px;
@@ -51,7 +51,7 @@
 .metricsWatcher .progressLabel,
 .metricsWatcher .progressValue {
 	vertical-align: top;
-	padding: 0px 5px;
+	padding: 0 5px;
 }
 .metricsWatcher .progressValue {
 	font-size: 13px;
@@ -83,7 +83,7 @@
 .metricsWatcher.cache .cacheContainer,
 .metricsWatcher.timer .timerContainer,
 .metricsWatcher.cache .gaugeTableContainer {
-	border-style: solid;
+	border-style: none;
 	border-width: 1px;
 	padding: 10px 0;
 	margin-left: 0;
