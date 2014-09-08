@@ -32,7 +32,14 @@ module UI {
         // sync with local storage and the location bar, maybe could refactor this into a helper function
         if (!Core.isBlank($scope.saveAs)) {
           if ($scope.saveAs in localStorage) {
-            $scope.ngModel = localStorage[$scope.saveAs];
+            var val = localStorage[$scope.saveAs];
+            if (!Core.isBlank(val)) {
+              $scope.ngModel = val;
+            } else {
+              $scope.ngModel = '';
+            }
+          } else {
+            $scope.ngModel = '';
           }
           /*
            // input loses focus when we muck with the search, at least on firefox
