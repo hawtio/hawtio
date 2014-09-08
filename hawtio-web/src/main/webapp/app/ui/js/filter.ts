@@ -49,12 +49,11 @@ module UI {
           }
           */
 
-          var updateFunc = Core.throttled(() => {
+          var updateFunc = () => {
             localStorage[$scope.saveAs] = $scope.ngModel;
             // input loses focus when we do this
             //$location.search($scope.saveAs, $scope.ngModel);
-            Core.$apply($scope);
-          }, 500);
+          };
           $scope.$watch('ngModel', updateFunc);
         }
       }]

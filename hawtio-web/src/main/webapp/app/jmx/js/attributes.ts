@@ -35,6 +35,7 @@ module Jmx {
                                        jmxWidgetTypes,
                                        $templateCache) => {
     $scope.searchText = '';
+    $scope.nid = 'empty';
     $scope.selectedItems = [];
 
     $scope.lastKey = null;
@@ -117,6 +118,8 @@ module Jmx {
         workspace.selection = null;
         $scope.lastKey = null;
       }
+      $scope.nid = $location.search()['nid'];
+      log.debug("nid: ", $scope.nid);
 
       setTimeout(updateTableContents, 50);
     });
