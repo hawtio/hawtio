@@ -1,7 +1,3 @@
-<form class="form-horizontal no-bottom-margin">
-  <fieldset>
-    <div class="control-group">
-        <input type="text" class="span12 search-query" ng-model="$parent.gridOptions.filterOptions.filterText" placeholder="Filter...">
-    </div>
-  </fieldset>
-</form>
+<div class="pull-right">
+  <hawtio-filter ng-model="gridOptions.filterOptions.filterText" placeholder="Filter..." save-as="{{nid}}-filter-text"></hawtio-filter>
+</div>

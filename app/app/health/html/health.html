@@ -4,7 +4,9 @@
     <p></p>
   </div>
   <div class="row-fluid">
-    <input type="text" class="input span12" ng-model="pageFilter" placeholder="Filter...">
+    <div class="pull-right">
+      <hawtio-filter ng-model="pageFilter" placeholder="Filter..." save-as="health-display-filter-text"></hawtio-filter>
+    </div>
   </div>
 
   <div class="row-fluid">

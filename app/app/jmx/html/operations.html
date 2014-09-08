@@ -5,16 +5,9 @@
   </div>
 
   <div class="row-fluid" ng-hide="isOperationsEmpty() || showInvoke">
-    <form class="form-horizontal no-bottom-margin">
-      <fieldset>
-        <div class="control-group">
-          <input type="text"
-                 class="search-query span12"
-                 ng-model="methodFilter"
-                 placeholder="Filter...">
-          </div>
-        </fieldset>
-      </form>
+    <div class="pull-right">
+      <hawtio-filter ng-model="methodFilter" placeholder="Filter..." save-as="{{objectName}}-text-filter"></hawtio-filter>
+    </div>
   </div>
 
 

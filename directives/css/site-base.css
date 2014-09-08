@@ -3081,15 +3081,13 @@ fs-donut svg g text.units {
   border-bottom: none;
 }
 
-.column-box .ok-container {
-  height: 100%;
-  vertical-align: middle;
-  text-align: center;
-  line-height: 155px;
-}
-
 .column-row {
   float: left;
+}
+
+.column-box-selected .column-box-header {
+  font-size: 150%;
+  font-weight: bold;
 }
 
 .column-box-icons > .span1 {
@@ -3525,7 +3523,8 @@ th > .indicator:before {
   display: inline-block;
 }
 
-.bundle-list-toolbar > div > input {
+.bundle-list-toolbar > div > input,
+.bundle-list-toolbar > div > div > input {
   margin-bottom: 10px;
 }
 
