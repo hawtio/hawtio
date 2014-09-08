@@ -1416,14 +1416,6 @@ img.nodeIcon:hover {
   /* box-shadow: 0 0 50px rgba(0, 0, 0, 0.2); */ 
 }
 
-.column-box.column-box-unselected {
-  border: 1px solid transparent;
-}
-
-.column-box.column-box-selected {
-  border: 1px solid #d4d4d4;
-}
-
 .navbar .nav > li > .dropdown-menu:before,
 .navbar .nav > li > .dropdown-menu:after {
   display: none;

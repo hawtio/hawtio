@@ -11,7 +11,10 @@
         <div class="row-fluid mouse-pointer"
              ng-click="toggleSelectionFromGroup(cartItems, profile)">
           <div class="span12">
-            <h4>{{profile.id}}</h4>
+            <h4 class="column-box-header">{{profile.id}}
+              <i class="icon-ok green"
+                 ng-show="isInGroup(cartItems, profile)"></i>
+            </h4>
           </div>
         </div>
         <div class="row-fluid">
@@ -51,13 +54,6 @@
              class="badge mouse-pointer">Dead: {{profile.deadCount}}</div>
       </div>
     </div>
-  </div>
-  <div class="span2 ok-container mouse-pointer"
-       ng-click="toggleSelectionFromGroup(cartItems, profile)">
-    <i class="icon-check-empty"
-       ng-hide="isInGroup(cartItems, profile)"></i>
-    <i class="icon-check"
-        ng-show="isInGroup(cartItems, profile)"></i>
   </div>
 </div>
 
