@@ -3523,7 +3523,8 @@ th > .indicator:before {
   display: inline-block;
 }
 
-.bundle-list-toolbar > div > input {
+.bundle-list-toolbar > div > input,
+.bundle-list-toolbar > div > div > input {
   margin-bottom: 10px;
 }
 

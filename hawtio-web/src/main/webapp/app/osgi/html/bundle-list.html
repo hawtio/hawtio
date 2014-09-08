@@ -65,9 +65,7 @@
       <input class="input-small search-query" type="number" min="0"
              ng-model="display.startLevelFilter"
              placeholder="Start Level..."/>
-      <input class="input-large search-query" type="text"
-             ng-model="display.bundleFilter"
-             placeholder="Filter..."/>
+      <hawtio-filter ng-model="display.bundleFilter" placeholder="Filter..." save-as="osgi-bundle-list-text-filter"></hawtio-filter>
     </div>
 
   </div>
