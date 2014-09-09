@@ -1,20 +1,22 @@
 package io.hawt.web;
 
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RedirectFilter implements Filter {
 
@@ -32,8 +34,8 @@ public class RedirectFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         if (servletRequest instanceof HttpServletRequest
-            && servletResponse instanceof HttpServletResponse) {
-            process((HttpServletRequest)servletRequest, (HttpServletResponse)servletResponse, filterChain);
+                && servletResponse instanceof HttpServletResponse) {
+            process((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, filterChain);
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }

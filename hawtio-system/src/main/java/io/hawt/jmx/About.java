@@ -27,7 +27,7 @@ public class About implements AboutMBean {
         if (mBeanServer != null) {
             try {
                 mBeanServer.registerMBean(this, objectName);
-            } catch(InstanceAlreadyExistsException iaee) {
+            } catch (InstanceAlreadyExistsException iaee) {
                 // Try to remove and re-register
                 mBeanServer.unregisterMBean(objectName);
                 mBeanServer.registerMBean(this, objectName);

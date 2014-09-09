@@ -1,5 +1,13 @@
 package io.hawt.web;
 
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Map;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.json.simple.JSONArray;
@@ -7,14 +15,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Map;
 
 public class ExportContextServlet extends HttpServlet {
     public static final String RENDER_JSON_ERROR_MESSAGES = "ERROR_MESSAGES";

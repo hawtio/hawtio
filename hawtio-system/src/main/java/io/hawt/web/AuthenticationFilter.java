@@ -3,8 +3,6 @@ package io.hawt.web;
 import java.io.IOException;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
-import java.util.List;
 import javax.security.auth.Subject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -127,10 +125,11 @@ public class AuthenticationFilter implements Filter {
         LOG.debug("Doing authentication and authorization for path {}", path);
         switch (Authenticator.authenticate(configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses(),
                 configuration.getConfiguration(), httpRequest, new PrivilegedCallback() {
-            public void execute(Subject subject) throws Exception {
-                executeAs(request, response, chain, subject);
-            }
-        })) {
+                    public void execute(Subject subject) throws Exception {
+                        executeAs(request, response, chain, subject);
+                    }
+                }
+        )) {
             case AUTHORIZED:
                 // request was executed using the authenticated subject, nothing more to do
                 break;
@@ -140,7 +139,7 @@ public class AuthenticationFilter implements Filter {
             case NO_CREDENTIALS:
                 if (configuration.isNoCredentials401()) {
                     // return auth prompt 401
-                    Helpers.doAuthPrompt(configuration.getRealm(), (HttpServletResponse)response);
+                    Helpers.doAuthPrompt(configuration.getRealm(), (HttpServletResponse) response);
                 } else {
                     // return forbidden 403 so the browser login does not popup
                     Helpers.doForbidden((HttpServletResponse) response);

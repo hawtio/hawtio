@@ -1,5 +1,14 @@
 package io.hawt.jmx;
 
+import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.List;
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.servlet.ServletContext;
+
 import io.hawt.system.ConfigManager;
 import io.hawt.util.Strings;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -7,15 +16,6 @@ import org.apache.commons.fileupload.servlet.FileCleanerCleanup;
 import org.apache.commons.io.FileCleaningTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.servlet.ServletContext;
-import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -50,7 +50,7 @@ public class UploadManager implements UploadManagerMBean {
         if (mBeanServer != null) {
             try {
                 mBeanServer.registerMBean(this, objectName);
-            } catch(InstanceAlreadyExistsException iaee) {
+            } catch (InstanceAlreadyExistsException iaee) {
                 // Try to remove and re-register
                 mBeanServer.unregisterMBean(objectName);
                 mBeanServer.registerMBean(this, objectName);
@@ -99,7 +99,7 @@ public class UploadManager implements UploadManagerMBean {
     private String getTargetDirectory(String parent) {
         parent = Strings.sanitizeDirectory(parent);
         if (Strings.isNotBlank(parent)) {
-            return  UPLOAD_DIRECTORY + File.separator + parent;
+            return UPLOAD_DIRECTORY + File.separator + parent;
         }
         return UPLOAD_DIRECTORY;
     }

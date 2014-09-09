@@ -1,5 +1,19 @@
 package io.hawt.web;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import io.hawt.util.IOHelper;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -8,9 +22,14 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.*;
+import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.ByteArrayPartSource;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
@@ -20,21 +39,6 @@ import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Based on code from http://edwardstx.net/2010/06/http-proxy-servlet/
@@ -90,7 +94,7 @@ public class ProxyServlet extends HttpServlet {
 
         Protocol http = new Protocol("http", socketFactory, 80);
         Protocol.registerProtocol("http", http);
-        if (LOG.isDebugEnabled())  {
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Registered OpenShiftProtocolSocketFactory Protocol for http: " + Protocol.getProtocol("http").getSocketFactory());
         }
 
@@ -129,12 +133,12 @@ public class ProxyServlet extends HttpServlet {
      * @param httpServletResponse The {@link HttpServletResponse} object by which
      *                            we can send a proxied response to the client
      */
-    public void doPut(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)            throws IOException, ServletException {
-      ProxyDetails proxyDetails = new ProxyDetails(httpServletRequest);
+    public void doPut(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
+        ProxyDetails proxyDetails = new ProxyDetails(httpServletRequest);
         if (!proxyDetails.isValid()) {
             httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "Context-Path should contain the proxy hostname to use");
         } else {
-            PutMethod putMethodProxyRequest= new PutMethod(proxyDetails.getStringProxyURL());
+            PutMethod putMethodProxyRequest = new PutMethod(proxyDetails.getStringProxyURL());
             // Forward the request headers
             setProxyRequestHeaders(proxyDetails, httpServletRequest, putMethodProxyRequest);
             // Execute the proxy request
@@ -281,14 +285,14 @@ public class ProxyServlet extends HttpServlet {
         }
 
         if (postMethodProxyRequest instanceof PostMethod) {
-          NameValuePair[] parameters = listNameValuePairs.toArray(new NameValuePair[]{});
-          if (entity != null) {
-              // TODO add as URL parameters?
-              //postMethodProxyRequest.addParameters(parameters);
-          } else {
-              // Set the proxy request POST data
-              ((PostMethod)postMethodProxyRequest).setRequestBody(parameters);
-          }
+            NameValuePair[] parameters = listNameValuePairs.toArray(new NameValuePair[]{});
+            if (entity != null) {
+                // TODO add as URL parameters?
+                //postMethodProxyRequest.addParameters(parameters);
+            } else {
+                // Set the proxy request POST data
+                ((PostMethod) postMethodProxyRequest).setRequestBody(parameters);
+            }
         } else {
             if (entity == null) {
                 entity = new InputStreamRequestEntity(httpServletRequest.getInputStream());

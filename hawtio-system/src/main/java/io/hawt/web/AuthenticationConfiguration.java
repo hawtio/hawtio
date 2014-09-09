@@ -1,7 +1,6 @@
 package io.hawt.web;
 
 import javax.security.auth.login.Configuration;
-import java.util.List;
 
 public class AuthenticationConfiguration {
 

@@ -54,30 +54,30 @@ public class CacheHeadersFilter implements Filter {
         String resourcePath = joinPaths(servletPath, pathInfo);
 
         // Don't cache the index.html file.
-        if( resourcePath.equals("/") || resourcePath.endsWith("/index.html") ) {
+        if (resourcePath.equals("/") || resourcePath.endsWith("/index.html")) {
             return false;
         }
 
         // Cache the other static resources.
-        return servletContext.getResource(resourcePath)!=null;
+        return servletContext.getResource(resourcePath) != null;
     }
 
     private String joinPaths(String p1, String p2) {
-        if( p1==null ) {
+        if (p1 == null) {
             p1 = "";
         }
-        if( p2==null ) {
+        if (p2 == null) {
             p2 = "";
         }
-        if( p1.isEmpty() )
+        if (p1.isEmpty())
             return p2;
-        if( p2.isEmpty() )
+        if (p2.isEmpty())
             return p1;
-        return trimSuffix(p1, "/")+"/"+trimPrefix(p2, "/");
+        return trimSuffix(p1, "/") + "/" + trimPrefix(p2, "/");
     }
 
     static String trimPrefix(String value, String prefix) {
-        if( value!=null && value.startsWith(prefix) ) {
+        if (value != null && value.startsWith(prefix)) {
             return value.substring(prefix.length());
         } else {
             return value;
@@ -85,8 +85,8 @@ public class CacheHeadersFilter implements Filter {
     }
 
     static String trimSuffix(String value, String suffix) {
-        if( value!=null && value.endsWith(suffix) ) {
-            return value.substring(0, value.length()-suffix.length());
+        if (value != null && value.endsWith(suffix)) {
+            return value.substring(0, value.length() - suffix.length());
         } else {
             return value;
         }

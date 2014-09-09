@@ -1,11 +1,12 @@
 package io.hawt.jmx;
 
+import java.util.List;
+import java.util.Map;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
-import java.util.List;
-import java.util.Map;
+
 import io.hawt.util.MBeanSupport;
 
 /**
@@ -40,13 +41,13 @@ public class JMXSecurity extends MBeanSupport implements JMXSecurityMBean {
                 boolean res = canInvoke(objectName);
                 CompositeData data = new CompositeDataSupport(CAN_INVOKE_RESULT_ROW_TYPE,
                         CAN_INVOKE_RESULT_COLUMNS,
-                        new Object [] {objectName, "", true});
+                        new Object[]{objectName, "", true});
                 table.put(data);
             } else {
                 for (String method : methods) {
                     CompositeData data = new CompositeDataSupport(CAN_INVOKE_RESULT_ROW_TYPE,
                             CAN_INVOKE_RESULT_COLUMNS,
-                            new Object [] {objectName, method, true});
+                            new Object[]{objectName, method, true});
                     table.put(data);
                 }
             }

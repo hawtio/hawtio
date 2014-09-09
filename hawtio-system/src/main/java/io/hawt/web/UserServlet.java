@@ -1,18 +1,18 @@
 package io.hawt.web;
 
-import io.hawt.system.ConfigManager;
-
+import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.PrintWriter;
+
+import io.hawt.system.ConfigManager;
 
 /**
- *  Returns the username associated with the current session, if any
+ * Returns the username associated with the current session, if any
  */
 public class UserServlet extends HttpServlet {
 

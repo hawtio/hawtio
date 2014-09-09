@@ -1,5 +1,11 @@
 package io.hawt.web;
 
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
+
 import io.hawt.system.AuthInfo;
 import io.hawt.system.Authenticator;
 import io.hawt.system.ExtractAuthInfoCallback;
@@ -11,12 +17,6 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * A helper object to store the proxy location details

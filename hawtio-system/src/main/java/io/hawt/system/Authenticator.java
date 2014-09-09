@@ -5,7 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.List;
-
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -31,7 +30,7 @@ public class Authenticator {
 
     public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String AUTHENTICATION_SCHEME_BASIC = "Basic";
-    
+
     private static Boolean websphereDetected;
     private static Method websphereGetGroupsMethod;
 
@@ -134,16 +133,16 @@ public class Authenticator {
 
             boolean found;
             if (isRunningOnWebsphere(subject)) {
-            	found = checkIfSubjectHasRequiredRoleOnWebsphere(subject, role);
+                found = checkIfSubjectHasRequiredRoleOnWebsphere(subject, role);
             } else {
                 if (rolePrincipalClasses == null || rolePrincipalClasses.equals("")) {
                     LOG.debug("Skipping role check, no rolePrincipalClasses configured");
                     return subject;
                 }
 
-            	found= checkIfSubjectHasRequiredRole(subject, role,rolePrincipalClasses);
+                found = checkIfSubjectHasRequiredRole(subject, role, rolePrincipalClasses);
             }
-					
+
             if (!found) {
                 LOG.debug("User " + username + " does not have the required role " + role);
                 return null;
@@ -164,9 +163,9 @@ public class Authenticator {
 
         return null;
     }
-    
-	private static boolean checkIfSubjectHasRequiredRole(Subject subject,
-			String role, String rolePrincipalClasses) {
+
+    private static boolean checkIfSubjectHasRequiredRole(Subject subject,
+                                                         String role, String rolePrincipalClasses) {
         String[] roleArray = role.split(",");
         String[] rolePrincipalClazzes = rolePrincipalClasses.split(",");
         boolean found = false;
@@ -195,83 +194,83 @@ public class Authenticator {
                 break;
             }
 
-		}
-		return found;
-	}
+        }
+        return found;
+    }
 
-	private static boolean isRunningOnWebsphere(Subject subject) {
-		if (websphereDetected == null) {
-	    	boolean onWebsphere = false;
-	    	for (Principal p : subject.getPrincipals()) {
-	    		LOG.trace("Checking principal for IBM specific interfaces: {}" , p);
-	    		onWebsphere = implementsInterface(p, "com.ibm.websphere.security.auth.WSPrincipal" );
-	    	}
-	    	LOG.trace("Checking if we are running using a IBM Websphere specific LoginModule: {}", onWebsphere);
-	    	websphereDetected = onWebsphere;
-		}
-		return websphereDetected;
+    private static boolean isRunningOnWebsphere(Subject subject) {
+        if (websphereDetected == null) {
+            boolean onWebsphere = false;
+            for (Principal p : subject.getPrincipals()) {
+                LOG.trace("Checking principal for IBM specific interfaces: {}", p);
+                onWebsphere = implementsInterface(p, "com.ibm.websphere.security.auth.WSPrincipal");
+            }
+            LOG.trace("Checking if we are running using a IBM Websphere specific LoginModule: {}", onWebsphere);
+            websphereDetected = onWebsphere;
+        }
+        return websphereDetected;
     }
 
     private static boolean checkIfSubjectHasRequiredRoleOnWebsphere(Subject subject, String role) {
-    	boolean found = false;
-    	
-    	LOG.debug("Running on websphere: checking if the Role {} is in the set of groups in WSCredential", role);
-    	for (final Object cred : subject.getPublicCredentials()) {
-    		LOG.debug("Checking credential {} if it is a WebSphere specific WSCredential containing group info", cred);
-    		if (implementsInterface(cred, "com.ibm.websphere.security.cred.WSCredential")) {
-    			try {
-					Method groupsMethod = getWebSphereGetGroupsMethod(cred);
-					@SuppressWarnings("unchecked")
-					final List<Object> groups = (List<Object>) groupsMethod.invoke(cred);
-					
-					if (groups != null) {
-						LOG.debug("Found a total of {} groups in the IBM WebSphere Credentials", groups.size());
-						
-						for (Object group : groups) {
-							LOG.debug("Matching IBM Websphere group name {} to required role {}", group, role);
-							
-							if (role.equals(group.toString())) {
-								LOG.debug("Required role {} found in IBM specific credentials", role);
-								found = true;
-								break;
-							}
-						}
-					} else {
-						LOG.debug("The IBM Websphere groups list is null");
-					}
-					
-				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					// ignored
-					LOG.debug("Caught exception trying to read groups from WebSphere specific WSCredentials class", e);
-				}
-    		}
-    		
-    		if (found) {
-    			break;
-    		}
-    	}
-    	
-		return found;
-	}
+        boolean found = false;
 
-	private static Method getWebSphereGetGroupsMethod(final Object cred) throws NoSuchMethodException {
-		if (websphereGetGroupsMethod == null) {
-			websphereGetGroupsMethod = cred.getClass().getMethod("getGroupIds"); 
-		}
-		return websphereGetGroupsMethod;
-	}
+        LOG.debug("Running on websphere: checking if the Role {} is in the set of groups in WSCredential", role);
+        for (final Object cred : subject.getPublicCredentials()) {
+            LOG.debug("Checking credential {} if it is a WebSphere specific WSCredential containing group info", cred);
+            if (implementsInterface(cred, "com.ibm.websphere.security.cred.WSCredential")) {
+                try {
+                    Method groupsMethod = getWebSphereGetGroupsMethod(cred);
+                    @SuppressWarnings("unchecked")
+                    final List<Object> groups = (List<Object>) groupsMethod.invoke(cred);
 
-	private static boolean implementsInterface(Object o, String interfaceName) {
-		boolean implementsIf = false;
-		for (Class<?> pif : o.getClass().getInterfaces()) {
-			LOG.trace("Checking interface {} if it matches {}", pif, interfaceName);
-			if (pif.getName().equals(interfaceName)) {
-				implementsIf = true;
-				break;
-			}
-		}
-		return implementsIf;
-	}
+                    if (groups != null) {
+                        LOG.debug("Found a total of {} groups in the IBM WebSphere Credentials", groups.size());
+
+                        for (Object group : groups) {
+                            LOG.debug("Matching IBM Websphere group name {} to required role {}", group, role);
+
+                            if (role.equals(group.toString())) {
+                                LOG.debug("Required role {} found in IBM specific credentials", role);
+                                found = true;
+                                break;
+                            }
+                        }
+                    } else {
+                        LOG.debug("The IBM Websphere groups list is null");
+                    }
+
+                } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    // ignored
+                    LOG.debug("Caught exception trying to read groups from WebSphere specific WSCredentials class", e);
+                }
+            }
+
+            if (found) {
+                break;
+            }
+        }
+
+        return found;
+    }
+
+    private static Method getWebSphereGetGroupsMethod(final Object cred) throws NoSuchMethodException {
+        if (websphereGetGroupsMethod == null) {
+            websphereGetGroupsMethod = cred.getClass().getMethod("getGroupIds");
+        }
+        return websphereGetGroupsMethod;
+    }
+
+    private static boolean implementsInterface(Object o, String interfaceName) {
+        boolean implementsIf = false;
+        for (Class<?> pif : o.getClass().getInterfaces()) {
+            LOG.trace("Checking interface {} if it matches {}", pif, interfaceName);
+            if (pif.getName().equals(interfaceName)) {
+                implementsIf = true;
+                break;
+            }
+        }
+        return implementsIf;
+    }
 
     private static final class AuthenticationCallbackHandler implements CallbackHandler {
 
