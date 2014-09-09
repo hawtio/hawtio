@@ -276,11 +276,12 @@ module Jmx {
           angular.forEach(map[objectName], (value, key) => {
             operations[key]['canInvoke'] = value['CanInvoke'];
           });
-          //log.debug("Got operations: ", $scope.operations);
+          log.debug("Got operations: ", $scope.operations);
           Core.$apply($scope);
         }, {
           error: (response) => {
             // silently ignore
+            log.debug("Failed to fetch ACL for operations: ", response);
             Core.$apply($scope);
           }
         }));
@@ -306,6 +307,7 @@ module Jmx {
         Core.$apply($scope);
       } else {
         fetchPermissions($scope.objectName, $scope.operations);
+        Core.$apply($scope);
       }
     }
 
