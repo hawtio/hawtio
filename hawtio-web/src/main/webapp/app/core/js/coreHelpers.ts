@@ -1272,6 +1272,7 @@ module Core {
     saveConnection(options);
     var $window:ng.IWindowService = Core.injector.get('$window');
     var newWindow = $window.open((options.view || '#/welcome') + '?con=' + options.name);
+    newWindow['con'] = options.name;
     newWindow['userDetails'] = {
       username: options.userName,
       password: options.password,

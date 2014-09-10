@@ -18,7 +18,6 @@ module Perspective {
     var url = Perspective.defaultPage($location, workspace, jolokia, localStorage);
     var path = Core.trimLeading(url, "#");
     if (path) {
-      path = Core.appendConnectionNameToUrl(path, params);
       log.debug("Redirecting to default page: ", path, " page params: ", params);
       $location.url(path);
     } else {
