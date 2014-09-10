@@ -191,33 +191,28 @@ var Core;
         if (Core.ConnectionName) {
             return Core.ConnectionName;
         }
+        var connectionName = undefined;
+        if ('con' in window) {
+            connectionName = window['con'];
+            Logger.get("Core").debug("Found connection name from window: ", connectionName);
+        } else {
+            connectionName = search["con"];
+            if (angular.isArray(connectionName)) {
+                connectionName = connectionName[0];
+            }
+            if (connectionName) {
+                connectionName = connectionName.unescapeURL();
+                Logger.get("Core").debug("Found connection name from URL: ", connectionName);
+            } else {
+                Logger.get("Core").debug("No connection name found, using direct connection to JVM");
+            }
+        }
 
         // Store the connection name once we've parsed it
-        var connectionName = search["con"];
-        if (angular.isArray(connectionName)) {
-            connectionName = connectionName[0];
-        }
-        if (connectionName) {
-            connectionName = connectionName.unescapeURL();
-        }
         Core.ConnectionName = connectionName;
         return connectionName;
     }
     Core.getConnectionNameParameter = getConnectionNameParameter;
-
-    /**
-    * Appends the ?con=NameOfConnection to the given  URI
-    */
-    function appendConnectionNameToUrl(path, search) {
-        var connectionName = getConnectionNameParameter(search);
-        if (connectionName) {
-            var separator = path.indexOf("?") >= 0 ? "&" : "?";
-            return path + separator + "con=" + connectionName;
-        } else {
-            return path;
-        }
-    }
-    Core.appendConnectionNameToUrl = appendConnectionNameToUrl;
 
     /**
     * Creates the Jolokia URL string for the given connection options
@@ -276,7 +271,9 @@ var Core;
                 password: 'biscuit'
             };
             var localStorage = getLocalStorage();
-            if ('userDetails' in localStorage) {
+            if ('userDetails' in window) {
+                fakeCredentials = window['userDetails'];
+            } else if ('userDetails' in localStorage) {
                 // user checked 'rememberMe'
                 fakeCredentials = angular.fromJson(localStorage['userDetails']);
             }
