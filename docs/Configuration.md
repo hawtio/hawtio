@@ -79,6 +79,25 @@ By default the security in hawtio uses these system properties when running in A
 
 Changing these values is often application server specific. Usually the easiest way to get hawtio working in your container is to just ensure you have a new user with the required role (by default its the 'admin' role).
 
+
+##### Example: customize the allowed roles in Fabric8
+
+Hawtio reads its values in form of system properties. To define them in Fabric8:
+```
+dev:system-property hawtio.roles my_organization_admin
+# restart hawtio bundle
+restart io.hawt.hawtio-web
+```
+Now only users with the `my_organization_admin` role will be allowed to login in Hawtio.
+
+To add the `my_organization_admin` role to the `admin` user in Fabric8:
+```
+jaas:manage --realm karaf
+jaas:roleadd admin my_organization_admin
+jaas:update
+```
+
+
 #### Default Security Settings for web containers
 
 By default the security in hawtio uses these system properties when running in any other container which you can override:
