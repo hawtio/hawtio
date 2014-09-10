@@ -260,7 +260,9 @@ module Core {
         password: 'biscuit'
       };
       var localStorage = getLocalStorage();
-      if ('userDetails' in localStorage) {
+      if ('userDetails' in window) {
+        fakeCredentials = window['userDetails'];
+      } else if ('userDetails' in localStorage) {
         // user checked 'rememberMe'
         fakeCredentials = angular.fromJson(localStorage['userDetails']);
       }
