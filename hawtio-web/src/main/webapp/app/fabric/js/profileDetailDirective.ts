@@ -184,13 +184,11 @@ module Fabric {
           arguments: [$scope.versionId, $scope.profileId, attribute, value]
         }, {
           success: () => {
-            // TODO - we're secretly hiding that the ng-click event is firing twice...
-            // notification('success', "Set attribute " + attribute + " to " + value);
+            log.debug("Set attribute ", attribute, " to ", value);
             Core.$apply($scope);
           },
           error: (response) => {
-            console.log("Failed to set attribute " + attribute + " to " + value + " due to " + response.error);
-            // notification('error', "Failed to set attribute " + attribute + " to " + value + " due to " + response.error);
+            log.debug("Failed to set attribute ", attribute, " to ", value, " due to ", response.error);
             Core.$apply($scope);
           }
         });
@@ -203,10 +201,10 @@ module Fabric {
           return parent.id;
         });
         changeProfileParents(jolokia, $scope.versionId, $scope.profileId, parents, () => {
-          Core.notification('success', 'Successfully changed parent profiles of ' + $scope.profileId);
+          log.debug('Successfully changed parent profiles of ', $scope.profileId);
           Core.$apply($scope);
         }, (response) => {
-          Core.notification('error', 'Failed to change parent profiles of ' + $scope.profileId + ' due to ' + response.error);
+          log.debug('Failed to change parent profiles of ', $scope.profileId, ' due to ', response.error);
           Core.$apply($scope);
         });
       };

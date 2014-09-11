@@ -93,9 +93,9 @@ module UI {
       okButtonText: '@',
       showOkButton: '@',
       cancelButtonText: '@',
-      onCancel: '&',
-      onOk: '&',
-      onClose: '&'
+      onCancel: '&?',
+      onOk: '&?',
+      onClose: '&?'
     };
 
     public controller = ($scope, $element, $attrs, $transclude, $compile) => {
