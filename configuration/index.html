@@ -188,22 +188,19 @@
 
 <h5 id = "Example:_customize_the_allowed_roles_in_Fabric8">Example: customize the allowed roles in Fabric8</h5>
 
-<p>Hawtio reads its values in form of system properties. To define them in Fabric8:
-```
-dev:system-property hawtio.roles my<em>organization</em>admin</p>
+<p>Hawtio reads its values in form of system properties. To define them in Fabric8:</p>
 
-<h1 id = "restart_hawtio_bundle">restart hawtio bundle</h1>
+<pre><code>dev:system-property hawtio.roles my_organization_admin
+# restart hawtio bundle
+restart io.hawt.hawtio-web</code></pre>
 
-<p>restart io.hawt.hawtio-web
-```
-Now only users with the <code>my_organization_admin</code> role will be allowed to login in Hawtio.</p>
+<p>Now only users with the <code>my_organization_admin</code> role will be allowed to login in Hawtio.</p>
 
-<p>To add the <code>my_organization_admin</code> role to the <code>admin</code> user in Fabric8:
-```
-jaas:manage &mdash;realm karaf
-jaas:roleadd admin my<em>organization</em>admin
-jaas:update
-```</p>
+<p>To add the <code>my_organization_admin</code> role to the <code>admin</code> user in Fabric8:</p>
+
+<pre><code>jaas:manage --realm karaf
+jaas:roleadd admin my_organization_admin
+jaas:update</code></pre>
 
 <h4 id = "Default_Security_Settings_for_web_containers">Default Security Settings for web containers</h4>
 

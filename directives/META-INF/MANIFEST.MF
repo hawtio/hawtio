@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1410392534167
+Bnd-LastModified: 1410478905565
 Build-Jdk: 1.7.0_55
-Build-Timestamp: Wed, 10 Sep 2014 23:38:25 +0000
+Build-Timestamp: Thu, 11 Sep 2014 23:38:24 +0000
 Built-By: jenkins
 Bundle-ClassPath: .
 Bundle-Description: hawtio :: hawtio-directives
@@ -69,7 +69,7 @@ Os-Name: Linux
 Os-Version: 2.6.32-494.el6.x86_64
 Scm-Connection: scm:git:git@github.com:hawtio/hawtio.git/hawtio-directiv
  es
-Scm-Revision: 7cce6a1e2dba982c638a83d9d5ecae702084cb4d
+Scm-Revision: 425557ca61a13bab9ecd9f7bf7ae2fb3d5e87ed4
 Scm-Url: git@github.com:hawtio/hawtio.git/hawtio-directives
 Specification-Title: hawtio-directives
 Specification-Vendor: JBoss by Red Hat

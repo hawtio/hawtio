@@ -4780,9 +4780,9 @@ var UI;
                 okButtonText: '@',
                 showOkButton: '@',
                 cancelButtonText: '@',
-                onCancel: '&',
-                onOk: '&',
-                onClose: '&'
+                onCancel: '&?',
+                onOk: '&?',
+                onClose: '&?'
             };
             this.controller = function ($scope, $element, $attrs, $transclude, $compile) {
                 $scope.clone = null;
