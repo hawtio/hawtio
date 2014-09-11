@@ -39,7 +39,7 @@ module Fabric {
           $scope.close = (result) => {
             dialog.close();
             if (result) {
-              Fabric.doCreateVersion($scope, jolokia, $location, name);
+              Fabric.doCreateVersion($scope, jolokia, $location, $scope.name);
             }
           }
         }]
