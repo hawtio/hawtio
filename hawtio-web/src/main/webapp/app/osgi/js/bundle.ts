@@ -15,6 +15,9 @@ module Osgi {
 
   export function formatAttributesAndDirectivesForPopover(data:{}, skipVersion:boolean):string {
     var str = "";
+    if (!data) {
+      return str;
+    }
     var sortedKeys = Object.keys(data).sort();
     for (var i = 0; i < sortedKeys.length; i++) {
       var da:any = sortedKeys[i];
