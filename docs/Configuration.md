@@ -83,19 +83,19 @@ Changing these values is often application server specific. Usually the easiest 
 ##### Example: customize the allowed roles in Fabric8
 
 Hawtio reads its values in form of system properties. To define them in Fabric8:
-```
-dev:system-property hawtio.roles my_organization_admin
-# restart hawtio bundle
-restart io.hawt.hawtio-web
-```
+
+    dev:system-property hawtio.roles my_organization_admin
+    # restart hawtio bundle
+    restart io.hawt.hawtio-web
+
 Now only users with the `my_organization_admin` role will be allowed to login in Hawtio.
 
 To add the `my_organization_admin` role to the `admin` user in Fabric8:
-```
-jaas:manage --realm karaf
-jaas:roleadd admin my_organization_admin
-jaas:update
-```
+
+    jaas:manage --realm karaf
+    jaas:roleadd admin my_organization_admin
+    jaas:update
+
 
 
 #### Default Security Settings for web containers
