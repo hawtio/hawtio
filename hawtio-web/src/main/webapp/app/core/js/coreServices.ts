@@ -176,7 +176,7 @@ module Core {
       log.debug("No username set, checking if we have a session");
       // fetch the username if we've already got a session at the server
       var userUrl = jolokiaUrl.replace("jolokia", "user");
-      $.ajax(userUrl, {
+      $.ajax(userUrl, <JQueryAjaxSettings> {
         type: "GET",
         success: (response) => {
           log.debug("Got user response: ", response);
