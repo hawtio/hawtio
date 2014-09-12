@@ -1,5 +1,9 @@
 ### Change Log
 
+#### 1.4.19
+* bug fixes
+* Fixes [these 46 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.19)
+
 #### 1.4.18
 * Hawtio requires Java 1.7 onwards
 * Authentication now detects if running on WebSphere, and adapts authentication to WebSphere specific credentials and APIs
