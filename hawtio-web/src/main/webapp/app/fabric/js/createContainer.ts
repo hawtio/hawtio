@@ -244,21 +244,31 @@ module Fabric {
     $scope.$watch('selectedProfiles', (newValue, oldValue) => {
       if (oldValue !== newValue) {
         log.debug("selectedProfiles: ", $scope.selectedProfiles);
-        $scope.selectedProfileIds = $scope.selectedProfiles.map((p) => { return p.id; }).join(',');
+        if ($scope.selectedProfiles.length > 0) {
+          $scope.selectedProfileIds = $scope.selectedProfiles.map((p) => { return p.id; }).join(',');
+        } else {
+          $scope.selectedProfileIds = "";
+        }
+        log.debug("selectedProfileIds: ", $scope.selectedProfileIds);
       }
     }, true);
 
 
     $scope.$watch('selectedProfileIds', (newValue, oldValue) => {
-      var profileIds = $scope.selectedProfileIds.split(',');
-      var selected = [];
-      profileIds.each((id) => {
-        selected.push({
-          id: id,
-          selected: true
+      if (Core.isBlank($scope.selectedProfileIds)) {
+        $scope.selectedProfiles.length = 0;
+        return;
+      } else {
+        var profileIds = $scope.selectedProfileIds.split(',');
+        var selected = [];
+        profileIds.each((id) => {
+          selected.push({
+            id: id,
+            selected: true
+          });
         });
-      });
-      $scope.selectedProfiles = selected;
+        $scope.selectedProfiles = selected;
+      }
       $location.search('profileIds', $scope.selectedProfileIds);
     });
 
