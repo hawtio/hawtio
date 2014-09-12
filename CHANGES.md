@@ -3,6 +3,7 @@
 #### 1.4.19
 
 * bug fixes
+* Fixed so hawtio deploys out-of-the-box in Apache Tomcat and Apache ServiceMix 5.1
 * Fixes [these 46 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.19)
 
 #### 1.4.18
