@@ -14,9 +14,9 @@ module Fabric {
       $scope.operation = 'getContainer(java.lang.String)';
     }
 
-    $scope.mavenRepoUploadUri = "upload";
-    $scope.mavenRepoDownloadUri = "download";
-    $scope.zookeeperUrl = "zookeeper";
+    $scope.mavenRepoUploadUri;
+    $scope.mavenRepoDownloadUri;
+    $scope.zookeeperUrl;
 
     $scope.username = userDetails.username;
     $scope.password = userDetails.password;
