@@ -39,13 +39,19 @@
             <a class="toggle-action"
                href=""
                ng-show="installed(feature.Installed)"
-               ng-click="uninstall(feature)">
+               ng-click="uninstall(feature)"
+               hawtio-show
+               object-name="{{featuresMBean}"
+               method-name="uninstallFeature">
               <i class="icon-power-off"></i>
             </a>
             <a class="toggle-action"
                href=""
                ng-hide="installed(feature.Installed)"
-               ng-click="install(feature)">
+               ng-click="install(feature)"
+               hawtio-show
+               object-name="{{featuresMBean}"
+               method-name="installFeature">
               <i class="icon-play-circle"></i>
             </a>
           </span>
@@ -64,18 +70,27 @@
         <button class="btn"
                 title="Remove selected feature repository"
                 ng-click="uninstallRepository()"
-                ng-hide="hasFabric"><i class="icon-minus"></i></button>
+                ng-hide="hasFabric"
+                hawtio-show
+                object-name="{{featuresMBean}}"
+                method-name="removeRepository"><i class="icon-minus"></i></button>
         <input type="text"
                class="input-xlarge"
                placeholder="mvn:foo/bar/1.0/xml/features"
                title="New feature repository URL"
                ng-model="newRepositoryURI"
-               ng-hide="hasFabric">
+               ng-hide="hasFabric"
+               hawtio-show
+               object-name="{{featuresMBean}}"
+               method-name="addRepository">
         <button class="btn"
                 title="Add feature repository URL"
                 ng-hide="hasFabric"
                 ng-click="installRepository()"
-                ng-disabled="isValidRepository()"><i class="icon-plus"></i></button>
+                ng-disabled="isValidRepository()"
+                hawtio-show
+                object-name="{{featuresMBean}}"
+                method-name="addRepository"><i class="icon-plus"></i></button>
       </div>
       <div class="row-fluid">
         <div class="bundle-list"
@@ -91,13 +106,19 @@
               <a class="toggle-action"
                  href=""
                  ng-show="installed(feature.Installed)"
-                 ng-click="uninstall(feature)">
+                 ng-click="uninstall(feature)"
+                 hawtio-show
+                 object-name="{{featuresMBean}"
+                 method-name="uninstallFeature">
                 <i class="icon-power-off"></i>
               </a>
               <a class="toggle-action"
                  href=""
                  ng-hide="installed(feature.Installed)"
-                 ng-click="install(feature)">
+                 ng-click="install(feature)"
+                 hawtio-show
+                 object-name="{{featuresMBean}"
+                 method-name="installFeature">
                 <i class="icon-play-circle"></i>
               </a>
             </span>
