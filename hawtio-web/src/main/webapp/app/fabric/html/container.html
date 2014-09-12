@@ -350,6 +350,21 @@
                   </button>
                 </dd>
               </dl>
+              <dl class="dl-horizontal">
+                <dt>ZooKeeper:</dt>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{zookeeperUrl | maskPassword}}"
+                         style="width: 300px">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{zookeeperUrl}}"
+                          title="Click to copy this URL to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
+              </dl>
               <dl class="dl-horizontal" ng-show="mavenRepoUploadUri">
                 <dt>Maven Proxy Upload:</dt>
                 <dd>

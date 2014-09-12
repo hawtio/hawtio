@@ -16,6 +16,7 @@ module Fabric {
 
     $scope.mavenRepoUploadUri = "upload";
     $scope.mavenRepoDownloadUri = "download";
+    $scope.zookeeperUrl = "zookeeper";
 
     $scope.username = userDetails.username;
     $scope.password = userDetails.password;
@@ -218,8 +219,8 @@ module Fabric {
     if (angular.isDefined($scope.containerId)) {
       Core.register(jolokia, $scope, {
         type: 'read', mbean: managerMBean,
-        attribute: ["MavenRepoURI", "MavenRepoUploadURI"],
-      }, onSuccess(mavenUris));
+        attribute: ["MavenRepoURI", "MavenRepoUploadURI", "ZookeeperUrl"],
+      }, onSuccess(mavenAndZookeeperUris));
 
       Core.register(jolokia, $scope, {
         type: 'exec', mbean: managerMBean,
@@ -233,11 +234,12 @@ module Fabric {
       return Log.formatStackTrace(exception);
     };
 
-    function mavenUris(response) {
+    function mavenAndZookeeperUris(response) {
       var obj = response.value;
       if (obj) {
         $scope.mavenRepoUploadUri = obj.MavenRepoUploadURI;
         $scope.mavenRepoDownloadUri = obj.MavenRepoURI;
+        $scope.zookeeperUrl = obj.ZookeeperUrl;
       }
     }
 
