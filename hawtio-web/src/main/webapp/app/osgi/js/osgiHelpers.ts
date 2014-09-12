@@ -357,8 +357,8 @@ module Osgi {
     export function getHawtioConfigAdminMBean(workspace:Workspace):string {
         if (workspace) {
             var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
-            var typeFolder = mbeanTypesToDomain["ConfigAdmin"];
-            var mbeanFolder = typeFolder["hawtio"];
+            var typeFolder = mbeanTypesToDomain["ConfigAdmin"] || {};
+            var mbeanFolder = typeFolder["hawtio"] || {};
             return mbeanFolder["objectName"];
         }
         return null;
