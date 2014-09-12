@@ -1,10 +1,13 @@
 ### Change Log
 
 #### 1.4.19
+
 * bug fixes
+* Fixed so hawtio deploys out-of-the-box in Apache Tomcat and Apache ServiceMix 5.1
 * Fixes [these 46 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.19)
 
 #### 1.4.18
+
 * Hawtio requires Java 1.7 onwards
 * Authentication now detects if running on WebSphere, and adapts authentication to WebSphere specific credentials and APIs
 * Filter now allow to filter by multi values separated by comma
@@ -12,20 +15,25 @@
 * bug fixes
 
 #### 1.4.17
+
 * bug fixes
 
 #### 1.4.16
+
 * bug fixes
 
 #### 1.4.14
+
 * upgrades to jaxb, jackson, dozer and spring to play nicer with the latest [fabric8](http://fabric8.io/) distro
 * Fixes [these 5 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.14+is%3Aclosed)
 
 #### 1.4.12
+
 * [fabric8](http://fabric8.io/) plugin has an improved Containers page and the start of a nice deploy UI with draggy droppy
 * Fixes [these 10 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.12+is%3Aclosed)
 
 #### 1.4.11
+
 * [fabric8](http://fabric8.io/) plugin has a nice funky 'App Store' style Profiles tab for selecting profiles
 * ActiveMQ plugin can now edit and resend messages
 * Minimised the generated JS to reduce the size
@@ -33,11 +41,13 @@
 * Support for Java 1.6 is deprecated
 
 #### 1.4.4
+
 * the Chrome Extension build worked, so we've a shiny new Chrome Extension!
 * various fixes for the new [fabric8](http://fabric8.io/) release
 * Fixes [these 14 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=14&state=closed)
 
 #### 1.4.2
+
 * New pane used for JMX/Camel/ActiveMQ tabs that allows resizing or hiding the JMX tree
 * New terminal theme
 * Restyled container list page in Fabric8 runtime view
