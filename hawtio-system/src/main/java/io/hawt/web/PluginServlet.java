@@ -72,9 +72,11 @@ public class PluginServlet extends HttpServlet {
             try {
                 attributeList = mBeanServer.getAttributes(objectInstance.getObjectName(), attributes);
             } catch (InstanceNotFoundException e) {
-                LOG.warn("Object instance not found: ", e);
+                LOG.warn("Object instance not found: " + objectInstance.getObjectName(), e);
             } catch (ReflectionException e) {
-                LOG.warn("Failed to get attribute list for " + objectInstance.getObjectName(), e);
+                LOG.warn("Failed to get attribute list for mbean: " + objectInstance.getObjectName(), e);
+            } catch (SecurityException e) {
+                LOG.warn("Security issue accessing mbean: " + objectInstance.getObjectName(), e);
             }
 
             if (attributeList != null && attributes.length == attributeList.size()) {

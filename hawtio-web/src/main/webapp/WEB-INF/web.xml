@@ -96,6 +96,11 @@
     <filter-name>AuthenticationFilter</filter-name>
     <url-pattern>/auth/*</url-pattern>
   </filter-mapping>
+  <!-- plugin discovery needs to be authenticated for rbac in karaf 2.4/3.x onwards -->
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/plugin/*</url-pattern>
+  </filter-mapping>
   <!--
        don't want to try and interpret the authentication header
        intended for the proxy
@@ -147,6 +152,7 @@
     <url-pattern>/proxy/*</url-pattern>
   </servlet-mapping>
 
+  <!-- spring-batch plugin is work in progress
     <servlet>
         <servlet-name>springBatch</servlet-name>
         <servlet-class>io.hawt.web.SpringBatchConfigServlet</servlet-class>
@@ -156,7 +162,8 @@
         <servlet-name>springBatch</servlet-name>
         <url-pattern>/springBatch/*</url-pattern>
     </servlet-mapping>
-    
+  -->
+
   <servlet>
     <servlet-name>file-upload</servlet-name>
     <servlet-class>io.hawt.web.UploadServlet</servlet-class>
