@@ -225,6 +225,26 @@ module Fabric {
         };
         break;
 
+      case 'kubernetes':
+        delete schema.properties['jmxUser'];
+        delete schema.properties['jmxPassword'];
+        delete schema.properties['parent'];
+        delete schema.properties['manualIp'];
+        delete schema.properties['preferredAddress'];
+        delete schema.properties['resolver'];
+        delete schema.properties['ensembleServer'];
+        delete schema.properties['proxyUri'];
+        delete schema.properties['adminAccess'];
+        delete schema.properties['path'];
+        delete schema.properties['bindAddress'];
+        delete schema.properties['hostNameContext'];
+
+        schema['tabs'] = {
+          'Common': ['name', 'number'],
+          'Advanced': ['environmentalVariables', 'jvmOpts', '*']
+        };
+        break;
+
       default:
     }
 
