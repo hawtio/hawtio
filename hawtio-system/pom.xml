@@ -66,13 +66,6 @@
       <version>${commons-codec-version}</version>
     </dependency>
 
-    <!-- TODO: deleteme -->
-    <dependency>
-      <groupId>org.apache.karaf.management</groupId>
-      <artifactId>org.apache.karaf.management.server</artifactId>
-      <version>3.0.1</version>
-    </dependency>
-
     <!-- testing -->
     <dependency>
       <groupId>io.hawt</groupId>

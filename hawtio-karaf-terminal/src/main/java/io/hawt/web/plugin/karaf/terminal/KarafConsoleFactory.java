@@ -22,6 +22,7 @@ public class KarafConsoleFactory {
     private final static Logger LOG = LoggerFactory.getLogger(KarafConsoleFactory.class);
 
     private static final String KARAF2_CONSOLE_CLASSNAME = "org.apache.karaf.shell.console.jline.Console";
+    private static final String KARAF3_CONSOLE_FACTORY = "org.apache.karaf.shell.console.factory.ConsoleFactory";
 
     public static final int TERM_WIDTH = 120;
     public static final int TERM_HEIGHT = 400;
@@ -104,7 +105,7 @@ public class KarafConsoleFactory {
         // okay its karaf 3 then
         // TODO: need to lookup the console factory and create the console!
         LOG.debug("Using Karaf 3.x Console API");
-        ServiceReference ref = bundleContext.getServiceReference("(osgi.service.blueprint.compname=consoleFactoryService)");
+        ServiceReference ref = bundleContext.getServiceReference(KARAF3_CONSOLE_FACTORY);
         if (ref != null) {
             Object service = bundleContext.getService(ref);
 
