@@ -59,7 +59,7 @@ public class TerminalServlet extends HttpServlet {
         }
 
         String sessionToken = (String) session.getAttribute(LoginTokenServlet.LOGIN_TOKEN);
-        if (!token.equals(sessionToken)) {
+        if (sessionToken == null || !token.equals(sessionToken)) {
             session.invalidate();
             Helpers.doForbidden(response);
             return;
@@ -67,13 +67,20 @@ public class TerminalServlet extends HttpServlet {
 
         String encoding = request.getHeader("Accept-Encoding");
         boolean supportsGzip = (encoding != null && encoding.toLowerCase().contains("gzip"));
-        SessionTerminal st = (SessionTerminal) session.getAttribute("terminal");
+        SessionTerminal st = null;
+        try {
+            st = (SessionTerminal) session.getAttribute("terminal");
+        } catch (Exception e) {
+            // ignore as we create a new session
+        }
         if (st == null || st.isClosed()) {
             st = new SessionTerminal(getCommandProcessor(), getThreadIO());
             // ensure to create a session as it was closed
             session = request.getSession(true);
+            session.setAttribute(LoginTokenServlet.LOGIN_TOKEN, token);
             session.setAttribute("terminal", st);
         }
+
         String str = request.getParameter("k");
         String f = request.getParameter("f");
         String dump = st.handle(str, f != null && f.length() > 0);
