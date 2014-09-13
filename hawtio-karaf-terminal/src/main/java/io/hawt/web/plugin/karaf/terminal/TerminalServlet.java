@@ -1,25 +1,29 @@
 package io.hawt.web.plugin.karaf.terminal;
 
-import io.hawt.system.Helpers;
-import io.hawt.web.LoginTokenServlet;
-import org.apache.felix.service.command.CommandProcessor;
-import org.apache.felix.service.command.CommandSession;
-import org.apache.felix.service.threadio.ThreadIO;
-import org.apache.karaf.shell.console.jline.Console;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.InterruptedIOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PrintStream;
+import java.util.zip.GZIPOutputStream;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.*;
-import java.lang.reflect.Constructor;
-import java.util.zip.GZIPOutputStream;
+
+import io.hawt.system.Helpers;
+import io.hawt.web.LoginTokenServlet;
+import org.apache.felix.service.command.CommandProcessor;
+import org.apache.felix.service.command.CommandSession;
+import org.apache.felix.service.threadio.ThreadIO;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -29,6 +33,7 @@ public class TerminalServlet extends HttpServlet {
     public static final int TERM_WIDTH = 120;
     public static final int TERM_HEIGHT = 400;
     private final static Logger LOG = LoggerFactory.getLogger(TerminalServlet.class);
+
     /**
      * Pseudo class version ID to keep the IDE quite.
      */
@@ -61,10 +66,12 @@ public class TerminalServlet extends HttpServlet {
         }
 
         String encoding = request.getHeader("Accept-Encoding");
-        boolean supportsGzip = (encoding != null && encoding.toLowerCase().indexOf("gzip") > -1);
+        boolean supportsGzip = (encoding != null && encoding.toLowerCase().contains("gzip"));
         SessionTerminal st = (SessionTerminal) session.getAttribute("terminal");
         if (st == null || st.isClosed()) {
             st = new SessionTerminal(getCommandProcessor(), getThreadIO());
+            // ensure to create a session as it was closed
+            session = request.getSession(true);
             session.setAttribute("terminal", st);
         }
         String str = request.getParameter("k");
@@ -95,11 +102,11 @@ public class TerminalServlet extends HttpServlet {
         }
         return bundleContext;
     }
-    
+
     public class SessionTerminal implements Runnable {
 
         private Terminal terminal;
-        private Console console;
+        private Object console;
         private PipedOutputStream in;
         private PipedInputStream out;
         private boolean closed;
@@ -113,32 +120,8 @@ public class TerminalServlet extends HttpServlet {
                 out = new PipedInputStream();
                 PrintStream pipedOut = new PrintStream(new PipedOutputStream(out), true);
 
-                Constructor ctr = Console.class.getConstructors()[0];
-                if (ctr.getParameterTypes().length <= 7) {
-                    LOG.debug("Using old Karaf Console API");
-                    // the old API does not have the threadIO parameter, so its only 7 parameters
-                    console = (Console) ctr.newInstance(commandProcessor,
-                            new PipedInputStream(in),
-                            pipedOut,
-                            pipedOut,
-                            new WebTerminal(TERM_WIDTH, TERM_HEIGHT),
-                            null,
-                            getBundleContext());
-                } else {
-                    LOG.debug("Using new Karaf Console API");
-                    // use the new api directly which we compile against
-                    console = new Console(commandProcessor,
-                            threadIO,
-                            new PipedInputStream(in),
-                            pipedOut,
-                            pipedOut,
-                            new WebTerminal(TERM_WIDTH, TERM_HEIGHT),
-                            null,
-                            null,
-                            getBundleContext());
-                }
-
-                CommandSession session = console.getSession();
+                console = KarafConsoleFactory.createConsole(commandProcessor, new PipedInputStream(in), pipedOut, threadIO, getBundleContext());
+                CommandSession session = KarafConsoleFactory.getSession(console);
                 session.put("APPLICATION", System.getProperty("karaf.name", "root"));
                 session.put("USER", "karaf");
                 session.put("COLUMNS", Integer.toString(TERM_WIDTH));
@@ -150,7 +133,7 @@ public class TerminalServlet extends HttpServlet {
                 LOG.info("Exception attaching to console", e);
                 throw (IOException) new IOException().initCause(e);
             }
-            new Thread(console).start();
+            new Thread((Runnable) console).start();
             new Thread(this).start();
         }
 
@@ -159,7 +142,7 @@ public class TerminalServlet extends HttpServlet {
         }
 
         public void close() {
-          console.close(true);
+            KarafConsoleFactory.close(console, true);
         }
 
         public String handle(String str, boolean forceDump) throws IOException {

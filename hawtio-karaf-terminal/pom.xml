@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>project</artifactId>
     <groupId>io.hawt</groupId>
@@ -18,7 +19,7 @@
     <!-- filtered plugin properties -->
     <plugin-context>/hawtio-karaf-terminal</plugin-context>
     <plugin-name>${project.artifactId}</plugin-name>
-    <plugin-domain />
+    <plugin-domain/>
     <plugin-scripts>app/js/gogoPlugin.js,app/js/gogo.js</plugin-scripts>
   </properties>
 
@@ -56,15 +57,6 @@
       <version>${felix.gogo.version}</version>
       <scope>provided</scope>
     </dependency>
-
-
-    <dependency>
-      <groupId>org.apache.karaf.shell</groupId>
-      <artifactId>org.apache.karaf.shell.console</artifactId>
-      <version>${karaf-version}</version>
-      <scope>provided</scope>
-    </dependency>
-
 
     <dependency>
       <groupId>jline</groupId>
@@ -129,7 +121,7 @@
             <Embed-Directory>WEB-INF/lib</Embed-Directory>
             <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
             <Embed-Transitive>true</Embed-Transitive>
-            <Export-Package />
+            <Export-Package/>
 
             <Import-Package>
               org.osgi.service.blueprint,
@@ -140,14 +132,13 @@
               org.osgi.service.blueprint.container,
               org.osgi.service.http,
               jline;version="[2.11,3.0)";-split-package:=merge-first,
-              org.apache.karaf.shell.console.jline;version="[2.2,4)",
+              org.apache.karaf.shell.console.jline;resolution:=optional;version="[2.2,4)",
+              org.apache.karaf.shell.console;resolution:=optional;version="[3,4)",
               org.osgi.framework,
               javax.management,
               *;resolution:=optional
             </Import-Package>
-
             <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
-
             <Bundle-Name>${project.description}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
             <Implementation-Title>hawtio karaf terminal plugin</Implementation-Title>
