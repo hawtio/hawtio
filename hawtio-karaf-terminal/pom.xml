@@ -133,7 +133,6 @@
               org.osgi.service.http,
               jline;version="[2.11,3.0)";-split-package:=merge-first,
               org.apache.karaf.shell.console.jline;resolution:=optional;version="[2.2,4)",
-              org.apache.karaf.shell.console;resolution:=optional;version="[3,4)",
               org.osgi.framework,
               javax.management,
               *;resolution:=optional

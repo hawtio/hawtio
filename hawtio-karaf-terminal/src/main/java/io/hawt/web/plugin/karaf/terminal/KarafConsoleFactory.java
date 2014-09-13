@@ -3,11 +3,13 @@ package io.hawt.web.plugin.karaf.terminal;
 import java.io.PipedInputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
 import org.apache.felix.service.threadio.ThreadIO;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +21,6 @@ public class KarafConsoleFactory {
 
     private final static Logger LOG = LoggerFactory.getLogger(KarafConsoleFactory.class);
 
-    private static final String KARAF3_CONSOLE_CLASSNAME = "org.apache.karaf.shell.console.Console";
     private static final String KARAF2_CONSOLE_CLASSNAME = "org.apache.karaf.shell.console.jline.Console";
 
     public static final int TERM_WIDTH = 120;
@@ -49,24 +50,16 @@ public class KarafConsoleFactory {
                                        BundleContext bundleContext) throws Exception {
 
         Class<?> clazz2 = null;
-        Class<?> clazz3 = null;
         try {
             clazz2 = bundleContext.getBundle().loadClass(KARAF2_CONSOLE_CLASSNAME);
-            if (clazz2 == null) {
-                clazz3 = bundleContext.getBundle().loadClass(KARAF3_CONSOLE_CLASSNAME);
-            }
         } catch (Exception e) {
             // ignore
-        }
-
-        if (clazz2 == null && clazz3 == null) {
-            throw new ClassNotFoundException("Cannot load Console class for either Karaf 2.x or 3.x");
         }
 
         if (clazz2 != null) {
             Constructor ctr = clazz2.getConstructors()[0];
             if (ctr.getParameterTypes().length <= 7) {
-                LOG.debug("Using old Karaf Console API");
+                LOG.debug("Using old Karaf 2.x Console API");
 
                 // last parameter may be BundleContext if its redhat version of karaf
                 // for ASF releases its a Runnable, and we should pass in null
@@ -85,7 +78,7 @@ public class KarafConsoleFactory {
                         null,
                         last);
             } else {
-                LOG.debug("Using new Karaf Console API");
+                LOG.debug("Using new Karaf 2.x Console API");
 
                 // last parameter may be BundleContext if its redhat version of karaf
                 // for ASF releases its a Runnable, and we should pass in null
@@ -108,11 +101,19 @@ public class KarafConsoleFactory {
             }
         }
 
-        if (clazz3 != null) {
-            Constructor ctr = clazz3.getConstructors()[0];
+        // okay its karaf 3 then
+        // TODO: need to lookup the console factory and create the console!
+        LOG.debug("Using Karaf 3.x Console API");
+        ServiceReference ref = bundleContext.getServiceReference("(osgi.service.blueprint.compname=consoleFactoryService)");
+        if (ref != null) {
+            Object service = bundleContext.getService(ref);
+
+            // invoke the create method
+            Method method = service.getClass().getMethods()[0];
+            return method.invoke(service, in, pipedOut, pipedOut, new WebTerminal(TERM_WIDTH, TERM_HEIGHT), null, null);
         }
 
-        throw new ClassNotFoundException("Cannot load Console class for either Karaf 2.x or 3.x");
+        throw new IllegalArgumentException("Karaf 3.x consoleFactoryService not found");
     }
 
 }
