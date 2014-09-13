@@ -4,12 +4,20 @@
             <td></td>
             <td class="less-big">
                 <div class="btn-group">
-                    <button ng-disabled="selectedComponents.length == 0" class="btn" ng-click="activate()"><i
-                            class="icon-play-circle"></i> Activate
-                    </button>
-                    <button ng-disabled="selectedComponents.length == 0" class="btn" ng-click="deactivate()"><i
-                            class="icon-off"></i> Deactivate
-                    </button>
+                  <button class="btn" 
+                          ng-click="activate()"
+                          hawtio-show
+                          object-name="{{scrMBean}}"
+                          method-name="activateComponent">
+                    <i class="icon-play-circle"></i> Activate
+                  </button>
+                  <button class="btn" 
+                          ng-click="deactivate()"
+                          hawtio-show
+                          object-name="{{scrMBean}}"
+                          method-name="deactiveateComponent">
+                    <i class="icon-off"></i> Deactivate
+                  </button>
                 </div>
             </td>
         </tr>

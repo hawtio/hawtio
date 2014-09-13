@@ -4,8 +4,22 @@
             <td></td>
             <td class="less-big">
                 <div class="btn-group">
-                    <button ng-click="uninstall(name,version)" class="btn icon-off" title="uninstall"></button>
-                    <button ng-click="install(name,version)" class="btn icon-play-circle" title="install"></button>
+                  <button ng-click="uninstall(name,version)" 
+                          class="btn" 
+                          title="uninstall" 
+                          hawtio-show
+                          object-name="{{featuresMBean}"
+                          method-name="uninstallFeature">
+                    <i class="icon-off"></i>
+                  </button>
+                  <button ng-click="install(name,version)" 
+                          class="btn" 
+                          title="install" 
+                          hawtio-show
+                          object-name="{{featuresMBean}"
+                          method-name="installFeature">
+                    <i class=icon-play-circle"></i>
+                  </button>
                 </div>
             </td>
         </tr>
