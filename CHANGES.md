@@ -1,5 +1,10 @@
 ### Change Log
 
+#### 1.4.20
+
+* bug fixes
+* Hawtio terminal now also supports Karaf 3.x
+
 #### 1.4.19
 
 * bug fixes

@@ -58,6 +58,14 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- karaf 3 support -->
+    <dependency>
+      <groupId>org.apache.karaf.shell</groupId>
+      <artifactId>org.apache.karaf.shell.console</artifactId>
+      <version>3.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>jline</groupId>
       <artifactId>jline</artifactId>
