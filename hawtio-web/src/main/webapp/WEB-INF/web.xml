@@ -96,11 +96,13 @@
     <filter-name>AuthenticationFilter</filter-name>
     <url-pattern>/auth/*</url-pattern>
   </filter-mapping>
-  <!-- plugin discovery needs to be authenticated for rbac in karaf 2.4/3.x onwards -->
+
+  <!-- plugin discovery needs to be authenticated for rbac in karaf 3.x onwards
+       or we need a wait to have hawtio in the whitelist out of the box
   <filter-mapping>
     <filter-name>AuthenticationFilter</filter-name>
     <url-pattern>/plugin/*</url-pattern>
-  </filter-mapping>
+  </filter-mapping> -->
   <!--
        don't want to try and interpret the authentication header
        intended for the proxy
