@@ -101,7 +101,7 @@
     <dependency>
       <groupId>io.fabric8</groupId>
       <artifactId>fabric-openshift</artifactId>
-        <version>${fabric-version}</version>
+        <version>${fabric-test-version}</version>
         <scope>test</scope>
     </dependency>
 
