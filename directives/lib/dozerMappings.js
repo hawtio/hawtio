@@ -1,47 +1,29 @@
 var io_hawt_dozer_schema_Mappings = {
   "type" : "object",
-  "id" : "urn:jsonschema:io:hawt:dozer:schema:Mappings",
   "properties" : {
-    "mapping" : {
-      "type" : "array",
-      "items" : {
-        "$ref" : "urn:jsonschema:io:hawt:dozer:schema:Mapping"
-      }
-    },
     "configuration" : {
       "type" : "object",
-      "id" : "urn:jsonschema:io:hawt:dozer:schema:Configuration",
       "properties" : {
-        "trim-strings" : {
+        "stop-on-errors" : {
           "type" : "boolean"
-        },
-        "wildcard" : {
-          "type" : "boolean"
-        },
-        "bean-factory" : {
-          "type" : "string"
-        },
-        "map-null" : {
-          "type" : "boolean"
-        },
-        "copy-by-references" : {
-          "type" : "object",
-          "id" : "urn:jsonschema:io:hawt:dozer:schema:CopyByReferences",
-          "properties" : {
-            "copy-by-reference" : {
-              "type" : "array",
-              "required" : true,
-              "items" : {
-                "type" : "string"
-              }
-            }
-          }
         },
         "date-format" : {
           "type" : "string"
         },
-        "stop-on-errors" : {
+        "wildcard" : {
           "type" : "boolean"
+        },
+        "trim-strings" : {
+          "type" : "boolean"
+        },
+        "map-null" : {
+          "type" : "boolean"
+        },
+        "map-empty-string" : {
+          "type" : "boolean"
+        },
+        "bean-factory" : {
+          "type" : "string"
         },
         "relationship-type" : {
           "type" : "string",
@@ -49,69 +31,239 @@ var io_hawt_dozer_schema_Mappings = {
         },
         "custom-converters" : {
           "type" : "object",
-          "id" : "urn:jsonschema:io:hawt:dozer:schema:CustomConverters",
           "properties" : {
             "converter" : {
               "type" : "array",
-              "required" : true,
               "items" : {
                 "type" : "object",
-                "id" : "urn:jsonschema:io:hawt:dozer:schema:ConverterType",
                 "properties" : {
-                  "type" : {
-                    "type" : "string"
-                  },
                   "class-a" : {
                     "type" : "object",
-                    "$ref" : "urn:jsonschema:io:hawt:dozer:schema:Class",
+                    "properties" : {
+                      "value" : {
+                        "type" : "string"
+                      },
+                      "bean-factory" : {
+                        "type" : "string"
+                      },
+                      "factory-bean-id" : {
+                        "type" : "string"
+                      },
+                      "map-set-method" : {
+                        "type" : "string"
+                      },
+                      "map-get-method" : {
+                        "type" : "string"
+                      },
+                      "create-method" : {
+                        "type" : "string"
+                      },
+                      "map-null" : {
+                        "type" : "boolean"
+                      },
+                      "map-empty-string" : {
+                        "type" : "boolean"
+                      },
+                      "is-accessible" : {
+                        "type" : "boolean"
+                      }
+                    },
                     "required" : true
                   },
                   "class-b" : {
                     "type" : "object",
-                    "$ref" : "urn:jsonschema:io:hawt:dozer:schema:Class",
+                    "properties" : {
+                      "value" : {
+                        "type" : "string"
+                      },
+                      "bean-factory" : {
+                        "type" : "string"
+                      },
+                      "factory-bean-id" : {
+                        "type" : "string"
+                      },
+                      "map-set-method" : {
+                        "type" : "string"
+                      },
+                      "map-get-method" : {
+                        "type" : "string"
+                      },
+                      "create-method" : {
+                        "type" : "string"
+                      },
+                      "map-null" : {
+                        "type" : "boolean"
+                      },
+                      "map-empty-string" : {
+                        "type" : "boolean"
+                      },
+                      "is-accessible" : {
+                        "type" : "boolean"
+                      }
+                    },
                     "required" : true
+                  },
+                  "type" : {
+                    "type" : "string"
                   }
                 }
-              }
+              },
+              "required" : true
             }
           }
         },
-        "map-empty-string" : {
-          "type" : "boolean"
-        },
-        "variables" : {
+        "copy-by-references" : {
           "type" : "object",
-          "id" : "urn:jsonschema:io:hawt:dozer:schema:Variables",
           "properties" : {
-            "variable" : {
+            "copy-by-reference" : {
               "type" : "array",
-              "required" : true,
               "items" : {
-                "type" : "object",
-                "id" : "urn:jsonschema:io:hawt:dozer:schema:Variable",
-                "properties" : {
-                  "name" : {
-                    "type" : "string"
-                  },
-                  "value" : {
-                    "type" : "string"
-                  }
-                }
-              }
+                "type" : "string"
+              },
+              "required" : true
             }
           }
         },
         "allowed-exceptions" : {
           "type" : "object",
-          "id" : "urn:jsonschema:io:hawt:dozer:schema:AllowedExceptions",
           "properties" : {
             "exception" : {
               "type" : "array",
-              "required" : true,
               "items" : {
                 "type" : "string"
+              },
+              "required" : true
+            }
+          }
+        },
+        "variables" : {
+          "type" : "object",
+          "properties" : {
+            "variable" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "properties" : {
+                  "value" : {
+                    "type" : "string"
+                  },
+                  "name" : {
+                    "type" : "string"
+                  }
+                }
+              },
+              "required" : true
+            }
+          }
+        }
+      }
+    },
+    "mapping" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "class-a" : {
+            "type" : "object",
+            "properties" : {
+              "value" : {
+                "type" : "string"
+              },
+              "bean-factory" : {
+                "type" : "string"
+              },
+              "factory-bean-id" : {
+                "type" : "string"
+              },
+              "map-set-method" : {
+                "type" : "string"
+              },
+              "map-get-method" : {
+                "type" : "string"
+              },
+              "create-method" : {
+                "type" : "string"
+              },
+              "map-null" : {
+                "type" : "boolean"
+              },
+              "map-empty-string" : {
+                "type" : "boolean"
+              },
+              "is-accessible" : {
+                "type" : "boolean"
               }
             }
+          },
+          "class-b" : {
+            "type" : "object",
+            "properties" : {
+              "value" : {
+                "type" : "string"
+              },
+              "bean-factory" : {
+                "type" : "string"
+              },
+              "factory-bean-id" : {
+                "type" : "string"
+              },
+              "map-set-method" : {
+                "type" : "string"
+              },
+              "map-get-method" : {
+                "type" : "string"
+              },
+              "create-method" : {
+                "type" : "string"
+              },
+              "map-null" : {
+                "type" : "boolean"
+              },
+              "map-empty-string" : {
+                "type" : "boolean"
+              },
+              "is-accessible" : {
+                "type" : "boolean"
+              }
+            }
+          },
+          "fieldOrFieldExclude" : {
+            "type" : "array",
+            "items" : {
+              "type" : "any"
+            }
+          },
+          "date-format" : {
+            "type" : "string"
+          },
+          "stop-on-errors" : {
+            "type" : "boolean"
+          },
+          "wildcard" : {
+            "type" : "boolean"
+          },
+          "trim-strings" : {
+            "type" : "boolean"
+          },
+          "map-null" : {
+            "type" : "boolean"
+          },
+          "map-empty-string" : {
+            "type" : "boolean"
+          },
+          "bean-factory" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "ONE_WAY", "BI_DIRECTIONAL" ]
+          },
+          "relationship-type" : {
+            "type" : "string",
+            "enum" : [ "CUMULATIVE", "NON_CUMULATIVE" ]
+          },
+          "map-id" : {
+            "type" : "string"
           }
         }
       }

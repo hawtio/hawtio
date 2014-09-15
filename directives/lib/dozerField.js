@@ -1,28 +1,18 @@
 var io_hawt_dozer_schema_Field = {
   "type" : "object",
-  "id" : "urn:jsonschema:io:hawt:dozer:schema:Field",
   "properties" : {
-    "b" : {
-      "type" : "object",
-      "$ref" : "urn:jsonschema:io:hawt:dozer:schema:FieldDefinition",
-      "required" : true
-    },
-    "a-hint" : {
-      "type" : "string"
-    },
-    "a-deep-index-hint" : {
-      "type" : "string"
-    },
-    "copy-by-reference" : {
-      "type" : "boolean"
-    },
     "a" : {
       "type" : "object",
-      "id" : "urn:jsonschema:io:hawt:dozer:schema:FieldDefinition",
-      "required" : true,
       "properties" : {
-        "is-accessible" : {
-          "type" : "boolean"
+        "value" : {
+          "type" : "string"
+        },
+        "date-format" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : [ "ITERATE", "GENERIC" ]
         },
         "set-method" : {
           "type" : "string"
@@ -30,57 +20,97 @@ var io_hawt_dozer_schema_Field = {
         "get-method" : {
           "type" : "string"
         },
-        "date-format" : {
+        "key" : {
           "type" : "string"
         },
-        "value" : {
-          "type" : "string"
-        },
-        "create-method" : {
+        "map-set-method" : {
           "type" : "string"
         },
         "map-get-method" : {
           "type" : "string"
         },
-        "map-set-method" : {
+        "is-accessible" : {
+          "type" : "boolean"
+        },
+        "create-method" : {
+          "type" : "string"
+        }
+      },
+      "required" : true
+    },
+    "b" : {
+      "type" : "object",
+      "properties" : {
+        "value" : {
+          "type" : "string"
+        },
+        "date-format" : {
           "type" : "string"
         },
         "type" : {
           "type" : "string",
           "enum" : [ "ITERATE", "GENERIC" ]
         },
+        "set-method" : {
+          "type" : "string"
+        },
+        "get-method" : {
+          "type" : "string"
+        },
         "key" : {
           "type" : "string"
+        },
+        "map-set-method" : {
+          "type" : "string"
+        },
+        "map-get-method" : {
+          "type" : "string"
+        },
+        "is-accessible" : {
+          "type" : "boolean"
+        },
+        "create-method" : {
+          "type" : "string"
         }
-      }
+      },
+      "required" : true
+    },
+    "a-hint" : {
+      "type" : "string"
+    },
+    "b-hint" : {
+      "type" : "string"
+    },
+    "a-deep-index-hint" : {
+      "type" : "string"
+    },
+    "b-deep-index-hint" : {
+      "type" : "string"
     },
     "relationship-type" : {
       "type" : "string",
       "enum" : [ "CUMULATIVE", "NON_CUMULATIVE" ]
     },
-    "custom-converter-param" : {
-      "type" : "string"
+    "remove-orphans" : {
+      "type" : "boolean"
     },
     "type" : {
       "type" : "string",
       "enum" : [ "ONE_WAY", "BI_DIRECTIONAL" ]
     },
-    "b-deep-index-hint" : {
+    "map-id" : {
+      "type" : "string"
+    },
+    "copy-by-reference" : {
+      "type" : "boolean"
+    },
+    "custom-converter" : {
       "type" : "string"
     },
     "custom-converter-id" : {
       "type" : "string"
     },
-    "custom-converter" : {
-      "type" : "string"
-    },
-    "remove-orphans" : {
-      "type" : "boolean"
-    },
-    "b-hint" : {
-      "type" : "string"
-    },
-    "map-id" : {
+    "custom-converter-param" : {
       "type" : "string"
     }
   }
