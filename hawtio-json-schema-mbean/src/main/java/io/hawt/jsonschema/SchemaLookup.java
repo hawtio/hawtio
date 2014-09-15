@@ -2,9 +2,8 @@ package io.hawt.jsonschema;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.jsonschema.JsonSchema;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
 import io.hawt.jsonschema.internal.customizers.JsonSchemaCustomizer;
 import io.hawt.util.MBeanSupport;
 import io.hawt.jsonschema.internal.BeanValidationAnnotationModule;
@@ -102,11 +101,13 @@ public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
         String name = clazz.getName();
         try {
             ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
-            SchemaFactoryWrapper schemaFactoryWrapper = new SchemaFactoryWrapper();
-            mapper.acceptJsonFormatVisitor(mapper.constructType(clazz), schemaFactoryWrapper);
-            com.fasterxml.jackson.module.jsonSchema.JsonSchema jsonSchema = schemaFactoryWrapper.finalSchema();
+            JsonSchema jsonSchema = mapper.generateJsonSchema(clazz);
             customizeSchema(clazz, jsonSchema);
             return writer.writeValueAsString(jsonSchema);
+//            SchemaFactoryWrapper schemaFactoryWrapper = new SchemaFactoryWrapper();
+//            mapper.acceptJsonFormatVisitor(mapper.constructType(clazz), schemaFactoryWrapper);
+//            com.fasterxml.jackson.module.jsonSchema.JsonSchema jsonSchema = schemaFactoryWrapper.finalSchema();
+//            return writer.writeValueAsString(jsonSchema);
         } catch (Exception e) {
             LOG.warn("Failed to generate JSON schema for class " + name, e);
             throw new RuntimeException(e);

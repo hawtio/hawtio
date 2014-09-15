@@ -52,6 +52,14 @@ public class SchemaLookupTest {
     }
 
     @Test
+    public void testCreateOpenshiftContainerOptions() throws Exception {
+        SchemaLookup lookup = createSchemaLookup();
+        String result = lookup.getSchemaForClass("io.fabric8.openshift.CreateOpenshiftContainerOptions");
+        System.out.println("testCreateOpenshiftContainerOptions - Got: \n\n" + result + "\n\n");
+        assertTrue(result.contains("\"default\" : \"openshift.redhat.com\""));
+    }
+
+    @Test
     public void testObjectWithValidationAnnotations() throws Exception {
         SchemaLookup lookup = createSchemaLookup();
         String result = lookup.getSchemaForClass("io.hawt.jsonschema.test.objects.ObjectWithValidationAnnotations");
