@@ -101,8 +101,6 @@ module Fabric {
 
     SelectionHelpers.decorate($scope);
 
-    Fabric.loadRestApi(jolokia, $scope);
-
     $scope.$on('Fabric.AppViewPaneController.filter', ($event, newValue) => {
       $scope.textFilter = newValue;
     });
@@ -120,18 +118,22 @@ module Fabric {
 
     var unreg:() => void = null;
 
-    $scope.$watch('selectedVersion.id', (newValue, oldValue) => {
-      if (!Core.isBlank(newValue)) {
-        if (unreg) {
-          unreg();
+    Fabric.loadRestApi(jolokia, undefined, (response) => {
+      $scope.restApiUrl = UrlHelpers.maybeProxy(Core.injector.get('jolokiaUrl'), response.value);
+      log.debug("Scope rest API: ", $scope.restApiUrl);
+      $scope.$watch('selectedVersion.id', (newValue, oldValue) => {
+        if (!Core.isBlank(newValue)) {
+          if (unreg) {
+            unreg();
+          }
+          unreg = <() => void>Core.registerForChanges(jolokia, $scope, {
+            type: 'exec',
+            mbean: Fabric.managerMBean,
+            operation: 'getProfiles(java.lang.String,java.util.List)',
+            arguments: [newValue, profileFields]
+          }, render);
         }
-        unreg = <() => void>Core.registerForChanges(jolokia, $scope, {
-          type: 'exec',
-          mbean: Fabric.managerMBean,
-          operation: 'getProfiles(java.lang.String,java.util.List)',
-          arguments: [newValue, profileFields]
-        }, render);
-      }
+      });
     });
 
     $scope.viewProfile = (profile:Profile) => {

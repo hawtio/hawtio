@@ -26,7 +26,6 @@ module Fabric {
     var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location', 'alive', 'type', 'ensembleServer', 'provisionResult', 'root', 'jolokiaUrl', 'jmxDomains', 'metadata'];
     var profileFields = ['id', 'hidden', 'version', 'summaryMarkdown', 'iconURL', 'tags'];
 
-    Fabric.loadRestApi(jolokia, $scope);
     Fabric.initScope($scope, $location, jolokia, workspace);
     SelectionHelpers.decorate($scope);
 
@@ -141,55 +140,59 @@ module Fabric {
       return answer;
     }
 
-    Core.registerForChanges(jolokia, $scope, {
-      type: 'exec',
-      mbean: Fabric.managerMBean,
-      operation: 'containers(java.util.List, java.util.List)',
-      arguments:[containerFields, profileFields]
-    }, (response) => {
-      var containers = response.value;
-      SelectionHelpers.sync($scope.selectedContainers, containers, 'id');
-      var versions = {};
-      var locations = {};
-      // massage the returned data a bit first
-      containers.forEach((container) => {
-        if (Core.isBlank(container.location)) {
-          container.location = ContainerHelpers.NO_LOCATION;
-        }
-        container.profiles = container.profiles.filter((p) => { return !p.hidden });
-        container.icon = Fabric.getTypeIcon(container);
-        container.services = Fabric.getServiceList(container);
-      });
-      var versions = groupByVersions(containers);
-      angular.forEach(versions, (version, versionId) => {
-        version.profiles.forEach((profile) => {
-          var containers = version.containers.filter((c) => { return c.profileIds.some(profile.id); });
-          profile.aliveCount = containers.count((c) => { return c.alive; });
-          profile.deadCount = containers.length - profile.aliveCount;
-          profile.summary = profile.summaryMarkdown ? marked(profile.summaryMarkdown) : '';
-          profile.iconURL = Fabric.toIconURL($scope, profile.iconURL);
-          profile.tags = ProfileHelpers.getTags(profile);
+    Fabric.loadRestApi(jolokia, undefined, (response) => {
+      $scope.restApiUrl = UrlHelpers.maybeProxy(Core.injector.get('jolokiaUrl'), response.value);
+      log.debug("Scope rest API: ", $scope.restApiUrl);
+      Core.registerForChanges(jolokia, $scope, {
+        type: 'exec',
+        mbean: Fabric.managerMBean,
+        operation: 'containers(java.util.List, java.util.List)',
+        arguments:[containerFields, profileFields]
+      }, (response) => {
+        var containers = response.value;
+        SelectionHelpers.sync($scope.selectedContainers, containers, 'id');
+        var versions = {};
+        var locations = {};
+        // massage the returned data a bit first
+        containers.forEach((container) => {
+          if (Core.isBlank(container.location)) {
+            container.location = ContainerHelpers.NO_LOCATION;
+          }
+          container.profiles = container.profiles.filter((p) => { return !p.hidden });
+          container.icon = Fabric.getTypeIcon(container);
+          container.services = Fabric.getServiceList(container);
         });
+        var versions = groupByVersions(containers);
+        angular.forEach(versions, (version, versionId) => {
+          version.profiles.forEach((profile) => {
+            var containers = version.containers.filter((c) => { return c.profileIds.some(profile.id); });
+            profile.aliveCount = containers.count((c) => { return c.alive; });
+            profile.deadCount = containers.length - profile.aliveCount;
+            profile.summary = profile.summaryMarkdown ? marked(profile.summaryMarkdown) : '';
+            profile.iconURL = Fabric.toIconURL($scope, profile.iconURL);
+            profile.tags = ProfileHelpers.getTags(profile);
+          });
+        });
+        var locations = groupByLocation(containers);
+        var locationIds = ContainerHelpers.extractLocations(containers);
+        $scope.locationMenu = ContainerHelpers.buildLocationMenu($scope, jolokia, locationIds);
+        // grouped by location
+        $scope.locations = locations;
+        // grouped by version/profile
+        $scope.versions = versions;
+        // list view
+        $scope.containers = containers;
+        Core.$apply($scope);
       });
-      var locations = groupByLocation(containers);
-      var locationIds = ContainerHelpers.extractLocations(containers);
-      $scope.locationMenu = ContainerHelpers.buildLocationMenu($scope, jolokia, locationIds);
-      // grouped by location
-      $scope.locations = locations;
-      // grouped by version/profile
-      $scope.versions = versions;
-      // list view
-      $scope.containers = containers;
-      Core.$apply($scope);
-    });
 
-    Core.registerForChanges(jolokia, $scope, {
-      type: 'read',
-      mbean: Fabric.clusterManagerMBean,
-      attribute: 'EnsembleContainers'
-    }, (response) => {
-      $scope.ensembleContainerIds = response.value;
-      Core.$apply($scope);
+      Core.registerForChanges(jolokia, $scope, {
+        type: 'read',
+        mbean: Fabric.clusterManagerMBean,
+        attribute: 'EnsembleContainers'
+      }, (response) => {
+        $scope.ensembleContainerIds = response.value;
+        Core.$apply($scope);
+      });
     });
 
   }]);

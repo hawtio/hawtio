@@ -69,7 +69,7 @@ module UrlHelpers {
    * @returns {*}
    */
   export function maybeProxy(jolokiaUrl:string, url:string) {
-    if (jolokiaUrl.has('/proxy/')) {
+    if (jolokiaUrl.startsWith('proxy/')) {
       return join('proxy', url);
     } else {
       return url;
