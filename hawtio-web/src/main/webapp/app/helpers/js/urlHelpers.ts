@@ -76,4 +76,14 @@ module UrlHelpers {
     }
   }
 
+  export function escapeColons(url:string):string {
+    var answer = url;
+    if (url.startsWith('proxy')) {
+      answer = url.replace(/:/g, '\\:');
+    } else {
+      answer = url.replace(/:([^\/])/, '\\:');
+    }
+    return answer;
+  }
+
 }

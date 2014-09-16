@@ -38,29 +38,43 @@ module Kubernetes {
     return answer.promise;
   }]);
 
-  _module.factory('KubernetesPods', ['KubernetesApiURL', '$q', '$resource', '$rootScope', (KubernetesApiURL:ng.IPromise<string>, $q:ng.IQService, $resource:ng.resource.IResourceService, $rootScope:ng.IRootScopeService) => {
-    var answer = <ng.IDeferred<ng.resource.IResourceClass>>$q.defer();
+  function createResource(deferred:ng.IDeferred<ng.resource.IResourceClass>, thing:string, urlTemplate:string) {
+    var $rootScope = <ng.IRootScopeService> Core.injector.get("$rootScope");
+    var $resource = <ng.resource.IResourceService> Core.injector.get("$resource");
+    var KubernetesApiURL = <ng.IPromise<string>> Core.injector.get("KubernetesApiURL");
+
     KubernetesApiURL.then((KubernetesApiURL) => {
-      var url = KubernetesApiURL;
-      if (url.startsWith('proxy')) {
-        url = KubernetesApiURL.replace(/:/g, '\\:');
-      } else {
-        url = KubernetesApiURL.replace(/:([^\/])/, '\\:');
-      }
-      log.debug("resource URL: ", url);
-      var resource = $resource(UrlHelpers.join(url, '/api/v1beta1/pods/:id'), null, {
+      var url = UrlHelpers.escapeColons(KubernetesApiURL);
+      var resource = $resource(UrlHelpers.join(url, urlTemplate), null, {
         'query': {
           method: 'GET',
           isArray: false
         }
       });
-      answer.resolve(resource);
+      deferred.resolve(resource);
       Core.$apply($rootScope);
     }, (response) => {
-      log.debug("Failed to get rest API URL, can't create pods resource: ", response);
-      answer.reject(response);
+      log.debug("Failed to get rest API URL, can't create " + thing + " resource: ", response);
+      deferred.reject(response);
       Core.$apply($rootScope);
     });
+  }
+
+  _module.factory('KubernetesPods', ['$q', ($q:ng.IQService) => {
+    var answer = <ng.IDeferred<ng.resource.IResourceClass>>$q.defer();
+    createResource(answer, 'pods', '/api/v1beta1/pods/:id');
+    return answer.promise;
+  }]);
+
+  _module.factory('KubernetesReplicationControllers', ['$q', ($q:ng.IQService) => {
+    var answer = <ng.IDeferred<ng.resource.IResourceClass>>$q.defer();
+    createResource(answer, 'replication controllers', '/api/v1beta1/replicationControllers/:id');
+    return answer.promise;
+  }]);
+
+  _module.factory('KubernetesServices', ['$q', ($q:ng.IQService) => {
+    var answer = <ng.IDeferred<ng.resource.IResourceClass>>$q.defer();
+    createResource(answer, 'services', '/api/v1beta1/services/:id');
     return answer.promise;
   }]);
 
