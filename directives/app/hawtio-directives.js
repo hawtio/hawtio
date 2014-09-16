@@ -1185,7 +1185,7 @@ var DataTable;
                     Core.pathSet(scope, dataName, value);
                 }
 
-                if (!('sortInfo' in config)) {
+                if (!('sortInfo' in config) && 'columnDefs' in config) {
                     // an optional defaultSort can be used to indicate a column
                     // should not automatic be the default sort
                     var ds = config.columnDefs.first()['defaultSort'];
@@ -1197,6 +1197,11 @@ var DataTable;
                     }
                     config['sortInfo'] = {
                         sortBy: sortField,
+                        ascending: true
+                    };
+                } else {
+                    config['sortInfo'] = {
+                        sortBy: '',
                         ascending: true
                     };
                 }
