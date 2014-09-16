@@ -45,6 +45,9 @@ module Perspective {
             href: "#/wiki/profile"
           },
           {
+            id: "fabric.kubernetes"
+          },
+          {
             href: "#/docker"
           },
           {
@@ -109,6 +112,9 @@ module Perspective {
           },
           {
             id: "fabric.requirements"
+          },
+          {
+            id: "fabric.kubernetes"
           },
           {
             href: "#/insight"
