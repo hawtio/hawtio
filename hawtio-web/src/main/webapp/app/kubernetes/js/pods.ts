@@ -5,6 +5,8 @@ module Kubernetes {
   export var Pods = controller("Pods", ["$scope", "KubernetesPods", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>) => {
 
     $scope.pods = []
+    $scope.fetched = false;
+
     $scope.podsConfig = {
       data: 'pods',
       showSelectionCheckbox: false,
@@ -32,6 +34,7 @@ module Kubernetes {
 
     KubernetesPods.then((KubernetesPods:ng.resource.IResourceClass) => {
       KubernetesPods.query((response) => {
+        $scope.fetched = true;
         $scope.pods = response['items'];
       });
     });

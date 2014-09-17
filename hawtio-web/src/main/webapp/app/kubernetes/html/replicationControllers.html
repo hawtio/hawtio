@@ -1,0 +1,18 @@
+<div class="row-fluid" ng-controller="Kubernetes.ReplicationControllers">
+  <div class="span12">
+    <div ng-hide="fetched">
+      <div class="align-center">
+        <i class="icon-spinner icon-spin"></i>
+      </div>
+    </div>
+    <div ng-show="fetched">
+      <div ng-hide="pods.length" class="align-center">
+        <p class="alert alert-info">There are no replication controllers currently running.</p>
+      </div>
+      <div ng-show="pods.length">
+        <table class="table table-condensed table-striped"
+               hawtio-simple-table="tableConfig"></table>
+      </div>
+    </div>
+  </div>
+</div>
