@@ -1,9 +1,22 @@
 <div class="row-fluid" ng-controller="Kubernetes.TopLevel">
   <div class="span12">
-    <!-- sub tabs if we want 'em
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs connected">
+      <li ng-class='{active : isActive("#/fabric/kubernetes/pods")}'
+          title="View kubernetes pods and their status">
+        <a ng-href="#/fabric/kubernetes/pods">Pods</a>
+      </li>
+      <li ng-class='{active : isActive("#/fabric/kubernetes/replicationControllers")}'
+          title="View kubernetes replication controllers and their status">
+        <a ng-href="#/fabric/kubernetes/replicationControllers">Replication Controllers</a>
+      </li>
+      <li ng-class='{active : isActive("#/fabric/kubernetes/services")}'
+          title="View kubernetes services and their status">
+        <a ng-href="#/fabric/kubernetes/services">Services</a>
+      </li>
+      <li class=pull-right>
+        <span ng-show="version">Kubernetes version: {{version.major}}.{{version.minor}}</span>
+      <li>
     </ul>
-    -->
     <div class="row-fluid" ng-view>
     </div>
   </div>
