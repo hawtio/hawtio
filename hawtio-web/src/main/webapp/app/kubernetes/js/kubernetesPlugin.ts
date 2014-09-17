@@ -16,7 +16,9 @@ module Kubernetes {
   export var route = PluginHelpers.createRoutingFunction(templatePath);
 
   _module.config(['$routeProvider', ($routeProvider:ng.route.IRouteProvider) => {
-    $routeProvider.when(UrlHelpers.join(context, 'pods'), route('pods.html'));
+    $routeProvider.when(UrlHelpers.join(context, 'pods'), route('pods.html'))
+                  .when(UrlHelpers.join(context, 'replicationControllers'), route('replicationControllers.html'))
+                  .when(UrlHelpers.join(context, 'services'), route('services.html'));
   }]);
 
   // set up a promise that supplies the API URL for Kubernetes, proxied if necessary
