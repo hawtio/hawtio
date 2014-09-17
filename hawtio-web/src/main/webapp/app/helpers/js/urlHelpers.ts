@@ -81,7 +81,7 @@ module UrlHelpers {
     if (url.startsWith('proxy')) {
       answer = url.replace(/:/g, '\\:');
     } else {
-      answer = url.replace(/:([^\/])/, '\\:');
+      answer = url.replace(/:([^\/])/, '\\:$1');
     }
     return answer;
   }
