@@ -12,10 +12,7 @@ module Kubernetes {
       enableRowClickSelection: false,
       multiSelect: false,
       columnDefs: [
-        {
-          field: 'id',
-          displayName: 'ID'
-        }
+        { field: 'id', displayName: 'ID' },
       ]
     };
 
