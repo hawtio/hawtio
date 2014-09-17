@@ -1,6 +1,8 @@
 /// <reference path="../../baseIncludes.ts"/>
 module UrlHelpers {
 
+  var log = Logger.get("UrlHelpers");
+
   /**
    * Returns the URL without the starting '#' if it's there
    * @param url
@@ -63,19 +65,30 @@ module UrlHelpers {
   export var parseQueryString = hawtioPluginLoader.parseQueryString;
 
   /**
-   * Apply a proxy to the supplied URL if the jolokiaUrl is using the proxy
+   * Apply a proxy to the supplied URL if the jolokiaUrl is using the proxy, or if the URL is for a a different host/port
    * @param jolokiaUrl
    * @param url
    * @returns {*}
    */
   export function maybeProxy(jolokiaUrl:string, url:string) {
     if (jolokiaUrl.startsWith('proxy/')) {
+      log.debug("Jolokia URL is proxied, applying proxy to: ", url);
       return join('proxy', url);
-    } else {
-      return url;
+    } 
+    var origin = window.location['origin'];
+    if (url.startsWith('http') && !url.startsWith(origin)) {
+      log.debug("Url doesn't match page origin: ", origin, " applying proxy to: ", url);
+      return join('proxy', url);
     }
+    log.debug("No need to proxy: ", url);
+    return url;
   }
 
+  /**
+   * Escape any colons in the URL for ng-resource, mostly useful for handling proxified URLs
+   * @param url
+   * @returns {*}
+   */
   export function escapeColons(url:string):string {
     var answer = url;
     if (url.startsWith('proxy')) {
