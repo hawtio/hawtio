@@ -71,12 +71,12 @@ module UrlHelpers {
    * @returns {*}
    */
   export function maybeProxy(jolokiaUrl:string, url:string) {
-    if (jolokiaUrl.startsWith('proxy/')) {
+    if (jolokiaUrl && jolokiaUrl.startsWith('proxy/')) {
       log.debug("Jolokia URL is proxied, applying proxy to: ", url);
       return join('proxy', url);
     } 
     var origin = window.location['origin'];
-    if (url.startsWith('http') && !url.startsWith(origin)) {
+    if (url && (url.startsWith('http') && !url.startsWith(origin))) {
       log.debug("Url doesn't match page origin: ", origin, " applying proxy to: ", url);
       return join('proxy', url);
     }
