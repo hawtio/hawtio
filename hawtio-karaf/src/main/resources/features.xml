@@ -84,7 +84,7 @@
 
   <feature name="hawtio-karaf-terminal" version="${project.version}" resolver="(obr)">
     <details>A terminal plugin for hawtio when installed in Karaf</details>
-    <bundle>mvn:jline/jline/${jline.version}</bundle>
+    <bundle dependency="true">mvn:jline/jline/${jline.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-karaf-terminal/${project.version}/war</bundle>
   </feature>
 
