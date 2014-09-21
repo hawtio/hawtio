@@ -3744,6 +3744,15 @@ span.hawtio-dropdown .dropdown-menu {
   -moz-box-shadow: 2px 2px 19px #e0e0e0;
   -moz-border-radius: 4px;
   border-radius: 4px;
+  background-color: lightgrey;
+  fill: lightgrey;
+}
+
+.window,
+.node.selected > rect {
+    stroke-width: 2px;
+    stroke-dasharray: 10,5;
+    stroke: red;
 }
 
 .window-inner {
