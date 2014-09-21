@@ -109,7 +109,9 @@
     <!-- route for having something trigger all the time -->
     <route id="timerToAMQ">
       <from uri="timer:foo?period=1000"/>
-      <setBody><constant>Hello World</constant></setBody>
+      <transform>
+        <constant>Hello World</constant>
+      </transform>
       <delay><constant>1500</constant></delay>
       <setBody><constant>A Delayed Hello World</constant></setBody>
       <setHeader headerName="myHeader">
@@ -121,7 +123,9 @@
 
     <route id="bytesToAMQ">
       <from uri="timer:foo?period=2000"/>
-      <setBody><constant>Hello World</constant></setBody>
+      <transform>
+        <constant>Hello World</constant>
+      </transform>
       <delay><constant>1000</constant></delay>
       <setBody><constant>A Delayed Hello World</constant></setBody>
       <setHeader headerName="myHeader">
