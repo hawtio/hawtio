@@ -78,9 +78,7 @@
   </bean>
 
   <!-- use camel-metrics route policy to gather metrics for all routes -->
-  <!-- TODO: for Camel 2.14 onwards
   <bean id="metricsRoutePolicyFactory" class="org.apache.camel.component.metrics.routepolicy.MetricsRoutePolicyFactory"/>
-  -->
 
   <!-- Here is a sample which processes the input files
          (leaving them in place - see the 'noop' flag), and
@@ -206,18 +204,18 @@
     </route>
   </camelContext>
 
-  <!-- TODO: requires Camel 2.14
+  <!-- lets have a Camel with the Rest DSL too -->
   <camelContext id="restCamel" xmlns="http://camel.apache.org/schema/spring">
 
     <restConfiguration component="jetty" bindingMode="json">
       <dataFormatProperty key="prettyPrint" value="true"/>
     </restConfiguration>
 
-    <rest uri="/user" consumes="application/json" produces="application/json">
+    <rest path="/user" consumes="application/json" produces="application/json">
       <get uri="/view/{id}" outType="io.hawt.camel.rest.User">
         <to uri="bean:userService?method=getUser(${header.id})"/>
       </get>
-      <get uri="/list" outList="true" outType="io.hawt.camel.rest.User">
+      <get uri="/list" outType="io.hawt.camel.rest.User[]">
         <to uri="bean:userService?method=listUsers"/>
       </get>
       <put uri="/update" type="io.hawt.camel.rest.UserService" outType="io.hawt.camel.rest.User">
@@ -226,7 +224,6 @@
     </rest>
 
   </camelContext>
-  -->
 
   <!-- dummy bean for camel routes -->
   <bean id="userService" class="io.hawt.camel.rest.UserService"/>
