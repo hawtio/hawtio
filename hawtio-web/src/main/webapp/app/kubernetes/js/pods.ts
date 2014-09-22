@@ -10,8 +10,9 @@ module Kubernetes {
     $scope.podsConfig = {
       data: 'pods',
       showSelectionCheckbox: false,
-      enableRowClickSelection: false,
-      multiSelect: false,
+      enableRowClickSelection: true,
+      multiSelect: true,
+      selectedItems: [],
       columnDefs: [
         {
           field: 'id',
@@ -33,16 +34,15 @@ module Kubernetes {
     };
 
     KubernetesPods.then((KubernetesPods:ng.resource.IResourceClass) => {
+      // Define all our functions that need KubernetesPods
+      $scope.deletePrompt = (selected) => {
+        log.debug("delete: ", selected);
+      };
+      // Fetch the list of pods
       KubernetesPods.query((response) => {
         $scope.fetched = true;
         $scope.pods = response['items'];
       });
-    });
-
-    $scope.$watch('pods', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        log.debug("pods: ", newValue);
-      }
     });
 
   }]);
