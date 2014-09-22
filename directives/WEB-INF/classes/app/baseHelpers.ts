@@ -126,7 +126,7 @@ module Core {
    * @param {String} postfix
    * @return {String}
    */
-  export function trimTrailing(text:string, postfix:string) {
+  export function trimTrailing(text:string, postfix:string): string {
     if (text && postfix) {
       if (text.endsWith(postfix)) {
         return text.substring(0, text.length - postfix.length);

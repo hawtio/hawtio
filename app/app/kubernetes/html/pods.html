@@ -1,17 +1,26 @@
 <div class="row-fluid" ng-controller="Kubernetes.Pods">
-  <div class="span12">
-    <div ng-hide="fetched">
-      <div class="align">
-        <i class="icon-spinner icon-spin"></i>
-      </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <button class="btn btn-danger pull-right"
+              ng-disabled="podsConfig.selectedItems.length == 0"
+              ng-click="deletePrompt(podsConfig.selectedItems)"><i class="icon-remove"></i> Delete</button>
     </div>
-    <div ng-show="fetched">
-      <div ng-hide="pods.length" class="align-center">
-        <p class="alert alert-info">There are no pods currently running.</p>
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <div ng-hide="fetched">
+        <div class="align">
+          <i class="icon-spinner icon-spin"></i>
+        </div>
       </div>
-      <div ng-show="pods.length">
-        <table class="table table-condensed table-striped"
-               hawtio-simple-table="podsConfig"></table>
+      <div ng-show="fetched">
+        <div ng-hide="pods.length" class="align-center">
+          <p class="alert alert-info">There are no pods currently running.</p>
+        </div>
+        <div ng-show="pods.length">
+          <table class="table table-condensed table-striped"
+                 hawtio-simple-table="podsConfig"></table>
+        </div>
       </div>
     </div>
   </div>
