@@ -282,9 +282,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.fusesource.insight</groupId>
+      <groupId>io.fabric8.insight</groupId>
       <artifactId>insight-log4j</artifactId>
-      <version>${insight-log4j.version}</version>
+      <version>${insight-log4j-version}</version>
       <scope>test</scope>
     </dependency>
 

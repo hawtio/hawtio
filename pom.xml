@@ -61,10 +61,20 @@
     <schema-outdir>${basedir}/src/main/webapp/lib</schema-outdir>
     <appjs-outfile>${webapp-outdir}/app/app.js</appjs-outfile>
 
-    <!-- versions -->
+    <!-- redhat -->
+    <!-- fabric test version points to a previous release version to break cycle with fabric -->
+    <!-- we disable redhat as that is for jboss-fuse
     <perfectus-number>379</perfectus-number>
     <perfectus-previous-number>355</perfectus-previous-number>
     <perfectus-build>610${perfectus-number}</perfectus-build>
+    <fabric-test-version>1.0.0.redhat-${perfectus-previous-number}</fabric-test-version>
+    <fabric-version>1.0.0.redhat-${perfectus-number}</fabric-version>
+    -->
+
+    <!-- fabric8 -->
+    <fabric-test-version>${fabric-version}</fabric-test-version>
+    <fabric-version>1.2.0.Beta4</fabric-version>
+
     <activemq-version>5.10.0</activemq-version>
     <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
     <aether-version>1.13.1</aether-version>
@@ -81,10 +91,6 @@
     <cxf-version>3.0.1</cxf-version>
     <dozer-version>5.5.1</dozer-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
-
-    <!-- fabric test version points to a previous release version to break cycle with fabric -->
-    <fabric-test-version>1.0.0.redhat-${perfectus-previous-number}</fabric-test-version>
-    <fabric-version>1.0.0.redhat-${perfectus-number}</fabric-version>
     <felix.gogo.version>0.10.0</felix.gogo.version>
     <gitective-version>0.9.9</gitective-version>
 
@@ -100,8 +106,7 @@
     <infinispan-version>6.0.0.Final</infinispan-version>
 -->
 
-    <!-- TODO until build 16 is done we need snapshot to get maven coords on stack frames -->
-    <insight-log4j.version>${fabric-test-version}</insight-log4j.version>
+    <insight-log4j-version>${fabric-test-version}</insight-log4j-version>
     <!-- make sure to align jackson with fabric8 -->
     <jackson-version>2.4.1</jackson-version>
     <javaewah-version>0.5.6</javaewah-version>
