@@ -118,7 +118,7 @@ module Fabric {
 
     var unreg:() => void = null;
 
-    Fabric.loadRestApi(jolokia, undefined, (response) => {
+    Fabric.loadRestApi(jolokia, workspace, undefined, (response) => {
       $scope.restApiUrl = UrlHelpers.maybeProxy(Core.injector.get('jolokiaUrl'), response.value);
       log.debug("Scope rest API: ", $scope.restApiUrl);
       $scope.$watch('selectedVersion.id', (newValue, oldValue) => {

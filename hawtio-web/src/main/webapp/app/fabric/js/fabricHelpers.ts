@@ -494,13 +494,30 @@ module Fabric {
   /**
    * Loads the restApiUrl property into the given $scope and added the helper function
    */
-  export function loadRestApi(jolokia, $scope:IScopeWithApiURL, callback:(response:any) => void = undefined) {
+  export function loadRestApi(jolokia, workspace: Workspace, $scope:IScopeWithApiURL, callback:(response:any) => void = undefined) {
     if ($scope && !$scope.restApiUrl) {
       $scope.restApiUrl = DEFAULT_REST_API;
     }
     Fabric.restApiUrl(jolokia, (response) => {
+      var answer: string = response.value || DEFAULT_REST_API;
+      // if we are running inside a root fabric8 node then lets strip off the host and port
+      // because on Docker / Kubernetes / OpenShift this could could be a port which is not
+      // accessible to the browser
+      if (Fabric.isFMCContainer(workspace)) {
+        // lets strip the host/port from the URL
+        try {
+          var url = new URL(answer);
+          var path = url.pathname;
+          if (path) {
+            answer = path;
+            response.value = answer;
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
       if ($scope) {
-        $scope.restApiUrl = response.value || DEFAULT_REST_API;
+        $scope.restApiUrl = answer;
         log.info("got REST API: " + $scope.restApiUrl);
         Core.$apply($scope);
       } if (callback) {
@@ -513,12 +530,7 @@ module Fabric {
    * Returns the fully qualified iconURL from the relative link
    */
   export function toIconURL($scope, iconURL) {
-    var restApiUrl = $scope.restApiUrl;
-    if (!restApiUrl || !iconURL) {
-      return null;
-    } else {
-      return restApiUrl + iconURL;
-    }
+    return iconURL;
   }
 
   export function getVersionsInUse(jolokia, callback:(used:string[]) => void) {

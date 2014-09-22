@@ -140,7 +140,7 @@ module Fabric {
       return answer;
     }
 
-    Fabric.loadRestApi(jolokia, undefined, (response) => {
+    Fabric.loadRestApi(jolokia, workspace, undefined, (response) => {
       $scope.restApiUrl = UrlHelpers.maybeProxy(Core.injector.get('jolokiaUrl'), response.value);
       log.debug("Scope rest API: ", $scope.restApiUrl);
       Core.registerForChanges(jolokia, $scope, {

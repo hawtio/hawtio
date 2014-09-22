@@ -19,7 +19,7 @@ module Fabric {
       $scope.managerMBean = Fabric.managerMBean;
 
       Fabric.initScope($scope, $location, jolokia, workspace);
-      Fabric.loadRestApi(jolokia, $scope);
+      Fabric.loadRestApi(jolokia, workspace, $scope);
 
       $scope.loading = true;
 

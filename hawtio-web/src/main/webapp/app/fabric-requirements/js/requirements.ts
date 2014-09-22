@@ -19,7 +19,7 @@ module FabricRequirements {
     };
   });
 
-  export var RequirementsController = controller("RequirementsController", ["$scope", "jolokia", "ProfileCart", "$templateCache", "FileUploader", "userDetails", "jolokiaUrl", "$location", "$timeout", "CurrentRequirements", "$element", ($scope, jolokia, ProfileCart:Array<Fabric.Profile>, $templateCache, FileUploader, userDetails, jolokiaUrl, $location, $timeout, CurrentRequirements:FabricRequirements.CurrentRequirements, $element:ng.IAugmentedJQuery) => {
+  export var RequirementsController = controller("RequirementsController", ["$scope", "jolokia", "workspace", "ProfileCart", "$templateCache", "FileUploader", "userDetails", "jolokiaUrl", "$location", "$timeout", "CurrentRequirements", "$element", ($scope, jolokia, workspace: Workspace, ProfileCart:Array<Fabric.Profile>, $templateCache, FileUploader, userDetails, jolokiaUrl, $location, $timeout, CurrentRequirements:FabricRequirements.CurrentRequirements, $element:ng.IAugmentedJQuery) => {
 
     $scope.tabs = {
       '0': {
@@ -101,7 +101,7 @@ module FabricRequirements {
       $scope.requirements.$dirty = true;
     };
 
-    Fabric.loadRestApi(jolokia, undefined, (response) => {
+    Fabric.loadRestApi(jolokia, workspace, undefined, (response) => {
       var uploadUrl = jolokiaUrl;
 
       $scope.uploader = <FileUpload.FileUploader> new FileUploader(<FileUpload.IOptions>{
