@@ -1,3 +1,5 @@
+/// <reference path="../../baseIncludes.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
 /**
  * @module DataTable
  */

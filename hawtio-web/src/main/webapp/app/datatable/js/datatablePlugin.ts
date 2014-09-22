@@ -1,3 +1,6 @@
+/// <reference path="../../baseIncludes.ts"/>
+/// <reference path="../../baseHelpers.ts"/>
+/// <reference path="tables.ts"/>
 /**
  * @module DataTable
  * @main DataTable
@@ -13,8 +16,6 @@ module DataTable {
     $routeProvider.
         when('/datatable/test', {templateUrl: 'app/datatable/html/test.html'});
   }]);
-
-  _module.directive('hawtioSimpleTable', ["$compile", ($compile) => new DataTable.SimpleDataTable($compile)]);
 
   _module.directive('hawtioDatatable', ["$templateCache", "$compile", "$timeout", "$filter", ($templateCache, $compile, $timeout, $filter) => {
             // return the directive link function. (compile function not needed)

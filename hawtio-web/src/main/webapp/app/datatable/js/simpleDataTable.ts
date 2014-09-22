@@ -1,3 +1,4 @@
+/// <reference path="datatablePlugin.ts"/>
 /**
  * @module DataTable
  */
@@ -247,7 +248,7 @@ module DataTable {
           config.selectedItems.splice(idx, 1);
         } else {
           if (!config.multiSelect) {
-            config.selectedItems = [];
+            config.selectedItems.length = 0;
           }
           log.debug("Selecting row at index " + row.index);
           // need to enrich entity with index, as we push row.entity to the selected items
@@ -320,4 +321,8 @@ module DataTable {
     });
     return answer;
   }
+
+  _module.directive('hawtioSimpleTable', ["$compile", ($compile) => new DataTable.SimpleDataTable($compile)]);
+
 }
+
