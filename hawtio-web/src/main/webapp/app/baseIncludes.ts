@@ -30,3 +30,4 @@
 /// <reference path="../../d.ts/toastr.d.ts" />
 /// <reference path="../../d.ts/zeroclipboard.d.ts" />
 /// <reference path="../../d.ts/metricsWatcher.d.ts" />
+/// <reference path="../../d.ts/URI.d.ts" />

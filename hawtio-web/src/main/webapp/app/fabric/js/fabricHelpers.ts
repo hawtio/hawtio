@@ -506,8 +506,8 @@ module Fabric {
       if (Fabric.isFMCContainer(workspace)) {
         // lets strip the host/port from the URL
         try {
-          var url = new URL(answer);
-          var path = url.pathname;
+          var url = new URI(answer);
+          var path = url.pathname();
           if (path) {
             answer = path;
             response.value = answer;
