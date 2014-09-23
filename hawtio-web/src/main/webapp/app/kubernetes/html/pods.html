@@ -6,6 +6,11 @@
             ng-class="labelClass(labelType)">{{labelValue}}</span>
     </div>
   </script>
+  <script type="text/ng-template" id="statusTemplate.html">
+    <div class=ngCellText ng-controller="Kubernetes.PodStatus">
+      <i ng-class="statusMapping[row.entity.currentState.status] || 'icon-question red'"></i>
+    </div>
+  </script>
   <div class="row-fluid">
     <div class="span12">
       <button class="btn btn-danger pull-right"

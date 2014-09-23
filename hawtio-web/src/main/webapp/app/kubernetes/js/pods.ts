@@ -7,6 +7,15 @@ module Kubernetes {
     id:string;
   }
 
+  // controller for the status icon cell
+  export var PodStatus = controller("PodStatus", ["$scope", ($scope) => {
+    $scope.statusMapping = {
+      'Running': 'icon-play-circle green',
+      'Waiting': 'icon-download',
+      'Terminated': 'icon-off yellow'
+    };
+  }]);
+
   // controller that deals with the labels per pod
   export var PodLabels = controller("PodLabels", ["$scope", ($scope) => {
     $scope.labels = {};
@@ -26,12 +35,10 @@ module Kubernetes {
         });
       }
     });
-
     var labelColors = {
       'profile': 'background-green',
       'version': 'background-blue'
     };
-
     $scope.labelClass = (labelType:string) => {
       if (!(labelType in labelColors)) {
         return '';
@@ -60,11 +67,16 @@ module Kubernetes {
         },
         {
           field: 'currentState.status',
-          displayName: 'Image Status'
+          displayName: 'Image Status',
+          cellTemplate: $templateCache.get("statusTemplate.html")
         },
         {
           field: 'currentState.host',
           displayName: 'Host'
+        },
+        { 
+          field: 'currentState.podIP',
+          displayName: 'Pod IP',
         },
         {
           field: 'labels',
@@ -115,6 +127,7 @@ module Kubernetes {
         KubernetesPods.query((response) => {
           $scope.fetched = true;
           $scope.pods = response['items'].sortBy((pod:KubePod) => { return pod.id });
+          //log.debug("Pods: ", $scope.pods);
           next();
         });
       });
