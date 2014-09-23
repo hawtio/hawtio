@@ -3619,6 +3619,7 @@ var UI;
     })();
     UI.AutoColumns = AutoColumns;
 })(UI || (UI = {}));
+/// <reference path="../../baseHelpers.ts"/>
 /**
 * @module UI
 */
@@ -3662,6 +3663,27 @@ var UI;
         return Dialog;
     })();
     UI.Dialog = Dialog;
+
+    function multiItemConfirmActionDialog(options) {
+        var $dialog = Core.injector.get("$dialog");
+        return $dialog.dialog({
+            resolve: {
+                options: function () {
+                    return options;
+                }
+            },
+            templateUrl: 'app/ui/html/multiItemConfirmActionDialog.html',
+            controller: [
+                "$scope", "dialog", "options", function ($scope, dialog, options) {
+                    $scope.options = options;
+                    $scope.close = function (result) {
+                        dialog.close();
+                        options.onClose(result);
+                    };
+                }]
+        });
+    }
+    UI.multiItemConfirmActionDialog = multiItemConfirmActionDialog;
 })(UI || (UI = {}));
 /**
 * @module UI

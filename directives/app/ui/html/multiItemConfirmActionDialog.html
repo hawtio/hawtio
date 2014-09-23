@@ -1,0 +1,26 @@
+<div>
+  <form class="no-bottom-margin">
+    <div class="modal-header">
+      <span>{{options.title || 'Are you sure?'}}</span>
+    </div>
+    <div class="modal-body">
+      <p ng-show='options.action'
+         ng-class='options.actionClass'
+         ng-bind='options.action'></p>
+      <ul>
+        <li ng-repeat="item in options.collection">{{item[options.index]}}</li>
+      </ul>
+      <p ng-show="options.custom" 
+         ng-class="options.customClass" 
+         ng-bind="options.custom"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" 
+              ng-class="options.okClass" 
+              ng-click="close(true)">{{options.okText || 'Ok'}}</button>
+      <button class="btn" 
+              ng-class="options.cancelClass"
+              ng-click="close(false)">{{options.cancelText || 'Cancel'}}</button>
+    </div>
+  </form>
+</div>

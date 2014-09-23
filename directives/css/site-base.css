@@ -309,8 +309,18 @@ ol.inline > li {
   color: green !important;
 }
 
+.background-green {
+  color: white;
+  background-color: #51a351;
+}
+
 .blue {
   color: dodgerblue !important;
+}
+
+.background-blue {
+  color: white;
+  background-color: #006dcc;
 }
 
 .icon1point5x {
@@ -4360,4 +4370,8 @@ ul.dynatree-container {
 .td-fixed-width-150 {
   white-space: normal;
   width: 150px;
+}
+
+.pod-label {
+  margin-right: 1em;
 }
