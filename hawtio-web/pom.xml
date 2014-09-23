@@ -418,27 +418,40 @@
       </plugin>
 
       <plugin>
-        <groupId>io.hawt</groupId>
-        <artifactId>typescript-maven-plugin</artifactId>
-        <version>0.0.1</version>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>0.0.16</version>
         <executions>
           <execution>
-            <id>compile</id>
-            <phase>compile</phase>
+            <id>install node and npm</id>
             <goals>
-              <goal>tsc</goal>
+              <goal>install-node-and-npm</goal>
             </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <nodeVersion>v0.10.32</nodeVersion>
+              <npmVersion>1.4.12</npmVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>grunt build</id>
+            <goals>
+              <goal>grunt</goal>
+            </goals>
+            <configuration>
+              <arguments>tsc</arguments>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <sourceDirectory>${basedir}/src/main/webapp/app</sourceDirectory>
-          <libraryDirectory>${basedir}/src/main/d.ts</libraryDirectory>
-          <noStandardLib>false</noStandardLib>
-          <useTsc>true</useTsc>
-          <targetVersion>ES5</targetVersion>
-          <targetFile>${appjs-outfile}</targetFile>
-          <watch>${watch}</watch>
-        </configuration>
       </plugin>
 
       <plugin>
