@@ -5,8 +5,42 @@ module Kubernetes {
   interface KubePod {
     id:string;
   }
-  
-  export var Pods = controller("Pods", ["$scope", "KubernetesPods", "$dialog", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, $dialog) => {
+
+  // controller that deals with the labels per pod
+  export var PodLabels = controller("PodLabels", ["$scope", ($scope) => {
+    $scope.labels = {};
+    $scope.$watch('entity', (newValue, oldValue) => {
+      if (newValue) {
+        // massage the labels a bit
+        angular.forEach($scope.entity.labels, (value, key) => {
+          if (key === 'container') {
+            // TODO isn't this redundant with the ID?
+            return;
+          }
+          if (key === 'fabric8') {
+            // TODO not sure what this is for, the container type?
+            return;
+          }
+          $scope.labels[key] = value;
+        });
+      }
+    });
+
+    var labelColors = {
+      'profile': 'background-green',
+      'version': 'background-blue'
+    };
+
+    $scope.labelClass = (labelType:string) => {
+      if (!(labelType in labelColors)) {
+        return '';
+      }
+      else return labelColors[labelType];
+    }
+  }]);
+ 
+  // main controller for the page
+  export var Pods = controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, $dialog, $templateCache) => {
 
     $scope.pods = []
     $scope.fetched = false;
@@ -32,7 +66,8 @@ module Kubernetes {
         },
         {
           field: 'labels',
-          displayName: 'Labels'
+          displayName: 'Labels',
+          cellTemplate: $templateCache.get("cellTemplate.html")
         }
       ]
     };

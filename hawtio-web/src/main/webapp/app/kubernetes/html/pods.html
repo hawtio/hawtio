@@ -1,4 +1,11 @@
 <div class="row-fluid" ng-controller="Kubernetes.Pods">
+  <script type="text/ng-template" id="cellTemplate.html">
+    <div class="ngCellText" ng-init="entity=row.entity" ng-controller="Kubernetes.PodLabels">
+      <span ng-repeat="(labelType, labelValue) in labels"
+            class="pod-label badge"
+            ng-class="labelClass(labelType)">{{labelValue}}</span>
+    </div>
+  </script>
   <div class="row-fluid">
     <div class="span12">
       <button class="btn btn-danger pull-right"
