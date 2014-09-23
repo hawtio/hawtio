@@ -26,6 +26,10 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
+import org.apache.commons.httpclient.methods.DeleteMethod;
+import org.apache.commons.httpclient.methods.OptionsMethod;
+import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.commons.httpclient.methods.TraceMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
@@ -149,6 +153,94 @@ public class ProxyServlet extends HttpServlet {
                 this.handleStandardPost(putMethodProxyRequest, httpServletRequest);
             }
             this.executeProxyRequest(proxyDetails, putMethodProxyRequest, httpServletRequest, httpServletResponse);
+        }
+    }
+
+    /**
+     * Performs an HTTP DELETE request
+     *
+     * @param httpServletRequest  The {@link HttpServletRequest} object passed
+     *                            in by the servlet engine representing the
+     *                            client request to be proxied
+     * @param httpServletResponse The {@link HttpServletResponse} object by which
+     *                            we can send a proxied response to the client
+     */
+    public void doDelete(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
+        ProxyDetails proxyDetails = new ProxyDetails(httpServletRequest);
+        if (!proxyDetails.isValid()) {
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "Context-Path should contain the proxy hostname to use");
+        } else {
+            DeleteMethod deleteMethodProxyRequest = new DeleteMethod(proxyDetails.getStringProxyURL());
+            // Forward the request headers
+            setProxyRequestHeaders(proxyDetails, httpServletRequest, deleteMethodProxyRequest);
+            // Execute the proxy request
+            this.executeProxyRequest(proxyDetails, deleteMethodProxyRequest, httpServletRequest, httpServletResponse);
+        }
+    }
+
+    /**
+     * Performs an HTTP OPTIONS request
+     *
+     * @param httpServletRequest  The {@link HttpServletRequest} object passed
+     *                            in by the servlet engine representing the
+     *                            client request to be proxied
+     * @param httpServletResponse The {@link HttpServletResponse} object by which
+     *                            we can send a proxied response to the client
+     */
+    public void doOptions(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
+        ProxyDetails proxyDetails = new ProxyDetails(httpServletRequest);
+        if (!proxyDetails.isValid()) {
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "Context-Path should contain the proxy hostname to use");
+        } else {
+            OptionsMethod optionsMethodProxyRequest = new OptionsMethod(proxyDetails.getStringProxyURL());
+            // Forward the request headers
+            setProxyRequestHeaders(proxyDetails, httpServletRequest, optionsMethodProxyRequest);
+            // Execute the proxy request
+            this.executeProxyRequest(proxyDetails, optionsMethodProxyRequest, httpServletRequest, httpServletResponse);
+        }
+    }
+
+    /**
+     * Performs an HTTP HEAD request
+     *
+     * @param httpServletRequest  The {@link HttpServletRequest} object passed
+     *                            in by the servlet engine representing the
+     *                            client request to be proxied
+     * @param httpServletResponse The {@link HttpServletResponse} object by which
+     *                            we can send a proxied response to the client
+     */
+    public void doHead(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
+        ProxyDetails proxyDetails = new ProxyDetails(httpServletRequest);
+        if (!proxyDetails.isValid()) {
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "Context-Path should contain the proxy hostname to use");
+        } else {
+            HeadMethod headMethodProxyRequest = new HeadMethod(proxyDetails.getStringProxyURL());
+            // Forward the request headers
+            setProxyRequestHeaders(proxyDetails, httpServletRequest, headMethodProxyRequest);
+            // Execute the proxy request
+            this.executeProxyRequest(proxyDetails, headMethodProxyRequest, httpServletRequest, httpServletResponse);
+        }
+    }
+
+    /**
+     * Performs an HTTP TRACE request
+     *
+     * @param httpServletRequest  The {@link HttpServletRequest} object passed
+     *                            in by the servlet engine representing the
+     *                            client request to be proxied
+     * @param httpServletResponse The {@link HttpServletResponse} object by which
+     *                            we can send a proxied response to the client
+     */
+    public void doTrace(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
+        ProxyDetails proxyDetails = new ProxyDetails(httpServletRequest);
+        if (!proxyDetails.isValid()) {
+            httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "Context-Path should contain the proxy hostname to use");
+        } else {
+            TraceMethod traceMethodProxyRequest = new TraceMethod(proxyDetails.getStringProxyURL());
+            // Forward the request headers
+            setProxyRequestHeaders(proxyDetails, httpServletRequest, traceMethodProxyRequest);
+            // Execute the proxy request
+            this.executeProxyRequest(proxyDetails, traceMethodProxyRequest, httpServletRequest, httpServletResponse);
         }
     }
 
