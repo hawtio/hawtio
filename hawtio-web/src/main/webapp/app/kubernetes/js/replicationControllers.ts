@@ -1,4 +1,5 @@
 /// <reference path="kubernetesPlugin.ts"/>
+/// <reference path="../../helpers/js/pollHelpers.ts"/>
 
 module Kubernetes {
 
@@ -17,11 +18,15 @@ module Kubernetes {
     };
 
     KubernetesReplicationControllers.then((KubernetesReplicationControllers:ng.resource.IResourceClass) => {
-      KubernetesReplicationControllers.query((response) => {
-        log.debug("got back response: ", response);
-        $scope.fetched = true;
-        $scope.replicationControllers = response['items'];
+      $scope.fetch = PollHelpers.setupPolling($scope, (next: () => void) => {
+        KubernetesReplicationControllers.query((response) => {
+          log.debug("got back response: ", response);
+          $scope.fetched = true;
+          $scope.replicationControllers = response['items'];
+          next();
+        });
       });
+      $scope.fetch();
     });
 
     $scope.$watch('replicationControllers', (newValue, oldValue) => {
@@ -29,8 +34,5 @@ module Kubernetes {
         log.debug("replicationControllers: ", newValue);
       }
     });
-
-
-
   }]);
 }

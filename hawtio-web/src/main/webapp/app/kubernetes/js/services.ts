@@ -1,5 +1,5 @@
 /// <reference path="kubernetesPlugin.ts"/>
-
+/// <reference path="../../helpers/js/pollHelpers.ts"/>
 module Kubernetes {
 
   export var Services = controller("Services", ["$scope", "KubernetesServices", ($scope, KubernetesServices:ng.IPromise<ng.resource.IResourceClass>) => {
@@ -20,11 +20,14 @@ module Kubernetes {
     };
 
     KubernetesServices.then((KubernetesServices:ng.resource.IResourceClass) => {
-      KubernetesServices.query((response) => {
-        log.debug("got back response: ", response);
-        $scope.fetched = true;
-        $scope.services = response['items'];
+      $scope.fetch = PollHelpers.setupPolling($scope, (next: () => void) => {
+        KubernetesServices.query((response) => {
+          $scope.fetched = true;
+          $scope.services = response['items'];
+          next();
+        });
       });
+      $scope.fetch();
     });
 
     $scope.$watch('services', (newValue, oldValue) => {

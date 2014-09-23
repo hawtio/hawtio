@@ -1,4 +1,5 @@
 /// <reference path="kubernetesPlugin.ts"/>
+/// <reference path="../../helpers/js/pollHelpers.ts"/>
 /// <reference path="../../ui/js/dialog.ts"/>
 module Kubernetes {
 
@@ -40,7 +41,7 @@ module Kubernetes {
   }]);
  
   // main controller for the page
-  export var Pods = controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, $dialog, $templateCache) => {
+  export var Pods = controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "jolokia", "$timeout", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, $dialog, $templateCache, jolokia:Jolokia.IJolokia, $timeout) => {
 
     $scope.pods = []
     $scope.fetched = false;
@@ -54,7 +55,8 @@ module Kubernetes {
       columnDefs: [
         {
           field: 'id',
-          displayName: 'ID'
+          displayName: 'ID',
+          defaultSort: true
         },
         {
           field: 'currentState.status',
@@ -72,16 +74,7 @@ module Kubernetes {
       ]
     };
 
-    function fetch(KubernetesPods:ng.resource.IResourceClass) {
-      // Fetch the list of pods
-      KubernetesPods.query((response) => {
-        $scope.fetched = true;
-        $scope.pods = response['items'];
-      });
-    }
-
     KubernetesPods.then((KubernetesPods:ng.resource.IResourceClass) => {
-
       $scope.deletePrompt = (selected:Array<KubePod>) => {
         UI.multiItemConfirmActionDialog(<UI.MultiItemConfirmActionOptions>{
           collection: selected,
@@ -90,9 +83,9 @@ module Kubernetes {
             if (result) {
               function deleteSelected(selected:Array<KubePod>, next:KubePod) {
                 if (!next) {
-                  $scope.fetched = false;
-                  // update the table
-                  fetch(KubernetesPods);
+                  if (!jolokia.isRunning()) {
+                    $scope.fetch();
+                  }
                 } else {
                   log.debug("deleting: ", next.id);
                   KubernetesPods.delete({
@@ -117,10 +110,16 @@ module Kubernetes {
           customClass: "alert alert-warning"
         }).open();
       };
-
-      // initial fetch
-      fetch(KubernetesPods);
+      // setup polling
+      $scope.fetch = PollHelpers.setupPolling($scope, (next:() => void) => {
+        KubernetesPods.query((response) => {
+          $scope.fetched = true;
+          $scope.pods = response['items'].sortBy((pod:KubePod) => { return pod.id });
+          next();
+        });
+      });
+      // kick off polling
+      $scope.fetch();
     });
-
   }]);
 }
