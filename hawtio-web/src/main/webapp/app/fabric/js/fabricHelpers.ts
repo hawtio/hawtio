@@ -940,7 +940,7 @@ module Fabric {
    * Connects to the broker in a new window
    */
   export function connectToBroker($scope, container, postfix = null) {
-    var view = "/jmx/attributes?tab=activemq";
+    var view = "#/jmx/attributes?tab=activemq";
     if (postfix) {
       view += "&" + postfix;
     }

@@ -85,7 +85,7 @@ module Camel {
       }
     };
 
-    function connectToContainer(container, postfix, viewPrefix = "/jmx/attributes?tab=camel") {
+    function connectToContainer(container, postfix, viewPrefix = "#/jmx/attributes?tab=camel") {
       var view = viewPrefix;
       if (postfix) {
         view += postfix;
