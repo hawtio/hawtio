@@ -18,7 +18,7 @@ module Kubernetes {
   }]);
 
   // controller that deals with the labels per pod
-  export var PodLabels = controller("PodLabels", ["$scope", "workspace", "jolokia", "$location", ($scope, workspace, jolokia, $location) => {
+  export var Labels = controller("Labels", ["$scope", "workspace", "jolokia", "$location", ($scope, workspace, jolokia, $location) => {
     $scope.labels = {};
     $scope.$watch('entity', (newValue, oldValue) => {
       if (newValue) {
@@ -38,9 +38,9 @@ module Kubernetes {
     $scope.handleClick = (entity, labelType:string, value) => {
       log.debug("handleClick, entity: ", entity, " labelType: ", labelType, " value: ", value);
       switch (labelType) {
-        case 'name':
-          if (entity.labels.name) {
-            Fabric.gotoContainer(entity.labels.name);
+        case 'container':
+          if (entity.labels.container) {
+            Fabric.gotoContainer(entity.labels.container);
           }
           return;
         case 'profile':
@@ -55,7 +55,8 @@ module Kubernetes {
     var labelColors = {
       'profile': 'background-green mouse-pointer',
       'version': 'background-blue',
-      'name': 'background-light-green mouse-pointer'
+      'name': 'background-light-grey',
+      'container': 'background-light-green mouse-pointer'
     };
     $scope.labelClass = (labelType:string) => {
       if (!(labelType in labelColors)) {
@@ -73,8 +74,8 @@ module Kubernetes {
 
     $scope.podsConfig = {
       data: 'pods',
-      showSelectionCheckbox: false,
-      enableRowClickSelection: true,
+      showSelectionCheckbox: true,
+      enableRowClickSelection: false,
       multiSelect: true,
       selectedItems: [],
       columnDefs: [
@@ -104,7 +105,7 @@ module Kubernetes {
         {
           field: 'labels',
           displayName: 'Labels',
-          cellTemplate: $templateCache.get("cellTemplate.html")
+          cellTemplate: $templateCache.get("labelTemplate.html")
         }
       ]
     };

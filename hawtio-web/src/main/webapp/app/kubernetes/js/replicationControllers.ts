@@ -3,7 +3,7 @@
 
 module Kubernetes {
 
-  export var ReplicationControllers = controller("ReplicationControllers", ["$scope", "KubernetesReplicationControllers", ($scope, KubernetesReplicationControllers:ng.IPromise<ng.resource.IResourceClass>) => {
+  export var ReplicationControllers = controller("ReplicationControllers", ["$scope", "KubernetesReplicationControllers", "$templateCache", ($scope, KubernetesReplicationControllers:ng.IPromise<ng.resource.IResourceClass>, $templateCache:ng.ITemplateCacheService) => {
 
     $scope.replicationControllers = [];
     $scope.fetched = false;
@@ -14,6 +14,9 @@ module Kubernetes {
       multiSelect: false,
       columnDefs: [
         { field: 'id', displayName: 'ID' },
+        { field: 'currentState.replicas', displayName: 'Current Replicas' },
+        { field: 'desiredState.replicas', displayName: 'Desired Replicas' },
+        { field: 'labels', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
       ]
     };
 
@@ -22,7 +25,7 @@ module Kubernetes {
         KubernetesReplicationControllers.query((response) => {
           log.debug("got back response: ", response);
           $scope.fetched = true;
-          $scope.replicationControllers = response['items'];
+          $scope.replicationControllers = response['items'].sortBy((item) => { return item.id; });
           next();
         });
       });

@@ -703,6 +703,11 @@ table.table thead .sorting_desc:after {
   background: url('../img/datatable/sort_desc.png') no-repeat top center;
 }
 
+.simple-table-checkbox, .simple-table-checkbox > input {
+  width: 16px;
+  max-width: 16px;
+}
+
 .dataTables_filter label {
   margin-bottom: 0px;
 }

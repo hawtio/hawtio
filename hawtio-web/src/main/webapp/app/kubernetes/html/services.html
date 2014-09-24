@@ -6,10 +6,10 @@
       </div>
     </div>
     <div ng-show="fetched">
-      <div ng-hide="pods.length" class="align-center">
+      <div ng-hide="services.length" class="align-center">
         <p class="alert alert-info">There are no services currently available.</p>
       </div>
-      <div ng-show="pods.length">
+      <div ng-show="services.length">
         <table class="table table-condensed table-striped"
                hawtio-simple-table="tableConfig"></table>
       </div>

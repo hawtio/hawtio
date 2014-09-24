@@ -1,3 +1,19 @@
+<script type="text/ng-template" id="selectorTemplate.html">
+  <div class="ngCellText">
+    <span ng-repeat="(name, value) in row.entity.selector">
+      <strong>{{name}}</strong>: {{value}}
+    </span>
+  </div>
+</script>
+<script type="text/ng-template" id="labelTemplate.html">
+  <div class="ngCellText" ng-init="entity=row.entity" ng-controller="Kubernetes.Labels">
+    <span ng-repeat="(labelType, value) in labels"
+          class="pod-label badge"
+          ng-class="labelClass(labelType)" 
+          ng-click="handleClick(entity, labelType, value)"
+          title="{{labelType}}">{{value.title}}</span>
+  </div>
+</script>
 <div class="row-fluid" ng-controller="Kubernetes.TopLevel">
   <div class="span12">
     <ul class="nav nav-tabs connected">
