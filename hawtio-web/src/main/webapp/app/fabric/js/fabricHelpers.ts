@@ -463,6 +463,11 @@ module Fabric {
     }
   }
 
+  export function gotoContainer(containerId:string) {
+    var $location = Core.injector.get('$location');
+    $location.path(UrlHelpers.join('/fabric/container', containerId));
+  }
+
   export function setSelect(selection, group) {
     if (!angular.isDefined(selection)) {
       return group[0];

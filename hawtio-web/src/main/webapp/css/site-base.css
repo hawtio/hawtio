@@ -314,6 +314,11 @@ ol.inline > li {
   background-color: #51a351;
 }
 
+.background-light-green {
+  color: white;
+  background-color: #5ab15a;
+}
+
 .blue {
   color: dodgerblue !important;
 }

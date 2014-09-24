@@ -1,9 +1,11 @@
 <div class="row-fluid" ng-controller="Kubernetes.Pods">
   <script type="text/ng-template" id="cellTemplate.html">
     <div class="ngCellText" ng-init="entity=row.entity" ng-controller="Kubernetes.PodLabels">
-      <span ng-repeat="(labelType, labelValue) in labels"
+      <span ng-repeat="(labelType, value) in labels"
             class="pod-label badge"
-            ng-class="labelClass(labelType)" title="{{labelType}}">{{labelValue}}</span>
+            ng-class="labelClass(labelType)" 
+            ng-click="handleClick(entity, labelType, value)"
+            title="{{labelType}}">{{value.title}}</span>
     </div>
   </script>
   <script type="text/ng-template" id="statusTemplate.html">

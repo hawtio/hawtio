@@ -1,5 +1,6 @@
 /// <reference path="kubernetesPlugin.ts"/>
 /// <reference path="../../helpers/js/pollHelpers.ts"/>
+/// <reference path="../../fabric/js/fabricHelpers.ts"/>
 /// <reference path="../../ui/js/dialog.ts"/>
 module Kubernetes {
 
@@ -17,27 +18,44 @@ module Kubernetes {
   }]);
 
   // controller that deals with the labels per pod
-  export var PodLabels = controller("PodLabels", ["$scope", ($scope) => {
+  export var PodLabels = controller("PodLabels", ["$scope", "workspace", "jolokia", "$location", ($scope, workspace, jolokia, $location) => {
     $scope.labels = {};
     $scope.$watch('entity', (newValue, oldValue) => {
       if (newValue) {
+        log.debug("labels: ", newValue);
         // massage the labels a bit
         angular.forEach($scope.entity.labels, (value, key) => {
-          if (key === 'container') {
-            // TODO isn't this redundant with the ID?
-            return;
-          }
           if (key === 'fabric8') {
             // TODO not sure what this is for, the container type?
             return;
           }
-          $scope.labels[key] = value;
+          $scope.labels[key] = {
+            title: value
+          };
         });
       }
     });
+    $scope.handleClick = (entity, labelType:string, value) => {
+      log.debug("handleClick, entity: ", entity, " labelType: ", labelType, " value: ", value);
+      switch (labelType) {
+        case 'name':
+          if (entity.labels.name) {
+            Fabric.gotoContainer(entity.labels.name);
+          }
+          return;
+        case 'profile':
+          if (entity.labels.version && entity.labels.profile) {
+            Fabric.gotoProfile(workspace, jolokia, workspace.localStorage, $location, entity.labels.version, entity.labels.profile);
+          }
+          return;
+        default:
+          return;
+      }
+    }
     var labelColors = {
-      'profile': 'background-green',
-      'version': 'background-blue'
+      'profile': 'background-green mouse-pointer',
+      'version': 'background-blue',
+      'name': 'background-light-green mouse-pointer'
     };
     $scope.labelClass = (labelType:string) => {
       if (!(labelType in labelColors)) {
