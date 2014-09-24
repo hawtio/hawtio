@@ -39,16 +39,18 @@ module Wiki {
       tooltip: "Create a new folder to contain documents",
       folder: true,
       icon: "/img/icons/wiki/folder.gif",
-      exemplar: "New Folder"
+      exemplar: "MyFolder"
     },
     {
       label: "Fabric8 Profile",
-      tooltip: "Create a new empty Fabric8 profile.  Using a hyphen ('-') will create a folder heirarchy, for example 'my-awesome-profile' will be available via the path 'my/awesome/profile'.",
+      tooltip: "Create a new empty fabric profile. Using a hyphen ('-') will create a folder heirarchy, for example 'my-awesome-profile' will be available via the path 'my/awesome/profile'.",
       profile: true,
       addClass: "icon-book green",
       exemplar: "user-profile",
-      fabricOnly: true
+      fabricOnly: true,
+      regex: /^[a-zA-Z0-9_-]*$/
     },
+
 //    {
 //      label: "Fabric8 Version",
 //      tooltip: "Create a new Fabric8 version based on the latest available version.  Leave the name blank to use the next available version name.  Version names must be in the form of x.y.z, for example 1.2.foo is okay, 1.2-foo is not",
