@@ -42,7 +42,7 @@ module JUnit {
     workspace.subLevelTabs.push({
       content: '<i class="icon-list-alt"></i> JUnit',
       title: "View the logs in this process",
-      isValid: (workspace:Workspace) => workspace.hasDomainAndProperties('org.fusesource.insight', {type: 'JUnitQuery'}),
+      isValid: (workspace:Workspace) => workspace.hasDomainAndProperties('io.fabric8.insight', {type: 'JUnitQuery'}),
       href: () => "#/logs"
     });
 */

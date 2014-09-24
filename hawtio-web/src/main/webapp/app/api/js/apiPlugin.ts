@@ -21,7 +21,7 @@ module API {
     viewRegistry['api'] = layoutFull;
     /*
     helpRegistry.addUserDoc('log', 'app/wsdl/doc/help.md', () => {
-      return workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'});
+      return workspace.treeContainsDomainAndProperties('io.fabric8.insight', {type: 'LogQuery'});
     });
     */
   }]);
