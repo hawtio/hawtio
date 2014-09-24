@@ -314,6 +314,11 @@ ol.inline > li {
   background-color: #51a351;
 }
 
+.background-light-green {
+  color: white;
+  background-color: #5ab15a;
+}
+
 .blue {
   color: dodgerblue !important;
 }
@@ -696,6 +701,11 @@ table.table thead .sorting_asc:after {
 
 table.table thead .sorting_desc:after {
   background: url('../img/datatable/sort_desc.png') no-repeat top center;
+}
+
+.simple-table-checkbox, .simple-table-checkbox > input {
+  width: 16px;
+  max-width: 16px;
 }
 
 .dataTables_filter label {

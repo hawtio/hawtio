@@ -122,7 +122,7 @@
 
 <p>Then you need to ensure that the LogQuery bean is instantiated in whatever dependency injection framework you choose. For example this is <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/test/resources/applicationContext.xml#L18">how we initialise LogQuery</a> in the <a href="https://github.com/hawtio/hawtio/tree/master/sample">sample war</a> using spring XML:</p>
 
-<pre><code>&lt;bean id="logQuery" class="org.fusesource.insight.log.log4j.Log4jLogQuery"
+<pre><code>&lt;bean id="logQuery" class="io.fabric8.insight.log.log4j.Log4jLogQuery"
       lazy-init="false" scope="singleton"
       init-method="start" destroy-method="stop"/&gt;</code></pre>
 

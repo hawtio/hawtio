@@ -1,17 +1,40 @@
+<script type="text/ng-template" id="idTemplate.html">
+  <div class="ngCellText" ng-controller="Kubernetes.IDSelector">
+    <a href="" 
+       title="View details for {{row.entity.id}}"
+       ng-click="select(row.entity.id)">{{row.entity.id}}</a>
+  </div>
+</script>
+<script type="text/ng-template" id="selectorTemplate.html">
+  <div class="ngCellText">
+    <span ng-repeat="(name, value) in row.entity.selector">
+      <strong>{{name}}</strong>: {{value}}
+    </span>
+  </div>
+</script>
+<script type="text/ng-template" id="labelTemplate.html">
+  <div class="ngCellText" ng-init="entity=row.entity" ng-controller="Kubernetes.Labels">
+    <span ng-repeat="(labelType, value) in labels"
+          class="pod-label badge"
+          ng-class="labelClass(labelType)" 
+          ng-click="handleClick(entity, labelType, value)"
+          title="{{labelType}}">{{value.title}}</span>
+  </div>
+</script>
 <div class="row-fluid" ng-controller="Kubernetes.TopLevel">
   <div class="span12">
     <ul class="nav nav-tabs connected">
-      <li ng-class='{active : isActive("#/fabric/kubernetes/pods")}'
+      <li ng-class='{active : isActive("#/kubernetes/pods")}'
           title="View kubernetes pods and their status">
-        <a ng-href="#/fabric/kubernetes/pods">Pods</a>
+        <a ng-href="#/kubernetes/pods">Pods</a>
       </li>
-      <li ng-class='{active : isActive("#/fabric/kubernetes/replicationControllers")}'
+      <li ng-class='{active : isActive("#/kubernetes/replicationControllers")}'
           title="View kubernetes replication controllers and their status">
-        <a ng-href="#/fabric/kubernetes/replicationControllers">Replication Controllers</a>
+        <a ng-href="#/kubernetes/replicationControllers">Replication Controllers</a>
       </li>
-      <li ng-class='{active : isActive("#/fabric/kubernetes/services")}'
+      <li ng-class='{active : isActive("#/kubernetes/services")}'
           title="View kubernetes services and their status">
-        <a ng-href="#/fabric/kubernetes/services">Services</a>
+        <a ng-href="#/kubernetes/services">Services</a>
       </li>
       <li class=pull-right>
         <span ng-show="version">Kubernetes version: {{version.major}}.{{version.minor}}</span>

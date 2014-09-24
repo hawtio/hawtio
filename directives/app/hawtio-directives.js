@@ -2022,8 +2022,8 @@ var DataTable;
             if (showCheckBox) {
                 var toggleAllHtml = isMultiSelect() ? "<input type='checkbox' ng-show='rows.length' ng-model='config.allRowsSelected' ng-change='toggleAllSelections()'>" : "";
 
-                headHtml += "\n<th>" + toggleAllHtml + "</th>";
-                bodyHtml += "\n<td><input type='checkbox' ng-model='row.selected' ng-change='toggleRowSelection(row)'></td>";
+                headHtml += "\n<th class='simple-table-checkbox'>" + toggleAllHtml + "</th>";
+                bodyHtml += "\n<td class='simple-table-checkbox'><input type='checkbox' ng-model='row.selected' ng-change='toggleRowSelection(row)'></td>";
             }
             angular.forEach(config.columnDefs, function (colDef) {
                 var field = colDef.field;

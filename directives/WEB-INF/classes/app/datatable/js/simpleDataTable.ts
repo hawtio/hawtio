@@ -278,10 +278,10 @@ module DataTable {
         var toggleAllHtml = isMultiSelect() ?
           "<input type='checkbox' ng-show='rows.length' ng-model='config.allRowsSelected' ng-change='toggleAllSelections()'>" : "";
 
-        headHtml += "\n<th>" +
+        headHtml += "\n<th class='simple-table-checkbox'>" +
           toggleAllHtml +
           "</th>"
-        bodyHtml += "\n<td><input type='checkbox' ng-model='row.selected' ng-change='toggleRowSelection(row)'></td>"
+        bodyHtml += "\n<td class='simple-table-checkbox'><input type='checkbox' ng-model='row.selected' ng-change='toggleRowSelection(row)'></td>"
       }
       angular.forEach(config.columnDefs, (colDef) => {
         var field = colDef.field;

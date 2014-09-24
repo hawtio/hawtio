@@ -110,51 +110,14 @@
 
 <p>We love <a href="http://hawt.io/contributing/index.html">contributions</a>! You may also want to know <a href="http://hawt.io/developers/index.html">how to hack on the hawtio code</a></p>
 
-<p><a href="http://hawt.io/">hawtio</a> can now be built <strong>without</strong> having to install node.js or anything first thanks to the <a href="https://github.com/hawtio/typescript-maven-plugin">typescript-maven-plugin</a>.  However <a href="http://hawt.io/">hawtio</a> will build faster if typescript is installed, so when possible it's recommended to install it.</p>
-
-<h2 id = "Installing_npm_and_TypeScript_for_faster_builds">Installing npm and TypeScript for faster builds</h2>
-
-<p>To install all of the required dependencies you first need to install <a href="https://npmjs.org/">npm</a> e.g. by <a href="http://nodejs.org/">installing nodejs</a>. If you're on OS X we recommend just installing <a href="https://npmjs.org/">npm</a> directly rather than via things like homebrew to get the latest npm crack.</p>
-
-<p>In order to make use of <a href="http://typescriptlang.org/">TypeScript</a> you will need to install the compiler globally. Installing a dependency globally allows you to access the the dependency directly from your shell.</p>
-
-<p>You can do this by running:</p>
-
-<pre><code>npm install -g typescript</code></pre>
-
-<p>Note, if you are using Ubuntu or OSX then you may need to use the <code>sudo</code> command:</p>
-
-<pre><code>sudo npm install -g typescript</code></pre>
-
-<p>To build the API documentation you also need to install <a href="http://sebastian-lenz.github.io/typedoc/">typedoc</a>:</p>
-
-<pre><code>sudo npm -g install typedoc</code></pre>
-
-<p>To run the tests you'll also need to install phantomjs:</p>
-
-<pre><code>sudo npm install -g phantomjs</code></pre>
-
-<h3 id = "Upgrading_TypeScript">Upgrading TypeScript</h3>
-
-<p>You can check which version of typescript you are using by</p>
-
-<pre><code>tsc -version</code></pre>
-
-<p>Note: You should be using version 1.0 or better.</p>
-
-<p>To upgrade typescript run the following</p>
-
-<pre><code>npm update -g typescript</code></pre>
-
-<p>Note, if you are using Ubuntu or OSX then you may need to use the <code>sudo</code> command:</p>
-
-<pre><code>sudo npm update -g typescript</code></pre>
+<p><a href="http://hawt.io/">hawtio</a> can now be built <strong>without</strong> having to install node.js or anything first thanks to the <a href="https://github.com/eirslett/frontend-maven-plugin">frontend-maven-plugin</a>. This
+will install node.js <span class="amp">&amp;</span> npm into a subdirectory, run <code>npm install</code> to install dependencies <span class="amp">&amp;</span> run the build like normal.</p>
 
 <h2 id = "Building">Building</h2>
 
 <p>After you've cloned hawtio's git repo the first thing you should do is build the whole project.  First <code>cd</code> into the root directory of the hawtio project and run:</p>
 
-<pre><code>mvn install</code></pre>
+<pre><code>mvn clean install</code></pre>
 
 <p>This will ensure all dependencies within the hawtio repo are built and any dependencies are downloaded and in your local repo.</p>
 
@@ -292,26 +255,6 @@ open src/test/specs/SpecRunner.html</code></pre>
 <pre><code>mvn -Pwatch</code></pre>
 
 <p>Now the unit tests are all re-run whenever you edit the source.</p>
-
-<h2 id = "Running_the_End-to-End_Integration_Tests">Running the End-to-End Integration Tests</h2>
-
-<p>Install <a href="http://vojtajina.github.com/testacular/">testacular</a>:</p>
-
-<pre><code>npm -g install testacular</code></pre>
-
-<p>To get the latest greatest testacular crack (e.g. so console.log() statements output to the command shell, etc.) you need 0.5.x or later use this command:</p>
-
-<pre><code>npm install -g testacular@"~0.5.7"</code></pre>
-
-<h3 id = "Running_Tests_With_Testacular">Running Tests With Testacular</h3>
-
-<p>In a shell in the <code>hawtio-web</code> directory run:</p>
-
-<pre><code>mvn test-compile exec:java</code></pre>
-
-<p>In another in the same directory run the following:</p>
-
-<pre><code>testacular start src/test/config/e2e-config.js</code></pre>
 
 <h2 id = "How_to_Get_Started_Hacking_the_Code">How to Get Started Hacking the Code</h2>
 

@@ -18,7 +18,7 @@ If you are not using OSGi then you just need to ensure you have [insight-log4j](
 
 Then you need to ensure that the LogQuery bean is instantiated in whatever dependency injection framework you choose. For example this is [how we initialise LogQuery](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/test/resources/applicationContext.xml#L18) in the [sample war](https://github.com/hawtio/hawtio/tree/master/sample) using spring XML:
 
-    <bean id="logQuery" class="org.fusesource.insight.log.log4j.Log4jLogQuery"
+    <bean id="logQuery" class="io.fabric8.insight.log.log4j.Log4jLogQuery"
           lazy-init="false" scope="singleton"
           init-method="start" destroy-method="stop"/>
 
