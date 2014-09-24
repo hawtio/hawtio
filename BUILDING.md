@@ -149,28 +149,6 @@ If you are using the [LiveReload plugin for Chrome](https://chrome.google.com/we
 Now the unit tests are all re-run whenever you edit the source.
 
 
-## Running the End-to-End Integration Tests
-
-Install [testacular](http://vojtajina.github.com/testacular/):
-
-    npm -g install testacular
-
-To get the latest greatest testacular crack (e.g. so console.log() statements output to the command shell, etc.) you need 0.5.x or later use this command:
-
-    npm install -g testacular@"~0.5.7"
-
-
-### Running Tests With Testacular
-
-In a shell in the `hawtio-web` directory run:
-
-    mvn test-compile exec:java
-
-In another in the same directory run the following:
-
-    testacular start src/test/config/e2e-config.js
-
-
 ## How to Get Started Hacking the Code
 
 Check out the [hawtio technologies, tools and code walkthroughs](http://hawt.io/developers/index.html)

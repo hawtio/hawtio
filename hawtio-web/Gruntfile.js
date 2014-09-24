@@ -25,13 +25,12 @@ module.exports = function(grunt) {
     // grunt-karma
     karma: {
       unit: {
-        // override karmaConfig.js settings here:
-//        singleRun: true,
-//        autoWatch: false,
         configFile: "src/test/config/karma.conf.js"
       },
       chrome: {
         configFile: "src/test/config/karma.conf.js",
+        autoWatch: true,
+        singleRun: false,
         browsers: [ "Chrome" ]
       }
     },

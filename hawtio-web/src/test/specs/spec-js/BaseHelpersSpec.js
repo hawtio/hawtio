@@ -12,6 +12,7 @@ describe("BaseHelpers", function() {
 
   it("returns prefixed url for absolute path", function() {
     spyOn(Core, 'windowLocation').andReturn({ pathname: "/a/b" });
+    spyOn($.fn, "attr").andReturn("/a");
     expect(Core.url("/#")).toBe("/a/#");
     expect(Core.url("/a/b/c")).toBe("/a/a/b/c");
   });
@@ -67,11 +68,6 @@ describe("BaseHelpers", function() {
     spyOn(hawtioPluginLoader, 'parseQueryString').andReturn({ localMode: true });
     spyOn(Core, 'windowLocation').andReturn({ pathname: "/a/b" });
     expect(Core.getJolokiaUrl()).toBeNull();
-  });
-
-  it("Should get correct jolokia url for non-localMode", function() {
-    spyOn(hawtioPluginLoader, 'parseQueryString').andReturn({ localMode: false, url: [ "a%20b", "b" ] });
-    expect(Core.getJolokiaUrl()).toBe("a b");
   });
 
   it("Should get correct, relative jolokia url for non-localMode", function() {

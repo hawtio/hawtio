@@ -88,7 +88,7 @@ module.exports = function(config) {
 
     // list of files to exclude
     exclude: [
-      
+
     ],
 
 
@@ -106,12 +106,8 @@ module.exports = function(config) {
     reporters: ['progress'],
 
 
-    // web server port
-    port: 9876,
-
-
     // enable / disable colors in the output (reporters and logs)
-    colors: true,
+    colors: false,
 
 
     // level of logging
@@ -130,7 +126,7 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: true
 
 //    typescriptPreprocessor: {
 //      options: {
