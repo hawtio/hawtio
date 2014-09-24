@@ -21,7 +21,7 @@
     <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
     <watch>false</watch>
     <gruntOptions></gruntOptions>
-    <testArguments>test</testArguments>
+    <testArguments>karma:unit</testArguments>
   </properties>
 
   <dependencies>
@@ -460,7 +460,7 @@
             </goals>
             <phase>test</phase>
             <configuration>
-              <arguments>${test-arguments}</arguments>
+              <arguments>${testArguments}</arguments>
             </configuration>
           </execution>
         </executions>
@@ -865,7 +865,7 @@
         <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
         <watch>true</watch>
         <gruntOptions>--watch=true</gruntOptions>
-        <testArguments>test-chrome</testArguments>
+        <testArguments>karma:chrome</testArguments>
       </properties>
     </profile>
 

@@ -71,13 +71,6 @@ describe("Core", function () {
   });
 
 
-  it("extracts credentials from URLs", function () {
-    var creds = hawtioPluginLoader.getCredentials("http://foo:bar@whatnot");
-    expect(creds[0]).toEqual("foo");
-    expect(creds[1]).toEqual("bar");
-  });
-
-
   assertObjectNameKeyValue("org.apache.activemq", { "dummy": null });
 
   assertObjectNameKeyValue("org.apache.activemq:brokerName=foo", { "dummy": null });
