@@ -1,50 +1,13 @@
 We love [contributions](http://hawt.io/contributing/index.html)! You may also want to know [how to hack on the hawtio code](http://hawt.io/developers/index.html)
 
-[hawtio](http://hawt.io/) can now be built **without** having to install node.js or anything first thanks to the [typescript-maven-plugin](https://github.com/hawtio/typescript-maven-plugin).  However [hawtio](http://hawt.io/) will build faster if typescript is installed, so when possible it's recommended to install it.
-
-## Installing npm and TypeScript for faster builds
-
-To install all of the required dependencies you first need to install [npm](https://npmjs.org/) e.g. by [installing nodejs](http://nodejs.org/). If you're on OS X we recommend just installing [npm](https://npmjs.org/) directly rather than via things like homebrew to get the latest npm crack.
-
-In order to make use of [TypeScript](http://typescriptlang.org/) you will need to install the compiler globally. Installing a dependency globally allows you to access the the dependency directly from your shell.
-
-You can do this by running:
-
-    npm install -g typescript
-
-Note, if you are using Ubuntu or OSX then you may need to use the `sudo` command:
-
-    sudo npm install -g typescript
-
-To build the API documentation you also need to install [typedoc](http://sebastian-lenz.github.io/typedoc/):
-
-    sudo npm -g install typedoc
-
-To run the tests you'll also need to install phantomjs:
-
-    sudo npm install -g phantomjs
-
-### Upgrading TypeScript
-
-You can check which version of typescript you are using by
-
-    tsc -version
-
-Note: You should be using version 1.0 or better.
-
-To upgrade typescript run the following
-
-    npm update -g typescript
-
-Note, if you are using Ubuntu or OSX then you may need to use the `sudo` command:
-
-    sudo npm update -g typescript
+[hawtio](http://hawt.io/) can now be built **without** having to install node.js or anything first thanks to the [frontend-maven-plugin](https://github.com/eirslett/frontend-maven-plugin). This
+will install node.js & npm into a subdirectory, run `npm install` to install dependencies & run the build like normal.
 
 ## Building
 
 After you've cloned hawtio's git repo the first thing you should do is build the whole project.  First ```cd``` into the root directory of the hawtio project and run:
 
-    mvn install
+    mvn clean install
 
 This will ensure all dependencies within the hawtio repo are built and any dependencies are downloaded and in your local repo.
 

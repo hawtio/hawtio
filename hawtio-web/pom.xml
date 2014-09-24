@@ -20,6 +20,7 @@
     -->
     <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
     <watch>false</watch>
+    <gruntOptions></gruntOptions>
   </properties>
 
   <dependencies>
@@ -448,7 +449,7 @@
               <goal>grunt</goal>
             </goals>
             <configuration>
-              <arguments>tsc</arguments>
+              <arguments>tsc ${gruntOptions}</arguments>
             </configuration>
           </execution>
         </executions>
@@ -852,6 +853,7 @@
       <properties>
         <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
         <watch>true</watch>
+        <gruntOptions>--watch=true</gruntOptions>
       </properties>
     </profile>
 
