@@ -1,17 +1,17 @@
 <div class="row-fluid" ng-controller="Kubernetes.TopLevel">
   <div class="span12">
     <ul class="nav nav-tabs connected">
-      <li ng-class='{active : isActive("#/fabric/kubernetes/pods")}'
+      <li ng-class='{active : isActive("#/kubernetes/pods")}'
           title="View kubernetes pods and their status">
-        <a ng-href="#/fabric/kubernetes/pods">Pods</a>
+        <a ng-href="#/kubernetes/pods">Pods</a>
       </li>
-      <li ng-class='{active : isActive("#/fabric/kubernetes/replicationControllers")}'
+      <li ng-class='{active : isActive("#/kubernetes/replicationControllers")}'
           title="View kubernetes replication controllers and their status">
-        <a ng-href="#/fabric/kubernetes/replicationControllers">Replication Controllers</a>
+        <a ng-href="#/kubernetes/replicationControllers">Replication Controllers</a>
       </li>
-      <li ng-class='{active : isActive("#/fabric/kubernetes/services")}'
+      <li ng-class='{active : isActive("#/kubernetes/services")}'
           title="View kubernetes services and their status">
-        <a ng-href="#/fabric/kubernetes/services">Services</a>
+        <a ng-href="#/kubernetes/services">Services</a>
       </li>
       <li class=pull-right>
         <span ng-show="version">Kubernetes version: {{version.major}}.{{version.minor}}</span>

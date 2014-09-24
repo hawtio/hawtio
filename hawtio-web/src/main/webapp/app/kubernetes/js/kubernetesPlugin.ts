@@ -5,7 +5,7 @@
 
 module Kubernetes {
   export var objectName = Fabric.jmxDomain + ":type=Kubernetes";
-  export var context = '/fabric/kubernetes';
+  export var context = '/kubernetes';
   export var hash = '#' + context;
   export var defaultRoute = hash + '/pods';
   export var pluginName = 'Kubernetes';
@@ -89,12 +89,12 @@ module Kubernetes {
 
   _module.run(['viewRegistry', 'workspace', (viewRegistry, workspace:Core.Workspace) => {
     log.debug("Running");
-    viewRegistry['fabric/kubernetes'] = templatePath + 'layoutKubernetes.html';
+    viewRegistry['kubernetes'] = templatePath + 'layoutKubernetes.html';
     workspace.topLevelTabs.push({
-      id: 'fabric.kubernetes',
+      id: 'kubernetes',
       content: 'Kubernetes',
       isValid: (workspace:Core.Workspace) => workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, { type: 'Kubernetes' }),
-      isActive: (workspace:Core.Workspace) => workspace.isLinkActive('fabric/kubernetes'),
+      isActive: (workspace:Core.Workspace) => workspace.isLinkActive('kubernetes'),
       href: () => defaultRoute
     });
   }]);

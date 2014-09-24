@@ -27,7 +27,7 @@ module Perspective {
       topLevelTabs: {
         includes: [
           {
-            href: "#/fabric"
+            id: "kubernetes"
           },
           {
             id: "fabric.containers"
@@ -39,13 +39,13 @@ module Perspective {
             href: "#/wiki/branch/"
           },
           {
+            href: "#/fabric"
+          },
+          {
             id: "fabric.requirements"
           },
           {
             href: "#/wiki/profile"
-          },
-          {
-            id: "fabric.kubernetes"
           },
           {
             href: "#/docker"
@@ -103,6 +103,9 @@ module Perspective {
         excludes: [
           {
             href: "#/fabric"
+          },
+          {
+            href: "#/kubernetes"
           },
           {
             id: "fabric.profiles"

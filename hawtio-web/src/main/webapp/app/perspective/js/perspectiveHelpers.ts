@@ -256,6 +256,7 @@ module Perspective {
       if (url.startsWith("/perspective/defaultPage") || url.startsWith("/login") || url.startsWith("/welcome") || url.startsWith("/index") ||
           // see metadata.ts for the fabric configuration for which plugins we want to be in the fabric perspective
           url.startsWith("/fabric") ||
+          url.startsWith("/kubernetes") ||
           url.startsWith("/profiles") ||
           url.startsWith("/dashboard") ||
           url.startsWith("/health") ||

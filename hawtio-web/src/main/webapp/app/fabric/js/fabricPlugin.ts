@@ -126,7 +126,7 @@ module Fabric {
 
     workspace.topLevelTabs.push({
       id: "fabric.runtime",
-      content: "Runtime",
+      content: "Services",
       title: "Manage your containers in this fabric",
       isValid: (workspace) => Fabric.isFMCContainer(workspace),
       href: () => "#/fabric/containers",
