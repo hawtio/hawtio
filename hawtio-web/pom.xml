@@ -311,26 +311,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>ro.isdc.wro4j</groupId>
-      <artifactId>wro4j-extensions</artifactId>
-      <version>1.6.3</version>
-      <scope>provided</scope>
-        <exclusions>
-            <exclusion>
-                <groupId>me.n4u.sass</groupId>
-                <artifactId>sass-gems</artifactId>
-            </exclusion>
-        </exclusions>
-    </dependency>
-    <!-- fix bad transient dependency of wro4j -->
-    <dependency>
-      <groupId>me.n4u.sass</groupId>
-      <artifactId>sass-gems</artifactId>
-      <version>3.2.1</version>
-      <scope>provided</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -413,6 +393,8 @@
               <directory>${basedir}/src/main/webapp/app</directory>
               <includes>
                 <include>app.js</include>
+                <include>app.min.js</include>
+                <include>*.map</include>
               </includes>
             </fileset>
           </filesets>
@@ -482,8 +464,8 @@
         <executions>
 
           <execution>
-            <id>generate-sources</id>
-            <phase>generate-sources</phase>
+            <id>process-resources</id>
+            <phase>process-resources</phase>
             <configuration>
               <target>
                 <mkdir dir="${basedir}/target/classes" />
@@ -532,8 +514,9 @@
 -->
                   <fileset dir="${basedir}/src/main/webapp">
                     <include name="**" />
-                    <exclude name="**/*.ts" />
                     <exclude name="index.html" />
+                    <exclude name="app/app.js" />
+                    <exclude name="app/app.js.map" />
                     <exclude name="manifest.json" />
                   </fileset>
                 </copy>
@@ -555,28 +538,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>ro.isdc.wro4j</groupId>
-        <artifactId>wro4j-maven-plugin</artifactId>
-        <version>1.6.3</version>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
-          <targetGroups>app</targetGroups>
-          <minimize>true</minimize>
-          <jsDestinationFolder>${webapp-outdir}/app/</jsDestinationFolder>
-          <contextFolder>${basedir}/src/main/webapp/</contextFolder>
-          <ignoreMissingResources>false</ignoreMissingResources>
-        </configuration>
       </plugin>
 
       <plugin>
@@ -646,10 +607,9 @@
           <warSourceDirectory>${webapp-outdir}</warSourceDirectory>
           <packagingExcludes>
             **/classes/OSGI-INF/**,
-            **/*.ts,
             */debug/**
           </packagingExcludes>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <failOnMissingWebXml>true</failOnMissingWebXml>
 <!--
           TODO disabled using archiveClasses for https://github.com/hawtio/hawtio/issues/403
           until we can figure out how to get the war to work inside OSGi again

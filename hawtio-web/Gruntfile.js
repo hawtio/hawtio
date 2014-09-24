@@ -15,8 +15,6 @@ module.exports = function(grunt) {
         options: {
           port: 8010,
           base: 'src/main/webapp',
-//          middleware: function(connect, options) {
-//          },
           keepalive: true
         }
       }
@@ -40,32 +38,32 @@ module.exports = function(grunt) {
       base: {
         src: [ "src/main/d.ts/*.d.ts", "src/main/webapp/app/**/*.ts" ],
         dest: "src/main/webapp/app/app.js",
-//        dest: ".tscache/tsc",
         options: {
           comments: true,
           module: "commonjs",
           target: "ES5",
           declaration: false,
+          sourceMap: true,
           watch: grunt.option("watch") ? {
             path: "src/main/webapp/app",
-//            after: [ "concat:appjs" ],
             atBegin: true
           } : false
         }
       }
     },
 
-    // grunt-ts (~10 seconds)
-    ts: {
-      build: {
-        src: [ "src/main/d.ts/*.d.ts", "src/main/webapp/app/**/*.ts" ],
-        out: "src/main/webapp/app/app.js",
-        watch: grunt.option("watch") ? "src/main/webapp/app" : false,
+    uglify: {
+      dist: {
         options: {
-          removeComments: false,
-          module: "commonjs",
-          target: "ES5",
-          declaration: false
+          // Reference to the source map TypeScript created.
+          sourceMapIn: 'src/main/webapp/app/app.js.map',
+          // Creates our new source map after minifying.
+          sourceMap: 'src/main/webapp/app/app.min.map',
+          // The root folder where the TypeScript live.
+          sourceMapRoot: 'src/main/webapp/app/**/*.ts'
+        },
+        files: {
+          'src/main/webapp/app/app.min.js': ['src/main/webapp/app/app.js']
         }
       }
     },
@@ -75,19 +73,6 @@ module.exports = function(grunt) {
       tsc: {
         files: [ "src/main/webapp/app/**/*.ts" ],
         tasks: [ "typescript:base" ]
-//        tasks: [ "ts:build" ]
-      }
-    },
-
-    // grunt-contrib-concat
-    concat: {
-      options: {
-        separator: "//~\n"
-      },
-      appjs: {
-        src: [ ".tscache/tsc/**/*.js" ],
-        // it produces app.js in wrong order
-        dest: "src/main/webapp/app/app.js"
       }
     },
 
@@ -117,11 +102,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-typescript');
-  grunt.loadNpmTasks('grunt-ts');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-angular-modules-graph');
   grunt.loadNpmTasks('grunt-graphviz');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
 
 
   /* task aliases */
@@ -138,7 +122,7 @@ module.exports = function(grunt) {
     grunt.registerTask("tsc", "Runs TypeScript compiler", [ "typescript:base", "watch:tsc" ]);
   } else {
 //    grunt.registerTask("tsc", "Runs TypeScript compiler", [ "ts:build" ]);
-    grunt.registerTask("tsc", "Runs TypeScript compiler", [ "typescript:base" ]);
+    grunt.registerTask("tsc", "Runs TypeScript compiler", [ "typescript:base", "uglify:dist" ]);
   }
 
 };

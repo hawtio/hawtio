@@ -24,6 +24,7 @@
     "grunt-graphviz": "~0.1.0",
     "typescript": "~1.0.1",
     "testacular": "~0.6.2",
-    "grunt-testacular": "~0.3.0"
+    "grunt-testacular": "~0.3.0",
+    "grunt-contrib-uglify": "~0.6.0"
   }
 }

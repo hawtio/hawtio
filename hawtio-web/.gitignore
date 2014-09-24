@@ -1,5 +1,6 @@
 hawtio-config
 mavenIndexer
 activemq-data
-src/main/webapp/app/app.js
+src/main/webapp/app/app.js*
+src/main/webapp/app/app.min.js*
 node/
