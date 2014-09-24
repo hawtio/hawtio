@@ -2,8 +2,9 @@
 /// <reference path="../../helpers/js/pluginHelpers.ts"/>
 /// <reference path="../../core/js/workspace.ts"/>
 /// <reference path="../../fabric/js/fabricGlobals.ts"/>
-
+/// <reference path="./kubernetesHelpers.ts"/>
 module Kubernetes {
+
   export var objectName = Fabric.jmxDomain + ":type=Kubernetes";
   export var context = '/kubernetes';
   export var hash = '#' + context;
@@ -16,9 +17,9 @@ module Kubernetes {
   export var route = PluginHelpers.createRoutingFunction(templatePath);
 
   _module.config(['$routeProvider', ($routeProvider:ng.route.IRouteProvider) => {
-    $routeProvider.when(UrlHelpers.join(context, 'pods'), route('pods.html'))
-                  .when(UrlHelpers.join(context, 'replicationControllers'), route('replicationControllers.html'))
-                  .when(UrlHelpers.join(context, 'services'), route('services.html'));
+    $routeProvider.when(UrlHelpers.join(context, 'pods'), route('pods.html', false))
+                  .when(UrlHelpers.join(context, 'replicationControllers'), route('replicationControllers.html', false))
+                  .when(UrlHelpers.join(context, 'services'), route('services.html', false));
   }]);
 
   // set up a promise that supplies the API URL for Kubernetes, proxied if necessary

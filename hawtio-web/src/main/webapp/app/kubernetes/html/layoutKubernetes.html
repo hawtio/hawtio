@@ -1,3 +1,10 @@
+<script type="text/ng-template" id="idTemplate.html">
+  <div class="ngCellText" ng-controller="Kubernetes.IDSelector">
+    <a href="" 
+       title="View details for {{row.entity.id}}"
+       ng-click="select(row.entity.id)">{{row.entity.id}}</a>
+  </div>
+</script>
 <script type="text/ng-template" id="selectorTemplate.html">
   <div class="ngCellText">
     <span ng-repeat="(name, value) in row.entity.selector">

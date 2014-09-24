@@ -1,76 +1,20 @@
 /// <reference path="kubernetesPlugin.ts"/>
 /// <reference path="../../helpers/js/pollHelpers.ts"/>
-/// <reference path="../../fabric/js/fabricHelpers.ts"/>
+/// <reference path="../../helpers/js/controllerHelpers.ts"/>
 /// <reference path="../../ui/js/dialog.ts"/>
 module Kubernetes {
 
-  interface KubePod {
-    id:string;
-  }
-
-  // controller for the status icon cell
-  export var PodStatus = controller("PodStatus", ["$scope", ($scope) => {
-    $scope.statusMapping = {
-      'Running': 'icon-play-circle green',
-      'Waiting': 'icon-download',
-      'Terminated': 'icon-off yellow'
-    };
-  }]);
-
-  // controller that deals with the labels per pod
-  export var Labels = controller("Labels", ["$scope", "workspace", "jolokia", "$location", ($scope, workspace, jolokia, $location) => {
-    $scope.labels = {};
-    $scope.$watch('entity', (newValue, oldValue) => {
-      if (newValue) {
-        log.debug("labels: ", newValue);
-        // massage the labels a bit
-        angular.forEach($scope.entity.labels, (value, key) => {
-          if (key === 'fabric8') {
-            // TODO not sure what this is for, the container type?
-            return;
-          }
-          $scope.labels[key] = {
-            title: value
-          };
-        });
-      }
-    });
-    $scope.handleClick = (entity, labelType:string, value) => {
-      log.debug("handleClick, entity: ", entity, " labelType: ", labelType, " value: ", value);
-      switch (labelType) {
-        case 'container':
-          if (entity.labels.container) {
-            Fabric.gotoContainer(entity.labels.container);
-          }
-          return;
-        case 'profile':
-          if (entity.labels.version && entity.labels.profile) {
-            Fabric.gotoProfile(workspace, jolokia, workspace.localStorage, $location, entity.labels.version, entity.labels.profile);
-          }
-          return;
-        default:
-          return;
-      }
-    }
-    var labelColors = {
-      'profile': 'background-green mouse-pointer',
-      'version': 'background-blue',
-      'name': 'background-light-grey',
-      'container': 'background-light-green mouse-pointer'
-    };
-    $scope.labelClass = (labelType:string) => {
-      if (!(labelType in labelColors)) {
-        return '';
-      }
-      else return labelColors[labelType];
-    }
-  }]);
- 
   // main controller for the page
-  export var Pods = controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "jolokia", "$timeout", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, $dialog, $templateCache, jolokia:Jolokia.IJolokia, $timeout) => {
+  export var Pods = controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "jolokia", "$location", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, $dialog, $templateCache, jolokia:Jolokia.IJolokia, $location:ng.ILocationService) => {
 
     $scope.pods = []
     $scope.fetched = false;
+    $scope.json = '';
+    ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
+
+    $scope.$on('kubeSelectedId', ($event, id) => {
+      Kubernetes.setJson($scope, id, $scope.pods);
+    });
 
     $scope.podsConfig = {
       data: 'pods',
@@ -82,7 +26,8 @@ module Kubernetes {
         {
           field: 'id',
           displayName: 'ID',
-          defaultSort: true
+          defaultSort: true,
+          cellTemplate: $templateCache.get("idTemplate.html")
         },
         {
           field: 'currentState.status',
@@ -111,7 +56,12 @@ module Kubernetes {
     };
 
     KubernetesPods.then((KubernetesPods:ng.resource.IResourceClass) => {
-      $scope.deletePrompt = (selected:Array<KubePod>) => {
+      $scope.deletePrompt = (selected) => {
+        if (angular.isString(selected)) {
+          selected = [{
+            id: selected
+          }];
+        }
         UI.multiItemConfirmActionDialog(<UI.MultiItemConfirmActionOptions>{
           collection: selected,
           index: 'id',
@@ -135,7 +85,7 @@ module Kubernetes {
                   });
                 }
               }
-              deleteSelected(selected, selected.pop());
+              deleteSelected(selected, selected.shift());
             }
           },
           title: 'Delete pods?',
@@ -151,7 +101,8 @@ module Kubernetes {
         KubernetesPods.query((response) => {
           $scope.fetched = true;
           $scope.pods = response['items'].sortBy((pod:KubePod) => { return pod.id });
-            //log.debug("Pods: ", $scope.pods);
+          Kubernetes.setJson($scope, $scope.id, $scope.pods);
+          //log.debug("Pods: ", $scope.pods);
           next();
         });
       });
