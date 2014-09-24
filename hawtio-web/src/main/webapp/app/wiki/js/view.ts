@@ -237,10 +237,10 @@ module Wiki {
       Core.notification("success", "Clicked cancel!");
     };
 
-
     $scope.onCreateDocumentSelect = (node) => {
       $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
       $scope.selectedCreateDocumentTemplateRegex = $scope.selectedCreateDocumentTemplate.regex || /.*/;
+      $scope.selectedCreateDocumentTemplateInvalid = $scope.selectedCreateDocumentTemplate.invalid || "invalid name";
       checkFileExists(getNewDocumentPath());
     };
 
@@ -249,7 +249,7 @@ module Wiki {
     });
 
     $scope.openAddDialog = () => {
-      $scope.newDocumentName = null;
+      $scope.newDocumentName = "";
       $scope.addDialog.open();
     };
 
@@ -257,6 +257,10 @@ module Wiki {
       $scope.newDocumentName = fileName;
       var template = $scope.selectedCreateDocumentTemplate;
       var path = getNewDocumentPath();
+
+      // clear $scope.newDocumentName so we dont remember it when we open it next time
+      $scope.newDocumentName = null;
+
       if (!template || !path) {
         return;
       }

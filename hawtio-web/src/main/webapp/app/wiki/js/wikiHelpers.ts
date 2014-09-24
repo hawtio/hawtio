@@ -11,7 +11,6 @@ module Wiki {
   export var dozerNamespaces = ["http://dozer.sourceforge.net"];
   export var activemqNamespaces = ["http://activemq.apache.org/schema/core"];
 
-
   export var excludeAdjustmentPrefixes = ["http://", "https://", "#"];
 
   /**
@@ -27,6 +26,9 @@ module Wiki {
    */
   export var hideExtentions = [".profile"];
 
+  var defaultFileNamePattern = /^[a-zA-Z0-9._-]*$/
+  var defaultFileNamePatternInvalid = "Name must be using letters, numbers or any of the following characters . _ -"
+
   /**
    * The wizard tree for creating new content in the wiki
    * @property documentTemplates
@@ -39,7 +41,9 @@ module Wiki {
       tooltip: "Create a new folder to contain documents",
       folder: true,
       icon: "/img/icons/wiki/folder.gif",
-      exemplar: "MyFolder"
+      exemplar: "MyFolder",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid
     },
     {
       label: "Fabric8 Profile",
@@ -47,8 +51,9 @@ module Wiki {
       profile: true,
       addClass: "icon-book green",
       exemplar: "user-profile",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
       fabricOnly: true,
-      regex: /^[a-zA-Z0-9_-]*$/
     },
 
 //    {
@@ -63,12 +68,16 @@ module Wiki {
     {
       label: "Properties File",
       tooltip: "A properties file typically used to configure Java classes",
-      exemplar: "properties-file.properties"
+      exemplar: "properties-file.properties",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid
     },
     {
       label: "Key Store File",
       tooltip: "Creates a keystore (database) of cryptographic keys, X.509 certificate chains, and trusted certificates.",
       exemplar: 'keystore.jks',
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
       generated: {
         mbean: ['hawtio', { type: 'KeystoreService' }],
         init: function(workspace, $scope) {
@@ -163,17 +172,23 @@ module Wiki {
     {
       label: "Markdown Document",
       tooltip: "A basic markup document using the Markdown wiki markup, particularly useful for ReadMe files in directories",
-      exemplar: "ReadMe.md"
+      exemplar: "ReadMe.md",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid
     },
     {
       label: "HTML Document",
       tooltip: "A HTML document you can edit directly using the HTML markup",
-      exemplar: "document.html"
+      exemplar: "document.html",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid
     },
     {
       label: "XML Document",
       tooltip: "An empty XML document",
-      exemplar: "document.xml"
+      exemplar: "document.xml",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid
     },
     {
       label: "Integration Flows",
@@ -183,27 +198,35 @@ module Wiki {
           label: "Camel XML document",
           tooltip: "A vanilla Camel XML document for integration flows",
           icon: "/img/icons/camel.svg",
-          exemplar: "camel.xml"
+          exemplar: "camel.xml",
+          regex: defaultFileNamePattern,
+          invalid: defaultFileNamePatternInvalid
         },
         {
           label: "Camel OSGi Blueprint XML document",
           tooltip: "A vanilla Camel XML document for integration flows when using OSGi Blueprint",
           icon: "/img/icons/camel.svg",
-          exemplar: "camel-blueprint.xml"
+          exemplar: "camel-blueprint.xml",
+          regex: defaultFileNamePattern,
+          invalid: defaultFileNamePatternInvalid
         },
         {
           label: "Camel Spring XML document",
           tooltip: "A vanilla Camel XML document for integration flows when using the Spring framework",
           icon: "/img/icons/camel.svg",
-          exemplar: "camel-spring.xml"
+          exemplar: "camel-spring.xml",
+          regex: defaultFileNamePattern,
+          invalid: defaultFileNamePatternInvalid
         }
       ]
     },
     {
       label: "Data Mapping Document",
       tooltip: "Dozer based configuration of mapping documents",
-      icon: "/app/dozer/img/dozer.gif",
-      exemplar: "dozerMapping.xml"
+      icon: "/img/icons/dozer/dozer.gif",
+      exemplar: "dozerMapping.xml",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid
     }
   ];
 
