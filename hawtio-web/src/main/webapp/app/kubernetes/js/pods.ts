@@ -67,8 +67,13 @@ module Kubernetes {
         },
         {
           field: 'currentState.status',
-          displayName: 'Image Status',
+          displayName: 'Status',
           cellTemplate: $templateCache.get("statusTemplate.html")
+        },
+        {
+          field: 'containerImages',
+          displayName: 'Images',
+          cellTemplate: $templateCache.get("imageTemplate.html")
         },
         {
           field: 'currentState.host',
@@ -76,7 +81,7 @@ module Kubernetes {
         },
         { 
           field: 'currentState.podIP',
-          displayName: 'Pod IP',
+          displayName: 'Pod IP'
         },
         {
           field: 'labels',
@@ -127,7 +132,7 @@ module Kubernetes {
         KubernetesPods.query((response) => {
           $scope.fetched = true;
           $scope.pods = response['items'].sortBy((pod:KubePod) => { return pod.id });
-          //log.debug("Pods: ", $scope.pods);
+            //log.debug("Pods: ", $scope.pods);
           next();
         });
       });

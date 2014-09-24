@@ -7,8 +7,15 @@
     </div>
   </script>
   <script type="text/ng-template" id="statusTemplate.html">
-    <div class=ngCellText ng-controller="Kubernetes.PodStatus">
+    <div class="ngCellText" ng-controller="Kubernetes.PodStatus" title="{{row.entity.currentState.status}}">
       <i ng-class="statusMapping[row.entity.currentState.status] || 'icon-question red'"></i>
+    </div>
+  </script>
+  <script type="text/ng-template" id="imageTemplate.html">
+    <div class="ngCellText">
+      <span ng-repeat="container in row.entity.desiredState.manifest.containers">
+        <a target="dockerRegistry" href="https://registry.hub.docker.com/u/{{container.image}}" title="{{container.name}}">{{container.image}}</a>
+      </span>
     </div>
   </script>
   <div class="row-fluid">
