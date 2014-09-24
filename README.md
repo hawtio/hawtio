@@ -14,6 +14,7 @@ The only server side dependency (other than the static HTML/CSS/JS/images) is th
 
 
 ## Want to hack on some code?
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/hawtio/hawtio?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 We love [contributions](http://hawt.io/contributing/index.html)!
 
