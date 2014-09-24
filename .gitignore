@@ -19,3 +19,4 @@ tags
 node_modules
 hawtio-config
 .tscache
+node/
