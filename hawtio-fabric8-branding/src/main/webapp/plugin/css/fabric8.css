@@ -1594,6 +1594,9 @@ textarea[readonly] {
   border: none;
 }
 
+.perspective-selector img {
+  vertical-align: middle;
+}
 .dropdown.perspective-selector .dropdown-menu > div > p,
 .hawtio-dropdown p {
   border-top: 1px solid #d4d4d4;
