@@ -4121,17 +4121,10 @@ img.nodeIcon:hover {
   width: 16px;
 }
 
-.perspective-selector i:before,
 .perspective-selector img {
   width: auto;
   height: 16px;
-  font-size: 16px;
   vertical-align: top;
-  line-height: 16px;
-}
-
-.perspective-selector i:before {
-  vertical-align: middle;
 }
 
 .operation-row {
