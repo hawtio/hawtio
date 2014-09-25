@@ -21,7 +21,7 @@ module Core {
     };
 
 
-    public controller = ($scope, $element, $attrs, jolokia) => {
+    public controller = ["$scope", "$element", "$attrs", "jolokia", ($scope, $element, $attrs, jolokia) => {
 
       $scope.target = '';
       $scope.response = '';
@@ -71,10 +71,10 @@ module Core {
 
       });
 
-    };
+    }];
 
 
-    public link = ($scope, $element, $attrs) => {
+    public link = ["$scope", "$element", "attrs", ($scope, $element, $attrs) => {
 
       var fileInput = $element.find('input[type=file]');
       var form = $element.find('form[name=file-upload]');
@@ -145,7 +145,7 @@ module Core {
       } else {
         fileInput.change(onFileChange);
       }
-    };
+    }];
   } // end class FileUpload
 
   // now add this directive to the module

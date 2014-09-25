@@ -13,11 +13,11 @@ module UI {
     public restrict = 'A';
     public replace = true;
 
-    public controller = ($scope, $element, $attrs) => {
+    public controller = ["$scope", "$element", "$attrs", ($scope, $element, $attrs) => {
 
-    };
+    }];
 
-    public link = ($scope, $element, $attrs) => {
+    public link = ["$scope", "$element", "$attrs", ($scope, $element, $attrs) => {
 
       var widgetMargins = [6, 6];
       var widgetBaseDimensions = [150, 150];
@@ -67,7 +67,7 @@ module UI {
         extra_cols: extraCols
       }).data('gridster');
 
-    };
+    }];
   }
 
 }

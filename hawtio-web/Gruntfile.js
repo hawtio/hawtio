@@ -39,7 +39,7 @@ module.exports = function(grunt) {
         src: [ "src/main/d.ts/*.d.ts", "src/main/webapp/app/**/*.ts" ],
         dest: "src/main/webapp/app/app.js",
         options: {
-          comments: true,
+          comments: false,
           module: "commonjs",
           target: "ES5",
           declaration: false,
@@ -52,6 +52,14 @@ module.exports = function(grunt) {
       }
     },
 
+    ngAnnotate: {
+      app: {
+        files: {
+          'src/main/webapp/app/app.js': ['src/main/webapp/app/app.js']
+        }
+      }
+    },
+
     uglify: {
       dist: {
         options: {
@@ -59,8 +67,7 @@ module.exports = function(grunt) {
           sourceMapIn: 'src/main/webapp/app/app.js.map',
           // Creates our new source map after minifying.
           sourceMap: 'src/main/webapp/app/app.min.map',
-          // The root folder where the TypeScript live.
-          sourceMapRoot: 'src/main/webapp/app/**/*.ts'
+          sourceMapIncludeSources: true
         },
         files: {
           'src/main/webapp/app/app.min.js': ['src/main/webapp/app/app.js']
@@ -72,7 +79,7 @@ module.exports = function(grunt) {
     watch: {
       tsc: {
         files: [ "src/main/webapp/app/**/*.ts" ],
-        tasks: [ "typescript:base" ]
+        tasks: [ "typescript:base", "karma:unit", "uglify:dist" ]
       }
     },
 
@@ -98,7 +105,6 @@ module.exports = function(grunt) {
   });
 
   /* load & register tasks */
-
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-typescript');
@@ -106,7 +112,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-angular-modules-graph');
   grunt.loadNpmTasks('grunt-graphviz');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-
+  grunt.loadNpmTasks('grunt-ng-annotate');
 
   /* task aliases */
 
@@ -117,12 +123,7 @@ module.exports = function(grunt) {
   grunt.registerTask("test", "Runs unit tests once", [ "karma:unit" ]);
   grunt.registerTask("test-chrome", "Runs unit tests continuously with autowatching", [ "karma:chrome" ]);
 
-  if (grunt.option("watch")) {
-//    grunt.registerTask("tsc", "Runs TypeScript compiler", [ "ts:build", "watch:tsc" ]);
-    grunt.registerTask("tsc", "Runs TypeScript compiler", [ "typescript:base", "watch:tsc" ]);
-  } else {
-//    grunt.registerTask("tsc", "Runs TypeScript compiler", [ "ts:build" ]);
-    grunt.registerTask("tsc", "Runs TypeScript compiler", [ "typescript:base", "uglify:dist" ]);
-  }
+  grunt.registerTask("default", ["typescript:base", "karma:unit", "ngAnnotate:app", "uglify:dist"])
+  grunt.registerTask("watch", ["typescript:base", "karma:unit", "ngAnnotate:app", "uglify:dist"])
 
 };

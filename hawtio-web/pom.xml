@@ -21,7 +21,7 @@
     <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
     <watch>false</watch>
     <gruntOptions></gruntOptions>
-    <testArguments>karma:unit</testArguments>
+    <gruntArguments>default</gruntArguments>
   </properties>
 
   <dependencies>
@@ -432,17 +432,7 @@
               <goal>grunt</goal>
             </goals>
             <configuration>
-              <arguments>tsc ${gruntOptions}</arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>grunt test</id>
-            <goals>
-              <goal>grunt</goal>
-            </goals>
-            <phase>test</phase>
-            <configuration>
-              <arguments>${testArguments}</arguments>
+              <arguments>${gruntArguments} ${gruntOptions}</arguments>
             </configuration>
           </execution>
         </executions>
@@ -505,13 +495,6 @@
 
                 <echo>Copying static non-ts resources to exploded war directory</echo>
                 <copy todir="${webapp-outdir}">
-<!--
-                  <filterchain>
-                    <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
-                      <param type="token" name="VERSION" value="${project.version}" />
-                    </filterreader>
-                  </filterchain>
--->
                   <fileset dir="${basedir}/src/main/webapp">
                     <include name="**" />
                     <exclude name="index.html" />
@@ -823,9 +806,7 @@
       <id>watch</id>
       <properties>
         <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
-        <watch>true</watch>
-        <gruntOptions>--watch=true</gruntOptions>
-        <testArguments>karma:chrome</testArguments>
+        <gruntArguments>watch</gruntArguments>
       </properties>
     </profile>
 
