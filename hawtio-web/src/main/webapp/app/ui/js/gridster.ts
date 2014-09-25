@@ -17,7 +17,7 @@ module UI {
 
     }];
 
-    public link = ["$scope", "$element", "$attrs", ($scope, $element, $attrs) => {
+    public link = ($scope, $element, $attrs) => {
 
       var widgetMargins = [6, 6];
       var widgetBaseDimensions = [150, 150];
@@ -67,7 +67,7 @@ module UI {
         extra_cols: extraCols
       }).data('gridster');
 
-    }];
+    };
   }
 
 }

@@ -52,7 +52,7 @@ module UI {
       };
     }];
 
-    public link = ["$scope", "$element", "$attrs", ($scope, $element, $attrs) => {
+    public link = ($scope, $element, $attrs) => {
       $scope.$watch('show', function() {
         if ($scope.show) {
           $element.addClass('out');
@@ -61,7 +61,7 @@ module UI {
           $element.removeClass('out');
         }
       });
-    }];
+    };
 
 
 
