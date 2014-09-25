@@ -79,7 +79,7 @@ module.exports = function(grunt) {
     watch: {
       tsc: {
         files: [ "src/main/webapp/app/**/*.ts" ],
-        tasks: [ "typescript:base", "karma:unit", "uglify:dist" ]
+        tasks: [ "typescript:base", "karma:unit", "ngAnnotate:app", "uglify:dist" ]
       }
     },
 
@@ -124,6 +124,5 @@ module.exports = function(grunt) {
   grunt.registerTask("test-chrome", "Runs unit tests continuously with autowatching", [ "karma:chrome" ]);
 
   grunt.registerTask("default", ["typescript:base", "karma:unit", "ngAnnotate:app", "uglify:dist"])
-  grunt.registerTask("watch", ["typescript:base", "karma:unit", "ngAnnotate:app", "uglify:dist"])
 
 };
