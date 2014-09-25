@@ -27,7 +27,10 @@ module Wiki {
   export var hideExtentions = [".profile"];
 
   var defaultFileNamePattern = /^[a-zA-Z0-9._-]*$/
-  var defaultFileNamePatternInvalid = "Name must be using letters, numbers or any of the following characters . _ -"
+  var defaultFileNamePatternInvalid = "Name must be: letters, numbers, and . _ or - characters"
+
+  var defaultLowerCaseFileNamePattern = /^[a-z0-9._-]*$/
+  var defaultLowerCaseFileNamePatternInvalid = "Name must be: lower-case letters, numbers, and . _ or - characters"
 
   /**
    * The wizard tree for creating new content in the wiki
@@ -41,9 +44,9 @@ module Wiki {
       tooltip: "Create a new folder to contain documents",
       folder: true,
       icon: "/img/icons/wiki/folder.gif",
-      exemplar: "MyFolder",
-      regex: defaultFileNamePattern,
-      invalid: defaultFileNamePatternInvalid
+      exemplar: "myfolder",
+      regex: defaultLowerCaseFileNamePattern,
+      invalid: defaultLowerCaseFileNamePatternInvalid
     },
     {
       label: "Fabric8 Profile",
@@ -51,20 +54,10 @@ module Wiki {
       profile: true,
       addClass: "icon-book green",
       exemplar: "user-profile",
-      regex: defaultFileNamePattern,
-      invalid: defaultFileNamePatternInvalid,
+      regex: defaultLowerCaseFileNamePattern,
+      invalid: defaultLowerCaseFileNamePatternInvalid,
       fabricOnly: true,
     },
-
-//    {
-//      label: "Fabric8 Version",
-//      tooltip: "Create a new Fabric8 version based on the latest available version.  Leave the name blank to use the next available version name.  Version names must be in the form of x.y.z, for example 1.2.foo is okay, 1.2-foo is not",
-//      version: true,
-//      addClass: "icon-code-fork green",
-//      exemplar: "1.1.MyVersion",
-//      fabricOnly: true,
-//      regex: /[1-9][0-9]*(\\.[0-9]+)*/
-//    },
     {
       label: "Properties File",
       tooltip: "A properties file typically used to configure Java classes",
@@ -172,7 +165,7 @@ module Wiki {
     {
       label: "Markdown Document",
       tooltip: "A basic markup document using the Markdown wiki markup, particularly useful for ReadMe files in directories",
-      exemplar: "ReadMe.md",
+      exemplar: "readme.md",
       regex: defaultFileNamePattern,
       invalid: defaultFileNamePatternInvalid
     },
@@ -224,7 +217,7 @@ module Wiki {
       label: "Data Mapping Document",
       tooltip: "Dozer based configuration of mapping documents",
       icon: "/img/icons/dozer/dozer.gif",
-      exemplar: "dozerMapping.xml",
+      exemplar: "dozer-mapping.xml",
       regex: defaultFileNamePattern,
       invalid: defaultFileNamePatternInvalid
     }
