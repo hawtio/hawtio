@@ -61,17 +61,8 @@ module.exports = function(grunt) {
     },
 
     uglify: {
-      dist: {
-        options: {
-          // Reference to the source map TypeScript created.
-          sourceMapIn: 'src/main/webapp/app/app.js.map',
-          // Creates our new source map after minifying.
-          sourceMap: 'src/main/webapp/app/app.min.map',
-          sourceMapIncludeSources: true
-        },
-        files: {
-          'src/main/webapp/app/app.min.js': ['src/main/webapp/app/app.js']
-        }
+      generated: {
+
       }
     },
 
@@ -79,7 +70,7 @@ module.exports = function(grunt) {
     watch: {
       tsc: {
         files: [ "src/main/webapp/app/**/*.ts" ],
-        tasks: [ "typescript:base", "karma:unit", "ngAnnotate:app", "uglify:dist" ]
+        tasks: [ "typescript:base", "karma:unit", "ngAnnotate:app" ]
       }
     },
 
@@ -100,19 +91,42 @@ module.exports = function(grunt) {
           'target/dependencies-graph.png': 'target/graph.dot'
         }
       }
+    },
+
+    useminPrepare: {
+      html: 'src/main/webapp/index.html',
+      options: {
+        dest: 'dist'
+      }
+    },
+
+    usemin: {
+      html: 'dist/**/*.html'
+    },
+
+    copy: {
+      html: {
+        cwd: 'src/main/webapp',
+        files: [
+          {expand: true, cwd: 'src/main/webapp/', src: ['**/*', '!**/*.ts', '!**/*.map'], dest: 'dist/'}
+        ]
+      }
+    },
+
+    cacheBust: {
+      options: {
+        rename: false
+      },
+      assets: {
+        files: [{
+          src: ['dist/index.html']
+        }]
+      }
     }
 
   });
 
-  /* load & register tasks */
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-karma');
-  grunt.loadNpmTasks('grunt-typescript');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-angular-modules-graph');
-  grunt.loadNpmTasks('grunt-graphviz');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-ng-annotate');
+  require('load-grunt-tasks')(grunt);
 
   /* task aliases */
 
@@ -123,6 +137,21 @@ module.exports = function(grunt) {
   grunt.registerTask("test", "Runs unit tests once", [ "karma:unit" ]);
   grunt.registerTask("test-chrome", "Runs unit tests continuously with autowatching", [ "karma:chrome" ]);
 
-  grunt.registerTask("default", ["typescript:base", "karma:unit", "ngAnnotate:app", "uglify:dist"])
+  grunt.registerTask("default", [
+    "typescript:base",
+    "karma:unit",
+    "ngAnnotate:app"
+  ])
+
+  grunt.registerTask("dist", [
+    "default",
+    "copy:html",
+    "useminPrepare",
+    'concat:generated',
+    'cssmin:generated',
+    'uglify:generated',
+    'usemin',
+    'cacheBust'
+  ]);
 
 };

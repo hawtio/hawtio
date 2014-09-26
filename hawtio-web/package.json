@@ -19,13 +19,23 @@
     "grunt-typescript": "~0.3.8",
     "grunt-ts": "~1.11.3",
     "grunt-contrib-watch": "~0.6.1",
-    "grunt-contrib-concat": "~0.4.0",
+    "grunt-contrib-concat": "~0.5.0",
     "grunt-angular-modules-graph": "~0.3.1",
     "grunt-graphviz": "~0.1.0",
     "typescript": "~1.0.1",
     "testacular": "~0.6.2",
     "grunt-testacular": "~0.3.0",
     "grunt-contrib-uglify": "~0.6.0",
-    "grunt-ng-annotate": "~0.4.0"
+    "grunt-ng-annotate": "~0.4.0",
+    "grunt-usemin": "~2.4.0",
+    "grunt-contrib-cssmin": "~0.10.0",
+    "grunt-filerev": "~2.0.0",
+    "grunt-contrib-copy": "~0.6.0",
+    "load-grunt-tasks": "~0.6.0",
+    "grunt-cache-bust": "~0.4.4",
+    "domhandler": "~2.2.0",
+    "domelementtype": "~1.1.1",
+    "domutils": "~1.4.0",
+    "CSSwhat": "~0.4.7"
   }
 }

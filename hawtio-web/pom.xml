@@ -22,6 +22,10 @@
     <watch>false</watch>
     <gruntOptions></gruntOptions>
     <gruntArguments>default</gruntArguments>
+    <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+    <webappDirectory>${webapp-outdir}</webappDirectory>
+    <warSourceExcludes></warSourceExcludes>
+    <packagingExcludes>**/classes/OSGI-INF/**,*/debug/**</packagingExcludes>
   </properties>
 
   <dependencies>
@@ -397,6 +401,15 @@
                 <include>*.map</include>
               </includes>
             </fileset>
+            <fileset>
+              <directory>${basedir}/dist</directory>
+            </fileset>
+            <fileset>
+              <directory>${basedir}/.tmp</directory>
+            </fileset>
+            <fileset>
+              <directory>${basedir}/tmp</directory>
+            </fileset>
           </filesets>
         </configuration>
       </plugin>
@@ -458,27 +471,20 @@
             <phase>process-resources</phase>
             <configuration>
               <target>
-                <mkdir dir="${basedir}/target/classes" />
+                <mkdir dir="${project.build.outputDirectory}" />
 
-                <!-- copy the markdown docs into the site plugin  -->
                 <echo>Writing version to index.html</echo>
-                <copy tofile="${webapp-outdir}/index.html" file="${basedir}/src/main/webapp/index.html" overwrite="true">
-                  <filterchain>
-                    <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
-                      <param type="token" name="VERSION" value="${project.version}" />
-                    </filterreader>
-                  </filterchain>
-                </copy>
+                <copy tofile="${webappDirectory}/index.html" file="${warSourceDirectory}/index.html" overwrite="true"/>
 
                 <echo>Coping help files to site</echo>
-                <copy todir="${webapp-outdir}/app/site" overwrite="true">
+                <copy todir="${webappDirectory}/app/site" overwrite="true">
                   <fileset dir="${basedir}/..">
                     <include name="*.md" />
                   </fileset>
                 </copy>
 
                 <echo>Copying site documentation</echo>
-                <copy todir="${webapp-outdir}/app/site/doc" overwrite="true">
+                <copy todir="${webappDirectory}/app/site/doc" overwrite="true">
                   <fileset dir="${basedir}/../docs">
                     <include name="**/*.md" />
                     <include name="**/*.html" />
@@ -487,25 +493,22 @@
                 </copy>
 
                 <echo>Copying base directory docs</echo>
-                <copy todir="${webapp-outdir}/app/core/doc">
+                <copy todir="${webappDirectory}/app/core/doc">
                   <fileset dir="${basedir}/../">
                     <include name="*.md" />
                   </fileset>
                 </copy>
 
                 <echo>Copying static non-ts resources to exploded war directory</echo>
-                <copy todir="${webapp-outdir}">
-                  <fileset dir="${basedir}/src/main/webapp">
+                <copy todir="${webappDirectory}">
+                  <fileset dir="${warSourceDirectory}">
                     <include name="**" />
-                    <exclude name="index.html" />
-                    <exclude name="app/app.js" />
-                    <exclude name="app/app.js.map" />
                     <exclude name="manifest.json" />
                   </fileset>
                 </copy>
 
                 <!-- update the manifest version -->
-                <copy todir="${webapp-outdir}">
+                <copy todir="${webappDirectory}">
                   <filterset begintoken="version&quot;: &quot;" endtoken="&quot;">
                       <filter token="1.0.0" value="version&quot;: &quot;${chrome-version}&quot;" />
                     </filterset>
@@ -538,8 +541,6 @@
         </executions>
         <configuration>
           <supportedProjectTypes>
-            <supportedProjectType>jar</supportedProjectType>
-            <supportedProjectType>bundle</supportedProjectType>
             <supportedProjectType>war</supportedProjectType>
           </supportedProjectTypes>
           <instructions>
@@ -587,11 +588,11 @@
         <version>${war-plugin-version}</version>
         <configuration>
           <outputFileNameMapping>@{artifactId}@-@{baseVersion}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
-          <warSourceDirectory>${webapp-outdir}</warSourceDirectory>
-          <packagingExcludes>
-            **/classes/OSGI-INF/**,
-            */debug/**
-          </packagingExcludes>
+          <warSourceDirectory>${warSourceDirectory}</warSourceDirectory>
+          <webappDirectory>${webappDirectory}</webappDirectory>
+          <packagingExcludes>${packagingExcludes}</packagingExcludes>
+          <packagingIncludes>${packagingIncludes}</packagingIncludes>
+          <warSourceExcludes>${warSourceExcludes}</warSourceExcludes>
           <failOnMissingWebXml>true</failOnMissingWebXml>
 <!--
           TODO disabled using archiveClasses for https://github.com/hawtio/hawtio/issues/403
@@ -602,17 +603,6 @@
           <archive>
             <manifestFile>${basedir}/target/classes/META-INF/MANIFEST.MF</manifestFile>
           </archive>
-<!--
-          <webResources>
-            <resource>
-              <filtering>true</filtering>
-              <directory>src/main/resources</directory>
-              <includes>
-                <include>**/*.*</include>
-              </includes>
-            </resource>
-          </webResources>
--->
         </configuration>
       </plugin>
 
@@ -661,7 +651,7 @@
           <webAppConfig>
             <contextPath>${context}</contextPath>
             <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-              <resourcesAsCSV>${basedir}/src/main/webapp,${webapp-outdir}</resourcesAsCSV>
+              <resourcesAsCSV>${webappDirectory}</resourcesAsCSV>
             </baseResource>
           </webAppConfig>
           <scanIntervalSeconds>0</scanIntervalSeconds>
@@ -711,7 +701,7 @@
           <systemProperties>
           </systemProperties>
           <useTestClasspath>false</useTestClasspath>
-          <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
+          <warSourceDirectory>${webappDirectory}</warSourceDirectory>
         </configuration>
       </plugin>
 
@@ -729,7 +719,7 @@
             </systemProperty>
           </systemProperties>
           <useTestClasspath>false</useTestClasspath>
-          <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
+          <warSourceDirectory>${webappDirectory}</warSourceDirectory>
         </configuration>
       </plugin>
 
@@ -1036,6 +1026,21 @@
       <id>release</id>
       <properties>
         <chrome-version>${project.version}</chrome-version>
+        <warSourceDirectory>${basedir}/dist</warSourceDirectory>
+        <maven.war.webxml>${basedir}/src/main/webapp/WEB-INF/web.xml</maven.war.webxml>
+        <warSourceExcludes>app/app.js.map</warSourceExcludes>
+        <gruntArguments>dist</gruntArguments>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>dist</id>
+      <properties>
+        <chrome-version>${project.version}</chrome-version>
+        <warSourceDirectory>${basedir}/dist</warSourceDirectory>
+        <maven.war.webxml>${basedir}/src/main/webapp/WEB-INF/web.xml</maven.war.webxml>
+        <warSourceExcludes>app/app.js.map</warSourceExcludes>
+        <gruntArguments>dist</gruntArguments>
       </properties>
     </profile>
 
