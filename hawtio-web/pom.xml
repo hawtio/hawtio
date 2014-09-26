@@ -651,7 +651,7 @@
           <webAppConfig>
             <contextPath>${context}</contextPath>
             <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-              <resourcesAsCSV>${webappDirectory}</resourcesAsCSV>
+              <resourcesAsCSV>${warSourceDirectory},${webappDirectory}</resourcesAsCSV>
             </baseResource>
           </webAppConfig>
           <scanIntervalSeconds>0</scanIntervalSeconds>
