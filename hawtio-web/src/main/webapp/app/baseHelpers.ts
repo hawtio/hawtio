@@ -290,6 +290,7 @@ module Core {
     (<JQueryStatic>$)("#main").css("min-height", "" + containerHeight + "px");
   }
 
+
   /**
    * Returns true if we are running inside a Chrome app or (and?) extension
    */

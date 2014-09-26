@@ -21,7 +21,11 @@
     <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
     <watch>false</watch>
     <gruntOptions></gruntOptions>
-    <testArguments>karma:unit</testArguments>
+    <gruntArguments>default</gruntArguments>
+    <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+    <webappDirectory>${webapp-outdir}</webappDirectory>
+    <warSourceExcludes></warSourceExcludes>
+    <packagingExcludes>**/classes/OSGI-INF/**,*/debug/**</packagingExcludes>
   </properties>
 
   <dependencies>
@@ -311,26 +315,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>ro.isdc.wro4j</groupId>
-      <artifactId>wro4j-extensions</artifactId>
-      <version>1.6.3</version>
-      <scope>provided</scope>
-        <exclusions>
-            <exclusion>
-                <groupId>me.n4u.sass</groupId>
-                <artifactId>sass-gems</artifactId>
-            </exclusion>
-        </exclusions>
-    </dependency>
-    <!-- fix bad transient dependency of wro4j -->
-    <dependency>
-      <groupId>me.n4u.sass</groupId>
-      <artifactId>sass-gems</artifactId>
-      <version>3.2.1</version>
-      <scope>provided</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -413,7 +397,18 @@
               <directory>${basedir}/src/main/webapp/app</directory>
               <includes>
                 <include>app.js</include>
+                <include>app.min.js</include>
+                <include>*.map</include>
               </includes>
+            </fileset>
+            <fileset>
+              <directory>${basedir}/dist</directory>
+            </fileset>
+            <fileset>
+              <directory>${basedir}/.tmp</directory>
+            </fileset>
+            <fileset>
+              <directory>${basedir}/tmp</directory>
             </fileset>
           </filesets>
         </configuration>
@@ -450,17 +445,7 @@
               <goal>grunt</goal>
             </goals>
             <configuration>
-              <arguments>tsc ${gruntOptions}</arguments>
-            </configuration>
-          </execution>
-          <execution>
-            <id>grunt test</id>
-            <goals>
-              <goal>grunt</goal>
-            </goals>
-            <phase>test</phase>
-            <configuration>
-              <arguments>${testArguments}</arguments>
+              <arguments>${gruntArguments} ${gruntOptions}</arguments>
             </configuration>
           </execution>
         </executions>
@@ -482,31 +467,24 @@
         <executions>
 
           <execution>
-            <id>generate-sources</id>
-            <phase>generate-sources</phase>
+            <id>process-resources</id>
+            <phase>process-resources</phase>
             <configuration>
               <target>
-                <mkdir dir="${basedir}/target/classes" />
+                <mkdir dir="${project.build.outputDirectory}" />
 
-                <!-- copy the markdown docs into the site plugin  -->
                 <echo>Writing version to index.html</echo>
-                <copy tofile="${webapp-outdir}/index.html" file="${basedir}/src/main/webapp/index.html" overwrite="true">
-                  <filterchain>
-                    <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
-                      <param type="token" name="VERSION" value="${project.version}" />
-                    </filterreader>
-                  </filterchain>
-                </copy>
+                <copy tofile="${webappDirectory}/index.html" file="${warSourceDirectory}/index.html" overwrite="true"/>
 
                 <echo>Coping help files to site</echo>
-                <copy todir="${webapp-outdir}/app/site" overwrite="true">
+                <copy todir="${webappDirectory}/app/site" overwrite="true">
                   <fileset dir="${basedir}/..">
                     <include name="*.md" />
                   </fileset>
                 </copy>
 
                 <echo>Copying site documentation</echo>
-                <copy todir="${webapp-outdir}/app/site/doc" overwrite="true">
+                <copy todir="${webappDirectory}/app/site/doc" overwrite="true">
                   <fileset dir="${basedir}/../docs">
                     <include name="**/*.md" />
                     <include name="**/*.html" />
@@ -515,31 +493,22 @@
                 </copy>
 
                 <echo>Copying base directory docs</echo>
-                <copy todir="${webapp-outdir}/app/core/doc">
+                <copy todir="${webappDirectory}/app/core/doc">
                   <fileset dir="${basedir}/../">
                     <include name="*.md" />
                   </fileset>
                 </copy>
 
                 <echo>Copying static non-ts resources to exploded war directory</echo>
-                <copy todir="${webapp-outdir}">
-<!--
-                  <filterchain>
-                    <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
-                      <param type="token" name="VERSION" value="${project.version}" />
-                    </filterreader>
-                  </filterchain>
--->
-                  <fileset dir="${basedir}/src/main/webapp">
+                <copy todir="${webappDirectory}">
+                  <fileset dir="${warSourceDirectory}">
                     <include name="**" />
-                    <exclude name="**/*.ts" />
-                    <exclude name="index.html" />
                     <exclude name="manifest.json" />
                   </fileset>
                 </copy>
 
                 <!-- update the manifest version -->
-                <copy todir="${webapp-outdir}">
+                <copy todir="${webappDirectory}">
                   <filterset begintoken="version&quot;: &quot;" endtoken="&quot;">
                       <filter token="1.0.0" value="version&quot;: &quot;${chrome-version}&quot;" />
                     </filterset>
@@ -558,28 +527,6 @@
       </plugin>
 
       <plugin>
-        <groupId>ro.isdc.wro4j</groupId>
-        <artifactId>wro4j-maven-plugin</artifactId>
-        <version>1.6.3</version>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
-          <targetGroups>app</targetGroups>
-          <minimize>true</minimize>
-          <jsDestinationFolder>${webapp-outdir}/app/</jsDestinationFolder>
-          <contextFolder>${basedir}/src/main/webapp/</contextFolder>
-          <ignoreMissingResources>false</ignoreMissingResources>
-        </configuration>
-      </plugin>
-
-      <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <version>${maven-bundle-plugin-version}</version>
@@ -594,8 +541,6 @@
         </executions>
         <configuration>
           <supportedProjectTypes>
-            <supportedProjectType>jar</supportedProjectType>
-            <supportedProjectType>bundle</supportedProjectType>
             <supportedProjectType>war</supportedProjectType>
           </supportedProjectTypes>
           <instructions>
@@ -643,13 +588,12 @@
         <version>${war-plugin-version}</version>
         <configuration>
           <outputFileNameMapping>@{artifactId}@-@{baseVersion}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
-          <warSourceDirectory>${webapp-outdir}</warSourceDirectory>
-          <packagingExcludes>
-            **/classes/OSGI-INF/**,
-            **/*.ts,
-            */debug/**
-          </packagingExcludes>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <warSourceDirectory>${warSourceDirectory}</warSourceDirectory>
+          <webappDirectory>${webappDirectory}</webappDirectory>
+          <packagingExcludes>${packagingExcludes}</packagingExcludes>
+          <packagingIncludes>${packagingIncludes}</packagingIncludes>
+          <warSourceExcludes>${warSourceExcludes}</warSourceExcludes>
+          <failOnMissingWebXml>true</failOnMissingWebXml>
 <!--
           TODO disabled using archiveClasses for https://github.com/hawtio/hawtio/issues/403
           until we can figure out how to get the war to work inside OSGi again
@@ -659,17 +603,6 @@
           <archive>
             <manifestFile>${basedir}/target/classes/META-INF/MANIFEST.MF</manifestFile>
           </archive>
-<!--
-          <webResources>
-            <resource>
-              <filtering>true</filtering>
-              <directory>src/main/resources</directory>
-              <includes>
-                <include>**/*.*</include>
-              </includes>
-            </resource>
-          </webResources>
--->
         </configuration>
       </plugin>
 
@@ -718,7 +651,7 @@
           <webAppConfig>
             <contextPath>${context}</contextPath>
             <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-              <resourcesAsCSV>${basedir}/src/main/webapp,${webapp-outdir}</resourcesAsCSV>
+              <resourcesAsCSV>${warSourceDirectory},${webappDirectory}</resourcesAsCSV>
             </baseResource>
           </webAppConfig>
           <scanIntervalSeconds>0</scanIntervalSeconds>
@@ -768,7 +701,7 @@
           <systemProperties>
           </systemProperties>
           <useTestClasspath>false</useTestClasspath>
-          <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
+          <warSourceDirectory>${webappDirectory}</warSourceDirectory>
         </configuration>
       </plugin>
 
@@ -786,7 +719,7 @@
             </systemProperty>
           </systemProperties>
           <useTestClasspath>false</useTestClasspath>
-          <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
+          <warSourceDirectory>${webappDirectory}</warSourceDirectory>
         </configuration>
       </plugin>
 
@@ -863,9 +796,7 @@
       <id>watch</id>
       <properties>
         <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
-        <watch>true</watch>
-        <gruntOptions>--watch=true</gruntOptions>
-        <testArguments>karma:chrome</testArguments>
+        <gruntArguments>watch</gruntArguments>
       </properties>
     </profile>
 
@@ -1095,6 +1026,21 @@
       <id>release</id>
       <properties>
         <chrome-version>${project.version}</chrome-version>
+        <warSourceDirectory>${basedir}/dist</warSourceDirectory>
+        <maven.war.webxml>${basedir}/src/main/webapp/WEB-INF/web.xml</maven.war.webxml>
+        <warSourceExcludes>app/app.js.map</warSourceExcludes>
+        <gruntArguments>dist</gruntArguments>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>dist</id>
+      <properties>
+        <chrome-version>${project.version}</chrome-version>
+        <warSourceDirectory>${basedir}/dist</warSourceDirectory>
+        <maven.war.webxml>${basedir}/src/main/webapp/WEB-INF/web.xml</maven.war.webxml>
+        <warSourceExcludes>app/app.js.map</warSourceExcludes>
+        <gruntArguments>dist</gruntArguments>
       </properties>
     </profile>
 
