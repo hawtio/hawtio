@@ -16,6 +16,12 @@ var io_hawt_dozer_schema_Mappings = {
         "trim-strings" : {
           "type" : "boolean"
         },
+        "map-null" : {
+          "type" : "boolean"
+        },
+        "map-empty-string" : {
+          "type" : "boolean"
+        },
         "bean-factory" : {
           "type" : "string"
         },

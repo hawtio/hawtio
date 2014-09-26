@@ -4817,67 +4817,68 @@ var UI;
                 onOk: '&?',
                 onClose: '&?'
             };
-            this.controller = function ($scope, $element, $attrs, $transclude, $compile) {
-                $scope.clone = null;
+            this.controller = [
+                "$scope", "$element", "$attrs", "$transclude", "$compile", function ($scope, $element, $attrs, $transclude, $compile) {
+                    $scope.clone = null;
 
-                $transclude(function (clone) {
-                    $scope.clone = $(clone).filter('.dialog-body');
-                });
+                    $transclude(function (clone) {
+                        $scope.clone = $(clone).filter('.dialog-body');
+                    });
 
-                $scope.$watch('show', function () {
-                    if ($scope.show) {
-                        setTimeout(function () {
-                            $scope.body = $('.modal-body');
-                            $scope.body.html($compile($scope.clone.html())($scope.$parent));
-                            Core.$apply($scope);
-                        }, 50);
-                    }
-                });
-
-                $attrs.$observe('okButtonText', function (value) {
-                    if (!angular.isDefined(value)) {
-                        $scope.okButtonText = "OK";
-                    }
-                });
-                $attrs.$observe('cancelButtonText', function (value) {
-                    if (!angular.isDefined(value)) {
-                        $scope.cancelButtonText = "Cancel";
-                    }
-                });
-                $attrs.$observe('title', function (value) {
-                    if (!angular.isDefined(value)) {
-                        $scope.title = "Are you sure?";
-                    }
-                });
-
-                function checkClosed() {
-                    setTimeout(function () {
-                        // lets make sure we don't have a modal-backdrop hanging around!
-                        var backdrop = $("div.modal-backdrop");
-                        if (backdrop && backdrop.length) {
-                            Logger.get("ConfirmDialog").debug("Removing the backdrop div! " + backdrop);
-                            backdrop.remove();
+                    $scope.$watch('show', function () {
+                        if ($scope.show) {
+                            setTimeout(function () {
+                                $scope.body = $('.modal-body');
+                                $scope.body.html($compile($scope.clone.html())($scope.$parent));
+                                Core.$apply($scope);
+                            }, 50);
                         }
-                    }, 200);
-                }
+                    });
 
-                $scope.cancel = function () {
-                    $scope.show = false;
-                    $scope.$parent.$eval($scope.onCancel);
-                    checkClosed();
-                };
+                    $attrs.$observe('okButtonText', function (value) {
+                        if (!angular.isDefined(value)) {
+                            $scope.okButtonText = "OK";
+                        }
+                    });
+                    $attrs.$observe('cancelButtonText', function (value) {
+                        if (!angular.isDefined(value)) {
+                            $scope.cancelButtonText = "Cancel";
+                        }
+                    });
+                    $attrs.$observe('title', function (value) {
+                        if (!angular.isDefined(value)) {
+                            $scope.title = "Are you sure?";
+                        }
+                    });
 
-                $scope.submit = function () {
-                    $scope.show = false;
-                    $scope.$parent.$eval($scope.onOk);
-                    checkClosed();
-                };
+                    function checkClosed() {
+                        setTimeout(function () {
+                            // lets make sure we don't have a modal-backdrop hanging around!
+                            var backdrop = $("div.modal-backdrop");
+                            if (backdrop && backdrop.length) {
+                                Logger.get("ConfirmDialog").debug("Removing the backdrop div! " + backdrop);
+                                backdrop.remove();
+                            }
+                        }, 200);
+                    }
 
-                $scope.close = function () {
-                    $scope.$parent.$eval($scope.onClose);
-                    checkClosed();
-                };
-            };
+                    $scope.cancel = function () {
+                        $scope.show = false;
+                        $scope.$parent.$eval($scope.onCancel);
+                        checkClosed();
+                    };
+
+                    $scope.submit = function () {
+                        $scope.show = false;
+                        $scope.$parent.$eval($scope.onOk);
+                        checkClosed();
+                    };
+
+                    $scope.close = function () {
+                        $scope.$parent.$eval($scope.onClose);
+                        checkClosed();
+                    };
+                }];
         }
         return ConfirmDialog;
     })();
@@ -5245,23 +5246,24 @@ var UI;
                     }
                 };
             };
-            this.controller = function ($scope, $element, $timeout) {
-                $scope.popout = false;
+            this.controller = [
+                "$scope", "$element", "timeout", function ($scope, $element, $timeout) {
+                    $scope.popout = false;
 
-                $scope.$watch('popout', function () {
-                    $element.find('.color-picker-popout').toggleClass('popout-open', $scope.popout);
-                });
+                    $scope.$watch('popout', function () {
+                        $element.find('.color-picker-popout').toggleClass('popout-open', $scope.popout);
+                    });
 
-                $scope.selectColor = function (color) {
-                    for (var i = 0; i < $scope.colorList.length; i++) {
-                        $scope.colorList[i].select = UI.unselected;
-                        if ($scope.colorList[i] === color) {
-                            $scope.property = color.color;
-                            $scope.colorList[i].select = UI.selected;
+                    $scope.selectColor = function (color) {
+                        for (var i = 0; i < $scope.colorList.length; i++) {
+                            $scope.colorList[i].select = UI.unselected;
+                            if ($scope.colorList[i] === color) {
+                                $scope.property = color.color;
+                                $scope.colorList[i].select = UI.selected;
+                            }
                         }
-                    }
-                };
-            };
+                    };
+                }];
         }
         return ColorPicker;
     })();
@@ -5385,8 +5387,9 @@ var UI;
         function GridsterDirective() {
             this.restrict = 'A';
             this.replace = true;
-            this.controller = function ($scope, $element, $attrs) {
-            };
+            this.controller = [
+                "$scope", "$element", "$attrs", function ($scope, $element, $attrs) {
+                }];
             this.link = function ($scope, $element, $attrs) {
                 var widgetMargins = [6, 6];
                 var widgetBaseDimensions = [150, 150];
