@@ -701,7 +701,7 @@
           <systemProperties>
           </systemProperties>
           <useTestClasspath>false</useTestClasspath>
-          <warSourceDirectory>${webappDirectory}</warSourceDirectory>
+          <warSourceDirectory>${warSourceDirectory}</warSourceDirectory>
         </configuration>
       </plugin>
 
@@ -719,7 +719,7 @@
             </systemProperty>
           </systemProperties>
           <useTestClasspath>false</useTestClasspath>
-          <warSourceDirectory>${webappDirectory}</warSourceDirectory>
+          <warSourceDirectory>${warSourceDirectory}</warSourceDirectory>
         </configuration>
       </plugin>
 
