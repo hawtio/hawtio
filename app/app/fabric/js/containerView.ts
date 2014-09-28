@@ -12,7 +12,7 @@ module Fabric {
     $scope.name = ContainerViewController.name;
     $scope.containers = <Array<Container>>[];
     $scope.selectedContainers = <Array<Container>>[];
-    $scope.groupBy = 'profileIds';
+    $scope.groupBy = 'none';
     $scope.filter = '';
     $scope.cartItems = [];
     $scope.versionIdFilter = '';
@@ -35,7 +35,7 @@ module Fabric {
       localStorage: localStorage,
       modelName: 'groupBy',
       paramName: 'groupBy',
-      intialValue: $scope.groupBy
+      initialValue: $scope.groupBy
     });
 
     StorageHelpers.bindModelToLocalStorage({
@@ -44,7 +44,7 @@ module Fabric {
       localStorage: localStorage,
       modelName: 'versionIdFilter',
       paramName: 'versionIdFilter',
-      intialValue: $scope.versionIdFilter
+      initialValue: $scope.versionIdFilter
     });
 
     StorageHelpers.bindModelToLocalStorage({
@@ -53,7 +53,7 @@ module Fabric {
       localStorage: localStorage,
       modelName: 'profileIdFilter',
       paramName: 'profileIdFilter',
-      intialValue: $scope.profileIdFilter
+      initialValue: $scope.profileIdFilter
     });
 
     StorageHelpers.bindModelToLocalStorage({
@@ -62,7 +62,7 @@ module Fabric {
       localStorage: localStorage,
       modelName: 'locationIdFilter',
       paramName: 'locationIdFilter',
-      intialValue: $scope.locationIdFilter
+      initialValue: $scope.locationIdFilter
     });
 
     $scope.groupByClass = ControllerHelpers.createClassSelector({

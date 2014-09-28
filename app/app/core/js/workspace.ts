@@ -587,7 +587,7 @@ module Core {
      * @return {String}
      */
     public selectionConfigKey(prefix: string = ""):string {
-      var key = null;
+      var key:string = null;
       var selection = this.selection;
       if (selection) {
         // lets make a unique string for the kind of select
@@ -645,7 +645,7 @@ module Core {
     public updateSelectionNode(node) {
       var originalSelection = this.selection;
       this.selection = <NodeSelection> node;
-      var key = null;
+      var key:string = null;
       if (node) {
         key = node['key'];
       }
@@ -677,7 +677,14 @@ module Core {
     public redrawTree() {
       var treeElement:any = this.treeElement;
       if (treeElement && angular.isDefined(treeElement.dynatree) && angular.isFunction(treeElement.dynatree)) {
-        treeElement.dynatree("getTree").reload();
+        var node:any = treeElement.dynatree("getTree");
+        if (angular.isDefined(node)) {
+          try {
+            node.reload();
+          } catch (e) {
+            // ignore as we may get an error if starting hawtio from incognito window on chrome
+          }
+        }
       }
     }
 
@@ -688,10 +695,10 @@ module Core {
      * @param {Boolean} flag
      */
     public expandSelection(flag) {
-      var treeElement = this.treeElement;
-      if (treeElement) {
-        var node = treeElement.dynatree("getActiveNode");
-        if (node) {
+      var treeElement:any = this.treeElement;
+      if (treeElement && angular.isDefined(treeElement.dynatree) && angular.isFunction(treeElement.dynatree)) {
+        var node:DynaTreeNode = treeElement.dynatree("getActiveNode");
+        if (angular.isDefined(node)) {
           node.expand(flag);
         }
       }

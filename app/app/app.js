@@ -1870,15 +1870,21 @@ var Core;
         Workspace.prototype.redrawTree = function () {
             var treeElement = this.treeElement;
             if (treeElement && angular.isDefined(treeElement.dynatree) && angular.isFunction(treeElement.dynatree)) {
-                treeElement.dynatree("getTree").reload();
+                var node = treeElement.dynatree("getTree");
+                if (angular.isDefined(node)) {
+                    try  {
+                        node.reload();
+                    } catch (e) {
+                    }
+                }
             }
         };
 
         Workspace.prototype.expandSelection = function (flag) {
             var treeElement = this.treeElement;
-            if (treeElement) {
+            if (treeElement && angular.isDefined(treeElement.dynatree) && angular.isFunction(treeElement.dynatree)) {
                 var node = treeElement.dynatree("getActiveNode");
-                if (node) {
+                if (angular.isDefined(node)) {
                     node.expand(flag);
                 }
             }
@@ -26700,7 +26706,7 @@ var Fabric;
             $scope.name = Fabric.ContainerViewController.name;
             $scope.containers = [];
             $scope.selectedContainers = [];
-            $scope.groupBy = 'profileIds';
+            $scope.groupBy = 'none';
             $scope.filter = '';
             $scope.cartItems = [];
             $scope.versionIdFilter = '';
@@ -26723,7 +26729,7 @@ var Fabric;
                 localStorage: localStorage,
                 modelName: 'groupBy',
                 paramName: 'groupBy',
-                intialValue: $scope.groupBy
+                initialValue: $scope.groupBy
             });
 
             StorageHelpers.bindModelToLocalStorage({
@@ -26732,7 +26738,7 @@ var Fabric;
                 localStorage: localStorage,
                 modelName: 'versionIdFilter',
                 paramName: 'versionIdFilter',
-                intialValue: $scope.versionIdFilter
+                initialValue: $scope.versionIdFilter
             });
 
             StorageHelpers.bindModelToLocalStorage({
@@ -26741,7 +26747,7 @@ var Fabric;
                 localStorage: localStorage,
                 modelName: 'profileIdFilter',
                 paramName: 'profileIdFilter',
-                intialValue: $scope.profileIdFilter
+                initialValue: $scope.profileIdFilter
             });
 
             StorageHelpers.bindModelToLocalStorage({
@@ -26750,7 +26756,7 @@ var Fabric;
                 localStorage: localStorage,
                 modelName: 'locationIdFilter',
                 paramName: 'locationIdFilter',
-                intialValue: $scope.locationIdFilter
+                initialValue: $scope.locationIdFilter
             });
 
             $scope.groupByClass = ControllerHelpers.createClassSelector({
