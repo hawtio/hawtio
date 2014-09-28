@@ -19,7 +19,7 @@ module StorageHelpers {
     var prefix = options.$scope.name + ':' || '::';
     var storageKey = prefix + options.modelName;
 
-    var toParam = options.to || Core.doNothing
+    var toParam = options.to || Core.doNothing;
     var fromParam = options.from || Core.doNothing;
 
     var toWrapper = (value:any):any => {
@@ -39,7 +39,6 @@ module StorageHelpers {
     };
 
     ControllerHelpers.bindModelToSearchParam(options.$scope, options.$location, options.modelName, options.paramName, options.initialValue, toWrapper, fromWrapper);
-
   }
 
 }

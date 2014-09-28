@@ -5,18 +5,21 @@
       <p></p>
       <div class="pull-left">
         Group by:
-        <div class="btn-group">
+        <div class="btn-group" style="padding-left: 10px">
           <button class="btn"
                   ng-class="groupByClass('profileIds', groupBy)"
-                  ng-click="groupBy='profileIds'">Profiles</button>
+                  ng-click="groupBy='profileIds'">Profiles
+          </button>
           <button class="btn"
                   ng-class="groupByClass('location', groupBy)"
-                  ng-click="groupBy='location'">Location</button>
+                  ng-click="groupBy='location'">Location
+          </button>
+          <button class="btn"
+                  ng-class="groupByClass('none', groupBy)"
+                  ng-click="groupBy='none'">Containers
+          </button>
         </div>
-        <button class="btn"
-                ng-class="groupByClass('none', groupBy)"
-                ng-click="groupBy='none'">Show List</button>
-        <span class="badge badge-success mouse-pointer" 
+        <span class="badge badge-success mouse-pointer"
           ng-show="versionIdFilter || profileIdFilter"
           ng-click="versionIdFilter=''; profileIdFilter='';">
           {{versionIdFilter}} {{profileIdFilter}}
@@ -74,7 +77,7 @@
            hawtio-show
            object-name="{{managerMBean}}"
            method-name="destroyContainer">
-          <i class="icon-minus"></i> Delete
+          <i class="icon-remove-sign"></i> Delete
         </a>
         <hawtio-filter ng-model="filter"
                        placeholder="Filter Containers..."
