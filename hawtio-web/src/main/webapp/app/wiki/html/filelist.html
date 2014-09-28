@@ -98,6 +98,9 @@
           <div ng-show="fileExists.exists" class="alert">
             Please choose a different name as <b>{{fileExists.name}}</b> already exists
           </div>
+          <div ng-show="!createForm.$valid" class="alert">
+            {{selectedCreateDocumentTemplateInvalid}}
+          </div>
         </div>
       </div>
       <div class="modal-footer">
