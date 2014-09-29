@@ -1,6 +1,6 @@
 <div ng-controller="Kubernetes.Services">
   <div class="row-fluid">
-    <div class="span12">
+    <div class="span12" ng-show="services.length">
       <hawtio-filter ng-model="filter.text"
                      css-class="input-xxlarge"
                      placeholder="Filter services..."
