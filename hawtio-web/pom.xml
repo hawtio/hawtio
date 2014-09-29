@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.4.21</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -20,11 +20,11 @@
     -->
     <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
     <watch>false</watch>
-    <gruntOptions></gruntOptions>
+    <gruntOptions />
     <gruntArguments>default</gruntArguments>
     <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
     <webappDirectory>${webapp-outdir}</webappDirectory>
-    <warSourceExcludes></warSourceExcludes>
+    <warSourceExcludes />
     <packagingExcludes>**/classes/OSGI-INF/**,*/debug/**</packagingExcludes>
   </properties>
 
@@ -474,7 +474,7 @@
                 <mkdir dir="${project.build.outputDirectory}" />
 
                 <echo>Writing version to index.html</echo>
-                <copy tofile="${webappDirectory}/index.html" file="${warSourceDirectory}/index.html" overwrite="true"/>
+                <copy tofile="${webappDirectory}/index.html" file="${warSourceDirectory}/index.html" overwrite="true" />
 
                 <echo>Coping help files to site</echo>
                 <copy todir="${webappDirectory}/app/site" overwrite="true">
