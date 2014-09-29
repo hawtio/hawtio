@@ -51,6 +51,12 @@ module Fabric {
   export var serviceIconRegistry = new IconRegistry();
 
   serviceIconRegistry.addIcons({
+    title: "Kubernetes",
+    type: "img",
+    src: "img/icons/kubernetes.svg"
+  }, "io.kubernetes");
+
+  serviceIconRegistry.addIcons({
     title: "Fabric8",
     type: "img",
     src: "img/icons/fabric8_icon.svg"
@@ -158,6 +164,12 @@ module Fabric {
     type: "img",
     src: "img/icons/jetty.svg"
   }, "Jetty");
+
+  containerIconRegistry.addIcons({
+    title: "Kubernetes",
+    type: "img",
+    src: "img/icons/kubernetes.svg"
+  }, "kubelet");
 
   containerIconRegistry.addIcons({
     title: "WildFly",
