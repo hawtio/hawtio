@@ -19,8 +19,10 @@ module Kubernetes {
     if (!item) {
       $scope.id = undefined;
       $scope.json = '';
+      $scope.item = undefined;
     } else {
       $scope.json = angular.toJson(item, true);
+      $scope.item = item;
     }
   }
 
