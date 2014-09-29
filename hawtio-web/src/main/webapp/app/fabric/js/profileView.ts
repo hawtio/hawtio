@@ -44,7 +44,7 @@ module Fabric {
             pid: '',
             hideProfileSelector: true,
             returnTo: me,
-            nextPage: '/fabric/containerView?groupBy=profileIDs'
+            nextPage: '/fabric/containerView?groupBy=profileIds'
           });
           Core.$apply($rootScope);
         }
