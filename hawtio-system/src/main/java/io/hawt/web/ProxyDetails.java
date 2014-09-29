@@ -107,6 +107,13 @@ public class ProxyDetails {
         if (schemeIdx > 0) {
             scheme = hostAndPort.substring(0, schemeIdx);
             hostAndPort = hostAndPort.substring(schemeIdx + 3);
+        } else {
+            // hawtio may report scheme without a double slash so lets handle that 'bug' also
+            schemeIdx = indexOf(hostAndPort, ":/");
+            if (schemeIdx > 0) {
+                scheme = hostAndPort.substring(0, schemeIdx);
+                hostAndPort = hostAndPort.substring(schemeIdx + 2);
+            }
         }
         idx = indexOf(hostAndPort, ":", "/");
         if (idx > 0) {
