@@ -2,7 +2,9 @@
 /// <reference path="../../helpers/js/pollHelpers.ts"/>
 module Kubernetes {
 
-  export var Services = controller("Services", ["$scope", "KubernetesServices", "$templateCache", "$location", ($scope, KubernetesServices:ng.IPromise<ng.resource.IResourceClass>, $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService) => {
+  export var Services = controller("Services",
+    ["$scope", "KubernetesServices", "$templateCache", "$location", "jolokia",
+      ($scope, KubernetesServices:ng.IPromise<ng.resource.IResourceClass>, $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService, jolokia:Jolokia.IJolokia) => {
 
     $scope.services = [];
     $scope.fetched = false;
@@ -16,9 +18,9 @@ module Kubernetes {
 
     $scope.tableConfig = {
       data: 'filter.entities',
-      showSelectionCheckbox: false,
+      showSelectionCheckbox: true,
       enableRowClickSelection: false,
-      multiSelect: false,
+      multiSelect: true,
       columnDefs: [
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
         { field: 'selector', displayName: 'Selector', cellTemplate: $templateCache.get("selectorTemplate.html") },
@@ -40,6 +42,47 @@ module Kubernetes {
     });
 
     KubernetesServices.then((KubernetesServices:ng.resource.IResourceClass) => {
+      $scope.deletePrompt = (selected) => {
+        if (angular.isString(selected)) {
+          selected = [{
+            id: selected
+          }];
+        }
+        UI.multiItemConfirmActionDialog(<UI.MultiItemConfirmActionOptions>{
+          collection: selected,
+          index: 'id',
+          onClose: (result:boolean) => {
+            if (result) {
+              function deleteSelected(selected:Array<KubePod>, next:KubePod) {
+                if (!next) {
+                  if (!jolokia.isRunning()) {
+                    $scope.fetch();
+                  }
+                } else {
+                  log.debug("deleting: ", next.id);
+                  KubernetesServices.delete({
+                    id: next.id
+                  }, undefined, () => {
+                    log.debug("deleted: ", next.id);
+                    deleteSelected(selected, selected.shift());
+                  }, (error) => {
+                    log.debug("Error deleting: ", error);
+                    deleteSelected(selected, selected.shift());
+                  });
+                }
+              }
+              deleteSelected(selected, selected.shift());
+            }
+          },
+          title: 'Delete services?',
+          action: 'The following services will be deleted:',
+          okText: 'Delete',
+          okClass: 'btn-danger',
+          custom: "This operation is permanent once completed!",
+          customClass: "alert alert-warning"
+        }).open();
+      };
+
       $scope.fetch = PollHelpers.setupPolling($scope, (next: () => void) => {
         KubernetesServices.query((response) => {
           $scope.fetched = true;
@@ -60,8 +103,5 @@ module Kubernetes {
         log.debug("services: ", newValue);
       }
     });
-
-
-
   }]);
 }

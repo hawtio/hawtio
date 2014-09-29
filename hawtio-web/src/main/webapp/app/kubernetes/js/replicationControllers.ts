@@ -3,7 +3,9 @@
 
 module Kubernetes {
 
-  export var ReplicationControllers = controller("ReplicationControllers", ["$scope", "KubernetesReplicationControllers", "$templateCache", "$location", ($scope, KubernetesReplicationControllers:ng.IPromise<ng.resource.IResourceClass>, $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService) => {
+  export var ReplicationControllers = controller("ReplicationControllers",
+    ["$scope", "KubernetesReplicationControllers", "$templateCache", "$location", "jolokia",
+      ($scope, KubernetesReplicationControllers:ng.IPromise<ng.resource.IResourceClass>, $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService, jolokia:Jolokia.IJolokia) => {
 
     $scope.replicationControllers = [];
     $scope.fetched = false;
@@ -17,9 +19,9 @@ module Kubernetes {
 
     $scope.tableConfig = {
       data: 'filter.entities',
-      showSelectionCheckbox: false,
+      showSelectionCheckbox: true,
       enableRowClickSelection: false,
-      multiSelect: false,
+      multiSelect: true,
       columnDefs: [
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
         { field: 'currentState.replicas', displayName: 'Current Replicas' },
@@ -39,6 +41,47 @@ module Kubernetes {
     });
 
     KubernetesReplicationControllers.then((KubernetesReplicationControllers:ng.resource.IResourceClass) => {
+      $scope.deletePrompt = (selected) => {
+        if (angular.isString(selected)) {
+          selected = [{
+            id: selected
+          }];
+        }
+        UI.multiItemConfirmActionDialog(<UI.MultiItemConfirmActionOptions>{
+          collection: selected,
+          index: 'id',
+          onClose: (result:boolean) => {
+            if (result) {
+              function deleteSelected(selected:Array<KubePod>, next:KubePod) {
+                if (!next) {
+                  if (!jolokia.isRunning()) {
+                    $scope.fetch();
+                  }
+                } else {
+                  log.debug("deleting: ", next.id);
+                  KubernetesReplicationControllers.delete({
+                    id: next.id
+                  }, undefined, () => {
+                    log.debug("deleted: ", next.id);
+                    deleteSelected(selected, selected.shift());
+                  }, (error) => {
+                    log.debug("Error deleting: ", error);
+                    deleteSelected(selected, selected.shift());
+                  });
+                }
+              }
+              deleteSelected(selected, selected.shift());
+            }
+          },
+          title: 'Delete replication controllers?',
+          action: 'The following replication controllers will be deleted:',
+          okText: 'Delete',
+          okClass: 'btn-danger',
+          custom: "This operation is permanent once completed!",
+          customClass: "alert alert-warning"
+        }).open();
+      };
+
       $scope.fetch = PollHelpers.setupPolling($scope, (next: () => void) => {
         KubernetesReplicationControllers.query((response) => {
           log.debug("got back response: ", response);
