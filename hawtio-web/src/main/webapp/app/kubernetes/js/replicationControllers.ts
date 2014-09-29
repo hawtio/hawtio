@@ -31,7 +31,7 @@ module Kubernetes {
         KubernetesReplicationControllers.query((response) => {
           log.debug("got back response: ", response);
           $scope.fetched = true;
-          $scope.replicationControllers = response['items'].sortBy((item) => { return item.id; });
+          $scope.replicationControllers = (response['items'] || []).sortBy((item) => { return item.id; });
           Kubernetes.setJson($scope, $scope.id, $scope.replicationControllers);
           next();
         });

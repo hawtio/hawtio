@@ -100,7 +100,7 @@ module Kubernetes {
       $scope.fetch = PollHelpers.setupPolling($scope, (next:() => void) => {
         KubernetesPods.query((response) => {
           $scope.fetched = true;
-          $scope.pods = response['items'].sortBy((pod:KubePod) => { return pod.id });
+          $scope.pods = (response['items'] || []).sortBy((pod:KubePod) => { return pod.id });
           Kubernetes.setJson($scope, $scope.id, $scope.pods);
           //log.debug("Pods: ", $scope.pods);
           next();

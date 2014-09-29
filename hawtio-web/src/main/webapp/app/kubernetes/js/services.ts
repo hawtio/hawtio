@@ -31,7 +31,7 @@ module Kubernetes {
       $scope.fetch = PollHelpers.setupPolling($scope, (next: () => void) => {
         KubernetesServices.query((response) => {
           $scope.fetched = true;
-          $scope.services = response['items'].sortBy((item) => { return item.id; });
+          $scope.services = (response['items'] || []).sortBy((item) => { return item.id; });
           Kubernetes.setJson($scope, $scope.id, $scope.services);
           next();
         });
