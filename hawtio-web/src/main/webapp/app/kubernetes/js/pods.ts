@@ -7,7 +7,7 @@ module Kubernetes {
   // main controller for the page
   export var Pods = controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "jolokia", "$location", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, $dialog, $templateCache, jolokia:Jolokia.IJolokia, $location:ng.ILocationService) => {
 
-    $scope.pods = []
+    $scope.pods = [];
     $scope.fetched = false;
     $scope.json = '';
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
@@ -16,8 +16,13 @@ module Kubernetes {
       Kubernetes.setJson($scope, id, $scope.pods);
     });
 
-    $scope.podsConfig = {
-      data: 'pods',
+    $scope.filter = {
+      text: "",
+      entities: []
+    };
+
+    $scope.tableConfig = {
+      data: 'filter.entities',
       showSelectionCheckbox: true,
       enableRowClickSelection: false,
       multiSelect: true,
@@ -54,6 +59,12 @@ module Kubernetes {
         }
       ]
     };
+
+    function updateFilter() {
+      filterEntities($scope.pods, $scope.filter);
+    }
+
+    $scope.$watch("filter.text", updateFilter);
 
     KubernetesPods.then((KubernetesPods:ng.resource.IResourceClass) => {
       $scope.deletePrompt = (selected) => {
@@ -96,12 +107,17 @@ module Kubernetes {
           customClass: "alert alert-warning"
         }).open();
       };
+
       // setup polling
       $scope.fetch = PollHelpers.setupPolling($scope, (next:() => void) => {
         KubernetesPods.query((response) => {
           $scope.fetched = true;
           $scope.pods = (response['items'] || []).sortBy((pod:KubePod) => { return pod.id });
+          angular.forEach($scope.pods, pod => {
+            pod.labelsText = Kubernetes.labelsToString(pod.labels);
+          });
           Kubernetes.setJson($scope, $scope.id, $scope.pods);
+          updateFilter();
           //log.debug("Pods: ", $scope.pods);
           next();
         });

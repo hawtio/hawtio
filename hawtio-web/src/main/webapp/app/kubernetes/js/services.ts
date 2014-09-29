@@ -8,8 +8,14 @@ module Kubernetes {
     $scope.fetched = false;
     $scope.json = '';
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
+
+    $scope.filter = {
+      text: "",
+      entities: []
+    };
+
     $scope.tableConfig = {
-      data: 'services',
+      data: 'filter.entities',
       showSelectionCheckbox: false,
       enableRowClickSelection: false,
       multiSelect: false,
@@ -19,9 +25,15 @@ module Kubernetes {
         { field: 'containerPort', displayName: 'Container Port' },
         { field: 'port', displayName: 'Port' },
         { field: 'protocol', displayName: 'Protocol' },
-        { field: 'labels', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
+        { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
       ]
     };
+
+    function updateFilter() {
+      filterEntities($scope.services, $scope.filter);
+    }
+
+    $scope.$watch("filter.text", updateFilter);
 
     $scope.$on('kubeSelectedId', ($event, id) => {
       Kubernetes.setJson($scope, id, $scope.services);
@@ -32,7 +44,11 @@ module Kubernetes {
         KubernetesServices.query((response) => {
           $scope.fetched = true;
           $scope.services = (response['items'] || []).sortBy((item) => { return item.id; });
+          angular.forEach($scope.services, entity => {
+            entity.labelsText = Kubernetes.labelsToString(entity.labels);
+          });
           Kubernetes.setJson($scope, $scope.id, $scope.services);
+          updateFilter();
           next();
         });
       });

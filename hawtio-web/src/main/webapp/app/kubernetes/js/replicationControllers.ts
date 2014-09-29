@@ -9,8 +9,14 @@ module Kubernetes {
     $scope.fetched = false;
     $scope.json = '';
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
+
+    $scope.filter = {
+      text: "",
+      entities: []
+    };
+
     $scope.tableConfig = {
-      data: 'replicationControllers',
+      data: 'filter.entities',
       showSelectionCheckbox: false,
       enableRowClickSelection: false,
       multiSelect: false,
@@ -18,9 +24,15 @@ module Kubernetes {
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
         { field: 'currentState.replicas', displayName: 'Current Replicas' },
         { field: 'desiredState.replicas', displayName: 'Desired Replicas' },
-        { field: 'labels', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
+        { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
       ]
     };
+
+    function updateFilter() {
+      filterEntities($scope.replicationControllers, $scope.filter);
+    }
+
+    $scope.$watch("filter.text", updateFilter);
 
     $scope.$on('kubeSelectedId', ($event, id) => {
       Kubernetes.setJson($scope, id, $scope.replicationControllers);
@@ -32,7 +44,11 @@ module Kubernetes {
           log.debug("got back response: ", response);
           $scope.fetched = true;
           $scope.replicationControllers = (response['items'] || []).sortBy((item) => { return item.id; });
+          angular.forEach($scope.replicationControllers, entity => {
+            entity.labelsText = Kubernetes.labelsToString(entity.labels);
+          });
           Kubernetes.setJson($scope, $scope.id, $scope.replicationControllers);
+          updateFilter();
           next();
         });
       });

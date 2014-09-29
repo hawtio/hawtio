@@ -13,10 +13,14 @@
   </script>
   <div class="row-fluid">
     <div class="span12">
+      <hawtio-filter ng-model="filter.text"
+                     css-class="input-xxlarge"
+                     placeholder="Filter pods..."
+                     save-as="kubernetes-pods-text-filter"></hawtio-filter>
       <button ng-show="fetched"
               class="btn btn-danger pull-right"
-              ng-disabled="!id && podsConfig.selectedItems.length == 0"
-              ng-click="deletePrompt(id || podsConfig.selectedItems)">
+              ng-disabled="!id && tableConfig.selectedItems.length == 0"
+              ng-click="deletePrompt(id || tableConfig.selectedItems)">
         <i class="icon-remove"></i> Delete
       </button>
       <span class="pull-right">&nbsp;</span>
@@ -38,7 +42,7 @@
         </div>
         <div ng-show="pods.length">
           <table class="table table-condensed table-striped"
-                 hawtio-simple-table="podsConfig"></table>
+                 hawtio-simple-table="tableConfig"></table>
         </div>
       </div>
       <div ng-show="fetched && id">

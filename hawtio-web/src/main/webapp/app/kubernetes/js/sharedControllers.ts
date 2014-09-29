@@ -38,6 +38,7 @@ module Kubernetes {
     });
     $scope.handleClick = (entity, labelType:string, value) => {
       log.debug("handleClick, entity: ", entity, " labelType: ", labelType, " value: ", value);
+/*
       switch (labelType) {
         case 'container':
           if (entity.labels.container) {
@@ -52,7 +53,44 @@ module Kubernetes {
         default:
           return;
       }
-    }
+*/
+      var filterTextSection = labelType + "=" + entity.labels[labelType];
+      var parentScope = $scope;
+
+
+      /**
+       * Returns the value of the given key in this scope or an ancestor parent scope
+       */
+      var filter = undefined;
+      while (true) {
+        filter = parentScope["filter"];
+        if (angular.isUndefined(filter)) {
+          parentScope = parentScope.$parent;
+          if (!parentScope) {
+            break;
+          }
+        } else {
+          break;
+        }
+      }
+      if (filter) {
+        var filterText = filter.text;
+        if (filterText) {
+          var expressions = filterText.split(/\s+/);
+          if (expressions.any(filterTextSection)) {
+            // lets exclude this filter expression
+            expressions = expressions.remove(filterTextSection);
+            filter.text = expressions.join(" ");
+          } else {
+            filter.text = filter.text + " " + filterTextSection;
+          }
+        } else {
+          filter.text = filterTextSection;
+        }
+      }
+      Core.$apply(parentScope);
+    };
+
     var labelColors = {
       'profile': 'background-green mouse-pointer',
       'version': 'background-blue',
