@@ -1,5 +1,19 @@
 package io.hawt.jvm.local;
 
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.ServerSocket;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.attach.VirtualMachineDescriptor;
 import org.jolokia.jvmagent.JvmAgent;
@@ -9,15 +23,6 @@ import org.jolokia.jvmagent.client.util.VirtualMachineHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.ServerSocket;
-import java.util.*;
-
 public class JVMList implements JVMListMBean {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(JVMList.class);
@@ -26,7 +31,8 @@ public class JVMList implements JVMListMBean {
     private ObjectName objectName;
 
 
-    protected static final Map<String,String> vmAliasMap = new HashMap<String, String>();
+    protected static final Map<String, String> vmAliasMap = new HashMap<String, String>();
+
     static {
         vmAliasMap.put("com.intellij.idea.Main", "IDEA");
         vmAliasMap.put("com.intellij.rt.execution.application.AppMain", "IDEA");
@@ -38,6 +44,7 @@ public class JVMList implements JVMListMBean {
         vmAliasMap.put("jboss-eap-6.1/jboss-modules.jar", "JBoss EAP 6");
         vmAliasMap.put("target/surefire", "Maven Surefire Test");
         vmAliasMap.put("org.apache.camel:camel-maven-plugin:run", "Local Camel Context");
+        vmAliasMap.put("camel:run", "Local Camel Context");
 
         /*
         vmAliasMap.put("default", "Apache Karaf");
@@ -56,12 +63,12 @@ public class JVMList implements JVMListMBean {
         try {
 
             try {
-              // let's just hit any errors we're going to hit before even creating the mbean
-              listLocalJVMs();
+                // let's just hit any errors we're going to hit before even creating the mbean
+                listLocalJVMs();
             } catch (LinkageError e) {
-              // Some JVM's don't support com.sun.tools.attach.VirtualMachine
-              LOG.warn("Local JVM discovery disabled as this JVM cannot access com.sun.tools.attach.VirtualMachine due to: " + e.getMessage());
-              return; 
+                // Some JVM's don't support com.sun.tools.attach.VirtualMachine
+                LOG.warn("Local JVM discovery disabled as this JVM cannot access com.sun.tools.attach.VirtualMachine due to: " + e.getMessage());
+                return;
             }
 
             if (objectName == null) {
@@ -102,9 +109,23 @@ public class JVMList implements JVMListMBean {
         List<VMDescriptorDTO> rc = new ArrayList<VMDescriptorDTO>();
         try {
             List<VirtualMachineDescriptor> processes = VirtualMachine.list();
-            for(VirtualMachineDescriptor process : processes) {
+            for (VirtualMachineDescriptor process : processes) {
                 VMDescriptorDTO dto = new VMDescriptorDTO(process);
                 dto.setAgentUrl(agentStatus(dto.getId()));
+
+                // provide fine grained url details
+                if (dto.getAgentUrl() != null) {
+                    try {
+                        URL url = new URL(dto.getAgentUrl());
+                        dto.setScheme(url.getProtocol());
+                        dto.setHostname(url.getHost());
+                        dto.setPort(url.getPort());
+                        dto.setPath(url.getPath());
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
+
                 rc.add(dto);
             }
         } catch (Exception e) {
