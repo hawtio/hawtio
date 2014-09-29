@@ -316,6 +316,16 @@ module Wiki {
         var profileName = toProfileName(concatenated);
         var targetPath = toPath(profileName);
 
+        // check if profile exists
+        var profile = Fabric.getProfile(workspace.jolokia, $scope.branch, profileName, false);
+        if (profile) {
+          $scope.fileExists.exists = true;
+          $scope.fileExists.name = profileName;
+          Core.$apply($scope);
+          return;
+        }
+
+        // okay then create profile asynchronously, so we close dialog, and then create the profile
         $scope.addDialog.close();
 
         Fabric.createProfile(workspace.jolokia, $scope.branch, profileName, ['default'], () => {
