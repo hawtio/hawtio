@@ -49,7 +49,7 @@ module Fabric {
 
       $scope.gotoCreateContainer = () => {
         var me = $location.url();
-        $location.url('/fabric/containers/createContainer').search({
+        $location.path('/fabric/containers/createContainer').search({
           versionId: $scope.versionId,
           profileIds: $scope.profileId,
           hideProfileSelector: true,
