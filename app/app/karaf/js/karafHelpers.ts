@@ -149,7 +149,10 @@ module Karaf {
     "activeio-core",
     "activemq-osgi",
     "^org.eclipse.jetty",
-    "org.codehaus.jettison.jettison"
+    "org.codehaus.jettison.jettison",
+    "org.jledit.core",
+    "org.fusesource.jansi",
+    "org.eclipse.equinox.region"
   ];
 
   var platformBundleRegex = new RegExp(platformBundlePatterns.join('|'));

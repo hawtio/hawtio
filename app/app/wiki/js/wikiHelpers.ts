@@ -20,17 +20,19 @@ module Wiki {
 
   /**
    * Which extensions do we wish to hide in the wiki file listing
-   * @property hideExtentions
+   * @property hideExtensions
    * @for Wiki
    * @type Array
    */
-  export var hideExtentions = [".profile"];
+  export var hideExtensions = [".profile"];
 
-  var defaultFileNamePattern = /^[a-zA-Z0-9._-]*$/
-  var defaultFileNamePatternInvalid = "Name must be: letters, numbers, and . _ or - characters"
+  var defaultFileNamePattern = /^[a-zA-Z0-9._-]*$/;
+  var defaultFileNamePatternInvalid = "Name must be: letters, numbers, and . _ or - characters";
 
-  var defaultLowerCaseFileNamePattern = /^[a-z0-9._-]*$/
-  var defaultLowerCaseFileNamePatternInvalid = "Name must be: lower-case letters, numbers, and . _ or - characters"
+  var defaultFileNameExtensionPattern = "";
+
+  var defaultLowerCaseFileNamePattern = /^[a-z0-9._-]*$/;
+  var defaultLowerCaseFileNamePatternInvalid = "Name must be: lower-case letters, numbers, and . _ or - characters";
 
   /**
    * The wizard tree for creating new content in the wiki
@@ -56,14 +58,15 @@ module Wiki {
       exemplar: "user-profile",
       regex: defaultLowerCaseFileNamePattern,
       invalid: defaultLowerCaseFileNamePatternInvalid,
-      fabricOnly: true,
+      fabricOnly: true
     },
     {
       label: "Properties File",
       tooltip: "A properties file typically used to configure Java classes",
       exemplar: "properties-file.properties",
       regex: defaultFileNamePattern,
-      invalid: defaultFileNamePatternInvalid
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".properties"
     },
     {
       label: "Key Store File",
@@ -71,6 +74,7 @@ module Wiki {
       exemplar: 'keystore.jks',
       regex: defaultFileNamePattern,
       invalid: defaultFileNamePatternInvalid,
+      extension: ".jks",
       generated: {
         mbean: ['hawtio', { type: 'KeystoreService' }],
         init: function(workspace, $scope) {
@@ -165,23 +169,26 @@ module Wiki {
     {
       label: "Markdown Document",
       tooltip: "A basic markup document using the Markdown wiki markup, particularly useful for ReadMe files in directories",
-      exemplar: "readme.md",
+      exemplar: "ReadMe.md",
       regex: defaultFileNamePattern,
-      invalid: defaultFileNamePatternInvalid
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".md"
     },
     {
       label: "HTML Document",
       tooltip: "A HTML document you can edit directly using the HTML markup",
       exemplar: "document.html",
       regex: defaultFileNamePattern,
-      invalid: defaultFileNamePatternInvalid
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".html"
     },
     {
       label: "XML Document",
       tooltip: "An empty XML document",
       exemplar: "document.xml",
       regex: defaultFileNamePattern,
-      invalid: defaultFileNamePatternInvalid
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".xml"
     },
     {
       label: "Integration Flows",
@@ -193,7 +200,8 @@ module Wiki {
           icon: "/img/icons/camel.svg",
           exemplar: "camel.xml",
           regex: defaultFileNamePattern,
-          invalid: defaultFileNamePatternInvalid
+          invalid: defaultFileNamePatternInvalid,
+          extension: ".xml"
         },
         {
           label: "Camel OSGi Blueprint XML document",
@@ -201,7 +209,8 @@ module Wiki {
           icon: "/img/icons/camel.svg",
           exemplar: "camel-blueprint.xml",
           regex: defaultFileNamePattern,
-          invalid: defaultFileNamePatternInvalid
+          invalid: defaultFileNamePatternInvalid,
+          extension: ".xml"
         },
         {
           label: "Camel Spring XML document",
@@ -209,7 +218,8 @@ module Wiki {
           icon: "/img/icons/camel.svg",
           exemplar: "camel-spring.xml",
           regex: defaultFileNamePattern,
-          invalid: defaultFileNamePatternInvalid
+          invalid: defaultFileNamePatternInvalid,
+          extension: ".xml"
         }
       ]
     },
@@ -219,7 +229,8 @@ module Wiki {
       icon: "/img/icons/dozer/dozer.gif",
       exemplar: "dozer-mapping.xml",
       regex: defaultFileNamePattern,
-      invalid: defaultFileNamePatternInvalid
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".xml"
     }
   ];
 
@@ -448,7 +459,7 @@ module Wiki {
    */
   export function hideFineNameExtensions(name) {
     if (name) {
-      angular.forEach(Wiki.hideExtentions, (extension) => {
+      angular.forEach(Wiki.hideExtensions, (extension) => {
         if (name.endsWith(extension)) {
           name = name.substring(0, name.length - extension.length);
         }

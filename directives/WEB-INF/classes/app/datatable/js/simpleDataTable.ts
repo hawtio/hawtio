@@ -1,4 +1,5 @@
 /// <reference path="datatablePlugin.ts"/>
+/// <reference path="../../helpers/js/filterHelpers.ts"/>
 /**
  * @module DataTable
  */
@@ -219,22 +220,12 @@ module DataTable {
         }
 
         if (!data) {
-          // try if the data is json, then we want to match on the json data
-          try {
-            data = angular.toJson(row);
-          } catch (e) {
-            // its maybe a Folder en
-          }
-        }
-        if (!data) {
           // use the row as-is
-          data = row;
+          data = row.entity;
         }
 
-        // use the core filter matcher
-        var match = Core.matchFilterIgnoreCase(data, filter);
+        var match = FilterHelpers.search(data, filter);
         return match;
-
       };
 
       $scope.isSelected = (row) => {

@@ -37,7 +37,7 @@ module Wiki {
     };
     $scope.move = {
       moveFolder: ""
-    }
+    };
     $scope.createDocumentTree = Wiki.createWizardTree(workspace, $scope);
 
     $scope.createDocumentTreeActivations = ["camel-spring.xml", "ReadMe.md"];
@@ -45,6 +45,8 @@ module Wiki {
       exists: false,
       name: ""
     };
+    $scope.newDocumentName = "";
+    $scope.selectedCreateDocumentExtension = null;
 
     // bind filter model values to search params...
     Core.bindModelToSearchParam($scope, $location, "searchText", "q", "");
@@ -77,21 +79,6 @@ module Wiki {
     $scope.$on('wikiBranchesUpdated', function () {
       updateView();
     });
-
-    /*
-     if (!$scope.nameOnly) {
-     $scope.gridOptions.columnDefs.push({
-     field: 'lastModified',
-     displayName: 'Modified',
-     cellFilter: "date:'EEE, MMM d, y : hh:mm:ss a'"
-     });
-     $scope.gridOptions.columnDefs.push({
-     field: 'length',
-     displayName: 'Size',
-     cellFilter: "number"
-     });
-     }
-     */
 
     $scope.createDashboardLink = () => {
       var href = '/wiki/branch/:branch/view/*page';
@@ -216,13 +203,6 @@ module Wiki {
       }
     });
 
-    /*
-     // TODO this doesn't work for some reason!
-     $scope.$on('jmxTreeUpdated', function () {
-     log.debug("view: jmx tree updated!");
-     });
-     */
-
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
       //log.info("Reloading view due to $routeChangeSuccess");
@@ -238,17 +218,20 @@ module Wiki {
     };
 
     $scope.onCreateDocumentSelect = (node) => {
+      // reset as we switch between document types
+      $scope.fileExists.exists = false;
+      $scope.fileExists.name = "";
+
       $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
       $scope.selectedCreateDocumentTemplateRegex = $scope.selectedCreateDocumentTemplate.regex || /.*/;
       $scope.selectedCreateDocumentTemplateInvalid = $scope.selectedCreateDocumentTemplate.invalid || "invalid name";
-      checkFileExists(getNewDocumentPath());
+      $scope.selectedCreateDocumentTemplateExtension = $scope.selectedCreateDocumentTemplate.extension || null;
     };
 
-    $scope.$watch("newDocumentName", () => {
-      checkFileExists(getNewDocumentPath());
-    });
-
     $scope.openAddDialog = () => {
+      // reset
+      $scope.fileExists.exists = false;
+      $scope.fileExists.name = "";
       $scope.newDocumentName = "";
       $scope.addDialog.open();
     };
@@ -261,11 +244,38 @@ module Wiki {
       // clear $scope.newDocumentName so we dont remember it when we open it next time
       $scope.newDocumentName = null;
 
+      // reset before we check just in a bit
+      $scope.fileExists.exists = false;
+      $scope.fileExists.name = "";
+      $scope.fileExtensionInvalid = null;
+
       if (!template || !path) {
         return;
       }
+
+      // validate if the name match the extension
+      if ($scope.selectedCreateDocumentTemplateExtension) {
+        var idx = path.lastIndexOf('.');
+        if (idx > 0) {
+          var ext = path.substring(idx);
+          if ($scope.selectedCreateDocumentTemplateExtension !== ext) {
+            $scope.fileExtensionInvalid = "File extension must be: " + $scope.selectedCreateDocumentTemplateExtension;
+            Core.$apply($scope);
+            return;
+          }
+        }
+      }
+
+      // validate if the file exists, and use the synchronous call
+      var exists:Boolean = wikiRepository.exists($scope.branch, path, null);
+      if (exists) {
+        $scope.fileExists.exists = true;
+        $scope.fileExists.name = path;
+        Core.$apply($scope);
+        return;
+      }
+
       var name = Wiki.fileName(path);
-      var fileName:string = name;
       var folder = Wiki.fileParent(path);
       var exemplar = template.exemplar;
 
@@ -306,6 +316,16 @@ module Wiki {
         var profileName = toProfileName(concatenated);
         var targetPath = toPath(profileName);
 
+        // check if profile exists
+        var profile = Fabric.getProfile(workspace.jolokia, $scope.branch, profileName, false);
+        if (profile) {
+          $scope.fileExists.exists = true;
+          $scope.fileExists.name = profileName;
+          Core.$apply($scope);
+          return;
+        }
+
+        // okay then create profile asynchronously, so we close dialog, and then create the profile
         $scope.addDialog.close();
 
         Fabric.createProfile(workspace.jolokia, $scope.branch, profileName, ['default'], () => {
@@ -343,8 +363,8 @@ module Wiki {
 
         $scope.addDialog.close();
 
-        var generateDialog = $scope.generateDialog
-        $scope.formSchema = template.generated.schema
+        var generateDialog = $scope.generateDialog;
+        $scope.formSchema = template.generated.schema;
         $scope.formData = template.generated.form(workspace, $scope);
         $scope.generate = function () {
           template.generated.generate(workspace, $scope.formData, (contents)=> {
@@ -363,43 +383,49 @@ module Wiki {
         generateDialog.open();
 
       } else {
-        // notification("success", "Creating new document " + name);
-
-        $http.get(exemplarUri).success((contents) => {
-
-          // TODO lets check this page does not exist - if it does lets keep adding a new post fix...
-          wikiRepository.putPage($scope.branch, path, contents, commitMessage, (status) => {
-            log.debug("Created file " + name);
-            Wiki.onComplete(status);
-
-            // lets navigate to the edit link
-            // load the directory and find the child item
-            $scope.git = wikiRepository.getPage($scope.branch, folder, $scope.objectId, (details) => {
-              // lets find the child entry so we can calculate its correct edit link
-              var link = null;
-              if (details && details.children) {
-                log.debug("scanned the directory " + details.children.length + " children");
-                var child = details.children.find(c => c.name === fileName);
-                if (child) {
-                  link = $scope.childLink(child);
-                } else {
-                  log.debug("Could not find name '" + fileName + "' in the list of file names " + JSON.stringify(details.children.map(c => c.name)));
-                }
-              }
-              if (!link) {
-                log.debug("WARNING: could not find the childLink so reverting to the wiki edit page!");
-                link = Wiki.editLink($scope.branch, path, $location);
-              }
-              $scope.addDialog.close();
-              Core.$apply($scope);
-              goToLink(link, $timeout, $location);
-            });
+        // load the example data (if any) and then add the document to git and change the link to the new document
+        $http.get(exemplarUri)
+          .success(function(data, status, headers, config) {
+            putPage(path, name, folder, data, commitMessage);
+          })
+          .error(function(data, status, headers, config) {
+            // create an empty file
+            putPage(path, name, folder, "", commitMessage);
           });
-        });
       }
       $scope.addDialog.close();
     };
 
+    function putPage(path, name, folder, contents, commitMessage) {
+      // TODO lets check this page does not exist - if it does lets keep adding a new post fix...
+      wikiRepository.putPage($scope.branch, path, contents, commitMessage, (status) => {
+        log.debug("Created file " + name);
+        Wiki.onComplete(status);
+
+        // lets navigate to the edit link
+        // load the directory and find the child item
+        $scope.git = wikiRepository.getPage($scope.branch, folder, $scope.objectId, (details) => {
+          // lets find the child entry so we can calculate its correct edit link
+          var link:string = null;
+          if (details && details.children) {
+            log.debug("scanned the directory " + details.children.length + " children");
+            var child = details.children.find(c => c.name === fileName);
+            if (child) {
+              link = $scope.childLink(child);
+            } else {
+              log.debug("Could not find name '" + fileName + "' in the list of file names " + JSON.stringify(details.children.map(c => c.name)));
+            }
+          }
+          if (!link) {
+            log.debug("WARNING: could not find the childLink so reverting to the wiki edit page!");
+            link = Wiki.editLink($scope.branch, path, $location);
+          }
+          $scope.addDialog.close();
+          Core.$apply($scope);
+          goToLink(link, $timeout, $location);
+        });
+      })
+    }
 
     $scope.openDeleteDialog = () => {
       if ($scope.gridOptions.selectedItems.length) {
@@ -495,7 +521,7 @@ module Wiki {
       var files = $scope.gridOptions.selectedItems;
       var fileCount = files.length;
       var moveFolder = $scope.move.moveFolder;
-      var oldFolder = $scope.pageId;
+      var oldFolder:string = $scope.pageId;
       if (moveFolder && fileCount && moveFolder !== oldFolder) {
         log.debug("Moving " + fileCount + " file(s) to " + moveFolder);
         angular.forEach(files, (file, idx) => {
@@ -670,7 +696,7 @@ module Wiki {
         wikiRepository.exists($scope.branch, path, (result) => {
           // filter old results
           if ($scope.operationCounter === counter) {
-            log.debug("for path " + path + " got result " + result);
+            log.debug("checkFileExists for path " + path + " got result " + result);
             $scope.fileExists.exists = result ? true : false;
             $scope.fileExists.name = result ? result.name : null;
             Core.$apply($scope);
@@ -708,7 +734,7 @@ module Wiki {
         return null;
       }
       var exemplar = template.exemplar || "";
-      var name = $scope.newDocumentName || exemplar;
+      var name:string = $scope.newDocumentName || exemplar;
 
       if (name.indexOf('.') < 0) {
         // lets add the file extension from the exemplar
@@ -719,18 +745,17 @@ module Wiki {
       }
 
       // lets deal with directories in the name
-      var folder = $scope.pageId;
+      var folder:string = $scope.pageId;
       if ($scope.isFile) {
         // if we are a file lets discard the last part of the path
-        var idx = folder.lastIndexOf("/");
+        var idx:any = folder.lastIndexOf("/");
         if (idx <= 0) {
           folder = "";
         } else {
           folder = folder.substring(0, idx);
         }
       }
-      var fileName = name;
-      var idx = name.lastIndexOf("/");
+      var idx:any = name.lastIndexOf("/");
       if (idx > 0) {
         folder += "/" + name.substring(0, idx);
         name = name.substring(idx + 1);

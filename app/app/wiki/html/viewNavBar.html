@@ -123,6 +123,9 @@
           <div ng-show="fileExists.exists" class="alert">
             Please choose a different name as <b>{{fileExists.name}}</b> already exists
           </div>
+          <div ng-show="fileExtensionInvalid" class="alert">
+            {{fileExtensionInvalid}}
+          </div>
           <div ng-show="!createForm.$valid" class="alert">
             {{selectedCreateDocumentTemplateInvalid}}
           </div>
@@ -142,7 +145,7 @@
     <div class="modal-footer">
       <input class="btn btn-primary add"
              type="submit"
-             ng-disabled="!selectedCreateDocumentTemplate.exemplar || fileExists.exists || !createForm.$valid"
+             ng-disabled="!selectedCreateDocumentTemplate.exemplar || !createForm.$valid"
              value="Create">
       <button class="btn btn-warning cancel" type="button" ng-click="addDialog.close()">Cancel</button>
     </div>

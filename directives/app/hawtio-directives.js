@@ -1748,6 +1748,7 @@ var DataTable;
     hawtioPluginLoader.addModule(DataTable.pluginName);
 })(DataTable || (DataTable = {}));
 /// <reference path="datatablePlugin.ts"/>
+/// <reference path="../../helpers/js/filterHelpers.ts"/>
 /**
 * @module DataTable
 */
@@ -1964,19 +1965,11 @@ var DataTable;
                 }
 
                 if (!data) {
-                    try  {
-                        data = angular.toJson(row);
-                    } catch (e) {
-                        // its maybe a Folder en
-                    }
-                }
-                if (!data) {
                     // use the row as-is
-                    data = row;
+                    data = row.entity;
                 }
 
-                // use the core filter matcher
-                var match = Core.matchFilterIgnoreCase(data, filter);
+                var match = FilterHelpers.search(data, filter);
                 return match;
             };
 
@@ -4579,6 +4572,52 @@ var UI;
     function asBoolean(value) {
         return value ? true : false;
     }
+})(UI || (UI = {}));
+/// <reference path="uiPlugin.ts"/>
+var UI;
+(function (UI) {
+    var objectView = UI._module.directive("hawtioObject", [
+        "$templateCache", "$interpolate", "$compile", function ($templateCache, $interpolate, $compile) {
+            return {
+                restrict: "A",
+                replace: true,
+                templateUrl: UI.templatePath + "object.html",
+                scope: {
+                    "entity": "=?hawtioObject",
+                    "config": "=?"
+                },
+                link: function ($scope, $element, $attr) {
+                    $scope.$watch('entity', function (entity) {
+                        if (entity) {
+                            angular.forEach(entity, function (value, key) {
+                                if (key.startsWith("$")) {
+                                    return;
+                                }
+                                var template = $templateCache.get('itemTemplate.html');
+                                if (angular.isObject(value)) {
+                                    template = $templateCache.get('objectTemplate.html');
+                                }
+                                var interpolated = $interpolate(template);
+                                var el = interpolated({
+                                    key: key.titleize() + ":",
+                                    data: value
+                                });
+                                if (angular.isObject(value)) {
+                                    var scope = $scope.$new();
+                                    scope.data = value;
+                                    $element.append($compile(el)(scope));
+                                } else {
+                                    $element.append(el);
+                                }
+                            });
+                        } else {
+                            $element.empty();
+                        }
+                        UI.log.debug("entity: ", $scope.entity);
+                    }, true);
+                }
+            };
+        }]);
 })(UI || (UI = {}));
 /**
 * @module UI

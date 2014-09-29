@@ -152,7 +152,7 @@ module Core {
   });
 
   // user detail service, contains username/password
-  _module.factory('userDetails', ["jolokiaUrl", "ConnectOptions", "localStorage", "$window", "$rootScope", (jolokiaUrl, ConnectOptions:Core.ConnectOptions, localStorage:WindowLocalStorage, $window:ng.IWindowService, $rootScope:ng.IRootScopeService)  => {
+  _module.factory('userDetails', ["ConnectOptions", "localStorage", "$window", "$rootScope", (ConnectOptions:Core.ConnectOptions, localStorage:WindowLocalStorage, $window:ng.IWindowService, $rootScope:ng.IRootScopeService)  => {
     var answer = <UserDetails> {
       username: null,
       password: null
@@ -175,7 +175,7 @@ module Core {
     } else {
       log.debug("No username set, checking if we have a session");
       // fetch the username if we've already got a session at the server
-      var userUrl = jolokiaUrl.replace("jolokia", "user");
+      var userUrl = "user";
       $.ajax(userUrl, <JQueryAjaxSettings> {
         type: "GET",
         success: (response) => {
@@ -190,7 +190,9 @@ module Core {
           answer.username = response;
           // 'user' is what the UserServlet returns if authenticationEnabled is off
           if (response !== 'user') {
+            log.debug("Authentication disabled, using dummy credentials");
             // use a dummy login details
+            answer.username = 'user';
             answer.loginDetails = {};
           }
           log.debug("User details loaded from existing session: ", StringHelpers.toString(answer));

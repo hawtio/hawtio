@@ -143,6 +143,10 @@ module Jmx {
                 foundNames = filtered;
               }
             }
+
+            // sort the names
+            foundNames = foundNames.sort();
+
             angular.forEach(foundNames, (key) => {
               var metric = $scope.jolokiaContext.metric({
                 type: 'read',
@@ -174,6 +178,9 @@ module Jmx {
               }
             }
           });
+
+          // sort the names
+          attributeNames = attributeNames.sort();
 
           // lets create the metrics
           attributeNames.forEach((key) => {

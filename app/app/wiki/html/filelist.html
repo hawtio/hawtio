@@ -87,22 +87,32 @@
           </div>
         </div>
 
-        <form class="form-inline" ng-submit="addAndCloseDialog()">
-          <label class="control-label" for="fileName">Name: </label>
-
-          <input id="fileName" type="text" ng-model="newDocumentName"
-                 placeholder="{{selectedCreateDocumentTemplate.exemplar}}"/>
-        </form>
-
         <div class="control-group">
           <div ng-show="fileExists.exists" class="alert">
             Please choose a different name as <b>{{fileExists.name}}</b> already exists
           </div>
+          <div ng-show="fileExtensionInvalid" class="alert">
+            {{fileExtensionInvalid}}
+          </div>
+          <div ng-show="!createForm.$valid" class="alert">
+            {{selectedCreateDocumentTemplateInvalid}}
+          </div>
         </div>
+
+        <form class="form-inline" ng-submit="addAndCloseDialog()">
+
+          <label class="control-label" for="fileName">Name: </label>
+          <input name="fileName" id="fileName"
+                 type="text"
+                 ng-pattern="selectedCreateDocumentTemplateRegex"
+                 ng-model="newDocumentName"
+                 placeholder="{{selectedCreateDocumentTemplate.exemplar}}">
+        </form>
+
       </div>
       <div class="modal-footer">
         <input id="submit" class="btn btn-primary add" type="submit" ng-click="addAndCloseDialog()"
-               ng-disabled="!selectedCreateDocumentTemplate.exemplar || fileExists.exists"
+               ng-disabled="!selectedCreateDocumentTemplate.exemplar || !createForm.$valid"
                value="Create">
         <button class="btn btn-warning cancel" type="button" ng-click="addDialog.close()">Cancel</button>
       </div>

@@ -7,7 +7,7 @@ module Kubernetes {
   // main controller for the page
   export var Pods = controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "jolokia", "$location", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, $dialog, $templateCache, jolokia:Jolokia.IJolokia, $location:ng.ILocationService) => {
 
-    $scope.pods = []
+    $scope.pods = [];
     $scope.fetched = false;
     $scope.json = '';
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
@@ -16,12 +16,17 @@ module Kubernetes {
       Kubernetes.setJson($scope, id, $scope.pods);
     });
 
-    $scope.podsConfig = {
+    Kubernetes.initShared($scope);
+
+    $scope.tableConfig = {
       data: 'pods',
       showSelectionCheckbox: true,
       enableRowClickSelection: false,
       multiSelect: true,
       selectedItems: [],
+      filterOptions: {
+        filterText: ''
+      },
       columnDefs: [
         {
           field: 'id',
@@ -96,11 +101,15 @@ module Kubernetes {
           customClass: "alert alert-warning"
         }).open();
       };
+
       // setup polling
       $scope.fetch = PollHelpers.setupPolling($scope, (next:() => void) => {
         KubernetesPods.query((response) => {
           $scope.fetched = true;
-          $scope.pods = response['items'].sortBy((pod:KubePod) => { return pod.id });
+          $scope.pods = (response['items'] || []).sortBy((pod:KubePod) => { return pod.id });
+          angular.forEach($scope.pods, entity => {
+            entity.labelsText = Kubernetes.labelsToString(entity.labels);
+          });
           Kubernetes.setJson($scope, $scope.id, $scope.pods);
           //log.debug("Pods: ", $scope.pods);
           next();

@@ -88,6 +88,10 @@ module Fabric {
     return jolokia.execute(Fabric.managerMBean, "containerIds", { method: 'POST' });
   }
 
+  export function getProfile(jolokia, version, id, mandatory) {
+    return jolokia.execute(Fabric.managerMBean, "getProfile(java.lang.String, java.lang.String, boolean)", version, id, mandatory, { method: 'GET' });
+  }
+
   export function deleteProfile(jolokia, version, id, success, error = Core.defaultJolokiaErrorHandler) {
     doAction('deleteProfile(java.lang.String, java.lang.String)', jolokia, [version, id], success, error);
   }

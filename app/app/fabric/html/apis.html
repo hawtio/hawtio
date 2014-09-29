@@ -17,6 +17,11 @@
         <div ng-show="apis.length">
           <table class="table table-striped" hawtio-simple-table="apiOptions"></table>
         </div>
+
+        <div class="row-fluid" ng-show="!initDone">
+          Loading...
+        </div>
+
         <div class="hero-unit" ng-show="apis.length === 0">
           <p>There are currently no endpoints running in this fabric exposing APIs</p>
 

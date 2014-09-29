@@ -3560,10 +3560,11 @@ var Core;
                 if (!ConnectOptions.name || !newUrl) {
                     return;
                 }
-                var newQuery = UrlHelpers.parseQueryString(newUrl);
+                var newQuery = $location.search();
                 if (!newQuery.con) {
                     Core.log.debug("Lost connection parameter (", ConnectOptions.name, ") from query params: ", newQuery, " resetting");
-                    $location.search({ 'con': ConnectOptions.name });
+                    newQuery['con'] = ConnectOptions.name;
+                    $location.search(newQuery);
                 }
             });
 
@@ -4162,6 +4163,11 @@ var Fabric;
         return jolokia.execute(Fabric.managerMBean, "containerIds", { method: 'POST' });
     }
     Fabric.getContainerIds = getContainerIds;
+
+    function getProfile(jolokia, version, id, mandatory) {
+        return jolokia.execute(Fabric.managerMBean, "getProfile(java.lang.String, java.lang.String, boolean)", version, id, mandatory, { method: 'GET' });
+    }
+    Fabric.getProfile = getProfile;
 
     function deleteProfile(jolokia, version, id, success, error) {
         if (typeof error === "undefined") { error = Core.defaultJolokiaErrorHandler; }
@@ -5329,10 +5335,12 @@ var Wiki;
 
     Wiki.customWikiViewPages = ["/formTable", "/camel/diagram", "/camel/canvas", "/camel/properties", "/dozer/mappings"];
 
-    Wiki.hideExtentions = [".profile"];
+    Wiki.hideExtensions = [".profile"];
 
     var defaultFileNamePattern = /^[a-zA-Z0-9._-]*$/;
     var defaultFileNamePatternInvalid = "Name must be: letters, numbers, and . _ or - characters";
+
+    var defaultFileNameExtensionPattern = "";
 
     var defaultLowerCaseFileNamePattern = /^[a-z0-9._-]*$/;
     var defaultLowerCaseFileNamePatternInvalid = "Name must be: lower-case letters, numbers, and . _ or - characters";
@@ -5362,7 +5370,8 @@ var Wiki;
             tooltip: "A properties file typically used to configure Java classes",
             exemplar: "properties-file.properties",
             regex: defaultFileNamePattern,
-            invalid: defaultFileNamePatternInvalid
+            invalid: defaultFileNamePatternInvalid,
+            extension: ".properties"
         },
         {
             label: "Key Store File",
@@ -5370,6 +5379,7 @@ var Wiki;
             exemplar: 'keystore.jks',
             regex: defaultFileNamePattern,
             invalid: defaultFileNamePatternInvalid,
+            extension: ".jks",
             generated: {
                 mbean: ['hawtio', { type: 'KeystoreService' }],
                 init: function (workspace, $scope) {
@@ -5463,23 +5473,26 @@ var Wiki;
         {
             label: "Markdown Document",
             tooltip: "A basic markup document using the Markdown wiki markup, particularly useful for ReadMe files in directories",
-            exemplar: "readme.md",
+            exemplar: "ReadMe.md",
             regex: defaultFileNamePattern,
-            invalid: defaultFileNamePatternInvalid
+            invalid: defaultFileNamePatternInvalid,
+            extension: ".md"
         },
         {
             label: "HTML Document",
             tooltip: "A HTML document you can edit directly using the HTML markup",
             exemplar: "document.html",
             regex: defaultFileNamePattern,
-            invalid: defaultFileNamePatternInvalid
+            invalid: defaultFileNamePatternInvalid,
+            extension: ".html"
         },
         {
             label: "XML Document",
             tooltip: "An empty XML document",
             exemplar: "document.xml",
             regex: defaultFileNamePattern,
-            invalid: defaultFileNamePatternInvalid
+            invalid: defaultFileNamePatternInvalid,
+            extension: ".xml"
         },
         {
             label: "Integration Flows",
@@ -5491,7 +5504,8 @@ var Wiki;
                     icon: "/img/icons/camel.svg",
                     exemplar: "camel.xml",
                     regex: defaultFileNamePattern,
-                    invalid: defaultFileNamePatternInvalid
+                    invalid: defaultFileNamePatternInvalid,
+                    extension: ".xml"
                 },
                 {
                     label: "Camel OSGi Blueprint XML document",
@@ -5499,7 +5513,8 @@ var Wiki;
                     icon: "/img/icons/camel.svg",
                     exemplar: "camel-blueprint.xml",
                     regex: defaultFileNamePattern,
-                    invalid: defaultFileNamePatternInvalid
+                    invalid: defaultFileNamePatternInvalid,
+                    extension: ".xml"
                 },
                 {
                     label: "Camel Spring XML document",
@@ -5507,7 +5522,8 @@ var Wiki;
                     icon: "/img/icons/camel.svg",
                     exemplar: "camel-spring.xml",
                     regex: defaultFileNamePattern,
-                    invalid: defaultFileNamePatternInvalid
+                    invalid: defaultFileNamePatternInvalid,
+                    extension: ".xml"
                 }
             ]
         },
@@ -5517,7 +5533,8 @@ var Wiki;
             icon: "/img/icons/dozer/dozer.gif",
             exemplar: "dozer-mapping.xml",
             regex: defaultFileNamePattern,
-            invalid: defaultFileNamePatternInvalid
+            invalid: defaultFileNamePatternInvalid,
+            extension: ".xml"
         }
     ];
 
@@ -5718,7 +5735,7 @@ var Wiki;
 
     function hideFineNameExtensions(name) {
         if (name) {
-            angular.forEach(Wiki.hideExtentions, function (extension) {
+            angular.forEach(Wiki.hideExtensions, function (extension) {
                 if (name.endsWith(extension)) {
                     name = name.substring(0, name.length - extension.length);
                 }
@@ -5975,6 +5992,12 @@ var Fabric;
     Fabric.serviceIconRegistry = new IconRegistry();
 
     Fabric.serviceIconRegistry.addIcons({
+        title: "Kubernetes",
+        type: "img",
+        src: "img/icons/kubernetes.svg"
+    }, "io.kubernetes");
+
+    Fabric.serviceIconRegistry.addIcons({
         title: "Fabric8",
         type: "img",
         src: "img/icons/fabric8_icon.svg"
@@ -6079,6 +6102,12 @@ var Fabric;
         type: "img",
         src: "img/icons/jetty.svg"
     }, "Jetty");
+
+    Fabric.containerIconRegistry.addIcons({
+        title: "Kubernetes",
+        type: "img",
+        src: "img/icons/kubernetes.svg"
+    }, "kubelet");
 
     Fabric.containerIconRegistry.addIcons({
         title: "WildFly",
@@ -16914,7 +16943,7 @@ var Core;
     });
 
     Core._module.factory('userDetails', [
-        "jolokiaUrl", "ConnectOptions", "localStorage", "$window", "$rootScope", function (jolokiaUrl, ConnectOptions, localStorage, $window, $rootScope) {
+        "ConnectOptions", "localStorage", "$window", "$rootScope", function (ConnectOptions, localStorage, $window, $rootScope) {
             var answer = {
                 username: null,
                 password: null
@@ -16937,7 +16966,7 @@ var Core;
             } else {
                 Core.log.debug("No username set, checking if we have a session");
 
-                var userUrl = jolokiaUrl.replace("jolokia", "user");
+                var userUrl = "user";
                 $.ajax(userUrl, {
                     type: "GET",
                     success: function (response) {
@@ -16952,6 +16981,9 @@ var Core;
                         answer.username = response;
 
                         if (response !== 'user') {
+                            Core.log.debug("Authentication disabled, using dummy credentials");
+
+                            answer.username = 'user';
                             answer.loginDetails = {};
                         }
                         Core.log.debug("User details loaded from existing session: ", StringHelpers.toString(answer));
@@ -20228,6 +20260,48 @@ var DataTable;
 
     hawtioPluginLoader.addModule(DataTable.pluginName);
 })(DataTable || (DataTable = {}));
+var FilterHelpers;
+(function (FilterHelpers) {
+    FilterHelpers.log = Logger.get("FilterHelpers");
+
+    function search(object, filter, maxDepth, and) {
+        if (typeof maxDepth === "undefined") { maxDepth = -1; }
+        if (typeof and === "undefined") { and = true; }
+        var f = filter.split(" ");
+        var matches = f.filter(function (f) {
+            return searchObject(object, f, maxDepth);
+        });
+        if (and) {
+            return matches.length === f.length;
+        } else {
+            return matches.length > 0;
+        }
+    }
+    FilterHelpers.search = search;
+
+    function searchObject(object, filter, maxDepth, depth) {
+        if (typeof maxDepth === "undefined") { maxDepth = -1; }
+        if (typeof depth === "undefined") { depth = 0; }
+        if ((maxDepth > 0 && depth >= maxDepth) || depth > 50) {
+            return false;
+        }
+        var f = filter.toLowerCase();
+        var answer = false;
+        if (angular.isString(object)) {
+            answer = object.toLowerCase().has(f);
+        } else if (angular.isNumber(object)) {
+            answer = ("" + object).toLowerCase().has(f);
+        } else if (angular.isArray(object)) {
+            answer = object.some(function (item) {
+                return searchObject(item, f, maxDepth, depth + 1);
+            });
+        } else if (angular.isObject(object)) {
+            answer = searchObject(Object.extended(object).values(), f, maxDepth, depth);
+        }
+        return answer;
+    }
+    FilterHelpers.searchObject = searchObject;
+})(FilterHelpers || (FilterHelpers = {}));
 var DataTable;
 (function (DataTable) {
     var SimpleDataTable = (function () {
@@ -20424,16 +20498,10 @@ var DataTable;
                 }
 
                 if (!data) {
-                    try  {
-                        data = angular.toJson(row);
-                    } catch (e) {
-                    }
-                }
-                if (!data) {
-                    data = row;
+                    data = row.entity;
                 }
 
-                var match = Core.matchFilterIgnoreCase(data, filter);
+                var match = FilterHelpers.search(data, filter);
                 return match;
             };
 
@@ -21628,7 +21696,17 @@ var Git;
         };
 
         JolokiaGit.prototype.exists = function (branch, path, fn) {
-            return this.jolokia.execute(this.mbean, "exists", branch, path, onSuccess(fn));
+            var result;
+            if (angular.isDefined(fn) && fn) {
+                result = this.jolokia.execute(this.mbean, "exists", branch, path, onSuccess(fn));
+            } else {
+                result = this.jolokia.execute(this.mbean, "exists", branch, path);
+            }
+            if (angular.isDefined(result) && result) {
+                return true;
+            } else {
+                return false;
+            }
         };
 
         JolokiaGit.prototype.read = function (branch, path, fn) {
@@ -21733,7 +21811,7 @@ var Wiki;
 
         GitWikiRepository.prototype.exists = function (branch, path, fn) {
             var fullPath = this.getPath(path);
-            this.git().exists(branch, fullPath, fn);
+            return this.git().exists(branch, fullPath, fn);
         };
 
         GitWikiRepository.prototype.completePath = function (branch, completionText, directoriesOnly, fn) {
@@ -22479,31 +22557,6 @@ var SelectionHelpers;
     }
     SelectionHelpers.decorate = decorate;
 })(SelectionHelpers || (SelectionHelpers = {}));
-var FilterHelpers;
-(function (FilterHelpers) {
-    function searchObject(object, filter, maxDepth, depth) {
-        if (typeof maxDepth === "undefined") { maxDepth = -1; }
-        if (typeof depth === "undefined") { depth = 0; }
-        if ((maxDepth > 0 && depth >= maxDepth) || depth > 50) {
-            return false;
-        }
-        var f = filter.toLowerCase();
-        var answer = false;
-        if (angular.isString(object)) {
-            answer = object.toLowerCase().has(f);
-        } else if (angular.isNumber(object)) {
-            answer = ("" + object).toLowerCase().has(f);
-        } else if (angular.isArray(object)) {
-            answer = object.some(function (item) {
-                return searchObject(item, f, maxDepth, depth + 1);
-            });
-        } else if (angular.isObject(object)) {
-            answer = searchObject(Object.extended(object).values(), f, maxDepth, depth);
-        }
-        return answer;
-    }
-    FilterHelpers.searchObject = searchObject;
-})(FilterHelpers || (FilterHelpers = {}));
 var ProfileHelpers;
 (function (ProfileHelpers) {
     function getTags(profile) {
@@ -22533,12 +22586,14 @@ var Fabric;
                     methodName: 'createContainers',
                     title: 'Deploy the selected profiles to new containers',
                     action: function () {
+                        var me = $location.path();
                         $location.path('/fabric/containers/createContainer').search({
                             p: 'fabric',
                             vid: '',
                             pid: '',
                             hideProfileSelector: true,
-                            returnTo: '/profiles'
+                            returnTo: me,
+                            nextPage: '/fabric/containerView?groupBy=profileIds'
                         });
                         Core.$apply($rootScope);
                     }
@@ -25330,6 +25385,7 @@ var Fabric;
 
             $scope.apis = null;
             $scope.selectedApis = [];
+            $scope.initDone = false;
 
             $scope.versionId = Fabric.getDefaultVersionId(jolokia);
 
@@ -25385,11 +25441,8 @@ var Fabric;
             }
 
             if (Fabric.fabricCreated(workspace)) {
-                Core.register(jolokia, $scope, {
-                    type: 'exec',
-                    mbean: Fabric.managerMBean,
-                    operation: "clusterJson",
-                    arguments: [$scope.path] }, onSuccess(onClusterData, { error: onClusterDataError }));
+                var query = { type: 'exec', mbean: Fabric.managerMBean, operation: 'clusterJson', arguments: [$scope.path] };
+                scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(onClusterData, query));
             }
 
             function addObjectNameProperties(object) {
@@ -25453,6 +25506,8 @@ var Fabric;
             }
 
             function onClusterData(response) {
+                $scope.initDone = true;
+
                 var responseJson = null;
                 if (response) {
                     responseJson = response.value;
@@ -25471,12 +25526,6 @@ var Fabric;
                     console.log("Failed to parse JSON " + e);
                     console.log("JSON: " + responseJson);
                 }
-            }
-
-            function onClusterDataError(response) {
-                $scope.apis = [];
-                Core.$apply($scope);
-                Core.defaultJolokiaErrorHandler(response);
             }
         }]);
 })(Fabric || (Fabric = {}));
@@ -27167,8 +27216,8 @@ var Fabric;
             $scope.profileIdFilter = '';
 
             $scope.hideProfileSelector = false;
-            $scope.returnTo = '/fabric/containers';
-            $scope.nextPage = '/fabric/containers';
+            $scope.returnTo = '/fabric/containerView?groupBy=none';
+            $scope.nextPage = '/fabric/containerView?groupBy=none';
 
             Core.bindModelToSearchParam($scope, $location, 'hideProfileSelector', 'hideProfileSelector', $scope.hideProfileSelector, Core.parseBooleanValue);
             Core.bindModelToSearchParam($scope, $location, 'returnTo', 'returnTo', $scope.returnTo);
@@ -27433,14 +27482,13 @@ var Fabric;
             }
 
             $scope.goBack = function () {
-                $location.path($scope.returnTo);
+                var target = new URI($scope.returnTo);
+                $location.path(target.path()).search(target.search(true));
             };
 
             $scope.goForward = function () {
-                $location.search('tab', null);
-                $location.search('profileIds', null);
-                $location.search('versionId', null);
-                $location.path($scope.nextPage);
+                var target = new URI($scope.nextPage);
+                $location.path(target.path()).search(target.search(true));
             };
 
             $scope.onSubmit = function (json, form) {
@@ -29025,12 +29073,13 @@ var Fabric;
                     $scope.pageId = Fabric.fabricTopLevel + Fabric.profilePath($scope.profileId);
 
                     $scope.gotoCreateContainer = function () {
-                        var me = $location.url();
-                        $location.url('/fabric/containers/createContainer').search({
+                        var me = $location.path();
+                        $location.path('/fabric/containers/createContainer').search({
                             versionId: $scope.versionId,
                             profileIds: $scope.profileId,
                             hideProfileSelector: true,
-                            returnTo: me
+                            returnTo: me,
+                            nextPage: me
                         });
                     };
 
@@ -35020,6 +35069,9 @@ var Jmx;
                                     foundNames = filtered;
                                 }
                             }
+
+                            foundNames = foundNames.sort();
+
                             angular.forEach(foundNames, function (key) {
                                 var metric = $scope.jolokiaContext.metric({
                                     type: 'read',
@@ -35050,6 +35102,8 @@ var Jmx;
                                 }
                             }
                         });
+
+                        attributeNames = attributeNames.sort();
 
                         attributeNames.forEach(function (key) {
                             angular.forEach(mbeans, function (mbean, name) {
@@ -36230,7 +36284,7 @@ var JVM;
 var JVM;
 (function (JVM) {
     JVM._module.controller("JVM.JVMsController", [
-        "$scope", "$window", "$location", "workspace", "jolokia", "mbeanName", function ($scope, $window, $location, workspace, jolokia, mbeanName) {
+        "$scope", "$window", "$location", "localStorage", "workspace", "jolokia", "mbeanName", function ($scope, $window, $location, localStorage, workspace, jolokia, mbeanName) {
             JVM.configureScope($scope, $location, workspace);
             $scope.data = [];
             $scope.deploying = false;
@@ -36276,8 +36330,22 @@ var JVM;
                 }));
             };
 
-            $scope.connectTo = function (url) {
-                $window.open("?url=" + encodeURIComponent(url));
+            $scope.connectTo = function (url, scheme, host, port, path) {
+                var options = {};
+                options["scheme"] = scheme;
+                options["host"] = host;
+                options["port"] = port;
+                options["path"] = path;
+
+                options["userName"] = "";
+                options["password"] = "";
+
+                var con = Core.createConnectToServerOptions(options);
+                con.name = "local";
+
+                JVM.log.debug("Connecting to local JVM agent: " + url);
+                Core.connectToServer(localStorage, con);
+                Core.$apply($scope);
             };
 
             function render(response) {
@@ -36445,7 +36513,10 @@ var Karaf;
         "activeio-core",
         "activemq-osgi",
         "^org.eclipse.jetty",
-        "org.codehaus.jettison.jettison"
+        "org.codehaus.jettison.jettison",
+        "org.jledit.core",
+        "org.fusesource.jansi",
+        "org.eclipse.equinox.region"
     ];
 
     var platformBundleRegex = new RegExp(platformBundlePatterns.join('|'));
@@ -37350,11 +37421,34 @@ var Kubernetes;
         if (!item) {
             $scope.id = undefined;
             $scope.json = '';
+            $scope.item = undefined;
         } else {
             $scope.json = angular.toJson(item, true);
+            $scope.item = item;
         }
     }
     Kubernetes.setJson = setJson;
+
+    function labelsToString(labels) {
+        var answer = "";
+        angular.forEach(labels, function (value, key) {
+            var separator = answer ? "," : "";
+            answer += separator + key + "=" + value;
+        });
+        return answer;
+    }
+    Kubernetes.labelsToString = labelsToString;
+
+    function initShared($scope) {
+        $scope.$on("labelFilterUpdate", function ($event, text) {
+            if (Core.isBlank($scope.tableConfig.filterOptions.filterText)) {
+                $scope.tableConfig.filterOptions.filterText = text;
+            } else {
+                $scope.tableConfig.filterOptions.filterText = $scope.tableConfig.filterOptions.filterText + " " + text;
+            }
+        });
+    }
+    Kubernetes.initShared = initShared;
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
 (function (Kubernetes) {
@@ -37494,12 +37588,17 @@ var Kubernetes;
                 Kubernetes.setJson($scope, id, $scope.pods);
             });
 
-            $scope.podsConfig = {
+            Kubernetes.initShared($scope);
+
+            $scope.tableConfig = {
                 data: 'pods',
                 showSelectionCheckbox: true,
                 enableRowClickSelection: false,
                 multiSelect: true,
                 selectedItems: [],
+                filterOptions: {
+                    filterText: ''
+                },
                 columnDefs: [
                     {
                         field: 'id',
@@ -37578,8 +37677,11 @@ var Kubernetes;
                 $scope.fetch = PollHelpers.setupPolling($scope, function (next) {
                     KubernetesPods.query(function (response) {
                         $scope.fetched = true;
-                        $scope.pods = response['items'].sortBy(function (pod) {
+                        $scope.pods = (response['items'] || []).sortBy(function (pod) {
                             return pod.id;
+                        });
+                        angular.forEach($scope.pods, function (entity) {
+                            entity.labelsText = Kubernetes.labelsToString(entity.labels);
                         });
                         Kubernetes.setJson($scope, $scope.id, $scope.pods);
 
@@ -37594,21 +37696,29 @@ var Kubernetes;
 var Kubernetes;
 (function (Kubernetes) {
     Kubernetes.ReplicationControllers = Kubernetes.controller("ReplicationControllers", [
-        "$scope", "KubernetesReplicationControllers", "$templateCache", "$location", function ($scope, KubernetesReplicationControllers, $templateCache, $location) {
+        "$scope", "KubernetesReplicationControllers", "$templateCache", "$location", "jolokia",
+        function ($scope, KubernetesReplicationControllers, $templateCache, $location, jolokia) {
             $scope.replicationControllers = [];
             $scope.fetched = false;
             $scope.json = '';
             ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
+
+            Kubernetes.initShared($scope);
+
             $scope.tableConfig = {
                 data: 'replicationControllers',
-                showSelectionCheckbox: false,
+                showSelectionCheckbox: true,
                 enableRowClickSelection: false,
-                multiSelect: false,
+                multiSelect: true,
+                selectedItems: [],
+                filterOptions: {
+                    filterText: ''
+                },
                 columnDefs: [
                     { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
                     { field: 'currentState.replicas', displayName: 'Current Replicas' },
                     { field: 'desiredState.replicas', displayName: 'Desired Replicas' },
-                    { field: 'labels', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
+                    { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
                 ]
             };
 
@@ -37617,12 +37727,56 @@ var Kubernetes;
             });
 
             KubernetesReplicationControllers.then(function (KubernetesReplicationControllers) {
+                $scope.deletePrompt = function (selected) {
+                    if (angular.isString(selected)) {
+                        selected = [{
+                                id: selected
+                            }];
+                    }
+                    UI.multiItemConfirmActionDialog({
+                        collection: selected,
+                        index: 'id',
+                        onClose: function (result) {
+                            if (result) {
+                                function deleteSelected(selected, next) {
+                                    if (!next) {
+                                        if (!jolokia.isRunning()) {
+                                            $scope.fetch();
+                                        }
+                                    } else {
+                                        Kubernetes.log.debug("deleting: ", next.id);
+                                        KubernetesReplicationControllers.delete({
+                                            id: next.id
+                                        }, undefined, function () {
+                                            Kubernetes.log.debug("deleted: ", next.id);
+                                            deleteSelected(selected, selected.shift());
+                                        }, function (error) {
+                                            Kubernetes.log.debug("Error deleting: ", error);
+                                            deleteSelected(selected, selected.shift());
+                                        });
+                                    }
+                                }
+                                deleteSelected(selected, selected.shift());
+                            }
+                        },
+                        title: 'Delete replication controllers?',
+                        action: 'The following replication controllers will be deleted:',
+                        okText: 'Delete',
+                        okClass: 'btn-danger',
+                        custom: "This operation is permanent once completed!",
+                        customClass: "alert alert-warning"
+                    }).open();
+                };
+
                 $scope.fetch = PollHelpers.setupPolling($scope, function (next) {
                     KubernetesReplicationControllers.query(function (response) {
                         Kubernetes.log.debug("got back response: ", response);
                         $scope.fetched = true;
-                        $scope.replicationControllers = response['items'].sortBy(function (item) {
+                        $scope.replicationControllers = (response['items'] || []).sortBy(function (item) {
                             return item.id;
+                        });
+                        angular.forEach($scope.replicationControllers, function (entity) {
+                            entity.labelsText = Kubernetes.labelsToString(entity.labels);
                         });
                         Kubernetes.setJson($scope, $scope.id, $scope.replicationControllers);
                         next();
@@ -37641,23 +37795,31 @@ var Kubernetes;
 var Kubernetes;
 (function (Kubernetes) {
     Kubernetes.Services = Kubernetes.controller("Services", [
-        "$scope", "KubernetesServices", "$templateCache", "$location", function ($scope, KubernetesServices, $templateCache, $location) {
+        "$scope", "KubernetesServices", "$templateCache", "$location", "jolokia",
+        function ($scope, KubernetesServices, $templateCache, $location, jolokia) {
             $scope.services = [];
             $scope.fetched = false;
             $scope.json = '';
             ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
+
+            Kubernetes.initShared($scope);
+
             $scope.tableConfig = {
                 data: 'services',
-                showSelectionCheckbox: false,
+                showSelectionCheckbox: true,
                 enableRowClickSelection: false,
-                multiSelect: false,
+                multiSelect: true,
+                selectedItems: [],
+                filterOptions: {
+                    filterText: ''
+                },
                 columnDefs: [
                     { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
                     { field: 'selector', displayName: 'Selector', cellTemplate: $templateCache.get("selectorTemplate.html") },
                     { field: 'containerPort', displayName: 'Container Port' },
                     { field: 'port', displayName: 'Port' },
                     { field: 'protocol', displayName: 'Protocol' },
-                    { field: 'labels', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
+                    { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
                 ]
             };
 
@@ -37666,13 +37828,57 @@ var Kubernetes;
             });
 
             KubernetesServices.then(function (KubernetesServices) {
+                $scope.deletePrompt = function (selected) {
+                    if (angular.isString(selected)) {
+                        selected = [{
+                                id: selected
+                            }];
+                    }
+                    UI.multiItemConfirmActionDialog({
+                        collection: selected,
+                        index: 'id',
+                        onClose: function (result) {
+                            if (result) {
+                                function deleteSelected(selected, next) {
+                                    if (!next) {
+                                        if (!jolokia.isRunning()) {
+                                            $scope.fetch();
+                                        }
+                                    } else {
+                                        Kubernetes.log.debug("deleting: ", next.id);
+                                        KubernetesServices.delete({
+                                            id: next.id
+                                        }, undefined, function () {
+                                            Kubernetes.log.debug("deleted: ", next.id);
+                                            deleteSelected(selected, selected.shift());
+                                        }, function (error) {
+                                            Kubernetes.log.debug("Error deleting: ", error);
+                                            deleteSelected(selected, selected.shift());
+                                        });
+                                    }
+                                }
+                                deleteSelected(selected, selected.shift());
+                            }
+                        },
+                        title: 'Delete services?',
+                        action: 'The following services will be deleted:',
+                        okText: 'Delete',
+                        okClass: 'btn-danger',
+                        custom: "This operation is permanent once completed!",
+                        customClass: "alert alert-warning"
+                    }).open();
+                };
+
                 $scope.fetch = PollHelpers.setupPolling($scope, function (next) {
                     KubernetesServices.query(function (response) {
                         $scope.fetched = true;
-                        $scope.services = response['items'].sortBy(function (item) {
+                        $scope.services = (response['items'] || []).sortBy(function (item) {
                             return item.id;
                         });
                         Kubernetes.setJson($scope, $scope.id, $scope.services);
+                        angular.forEach($scope.services, function (entity) {
+                            entity.labelsText = Kubernetes.labelsToString(entity.labels);
+                        });
                         next();
                     });
                 });
@@ -37721,34 +37927,24 @@ var Kubernetes;
                     });
                 }
             });
+
             $scope.handleClick = function (entity, labelType, value) {
                 Kubernetes.log.debug("handleClick, entity: ", entity, " labelType: ", labelType, " value: ", value);
-                switch (labelType) {
-                    case 'container':
-                        if (entity.labels.container) {
-                            Fabric.gotoContainer(entity.labels.container);
-                        }
-                        return;
-                    case 'profile':
-                        if (entity.labels.version && entity.labels.profile) {
-                            Fabric.gotoProfile(workspace, jolokia, workspace.localStorage, $location, entity.labels.version, entity.labels.profile);
-                        }
-                        return;
-                    default:
-                        return;
-                }
+                var filterTextSection = labelType + "=" + value.title;
+                $scope.$emit('labelFilterUpdate', filterTextSection);
             };
+
             var labelColors = {
-                'profile': 'background-green mouse-pointer',
+                'profile': 'background-green',
                 'version': 'background-blue',
                 'name': 'background-light-grey',
-                'container': 'background-light-green mouse-pointer'
+                'container': 'background-light-green'
             };
             $scope.labelClass = function (labelType) {
                 if (!(labelType in labelColors)) {
-                    return '';
+                    return 'mouse-pointer';
                 } else
-                    return labelColors[labelType];
+                    return labelColors[labelType] + ' mouse-pointer';
             };
         }]);
 })(Kubernetes || (Kubernetes = {}));
@@ -38838,7 +39034,7 @@ var Osgi;
                             success: function (response) {
                                 var isFragment = response.value;
                                 if (isFragment) {
-                                    Core.notification("success", "Fragment installed succesfully.");
+                                    Core.notification("success", "Fragment installed successfully.");
                                     $scope.bundleUrl = "";
                                     Core.$apply($scope);
                                 } else {
@@ -45853,6 +46049,51 @@ var UI;
 })(UI || (UI = {}));
 var UI;
 (function (UI) {
+    var objectView = UI._module.directive("hawtioObject", [
+        "$templateCache", "$interpolate", "$compile", function ($templateCache, $interpolate, $compile) {
+            return {
+                restrict: "A",
+                replace: true,
+                templateUrl: UI.templatePath + "object.html",
+                scope: {
+                    "entity": "=?hawtioObject",
+                    "config": "=?"
+                },
+                link: function ($scope, $element, $attr) {
+                    $scope.$watch('entity', function (entity) {
+                        if (entity) {
+                            angular.forEach(entity, function (value, key) {
+                                if (key.startsWith("$")) {
+                                    return;
+                                }
+                                var template = $templateCache.get('itemTemplate.html');
+                                if (angular.isObject(value)) {
+                                    template = $templateCache.get('objectTemplate.html');
+                                }
+                                var interpolated = $interpolate(template);
+                                var el = interpolated({
+                                    key: key.titleize() + ":",
+                                    data: value
+                                });
+                                if (angular.isObject(value)) {
+                                    var scope = $scope.$new();
+                                    scope.data = value;
+                                    $element.append($compile(el)(scope));
+                                } else {
+                                    $element.append(el);
+                                }
+                            });
+                        } else {
+                            $element.empty();
+                        }
+                        UI.log.debug("entity: ", $scope.entity);
+                    }, true);
+                }
+            };
+        }]);
+})(UI || (UI = {}));
+var UI;
+(function (UI) {
     function hawtioPane() {
         return {
             restrict: 'E',
@@ -49253,6 +49494,8 @@ var Wiki;
                 exists: false,
                 name: ""
             };
+            $scope.newDocumentName = "";
+            $scope.selectedCreateDocumentExtension = null;
 
             Core.bindModelToSearchParam($scope, $location, "searchText", "q", "");
 
@@ -49414,17 +49657,18 @@ var Wiki;
             };
 
             $scope.onCreateDocumentSelect = function (node) {
+                $scope.fileExists.exists = false;
+                $scope.fileExists.name = "";
+
                 $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
                 $scope.selectedCreateDocumentTemplateRegex = $scope.selectedCreateDocumentTemplate.regex || /.*/;
                 $scope.selectedCreateDocumentTemplateInvalid = $scope.selectedCreateDocumentTemplate.invalid || "invalid name";
-                checkFileExists(getNewDocumentPath());
+                $scope.selectedCreateDocumentTemplateExtension = $scope.selectedCreateDocumentTemplate.extension || null;
             };
 
-            $scope.$watch("newDocumentName", function () {
-                checkFileExists(getNewDocumentPath());
-            });
-
             $scope.openAddDialog = function () {
+                $scope.fileExists.exists = false;
+                $scope.fileExists.name = "";
                 $scope.newDocumentName = "";
                 $scope.addDialog.open();
             };
@@ -49436,11 +49680,35 @@ var Wiki;
 
                 $scope.newDocumentName = null;
 
+                $scope.fileExists.exists = false;
+                $scope.fileExists.name = "";
+                $scope.fileExtensionInvalid = null;
+
                 if (!template || !path) {
                     return;
                 }
+
+                if ($scope.selectedCreateDocumentTemplateExtension) {
+                    var idx = path.lastIndexOf('.');
+                    if (idx > 0) {
+                        var ext = path.substring(idx);
+                        if ($scope.selectedCreateDocumentTemplateExtension !== ext) {
+                            $scope.fileExtensionInvalid = "File extension must be: " + $scope.selectedCreateDocumentTemplateExtension;
+                            Core.$apply($scope);
+                            return;
+                        }
+                    }
+                }
+
+                var exists = wikiRepository.exists($scope.branch, path, null);
+                if (exists) {
+                    $scope.fileExists.exists = true;
+                    $scope.fileExists.name = path;
+                    Core.$apply($scope);
+                    return;
+                }
+
                 var name = Wiki.fileName(path);
-                var fileName = name;
                 var folder = Wiki.fileParent(path);
                 var exemplar = template.exemplar;
 
@@ -49477,6 +49745,14 @@ var Wiki;
 
                     var profileName = toProfileName(concatenated);
                     var targetPath = toPath(profileName);
+
+                    var profile = Fabric.getProfile(workspace.jolokia, $scope.branch, profileName, false);
+                    if (profile) {
+                        $scope.fileExists.exists = true;
+                        $scope.fileExists.name = profileName;
+                        Core.$apply($scope);
+                        return;
+                    }
 
                     $scope.addDialog.close();
 
@@ -49526,39 +49802,45 @@ var Wiki;
                     };
                     generateDialog.open();
                 } else {
-                    $http.get(exemplarUri).success(function (contents) {
-                        wikiRepository.putPage($scope.branch, path, contents, commitMessage, function (status) {
-                            Wiki.log.debug("Created file " + name);
-                            Wiki.onComplete(status);
-
-                            $scope.git = wikiRepository.getPage($scope.branch, folder, $scope.objectId, function (details) {
-                                var link = null;
-                                if (details && details.children) {
-                                    Wiki.log.debug("scanned the directory " + details.children.length + " children");
-                                    var child = details.children.find(function (c) {
-                                        return c.name === fileName;
-                                    });
-                                    if (child) {
-                                        link = $scope.childLink(child);
-                                    } else {
-                                        Wiki.log.debug("Could not find name '" + fileName + "' in the list of file names " + JSON.stringify(details.children.map(function (c) {
-                                            return c.name;
-                                        })));
-                                    }
-                                }
-                                if (!link) {
-                                    Wiki.log.debug("WARNING: could not find the childLink so reverting to the wiki edit page!");
-                                    link = Wiki.editLink($scope.branch, path, $location);
-                                }
-                                $scope.addDialog.close();
-                                Core.$apply($scope);
-                                goToLink(link, $timeout, $location);
-                            });
-                        });
+                    $http.get(exemplarUri).success(function (data, status, headers, config) {
+                        putPage(path, name, folder, data, commitMessage);
+                    }).error(function (data, status, headers, config) {
+                        putPage(path, name, folder, "", commitMessage);
                     });
                 }
                 $scope.addDialog.close();
             };
+
+            function putPage(path, name, folder, contents, commitMessage) {
+                wikiRepository.putPage($scope.branch, path, contents, commitMessage, function (status) {
+                    Wiki.log.debug("Created file " + name);
+                    Wiki.onComplete(status);
+
+                    $scope.git = wikiRepository.getPage($scope.branch, folder, $scope.objectId, function (details) {
+                        var link = null;
+                        if (details && details.children) {
+                            Wiki.log.debug("scanned the directory " + details.children.length + " children");
+                            var child = details.children.find(function (c) {
+                                return c.name === Wiki.fileName;
+                            });
+                            if (child) {
+                                link = $scope.childLink(child);
+                            } else {
+                                Wiki.log.debug("Could not find name '" + Wiki.fileName + "' in the list of file names " + JSON.stringify(details.children.map(function (c) {
+                                    return c.name;
+                                })));
+                            }
+                        }
+                        if (!link) {
+                            Wiki.log.debug("WARNING: could not find the childLink so reverting to the wiki edit page!");
+                            link = Wiki.editLink($scope.branch, path, $location);
+                        }
+                        $scope.addDialog.close();
+                        Core.$apply($scope);
+                        goToLink(link, $timeout, $location);
+                    });
+                });
+            }
 
             $scope.openDeleteDialog = function () {
                 if ($scope.gridOptions.selectedItems.length) {
@@ -49822,7 +50104,7 @@ var Wiki;
                 if (path) {
                     wikiRepository.exists($scope.branch, path, function (result) {
                         if ($scope.operationCounter === counter) {
-                            Wiki.log.debug("for path " + path + " got result " + result);
+                            Wiki.log.debug("checkFileExists for path " + path + " got result " + result);
                             $scope.fileExists.exists = result ? true : false;
                             $scope.fileExists.name = result ? result.name : null;
                             Core.$apply($scope);
@@ -49876,7 +50158,6 @@ var Wiki;
                         folder = folder.substring(0, idx);
                     }
                 }
-                var fileName = name;
                 var idx = name.lastIndexOf("/");
                 if (idx > 0) {
                     folder += "/" + name.substring(0, idx);

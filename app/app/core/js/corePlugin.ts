@@ -178,10 +178,11 @@ module Core {
       if (!ConnectOptions.name || !newUrl) {
         return;
       }
-      var newQuery:any = UrlHelpers.parseQueryString(newUrl);
+      var newQuery:any = $location.search();
       if (!newQuery.con) {
         log.debug("Lost connection parameter (", ConnectOptions.name, ") from query params: ", newQuery, " resetting");
-        $location.search({ 'con': ConnectOptions.name });
+        newQuery['con'] = ConnectOptions.name;
+        $location.search(newQuery);
       }
     });
 
