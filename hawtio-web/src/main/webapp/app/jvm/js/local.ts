@@ -59,7 +59,7 @@ module JVM {
       options["port"] = port;
       options["path"] = path;
       // add empty username as we dont need login
-      options["username"] = "";
+      options["userName"] = "";
       options["password"] = "";
 
       var con = Core.createConnectToServerOptions(options);
@@ -71,7 +71,7 @@ module JVM {
     };
 
     function render(response) {
-      $scope.data = response.value
+      $scope.data = response.value;
       if ($scope.data.length === 0) {
         $scope.status = 'Could not discover local JVM processes';
       }
