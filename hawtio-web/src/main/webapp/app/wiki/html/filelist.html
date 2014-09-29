@@ -109,7 +109,7 @@
       </div>
       <div class="modal-footer">
         <input id="submit" class="btn btn-primary add" type="submit" ng-click="addAndCloseDialog()"
-               ng-disabled="!selectedCreateDocumentTemplate.exemplar || fileExists.exists || !createForm.$valid"
+               ng-disabled="!selectedCreateDocumentTemplate.exemplar || !createForm.$valid"
                value="Create">
         <button class="btn btn-warning cancel" type="button" ng-click="addDialog.close()">Cancel</button>
       </div>
