@@ -48,12 +48,13 @@ module Fabric {
       $scope.pageId = fabricTopLevel + Fabric.profilePath($scope.profileId);
 
       $scope.gotoCreateContainer = () => {
-        var me = $location.url();
+        var me = $location.path();
         $location.path('/fabric/containers/createContainer').search({
           versionId: $scope.versionId,
           profileIds: $scope.profileId,
           hideProfileSelector: true,
-          returnTo: me
+          returnTo: me,
+          nextPage: me
         });
       };
 

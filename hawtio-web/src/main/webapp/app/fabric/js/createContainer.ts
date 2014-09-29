@@ -57,8 +57,8 @@ module Fabric {
     $scope.profileIdFilter = '';
 
     $scope.hideProfileSelector = false;
-    $scope.returnTo = '/fabric/containers';
-    $scope.nextPage = '/fabric/containers';
+    $scope.returnTo = '/fabric/containerView?groupBy=none';
+    $scope.nextPage = '/fabric/containerView?groupBy=none';
 
     Core.bindModelToSearchParam($scope, $location, 'hideProfileSelector', 'hideProfileSelector', $scope.hideProfileSelector, Core.parseBooleanValue);
     Core.bindModelToSearchParam($scope, $location, 'returnTo', 'returnTo', $scope.returnTo);

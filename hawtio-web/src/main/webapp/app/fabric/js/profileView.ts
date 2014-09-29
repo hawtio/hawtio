@@ -37,12 +37,14 @@ module Fabric {
         methodName: 'createContainers',
         title: 'Deploy the selected profiles to new containers',
         action: () => {
+          var me = $location.path();
           $location.path('/fabric/containers/createContainer').search({
             p: 'fabric',
             vid: '',
             pid: '',
             hideProfileSelector: true,
-            returnTo: '/profiles'
+            returnTo: me,
+            nextPage: '/fabric/containerView?groupBy=profileIDs'
           });
           Core.$apply($rootScope);
         }
