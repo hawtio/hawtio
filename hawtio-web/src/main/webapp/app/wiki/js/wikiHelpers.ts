@@ -56,7 +56,7 @@ module Wiki {
       exemplar: "user-profile",
       regex: defaultLowerCaseFileNamePattern,
       invalid: defaultLowerCaseFileNamePatternInvalid,
-      fabricOnly: true,
+      fabricOnly: true
     },
     {
       label: "Properties File",
@@ -165,7 +165,7 @@ module Wiki {
     {
       label: "Markdown Document",
       tooltip: "A basic markup document using the Markdown wiki markup, particularly useful for ReadMe files in directories",
-      exemplar: "readme.md",
+      exemplar: "ReadMe.md",
       regex: defaultFileNamePattern,
       invalid: defaultFileNamePatternInvalid
     },
