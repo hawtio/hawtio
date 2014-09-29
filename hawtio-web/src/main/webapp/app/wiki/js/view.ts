@@ -46,6 +46,7 @@ module Wiki {
       name: ""
     };
     $scope.newDocumentName = "";
+    $scope.selectedCreateDocumentExtension = null;
 
     // bind filter model values to search params...
     Core.bindModelToSearchParam($scope, $location, "searchText", "q", "");
@@ -224,6 +225,7 @@ module Wiki {
       $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
       $scope.selectedCreateDocumentTemplateRegex = $scope.selectedCreateDocumentTemplate.regex || /.*/;
       $scope.selectedCreateDocumentTemplateInvalid = $scope.selectedCreateDocumentTemplate.invalid || "invalid name";
+      $scope.selectedCreateDocumentTemplateExtension = $scope.selectedCreateDocumentTemplate.extension || null;
     };
 
     $scope.openAddDialog = () => {
@@ -242,8 +244,26 @@ module Wiki {
       // clear $scope.newDocumentName so we dont remember it when we open it next time
       $scope.newDocumentName = null;
 
+      // reset before we check just in a bit
+      $scope.fileExists.exists = false;
+      $scope.fileExists.name = "";
+      $scope.fileExtensionInvalid = null;
+
       if (!template || !path) {
         return;
+      }
+
+      // validate if the name match the extension
+      if ($scope.selectedCreateDocumentTemplateExtension) {
+        var idx = path.lastIndexOf('.');
+        if (idx > 0) {
+          var ext = path.substring(idx);
+          if ($scope.selectedCreateDocumentTemplateExtension !== ext) {
+            $scope.fileExtensionInvalid = "File extension must be: " + $scope.selectedCreateDocumentTemplateExtension;
+            Core.$apply($scope);
+            return;
+          }
+        }
       }
 
       // validate if the file exists, and use the synchronous call
@@ -256,7 +276,6 @@ module Wiki {
       }
 
       var name = Wiki.fileName(path);
-      var fileName:string = name;
       var folder = Wiki.fileParent(path);
       var exemplar = template.exemplar;
 
