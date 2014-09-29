@@ -50,7 +50,7 @@ module Osgi {
             success: function (response) {
               var isFragment = response.value;
               if (isFragment) {
-                Core.notification("success", "Fragment installed succesfully.");
+                Core.notification("success", "Fragment installed successfully.");
                 $scope.bundleUrl = "";
                 Core.$apply($scope);
               } else {
