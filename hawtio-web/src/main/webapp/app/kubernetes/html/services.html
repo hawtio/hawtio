@@ -1,7 +1,7 @@
 <div ng-controller="Kubernetes.Services">
   <div class="row-fluid">
     <div class="span12" ng-show="services.length">
-      <hawtio-filter ng-model="filter.text"
+      <hawtio-filter ng-model="tableConfig.filterOptions.filterText"
                      css-class="input-xxlarge"
                      placeholder="Filter services..."
                      save-as="kubernetes-services-text-filter"></hawtio-filter>

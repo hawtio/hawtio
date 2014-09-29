@@ -1,6 +1,18 @@
 /// <reference path="../../baseHelpers.ts"/>
 module FilterHelpers {
 
+  export var log:Logging.Logger = Logger.get("FilterHelpers");
+
+  export function search(object:any, filter:string, maxDepth = -1, and = true):boolean {
+    var f = filter.split(" ");
+    var matches = f.filter((f) => { return searchObject(object, f, maxDepth); });
+    if (and) {
+      return matches.length === f.length;
+    } else {
+      return matches.length > 0;
+    }
+  }
+
   /**
    * Tests if an object contains the text in "filter".  The function
    * only checks the values in an object and ignores keys altogether,

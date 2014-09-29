@@ -1,5 +1,6 @@
 /// <reference path="kubernetesPlugin.ts"/>
 /// <reference path="../../helpers/js/pollHelpers.ts"/>
+/// <reference path="../../ui/js/dialog.ts"/>
 module Kubernetes {
 
   export var Services = controller("Services",
@@ -11,16 +12,17 @@ module Kubernetes {
     $scope.json = '';
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
 
-    $scope.filter = {
-      text: "",
-      entities: []
-    };
+    Kubernetes.initShared($scope);
 
     $scope.tableConfig = {
-      data: 'filter.entities',
+      data: 'services',
       showSelectionCheckbox: true,
       enableRowClickSelection: false,
       multiSelect: true,
+      selectedItems: [],
+      filterOptions: {
+        filterText: ''
+      },
       columnDefs: [
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
         { field: 'selector', displayName: 'Selector', cellTemplate: $templateCache.get("selectorTemplate.html") },
@@ -30,12 +32,6 @@ module Kubernetes {
         { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
       ]
     };
-
-    function updateFilter() {
-      filterEntities($scope.services, $scope.filter);
-    }
-
-    $scope.$watch("filter.text", updateFilter);
 
     $scope.$on('kubeSelectedId', ($event, id) => {
       Kubernetes.setJson($scope, id, $scope.services);
@@ -87,11 +83,10 @@ module Kubernetes {
         KubernetesServices.query((response) => {
           $scope.fetched = true;
           $scope.services = (response['items'] || []).sortBy((item) => { return item.id; });
+          Kubernetes.setJson($scope, $scope.id, $scope.services);
           angular.forEach($scope.services, entity => {
             entity.labelsText = Kubernetes.labelsToString(entity.labels);
           });
-          Kubernetes.setJson($scope, $scope.id, $scope.services);
-          updateFilter();
           next();
         });
       });

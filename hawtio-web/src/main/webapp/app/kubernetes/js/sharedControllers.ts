@@ -36,72 +36,24 @@ module Kubernetes {
         });
       }
     });
+
     $scope.handleClick = (entity, labelType:string, value) => {
       log.debug("handleClick, entity: ", entity, " labelType: ", labelType, " value: ", value);
-/*
-      switch (labelType) {
-        case 'container':
-          if (entity.labels.container) {
-            Fabric.gotoContainer(entity.labels.container);
-          }
-          return;
-        case 'profile':
-          if (entity.labels.version && entity.labels.profile) {
-            Fabric.gotoProfile(workspace, jolokia, workspace.localStorage, $location, entity.labels.version, entity.labels.profile);
-          }
-          return;
-        default:
-          return;
-      }
-*/
-      var filterTextSection = labelType + "=" + entity.labels[labelType];
-      var parentScope = $scope;
-
-
-      /**
-       * Returns the value of the given key in this scope or an ancestor parent scope
-       */
-      var filter = undefined;
-      while (true) {
-        filter = parentScope["filter"];
-        if (angular.isUndefined(filter)) {
-          parentScope = parentScope.$parent;
-          if (!parentScope) {
-            break;
-          }
-        } else {
-          break;
-        }
-      }
-      if (filter) {
-        var filterText = filter.text;
-        if (filterText) {
-          var expressions = filterText.split(/\s+/);
-          if (expressions.any(filterTextSection)) {
-            // lets exclude this filter expression
-            expressions = expressions.remove(filterTextSection);
-            filter.text = expressions.join(" ");
-          } else {
-            filter.text = filter.text + " " + filterTextSection;
-          }
-        } else {
-          filter.text = filterTextSection;
-        }
-      }
-      Core.$apply(parentScope);
+      var filterTextSection = labelType + "=" + value.title;
+      $scope.$emit('labelFilterUpdate', filterTextSection);
     };
 
     var labelColors = {
-      'profile': 'background-green mouse-pointer',
+      'profile': 'background-green',
       'version': 'background-blue',
       'name': 'background-light-grey',
-      'container': 'background-light-green mouse-pointer'
+      'container': 'background-light-green'
     };
     $scope.labelClass = (labelType:string) => {
       if (!(labelType in labelColors)) {
-        return '';
+        return 'mouse-pointer';
       }
-      else return labelColors[labelType];
+      else return labelColors[labelType] + ' mouse-pointer';
     }
   }]);
 

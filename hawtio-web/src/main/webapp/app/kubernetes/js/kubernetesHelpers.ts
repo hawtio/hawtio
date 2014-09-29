@@ -1,4 +1,5 @@
 /// <reference path="../../baseIncludes.ts"/>
+/// <reference path="../../baseHelpers.ts"/>
 module Kubernetes {
 
   export interface KubePod {
@@ -36,47 +37,14 @@ module Kubernetes {
     return answer;
   }
 
-
-  /**
-   * Recursively compares all string fields in the object tree for the given text
-   */
-  function textMatches(entity, text: string, entitiesSearched) {
-    if (angular.isString(entity)) {
-      return entity.indexOf(text) >= 0;
-    } else if (angular.isArray(entity) || angular.isObject(entity)) {
-      var answer = false;
-      angular.forEach(entity, value => {
-        if (!answer && entitiesSearched.indexOf(value) < 0) {
-          entitiesSearched.push(value);
-          if (textMatches(value, text, entitiesSearched)) {
-            answer = true;
-          }
-        }
-      });
-      return answer;
-    } else {
-      return false;
-    }
+  export function initShared($scope) {
+    $scope.$on("labelFilterUpdate", ($event, text) => {
+      if (Core.isBlank($scope.tableConfig.filterOptions.filterText)) {
+        $scope.tableConfig.filterOptions.filterText = text;
+      } else {
+        $scope.tableConfig.filterOptions.filterText = $scope.tableConfig.filterOptions.filterText + " " + text;
+      }
+    });
   }
 
-  /**
-   * Re-evaluates the given filter on the list of entities
-   */
-  export function filterEntities(entities, filter) {
-    var filterText = filter.text;
-    if (!filterText) {
-      filter.entities = entities;
-    } else {
-      var expressions = filterText.split(/\s+/);
-      filter.entities = entities.filter(entity => {
-        var answer = true;
-        angular.forEach(expressions, (expression) => {
-          if (answer && !textMatches(entity, expression, [entity])) {
-            answer = false;
-          }
-        });
-        return answer;
-      });
-    }
-  }
 }

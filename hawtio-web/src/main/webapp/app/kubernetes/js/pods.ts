@@ -16,17 +16,17 @@ module Kubernetes {
       Kubernetes.setJson($scope, id, $scope.pods);
     });
 
-    $scope.filter = {
-      text: "",
-      entities: []
-    };
+    Kubernetes.initShared($scope);
 
     $scope.tableConfig = {
-      data: 'filter.entities',
+      data: 'pods',
       showSelectionCheckbox: true,
       enableRowClickSelection: false,
       multiSelect: true,
       selectedItems: [],
+      filterOptions: {
+        filterText: ''
+      },
       columnDefs: [
         {
           field: 'id',
@@ -59,12 +59,6 @@ module Kubernetes {
         }
       ]
     };
-
-    function updateFilter() {
-      filterEntities($scope.pods, $scope.filter);
-    }
-
-    $scope.$watch("filter.text", updateFilter);
 
     KubernetesPods.then((KubernetesPods:ng.resource.IResourceClass) => {
       $scope.deletePrompt = (selected) => {
@@ -113,11 +107,10 @@ module Kubernetes {
         KubernetesPods.query((response) => {
           $scope.fetched = true;
           $scope.pods = (response['items'] || []).sortBy((pod:KubePod) => { return pod.id });
-          angular.forEach($scope.pods, pod => {
-            pod.labelsText = Kubernetes.labelsToString(pod.labels);
+          angular.forEach($scope.pods, entity => {
+            entity.labelsText = Kubernetes.labelsToString(entity.labels);
           });
           Kubernetes.setJson($scope, $scope.id, $scope.pods);
-          updateFilter();
           //log.debug("Pods: ", $scope.pods);
           next();
         });

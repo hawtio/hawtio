@@ -1,6 +1,6 @@
 /// <reference path="kubernetesPlugin.ts"/>
 /// <reference path="../../helpers/js/pollHelpers.ts"/>
-
+/// <reference path="../../ui/js/dialog.ts"/>
 module Kubernetes {
 
   export var ReplicationControllers = controller("ReplicationControllers",
@@ -12,16 +12,17 @@ module Kubernetes {
     $scope.json = '';
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
 
-    $scope.filter = {
-      text: "",
-      entities: []
-    };
+    Kubernetes.initShared($scope);
 
     $scope.tableConfig = {
-      data: 'filter.entities',
+      data: 'replicationControllers',
       showSelectionCheckbox: true,
       enableRowClickSelection: false,
       multiSelect: true,
+      selectedItems: [],
+      filterOptions: {
+        filterText: ''
+      },
       columnDefs: [
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
         { field: 'currentState.replicas', displayName: 'Current Replicas' },
@@ -29,12 +30,6 @@ module Kubernetes {
         { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
       ]
     };
-
-    function updateFilter() {
-      filterEntities($scope.replicationControllers, $scope.filter);
-    }
-
-    $scope.$watch("filter.text", updateFilter);
 
     $scope.$on('kubeSelectedId', ($event, id) => {
       Kubernetes.setJson($scope, id, $scope.replicationControllers);
@@ -91,7 +86,6 @@ module Kubernetes {
             entity.labelsText = Kubernetes.labelsToString(entity.labels);
           });
           Kubernetes.setJson($scope, $scope.id, $scope.replicationControllers);
-          updateFilter();
           next();
         });
       });

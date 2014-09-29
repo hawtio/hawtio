@@ -2,7 +2,7 @@
 /// <reference path="../../helpers/js/pluginHelpers.ts"/>
 /// <reference path="../../core/js/workspace.ts"/>
 /// <reference path="../../fabric/js/fabricGlobals.ts"/>
-/// <reference path="./kubernetesHelpers.ts"/>
+/// <reference path="kubernetesHelpers.ts"/>
 module Kubernetes {
 
   export var objectName = Fabric.jmxDomain + ":type=Kubernetes";

@@ -1,7 +1,7 @@
 <div ng-controller="Kubernetes.ReplicationControllers">
   <div class="row-fluid">
     <div class="span12" ng-show="replicationControllers.length">
-      <hawtio-filter ng-model="filter.text"
+      <hawtio-filter ng-model="tableConfig.filterOptions.filterText"
                      css-class="input-xxlarge"
                      placeholder="Filter replication controllers..."
                      save-as="kubernetes-replication-controllers-text-filter"></hawtio-filter>
