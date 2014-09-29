@@ -1,17 +1,18 @@
 package io.hawt.git;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import javax.management.ObjectName;
+
 import io.hawt.util.Files;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
-
-import javax.management.ObjectName;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -24,6 +25,7 @@ import static org.junit.Assert.fail;
 /**
  * Tests we create a configuration directory
  */
+@Ignore
 public class GitFacadeTest {
     GitFacade git = createTestGitFacade();
 
@@ -74,7 +76,31 @@ public class GitFacadeTest {
         git.destroy();
     }
 
-    @Ignore
+    @Test
+    public void testExists() throws Exception {
+        assertConfigDirectoryExists(git);
+
+        String readMeContent = "Hello world!";
+        String anotherContent = "Something else!";
+        String readMePath = "/ReadMe.md";
+        String anotherPath = "/Another.md";
+
+        git.write(branch, readMePath, "Initial commit", authorName, authorEmail, readMeContent);
+        git.write(branch, anotherPath, "Second commit", authorName, authorEmail, anotherContent);
+
+        FileInfo info = git.exists(branch, "ReadMe.md");
+        assertNotNull(info);
+        assertEquals("ReadMe.md", info.getName());
+
+        info = git.exists(branch, "readme.md");
+        assertNotNull(info);
+        assertEquals("ReadMe.md", info.getName());
+
+        info = git.exists(branch, "unknown.md");
+        assertNull(info);
+    }
+
+    @Test
     public void createFileAndListDirectory() throws Exception {
         assertConfigDirectoryExists(git);
 

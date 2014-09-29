@@ -1,5 +1,13 @@
 package io.hawt.git;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Callable;
+
 import io.hawt.config.ConfigFacade;
 import io.hawt.util.Objects;
 import io.hawt.util.Strings;
@@ -23,14 +31,6 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.Callable;
 
 /**
  * A git bean to create a local git repo for configuration data which if configured will push/pull
@@ -265,9 +265,6 @@ public class GitFacade extends GitFacadeSupport {
         return doGetContent(git, objectId, blobPath);
     }
 
-    /**
-     * Reads the file contents of the given path
-     */
     public FileContents read(final String branch, final String pathOrEmpty) throws IOException, GitAPIException {
         return gitOperation(getStashPersonIdent(), new Callable<FileContents>() {
             @Override
@@ -282,11 +279,6 @@ public class GitFacade extends GitFacadeSupport {
         });
     }
 
-    /**
-     * Checks if the file exists at the given path and returns the file metadata or null if it does not exist
-     *
-     * @return the metadata for the given file or null if it does not exist
-     */
     @Override
     public FileInfo exists(final String branch, final String pathOrEmpty) throws IOException, GitAPIException {
         return gitOperation(getStashPersonIdent(), new Callable<FileInfo>() {
@@ -298,14 +290,11 @@ public class GitFacade extends GitFacadeSupport {
             @Override
             public FileInfo call() throws Exception {
                 File rootDir = getRootGitDirectory();
-                return doExists(git, rootDir, branch, pathOrEmpty);
+                return doExists(git, rootDir, branch, pathOrEmpty, false);
             }
         });
     }
 
-    /**
-     * Provides a file/path completion hook so we can start typing the name of a file or directory
-     */
     public List<String> completePath(final String branch, final String completionText, final boolean directoriesOnly) {
         return gitOperation(getStashPersonIdent(), new Callable<List<String>>() {
             @Override
@@ -321,9 +310,6 @@ public class GitFacade extends GitFacadeSupport {
         });
     }
 
-    /**
-     * Reads the child JSON file contents which match the given search string (if specified) and which match the given file name wildcard (using * to match any characters in the name).
-     */
     @Override
     public String readJsonChildContent(final String branch, final String path, String fileNameWildcardOrBlank, final String search) throws IOException {
         final String fileNameWildcard = (Strings.isBlank(fileNameWildcardOrBlank)) ? "*.json" : fileNameWildcardOrBlank;
@@ -367,11 +353,6 @@ public class GitFacade extends GitFacadeSupport {
         });
     }
 
-    /**
-     * Creates a new file if it doesn't already exist
-     *
-     * @return the commit metadata for the newly created file or null if it already exists
-     */
     @Override
     public CommitInfo createDirectory(final String branch, final String path, final String commitMessage,
                                      final String authorName, final String authorEmail) {

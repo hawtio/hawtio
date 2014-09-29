@@ -17,6 +17,18 @@
  */
 package io.hawt.git;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import io.hawt.util.FileFilters;
 import io.hawt.util.IOHelper;
 import io.hawt.util.MBeanSupport;
@@ -28,9 +40,8 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
-
+import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
@@ -51,17 +62,6 @@ import org.gitective.core.filter.commit.CommitLimitFilter;
 import org.gitective.core.filter.commit.CommitListFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import static io.hawt.git.GitFacade.trimLeadingSlash;
 
@@ -437,13 +437,27 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         }
     }
 
-    protected FileInfo doExists(Git git, File rootDir, String branch, String pathOrEmpty) throws GitAPIException {
+    protected FileInfo doExists(Git git, File rootDir, String branch, String pathOrEmpty, final boolean caseSensitive) throws GitAPIException {
         checkoutBranch(git, branch);
         final String path = Strings.isBlank(pathOrEmpty) ? "/" : pathOrEmpty;
+
         File file = getFile(rootDir, path);
-        if (file.exists()) {
-            return FileInfo.createFileInfo(rootDir, file);
+        File parent = file.getParentFile();
+
+        // need to list the files, so we can grab the actual file name
+        File[] files = parent.listFiles(new FileFilter() {
+            String match = caseSensitive ? path : path.toLowerCase(Locale.US);
+            @Override
+            public boolean accept(File pathname) {
+                String name = caseSensitive ? pathname.getName() : pathname.getName().toLowerCase(Locale.US);
+                return match.endsWith(name);
+            }
+        });
+
+        if (files != null && files.length == 1) {
+            return FileInfo.createFileInfo(rootDir, files[0]);
         }
+
         return null;
     }
 
