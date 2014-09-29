@@ -9,17 +9,6 @@ module.exports = function(grunt) {
 
     /* task configuration */
 
-    // grunt-contrib-connect
-    connect: {
-      devserver: {
-        options: {
-          port: 8010,
-          base: 'src/main/webapp',
-          keepalive: true
-        }
-      }
-    },
-
     // grunt-karma
     karma: {
       unit: {
@@ -122,6 +111,15 @@ module.exports = function(grunt) {
           src: ['dist/index.html']
         }]
       }
+    },
+
+    express: {
+      server: {
+        options: {
+          port: 9001,
+          bases: ['src/main/webapp', 'dist']
+        }
+      }
     }
 
   });
@@ -132,6 +130,8 @@ module.exports = function(grunt) {
 
   // "grunt webserver" starts a webserver which hosts hawt.io without backend Java server
   // this might be however very useful to connect to existing Jolokia agent
+  grunt.registerTask("server", "Starts a webserver which hosts hawt.io without backend Java server", [ "express:server" ]);
+
   grunt.registerTask("webserver", "Starts a webserver which hosts hawt.io without backend Java server", [ "connect:devserver" ]);
 
   grunt.registerTask("test", "Runs unit tests once", [ "karma:unit" ]);

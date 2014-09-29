@@ -8,7 +8,7 @@ module Insight {
   export var allContainers = { id: '-- all --' };
 
   export function hasInsight(workspace) {
-    return workspace.treeContainsDomainAndProperties('org.elasticsearch', {service: 'restjmx'});
+    return workspace.treeContainsDomainAndProperties('io.fabric8.insight', {type: 'Elasticsearch'});
   }
 
   export function getInsightMetricsCollectorMBean(workspace) {
