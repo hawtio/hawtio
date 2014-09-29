@@ -437,6 +437,10 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         }
     }
 
+    protected FileInfo doExists(Git git, File rootDir, String branch, String pathOrEmpty) throws GitAPIException {
+        return doExists(git, rootDir, branch, pathOrEmpty, false);
+    }
+
     protected FileInfo doExists(Git git, File rootDir, String branch, String pathOrEmpty, final boolean caseSensitive) throws GitAPIException {
         checkoutBranch(git, branch);
         final String path = Strings.isBlank(pathOrEmpty) ? "/" : pathOrEmpty;
