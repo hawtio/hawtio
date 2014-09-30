@@ -5822,16 +5822,31 @@ var Wiki;
     }
     Wiki.initScope = initScope;
 
-    function loadBranches(wikiRepository, $scope) {
+    function loadBranches(wikiRepository, $scope, isFmc) {
+        if (typeof isFmc === "undefined") { isFmc = false; }
         wikiRepository.branches(function (response) {
             $scope.branches = response.sortBy(function (v) {
                 return Core.versionToSortableString(v);
             }, true);
 
+            if (isFmc) {
+                $scope.branches = $scope.branches.filter(function (v) {
+                    return v !== "master";
+                });
+            }
+
             if (!$scope.branch && $scope.branches.find(function (branch) {
-                return branch === "master";
+                if (isFmc) {
+                    return branch === "1.0";
+                } else {
+                    return branch === "master";
+                }
             })) {
-                $scope.branch = "master";
+                if (isFmc) {
+                    $scope.branch = "1.0";
+                } else {
+                    $scope.branch = "master";
+                }
             }
             Core.$apply($scope);
         });
@@ -17596,7 +17611,7 @@ var Core;
 (function (Core) {
     Core._module.factory('jolokia', [
         "$location", "localStorage", "jolokiaStatus", "$rootScope", "userDetails", "jolokiaParams", "jolokiaUrl", function ($location, localStorage, jolokiaStatus, $rootScope, userDetails, jolokiaParams, jolokiaUrl) {
-            Core.log.info("Jolokia URL is " + jolokiaUrl);
+            Core.log.debug("Jolokia URL is " + jolokiaUrl);
             if (jolokiaUrl) {
                 var connectionName = Core.getConnectionNameParameter($location.search());
                 var connectionOptions = Core.getConnectOptions(connectionName);
@@ -35999,7 +36014,7 @@ var JVM;
     JVM._module.constant('mbeanName', 'hawtio:type=JVMList');
 
     JVM._module.run([
-        "$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry", function ($location, workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) {
+        "$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry", "ConnectOptions", function ($location, workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry, connectOptions) {
             viewRegistry[JVM.pluginName] = JVM.templatePath + 'layoutConnect.html';
             helpRegistry.addUserDoc('jvm', 'app/jvm/doc/help.md');
 
@@ -36010,7 +36025,7 @@ var JVM;
                 content: "Connect",
                 title: "Connect to other JVMs",
                 isValid: function (workspace) {
-                    return true;
+                    return connectOptions == null || connectOptions.name == null;
                 },
                 href: function () {
                     return '#/jvm/connect';
@@ -36248,16 +36263,16 @@ var JVM;
             };
 
             function render(response) {
+                $scope.discovering = false;
                 if (!response.value) {
+                    Core.$apply($scope);
                     return;
                 }
+
                 var responseJson = angular.toJson(response.value.sortBy(function (agent) {
                     return agent['agent_id'];
                 }), true);
                 if ($scope.responseJson !== responseJson) {
-                    if ($scope.discovering) {
-                        $scope.discovering = false;
-                    }
                     $scope.responseJson = responseJson;
                     JVM.log.debug("agents: ", $scope.agents);
                     $scope.agents = response.value;
@@ -36265,20 +36280,14 @@ var JVM;
                 }
             }
 
-            var updateRate = localStorage['updateRate'];
-            if (updateRate > 0) {
-                Core.register(jolokia, $scope, {
-                    type: 'exec', mbean: 'jolokia:type=Discovery',
-                    operation: 'lookupAgentsWithTimeout',
-                    arguments: [updateRate]
-                }, onSuccess(render));
-            } else {
-                Core.register(jolokia, $scope, {
-                    type: 'exec', mbean: 'jolokia:type=Discovery',
-                    operation: 'lookupAgents',
-                    arguments: []
-                }, onSuccess(render));
-            }
+            $scope.fetch = function () {
+                $scope.discovering = true;
+                Core.$apply($scope);
+
+                jolokia.execute('jolokia:type=Discovery', 'lookupAgentsWithTimeout(int)', 30 * 1000, onSuccess(render));
+            };
+
+            $scope.fetch();
         }]);
 })(JVM || (JVM = {}));
 var JVM;
@@ -36289,9 +36298,18 @@ var JVM;
             $scope.data = [];
             $scope.deploying = false;
             $scope.status = '';
+            $scope.initDone = false;
+            $scope.filter = '';
+
+            $scope.filterMatches = function (jvm) {
+                if (Core.isBlank($scope.filter)) {
+                    return true;
+                } else {
+                    return jvm.alias.toLowerCase().has($scope.filter.toLowerCase());
+                }
+            };
 
             $scope.fetch = function () {
-                Core.notification('info', 'Discovering local JVM processes, please wait...');
                 jolokia.request({
                     type: 'exec', mbean: mbeanName,
                     operation: 'listLocalJVMs()',
@@ -36300,6 +36318,7 @@ var JVM;
                     success: render,
                     error: function (response) {
                         $scope.data = [];
+                        $scope.initDone = true;
                         $scope.status = 'Could not discover local JVM processes: ' + response.error;
                         Core.$apply($scope);
                     }
@@ -36307,25 +36326,21 @@ var JVM;
             };
 
             $scope.stopAgent = function (pid) {
-                Core.notification('info', "Attempting to detach agent from PID " + pid);
                 jolokia.request({
                     type: 'exec', mbean: mbeanName,
                     operation: 'stopAgent(java.lang.String)',
                     arguments: [pid]
                 }, onSuccess(function () {
-                    Core.notification('success', "Detached agent from PID " + pid);
                     $scope.fetch();
                 }));
             };
 
             $scope.startAgent = function (pid) {
-                Core.notification('info', "Attempting to attach agent to PID " + pid);
                 jolokia.request({
                     type: 'exec', mbean: mbeanName,
                     operation: 'startAgent(java.lang.String)',
                     arguments: [pid]
                 }, onSuccess(function () {
-                    Core.notification('success', "Attached agent to PID " + pid);
                     $scope.fetch();
                 }));
             };
@@ -36349,6 +36364,7 @@ var JVM;
             };
 
             function render(response) {
+                $scope.initDone = true;
                 $scope.data = response.value;
                 if ($scope.data.length === 0) {
                     $scope.status = 'Could not discover local JVM processes';
@@ -37582,6 +37598,8 @@ var Kubernetes;
             $scope.pods = [];
             $scope.fetched = false;
             $scope.json = '';
+            $scope.itemSchema = Forms.createFormConfiguration();
+
             ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
 
             $scope.$on('kubeSelectedId', function ($event, id) {
@@ -37681,7 +37699,7 @@ var Kubernetes;
                             return pod.id;
                         });
                         angular.forEach($scope.pods, function (entity) {
-                            entity.labelsText = Kubernetes.labelsToString(entity.labels);
+                            entity.$labelsText = Kubernetes.labelsToString(entity.labels);
                         });
                         Kubernetes.setJson($scope, $scope.id, $scope.pods);
 
@@ -37776,7 +37794,7 @@ var Kubernetes;
                             return item.id;
                         });
                         angular.forEach($scope.replicationControllers, function (entity) {
-                            entity.labelsText = Kubernetes.labelsToString(entity.labels);
+                            entity.$labelsText = Kubernetes.labelsToString(entity.labels);
                         });
                         Kubernetes.setJson($scope, $scope.id, $scope.replicationControllers);
                         next();
@@ -37877,7 +37895,7 @@ var Kubernetes;
                         });
                         Kubernetes.setJson($scope, $scope.id, $scope.services);
                         angular.forEach($scope.services, function (entity) {
-                            entity.labelsText = Kubernetes.labelsToString(entity.labels);
+                            entity.$labelsText = Kubernetes.labelsToString(entity.labels);
                         });
                         next();
                     });
@@ -42872,14 +42890,6 @@ var SpringBatch;
                 }
             });
 
-            var serverListRes = $resource('/hawtio/springBatch');
-            serverListRes.get(function (data) {
-                $rootScope.springBatchServerList = data.springBatchServerList || [
-                    'localhost\\:8080/spring-batch-admin-sample/',
-                    'localhost\\:8181/'
-                ];
-            });
-
             $rootScope.proxyUrl = '/hawtio/proxy/';
 
             $rootScope.alert = {
@@ -42894,8 +42904,6 @@ var SpringBatch;
                 }
             };
         }]);
-
-    hawtioPluginLoader.addModule(SpringBatch.pluginName);
 })(SpringBatch || (SpringBatch = {}));
 var SpringBatch;
 (function (SpringBatch) {
@@ -43024,7 +43032,7 @@ var SpringBatch;
             $scope.subLevelTabs = subLevelTabs;
 
             $scope.isActive = function (tab) {
-                return ('/springbatch/' + tab.uri === $location.path());
+                return false;
             };
         }]);
 })(SpringBatch || (SpringBatch = {}));
@@ -46060,33 +46068,167 @@ var UI;
                     "config": "=?"
                 },
                 link: function ($scope, $element, $attr) {
-                    $scope.$watch('entity', function (entity) {
-                        if (entity) {
-                            angular.forEach(entity, function (value, key) {
-                                if (key.startsWith("$")) {
-                                    return;
-                                }
-                                var template = $templateCache.get('itemTemplate.html');
-                                if (angular.isObject(value)) {
-                                    template = $templateCache.get('objectTemplate.html');
-                                }
-                                var interpolated = $interpolate(template);
-                                var el = interpolated({
-                                    key: key.titleize() + ":",
-                                    data: value
-                                });
-                                if (angular.isObject(value)) {
-                                    var scope = $scope.$new();
-                                    scope.data = value;
-                                    $element.append($compile(el)(scope));
-                                } else {
-                                    $element.append(el);
-                                }
+                    function interpolate(template, key, value) {
+                        var interpolateFunc = $interpolate(template);
+                        if (!key) {
+                            return interpolateFunc({
+                                data: value
                             });
                         } else {
-                            $element.empty();
+                            return interpolateFunc({
+                                key: key.titleize(),
+                                data: value
+                            });
                         }
-                        UI.log.debug("entity: ", $scope.entity);
+                    }
+
+                    function compile(template, key, value) {
+                        var interpolated = interpolate(template, key, value);
+                        var scope = $scope.$new();
+                        scope.data = value;
+                        return $compile(interpolated)(scope);
+                    }
+
+                    function renderPrimitiveValue(entity) {
+                        var template = $templateCache.get('primitiveValueTemplate.html');
+                        return compile(template, undefined, entity);
+                    }
+
+                    function renderObjectValue(entity) {
+                        var isArray = false;
+                        var el = undefined;
+                        angular.forEach(entity, function (value, key) {
+                            if (angular.isNumber(key) && "length" in entity) {
+                                isArray = true;
+                            }
+                            if (isArray) {
+                                return;
+                            }
+                            if (key.startsWith("$")) {
+                                return;
+                            }
+                            if (!el) {
+                                el = angular.element('<span></span>');
+                            }
+                            if (angular.isArray(value)) {
+                                el.append(renderArrayAttribute(key, value));
+                            } else if (angular.isObject(value)) {
+                                if (Object.extended(value).size() === 0) {
+                                    el.append(renderPrimitiveAttribute(key, 'empty'));
+                                } else {
+                                    el.append(renderObjectAttribute(key, value));
+                                }
+                            } else {
+                                el.append(renderPrimitiveAttribute(key, value));
+                            }
+                        });
+                        if (el) {
+                            return el.children();
+                        } else {
+                            return el;
+                        }
+                    }
+
+                    function getColumnHeaders(entity) {
+                        var answer = undefined;
+                        if (!entity) {
+                            return answer;
+                        }
+                        var hasPrimitive = false;
+                        entity.forEach(function (item) {
+                            if (!hasPrimitive && angular.isObject(item)) {
+                                if (!answer) {
+                                    answer = [];
+                                }
+                                answer = Object.extended(item).keys().union(answer);
+                            } else {
+                                answer = undefined;
+                                hasPrimitive = true;
+                            }
+                        });
+                        if (answer) {
+                            answer = answer.exclude(function (item) {
+                                return ("" + item).startsWith('$');
+                            });
+                        }
+
+                        return answer;
+                    }
+
+                    function renderTable(template, key, value, headers) {
+                        var el = angular.element(interpolate(template, key, value));
+                        var thead = el.find('thead');
+                        var tbody = el.find('tbody');
+
+                        var headerTemplate = $templateCache.get('headerTemplate.html');
+                        var cellTemplate = $templateCache.get('cellTemplate.html');
+                        var rowTemplate = $templateCache.get('rowTemplate.html');
+                        var headerRow = angular.element(rowTemplate);
+
+                        headers.forEach(function (header) {
+                            headerRow.append(interpolate(headerTemplate, header, undefined));
+                        });
+                        thead.append(headerRow);
+                        value.forEach(function (item) {
+                            var tr = angular.element(rowTemplate);
+                            headers.forEach(function (header) {
+                                var td = angular.element(cellTemplate);
+                                td.append(renderThing(item[header]));
+                                tr.append(td);
+                            });
+                            tbody.append(tr);
+                        });
+                        return el;
+                    }
+
+                    function renderArrayValue(entity) {
+                        var headers = getColumnHeaders(entity);
+                        if (!headers) {
+                            var template = $templateCache.get('arrayValueListTemplate.html');
+                            return compile(template, undefined, entity);
+                        } else {
+                            var template = $templateCache.get('arrayValueTableTemplate.html');
+                            return renderTable(template, undefined, entity, headers);
+                        }
+                    }
+
+                    function renderPrimitiveAttribute(key, value) {
+                        var template = $templateCache.get('primitiveAttributeTemplate.html');
+                        return compile(template, key, value);
+                    }
+
+                    function renderObjectAttribute(key, value) {
+                        var template = $templateCache.get('objectAttributeTemplate.html');
+                        return compile(template, key, value);
+                    }
+
+                    function renderArrayAttribute(key, value) {
+                        var headers = getColumnHeaders(value);
+                        if (!headers) {
+                            var template = $templateCache.get('arrayAttributeListTemplate.html');
+                            return compile(template, key, value);
+                        } else {
+                            var template = $templateCache.get('arrayAttributeTableTemplate.html');
+                            return renderTable(template, key, value, headers);
+                        }
+                    }
+
+                    function renderThing(entity) {
+                        if (angular.isArray(entity)) {
+                            return renderArrayValue(entity);
+                        } else if (angular.isObject(entity)) {
+                            return renderObjectValue(entity);
+                        } else {
+                            return renderPrimitiveValue(entity);
+                        }
+                    }
+
+                    $scope.$watch('entity', function (entity) {
+                        if (!entity) {
+                            $element.empty();
+                            return;
+                        }
+                        $element.html(renderThing(entity));
                     }, true);
                 }
             };
@@ -48341,6 +48483,8 @@ var Wiki;
 (function (Wiki) {
     Wiki._module.controller("Wiki.CommitController", [
         "$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", function ($scope, $location, $routeParams, $templateCache, workspace, marked, fileExtensionTypeRegistry, wikiRepository) {
+            var isFmc = Fabric.isFMCContainer(workspace);
+
             Wiki.initScope($scope, $routeParams, $location);
             $scope.commitId = $scope.objectId;
             $scope.selectedItems = [];
@@ -48417,7 +48561,7 @@ var Wiki;
             function updateView() {
                 var commitId = $scope.commitId;
 
-                Wiki.loadBranches(wikiRepository, $scope);
+                Wiki.loadBranches(wikiRepository, $scope, isFmc);
 
                 wikiRepository.commitInfo(commitId, function (commitInfo) {
                     $scope.commitInfo = commitInfo;
@@ -49196,6 +49340,8 @@ var Wiki;
 (function (Wiki) {
     Wiki._module.controller("Wiki.HistoryController", [
         "$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", function ($scope, $location, $routeParams, $templateCache, workspace, marked, fileExtensionTypeRegistry, wikiRepository) {
+            var isFmc = Fabric.isFMCContainer(workspace);
+
             Wiki.initScope($scope, $routeParams, $location);
             $scope.selectedItems = [];
 
@@ -49304,7 +49450,7 @@ var Wiki;
                     $scope.logs = logArray;
                     Core.$apply($scope);
                 });
-                Wiki.loadBranches(wikiRepository, $scope);
+                Wiki.loadBranches(wikiRepository, $scope, isFmc);
             }
         }]);
 })(Wiki || (Wiki = {}));
@@ -49463,6 +49609,8 @@ var Wiki;
 
     Wiki._module.controller("Wiki.ViewController", [
         "$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", function ($scope, $location, $routeParams, $route, $http, $timeout, workspace, marked, fileExtensionTypeRegistry, wikiRepository, $compile, $templateCache, jolokia) {
+            var isFmc = Fabric.isFMCContainer(workspace);
+
             Wiki.initScope($scope, $routeParams, $location);
 
             $scope.fabricTopLevel = "fabric/profiles/";
@@ -49977,7 +50125,7 @@ var Wiki;
                 } else {
                     $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onFileDetails);
                 }
-                Wiki.loadBranches(wikiRepository, $scope);
+                Wiki.loadBranches(wikiRepository, $scope, isFmc);
             }
 
             $scope.updateView = updateView;

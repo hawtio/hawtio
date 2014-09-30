@@ -153,18 +153,17 @@
       hawtio.role or hawtio.roles
     </td>
     <td>
-      admin
+      admin,viewer
     </td>
     <td>
-      The user role or roles required to be able to login to the console.  Multiple roles to allow can be separated by a comma.  Set to * or an empty value to disable role checking when hawtio authenticates a user.
+      The user role or roles required to be able to login to the console. Multiple roles to allow can be separated by a comma.  Set to * or an empty value to disable role checking when hawtio authenticates a user.
     </td>
   </tr>
   <tr>
     <td>
       hawtio.rolePrincipalClasses
     </td>
-    <td>
-
+    <td>      
     </td>
     <td>
       Principal fully qualified classname(s). Multiple classes can be separated by a comma.  Leave unset or set to an empty value to disable role checking when hawtio authenticates a user.
@@ -239,12 +238,12 @@ jaas:update</code></pre>
   </tr>
   <tr>
     <td>
-      hawtio.role
+      hawtio.role or hawtio.roles
     </td>
     <td>
     </td>
     <td>
-      The user role required to be able to login to the console
+       The user role or roles required to be able to login to the console. Multiple roles to allow can be separated by a comma.  Set to * or an empty value to disable role checking when hawtio authenticates a user.
     </td>
   </tr>
   <tr>
@@ -442,6 +441,10 @@ admin=CRYPT:adpexzg3FUZAk,admin,user</code></pre>
 <h4 id = "OSGi_configuration">OSGi configuration</h4>
 
 <p>Just update the blueprint configuration values in OSGi config admim as you would any OSGi blueprint bundles. On OSGi all the hawtio Java modules use OSGi blueprint.</p>
+
+<h4 id = "More_information">More information</h4>
+
+<p>In the <a href="http://hawt.io/articles/index.html">articles</a> colleciton you may find links to blog posts how to setup authentication with hawtio in various other containers. </p>
 
 <p>  </div>
     </div>

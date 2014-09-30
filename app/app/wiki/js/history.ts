@@ -6,6 +6,8 @@ module Wiki {
 
   _module.controller("Wiki.HistoryController", ["$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", ($scope, $location, $routeParams, $templateCache, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) => {
 
+    var isFmc = Fabric.isFMCContainer(workspace);
+
     Wiki.initScope($scope, $routeParams, $location);
     $scope.selectedItems = [];
 
@@ -119,7 +121,7 @@ module Wiki {
         $scope.logs = logArray;
         Core.$apply($scope);
       });
-      Wiki.loadBranches(wikiRepository, $scope);
+      Wiki.loadBranches(wikiRepository, $scope, isFmc);
     }
   }]);
 }

@@ -59,10 +59,6 @@ module Fabric {
     var hasSchemaMBean = Fabric.hasSchemaMBean(workspace);
     var hasGitMBean = Fabric.hasGitMBean(workspace);
 
-    // Too noisy...
-    // log.debug("is FMC container, hasFabric: ", hasFabric, " hasSchemaMBean:", hasSchemaMBean, " hasGitMBean:", hasGitMBean);
-
-
     return hasFabric &&
            hasSchemaMBean &&
            hasGitMBean;

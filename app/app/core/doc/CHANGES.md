@@ -1,13 +1,30 @@
 ### Change Log
 
+#### 1.4.22 (in progress)
+
+* Bug fixes
+* Fixed hawtio connector to work with local and remote connections again
+* Fixes [these NN issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.22)
+
+#### 1.4.21
+
+* Bug fixes
+* Optimized application initial load time, and added source mappings so view source works in browsers to aid javascript debugging
+* Added support for [kubernetes](http://fabric8.io/gitbook/kubernetes.html) with fabric8
+* Hawtio terminal now also supports Karaf 2.4.x / 3.x (though requires some customization to enable hawtio-plgiin in Karaf ACL)
+* Fixes [these 7 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.21)
+
 #### 1.4.20
 
-* bug fixes
+* Bug fixes
+* The source code can now be [built](http://hawt.io/building/index.html) without installing npm, just use plain Apache Maven.
 * Hawtio terminal now also supports Karaf 3.x
+* Fixed an issue deploying hawtio-war into WebLogic
+* Fixes [these 10 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.20)
 
 #### 1.4.19
 
-* bug fixes
+* Bug fixes
 * Fixed so hawtio deploys out-of-the-box in Apache Tomcat and Apache ServiceMix 5.1
 * Fixes [these 46 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.19)
 
@@ -17,19 +34,19 @@
 * Authentication now detects if running on WebSphere, and adapts authentication to WebSphere specific credentials and APIs
 * Filter now allow to filter by multi values separated by comma
 * Camel sub tab for route metrics when using the new camel-metrics component
-* bug fixes
+* Bug fixes
 
 #### 1.4.17
 
-* bug fixes
+* Bug fixes
 
 #### 1.4.16
 
-* bug fixes
+* Bug fixes
 
 #### 1.4.14
 
-* upgrades to jaxb, jackson, dozer and spring to play nicer with the latest [fabric8](http://fabric8.io/) distro
+* Upgrades to jaxb, jackson, dozer and spring to play nicer with the latest [fabric8](http://fabric8.io/) distro
 * Fixes [these 5 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.14+is%3Aclosed)
 
 #### 1.4.12
@@ -47,8 +64,8 @@
 
 #### 1.4.4
 
-* the Chrome Extension build worked, so we've a shiny new Chrome Extension!
-* various fixes for the new [fabric8](http://fabric8.io/) release
+* The Chrome Extension build worked, so we've a shiny new Chrome Extension!
+* Various fixes for the new [fabric8](http://fabric8.io/) release
 * Fixes [these 14 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=14&state=closed)
 
 #### 1.4.2
@@ -92,7 +109,7 @@
 
 #### 1.2.3
 
-* new [hawtio Chrome Extension](http://hawt.io/getstarted/index.html) for easier connection to remote JVMs from your browser without having to run a hawtio server or connect through a web proxy
+* New [hawtio Chrome Extension](http://hawt.io/getstarted/index.html) for easier connection to remote JVMs from your browser without having to run a hawtio server or connect through a web proxy
 * Upgraded to TypeScript 0.9.5 which is faster
 * [threads](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/threads) plugin to monitor JVM thread usage and status.
 * Moved java code from hawtio-web into hawtio-system
@@ -169,4 +186,3 @@
 * First main release of hawtio with [lots of hawt plugins](http://hawt.io/plugins/index.html).
 * Fixes [these 74 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=1&state=closed)
 
-#### In Progress

@@ -25,10 +25,8 @@ The following articles have been found on the web about hawtio. If you find any 
 * [Hawtio, écrire un plugin](http://blog.zenika.com/index.php?post/2014/01/14/HawtIO-ecrire-un-plugin) by Gérald Quintana (in French) the second part on writing a plugin (note: Google can translate the page into readable english)
 * [Hawtio authentication with LDAP](http://jcordes73.blogspot.de/2014/03/hawtio-authentication-with-ldap-on.html) by Jochen Cordes with a blog series how to use LDAP authentication with hawtio running on Tomcat 7, JBoss Fuse, and JBoss EAP.
 * [Installing hawtio as web console for ActiveMQ](http://sensatic.net/activemq/activemq-and-hawtio.html) by Dejan Bosanac shows how to install hawtio as the web console in Apache ActiveMQ. Dejan also demonstrates how you can remote connect from hawtio to any ActiveMQ broker.
-* [HawtIO on JBoss Wildfly 8.1 -- step by step](http://www
-.christianposta.com/blog/?p=403) by [Christian Posta](http://www
-.christianposta.com/) How to get HawtIO running and secured on JBoss
- Wildfly Application Server 8.1
+* [HawtIO on JBoss Wildfly 8.1 -- step by step](http://www.christianposta.com/blog/?p=403) by [Christian Posta](http://www.christianposta.com/) How to get HawtIO running and secured on JBoss Wildfly Application Server 8.1
+* [HawtIO on OpenShift](http://jimmidyson.github.io/hawtio-on-OpenShift/) by Jimmi Dyson, how to run Apache Tomcat on OpenShift Online and install hawtio into the Tomcat.
 
 
 ## Developer articles

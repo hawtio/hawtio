@@ -12,7 +12,7 @@ module Core {
   _module.factory('jolokia',["$location", "localStorage", "jolokiaStatus", "$rootScope", "userDetails", "jolokiaParams", "jolokiaUrl", ($location:ng.ILocationService, localStorage, jolokiaStatus, $rootScope, userDetails:Core.UserDetails, jolokiaParams, jolokiaUrl):Jolokia.IJolokia => {
     // TODO - Maybe have separate URLs or even jolokia instances for loading plugins vs. application stuff
     // var jolokiaUrl = $location.search()['url'] || Core.url("/jolokia");
-    log.info("Jolokia URL is " + jolokiaUrl);
+    log.debug("Jolokia URL is " + jolokiaUrl);
     if (jolokiaUrl) {
 
       var connectionName = Core.getConnectionNameParameter($location.search());

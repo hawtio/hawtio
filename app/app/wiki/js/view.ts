@@ -14,6 +14,8 @@ module Wiki {
 
   _module.controller("Wiki.ViewController", ["$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", ($scope, $location, $routeParams, $route, $http, $timeout, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile, $templateCache, jolokia) => {
 
+    var isFmc = Fabric.isFMCContainer(workspace);
+
     Wiki.initScope($scope, $routeParams, $location);
 
     $scope.fabricTopLevel = "fabric/profiles/";
@@ -561,7 +563,7 @@ module Wiki {
       } else {
         $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onFileDetails);
       }
-      Wiki.loadBranches(wikiRepository, $scope);
+      Wiki.loadBranches(wikiRepository, $scope, isFmc);
     }
 
     $scope.updateView = updateView;

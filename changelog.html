@@ -104,17 +104,38 @@
 
 <h3 id = "Change_Log">Change Log</h3>
 
+<h4 id = "1_4_22__in_progress_">1.4.22 (in progress)</h4>
+
+<ul>
+<li>Bug fixes</li>
+<li>Fixed hawtio connector to work with local and remote connections again</li>
+<li>Fixes <a href="https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.22">these NN issues and enhancements</a></li>
+</ul>
+
+<h4 id = "1_4_21">1.4.21</h4>
+
+<ul>
+<li>Bug fixes</li>
+<li>Optimized application initial load time, and added source mappings so view source works in browsers to aid javascript debugging</li>
+<li>Added support for <a href="http://fabric8.io/gitbook/kubernetes.html">kubernetes</a> with fabric8</li>
+<li>Hawtio terminal now also supports Karaf 2.4.x / 3.x (though requires some customization to enable hawtio-plgiin in Karaf ACL)</li>
+<li>Fixes <a href="https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.21">these 7 issues and enhancements</a></li>
+</ul>
+
 <h4 id = "1_4_20">1.4.20</h4>
 
 <ul>
-<li>bug fixes</li>
+<li>Bug fixes</li>
+<li>The source code can now be <a href="http://hawt.io/building/index.html">built</a> without installing npm, just use plain Apache Maven.</li>
 <li>Hawtio terminal now also supports Karaf 3.x</li>
+<li>Fixed an issue deploying hawtio-war into WebLogic</li>
+<li>Fixes <a href="https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.20">these 10 issues and enhancements</a></li>
 </ul>
 
 <h4 id = "1_4_19">1.4.19</h4>
 
 <ul>
-<li>bug fixes</li>
+<li>Bug fixes</li>
 <li>Fixed so hawtio deploys out-of-the-box in Apache Tomcat and Apache ServiceMix 5.1</li>
 <li>Fixes <a href="https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.19">these 46 issues and enhancements</a></li>
 </ul>
@@ -126,25 +147,25 @@
 <li>Authentication now detects if running on WebSphere, and adapts authentication to WebSphere specific credentials and APIs</li>
 <li>Filter now allow to filter by multi values separated by comma</li>
 <li>Camel sub tab for route metrics when using the new camel-metrics component</li>
-<li>bug fixes</li>
+<li>Bug fixes</li>
 </ul>
 
 <h4 id = "1_4_17">1.4.17</h4>
 
 <ul>
-<li>bug fixes</li>
+<li>Bug fixes</li>
 </ul>
 
 <h4 id = "1_4_16">1.4.16</h4>
 
 <ul>
-<li>bug fixes</li>
+<li>Bug fixes</li>
 </ul>
 
 <h4 id = "1_4_14">1.4.14</h4>
 
 <ul>
-<li>upgrades to jaxb, jackson, dozer and spring to play nicer with the latest <a href="http://fabric8.io/">fabric8</a> distro</li>
+<li>Upgrades to jaxb, jackson, dozer and spring to play nicer with the latest <a href="http://fabric8.io/">fabric8</a> distro</li>
 <li>Fixes <a href="https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.14+is%3Aclosed">these 5 issues and enhancements</a></li>
 </ul>
 
@@ -168,8 +189,8 @@
 <h4 id = "1_4_4">1.4.4</h4>
 
 <ul>
-<li>the Chrome Extension build worked, so we've a shiny new Chrome Extension!</li>
-<li>various fixes for the new <a href="http://fabric8.io/">fabric8</a> release</li>
+<li>The Chrome Extension build worked, so we've a shiny new Chrome Extension!</li>
+<li>Various fixes for the new <a href="http://fabric8.io/">fabric8</a> release</li>
 <li>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=14&amp;state=closed">these 14 issues and enhancements</a></li>
 </ul>
 
@@ -225,7 +246,7 @@
 <h4 id = "1_2_3">1.2.3</h4>
 
 <ul>
-<li>new <a href="http://hawt.io/getstarted/index.html">hawtio Chrome Extension</a> for easier connection to remote JVMs from your browser without having to run a hawtio server or connect through a web proxy</li>
+<li>New <a href="http://hawt.io/getstarted/index.html">hawtio Chrome Extension</a> for easier connection to remote JVMs from your browser without having to run a hawtio server or connect through a web proxy</li>
 <li>Upgraded to TypeScript 0.9.5 which is faster</li>
 <li><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/threads">threads</a> plugin to monitor JVM thread usage and status.</li>
 <li>Moved java code from hawtio-web into hawtio-system</li>
@@ -326,8 +347,6 @@
 <li>First main release of hawtio with <a href="http://hawt.io/plugins/index.html">lots of hawt plugins</a>.</li>
 <li>Fixes <a href="https://github.com/hawtio/hawtio/issues?milestone=1&amp;state=closed">these 74 issues and enhancements</a></li>
 </ul>
-
-<h4 id = "In_Progress">In Progress</h4>
 
 <p></div>
   </div></p>
