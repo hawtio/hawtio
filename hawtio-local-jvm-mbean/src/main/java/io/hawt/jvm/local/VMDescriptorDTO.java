@@ -2,9 +2,6 @@ package io.hawt.jvm.local;
 
 import com.sun.tools.attach.VirtualMachineDescriptor;
 
-/**
- * @author Stan Lewis
- */
 public class VMDescriptorDTO {
 
     private VirtualMachineDescriptor descriptor;
@@ -17,11 +14,14 @@ public class VMDescriptorDTO {
 
     public VMDescriptorDTO(VirtualMachineDescriptor descriptor) {
         this.descriptor = descriptor;
-        this.alias = JVMList.getVmAlias(descriptor.displayName());
     }
 
     public String getId() {
         return descriptor.id();
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     public String getAlias() {

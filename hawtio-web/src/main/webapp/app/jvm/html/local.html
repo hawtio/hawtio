@@ -32,7 +32,7 @@
       <tbody>
       <tr ng-repeat="jvm in data track by $index" ng-show="filterMatches(jvm)">
         <td>{{jvm.id}}</td>
-        <td>{{jvm.alias}}</td>
+        <td title="{{jvm.displayName}}">{{jvm.alias}}</td>
         <td><a href='' title="Connect to this agent"
                ng-click="connectTo(jvm.url, jvm.scheme, jvm.hostname, jvm.port, jvm.path)">{{jvm.agentUrl}}</a></td>
         <td>
