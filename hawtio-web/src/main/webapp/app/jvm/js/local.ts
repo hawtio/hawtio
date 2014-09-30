@@ -10,11 +10,18 @@ module JVM {
     $scope.data = [];
     $scope.deploying = false;
     $scope.status = '';
-    $scope.discovering = true;
+    $scope.initDone = false;
+    $scope.filter = '';
+
+    $scope.filterMatches = (jvm) => {
+      if (Core.isBlank($scope.filter)) {
+        return true;
+      } else {
+        return jvm.alias.toLowerCase().has($scope.filter.toLowerCase());
+      }
+    };
 
     $scope.fetch = () => {
-      $scope.discovering = true;
-
       jolokia.request({
         type: 'exec', mbean: mbeanName,
         operation: 'listLocalJVMs()',
@@ -23,7 +30,7 @@ module JVM {
         success: render,
         error: (response) => {
           $scope.data = [];
-          $scope.discovering = false;
+          $scope.initDone = true;
           $scope.status = 'Could not discover local JVM processes: ' + response.error;
           Core.$apply($scope);
         }
@@ -70,7 +77,7 @@ module JVM {
     };
 
     function render(response) {
-      $scope.discovering = false;
+      $scope.initDone = true;
       $scope.data = response.value;
       if ($scope.data.length === 0) {
         $scope.status = 'Could not discover local JVM processes';

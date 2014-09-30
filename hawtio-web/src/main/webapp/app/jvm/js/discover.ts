@@ -81,14 +81,14 @@ module JVM {
     };
 
     function render(response) {
+      $scope.discovering = false;
       if (!response.value) {
+        Core.$apply($scope);
         return;
       }
+
       var responseJson = angular.toJson(response.value.sortBy((agent) => agent['agent_id']), true);
       if ($scope.responseJson !== responseJson) {
-        if ($scope.discovering) {
-          $scope.discovering = false;
-        }
         $scope.responseJson = responseJson;
         log.debug("agents: ", $scope.agents);
         $scope.agents = response.value;
@@ -96,22 +96,15 @@ module JVM {
       }
     }
 
-    var updateRate = localStorage['updateRate'];
-    if (updateRate > 0) {
-      Core.register(jolokia, $scope, {
-        type: 'exec', mbean: 'jolokia:type=Discovery',
-        operation: 'lookupAgentsWithTimeout',
-        arguments: [updateRate]
-      }, onSuccess(render));
-    } else {
-      Core.register(jolokia, $scope, {
-        type: 'exec', mbean: 'jolokia:type=Discovery',
-        operation: 'lookupAgents',
-        arguments: []
-      }, onSuccess(render));
-    }
+    $scope.fetch = () => {
+      $scope.discovering = true;
+      Core.$apply($scope);
 
+      // use 30 sec timeout
+      jolokia.execute('jolokia:type=Discovery', 'lookupAgentsWithTimeout(int)', 30 * 1000, onSuccess(render));
+    };
 
+    $scope.fetch();
   }]);
 
 }
