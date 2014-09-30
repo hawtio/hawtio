@@ -10,6 +10,7 @@
 
 * Bug fixes
 * Optimized application initial load time, and added source mappings so view source works in browsers to aid javascript debugging
+* Added support for (kubernetes)[http://fabric8.io/gitbook/kubernetes.html] with fabric8
 * Hawtio terminal now also supports Karaf 2.4.x / 3.x (though requires some customization to enable hawtio-plgiin in Karaf ACL)
 * Fixes [these 7 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.21)
 
