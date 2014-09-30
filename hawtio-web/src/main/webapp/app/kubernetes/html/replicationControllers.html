@@ -1,10 +1,12 @@
 <div ng-controller="Kubernetes.ReplicationControllers">
   <div class="row-fluid">
     <div class="span12" ng-show="replicationControllers.length">
-      <hawtio-filter ng-model="tableConfig.filterOptions.filterText"
-                     css-class="input-xxlarge"
-                     placeholder="Filter replication controllers..."
-                     save-as="kubernetes-replication-controllers-text-filter"></hawtio-filter>
+      <span ng-show="!id">
+        <hawtio-filter ng-model="tableConfig.filterOptions.filterText"
+                       css-class="input-xxlarge"
+                       placeholder="Filter replication controllers..."
+                       save-as="kubernetes-replication-controllers-text-filter"></hawtio-filter>
+      </span>
       <button ng-show="fetched"
               class="btn btn-danger pull-right"
               ng-disabled="!id && tableConfig.selectedItems.length == 0"
@@ -33,10 +35,11 @@
                  hawtio-simple-table="tableConfig"></table>
         </div>
       </div>
-      <div ng-show="fetched && id">
-        <p></p>
-        <p hawtio-editor="json" mode="javascript"></p>
-      </div>
+    </div>
+  </div>
+  <div class="row-fluid" ng-show="fetched && id">
+    <div class="span12">
+      <div hawtio-object="item"></div>
     </div>
   </div>
 </div>

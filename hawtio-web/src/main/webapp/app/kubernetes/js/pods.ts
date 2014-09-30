@@ -2,6 +2,7 @@
 /// <reference path="../../helpers/js/pollHelpers.ts"/>
 /// <reference path="../../helpers/js/controllerHelpers.ts"/>
 /// <reference path="../../ui/js/dialog.ts"/>
+/// <reference path="../../forms/js/formInterfaces.ts"/>
 module Kubernetes {
 
   // main controller for the page
@@ -10,6 +11,8 @@ module Kubernetes {
     $scope.pods = [];
     $scope.fetched = false;
     $scope.json = '';
+    $scope.itemSchema = Forms.createFormConfiguration();
+
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
 
     $scope.$on('kubeSelectedId', ($event, id) => {
@@ -108,7 +111,7 @@ module Kubernetes {
           $scope.fetched = true;
           $scope.pods = (response['items'] || []).sortBy((pod:KubePod) => { return pod.id });
           angular.forEach($scope.pods, entity => {
-            entity.labelsText = Kubernetes.labelsToString(entity.labels);
+            entity.$labelsText = Kubernetes.labelsToString(entity.labels);
           });
           Kubernetes.setJson($scope, $scope.id, $scope.pods);
           //log.debug("Pods: ", $scope.pods);

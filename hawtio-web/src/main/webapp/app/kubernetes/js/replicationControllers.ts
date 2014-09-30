@@ -83,7 +83,7 @@ module Kubernetes {
           $scope.fetched = true;
           $scope.replicationControllers = (response['items'] || []).sortBy((item) => { return item.id; });
           angular.forEach($scope.replicationControllers, entity => {
-            entity.labelsText = Kubernetes.labelsToString(entity.labels);
+            entity.$labelsText = Kubernetes.labelsToString(entity.labels);
           });
           Kubernetes.setJson($scope, $scope.id, $scope.replicationControllers);
           next();
