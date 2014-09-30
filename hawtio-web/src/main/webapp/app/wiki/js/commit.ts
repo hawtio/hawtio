@@ -6,6 +6,8 @@ module Wiki {
 
   _module.controller("Wiki.CommitController", ["$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", ($scope, $location, $routeParams, $templateCache, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) => {
 
+    var isFmc = Fabric.isFMCContainer(workspace);
+
     Wiki.initScope($scope, $routeParams, $location);
     $scope.commitId = $scope.objectId;
     $scope.selectedItems = [];
@@ -93,7 +95,7 @@ module Wiki {
     function updateView() {
       var commitId = $scope.commitId;
 
-      Wiki.loadBranches(wikiRepository, $scope);
+      Wiki.loadBranches(wikiRepository, $scope, isFmc);
 
       wikiRepository.commitInfo(commitId, (commitInfo) => {
         $scope.commitInfo = commitInfo;

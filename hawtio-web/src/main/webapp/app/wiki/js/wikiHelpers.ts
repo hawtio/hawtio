@@ -565,22 +565,35 @@ module Wiki {
    *
    * @param wikiRepository
    * @param $scope
+   * @param isFmc whether we run as fabric8 or as hawtio
    */
-  export function loadBranches(wikiRepository, $scope) {
+  export function loadBranches(wikiRepository, $scope, isFmc = false) {
     wikiRepository.branches((response) => {
       // lets sort by version number
       $scope.branches = response.sortBy((v) => Core.versionToSortableString(v), true);
 
-      // default the branch name if we have 'master'
+      if (isFmc) {
+        // if FMC (eg fabric8) we do not want to show the master branch
+        $scope.branches = $scope.branches.filter((v) => v !== "master");
+      }
+
+      // default the branch name if we have 'master' or 1.0 if fmc
       if (!$scope.branch && $scope.branches.find((branch) => {
-        return branch === "master";
+        if (isFmc) {
+          return branch === "1.0";
+        } else {
+          return branch === "master";
+        }
       })) {
-        $scope.branch = "master";
+        if (isFmc) {
+          $scope.branch = "1.0";
+        } else {
+          $scope.branch = "master";
+        }
       }
       Core.$apply($scope);
     });
   }
-
 
   /**
    * Extracts the pageId from the route parameters
