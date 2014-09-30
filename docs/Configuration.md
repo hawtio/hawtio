@@ -46,18 +46,17 @@ By default the security in hawtio uses these system properties when running in A
       hawtio.role or hawtio.roles
     </td>
     <td>
-      admin
+      admin,viewer
     </td>
     <td>
-      The user role or roles required to be able to login to the console.  Multiple roles to allow can be separated by a comma.  Set to * or an empty value to disable role checking when hawtio authenticates a user.
+      The user role or roles required to be able to login to the console. Multiple roles to allow can be separated by a comma.  Set to * or an empty value to disable role checking when hawtio authenticates a user.
     </td>
   </tr>
   <tr>
     <td>
       hawtio.rolePrincipalClasses
     </td>
-    <td>
-      
+    <td>      
     </td>
     <td>
       Principal fully qualified classname(s). Multiple classes can be separated by a comma.  Leave unset or set to an empty value to disable role checking when hawtio authenticates a user.
@@ -135,12 +134,12 @@ By default the security in hawtio uses these system properties when running in a
   </tr>
   <tr>
     <td>
-      hawtio.role
+      hawtio.role or hawtio.roles
     </td>
     <td>
     </td>
     <td>
-      The user role required to be able to login to the console
+       The user role or roles required to be able to login to the console. Multiple roles to allow can be separated by a comma.  Set to * or an empty value to disable role checking when hawtio authenticates a user.
     </td>
   </tr>
   <tr>
@@ -343,3 +342,6 @@ If you are using a web container, the easiest way to change the web app configur
 Just update the blueprint configuration values in OSGi config admim as you would any OSGi blueprint bundles. On OSGi all the hawtio Java modules use OSGi blueprint.
 
 
+#### More information
+
+In the [articles](http://hawt.io/articles/index.html) colleciton you may find links to blog posts how to setup authentication with hawtio in various other containers. 

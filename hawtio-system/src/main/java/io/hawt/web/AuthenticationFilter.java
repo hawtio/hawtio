@@ -56,8 +56,16 @@ public class AuthenticationFilter implements Filter {
 
         if (config != null) {
             configuration.setRealm(config.get("realm", "karaf"));
-            configuration.setRole(config.get("role", "admin,viewer"));
-            configuration.setRole(config.get("roles", "admin,viewer"));
+            // we have either role or roles
+            String roles = config.get("role", null);
+            if (roles == null) {
+                roles = config.get("roles", null);
+            }
+            if (roles == null) {
+                // use default roles (karaf roles)
+                roles = "admin,viewer";
+            }
+            configuration.setRole(roles);
             configuration.setRolePrincipalClasses(config.get("rolePrincipalClasses", defaultRolePrincipalClasses));
             configuration.setEnabled(Boolean.parseBoolean(config.get("authenticationEnabled", "true")));
             configuration.setNoCredentials401(Boolean.parseBoolean(config.get("noCredentials401", "false")));
