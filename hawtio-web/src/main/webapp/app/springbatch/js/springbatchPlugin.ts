@@ -37,7 +37,8 @@ module SpringBatch {
 
 
         // TODO: server list should not be hardcoded
-        var serverListRes = $resource('/hawtio/springBatch');
+        /*
+        var serverListRes = $resource('/hawtio/springbatch');
         serverListRes.get(function(data){
             $rootScope.springBatchServerList = data.springBatchServerList || [
                 'localhost\\:8080/spring-batch-admin-sample/',
@@ -45,7 +46,7 @@ module SpringBatch {
             ];
 
   //                $rootScope.springBatchServer = $rootScope.springBatchServerList[0];
-        });
+        });*/
 
         $rootScope.proxyUrl = '/hawtio/proxy/';
 
@@ -62,5 +63,6 @@ module SpringBatch {
         };
     }]);
 
-    hawtioPluginLoader.addModule(pluginName);
+    // TODO: spring batch is not ready
+    // hawtioPluginLoader.addModule(pluginName);
 }
