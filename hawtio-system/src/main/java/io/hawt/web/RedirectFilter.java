@@ -81,17 +81,20 @@ public class RedirectFilter implements Filter {
             }
         }
         // if we've gotten here, we need to just return index.html
-        LOG.info("Accessing {}, which isn't valid, returning index.html", request.getRequestURI());
+        LOG.debug("Accessing {}, which isn't valid, returning index.html", request.getRequestURI());
         response.setContentType("text/html;charset=UTF-8");
         OutputStream out = response.getOutputStream();
-        InputStream indexHtml = context.getResourceAsStream("/index.html");
-        IOUtils.copy(indexHtml, out);
-        out.flush();
-        out.close();
+        try {
+            InputStream indexHtml = context.getResourceAsStream("/index.html");
+            IOUtils.copy(indexHtml, out);
+            out.flush();
+        } finally {
+            out.close();
+        }
     }
 
     @Override
     public void destroy() {
-
+        // noop
     }
 }
