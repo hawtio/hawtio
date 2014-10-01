@@ -95,13 +95,10 @@ module Perspective {
             href: "#/camin"
           },
           {
-            href: "#/kibanalogs"
+            id: "insight-logs"
           },
           {
-            href: "#/kibanacamel"
-          },
-          {
-            href: "#/eshead"
+            id: "insight-camel"
           },
           {
             id: "dashboard",

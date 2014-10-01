@@ -39,19 +39,10 @@ module Insight {
             topLevelTabs: {
                 includes: [
                     {
-                        href: "#/kibanalogs"
-                    },
-                    {
                         href: "#/insight"
                     },
                     {
-                        href: "#/kibanacamel"
-                    },
-                    {
                         href: "#/camin"
-                    },
-                    {
-                        href: "#/eshead"
                     },
                     {
                         id: "insight-logs"
