@@ -41,12 +41,19 @@ module Kubernetes {
 
   export function initShared($scope) {
     $scope.$on("labelFilterUpdate", ($event, text) => {
-      if (Core.isBlank($scope.tableConfig.filterOptions.filterText)) {
+      var filterText = $scope.tableConfig.filterOptions.filterText;
+      if (Core.isBlank(filterText)) {
         $scope.tableConfig.filterOptions.filterText = text;
       } else {
-        $scope.tableConfig.filterOptions.filterText = $scope.tableConfig.filterOptions.filterText + " " + text;
+        var expressions = filterText.split(/\s+/);
+        if (expressions.any(text)) {
+          // lets exclude this filter expression
+          expressions = expressions.remove(text);
+          $scope.tableConfig.filterOptions.filterText = expressions.join(" ");
+        } else {
+          $scope.tableConfig.filterOptions.filterText = filterText + " " + text;
+        }
       }
     });
   }
-
 }
