@@ -31,8 +31,7 @@ module Wiki {
           icon: '',
           action: () => {}
         };
-        // the item may be default so we need to check for that as well
-        if (item === $scope.branch || item === $scope.branch + "(default)") {
+        if (item === $scope.branch) {
           menuItem.icon = "icon-ok";
         } else {
           menuItem.action = () => {

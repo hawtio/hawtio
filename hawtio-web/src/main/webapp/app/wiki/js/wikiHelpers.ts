@@ -581,15 +581,6 @@ module Wiki {
       // lets sort by version number
       $scope.branches = $scope.branches.sortBy((v) => Core.versionToSortableString(v), true);
 
-      // mark the default version in the title
-      $scope.branches = $scope.branches.map((v) => {
-        if (v === defaultVersion) {
-          return v + " (default)";
-        } else {
-          return v;
-        }
-      });
-
       Core.$apply($scope);
     } else {
       wikiRepository.branches((response) => {
