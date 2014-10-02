@@ -402,11 +402,12 @@ module Osgi {
     if (!initFn) {
       initFn = () => null;
     }
+    debugger;
     var versionId = $scope.versionId;
     var profileId = $scope.profileId;
     $scope.profileNotRunning = false;
     $scope.profileMetadataMBean = null;
-    if (versionId && versionId) {
+    if (versionId && profileId) {
       $scope.inFabricProfile = true;
       $scope.configurationsLink = "/wiki/branch/" + versionId + "/configurations/" + $scope.pageId;
       $scope.profileMetadataMBean = getProfileMetadataMBean(workspace);
