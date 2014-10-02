@@ -24,6 +24,17 @@ Or if you want to just run an empty hawtio and connect in hawtio to a remote con
     cd hawtio-web
     mvn clean jetty:run
 
+### How to resolve building error of hawtio-web
+
+In case you get any building error of `hawtio-web`, then it may be due permission error of your local `.npm` directory. This has been known to happen for osx users. To remedy this
+
+    cd ~
+    cd .npm
+    sudo chown -R yourusernamehere *
+
+Where `yourusernamehere` is your username. This will change the file permissions of the node files so you can build the project. After this try building the hawtio source code again.
+
+
 ### Trying Different Containers
 
 The above uses Jetty but you can try running hawtio in different containers via any of the following commands. Each of them runs the hawtio-web in a different container (with an empty JVM so no beans or camel by default).
