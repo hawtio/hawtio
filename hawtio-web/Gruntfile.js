@@ -60,6 +60,10 @@ module.exports = function(grunt) {
       tsc: {
         files: [ "src/main/webapp/app/**/*.ts" ],
         tasks: [ "typescript:base", "karma:unit", "ngAnnotate:app" ]
+      },
+      tests: {
+        files: [ "src/test/specs/**/*.js" ],
+        tasks: [ "karma:unit" ]
       }
     },
 
