@@ -181,6 +181,15 @@
                     <include name="**/*.*"/>
                   </fileset>
                 </copy>
+
+                <!-- copy the api docs -->
+                <mkdir dir="${project.build.directory}/sitegen/ts-api"/>
+                <copy todir="${project.build.directory}/sitegen/ts-api">
+                  <fileset dir="${basedir}/../hawtio-api-docs/target/hawtio-api-docs-${project.version}">
+                    <include name="**/*.*"/>
+                  </fileset>
+                </copy>
+
               </target>
             </configuration>
             <goals>
