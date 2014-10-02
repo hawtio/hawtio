@@ -3,21 +3,21 @@
            xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0"
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0">
 
-  <bean id="mavenIndexer" class="io.hawt.maven.indexer.AsyncMavenIndexerFacadeFactory" init-method="init"
-        destroy-method="destroy" scope="singleton">
-    <property name="indexDirectory" value="${indexDir}"/>
-<!--
-    <property name="repositories" value="${hawtio.maven.index.repos}"/>
--->
-  </bean>
+    <bean id="mavenIndexer" class="io.hawt.maven.indexer.AsyncMavenIndexerFacadeFactory" init-method="init"
+          destroy-method="destroy" scope="singleton">
+        <property name="indexDirectory" value="${indexDir}"/>
+        <property name="repositories" value="${repositories}"/>
+    </bean>
 
-  <!-- OSGi specific Config Admin -->
-  <ext:property-placeholder placeholder-prefix="$[" placeholder-suffix="]" />
+    <!-- OSGi specific Config Admin -->
+    <ext:property-placeholder placeholder-prefix="$[" placeholder-suffix="]"/>
 
-  <cm:property-placeholder persistent-id="io.hawt.hawtio-maven-indexer">
-    <cm:default-properties>
-      <cm:property name="indexDir" value="$[karaf.data]/mavenIndexer"/>
-    </cm:default-properties>
-  </cm:property-placeholder>
+    <cm:property-placeholder persistent-id="io.hawt.hawtio-maven-indexer">
+        <cm:default-properties>
+            <cm:property name="indexDir" value="$[karaf.data]/mavenIndexer"/>
+            <!--<cm:property name="repositories" value=http://repository.jboss.org/nexus/content/repositories/ea@id=ea.jboss.release.repo, http://repo1.maven.org/maven2@central"/>-->
+            <cm:property name="repositories" value="http://repo1.maven.org/maven2@central,http://paolo"/>
+        </cm:default-properties>
+    </cm:property-placeholder>
 
 </blueprint>
