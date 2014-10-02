@@ -17,11 +17,18 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
-    <typedoc-exe>typedoc</typedoc-exe>
+    <gruntOptions>--directory=${webapp-outdir}</gruntOptions>
+    <gruntArguments>typedoc</gruntArguments>
   </properties>
 
   <dependencies>
-
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-web</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -35,27 +42,37 @@
     <plugins>
 
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>${exec-maven-plugin-version}</version>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>${frontend-maven-plugin-version}</version>
         <executions>
           <execution>
-            <id>generate-api-docs</id>
-            <phase>compile</phase>
+            <id>install node and npm</id>
             <goals>
-              <goal>exec</goal>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <nodeVersion>v0.10.32</nodeVersion>
+              <npmVersion>1.4.12</npmVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
             </goals>
             <configuration>
-              <executable>typedoc</executable>
-              <arguments>
-                <argument>--out</argument>
-                <argument>${webapp-outdir}</argument>
-                <argument>--target</argument>
-                <argument>ES5</argument>
-                <argument>--includeDeclarations</argument>
-                <argument>--verbose</argument>
-                <argument>../hawtio-web/src/main/</argument>
-              </arguments>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>grunt build</id>
+            <goals>
+              <goal>grunt</goal>
+            </goals>
+            <configuration>
+              <arguments>${gruntArguments} ${gruntOptions}</arguments>
             </configuration>
           </execution>
         </executions>
