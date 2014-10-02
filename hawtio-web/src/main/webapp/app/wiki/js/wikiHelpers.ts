@@ -567,32 +567,44 @@ module Wiki {
    * @param $scope
    * @param isFmc whether we run as fabric8 or as hawtio
    */
-  export function loadBranches(wikiRepository, $scope, isFmc = false) {
-    wikiRepository.branches((response) => {
-      // lets sort by version number
-      $scope.branches = response.sortBy((v) => Core.versionToSortableString(v), true);
+  export function loadBranches(jolokia, wikiRepository, $scope, isFmc = false) {
+    if (isFmc) {
+      // when using fabric then the branches is the fabric versions, so we should use that instead
+      $scope.branches = Fabric.getVersionIds(jolokia);
+      var defaultVersion = Fabric.getDefaultVersionId(jolokia);
 
-      if (isFmc) {
-        // if FMC (eg fabric8) we do not want to show the master branch
-        $scope.branches = $scope.branches.filter((v) => v !== "master");
+      // use current default version as default branch
+      if (!$scope.branch) {
+        $scope.branch = defaultVersion;
       }
 
-      // default the branch name if we have 'master' or 1.0 if fmc
-      if (!$scope.branch && $scope.branches.find((branch) => {
-        if (isFmc) {
-          return branch === "1.0";
+      // lets sort by version number
+      $scope.branches = $scope.branches.sortBy((v) => Core.versionToSortableString(v), true);
+
+      // mark the default version in the title
+      $scope.branches = $scope.branches.map((v) => {
+        if (v === defaultVersion) {
+          return v + " (default)";
         } else {
-          return branch === "master";
+          return v;
         }
-      })) {
-        if (isFmc) {
-          $scope.branch = "1.0";
-        } else {
+      });
+
+      Core.$apply($scope);
+    } else {
+      wikiRepository.branches((response) => {
+        // lets sort by version number
+        $scope.branches = response.sortBy((v) => Core.versionToSortableString(v), true);
+
+        // default the branch name if we have 'master'
+        if (!$scope.branch && $scope.branches.find((branch) => {
+          return branch === "master";
+        })) {
           $scope.branch = "master";
         }
-      }
-      Core.$apply($scope);
-    });
+        Core.$apply($scope);
+      });
+    }
   }
 
   /**

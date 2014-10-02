@@ -3,7 +3,9 @@
  */
 /// <reference path="./wikiPlugin.ts"/>
 module Wiki {
-  _module.controller("Wiki.NavBarController", ["$scope", "$location", "$routeParams", "workspace", "wikiRepository", "wikiBranchMenu", ($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository, wikiBranchMenu:BranchMenu) => {
+  _module.controller("Wiki.NavBarController", ["$scope", "$location", "$routeParams", "workspace", "jolokia", "wikiRepository", "wikiBranchMenu", ($scope, $location, $routeParams, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, wikiBranchMenu:BranchMenu) => {
+
+    var isFmc = Fabric.isFMCContainer(workspace);
 
     Wiki.initScope($scope, $routeParams, $location);
     $scope.branchMenuConfig = <UI.MenuItem>{
@@ -20,7 +22,7 @@ module Wiki {
       $scope.branchMenuConfig.items = [];
       if (newValue.length > 0) {
         $scope.branchMenuConfig.items.push({
-          heading: "Branches"
+          heading: isFmc ? "Versions" : "Branches"
         });
       }
       newValue.sort().forEach((item) => {
@@ -29,7 +31,8 @@ module Wiki {
           icon: '',
           action: () => {}
         };
-        if (item === $scope.branch) {
+        // the item may be default so we need to check for that as well
+        if (item === $scope.branch || item === $scope.branch + "(default)") {
           menuItem.icon = "icon-ok";
         } else {
           menuItem.action = () => {

@@ -4,7 +4,7 @@
 /// <reference path="./wikiPlugin.ts"/>
 module Wiki {
 
-  _module.controller("Wiki.HistoryController", ["$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", ($scope, $location, $routeParams, $templateCache, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) => {
+  _module.controller("Wiki.HistoryController", ["$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "jolokia", ($scope, $location, $routeParams, $templateCache, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, jolokia) => {
 
     var isFmc = Fabric.isFMCContainer(workspace);
 
@@ -121,7 +121,7 @@ module Wiki {
         $scope.logs = logArray;
         Core.$apply($scope);
       });
-      Wiki.loadBranches(wikiRepository, $scope, isFmc);
+      Wiki.loadBranches(jolokia, wikiRepository, $scope, isFmc);
     }
   }]);
 }
