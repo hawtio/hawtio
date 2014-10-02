@@ -4154,6 +4154,11 @@ var Fabric;
     }
     Fabric.deleteVersion = deleteVersion;
 
+    function getVersionIds(jolokia) {
+        return jolokia.execute(Fabric.managerMBean, "versionIds", { method: 'GET' });
+    }
+    Fabric.getVersionIds = getVersionIds;
+
     function getContainerIdsForProfile(jolokia, version, profileId) {
         return jolokia.execute(Fabric.managerMBean, "containerIdsForProfile", version, profileId, { method: 'POST' });
     }
@@ -5822,34 +5827,35 @@ var Wiki;
     }
     Wiki.initScope = initScope;
 
-    function loadBranches(wikiRepository, $scope, isFmc) {
+    function loadBranches(jolokia, wikiRepository, $scope, isFmc) {
         if (typeof isFmc === "undefined") { isFmc = false; }
-        wikiRepository.branches(function (response) {
-            $scope.branches = response.sortBy(function (v) {
+        if (isFmc) {
+            $scope.branches = Fabric.getVersionIds(jolokia);
+            var defaultVersion = Fabric.getDefaultVersionId(jolokia);
+
+            if (!$scope.branch) {
+                $scope.branch = defaultVersion;
+            }
+
+            $scope.branches = $scope.branches.sortBy(function (v) {
                 return Core.versionToSortableString(v);
             }, true);
 
-            if (isFmc) {
-                $scope.branches = $scope.branches.filter(function (v) {
-                    return v !== "master";
-                });
-            }
+            Core.$apply($scope);
+        } else {
+            wikiRepository.branches(function (response) {
+                $scope.branches = response.sortBy(function (v) {
+                    return Core.versionToSortableString(v);
+                }, true);
 
-            if (!$scope.branch && $scope.branches.find(function (branch) {
-                if (isFmc) {
-                    return branch === "1.0";
-                } else {
+                if (!$scope.branch && $scope.branches.find(function (branch) {
                     return branch === "master";
-                }
-            })) {
-                if (isFmc) {
-                    $scope.branch = "1.0";
-                } else {
+                })) {
                     $scope.branch = "master";
                 }
-            }
-            Core.$apply($scope);
-        });
+                Core.$apply($scope);
+            });
+        }
     }
     Wiki.loadBranches = loadBranches;
 
@@ -6017,12 +6023,6 @@ var Fabric;
         type: "img",
         src: "img/icons/fabric8_icon.svg"
     }, "io.fabric8", "org.fusesource.fabric");
-
-    Fabric.serviceIconRegistry.addIcons({
-        title: "Fabric8 Insight",
-        type: "icon",
-        src: "icon-eye-open"
-    }, "org.fusesource.insight", "io.fabric8.insight");
 
     Fabric.serviceIconRegistry.addIcons({
         title: "hawtio",
@@ -21268,9 +21268,14 @@ var Insight;
     Insight.allContainers = { id: '-- all --' };
 
     function hasInsight(workspace) {
-        return workspace.treeContainsDomainAndProperties('org.elasticsearch', { service: 'restjmx' });
+        return workspace.treeContainsDomainAndProperties('io.fabric8.insight', { type: 'Elasticsearch' });
     }
     Insight.hasInsight = hasInsight;
+
+    function hasKibana(workspace) {
+        return workspace.treeContainsDomainAndProperties('hawtio', { type: 'plugin', name: 'hawtio-kibana' });
+    }
+    Insight.hasKibana = hasKibana;
 
     function getInsightMetricsCollectorMBean(workspace) {
         var node = workspace.findMBeanWithProperties('io.fabric8.insight', { type: 'MetricsCollector' });
@@ -21488,39 +21493,6 @@ var Perspective;
                     },
                     {
                         href: "#/health"
-                    },
-                    {
-                        id: "fabric.insight"
-                    }
-                ]
-            }
-        },
-        insight: {
-            icon: {
-                title: "Fabric8 Insight",
-                type: "icon",
-                src: "icon-eye-open"
-            },
-            label: "Insight",
-            isValid: function (workspace) {
-                return Insight.hasInsight(workspace);
-            },
-            topLevelTabs: {
-                includes: [
-                    {
-                        href: "#/kibanalogs"
-                    },
-                    {
-                        href: "#/insight"
-                    },
-                    {
-                        href: "#/kibanacamel"
-                    },
-                    {
-                        href: "#/camin"
-                    },
-                    {
-                        href: "#/eshead"
                     }
                 ]
             }
@@ -21563,13 +21535,10 @@ var Perspective;
                         href: "#/camin"
                     },
                     {
-                        href: "#/kibanalogs"
+                        id: "insight-logs"
                     },
                     {
-                        href: "#/kibanacamel"
-                    },
-                    {
-                        href: "#/eshead"
+                        id: "insight-camel"
                     },
                     {
                         id: "dashboard",
@@ -22228,21 +22197,6 @@ var Fabric;
                 },
                 isActive: function (workspace) {
                     return workspace.isLinkActive("/wiki") && (workspace.linkContains("fabric", "profiles") || workspace.linkContains("editFeatures"));
-                }
-            });
-
-            workspace.topLevelTabs.push({
-                id: "fabric.insight",
-                content: "Insight",
-                title: "View insight into your fabric looking at logs, metrics and messages across the fabric",
-                isValid: function (workspace) {
-                    return Fabric.isFMCContainer(workspace) && Insight.hasInsight(workspace);
-                },
-                href: function () {
-                    return "#/insight/all?p=insight";
-                },
-                isActive: function (workspace) {
-                    return workspace.isLinkActive("/insight");
                 }
             });
 
@@ -28761,7 +28715,7 @@ var Osgi;
         var profileId = $scope.profileId;
         $scope.profileNotRunning = false;
         $scope.profileMetadataMBean = null;
-        if (versionId && versionId) {
+        if (versionId && profileId) {
             $scope.inFabricProfile = true;
             $scope.configurationsLink = "/wiki/branch/" + versionId + "/configurations/" + $scope.pageId;
             $scope.profileMetadataMBean = getProfileMetadataMBean(workspace);
@@ -31132,25 +31086,94 @@ var Insight;
 
     Insight._module.config([
         "$routeProvider", function ($routeProvider) {
-            $routeProvider.when('/insight/all', { templateUrl: 'app/insight/html/all.html' }).when('/insight/jvms', { templateUrl: 'app/insight/html/jvms.html' }).when('/insight/elasticsearch', { templateUrl: 'app/insight/html/elasticsearch.html' });
+            $routeProvider.when('/insight/all', { templateUrl: 'app/insight/html/all.html' }).when('/insight/jvms', { templateUrl: 'app/insight/html/jvms.html' }).when('/insight/elasticsearch', { templateUrl: 'app/insight/html/elasticsearch.html' }).when('/insight/logs', { redirectTo: function () {
+                    return '/insight/dashboard?kbnId=app/insight/dashboards/logs&p=insight&tab=insight-logs';
+                } }).when('/insight/camel', { redirectTo: function () {
+                    return '/insight/dashboard?kbnId=app/insight/dashboards/camel&p=insight&tab=insight-camel';
+                } }).when('/insight/dashboard', { templateUrl: '../hawtio-kibana/app/partials/dashboard.html' });
         }]);
 
     Insight._module.run([
-        "workspace", "viewRegistry", "helpRegistry", function (workspace, viewRegistry, helpRegistry) {
-            viewRegistry["insight"] = "app/insight/html/layoutInsight.html";
+        "workspace", "viewRegistry", "helpRegistry", "serviceIconRegistry", function (workspace, viewRegistry, helpRegistry, serviceIconRegistry) {
+            serviceIconRegistry.addIcons({
+                title: "Fabric8 Insight",
+                type: "icon",
+                src: "icon-eye-open"
+            }, "org.fusesource.insight", "io.fabric8.insight");
+
+            Perspective.metadata['insight'] = {
+                icon: {
+                    title: "Fabric8 Insight",
+                    type: "icon",
+                    src: "icon-eye-open"
+                },
+                label: "Insight",
+                isValid: function (workspace) {
+                    return Insight.hasInsight(workspace);
+                },
+                topLevelTabs: {
+                    includes: [
+                        {
+                            href: "#/insight"
+                        },
+                        {
+                            href: "#/camin"
+                        },
+                        {
+                            id: "insight-logs"
+                        },
+                        {
+                            id: "insight-camel"
+                        }
+                    ]
+                }
+            };
+
+            viewRegistry["insight"] = "../hawtio-kibana/app/partials/hawtioLayout.html";
+
             helpRegistry.addUserDoc('insight', 'app/insight/doc/help.md', function () {
-                return Fabric.hasFabric(workspace) && workspace.treeContainsDomainAndProperties("org.elasticsearch", { service: "restjmx" });
+                return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace);
             });
 
             workspace.topLevelTabs.push({
-                id: "insight",
+                id: "insight-metrics",
                 content: "Metrics",
                 title: "View Insight metrics",
                 href: function () {
                     return "#/insight/all";
                 },
                 isValid: function (workspace) {
-                    return Fabric.hasFabric(workspace) && workspace.treeContainsDomainAndProperties("org.elasticsearch", { service: "restjmx" });
+                    return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace);
+                }
+            });
+
+            workspace.topLevelTabs.push({
+                id: "insight-logs",
+                content: "Logs",
+                title: "View Insight Logs",
+                href: function () {
+                    return "#/insight/logs";
+                },
+                isValid: function (workspace) {
+                    return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace) && Insight.hasKibana(workspace);
+                },
+                isActive: function () {
+                    return workspace.isTopTabActive("insight-logs");
+                }
+            });
+
+            workspace.topLevelTabs.push({
+                id: "insight-camel",
+                content: "Camel",
+                title: "View Insight Camel",
+                href: function () {
+                    return "#/insight/camel";
+                },
+                isValid: function (workspace) {
+                    return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace) && Insight.hasKibana(workspace);
+                },
+                isActive: function () {
+                    return workspace.isTopTabActive("insight-camel");
                 }
             });
         }]);
@@ -48482,7 +48505,7 @@ var Wiki;
 var Wiki;
 (function (Wiki) {
     Wiki._module.controller("Wiki.CommitController", [
-        "$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", function ($scope, $location, $routeParams, $templateCache, workspace, marked, fileExtensionTypeRegistry, wikiRepository) {
+        "$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "jolokia", function ($scope, $location, $routeParams, $templateCache, workspace, marked, fileExtensionTypeRegistry, wikiRepository, jolokia) {
             var isFmc = Fabric.isFMCContainer(workspace);
 
             Wiki.initScope($scope, $routeParams, $location);
@@ -48561,7 +48584,7 @@ var Wiki;
             function updateView() {
                 var commitId = $scope.commitId;
 
-                Wiki.loadBranches(wikiRepository, $scope, isFmc);
+                Wiki.loadBranches(jolokia, wikiRepository, $scope, isFmc);
 
                 wikiRepository.commitInfo(commitId, function (commitInfo) {
                     $scope.commitInfo = commitInfo;
@@ -49339,7 +49362,7 @@ var Wiki;
 var Wiki;
 (function (Wiki) {
     Wiki._module.controller("Wiki.HistoryController", [
-        "$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", function ($scope, $location, $routeParams, $templateCache, workspace, marked, fileExtensionTypeRegistry, wikiRepository) {
+        "$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "jolokia", function ($scope, $location, $routeParams, $templateCache, workspace, marked, fileExtensionTypeRegistry, wikiRepository, jolokia) {
             var isFmc = Fabric.isFMCContainer(workspace);
 
             Wiki.initScope($scope, $routeParams, $location);
@@ -49450,14 +49473,16 @@ var Wiki;
                     $scope.logs = logArray;
                     Core.$apply($scope);
                 });
-                Wiki.loadBranches(wikiRepository, $scope, isFmc);
+                Wiki.loadBranches(jolokia, wikiRepository, $scope, isFmc);
             }
         }]);
 })(Wiki || (Wiki = {}));
 var Wiki;
 (function (Wiki) {
     Wiki._module.controller("Wiki.NavBarController", [
-        "$scope", "$location", "$routeParams", "workspace", "wikiRepository", "wikiBranchMenu", function ($scope, $location, $routeParams, workspace, wikiRepository, wikiBranchMenu) {
+        "$scope", "$location", "$routeParams", "workspace", "jolokia", "wikiRepository", "wikiBranchMenu", function ($scope, $location, $routeParams, workspace, jolokia, wikiRepository, wikiBranchMenu) {
+            var isFmc = Fabric.isFMCContainer(workspace);
+
             Wiki.initScope($scope, $routeParams, $location);
             $scope.branchMenuConfig = {
                 title: $scope.branch,
@@ -49473,7 +49498,7 @@ var Wiki;
                 $scope.branchMenuConfig.items = [];
                 if (newValue.length > 0) {
                     $scope.branchMenuConfig.items.push({
-                        heading: "Branches"
+                        heading: isFmc ? "Versions" : "Branches"
                     });
                 }
                 newValue.sort().forEach(function (item) {
@@ -50125,7 +50150,7 @@ var Wiki;
                 } else {
                     $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onFileDetails);
                 }
-                Wiki.loadBranches(wikiRepository, $scope, isFmc);
+                Wiki.loadBranches(jolokia, wikiRepository, $scope, isFmc);
             }
 
             $scope.updateView = updateView;

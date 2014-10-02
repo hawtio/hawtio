@@ -134,6 +134,16 @@ mvn test-compile exec:java</code></pre>
 <pre><code>cd hawtio-web
 mvn clean jetty:run</code></pre>
 
+<h3 id = "How_to_resolve_building_error_of_hawtio-web">How to resolve building error of hawtio-web</h3>
+
+<p>In case you get any building error of <code>hawtio-web</code>, then it may be due permission error of your local <code>.npm</code> directory. This has been known to happen for osx users. To remedy this</p>
+
+<pre><code>cd ~
+cd .npm
+sudo chown -R yourusernamehere *</code></pre>
+
+<p>Where <code>yourusernamehere</code> is your username. This will change the file permissions of the node files so you can build the project. After this try building the hawtio source code again.</p>
+
 <h3 id = "Trying_Different_Containers">Trying Different Containers</h3>
 
 <p>The above uses Jetty but you can try running hawtio in different containers via any of the following commands. Each of them runs the hawtio-web in a different container (with an empty JVM so no beans or camel by default).</p>

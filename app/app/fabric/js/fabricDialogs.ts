@@ -83,7 +83,8 @@ module Fabric {
             if (result) {
               var selectedVersion = $scope.selectedVersion.id;
               deleteVersion(jolokia, selectedVersion, () => {
-                $rootScope.$broadcast('wikiBranchesUpdated');                            getDefaultVersionIdAsync(jolokia, (versionId) => {
+                $rootScope.$broadcast('wikiBranchesUpdated');
+                getDefaultVersionIdAsync(jolokia, (versionId) => {
                   viewVersion(versionId, $location, $scope);
                   Core.$apply($scope);
                 });

@@ -563,7 +563,7 @@ module Wiki {
       } else {
         $scope.git = wikiRepository.getPage($scope.branch, $scope.pageId, $scope.objectId, onFileDetails);
       }
-      Wiki.loadBranches(wikiRepository, $scope, isFmc);
+      Wiki.loadBranches(jolokia, wikiRepository, $scope, isFmc);
     }
 
     $scope.updateView = updateView;

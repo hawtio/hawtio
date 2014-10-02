@@ -80,6 +80,10 @@ module Fabric {
     doAction('deleteVersion(java.lang.String)', jolokia, [id], success, error);
   }
 
+  export function getVersionIds(jolokia) {
+    return jolokia.execute(Fabric.managerMBean, "versionIds", { method: 'GET' });
+  }
+
   export function getContainerIdsForProfile(jolokia, version, profileId) {
     return jolokia.execute(Fabric.managerMBean, "containerIdsForProfile", version, profileId, { method: 'POST' });
   }
