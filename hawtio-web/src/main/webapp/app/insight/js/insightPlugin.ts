@@ -15,8 +15,8 @@ module Insight {
             when('/insight/all', { templateUrl: 'app/insight/html/all.html' }).
             when('/insight/jvms', { templateUrl: 'app/insight/html/jvms.html' }).
             when('/insight/elasticsearch', { templateUrl: 'app/insight/html/elasticsearch.html' }).
-            when('/insight/logs', { redirectTo: function() { return '/insight/dashboard?kbnId=app/insight/dashboards/logs&p=insight';} }).
-            when('/insight/camel', { redirectTo: function() { return '/insight/dashboard?kbnId=app/insight/dashboards/camel&p=insight';} }).
+            when('/insight/logs', { redirectTo: function() { return '/insight/dashboard?kbnId=app/insight/dashboards/logs&p=insight&tab=insight-logs';} }).
+            when('/insight/camel', { redirectTo: function() { return '/insight/dashboard?kbnId=app/insight/dashboards/camel&p=insight&tab=insight-camel';} }).
             when('/insight/dashboard', { templateUrl: '../hawtio-kibana/app/partials/dashboard.html' });
     }]);
 
@@ -80,8 +80,9 @@ module Insight {
             title: "View Insight Logs",
             href: () => "#/insight/logs",
             isValid: (workspace:Workspace) => {
-                return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace);
-            }
+                return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace) && Insight.hasKibana(workspace);
+            },
+            isActive: () => workspace.isTopTabActive("insight-logs")
         });
 
         // Set up top-level link to our plugin
@@ -91,8 +92,9 @@ module Insight {
             title: "View Insight Camel",
             href: () => "#/insight/camel",
             isValid: (workspace:Workspace) => {
-                return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace);
-            }
+                return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace) && Insight.hasKibana(workspace);
+            },
+            isActive: () => workspace.isTopTabActive("insight-camel")
         });
 
     }]);
