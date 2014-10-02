@@ -402,7 +402,6 @@ module Osgi {
     if (!initFn) {
       initFn = () => null;
     }
-    debugger;
     var versionId = $scope.versionId;
     var profileId = $scope.profileId;
     $scope.profileNotRunning = false;
