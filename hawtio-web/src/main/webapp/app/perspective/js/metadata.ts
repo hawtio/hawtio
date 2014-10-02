@@ -55,37 +55,6 @@ module Perspective {
           },
           {
             href: "#/health"
-          },
-          {
-            id: "fabric.insight"
-          }
-        ]
-      }
-    },
-    insight: {
-      icon: {
-        title: "Fabric8 Insight",
-        type: "icon",
-        src: "icon-eye-open"
-      },
-      label: "Insight",
-      isValid: (workspace) => Insight.hasInsight(workspace),
-      topLevelTabs: {
-        includes: [
-          {
-            href: "#/kibanalogs"
-          },
-          {
-            href: "#/insight"
-          },
-          {
-            href: "#/kibanacamel"
-          },
-          {
-            href: "#/camin"
-          },
-          {
-            href: "#/eshead"
           }
         ]
       }
@@ -126,13 +95,10 @@ module Perspective {
             href: "#/camin"
           },
           {
-            href: "#/kibanalogs"
+            id: "insight-logs"
           },
           {
-            href: "#/kibanacamel"
-          },
-          {
-            href: "#/eshead"
+            id: "insight-camel"
           },
           {
             id: "dashboard",

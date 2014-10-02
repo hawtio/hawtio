@@ -63,12 +63,6 @@ module Fabric {
   }, "io.fabric8", "org.fusesource.fabric");
 
   serviceIconRegistry.addIcons({
-    title: "Fabric8 Insight",
-    type: "icon",
-    src: "icon-eye-open"
-  }, "org.fusesource.insight", "io.fabric8.insight");
-
-  serviceIconRegistry.addIcons({
     title: "hawtio",
     type: "img",
     src: "img/hawtio_icon.svg"

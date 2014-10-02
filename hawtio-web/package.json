@@ -36,6 +36,7 @@
     "domhandler": "~2.2.0",
     "domelementtype": "~1.1.1",
     "domutils": "~1.4.0",
-    "CSSwhat": "~0.4.7"
+    "CSSwhat": "~0.4.7",
+    "grunt-express": "~1.4.1"
   }
 }
