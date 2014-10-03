@@ -22,7 +22,8 @@
   ],
   "dependencies": {
     "jquery": "1.8.2",
-    "js-logger": "~0.9.14"
+    "js-logger": "~0.9.14",
+    "bootstrap": "2.2.1"
   },
   "resolutions": {
     "js-logger": "~0.9.14"

@@ -42,6 +42,9 @@ module.exports = function(grunt) {
             },
             'jolokia': {
               "main": "jolokia.js"
+            },
+            'bootstrap': {
+              'main': ['bootstrap.css', 'bootstrap.js']
             }
           }
         }
