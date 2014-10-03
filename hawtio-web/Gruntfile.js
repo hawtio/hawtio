@@ -45,6 +45,11 @@ module.exports = function(grunt) {
             },
             'bootstrap': {
               'main': ['bootstrap.css', 'bootstrap.js']
+            },
+            'Font-Awesome': {
+              main: [
+                'css/font-awesome.css'
+              ]
             }
           }
         }
