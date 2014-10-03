@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -49,7 +51,6 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
     private boolean updateIndexOnStartup = true;
     private int maximumIndexersPerMachine = 20;
     private String[] repositories = {
-            "http://repository.jboss.org/nexus/content/repositories/ea@id=ea.jboss..release.repo",
             "http://repo1.maven.org/maven2@central"
     };
     private String cacheDirName;
@@ -58,6 +59,7 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
     private FileLocker fileLock;
     private String lockFileName = "hawtio.lock";
     private final AtomicBoolean indexing = new AtomicBoolean();
+    private int failedRepos = 0;
 
     public MavenIndexerFacade() {
     }
@@ -112,8 +114,8 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
                 mergedContext = indexer.createMergedIndexingContext("all-context", "all", cacheDir, indexDir, true, members);
 
             } catch (Exception e) {
-                LOG.warn("Failed to fetch the maven repository indices due to: " + e.getMessage());
-                LOG.warn("Some or all maven repository data may not be available for searching...");
+                failedRepos++;
+                LOG.warn("Failed to fetch Maven repository: {}", repository, e);
             }
         }
         if (updateIndexOnStartup) {
@@ -134,14 +136,14 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
         Set<Map.Entry<String, IndexingContext>> entries = indexContexts.entrySet();
 
         if (!entries.isEmpty()) {
-            LOG.info("Updating the maven indices. This may take a while, please be patient...");
-            LOG.info("Maven repos to be indexed: {}", getRepositories());
+            LOG.info("Maven repos to be indexed: [{}]", getRepositories());
+            LOG.info("Updating maven indices. This may take a while, please be patient...");
         }
 
         for (Map.Entry<String, IndexingContext> entry : entries) {
-
+            final String contextId = entry.getKey();
             try {
-                final String contextId = entry.getKey();
+
                 IndexingContext context = entry.getValue();
                 Date contextTime = context.getTimestamp();
 
@@ -173,34 +175,37 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
                 }
 
             } catch (Exception e) {
-                LOG.warn("Failed to fetch the maven repository indices due to: " + e.getMessage());
-                LOG.warn("Some or all maven repository data may not be available for searching...");
+                failedRepos++;
+                LOG.warn("Failed to fetch Maven repository:", contextId , e);
             }
         }
 
         if (!entries.isEmpty()) {
-            LOG.info("Completed updating {} maven indices.", entries.size());
+            LOG.info("Updated successfully {}/{} maven indexes.", entries.size() - failedRepos, entries.size());
         }
     }
 
     public void destroy() throws Exception {
-        if (indexing.get()) {
-            LOG.warn("Destroying MavenIndexer while indexing is still in progress, this could lead to errors ... ");
-        } else {
-            LOG.debug("Destroying MavenIndexer ... ");
-        }
-
-        if (fileLock != null) {
-            fileLock.destroy();
-        }
-        if (indexer != null) {
-            for (IndexingContext context : indexContexts.values()) {
-                // close cleanly
-                indexer.closeIndexingContext(context, false);
+        try {
+            if (indexing.get()) {
+                LOG.warn("Destroying MavenIndexer while indexing is still in progress, this could lead to errors ... ");
+            } else {
+                LOG.debug("Destroying MavenIndexer ... ");
             }
-            indexContexts.clear();
+
+            if (fileLock != null) {
+                fileLock.destroy();
+            }
+            if (indexer != null) {
+                for (IndexingContext context : indexContexts.values()) {
+                    // close cleanly
+                    indexer.closeIndexingContext(context, false);
+                }
+                indexContexts.clear();
+            }
+        } finally{
+            super.destroy();
         }
-        super.destroy();
     }
 
     public boolean isUpdateIndexOnStartup() {
@@ -231,16 +236,28 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
         return result;
     }
 
+    /**
+     * Param is a String, instead of a String[] to support properties replacement in blueprint
+     * @param repositories
+     */
     public void setRepositories(String repositories) {
-        if (repositories == null || "".equals(repositories.trim())) {
+        if (Strings.isBlank(repositories)) {
             this.repositories = new String[0];
         } else {
             repositories = repositories.trim();
-            String[] temp = repositories.split(",");
-            for (int i = 0; i < temp.length; i++) {
-                temp[i] = temp[i].trim();
+            String[] input = repositories.split(",");
+            List<String> result = new ArrayList<>(input.length);
+            for (int i = 0; i < input.length; i++) {
+                String url = input[i].trim();
+                url = url.trim();
+                try{
+                    new URL(url);
+                    result.add(url);
+                } catch(MalformedURLException e){
+                    LOG.error("Discarding unsupported URL provided to Maven Indexer Service: {}", url, e );
+                }
             }
-            this.repositories = temp;
+            result.toArray(this.repositories);
         }
     }
 
