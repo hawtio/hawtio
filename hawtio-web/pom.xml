@@ -1139,7 +1139,7 @@
                 <phase>verify</phase>
                 <configuration>
                   <source>
-                    def result = new AntBuilder().fileset( dir:'target/failsafe-reports', includes:'TEST-*.xml' ) {
+                    def result = new AntBuilder().fileset( dir:"${basedir}/target/failsafe-reports", includes:'TEST-*.xml' ) {
                     containsregexp expression:'(failures|errors)="[^0]'
                     }*.file
 
