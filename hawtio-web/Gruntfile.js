@@ -19,14 +19,29 @@ module.exports = function(grunt) {
     wiredep: {
       target: {
         src: [
-          'src/main/webapp/index.html'
+          'src/main/webapp/index.html',
+          'src/test/config/karma.conf.js'
         ],
+        fileTypes: {
+          js: {
+            block: /(([\s\t]*)\/\/\s*bower:*(\S*))(\n|\r|.)*?(\/\/\s*endbower)/gi,
+            detect: {
+              js: /'(.*\.js)'/gi
+            },
+            replace: {
+              js: 'libdir + \'../{{filePath}}\','
+            }
+          }
+        },
         options: {
           ignorePath: '../../../',
           dependencies: true,
           overrides: {
             'js-logger': {
               "main": "logger.js"
+            },
+            'jolokia': {
+              "main": "jolokia.js"
             }
           }
         }

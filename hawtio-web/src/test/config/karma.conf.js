@@ -17,10 +17,11 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      libdir + '../bower_components/**/*.js',
+      // bower:js
+      libdir + '../bower_components/jquery/jquery.js',
+      libdir + '../bower_components/js-logger/logger.js',
+      // endbower
       libdir + 'loggingInit.js',
-      libdir + 'd3.v3.min.js',
-      libdir + 'jolokia-min.js',
       libdir + 'cubism.v1.min.js',
       libdir + 'jolokia-cubism-min.js',
       libdir + 'jolokia-simple-min.js',
@@ -110,7 +111,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_DEBUG,
 
 
     // enable / disable watching file and executing tests whenever any file changes
