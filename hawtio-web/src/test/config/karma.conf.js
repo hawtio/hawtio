@@ -21,6 +21,7 @@ module.exports = function(config) {
       libdir + '../bower_components/jquery/jquery.js',
       libdir + '../bower_components/js-logger/logger.js',
       libdir + '../bower_components/bootstrap/bootstrap.js',
+      libdir + '../bower_components/d3/d3.js',
       // endbower
       libdir + 'loggingInit.js',
       libdir + 'cubism.v1.min.js',

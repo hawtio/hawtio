@@ -23,7 +23,8 @@
   "dependencies": {
     "jquery": "1.8.2",
     "js-logger": "~0.9.14",
-    "bootstrap": "2.2.1"
+    "bootstrap": "2.2.1",
+    "d3": "3.0.0"
   },
   "resolutions": {
     "js-logger": "~0.9.14"
