@@ -8,6 +8,30 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON("package.json"),
 
     /* task configuration */
+    bower: {
+      install: {
+        options: {
+          targetDir: 'src/main/webapp/bower_components'
+        }
+      }
+    },
+
+    wiredep: {
+      target: {
+        src: [
+          'src/main/webapp/index.html'
+        ],
+        options: {
+          ignorePath: '../../../',
+          dependencies: true,
+          overrides: {
+            'js-logger': {
+              "main": "logger.js"
+            }
+          }
+        }
+      }
+    },
 
     // grunt-karma
     karma: {
@@ -149,6 +173,7 @@ module.exports = function(grunt) {
   grunt.registerTask("test-chrome", "Runs unit tests continuously with autowatching", [ "karma:chrome" ]);
 
   grunt.registerTask("default", [
+    "bower",
     "typescript:base",
     "rename",
     "karma:unit",

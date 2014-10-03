@@ -394,6 +394,9 @@
         <configuration>
           <filesets>
             <fileset>
+              <directory>${basedir}/src/main/webapp/bower_components</directory>
+            </fileset>
+            <fileset>
               <directory>${basedir}/src/main/webapp/app</directory>
               <includes>
                 <include>app.js</include>
@@ -819,7 +822,7 @@
       <id>watch</id>
       <properties>
         <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
-        <gruntArguments>watch</gruntArguments>
+        <gruntArguments>bower watch</gruntArguments>
       </properties>
     </profile>
 
