@@ -31,13 +31,20 @@ module.exports = function(grunt) {
           comments: false,
           module: "commonjs",
           target: "ES5",
-          declaration: false,
+          declaration: true,
           sourceMap: true,
           watch: grunt.option("watch") ? {
             path: "src/main/webapp/app",
             atBegin: true
           } : false
         }
+      }
+    },
+
+    rename: {
+      declaration: {
+        src: 'src/main/webapp/app/app.d.ts',
+        dest: 'target/hawtio.d.ts'
       }
     },
 
@@ -59,7 +66,7 @@ module.exports = function(grunt) {
     watch: {
       tsc: {
         files: [ "src/main/webapp/app/**/*.ts" ],
-        tasks: [ "typescript:base", "karma:unit", "ngAnnotate:app" ]
+        tasks: [ "typescript:base", 'rename', "karma:unit", "ngAnnotate:app" ]
       },
       tests: {
         files: [ "src/test/specs/**/*.js" ],
@@ -143,6 +150,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask("default", [
     "typescript:base",
+    "rename",
     "karma:unit",
     "ngAnnotate:app"
   ])
