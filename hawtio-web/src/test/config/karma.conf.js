@@ -17,13 +17,9 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      libdir + 'rainbow.js',
-      libdir + 'language/javascript.js',
-      libdir + 'language/generic.js',
-      libdir + 'logger.min.js',
+      libdir + '../bower_components/**/*.js',
       libdir + 'loggingInit.js',
       libdir + 'd3.v3.min.js',
-      libdir + 'jquery-1.8.2.min.js',
       libdir + 'jolokia-min.js',
       libdir + 'cubism.v1.min.js',
       libdir + 'jolokia-cubism-min.js',
