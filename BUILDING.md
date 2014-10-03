@@ -157,20 +157,25 @@ You can run the unit tests via maven:
     cd hawtio-web
     mvn test
 
-
-If you have a local build (or ideally are using the _mvn -Pwatch_ command to do incremental compiles as you edit the source), you can open the unit test runner via the following:
-
-    cd hawtio-web
-    open src/test/specs/SpecRunner.html
-
-This then runs the [unit test specifications](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/test/specs/spec) using [Jasmine](http://pivotal.github.com/jasmine/) in your browser. From this web page you can use the browser's debugger and console to debug and introspect unit test cases as required.
-
 If you are using the [LiveReload plugin for Chrome](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) you can then hit the LiveReload icon to the right of the address bar and if you are running the watch profile, the tests are re-run every time there is a compile:
 
-    mvn -Pwatch
+    mvn test -Pwatch
 
 Now the unit tests are all re-run whenever you edit the source.
 
+## Running integration Tests
+
+You can run the Protractor integration tests via maven:
+
+    cd hawtio-web
+    mvn verify -Pitests
+
+This will run the tests headlessly, in [Phantomjs](http://phantomjs.org/).
+
+If you want to see the tests running, you can run them in Chrome with:
+
+    cd hawtio-web
+    mvn verify -Pitests,chrome
 
 ## How to Get Started Hacking the Code
 

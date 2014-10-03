@@ -20,8 +20,10 @@
     -->
     <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
     <watch>false</watch>
-    <gruntOptions />
     <gruntArguments>default</gruntArguments>
+    <gruntOptions />
+    <gruntE2EArguments>e2e</gruntE2EArguments>
+    <gruntE2EOptions>--headless</gruntE2EOptions>
     <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
     <webappDirectory>${webapp-outdir}</webappDirectory>
     <warSourceExcludes />
@@ -167,6 +169,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-util</artifactId>
+      <version>${jetty-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>${jetty-plugin-groupId}</groupId>
       <artifactId>jetty-maven-plugin</artifactId>
       <version>${jetty-version}</version>
@@ -175,10 +183,6 @@
         <exclusion>
           <groupId>org.eclipse.jetty.orbit</groupId>
           <artifactId>javax.servlet</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-jsp</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -672,7 +676,7 @@
       <plugin>
         <groupId>${jetty-plugin-groupId}</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty-version}</version>
+        <version>${jetty-plugin-version}</version>
         <configuration>
           <webAppConfig>
             <contextPath>${context}</contextPath>
@@ -681,6 +685,8 @@
             </baseResource>
           </webAppConfig>
           <scanIntervalSeconds>0</scanIntervalSeconds>
+          <stopKey>foo</stopKey>
+          <stopPort>9999</stopPort>
           <useTestScope>true</useTestScope>
           <connectors>
             <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
@@ -1068,6 +1074,90 @@
         <warSourceExcludes>app/app.js.map</warSourceExcludes>
         <gruntArguments>dist</gruntArguments>
       </properties>
+    </profile>
+
+    <profile>
+      <id>chrome</id>
+      <properties>
+        <gruntE2EOptions/>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>itests</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>grunt e2e</id>
+                <goals>
+                  <goal>grunt</goal>
+                </goals>
+                <phase>integration-test</phase>
+                <configuration>
+                  <arguments>${gruntE2EArguments} ${gruntE2EOptions}</arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>${jetty-plugin-groupId}</groupId>
+            <artifactId>jetty-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>start-jetty</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+                <configuration>
+                  <daemon>true</daemon>
+                  <scanIntervalSeconds>0</scanIntervalSeconds>
+                </configuration>
+              </execution>
+              <execution>
+                <id>stop-jetty</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.gmaven</groupId>
+            <artifactId>groovy-maven-plugin </artifactId>
+            <version>2.0</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <phase>verify</phase>
+                <configuration>
+                  <source>
+                    def result = new AntBuilder().fileset( dir:"${basedir}/target/failsafe-reports", includes:'TEST-*.xml' ) {
+                    containsregexp expression:'(failures|errors)="[^0]'
+                    }*.file
+
+                    if (result.size > 0) then fail('There were Protractor test failures/errors')
+                  </source>
+                </configuration>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-all</artifactId>
+                <version>2.3.7</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
   </profiles>

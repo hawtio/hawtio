@@ -178,6 +178,22 @@ module.exports = function(grunt) {
           bases: ['src/main/webapp', 'dist']
         }
       }
+    },
+
+    protractor: {
+      options: {
+        configFile: "node_modules/protractor/docs/referenceConf.js", // Default config file
+        keepAlive: true, // If false, the grunt process stops when the test fails.
+        noColor: grunt.option("color") ? false : true, // If true, protractor will not use colors in its output.
+        args: {
+          // Arguments passed to the command
+        }
+      },
+      all: {   // Grunt requires at least one target to run so you can simply put 'all: {}' here too.
+        options: {
+          configFile: grunt.option("headless") ? "src/test/e2e-specs/phantomjs_conf.js" : "src/test/e2e-specs/conf.js"
+        }
+      }
     }
 
   });
@@ -212,6 +228,10 @@ module.exports = function(grunt) {
     'uglify:generated',
     'usemin',
     'cacheBust'
+  ]);
+
+  grunt.registerTask("e2e", [
+    "protractor:all"
   ]);
 
 };

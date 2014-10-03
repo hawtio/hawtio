@@ -122,7 +122,7 @@
 -->
     <jetty-version>7.6.9.v20130131</jetty-version>
     <jetty-plugin-groupId>org.mortbay.jetty</jetty-plugin-groupId>
-    <jetty-plugin-version>7.6.9.v20130131</jetty-plugin-version>
+    <jetty-plugin-version>7.6.16.v20140903</jetty-plugin-version>
     <jetty-webapp-artifactId>jetty-webapp</jetty-webapp-artifactId>
 
     <jgit-version>3.0.0.201306101825-r</jgit-version>

@@ -285,7 +285,7 @@
       </plugin>
 
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>${jetty-plugin-groupId}</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty-plugin-version}</version>
         <configuration>
