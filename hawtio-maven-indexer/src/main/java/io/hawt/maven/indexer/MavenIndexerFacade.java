@@ -7,15 +7,7 @@ import io.hawt.util.Strings;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
-import org.apache.maven.index.ArtifactInfo;
-import org.apache.maven.index.ArtifactInfoGroup;
-import org.apache.maven.index.Field;
-import org.apache.maven.index.FlatSearchRequest;
-import org.apache.maven.index.FlatSearchResponse;
-import org.apache.maven.index.GroupedSearchRequest;
-import org.apache.maven.index.GroupedSearchResponse;
-import org.apache.maven.index.Indexer;
-import org.apache.maven.index.MAVEN;
+import org.apache.maven.index.*;
 import org.apache.maven.index.context.ContextMemberProvider;
 import org.apache.maven.index.context.IndexCreator;
 import org.apache.maven.index.context.IndexingContext;
@@ -23,11 +15,7 @@ import org.apache.maven.index.context.StaticContextMemberProvider;
 import org.apache.maven.index.expr.SourcedSearchExpression;
 import org.apache.maven.index.expr.UserInputSearchExpression;
 import org.apache.maven.index.search.grouping.GAGrouping;
-import org.apache.maven.index.updater.IndexUpdateRequest;
-import org.apache.maven.index.updater.IndexUpdateResult;
-import org.apache.maven.index.updater.IndexUpdater;
-import org.apache.maven.index.updater.ResourceFetcher;
-import org.apache.maven.index.updater.WagonHelper;
+import org.apache.maven.index.updater.*;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.events.TransferEvent;
 import org.apache.maven.wagon.events.TransferListener;
@@ -40,13 +28,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -67,7 +51,6 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
     private boolean updateIndexOnStartup = true;
     private int maximumIndexersPerMachine = 20;
     private String[] repositories = {
-            "http://repository.jboss.org/nexus/content/repositories/ea@id=ea.jboss..release.repo",
             "http://repo1.maven.org/maven2@central"
     };
     private String cacheDirName;
@@ -76,8 +59,9 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
     private FileLocker fileLock;
     private String lockFileName = "hawtio.lock";
     private final AtomicBoolean indexing = new AtomicBoolean();
+    private int failedRepos = 0;
 
-    public MavenIndexerFacade()  {
+    public MavenIndexerFacade() {
     }
 
     public void init() throws Exception {
@@ -100,10 +84,10 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
         LOG.info("Storing maven index files in local directory: " + dir.getAbsolutePath());
 
         // now lets create all the indexers
-        try {
-            indexing.set(true);
+        indexing.set(true);
 
-            for (String repository : repositories) {
+        for (String repository : repositories) {
+            try {
                 if (StringUtils.isNotBlank(repository)) {
                     String url = repository;
                     String id = repository;
@@ -128,17 +112,17 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
                 File indexDir = new File(mergedDir, "index");
                 ContextMemberProvider members = new StaticContextMemberProvider(indexContexts.values());
                 mergedContext = indexer.createMergedIndexingContext("all-context", "all", cacheDir, indexDir, true, members);
+
+            } catch (Exception e) {
+                failedRepos++;
+                LOG.warn("Failed to fetch Maven repository: {}", repository, e);
             }
-            if (updateIndexOnStartup) {
-                downloadOrUpdateIndices();
-            }
-        } catch (Exception e) {
-            LOG.info("Failed to fetch the maven repository indices due to: " + e.getMessage());
-            LOG.info("Some or all maven repository data may not be available for searching...");
-        } finally {
-            indexing.set(false);
+        }
+        if (updateIndexOnStartup) {
+            downloadOrUpdateIndices();
         }
 
+        indexing.set(false);
         try {
             super.init();
         } catch (Exception e) {
@@ -152,65 +136,76 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
         Set<Map.Entry<String, IndexingContext>> entries = indexContexts.entrySet();
 
         if (!entries.isEmpty()) {
-            LOG.info("Updating the maven indices. This may take a while, please be patient...");
+            LOG.info("Maven repos to be indexed: [{}]", getRepositories());
+            LOG.info("Updating maven indices. This may take a while, please be patient...");
         }
 
         for (Map.Entry<String, IndexingContext> entry : entries) {
             final String contextId = entry.getKey();
-            IndexingContext context = entry.getValue();
-            Date contextTime = context.getTimestamp();
+            try {
 
-            TransferListener listener = new AbstractTransferListener() {
-                public void transferStarted(TransferEvent transferEvent) {
-                    LOG.debug(contextId + ": Downloading " + transferEvent.getResource().getName());
-                }
+                IndexingContext context = entry.getValue();
+                Date contextTime = context.getTimestamp();
 
-                public void transferProgress(TransferEvent transferEvent, byte[] buffer, int length) {
-                }
+                TransferListener listener = new AbstractTransferListener() {
+                    public void transferStarted(TransferEvent transferEvent) {
+                        LOG.debug(contextId + ": Downloading " + transferEvent.getResource().getName());
+                    }
 
-                public void transferCompleted(TransferEvent transferEvent) {
-                    LOG.debug(contextId + ": Download complete");
-                }
-            };
-            ResourceFetcher resourceFetcher = new WagonHelper.WagonFetcher(httpWagon, listener, null, null);
+                    public void transferProgress(TransferEvent transferEvent, byte[] buffer, int length) {
+                    }
 
-            IndexUpdateRequest updateRequest = new IndexUpdateRequest(context, resourceFetcher);
-            IndexUpdateResult updateResult = indexUpdater.fetchAndUpdateIndex(updateRequest);
-            if (updateResult.isFullUpdate()) {
-                LOG.debug(contextId + ": Full index update completed on index");
-            } else {
-                Date timestamp = updateResult.getTimestamp();
-                if (timestamp != null && timestamp.equals(contextTime)) {
-                    LOG.debug(contextId + ": No index update needed, index is up to date!");
+                    public void transferCompleted(TransferEvent transferEvent) {
+                        LOG.debug(contextId + ": Download complete");
+                    }
+                };
+                ResourceFetcher resourceFetcher = new WagonHelper.WagonFetcher(httpWagon, listener, null, null);
+
+                IndexUpdateRequest updateRequest = new IndexUpdateRequest(context, resourceFetcher);
+                IndexUpdateResult updateResult = indexUpdater.fetchAndUpdateIndex(updateRequest);
+                if (updateResult.isFullUpdate()) {
+                    LOG.debug(contextId + ": Full index update completed on index");
                 } else {
-                    LOG.debug(contextId + ": Incremental update happened, change covered " + contextTime + " - " + timestamp + " period.");
+                    Date timestamp = updateResult.getTimestamp();
+                    if (timestamp != null && timestamp.equals(contextTime)) {
+                        LOG.debug(contextId + ": No index update needed, index is up to date!");
+                    } else {
+                        LOG.debug(contextId + ": Incremental update happened, change covered " + contextTime + " - " + timestamp + " period.");
+                    }
                 }
+
+            } catch (Exception e) {
+                failedRepos++;
+                LOG.warn("Failed to fetch Maven repository:", contextId , e);
             }
         }
 
         if (!entries.isEmpty()) {
-            LOG.info("Completed updating {} maven indices.", entries.size());
+            LOG.info("Updated successfully {}/{} maven indexes.", entries.size() - failedRepos, entries.size());
         }
     }
 
     public void destroy() throws Exception {
-        if (indexing.get()) {
-            LOG.warn("Destroying MavenIndexer while indexing is still in progress, this could lead to errors ... ");
-        } else {
-            LOG.debug("Destroying MavenIndexer ... ");
-        }
-
-        if (fileLock != null) {
-            fileLock.destroy();
-        }
-        if (indexer != null) {
-            for (IndexingContext context : indexContexts.values()) {
-                // close cleanly
-                indexer.closeIndexingContext(context, false);
+        try {
+            if (indexing.get()) {
+                LOG.warn("Destroying MavenIndexer while indexing is still in progress, this could lead to errors ... ");
+            } else {
+                LOG.debug("Destroying MavenIndexer ... ");
             }
-            indexContexts.clear();
+
+            if (fileLock != null) {
+                fileLock.destroy();
+            }
+            if (indexer != null) {
+                for (IndexingContext context : indexContexts.values()) {
+                    // close cleanly
+                    indexer.closeIndexingContext(context, false);
+                }
+                indexContexts.clear();
+            }
+        } finally{
+            super.destroy();
         }
-        super.destroy();
     }
 
     public boolean isUpdateIndexOnStartup() {
@@ -230,12 +225,40 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
     }
 
     @Override
-    public String[] getRepositories() {
-        return repositories;
+    public String getRepositories() {
+        String result = "";
+        for (int i = 0; i < repositories.length; i++) {
+            result += repositories[i];
+            if (i < repositories.length - 1) {
+                result += ",";
+            }
+        }
+        return result;
     }
 
-    public void setRepositories(String[] repositories) {
-        this.repositories = repositories;
+    /**
+     * Param is a String, instead of a String[] to support properties replacement in blueprint
+     * @param repositories
+     */
+    public void setRepositories(String repositories) {
+        if (Strings.isBlank(repositories)) {
+            this.repositories = new String[0];
+        } else {
+            repositories = repositories.trim();
+            String[] input = repositories.split(",");
+            List<String> result = new ArrayList<>(input.length);
+            for (int i = 0; i < input.length; i++) {
+                String url = input[i].trim();
+                url = url.trim();
+                try{
+                    new URL(url);
+                    result.add(url);
+                } catch(MalformedURLException e){
+                    LOG.error("Discarding unsupported URL provided to Maven Indexer Service: {}", url, e );
+                }
+            }
+            result.toArray(this.repositories);
+        }
     }
 
     public int getMaximumIndexersPerMachine() {

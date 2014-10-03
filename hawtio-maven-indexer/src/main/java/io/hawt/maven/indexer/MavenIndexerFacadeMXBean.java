@@ -51,5 +51,5 @@ public interface MavenIndexerFacadeMXBean {
     /**
      * Returns the current list of maven repositories
      */
-    String[] getRepositories();
+    String getRepositories();
 }
