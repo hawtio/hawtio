@@ -14,11 +14,13 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>hawtio</title>
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/Font-Awesome/css/font-awesome.css" />
+    <!-- endbower -->
 
     <!-- build:css css/hawtio-base.css -->
-    <link rel="stylesheet" href="css/bootstrap.css" type="text/css"/>
     <link rel="stylesheet" href="css/bootstrap-responsive.css" type="text/css"/>
-    <link rel="stylesheet" href="css/font-awesome.css" type="text/css"/>
     <link rel="stylesheet" href="css/ui.dynatree.css" type="text/css"/>
     <link rel="stylesheet" href="css/dynatree-icons.css" type="text/css"/>
     <link rel="stylesheet" href="css/datatable.bootstrap.css" type="text/css"/>
@@ -325,11 +327,14 @@ div.log-stack-trace p:nth-child(odd) {
     <!-- build:js app/app.js -->
     <!--
       Configure logging first thing...
-    -->
-    <script type="text/javascript" src="lib/rainbow.js"></script>
-    <script type="text/javascript" src="lib/language/javascript.js"></script>
-    <script type="text/javascript" src="lib/language/generic.js"></script>
-    <script type="text/javascript" src="lib/logger.min.js"></script>
+      -->
+
+    <!-- bower:js -->
+    <script src="bower_components/jquery/jquery.js"></script>
+    <script src="bower_components/js-logger/logger.js"></script>
+    <script src="bower_components/bootstrap/bootstrap.js"></script>
+    <script src="bower_components/d3/d3.js"></script>
+    <!-- endbower -->
 
     <script type="text/javascript" src="lib/loggingInit.js"></script>
 
@@ -337,17 +342,11 @@ div.log-stack-trace p:nth-child(odd) {
     <script type="text/javascript" src="lib/hawtio-plugin-loader.js"></script>
 
     <!-- charts and jolokia for jmx -->
-    <script type="text/javascript" src="lib/d3.v3.min.js"></script>
-
-    <script type="text/javascript" src="lib/jquery-1.8.2.min.js"></script>
     <script type="text/javascript" src="lib/jolokia-min.js"></script>
-
     <script type="text/javascript" src="lib/cubism.v1.min.js"></script>
     <script type="text/javascript" src="lib/jolokia-cubism-min.js"></script>
     <script type="text/javascript" src="lib/jolokia-simple-min.js"></script>
 
-    <!-- UI framework -->
-    <script type="text/javascript" src="lib/bootstrap.min.js"></script>
     <!--
     TODO add patch for dashboard until angular supports nested custom injections
     <script type="text/javascript" src="lib/angular.min.js"></script>
@@ -399,7 +398,6 @@ div.log-stack-trace p:nth-child(odd) {
     <script type="text/javascript" src="lib/elastic.min.js"></script>
 
     <!-- Dangle -->
-    <script type="text/javascript" src="lib/d3.min.js"></script>
     <script type="text/javascript" src="lib/dangle.min.js"></script>
 
     <!-- source format -->

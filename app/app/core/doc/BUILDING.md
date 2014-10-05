@@ -78,6 +78,18 @@ Now when you do **Tools** -> **watchTsc** you should get a output in the Run tab
 
 I spotted a handy tip on [this issue](http://youtrack.jetbrains.com/issue/IDEA-74931), if you move the cursor to the end of the Run window after some compiler output has been generated - pressing keys _META_ + _end_ (which on OS X is the _fn_ and the _option/splat_ and right cursor keys) then IDEA keeps scrolling to the end of the output automatically; you don't have to then keep pressing the "Scroll to end" button ;)
 
+## Adding additional Javascript dependencies
+
+Hawtio is (finally) adopting [bower](http://bower.io/) for managing dependencies, these are automatically pulled in when building the project.  It's now really easy to add third-party Javascript/CSS stuff to hawtio:
+
+* cd into 'hawtio-web', and build it
+* source 'setenv.sh' to add bower to your PATH (it's under node_modules) if you haven't installed it globally
+* run 'bower install --save some-awesome-tool'
+* run 'grunt bower wiredep' to update index.html
+* commit the change to bower.json and index.html
+
+When running in development mode be sure you've run 'grunt bower' if you see 404 errors for the bower package you've installed.  This is normally done for you when running 'mvn clean install'
+
 ## Using LiveReload
 
 The LiveReload support allows you to edit the code and for the browser to automatically reload once things are compiled. This makes for a much more fun and RAD development environment!!
@@ -145,20 +157,25 @@ You can run the unit tests via maven:
     cd hawtio-web
     mvn test
 
-
-If you have a local build (or ideally are using the _mvn -Pwatch_ command to do incremental compiles as you edit the source), you can open the unit test runner via the following:
-
-    cd hawtio-web
-    open src/test/specs/SpecRunner.html
-
-This then runs the [unit test specifications](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/test/specs/spec) using [Jasmine](http://pivotal.github.com/jasmine/) in your browser. From this web page you can use the browser's debugger and console to debug and introspect unit test cases as required.
-
 If you are using the [LiveReload plugin for Chrome](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) you can then hit the LiveReload icon to the right of the address bar and if you are running the watch profile, the tests are re-run every time there is a compile:
 
-    mvn -Pwatch
+    mvn test -Pwatch
 
 Now the unit tests are all re-run whenever you edit the source.
 
+## Running integration Tests
+
+You can run the Protractor integration tests via maven:
+
+    cd hawtio-web
+    mvn verify -Pitests
+
+This will run the tests headlessly, in [Phantomjs](http://phantomjs.org/).
+
+If you want to see the tests running, you can run them in Chrome with:
+
+    cd hawtio-web
+    mvn verify -Pitests,chrome
 
 ## How to Get Started Hacking the Code
 

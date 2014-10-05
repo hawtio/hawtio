@@ -189,13 +189,13 @@ module Core {
           }
           answer.username = response;
           // 'user' is what the UserServlet returns if authenticationEnabled is off
-          if (response !== 'user') {
+          if (response === 'user') {
             log.debug("Authentication disabled, using dummy credentials");
             // use a dummy login details
-            answer.username = 'user';
             answer.loginDetails = {};
+          } else {
+            log.debug("User details loaded from existing session: ", StringHelpers.toString(answer));
           }
-          log.debug("User details loaded from existing session: ", StringHelpers.toString(answer));
           executePostLoginTasks();
           Core.$apply($rootScope);
         },

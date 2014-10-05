@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1412293316939
+Bnd-LastModified: 1412469851094
 Build-Jdk: 1.7.0_55
-Build-Timestamp: Thu, 2 Oct 2014 23:37:11 +0000
+Build-Timestamp: Sun, 5 Oct 2014 00:39:08 +0000
 Built-By: jenkins
 Bundle-ClassPath: .
 Bundle-Description: hawtio :: hawtio-directives
@@ -27,36 +27,36 @@ Export-Package: lib.codemirror.mode.css;version="1.5.0.SNAPSHOT",img.ico
  .5.0.SNAPSHOT",app.ui.doc;version="1.5.0.SNAPSHOT",img.datatable;versio
  n="1.5.0.SNAPSHOT",app.forcegraph.js;version="1.5.0.SNAPSHOT",app.datat
  able.html;version="1.5.0.SNAPSHOT",img.dots;version="1.5.0.SNAPSHOT",li
- b.language;version="1.5.0.SNAPSHOT",font;version="1.5.0.SNAPSHOT",lib.c
- odemirror.mode.htmlembedded;version="1.5.0.SNAPSHOT",io.hawt.web.direct
- ives;uses:="javax.servlet";version="1.5.0.SNAPSHOT",lib.codemirror.mode
- ;version="1.5.0.SNAPSHOT",app.forcegraph.doc.img;version="1.5.0.SNAPSHO
- T",lib.codemirror;version="1.5.0.SNAPSHOT",img.dynatree;version="1.5.0.
- SNAPSHOT",lib.codemirror.mode.yaml;version="1.5.0.SNAPSHOT",lib.codemir
- ror.theme;version="1.5.0.SNAPSHOT",app.ui.html;version="1.5.0.SNAPSHOT"
- ,css;version="1.5.0.SNAPSHOT",lib.codemirror.addon.lint;version="1.5.0.
- SNAPSHOT",img.icons.jvm;version="1.5.0.SNAPSHOT",app.forcegraph;version
- ="1.5.0.SNAPSHOT",app.datatable.js;version="1.5.0.SNAPSHOT",lib.codemir
- ror.mode.javascript;version="1.5.0.SNAPSHOT",img.icons.wiki;version="1.
- 5.0.SNAPSHOT",lib.codemirror.mode.diff;version="1.5.0.SNAPSHOT",lib.cod
- emirror.addon.edit;version="1.5.0.SNAPSHOT",javax.servlet.resources;ver
- sion="1.5.0.SNAPSHOT",app.ui.html.test;version="1.5.0.SNAPSHOT",lib.cod
- emirror.mode.coffeescript;version="1.5.0.SNAPSHOT",lib.codemirror.mode.
- sass;version="1.5.0.SNAPSHOT",img.icons.activemq;version="1.5.0.SNAPSHO
- T",img.icons.dozer;version="1.5.0.SNAPSHOT",app;version="1.5.0.SNAPSHOT
- ",img.icons.camel;version="1.5.0.SNAPSHOT",lib.codemirror.addon.hint;ve
- rsion="1.5.0.SNAPSHOT",app.ui.js;version="1.5.0.SNAPSHOT",lib.codemirro
- r.addon.fold;version="1.5.0.SNAPSHOT",app.forcegraph.doc;version="1.5.0
- .SNAPSHOT",lib.codemirror.mode.htmlmixed;version="1.5.0.SNAPSHOT",lib.c
- odemirror.mode.markdown;version="1.5.0.SNAPSHOT",lib.codemirror.mode.pr
- operties;version="1.5.0.SNAPSHOT",lib.codemirror.addon.format;version="
- 1.5.0.SNAPSHOT",css.codemirror.themes;version="1.5.0.SNAPSHOT",lib.code
- mirror.mode.shell;version="1.5.0.SNAPSHOT",img.icons;version="1.5.0.SNA
- PSHOT",lib;version="1.5.0.SNAPSHOT",css.codemirror;version="1.5.0.SNAPS
- HOT",app.datatable.doc;version="1.5.0.SNAPSHOT",lib.codemirror.mode.xml
- ;version="1.5.0.SNAPSHOT",lib.codemirror.keymap;version="1.5.0.SNAPSHOT
- ",lib.codemirror.addon.runmode;version="1.5.0.SNAPSHOT",javax.servlet.h
- ttp;uses:="javax.servlet";version="1.5.0.SNAPSHOT"
+ b.language;version="1.5.0.SNAPSHOT",lib.codemirror.mode.htmlembedded;ve
+ rsion="1.5.0.SNAPSHOT",io.hawt.web.directives;uses:="javax.servlet";ver
+ sion="1.5.0.SNAPSHOT",lib.codemirror.mode;version="1.5.0.SNAPSHOT",app.
+ forcegraph.doc.img;version="1.5.0.SNAPSHOT",lib.codemirror;version="1.5
+ .0.SNAPSHOT",img.dynatree;version="1.5.0.SNAPSHOT",lib.codemirror.mode.
+ yaml;version="1.5.0.SNAPSHOT",lib.codemirror.theme;version="1.5.0.SNAPS
+ HOT",app.ui.html;version="1.5.0.SNAPSHOT",css;version="1.5.0.SNAPSHOT",
+ lib.codemirror.addon.lint;version="1.5.0.SNAPSHOT",img.icons.jvm;versio
+ n="1.5.0.SNAPSHOT",app.forcegraph;version="1.5.0.SNAPSHOT",app.datatabl
+ e.js;version="1.5.0.SNAPSHOT",lib.codemirror.mode.javascript;version="1
+ .5.0.SNAPSHOT",img.icons.wiki;version="1.5.0.SNAPSHOT",lib.codemirror.m
+ ode.diff;version="1.5.0.SNAPSHOT",lib.codemirror.addon.edit;version="1.
+ 5.0.SNAPSHOT",javax.servlet.resources;version="1.5.0.SNAPSHOT",app.ui.h
+ tml.test;version="1.5.0.SNAPSHOT",lib.codemirror.mode.coffeescript;vers
+ ion="1.5.0.SNAPSHOT",lib.codemirror.mode.sass;version="1.5.0.SNAPSHOT",
+ img.icons.activemq;version="1.5.0.SNAPSHOT",img.icons.dozer;version="1.
+ 5.0.SNAPSHOT",app;version="1.5.0.SNAPSHOT",img.icons.camel;version="1.5
+ .0.SNAPSHOT",lib.codemirror.addon.hint;version="1.5.0.SNAPSHOT",app.ui.
+ js;version="1.5.0.SNAPSHOT",lib.codemirror.addon.fold;version="1.5.0.SN
+ APSHOT",app.forcegraph.doc;version="1.5.0.SNAPSHOT",lib.codemirror.mode
+ .htmlmixed;version="1.5.0.SNAPSHOT",lib.codemirror.mode.markdown;versio
+ n="1.5.0.SNAPSHOT",lib.codemirror.mode.properties;version="1.5.0.SNAPSH
+ OT",lib.codemirror.addon.format;version="1.5.0.SNAPSHOT",css.codemirror
+ .themes;version="1.5.0.SNAPSHOT",lib.codemirror.mode.shell;version="1.5
+ .0.SNAPSHOT",img.icons;version="1.5.0.SNAPSHOT",lib;version="1.5.0.SNAP
+ SHOT",css.codemirror;version="1.5.0.SNAPSHOT",app.datatable.doc;version
+ ="1.5.0.SNAPSHOT",lib.codemirror.mode.xml;version="1.5.0.SNAPSHOT",lib.
+ codemirror.keymap;version="1.5.0.SNAPSHOT",lib.codemirror.addon.runmode
+ ;version="1.5.0.SNAPSHOT",javax.servlet.http;uses:="javax.servlet";vers
+ ion="1.5.0.SNAPSHOT"
 Implementation-Title: hawtio-directives
 Implementation-URL: http://hawt.io/hawtio-directives/
 Implementation-Vendor: JBoss by Red Hat
@@ -69,7 +69,7 @@ Os-Name: Linux
 Os-Version: 2.6.32-494.el6.x86_64
 Scm-Connection: scm:git:git@github.com:hawtio/hawtio.git/hawtio-directiv
  es
-Scm-Revision: ce6ccc2150e28a589d185477cd79a75fbc80d9c1
+Scm-Revision: 59822e88c7cf1c53e0d1c597c2a468b5fcc4efb7
 Scm-Url: git@github.com:hawtio/hawtio.git/hawtio-directives
 Specification-Title: hawtio-directives
 Specification-Vendor: JBoss by Red Hat

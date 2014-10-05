@@ -16995,13 +16995,13 @@ var Core;
                         }
                         answer.username = response;
 
-                        if (response !== 'user') {
+                        if (response === 'user') {
                             Core.log.debug("Authentication disabled, using dummy credentials");
 
-                            answer.username = 'user';
                             answer.loginDetails = {};
+                        } else {
+                            Core.log.debug("User details loaded from existing session: ", StringHelpers.toString(answer));
                         }
-                        Core.log.debug("User details loaded from existing session: ", StringHelpers.toString(answer));
                         Core.executePostLoginTasks();
                         Core.$apply($rootScope);
                     },
