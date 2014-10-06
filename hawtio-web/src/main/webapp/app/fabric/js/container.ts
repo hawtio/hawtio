@@ -267,6 +267,10 @@ module Fabric {
               $scope.updateContainerProperty('resolver', $scope.row);
             }
           });
+          if ($scope.row.jmxDomains && $scope.row.jmxDomains.length > 0) {
+            // we want the JMX domains sorted ignoring case
+            $scope.row.jmxDomains = $scope.row.jmxDomains.sortBy((n) => n.toString().toLowerCase());
+          }
         }
         Core.$apply($scope);
       }

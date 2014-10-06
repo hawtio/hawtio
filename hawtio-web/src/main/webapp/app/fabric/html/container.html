@@ -160,7 +160,7 @@
                 <dt>Services:</dt>
                 <dd>
                   <ul class="service-list">
-                    <li ng-repeat="service in services" ng-switch="service.type">
+                    <li ng-repeat="service in services track by $index" ng-switch="service.type">
                       <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
                       <img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}">
                     </li>
