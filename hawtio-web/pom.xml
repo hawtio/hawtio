@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.4.22</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -1079,7 +1079,7 @@
     <profile>
       <id>chrome</id>
       <properties>
-        <gruntE2EOptions/>
+        <gruntE2EOptions />
       </properties>
     </profile>
 
@@ -1143,7 +1143,7 @@
                     containsregexp expression:'(failures|errors)="[^0]'
                     }*.file
 
-                    if (result.size > 0) then fail('There were Protractor test failures/errors')
+                    if (result.size &gt; 0) then fail('There were Protractor test failures/errors')
                   </source>
                 </configuration>
               </execution>
