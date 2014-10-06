@@ -243,9 +243,9 @@ module Perspective {
   export function choosePerspective($location, workspace: Workspace, jolokia, localStorage) {
     var answer;
 
+    var url = $location.url();
     var inFMC = Fabric.isFMCContainer(workspace);
     if (inFMC) {
-      var url = $location.url();
 
       // noisy!
       //log.debug("Checking url: ", url);
@@ -263,6 +263,10 @@ module Perspective {
           (url.startsWith("/wiki") && url.has("/fabric/profiles")) ||
           (url.startsWith("/wiki") && url.has("/editFeatures"))) {
         answer = "fabric";
+      }
+    } else if (Kubernetes.isKubernetes(workspace)) {
+      if (url.startsWith("/kubernetes")) {
+        answer = "kubernetes";
       }
     }
     answer = answer || Perspective.defaultPerspective || "container";

@@ -138,6 +138,17 @@ Then use [livereload-jvm](https://github.com/davidB/livereload-jvm) manually as 
 
 Now just run Tomcat as normal. You should have full LiveReload support and should not have to stop/start Tomcat or recreate the WAR etc!
 
+### Running hawtio against Kubernetes / OpenShift
+
+To try use a local build of OpensShift V3 based on Kubernetes / Docker first [build the openshift executable](https://github.com/openshift/origin#getting-started) and run **openshift start**
+
+Then run the following:
+
+    export KUBERNETES_MASTER=http://localhost:8080/
+    mvn test-compile exec:java -DjettyPort=8181
+
+You should now see the Kubernetes / OpenShift console at http://localhost:8181/
+
 #### Using your build from inside Jetty
 
 For jetty you need to name the symlink directory **hawtio.war** for [Jetty to recognise it](http://www.eclipse.org/jetty/documentation/current/automatic-webapp-deployment.html).

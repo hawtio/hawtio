@@ -6,6 +6,10 @@ module Kubernetes {
     id:string;
   }
 
+  export function isKubernetes(workspace) {
+    return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Kubernetes"});
+  }
+
   export function setJson($scope, id, collection) {
     $scope.id = id;
     if (!$scope.fetched) {
