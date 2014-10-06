@@ -51,7 +51,8 @@
 
       <div class="fabric-page-header row-fluid">
         <!-- TODO - rework this header in the css -->
-        <h2 style="display: inline-block; margin: 0"><i ng-class="statusIcon()"></i> Container: <span class="contained c-wide" title="{{row.id}}">{{row.id}}</span></h2>
+        <!-- need the 1px padding so the header and value is aligned -->
+        <h2 style="display: inline-block; margin: 0"><i ng-class="statusIcon()"></i> Container: <span class="contained c-wide" style="padding-bottom: 1px" title="{{row.id}}">{{row.id}}</span></h2>
         <div class="pull-right">
           <button class="btn"
                   ng-show="canConnect(row)"
@@ -84,7 +85,7 @@
         <div class="span4 offset1 container-profile-settings">
           <p></p>
           <h4>Associated Profiles</h4>
-          <p>This is the current set of profiles that are assigned to this container.  Use the add and remove buttons to manage this list.</p>
+          <p>This is the current set of profiles that are assigned to this container.  Use the add and remove buttons to manage this set.</p>
 
           <div class="container-detail-profiles">
             <div class="pull-right container-detail-profile-buttons">
@@ -160,7 +161,7 @@
                 <dt>Services:</dt>
                 <dd>
                   <ul class="service-list">
-                    <li ng-repeat="service in services" ng-switch="service.type">
+                    <li ng-repeat="service in services track by $index" ng-switch="service.type">
                       <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
                       <img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}">
                     </li>

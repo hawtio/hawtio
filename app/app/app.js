@@ -7836,9 +7836,10 @@ var ActiveMQ;
 var ActiveMQ;
 (function (ActiveMQ) {
     ActiveMQ.BrowseQueueController = ActiveMQ._module.controller("ActiveMQ.BrowseQueueController", [
-        "$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", function ($scope, workspace, jolokia, localStorage, location, activeMQMessage) {
+        "$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", function ($scope, workspace, jolokia, localStorage, location, activeMQMessage, $timeout) {
             $scope.searchText = '';
 
+            $scope.allMessages = [];
             $scope.messages = [];
             $scope.headers = {};
             $scope.mode = 'text';
@@ -7854,8 +7855,10 @@ var ActiveMQ;
                 showColumnMenu: true,
                 enableColumnResize: true,
                 enableColumnReordering: true,
+                enableHighlighting: true,
                 filterOptions: {
-                    filterText: ''
+                    filterText: '',
+                    useExternalFilter: true
                 },
                 selectWithCheckboxOnly: true,
                 showSelectionCheckbox: true,
@@ -7908,10 +7911,15 @@ var ActiveMQ;
                 "DoubleProperties", "StringProperties"];
 
             $scope.$watch('workspace.selection', function () {
-                if (workspace.moveIfViewInvalid())
+                if (workspace.moveIfViewInvalid()) {
                     return;
+                }
 
                 setTimeout(loadTable, 50);
+            });
+
+            $scope.$watch('gridOptions.filterOptions.filterText', function (filterText) {
+                filterMessages(filterText);
             });
 
             $scope.openMessageDialog = function (message) {
@@ -7998,18 +8006,19 @@ var ActiveMQ;
             function populateTable(response) {
                 var data = response.value;
                 if (!angular.isArray(data)) {
-                    $scope.messages = [];
+                    $scope.allMessages = [];
                     angular.forEach(data, function (value, idx) {
-                        $scope.messages.push(value);
+                        $scope.allMessages.push(value);
                     });
                 } else {
-                    $scope.messages = data;
+                    $scope.allMessages = data;
                 }
-                angular.forEach($scope.messages, function (message) {
+                angular.forEach($scope.allMessages, function (message) {
                     message.headerHtml = createHeaderHtml(message);
                     message.bodyText = createBodyText(message);
                 });
                 Core.$apply($scope);
+                filterMessages($scope.gridOptions.filterOptions.filterText);
             }
 
             function createBodyText(message) {
@@ -8164,6 +8173,99 @@ var ActiveMQ;
             function moveSuccess() {
                 operationSuccess();
                 workspace.loadTree();
+            }
+
+            function filterMessages(filter) {
+                var searchConditions = buildSearchConditions(filter);
+
+                evalFilter(searchConditions);
+            }
+
+            function evalFilter(searchConditions) {
+                if (!searchConditions || searchConditions.length === 0) {
+                    $scope.messages = $scope.allMessages;
+                } else {
+                    ActiveMQ.log.debug("Filtering conditions:", searchConditions);
+                    $scope.messages = $scope.allMessages.filter(function (message) {
+                        ActiveMQ.log.debug("Message:", message);
+
+                        var matched = true;
+
+                        $.each(searchConditions, function (index, condition) {
+                            if (!condition.column) {
+                                matched = matched && evalMessage(message, condition.regex);
+                            } else {
+                                matched = matched && (message[condition.column] && condition.regex.test(message[condition.column])) || (message.StringProperties && message.StringProperties[condition.column] && condition.regex.test(message.StringProperties[condition.column]));
+                            }
+                        });
+
+                        return matched;
+                    });
+                }
+            }
+
+            function evalMessage(message, regex) {
+                var jmsHeaders = ['JMSDestination', 'JMSDeliveryMode', 'JMSExpiration', 'JMSPriority', 'JMSMessageID', 'JMSTimestamp', 'JMSCorrelationID', 'JMSReplyTo', 'JMSType', 'JMSRedelivered'];
+                for (var i = 0; i < jmsHeaders.length; i++) {
+                    var header = jmsHeaders[i];
+                    if (message[header] && regex.test(message[header])) {
+                        return true;
+                    }
+                }
+
+                if (message.StringProperties) {
+                    for (var property in message.StringProperties) {
+                        if (regex.test(message.StringProperties[property])) {
+                            return true;
+                        }
+                    }
+                }
+
+                if (message.bodyText && regex.test(message.bodyText)) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            function getRegExp(str, modifiers) {
+                try  {
+                    return new RegExp(str, modifiers);
+                } catch (err) {
+                    return new RegExp(str.replace(/(\^|\$|\(|\)|<|>|\[|\]|\{|\}|\\|\||\.|\*|\+|\?)/g, '\\$1'));
+                }
+            }
+
+            function buildSearchConditions(filterText) {
+                var searchConditions = [];
+                var qStr;
+                if (!(qStr = $.trim(filterText))) {
+                    return;
+                }
+                var columnFilters = qStr.split(";");
+                for (var i = 0; i < columnFilters.length; i++) {
+                    var args = columnFilters[i].split(':');
+                    if (args.length > 1) {
+                        var columnName = $.trim(args[0]);
+                        var columnValue = $.trim(args[1]);
+                        if (columnName && columnValue) {
+                            searchConditions.push({
+                                column: columnName,
+                                columnDisplay: columnName.replace(/\s+/g, '').toLowerCase(),
+                                regex: getRegExp(columnValue, 'i')
+                            });
+                        }
+                    } else {
+                        var val = $.trim(args[0]);
+                        if (val) {
+                            searchConditions.push({
+                                column: '',
+                                regex: getRegExp(val, 'i')
+                            });
+                        }
+                    }
+                }
+                return searchConditions;
             }
         }]);
 })(ActiveMQ || (ActiveMQ = {}));
@@ -15851,12 +15953,15 @@ var Perspective;
     function choosePerspective($location, workspace, jolokia, localStorage) {
         var answer;
 
+        var url = $location.url();
         var inFMC = Fabric.isFMCContainer(workspace);
         if (inFMC) {
-            var url = $location.url();
-
             if (url.startsWith("/perspective/defaultPage") || url.startsWith("/login") || url.startsWith("/welcome") || url.startsWith("/index") || url.startsWith("/fabric") || url.startsWith("/kubernetes") || url.startsWith("/profiles") || url.startsWith("/dashboard") || url.startsWith("/health") || (url.startsWith("/wiki") && url.has("/fabric/profiles")) || (url.startsWith("/wiki") && url.has("/editFeatures"))) {
                 answer = "fabric";
+            }
+        } else if (Kubernetes.isKubernetes(workspace)) {
+            if (url.startsWith("/kubernetes")) {
+                answer = "kubernetes";
             }
         }
         answer = answer || Perspective.defaultPerspective || "container";
@@ -21451,6 +21556,37 @@ var Perspective;
     Perspective.containerPerspectiveEnabled = true;
 
     Perspective.metadata = {
+        kubernetes: {
+            icon: {
+                title: "Kubernetes",
+                type: "img",
+                src: "img/icons/kubernetes.svg"
+            },
+            label: "Kubernetes",
+            isValid: function (workspace) {
+                return !Fabric.isFMCContainer(workspace) && Kubernetes.isKubernetes(workspace);
+            },
+            lastPage: "#/kubernetes/pods",
+            topLevelTabs: {
+                includes: [
+                    {
+                        id: "kubernetes"
+                    },
+                    {
+                        href: "#/wiki"
+                    },
+                    {
+                        href: "#/docker"
+                    },
+                    {
+                        href: "#/dashboard"
+                    },
+                    {
+                        href: "#/health"
+                    }
+                ]
+            }
+        },
         fabric: {
             icon: {
                 title: "Fabric8",
@@ -26253,6 +26389,11 @@ var Fabric;
                                 $scope.updateContainerProperty('resolver', $scope.row);
                             }
                         });
+                        if ($scope.row.jmxDomains && $scope.row.jmxDomains.length > 0) {
+                            $scope.row.jmxDomains = $scope.row.jmxDomains.sortBy(function (n) {
+                                return n.toString().toLowerCase();
+                            });
+                        }
                     }
                     Core.$apply($scope);
                 }
@@ -37445,6 +37586,11 @@ var Karaf;
 })(Karaf || (Karaf = {}));
 var Kubernetes;
 (function (Kubernetes) {
+    function isKubernetes(workspace) {
+        return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, { type: "Kubernetes" });
+    }
+    Kubernetes.isKubernetes = isKubernetes;
+
     function setJson($scope, id, collection) {
         $scope.id = id;
         if (!$scope.fetched) {
@@ -37480,10 +37626,17 @@ var Kubernetes;
 
     function initShared($scope) {
         $scope.$on("labelFilterUpdate", function ($event, text) {
-            if (Core.isBlank($scope.tableConfig.filterOptions.filterText)) {
+            var filterText = $scope.tableConfig.filterOptions.filterText;
+            if (Core.isBlank(filterText)) {
                 $scope.tableConfig.filterOptions.filterText = text;
             } else {
-                $scope.tableConfig.filterOptions.filterText = $scope.tableConfig.filterOptions.filterText + " " + text;
+                var expressions = filterText.split(/\s+/);
+                if (expressions.any(text)) {
+                    expressions = expressions.remove(text);
+                    $scope.tableConfig.filterOptions.filterText = expressions.join(" ");
+                } else {
+                    $scope.tableConfig.filterOptions.filterText = filterText + " " + text;
+                }
             }
         });
     }

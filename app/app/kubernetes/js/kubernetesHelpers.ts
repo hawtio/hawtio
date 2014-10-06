@@ -6,6 +6,10 @@ module Kubernetes {
     id:string;
   }
 
+  export function isKubernetes(workspace) {
+    return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Kubernetes"});
+  }
+
   export function setJson($scope, id, collection) {
     $scope.id = id;
     if (!$scope.fetched) {
@@ -41,12 +45,19 @@ module Kubernetes {
 
   export function initShared($scope) {
     $scope.$on("labelFilterUpdate", ($event, text) => {
-      if (Core.isBlank($scope.tableConfig.filterOptions.filterText)) {
+      var filterText = $scope.tableConfig.filterOptions.filterText;
+      if (Core.isBlank(filterText)) {
         $scope.tableConfig.filterOptions.filterText = text;
       } else {
-        $scope.tableConfig.filterOptions.filterText = $scope.tableConfig.filterOptions.filterText + " " + text;
+        var expressions = filterText.split(/\s+/);
+        if (expressions.any(text)) {
+          // lets exclude this filter expression
+          expressions = expressions.remove(text);
+          $scope.tableConfig.filterOptions.filterText = expressions.join(" ");
+        } else {
+          $scope.tableConfig.filterOptions.filterText = filterText + " " + text;
+        }
       }
     });
   }
-
 }
