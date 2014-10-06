@@ -51,7 +51,8 @@
 
       <div class="fabric-page-header row-fluid">
         <!-- TODO - rework this header in the css -->
-        <h2 style="display: inline-block; margin: 0"><i ng-class="statusIcon()"></i> Container: <span class="contained c-wide" title="{{row.id}}">{{row.id}}</span></h2>
+        <!-- need the 1px padding so the header and value is aligned -->
+        <h2 style="display: inline-block; margin: 0"><i ng-class="statusIcon()"></i> Container: <span class="contained c-wide" style="padding-bottom: 1px" title="{{row.id}}">{{row.id}}</span></h2>
         <div class="pull-right">
           <button class="btn"
                   ng-show="canConnect(row)"
