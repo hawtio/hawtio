@@ -160,6 +160,7 @@ module ActiveMQ {
       return (queuesFolder) ? queuesFolder.children.map(n => n.title) : [];
     };
 
+
     function populateTable(response) {
       var data = response.value;
       if (!angular.isArray(data)) {
@@ -320,18 +321,26 @@ module ActiveMQ {
     }
 
     function loadTable() {
-      var selection = workspace.selection;
-      if (selection) {
-        var mbean = selection.objectName;
-        if (mbean) {
-          $scope.dlq = false;
-          jolokia.getAttribute(mbean, "DLQ", onSuccess(onDlq, {silent: true}));
-          jolokia.request(
-                  {type: 'exec', mbean: mbean, operation: 'browse()'},
-                  onSuccess(populateTable));
-        }
+      var objName;
+
+      if(workspace.selection){
+        objName = workspace.selection.objectName;
+      } else{
+        // in case of refresh
+        var key = location.search()['nid'];
+        var node = workspace.keyToNodeMap[key];
+        objName = node.objectName;
+      }
+
+      if (objName) {
+        $scope.dlq = false;
+        jolokia.getAttribute(objName, "DLQ", onSuccess(onDlq, {silent: true}));
+        jolokia.request(
+          {type: 'exec', mbean: objName, operation: 'browse()'},
+          onSuccess(populateTable));
       }
     }
+
 
     function onDlq(response) {
       $scope.dlq = response;
