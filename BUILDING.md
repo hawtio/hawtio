@@ -115,7 +115,7 @@ In another shell (as mentioned above in the "Incrementally compile TypeScript" s
     cd hawtio-web
     mvn compile -Pwatch
 
-Enable Live Reload in your browser (open [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) then click on the Live Reload icon to the right of the location bar).
+Enable Live Reload in your browser (open [http://localhost:8282/hawtio/](http://localhost:8282/hawtio/) then click on the Live Reload icon to the right of the location bar).
 
 Now if you change any source (HTML, CSS, TypeScript, JS library) the browser will auto reload on the fly. No more context-switching between your IDE and your browser! :)
 
@@ -140,14 +140,16 @@ Now just run Tomcat as normal. You should have full LiveReload support and shoul
 
 ### Running hawtio against Kubernetes / OpenShift
 
-To try use a local build of OpensShift V3 based on Kubernetes / Docker first [build the openshift executable](https://github.com/openshift/origin#getting-started) and run **openshift start**
+To try run a [local OpenShift V3 based on Kubernetes / Docker](http://fabric8.io/v2/getStarted.html) first
+
+    opeshift start
 
 Then run the following:
 
-    export KUBERNETES_MASTER=http://localhost:8080/
-    mvn test-compile exec:java -DjettyPort=8181
+    export KUBERNETES_MASTER=http://localhost:8282/
+    mvn test-compile exec:java
 
-You should now see the Kubernetes / OpenShift console at http://localhost:8181/
+You should now see the Kubernetes / OpenShift console at http://localhost:8282/
 
 #### Using your build from inside Jetty
 
@@ -158,7 +160,7 @@ For jetty you need to name the symlink directory **hawtio.war** for [Jetty to re
 
 Another thing is for symlinks jetty uses the real directory name rather than the symlink name for the context path.
 
-So to open the application in Jetty open [http://localhost:8080/hawtio-web-1.3-SNAPSHOT/](http://localhost:8080/hawtio-web-1.3-SNAPSHOT/)
+So to open the application in Jetty open [http://localhost:8282/hawtio-web-1.3-SNAPSHOT/](http://localhost:8282/hawtio-web-1.3-SNAPSHOT/)
 
 
 ## Running Unit Tests

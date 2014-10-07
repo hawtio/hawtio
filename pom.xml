@@ -49,7 +49,7 @@
   </prerequisites>
 
   <properties>
-    <jettyPort>8080</jettyPort>
+    <jettyPort>8282</jettyPort>
     <context>/hawtio</context>
     <hawtio-config-dir>${basedir}/hawtio-config</hawtio-config-dir>
     <hawtio-config-repo>https://github.com/hawtio/hawtio-config.git</hawtio-config-repo>
