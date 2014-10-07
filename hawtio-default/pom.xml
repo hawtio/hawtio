@@ -85,6 +85,11 @@
       <artifactId>hawtio-aether</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-kubernetes</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>io.hawt</groupId>
