@@ -10,7 +10,6 @@
 module RBAC {
 
   export var pluginName:string = "hawtioRbac";
-  export var log:Logging.Logger = Logger.get("RBAC");
   export var _module = angular.module(pluginName, ["hawtioCore"]);
 
   _module.factory('rbacTasks', ["postLoginTasks", "jolokia", "$q",  (postLoginTasks:Core.Tasks, jolokia, $q:ng.IQService) => {
@@ -72,10 +71,13 @@ module RBAC {
     // or not
     rbacTasks.addTask("JMXTreePostProcess", () => {
       workspace.addTreePostProcessor((tree) => {
-        var mbeans = {};
-        flattenMBeanTree(mbeans, tree);
-        var requests = [];
         rbacTasks.getACLMBean().then((mbean) => {
+          // log.debug("JMX tree is: ", tree);
+          var mbeans = {};
+          flattenMBeanTree(mbeans, tree);
+          // log.debug("Flattened MBeans: ", mbeans);
+          var requests = [];
+          var bulkRequest = {};
           angular.forEach(mbeans, (value, key) => {
             if (!('canInvoke' in value)) {
               requests.push({
@@ -84,19 +86,38 @@ module RBAC {
                 operation: 'canInvoke(java.lang.String)',
                 arguments: [key]
               });
+              if (value.mbean && value.mbean.op) {
+                var ops:Core.JMXOperations = value.mbean.op;
+                value.mbean.opByString = {};
+                var opList = [];
+                angular.forEach(ops, (op:Core.JMXOperation, opName:string) => {
+                  var operationString = Core.operationToString(opName, op.args);
+                  // enrich the mbean by indexing the full operation string so we can easily look it up later
+                  value.mbean.opByString[operationString] = op;
+                  opList.push(operationString);
+                });
+                bulkRequest[key] = opList;
+              }
             }
+          });
+          requests.push({
+            type: 'exec',
+            mbean: mbean,
+            operation: 'canInvoke(java.util.Map)',
+            arguments: [bulkRequest]
           });
           var numResponses:number = 0;
           var maybeRedraw = () => {
             numResponses = numResponses + 1;
             if (numResponses >= requests.length) {
               workspace.redrawTree();
+              log.debug("Enriched workspace tree: ", tree);
               Core.$apply($rootScope);
             }
           };
           jolokia.request(requests, onSuccess((response) => {
             var mbean = response.request.arguments[0];
-            if (mbean) {
+            if (mbean && angular.isString(mbean)) {
               mbeans[mbean]['canInvoke'] = response.value;
               var toAdd:string = "cant-invoke";
               if (response.value) {
@@ -104,6 +125,14 @@ module RBAC {
               }
               mbeans[mbean]['addClass'] = stripClasses(mbeans[mbean]['addClass']);
               mbeans[mbean]['addClass'] = addClass(mbeans[mbean]['addClass'], toAdd);
+              maybeRedraw();
+            } else {
+              var responseMap = response.value;
+              angular.forEach(responseMap, (operations, mbeanName) => {
+                angular.forEach(operations, (data, operationName) => {
+                  mbeans[mbeanName].mbean.opByString[operationName]['canInvoke'] = data['CanInvoke'];
+                });
+              });
               maybeRedraw();
             }
           }, {

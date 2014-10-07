@@ -1,3 +1,6 @@
+/// <reference path="../../baseHelpers.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
 /**
  * @module Camel
  */
@@ -682,17 +685,17 @@ module Camel {
    * @method
    */
     // TODO should be a service
-  export function getSelectionCamelContextMBean(workspace:Workspace) {
+  export function getSelectionCamelContextMBean(workspace:Core.Workspace) {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
-      var tree = workspace.tree;
+      var tree:Core.Folder = workspace.tree;
       if (tree && selection) {
         var domain = selection.domain;
         if (domain && contextId) {
           var result = tree.navigate(domain, contextId, "context");
           if (result && result.children) {
-            var contextBean = result.children.first();
+            var contextBean:any = result.children.first();
             if (contextBean.title) {
               var contextName = contextBean.title;
               return "" + domain + ":context=" + contextId + ',type=context,name="' + contextName + '"';
@@ -917,7 +920,7 @@ module Camel {
         if (domain && contextId) {
           var result = tree.navigate(domain, contextId, "routes");
           if (result && result.children) {
-            var mbean = result.children.find(m => m.title === routeId);
+            var mbean:any = result.children.find(m => m.title === routeId);
             if (mbean) {
               return mbean.objectName;
             }
@@ -938,7 +941,7 @@ module Camel {
         if (domain && contextId) {
           var result = tree.navigate(domain, contextId, "context");
           if (result && result.children) {
-            var contextBean = result.children.first();
+            var contextBean:any = result.children.first();
             if (contextBean.version) {
               // read the cached version
               return contextBean.version;

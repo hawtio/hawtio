@@ -940,6 +940,35 @@ var Core;
 (function (Core) {
     
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    function operationToString(name, args) {
+        if (!args || args.length === 0) {
+            return name + '()';
+        } else {
+            return name + '(' + args.map(function (arg) {
+                return arg.type;
+            }).join(',') + ')';
+        }
+    }
+    Core.operationToString = operationToString;
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
+    
+
     var Folder = (function () {
         function Folder(title) {
             this.title = title;
@@ -958,6 +987,7 @@ var Core;
             this.tooltip = null;
             this.entity = null;
             this.version = null;
+            this.mbean = null;
             this.addClass = escapeTreeCssStyles(title);
         }
         Folder.prototype.get = function (key) {
@@ -1375,7 +1405,7 @@ var Core;
         };
 
         Workspace.prototype.loadTree = function () {
-            var flags = { ignoreErrors: true, maxDepth: 2 };
+            var flags = { ignoreErrors: true, maxDepth: 7 };
             var data = this.jolokia.list(null, onSuccess(null, flags));
 
             if (data) {
@@ -1468,7 +1498,7 @@ var Core;
         Workspace.prototype.populateTree = function (response) {
             if (!Object.equal(this.treeResponse, response.value)) {
                 this.treeResponse = response.value;
-                log.debug("JMX tree has been loaded!");
+                log.debug("JMX tree has been loaded, data: ", response.value);
 
                 var rootId = 'root';
                 var separator = '-';
@@ -1478,21 +1508,21 @@ var Core;
                 var tree = new Core.Folder('MBeans');
                 tree.key = rootId;
                 var domains = response.value;
-                for (var domain in domains) {
-                    var domainClass = escapeDots(domain);
-                    var mbeans = domains[domain];
-                    for (var path in mbeans) {
+                for (var domainName in domains) {
+                    var domainClass = escapeDots(domainName);
+                    var domain = domains[domainName];
+                    for (var mbeanName in domain) {
                         var entries = {};
-                        var folder = this.folderGetOrElse(tree, domain);
+                        var folder = this.folderGetOrElse(tree, domainName);
 
-                        folder.domain = domain;
+                        folder.domain = domainName;
                         if (!folder.key) {
-                            folder.key = rootId + separator + domain;
+                            folder.key = rootId + separator + domainName;
                         }
-                        var folderNames = [domain];
+                        var folderNames = [domainName];
                         folder.folderNames = folderNames;
                         folderNames = folderNames.clone();
-                        var items = path.split(',');
+                        var items = mbeanName.split(',');
                         var paths = [];
                         var typeName = null;
                         var serviceName = null;
@@ -1521,7 +1551,7 @@ var Core;
                         });
 
                         var configureFolder = function (folder, name) {
-                            folder.domain = domain;
+                            folder.domain = domainName;
                             if (!folder.key) {
                                 folder.key = rootId + separator + folderNames.join(separator);
                             }
@@ -1564,7 +1594,7 @@ var Core;
                             }
                         });
                         var key = rootId + separator + folderNames.join(separator) + separator + lastPath;
-                        var objectName = domain + ":" + path;
+                        var objectName = domainName + ":" + mbeanName;
 
                         if (folder) {
                             folder = this.folderGetOrElse(folder, lastPath);
@@ -1574,6 +1604,7 @@ var Core;
                                 angular.bind(this, configureFolder, folder, lastPath)();
                                 folder.title = Core.trimQuotes(lastPath);
                                 folder.objectName = objectName;
+                                folder.mbean = domain[mbeanName];
                                 folder.typeName = typeName;
 
                                 var addFolderByDomain = function (owner, typeName) {
@@ -1582,16 +1613,16 @@ var Core;
                                         map = {};
                                         owner[typeName] = map;
                                     }
-                                    var value = map[domain];
+                                    var value = map[domainName];
                                     if (!value) {
-                                        map[domain] = folder;
+                                        map[domainName] = folder;
                                     } else {
                                         var array = null;
                                         if (angular.isArray(value)) {
                                             array = value;
                                         } else {
                                             array = [value];
-                                            map[domain] = array;
+                                            map[domainName] = array;
                                         }
                                         array.push(folder);
                                     }
@@ -8144,14 +8175,20 @@ var ActiveMQ;
             }
 
             function loadTable() {
-                var selection = workspace.selection;
-                if (selection) {
-                    var mbean = selection.objectName;
-                    if (mbean) {
-                        $scope.dlq = false;
-                        jolokia.getAttribute(mbean, "DLQ", onSuccess(onDlq, { silent: true }));
-                        jolokia.request({ type: 'exec', mbean: mbean, operation: 'browse()' }, onSuccess(populateTable));
-                    }
+                var objName;
+
+                if (workspace.selection) {
+                    objName = workspace.selection.objectName;
+                } else {
+                    var key = location.search()['nid'];
+                    var node = workspace.keyToNodeMap[key];
+                    objName = node.objectName;
+                }
+
+                if (objName) {
+                    $scope.dlq = false;
+                    jolokia.getAttribute(objName, "DLQ", onSuccess(onDlq, { silent: true }));
+                    jolokia.request({ type: 'exec', mbean: objName, operation: 'browse()' }, onSuccess(populateTable));
                 }
             }
 
@@ -34665,6 +34702,15 @@ var Jmx;
                 var node = workspace.selection;
                 if (node === null || angular.isUndefined(node) || node.key !== $scope.lastKey) {
                     $scope.attributesInfoCache = null;
+
+                    if (mbean == null) {
+                        var _key = $location.search()['nid'];
+                        var _node = workspace.keyToNodeMap[_key];
+                        if (_node) {
+                            mbean = _node.objectName;
+                        }
+                    }
+
                     if (mbean) {
                         var asQuery = function (node) {
                             var path = escapeMBeanPath(node);
@@ -34686,7 +34732,7 @@ var Jmx;
 
                 if (mbean) {
                     request = { type: 'read', mbean: mbean };
-                    if (node.key !== $scope.lastKey) {
+                    if (node === null || angular.isUndefined(node) || node.key !== $scope.lastKey) {
                         $scope.gridOptions.columnDefs = Jmx.propertiesColumnDefs;
                         $scope.gridOptions.enableRowClickSelection = false;
                     }
@@ -42194,6 +42240,8 @@ var Quartz;
 })(Quartz || (Quartz = {}));
 var RBAC;
 (function (RBAC) {
+    RBAC.log = Logger.get("RBAC");
+
     function flattenMBeanTree(mbeans, tree) {
         if (!Core.isBlank(tree.objectName)) {
             mbeans[tree.objectName] = tree;
@@ -42260,7 +42308,6 @@ var RBAC;
 var RBAC;
 (function (RBAC) {
     RBAC.pluginName = "hawtioRbac";
-    RBAC.log = Logger.get("RBAC");
     RBAC._module = angular.module(RBAC.pluginName, ["hawtioCore"]);
 
     RBAC._module.factory('rbacTasks', [
@@ -42316,10 +42363,12 @@ var RBAC;
 
             rbacTasks.addTask("JMXTreePostProcess", function () {
                 workspace.addTreePostProcessor(function (tree) {
-                    var mbeans = {};
-                    RBAC.flattenMBeanTree(mbeans, tree);
-                    var requests = [];
                     rbacTasks.getACLMBean().then(function (mbean) {
+                        var mbeans = {};
+                        RBAC.flattenMBeanTree(mbeans, tree);
+
+                        var requests = [];
+                        var bulkRequest = {};
                         angular.forEach(mbeans, function (value, key) {
                             if (!('canInvoke' in value)) {
                                 requests.push({
@@ -42328,19 +42377,38 @@ var RBAC;
                                     operation: 'canInvoke(java.lang.String)',
                                     arguments: [key]
                                 });
+                                if (value.mbean && value.mbean.op) {
+                                    var ops = value.mbean.op;
+                                    value.mbean.opByString = {};
+                                    var opList = [];
+                                    angular.forEach(ops, function (op, opName) {
+                                        var operationString = Core.operationToString(opName, op.args);
+
+                                        value.mbean.opByString[operationString] = op;
+                                        opList.push(operationString);
+                                    });
+                                    bulkRequest[key] = opList;
+                                }
                             }
+                        });
+                        requests.push({
+                            type: 'exec',
+                            mbean: mbean,
+                            operation: 'canInvoke(java.util.Map)',
+                            arguments: [bulkRequest]
                         });
                         var numResponses = 0;
                         var maybeRedraw = function () {
                             numResponses = numResponses + 1;
                             if (numResponses >= requests.length) {
                                 workspace.redrawTree();
+                                RBAC.log.debug("Enriched workspace tree: ", tree);
                                 Core.$apply($rootScope);
                             }
                         };
                         jolokia.request(requests, onSuccess(function (response) {
                             var mbean = response.request.arguments[0];
-                            if (mbean) {
+                            if (mbean && angular.isString(mbean)) {
                                 mbeans[mbean]['canInvoke'] = response.value;
                                 var toAdd = "cant-invoke";
                                 if (response.value) {
@@ -42348,6 +42416,14 @@ var RBAC;
                                 }
                                 mbeans[mbean]['addClass'] = RBAC.stripClasses(mbeans[mbean]['addClass']);
                                 mbeans[mbean]['addClass'] = RBAC.addClass(mbeans[mbean]['addClass'], toAdd);
+                                maybeRedraw();
+                            } else {
+                                var responseMap = response.value;
+                                angular.forEach(responseMap, function (operations, mbeanName) {
+                                    angular.forEach(operations, function (data, operationName) {
+                                        mbeans[mbeanName].mbean.opByString[operationName]['canInvoke'] = data['CanInvoke'];
+                                    });
+                                });
                                 maybeRedraw();
                             }
                         }, {

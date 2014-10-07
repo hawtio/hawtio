@@ -81,7 +81,7 @@ Currently all of the **hawtio** Maven Plugins provides the following common opti
   </tr>  
   <tr>
     <td>port</td>
-    <td>8080</td>
+    <td>8282</td>
     <td>The port number to use for the embedded hawtio web console.</td>
   </tr>  
   <tr>
@@ -229,7 +229,7 @@ In the &lt;configuration&gt; section we can configure the plugin with any of the
         <logClasspath>true</logClasspath>
       </configuration>
 
-And to change the port number from 8080 to 8090 do:
+And to change the port number from 8282 to 8090 do:
 
       <configuration>
         <logClasspath>true</logClasspath>

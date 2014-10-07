@@ -2,7 +2,9 @@
  * @module Core
  */
 
-/// <reference path="./corePlugin.ts"/>
+/// <reference path="corePlugin.ts"/>
+/// <reference path="jolokiaInterfaces.ts"/>
+/// <reference path="folder.ts"/>
 /// <reference path="../../jmx/js/jmxHelpers.ts"/>
 module Core {
 
@@ -26,8 +28,8 @@ module Core {
   export class Workspace {
     public operationCounter = 0;
     public selection:NodeSelection;
-    public tree:any = new Folder('MBeans');
-    public treeResponse = {};
+    public tree:Folder = new Folder('MBeans');
+    public treeResponse = <Core.JMXDomains> {};
     public mbeanTypesToDomain = {};
     public mbeanServicesToDomain = {};
     public attributeColumnDefs = {};
@@ -88,8 +90,7 @@ module Core {
     public loadTree() {
       // Make an initial blocking call to ensure the JMX tree is populated while the
       // app is initializing...
-      //var flags = {error: initialLoadError, ajaxError: initialLoadError, maxDepth: 2};
-      var flags = {ignoreErrors: true, maxDepth: 2};
+      var flags = {ignoreErrors: true, maxDepth: 7};
       var data = this.jolokia.list(null, onSuccess(null, flags));
 
       if (data) {
@@ -98,8 +99,6 @@ module Core {
       this.populateTree({
         value: data
       });
-      // we now only reload the tree if the TreeWatcher mbean is present...
-      // Core.register(this.jolokia, this, {type: 'list', maxDepth: 2}, onSuccess(angular.bind(this, this.populateTree), {maxDepth: 2}));
     }
 
 
@@ -192,8 +191,8 @@ module Core {
 
     public populateTree(response) {
       if (!Object.equal(this.treeResponse, response.value)) {
-        this.treeResponse = response.value;
-        log.debug("JMX tree has been loaded!");
+        this.treeResponse = <Core.JMXDomains> response.value;
+        log.debug("JMX tree has been loaded, data: ", response.value);
 
         var rootId = 'root';
         var separator = '-';
@@ -202,22 +201,22 @@ module Core {
         this.keyToNodeMap = {};
         var tree = new Folder('MBeans');
         tree.key = rootId;
-        var domains = response.value;
-        for (var domain in domains) {
-          var domainClass = escapeDots(domain);
-          var mbeans = domains[domain];
-          for (var path in mbeans) {
+        var domains = <Core.JMXDomains> response.value;
+        for (var domainName in domains) {
+          var domainClass = escapeDots(domainName);
+          var domain = <Core.JMXDomain> domains[domainName];
+          for (var mbeanName in domain) {
             var entries = {};
-            var folder = this.folderGetOrElse(tree, domain);
+            var folder = this.folderGetOrElse(tree, domainName);
             //if (!folder) continue;
-            folder.domain = domain;
+            folder.domain = domainName;
             if (!folder.key) {
-              folder.key = rootId + separator + domain;
+              folder.key = rootId + separator + domainName;
             }
-            var folderNames = [domain];
+            var folderNames = [domainName];
             folder.folderNames = folderNames;
             folderNames = folderNames.clone();
-            var items = path.split(',');
+            var items = mbeanName.split(',');
             var paths = [];
             var typeName = null;
             var serviceName = null;
@@ -248,7 +247,7 @@ module Core {
 
 
           var configureFolder = function(folder: Folder, name: string) {
-              folder.domain = domain;
+              folder.domain = domainName;
               if (!folder.key) {
                 folder.key = rootId + separator + folderNames.join(separator);
               }
@@ -291,7 +290,7 @@ module Core {
               }
             });
             var key = rootId + separator + folderNames.join(separator) + separator + lastPath;
-            var objectName = domain + ":" + path;
+            var objectName = domainName + ":" + mbeanName;
 
             if (folder) {
               folder = this.folderGetOrElse(folder, lastPath);
@@ -302,6 +301,7 @@ module Core {
                 angular.bind(this, configureFolder, folder, lastPath)();
                 folder.title = trimQuotes(lastPath);
                 folder.objectName = objectName;
+                folder.mbean = domain[mbeanName];
                 folder.typeName = typeName;
 
                 var addFolderByDomain = function(owner, typeName) {
@@ -310,16 +310,16 @@ module Core {
                       map = {};
                       owner[typeName] = map;
                     }
-                    var value = map[domain];
+                    var value = map[domainName];
                     if (!value) {
-                      map[domain] = folder;
+                      map[domainName] = folder;
                     } else {
                       var array = null;
                       if (angular.isArray(value)) {
                         array = value;
                       } else {
                         array = [value];
-                        map[domain] = array;
+                        map[domainName] = array;
                       }
                       array.push(folder);
                     }

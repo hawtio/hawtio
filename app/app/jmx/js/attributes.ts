@@ -393,6 +393,16 @@ module Jmx {
       if (node === null || angular.isUndefined(node) || node.key !== $scope.lastKey) {
         // cache attributes info, so we know if the attribute is read-only or read-write, and also the attribute description
         $scope.attributesInfoCache = null;
+
+        if(mbean == null) {
+          // in case of refresh
+          var _key = $location.search()['nid'];
+          var _node = workspace.keyToNodeMap[_key];
+          if (_node) {
+            mbean = _node.objectName;
+          }
+        }
+
         if (mbean) {
           var asQuery = (node) => {
             var path = escapeMBeanPath(node);
@@ -414,7 +424,7 @@ module Jmx {
 
       if (mbean) {
         request = { type: 'read', mbean: mbean };
-        if (node.key !== $scope.lastKey) {
+        if (node === null || angular.isUndefined(node) || node.key !== $scope.lastKey) {
           $scope.gridOptions.columnDefs = propertiesColumnDefs;
           $scope.gridOptions.enableRowClickSelection = false;
         }

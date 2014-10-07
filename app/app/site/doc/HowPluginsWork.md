@@ -21,7 +21,7 @@ In terms of JS code, we're using JavaScript modules to keep things separated, so
 
 If you want so see some example code, here's a [log plugin](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts) designed to work with an MBean which queries the log statements from SLF4J/log4j, etc.
 
-* We can [map single page URIs templates](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L5) to HTML templates (partials) and controllers. This will add the view at http://localhost:8080/hawtio/#/logs if you are running hawtio locally.
+* We can [map single page URIs templates](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L5) to HTML templates (partials) and controllers. This will add the view at http://localhost:8282/hawtio/#/logs if you are running hawtio locally.
 * These AngularJS modules can be added and removed at runtime inside the same single page application without requiring a reload.
 * [Here's where we register a top-level navigation bar item](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L12) for this the new log tab.
 * Here's a [sub tab in the JMX plugin](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L19) which is only visible if you select a node in the JMX tree.

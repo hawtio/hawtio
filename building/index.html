@@ -226,7 +226,7 @@ $FILE_PATH$&#40;$LINE$,$COLUMN$&#41;\:
 <pre><code>cd hawtio-web
 mvn compile -Pwatch</code></pre>
 
-<p>Enable Live Reload in your browser (open <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a> then click on the Live Reload icon to the right of the location bar).</p>
+<p>Enable Live Reload in your browser (open <a href="http://localhost:8282/hawtio/">http://localhost:8282/hawtio/</a> then click on the Live Reload icon to the right of the location bar).</p>
 
 <p>Now if you change any source (HTML, CSS, TypeScript, JS library) the browser will auto reload on the fly. No more context-switching between your IDE and your browser! :)</p>
 
@@ -251,14 +251,16 @@ ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.3-SNAPSHOT hawtio</code></pre>
 
 <h3 id = "Running_hawtio_against_Kubernetes___OpenShift">Running hawtio against Kubernetes / OpenShift</h3>
 
-<p>To try use a local build of OpensShift V3 based on Kubernetes / Docker first <a href="https://github.com/openshift/origin#getting-started">build the openshift executable</a> and run <strong>openshift start</strong></p>
+<p>To try run a <a href="http://fabric8.io/v2/getStarted.html">local OpenShift V3 based on Kubernetes / Docker</a> first</p>
+
+<pre><code>opeshift start</code></pre>
 
 <p>Then run the following:</p>
 
-<pre><code>export KUBERNETES_MASTER=http://localhost:8080/
-mvn test-compile exec:java -DjettyPort=8181</code></pre>
+<pre><code>export KUBERNETES_MASTER=http://localhost:8282/
+mvn test-compile exec:java</code></pre>
 
-<p>You should now see the Kubernetes / OpenShift console at http://localhost:8181/</p>
+<p>You should now see the Kubernetes / OpenShift console at http://localhost:8282/</p>
 
 <h4 id = "Using_your_build_from_inside_Jetty">Using your build from inside Jetty</h4>
 
@@ -269,7 +271,7 @@ ln -s ~/hawtio/hawtio-web/target/hawtio-web-1.3-SNAPSHOT hawtio.war</code></pre>
 
 <p>Another thing is for symlinks jetty uses the real directory name rather than the symlink name for the context path.</p>
 
-<p>So to open the application in Jetty open <a href="http://localhost:8080/hawtio-web-1.3-SNAPSHOT/">http://localhost:8080/hawtio-web-1.3-SNAPSHOT/</a></p>
+<p>So to open the application in Jetty open <a href="http://localhost:8282/hawtio-web-1.3-SNAPSHOT/">http://localhost:8282/hawtio-web-1.3-SNAPSHOT/</a></p>
 
 <h2 id = "Running_Unit_Tests">Running Unit Tests</h2>
 
