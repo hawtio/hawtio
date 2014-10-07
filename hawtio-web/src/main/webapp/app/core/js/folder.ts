@@ -1,3 +1,4 @@
+/// <reference path="coreHelpers.ts"/>
 /**
  * @module Core
  */
@@ -54,7 +55,7 @@ module Core {
      * @type NodeSelection
      * @optional
      */
-    children?:NodeSelection[];
+    children?:Array<NodeSelection>;
     /**
      * @property parent
      * @type NodeSelection
@@ -118,7 +119,7 @@ module Core {
 
     key:string = null;
     typeName:string = null;
-    children:NodeSelection[] = [];
+    children = <Array<NodeSelection>>[];
     folderNames:string[] = [];
     domain:string = null;
     objectName:string = null;
@@ -131,6 +132,7 @@ module Core {
     tooltip:string = null;
     entity:any = null;
     version:string = null;
+    mbean:JMXMBean = null;
 
     get(key:string):NodeSelection {
       return this.map[key];
@@ -146,7 +148,7 @@ module Core {
      * @param {Array} paths
      * @return {NodeSelection}
      */
-    public navigate(...paths:string[]) {
+    public navigate(...paths:string[]):NodeSelection {
       var node:NodeSelection = this;
       paths.forEach((path) => {
         if (node) {

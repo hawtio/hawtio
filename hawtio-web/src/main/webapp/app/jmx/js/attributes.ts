@@ -394,11 +394,13 @@ module Jmx {
         // cache attributes info, so we know if the attribute is read-only or read-write, and also the attribute description
         $scope.attributesInfoCache = null;
 
-        if(mbean == null){
+        if(mbean == null) {
           // in case of refresh
           var _key = $location.search()['nid'];
           var _node = workspace.keyToNodeMap[_key];
-          mbean = _node.objectName;
+          if (_node) {
+            mbean = _node.objectName;
+          }
         }
 
         if (mbean) {

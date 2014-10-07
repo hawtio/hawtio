@@ -1,7 +1,10 @@
+/// <reference path="../../core/js/coreHelpers.ts"/>
 /**
  * @module RBAC
  */
 module RBAC {
+
+  export var log:Logging.Logger = Logger.get("RBAC");
 
   export function flattenMBeanTree(mbeans, tree) {
     if (!Core.isBlank(tree.objectName)) {
