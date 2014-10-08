@@ -20,11 +20,14 @@ import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static io.hawt.util.Strings.isBlank;
+
 /**
  * Helper MBean to expose the <a href="http://kubernetes.io/">Kubernetes</a> REST API
  */
 public class KubernetesService extends MBeanSupport implements KubernetesServiceMXBean {
 
+    public static final String DEFAULT_DOCKER_HOST = "tcp://localhost:2375";
     private static final transient Logger LOG = LoggerFactory.getLogger(KubernetesService.class);
 
     public void init() throws Exception {
@@ -41,6 +44,20 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
 
 
     @Override
+    public String getDockerIp() {
+        String url = resolveDockerHost();
+        int idx = url.indexOf("://");
+        if (idx > 0) {
+            url = url.substring(idx + 3);
+        }
+        idx = url.indexOf(":");
+        if (idx > 0) {
+            url = url.substring(0, idx);
+        }
+        return url;
+    }
+
+    @Override
     protected String getDefaultObjectName() {
         return "io.fabric8:type=Kubernetes";
     }
@@ -48,5 +65,25 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
     @Override
     public String getKubernetesAddress() {
         return System.getenv("KUBERNETES_MASTER");
+    }
+
+
+    public static String resolveHttpDockerHost() {
+        String dockerHost = resolveDockerHost();
+        if (dockerHost.startsWith("tcp:")) {
+            return "http:" + dockerHost.substring(4);
+        }
+        return dockerHost;
+    }
+
+    public static String resolveDockerHost() {
+        String dockerHost = System.getenv("DOCKER_HOST");
+        if (isBlank(dockerHost)) {
+            dockerHost = System.getProperty("docker.host");
+        }
+        if (!isBlank(dockerHost)) {
+            return dockerHost;
+        }
+        return DEFAULT_DOCKER_HOST;
     }
 }

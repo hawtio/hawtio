@@ -1,7 +1,42 @@
 <div class="row-fluid" ng-controller="Kubernetes.Pods">
+  <div hawtio-confirm-dialog="connect.dialog.show" title="Connect to {{connect.containerName}}?" ok-button-text="Connect" on-ok="connect.onOK()">
+    <div class="dialog-body">
+      <p>Please enter the user name and password for {{connect.containerName}}:</p>
+      <div class="control-group">
+        <label class="control-label">User name: </label>
+        <div class="controls">
+          <input name="userName" ng-model="connect.userName" type="text" autofill>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Password: </label>
+        <div class="controls">
+          <input name="password" ng-model="connect.password" type="password" autofill>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <label class="checkbox">
+            <input type="checkbox" ng-model="connect.saveCredentials"> Save these credentials as the default
+          </label>
+        </div>
+      </div>
+      <div>
+      </div>
+    </div>
+  </div>
   <script type="text/ng-template" id="statusTemplate.html">
     <div class="ngCellText" ng-controller="Kubernetes.PodStatus" title="{{row.entity.currentState.status}}">
       <i ng-class="statusMapping[row.entity.currentState.status] || 'icon-question red'"></i>
+
+      <span ng-show="row.entity.$jolokiaUrl">
+        <a class="clickable"
+           href=""
+           ng-click="row.entity.$connect.doConnect(row.entity)"
+           title="Open a new window and connect to this container">
+          <i class="icon-signin"></i>
+        </a>
+      <span>
     </div>
   </script>
   <script type="text/ng-template" id="imageTemplate.html">

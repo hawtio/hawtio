@@ -20,5 +20,23 @@ package io.hawt.kubernetes;
 /**
  */
 public interface KubernetesServiceMXBean {
+
+    /**
+     * Returns the Kubernetes Master REST API URL.
+     *
+     * Typically this is the value of the <b>KUBERNETES_MASTER</b> environment variable
+     * which if you are running it locally is <code>http://localhost:8080</code>
+     */
     String getKubernetesAddress();
+
+    /**
+     * Returns the Docker Host (or IP address).
+     *
+     * If you are running Kubernetes locally on your laptop and running hawtio outside of docker
+     * then this host will be different to localhost.
+     *
+     * This method will look at the DOCKER_HOST environment variable to find the IP address of
+     * docker and use that instead of localhost/127.0.0.1.
+     */
+    String getDockerIp();
 }
