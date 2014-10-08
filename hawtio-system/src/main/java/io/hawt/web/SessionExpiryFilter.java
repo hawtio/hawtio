@@ -79,7 +79,9 @@ public class SessionExpiryFilter implements Filter {
         String[] uriParts = Pattern.compile("/").split(uri);
         // pass along if it's the top-level context
         if (uriParts.length == 1) {
-            session.setAttribute("LastAccess", new Date());
+            if (session != null) {
+              session.setAttribute("LastAccess", new Date());
+            }
             chain.doFilter(request, response);
             return;
         }
