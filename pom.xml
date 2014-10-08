@@ -263,7 +263,9 @@
     <module>hawtio-sample-springboot</module>
     <module>hawtio-karaf-terminal</module>
     <module>hawtio-karaf-git</module>
+    <!-- TODO - a bit broken at the moment
     <module>hawtio-directives</module>
+    -->
     <module>hawtio-redhat-fuse-branding</module>
     <module>hawtio-redhat-amq-branding</module>
     <module>hawtio-fabric8-branding</module>
