@@ -35,6 +35,10 @@ module Kubernetes {
       Kubernetes.setJson($scope, id, $scope.replicationControllers);
     });
 
+    $scope.$on('$routeUpdate', ($event) => {
+      Kubernetes.setJson($scope, $location.search()['_id'], $scope.pods);
+    });
+
     KubernetesReplicationControllers.then((KubernetesReplicationControllers:ng.resource.IResourceClass) => {
       $scope.deletePrompt = (selected) => {
         if (angular.isString(selected)) {

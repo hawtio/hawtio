@@ -19,6 +19,10 @@ module Kubernetes {
       Kubernetes.setJson($scope, id, $scope.pods);
     });
 
+    $scope.$on('$routeUpdate', ($event) => {
+      Kubernetes.setJson($scope, $location.search()['_id'], $scope.pods);
+    });
+
     jolokia.getAttribute(objectName, 'DockerIp', undefined,
       <Jolokia.IParams> onSuccess((results) => {
         log.info("got Docker IP: " + results);
