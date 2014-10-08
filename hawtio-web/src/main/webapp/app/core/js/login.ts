@@ -27,17 +27,22 @@ module Core {
       password: ''
     };
     $scope.backstretch = (<any>$).backstretch(branding.loginBg);
-
     $scope.rememberMe = false;
     if ('userDetails' in localStorage) {
       $scope.rememberMe = true;
+      var details = angular.fromJson(localStorage['userDetails']);
+      $scope.entity.username = details.username;
+      $scope.entity.password = details.password;
     }
     $scope.branding = branding;
 
     $scope.$watch('userDetails', (newValue:Core.UserDetails) => {
-      $scope.entity.username = newValue.username;
-      $scope.entity.password = newValue.password;
-      log.debug("userDetails changed: ", StringHelpers.toString(userDetails));
+      if (newValue.username) {
+        $scope.entity.username = newValue.username;
+      }
+      if (newValue.password) {
+        $scope.entity.password = newValue.password;
+      }
     }, true);
 
     $scope.$on('$routeChangeStart', function() {

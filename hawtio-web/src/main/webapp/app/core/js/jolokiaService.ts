@@ -79,6 +79,7 @@ module Core {
         if (xhr.status === 401 || xhr.status === 403) {
           userDetails.username = null;
           userDetails.password = null;
+          delete userDetails.loginDetails;
         } else {
           jolokiaStatus.xhr = xhr;
           if (!xhr.responseText && error) {

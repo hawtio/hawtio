@@ -100,6 +100,8 @@ public class AuthenticationFilter implements Filter {
             }
         }
 
+        filterConfig.getServletContext().setAttribute("authenticationEnabled", configuration.isEnabled());
+
         if (configuration.isEnabled()) {
             LOG.info("Starting hawtio authentication filter, JAAS realm: \"{}\" authorized role(s): \"{}\" role principal classes: \"{}\"",
                     new Object[]{configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses()});
