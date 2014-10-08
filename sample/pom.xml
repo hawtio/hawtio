@@ -3,7 +3,7 @@
   <parent>
 	  <groupId>io.hawt</groupId>
 	  <artifactId>project</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.4.23</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
