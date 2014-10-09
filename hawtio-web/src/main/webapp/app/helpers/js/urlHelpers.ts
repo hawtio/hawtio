@@ -71,28 +71,17 @@ module UrlHelpers {
    * @returns {*}
    */
   export function maybeProxy(jolokiaUrl:string, url:string) {
-    var origin = window.location['origin'];
-    var answer:string = null;
     if (jolokiaUrl && jolokiaUrl.startsWith('proxy/')) {
       log.debug("Jolokia URL is proxied, applying proxy to: ", url);
-      if (!url.startsWith('http')) {
-        var urlObj = new URI(jolokiaUrl.from(6));
-        urlObj.path(url);
-        url = urlObj.toString();
-      }
-      var answer = join('proxy', url);
+      return join('proxy', url);
     } 
+    var origin = window.location['origin'];
     if (url && (url.startsWith('http') && !url.startsWith(origin))) {
       log.debug("Url doesn't match page origin: ", origin, " applying proxy to: ", url);
-      var answer = join('proxy', url);
+      return join('proxy', url);
     }
-    if (answer) {
-      log.debug("Proxied URL is: ", answer);
-      return answer;
-    } else { 
-      log.debug("No need to proxy: ", url);
-      return url;
-    }
+    log.debug("No need to proxy: ", url);
+    return url;
   }
 
   /**

@@ -225,10 +225,10 @@ module Core {
 
     $scope.maybeRedirect = () => {
       if (userDetails.username === null) {
-        var currentUrl = $location.path();
+        var currentUrl = $location.url();
         if (!currentUrl.startsWith('/login')) {
           lastLocation.url = currentUrl;
-          $location.path('/login');
+          $location.url('/login');
         } else {
           // ensures that the login page loads correctly if the user happens to click refresh
           if (!$scope.reloaded) {
@@ -237,12 +237,12 @@ module Core {
           }
         }
       } else {
-        if ($location.path().startsWith('/login')) {
+        if ($location.url().startsWith('/login')) {
           var url:string = defaultPage();
           if (angular.isDefined(lastLocation.url)) {
             url = lastLocation.url;
           }
-          $location.path(url);
+          $location.url(url);
         }
       }
     };

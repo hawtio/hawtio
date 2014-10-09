@@ -52,45 +52,48 @@ module Core {
     });
 
     $scope.doLogin = () => {
-      var url = "auth/login/";
-      if ($scope.entity.username.trim() != '') {
-        $.ajax(url, {
-          type: "POST",
-          success: (response) => {
-            userDetails.username = $scope.entity.username;
-            userDetails.password = $scope.entity.password;
-            userDetails.loginDetails = response;
+      if (jolokiaUrl) {
+        var url = "auth/login/";
 
-            if ($scope.rememberMe) {
-              localStorage['userDetails'] = angular.toJson(userDetails);
-            } else {
-              delete localStorage['userDetails'];
-            }
+        if ($scope.entity.username.trim() != '') {
+          $.ajax(url, {
+            type: "POST",
+            success: (response) => {
+              userDetails.username = $scope.entity.username;
+              userDetails.password = $scope.entity.password;
+              userDetails.loginDetails = response;
 
-            jolokia.start();
-            workspace.loadTree();
-            Core.executePostLoginTasks();
-            Core.$apply($scope);
-          },
-          error: (xhr, textStatus, error) => {
-            // TODO placeholder for more feedback
-            switch (xhr.status) {
-              case 401:
-                notification('error', 'Failed to log in, ' + error);
-                break;
-              case 403:
-                notification('error', 'Failed to log in, ' + error);
-                break;
-              default:
-                notification('error', 'Failed to log in, ' + error);
-                break;
+              if ($scope.rememberMe) {
+                localStorage['userDetails'] = angular.toJson(userDetails);
+              } else {
+                delete localStorage['userDetails'];
+              }
+
+              jolokia.start();
+              workspace.loadTree();
+              Core.executePostLoginTasks();
+              Core.$apply($scope);
+            },
+            error: (xhr, textStatus, error) => {
+              // TODO placeholder for more feedback
+              switch (xhr.status) {
+                case 401:
+                  notification('error', 'Failed to log in, ' + error);
+                  break;
+                case 403:
+                  notification('error', 'Failed to log in, ' + error);
+                  break;
+                default:
+                  notification('error', 'Failed to log in, ' + error);
+                  break;
+              }
+              Core.$apply($scope);
+            },
+            beforeSend: (xhr) => {
+              xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader($scope.entity.username, $scope.entity.password));
             }
-            Core.$apply($scope);
-          },
-          beforeSend: (xhr) => {
-            xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader($scope.entity.username, $scope.entity.password));
-          }
-        });
+          });
+        }
       }
     }
   }]);
