@@ -725,7 +725,6 @@ module Core {
             canInvoke = mbean.canInvoke;
           }
           if (canInvoke && methods && methods.length > 0) {
-            log.debug("mbean: ", mbean);
             var opsByString = mbean['opByString'];
             var ops = mbean['op'];
             if (opsByString && ops) {
