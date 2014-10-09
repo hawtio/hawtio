@@ -1,6 +1,8 @@
 /**
  * @module Core
  */
+/// <reference path="../../helpers/js/stringHelpers.ts"/>
+/// <reference path="../../helpers/js/urlHelpers.ts"/>
 /// <reference path="corePlugin.ts"/>
 /// <reference path="coreInterfaces.ts"/>
 module Core {
@@ -12,69 +14,8 @@ module Core {
   _module.factory('jolokia',["$location", "localStorage", "jolokiaStatus", "$rootScope", "userDetails", "jolokiaParams", "jolokiaUrl", ($location:ng.ILocationService, localStorage, jolokiaStatus, $rootScope, userDetails:Core.UserDetails, jolokiaParams, jolokiaUrl):Jolokia.IJolokia => {
     // TODO - Maybe have separate URLs or even jolokia instances for loading plugins vs. application stuff
     // var jolokiaUrl = $location.search()['url'] || Core.url("/jolokia");
-    log.debug("Jolokia URL is " + jolokiaUrl);
+    log.debug("Creating jolokia service, URL is: ", jolokiaUrl);
     if (jolokiaUrl) {
-
-      var connectionName = Core.getConnectionNameParameter($location.search());
-      var connectionOptions = Core.getConnectOptions(connectionName);
-
-      // pass basic auth credentials down to jolokia if set
-      var username:String = null;
-      var password:String = null;
-
-      if (connectionOptions) {
-        username = connectionOptions.userName;
-        password = connectionOptions.password;
-      } else if (angular.isDefined(userDetails) &&
-                  angular.isDefined(userDetails.username) &&
-                  angular.isDefined(userDetails.password)) {
-        username = userDetails.username;
-        password = userDetails.password;
-      } else {
-        // lets see if they are passed in via request parameter...
-        var search = hawtioPluginLoader.parseQueryString();
-        username = search["_user"];
-        password = search["_pwd"];
-        if (angular.isArray(username)) username = username[0];
-        if (angular.isArray(password)) password = password[0];
-      }
-
-      if (username && password) {
-        userDetails.username = username;
-        userDetails.password = password;
-
-        $.ajaxSetup({
-          beforeSend: (xhr) => {
-            xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(<string>userDetails.username, <string>userDetails.password));
-          }
-        });
-
-        var loginUrl = jolokiaUrl.replace("jolokia", "auth/login/");
-        $.ajax(loginUrl, {
-          type: "POST",
-          success: (response) => {
-            if (response['credentials'] || response['principals']) {
-              userDetails.loginDetails = {
-                'credentials': response['credentials'],
-                'principals': response['principals']
-              };
-            } else {
-              var doc = Core.pathGet(response, ['children', 0, 'innerHTML']);
-                // hmm, maybe we got an XML document, let's log it just in case...
-                if (doc) {
-                  Core.log.debug("Response is a document (ignoring this): ", doc);
-                }
-            }
-            Core.executePostLoginTasks();
-          },
-          error: (xhr, textStatus, error) => {
-            // silently ignore, we could be using the proxy
-            Core.executePostLoginTasks();
-          }
-        });
-
-      }
-
       jolokiaParams['ajaxError'] = (xhr, textStatus, error) => {
         if (xhr.status === 401 || xhr.status === 403) {
           userDetails.username = null;
@@ -88,13 +29,12 @@ module Core {
         }
         Core.$apply($rootScope);
       };
-
       var jolokia = new Jolokia(jolokiaParams);
       localStorage['url'] = jolokiaUrl;
       jolokia.stop();
       return jolokia;
     } else {
-
+      // empty jolokia that returns nothing
       var answer = <DummyJolokia> {
         running: false,
         request: (req:any, opts?:Jolokia.IParams) => null,
@@ -115,8 +55,6 @@ module Core {
         jobs: () => []
 
       };
-
-      // empty jolokia that returns nothing
       return answer;          
     }
   }]);

@@ -483,7 +483,6 @@ public class ProxyServlet extends HttpServlet {
             String stringHeaderName = (String) enumerationOfHeaderNames.nextElement();
 
             if (stringHeaderName.equalsIgnoreCase(STRING_CONTENT_LENGTH_HEADER_NAME) ||
-                    stringHeaderName.equalsIgnoreCase("Authorization") ||
                     stringHeaderName.equalsIgnoreCase("Origin"))
                 continue;
             // As per the Java Servlet API 2.5 documentation:

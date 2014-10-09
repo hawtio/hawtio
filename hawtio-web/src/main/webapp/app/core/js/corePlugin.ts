@@ -163,7 +163,15 @@ module Core {
       Logger.get("Core").debug("Set update rate to: ", rate);
     });
 
-    $rootScope.$emit('UpdateRate', localStorage['updateRate']);
+    preLogoutTasks.addTask('StopJolokia', () => {
+      jolokia.stop();
+    });
+
+    postLoginTasks.addTask('StartJolokia', () => {
+      $rootScope.$emit('UpdateRate', localStorage['updateRate']);
+      Core.$apply($rootScope);
+    });
+
     $rootScope.$on('$locationChangeStart', ($event, newUrl, oldUrl) => {
       locationChangeStartTasks.execute($event, newUrl, oldUrl);
     });

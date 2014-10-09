@@ -1,18 +1,21 @@
-/**
- * @module Core
- */
-
+/// <reference path="../../helpers/js/urlHelpers.ts"/>
 /// <reference path="corePlugin.ts"/>
 /// <reference path="./helpRegistry.ts"/>
 /// <reference path="./preferencesRegistry.ts"/>
 /// <reference path="../../themes/js/themesPlugin.ts"/>
+
+/**
+ * @module Core
+ */
 module Core {
 
   // Create the workspace object used in all kinds of places
-  _module.factory('workspace',["$location", "jmxTreeLazyLoadRegistry","$compile", "$templateCache", "localStorage", "jolokia", "jolokiaStatus", "$rootScope", "userDetails", ($location:ng.ILocationService,jmxTreeLazyLoadRegistry, $compile:ng.ICompileService,$templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia, jolokiaStatus, $rootScope, userDetails) => {
+  _module.factory('workspace',["$location", "jmxTreeLazyLoadRegistry","$compile", "$templateCache", "localStorage", "jolokia", "jolokiaStatus", "$rootScope", "userDetails", "postLoginTasks", ($location:ng.ILocationService,jmxTreeLazyLoadRegistry, $compile:ng.ICompileService,$templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia, jolokiaStatus, $rootScope, userDetails, postLoginTasks:Core.Tasks) => {
 
       var answer = new Workspace(jolokia, jolokiaStatus, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope, userDetails);
-      answer.loadTree();
+      postLoginTasks.addTask('LoadTree', () => {
+        answer.loadTree();
+      });
       return answer;
   }]);
 
@@ -151,8 +154,54 @@ module Core {
     return answer;
   });
 
+  function setCredentialHeader(userDetails:UserDetails) {
+    log.debug("Setting credential header");
+    $.ajaxSetup({
+      beforeSend: (xhr) => {
+        xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(<string>userDetails.username, <string>userDetails.password));
+      }
+    });
+  }
+
+  function attemptLogin(jolokiaUrl:string, userDetails:UserDetails) {
+    if (jolokiaUrl && jolokiaUrl.has("hawtio")) {
+      log.debug("Remote jolokia is part of hawtio, attempting to log in");
+      var loginUrl = UrlHelpers.maybeProxy(jolokiaUrl, '/hawtio/auth/login');
+      $.ajax(loginUrl, {
+        type: "POST",
+        success: (response) => {
+          if (response['credentials'] || response['principals']) {
+            userDetails.loginDetails = {
+              'credentials': response['credentials'],
+              'principals': response['principals']
+            };
+            log.debug("Successfully logged in, user details: ", StringHelpers.toString(userDetails));
+          } else {
+            var doc = Core.pathGet(response, ['children', 0, 'innerHTML']);
+            // hmm, maybe we got an XML document, let's log it just in case...
+            if (doc) {
+              Core.log.debug("Response is a document (ignoring this): ", doc);
+            }
+          }
+          Core.executePostLoginTasks();
+        },
+        error: (xhr, textStatus, error) => {
+          // silently ignore, we could be using the proxy or it may mean nothing
+          Core.log.debug("Remote login failed: ", error);
+          Core.executePostLoginTasks();
+        },
+        beforeSend: (xhr) => {
+          xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(<string> userDetails.username, <string> userDetails.password));
+        }
+      });
+    } else {
+      log.debug("Remote jolokia is standalone, not attempting to log in");
+      Core.executePostLoginTasks();
+    }
+  }
+
   // user detail service, contains username/password
-  _module.factory('userDetails', ["ConnectOptions", "localStorage", "$window", "$rootScope", (ConnectOptions:Core.ConnectOptions, localStorage:WindowLocalStorage, $window:ng.IWindowService, $rootScope:ng.IRootScopeService)  => {
+  _module.factory('userDetails', ["ConnectOptions", "localStorage", "$window", "$rootScope", "jolokiaUrl", (ConnectOptions:Core.ConnectOptions, localStorage:WindowLocalStorage, $window:ng.IWindowService, $rootScope:ng.IRootScopeService, jolokiaUrl)  => {
     var answer = <UserDetails> {
       username: null,
       password: null
@@ -160,11 +209,13 @@ module Core {
     if('userDetails' in $window) {
       answer = $window['userDetails'];
       log.debug("User details loaded from parent window: ", StringHelpers.toString(answer));
-      executePostLoginTasks();
+      setCredentialHeader(answer);
+      attemptLogin(jolokiaUrl, answer);
     } else if ('userDetails' in localStorage) {
       answer = angular.fromJson(localStorage['userDetails']);
       log.debug("User details loaded from local storage: ", StringHelpers.toString(answer));
-      executePostLoginTasks();
+      setCredentialHeader(answer);
+      attemptLogin(jolokiaUrl, answer);
     } else if (Core.isChromeApp()) {
       answer = <Core.UserDetails> {
         username: 'user',
