@@ -30,6 +30,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import io.hawt.util.FileFilters;
+import io.hawt.util.Files;
 import io.hawt.util.IOHelper;
 import io.hawt.util.MBeanSupport;
 import io.hawt.util.Objects;
@@ -291,7 +292,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
     protected RevCommit doRemove(Git git, File rootDir, String branch, String path, String commitMessage, PersonIdent personIdent) throws Exception {
         File file = getFile(rootDir, path);
         if (file.exists()) {
-            file.delete();
+            Files.recursiveDelete(file);
 
             String filePattern = getFilePattern(path);
             git.rm().addFilepattern(filePattern).call();
