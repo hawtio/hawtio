@@ -1,7 +1,8 @@
+/// <reference path="../../baseIncludes.ts"/>
 module Core {
 
   // interfaces that represent the response from 'list', 
-  // TODO should maybe put this in jolokia-1.0.d.ts
+  // TODO should maybe put most of this in jolokia-1.0.d.ts
 
   /**
    * Operation arguments are stored in a map of argument name -> type
@@ -53,6 +54,7 @@ module Core {
     op: JMXOperations;
     attr: JMXAttributes;
     desc: string;
+    canInvoke?: boolean;
   }
 
   /**
@@ -74,7 +76,12 @@ module Core {
     if (!args || args.length === 0) {
       return name + '()';
     } else {
-      return name + '(' + args.map((arg:JMXOperationArgument) => { return arg.type }).join(',') + ')';
+      return name + '(' + args.map((arg:any) => { 
+        if (angular.isString(arg)) {
+          arg = angular.fromJson(arg);
+        }
+        return arg.type 
+      }).join(',') + ')';
     }
   }
 

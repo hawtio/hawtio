@@ -90,11 +90,22 @@ module RBAC {
                 var ops:Core.JMXOperations = value.mbean.op;
                 value.mbean.opByString = {};
                 var opList = [];
-                angular.forEach(ops, (op:Core.JMXOperation, opName:string) => {
-                  var operationString = Core.operationToString(opName, op.args);
-                  // enrich the mbean by indexing the full operation string so we can easily look it up later
-                  value.mbean.opByString[operationString] = op;
-                  opList.push(operationString);
+                angular.forEach(ops, (op:any, opName:string) => {
+
+                  function addOp(opName:string, op:Core.JMXOperation) {
+                    var operationString = Core.operationToString(opName, op.args);
+                    // enrich the mbean by indexing the full operation string so we can easily look it up later
+                    value.mbean.opByString[operationString] = op;
+                    opList.push(operationString);
+                  }
+                  if (angular.isArray(op)) {
+                    (<Array<any>>op).forEach((op) => {
+                      addOp(opName, op);
+                    });
+
+                  } else {
+                    addOp(opName, op);
+                  }
                 });
                 bulkRequest[key] = opList;
               }
