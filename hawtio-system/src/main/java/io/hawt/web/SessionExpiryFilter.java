@@ -67,6 +67,11 @@ public class SessionExpiryFilter implements Filter {
     }
 
     private void process(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        if (context == null || context.getAttribute("authenticationEnabled") == null) {
+          // most likely the authentication filter hasn't been started up yet, let this request through and it can be dealt with by the authentication filter
+          chain.doFilter(request, response);
+          return;
+        }
         HttpSession session = request.getSession(false);
         boolean enabled = (boolean) context.getAttribute("authenticationEnabled");
         String uri = request.getRequestURI();
