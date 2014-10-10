@@ -14,13 +14,13 @@ module Insight {
         $routeProvider.
             when('/insight/all', { templateUrl: 'app/insight/html/all.html' }).
             when('/insight/jvms', { templateUrl: 'app/insight/html/jvms.html' }).
-            when('/insight/elasticsearch', { templateUrl: 'app/insight/html/elasticsearch.html' }).
+            when('/insight/elasticsearch', { templateUrl: 'app/insight/html/eshead.html' }).
             when('/insight/logs', { redirectTo: function() { return '/insight/dashboard?kbnId=app/insight/dashboards/logs&p=insight&tab=insight-logs';} }).
             when('/insight/camel', { redirectTo: function() { return '/insight/dashboard?kbnId=app/insight/dashboards/camel&p=insight&tab=insight-camel';} }).
             when('/insight/dashboard', { templateUrl: '../hawtio-kibana/app/partials/dashboard.html' });
     }]);
 
-    _module.run(["workspace", "viewRegistry", "helpRegistry", "serviceIconRegistry", (workspace, viewRegistry, helpRegistry, serviceIconRegistry) => {
+    _module.run(["workspace", "viewRegistry", "helpRegistry", "serviceIconRegistry", "layoutFull", (workspace, viewRegistry, helpRegistry, serviceIconRegistry, layoutFull) => {
 
         serviceIconRegistry.addIcons({
             title: "Fabric8 Insight",
@@ -39,9 +39,6 @@ module Insight {
             topLevelTabs: {
                 includes: [
                     {
-                        href: "#/insight"
-                    },
-                    {
                         href: "#/camin"
                     },
                     {
@@ -49,12 +46,16 @@ module Insight {
                     },
                     {
                         id: "insight-camel"
+                    },
+                    {
+                        id: "insight-eshead"
                     }
                 ]
             }
         };
 
         viewRegistry["insight"] = "../hawtio-kibana/app/partials/hawtioLayout.html";
+        viewRegistry["eshead"] = layoutFull;
 
         helpRegistry.addUserDoc('insight', 'app/insight/doc/help.md', () => {
             return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace);
@@ -88,13 +89,25 @@ module Insight {
         // Set up top-level link to our plugin
         workspace.topLevelTabs.push({
             id: "insight-camel",
-            content: "Camel",
+            content: "Camel Events",
             title: "View Insight Camel",
             href: () => "#/insight/camel",
             isValid: (workspace:Workspace) => {
                 return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace) && Insight.hasKibana(workspace);
             },
             isActive: () => workspace.isTopTabActive("insight-camel")
+        });
+
+        // Set up top-level link to our plugin
+        workspace.topLevelTabs.push({
+            id: "insight-eshead",
+            content: "Elasticsearch",
+            title: "View Insight Elasticsearch",
+            href: () => "#/insight/elasticsearch?tab=eshead",
+            isValid: (workspace:Workspace) => {
+                return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace) && Insight.hasEsHead(workspace);
+            },
+            isActive: () => workspace.isTopTabActive("insight-eshead")
         });
 
     }]);
