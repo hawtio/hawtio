@@ -200,4 +200,26 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>fabric-kubernetes-api</id>
+      <dependencies>
+        <dependency>
+          <groupId>io.fabric8</groupId>
+          <artifactId>fabric-kubernetes-api</artifactId>
+          <version>2.0.0-SNAPSHOT</version>
+          <exclusions>
+            <exclusion>
+              <groupId>org.apache.karaf.features</groupId>
+              <artifactId>org.apache.karaf.features.core</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.osgi</groupId>
+              <artifactId>org.osgi.core</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>
