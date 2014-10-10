@@ -50,6 +50,14 @@
           </div>
         </div>
 
+        <div ng-hide="!showAppHeader">
+          <div class="row-fluid">
+            <div class="span12">
+              <div kubernetes-json="kubernetesJson"></div>
+            </div>
+          </div>
+        </div>
+
         <div ng-hide="!html" wiki-href-adjuster wiki-title-linker>
           <div class="row-fluid" style="margin-left: 10px">
             <div class="span12">

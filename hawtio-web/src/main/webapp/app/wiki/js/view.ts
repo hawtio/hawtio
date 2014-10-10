@@ -1,7 +1,11 @@
 /**
  * @module Wiki
  */
-/// <reference path="./wikiPlugin.ts"/>
+/// <reference path="wikiPlugin.ts"/>
+/// <reference path="../../ui/js/dialog.ts"/>
+/// <reference path="../../fabric/js/fabricGlobals.ts"/>
+/// <reference path="../../fabric/js/fabricHelpers.ts"/>
+/// <reference path="../../kubernetes/js/kubernetesHelpers.ts"/>
 module Wiki {
 
   function goToLink(link, $timeout, $location) {
@@ -26,6 +30,7 @@ module Wiki {
 
     $scope.profileId = Fabric.pagePathToProfileId($scope.pageId);
     $scope.showProfileHeader = $scope.profileId && $scope.pageId.endsWith(Fabric.profileSuffix) ? true : false;
+    $scope.showAppHeader = false;
 
     $scope.operationCounter = 1;
     $scope.addDialog = new UI.Dialog();
@@ -656,8 +661,6 @@ module Wiki {
           .sortBy((file) => {
             return file.name.split('.').last();
           });
-
-
         $scope.children = (<any>Array).create(directories, profiles, files);
       }
 
@@ -680,6 +683,20 @@ module Wiki {
           $scope.readMePath = pageName;
           wikiRepository.getPage($scope.branch, pageName, $scope.objectId, (readmeDetails) => {
             viewContents(pageName, readmeDetails.text);
+          });
+        }
+        var kubernetesJson = $scope.children.find((child) => {
+          var name = (child.name || "").toLowerCase();
+          var ext = fileExtension(name);
+          return name && ext && name.startsWith("kubernetes") && ext === "json";
+        });
+        if (kubernetesJson) {
+          wikiRepository.getPage($scope.branch, kubernetesJson.path, undefined, (json) => {
+            if (json && json.text) {
+              $scope.kubernetesJson = angular.fromJson(json.text);
+              $scope.showAppHeader = true;
+              Core.$apply($scope);
+            }
           });
         }
       } else {
