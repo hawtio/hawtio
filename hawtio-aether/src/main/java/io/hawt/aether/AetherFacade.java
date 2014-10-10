@@ -1,5 +1,7 @@
 package io.hawt.aether;
 
+import io.hawt.config.ConfigFacade;
+import io.hawt.config.URLHandler;
 import io.hawt.util.MBeanSupport;
 import io.hawt.util.Strings;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
@@ -20,6 +22,10 @@ import org.sonatype.aether.resolution.DependencyResolutionException;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 import org.sonatype.aether.util.graph.PreorderNodeListGenerator;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +34,7 @@ import java.util.List;
  * A facade for working with Aether over JMX
  */
 public class AetherFacade extends MBeanSupport implements AetherFacadeMXBean {
+    public static final String AETHER_MBEAN_NAME = "hawtio:type=AetherFacade";
     protected static String DEFAULT_EXTENSION = "jar";
     protected static String DEFAULT_CLASSIFIER = "";
 
@@ -49,7 +56,40 @@ public class AetherFacade extends MBeanSupport implements AetherFacadeMXBean {
     );
 
     @Override
+    public void init() throws Exception {
+        ConfigFacade.getSingleton().addUrlHandler("mvn", new URLHandler() {
+            @Override
+            public InputStream openStream(String url) {
+                try {
+                    return new OpenMavenURL(url).getInputStream();
+                } catch (MalformedURLException e) {
+                    throw new IllegalArgumentException("Could not parse URL: " + url + ". " + e, e);
+                } catch (IOException e) {
+                    throw new IllegalArgumentException("Could not read URL: " + url + ". " + e, e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public String resolveUrlToFileName(String mvnUrl) throws MalformedURLException, ComponentLookupException, DependencyCollectionException, PlexusContainerException, DependencyResolutionException, ArtifactResolutionException {
+        MavenURL mavenUrl = new MavenURL(mvnUrl);
+        AetherResult result = null;
+        result = resolve(mavenUrl.getGroup(), mavenUrl.getArtifact(), mavenUrl.getVersion(), mavenUrl.getType(), mavenUrl.getClassifier());
+        if (result != null) {
+            List<File> files = result.getFiles();
+            if (files.size() > 0) {
+                File file = files.get(0);
+                return file.getAbsolutePath();
+            }
+        }
+        return null;
+
+    }
+
+    @Override
     public String resolveJson(String mavenCoords) throws ComponentLookupException, DependencyCollectionException, PlexusContainerException, ArtifactResolutionException, DependencyResolutionException {
+        // TODO we should really use the MavenURL parser??
         AetherResult result = resolve(mavenCoords);
         return result.jsonString();
     }
@@ -152,7 +192,7 @@ public class AetherFacade extends MBeanSupport implements AetherFacadeMXBean {
 
     @Override
     protected String getDefaultObjectName() {
-        return "hawtio:type=AetherFacade";
+        return AETHER_MBEAN_NAME;
     }
 
     protected RepositorySystem newManualSystem() throws PlexusContainerException, ComponentLookupException {

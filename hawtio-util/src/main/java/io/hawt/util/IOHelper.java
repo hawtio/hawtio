@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 
+import static io.hawt.util.Closeables.closeQuitely;
+
 /**
  * A collection of IO helpers
  */
@@ -119,5 +121,19 @@ public class IOHelper {
         output.flush();
         return total;
     }
+
+    public static void copy(InputStream is, OutputStream os) throws IOException {
+        try {
+            byte[] b = new byte[64 * 1024];
+            int l = is.read(b);
+            while (l >= 0) {
+                os.write(b, 0, l);
+                l = is.read(b);
+            }
+        } finally {
+            closeQuitely(os);
+        }
+    }
+
 
 }

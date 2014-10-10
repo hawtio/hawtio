@@ -329,6 +329,10 @@ The following table contains the various configuration settings for the various 
       <td>If set to the value of <b>false</b> then there will be no attempt to clone the remote repo</td>
     </tr>
     <tr>
+      <td>hawtio.config.importURLs</td>
+      <td>The URLs (comman separated) of jar/zip contents that should be downloaded and imported into the wiki on startup. This supports the <code>mvn:group/artifact/version[/extension/classifier]</code> syntax so you can refer to jars/zips from maven repos</td>
+    </tr>
+    <tr>
       <td>hawtio.config.pullOnStartup</td>
       <td>If set to the value of <b>false</b> then there will be no attempt to pull from the remote config repo on startup</td>
     </tr>

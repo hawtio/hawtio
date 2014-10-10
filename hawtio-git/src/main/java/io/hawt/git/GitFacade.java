@@ -2,6 +2,10 @@ package io.hawt.git;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -9,10 +13,13 @@ import java.util.TimerTask;
 import java.util.concurrent.Callable;
 
 import io.hawt.config.ConfigFacade;
+import io.hawt.util.Files;
 import io.hawt.util.Objects;
 import io.hawt.util.Strings;
+import io.hawt.util.Zips;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
@@ -59,6 +66,7 @@ public class GitFacade extends GitFacadeSupport {
     private String defaultBranch;
     private boolean firstPull = true;
     private ConfigFacade config;
+    private String initialImportURLs;
 
     public static String trimLeadingSlash(String path) {
         String name = path;
@@ -258,6 +266,17 @@ public class GitFacade extends GitFacadeSupport {
 
     public void setDefaultBranch(String defaultBranch) {
         this.defaultBranch = defaultBranch;
+    }
+
+    public String getInitialImportURLs() {
+        return initialImportURLs;
+    }
+
+    /**
+     * Sets the URLs which are used to import content in a newly created git repository
+     */
+    public void setInitialImportURLs(String initialImportURLs) {
+        this.initialImportURLs = initialImportURLs;
     }
 
     @Override
@@ -581,6 +600,8 @@ public class GitFacade extends GitFacadeSupport {
 
             String branch = git.getRepository().getBranch();
             configureBranch(branch);
+
+            importInitialContent(git, confDir, branch);
         } else {
             Repository repository = builder.setGitDir(gitDir)
                     .readEnvironment() // scan environment GIT_* variables
@@ -596,6 +617,88 @@ public class GitFacade extends GitFacadeSupport {
             }
         }
     }
+
+    /**
+     * When creating an empty initial git repository lets see if there are a list of URLs for zips
+     * of content to include
+     * @param git
+     * @param branch
+     */
+    protected void importInitialContent(Git git, File rootFolder, String branch) {
+        System.out.println("Importing initial URLs: " + initialImportURLs);
+        if (Strings.isNotBlank(initialImportURLs)) {
+            String[] split = initialImportURLs.split(",");
+            if (split != null) {
+                for (String importURL : split) {
+                    if (Strings.isNotBlank(importURL)) {
+                        InputStream inputStream = null;
+                        try {
+                            inputStream = ConfigFacade.getSingleton().openURL(importURL);
+                        } catch (IOException e) {
+                            LOG.warn("Could not load initial import URL: " + importURL + ". " + e, e);
+                            return;
+                        }
+                        if (inputStream == null) {
+                            LOG.warn("Could not load initial import URL: " + importURL);
+                            return;
+                        }
+
+                        try {
+                            Zips.unzip(inputStream, rootFolder);
+                        } catch (IOException e) {
+                            LOG.warn("Failed to unzip initial import URL: " + importURL + ". " + e, e);
+                        }
+                    }
+                }
+            }
+        }
+
+        // now lets add any expanded stuff to git
+        int count = 0;
+        File[] files = rootFolder.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                String name = file.getName();
+                if (!Objects.equals(".git", name)) {
+                    try {
+                        count += addFiles(git, rootFolder, file);
+                    } catch (Exception e) {
+                        LOG.warn("Failed to add file " + name + ". " + e, e);
+                    }
+                }
+            }
+        }
+
+        // commit any changes
+        if (count > 0) {
+            PersonIdent personIdent = getStashPersonIdent();
+            CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage("Added import URLs: " + initialImportURLs);
+            try {
+                RevCommit revCommit = commitThenPush(git, branch, commit);
+            } catch (Exception e) {
+                LOG.warn("Failed to commit initial import of " + initialImportURLs + ". " + e, e);
+            }
+        }
+    }
+
+    private int addFiles(Git git, File rootDir, File... files) throws GitAPIException, IOException {
+        int counter = 0;
+        for (File file : files) {
+            String relativePath = getFilePattern(rootDir, file);
+            git.add().addFilepattern(relativePath).call();
+            counter++;
+        }
+        return counter;
+    }
+
+    private String getFilePattern(File rootDir, File file) throws IOException {
+        String relativePath = Files.getRelativePath(rootDir, file);
+        if (relativePath.startsWith(File.separator)) {
+            relativePath = relativePath.substring(1);
+        }
+        return relativePath.replace(File.separatorChar, '/');
+    }
+
 
     protected void doPull() {
         CredentialsProvider cp = getCredentials();

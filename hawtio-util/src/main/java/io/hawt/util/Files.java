@@ -18,6 +18,7 @@
 package io.hawt.util;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  */
@@ -40,4 +41,16 @@ public class Files {
             answer += 1;
         }
         return answer;
+    }
+
+
+
+    public static String getRelativePath(File rootDir, File file) throws IOException {
+        String rootPath = rootDir.getCanonicalPath();
+        String fullPath = file.getCanonicalPath();
+        if (fullPath.startsWith(rootPath)) {
+            return fullPath.substring(rootPath.length());
+        } else {
+            return fullPath;
+        }
     }}

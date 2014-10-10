@@ -18,6 +18,7 @@
 package io.hawt.blueprint;
 
 import org.apache.aries.blueprint.container.BlueprintContainerImpl;
+import org.omg.CORBA.ObjectHelper;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -25,6 +26,8 @@ import javax.servlet.ServletContextListener;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +61,12 @@ public class HawtioBlueprintContextListener implements ServletContextListener {
             while (resources.hasMoreElements()) {
                 resourcePaths.add(resources.nextElement());
             }
+            Collections.sort(resourcePaths, new Comparator<URL>() {
+                @Override
+                public int compare(URL o1, URL o2) {
+                    return o1.toString().compareTo(o2.toString());
+                }
+            });
             servletContext.log("Loading Blueprint contexts " + resourcePaths);
 
             Map<String, String> properties = new HashMap<String, String>();
@@ -83,6 +92,7 @@ public class HawtioBlueprintContextListener implements ServletContextListener {
                 }
             }
             appendEnvironmentVariables(servletContext, properties);
+
 
             BlueprintContainerImpl container = new BlueprintContainerImpl(classLoader, resourcePaths, properties, true);
             servletContext.setAttribute(CONTAINER_ATTRIBUTE, container);
