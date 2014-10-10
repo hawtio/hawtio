@@ -1,3 +1,16 @@
+## Environment Variables
+
+Using [Docker](http://docker.io/) containers is increasingly common. We now have a [docker container for running hawtio](https://github.com/fabric8io/hawtio-docker) for example.
+
+When using docker then environment variables are a preferred way to configure things with environmental values.
+
+So when using **hawtio-base** or **hawtio-default** you can use environment variables to override any of the properties on this page.
+
+To override property "hawtio.foo" just set an environment variable (using _ for dots).
+
+    export hawtio_foo=bar
+
+and if you boot up hawtio in that shell (or you pass that variable into a docker container) then you will override the system property _hawtio.foo_
 
 ## Configuring Security
 

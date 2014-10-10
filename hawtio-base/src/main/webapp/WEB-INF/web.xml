@@ -206,7 +206,7 @@
     <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
   </listener>
   <listener>
-    <listener-class>org.apache.aries.blueprint.web.BlueprintContextListener</listener-class>
+    <listener-class>io.hawt.blueprint.HawtioBlueprintContextListener</listener-class>
   </listener>
 
   <context-param>

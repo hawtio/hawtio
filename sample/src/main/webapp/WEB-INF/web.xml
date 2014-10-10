@@ -67,7 +67,7 @@
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
   <listener>
-    <listener-class>org.apache.aries.blueprint.web.BlueprintContextListener</listener-class>
+    <listener-class>io.hawt.blueprint.HawtioBlueprintContextListener</listener-class>
   </listener>
   <listener>
     <listener-class>io.hawt.HawtioContextListener</listener-class>
