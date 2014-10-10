@@ -265,9 +265,7 @@ module Perspective {
         answer = "fabric";
       }
     } else if (Kubernetes.isKubernetes(workspace)) {
-      if (url.startsWith("/kubernetes")) {
-        answer = "kubernetes";
-      }
+      answer = "kubernetes";
     }
     answer = answer || Perspective.defaultPerspective || "container";
 
