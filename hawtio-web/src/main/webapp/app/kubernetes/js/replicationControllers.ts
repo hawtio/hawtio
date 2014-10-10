@@ -3,6 +3,37 @@
 /// <reference path="../../ui/js/dialog.ts"/>
 module Kubernetes {
 
+  export var DesiredReplicas = controller("DesiredReplicas", ["$scope", ($scope) => {
+    var watch:any = null;
+    var originalValue:number = null;
+    $scope.$watch('row.entity', (entity) => {
+      // log.debug("entity updated: ", entity);
+      if (watch && angular.isFunction(watch)) {
+        originalValue = null;
+        watch();
+      }
+      watch = $scope.$watch('row.entity.desiredState.replicas', (replicas) => {
+        if (originalValue === null && replicas !== undefined) {
+          originalValue = replicas;
+        }
+        if (replicas < 1) {
+          $scope.row.entity.desiredState.replicas = 1;
+        }
+        if (replicas !== originalValue) {
+          $scope.$emit('kubernetes.dirtyController', $scope.row.entity);
+        } else {
+          $scope.$emit('kubernetes.cleanController', $scope.row.entity);
+        }
+        Core.$apply($scope);
+        // log.debug("Replicas: ", replicas, " original value: ", originalValue);
+      });
+    });
+
+    $scope.$on('kubernetes.resetReplicas', ($event) => {
+      $scope.row.entity.desiredState.replicas = originalValue;
+    });
+  }]);
+
   export var ReplicationControllers = controller("ReplicationControllers",
     ["$scope", "KubernetesReplicationControllers", "$templateCache", "$location", "jolokia",
       ($scope, KubernetesReplicationControllers:ng.IPromise<ng.resource.IResourceClass>, $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService, jolokia:Jolokia.IJolokia) => {
@@ -26,10 +57,31 @@ module Kubernetes {
       columnDefs: [
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
         { field: 'currentState.replicas', displayName: 'Current Replicas' },
-        { field: 'desiredState.replicas', displayName: 'Desired Replicas' },
+        { field: 'desiredState.replicas', displayName: 'Desired Replicas', cellTemplate:$templateCache.get("desiredReplicas.html") },
         { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
       ]
     };
+
+    $scope.$on('kubernetes.dirtyController', ($event, replicationController) => {
+      replicationController.$dirty = true;
+      //log.debug("Replication controller is dirty: ", replicationController, " all replication controllers: ", $scope.replicationControllers);
+    });
+
+    $scope.$on('kubernetes.cleanController', ($event, replicationController) => {
+      replicationController.$dirty = false;
+    });
+
+    $scope.anyDirty = () => {
+      return $scope.replicationControllers.any((controller) => { return controller.$dirty; });
+    };
+
+    $scope.undo = () => {
+      $scope.$broadcast('kubernetes.resetReplicas');
+    };
+
+    /*$scope.$watch('anyDirty()', (dirty) => {
+      log.debug("Dirty controllers: ", dirty);
+    });*/
 
     $scope.$on('kubeSelectedId', ($event, id) => {
       Kubernetes.setJson($scope, id, $scope.replicationControllers);
@@ -40,6 +92,22 @@ module Kubernetes {
     });
 
     KubernetesReplicationControllers.then((KubernetesReplicationControllers:ng.resource.IResourceClass) => {
+      $scope.save = () => {
+        var dirtyControllers = $scope.replicationControllers.filter((controller) => { return controller.$dirty });
+        if (dirtyControllers.length) {
+          dirtyControllers.forEach((replicationController) => {
+            KubernetesReplicationControllers.save(undefined, replicationController, () => {
+              replicationController.$dirty = false;
+              log.debug("Updated ", replicationController.id);
+            }, (error) => {
+              replicationController.$dirty = false;
+              log.debug("Failed to update ", replicationController.id, " error: ", error);
+            });
+
+          });
+        }
+      }
+
       $scope.deletePrompt = (selected) => {
         if (angular.isString(selected)) {
           selected = [{
@@ -83,8 +151,13 @@ module Kubernetes {
 
       $scope.fetch = PollHelpers.setupPolling($scope, (next: () => void) => {
         KubernetesReplicationControllers.query((response) => {
-          log.debug("got back response: ", response);
+          //log.debug("got back response: ", response);
           $scope.fetched = true;
+          if ($scope.anyDirty()) {
+            log.debug("Table has been changed, not updating local view");
+            next();
+            return;
+          }
           $scope.replicationControllers = (response['items'] || []).sortBy((item) => { return item.id; });
           angular.forEach($scope.replicationControllers, entity => {
             entity.$labelsText = Kubernetes.labelsToString(entity.labels);
@@ -96,10 +169,10 @@ module Kubernetes {
       $scope.fetch();
     });
 
-    $scope.$watch('replicationControllers', (newValue, oldValue) => {
+    /*$scope.$watch('replicationControllers', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         log.debug("replicationControllers: ", newValue);
       }
-    });
+    });*/
   }]);
 }

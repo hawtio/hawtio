@@ -1,4 +1,13 @@
 <div ng-controller="Kubernetes.ReplicationControllers">
+  <script type="text/ng-template" id="desiredReplicas.html">
+    <div class="ngCellText" 
+         ng-controller="Kubernetes.DesiredReplicas">
+      <input type="number" 
+             class="no-bottom-margin"
+             min="1"
+             ng-model="row.entity.desiredState.replicas">
+    </div>
+  </script>
   <div class="row-fluid">
     <div class="span12" ng-show="replicationControllers.length">
       <span ng-show="!id">
@@ -12,6 +21,20 @@
               ng-disabled="!id && tableConfig.selectedItems.length == 0"
               ng-click="deletePrompt(id || tableConfig.selectedItems)">
         <i class="icon-remove"></i> Delete
+      </button>
+      <span class="pull-right">&nbsp;</span>
+      <button ng-show="fetched && !id"
+              class="btn pull-right"
+              ng-disabled="!anyDirty()"
+              ng-click="undo()">
+        <i class="icon-undo"></i> Undo</span>
+      </button>
+      <span class="pull-right">&nbsp;</span>
+      <button ng-show="fetched && !id"
+              class="btn btn-primary pull-right"
+              ng-disabled="!anyDirty()"
+              ng-click="save()">
+        <i class="icon-save"></i> Save</span>
       </button>
       <span class="pull-right">&nbsp;</span>
       <button ng-show="id"
