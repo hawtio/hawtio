@@ -54,6 +54,11 @@
       <artifactId>hawtio-core</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- Git Library -->
     <dependency>

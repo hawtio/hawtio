@@ -31,6 +31,7 @@ import java.util.TreeSet;
 
 import io.hawt.util.FileFilters;
 import io.hawt.util.Files;
+import io.hawt.util.Function;
 import io.hawt.util.IOHelper;
 import io.hawt.util.MBeanSupport;
 import io.hawt.util.Objects;
@@ -436,6 +437,28 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
             }
             return new FileContents(file.isDirectory(), null, children);
         }
+    }
+
+    /**
+     * Performs a read only operation on the file
+     */
+    protected <T> T doReadFile(Git git, File rootDir, String branch, String pathOrEmpty, Function<File, T> callback) throws IOException, GitAPIException {
+        checkoutBranch(git, branch);
+        String path = Strings.isBlank(pathOrEmpty) ? "/" : pathOrEmpty;
+        File file = getFile(rootDir, path);
+        T results = callback.apply(file);
+        return results;
+    }
+
+    /**
+     * Performs a write operation on the file
+     */
+    protected <T> T doWriteFile(Git git, File rootDir, String branch, String pathOrEmpty, Function<File, T> callback) throws IOException, GitAPIException {
+        checkoutBranch(git, branch);
+        String path = Strings.isBlank(pathOrEmpty) ? "/" : pathOrEmpty;
+        File file = getFile(rootDir, path);
+        T results = callback.apply(file);
+        return results;
     }
 
     protected FileInfo doExists(Git git, File rootDir, String branch, String pathOrEmpty) throws GitAPIException {

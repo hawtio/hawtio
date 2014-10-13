@@ -17,12 +17,17 @@
  */
 package io.hawt.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
  */
 public class Files {
+    private static final int BUFFER_SIZE = 8192;
+
     /**
      * Recursively deletes the given file whether its a file or directory returning the number
      * of files deleted
@@ -53,4 +58,29 @@ public class Files {
         } else {
             return fullPath;
         }
-    }}
+    }
+
+    /**
+     * Reads a {@link File} and returns the data as a byte array
+     */
+    public static byte[] readBytes(File file) throws IOException {
+        FileInputStream fis = null;
+        ByteArrayOutputStream bos = null;
+        if (file == null) {
+            throw new FileNotFoundException("No file specified");
+        }
+        try {
+            fis = new FileInputStream(file);
+            bos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int remaining;
+            while ((remaining = fis.read(buffer)) > 0) {
+                bos.write(buffer, 0, remaining);
+            }
+            return bos.toByteArray();
+        } finally {
+            Closeables.closeQuitely(fis);
+            Closeables.closeQuitely(bos);
+        }
+    }
+}

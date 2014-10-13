@@ -188,6 +188,15 @@
     <url-pattern>/git/*</url-pattern>
   </servlet-mapping>
 -->
+  <servlet>
+    <servlet-name>gitServlet</servlet-name>
+    <servlet-class>io.hawt.git.GitServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>gitServlet</servlet-name>
+    <url-pattern>/wiki/*</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>maven-source</servlet-name>
