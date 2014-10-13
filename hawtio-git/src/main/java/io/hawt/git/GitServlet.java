@@ -83,13 +83,9 @@ public class GitServlet extends HttpServlet {
                 resp.setContentType(type);
                 if (file.isFile() && file.exists()) {
                     try {
-                        //IOHelper.copy(new FileInputStream(file), resp.getOutputStream());
                         byte[] bytes = Files.readBytes(file);
                         int length = bytes.length;
-
-                        System.out.println("Serving file: " + file.getAbsolutePath() + " of type " + type + " length: " + length);
-                        LOG.debug("Serving file: " + file.getAbsolutePath() + " of type " + type);
-                        //resp.setHeader("Content-Length", "" + length);
+                        LOG.debug("Serving file: " + file.getAbsolutePath() + " of type " + type + " length: " + length);
                         resp.setContentLength(length);
                         resp.getOutputStream().write(bytes);
                     } catch (IOException e) {
