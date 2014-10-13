@@ -366,7 +366,7 @@ div#main div ul.nav li.active a:hover {
   text-shadow: 0 1px 0 #FFFFFF;
 }
 
-div#main div ul.nav li a {
+div#main div ul.nav li a:not(.btn) {
   border: 1px;
   border-radius: 2px;
   background: inherit;
@@ -381,7 +381,7 @@ div#main div ul.nav li div.separator {
     float: left;
 }
 
-div#main div ul.nav li a:hover {
+div#main div ul.nav li a:hover:not(.btn) {
   border: 1px;
   border-radius: 2px;
   background: inherit;

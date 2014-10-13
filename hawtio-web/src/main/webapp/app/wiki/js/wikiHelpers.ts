@@ -18,6 +18,8 @@ module Wiki {
 
   export var excludeAdjustmentPrefixes = ["http://", "https://", "#"];
 
+  export enum ViewMode { List, Icon };
+
   /**
    * The custom views within the wiki namespace; either "/wiki/$foo" or "/wiki/branch/$branch/$foo"
    */
@@ -497,11 +499,13 @@ module Wiki {
     var name = row.name;
     var directory = row.directory;
     var xmlNamespaces = row.xmlNamespaces;
+    var iconUrl = row.iconUrl;
     var entity = row.entity;
     if (entity) {
       name = name || entity.name;
       directory = directory || entity.directory;
       xmlNamespaces = xmlNamespaces || entity.xmlNamespaces;
+      iconUrl = iconUrl || entity.iconUrl;
     }
     var css = null;
     var icon = null;
@@ -519,7 +523,10 @@ module Wiki {
         console.log("file " + name + " has namespaces " + xmlNamespaces);
       }
     }
-
+    if (iconUrl) {
+      css = null;
+      icon = 'git/' + iconUrl;
+    }
     if (!icon) {
       if (directory) {
         if ("profile" === extension) {

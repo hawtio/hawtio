@@ -38,7 +38,9 @@ module StorageHelpers {
       return fromParam(value);
     };
 
-    ControllerHelpers.bindModelToSearchParam(options.$scope, options.$location, options.modelName, options.paramName, options.initialValue, toWrapper, fromWrapper);
+    var storedValue = fromWrapper(undefined);
+
+    ControllerHelpers.bindModelToSearchParam(options.$scope, options.$location, options.modelName, options.paramName, storedValue || options.initialValue, toWrapper, fromWrapper);
   }
 
 }

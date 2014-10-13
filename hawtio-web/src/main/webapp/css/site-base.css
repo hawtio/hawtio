@@ -3102,6 +3102,11 @@ fs-donut svg g text.units {
   margin-bottom: 0;
 }
 
+.column-box .file-icon > * {
+  width: 100%;
+  height: auto;
+}
+
 .location-box {
   margin: 12px;
 }

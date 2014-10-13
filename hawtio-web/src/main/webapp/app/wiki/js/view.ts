@@ -6,6 +6,7 @@
 /// <reference path="../../fabric/js/fabricGlobals.ts"/>
 /// <reference path="../../fabric/js/fabricHelpers.ts"/>
 /// <reference path="../../kubernetes/js/kubernetesHelpers.ts"/>
+/// <reference path="../../helpers/js/storageHelpers.ts"/>
 module Wiki {
 
   function goToLink(link, $timeout, $location) {
@@ -16,7 +17,9 @@ module Wiki {
     }, 100);
   }
 
-  _module.controller("Wiki.ViewController", ["$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", ($scope, $location, $routeParams, $route, $http, $timeout, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile, $templateCache, jolokia) => {
+  export var ViewController = _module.controller("Wiki.ViewController", ["$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", "localStorage", ($scope, $location:ng.ILocationService, $routeParams:ng.route.IRouteParamsService, $route:ng.route.IRouteService, $http:ng.IHttpService, $timeout:ng.ITimeoutService, workspace:Core.Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, jolokia:Jolokia.IJolokia, localStorage) => {
+
+    $scope.name = "WikiViewController";
 
     var isFmc = Fabric.isFMCContainer(workspace);
 
@@ -39,6 +42,7 @@ module Wiki {
     $scope.moveDialog = new UI.Dialog();
     $scope.deleteDialog = new UI.Dialog();
     $scope.isFile = false;
+
     $scope.rename = {
       newFileName: ""
     };
@@ -54,12 +58,24 @@ module Wiki {
     };
     $scope.newDocumentName = "";
     $scope.selectedCreateDocumentExtension = null;
+    $scope.ViewMode = Wiki.ViewMode;
 
     // bind filter model values to search params...
     Core.bindModelToSearchParam($scope, $location, "searchText", "q", "");
 
+    StorageHelpers.bindModelToLocalStorage({
+      $scope: $scope,
+      $location: $location,
+      localStorage: localStorage,
+      modelName: 'mode',
+      paramName: 'wikiViewMode',
+      initialValue: Wiki.ViewMode.List,
+      to: Core.numberToString,
+      from: Core.parseIntValue
+    });
+
     // only reload the page if certain search parameters change
-    Core.reloadWhenParametersChange($route, $scope, $location);
+    Core.reloadWhenParametersChange($route, $scope, $location, ['wikiViewMode']);
 
     $scope.gridOptions = {
       data: 'children',
@@ -78,9 +94,34 @@ module Wiki {
       ]
     };
 
+    $scope.$on('Wiki.SetViewMode', ($event, mode:Wiki.ViewMode) => {
+      $scope.mode = mode;
+      switch(mode) {
+        case ViewMode.List:
+          log.debug("List view mode");
+          break;
+        case ViewMode.Icon:
+          log.debug("Icon view mode");
+          break;
+        default:
+          $scope.mode = ViewMode.List;
+          log.debug("Defaulting to list view mode");
+          break;
+      }
+    });
+
+
     $scope.childActions = [];
 
     var maybeUpdateView = Core.throttled(updateView, 1000);
+
+    $scope.marked = (text) => {
+      if (text) {
+        return marked(text);
+      } else {
+        return '';
+      }
+    };
 
 
     $scope.$on('wikiBranchesUpdated', function () {
