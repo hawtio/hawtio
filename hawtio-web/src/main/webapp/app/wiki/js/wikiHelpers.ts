@@ -1,3 +1,8 @@
+/// <reference path="../../baseIncludes.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
+/// <reference path="../../git/js/gitHelpers.ts"/>
+/// <reference path="../../git/js/git.ts"/>
+/// <reference path="../../fabric/js/fabricHelpers.ts"/>
 /**
  * @module Wiki
  */
@@ -67,6 +72,14 @@ module Wiki {
       regex: defaultFileNamePattern,
       invalid: defaultFileNamePatternInvalid,
       extension: ".properties"
+    },
+    {
+      label: "JSON File",
+      tooltip: "A file containing JSON data",
+      exemplar: "document.json",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".json"
     },
     {
       label: "Key Store File",
