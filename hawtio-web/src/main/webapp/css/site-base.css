@@ -786,7 +786,7 @@ div#main div ul.nav li a:hover {
 }
 
 .span12 > .nav.nav-tabs:not(.connected),
-.span12 > .nav.nav-tabs:not(.connected) > li {
+.span12 > .nav.nav-tabs > li {
   margin: 3px;
 }
 
