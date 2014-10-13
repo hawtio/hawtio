@@ -33,6 +33,7 @@ public class LoginServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final transient Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
+    private static final int DEFAULT_SESSION_TIMEOUT = 1800;
 
     protected Converters converters = new Converters();
     protected JsonConvertOptions options = JsonConvertOptions.DEFAULT;
@@ -49,10 +50,11 @@ public class LoginServlet extends HttpServlet {
                     timeout = Integer.parseInt(s);
                     // timeout of 0 means default timeout
                     if (timeout == 0) {
-                        timeout = null;
+                        timeout = DEFAULT_SESSION_TIMEOUT;
                     }
                 } catch (Exception e) {
-                    // ignore and use default timeout value
+                    // ignore and use our own default of 1/2 hour
+                    timeout = DEFAULT_SESSION_TIMEOUT;
                 }
             }
         }
