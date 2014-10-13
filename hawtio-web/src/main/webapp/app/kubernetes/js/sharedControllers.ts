@@ -44,10 +44,9 @@ module Kubernetes {
     };
 
     var labelColors = {
-      'profile': 'background-green',
       'version': 'background-blue',
-      'name': 'background-light-grey',
-      'container': 'background-light-green'
+      'name': 'background-light-green',
+      'container': 'background-light-grey'
     };
     $scope.labelClass = (labelType:string) => {
       if (!(labelType in labelColors)) {
