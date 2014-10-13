@@ -1,3 +1,5 @@
+/// <reference path="../../core/js/coreHelpers.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
 /// <reference path="rbacPlugin.ts"/>
 module RBAC {
 
@@ -39,64 +41,62 @@ module RBAC {
    * Directive that sets an element's visibility to hidden if the user cannot invoke the supplied operation
    * @type {ng.IModule|ng.ICompileProvider}
    */
-  export var hawtioShow = _module.directive('hawtioShow', ['jolokia', 'rbacACLMBean', 'rbacTasks', (jolokia, rbacACLMBean:ng.IPromise<string>, rbacTasks:RBAC.RBACTasks) => {
+  export var hawtioShow = _module.directive('hawtioShow', ['workspace', (workspace:Core.Workspace) => {
     return {
       restrict: 'A',
       replace: false,
       link: (scope:ng.IScope, element:ng.IAugmentedJQuery, attr:ng.IAttributes) => {
-        rbacACLMBean.then((rbacACLMBean:string) => {
-          var objectName = attr['objectName'];
-          if (!objectName) {
-            return;
-          }
-          var methodName = attr['methodName'];
-          var argumentTypes = attr['argumentTypes'];
-          var mode = attr['mode'] || HIDE;
-          var op = getOp(objectName, methodName, argumentTypes);
-          var arguments = getArguments(op, objectName, methodName, argumentTypes);
-
-          log.debug("Arguments for operation: ", arguments);
-          log.debug("ACL MBean: ", rbacACLMBean);
-
-          var success = (response) => {
-            var value = <boolean>response.value;
-            if (value) {
-              log.debug("User can invoke: ", response.request.arguments);
-              if (mode === INVERSE) {
-                element.css({
-                  display: 'none'
-                });
-              }
-            } else {
-              log.debug("User cannot invoke: ", response.request.arguments);
-              if (mode === REMOVE) {
-                element.css({
-                  display: 'none'
-                });
-              } else if (mode === HIDE) {
-                element.css({
-                  visibility: 'hidden'
-                });
-              }
+        var objectName = attr['objectName'];
+        if (!objectName) {
+          return;
+        }
+        function applyInvokeRights(value:boolean, mode:string) {
+          if (value) {
+            if (mode === INVERSE) {
+              element.css({
+                display: 'none'
+              });
             }
-          };
+          } else {
+            if (mode === REMOVE) {
+              element.css({
+                display: 'none'
+              });
+            } else if (mode === HIDE) {
+              element.css({
+                visibility: 'hidden'
+              });
+            }
+          }
+        };
+        scope.$watch(() => {
+        var methodName = attr['methodName'];
+        var argumentTypes = attr['argumentTypes'];
+        var mode = attr['mode'] || HIDE;
+        var op = getOp(objectName, methodName, argumentTypes);
+        var args = getArguments(op, objectName, methodName, argumentTypes);
+        objectName = args[0];
+        methodName = args[1];
+        if (objectName) {
+          var mbean = Core.parseMBean(objectName);
+          var folder = workspace.findMBeanWithProperties(mbean.domain, mbean.attributes);
+          if (folder) {
+            var invokeRights = workspace.hasInvokeRights(folder, methodName);
+            /*
+            if (invokeRights) {
+              log.debug("User has invoke rights on mbean: ", objectName, " methodName: ", methodName);
 
-          var error = (response) => {
-            log.debug("got error checking permission: ", response);
-          };
+            } else {
+              log.debug("User does not have invoke rights on mbean: ", objectName, " methodName: ", methodName);
 
-          jolokia.request({
-            type: 'exec',
-            mbean: rbacACLMBean,
-            operation: op,
-            arguments: arguments
-          }, onSuccess(success, {
-            error: error
-          }));
-
+            }
+            */
+            applyInvokeRights(invokeRights, mode);
+          }
+        }
         });
       }
-    }
+    };
   }]);
 
 }

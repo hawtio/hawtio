@@ -282,7 +282,7 @@ module Core {
   }
 
   export function parseMBean(mbean) {
-    var answer = {};
+    var answer:any = {};
     var parts:any = mbean.split(":");
     if (parts.length > 1) {
       answer['domain'] = parts.first();
