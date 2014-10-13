@@ -124,9 +124,6 @@ module Perspective {
             href: "#/camin"
           },
           {
-            id: "insight-logs"
-          },
-          {
             id: "insight-camel"
           },
           {
