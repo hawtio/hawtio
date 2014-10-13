@@ -430,7 +430,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
                 File[] files = file.listFiles();
                 for (File child : files) {
                     if (!isIgnoreFile(child)) {
-                        children.add(FileInfo.createFileInfo(rootDir, child));
+                        children.add(FileInfo.createFileInfo(rootDir, child, branch));
                     }
                 }
             }
@@ -460,7 +460,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         });
 
         if (files != null && files.length == 1) {
-            return FileInfo.createFileInfo(rootDir, files[0]);
+            return FileInfo.createFileInfo(rootDir, files[0], branch);
         }
 
         return null;
@@ -531,7 +531,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
                             buffer.append(child.getName());
                             buffer.append("\": ");
                             buffer.append(text);
-                            children.add(FileInfo.createFileInfo(rootDir, child));
+                            children.add(FileInfo.createFileInfo(rootDir, child, branch));
                         }
                     }
                 }
