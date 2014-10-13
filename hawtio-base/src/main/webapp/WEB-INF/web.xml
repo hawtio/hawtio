@@ -195,7 +195,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>gitServlet</servlet-name>
-    <url-pattern>/wiki/*</url-pattern>
+    <url-pattern>/git/*</url-pattern>
   </servlet-mapping>
 
   <servlet>
