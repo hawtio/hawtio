@@ -728,12 +728,14 @@ table.table thead .sorting_desc:after {
   margin-bottom: 0px;
 }
 
-div#main div ul.nav {
+#main > div > ul.nav,
+ng-include > .nav.nav-tabs {
   margin-bottom: 10px;
   min-width: 120px;
 }
 
-div#main div ul.nav li {
+#main > div > ul.nav > li, 
+ng-include > .nav.nav-tabs > li {
   margin-top: 3px;
   margin-bottom: 3px;
 }
@@ -750,7 +752,8 @@ div#main div ul.nav li {
   margin-left: 7px;
 }
 
-div#main div ul.nav {
+#main > div > ul.nav,
+ng-include > .nav.nav-tabs {
   padding-left: 3px;
   padding-right: 3px;
 }
@@ -777,8 +780,14 @@ div#main div ul.nav li a:hover {
   min-width: 120px;
 }
 
-#main div div div .nav.nav-tabs:not(.connected) {
+#main > div > div > div > .nav.nav-tabs:not(.connected),
+.span12 > .nav.nav-tabs:not(.connected) {
   margin-top: 5px;
+}
+
+.span12 > .nav.nav-tabs:not(.connected),
+.span12 > .nav.nav-tabs:not(.connected) > li {
+  margin: 3px;
 }
 
 .logbar {
@@ -857,22 +866,26 @@ table.dataTable tbody tr td {
   text-overflow: ellipsis;
 }
 
-#main .logbar[ng-controller='Wiki.NavBarController'] .wiki.logbar-container .nav.nav-tabs,
-#main .logbar-wiki .wiki.logbar-container .nav.nav-tabs {
-  margin: 0px;
+.wiki.logbar-container {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
-.wiki.logbar-container {
-  margin-top: 2px;
-  margin-bottom: 2px;
+.wiki.logbar-container > .nav.nav-tabs {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.wiki.logbar-container .pull-right {
+  margin-top: 1px;
 }
 
 .wiki-fixed {
-  margin-top: 40px;
+  margin-top: 45px;
 }
 
 .wiki-fixed .pane {
-  top: 105px;
+  top: 120px;
 }
 
 .help-sidebar li {
@@ -1866,7 +1879,23 @@ div#main div ul.nav li a.nav-primary.active {
   opacity: 0.3;
 }
 
+.caret:before {
+  font-family: 'FontAwesome';
+  border: 0;
+  content: "\f078";
+  font-size: 11px;
+  display: block;
+  position: relative;
+  top: -9px;
+  left: 0;
+}
+
+.dropdown.perspective-selector .caret:before {
+  top: -7px;
+}
+
 .caret {
+  border: none;
   width: 9px;
 }
 
@@ -3615,6 +3644,10 @@ th > .indicator:before {
   margin-bottom: 0;
 }
 
+.nav .hawtio-dropdown {
+  margin-top: 2px;
+}
+
 .dropdown.perspective-selector .dropdown-menu > div > ul {
   margin-top: 0;
 }
@@ -3695,21 +3728,6 @@ span.hawtio-dropdown .dropdown-menu {
 
 .hawtio-breadcrumb > li {
   display: inline-block;
-}
-
-.caret {
-  border: 0;
-}
-
-.caret:before {
-  font-family: 'FontAwesome';
-  border: 0;
-  content: "\f078";
-  font-size: 11px;
-  display: block;
-  position: relative;
-  top: -7px;
-  left: 0;
 }
 
 .dropdown-menu .dropdown .caret {
