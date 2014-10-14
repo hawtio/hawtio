@@ -10,8 +10,7 @@ module Kubernetes {
       scope: {
         config: '=kubernetesJson'
       },
-      controller: ["$scope", "$location", "$http", "jolokia", ($scope, $location, $http, jolokia:Jolokia.IJolokia) => {
-        var parentScope = $scope.$parent;
+      controller: ["$scope", "$location", "$http", "jolokia", "marked", ($scope, $location, $http, jolokia:Jolokia.IJolokia, marked) => {
 
         $scope.$watch('config', (config) => {
           if (config) {
@@ -19,34 +18,15 @@ module Kubernetes {
           } 
         });
 
-        function pathToURL(path:string):string {
-          if (path) {
-            var branch = parentScope["branch"] || "master";
-            return Wiki.gitRestURL(branch, path);
-          } else {
-            return null;
-          }
-        }
-
-        parentScope.$watch('children', (children) => {
-          $scope.appTitle = Wiki.fileName(parentScope["pageId"]);
+        $scope.$on('Wiki.ViewPage.Children', ($event, pageId, children) => {
+          // log.debug("Got broadcast, pageId: ", pageId, " children: ", children);
+          $scope.appTitle = pageId;
           if (children) {
-            $scope.children = children;
-            $scope.summaryPath = (children.find({name: "Summary.md"}) || {})["path"];
-            $scope.iconPath = (children.find(fileInfo => {
-              var name = fileInfo["name"];
-              return name && name.startsWith("icon.");
-            }) || {})["path"];
-            var branch = parentScope["branch"] || "master";
-            if ($scope.iconPath) {
-              $scope.iconURL = pathToURL($scope.iconPath);
-            }
-            if ($scope.summaryPath) {
-              $scope.summaryURL = pathToURL($scope.summaryPath);
-
-              // now lets load the summary
-              log.info("Loading : " + $scope.summaryURL);
-              $http.get($scope.summaryURL).
+            var summaryFile = children.find((child) => { return child.name.toLowerCase() === "summary.md";});
+            var summaryURL:string = null;
+            if (summaryFile) {
+              summaryURL = Wiki.gitRestURL(summaryFile.branch, summaryFile.path);
+              $http.get(summaryURL).
                 success(function (data, status, headers, config) {
                   var summaryMarkdown = data;
                   if (summaryMarkdown) {
@@ -57,10 +37,13 @@ module Kubernetes {
                 }).
                 error(function (data, status, headers, config) {
                   $scope.summaryHtml = null;
-                  log.warn("Failed to load " + $scope.summaryURL + " " + data + " " + status);
+                  log.warn("Failed to load " + summaryURL + " " + data + " " + status);
                 });
             }
-            log.debug("got children " + children + " iconPath: " + $scope.iconPath + " summaryPath: " + $scope.summaryPath);
+            var iconFile = children.find((child) => { return child.name.toLowerCase().startsWith("icon"); });
+            if (iconFile) {
+              $scope.iconURL = Wiki.gitRestURL(iconFile.branch, iconFile.path);
+            }
           }
         });
 

@@ -497,9 +497,17 @@ module Wiki {
    * Returns the URL to perform a GET or POST for the given branch name and path
    */
   export function gitRestURL(branch: string, path: string) {
+    var url = gitRelativeURL(branch, path);
+    return Core.url(url);
+  }
+
+  /**
+   * Returns a relative URL to perform a GET or POST for the given branch/path
+   */
+  export function gitRelativeURL(branch: string, path: string) {
     if (!branch) branch = "master";
     if (!path) path = "/";
-    return Core.url("/git/" + branch + (path.startsWith("/") ? "" : "/") + path);
+    return UrlHelpers.join("git/" + branch, path);
   }
 
 
@@ -568,7 +576,7 @@ module Wiki {
           case 'jpg':
           case 'gif':
             css = null;
-            icon = UrlHelpers.join("git/" + branch, path);
+            icon = Wiki.gitRelativeURL(branch, path);
             break;
           case 'json':
           case 'xml':

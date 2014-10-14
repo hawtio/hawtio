@@ -750,6 +750,7 @@ module Wiki {
             }
           });
         }
+        $scope.$broadcast('Wiki.ViewPage.Children', $scope.pageId, $scope.children);
       } else {
         $scope.$broadcast('pane.close');
         var pageName = $scope.pageId;
