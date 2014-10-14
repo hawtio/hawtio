@@ -19,9 +19,9 @@ module Kubernetes {
         $scope.apply = () => {
           var json = angular.toJson($scope.config);
           if (json) {
-            // TODO find app name from parent scope...
-            var name = "App";
+            var name = Core.pathGet($scope, ["$parent", "pageId"]) || "App";
             Core.notification('info', "Running " + name);
+
             jolokia.execute(Kubernetes.managerMBean, "apply", json,
               onSuccess((response) => {
                 log.debug("Got response: ", response);
@@ -30,10 +30,7 @@ module Kubernetes {
                 $location.url("/kubernetes/pods");
                 Core.$apply($scope);
               }));
-            
-
           }
-          log.debug("Clicked apply!");
         };
       }]
     };
