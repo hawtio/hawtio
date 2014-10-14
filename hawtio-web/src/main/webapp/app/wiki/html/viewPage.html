@@ -62,48 +62,48 @@
       </div>
     </div>
 
-    <div class="row-fluid">
-      <div class="span12 wiki-icon-view">
-        <div class="column-box mouse-pointer" 
-             ng-repeat="child in children" 
-             ng-class="isInGroup(gridOptions.selectedItems, child, 'selected', '')"
-             ng-click="toggleSelectionFromGroup(gridOptions.selectedItems, child)">
-          <div class="row-fluid">
-            <div class="span2">
-              <span class="app-logo" ng-class="fileClass(child)" ng-bind-html-unsafe="fileIconHtml(child)"></span>
+    <div class="row-fluid" ng-hide="!directory">
+      <div class="span12" ng-controller="Wiki.FileDropController">
+        <div class="wiki-icon-view" nv-file-drop nv-file-over uploader="uploader" over-class="ready-drop">
+          <div class="column-box mouse-pointer" 
+               ng-repeat="child in children" 
+               ng-class="isInGroup(gridOptions.selectedItems, child, 'selected', '')"
+               ng-click="toggleSelectionFromGroup(gridOptions.selectedItems, child)">
+            <div class="row-fluid">
+              <div class="span2">
+                <span class="app-logo" ng-class="fileClass(child)" ng-bind-html-unsafe="fileIconHtml(child)"></span>
+              </div>
+              <div class="span10">
+                <h3>
+                  <a href="{{childLink(child)}}">{{child.name}}</a>
+                </h3>
+              </div>
             </div>
-            <div class="span10">
-              <h3>
-                <a href="{{childLink(child)}}">{{child.name}}</a>
-              </h3>
-            </div>
-          </div>
-          <div class="row-fluid" ng-show="child.summary">
-            <div class="span12">
-              <p compile="marked(child.summary)"></p>
-            </div>
-          </div>
-          <!--
-          <div class="row-fluid">
-            <div class="span12">
-              <pre>{{child}}</pre>
+            <div class="row-fluid" ng-show="child.summary">
+              <div class="span12">
+                <p compile="marked(child.summary)"></p>
+              </div>
             </div>
           </div>
-          -->
         </div>
       </div>
     </div>
+    <!--
     <div ng-hide="showProfileHeader || !directory">
       <div wiki-drop-file branch="{{branch}}" path="{{pageId}}"></div>
     </div>
-    <div ng-include="sourceView" class="editor-autoresize"></div>
+    -->
   </div>
   <!-- end Icon view -->
 
   <!-- start List view -->
   <div ng-show="mode == ViewMode.List" class="wiki-fixed">
     <hawtio-pane position="left" width="300">
-      <div class="wiki-grid" hawtio-list="gridOptions"></div>
+      <div ng-controller="Wiki.FileDropController">
+        <div class="wiki-list-view" nv-file-drop nv-file-over uploader="uploader" over-class="ready-drop">
+          <div class="wiki-grid" hawtio-list="gridOptions"></div>
+        </div>
+      </div>
     </hawtio-pane>
 
     <div class="row-fluid">
@@ -134,12 +134,14 @@
           </div>
         </div>
 
+        <!--
         <div ng-hide="showProfileHeader || !directory">
           <div wiki-drop-file branch="{{branch}}" path="{{pageId}}"></div>
         </div>
-        <div ng-include="sourceView" class="editor-autoresize"></div>
+        -->
       </div>
     </div>
   </div>
   <!-- end List view -->
+  <div ng-include="sourceView" class="editor-autoresize"></div>
 </div>

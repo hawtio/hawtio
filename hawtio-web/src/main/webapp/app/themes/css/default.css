@@ -1463,3 +1463,30 @@ img.nodeIcon:hover {
   border-bottom: 1px solid #d4d4d4;
 }
 
+.wiki-icon-view {
+  border-radius: 10px;
+  border: 4px solid transparent;
+}
+
+.ready-drop {
+  border-radius: 10px;
+  border: 4px dashed #aaffaa;
+  background: #ddffdd;
+  min-height: 150px;
+  position: relative;
+}
+
+.ready-drop:after {
+  position: absolute;
+  /*
+  content: "Add File Here...";
+  */
+  font-size: 50px;
+  top: 50%;
+  left: 50%;
+  margin-left: -200px;
+  margin-top: -25px;
+  z-index: 10000;
+  opacity: 0.5;
+}
+
