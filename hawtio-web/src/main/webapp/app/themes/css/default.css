@@ -835,7 +835,10 @@ div#main div ul.nav li a.nav-primary .caret {
   background: inherit !important;
 }
 
-.file-icon i.icon-folder-close {
+.file-icon i.icon-folder-close,
+.file-icon i.icon-folder-close-alt,
+.app-logo .icon-folder-close,
+.app-logo .icon-folder-close-alt {
   color: #EECA7C;
 }
 

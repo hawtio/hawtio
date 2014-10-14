@@ -17,7 +17,7 @@ module Wiki {
     }, 100);
   }
 
-  export var ViewController = _module.controller("Wiki.ViewController", ["$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", "localStorage", ($scope, $location:ng.ILocationService, $routeParams:ng.route.IRouteParamsService, $route:ng.route.IRouteService, $http:ng.IHttpService, $timeout:ng.ITimeoutService, workspace:Core.Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, jolokia:Jolokia.IJolokia, localStorage) => {
+  export var ViewController = _module.controller("Wiki.ViewController", ["$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", "localStorage", "$interpolate", ($scope, $location:ng.ILocationService, $routeParams:ng.route.IRouteParamsService, $route:ng.route.IRouteService, $http:ng.IHttpService, $timeout:ng.ITimeoutService, workspace:Core.Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, jolokia:Jolokia.IJolokia, localStorage, $interpolate:ng.IInterpolateService) => {
 
     $scope.name = "WikiViewController";
 
@@ -623,31 +623,41 @@ module Wiki {
       } else {
         format = Wiki.fileFormat(pageName, fileExtensionTypeRegistry) || $scope.format;
       }
-      if ("markdown" === format) {
-        // lets convert it to HTML
-        $scope.html = contents ? marked(contents) : "";
-      } else if (format && format.startsWith("html")) {
-        $scope.html = contents;
-      } else {
-        var form = null;
-        if (format && format === "javascript") {
+      log.debug("File format: ", format);
+      switch (format) {
+        case "image":
+          var imageURL = 'git/' + $scope.branch;
+          log.debug("$scope: ", $scope);
+          imageURL = UrlHelpers.join(imageURL, $scope.pageId);
+          var interpolateFunc = $interpolate($templateCache.get("imageTemplate.html"));
+          $scope.html = interpolateFunc({
+            imageURL: imageURL
+          });
+          break;
+        case "markdown":
+          $scope.html = contents ? marked(contents) : "";
+          break;
+        case "javascript":
+          var form = null;
           form = $location.search()["form"];
-        }
-        $scope.source = contents;
-        $scope.form = form;
-        if (form) {
-          // now lets try load the form JSON so we can then render the form
-          $scope.sourceView = null;
-          if (form === "/") {
-            onFormSchema(_jsonSchema);
+          $scope.source = contents;
+          $scope.form = form;
+          if (form) {
+            // now lets try load the form JSON so we can then render the form
+            $scope.sourceView = null;
+            if (form === "/") {
+              onFormSchema(_jsonSchema);
+            } else {
+              $scope.git = wikiRepository.getPage($scope.branch, form, $scope.objectId, (details) => {
+                onFormSchema(Wiki.parseJson(details.text));
+              });
+            }
           } else {
-            $scope.git = wikiRepository.getPage($scope.branch, form, $scope.objectId, (details) => {
-              onFormSchema(Wiki.parseJson(details.text));
-            });
+            $scope.sourceView = "app/wiki/html/sourceView.html";
           }
-        } else {
+          break;
+        default:
           $scope.sourceView = "app/wiki/html/sourceView.html";
-        }
       }
       Core.$apply($scope);
     }
@@ -672,12 +682,9 @@ module Wiki {
         $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
       }
       $scope.codeMirrorOptions.mode.name = $scope.format;
-      //log.debug("format is '" + $scope.format + "'");
-
       $scope.children = null;
 
       if (details.directory) {
-
         var directories = details.children.filter((dir) => {
           return dir.directory && !dir.name.has(".profile")
         });
@@ -687,21 +694,23 @@ module Wiki {
         var files = details.children.filter((file) => {
           return !file.directory;
         });
-
         directories = directories.sortBy((dir) => {
           return dir.name;
         });
         profiles = profiles.sortBy((dir) => {
           return dir.name;
         });
-
         files = files.sortBy((file) => {
           return file.name;
         })
           .sortBy((file) => {
             return file.name.split('.').last();
           });
-        $scope.children = (<any>Array).create(directories, profiles, files);
+        // Also enrich the response with the current branch, as that's part of the coordinate for locating the actual file in git
+        $scope.children = (<any>Array).create(directories, profiles, files).map((file) => {
+          file.branch = $scope.branch;
+          return file;
+        });
       }
 
 

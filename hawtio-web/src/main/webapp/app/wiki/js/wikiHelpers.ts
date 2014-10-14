@@ -3,6 +3,7 @@
 /// <reference path="../../git/js/gitHelpers.ts"/>
 /// <reference path="../../git/js/git.ts"/>
 /// <reference path="../../fabric/js/fabricHelpers.ts"/>
+/// <reference path="../../helpers/js/urlHelpers.ts"/>
 /**
  * @module Wiki
  */
@@ -378,13 +379,19 @@ module Wiki {
 
   export function editLink(branch:string, pageId:string, $location) {
     var link:string = null;
-    var start = startLink(branch);
-    if (pageId) {
-      link = start + "/edit/" + encodePath(pageId);
-    } else {
-      // lets use the current path
-      var path = $location.path();
-      link = "#" + path.replace(/(view|create)/, "edit");
+    var format = Wiki.fileFormat(pageId);
+    switch (format) {
+      case "image":
+        break;
+      default:
+      var start = startLink(branch);
+      if (pageId) {
+        link = start + "/edit/" + encodePath(pageId);
+      } else {
+        // lets use the current path
+        var path = $location.path();
+        link = "#" + path.replace(/(view|create)/, "edit");
+      }
     }
     return link;
   }
@@ -416,9 +423,12 @@ module Wiki {
     return pageId.split("/").map(decodeURIComponent).join("/");
   }
 
-  export function fileFormat(name:string, fileExtensionTypeRegistry) {
+  export function fileFormat(name:string, fileExtensionTypeRegistry?) {
     var extension = fileExtension(name);
     var answer = null;
+    if (!fileExtensionTypeRegistry) {
+      fileExtensionTypeRegistry = Core.injector.get("fileExtensionTypeRegistry");
+    }
     angular.forEach(fileExtensionTypeRegistry, (array, key) => {
       if (array.indexOf(extension) >= 0) {
         answer = key;
@@ -507,12 +517,16 @@ module Wiki {
    */
   export function fileIconHtml(row) {
     var name = row.name;
+    var path = row.path;
+    var branch = row.branch;
     var directory = row.directory;
     var xmlNamespaces = row.xmlNamespaces;
     var iconUrl = row.iconUrl;
     var entity = row.entity;
     if (entity) {
       name = name || entity.name;
+      path = path || entity.path;
+      branch = branch || entity.branch;
       directory = directory || entity.directory;
       xmlNamespaces = xmlNamespaces || entity.xmlNamespaces;
       iconUrl = iconUrl || entity.iconUrl;
@@ -530,24 +544,43 @@ module Wiki {
       } else if (xmlNamespaces.any((ns) => Wiki.activemqNamespaces.any(ns))) {
         icon = "img/icons/messagebroker.svg";
       } else {
-        console.log("file " + name + " has namespaces " + xmlNamespaces);
+        log.debug("file " + name + " has namespaces " + xmlNamespaces);
       }
     }
     if (iconUrl) {
       css = null;
-      icon = 'git/' + iconUrl;
+      icon = UrlHelpers.join("git", iconUrl);
     }
     if (!icon) {
       if (directory) {
-        if ("profile" === extension) {
-          css = "icon-book";
-        } else {
-          css = "icon-folder-close";
+        switch (extension) {
+          case 'profile':
+            css = "icon-book";
+            break;
+          default:
+            log.debug("No match for extension: ", extension, " using a generic folder icon");
+            css = "icon-folder-close";
         }
-      } else if ("xml" === extension) {
-        css = "icon-file-text";
       } else {
-        css = "icon-file-alt";
+        switch (extension) {
+          case 'png':
+          case 'svg':
+          case 'jpg':
+          case 'gif':
+            css = null;
+            icon = UrlHelpers.join("git/" + branch, path);
+            break;
+          case 'json':
+          case 'xml':
+            css = "icon-file-text";
+            break;
+          case 'md':
+            css = "icon-file-text-alt";
+            break;
+          default:
+            log.debug("No match for extension: ", extension, " using a generic file icon");
+            css = "icon-file-alt";
+        }
       }
     }
     if (icon) {
