@@ -13,10 +13,9 @@ module WikiDrop {
         path: '@'
       },
       templateUrl: WikiDrop.templatePath + "deploy.html",
-      controller: ["$scope", "$element", "FileUploader", "jolokiaUrl", "$templateCache", "jolokia", "userDetails", ($scope, $element, FileUploader:any, jolokiaUrl, $templateCache, jolokia, userDetails:Core.UserDetails) => {
+      controller: ["$scope", "$element", "FileUploader", "jolokiaUrl", "$templateCache", "$route", "$timeout", "jolokia", "userDetails", ($scope, $element, FileUploader:any, jolokiaUrl, $templateCache, $route, $timeout, jolokia, userDetails:Core.UserDetails) => {
 
         $scope.artifactTemplate = '';
-
 
         function updateURL() {
           var uploadURI = Wiki.gitRestURL($scope.branch, $scope.path);
@@ -77,6 +76,11 @@ module WikiDrop {
           uploader.onCompleteAll = function () {
             log.debug('onCompleteAll');
             uploader.clearQueue();
+            $timeout(() => {
+              log.info("Completed all uploads. Lets force a reload");
+              $route.reload();
+              Core.$apply($scope);
+            }, 200);
           };
 
           log.debug('uploader', uploader);
