@@ -7,6 +7,7 @@
 /// <reference path="../../fabric/js/fabricHelpers.ts"/>
 /// <reference path="../../kubernetes/js/kubernetesHelpers.ts"/>
 /// <reference path="../../helpers/js/storageHelpers.ts"/>
+/// <reference path="../../helpers/js/selectionHelpers.ts"/>
 module Wiki {
 
   function goToLink(link, $timeout, $location) {
@@ -24,6 +25,7 @@ module Wiki {
     var isFmc = Fabric.isFMCContainer(workspace);
 
     Wiki.initScope($scope, $routeParams, $location);
+    SelectionHelpers.decorate($scope);
 
     $scope.fabricTopLevel = "fabric/profiles/";
 

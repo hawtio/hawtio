@@ -64,7 +64,10 @@
 
     <div class="row-fluid">
       <div class="span12 wiki-icon-view">
-        <div class="column-box" ng-repeat="child in children">
+        <div class="column-box mouse-pointer" 
+             ng-repeat="child in children" 
+             ng-class="isInGroup(gridOptions.selectedItems, child, 'selected', '')"
+             ng-click="toggleSelectionFromGroup(gridOptions.selectedItems, child)">
           <div class="row-fluid">
             <div class="span2">
               <span class="app-logo" ng-class="fileClass(child)" ng-bind-html-unsafe="fileIconHtml(child)"></span>
