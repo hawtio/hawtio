@@ -4140,7 +4140,8 @@ img.nodeIcon:hover {
   margin-right: 10px;
 }
 
-.app-logo img {
+.app-logo img,
+.app-logo i {
   vertical-align: middle;
   font-size: 64px;
   height: 64px;

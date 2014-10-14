@@ -25,9 +25,6 @@ module Wiki {
 
     Wiki.initScope($scope, $routeParams, $location);
 
-    // lets make the scope available to child scopes
-    $scope.wikiScope = $scope;
-
     $scope.fabricTopLevel = "fabric/profiles/";
 
     $scope.versionId = $scope.branch;
