@@ -3078,6 +3078,12 @@ fs-donut svg g text.units {
   width: 500px;
 }
 
+.wiki-icon-view > .column-box {
+  min-height: inherit;
+  margin-bottom: 25px;
+}
+
+
 .column-box-half-screen {
   width: 50%;
   min-width: auto;

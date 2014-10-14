@@ -1457,3 +1457,9 @@ img.nodeIcon:hover {
 .column-box-square.selected {
   background-color: #f0f0ff;
 }
+
+.wiki-icon-view-header h5 {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d4d4d4;
+}
+
