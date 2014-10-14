@@ -20,25 +20,54 @@ module Kubernetes {
 
   // controller that deals with the labels per pod
   export var Labels = controller("Labels", ["$scope", "workspace", "jolokia", "$location", ($scope, workspace, jolokia, $location) => {
-    $scope.labels = {};
+    $scope.labels = [];
     $scope.$watch('entity', (newValue, oldValue) => {
       if (newValue) {
         log.debug("labels: ", newValue);
         // massage the labels a bit
+        $scope.labels = [];
         angular.forEach($scope.entity.labels, (value, key) => {
           if (key === 'fabric8') {
             // TODO not sure what this is for, the container type?
             return;
           }
-          $scope.labels[key] = {
+          $scope.labels.push({
+            key: key,
             title: value
-          };
+          });
+        });
+
+        //  lets sort by key but lets make sure that we weight certain labels so they are first
+        $scope.labels = $scope.labels.sort((a, b) => {
+          var n1 = a["key"];
+          var n2 = b["key"];
+          if (n1 === "name") {
+            return n2 === "name" ? 0 : -1;
+          } else if (n2 === "name") {
+            return 1;
+          } else if (n1 && n2) {
+            if (n1 > n2) {
+              return 1;
+            } else if (n1 < n2) {
+              return -1;
+            } else {
+              return 0;
+            }
+          } else {
+            if (n1 === n2) {
+              return 0;
+            } else if (n1) {
+              return 1;
+            } else {
+              return -1;
+            }
+          }
         });
       }
     });
 
     $scope.handleClick = (entity, labelType:string, value) => {
-      log.debug("handleClick, entity: ", entity, " labelType: ", labelType, " value: ", value);
+      log.debug("handleClick, entity: ", entity, " key: ", labelType, " value: ", value);
       var filterTextSection = labelType + "=" + value.title;
       $scope.$emit('labelFilterUpdate', filterTextSection);
     };

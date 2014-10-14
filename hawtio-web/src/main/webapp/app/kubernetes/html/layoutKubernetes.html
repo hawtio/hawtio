@@ -14,11 +14,11 @@
 </script>
 <script type="text/ng-template" id="labelTemplate.html">
   <div class="ngCellText" ng-init="entity=row.entity" ng-controller="Kubernetes.Labels">
-    <span ng-repeat="(labelType, value) in labels"
+    <span ng-repeat="label in labels"
           class="pod-label badge"
-          ng-class="labelClass(labelType)" 
-          ng-click="handleClick(entity, labelType, value)"
-          title="{{labelType}}">{{value.title}}</span>
+          ng-class="labelClass(label.key)"
+          ng-click="handleClick(entity, label.key, label)"
+          title="{{label.key}}">{{label.title}}</span>
   </div>
 </script>
 <div class="row-fluid" ng-controller="Kubernetes.TopLevel">
