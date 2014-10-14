@@ -666,6 +666,7 @@ module Wiki {
     function onFileDetails(details) {
       var contents = details.text;
       $scope.directory = details.directory;
+      $scope.fileDetails = details;
 
       if (details && details.format) {
         $scope.format = details.format;
