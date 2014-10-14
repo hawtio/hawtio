@@ -9,7 +9,7 @@ module Kubernetes {
       scope: {
         config: '=kubernetesJson'
       },
-      controller: ["$scope", "jolokia", ($scope, jolokia:Jolokia.IJolokia) => {
+      controller: ["$scope", "$location", "jolokia", ($scope, $location, jolokia:Jolokia.IJolokia) => {
         $scope.$watch('config', (config) => {
           if (config) {
             log.debug("Got kubernetes configuration: ", config);
@@ -19,9 +19,16 @@ module Kubernetes {
         $scope.apply = () => {
           var json = angular.toJson($scope.config);
           if (json) {
-            jolokia.execute(Kubernetes.managerMBean, "apply", json, 
+            // TODO find app name from parent scope...
+            var name = "App";
+            Core.notification('info', "Running " + name);
+            jolokia.execute(Kubernetes.managerMBean, "apply", json,
               onSuccess((response) => {
                 log.debug("Got response: ", response);
+
+                // now lets navigate to the pods page so folks see things happen
+                $location.url("/kubernetes/pods");
+                Core.$apply($scope);
               }));
             
 
