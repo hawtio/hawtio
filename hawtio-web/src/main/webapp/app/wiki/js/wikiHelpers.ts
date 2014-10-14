@@ -484,6 +484,16 @@ module Wiki {
   }
 
   /**
+   * Returns the URL to perform a GET or POST for the given branch name and path
+   */
+  export function gitRestURL(branch: string, path: string) {
+    if (!branch) branch = "master";
+    if (!path) path = "/";
+    return Core.url("/git/" + branch + (path.startsWith("/") ? "" : "/") + path);
+  }
+
+
+  /**
    * Takes a row containing the entity object; or can take the entity directly.
    *
    * It then uses the name, directory and xmlNamespaces properties

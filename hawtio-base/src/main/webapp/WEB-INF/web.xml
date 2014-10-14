@@ -190,7 +190,7 @@
 -->
   <servlet>
     <servlet-name>gitServlet</servlet-name>
-    <servlet-class>io.hawt.git.GitServlet</servlet-class>
+    <servlet-class>io.hawt.web.GitServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>

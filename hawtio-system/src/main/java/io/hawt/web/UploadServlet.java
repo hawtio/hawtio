@@ -31,14 +31,19 @@ public class UploadServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String uploadDirectory = UploadManager.UPLOAD_DIRECTORY;
+        File uploadDir = new File(uploadDirectory);
 
+        uploadFiles(request, response, uploadDir);
+    }
+
+    protected List<File> uploadFiles(HttpServletRequest request, HttpServletResponse response, File uploadDir) throws IOException, ServletException {
         response.setContentType("text/html");
         final PrintWriter out = response.getWriter();
-
+        List<File> uploadedFiles = new ArrayList<>();
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         if (isMultipart) {
             ServletContext context = this.getServletConfig().getServletContext();
-            File uploadDir = new File(UploadManager.UPLOAD_DIRECTORY);
             if (!uploadDir.exists()) {
                 LOG.info("Creating directory {}" + uploadDir);
                 if (!uploadDir.mkdirs()) {
@@ -71,7 +76,6 @@ public class UploadServlet extends HttpServlet {
 
             try {
                 List<FileItem> items = upload.parseRequest(request);
-
                 for (FileItem item : items) {
                     if (item.isFormField()) {
                         String name = item.getFieldName();
@@ -94,8 +98,7 @@ public class UploadServlet extends HttpServlet {
                             LOG.info("Skipping field " + fieldName + " no filename given");
                             continue;
                         }
-
-                        File target = new File(UploadManager.UPLOAD_DIRECTORY + File.separator + fileName);
+                        File target = new File(uploadDir, fileName);
 
                         try {
                             item.write(target);
@@ -126,13 +129,18 @@ public class UploadServlet extends HttpServlet {
                     LOG.info("Renaming {} to {}", file, dest);
                     if (!file.renameTo(dest)) {
                         LOG.warn("Failed to rename {} to {}", file, dest);
+                    } else {
+                        uploadedFiles.add(dest);
                     }
                 }
+            } else {
+                uploadedFiles = files;
             }
 
         } else {
             super.doPost(request, response);
         }
+        return uploadedFiles;
     }
 
 }

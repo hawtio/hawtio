@@ -27,6 +27,29 @@
       <artifactId>hawtio-core</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-git</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>${jgit-version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.gitective</groupId>
+      <artifactId>gitective-core</artifactId>
+      <version>${gitective-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jgit</groupId>
+          <artifactId>org.eclipse.jgit</artifactId>
+        </exclusion>
+      </exclusions>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.jolokia</groupId>
@@ -67,12 +90,6 @@
     </dependency>
 
     <!-- testing -->
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-git</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

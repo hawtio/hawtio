@@ -327,7 +327,7 @@ public class GitFacade extends GitFacadeSupport {
         });
     }
 
-    public <T> T writeFile(final String branch, final String pathOrEmpty, final Function<File,T> callback) throws IOException, GitAPIException {
+    public <T> T writeFile(final String branch, final String pathOrEmpty, final WriteCallback<T> callback) throws IOException, GitAPIException {
         return gitOperation(getStashPersonIdent(), new Callable<T>() {
             @Override
             public String toString() {
@@ -918,6 +918,5 @@ public class GitFacade extends GitFacadeSupport {
         }
         return localBranchExists;
     }
-
 
 }

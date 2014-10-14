@@ -453,11 +453,25 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
     /**
      * Performs a write operation on the file
      */
-    protected <T> T doWriteFile(Git git, File rootDir, String branch, String pathOrEmpty, Function<File, T> callback) throws IOException, GitAPIException {
+    protected <T> T doWriteFile(Git git, File rootDir, String branch, String pathOrEmpty, WriteCallback callback) throws Exception {
         checkoutBranch(git, branch);
         String path = Strings.isBlank(pathOrEmpty) ? "/" : pathOrEmpty;
         File file = getFile(rootDir, path);
-        T results = callback.apply(file);
+        WriteContext context = new WriteContext(git, rootDir, file);
+        T results = (T) callback.apply(context);
+        if (context.isRequiresCommit()) {
+            PersonIdent author = context.getAuthor();
+            String message = context.getMessage();
+            if (Strings.isBlank(message)) {
+                message = "Updated " + Files.getRelativePath(rootDir, file);
+            }
+            CommitCommand command = git.commit().setAll(true).setMessage(message);
+            if (author != null) {
+                command = command.setAuthor(author);
+            }
+            RevCommit revCommit = commitThenPush(git, branch, command);
+            createCommitInfo(revCommit);
+        }
         return results;
     }
 

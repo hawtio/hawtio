@@ -1,4 +1,5 @@
 /// <reference path="kubernetesPlugin.ts"/>
+/// <reference path="../../wiki/js/wikiHelpers.ts"/>
 module Kubernetes {
 
   export var KubernetesJsonDirective = _module.directive("kubernetesJson", [() => {
@@ -21,7 +22,7 @@ module Kubernetes {
         function pathToURL(path:string):string {
           if (path) {
             var branch = parentScope["branch"] || "master";
-            return Core.url("/git/" + branch + (path.startsWith("/") ? "" : "/") + path);
+            return Wiki.gitRestURL(branch, path);
           } else {
             return null;
           }
