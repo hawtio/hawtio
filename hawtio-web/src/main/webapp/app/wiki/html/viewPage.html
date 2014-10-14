@@ -33,15 +33,39 @@
   <ng-include src="'app/wiki/html/viewNavBar.html'"></ng-include>
 
   <div ng-show="mode == ViewMode.Icon" class="wiki-fixed">
+    <div ng-hide="!showAppHeader">
+      <div class="row-fluid">
+        <div class="span12">
+          <div kubernetes-json="kubernetesJson"></div>
+        </div>
+      </div>
+    </div>
+
+    <div ng-show="wikiScope.html" wiki-href-adjuster wiki-title-linker>
+      <div class="row-fluid" style="margin-left: 10px">
+        <div class="span12">
+          <div ng-bind-html-unsafe="wikiScope.html"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row-fluid">
+      <div class="span12">
+        <div ng-include="sourceView" class="editor-autoresize"></div>
+      </div>
+    </div>
+
     <div class="row-fluid">
       <div class="span12">
         <div class="column-box" ng-repeat="child in children">
           <div class="row-fluid">
-            <div class="span1">
-              <span class="file-icon" ng-class="fileClass(child)" ng-bind-html-unsafe="fileIconHtml(child)"></span>
+            <div class="span2">
+              <span class="app-logo" ng-class="fileClass(child)" ng-bind-html-unsafe="fileIconHtml(child)"></span>
             </div>
-            <div class="span11">
-              <a href="{{childLink(child)}}">{{child.name}}</a>
+            <div class="span10">
+              <h3>
+                <a href="{{childLink(child)}}">{{child.name}}</a>
+              </h3>
             </div>
           </div>
           <div class="row-fluid" ng-show="child.summary">
@@ -57,20 +81,6 @@
           </div>
           -->
         </div>
-      </div>
-    </div>
-
-    <div ng-hide="!html" wiki-href-adjuster wiki-title-linker>
-      <div class="row-fluid" style="margin-left: 10px">
-        <div class="span12">
-          <div ng-bind-html-unsafe="html"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row-fluid">
-      <div class="span12">
-        <div ng-include="sourceView" class="editor-autoresize"></div>
       </div>
     </div>
   </div>
