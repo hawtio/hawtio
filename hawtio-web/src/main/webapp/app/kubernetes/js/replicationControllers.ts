@@ -106,7 +106,7 @@ module Kubernetes {
 
           });
         }
-      }
+      };
 
       $scope.deletePrompt = (selected) => {
         if (angular.isString(selected)) {
