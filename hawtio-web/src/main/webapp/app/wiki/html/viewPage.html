@@ -80,7 +80,9 @@
         </div>
       </div>
     </div>
-
+    <div ng-hide="showProfileHeader || !directory">
+      <div wiki-drop-file branch="{{branch}}" path="{{pageId}}"></div>
+    </div>
     <div ng-include="sourceView" class="editor-autoresize"></div>
 
   </div>
@@ -120,6 +122,9 @@
           </div>
         </div>
 
+        <div ng-hide="showProfileHeader || !directory">
+          <div wiki-drop-file branch="{{branch}}" path="{{pageId}}"></div>
+        </div>
         <div ng-include="sourceView" class="editor-autoresize"></div>
       </div>
     </div>
