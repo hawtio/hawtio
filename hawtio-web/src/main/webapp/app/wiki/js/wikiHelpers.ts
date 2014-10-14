@@ -191,6 +191,14 @@ module Wiki {
       extension: ".md"
     },
     {
+      label: "Text Document",
+      tooltip: "A plain text file",
+      exemplar: "document.text",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".txt"
+    },
+    {
       label: "HTML Document",
       tooltip: "A HTML document you can edit directly using the HTML markup",
       exemplar: "document.html",
