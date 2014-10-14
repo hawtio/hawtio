@@ -1119,7 +1119,7 @@ li.stacktrace {
 .slideout-title span {
   width: 97%;
   display: inline-block;
-  text-align: center;
+  text-align: left;
 }
 
 .slideout.left > .slideout-content {
