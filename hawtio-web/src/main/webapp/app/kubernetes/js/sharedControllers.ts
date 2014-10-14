@@ -21,6 +21,11 @@ module Kubernetes {
   // controller that deals with the labels per pod
   export var Labels = controller("Labels", ["$scope", "workspace", "jolokia", "$location", ($scope, workspace, jolokia, $location) => {
     $scope.labels = [];
+    var labelKeyWeights = {
+      "name": 1,
+      "replicationController": 2,
+      "group": 3
+    };
     $scope.$watch('entity', (newValue, oldValue) => {
       if (newValue) {
         log.debug("labels: ", newValue);
@@ -39,13 +44,20 @@ module Kubernetes {
 
         //  lets sort by key but lets make sure that we weight certain labels so they are first
         $scope.labels = $scope.labels.sort((a, b) => {
+          function getWeight(key) {
+            return labelKeyWeights[key] || 1000;
+          }
           var n1 = a["key"];
           var n2 = b["key"];
-          if (n1 === "name") {
-            return n2 === "name" ? 0 : -1;
-          } else if (n2 === "name") {
+          var w1 = getWeight(n1);
+          var w2 = getWeight(n2);
+          var diff = w1 - w2;
+          if (diff < 0) {
+            return -1;
+          } else if (diff > 0) {
             return 1;
-          } else if (n1 && n2) {
+          }
+          if (n1 && n2) {
             if (n1 > n2) {
               return 1;
             } else if (n1 < n2) {
