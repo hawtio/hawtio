@@ -629,10 +629,8 @@ module Wiki {
       if ("markdown" === format) {
         // lets convert it to HTML
         $scope.html = contents ? marked(contents) : "";
-        $scope.html = $compile($scope.html)($scope);
       } else if (format && format.startsWith("html")) {
         $scope.html = contents;
-        $compile($scope.html)($scope);
       } else {
         var form = null;
         if (format && format === "javascript") {
