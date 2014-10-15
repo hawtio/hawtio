@@ -1,5 +1,10 @@
 ### Change Log
 
+#### 1.4.25
+
+* Lots of improvements for using hawtio as a great console for working with [fabric8 V2](http://fabric8.io/v2/index.html), [kubernetes](http://kubernetes.io/) and [OpenShift](https://github.com/openshift/origin)
+* Fixes [these 8 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.25+is%3Aclosed)
+
 #### 1.4.24
 
 * A new kuberetes plugin which now links to the hawtio console for any JVM which exposes the jolokia port (8778)
