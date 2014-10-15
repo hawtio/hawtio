@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.4.25</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -29,7 +29,7 @@
     <warSourceExcludes />
     <packagingExcludes>**/classes/OSGI-INF/**,*/debug/**</packagingExcludes>
 
-    <hawtio-config-importURLs></hawtio-config-importURLs>
+    <hawtio-config-importURLs />
     <hawtio-config-cloneOnStartup>true</hawtio-config-cloneOnStartup>
   </properties>
 
