@@ -614,7 +614,9 @@ module Wiki {
       return "icon-folder-close";
     }
     if ("xml" === extension) {
-      return "icon-cog";
+        return "icon-cog";
+    } else if ("md" === extension) {
+        return "icon-file-text-alt";
     }
     // TODO could we use different icons for markdown v xml v html
     return "icon-file-alt";
