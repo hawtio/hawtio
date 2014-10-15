@@ -102,7 +102,20 @@
 		  <p><div class="container">
     <div class="row">
       <div class="col-md-12">
-      <h1>Configuration</h1></p>
+      <h1>Configuration</h1>
+  ## Environment Variables</p>
+
+<p>Using <a href="http://docker.io/">Docker</a> containers is increasingly common. We now have a <a href="https://github.com/fabric8io/hawtio-docker">docker container for running hawtio</a> for example.</p>
+
+<p>When using docker then environment variables are a preferred way to configure things with environmental values.</p>
+
+<p>So when using <strong>hawtio-base</strong> or <strong>hawtio-default</strong> you can use environment variables to override any of the properties on this page.</p>
+
+<p>To override property &ldquo;hawtio.foo&rdquo; just set an environment variable (using _ for dots).</p>
+
+<pre><code>export hawtio_foo=bar</code></pre>
+
+<p>and if you boot up hawtio in that shell (or you pass that variable into a docker container) then you will override the system property <em>hawtio.foo</em></p>
 
 <h2 id = "Configuring_Security">Configuring Security</h2>
 
@@ -413,6 +426,10 @@ admin=CRYPT:adpexzg3FUZAk,admin,user</code></pre>
     <tr>
       <td>hawtio.config.cloneOnStartup</td>
       <td>If set to the value of <b>false</b> then there will be no attempt to clone the remote repo</td>
+    </tr>
+    <tr>
+      <td>hawtio.config.importURLs</td>
+      <td>The URLs (comman separated) of jar/zip contents that should be downloaded and imported into the wiki on startup. This supports the <code>mvn:group/artifact/version[/extension/classifier]</code> syntax so you can refer to jars/zips from maven repos</td>
     </tr>
     <tr>
       <td>hawtio.config.pullOnStartup</td>

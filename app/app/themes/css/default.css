@@ -366,7 +366,7 @@ div#main div ul.nav li.active a:hover {
   text-shadow: 0 1px 0 #FFFFFF;
 }
 
-div#main div ul.nav li a {
+div#main div ul.nav li a:not(.btn) {
   border: 1px;
   border-radius: 2px;
   background: inherit;
@@ -381,7 +381,7 @@ div#main div ul.nav li div.separator {
     float: left;
 }
 
-div#main div ul.nav li a:hover {
+div#main div ul.nav li a:hover:not(.btn) {
   border: 1px;
   border-radius: 2px;
   background: inherit;
@@ -835,7 +835,10 @@ div#main div ul.nav li a.nav-primary .caret {
   background: inherit !important;
 }
 
-.file-icon i.icon-folder-close {
+.file-icon i.icon-folder-close,
+.file-icon i.icon-folder-close-alt,
+.app-logo .icon-folder-close,
+.app-logo .icon-folder-close-alt {
   color: #EECA7C;
 }
 
@@ -1454,3 +1457,36 @@ img.nodeIcon:hover {
 .column-box-square.selected {
   background-color: #f0f0ff;
 }
+
+.wiki-icon-view-header h5 {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.wiki-icon-view {
+  border-radius: 10px;
+  border: 4px solid transparent;
+}
+
+.ready-drop {
+  border-radius: 10px;
+  border: 4px dashed #aaffaa;
+  background: #ddffdd;
+  min-height: 150px;
+  position: relative;
+}
+
+.ready-drop:after {
+  position: absolute;
+  /*
+  content: "Add File Here...";
+  */
+  font-size: 50px;
+  top: 50%;
+  left: 50%;
+  margin-left: -200px;
+  margin-top: -25px;
+  z-index: 10000;
+  opacity: 0.5;
+}
+

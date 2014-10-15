@@ -1,10 +1,16 @@
+/// <reference path="../../fabric/js/fabricGlobals.ts"/>
 /// <reference path="../../baseIncludes.ts"/>
 /// <reference path="../../baseHelpers.ts"/>
 module Kubernetes {
 
+  export var appSuffix = ".app";
+
   export interface KubePod {
     id:string;
   }
+
+  export var mbean = Fabric.jmxDomain + ":type=Kubernetes";
+  export var managerMBean = Fabric.jmxDomain + ":type=KubernetesManager";
 
   export function isKubernetes(workspace) {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Kubernetes"});

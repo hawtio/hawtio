@@ -91,6 +91,7 @@ module Core {
                "$location",
                "ConnectOptions",
                "locationChangeStartTasks",
+               "$http",
                ($rootScope,
                $routeParams,
                jolokia,
@@ -109,7 +110,8 @@ module Core {
                preLogoutTasks:Core.Tasks,
                $location:ng.ILocationService,
                ConnectOptions:Core.ConnectOptions,
-               locationChangeStartTasks:Core.ParameterizedTasks) => {
+               locationChangeStartTasks:Core.ParameterizedTasks,
+               $http:ng.IHttpService) => {
 
     postLoginTasks.addTask("ResetPreLogoutTasks", () => {
       preLogoutTasks.reset();
@@ -184,6 +186,16 @@ module Core {
         newQuery['con'] = ConnectOptions.name;
         $location.search(newQuery);
       }
+    });
+
+    locationChangeStartTasks.addTask('UpdateSession', () => {
+      log.debug("Updating session expiry");
+      $http({ method: 'post', url: 'refresh' }).success((data) => {
+        log.debug("Updated session, response: ", data);  
+      }).error(() => {
+        log.debug("Failed to update session expiry");
+      });
+      log.debug("Made request");
     });
 
     /*

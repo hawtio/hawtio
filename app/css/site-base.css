@@ -728,12 +728,14 @@ table.table thead .sorting_desc:after {
   margin-bottom: 0px;
 }
 
-div#main div ul.nav {
+#main > div > ul.nav,
+ng-include > .nav.nav-tabs {
   margin-bottom: 10px;
   min-width: 120px;
 }
 
-div#main div ul.nav li {
+#main > div > ul.nav > li, 
+ng-include > .nav.nav-tabs > li {
   margin-top: 3px;
   margin-bottom: 3px;
 }
@@ -750,7 +752,8 @@ div#main div ul.nav li {
   margin-left: 7px;
 }
 
-div#main div ul.nav {
+#main > div > ul.nav,
+ng-include > .nav.nav-tabs {
   padding-left: 3px;
   padding-right: 3px;
 }
@@ -777,8 +780,14 @@ div#main div ul.nav li a:hover {
   min-width: 120px;
 }
 
-#main div div div .nav.nav-tabs:not(.connected) {
+#main > div > div > div > .nav.nav-tabs:not(.connected),
+.span12 > .nav.nav-tabs:not(.connected) {
   margin-top: 5px;
+}
+
+.span12 > .nav.nav-tabs:not(.connected),
+.span12 > .nav.nav-tabs > li {
+  margin: 3px;
 }
 
 .logbar {
@@ -857,22 +866,26 @@ table.dataTable tbody tr td {
   text-overflow: ellipsis;
 }
 
-#main .logbar[ng-controller='Wiki.NavBarController'] .wiki.logbar-container .nav.nav-tabs,
-#main .logbar-wiki .wiki.logbar-container .nav.nav-tabs {
-  margin: 0px;
+.wiki.logbar-container {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
-.wiki.logbar-container {
-  margin-top: 2px;
-  margin-bottom: 2px;
+.wiki.logbar-container > .nav.nav-tabs {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.wiki.logbar-container .pull-right {
+  margin-top: 1px;
 }
 
 .wiki-fixed {
-  margin-top: 40px;
+  margin-top: 45px;
 }
 
 .wiki-fixed .pane {
-  top: 105px;
+  top: 120px;
 }
 
 .help-sidebar li {
@@ -1091,6 +1104,8 @@ li.stacktrace {
 
 .slideout > .slideout-title {
   min-height: 22px;
+  font-size: 20px;
+  padding: 15px;
 }
 
 .slideout > .slideout-content {
@@ -1104,7 +1119,7 @@ li.stacktrace {
 .slideout-title span {
   width: 97%;
   display: inline-block;
-  text-align: center;
+  text-align: left;
 }
 
 .slideout.left > .slideout-content {
@@ -1866,7 +1881,23 @@ div#main div ul.nav li a.nav-primary.active {
   opacity: 0.3;
 }
 
+.caret:before {
+  font-family: 'FontAwesome';
+  border: 0;
+  content: "\f078";
+  font-size: 11px;
+  display: block;
+  position: relative;
+  top: -9px;
+  left: 0;
+}
+
+.dropdown.perspective-selector .caret:before {
+  top: -7px;
+}
+
 .caret {
+  border: none;
   width: 9px;
 }
 
@@ -3047,6 +3078,15 @@ fs-donut svg g text.units {
   width: 500px;
 }
 
+.wiki-icon-view {
+  min-height: 200px;
+}
+
+.wiki-icon-view .column-box {
+  min-height: 0;
+  margin-bottom: 25px;
+}
+
 .column-box-half-screen {
   width: 50%;
   min-width: auto;
@@ -3071,6 +3111,11 @@ fs-donut svg g text.units {
 
 .column-box-variable > h3 {
   margin-bottom: 0;
+}
+
+.column-box .file-icon > * {
+  width: 100%;
+  height: auto;
 }
 
 .location-box {
@@ -3615,6 +3660,10 @@ th > .indicator:before {
   margin-bottom: 0;
 }
 
+.nav .hawtio-dropdown {
+  margin-top: 2px;
+}
+
 .dropdown.perspective-selector .dropdown-menu > div > ul {
   margin-top: 0;
 }
@@ -3695,21 +3744,6 @@ span.hawtio-dropdown .dropdown-menu {
 
 .hawtio-breadcrumb > li {
   display: inline-block;
-}
-
-.caret {
-  border: 0;
-}
-
-.caret:before {
-  font-family: 'FontAwesome';
-  border: 0;
-  content: "\f078";
-  font-size: 11px;
-  display: block;
-  position: relative;
-  top: -7px;
-  left: 0;
 }
 
 .dropdown-menu .dropdown .caret {
@@ -4115,7 +4149,8 @@ img.nodeIcon:hover {
   margin-right: 10px;
 }
 
-.app-logo img {
+.app-logo img,
+.app-logo i {
   vertical-align: middle;
   font-size: 64px;
   height: 64px;

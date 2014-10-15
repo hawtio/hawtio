@@ -5,7 +5,7 @@
         <div hawtio-drop-down="branchMenuConfig"></div>
       </li>
       <li ng-repeat="link in breadcrumbs" ng-class='{active : isActive(link.href) && !objectId}'>
-        <a class="breadcrumb-link" ng-href="{{link.href}}{{hash}}">
+        <a class="breadcrumb-link" ng-href="{{link.href}}">
           <span class="contained c-medium">{{link.name}}</span>
         </a>
       </li>
@@ -82,6 +82,21 @@
                      data-placement="bottom">
                     <i class="icon-plus"></i> Create</a>
         -->
+      </li>
+      <li class="pull-right">
+        <div class="btn-group" 
+             ng-hide="!children || profile">
+          <a class="btn btn-small"
+             ng-disabled="mode == ViewMode.List"
+             href="" 
+             ng-click="setViewMode(ViewMode.List)">
+            <i class="icon-list"></i></a>
+          <a class="btn btn-small" 
+             ng-disabled="mode == ViewMode.Icon"
+             href="" 
+             ng-click="setViewMode(ViewMode.Icon)">
+            <i class="icon-th-large"></i></a>
+        </div>
       </li>
       <li class="pull-right">
         <a href="" ng-hide="children || profile" title="Add to dashboard" ng-href="{{createDashboardLink()}}"

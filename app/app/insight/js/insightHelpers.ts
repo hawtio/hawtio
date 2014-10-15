@@ -15,6 +15,10 @@ module Insight {
     return workspace.treeContainsDomainAndProperties('hawtio', {type: 'plugin', name: 'hawtio-kibana'});
   }
 
+  export function hasEsHead(workspace) {
+    return workspace.treeContainsDomainAndProperties('hawtio', {type: 'plugin', name: 'hawtio-eshead'});
+  }
+
   export function getInsightMetricsCollectorMBean(workspace) {
     var node = workspace.findMBeanWithProperties('io.fabric8.insight', {type: 'MetricsCollector'});
     if (!node) {

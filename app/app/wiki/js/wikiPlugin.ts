@@ -82,6 +82,7 @@ module Wiki {
 
   _module.factory('fileExtensionTypeRegistry', () => {
     return {
+      "image": ["svg", "png", "ico", "bmp", "jpg", "gif"],
       "markdown": ["md", "markdown", "mdown", "mkdn", "mkd"],
       "htmlmixed": ["html", "xhtml", "htm"],
       "text/x-java": ["java"],

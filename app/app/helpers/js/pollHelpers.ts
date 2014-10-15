@@ -3,7 +3,7 @@ module PollHelpers {
 
   var log:Logging.Logger = Logger.get("PollHelpers");
   
-  export function setupPolling($scope, updateFunction:(next:() => void) => void, period = 5000) {
+  export function setupPolling($scope, updateFunction:(next:() => void) => void, period = 2000) {
     var $timeout:ng.ITimeoutService = Core.injector.get('$timeout');
     var jolokia:Jolokia.IJolokia = Core.injector.get('jolokia');
 

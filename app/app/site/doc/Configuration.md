@@ -1,3 +1,16 @@
+## Environment Variables
+
+Using [Docker](http://docker.io/) containers is increasingly common. We now have a [docker container for running hawtio](https://github.com/fabric8io/hawtio-docker) for example.
+
+When using docker then environment variables are a preferred way to configure things with environmental values.
+
+So when using **hawtio-base** or **hawtio-default** you can use environment variables to override any of the properties on this page.
+
+To override property "hawtio.foo" just set an environment variable (using _ for dots).
+
+    export hawtio_foo=bar
+
+and if you boot up hawtio in that shell (or you pass that variable into a docker container) then you will override the system property _hawtio.foo_
 
 ## Configuring Security
 
@@ -314,6 +327,10 @@ The following table contains the various configuration settings for the various 
     <tr>
       <td>hawtio.config.cloneOnStartup</td>
       <td>If set to the value of <b>false</b> then there will be no attempt to clone the remote repo</td>
+    </tr>
+    <tr>
+      <td>hawtio.config.importURLs</td>
+      <td>The URLs (comman separated) of jar/zip contents that should be downloaded and imported into the wiki on startup. This supports the <code>mvn:group/artifact/version[/extension/classifier]</code> syntax so you can refer to jars/zips from maven repos</td>
     </tr>
     <tr>
       <td>hawtio.config.pullOnStartup</td>

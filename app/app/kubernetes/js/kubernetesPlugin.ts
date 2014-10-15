@@ -50,10 +50,8 @@ module Kubernetes {
       var url = UrlHelpers.escapeColons(KubernetesApiURL);
       log.debug("Url for ", thing, ": ", url);
       var resource = $resource(UrlHelpers.join(url, urlTemplate), null, {
-        'query': {
-          method: 'GET',
-          isArray: false
-        }
+        query: { method: 'GET', isArray: false },
+        save: { method: 'PUT', params: { id: '@id' } }
       });
       deferred.resolve(resource);
       Core.$apply($rootScope);

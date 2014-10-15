@@ -959,6 +959,9 @@ var Core;
             return name + '()';
         } else {
             return name + '(' + args.map(function (arg) {
+                if (angular.isString(arg)) {
+                    arg = angular.fromJson(arg);
+                }
                 return arg.type;
             }).join(',') + ')';
         }
@@ -1933,6 +1936,48 @@ var Core;
             return true;
         };
 
+        Workspace.prototype.hasInvokeRights = function (selection) {
+            var methods = [];
+            for (var _i = 0; _i < (arguments.length - 1); _i++) {
+                methods[_i] = arguments[_i + 1];
+            }
+            var canInvoke = true;
+            if (selection) {
+                var selectionFolder = selection;
+                var mbean = selectionFolder.mbean;
+                if (mbean) {
+                    if (angular.isDefined(mbean.canInvoke)) {
+                        canInvoke = mbean.canInvoke;
+                    }
+                    if (canInvoke && methods && methods.length > 0) {
+                        var opsByString = mbean['opByString'];
+                        var ops = mbean['op'];
+                        if (opsByString && ops) {
+                            methods.forEach(function (method) {
+                                if (!canInvoke) {
+                                    return;
+                                }
+                                var op = null;
+                                if (method.endsWith(')')) {
+                                    op = opsByString[method];
+                                } else {
+                                    op = ops[method];
+                                }
+                                if (!op) {
+                                    log.debug("Could not find method:", method, " to check permissions, skipping");
+                                    return;
+                                }
+                                if (angular.isDefined(op.canInvoke)) {
+                                    canInvoke = op.canInvoke;
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+            return canInvoke;
+        };
+
         Workspace.prototype.treeContainsDomainAndProperties = function (domainName, properties) {
             var _this = this;
             if (typeof properties === "undefined") { properties = null; }
@@ -2686,14 +2731,11 @@ var Core;
                 var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
                 if (stacktrace.indexOf("javax.management.InstanceNotFoundException") >= 0 || stacktrace.indexOf("javax.management.AttributeNotFoundException") >= 0 || stacktrace.indexOf("java.lang.IllegalArgumentException: No operation") >= 0) {
                     Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
-                    Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
                 } else {
                     Core.log.warn("Operation ", operation, " failed due to: ", response['error']);
-                    Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
                 }
             } else {
                 Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
-                Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
             }
         }
     }
@@ -2704,7 +2746,6 @@ var Core;
         if (stacktrace) {
             var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
             Core.log.info("Operation ", operation, " failed due to: ", response['error']);
-            Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
         }
     }
     Core.logJolokiaStackTrace = logJolokiaStackTrace;
@@ -3547,7 +3588,8 @@ var Core;
         "$location",
         "ConnectOptions",
         "locationChangeStartTasks",
-        function ($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry, pageTitle, branding, toastr, metricsWatcher, userDetails, preferencesRegistry, postLoginTasks, preLogoutTasks, $location, ConnectOptions, locationChangeStartTasks) {
+        "$http",
+        function ($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry, pageTitle, branding, toastr, metricsWatcher, userDetails, preferencesRegistry, postLoginTasks, preLogoutTasks, $location, ConnectOptions, locationChangeStartTasks, $http) {
             postLoginTasks.addTask("ResetPreLogoutTasks", function () {
                 preLogoutTasks.reset();
             });
@@ -3597,6 +3639,16 @@ var Core;
                     newQuery['con'] = ConnectOptions.name;
                     $location.search(newQuery);
                 }
+            });
+
+            locationChangeStartTasks.addTask('UpdateSession', function () {
+                Core.log.debug("Updating session expiry");
+                $http({ method: 'post', url: 'refresh' }).success(function (data) {
+                    Core.log.debug("Updated session, response: ", data);
+                }).error(function () {
+                    Core.log.debug("Failed to update session expiry");
+                });
+                Core.log.debug("Made request");
             });
 
             $rootScope.log = function (variable) {
@@ -3797,7 +3849,7 @@ var ActiveMQ;
                 content: '<i class="icon-envelope"></i> Browse',
                 title: "Browse the messages on the queue",
                 isValid: function (workspace) {
-                    return isQueue(workspace);
+                    return isQueue(workspace) && workspace.hasInvokeRights(workspace.selection, "browse()");
                 },
                 href: function () {
                     return "#/activemq/browseQueue";
@@ -3807,7 +3859,7 @@ var ActiveMQ;
                 content: '<i class="icon-pencil"></i> Send',
                 title: "Send a message to this destination",
                 isValid: function (workspace) {
-                    return isQueue(workspace) || isTopic(workspace);
+                    return (isQueue(workspace) || isTopic(workspace)) && workspace.hasInvokeRights(workspace.selection, "sendTextMessage(java.util.Map,java.lang.String,java.lang.String,java.lang.String)");
                 },
                 href: function () {
                     return "#/activemq/sendMessage";
@@ -3827,7 +3879,7 @@ var ActiveMQ;
                 content: '<i class="icon-plus"></i> Create',
                 title: "Create a new destination",
                 isValid: function (workspace) {
-                    return isBroker(workspace);
+                    return isBroker(workspace) && workspace.hasInvokeRights(getBroker(workspace), "addQueue", "addTopic");
                 },
                 href: function () {
                     return "#/activemq/createDestination";
@@ -3837,7 +3889,7 @@ var ActiveMQ;
                 content: '<i class="icon-plus"></i> Create',
                 title: "Create a new queue",
                 isValid: function (workspace) {
-                    return isQueuesFolder(workspace);
+                    return isQueuesFolder(workspace) && workspace.hasInvokeRights(getBroker(workspace), "addQueue");
                 },
                 href: function () {
                     return "#/activemq/createQueue";
@@ -3847,7 +3899,7 @@ var ActiveMQ;
                 content: '<i class="icon-plus"></i> Create',
                 title: "Create a new topic",
                 isValid: function (workspace) {
-                    return isTopicsFolder(workspace);
+                    return isTopicsFolder(workspace) && workspace.hasInvokeRights(getBroker(workspace), "addQueue");
                 },
                 href: function () {
                     return "#/activemq/createTopic";
@@ -3857,7 +3909,7 @@ var ActiveMQ;
                 content: '<i class="icon-remove"></i> Delete Topic',
                 title: "Delete this topic",
                 isValid: function (workspace) {
-                    return isTopic(workspace);
+                    return isTopic(workspace) && workspace.hasInvokeRights(getBroker(workspace), "removeTopic");
                 },
                 href: function () {
                     return "#/activemq/deleteTopic";
@@ -3867,7 +3919,7 @@ var ActiveMQ;
                 content: '<i class="icon-remove"></i> Delete',
                 title: "Delete or purge this queue",
                 isValid: function (workspace) {
-                    return isQueue(workspace);
+                    return isQueue(workspace) && workspace.hasInvokeRights(getBroker(workspace), "removeQueue");
                 },
                 href: function () {
                     return "#/activemq/deleteQueue";
@@ -3943,6 +3995,23 @@ var ActiveMQ;
         }]);
 
     hawtioPluginLoader.addModule(ActiveMQ.pluginName);
+
+    function getBroker(workspace) {
+        var answer = null;
+        var selection = workspace.selection;
+        if (selection) {
+            answer = selection.findAncestor(function (current) {
+                var entries = current.entries;
+                if (entries) {
+                    return (('type' in entries && entries.type === 'Broker') && 'brokerName' in entries && !('destinationName' in entries) && !('destinationType' in entries));
+                } else {
+                    return false;
+                }
+            });
+        }
+        return answer;
+    }
+    ActiveMQ.getBroker = getBroker;
 
     function isQueue(workspace) {
         return workspace.hasDomainAndProperties(ActiveMQ.jmxDomain, { 'destinationType': 'Queue' }, 4) || workspace.selectionHasDomainAndType(ActiveMQ.jmxDomain, 'Queue');
@@ -5357,6 +5426,126 @@ var UI;
     }
     UI.multiItemConfirmActionDialog = multiItemConfirmActionDialog;
 })(UI || (UI = {}));
+var Git;
+(function (Git) {
+    
+
+    var JolokiaGit = (function () {
+        function JolokiaGit(mbean, jolokia, localStorage, userDetails, branch) {
+            if (typeof branch === "undefined") { branch = "master"; }
+            this.mbean = mbean;
+            this.jolokia = jolokia;
+            this.localStorage = localStorage;
+            this.userDetails = userDetails;
+            this.branch = branch;
+        }
+        JolokiaGit.prototype.getRepositoryLabel = function (fn, error) {
+            return this.jolokia.request({ type: "read", mbean: this.mbean, attribute: ["RepositoryLabel"] }, onSuccess(function (result) {
+                fn(result.value.RepositoryLabel);
+            }, { error: error }));
+        };
+
+        JolokiaGit.prototype.exists = function (branch, path, fn) {
+            var result;
+            if (angular.isDefined(fn) && fn) {
+                result = this.jolokia.execute(this.mbean, "exists", branch, path, onSuccess(fn));
+            } else {
+                result = this.jolokia.execute(this.mbean, "exists", branch, path);
+            }
+            if (angular.isDefined(result) && result) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+        JolokiaGit.prototype.read = function (branch, path, fn) {
+            return this.jolokia.execute(this.mbean, "read", branch, path, onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.write = function (branch, path, commitMessage, contents, fn) {
+            var authorName = this.getUserName();
+            var authorEmail = this.getUserEmail();
+            return this.jolokia.execute(this.mbean, "write", branch, path, commitMessage, authorName, authorEmail, contents, onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.writeBase64 = function (branch, path, commitMessage, contents, fn) {
+            var authorName = this.getUserName();
+            var authorEmail = this.getUserEmail();
+            return this.jolokia.execute(this.mbean, "writeBase64", branch, path, commitMessage, authorName, authorEmail, contents, onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.createDirectory = function (branch, path, commitMessage, fn) {
+            var authorName = this.getUserName();
+            var authorEmail = this.getUserEmail();
+
+            return this.jolokia.execute(this.mbean, "createDirectory", branch, path, commitMessage, authorName, authorEmail, onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.revertTo = function (branch, objectId, blobPath, commitMessage, fn) {
+            var authorName = this.getUserName();
+            var authorEmail = this.getUserEmail();
+
+            return this.jolokia.execute(this.mbean, "revertTo", branch, objectId, blobPath, commitMessage, authorName, authorEmail, onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.rename = function (branch, oldPath, newPath, commitMessage, fn) {
+            var authorName = this.getUserName();
+            var authorEmail = this.getUserEmail();
+
+            return this.jolokia.execute(this.mbean, "rename", branch, oldPath, newPath, commitMessage, authorName, authorEmail, onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.remove = function (branch, path, commitMessage, fn) {
+            var authorName = this.getUserName();
+            var authorEmail = this.getUserEmail();
+
+            return this.jolokia.execute(this.mbean, "remove", branch, path, commitMessage, authorName, authorEmail, onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.completePath = function (branch, completionText, directoriesOnly, fn) {
+            return this.jolokia.execute(this.mbean, "completePath", branch, completionText, directoriesOnly, onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.history = function (branch, objectId, path, limit, fn) {
+            return this.jolokia.execute(this.mbean, "history", branch, objectId, path, limit, onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.commitTree = function (commitId, fn) {
+            return this.jolokia.execute(this.mbean, "getCommitTree", commitId, onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.commitInfo = function (commitId, fn) {
+            return this.jolokia.execute(this.mbean, "getCommitInfo", commitId, onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.diff = function (objectId, baseObjectId, path, fn) {
+            return this.jolokia.execute(this.mbean, "diff", objectId, baseObjectId, path, onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.getContent = function (objectId, blobPath, fn) {
+            return this.jolokia.execute(this.mbean, "getContent", objectId, blobPath, onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.readJsonChildContent = function (path, nameWildcard, search, fn) {
+            return this.jolokia.execute(this.mbean, "readJsonChildContent", this.branch, path, nameWildcard, search, onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.branches = function (fn) {
+            return this.jolokia.execute(this.mbean, "branches", onSuccess(fn));
+        };
+
+        JolokiaGit.prototype.getUserName = function () {
+            return this.localStorage["gitUserName"] || this.userDetails.username || "anonymous";
+        };
+
+        JolokiaGit.prototype.getUserEmail = function () {
+            return this.localStorage["gitUserEmail"] || "anonymous@gmail.com";
+        };
+        return JolokiaGit;
+    })();
+    Git.JolokiaGit = JolokiaGit;
+})(Git || (Git = {}));
 var Wiki;
 (function (Wiki) {
     Wiki.log = Logger.get("Wiki");
@@ -5368,6 +5557,13 @@ var Wiki;
     Wiki.activemqNamespaces = ["http://activemq.apache.org/schema/core"];
 
     Wiki.excludeAdjustmentPrefixes = ["http://", "https://", "#"];
+
+    (function (ViewMode) {
+        ViewMode[ViewMode["List"] = 0] = "List";
+        ViewMode[ViewMode["Icon"] = 1] = "Icon";
+    })(Wiki.ViewMode || (Wiki.ViewMode = {}));
+    var ViewMode = Wiki.ViewMode;
+    ;
 
     Wiki.customWikiViewPages = ["/formTable", "/camel/diagram", "/camel/canvas", "/camel/properties", "/dozer/mappings"];
 
@@ -5408,6 +5604,14 @@ var Wiki;
             regex: defaultFileNamePattern,
             invalid: defaultFileNamePatternInvalid,
             extension: ".properties"
+        },
+        {
+            label: "JSON File",
+            tooltip: "A file containing JSON data",
+            exemplar: "document.json",
+            regex: defaultFileNamePattern,
+            invalid: defaultFileNamePatternInvalid,
+            extension: ".json"
         },
         {
             label: "Key Store File",
@@ -5513,6 +5717,14 @@ var Wiki;
             regex: defaultFileNamePattern,
             invalid: defaultFileNamePatternInvalid,
             extension: ".md"
+        },
+        {
+            label: "Text Document",
+            tooltip: "A plain text file",
+            exemplar: "document.text",
+            regex: defaultFileNamePattern,
+            invalid: defaultFileNamePatternInvalid,
+            extension: ".txt"
         },
         {
             label: "HTML Document",
@@ -5695,12 +5907,18 @@ var Wiki;
 
     function editLink(branch, pageId, $location) {
         var link = null;
-        var start = startLink(branch);
-        if (pageId) {
-            link = start + "/edit/" + encodePath(pageId);
-        } else {
-            var path = $location.path();
-            link = "#" + path.replace(/(view|create)/, "edit");
+        var format = Wiki.fileFormat(pageId);
+        switch (format) {
+            case "image":
+                break;
+            default:
+                var start = startLink(branch);
+                if (pageId) {
+                    link = start + "/edit/" + encodePath(pageId);
+                } else {
+                    var path = $location.path();
+                    link = "#" + path.replace(/(view|create)/, "edit");
+                }
         }
         return link;
     }
@@ -5737,6 +5955,9 @@ var Wiki;
     function fileFormat(name, fileExtensionTypeRegistry) {
         var extension = fileExtension(name);
         var answer = null;
+        if (!fileExtensionTypeRegistry) {
+            fileExtensionTypeRegistry = Core.injector.get("fileExtensionTypeRegistry");
+        }
         angular.forEach(fileExtensionTypeRegistry, function (array, key) {
             if (array.indexOf(extension) >= 0) {
                 answer = key;
@@ -5781,16 +6002,36 @@ var Wiki;
     }
     Wiki.hideFineNameExtensions = hideFineNameExtensions;
 
+    function gitRestURL(branch, path) {
+        var url = gitRelativeURL(branch, path);
+        return Core.url(url);
+    }
+    Wiki.gitRestURL = gitRestURL;
+
+    function gitRelativeURL(branch, path) {
+        branch = branch || "master";
+        path = path || "/";
+        return UrlHelpers.join("git/" + branch, path);
+    }
+    Wiki.gitRelativeURL = gitRelativeURL;
+
     function fileIconHtml(row) {
         var name = row.name;
+        var path = row.path;
+        var branch = row.branch;
         var directory = row.directory;
         var xmlNamespaces = row.xmlNamespaces;
+        var iconUrl = row.iconUrl;
         var entity = row.entity;
         if (entity) {
             name = name || entity.name;
+            path = path || entity.path;
+            branch = branch || entity.branch;
             directory = directory || entity.directory;
             xmlNamespaces = xmlNamespaces || entity.xmlNamespaces;
+            iconUrl = iconUrl || entity.iconUrl;
         }
+        branch = branch || "master";
         var css = null;
         var icon = null;
         var extension = fileExtension(name);
@@ -5809,21 +6050,43 @@ var Wiki;
             })) {
                 icon = "img/icons/messagebroker.svg";
             } else {
-                console.log("file " + name + " has namespaces " + xmlNamespaces);
+                Wiki.log.debug("file " + name + " has namespaces " + xmlNamespaces);
             }
         }
-
+        if (iconUrl) {
+            css = null;
+            icon = UrlHelpers.join("git", iconUrl);
+        }
         if (!icon) {
             if (directory) {
-                if ("profile" === extension) {
-                    css = "icon-book";
-                } else {
-                    css = "icon-folder-close";
+                switch (extension) {
+                    case 'profile':
+                        css = "icon-book";
+                        break;
+                    default:
+                        Wiki.log.debug("No match for extension: ", extension, " using a generic folder icon");
+                        css = "icon-folder-close";
                 }
-            } else if ("xml" === extension) {
-                css = "icon-file-text";
             } else {
-                css = "icon-file-alt";
+                switch (extension) {
+                    case 'png':
+                    case 'svg':
+                    case 'jpg':
+                    case 'gif':
+                        css = null;
+                        icon = Wiki.gitRelativeURL(branch, path);
+                        break;
+                    case 'json':
+                    case 'xml':
+                        css = "icon-file-text";
+                        break;
+                    case 'md':
+                        css = "icon-file-text-alt";
+                        break;
+                    default:
+                        Wiki.log.debug("No match for extension: ", extension, " using a generic file icon");
+                        css = "icon-file-alt";
+                }
             }
         }
         if (icon) {
@@ -5843,6 +6106,8 @@ var Wiki;
         }
         if ("xml" === extension) {
             return "icon-cog";
+        } else if ("md" === extension) {
+            return "icon-file-text-alt";
         }
 
         return "icon-file-alt";
@@ -6175,17 +6440,22 @@ var Core;
                 password: ''
             };
             $scope.backstretch = $.backstretch(branding.loginBg);
-
             $scope.rememberMe = false;
             if ('userDetails' in localStorage) {
                 $scope.rememberMe = true;
+                var details = angular.fromJson(localStorage['userDetails']);
+                $scope.entity.username = details.username;
+                $scope.entity.password = details.password;
             }
             $scope.branding = branding;
 
             $scope.$watch('userDetails', function (newValue) {
-                $scope.entity.username = newValue.username;
-                $scope.entity.password = newValue.password;
-                Core.log.debug("userDetails changed: ", StringHelpers.toString(userDetails));
+                if (newValue.username) {
+                    $scope.entity.username = newValue.username;
+                }
+                if (newValue.password) {
+                    $scope.entity.password = newValue.password;
+                }
             }, true);
 
             $scope.$on('$routeChangeStart', function () {
@@ -15997,9 +16267,7 @@ var Perspective;
                 answer = "fabric";
             }
         } else if (Kubernetes.isKubernetes(workspace)) {
-            if (url.startsWith("/kubernetes")) {
-                answer = "kubernetes";
-            }
+            answer = "kubernetes";
         }
         answer = answer || Perspective.defaultPerspective || "container";
 
@@ -17815,6 +18083,7 @@ var Core;
                     if (xhr.status === 401 || xhr.status === 403) {
                         userDetails.username = null;
                         userDetails.password = null;
+                        delete userDetails.loginDetails;
                     } else {
                         jolokiaStatus.xhr = xhr;
                         if (!xhr.responseText && error) {
@@ -21419,6 +21688,11 @@ var Insight;
     }
     Insight.hasKibana = hasKibana;
 
+    function hasEsHead(workspace) {
+        return workspace.treeContainsDomainAndProperties('hawtio', { type: 'plugin', name: 'hawtio-eshead' });
+    }
+    Insight.hasEsHead = hasEsHead;
+
     function getInsightMetricsCollectorMBean(workspace) {
         var node = workspace.findMBeanWithProperties('io.fabric8.insight', { type: 'MetricsCollector' });
         if (!node) {
@@ -21708,9 +21982,6 @@ var Perspective;
                         href: "#/camin"
                     },
                     {
-                        id: "insight-logs"
-                    },
-                    {
                         id: "insight-camel"
                     },
                     {
@@ -21833,126 +22104,6 @@ var Perspective;
         }
     };
 })(Perspective || (Perspective = {}));
-var Git;
-(function (Git) {
-    
-
-    var JolokiaGit = (function () {
-        function JolokiaGit(mbean, jolokia, localStorage, userDetails, branch) {
-            if (typeof branch === "undefined") { branch = "master"; }
-            this.mbean = mbean;
-            this.jolokia = jolokia;
-            this.localStorage = localStorage;
-            this.userDetails = userDetails;
-            this.branch = branch;
-        }
-        JolokiaGit.prototype.getRepositoryLabel = function (fn, error) {
-            return this.jolokia.request({ type: "read", mbean: this.mbean, attribute: ["RepositoryLabel"] }, onSuccess(function (result) {
-                fn(result.value.RepositoryLabel);
-            }, { error: error }));
-        };
-
-        JolokiaGit.prototype.exists = function (branch, path, fn) {
-            var result;
-            if (angular.isDefined(fn) && fn) {
-                result = this.jolokia.execute(this.mbean, "exists", branch, path, onSuccess(fn));
-            } else {
-                result = this.jolokia.execute(this.mbean, "exists", branch, path);
-            }
-            if (angular.isDefined(result) && result) {
-                return true;
-            } else {
-                return false;
-            }
-        };
-
-        JolokiaGit.prototype.read = function (branch, path, fn) {
-            return this.jolokia.execute(this.mbean, "read", branch, path, onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.write = function (branch, path, commitMessage, contents, fn) {
-            var authorName = this.getUserName();
-            var authorEmail = this.getUserEmail();
-            return this.jolokia.execute(this.mbean, "write", branch, path, commitMessage, authorName, authorEmail, contents, onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.writeBase64 = function (branch, path, commitMessage, contents, fn) {
-            var authorName = this.getUserName();
-            var authorEmail = this.getUserEmail();
-            return this.jolokia.execute(this.mbean, "writeBase64", branch, path, commitMessage, authorName, authorEmail, contents, onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.createDirectory = function (branch, path, commitMessage, fn) {
-            var authorName = this.getUserName();
-            var authorEmail = this.getUserEmail();
-
-            return this.jolokia.execute(this.mbean, "createDirectory", branch, path, commitMessage, authorName, authorEmail, onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.revertTo = function (branch, objectId, blobPath, commitMessage, fn) {
-            var authorName = this.getUserName();
-            var authorEmail = this.getUserEmail();
-
-            return this.jolokia.execute(this.mbean, "revertTo", branch, objectId, blobPath, commitMessage, authorName, authorEmail, onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.rename = function (branch, oldPath, newPath, commitMessage, fn) {
-            var authorName = this.getUserName();
-            var authorEmail = this.getUserEmail();
-
-            return this.jolokia.execute(this.mbean, "rename", branch, oldPath, newPath, commitMessage, authorName, authorEmail, onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.remove = function (branch, path, commitMessage, fn) {
-            var authorName = this.getUserName();
-            var authorEmail = this.getUserEmail();
-
-            return this.jolokia.execute(this.mbean, "remove", branch, path, commitMessage, authorName, authorEmail, onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.completePath = function (branch, completionText, directoriesOnly, fn) {
-            return this.jolokia.execute(this.mbean, "completePath", branch, completionText, directoriesOnly, onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.history = function (branch, objectId, path, limit, fn) {
-            return this.jolokia.execute(this.mbean, "history", branch, objectId, path, limit, onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.commitTree = function (commitId, fn) {
-            return this.jolokia.execute(this.mbean, "getCommitTree", commitId, onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.commitInfo = function (commitId, fn) {
-            return this.jolokia.execute(this.mbean, "getCommitInfo", commitId, onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.diff = function (objectId, baseObjectId, path, fn) {
-            return this.jolokia.execute(this.mbean, "diff", objectId, baseObjectId, path, onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.getContent = function (objectId, blobPath, fn) {
-            return this.jolokia.execute(this.mbean, "getContent", objectId, blobPath, onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.readJsonChildContent = function (path, nameWildcard, search, fn) {
-            return this.jolokia.execute(this.mbean, "readJsonChildContent", this.branch, path, nameWildcard, search, onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.branches = function (fn) {
-            return this.jolokia.execute(this.mbean, "branches", onSuccess(fn));
-        };
-
-        JolokiaGit.prototype.getUserName = function () {
-            return this.localStorage["gitUserName"] || this.userDetails.username || "anonymous";
-        };
-
-        JolokiaGit.prototype.getUserEmail = function () {
-            return this.localStorage["gitUserEmail"] || "anonymous@gmail.com";
-        };
-        return JolokiaGit;
-    })();
-    Git.JolokiaGit = JolokiaGit;
-})(Git || (Git = {}));
 var Wiki;
 (function (Wiki) {
     
@@ -22180,6 +22331,7 @@ var Wiki;
 
     Wiki._module.factory('fileExtensionTypeRegistry', function () {
         return {
+            "image": ["svg", "png", "ico", "bmp", "jpg", "gif"],
             "markdown": ["md", "markdown", "mdown", "mkdn", "mkd"],
             "htmlmixed": ["html", "xhtml", "htm"],
             "text/x-java": ["java"],
@@ -26891,7 +27043,9 @@ var StorageHelpers;
             return fromParam(value);
         };
 
-        ControllerHelpers.bindModelToSearchParam(options.$scope, options.$location, options.modelName, options.paramName, options.initialValue, toWrapper, fromWrapper);
+        var storedValue = fromWrapper(undefined);
+
+        ControllerHelpers.bindModelToSearchParam(options.$scope, options.$location, options.modelName, options.paramName, storedValue || options.initialValue, toWrapper, fromWrapper);
     }
     StorageHelpers.bindModelToLocalStorage = bindModelToLocalStorage;
 })(StorageHelpers || (StorageHelpers = {}));
@@ -30834,7 +30988,7 @@ var PollHelpers;
     var log = Logger.get("PollHelpers");
 
     function setupPolling($scope, updateFunction, period) {
-        if (typeof period === "undefined") { period = 5000; }
+        if (typeof period === "undefined") { period = 2000; }
         var $timeout = Core.injector.get('$timeout');
         var jolokia = Core.injector.get('jolokia');
 
@@ -31264,7 +31418,7 @@ var Insight;
 
     Insight._module.config([
         "$routeProvider", function ($routeProvider) {
-            $routeProvider.when('/insight/all', { templateUrl: 'app/insight/html/all.html' }).when('/insight/jvms', { templateUrl: 'app/insight/html/jvms.html' }).when('/insight/elasticsearch', { templateUrl: 'app/insight/html/elasticsearch.html' }).when('/insight/logs', { redirectTo: function () {
+            $routeProvider.when('/insight/all', { templateUrl: 'app/insight/html/all.html' }).when('/insight/jvms', { templateUrl: 'app/insight/html/jvms.html' }).when('/insight/elasticsearch', { templateUrl: 'app/insight/html/eshead.html' }).when('/insight/logs', { redirectTo: function () {
                     return '/insight/dashboard?kbnId=app/insight/dashboards/logs&p=insight&tab=insight-logs';
                 } }).when('/insight/camel', { redirectTo: function () {
                     return '/insight/dashboard?kbnId=app/insight/dashboards/camel&p=insight&tab=insight-camel';
@@ -31272,7 +31426,7 @@ var Insight;
         }]);
 
     Insight._module.run([
-        "workspace", "viewRegistry", "helpRegistry", "serviceIconRegistry", function (workspace, viewRegistry, helpRegistry, serviceIconRegistry) {
+        "workspace", "viewRegistry", "helpRegistry", "serviceIconRegistry", "layoutFull", function (workspace, viewRegistry, helpRegistry, serviceIconRegistry, layoutFull) {
             serviceIconRegistry.addIcons({
                 title: "Fabric8 Insight",
                 type: "icon",
@@ -31292,9 +31446,6 @@ var Insight;
                 topLevelTabs: {
                     includes: [
                         {
-                            href: "#/insight"
-                        },
-                        {
                             href: "#/camin"
                         },
                         {
@@ -31302,12 +31453,16 @@ var Insight;
                         },
                         {
                             id: "insight-camel"
+                        },
+                        {
+                            id: "insight-eshead"
                         }
                     ]
                 }
             };
 
             viewRegistry["insight"] = "../hawtio-kibana/app/partials/hawtioLayout.html";
+            viewRegistry["eshead"] = layoutFull;
 
             helpRegistry.addUserDoc('insight', 'app/insight/doc/help.md', function () {
                 return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace);
@@ -31342,7 +31497,7 @@ var Insight;
 
             workspace.topLevelTabs.push({
                 id: "insight-camel",
-                content: "Camel",
+                content: "Camel Events",
                 title: "View Insight Camel",
                 href: function () {
                     return "#/insight/camel";
@@ -31352,6 +31507,21 @@ var Insight;
                 },
                 isActive: function () {
                     return workspace.isTopTabActive("insight-camel");
+                }
+            });
+
+            workspace.topLevelTabs.push({
+                id: "insight-eshead",
+                content: "Elasticsearch",
+                title: "View Insight Elasticsearch",
+                href: function () {
+                    return "#/insight/elasticsearch?tab=eshead";
+                },
+                isValid: function (workspace) {
+                    return Fabric.hasFabric(workspace) && Insight.hasInsight(workspace) && Insight.hasEsHead(workspace);
+                },
+                isActive: function () {
+                    return workspace.isTopTabActive("insight-eshead");
                 }
             });
         }]);
@@ -37632,6 +37802,11 @@ var Karaf;
 })(Karaf || (Karaf = {}));
 var Kubernetes;
 (function (Kubernetes) {
+    Kubernetes.appSuffix = ".app";
+
+    Kubernetes.mbean = Fabric.jmxDomain + ":type=Kubernetes";
+    Kubernetes.managerMBean = Fabric.jmxDomain + ":type=KubernetesManager";
+
     function isKubernetes(workspace) {
         return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, { type: "Kubernetes" });
     }
@@ -37733,10 +37908,8 @@ var Kubernetes;
             var url = UrlHelpers.escapeColons(KubernetesApiURL);
             Kubernetes.log.debug("Url for ", thing, ": ", url);
             var resource = $resource(UrlHelpers.join(url, urlTemplate), null, {
-                'query': {
-                    method: 'GET',
-                    isArray: false
-                }
+                query: { method: 'GET', isArray: false },
+                save: { method: 'PUT', params: { id: '@id' } }
             });
             deferred.resolve(resource);
             Core.$apply($rootScope);
@@ -37798,6 +37971,72 @@ var Kubernetes;
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
 (function (Kubernetes) {
+    Kubernetes.KubernetesJsonDirective = Kubernetes._module.directive("kubernetesJson", [function () {
+            return {
+                restrict: 'A',
+                replace: true,
+                templateUrl: Kubernetes.templatePath + 'kubernetesJsonDirective.html',
+                scope: {
+                    config: '=kubernetesJson'
+                },
+                controller: [
+                    "$scope", "$location", "$http", "jolokia", "marked", function ($scope, $location, $http, jolokia, marked) {
+                        $scope.$watch('config', function (config) {
+                            if (config) {
+                                Kubernetes.log.debug("Got kubernetes configuration: ", config);
+                            }
+                        });
+
+                        $scope.$on('Wiki.ViewPage.Children', function ($event, pageId, children) {
+                            $scope.appTitle = pageId;
+                            if (children) {
+                                var summaryFile = children.find(function (child) {
+                                    return child.name.toLowerCase() === "summary.md";
+                                });
+                                var summaryURL = null;
+                                if (summaryFile) {
+                                    summaryURL = Wiki.gitRestURL(summaryFile.branch, summaryFile.path);
+                                    $http.get(summaryURL).success(function (data, status, headers, config) {
+                                        var summaryMarkdown = data;
+                                        if (summaryMarkdown) {
+                                            $scope.summaryHtml = marked(summaryMarkdown);
+                                        } else {
+                                            $scope.summaryHtml = null;
+                                        }
+                                    }).error(function (data, status, headers, config) {
+                                        $scope.summaryHtml = null;
+                                        Kubernetes.log.warn("Failed to load " + summaryURL + " " + data + " " + status);
+                                    });
+                                }
+                                var iconFile = children.find(function (child) {
+                                    return child.name.toLowerCase().startsWith("icon");
+                                });
+                                if (iconFile) {
+                                    $scope.iconURL = Wiki.gitRestURL(iconFile.branch, iconFile.path);
+                                }
+                            }
+                        });
+
+                        $scope.apply = function () {
+                            var json = angular.toJson($scope.config);
+                            if (json) {
+                                var name = $scope.appTitle || "App";
+                                Core.notification('info', "Running " + name);
+
+                                jolokia.execute(Kubernetes.managerMBean, "apply", json, onSuccess(function (response) {
+                                    Kubernetes.log.debug("Got response: ", response);
+
+                                    $location.url("/kubernetes/pods");
+                                    Core.$apply($scope);
+                                }));
+                            }
+                        };
+                    }]
+            };
+        }]);
+})(Kubernetes || (Kubernetes = {}));
+var Kubernetes;
+(function (Kubernetes) {
     Kubernetes.TopLevel = Kubernetes.controller("TopLevel", [
         "$scope", "workspace", "KubernetesVersion", function ($scope, workspace, KubernetesVersion) {
             $scope.version = undefined;
@@ -37816,7 +38055,7 @@ var Kubernetes;
 var Kubernetes;
 (function (Kubernetes) {
     Kubernetes.Pods = Kubernetes.controller("Pods", [
-        "$scope", "KubernetesPods", "$dialog", "$templateCache", "jolokia", "$location", function ($scope, KubernetesPods, $dialog, $templateCache, jolokia, $location) {
+        "$scope", "KubernetesPods", "$dialog", "$templateCache", "jolokia", "$location", "localStorage", function ($scope, KubernetesPods, $dialog, $templateCache, jolokia, $location, localStorage) {
             $scope.pods = [];
             $scope.fetched = false;
             $scope.json = '';
@@ -37827,6 +38066,22 @@ var Kubernetes;
             $scope.$on('kubeSelectedId', function ($event, id) {
                 Kubernetes.setJson($scope, id, $scope.pods);
             });
+
+            $scope.$on('$routeUpdate', function ($event) {
+                Kubernetes.setJson($scope, $location.search()['_id'], $scope.pods);
+            });
+
+            jolokia.getAttribute(Kubernetes.objectName, 'DockerIp', undefined, onSuccess(function (results) {
+                Kubernetes.log.info("got Docker IP: " + results);
+                if (results) {
+                    $scope.dockerIp = results;
+                }
+                Core.$apply($scope);
+            }, {
+                error: function (response) {
+                    Kubernetes.log.debug("error fetching API URL: ", response);
+                }
+            }));
 
             Kubernetes.initShared($scope);
 
@@ -37870,6 +38125,63 @@ var Kubernetes;
                         cellTemplate: $templateCache.get("labelTemplate.html")
                     }
                 ]
+            };
+
+            $scope.connect = {
+                dialog: new UI.Dialog(),
+                saveCredentials: false,
+                userName: null,
+                password: null,
+                jolokiaUrl: null,
+                containerName: null,
+                view: null,
+                onOK: function () {
+                    var userName = $scope.connect.userName;
+                    var password = $scope.connect.password;
+                    var userDetails = Core.injector.get('userDetails');
+                    if (!userDetails.password) {
+                        userDetails.password = password;
+                    }
+                    if ($scope.connect.saveCredentials) {
+                        $scope.connect.saveCredentials = false;
+                        if (userName) {
+                            localStorage['kuberentes.userName'] = userName;
+                        }
+                        if (password) {
+                            localStorage['kuberentes.password'] = password;
+                        }
+                    }
+                    var options = Core.createConnectOptions({
+                        jolokiaUrl: $scope.connect.jolokiaUrl,
+                        userName: userName,
+                        password: password,
+                        useProxy: true,
+                        view: $scope.connect.view,
+                        name: $scope.connect.containerName
+                    });
+                    Core.connectToServer(localStorage, options);
+                    setTimeout(function () {
+                        $scope.connect.dialog.close();
+                        Core.$apply($scope);
+                    }, 100);
+                },
+                doConnect: function (entity) {
+                    var userDetails = Core.injector.get('userDetails');
+                    if (userDetails) {
+                        $scope.connect.userName = userDetails.username;
+                        $scope.connect.password = userDetails.password;
+                    }
+                    $scope.connect.jolokiaUrl = entity.$jolokiaUrl;
+                    $scope.connect.containerName = entity.id;
+
+                    var alwaysPrompt = localStorage['fabricAlwaysPrompt'];
+                    if ((alwaysPrompt && alwaysPrompt !== "false") || !$scope.connect.userName || !$scope.connect.password) {
+                        $scope.connect.dialog.open();
+                    } else {
+                        Kubernetes.log.info("Connecting to " + $scope.connect.jolokiaUrl + " for container: " + $scope.connect.containerName + " user: " + $scope.connect.userName);
+                        $scope.connect.onOK();
+                    }
+                }
             };
 
             KubernetesPods.then(function (KubernetesPods) {
@@ -37922,6 +38234,37 @@ var Kubernetes;
                         });
                         angular.forEach($scope.pods, function (entity) {
                             entity.$labelsText = Kubernetes.labelsToString(entity.labels);
+
+                            var info = Core.pathGet(entity, ["currentState", "info"]);
+                            var hostPort = null;
+                            var currentState = entity.currentState;
+                            var host = currentState ? currentState["host"] : null;
+                            if (currentState)
+                                angular.forEach(info, function (containerInfo, containerName) {
+                                    if (!hostPort) {
+                                        var jolokiaHostPort = Core.pathGet(containerInfo, ["detailInfo", "HostConfig", "PortBindings", "8778/tcp"]);
+                                        if (jolokiaHostPort) {
+                                            var hostPorts = jolokiaHostPort.map("HostPort");
+                                            if (hostPorts && hostPorts.length > 0) {
+                                                hostPort = hostPorts[0];
+                                            }
+                                        }
+                                    }
+                                });
+                            if (hostPort) {
+                                if (!host) {
+                                    host = "localhost";
+                                }
+
+                                if ($scope.dockerIp) {
+                                    if (host === "localhost" || host === "127.0.0.1") {
+                                        host = $scope.dockerIp;
+                                    }
+                                }
+                                entity.$jolokiaUrl = "http://" + host + ":" + hostPort + "/jolokia/";
+
+                                entity.$connect = $scope.connect;
+                            }
                         });
                         Kubernetes.setJson($scope, $scope.id, $scope.pods);
 
@@ -37935,6 +38278,36 @@ var Kubernetes;
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
 (function (Kubernetes) {
+    Kubernetes.DesiredReplicas = Kubernetes.controller("DesiredReplicas", [
+        "$scope", function ($scope) {
+            var watch = null;
+            var originalValue = null;
+            $scope.$watch('row.entity', function (entity) {
+                if (watch && angular.isFunction(watch)) {
+                    originalValue = null;
+                    watch();
+                }
+                watch = $scope.$watch('row.entity.desiredState.replicas', function (replicas) {
+                    if (originalValue === null && replicas !== undefined) {
+                        originalValue = replicas;
+                    }
+                    if (replicas < 1) {
+                        $scope.row.entity.desiredState.replicas = 1;
+                    }
+                    if (replicas !== originalValue) {
+                        $scope.$emit('kubernetes.dirtyController', $scope.row.entity);
+                    } else {
+                        $scope.$emit('kubernetes.cleanController', $scope.row.entity);
+                    }
+                    Core.$apply($scope);
+                });
+            });
+
+            $scope.$on('kubernetes.resetReplicas', function ($event) {
+                $scope.row.entity.desiredState.replicas = originalValue;
+            });
+        }]);
+
     Kubernetes.ReplicationControllers = Kubernetes.controller("ReplicationControllers", [
         "$scope", "KubernetesReplicationControllers", "$templateCache", "$location", "jolokia",
         function ($scope, KubernetesReplicationControllers, $templateCache, $location, jolokia) {
@@ -37957,16 +38330,55 @@ var Kubernetes;
                 columnDefs: [
                     { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
                     { field: 'currentState.replicas', displayName: 'Current Replicas' },
-                    { field: 'desiredState.replicas', displayName: 'Desired Replicas' },
+                    { field: 'desiredState.replicas', displayName: 'Desired Replicas', cellTemplate: $templateCache.get("desiredReplicas.html") },
                     { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
                 ]
+            };
+
+            $scope.$on('kubernetes.dirtyController', function ($event, replicationController) {
+                replicationController.$dirty = true;
+            });
+
+            $scope.$on('kubernetes.cleanController', function ($event, replicationController) {
+                replicationController.$dirty = false;
+            });
+
+            $scope.anyDirty = function () {
+                return $scope.replicationControllers.any(function (controller) {
+                    return controller.$dirty;
+                });
+            };
+
+            $scope.undo = function () {
+                $scope.$broadcast('kubernetes.resetReplicas');
             };
 
             $scope.$on('kubeSelectedId', function ($event, id) {
                 Kubernetes.setJson($scope, id, $scope.replicationControllers);
             });
 
+            $scope.$on('$routeUpdate', function ($event) {
+                Kubernetes.setJson($scope, $location.search()['_id'], $scope.pods);
+            });
+
             KubernetesReplicationControllers.then(function (KubernetesReplicationControllers) {
+                $scope.save = function () {
+                    var dirtyControllers = $scope.replicationControllers.filter(function (controller) {
+                        return controller.$dirty;
+                    });
+                    if (dirtyControllers.length) {
+                        dirtyControllers.forEach(function (replicationController) {
+                            KubernetesReplicationControllers.save(undefined, replicationController, function () {
+                                replicationController.$dirty = false;
+                                Kubernetes.log.debug("Updated ", replicationController.id);
+                            }, function (error) {
+                                replicationController.$dirty = false;
+                                Kubernetes.log.debug("Failed to update ", replicationController.id, " error: ", error);
+                            });
+                        });
+                    }
+                };
+
                 $scope.deletePrompt = function (selected) {
                     if (angular.isString(selected)) {
                         selected = [{
@@ -38010,8 +38422,12 @@ var Kubernetes;
 
                 $scope.fetch = PollHelpers.setupPolling($scope, function (next) {
                     KubernetesReplicationControllers.query(function (response) {
-                        Kubernetes.log.debug("got back response: ", response);
                         $scope.fetched = true;
+                        if ($scope.anyDirty()) {
+                            Kubernetes.log.debug("Table has been changed, not updating local view");
+                            next();
+                            return;
+                        }
                         $scope.replicationControllers = (response['items'] || []).sortBy(function (item) {
                             return item.id;
                         });
@@ -38023,12 +38439,6 @@ var Kubernetes;
                     });
                 });
                 $scope.fetch();
-            });
-
-            $scope.$watch('replicationControllers', function (newValue, oldValue) {
-                if (newValue !== oldValue) {
-                    Kubernetes.log.debug("replicationControllers: ", newValue);
-                }
             });
         }]);
 })(Kubernetes || (Kubernetes = {}));
@@ -38065,6 +38475,10 @@ var Kubernetes;
 
             $scope.$on('kubeSelectedId', function ($event, id) {
                 Kubernetes.setJson($scope, id, $scope.services);
+            });
+
+            $scope.$on('$routeUpdate', function ($event) {
+                Kubernetes.setJson($scope, $location.search()['_id'], $scope.pods);
             });
 
             KubernetesServices.then(function (KubernetesServices) {
@@ -38152,33 +38566,72 @@ var Kubernetes;
 
     Kubernetes.Labels = Kubernetes.controller("Labels", [
         "$scope", "workspace", "jolokia", "$location", function ($scope, workspace, jolokia, $location) {
-            $scope.labels = {};
+            $scope.labels = [];
+            var labelKeyWeights = {
+                "name": 1,
+                "replicationController": 2,
+                "group": 3
+            };
             $scope.$watch('entity', function (newValue, oldValue) {
                 if (newValue) {
                     Kubernetes.log.debug("labels: ", newValue);
 
+                    $scope.labels = [];
                     angular.forEach($scope.entity.labels, function (value, key) {
                         if (key === 'fabric8') {
                             return;
                         }
-                        $scope.labels[key] = {
+                        $scope.labels.push({
+                            key: key,
                             title: value
-                        };
+                        });
+                    });
+
+                    $scope.labels = $scope.labels.sort(function (a, b) {
+                        function getWeight(key) {
+                            return labelKeyWeights[key] || 1000;
+                        }
+                        var n1 = a["key"];
+                        var n2 = b["key"];
+                        var w1 = getWeight(n1);
+                        var w2 = getWeight(n2);
+                        var diff = w1 - w2;
+                        if (diff < 0) {
+                            return -1;
+                        } else if (diff > 0) {
+                            return 1;
+                        }
+                        if (n1 && n2) {
+                            if (n1 > n2) {
+                                return 1;
+                            } else if (n1 < n2) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        } else {
+                            if (n1 === n2) {
+                                return 0;
+                            } else if (n1) {
+                                return 1;
+                            } else {
+                                return -1;
+                            }
+                        }
                     });
                 }
             });
 
             $scope.handleClick = function (entity, labelType, value) {
-                Kubernetes.log.debug("handleClick, entity: ", entity, " labelType: ", labelType, " value: ", value);
+                Kubernetes.log.debug("handleClick, entity: ", entity, " key: ", labelType, " value: ", value);
                 var filterTextSection = labelType + "=" + value.title;
                 $scope.$emit('labelFilterUpdate', filterTextSection);
             };
 
             var labelColors = {
-                'profile': 'background-green',
                 'version': 'background-blue',
-                'name': 'background-light-grey',
-                'container': 'background-light-green'
+                'name': 'background-light-green',
+                'container': 'background-light-grey'
             };
             $scope.labelClass = function (labelType) {
                 if (!(labelType in labelColors)) {
@@ -38225,7 +38678,7 @@ var Log;
                 content: "Logs",
                 title: "View and search the logs of this container",
                 isValid: function (workspace) {
-                    return Log.treeContainsLogQueryMBean(workspace);
+                    return Log.treeContainsLogQueryMBean(workspace) && !(Fabric.hasFabric(workspace) && Insight.hasInsight(workspace) && Insight.hasKibana(workspace));
                 },
                 href: function () {
                     return "#/logs";
@@ -42382,10 +42835,19 @@ var RBAC;
                                     value.mbean.opByString = {};
                                     var opList = [];
                                     angular.forEach(ops, function (op, opName) {
-                                        var operationString = Core.operationToString(opName, op.args);
+                                        function addOp(opName, op) {
+                                            var operationString = Core.operationToString(opName, op.args);
 
-                                        value.mbean.opByString[operationString] = op;
-                                        opList.push(operationString);
+                                            value.mbean.opByString[operationString] = op;
+                                            opList.push(operationString);
+                                        }
+                                        if (angular.isArray(op)) {
+                                            op.forEach(function (op) {
+                                                addOp(opName, op);
+                                            });
+                                        } else {
+                                            addOp(opName, op);
+                                        }
                                     });
                                     bulkRequest[key] = opList;
                                 }
@@ -42476,60 +42938,52 @@ var RBAC;
     }
 
     RBAC.hawtioShow = RBAC._module.directive('hawtioShow', [
-        'jolokia', 'rbacACLMBean', 'rbacTasks', function (jolokia, rbacACLMBean, rbacTasks) {
+        'workspace', function (workspace) {
             return {
                 restrict: 'A',
                 replace: false,
                 link: function (scope, element, attr) {
-                    rbacACLMBean.then(function (rbacACLMBean) {
-                        var objectName = attr['objectName'];
-                        if (!objectName) {
-                            return;
+                    var objectName = attr['objectName'];
+                    if (!objectName) {
+                        return;
+                    }
+                    function applyInvokeRights(value, mode) {
+                        if (value) {
+                            if (mode === INVERSE) {
+                                element.css({
+                                    display: 'none'
+                                });
+                            }
+                        } else {
+                            if (mode === REMOVE) {
+                                element.css({
+                                    display: 'none'
+                                });
+                            } else if (mode === HIDE) {
+                                element.css({
+                                    visibility: 'hidden'
+                                });
+                            }
                         }
+                    }
+                    ;
+                    scope.$watch(function () {
                         var methodName = attr['methodName'];
                         var argumentTypes = attr['argumentTypes'];
                         var mode = attr['mode'] || HIDE;
                         var op = getOp(objectName, methodName, argumentTypes);
-                        var arguments = getArguments(op, objectName, methodName, argumentTypes);
+                        var args = getArguments(op, objectName, methodName, argumentTypes);
+                        objectName = args[0];
+                        methodName = args[1];
+                        if (objectName) {
+                            var mbean = Core.parseMBean(objectName);
+                            var folder = workspace.findMBeanWithProperties(mbean.domain, mbean.attributes);
+                            if (folder) {
+                                var invokeRights = workspace.hasInvokeRights(folder, methodName);
 
-                        RBAC.log.debug("Arguments for operation: ", arguments);
-                        RBAC.log.debug("ACL MBean: ", rbacACLMBean);
-
-                        var success = function (response) {
-                            var value = response.value;
-                            if (value) {
-                                RBAC.log.debug("User can invoke: ", response.request.arguments);
-                                if (mode === INVERSE) {
-                                    element.css({
-                                        display: 'none'
-                                    });
-                                }
-                            } else {
-                                RBAC.log.debug("User cannot invoke: ", response.request.arguments);
-                                if (mode === REMOVE) {
-                                    element.css({
-                                        display: 'none'
-                                    });
-                                } else if (mode === HIDE) {
-                                    element.css({
-                                        visibility: 'hidden'
-                                    });
-                                }
+                                applyInvokeRights(invokeRights, mode);
                             }
-                        };
-
-                        var error = function (response) {
-                            RBAC.log.debug("got error checking permission: ", response);
-                        };
-
-                        jolokia.request({
-                            type: 'exec',
-                            mbean: rbacACLMBean,
-                            operation: op,
-                            arguments: arguments
-                        }, onSuccess(success, {
-                            error: error
-                        }));
+                        }
                     });
                 }
             };
@@ -47710,6 +48164,123 @@ var UI;
     }
     UI.ZeroClipboardDirective = ZeroClipboardDirective;
 })(UI || (UI = {}));
+var WikiDrop;
+(function (WikiDrop) {
+    WikiDrop.log = Logger.get('WikiDrop');
+    WikiDrop.pluginName = 'wiki-drop';
+    WikiDrop.templatePath = 'app/' + WikiDrop.pluginName + '/html/';
+
+    WikiDrop._module = angular.module(WikiDrop.pluginName, ['bootstrap', 'wiki']);
+
+    WikiDrop._module.config([
+        '$routeProvider', function ($routeProvider) {
+            $routeProvider.when('/wiki/drop', { templateUrl: WikiDrop.templatePath + 'deploy.html' });
+        }]);
+
+    WikiDrop._module.run([
+        'viewRegistry', 'layoutFull', 'workspace', function (viewRegistry, layoutFull, workspace) {
+            WikiDrop.log.debug("started");
+        }]);
+
+    hawtioPluginLoader.addModule(WikiDrop.pluginName);
+})(WikiDrop || (WikiDrop = {}));
+var WikiDrop;
+(function (WikiDrop) {
+    WikiDrop.DropFile = WikiDrop._module.directive("wikiDropFile", [function () {
+            WikiDrop.log.debug("Creating wiki drop directive...");
+            return {
+                restrict: 'A',
+                replace: true,
+                scope: {
+                    branch: '@',
+                    path: '@',
+                    unzip: '@'
+                },
+                templateUrl: WikiDrop.templatePath + "deploy.html",
+                controller: [
+                    "$scope", "$element", "FileUploader", "jolokiaUrl", "$templateCache", "$route", "$timeout", "jolokia", "userDetails", function ($scope, $element, FileUploader, jolokiaUrl, $templateCache, $route, $timeout, jolokia, userDetails) {
+                        $scope.artifactTemplate = '';
+
+                        function updateURL() {
+                            var uploadURI = Wiki.gitRestURL($scope.branch, $scope.path);
+                            WikiDrop.log.info("Upload URI: " + uploadURI);
+
+                            var uploader = $scope.artifactUploader = new FileUploader({
+                                headers: {
+                                    'Authorization': Core.authHeaderValue(userDetails)
+                                },
+                                autoUpload: true,
+                                withCredentials: true,
+                                method: 'POST',
+                                url: uploadURI
+                            });
+
+                            $scope.doUpload = function () {
+                                uploader.uploadAll();
+                            };
+
+                            uploader.onWhenAddingFileFailed = function (item, filter, options) {
+                                WikiDrop.log.debug('onWhenAddingFileFailed', item, filter, options);
+                            };
+                            uploader.onAfterAddingFile = function (fileItem) {
+                                WikiDrop.log.debug('onAfterAddingFile', fileItem);
+                            };
+                            uploader.onAfterAddingAll = function (addedFileItems) {
+                                WikiDrop.log.debug('onAfterAddingAll', addedFileItems);
+                            };
+                            uploader.onBeforeUploadItem = function (item) {
+                                if ('file' in item) {
+                                    item.fileSizeMB = (item.file.size / 1024 / 1024).toFixed(2);
+                                } else {
+                                    item.fileSizeMB = 0;
+                                }
+
+                                item.url = uploadURI;
+                                if ($scope.unzip === false || $scope.unzip === "false") {
+                                    item.url += "?unzip=false";
+                                }
+                                WikiDrop.log.info("Uploading files to " + uploadURI);
+                                WikiDrop.log.debug('onBeforeUploadItem', item);
+                            };
+                            uploader.onProgressItem = function (fileItem, progress) {
+                                WikiDrop.log.debug('onProgressItem', fileItem, progress);
+                            };
+                            uploader.onProgressAll = function (progress) {
+                                WikiDrop.log.debug('onProgressAll', progress);
+                            };
+                            uploader.onSuccessItem = function (fileItem, response, status, headers) {
+                                WikiDrop.log.debug('onSuccessItem', fileItem, response, status, headers);
+                            };
+                            uploader.onErrorItem = function (fileItem, response, status, headers) {
+                                WikiDrop.log.debug('onErrorItem', fileItem, response, status, headers);
+                            };
+                            uploader.onCancelItem = function (fileItem, response, status, headers) {
+                                WikiDrop.log.debug('onCancelItem', fileItem, response, status, headers);
+                            };
+                            uploader.onCompleteItem = function (fileItem, response, status, headers) {
+                                WikiDrop.log.debug('onCompleteItem', fileItem, response, status, headers);
+                            };
+                            uploader.onCompleteAll = function () {
+                                WikiDrop.log.debug('onCompleteAll');
+                                uploader.clearQueue();
+                                $timeout(function () {
+                                    WikiDrop.log.info("Completed all uploads. Lets force a reload");
+                                    $route.reload();
+                                    Core.$apply($scope);
+                                }, 200);
+                            };
+
+                            WikiDrop.log.debug('uploader', uploader);
+                            $scope.artifactTemplate = $templateCache.get('fileUpload.html');
+                            Core.$apply($scope);
+                        }
+
+                        $scope.$watch("branch", updateURL);
+                        $scope.$watch("path", updateURL);
+                    }]
+            };
+        }]);
+})(WikiDrop || (WikiDrop = {}));
 var Wiki;
 (function (Wiki) {
     Wiki._module.controller("Wiki.CamelController", [
@@ -49718,6 +50289,11 @@ var Wiki;
                 items: []
             };
 
+            $scope.ViewMode = Wiki.ViewMode;
+            $scope.setViewMode = function (mode) {
+                $scope.$emit('Wiki.SetViewMode', mode);
+            };
+
             wikiBranchMenu.applyMenuExtensions($scope.branchMenuConfig.items);
 
             $scope.$watch('branches', function (newValue, oldValue) {
@@ -49861,11 +50437,79 @@ var Wiki;
         }, 100);
     }
 
-    Wiki._module.controller("Wiki.ViewController", [
-        "$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", function ($scope, $location, $routeParams, $route, $http, $timeout, workspace, marked, fileExtensionTypeRegistry, wikiRepository, $compile, $templateCache, jolokia) {
+    Wiki.FileDropController = Wiki._module.controller("Wiki.FileDropController", [
+        "$scope", "FileUploader", "$route", "$timeout", "userDetails", function ($scope, FileUploader, $route, $timeout, userDetails) {
+            var uploadURI = Wiki.gitRestURL($scope.branch, $scope.pageId);
+            Wiki.log.info("Upload URI: " + uploadURI);
+            var uploader = $scope.uploader = new FileUploader({
+                headers: {
+                    'Authorization': Core.authHeaderValue(userDetails)
+                },
+                autoUpload: true,
+                withCredentials: true,
+                method: 'POST',
+                url: uploadURI
+            });
+            $scope.doUpload = function () {
+                uploader.uploadAll();
+            };
+            uploader.onWhenAddingFileFailed = function (item, filter, options) {
+                Wiki.log.debug('onWhenAddingFileFailed', item, filter, options);
+            };
+            uploader.onAfterAddingFile = function (fileItem) {
+                Wiki.log.debug('onAfterAddingFile', fileItem);
+            };
+            uploader.onAfterAddingAll = function (addedFileItems) {
+                Wiki.log.debug('onAfterAddingAll', addedFileItems);
+            };
+            uploader.onBeforeUploadItem = function (item) {
+                if ('file' in item) {
+                    item.fileSizeMB = (item.file.size / 1024 / 1024).toFixed(2);
+                } else {
+                    item.fileSizeMB = 0;
+                }
+
+                item.url = uploadURI;
+                Wiki.log.info("Loading files to " + uploadURI);
+                Wiki.log.debug('onBeforeUploadItem', item);
+            };
+            uploader.onProgressItem = function (fileItem, progress) {
+                Wiki.log.debug('onProgressItem', fileItem, progress);
+            };
+            uploader.onProgressAll = function (progress) {
+                Wiki.log.debug('onProgressAll', progress);
+            };
+            uploader.onSuccessItem = function (fileItem, response, status, headers) {
+                Wiki.log.debug('onSuccessItem', fileItem, response, status, headers);
+            };
+            uploader.onErrorItem = function (fileItem, response, status, headers) {
+                Wiki.log.debug('onErrorItem', fileItem, response, status, headers);
+            };
+            uploader.onCancelItem = function (fileItem, response, status, headers) {
+                Wiki.log.debug('onCancelItem', fileItem, response, status, headers);
+            };
+            uploader.onCompleteItem = function (fileItem, response, status, headers) {
+                Wiki.log.debug('onCompleteItem', fileItem, response, status, headers);
+            };
+            uploader.onCompleteAll = function () {
+                Wiki.log.debug('onCompleteAll');
+                uploader.clearQueue();
+                $timeout(function () {
+                    Wiki.log.info("Completed all uploads. Lets force a reload");
+                    $route.reload();
+                    Core.$apply($scope);
+                }, 200);
+            };
+        }]);
+
+    Wiki.ViewController = Wiki._module.controller("Wiki.ViewController", [
+        "$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", "localStorage", "$interpolate", function ($scope, $location, $routeParams, $route, $http, $timeout, workspace, marked, fileExtensionTypeRegistry, wikiRepository, $compile, $templateCache, jolokia, localStorage, $interpolate) {
+            $scope.name = "WikiViewController";
+
             var isFmc = Fabric.isFMCContainer(workspace);
 
             Wiki.initScope($scope, $routeParams, $location);
+            SelectionHelpers.decorate($scope);
 
             $scope.fabricTopLevel = "fabric/profiles/";
 
@@ -49875,6 +50519,7 @@ var Wiki;
 
             $scope.profileId = Fabric.pagePathToProfileId($scope.pageId);
             $scope.showProfileHeader = $scope.profileId && $scope.pageId.endsWith(Fabric.profileSuffix) ? true : false;
+            $scope.showAppHeader = false;
 
             $scope.operationCounter = 1;
             $scope.addDialog = new UI.Dialog();
@@ -49883,6 +50528,7 @@ var Wiki;
             $scope.moveDialog = new UI.Dialog();
             $scope.deleteDialog = new UI.Dialog();
             $scope.isFile = false;
+
             $scope.rename = {
                 newFileName: ""
             };
@@ -49898,10 +50544,22 @@ var Wiki;
             };
             $scope.newDocumentName = "";
             $scope.selectedCreateDocumentExtension = null;
+            $scope.ViewMode = Wiki.ViewMode;
 
             Core.bindModelToSearchParam($scope, $location, "searchText", "q", "");
 
-            Core.reloadWhenParametersChange($route, $scope, $location);
+            StorageHelpers.bindModelToLocalStorage({
+                $scope: $scope,
+                $location: $location,
+                localStorage: localStorage,
+                modelName: 'mode',
+                paramName: 'wikiViewMode',
+                initialValue: 0 /* List */,
+                to: Core.numberToString,
+                from: Core.parseIntValue
+            });
+
+            Core.reloadWhenParametersChange($route, $scope, $location, ['wikiViewMode']);
 
             $scope.gridOptions = {
                 data: 'children',
@@ -49920,9 +50578,33 @@ var Wiki;
                 ]
             };
 
+            $scope.$on('Wiki.SetViewMode', function ($event, mode) {
+                $scope.mode = mode;
+                switch (mode) {
+                    case 0 /* List */:
+                        Wiki.log.debug("List view mode");
+                        break;
+                    case 1 /* Icon */:
+                        Wiki.log.debug("Icon view mode");
+                        break;
+                    default:
+                        $scope.mode = 0 /* List */;
+                        Wiki.log.debug("Defaulting to list view mode");
+                        break;
+                }
+            });
+
             $scope.childActions = [];
 
             var maybeUpdateView = Core.throttled(updateView, 1000);
+
+            $scope.marked = function (text) {
+                if (text) {
+                    return marked(text);
+                } else {
+                    return '';
+                }
+            };
 
             $scope.$on('wikiBranchesUpdated', function () {
                 updateView();
@@ -50393,31 +51075,42 @@ var Wiki;
                 } else {
                     format = Wiki.fileFormat(pageName, fileExtensionTypeRegistry) || $scope.format;
                 }
-                if ("markdown" === format) {
-                    $scope.html = contents ? marked(contents) : "";
-                    $scope.html = $compile($scope.html)($scope);
-                } else if (format && format.startsWith("html")) {
-                    $scope.html = contents;
-                    $compile($scope.html)($scope);
-                } else {
-                    var form = null;
-                    if (format && format === "javascript") {
+                Wiki.log.debug("File format: ", format);
+                switch (format) {
+                    case "image":
+                        var imageURL = 'git/' + $scope.branch;
+                        Wiki.log.debug("$scope: ", $scope);
+                        imageURL = UrlHelpers.join(imageURL, $scope.pageId);
+                        var interpolateFunc = $interpolate($templateCache.get("imageTemplate.html"));
+                        $scope.html = interpolateFunc({
+                            imageURL: imageURL
+                        });
+                        break;
+                    case "markdown":
+                        $scope.html = contents ? marked(contents) : "";
+                        break;
+                    case "javascript":
+                        var form = null;
                         form = $location.search()["form"];
-                    }
-                    $scope.source = contents;
-                    $scope.form = form;
-                    if (form) {
-                        $scope.sourceView = null;
-                        if (form === "/") {
-                            onFormSchema(_jsonSchema);
+                        $scope.source = contents;
+                        $scope.form = form;
+                        if (form) {
+                            $scope.sourceView = null;
+                            if (form === "/") {
+                                onFormSchema(_jsonSchema);
+                            } else {
+                                $scope.git = wikiRepository.getPage($scope.branch, form, $scope.objectId, function (details) {
+                                    onFormSchema(Wiki.parseJson(details.text));
+                                });
+                            }
                         } else {
-                            $scope.git = wikiRepository.getPage($scope.branch, form, $scope.objectId, function (details) {
-                                onFormSchema(Wiki.parseJson(details.text));
-                            });
+                            $scope.sourceView = "app/wiki/html/sourceView.html";
                         }
-                    } else {
+                        break;
+                    default:
+                        $scope.html = null;
+                        $scope.source = contents;
                         $scope.sourceView = "app/wiki/html/sourceView.html";
-                    }
                 }
                 Core.$apply($scope);
             }
@@ -50434,6 +51127,7 @@ var Wiki;
             function onFileDetails(details) {
                 var contents = details.text;
                 $scope.directory = details.directory;
+                $scope.fileDetails = details;
 
                 if (details && details.format) {
                     $scope.format = details.format;
@@ -50441,7 +51135,6 @@ var Wiki;
                     $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
                 }
                 $scope.codeMirrorOptions.mode.name = $scope.format;
-
                 $scope.children = null;
 
                 if (details.directory) {
@@ -50454,21 +51147,22 @@ var Wiki;
                     var files = details.children.filter(function (file) {
                         return !file.directory;
                     });
-
                     directories = directories.sortBy(function (dir) {
                         return dir.name;
                     });
                     profiles = profiles.sortBy(function (dir) {
                         return dir.name;
                     });
-
                     files = files.sortBy(function (file) {
                         return file.name;
                     }).sortBy(function (file) {
                         return file.name.split('.').last();
                     });
 
-                    $scope.children = Array.create(directories, profiles, files);
+                    $scope.children = Array.create(directories, profiles, files).map(function (file) {
+                        file.branch = $scope.branch;
+                        return file;
+                    });
                 }
 
                 $scope.html = null;
@@ -50491,6 +51185,21 @@ var Wiki;
                             viewContents(pageName, readmeDetails.text);
                         });
                     }
+                    var kubernetesJson = $scope.children.find(function (child) {
+                        var name = (child.name || "").toLowerCase();
+                        var ext = Wiki.fileExtension(name);
+                        return name && ext && name.startsWith("kubernetes") && ext === "json";
+                    });
+                    if (kubernetesJson) {
+                        wikiRepository.getPage($scope.branch, kubernetesJson.path, undefined, function (json) {
+                            if (json && json.text) {
+                                $scope.kubernetesJson = angular.fromJson(json.text);
+                                $scope.showAppHeader = true;
+                                Core.$apply($scope);
+                            }
+                        });
+                    }
+                    $scope.$broadcast('Wiki.ViewPage.Children', $scope.pageId, $scope.children);
                 } else {
                     $scope.$broadcast('pane.close');
                     var pageName = $scope.pageId;

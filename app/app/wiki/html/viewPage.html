@@ -1,5 +1,4 @@
 <div ng-controller="Wiki.ViewController">
-
   <script type="text/ng-template" id="fileCellTemplate.html">
     <div class="ngCellText"
          title="{{fileName(row.entity)}} - Last Modified: {{row.entity.lastModified | date:'medium'}}, Size: {{row.entity.length}}">
@@ -14,11 +13,9 @@
   </script>
 
   <script type="text/ng-template" id="fileColumnTemplate.html">
-
     <div class="ngHeaderSortColumn {{col.headerClass}}"
          ng-style="{'cursor': col.cursor}"
          ng-class="{ 'ngSorted': !noSortVisible }">
-
       <div class="ngHeaderText" ng-hide="pageId === '/'">
         <a ng-href="{{parentLink()}}"
            class="wiki-file-list-up"
@@ -27,19 +24,74 @@
         </a>
       </div>
     </div>
+  </script>
 
+  <script type="text/ng-template" id="imageTemplate.html">
+    <img src="{{imageURL}}">
   </script>
 
   <ng-include src="'app/wiki/html/viewNavBar.html'"></ng-include>
 
-  <div class="wiki-fixed form-horizontal">
+  <!-- Icon View -->
+  <div ng-show="mode == ViewMode.Icon" class="wiki-fixed">
+    <div ng-hide="!showAppHeader">
+      <div class="row-fluid">
+        <div class="span12">
+          <div kubernetes-json="kubernetesJson"></div>
+        </div>
+      </div>
+    </div>
+    <div ng-hide="!html" wiki-href-adjuster wiki-title-linker>
+      <div class="row-fluid" style="margin-left: 10px">
+        <div class="span12">
+          <div compile="html"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row-fluid" ng-show="html && children">
+      <div class="span12 wiki-icon-view-header">
+        <h5>Directories and Files</h5>
+      </div>
+    </div>
+    <div class="row-fluid" ng-hide="!directory">
+      <div class="span12" ng-controller="Wiki.FileDropController">
+        <div class="wiki-icon-view" nv-file-drop nv-file-over uploader="uploader" over-class="ready-drop">
+          <div class="column-box mouse-pointer" 
+               ng-repeat="child in children" 
+               ng-class="isInGroup(gridOptions.selectedItems, child, 'selected', '')"
+               ng-click="toggleSelectionFromGroup(gridOptions.selectedItems, child)">
+            <div class="row-fluid">
+              <div class="span2">
+                <span class="app-logo" ng-class="fileClass(child)" ng-bind-html-unsafe="fileIconHtml(child)"></span>
+              </div>
+              <div class="span10">
+                <h3>
+                  <a href="{{childLink(child)}}">{{child.name}}</a>
+                </h3>
+              </div>
+            </div>
+            <div class="row-fluid" ng-show="child.summary">
+              <div class="span12">
+                <p compile="marked(child.summary)"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- end Icon view -->
 
+  <!-- start List view -->
+  <div ng-show="mode == ViewMode.List" class="wiki-fixed">
     <hawtio-pane position="left" width="300">
-      <div class="wiki-grid" hawtio-list="gridOptions"></div>
+      <div ng-controller="Wiki.FileDropController">
+        <div class="wiki-list-view" nv-file-drop nv-file-over uploader="uploader" over-class="ready-drop">
+          <div class="wiki-grid" hawtio-list="gridOptions"></div>
+        </div>
+      </div>
     </hawtio-pane>
-
     <div class="row-fluid">
-
       <div ng-class="span12">
         <div ng-hide="!showProfileHeader">
           <div class="row-fluid">
@@ -49,17 +101,23 @@
             </div>
           </div>
         </div>
-
-        <div ng-hide="!html" wiki-href-adjuster wiki-title-linker>
-          <div class="row-fluid" style="margin-left: 10px">
+        <div ng-hide="!showAppHeader">
+          <div class="row-fluid">
             <div class="span12">
-              <div ng-bind-html-unsafe="html"></div>
+              <div kubernetes-json="kubernetesJson" children="children"></div>
             </div>
           </div>
         </div>
-
-        <div ng-include="sourceView" class="editor-autoresize"></div>
+        <div ng-hide="!html" wiki-href-adjuster wiki-title-linker>
+          <div class="row-fluid" style="margin-left: 10px">
+            <div class="span12">
+              <div compile="html"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+  <!-- end List view -->
+  <div ng-include="sourceView" class="editor-autoresize"></div>
 </div>

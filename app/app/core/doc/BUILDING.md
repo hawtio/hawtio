@@ -146,7 +146,7 @@ To try run a [local OpenShift V3 based on Kubernetes / Docker](http://fabric8.io
 
 Then run the following:
 
-    export KUBERNETES_MASTER=http://localhost:8282/
+    export KUBERNETES_MASTER=http://localhost:8080
     mvn test-compile exec:java
 
 You should now see the Kubernetes / OpenShift console at http://localhost:8282/

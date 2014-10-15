@@ -1,7 +1,13 @@
 /**
  * @module Wiki
  */
-/// <reference path="./wikiPlugin.ts"/>
+/// <reference path="wikiPlugin.ts"/>
+/// <reference path="../../ui/js/dialog.ts"/>
+/// <reference path="../../fabric/js/fabricGlobals.ts"/>
+/// <reference path="../../fabric/js/fabricHelpers.ts"/>
+/// <reference path="../../kubernetes/js/kubernetesHelpers.ts"/>
+/// <reference path="../../helpers/js/storageHelpers.ts"/>
+/// <reference path="../../helpers/js/selectionHelpers.ts"/>
 module Wiki {
 
   function goToLink(link, $timeout, $location) {
@@ -12,11 +18,80 @@ module Wiki {
     }, 100);
   }
 
-  _module.controller("Wiki.ViewController", ["$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", ($scope, $location, $routeParams, $route, $http, $timeout, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile, $templateCache, jolokia) => {
+  // controller for handling file drops
+  export var FileDropController = _module.controller("Wiki.FileDropController", ["$scope", "FileUploader", "$route", "$timeout", "userDetails", ($scope, FileUploader, $route:ng.route.IRouteService, $timeout:ng.ITimeoutService, userDetails:Core.UserDetails) => {
+    var uploadURI = Wiki.gitRestURL($scope.branch, $scope.pageId);
+    log.info("Upload URI: " + uploadURI);
+    var uploader = $scope.uploader = new FileUploader({
+      headers: {
+        'Authorization': Core.authHeaderValue(userDetails)
+      },
+      autoUpload: true,
+      withCredentials: true,
+      method: 'POST',
+      url: uploadURI
+    });
+    $scope.doUpload = () => {
+      uploader.uploadAll();
+    };
+    uploader.onWhenAddingFileFailed = function (item /*{File|FileLikeObject}*/, filter, options) {
+      log.debug('onWhenAddingFileFailed', item, filter, options);
+    };
+    uploader.onAfterAddingFile = function (fileItem) {
+      log.debug('onAfterAddingFile', fileItem);
+    };
+    uploader.onAfterAddingAll = function (addedFileItems) {
+      log.debug('onAfterAddingAll', addedFileItems);
+    };
+    uploader.onBeforeUploadItem = function (item) {
+      if ('file' in item) {
+        item.fileSizeMB = (item.file.size / 1024 / 1024).toFixed(2);
+      } else {
+        item.fileSizeMB = 0;
+      }
+      //item.url = UrlHelpers.join(uploadURI, item.file.name);
+      item.url = uploadURI;
+      log.info("Loading files to " + uploadURI);
+      log.debug('onBeforeUploadItem', item);
+    };
+    uploader.onProgressItem = function (fileItem, progress) {
+      log.debug('onProgressItem', fileItem, progress);
+    };
+    uploader.onProgressAll = function (progress) {
+      log.debug('onProgressAll', progress);
+    };
+    uploader.onSuccessItem = function (fileItem, response, status, headers) {
+      log.debug('onSuccessItem', fileItem, response, status, headers);
+    };
+    uploader.onErrorItem = function (fileItem, response, status, headers) {
+      log.debug('onErrorItem', fileItem, response, status, headers);
+    };
+    uploader.onCancelItem = function (fileItem, response, status, headers) {
+      log.debug('onCancelItem', fileItem, response, status, headers);
+    };
+    uploader.onCompleteItem = function (fileItem, response, status, headers) {
+      log.debug('onCompleteItem', fileItem, response, status, headers);
+    };
+    uploader.onCompleteAll = function () {
+      log.debug('onCompleteAll');
+      uploader.clearQueue();
+      $timeout(() => {
+        log.info("Completed all uploads. Lets force a reload");
+        $route.reload();
+        Core.$apply($scope);
+      }, 200);
+    };
+  }]);
+
+  // main page controller
+  export var ViewController = _module.controller("Wiki.ViewController", ["$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", "localStorage", "$interpolate", ($scope, $location:ng.ILocationService, $routeParams:ng.route.IRouteParamsService, $route:ng.route.IRouteService, $http:ng.IHttpService, $timeout:ng.ITimeoutService, workspace:Core.Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, jolokia:Jolokia.IJolokia, localStorage, $interpolate:ng.IInterpolateService) => {
+
+    $scope.name = "WikiViewController";
 
     var isFmc = Fabric.isFMCContainer(workspace);
 
     Wiki.initScope($scope, $routeParams, $location);
+    SelectionHelpers.decorate($scope);
 
     $scope.fabricTopLevel = "fabric/profiles/";
 
@@ -26,6 +101,7 @@ module Wiki {
 
     $scope.profileId = Fabric.pagePathToProfileId($scope.pageId);
     $scope.showProfileHeader = $scope.profileId && $scope.pageId.endsWith(Fabric.profileSuffix) ? true : false;
+    $scope.showAppHeader = false;
 
     $scope.operationCounter = 1;
     $scope.addDialog = new UI.Dialog();
@@ -34,6 +110,7 @@ module Wiki {
     $scope.moveDialog = new UI.Dialog();
     $scope.deleteDialog = new UI.Dialog();
     $scope.isFile = false;
+
     $scope.rename = {
       newFileName: ""
     };
@@ -49,12 +126,24 @@ module Wiki {
     };
     $scope.newDocumentName = "";
     $scope.selectedCreateDocumentExtension = null;
+    $scope.ViewMode = Wiki.ViewMode;
 
     // bind filter model values to search params...
     Core.bindModelToSearchParam($scope, $location, "searchText", "q", "");
 
+    StorageHelpers.bindModelToLocalStorage({
+      $scope: $scope,
+      $location: $location,
+      localStorage: localStorage,
+      modelName: 'mode',
+      paramName: 'wikiViewMode',
+      initialValue: Wiki.ViewMode.List,
+      to: Core.numberToString,
+      from: Core.parseIntValue
+    });
+
     // only reload the page if certain search parameters change
-    Core.reloadWhenParametersChange($route, $scope, $location);
+    Core.reloadWhenParametersChange($route, $scope, $location, ['wikiViewMode']);
 
     $scope.gridOptions = {
       data: 'children',
@@ -73,9 +162,34 @@ module Wiki {
       ]
     };
 
+    $scope.$on('Wiki.SetViewMode', ($event, mode:Wiki.ViewMode) => {
+      $scope.mode = mode;
+      switch(mode) {
+        case ViewMode.List:
+          log.debug("List view mode");
+          break;
+        case ViewMode.Icon:
+          log.debug("Icon view mode");
+          break;
+        default:
+          $scope.mode = ViewMode.List;
+          log.debug("Defaulting to list view mode");
+          break;
+      }
+    });
+
+
     $scope.childActions = [];
 
     var maybeUpdateView = Core.throttled(updateView, 1000);
+
+    $scope.marked = (text) => {
+      if (text) {
+        return marked(text);
+      } else {
+        return '';
+      }
+    };
 
 
     $scope.$on('wikiBranchesUpdated', function () {
@@ -577,33 +691,43 @@ module Wiki {
       } else {
         format = Wiki.fileFormat(pageName, fileExtensionTypeRegistry) || $scope.format;
       }
-      if ("markdown" === format) {
-        // lets convert it to HTML
-        $scope.html = contents ? marked(contents) : "";
-        $scope.html = $compile($scope.html)($scope);
-      } else if (format && format.startsWith("html")) {
-        $scope.html = contents;
-        $compile($scope.html)($scope);
-      } else {
-        var form = null;
-        if (format && format === "javascript") {
+      log.debug("File format: ", format);
+      switch (format) {
+        case "image":
+          var imageURL = 'git/' + $scope.branch;
+          log.debug("$scope: ", $scope);
+          imageURL = UrlHelpers.join(imageURL, $scope.pageId);
+          var interpolateFunc = $interpolate($templateCache.get("imageTemplate.html"));
+          $scope.html = interpolateFunc({
+            imageURL: imageURL
+          });
+          break;
+        case "markdown":
+          $scope.html = contents ? marked(contents) : "";
+          break;
+        case "javascript":
+          var form = null;
           form = $location.search()["form"];
-        }
-        $scope.source = contents;
-        $scope.form = form;
-        if (form) {
-          // now lets try load the form JSON so we can then render the form
-          $scope.sourceView = null;
-          if (form === "/") {
-            onFormSchema(_jsonSchema);
+          $scope.source = contents;
+          $scope.form = form;
+          if (form) {
+            // now lets try load the form JSON so we can then render the form
+            $scope.sourceView = null;
+            if (form === "/") {
+              onFormSchema(_jsonSchema);
+            } else {
+              $scope.git = wikiRepository.getPage($scope.branch, form, $scope.objectId, (details) => {
+                onFormSchema(Wiki.parseJson(details.text));
+              });
+            }
           } else {
-            $scope.git = wikiRepository.getPage($scope.branch, form, $scope.objectId, (details) => {
-              onFormSchema(Wiki.parseJson(details.text));
-            });
+            $scope.sourceView = "app/wiki/html/sourceView.html";
           }
-        } else {
+          break;
+        default:
+          $scope.html = null;
+          $scope.source = contents;
           $scope.sourceView = "app/wiki/html/sourceView.html";
-        }
       }
       Core.$apply($scope);
     }
@@ -620,6 +744,7 @@ module Wiki {
     function onFileDetails(details) {
       var contents = details.text;
       $scope.directory = details.directory;
+      $scope.fileDetails = details;
 
       if (details && details.format) {
         $scope.format = details.format;
@@ -627,12 +752,9 @@ module Wiki {
         $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);
       }
       $scope.codeMirrorOptions.mode.name = $scope.format;
-      //log.debug("format is '" + $scope.format + "'");
-
       $scope.children = null;
 
       if (details.directory) {
-
         var directories = details.children.filter((dir) => {
           return dir.directory && !dir.name.has(".profile")
         });
@@ -642,23 +764,23 @@ module Wiki {
         var files = details.children.filter((file) => {
           return !file.directory;
         });
-
         directories = directories.sortBy((dir) => {
           return dir.name;
         });
         profiles = profiles.sortBy((dir) => {
           return dir.name;
         });
-
         files = files.sortBy((file) => {
           return file.name;
         })
           .sortBy((file) => {
             return file.name.split('.').last();
           });
-
-
-        $scope.children = (<any>Array).create(directories, profiles, files);
+        // Also enrich the response with the current branch, as that's part of the coordinate for locating the actual file in git
+        $scope.children = (<any>Array).create(directories, profiles, files).map((file) => {
+          file.branch = $scope.branch;
+          return file;
+        });
       }
 
 
@@ -682,6 +804,21 @@ module Wiki {
             viewContents(pageName, readmeDetails.text);
           });
         }
+        var kubernetesJson = $scope.children.find((child) => {
+          var name = (child.name || "").toLowerCase();
+          var ext = fileExtension(name);
+          return name && ext && name.startsWith("kubernetes") && ext === "json";
+        });
+        if (kubernetesJson) {
+          wikiRepository.getPage($scope.branch, kubernetesJson.path, undefined, (json) => {
+            if (json && json.text) {
+              $scope.kubernetesJson = angular.fromJson(json.text);
+              $scope.showAppHeader = true;
+              Core.$apply($scope);
+            }
+          });
+        }
+        $scope.$broadcast('Wiki.ViewPage.Children', $scope.pageId, $scope.children);
       } else {
         $scope.$broadcast('pane.close');
         var pageName = $scope.pageId;

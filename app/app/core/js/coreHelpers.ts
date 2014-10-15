@@ -282,7 +282,7 @@ module Core {
   }
 
   export function parseMBean(mbean) {
-    var answer = {};
+    var answer:any = {};
     var parts:any = mbean.split(":");
     if (parts.length > 1) {
       answer['domain'] = parts.first();
@@ -742,14 +742,14 @@ module Core {
           // such as its been removed
           // or if we run against older containers
           Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
-          Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
+          // Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
         } else {
           Core.log.warn("Operation ", operation, " failed due to: ", response['error']);
-          Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
+          // Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
         }
       } else {
         Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
-        Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
+        // Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
       }
     }
   }
@@ -762,7 +762,7 @@ module Core {
     if (stacktrace) {
       var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
       Core.log.info("Operation ", operation, " failed due to: ", response['error']);
-      Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
+      // Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
     }
   }
 

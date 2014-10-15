@@ -1,7 +1,7 @@
 /**
  * @module Wiki
  */
-/// <reference path="./wikiPlugin.ts"/>
+/// <reference path="wikiPlugin.ts"/>
 module Wiki {
   _module.controller("Wiki.NavBarController", ["$scope", "$location", "$routeParams", "workspace", "jolokia", "wikiRepository", "wikiBranchMenu", ($scope, $location, $routeParams, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, wikiBranchMenu:BranchMenu) => {
 
@@ -12,6 +12,11 @@ module Wiki {
       title: $scope.branch,
       items: []
     };
+
+    $scope.ViewMode = Wiki.ViewMode;
+    $scope.setViewMode = (mode:Wiki.ViewMode) => {
+      $scope.$emit('Wiki.SetViewMode', mode);
+    }
 
     wikiBranchMenu.applyMenuExtensions($scope.branchMenuConfig.items);
 

@@ -715,6 +715,44 @@ module Core {
       return true;
     }
 
+    public hasInvokeRights(selection:Core.NodeSelection, ...methods:Array<string>) {
+      var canInvoke = true;
+      if (selection) {
+        var selectionFolder = <Core.Folder> selection;
+        var mbean = selectionFolder.mbean;
+        if (mbean) {
+          if (angular.isDefined(mbean.canInvoke)) {
+            canInvoke = mbean.canInvoke;
+          }
+          if (canInvoke && methods && methods.length > 0) {
+            var opsByString = mbean['opByString'];
+            var ops = mbean['op'];
+            if (opsByString && ops) {
+              methods.forEach((method) => {
+                if (!canInvoke) {
+                  return;
+                }
+                var op = null;
+                if (method.endsWith(')')) {
+                  op = opsByString[method];
+                } else {
+                  op = ops[method];
+                }
+                if (!op) {
+                  log.debug("Could not find method:", method, " to check permissions, skipping");
+                  return;
+                }
+                if (angular.isDefined(op.canInvoke)) {
+                  canInvoke = op.canInvoke;
+                }
+              });
+            }
+          }
+        }
+      } 
+      return canInvoke;
+    }
+
     public treeContainsDomainAndProperties(domainName, properties = null) {
       var workspace = this;
       var tree = workspace.tree;
