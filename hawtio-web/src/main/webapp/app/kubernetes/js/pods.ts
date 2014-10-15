@@ -35,6 +35,18 @@ module Kubernetes {
           log.debug("error fetching API URL: ", response);
         }
       }));
+    jolokia.getAttribute(objectName, 'HostName', undefined,
+      <Jolokia.IParams> onSuccess((results) => {
+        log.info("got hostname: " + results);
+        if (results) {
+          $scope.hostName = results;
+        }
+        Core.$apply($scope);
+      }, {
+        error: (response) => {
+          log.debug("error fetching API URL: ", response);
+        }
+      }));
 
     Kubernetes.initShared($scope);
 
@@ -106,6 +118,7 @@ module Kubernetes {
             localStorage['kuberentes.password'] = password;
           }
         }
+        log.info("Connecting to " + $scope.connect.jolokiaUrl + " for container: " + $scope.connect.containerName + " user: " + $scope.connect.userName);
         var options = Core.createConnectOptions({
           jolokiaUrl: $scope.connect.jolokiaUrl,
           userName: userName,
@@ -135,7 +148,6 @@ module Kubernetes {
         if ((alwaysPrompt && alwaysPrompt !== "false") || !$scope.connect.userName || !$scope.connect.password) {
           $scope.connect.dialog.open();
         } else {
-          log.info("Connecting to " + $scope.connect.jolokiaUrl + " for container: " + $scope.connect.containerName + " user: " + $scope.connect.userName);
           $scope.connect.onOK();
         }
       }
@@ -218,7 +230,7 @@ module Kubernetes {
               // then docker containers will be on a different IP so lets check for localhost and
               // switch to the docker IP if its available
               if ($scope.dockerIp) {
-                if (host === "localhost" || host === "127.0.0.1") {
+                if (host === "localhost" || host === "127.0.0.1" || host === $scope.hostName) {
                   host = $scope.dockerIp;
                 }
               }

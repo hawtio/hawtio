@@ -20,6 +20,9 @@ import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import static io.hawt.util.Strings.isBlank;
 
 /**
@@ -65,6 +68,19 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
     @Override
     public String getKubernetesAddress() {
         return System.getenv("KUBERNETES_MASTER");
+    }
+
+    @Override
+    public String getHostName() {
+        String answer = System.getenv("HOSTNAME");
+        if (Strings.isBlank(answer)) {
+            try {
+                answer = InetAddress.getLocalHost().getHostName();
+            } catch (UnknownHostException e) {
+                LOG.warn("Could not look up local host name: " + e, e);
+            }
+        }
+        return answer;
     }
 
 

@@ -39,4 +39,6 @@ public interface KubernetesServiceMXBean {
      * docker and use that instead of localhost/127.0.0.1.
      */
     String getDockerIp();
+
+    String getHostName();
 }
