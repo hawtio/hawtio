@@ -23,6 +23,8 @@ import io.hawt.git.WriteContext;
 import io.hawt.util.Files;
 import io.hawt.util.Function;
 import io.hawt.util.IOHelper;
+import io.hawt.util.Strings;
+import io.hawt.util.Zips;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.slf4j.Logger;
@@ -33,6 +35,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -113,7 +116,24 @@ public class GitServlet extends UploadServlet {
                     throw new IOException(e);
                 }
                 if (uploadedFiles != null) {
+                    boolean unzip = true;
+                    String unpackZipFlag = req.getParameter("unpackZip");
+                    if (Strings.isNotBlank(unpackZipFlag)) {
+                        String lowerFlag = unpackZipFlag.toLowerCase();
+                        if (lowerFlag.startsWith("f") || lowerFlag.equals("0")) {
+                            unzip = false;
+                        }
+                    }
                     for (File uploadedFile : uploadedFiles) {
+                        String name = uploadedFile.getName();
+                        if (unzip && name.endsWith(".zip")) {
+                            // lets unzip zip files into a folder
+                            String folderName = name.substring(0, name.length() - 4);
+                            File unzipDir = new File(uploadedFile.getParentFile(), folderName);
+                            Zips.unzip(new FileInputStream(uploadedFile), unzipDir);
+                            uploadedFile.delete();
+                            uploadedFile = unzipDir;
+                        }
                         LOG.info("Adding to folder: " + file + " file: " + uploadedFile + " to git");
                         context.addFile(uploadedFile);
                     }

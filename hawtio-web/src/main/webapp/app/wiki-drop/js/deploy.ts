@@ -10,7 +10,8 @@ module WikiDrop {
       replace: true,
       scope: {
         branch: '@',
-        path: '@'
+        path: '@',
+        unzip: '@'
       },
       templateUrl: WikiDrop.templatePath + "deploy.html",
       controller: ["$scope", "$element", "FileUploader", "jolokiaUrl", "$templateCache", "$route", "$timeout", "jolokia", "userDetails", ($scope, $element, FileUploader:any, jolokiaUrl, $templateCache, $route, $timeout, jolokia, userDetails:Core.UserDetails) => {
@@ -52,7 +53,10 @@ module WikiDrop {
             }
             //item.url = UrlHelpers.join(uploadURI, item.file.name);
             item.url = uploadURI;
-            log.info("Loading files to " + uploadURI);
+            if ($scope.unzip === false || $scope.unzip === "false") {
+              item.url += "?unzip=false"
+            }
+            log.info("Uploading files to " + uploadURI);
             log.debug('onBeforeUploadItem', item);
           };
           uploader.onProgressItem = function (fileItem, progress) {
