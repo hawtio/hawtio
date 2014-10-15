@@ -779,6 +779,11 @@ module Wiki {
         // Also enrich the response with the current branch, as that's part of the coordinate for locating the actual file in git
         $scope.children = (<any>Array).create(directories, profiles, files).map((file) => {
           file.branch = $scope.branch;
+          // TODO when we can download a zip file for a directory
+          if (!file.directory) {
+            file.fileName = file.name;
+            file.downloadURL = Wiki.gitRestURL($scope.branch, file.path);
+          }
           return file;
         });
       }

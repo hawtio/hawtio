@@ -506,7 +506,7 @@ module Wiki {
    */
   export function gitRestURL(branch: string, path: string) {
     var url = gitRelativeURL(branch, path);
-    return Core.url(url);
+    return Core.url('/' + url);
   }
 
   /**
@@ -551,7 +551,6 @@ module Wiki {
     var css = null;
     var icon = null;
     var extension = fileExtension(name);
-
     // TODO could we use different icons for markdown v xml v html
     if (xmlNamespaces && xmlNamespaces.length) {
       if (xmlNamespaces.any((ns) => Wiki.camelNamespaces.any(ns))) {

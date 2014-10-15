@@ -2,12 +2,11 @@
   <script type="text/ng-template" id="fileCellTemplate.html">
     <div class="ngCellText"
          title="{{fileName(row.entity)}} - Last Modified: {{row.entity.lastModified | date:'medium'}}, Size: {{row.entity.length}}">
-      <a href="{{childLink(row.entity)}}" class="file-name">
+      <a href="{{childLink(row.entity)}}" class="file-name" hawtio-file-drop="{{row.entity.fileName}}" download-url="{{row.entity.downloadURL}}">
         <span class="file-icon"
               ng-class="fileClass(row.entity)"
-              ng-bind-html-unsafe="fileIconHtml(row)">
-
-              </span>{{fileName(row.entity)}}
+              compile="fileIconHtml(row)">
+        </span>{{fileName(row.entity)}}
       </a>
     </div>
   </script>
@@ -61,8 +60,8 @@
                ng-class="isInGroup(gridOptions.selectedItems, child, 'selected', '')"
                ng-click="toggleSelectionFromGroup(gridOptions.selectedItems, child)">
             <div class="row-fluid">
-              <div class="span2">
-                <span class="app-logo" ng-class="fileClass(child)" ng-bind-html-unsafe="fileIconHtml(child)"></span>
+              <div class="span2" hawtio-file-drop="{{child.fileName}}" download-url="{{child.downloadURL}}">
+                  <span class="app-logo" ng-class="fileClass(child)" compile="fileIconHtml(child)"></span>
               </div>
               <div class="span10">
                 <h3>

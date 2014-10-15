@@ -6004,7 +6004,7 @@ var Wiki;
 
     function gitRestURL(branch, path) {
         var url = gitRelativeURL(branch, path);
-        return Core.url(url);
+        return Core.url('/' + url);
     }
     Wiki.gitRestURL = gitRestURL;
 
@@ -38082,6 +38082,17 @@ var Kubernetes;
                     Kubernetes.log.debug("error fetching API URL: ", response);
                 }
             }));
+            jolokia.getAttribute(Kubernetes.objectName, 'HostName', undefined, onSuccess(function (results) {
+                Kubernetes.log.info("got hostname: " + results);
+                if (results) {
+                    $scope.hostName = results;
+                }
+                Core.$apply($scope);
+            }, {
+                error: function (response) {
+                    Kubernetes.log.debug("error fetching API URL: ", response);
+                }
+            }));
 
             Kubernetes.initShared($scope);
 
@@ -38151,6 +38162,7 @@ var Kubernetes;
                             localStorage['kuberentes.password'] = password;
                         }
                     }
+                    Kubernetes.log.info("Connecting to " + $scope.connect.jolokiaUrl + " for container: " + $scope.connect.containerName + " user: " + $scope.connect.userName);
                     var options = Core.createConnectOptions({
                         jolokiaUrl: $scope.connect.jolokiaUrl,
                         userName: userName,
@@ -38178,7 +38190,6 @@ var Kubernetes;
                     if ((alwaysPrompt && alwaysPrompt !== "false") || !$scope.connect.userName || !$scope.connect.password) {
                         $scope.connect.dialog.open();
                     } else {
-                        Kubernetes.log.info("Connecting to " + $scope.connect.jolokiaUrl + " for container: " + $scope.connect.containerName + " user: " + $scope.connect.userName);
                         $scope.connect.onOK();
                     }
                 }
@@ -38257,7 +38268,7 @@ var Kubernetes;
                                 }
 
                                 if ($scope.dockerIp) {
-                                    if (host === "localhost" || host === "127.0.0.1") {
+                                    if (host === "localhost" || host === "127.0.0.1" || host === $scope.hostName) {
                                         host = $scope.dockerIp;
                                     }
                                 }
@@ -46270,6 +46281,40 @@ var UI;
 })(UI || (UI = {}));
 var UI;
 (function (UI) {
+    var hawtioFileDrop = UI._module.directive("hawtioFileDrop", [function () {
+            return {
+                restrict: 'A',
+                replace: false,
+                link: function (scope, element, attr) {
+                    var fileName = attr['hawtioFileDrop'];
+                    var downloadURL = attr['downloadUrl'];
+                    var mimeType = attr['mimeType'] || 'application/octet-stream';
+                    if (Core.isBlank(fileName) || Core.isBlank(downloadURL)) {
+                        return;
+                    }
+
+                    if (!downloadURL.startsWith("http")) {
+                        var uri = new URI();
+                        downloadURL = uri.path(downloadURL).toString();
+                    }
+                    var fileDetails = mimeType + ":" + fileName + ":" + downloadURL;
+                    element.attr({
+                        draggable: true
+                    });
+                    element[0].addEventListener("dragstart", function (event) {
+                        if (event.dataTransfer) {
+                            UI.log.debug("Drag started, event: ", event, "File details: ", fileDetails);
+                            event.dataTransfer.setData("DownloadURL", fileDetails);
+                        } else {
+                            UI.log.debug("Drag event object doesn't contain data transfer: ", event);
+                        }
+                    });
+                }
+            };
+        }]);
+})(UI || (UI = {}));
+var UI;
+(function (UI) {
     UI.hawtioFilter = UI._module.directive("hawtioFilter", [function () {
             return {
                 restrict: 'E',
@@ -51161,6 +51206,11 @@ var Wiki;
 
                     $scope.children = Array.create(directories, profiles, files).map(function (file) {
                         file.branch = $scope.branch;
+
+                        if (!file.directory) {
+                            file.fileName = file.name;
+                            file.downloadURL = Wiki.gitRestURL($scope.branch, file.path);
+                        }
                         return file;
                     });
                 }
