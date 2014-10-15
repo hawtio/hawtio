@@ -513,8 +513,8 @@ module Wiki {
    * Returns a relative URL to perform a GET or POST for the given branch/path
    */
   export function gitRelativeURL(branch: string, path: string) {
-    if (!branch) branch = "master";
-    if (!path) path = "/";
+    branch = branch || "master";
+    path = path || "/";
     return UrlHelpers.join("git/" + branch, path);
   }
 
@@ -534,7 +534,7 @@ module Wiki {
   export function fileIconHtml(row) {
     var name = row.name;
     var path = row.path;
-    var branch = row.branch;
+    var branch = row.branch ;
     var directory = row.directory;
     var xmlNamespaces = row.xmlNamespaces;
     var iconUrl = row.iconUrl;
@@ -547,6 +547,7 @@ module Wiki {
       xmlNamespaces = xmlNamespaces || entity.xmlNamespaces;
       iconUrl = iconUrl || entity.iconUrl;
     }
+    branch = branch || "master";
     var css = null;
     var icon = null;
     var extension = fileExtension(name);

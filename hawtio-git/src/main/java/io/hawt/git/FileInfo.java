@@ -1,6 +1,7 @@
 package io.hawt.git;
 
 import io.hawt.util.IOHelper;
+import io.hawt.util.Strings;
 import io.hawt.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,9 @@ public class FileInfo {
     private String summary;
 
     public static FileInfo createFileInfo(File rootDir, File file, String branch) {
+        if (Strings.isBlank(branch)) {
+            branch = "master";
+        }
         String path = getRelativePath(rootDir, file).replace("\\", "/");
         FileInfo answer = new FileInfo(path, file.getName(), file.lastModified(), file.length(), file.isDirectory());
         if (file.isFile()) {
