@@ -41,7 +41,6 @@
         </div>
       </div>
     </div>
-
     <div ng-hide="!html" wiki-href-adjuster wiki-title-linker>
       <div class="row-fluid" style="margin-left: 10px">
         <div class="span12">
@@ -49,19 +48,11 @@
         </div>
       </div>
     </div>
-
-    <div class="row-fluid">
-      <div class="span12">
-        <div ng-include="sourceView" class="editor-autoresize"></div>
-      </div>
-    </div>
-
     <div class="row-fluid" ng-show="html && children">
       <div class="span12 wiki-icon-view-header">
         <h5>Directories and Files</h5>
       </div>
     </div>
-
     <div class="row-fluid" ng-hide="!directory">
       <div class="span12" ng-controller="Wiki.FileDropController">
         <div class="wiki-icon-view" nv-file-drop nv-file-over uploader="uploader" over-class="ready-drop">
@@ -88,11 +79,6 @@
         </div>
       </div>
     </div>
-    <!--
-    <div ng-hide="showProfileHeader || !directory">
-      <div wiki-drop-file branch="{{branch}}" path="{{pageId}}"></div>
-    </div>
-    -->
   </div>
   <!-- end Icon view -->
 
@@ -105,9 +91,7 @@
         </div>
       </div>
     </hawtio-pane>
-
     <div class="row-fluid">
-
       <div ng-class="span12">
         <div ng-hide="!showProfileHeader">
           <div class="row-fluid">
@@ -117,7 +101,6 @@
             </div>
           </div>
         </div>
-
         <div ng-hide="!showAppHeader">
           <div class="row-fluid">
             <div class="span12">
@@ -125,7 +108,6 @@
             </div>
           </div>
         </div>
-
         <div ng-hide="!html" wiki-href-adjuster wiki-title-linker>
           <div class="row-fluid" style="margin-left: 10px">
             <div class="span12">
@@ -133,12 +115,6 @@
             </div>
           </div>
         </div>
-
-        <!--
-        <div ng-hide="showProfileHeader || !directory">
-          <div wiki-drop-file branch="{{branch}}" path="{{pageId}}"></div>
-        </div>
-        -->
       </div>
     </div>
   </div>
