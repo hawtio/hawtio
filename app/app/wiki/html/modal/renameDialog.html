@@ -1,0 +1,26 @@
+<div>
+  <form class="form-horizontal" ng-submit="renameAndCloseDialog()">
+    <div class="modal-header"><h4>Rename Document</h4></div>
+    <div class="modal-body">
+      <div class="control-group">
+        <label class="control-label" for="renameFileName">Name</label>
+
+        <div class="controls">
+          <input type="text" id="renameFileName" ng-model="rename.newFileName">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div ng-show="fileExists.exists" class="alert">
+          Please choose a different name as <b>{{fileExists.name}}</b> already exists
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <input class="btn btn-primary" type="submit"
+             ng-disabled="!fileName || fileExists.exists"
+             value="Rename">
+      <button class="btn btn-warning cancel" type="button" ng-click="close()">Cancel</button>
+    </div>
+  </form>
+</div>

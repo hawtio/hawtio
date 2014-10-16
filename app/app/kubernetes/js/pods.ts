@@ -23,7 +23,7 @@ module Kubernetes {
       Kubernetes.setJson($scope, $location.search()['_id'], $scope.pods);
     });
 
-    jolokia.getAttribute(objectName, 'DockerIp', undefined,
+    jolokia.getAttribute(Kubernetes.mbean, 'DockerIp', undefined,
       <Jolokia.IParams> onSuccess((results) => {
         log.info("got Docker IP: " + results);
         if (results) {
@@ -35,7 +35,7 @@ module Kubernetes {
           log.debug("error fetching API URL: ", response);
         }
       }));
-    jolokia.getAttribute(objectName, 'HostName', undefined,
+    jolokia.getAttribute(Kubernetes.mbean, 'HostName', undefined,
       <Jolokia.IParams> onSuccess((results) => {
         log.info("got hostname: " + results);
         if (results) {
@@ -152,8 +152,6 @@ module Kubernetes {
         }
       }
     };
-
-
 
     KubernetesPods.then((KubernetesPods:ng.resource.IResourceClass) => {
       $scope.deletePrompt = (selected) => {

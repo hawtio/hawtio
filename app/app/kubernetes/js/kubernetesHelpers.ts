@@ -3,6 +3,13 @@
 /// <reference path="../../baseHelpers.ts"/>
 module Kubernetes {
 
+  export var context = '/kubernetes';
+  export var hash = '#' + context;
+  export var defaultRoute = hash + '/pods';
+  export var pluginName = 'Kubernetes';
+  export var templatePath = 'app/kubernetes/html/';
+  export var log:Logging.Logger = Logger.get(pluginName);
+
   export var appSuffix = ".app";
 
   export interface KubePod {

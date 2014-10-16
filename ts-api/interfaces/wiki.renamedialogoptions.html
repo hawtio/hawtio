@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>KubePod | hawtio</title>
+	<title>RenameDialogOptions | hawtio</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -51,13 +51,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/kubernetes.html">Kubernetes</a>
+					<a href="../modules/wiki.html">Wiki</a>
 				</li>
 				<li>
-					<a href="kubernetes.kubepod.html">KubePod</a>
+					<a href="wiki.renamedialogoptions.html">RenameDialogOptions</a>
 				</li>
 			</ul>
-			<h1>Interface KubePod</h1>
+			<h1>Interface RenameDialogOptions</h1>
 		</div>
 	</div>
 </header>
@@ -71,7 +71,10 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="kubernetes.kubepod.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="wiki.renamedialogoptions.html#callbacks" class="tsd-kind-icon">callbacks</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="wiki.renamedialogoptions.html#fileexists" class="tsd-kind-icon">file<wbr>Exists</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="wiki.renamedialogoptions.html#filename" class="tsd-kind-icon">file<wbr>Name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="wiki.renamedialogoptions.html#rename" class="tsd-kind-icon">rename</a></li>
 							</ul>
 						</section>
 					</div>
@@ -79,15 +82,106 @@
 				</section>            <section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="id" class="tsd-anchor"></a>
-					<h3>id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">string</span></div>
+					<a name="callbacks" class="tsd-anchor"></a>
+					<h3>callbacks</h3>
+					<div class="tsd-signature tsd-kind-icon">callbacks<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/kubernetes/js/kubernetesHelpers.ts:16</li>
+							<li>Defined in app/wiki/js/wikiDialogs.ts:12</li>
 						</ul>
 					</aside>
-			</section></section>
+					<section class="tsd-panel tsd-member tsd-kind-function-type tsd-parent-kind-property">
+						<a name="callbacks.callbacks_function_signature" class="tsd-anchor"></a>
+						<h3>callbacks function signature</h3>
+						<ul class="tsd-signatures tsd-kind-function-type tsd-parent-kind-property">
+							<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">String</span></li>
+						</ul>
+						<ul class="tsd-descriptions">
+							<li class="tsd-description"><aside class="tsd-sources">
+									<ul>
+										<li>Defined in app/wiki/js/wikiDialogs.ts:12</li>
+									</ul>
+								</aside>
+								<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">String</span>
+								</h4>
+							</li>
+						</ul>
+					</section></section>            <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="fileexists" class="tsd-anchor"></a>
+					<h3>file<wbr>Exists</h3>
+					<div class="tsd-signature tsd-kind-icon">file<wbr>Exists<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Function</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in app/wiki/js/wikiDialogs.ts:10</li>
+						</ul>
+					</aside>
+					<section class="tsd-panel tsd-member tsd-kind-function-type tsd-parent-kind-property">
+						<a name="fileexists.fileexists_function_signature" class="tsd-anchor"></a>
+						<h3>file<wbr>Exists function signature</h3>
+						<ul class="tsd-signatures tsd-kind-function-type tsd-parent-kind-property">
+							<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">{}</span></li>
+						</ul>
+						<ul class="tsd-descriptions">
+							<li class="tsd-description"><aside class="tsd-sources">
+									<ul>
+										<li>Defined in app/wiki/js/wikiDialogs.ts:10</li>
+									</ul>
+								</aside>
+								<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">{}</span>
+								</h4>
+							</li>
+						</ul>
+					</section></section>            <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="filename" class="tsd-anchor"></a>
+					<h3>file<wbr>Name</h3>
+					<div class="tsd-signature tsd-kind-icon">file<wbr>Name<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Function</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in app/wiki/js/wikiDialogs.ts:11</li>
+						</ul>
+					</aside>
+					<section class="tsd-panel tsd-member tsd-kind-function-type tsd-parent-kind-property">
+						<a name="filename.filename_function_signature" class="tsd-anchor"></a>
+						<h3>file<wbr>Name function signature</h3>
+						<ul class="tsd-signatures tsd-kind-function-type tsd-parent-kind-property">
+							<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">String</span></li>
+						</ul>
+						<ul class="tsd-descriptions">
+							<li class="tsd-description"><aside class="tsd-sources">
+									<ul>
+										<li>Defined in app/wiki/js/wikiDialogs.ts:11</li>
+									</ul>
+								</aside>
+								<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">String</span>
+								</h4>
+							</li>
+						</ul>
+					</section></section>            <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="rename" class="tsd-anchor"></a>
+					<h3>rename</h3>
+					<div class="tsd-signature tsd-kind-icon">rename<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Function</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in app/wiki/js/wikiDialogs.ts:9</li>
+						</ul>
+					</aside>
+					<section class="tsd-panel tsd-member tsd-kind-function-type tsd-parent-kind-property">
+						<a name="rename.rename_function_signature" class="tsd-anchor"></a>
+						<h3>rename function signature</h3>
+						<ul class="tsd-signatures tsd-kind-function-type tsd-parent-kind-property">
+							<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">{}</span></li>
+						</ul>
+						<ul class="tsd-descriptions">
+							<li class="tsd-description"><aside class="tsd-sources">
+									<ul>
+										<li>Defined in app/wiki/js/wikiDialogs.ts:9</li>
+									</ul>
+								</aside>
+								<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">{}</span>
+								</h4>
+							</li>
+						</ul>
+			</section></section></section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
@@ -96,7 +190,7 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-container">
-						<a href="../modules/kubernetes.html">Kubernetes</a>
+						<a href="../modules/wiki.html">Wiki</a>
 					</li>
 				</ul>
 			</nav>
@@ -105,93 +199,24 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-container">
-						<a href="kubernetes.kubepod.html" class="tsd-kind-icon">Kube<wbr>Pod</a>
+						<a href="wiki.renamedialogoptions.html" class="tsd-kind-icon">Rename<wbr>Dialog<wbr>Options</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="kubernetes.kubepod.html#id" class="tsd-kind-icon">id</a>
+								<a href="wiki.renamedialogoptions.html#callbacks" class="tsd-kind-icon">callbacks</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="wiki.renamedialogoptions.html#fileexists" class="tsd-kind-icon">file<wbr>Exists</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="wiki.renamedialogoptions.html#filename" class="tsd-kind-icon">file<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="wiki.renamedialogoptions.html#rename" class="tsd-kind-icon">rename</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-function tsd-parent-kind-container tsd-is-not-exported">
-						<a href="../modules/kubernetes.html#createresource" class="tsd-kind-icon">create<wbr>Resource</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#initshared" class="tsd-kind-icon">init<wbr>Shared</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#iskubernetes" class="tsd-kind-icon">is<wbr>Kubernetes</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#labelstostring" class="tsd-kind-icon">labels<wbr>ToString</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#setjson" class="tsd-kind-icon">set<wbr>Json</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#desiredreplicas" class="tsd-kind-icon">Desired<wbr>Replicas</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#idselector" class="tsd-kind-icon">IDSelector</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#kubernetesjsondirective" class="tsd-kind-icon">Kubernetes<wbr>Json<wbr>Directive</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#labels" class="tsd-kind-icon">Labels</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#podstatus" class="tsd-kind-icon">Pod<wbr>Status</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#pods" class="tsd-kind-icon">Pods</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#replicationcontrollers" class="tsd-kind-icon">Replication<wbr>Controllers</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#services" class="tsd-kind-icon">Services</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#toplevel" class="tsd-kind-icon">Top<wbr>Level</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#_module" class="tsd-kind-icon">_module</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#appsuffix" class="tsd-kind-icon">app<wbr>Suffix</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#context" class="tsd-kind-icon">context</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#controller" class="tsd-kind-icon">controller</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#defaultroute" class="tsd-kind-icon">default<wbr>Route</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#hash" class="tsd-kind-icon">hash</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#log" class="tsd-kind-icon">log</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#managermbean" class="tsd-kind-icon">managerMBean</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#mbean" class="tsd-kind-icon">mbean</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#pluginname" class="tsd-kind-icon">plugin<wbr>Name</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#route" class="tsd-kind-icon">route</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="../modules/kubernetes.html#templatepath" class="tsd-kind-icon">template<wbr>Path</a>
-					</li>
 				</ul>
 			</nav>
 		</div>

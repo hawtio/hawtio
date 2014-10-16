@@ -21008,6 +21008,313 @@ var DataTable;
             return new DataTable.SimpleDataTable($compile);
         }]);
 })(DataTable || (DataTable = {}));
+var PluginHelpers;
+(function (PluginHelpers) {
+    function createControllerFunction(_module, pluginName) {
+        return function (name, inlineAnnotatedConstructor) {
+            return _module.controller(pluginName + '.' + name, inlineAnnotatedConstructor);
+        };
+    }
+    PluginHelpers.createControllerFunction = createControllerFunction;
+
+    function createRoutingFunction(templateUrl) {
+        return function (templateName, reloadOnSearch) {
+            if (typeof reloadOnSearch === "undefined") { reloadOnSearch = true; }
+            return {
+                templateUrl: UrlHelpers.join(templateUrl, templateName),
+                reloadOnSearch: reloadOnSearch
+            };
+        };
+    }
+    PluginHelpers.createRoutingFunction = createRoutingFunction;
+})(PluginHelpers || (PluginHelpers = {}));
+var DockerRegistry;
+(function (DockerRegistry) {
+    DockerRegistry.context = '/docker-registry';
+    DockerRegistry.hash = UrlHelpers.join('#', DockerRegistry.context);
+    DockerRegistry.defaultRoute = UrlHelpers.join(DockerRegistry.hash, 'list');
+    DockerRegistry.basePath = UrlHelpers.join('app', DockerRegistry.context);
+    DockerRegistry.templatePath = UrlHelpers.join(DockerRegistry.basePath, 'html');
+    DockerRegistry.pluginName = 'DockerRegistry';
+    DockerRegistry.log = Logger.get(DockerRegistry.pluginName);
+    DockerRegistry.SEARCH_FRAGMENT = '/v1/search';
+
+    function getDockerImageRepositories(callback) {
+        var DockerRegistryRestURL = Core.injector.get("DockerRegistryRestURL");
+        var $http = Core.injector.get("$http");
+        DockerRegistryRestURL.then(function (restURL) {
+            $http.get(UrlHelpers.join(restURL, DockerRegistry.SEARCH_FRAGMENT)).success(function (data) {
+                callback(restURL, data);
+            }).error(function (data) {
+                DockerRegistry.log.debug("Error fetching image repositories:", data);
+                callback(restURL, null);
+            });
+        });
+    }
+    DockerRegistry.getDockerImageRepositories = getDockerImageRepositories;
+})(DockerRegistry || (DockerRegistry = {}));
+var Kubernetes;
+(function (Kubernetes) {
+    Kubernetes.context = '/kubernetes';
+    Kubernetes.hash = '#' + Kubernetes.context;
+    Kubernetes.defaultRoute = Kubernetes.hash + '/pods';
+    Kubernetes.pluginName = 'Kubernetes';
+    Kubernetes.templatePath = 'app/kubernetes/html/';
+    Kubernetes.log = Logger.get(Kubernetes.pluginName);
+
+    Kubernetes.appSuffix = ".app";
+
+    Kubernetes.mbean = Fabric.jmxDomain + ":type=Kubernetes";
+    Kubernetes.managerMBean = Fabric.jmxDomain + ":type=KubernetesManager";
+
+    function isKubernetes(workspace) {
+        return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, { type: "Kubernetes" });
+    }
+    Kubernetes.isKubernetes = isKubernetes;
+
+    function setJson($scope, id, collection) {
+        $scope.id = id;
+        if (!$scope.fetched) {
+            return;
+        }
+        if (!id) {
+            $scope.json = '';
+            return;
+        }
+        var item = collection.find(function (item) {
+            return item.id === id;
+        });
+        if (!item) {
+            $scope.id = undefined;
+            $scope.json = '';
+            $scope.item = undefined;
+        } else {
+            $scope.json = angular.toJson(item, true);
+            $scope.item = item;
+        }
+    }
+    Kubernetes.setJson = setJson;
+
+    function labelsToString(labels) {
+        var answer = "";
+        angular.forEach(labels, function (value, key) {
+            var separator = answer ? "," : "";
+            answer += separator + key + "=" + value;
+        });
+        return answer;
+    }
+    Kubernetes.labelsToString = labelsToString;
+
+    function initShared($scope) {
+        $scope.$on("labelFilterUpdate", function ($event, text) {
+            var filterText = $scope.tableConfig.filterOptions.filterText;
+            if (Core.isBlank(filterText)) {
+                $scope.tableConfig.filterOptions.filterText = text;
+            } else {
+                var expressions = filterText.split(/\s+/);
+                if (expressions.any(text)) {
+                    expressions = expressions.remove(text);
+                    $scope.tableConfig.filterOptions.filterText = expressions.join(" ");
+                } else {
+                    $scope.tableConfig.filterOptions.filterText = filterText + " " + text;
+                }
+            }
+        });
+    }
+    Kubernetes.initShared = initShared;
+})(Kubernetes || (Kubernetes = {}));
+var DockerRegistry;
+(function (DockerRegistry) {
+    DockerRegistry._module = angular.module(DockerRegistry.pluginName, ['hawtioCore', 'ngResource']);
+    DockerRegistry.controller = PluginHelpers.createControllerFunction(DockerRegistry._module, DockerRegistry.pluginName);
+    DockerRegistry.route = PluginHelpers.createRoutingFunction(DockerRegistry.templatePath);
+
+    DockerRegistry._module.config([
+        '$routeProvider', function ($routeProvider) {
+            $routeProvider.when(UrlHelpers.join(DockerRegistry.context, 'list'), DockerRegistry.route('list.html', false));
+        }]);
+
+    DockerRegistry._module.factory('DockerRegistryRestURL', [
+        'jolokiaUrl', 'jolokia', '$q', '$rootScope', function (jolokiaUrl, jolokia, $q, $rootScope) {
+            var answer = $q.defer();
+            jolokia.getAttribute(Kubernetes.managerMBean, 'DockerRegistry', undefined, onSuccess(function (response) {
+                var proxified = UrlHelpers.maybeProxy(jolokiaUrl, response);
+                DockerRegistry.log.debug("Discovered docker registry API URL: ", proxified);
+                answer.resolve(proxified);
+                Core.$apply($rootScope);
+            }, {
+                error: function (response) {
+                    DockerRegistry.log.debug("error fetching docker registry API details: ", response);
+                    answer.reject(response);
+                    Core.$apply($rootScope);
+                }
+            }));
+            return answer.promise;
+        }]);
+
+    DockerRegistry._module.run([
+        'viewRegistry', 'workspace', function (viewRegistry, workspace) {
+            DockerRegistry.log.debug("Running");
+            viewRegistry['docker-registry'] = UrlHelpers.join(DockerRegistry.templatePath, 'layoutDockerRegistry.html');
+            workspace.topLevelTabs.push({
+                id: 'docker-registry',
+                content: 'Images',
+                isValid: function (workspace) {
+                    return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, { type: 'KubernetesManager' });
+                },
+                isActive: function (workspace) {
+                    return workspace.isLinkActive('docker-registry');
+                },
+                href: function () {
+                    return DockerRegistry.defaultRoute;
+                }
+            });
+        }]);
+
+    hawtioPluginLoader.addModule(DockerRegistry.pluginName);
+})(DockerRegistry || (DockerRegistry = {}));
+var PollHelpers;
+(function (PollHelpers) {
+    var log = Logger.get("PollHelpers");
+
+    function setupPolling($scope, updateFunction, period) {
+        if (typeof period === "undefined") { period = 2000; }
+        var $timeout = Core.injector.get('$timeout');
+        var jolokia = Core.injector.get('jolokia');
+
+        var promise = undefined;
+
+        var refreshFunction = function () {
+            log.debug("Polling");
+            updateFunction(function () {
+                if (jolokia.isRunning()) {
+                    promise = $timeout(refreshFunction, period);
+                }
+            });
+        };
+
+        $scope.$on('$routeChangeStart', function () {
+            $timeout.cancel(promise);
+        });
+        return refreshFunction;
+    }
+    PollHelpers.setupPolling = setupPolling;
+})(PollHelpers || (PollHelpers = {}));
+var DockerRegistry;
+(function (DockerRegistry) {
+    DockerRegistry.TopLevel = DockerRegistry.controller("TopLevel", [
+        "$scope", "$http", function ($scope, $http) {
+            $scope.repositories = [];
+            $scope.restURL = '';
+            DockerRegistry.getDockerImageRepositories(function (restURL, repositories) {
+                $scope.restURL = restURL;
+                if ($scope.repositories) {
+                    $scope.repositories = repositories.results;
+                    var previous = angular.toJson($scope.repositories);
+                    $scope.fetch = PollHelpers.setupPolling($scope, function (next) {
+                        var searchURL = UrlHelpers.join($scope.restURL, DockerRegistry.SEARCH_FRAGMENT);
+                        $http.get(searchURL).success(function (repositories) {
+                            if (repositories && repositories.results) {
+                                if (previous !== angular.toJson(repositories.results)) {
+                                    $scope.repositories = repositories.results;
+                                    previous = angular.toJson($scope.repositories);
+                                }
+                            }
+                            next();
+                        });
+                    });
+                    $scope.fetch();
+                } else {
+                    DockerRegistry.log.debug("Failed initial fetch of image repositories");
+                }
+            });
+            $scope.$watchCollection('repositories', function (repositories) {
+                if (!Core.isBlank($scope.restURL)) {
+                    var outstanding = repositories.length;
+                    repositories.forEach(function (repository) {
+                        var tagURL = UrlHelpers.join($scope.restURL, 'v1/repositories/' + repository.name + '/tags');
+                        DockerRegistry.log.debug("Fetching tags from URL: ", tagURL);
+                        $http.get(tagURL).success(function (tags) {
+                            DockerRegistry.log.debug("Got tags: ", tags, " for image repository: ", repository.name);
+                            repository.tags = tags;
+                        }).error(function (data) {
+                            DockerRegistry.log.debug("Error fetching data for image repository: ", repository.name, " error: ", data);
+                        });
+                    });
+                    $scope.$broadcast("DockerRegistry.Repositories", $scope.restURL, repositories);
+                }
+            });
+        }]);
+})(DockerRegistry || (DockerRegistry = {}));
+var DockerRegistry;
+(function (DockerRegistry) {
+    DockerRegistry.TagController = DockerRegistry.controller("TagController", [
+        "$scope", function ($scope) {
+            $scope.selectImage = function (imageID) {
+                $scope.$emit("DockerRegistry.SelectedImageID", imageID);
+            };
+        }]);
+
+    DockerRegistry.ListController = DockerRegistry.controller("ListController", [
+        "$scope", "$templateCache", "$http", function ($scope, $templateCache, $http) {
+            $scope.imageRepositories = [];
+            $scope.selectedImage = undefined;
+
+            $scope.tableConfig = {
+                data: 'imageRepositories',
+                showSelectionCheckbox: true,
+                enableRowClickSelection: false,
+                multiSelect: true,
+                selectedItems: [],
+                filterOptions: {
+                    filterText: ''
+                },
+                columnDefs: [
+                    { field: 'name', displayName: 'Name', defaultSort: true },
+                    { field: 'description', displayName: 'Description' },
+                    { field: 'tags', displayName: 'Tags', cellTemplate: $templateCache.get("tagsTemplate.html") }
+                ]
+            };
+
+            $scope.deletePrompt = function (selectedRepositories) {
+                UI.multiItemConfirmActionDialog({
+                    collection: selectedRepositories,
+                    index: 'name',
+                    onClose: function (result) {
+                        if (result) {
+                            selectedRepositories.forEach(function (repository) {
+                                var deleteURL = UrlHelpers.join($scope.restURL, '/v1/repositories/' + repository.name + '/');
+                                DockerRegistry.log.debug("Using URL: ", deleteURL);
+                                $http.delete(deleteURL).success(function (data) {
+                                    DockerRegistry.log.debug("Deleted repository: ", repository.name);
+                                }).error(function (data) {
+                                    DockerRegistry.log.debug("Failed to delete repository: ", repository.name);
+                                });
+                            });
+                        }
+                    },
+                    title: 'Delete Repositories?',
+                    action: 'The following repositories will be deleted:',
+                    okText: 'Delete',
+                    okClass: 'btn-danger',
+                    custom: 'This operation is permanent once completed!',
+                    customClass: 'alert alert-warning'
+                }).open();
+            };
+
+            $scope.$on("DockerRegistry.SelectedImageID", function ($event, imageID) {
+                var imageJsonURL = UrlHelpers.join($scope.restURL, '/v1/images/' + imageID + '/json');
+                $http.get(imageJsonURL).success(function (image) {
+                    DockerRegistry.log.debug("Got image: ", image);
+                    $scope.selectedImage = image;
+                });
+            });
+
+            $scope.$on('DockerRegistry.Repositories', function ($event, restURL, repositories) {
+                $scope.imageRepositories = repositories;
+            });
+        }]);
+})(DockerRegistry || (DockerRegistry = {}));
 var Dozer;
 (function (Dozer) {
     Dozer.jmxDomain = 'net.sourceforge.dozer';
@@ -22665,26 +22972,6 @@ var ObjectHelpers;
     }
     ObjectHelpers.toMap = toMap;
 })(ObjectHelpers || (ObjectHelpers = {}));
-var PluginHelpers;
-(function (PluginHelpers) {
-    function createControllerFunction(_module, pluginName) {
-        return function (name, inlineAnnotatedConstructor) {
-            return _module.controller(pluginName + '.' + name, inlineAnnotatedConstructor);
-        };
-    }
-    PluginHelpers.createControllerFunction = createControllerFunction;
-
-    function createRoutingFunction(templateUrl) {
-        return function (templateName, reloadOnSearch) {
-            if (typeof reloadOnSearch === "undefined") { reloadOnSearch = true; }
-            return {
-                templateUrl: templateUrl + templateName,
-                reloadOnSearch: reloadOnSearch
-            };
-        };
-    }
-    PluginHelpers.createRoutingFunction = createRoutingFunction;
-})(PluginHelpers || (PluginHelpers = {}));
 var SelectionHelpers;
 (function (SelectionHelpers) {
     var log = Logger.get("SelectionHelpers");
@@ -30983,33 +31270,6 @@ var Health;
             }
         }]);
 })(Health || (Health = {}));
-var PollHelpers;
-(function (PollHelpers) {
-    var log = Logger.get("PollHelpers");
-
-    function setupPolling($scope, updateFunction, period) {
-        if (typeof period === "undefined") { period = 2000; }
-        var $timeout = Core.injector.get('$timeout');
-        var jolokia = Core.injector.get('jolokia');
-
-        var promise = undefined;
-
-        var refreshFunction = function () {
-            log.debug("Polling");
-            updateFunction(function () {
-                if (jolokia.isRunning()) {
-                    promise = $timeout(refreshFunction, period);
-                }
-            });
-        };
-
-        $scope.$on('$routeChangeStart', function () {
-            $timeout.cancel(promise);
-        });
-        return refreshFunction;
-    }
-    PollHelpers.setupPolling = setupPolling;
-})(PollHelpers || (PollHelpers = {}));
 var IDE;
 (function (IDE) {
     var log = Logger.get("IDE");
@@ -37802,76 +38062,6 @@ var Karaf;
 })(Karaf || (Karaf = {}));
 var Kubernetes;
 (function (Kubernetes) {
-    Kubernetes.appSuffix = ".app";
-
-    Kubernetes.mbean = Fabric.jmxDomain + ":type=Kubernetes";
-    Kubernetes.managerMBean = Fabric.jmxDomain + ":type=KubernetesManager";
-
-    function isKubernetes(workspace) {
-        return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, { type: "Kubernetes" });
-    }
-    Kubernetes.isKubernetes = isKubernetes;
-
-    function setJson($scope, id, collection) {
-        $scope.id = id;
-        if (!$scope.fetched) {
-            return;
-        }
-        if (!id) {
-            $scope.json = '';
-            return;
-        }
-        var item = collection.find(function (item) {
-            return item.id === id;
-        });
-        if (!item) {
-            $scope.id = undefined;
-            $scope.json = '';
-            $scope.item = undefined;
-        } else {
-            $scope.json = angular.toJson(item, true);
-            $scope.item = item;
-        }
-    }
-    Kubernetes.setJson = setJson;
-
-    function labelsToString(labels) {
-        var answer = "";
-        angular.forEach(labels, function (value, key) {
-            var separator = answer ? "," : "";
-            answer += separator + key + "=" + value;
-        });
-        return answer;
-    }
-    Kubernetes.labelsToString = labelsToString;
-
-    function initShared($scope) {
-        $scope.$on("labelFilterUpdate", function ($event, text) {
-            var filterText = $scope.tableConfig.filterOptions.filterText;
-            if (Core.isBlank(filterText)) {
-                $scope.tableConfig.filterOptions.filterText = text;
-            } else {
-                var expressions = filterText.split(/\s+/);
-                if (expressions.any(text)) {
-                    expressions = expressions.remove(text);
-                    $scope.tableConfig.filterOptions.filterText = expressions.join(" ");
-                } else {
-                    $scope.tableConfig.filterOptions.filterText = filterText + " " + text;
-                }
-            }
-        });
-    }
-    Kubernetes.initShared = initShared;
-})(Kubernetes || (Kubernetes = {}));
-var Kubernetes;
-(function (Kubernetes) {
-    Kubernetes.objectName = Fabric.jmxDomain + ":type=Kubernetes";
-    Kubernetes.context = '/kubernetes';
-    Kubernetes.hash = '#' + Kubernetes.context;
-    Kubernetes.defaultRoute = Kubernetes.hash + '/pods';
-    Kubernetes.pluginName = 'Kubernetes';
-    Kubernetes.templatePath = 'app/kubernetes/html/';
-    Kubernetes.log = Logger.get(Kubernetes.pluginName);
     Kubernetes._module = angular.module(Kubernetes.pluginName, ['hawtioCore', 'ngResource']);
     Kubernetes.controller = PluginHelpers.createControllerFunction(Kubernetes._module, Kubernetes.pluginName);
     Kubernetes.route = PluginHelpers.createRoutingFunction(Kubernetes.templatePath);
@@ -37884,7 +38074,7 @@ var Kubernetes;
     Kubernetes._module.factory('KubernetesApiURL', [
         'jolokiaUrl', 'jolokia', '$q', '$rootScope', function (jolokiaUrl, jolokia, $q, $rootScope) {
             var answer = $q.defer();
-            jolokia.getAttribute(Kubernetes.objectName, 'KubernetesAddress', undefined, onSuccess(function (response) {
+            jolokia.getAttribute(Kubernetes.mbean, 'KubernetesAddress', undefined, onSuccess(function (response) {
                 var proxified = UrlHelpers.maybeProxy(jolokiaUrl, response);
                 Kubernetes.log.debug("discovered API URL:", proxified);
                 answer.resolve(proxified);
@@ -38071,7 +38261,7 @@ var Kubernetes;
                 Kubernetes.setJson($scope, $location.search()['_id'], $scope.pods);
             });
 
-            jolokia.getAttribute(Kubernetes.objectName, 'DockerIp', undefined, onSuccess(function (results) {
+            jolokia.getAttribute(Kubernetes.mbean, 'DockerIp', undefined, onSuccess(function (results) {
                 Kubernetes.log.info("got Docker IP: " + results);
                 if (results) {
                     $scope.dockerIp = results;
@@ -38082,7 +38272,7 @@ var Kubernetes;
                     Kubernetes.log.debug("error fetching API URL: ", response);
                 }
             }));
-            jolokia.getAttribute(Kubernetes.objectName, 'HostName', undefined, onSuccess(function (results) {
+            jolokia.getAttribute(Kubernetes.mbean, 'HostName', undefined, onSuccess(function (results) {
                 Kubernetes.log.info("got hostname: " + results);
                 if (results) {
                     $scope.hostName = results;
@@ -50550,7 +50740,7 @@ var Wiki;
         }]);
 
     Wiki.ViewController = Wiki._module.controller("Wiki.ViewController", [
-        "$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", "localStorage", "$interpolate", function ($scope, $location, $routeParams, $route, $http, $timeout, workspace, marked, fileExtensionTypeRegistry, wikiRepository, $compile, $templateCache, jolokia, localStorage, $interpolate) {
+        "$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", "localStorage", "$interpolate", "$dialog", function ($scope, $location, $routeParams, $route, $http, $timeout, workspace, marked, fileExtensionTypeRegistry, wikiRepository, $compile, $templateCache, jolokia, localStorage, $interpolate, $dialog) {
             $scope.name = "WikiViewController";
 
             var isFmc = Fabric.isFMCContainer(workspace);
@@ -50571,9 +50761,9 @@ var Wiki;
             $scope.operationCounter = 1;
             $scope.addDialog = new UI.Dialog();
             $scope.generateDialog = new UI.Dialog();
-            $scope.renameDialog = new UI.Dialog();
-            $scope.moveDialog = new UI.Dialog();
-            $scope.deleteDialog = new UI.Dialog();
+            $scope.renameDialog = null;
+            $scope.moveDialog = null;
+            $scope.deleteDialog = null;
             $scope.isFile = false;
 
             $scope.rename = {
@@ -50978,6 +51168,16 @@ var Wiki;
                     $scope.selectedFileHtml = "<ul>" + $scope.gridOptions.selectedItems.map(function (file) {
                         return "<li>" + file.name + "</li>";
                     }).sort().join("") + "</ul>";
+
+                    $scope.deleteDialog = Wiki.getDeleteDialog($dialog, {
+                        callbacks: function () {
+                            return $scope.deleteAndCloseDialog;
+                        },
+                        selectedFileHtml: function () {
+                            return $scope.selectedFileHtml;
+                        }
+                    });
+
                     $scope.deleteDialog.open();
                 } else {
                     Wiki.log.debug("No items selected right now! " + $scope.gridOptions.selectedItems);
@@ -51007,29 +51207,11 @@ var Wiki;
             $scope.$watch("rename.newFileName", function () {
                 var path = getRenameFilePath();
                 if ($scope.originalRenameFilePath === path) {
-                    $scope.fileExists = { exsits: false, name: null };
+                    $scope.fileExists = { exists: false, name: null };
                 } else {
                     checkFileExists(path);
                 }
             });
-
-            $scope.openRenameDialog = function () {
-                var name = null;
-                if ($scope.gridOptions.selectedItems.length) {
-                    var selected = $scope.gridOptions.selectedItems[0];
-                    name = selected.name;
-                }
-                if (name) {
-                    $scope.rename.newFileName = name;
-                    $scope.originalRenameFilePath = getRenameFilePath();
-                    $scope.renameDialog.open();
-                    $timeout(function () {
-                        $('#renameFileName').focus();
-                    }, 50);
-                } else {
-                    Wiki.log.debug("No items selected right now! " + $scope.gridOptions.selectedItems);
-                }
-            };
 
             $scope.renameAndCloseDialog = function () {
                 if ($scope.gridOptions.selectedItems.length) {
@@ -51052,12 +51234,35 @@ var Wiki;
                 $scope.renameDialog.close();
             };
 
-            $scope.openMoveDialog = function () {
+            $scope.openRenameDialog = function () {
+                var name = null;
                 if ($scope.gridOptions.selectedItems.length) {
-                    $scope.move.moveFolder = $scope.pageId;
-                    $scope.moveDialog.open();
+                    var selected = $scope.gridOptions.selectedItems[0];
+                    name = selected.name;
+                }
+                if (name) {
+                    $scope.rename.newFileName = name;
+                    $scope.originalRenameFilePath = getRenameFilePath();
+
+                    $scope.renameDialog = Wiki.getRenameDialog($dialog, {
+                        rename: function () {
+                            return $scope.rename;
+                        },
+                        fileExists: function () {
+                            return $scope.fileExists;
+                        },
+                        fileName: function () {
+                            return $scope.fileName;
+                        },
+                        callbacks: function () {
+                            return $scope.renameAndCloseDialog;
+                        }
+                    });
+
+                    $scope.renameDialog.open();
+
                     $timeout(function () {
-                        $('#moveFolder').focus();
+                        $('#renameFileName').focus();
                     }, 50);
                 } else {
                     Wiki.log.debug("No items selected right now! " + $scope.gridOptions.selectedItems);
@@ -51092,6 +51297,32 @@ var Wiki;
 
             $scope.folderNames = function (text) {
                 return wikiRepository.completePath($scope.branch, text, true, null);
+            };
+
+            $scope.openMoveDialog = function () {
+                if ($scope.gridOptions.selectedItems.length) {
+                    $scope.move.moveFolder = $scope.pageId;
+
+                    $scope.moveDialog = Wiki.getMoveDialog($dialog, {
+                        move: function () {
+                            return $scope.move;
+                        },
+                        folderNames: function () {
+                            return $scope.folderNames;
+                        },
+                        callbacks: function () {
+                            return $scope.moveAndCloseDialog;
+                        }
+                    });
+
+                    $scope.moveDialog.open();
+
+                    $timeout(function () {
+                        $('#moveFolder').focus();
+                    }, 50);
+                } else {
+                    Wiki.log.debug("No items selected right now! " + $scope.gridOptions.selectedItems);
+                }
             };
 
             setTimeout(maybeUpdateView, 50);
@@ -51335,6 +51566,65 @@ var Wiki;
                 return ($scope.pageId && newFileName) ? $scope.pageId + "/" + newFileName : null;
             }
         }]);
+})(Wiki || (Wiki = {}));
+var Wiki;
+(function (Wiki) {
+    function getRenameDialog($dialog, $scope) {
+        return $dialog.dialog({
+            resolve: $scope,
+            templateUrl: 'app/wiki/html/modal/renameDialog.html',
+            controller: [
+                "$scope", "dialog", "callbacks", "rename", "fileExists", "fileName", function ($scope, dialog, callbacks, rename, fileExists, fileName) {
+                    $scope.rename = rename;
+                    $scope.fileExists = fileExists;
+                    $scope.fileName = fileName;
+
+                    $scope.close = function (result) {
+                        dialog.close();
+                    };
+
+                    $scope.renameAndCloseDialog = callbacks;
+                }]
+        });
+    }
+    Wiki.getRenameDialog = getRenameDialog;
+
+    function getMoveDialog($dialog, $scope) {
+        return $dialog.dialog({
+            resolve: $scope,
+            templateUrl: 'app/wiki/html/modal/moveDialog.html',
+            controller: [
+                "$scope", "dialog", "callbacks", "move", "folderNames", function ($scope, dialog, callbacks, move, folderNames) {
+                    $scope.move = move;
+                    $scope.folderNames = folderNames;
+
+                    $scope.close = function (result) {
+                        dialog.close();
+                    };
+
+                    $scope.moveAndCloseDialog = callbacks;
+                }]
+        });
+    }
+    Wiki.getMoveDialog = getMoveDialog;
+
+    function getDeleteDialog($dialog, $scope) {
+        return $dialog.dialog({
+            resolve: $scope,
+            templateUrl: 'app/wiki/html/modal/deleteDialog.html',
+            controller: [
+                "$scope", "dialog", "callbacks", "selectedFileHtml", function ($scope, dialog, callbacks, selectedFileHtml) {
+                    $scope.selectedFileHtml = selectedFileHtml;
+
+                    $scope.close = function (result) {
+                        dialog.close();
+                    };
+
+                    $scope.deleteAndCloseDialog = callbacks;
+                }]
+        });
+    }
+    Wiki.getDeleteDialog = getDeleteDialog;
 })(Wiki || (Wiki = {}));
 var Wiki;
 (function (Wiki) {

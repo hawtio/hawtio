@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>FabricRequirements | hawtio</title>
+	<title>DockerRegistry | hawtio</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -51,10 +51,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="fabricrequirements.html">FabricRequirements</a>
+					<a href="dockerregistry.html">DockerRegistry</a>
 				</li>
 			</ul>
-			<h1>Module FabricRequirements</h1>
+			<h1>Module DockerRegistry</h1>
 		</div>
 	</div>
 </header>
@@ -68,66 +68,124 @@
 						<section class="tsd-index-section ">
 							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-interface tsd-parent-kind-container"><a href="../interfaces/fabricrequirements.currentrequirements.html" class="tsd-kind-icon">Current<wbr>Requirements</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-container tsd-is-not-exported"><a href="../interfaces/fabricrequirements.iprofilerequirementscontroller.html" class="tsd-kind-icon">IProfile<wbr>Requirements<wbr>Controller</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-container"><a href="../interfaces/dockerregistry.dockerimagerepositories.html" class="tsd-kind-icon">Docker<wbr>Image<wbr>Repositories</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-container"><a href="../interfaces/dockerregistry.dockerimagerepository.html" class="tsd-kind-icon">Docker<wbr>Image<wbr>Repository</a></li>
+								<li class="tsd-kind-interface tsd-parent-kind-container"><a href="../interfaces/dockerregistry.dockerimagetag.html" class="tsd-kind-icon">Docker<wbr>Image<wbr>Tag</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-container"><a href="dockerregistry.html#getdockerimagerepositories" class="tsd-kind-icon">get<wbr>Docker<wbr>Image<wbr>Repositories</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="fabricrequirements.html#dockerconfigcontroller" class="tsd-kind-icon">Docker<wbr>Config<wbr>Controller</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="fabricrequirements.html#profilerequirementscontroller" class="tsd-kind-icon">Profile<wbr>Requirements<wbr>Controller</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="fabricrequirements.html#requirementscontroller" class="tsd-kind-icon">Requirements<wbr>Controller</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="fabricrequirements.html#sshconfigcontroller" class="tsd-kind-icon">Ssh<wbr>Config<wbr>Controller</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="fabricrequirements.html#_module" class="tsd-kind-icon">_module</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="fabricrequirements.html#controller" class="tsd-kind-icon">controller</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-container tsd-is-not-exported"><a href="fabricrequirements.html#fabricroute" class="tsd-kind-icon">fabric<wbr>Route</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="fabricrequirements.html#log" class="tsd-kind-icon">log</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="fabricrequirements.html#pluginname" class="tsd-kind-icon">plugin<wbr>Name</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="fabricrequirements.html#requirementscontext" class="tsd-kind-icon">requirements<wbr>Context</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="fabricrequirements.html#requirementshash" class="tsd-kind-icon">requirements<wbr>Hash</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="fabricrequirements.html#route" class="tsd-kind-icon">route</a></li>
-								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="fabricrequirements.html#templatepath" class="tsd-kind-icon">template<wbr>Path</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="dockerregistry.html#listcontroller" class="tsd-kind-icon">List<wbr>Controller</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="dockerregistry.html#search_fragment" class="tsd-kind-icon">SEARCH_<wbr>FRAGMENT</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="dockerregistry.html#tagcontroller" class="tsd-kind-icon">Tag<wbr>Controller</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="dockerregistry.html#toplevel" class="tsd-kind-icon">Top<wbr>Level</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="dockerregistry.html#_module" class="tsd-kind-icon">_module</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="dockerregistry.html#basepath" class="tsd-kind-icon">base<wbr>Path</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="dockerregistry.html#context" class="tsd-kind-icon">context</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="dockerregistry.html#controller" class="tsd-kind-icon">controller</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="dockerregistry.html#defaultroute" class="tsd-kind-icon">default<wbr>Route</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="dockerregistry.html#hash" class="tsd-kind-icon">hash</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="dockerregistry.html#log" class="tsd-kind-icon">log</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="dockerregistry.html#pluginname" class="tsd-kind-icon">plugin<wbr>Name</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="dockerregistry.html#route" class="tsd-kind-icon">route</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="dockerregistry.html#templatepath" class="tsd-kind-icon">template<wbr>Path</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 				</section>            <section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-container">
+					<a name="getdockerimagerepositories" class="tsd-anchor"></a>
+					<h3>get<wbr>Docker<wbr>Image<wbr>Repositories</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Docker<wbr>Image<wbr>Repositories<span class="tsd-signature-symbol">(</span>callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">)</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description"><aside class="tsd-sources">
+								<ul>
+									<li>Defined in app/docker-registry/js/dockerRegistryHelpers.ts:23</li>
+								</ul>
+								</aside>        <div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Fetch the available docker images in the registry, can only
+									be called after app initialization</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>callback:         <span class="tsd-signature-type">Function</span></h5>
+									<ul class="tsd-parameters">
+										<li>
+											<h5>callback function signature<span class="tsd-signature-symbol"></span></h5>
+											<ul class="tsd-signatures tsd-kind-function-type tsd-parent-kind-parameter">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>repositories<span class="tsd-signature-symbol">: </span><a href="../interfaces/dockerregistry.dockerimagerepositories.html" class="tsd-signature-type">DockerImageRepositories</a>, restURL<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description"><aside class="tsd-sources">
+														<ul>
+															<li>Defined in app/docker-registry/js/dockerRegistryHelpers.ts:23</li>
+														</ul>
+													</aside>
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>repositories:         <a href="../interfaces/dockerregistry.dockerimagerepositories.html" class="tsd-signature-type">DockerImageRepositories</a></h5>
+														</li>
+														<li>
+															<h5>restURL:         <span class="tsd-signature-type">string</span></h5>
+														</li>
+													</ul>
+												</li>
+										</ul>        </li>
+								</ul>            </li>
+							</ul>
+						</li>
+					</ul>
+				</section></section>        <section class="tsd-panel-group tsd-member-group ">
 				<h2>Variables</h2>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
-					<a name="dockerconfigcontroller" class="tsd-anchor"></a>
-					<h3>Docker<wbr>Config<wbr>Controller</h3>
-					<div class="tsd-signature tsd-kind-icon">Docker<wbr>Config<wbr>Controller<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">ng.IModule</span></div>
+					<a name="listcontroller" class="tsd-anchor"></a>
+					<h3>List<wbr>Controller</h3>
+					<div class="tsd-signature tsd-kind-icon">List<wbr>Controller<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">ng.IModule</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/fabric-requirements/js/dockerConfig.ts:5</li>
+							<li>Defined in app/docker-registry/js/list.ts:11</li>
 						</ul>
 					</aside>
 					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
-					<a name="profilerequirementscontroller" class="tsd-anchor"></a>
-					<h3>Profile<wbr>Requirements<wbr>Controller</h3>
-					<div class="tsd-signature tsd-kind-icon">Profile<wbr>Requirements<wbr>Controller<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">ng.IModule</span></div>
+					<a name="search_fragment" class="tsd-anchor"></a>
+					<h3>SEARCH_<wbr>FRAGMENT</h3>
+					<div class="tsd-signature tsd-kind-icon">SEARCH_<wbr>FRAGMENT<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/fabric-requirements/js/profileRequirements.ts:15</li>
+							<li>Defined in app/docker-registry/js/dockerRegistryHelpers.ts:17</li>
 						</ul>
 					</aside>
 					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
-					<a name="requirementscontroller" class="tsd-anchor"></a>
-					<h3>Requirements<wbr>Controller</h3>
-					<div class="tsd-signature tsd-kind-icon">Requirements<wbr>Controller<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">ng.IModule</span></div>
+					<a name="tagcontroller" class="tsd-anchor"></a>
+					<h3>Tag<wbr>Controller</h3>
+					<div class="tsd-signature tsd-kind-icon">Tag<wbr>Controller<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">ng.IModule</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/fabric-requirements/js/requirements.ts:22</li>
+							<li>Defined in app/docker-registry/js/list.ts:5</li>
 						</ul>
 					</aside>
 					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
-					<a name="sshconfigcontroller" class="tsd-anchor"></a>
-					<h3>Ssh<wbr>Config<wbr>Controller</h3>
-					<div class="tsd-signature tsd-kind-icon">Ssh<wbr>Config<wbr>Controller<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">ng.IModule</span></div>
+					<a name="toplevel" class="tsd-anchor"></a>
+					<h3>Top<wbr>Level</h3>
+					<div class="tsd-signature tsd-kind-icon">Top<wbr>Level<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">ng.IModule</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/fabric-requirements/js/sshConfig.ts:5</li>
+							<li>Defined in app/docker-registry/js/dockerRegistryTopLevel.ts:5</li>
 						</ul>
 					</aside>
 					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
@@ -136,7 +194,25 @@
 					<div class="tsd-signature tsd-kind-icon">_module<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">ng.IModule</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/fabric-requirements/js/fabricRequirementsPlugin.ts:12</li>
+							<li>Defined in app/docker-registry/js/dockerRegistryPlugin.ts:5</li>
+						</ul>
+					</aside>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
+					<a name="basepath" class="tsd-anchor"></a>
+					<h3>base<wbr>Path</h3>
+					<div class="tsd-signature tsd-kind-icon">base<wbr>Path<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in app/docker-registry/js/dockerRegistryHelpers.ts:13</li>
+						</ul>
+					</aside>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
+					<a name="context" class="tsd-anchor"></a>
+					<h3>context</h3>
+					<div class="tsd-signature tsd-kind-icon">context<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in app/docker-registry/js/dockerRegistryHelpers.ts:10</li>
 						</ul>
 					</aside>
 					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
@@ -145,7 +221,7 @@
 					<div class="tsd-signature tsd-kind-icon">controller<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/fabric-requirements/js/fabricRequirementsPlugin.ts:15</li>
+							<li>Defined in app/docker-registry/js/dockerRegistryPlugin.ts:6</li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-function-expression tsd-parent-kind-variable">
@@ -173,47 +249,31 @@
 								</h4>
 							</li>
 						</ul>
-					</section></section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container tsd-is-not-exported">
-					<a name="fabricroute" class="tsd-anchor"></a>
-					<h3>fabric<wbr>Route</h3>
-					<div class="tsd-signature tsd-kind-icon">fabric<wbr>Route<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Function</span></div>
+					</section></section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
+					<a name="defaultroute" class="tsd-anchor"></a>
+					<h3>default<wbr>Route</h3>
+					<div class="tsd-signature tsd-kind-icon">default<wbr>Route<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/fabric-requirements/js/fabricRequirementsPlugin.ts:17</li>
+							<li>Defined in app/docker-registry/js/dockerRegistryHelpers.ts:12</li>
 						</ul>
 					</aside>
-					<section class="tsd-panel tsd-member tsd-kind-function-expression tsd-parent-kind-variable tsd-is-not-exported">
-						<a name="fabricroute.fabricroute_function_signature" class="tsd-anchor"></a>
-						<h3>fabric<wbr>Route function signature</h3>
-						<ul class="tsd-signatures tsd-kind-function-expression tsd-parent-kind-variable tsd-is-not-exported">
-							<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>reloadOnSearch<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;</span>true, templateName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">{ templateUrl: string; reloadOnSearch: boolean; }</span></li>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
+					<a name="hash" class="tsd-anchor"></a>
+					<h3>hash</h3>
+					<div class="tsd-signature tsd-kind-icon">hash<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in app/docker-registry/js/dockerRegistryHelpers.ts:11</li>
 						</ul>
-						<ul class="tsd-descriptions">
-							<li class="tsd-description"><aside class="tsd-sources">
-									<ul>
-										<li>Defined in app/helpers/js/pluginHelpers.ts:23</li>
-									</ul>
-								</aside>
-								<h4 class="tsd-parameters-title">Parameters</h4>
-								<ul class="tsd-parameters">
-									<li>
-										<h5>reloadOnSearch?:         <span class="tsd-signature-type">boolean</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
-									</li>
-									<li>
-										<h5>templateName:         <span class="tsd-signature-type">string</span></h5>
-									</li>
-								</ul>
-								<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">{ templateUrl: string; reloadOnSearch: boolean; }</span>
-								</h4>
-							</li>
-						</ul>
-					</section></section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
+					</aside>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
 					<a name="log" class="tsd-anchor"></a>
 					<h3>log</h3>
 					<div class="tsd-signature tsd-kind-icon">log<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Logging.Logger</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/fabric-requirements/js/fabricRequirementsPlugin.ts:11</li>
+							<li>Defined in app/docker-registry/js/dockerRegistryHelpers.ts:16</li>
 						</ul>
 					</aside>
 					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
@@ -222,25 +282,7 @@
 					<div class="tsd-signature tsd-kind-icon">plugin<wbr>Name<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/fabric-requirements/js/fabricRequirementsPlugin.ts:9</li>
-						</ul>
-					</aside>
-					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
-					<a name="requirementscontext" class="tsd-anchor"></a>
-					<h3>requirements<wbr>Context</h3>
-					<div class="tsd-signature tsd-kind-icon">requirements<wbr>Context<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in app/fabric-requirements/js/fabricRequirementsPlugin.ts:7</li>
-						</ul>
-					</aside>
-					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
-					<a name="requirementshash" class="tsd-anchor"></a>
-					<h3>requirements<wbr>Hash</h3>
-					<div class="tsd-signature tsd-kind-icon">requirements<wbr>Hash<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in app/fabric-requirements/js/fabricRequirementsPlugin.ts:8</li>
+							<li>Defined in app/docker-registry/js/dockerRegistryHelpers.ts:15</li>
 						</ul>
 					</aside>
 					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
@@ -249,7 +291,7 @@
 					<div class="tsd-signature tsd-kind-icon">route<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/fabric-requirements/js/fabricRequirementsPlugin.ts:16</li>
+							<li>Defined in app/docker-registry/js/dockerRegistryPlugin.ts:7</li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-function-expression tsd-parent-kind-variable">
@@ -283,7 +325,7 @@
 					<div class="tsd-signature tsd-kind-icon">template<wbr>Path<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/fabric-requirements/js/fabricRequirementsPlugin.ts:10</li>
+							<li>Defined in app/docker-registry/js/dockerRegistryHelpers.ts:14</li>
 						</ul>
 					</aside>
 			</section></section>
@@ -295,56 +337,65 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class="current tsd-kind-container">
-						<a href="fabricrequirements.html">Fabric<wbr>Requirements</a>
+						<a href="dockerregistry.html">Docker<wbr>Registry</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-container">
-						<a href="../interfaces/fabricrequirements.currentrequirements.html" class="tsd-kind-icon">Current<wbr>Requirements</a>
+						<a href="../interfaces/dockerregistry.dockerimagerepositories.html" class="tsd-kind-icon">Docker<wbr>Image<wbr>Repositories</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-container tsd-is-not-exported">
-						<a href="../interfaces/fabricrequirements.iprofilerequirementscontroller.html" class="tsd-kind-icon">IProfile<wbr>Requirements<wbr>Controller</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-container">
+						<a href="../interfaces/dockerregistry.dockerimagerepository.html" class="tsd-kind-icon">Docker<wbr>Image<wbr>Repository</a>
 					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="fabricrequirements.html#dockerconfigcontroller" class="tsd-kind-icon">Docker<wbr>Config<wbr>Controller</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-container">
+						<a href="../interfaces/dockerregistry.dockerimagetag.html" class="tsd-kind-icon">Docker<wbr>Image<wbr>Tag</a>
 					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="fabricrequirements.html#profilerequirementscontroller" class="tsd-kind-icon">Profile<wbr>Requirements<wbr>Controller</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="fabricrequirements.html#requirementscontroller" class="tsd-kind-icon">Requirements<wbr>Controller</a>
+					<li class=" tsd-kind-function tsd-parent-kind-container">
+						<a href="dockerregistry.html#getdockerimagerepositories" class="tsd-kind-icon">get<wbr>Docker<wbr>Image<wbr>Repositories</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="fabricrequirements.html#sshconfigcontroller" class="tsd-kind-icon">Ssh<wbr>Config<wbr>Controller</a>
+						<a href="dockerregistry.html#listcontroller" class="tsd-kind-icon">List<wbr>Controller</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="fabricrequirements.html#_module" class="tsd-kind-icon">_module</a>
+						<a href="dockerregistry.html#search_fragment" class="tsd-kind-icon">SEARCH_<wbr>FRAGMENT</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="fabricrequirements.html#controller" class="tsd-kind-icon">controller</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-container tsd-is-not-exported">
-						<a href="fabricrequirements.html#fabricroute" class="tsd-kind-icon">fabric<wbr>Route</a>
+						<a href="dockerregistry.html#tagcontroller" class="tsd-kind-icon">Tag<wbr>Controller</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="fabricrequirements.html#log" class="tsd-kind-icon">log</a>
+						<a href="dockerregistry.html#toplevel" class="tsd-kind-icon">Top<wbr>Level</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="fabricrequirements.html#pluginname" class="tsd-kind-icon">plugin<wbr>Name</a>
+						<a href="dockerregistry.html#_module" class="tsd-kind-icon">_module</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="fabricrequirements.html#requirementscontext" class="tsd-kind-icon">requirements<wbr>Context</a>
+						<a href="dockerregistry.html#basepath" class="tsd-kind-icon">base<wbr>Path</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="fabricrequirements.html#requirementshash" class="tsd-kind-icon">requirements<wbr>Hash</a>
+						<a href="dockerregistry.html#context" class="tsd-kind-icon">context</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="fabricrequirements.html#route" class="tsd-kind-icon">route</a>
+						<a href="dockerregistry.html#controller" class="tsd-kind-icon">controller</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-container">
-						<a href="fabricrequirements.html#templatepath" class="tsd-kind-icon">template<wbr>Path</a>
+						<a href="dockerregistry.html#defaultroute" class="tsd-kind-icon">default<wbr>Route</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-container">
+						<a href="dockerregistry.html#hash" class="tsd-kind-icon">hash</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-container">
+						<a href="dockerregistry.html#log" class="tsd-kind-icon">log</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-container">
+						<a href="dockerregistry.html#pluginname" class="tsd-kind-icon">plugin<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-container">
+						<a href="dockerregistry.html#route" class="tsd-kind-icon">route</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-container">
+						<a href="dockerregistry.html#templatepath" class="tsd-kind-icon">template<wbr>Path</a>
 					</li>
 				</ul>
 			</nav>

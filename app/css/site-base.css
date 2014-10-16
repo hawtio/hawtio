@@ -4413,3 +4413,11 @@ ul.dynatree-container {
 .pod-label {
   margin-right: 1em;
 }
+
+td > ul {
+  margin-bottom: 0px;
+}
+
+td > .zebra-list > li {
+  padding: 2px;
+}
