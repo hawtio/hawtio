@@ -1,4 +1,5 @@
 /// <reference path="../../baseIncludes.ts"/>
+/// <reference path="urlHelpers.ts"/>
 module PluginHelpers {
 
   export interface PluginModule {
@@ -21,7 +22,7 @@ module PluginHelpers {
   export function createRoutingFunction(templateUrl:string) {
     return (templateName:string, reloadOnSearch:boolean = true) => {
       return {
-        templateUrl: templateUrl + templateName,
+        templateUrl: UrlHelpers.join(templateUrl, templateName),
         reloadOnSearch: reloadOnSearch
       };
     } 

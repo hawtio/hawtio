@@ -5,13 +5,6 @@
 /// <reference path="kubernetesHelpers.ts"/>
 module Kubernetes {
 
-  export var objectName = Fabric.jmxDomain + ":type=Kubernetes";
-  export var context = '/kubernetes';
-  export var hash = '#' + context;
-  export var defaultRoute = hash + '/pods';
-  export var pluginName = 'Kubernetes';
-  export var templatePath = 'app/kubernetes/html/';
-  export var log:Logging.Logger = Logger.get(pluginName);
   export var _module = angular.module(pluginName, ['hawtioCore', 'ngResource']);
   export var controller = PluginHelpers.createControllerFunction(_module, pluginName);
   export var route = PluginHelpers.createRoutingFunction(templatePath);
@@ -25,7 +18,7 @@ module Kubernetes {
   // set up a promise that supplies the API URL for Kubernetes, proxied if necessary
   _module.factory('KubernetesApiURL', ['jolokiaUrl', 'jolokia', '$q', '$rootScope', (jolokiaUrl:string, jolokia:Jolokia.IJolokia, $q:ng.IQService, $rootScope:ng.IRootScopeService) => {
     var answer = <ng.IDeferred<string>>$q.defer();
-    jolokia.getAttribute(objectName, 'KubernetesAddress', undefined, 
+    jolokia.getAttribute(Kubernetes.mbean, 'KubernetesAddress', undefined, 
       <Jolokia.IParams> onSuccess((response) => {
         var proxified = UrlHelpers.maybeProxy(jolokiaUrl, response);
         log.debug("discovered API URL:", proxified);
