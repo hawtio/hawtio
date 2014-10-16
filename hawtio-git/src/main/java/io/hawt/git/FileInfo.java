@@ -1,5 +1,6 @@
 package io.hawt.git;
 
+import io.hawt.util.Files;
 import io.hawt.util.IOHelper;
 import io.hawt.util.Strings;
 import io.hawt.util.XmlHelper;
@@ -21,6 +22,7 @@ public class FileInfo {
     private final long lastModified;
     private final long length;
     private final boolean directory;
+    private final String mimeType;
     private String[] xmlNamespaces;
     private String iconUrl;
     private String summary;
@@ -30,7 +32,8 @@ public class FileInfo {
             branch = "master";
         }
         String path = getRelativePath(rootDir, file).replace("\\", "/");
-        FileInfo answer = new FileInfo(path, file.getName(), file.lastModified(), file.length(), file.isDirectory());
+        String mimeType = Files.getMimeType(file);
+        FileInfo answer = new FileInfo(path, file.getName(), file.lastModified(), file.length(), file.isDirectory(), mimeType);
         if (file.isFile()) {
             String name = file.getName();
             if (name.indexOf('#') > 0) {
@@ -94,12 +97,13 @@ public class FileInfo {
         }
     }
 
-    public FileInfo(String path, String name, long lastModified, long length, boolean directory) {
+    public FileInfo(String path, String name, long lastModified, long length, boolean directory, String mimeType) {
         this.path = path;
         this.name = name;
         this.lastModified = lastModified;
         this.length = length;
         this.directory = directory;
+        this.mimeType = mimeType;
     }
 
     @Override
@@ -125,6 +129,10 @@ public class FileInfo {
 
     public String getPath() {
         return path;
+    }
+
+    public String getMimeType() {
+        return mimeType;
     }
 
     public void setXmlNamespaces(String[] xmlNamespaces) {

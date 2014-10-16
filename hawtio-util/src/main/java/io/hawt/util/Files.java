@@ -17,6 +17,9 @@
  */
 package io.hawt.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +29,8 @@ import java.io.IOException;
 /**
  */
 public class Files {
+    private static final transient Logger LOG = LoggerFactory.getLogger(Files.class);
+
     private static final int BUFFER_SIZE = 8192;
 
     /**
@@ -82,5 +87,54 @@ public class Files {
             Closeables.closeQuitely(fis);
             Closeables.closeQuitely(bos);
         }
+    }
+
+    public static String getMimeType(File file) {
+        try {
+            String answer = java.nio.file.Files.probeContentType(file.toPath());
+            if (Strings.isNotBlank(answer)) {
+                return answer;
+            }
+        } catch (Throwable e) {
+            LOG.warn("Could not find mime type of " + file + ". " + e, e);
+        }
+        if (file.isDirectory()) {
+            return "application/zip";
+        }
+        String fileName = file.getName();
+        if (fileName.endsWith(".xml")) {
+            return "application/xml";
+        }
+        if (fileName.endsWith(".wadl")) {
+            return "application/wadl+xml";
+        }
+        if (fileName.endsWith(".wsdl")) {
+            return "application/wsdl+xml";
+        }
+        if (fileName.endsWith(".xsd")) {
+            return "application/xsd+xml";
+        }
+        if (fileName.endsWith(".json")) {
+            return "application/json";
+        }
+        if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
+            return "application/html";
+        }
+        if (fileName.endsWith(".properties")) {
+            return "text/x-java-properties";
+        }
+        if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+            return "image/jpeg";
+        }
+        if (fileName.endsWith(".png")) {
+            return "image/png";
+        }
+        if (fileName.endsWith(".gif")) {
+            return "image/gif";
+        }
+        if (fileName.endsWith(".svg")) {
+            return "image/svg+xml";
+        }
+        return "text/plain";
     }
 }
