@@ -63,23 +63,35 @@ public class GitServlet extends UploadServlet {
         Function<File, Object> callback = new Function<File, Object>() {
             @Override
             public Object apply(File file) {
-                String type = getServletContext().getMimeType(file.getAbsolutePath());
-                if (type == null) {
-                    type = "application/octet-stream";
-                }
-                resp.reset();
-                resp.setBufferSize(DEFAULT_BUFFER_SIZE);
-                resp.setContentType(type);
-                if (file.isFile() && file.exists()) {
-                    try {
+                try {
+                    String name = file.getName();
+                    if (!file.exists() && name.endsWith(".zip")) {
+                        String folderName = name.substring(0, name.length() - 4);
+                        File dir = new File(file.getParentFile(), folderName);
+                        if (dir.exists()) {
+                            file = dir;
+                        }
+                    }
+                    if (file.isDirectory() && file.exists()) {
+                        // lets create a temporary zip for a directory
+                        file = createZip(file);
+                    }
+                    String type = getServletContext().getMimeType(file.getAbsolutePath());
+                    if (type == null) {
+                        type = "application/octet-stream";
+                    }
+                    resp.reset();
+                    resp.setBufferSize(DEFAULT_BUFFER_SIZE);
+                    resp.setContentType(type);
+                    if (file.isFile() && file.exists()) {
                         byte[] bytes = Files.readBytes(file);
                         int length = bytes.length;
                         LOG.debug("Serving file: " + file.getAbsolutePath() + " of type " + type + " length: " + length);
                         resp.setContentLength(length);
                         resp.getOutputStream().write(bytes);
-                    } catch (IOException e) {
-                        throw new RuntimeException("Failed to read file " + file + ". " + e, e);
                     }
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to read file " + file + ". " + e, e);
                 }
                 return null;
             }
@@ -89,6 +101,12 @@ public class GitServlet extends UploadServlet {
         } catch (GitAPIException e) {
             throw new ServletException("Failed to read file: " + path + " on branch " + branch + ". " + e, e);
         }
+    }
+
+    protected File createZip(File file) throws IOException {
+        File answer = File.createTempFile(file.getName(), "zip");
+        Zips.createZipFile(LOG, file, answer);
+        return answer;
     }
 
 

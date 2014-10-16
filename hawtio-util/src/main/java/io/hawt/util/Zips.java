@@ -17,14 +17,19 @@
  */
 package io.hawt.util;
 
+import org.slf4j.Logger;
+
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import static io.hawt.util.Closeables.closeQuitely;
 import static io.hawt.util.IOHelper.copy;
@@ -32,6 +37,74 @@ import static io.hawt.util.IOHelper.copy;
 /**
  */
 public class Zips {
+    /**
+     * Creates a zip fie from the given source directory and output zip file name
+     */
+    public static void createZipFile(Logger log, File sourceDir, File outputZipFile) throws IOException {
+        FileFilter filter = null;
+        createZipFile(log, sourceDir, outputZipFile, filter);
+    }
+
+    public static void createZipFile(Logger log, File sourceDir, File outputZipFile, FileFilter filter) throws IOException {
+        outputZipFile.getParentFile().mkdirs();
+        OutputStream os = new FileOutputStream(outputZipFile);
+        ZipOutputStream zos = new ZipOutputStream(os);
+        try {
+            //zos.setLevel(Deflater.DEFAULT_COMPRESSION);
+            //zos.setLevel(Deflater.NO_COMPRESSION);
+            String path = "";
+            zipDirectory(log, sourceDir, zos, path, filter);
+        } finally {
+            closeQuitely(zos);
+        }
+    }
+
+    /**
+     * Zips the directory recursively into the ZIP stream given the starting path and optional filter
+     */
+    public static void zipDirectory(Logger log, File directory, ZipOutputStream zos, String path, FileFilter filter) throws IOException {
+        // get a listing of the directory content
+        File[] dirList = directory.listFiles();
+        byte[] readBuffer = new byte[8192];
+        int bytesIn = 0;
+        // loop through dirList, and zip the files
+        if (dirList != null) {
+            for (File f : dirList) {
+                if (f.isDirectory()) {
+                    String prefix = path + f.getName() + "/";
+                    if (matches(filter, f)) {
+                        zos.putNextEntry(new ZipEntry(prefix));
+                        zipDirectory(log, f, zos, prefix, filter);
+                    }
+                } else {
+                    String entry = path + f.getName();
+                    if (matches(filter, f)) {
+                        FileInputStream fis = new FileInputStream(f);
+                        try {
+                            ZipEntry anEntry = new ZipEntry(entry);
+                            zos.putNextEntry(anEntry);
+                            bytesIn = fis.read(readBuffer);
+                            while (bytesIn != -1) {
+                                zos.write(readBuffer, 0, bytesIn);
+                                bytesIn = fis.read(readBuffer);
+                            }
+                        } finally {
+                            fis.close();
+                        }
+                        if (log.isDebugEnabled()) {
+                            log.debug("zipping file " + entry);
+                        }
+                    }
+                }
+                zos.closeEntry();
+            }
+        }
+    }
+
+    protected static boolean matches(FileFilter filter, File f) {
+        return filter == null || filter.accept(f);
+    }
+
     /**
      * Unzips the given input stream of a ZIP to the given directory
      */
