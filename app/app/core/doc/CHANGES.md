@@ -1,5 +1,10 @@
 ### Change Log
 
+#### 1.4.26
+
+* You can now drag and drop files onto the wiki file listing; or from a file listing to your desktop/folders.
+* Fixes [these 2 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.26)
+
 #### 1.4.25
 
 * Lots of improvements for using hawtio as a great console for working with [fabric8 V2](http://fabric8.io/v2/index.html), [kubernetes](http://kubernetes.io/) and [OpenShift](https://github.com/openshift/origin)
@@ -15,7 +20,7 @@
 * Bug fixes
 * Fixes [these 31 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.23)
 
-#### 1.4.22 (in progress)
+#### 1.4.22
 
 * Bug fixes
 * Fixed hawtio connector to work with local and remote connections again

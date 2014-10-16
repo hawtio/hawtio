@@ -38242,6 +38242,8 @@ var Kubernetes;
                         $scope.fetched = true;
                         $scope.pods = (response['items'] || []).sortBy(function (pod) {
                             return pod.id;
+                        }).filter(function (pod) {
+                            return pod.id;
                         });
                         angular.forEach($scope.pods, function (entity) {
                             entity.$labelsText = Kubernetes.labelsToString(entity.labels);
@@ -51206,11 +51208,11 @@ var Wiki;
 
                     $scope.children = Array.create(directories, profiles, files).map(function (file) {
                         file.branch = $scope.branch;
-
-                        if (!file.directory) {
-                            file.fileName = file.name;
-                            file.downloadURL = Wiki.gitRestURL($scope.branch, file.path);
+                        file.fileName = file.name;
+                        if (file.directory) {
+                            file.fileName += ".zip";
                         }
+                        file.downloadURL = Wiki.gitRestURL($scope.branch, file.path);
                         return file;
                     });
                 }

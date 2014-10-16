@@ -119,21 +119,21 @@ If you do not use a servlet container or application server, you can also embed 
 
 <p>You can startup hawtio on your machine using the hawtio-app executable jar.</p>
 
-<p><a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-app/1.4.25/hawtio-app-1.4.25.jar">Download the executable hawtio-app-1.4.25.jar</a></p>
+<p><a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-app/1.4.26/hawtio-app-1.4.26.jar">Download the executable hawtio-app-1.4.26.jar</a></p>
 
 <p>Once you have downloaded it, just run this from the command line:</p>
 
-<pre><code>java -jar hawtio-app-1.4.25.jar</code></pre>
+<pre><code>java -jar hawtio-app-1.4.26.jar</code></pre>
 
 <p>And the console should show you which URL to open to view hawtio; which by default is <a href="http://localhost:8282/hawtio/">http://localhost:8282/hawtio/</a></p>
 
 <p>You can specify the port number to use, for example to use port 8090 run from the command line:</p>
 
-<pre><code>java -jar hawtio-app-1.4.25.jar --port 8090</code></pre>
+<pre><code>java -jar hawtio-app-1.4.26.jar --port 8090</code></pre>
 
 <p>hawtio supports other options which you can get listed by running from command line:</p>
 
-<pre><code>java -jar hawtio-app-1.4.25.jar --help</code></pre>
+<pre><code>java -jar hawtio-app-1.4.26.jar --help</code></pre>
 
 <p><a name="web-container"></a></p>
 
@@ -145,7 +145,7 @@ If you do not use a servlet container or application server, you can also embed 
 <div class="row">
   <div class="col-md-6 span6 text-center">
     <p>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.4.25/hawtio-default-1.4.25.war">Download hawtio-default.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.4.26/hawtio-default-1.4.26.war">Download hawtio-default.war</a>
     </p>
     <p>
       a bare hawtio web application with minimal dependencies
@@ -153,7 +153,7 @@ If you do not use a servlet container or application server, you can also embed 
   </div>
   <div class="col-md-6 span6 text-center">
     <p>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.4.25/sample-1.4.25.war">Download sample.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.4.26/sample-1.4.26.war">Download sample.war</a>
     </p>
     <p>
       a hawtio web application which comes with some <a href="http://activemq.apache.org/">Apache ActiveMQ</a> and
@@ -166,12 +166,12 @@ If you do not use a servlet container or application server, you can also embed 
 
 <p>If you rename the downloaded file to <em>hawtio.war</em> then drop it into your deploy directory then open <a href="http://localhost:8282/hawtio/">http://localhost:8282/hawtio/</a> and you should have your hawtio console to play with.</p>
 
-<p>Otherwise you will need to use either <a href="http://localhost:8282/hawtio-default-1.4.25/">http://localhost:8282/hawtio-default-1.4.25/</a> or <a href="http://localhost:8282/sample-1.4.25/">http://localhost:8282/sample-1.4.25/</a>  depending on the file name you downloaded.</p>
+<p>Otherwise you will need to use either <a href="http://localhost:8282/hawtio-default-1.4.26/">http://localhost:8282/hawtio-default-1.4.26/</a> or <a href="http://localhost:8282/sample-1.4.26/">http://localhost:8282/sample-1.4.26/</a>  depending on the file name you downloaded.</p>
 
 <p>Please check <a href="http://hawt.io/configuration/index.html">the configuration guide</a> to see how to configure things; in particular security.</p>
 
 <p>If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to
- <a class="btn btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.4.25/hawtio-default-offline-1.4.25.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).</p>
+ <a class="btn btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.4.26/hawtio-default-offline-1.4.26.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).</p>
 
 <p>If you don't see a Tomcat / Jetty tab for your container you may need to enable JMX.</p>
 
@@ -183,19 +183,19 @@ If you do not use a servlet container or application server, you can also embed 
 
 <p>Otherwise if you are using 6.0 or earlier of <a href="http://www.jboss.org/products/fuse">Fuse</a> or a vanilla <a href="http://karaf.apache.org/">Apache Karaf</a> or <a href="http://servicemix.apache.org/">Apache ServiceMix</a> then try the following:</p>
 
-<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.4.25/xml/features
+<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.4.26/xml/features
 features:install hawtio</code></pre>
 
 <p>If you are using <a href="http://karaf.apache.org/">Apache Karaf</a> 2.3.3 or newer then you can use 'features:chooseurl' which is simpler to do:</p>
 
-<pre><code>features:chooseurl hawtio 1.4.25
+<pre><code>features:chooseurl hawtio 1.4.26
 features:install hawtio</code></pre>
 
 <p>The hawtio console can then be viewed at <a href="http://localhost:8181/hawtio/">http://localhost:8181/hawtio/</a>. The default login for Karaf is karaf/karaf, and for ServiceMix its smx/smx.</p>
 
 <p><strong>NOTE</strong> if you are on ServiceMix 4.5 then you should install hawtio-core instead of hawtio, eg</p>
 
-<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.4.25/xml/features
+<pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.4.26/xml/features
 features:install hawtio-core</code></pre>
 
 <h3 id = "If_you_use_a_HTTP_proxy">If you use a HTTP proxy</h3>
@@ -224,7 +224,7 @@ features:install hawtio-core</code></pre>
 
 <h3 id = "If_you_use_JBoss_AS_or_Wildfly">If you use JBoss AS or Wildfly</h3>
 
-<p>You may have issues with slf4j JARs in WAR deployments on JBoss AS or Wildfly. To resolve this you must use <a class="btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.4.25/hawtio-no-slf4j-1.4.25.war">Download hawtio-no-slf4j.war</a>.</p>
+<p>You may have issues with slf4j JARs in WAR deployments on JBoss AS or Wildfly. To resolve this you must use <a class="btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.4.26/hawtio-no-slf4j-1.4.26.war">Download hawtio-no-slf4j.war</a>.</p>
 
 <p>See more details <a href="http://totalprogus.blogspot.co.uk/2011/06/javalanglinkageerror-loader-constraint.html">here</a>.</p>
 
@@ -316,7 +316,7 @@ main.run();</code></pre>
 <p>Chrome Extension currently does not work, as Google requires extensions to be installed using their app store, and hawtio are not yet published to the app store. This may change in the future.</p>
 </blockquote>
 
-<p><a class="btn btn-large btn-primary" href="http://central.maven.org/maven2/io/hawt/hawtio-crx/1.4.25/hawtio-crx-1.4.25.crx">Download the hawtio Chrome Extension version 1.4.25</a></p>
+<p><a class="btn btn-large btn-primary" href="http://central.maven.org/maven2/io/hawt/hawtio-crx/1.4.26/hawtio-crx-1.4.26.crx">Download the hawtio Chrome Extension version 1.4.26</a></p>
 
 <ul>
 <li><p>Then you'll need to open the folder that the CRX file got downloaded to. On a Mac in Chrome you right click the downloaded file and click <b>Show in Finder</b></p></li>

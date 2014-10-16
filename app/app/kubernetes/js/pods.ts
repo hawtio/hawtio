@@ -201,7 +201,7 @@ module Kubernetes {
       $scope.fetch = PollHelpers.setupPolling($scope, (next:() => void) => {
         KubernetesPods.query((response) => {
           $scope.fetched = true;
-          $scope.pods = (response['items'] || []).sortBy((pod:KubePod) => { return pod.id });
+          $scope.pods = (response['items'] || []).sortBy((pod:KubePod) => { return pod.id }).filter((pod:KubePod) => { return pod.id });
           angular.forEach($scope.pods, entity => {
             entity.$labelsText = Kubernetes.labelsToString(entity.labels);
 
