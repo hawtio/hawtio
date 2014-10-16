@@ -84,7 +84,7 @@ module Wiki {
   }]);
 
   // main page controller
-  export var ViewController = _module.controller("Wiki.ViewController", ["$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", "localStorage", "$interpolate", ($scope, $location:ng.ILocationService, $routeParams:ng.route.IRouteParamsService, $route:ng.route.IRouteService, $http:ng.IHttpService, $timeout:ng.ITimeoutService, workspace:Core.Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, jolokia:Jolokia.IJolokia, localStorage, $interpolate:ng.IInterpolateService) => {
+  export var ViewController = _module.controller("Wiki.ViewController", ["$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "$compile", "$templateCache", "jolokia", "localStorage", "$interpolate", "$dialog", ($scope, $location:ng.ILocationService, $routeParams:ng.route.IRouteParamsService, $route:ng.route.IRouteService, $http:ng.IHttpService, $timeout:ng.ITimeoutService, workspace:Core.Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, $compile:ng.ICompileService, $templateCache:ng.ITemplateCacheService, jolokia:Jolokia.IJolokia, localStorage, $interpolate:ng.IInterpolateService, $dialog) => {
 
     $scope.name = "WikiViewController";
 
@@ -106,9 +106,9 @@ module Wiki {
     $scope.operationCounter = 1;
     $scope.addDialog = new UI.Dialog();
     $scope.generateDialog = new UI.Dialog();
-    $scope.renameDialog = new UI.Dialog();
-    $scope.moveDialog = new UI.Dialog();
-    $scope.deleteDialog = new UI.Dialog();
+    $scope.renameDialog = <WikiDialog> null;
+    $scope.moveDialog = <WikiDialog> null;
+    $scope.deleteDialog = <WikiDialog> null;
     $scope.isFile = false;
 
     $scope.rename = {
@@ -546,7 +546,14 @@ module Wiki {
     $scope.openDeleteDialog = () => {
       if ($scope.gridOptions.selectedItems.length) {
         $scope.selectedFileHtml = "<ul>" + $scope.gridOptions.selectedItems.map(file => "<li>" + file.name + "</li>").sort().join("") + "</ul>";
+
+        $scope.deleteDialog = Wiki.getDeleteDialog($dialog, <Wiki.DeleteDialogOptions>{
+          callbacks: () => { return $scope.deleteAndCloseDialog; },
+          selectedFileHtml : () =>  { return $scope.selectedFileHtml; }
+        });
+
         $scope.deleteDialog.open();
+
       } else {
         log.debug("No items selected right now! " + $scope.gridOptions.selectedItems);
       }
@@ -576,29 +583,11 @@ module Wiki {
       // ignore errors if the file is the same as the rename file!
       var path = getRenameFilePath();
       if ($scope.originalRenameFilePath === path) {
-        $scope.fileExists = { exsits: false, name: null };
+        $scope.fileExists = { exists: false, name: null };
       } else {
         checkFileExists(path);
       }
     });
-
-    $scope.openRenameDialog = () => {
-      var name = null;
-      if ($scope.gridOptions.selectedItems.length) {
-        var selected = $scope.gridOptions.selectedItems[0];
-        name = selected.name;
-      }
-      if (name) {
-        $scope.rename.newFileName = name;
-        $scope.originalRenameFilePath = getRenameFilePath();
-        $scope.renameDialog.open();
-        $timeout(() => {
-          $('#renameFileName').focus();
-        }, 50);
-      } else {
-        log.debug("No items selected right now! " + $scope.gridOptions.selectedItems);
-      }
-    };
 
     $scope.renameAndCloseDialog = () => {
       if ($scope.gridOptions.selectedItems.length) {
@@ -621,12 +610,27 @@ module Wiki {
       $scope.renameDialog.close();
     };
 
-    $scope.openMoveDialog = () => {
+    $scope.openRenameDialog = () => {
+      var name = null;
       if ($scope.gridOptions.selectedItems.length) {
-        $scope.move.moveFolder = $scope.pageId;
-        $scope.moveDialog.open();
+        var selected = $scope.gridOptions.selectedItems[0];
+        name = selected.name;
+      }
+      if (name) {
+        $scope.rename.newFileName = name;
+        $scope.originalRenameFilePath = getRenameFilePath();
+
+        $scope.renameDialog = Wiki.getRenameDialog($dialog, <Wiki.RenameDialogOptions>{
+          rename: () => {  return $scope.rename; },
+          fileExists: () => { return $scope.fileExists; },
+          fileName: () => { return $scope.fileName; },
+          callbacks: () => { return $scope.renameAndCloseDialog; }
+        });
+
+        $scope.renameDialog.open();
+
         $timeout(() => {
-          $('#moveFolder').focus();
+          $('#renameFileName').focus();
         }, 50);
       } else {
         log.debug("No items selected right now! " + $scope.gridOptions.selectedItems);
@@ -662,6 +666,27 @@ module Wiki {
     $scope.folderNames = (text) => {
       return wikiRepository.completePath($scope.branch, text, true, null);
     };
+
+    $scope.openMoveDialog = () => {
+      if ($scope.gridOptions.selectedItems.length) {
+        $scope.move.moveFolder = $scope.pageId;
+
+        $scope.moveDialog = Wiki.getMoveDialog($dialog, <Wiki.MoveDialogOptions>{
+          move: () => {  return $scope.move; },
+          folderNames: () => { return $scope.folderNames; },
+          callbacks: () => { return $scope.moveAndCloseDialog; }
+        });
+
+        $scope.moveDialog.open();
+
+        $timeout(() => {
+          $('#moveFolder').focus();
+        }, 50);
+      } else {
+        log.debug("No items selected right now! " + $scope.gridOptions.selectedItems);
+      }
+    };
+
 
     setTimeout(maybeUpdateView, 50);
 
