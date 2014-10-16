@@ -1,8 +1,9 @@
 ### Change Log
 
-#### 1.4.26 (in progress)
+#### 1.4.26
 
 * You can now drag and drop files onto the wiki file listing; or from a file listing to your desktop/folders.
+* Fixes [these 2 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.26)
 
 #### 1.4.25
 
