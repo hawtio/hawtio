@@ -98,9 +98,11 @@ module Wiki {
           var response = workspace.jolokia.request( {type: "read", mbean: mbean, attribute: "SecurityProviderInfo" }, {
             success: (response)=>{
               $scope.securityProviderInfo = response.value;
+              Core.$apply($scope);
             },
             error: (response) => {
               console.log('Could not find the supported security algorithms: ', response.error);
+              Core.$apply($scope);
             }
           });
         },
@@ -179,7 +181,6 @@ module Wiki {
              }
            }
         }
-
       }
     },
     {
@@ -262,6 +263,14 @@ module Wiki {
     return Git.createGitRepository(workspace, jolokia, localStorage) !== null;
   }
 
+  export function goToLink(link, $timeout, $location) {
+    var href = Core.trimLeading(link, "#");
+    $timeout(() => {
+      log.debug("About to navigate to: " + href);
+      $location.url(href);
+    }, 100);
+  }
+
   /**
    * Returns all the links for the given branch for the custom views, starting with "/"
    * @param $scope
@@ -302,7 +311,6 @@ module Wiki {
         }
         if ( template.generated.init ) {
           template.generated.init(workspace, $scope);
-          template.generated.init = null
         }
       }
 
@@ -574,7 +582,7 @@ module Wiki {
             css = "icon-book";
             break;
           default:
-            log.debug("No match for extension: ", extension, " using a generic folder icon");
+            // log.debug("No match for extension: ", extension, " using a generic folder icon");
             css = "icon-folder-close";
         }
       } else {
@@ -594,7 +602,7 @@ module Wiki {
             css = "icon-file-text-alt";
             break;
           default:
-            log.debug("No match for extension: ", extension, " using a generic file icon");
+            // log.debug("No match for extension: ", extension, " using a generic file icon");
             css = "icon-file-alt";
         }
       }
