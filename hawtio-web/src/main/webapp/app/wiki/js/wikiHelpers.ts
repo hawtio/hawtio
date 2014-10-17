@@ -59,6 +59,58 @@ module Wiki {
       invalid: defaultLowerCaseFileNamePatternInvalid
     },
     {
+      label: "App",
+      tooltip: "Creates a new App folder used to configure and run containers",
+      addClass: "icon-cog green",
+      exemplar: 'myapp',
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
+      extension: '',
+      generated: {
+        mbean: ['io.fabric8', { type: 'KubernetesTemplateManager' }],
+        init: (workspace, $scope) => {
+
+        },
+        generate: (workspace, form, success, error, name) => {
+          form.name = name;
+          log.debug("Got form: ", form);
+          var json = angular.toJson(form);
+          var jolokia = <Jolokia.IJolokia> Core.injector.get("jolokia");
+          jolokia.request({
+            type: 'exec',
+            mbean: 'io.fabric8:type=KubernetesTemplateManager',
+            operation: 'createAppByJson',
+            arguments: [json]
+          }, onSuccess((response) => { 
+            log.debug("Generated app, response: ", response);
+            success(undefined); 
+          }, {
+            error: (response) => { error(response.error); }
+          }));
+        },
+        form: (workspace, $scope) => {
+          return {
+
+          };
+        },
+        schema: {
+          description: 'App settings',
+          type: 'java.lang.String',
+          properties: {
+            'dockerImage': {
+              'description': 'Docker Image',
+              'type': 'java.lang.String',
+              'input-attributes': { 'required': '' }
+            },
+            'labels': {
+              'description': 'Labels',
+              'type': 'map'
+            }
+          }
+        }
+      }
+    },
+    {
       label: "Fabric8 Profile",
       tooltip: "Create a new empty fabric profile. Using a hyphen ('-') will create a folder heirarchy, for example 'my-awesome-profile' will be available via the path 'my/awesome/profile'.",
       profile: true,

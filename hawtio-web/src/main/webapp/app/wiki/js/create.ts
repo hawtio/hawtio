@@ -163,15 +163,19 @@ module Wiki {
           generateDialog.close();
           Core.$apply($scope);
           template.generated.generate(workspace, $scope.formData, (contents)=> {
-            wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, (status) => {
-              log.debug("Created file " + name);
-              Wiki.onComplete(status);
+            if (contents) {
+              wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, (status) => {
+                log.debug("Created file " + name);
+                Wiki.onComplete(status);
+                returnToDirectory();
+              });
+            } else {
               returnToDirectory();
-            });
+            }
           }, (error)=> {
             Core.notification('error', error);
             Core.$apply($scope);
-          });
+          }, name);
         };
         generateDialog.open();
       } else {

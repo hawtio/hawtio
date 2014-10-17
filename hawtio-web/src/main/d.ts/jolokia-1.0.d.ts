@@ -98,8 +98,7 @@ declare module Jolokia {
   // we'll assume jolokia-simple.js is also being included
   export interface IJolokia {
     // low-level request API
-    request(request:IRequest, params?:IParams):any;
-    request(requests:Array<IRequest>, params?:IParams):any;
+    request(...args:any[]):any;
 
     // simple API
     getAttribute(mbean:string, attribute:string, path?:string, opts?:IParams):any;
