@@ -6,8 +6,12 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
@@ -40,6 +44,8 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static io.hawt.git.GitHelper.doUploadFiles;
 
 /**
  * A git bean to create a local git repo for configuration data which if configured will push/pull
@@ -589,6 +595,48 @@ public class GitFacade extends GitFacadeSupport {
     public String diff(String objectId, String baseObjectId, String path) {
         return doDiff(git, objectId, baseObjectId, path);
     }
+
+    /**
+     * Uploads the given local file name to the given branch and path; unzipping any zips if the flag is true
+     */
+    @Override
+    public void uploadFile(String branch, String path, boolean unzip, String sourceFileName, String destName) throws IOException, GitAPIException {
+        Map<String, File> uploadedFiles = new HashMap<>();
+        File sourceFile = new File(sourceFileName);
+        if (!sourceFile.exists()) {
+            throw new IllegalArgumentException("Source file does not exist: " + sourceFile);
+        }
+        uploadedFiles.put(destName, sourceFile);
+        uploadFiles(branch, path, unzip, uploadedFiles);
+    }
+
+    /**
+     * Uploads a list of files to the given branch and path
+     */
+    public void uploadFiles(String branch, String path, final boolean unzip, final Map<String, File> uploadFiles) throws IOException, GitAPIException {
+        LOG.info("uploadFiles: branch: " + branch + " path: " + path + " unzip: " + unzip + " uploadFiles: " + uploadFiles);
+
+        WriteCallback<Object> callback = new WriteCallback<Object>() {
+            @Override
+            public Object apply(WriteContext context) throws IOException, GitAPIException {
+                File folder = context.getFile();
+                // lets copy the files into the folder so we can add them to git
+                List<File> copiedFiles = new ArrayList<>();
+                Set<Map.Entry<String, File>> entries = uploadFiles.entrySet();
+                for (Map.Entry<String, File> entry : entries) {
+                    String name = entry.getKey();
+                    File uploadFile = entry.getValue();
+                    File copiedFile = new File(folder, name);
+                    Files.copy(uploadFile, copiedFile);
+                    copiedFiles.add(copiedFile);
+                }
+                doUploadFiles(context, folder, unzip, copiedFiles);
+                return null;
+            }
+        };
+        writeFile(branch, path, callback);
+    }
+
 
     public File getRootGitDirectory() {
         if (configDirectory == null) {

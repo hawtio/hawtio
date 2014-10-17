@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -32,6 +33,23 @@ public class Files {
     private static final transient Logger LOG = LoggerFactory.getLogger(Files.class);
 
     private static final int BUFFER_SIZE = 8192;
+
+    /**
+     * Copy the source {@link File} to the target {@link File}.
+     */
+    public static void copy(File source, File target) throws IOException {
+        if (!source.exists()) {
+            throw new FileNotFoundException("Source file not found:" + source.getAbsolutePath());
+        }
+
+        if (!target.exists() && !target.getParentFile().exists() && !target.getParentFile().mkdirs()) {
+            throw new IOException("Can't create target directory:" + target.getParentFile().getAbsolutePath());
+        }
+        FileInputStream is = new FileInputStream(source);
+        FileOutputStream os = new FileOutputStream(target);
+        IOHelper.copy(is, os);
+    }
+
 
     /**
      * Recursively deletes the given file whether its a file or directory returning the number
