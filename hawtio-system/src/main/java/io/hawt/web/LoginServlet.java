@@ -38,13 +38,13 @@ public class LoginServlet extends HttpServlet {
     protected Converters converters = new Converters();
     protected JsonConvertOptions options = JsonConvertOptions.DEFAULT;
     protected ConfigManager config;
-    private Integer timeout;
+    private Integer timeout = DEFAULT_SESSION_TIMEOUT;
 
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         config = (ConfigManager) servletConfig.getServletContext().getAttribute("ConfigManager");
         if (config != null) {
-            String s = config.get("sessionTimeout", null);
+            String s = config.get("sessionTimeout", "" + DEFAULT_SESSION_TIMEOUT);
             if (s != null) {
                 try {
                     timeout = Integer.parseInt(s);
