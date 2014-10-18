@@ -105,6 +105,16 @@ module Wiki {
             'labels': {
               'description': 'Labels',
               'type': 'map'
+            },
+            'summaryMarkdown': {
+              'description': 'Short Description',
+              'type': 'java.lang.String',
+              'input-attributes': { 'required': '' }
+            },
+            'replicaCount': {
+              'description': 'Replica Count',
+              'type': 'java.lang.Integer',
+              'input-attributes': {  }
             }
           }
         }
