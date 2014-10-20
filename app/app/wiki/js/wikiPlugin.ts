@@ -2,30 +2,33 @@
  * @module Wiki
  * @main Wiki
  */
-/// <reference path="./wikiHelpers.ts"/>
+/// <reference path="wikiHelpers.ts"/>
 /// <reference path="../../ui/js/dropDown.ts"/>
 /// <reference path="../../core/js/workspace.ts"/>
 /// <reference path="../../git/js/git.ts"/>
 /// <reference path="../../git/js/gitHelpers.ts"/>
+/// <reference path="../../helpers/js/pluginHelpers.ts"/>
+/// <reference path="../../helpers/js/urlHelpers.ts"/>
 /// <reference path="./wikiRepository.ts"/>
 module Wiki {
 
-  var pluginName = 'wiki';
-
+  export var pluginName = 'wiki';
   export var templatePath = 'app/wiki/html/';
   export var tab:any = null;
 
   export var _module = angular.module(pluginName, ['bootstrap', 'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ngResource', 'hawtioCore', 'hawtio-ui', 'tree', 'camel']);
+  export var controller = PluginHelpers.createControllerFunction(_module, 'Wiki');
+  export var route = PluginHelpers.createRoutingFunction(templatePath);
 
   _module.config(["$routeProvider", ($routeProvider) => {
 
     // allow optional branch paths...
     angular.forEach(["", "/branch/:branch"], (path) => {
       $routeProvider.
-              when('/wiki' + path + '/view', {templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false}).
+              when(UrlHelpers.join('/wiki', path, 'view'), route('viewPage.html', false)).
+              when(UrlHelpers.join('/wiki', path, 'create/*page'), route('create.html', false)).
               when('/wiki' + path + '/view/*page', {templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false}).
               when('/wiki' + path + '/book/*page', {templateUrl: 'app/wiki/html/viewBook.html', reloadOnSearch: false}).
-              when('/wiki' + path + '/create/*page', {templateUrl: 'app/wiki/html/createPage.html'}).
               when('/wiki' + path + '/edit/*page', {templateUrl: 'app/wiki/html/editPage.html'}).
               when('/wiki' + path + '/version/*page/:objectId', {templateUrl: 'app/wiki/html/viewPage.html'}).
               when('/wiki' + path + '/history/*page', {templateUrl: 'app/wiki/html/history.html'}).

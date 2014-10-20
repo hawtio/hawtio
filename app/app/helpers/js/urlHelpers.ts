@@ -1,4 +1,5 @@
 /// <reference path="../../baseIncludes.ts"/>
+/// <reference path="../../baseHelpers.ts"/>
 module UrlHelpers {
 
   var log = Logger.get("UrlHelpers");
@@ -42,24 +43,29 @@ module UrlHelpers {
   }
 
   /**
-   * Add the remainder to the URL string, adding a '/' if necessary
-   * @param url
-   * @param remainder
+   * Joins the supplied strings together using '/', stripping any leading/ending '/'
+   * from the supplied strings if needed, except the first and last string
    * @returns {string}
    */
-  export function join(url:string, remainder:string) {
-    if (!remainder || remainder.length === 0) {
-      return url;
-    }
-    var adjusted = remainder;
-    if (remainder.first(1) === '/') {
-      adjusted = remainder.from(1);
-    }
-    if (url.last(1) === '/') {
-      return url + adjusted;
-    } else {
-      return url + '/' + adjusted;
-    }
+  export function join(...paths:string[]) {
+    var tmp = [];
+    var length = paths.length - 1;
+    paths.forEach((path, index) => {
+      if (Core.isBlank(path)) {
+        return;
+      }
+      if (index !== 0 && path.first(1) === '/') {
+        path = path.slice(1);
+      }
+      if (index !== length && path.last(1) === '/') {
+        path = path.slice(0, path.length - 1);
+      }
+      if (!Core.isBlank(path)) {
+        tmp.push(path);
+      }
+    });
+    var rc = tmp.join('/');
+    return rc
   }
 
   export var parseQueryString = hawtioPluginLoader.parseQueryString;

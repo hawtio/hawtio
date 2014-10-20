@@ -96,7 +96,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/helpers/js/urlHelpers.ts:33</li>
+									<li>Defined in app/helpers/js/urlHelpers.ts:34</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -125,7 +125,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/helpers/js/urlHelpers.ts:92</li>
+									<li>Defined in app/helpers/js/urlHelpers.ts:98</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -151,7 +151,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/helpers/js/urlHelpers.ts:19</li>
+									<li>Defined in app/helpers/js/urlHelpers.ts:20</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -168,7 +168,7 @@
 					<a name="join" class="tsd-anchor"></a>
 					<h3>join</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
-						<li class="tsd-signature tsd-kind-icon">join<span class="tsd-signature-symbol">(</span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, remainder<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						<li class="tsd-signature tsd-kind-icon">join<span class="tsd-signature-symbol">(</span>paths<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Array&lt;string&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
@@ -177,16 +177,14 @@
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Add the remainder to the URL string, adding a &#39;/&#39; if necessary</p>
+									<p>Joins the supplied strings together using &#39;/&#39;, stripping any leading/ending &#39;/&#39;
+									from the supplied strings if needed, except the first and last string</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>url:         <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>remainder:         <span class="tsd-signature-type">string</span></h5>
+									<h5>paths?:         <span class="tsd-signature-type">Array&lt;string&gt;</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">string</span>
@@ -202,7 +200,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/helpers/js/urlHelpers.ts:73</li>
+									<li>Defined in app/helpers/js/urlHelpers.ts:79</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -231,7 +229,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/helpers/js/urlHelpers.ts:11</li>
+									<li>Defined in app/helpers/js/urlHelpers.ts:12</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -256,7 +254,7 @@
 					<div class="tsd-signature tsd-kind-icon">log<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Logging.Logger</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/helpers/js/urlHelpers.ts:4</li>
+							<li>Defined in app/helpers/js/urlHelpers.ts:5</li>
 						</ul>
 					</aside>
 					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
@@ -265,7 +263,7 @@
 					<div class="tsd-signature tsd-kind-icon">parse<wbr>Query<wbr>String<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/helpers/js/urlHelpers.ts:65</li>
+							<li>Defined in app/helpers/js/urlHelpers.ts:71</li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-variable">

@@ -191,19 +191,29 @@ var UrlHelpers;
     }
     UrlHelpers.contextActive = contextActive;
 
-    function join(url, remainder) {
-        if (!remainder || remainder.length === 0) {
-            return url;
+    function join() {
+        var paths = [];
+        for (var _i = 0; _i < (arguments.length - 0); _i++) {
+            paths[_i] = arguments[_i + 0];
         }
-        var adjusted = remainder;
-        if (remainder.first(1) === '/') {
-            adjusted = remainder.from(1);
-        }
-        if (url.last(1) === '/') {
-            return url + adjusted;
-        } else {
-            return url + '/' + adjusted;
-        }
+        var tmp = [];
+        var length = paths.length - 1;
+        paths.forEach(function (path, index) {
+            if (Core.isBlank(path)) {
+                return;
+            }
+            if (index !== 0 && path.first(1) === '/') {
+                path = path.slice(1);
+            }
+            if (index !== length && path.last(1) === '/') {
+                path = path.slice(0, path.length - 1);
+            }
+            if (!Core.isBlank(path)) {
+                tmp.push(path);
+            }
+        });
+        var rc = tmp.join('/');
+        return rc;
     }
     UrlHelpers.join = join;
 
@@ -1941,6 +1951,9 @@ var Core;
             for (var _i = 0; _i < (arguments.length - 1); _i++) {
                 methods[_i] = arguments[_i + 1];
             }
+            methods = methods.filter(function (m) {
+                return m !== undefined;
+            });
             var canInvoke = true;
             if (selection) {
                 var selectionFolder = selection;
@@ -5588,6 +5601,67 @@ var Wiki;
             invalid: defaultLowerCaseFileNamePatternInvalid
         },
         {
+            label: "App",
+            tooltip: "Creates a new App folder used to configure and run containers",
+            addClass: "icon-cog green",
+            exemplar: 'myapp',
+            regex: defaultFileNamePattern,
+            invalid: defaultFileNamePatternInvalid,
+            extension: '',
+            generated: {
+                mbean: ['io.fabric8', { type: 'KubernetesTemplateManager' }],
+                init: function (workspace, $scope) {
+                },
+                generate: function (workspace, form, success, error, name) {
+                    form.name = name;
+                    Wiki.log.debug("Got form: ", form);
+                    var json = angular.toJson(form);
+                    var jolokia = Core.injector.get("jolokia");
+                    jolokia.request({
+                        type: 'exec',
+                        mbean: 'io.fabric8:type=KubernetesTemplateManager',
+                        operation: 'createAppByJson',
+                        arguments: [json]
+                    }, onSuccess(function (response) {
+                        Wiki.log.debug("Generated app, response: ", response);
+                        success(undefined);
+                    }, {
+                        error: function (response) {
+                            error(response.error);
+                        }
+                    }));
+                },
+                form: function (workspace, $scope) {
+                    return {};
+                },
+                schema: {
+                    description: 'App settings',
+                    type: 'java.lang.String',
+                    properties: {
+                        'dockerImage': {
+                            'description': 'Docker Image',
+                            'type': 'java.lang.String',
+                            'input-attributes': { 'required': '' }
+                        },
+                        'labels': {
+                            'description': 'Labels',
+                            'type': 'map'
+                        },
+                        'summaryMarkdown': {
+                            'description': 'Short Description',
+                            'type': 'java.lang.String',
+                            'input-attributes': { 'required': '' }
+                        },
+                        'replicaCount': {
+                            'description': 'Replica Count',
+                            'type': 'java.lang.Integer',
+                            'input-attributes': {}
+                        }
+                    }
+                }
+            }
+        },
+        {
             label: "Fabric8 Profile",
             tooltip: "Create a new empty fabric profile. Using a hyphen ('-') will create a folder heirarchy, for example 'my-awesome-profile' will be available via the path 'my/awesome/profile'.",
             profile: true,
@@ -5627,9 +5701,11 @@ var Wiki;
                     var response = workspace.jolokia.request({ type: "read", mbean: mbean, attribute: "SecurityProviderInfo" }, {
                         success: function (response) {
                             $scope.securityProviderInfo = response.value;
+                            Core.$apply($scope);
                         },
                         error: function (response) {
                             console.log('Could not find the supported security algorithms: ', response.error);
+                            Core.$apply($scope);
                         }
                     });
                 },
@@ -5791,6 +5867,15 @@ var Wiki;
     }
     Wiki.isWikiEnabled = isWikiEnabled;
 
+    function goToLink(link, $timeout, $location) {
+        var href = Core.trimLeading(link, "#");
+        $timeout(function () {
+            Wiki.log.debug("About to navigate to: " + href);
+            $location.url(href);
+        }, 100);
+    }
+    Wiki.goToLink = goToLink;
+
     function customViewLinks($scope) {
         var branch = $scope.branch;
         var prefix = Core.trimLeading(Wiki.startLink(branch), "#");
@@ -5822,7 +5907,6 @@ var Wiki;
                 }
                 if (template.generated.init) {
                     template.generated.init(workspace, $scope);
-                    template.generated.init = null;
                 }
             }
 
@@ -6064,7 +6148,6 @@ var Wiki;
                         css = "icon-book";
                         break;
                     default:
-                        Wiki.log.debug("No match for extension: ", extension, " using a generic folder icon");
                         css = "icon-folder-close";
                 }
             } else {
@@ -6084,7 +6167,6 @@ var Wiki;
                         css = "icon-file-text-alt";
                         break;
                     default:
-                        Wiki.log.debug("No match for extension: ", extension, " using a generic file icon");
                         css = "icon-file-alt";
                 }
             }
@@ -22587,17 +22669,18 @@ var Wiki;
 })(Wiki || (Wiki = {}));
 var Wiki;
 (function (Wiki) {
-    var pluginName = 'wiki';
-
+    Wiki.pluginName = 'wiki';
     Wiki.templatePath = 'app/wiki/html/';
     Wiki.tab = null;
 
-    Wiki._module = angular.module(pluginName, ['bootstrap', 'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ngResource', 'hawtioCore', 'hawtio-ui', 'tree', 'camel']);
+    Wiki._module = angular.module(Wiki.pluginName, ['bootstrap', 'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ngResource', 'hawtioCore', 'hawtio-ui', 'tree', 'camel']);
+    Wiki.controller = PluginHelpers.createControllerFunction(Wiki._module, 'Wiki');
+    Wiki.route = PluginHelpers.createRoutingFunction(Wiki.templatePath);
 
     Wiki._module.config([
         "$routeProvider", function ($routeProvider) {
             angular.forEach(["", "/branch/:branch"], function (path) {
-                $routeProvider.when('/wiki' + path + '/view', { templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false }).when('/wiki' + path + '/view/*page', { templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false }).when('/wiki' + path + '/book/*page', { templateUrl: 'app/wiki/html/viewBook.html', reloadOnSearch: false }).when('/wiki' + path + '/create/*page', { templateUrl: 'app/wiki/html/createPage.html' }).when('/wiki' + path + '/edit/*page', { templateUrl: 'app/wiki/html/editPage.html' }).when('/wiki' + path + '/version/*page/:objectId', { templateUrl: 'app/wiki/html/viewPage.html' }).when('/wiki' + path + '/history/*page', { templateUrl: 'app/wiki/html/history.html' }).when('/wiki' + path + '/commit/*page/:objectId', { templateUrl: 'app/wiki/html/commit.html' }).when('/wiki' + path + '/diff/*page/:objectId/:baseObjectId', { templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false }).when('/wiki' + path + '/formTable/*page', { templateUrl: 'app/wiki/html/formTable.html' }).when('/wiki' + path + '/dozer/mappings/*page', { templateUrl: 'app/wiki/html/dozerMappings.html' }).when('/wiki' + path + '/configurations/*page', { templateUrl: 'app/wiki/html/configurations.html' }).when('/wiki' + path + '/configuration/:pid/*page', { templateUrl: 'app/wiki/html/configuration.html' }).when('/wiki' + path + '/newConfiguration/:factoryPid/*page', { templateUrl: 'app/wiki/html/configuration.html' }).when('/wiki' + path + '/camel/diagram/*page', { templateUrl: 'app/wiki/html/camelDiagram.html' }).when('/wiki' + path + '/camel/canvas/*page', { templateUrl: 'app/wiki/html/camelCanvas.html' }).when('/wiki' + path + '/camel/properties/*page', { templateUrl: 'app/wiki/html/camelProperties.html' });
+                $routeProvider.when(UrlHelpers.join('/wiki', path, 'view'), Wiki.route('viewPage.html', false)).when(UrlHelpers.join('/wiki', path, 'create/*page'), Wiki.route('create.html', false)).when('/wiki' + path + '/view/*page', { templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false }).when('/wiki' + path + '/book/*page', { templateUrl: 'app/wiki/html/viewBook.html', reloadOnSearch: false }).when('/wiki' + path + '/edit/*page', { templateUrl: 'app/wiki/html/editPage.html' }).when('/wiki' + path + '/version/*page/:objectId', { templateUrl: 'app/wiki/html/viewPage.html' }).when('/wiki' + path + '/history/*page', { templateUrl: 'app/wiki/html/history.html' }).when('/wiki' + path + '/commit/*page/:objectId', { templateUrl: 'app/wiki/html/commit.html' }).when('/wiki' + path + '/diff/*page/:objectId/:baseObjectId', { templateUrl: 'app/wiki/html/viewPage.html', reloadOnSearch: false }).when('/wiki' + path + '/formTable/*page', { templateUrl: 'app/wiki/html/formTable.html' }).when('/wiki' + path + '/dozer/mappings/*page', { templateUrl: 'app/wiki/html/dozerMappings.html' }).when('/wiki' + path + '/configurations/*page', { templateUrl: 'app/wiki/html/configurations.html' }).when('/wiki' + path + '/configuration/:pid/*page', { templateUrl: 'app/wiki/html/configuration.html' }).when('/wiki' + path + '/newConfiguration/:factoryPid/*page', { templateUrl: 'app/wiki/html/configuration.html' }).when('/wiki' + path + '/camel/diagram/*page', { templateUrl: 'app/wiki/html/camelDiagram.html' }).when('/wiki' + path + '/camel/canvas/*page', { templateUrl: 'app/wiki/html/camelCanvas.html' }).when('/wiki' + path + '/camel/properties/*page', { templateUrl: 'app/wiki/html/camelProperties.html' });
             });
         }]);
 
@@ -22693,7 +22776,7 @@ var Wiki;
             });
         }]);
 
-    hawtioPluginLoader.addModule(pluginName);
+    hawtioPluginLoader.addModule(Wiki.pluginName);
 })(Wiki || (Wiki = {}));
 var Fabric;
 (function (Fabric) {
@@ -49664,6 +49747,244 @@ var Wiki;
 })(Wiki || (Wiki = {}));
 var Wiki;
 (function (Wiki) {
+    var CreateController = Wiki.controller("CreateController", [
+        "$scope", "$location", "$routeParams", "$route", "$http", "$timeout", "workspace", "jolokia", "wikiRepository", function ($scope, $location, $routeParams, $route, $http, $timeout, workspace, jolokia, wikiRepository) {
+            var isFmc = Fabric.isFMCContainer(workspace);
+            Wiki.initScope($scope, $routeParams, $location);
+            $scope.createDocumentTree = Wiki.createWizardTree(workspace, $scope);
+            $scope.createDocumentTreeActivations = ["camel-spring.xml", "ReadMe.md"];
+            $scope.fileExists = {
+                exists: false,
+                name: ""
+            };
+            $scope.newDocumentName = "";
+            $scope.selectedCreateDocumentExtension = null;
+            $scope.fileExists.exists = false;
+            $scope.fileExists.name = "";
+            $scope.newDocumentName = "";
+            $scope.generateDialog = new UI.Dialog();
+
+            function returnToDirectory() {
+                var link = Wiki.viewLink($scope.branch, $scope.pageId, $location);
+                Wiki.log.debug("Cancelling, going to link: ", link);
+                Wiki.goToLink(link, $timeout, $location);
+            }
+
+            $scope.cancel = function () {
+                returnToDirectory();
+            };
+
+            $scope.onCreateDocumentSelect = function (node) {
+                $scope.fileExists.exists = false;
+                $scope.fileExists.name = "";
+
+                $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
+                $scope.selectedCreateDocumentTemplateRegex = $scope.selectedCreateDocumentTemplate.regex || /.*/;
+                $scope.selectedCreateDocumentTemplateInvalid = $scope.selectedCreateDocumentTemplate.invalid || "invalid name";
+                $scope.selectedCreateDocumentTemplateExtension = $scope.selectedCreateDocumentTemplate.extension || null;
+            };
+
+            $scope.addAndCloseDialog = function (fileName) {
+                $scope.newDocumentName = fileName;
+                var template = $scope.selectedCreateDocumentTemplate;
+                var path = getNewDocumentPath();
+
+                $scope.newDocumentName = null;
+
+                $scope.fileExists.exists = false;
+                $scope.fileExists.name = "";
+                $scope.fileExtensionInvalid = null;
+
+                if (!template || !path) {
+                    return;
+                }
+
+                if ($scope.selectedCreateDocumentTemplateExtension) {
+                    var idx = path.lastIndexOf('.');
+                    if (idx > 0) {
+                        var ext = path.substring(idx);
+                        if ($scope.selectedCreateDocumentTemplateExtension !== ext) {
+                            $scope.fileExtensionInvalid = "File extension must be: " + $scope.selectedCreateDocumentTemplateExtension;
+                            Core.$apply($scope);
+                            return;
+                        }
+                    }
+                }
+
+                var exists = wikiRepository.exists($scope.branch, path, null);
+                if (exists) {
+                    $scope.fileExists.exists = true;
+                    $scope.fileExists.name = path;
+                    Core.$apply($scope);
+                    return;
+                }
+
+                var name = Wiki.fileName(path);
+                var folder = Wiki.fileParent(path);
+                var exemplar = template.exemplar;
+
+                var commitMessage = "Created " + template.label;
+                var exemplarUri = Core.url("/app/wiki/exemplar/" + exemplar);
+
+                if (template.folder) {
+                    Core.notification("success", "Creating new folder " + name);
+
+                    wikiRepository.createDirectory($scope.branch, path, commitMessage, function (status) {
+                        var link = Wiki.viewLink($scope.branch, path, $location);
+                        Wiki.goToLink(link, $timeout, $location);
+                    });
+                } else if (template.profile) {
+                    function toPath(profileName) {
+                        var answer = "fabric/profiles/" + profileName;
+                        answer = answer.replace(/-/g, "/");
+                        answer = answer + ".profile";
+                        return answer;
+                    }
+
+                    function toProfileName(path) {
+                        var answer = path.replace(/^fabric\/profiles\//, "");
+                        answer = answer.replace(/\//g, "-");
+                        answer = answer.replace(/\.profile$/, "");
+                        return answer;
+                    }
+
+                    folder = folder.replace(/\/=?(\w*)\.profile$/, "");
+
+                    var concatenated = folder + "/" + name;
+
+                    var profileName = toProfileName(concatenated);
+                    var targetPath = toPath(profileName);
+
+                    var profile = Fabric.getProfile(workspace.jolokia, $scope.branch, profileName, false);
+                    if (profile) {
+                        $scope.fileExists.exists = true;
+                        $scope.fileExists.name = profileName;
+                        Core.$apply($scope);
+                        return;
+                    }
+
+                    $scope.addDialog.close();
+
+                    Fabric.createProfile(workspace.jolokia, $scope.branch, profileName, ['default'], function () {
+                        Core.$apply($scope);
+                        Fabric.newConfigFile(workspace.jolokia, $scope.branch, profileName, 'ReadMe.md', function () {
+                            Core.$apply($scope);
+                            var contents = "Here's an empty ReadMe.md for '" + profileName + "', please update!";
+                            Fabric.saveConfigFile(workspace.jolokia, $scope.branch, profileName, 'ReadMe.md', contents.encodeBase64(), function () {
+                                Core.$apply($scope);
+                                var link = Wiki.viewLink($scope.branch, targetPath, $location);
+                                Wiki.goToLink(link, $timeout, $location);
+                            }, function (response) {
+                                Core.notification('error', 'Failed to set ReadMe.md data in profile ' + profileName + ' due to ' + response.error);
+                                Core.$apply($scope);
+                            });
+                        }, function (response) {
+                            Core.notification('error', 'Failed to create ReadMe.md in profile ' + profileName + ' due to ' + response.error);
+                            Core.$apply($scope);
+                        });
+                    }, function (response) {
+                        Core.notification('error', 'Failed to create profile ' + profileName + ' due to ' + response.error);
+                        Core.$apply($scope);
+                    });
+                } else if (template.generated) {
+                    var generateDialog = $scope.generateDialog;
+                    $scope.formSchema = template.generated.schema;
+                    $scope.formData = template.generated.form(workspace, $scope);
+                    $scope.generate = function () {
+                        generateDialog.close();
+                        Core.$apply($scope);
+                        template.generated.generate(workspace, $scope.formData, function (contents) {
+                            if (contents) {
+                                wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, function (status) {
+                                    Wiki.log.debug("Created file " + name);
+                                    Wiki.onComplete(status);
+                                    returnToDirectory();
+                                });
+                            } else {
+                                returnToDirectory();
+                            }
+                        }, function (error) {
+                            Core.notification('error', error);
+                            Core.$apply($scope);
+                        }, name);
+                    };
+                    generateDialog.open();
+                } else {
+                    $http.get(exemplarUri).success(function (data, status, headers, config) {
+                        putPage(path, name, folder, data, commitMessage);
+                    }).error(function (data, status, headers, config) {
+                        putPage(path, name, folder, "", commitMessage);
+                    });
+                }
+            };
+
+            function putPage(path, name, folder, contents, commitMessage) {
+                wikiRepository.putPage($scope.branch, path, contents, commitMessage, function (status) {
+                    Wiki.log.debug("Created file " + name);
+                    Wiki.onComplete(status);
+
+                    $scope.git = wikiRepository.getPage($scope.branch, folder, $scope.objectId, function (details) {
+                        var link = null;
+                        if (details && details.children) {
+                            Wiki.log.debug("scanned the directory " + details.children.length + " children");
+                            var child = details.children.find(function (c) {
+                                return c.name === Wiki.fileName;
+                            });
+                            if (child) {
+                                link = $scope.childLink(child);
+                            } else {
+                                Wiki.log.debug("Could not find name '" + Wiki.fileName + "' in the list of file names " + JSON.stringify(details.children.map(function (c) {
+                                    return c.name;
+                                })));
+                            }
+                        }
+                        if (!link) {
+                            Wiki.log.debug("WARNING: could not find the childLink so reverting to the wiki edit page!");
+                            link = Wiki.editLink($scope.branch, path, $location);
+                        }
+
+                        Wiki.goToLink(link, $timeout, $location);
+                    });
+                });
+            }
+
+            function getNewDocumentPath() {
+                var template = $scope.selectedCreateDocumentTemplate;
+                if (!template) {
+                    Wiki.log.debug("No template selected.");
+                    return null;
+                }
+                var exemplar = template.exemplar || "";
+                var name = $scope.newDocumentName || exemplar;
+
+                if (name.indexOf('.') < 0) {
+                    var idx = exemplar.lastIndexOf(".");
+                    if (idx > 0) {
+                        name += exemplar.substring(idx);
+                    }
+                }
+
+                var folder = $scope.pageId;
+                if ($scope.isFile) {
+                    var idx = folder.lastIndexOf("/");
+                    if (idx <= 0) {
+                        folder = "";
+                    } else {
+                        folder = folder.substring(0, idx);
+                    }
+                }
+                var idx = name.lastIndexOf("/");
+                if (idx > 0) {
+                    folder += "/" + name.substring(0, idx);
+                    name = name.substring(idx + 1);
+                }
+                folder = Core.trimLeading(folder, "/");
+                return folder + (folder ? "/" : "") + name;
+            }
+        }]);
+})(Wiki || (Wiki = {}));
+var Wiki;
+(function (Wiki) {
     Wiki._module.controller("Wiki.DozerMappingsController", [
         "$scope", "$location", "$routeParams", "workspace", "jolokia", "wikiRepository", "$templateCache", function ($scope, $location, $routeParams, workspace, jolokia, wikiRepository, $templateCache) {
             var log = Logger.get("Dozer");
@@ -50666,14 +50987,65 @@ var Wiki;
 })(Wiki || (Wiki = {}));
 var Wiki;
 (function (Wiki) {
-    function goToLink(link, $timeout, $location) {
-        var href = Core.trimLeading(link, "#");
-        $timeout(function () {
-            Wiki.log.debug("About to navigate to: " + href);
-            $location.url(href);
-        }, 100);
-    }
+    function getRenameDialog($dialog, $scope) {
+        return $dialog.dialog({
+            resolve: $scope,
+            templateUrl: 'app/wiki/html/modal/renameDialog.html',
+            controller: [
+                "$scope", "dialog", "callbacks", "rename", "fileExists", "fileName", function ($scope, dialog, callbacks, rename, fileExists, fileName) {
+                    $scope.rename = rename;
+                    $scope.fileExists = fileExists;
+                    $scope.fileName = fileName;
 
+                    $scope.close = function (result) {
+                        dialog.close();
+                    };
+
+                    $scope.renameAndCloseDialog = callbacks;
+                }]
+        });
+    }
+    Wiki.getRenameDialog = getRenameDialog;
+
+    function getMoveDialog($dialog, $scope) {
+        return $dialog.dialog({
+            resolve: $scope,
+            templateUrl: 'app/wiki/html/modal/moveDialog.html',
+            controller: [
+                "$scope", "dialog", "callbacks", "move", "folderNames", function ($scope, dialog, callbacks, move, folderNames) {
+                    $scope.move = move;
+                    $scope.folderNames = folderNames;
+
+                    $scope.close = function (result) {
+                        dialog.close();
+                    };
+
+                    $scope.moveAndCloseDialog = callbacks;
+                }]
+        });
+    }
+    Wiki.getMoveDialog = getMoveDialog;
+
+    function getDeleteDialog($dialog, $scope) {
+        return $dialog.dialog({
+            resolve: $scope,
+            templateUrl: 'app/wiki/html/modal/deleteDialog.html',
+            controller: [
+                "$scope", "dialog", "callbacks", "selectedFileHtml", function ($scope, dialog, callbacks, selectedFileHtml) {
+                    $scope.selectedFileHtml = selectedFileHtml;
+
+                    $scope.close = function (result) {
+                        dialog.close();
+                    };
+
+                    $scope.deleteAndCloseDialog = callbacks;
+                }]
+        });
+    }
+    Wiki.getDeleteDialog = getDeleteDialog;
+})(Wiki || (Wiki = {}));
+var Wiki;
+(function (Wiki) {
     Wiki.FileDropController = Wiki._module.controller("Wiki.FileDropController", [
         "$scope", "FileUploader", "$route", "$timeout", "userDetails", function ($scope, FileUploader, $route, $timeout, userDetails) {
             var uploadURI = Wiki.gitRestURL($scope.branch, $scope.pageId);
@@ -50759,8 +51131,6 @@ var Wiki;
             $scope.showAppHeader = false;
 
             $scope.operationCounter = 1;
-            $scope.addDialog = new UI.Dialog();
-            $scope.generateDialog = new UI.Dialog();
             $scope.renameDialog = null;
             $scope.moveDialog = null;
             $scope.deleteDialog = null;
@@ -50772,15 +51142,6 @@ var Wiki;
             $scope.move = {
                 moveFolder: ""
             };
-            $scope.createDocumentTree = Wiki.createWizardTree(workspace, $scope);
-
-            $scope.createDocumentTreeActivations = ["camel-spring.xml", "ReadMe.md"];
-            $scope.fileExists = {
-                exists: false,
-                name: ""
-            };
-            $scope.newDocumentName = "";
-            $scope.selectedCreateDocumentExtension = null;
             $scope.ViewMode = Wiki.ViewMode;
 
             Core.bindModelToSearchParam($scope, $location, "searchText", "q", "");
@@ -50968,200 +51329,6 @@ var Wiki;
             $scope.$on("$routeChangeSuccess", function (event, current, previous) {
                 setTimeout(maybeUpdateView, 50);
             });
-
-            $scope.onSubmit = function (json, form) {
-                Core.notification("success", "Submitted form :" + form.get(0).name + " data: " + JSON.stringify(json));
-            };
-
-            $scope.onCancel = function (form) {
-                Core.notification("success", "Clicked cancel!");
-            };
-
-            $scope.onCreateDocumentSelect = function (node) {
-                $scope.fileExists.exists = false;
-                $scope.fileExists.name = "";
-
-                $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
-                $scope.selectedCreateDocumentTemplateRegex = $scope.selectedCreateDocumentTemplate.regex || /.*/;
-                $scope.selectedCreateDocumentTemplateInvalid = $scope.selectedCreateDocumentTemplate.invalid || "invalid name";
-                $scope.selectedCreateDocumentTemplateExtension = $scope.selectedCreateDocumentTemplate.extension || null;
-            };
-
-            $scope.openAddDialog = function () {
-                $scope.fileExists.exists = false;
-                $scope.fileExists.name = "";
-                $scope.newDocumentName = "";
-                $scope.addDialog.open();
-            };
-
-            $scope.addAndCloseDialog = function (fileName) {
-                $scope.newDocumentName = fileName;
-                var template = $scope.selectedCreateDocumentTemplate;
-                var path = getNewDocumentPath();
-
-                $scope.newDocumentName = null;
-
-                $scope.fileExists.exists = false;
-                $scope.fileExists.name = "";
-                $scope.fileExtensionInvalid = null;
-
-                if (!template || !path) {
-                    return;
-                }
-
-                if ($scope.selectedCreateDocumentTemplateExtension) {
-                    var idx = path.lastIndexOf('.');
-                    if (idx > 0) {
-                        var ext = path.substring(idx);
-                        if ($scope.selectedCreateDocumentTemplateExtension !== ext) {
-                            $scope.fileExtensionInvalid = "File extension must be: " + $scope.selectedCreateDocumentTemplateExtension;
-                            Core.$apply($scope);
-                            return;
-                        }
-                    }
-                }
-
-                var exists = wikiRepository.exists($scope.branch, path, null);
-                if (exists) {
-                    $scope.fileExists.exists = true;
-                    $scope.fileExists.name = path;
-                    Core.$apply($scope);
-                    return;
-                }
-
-                var name = Wiki.fileName(path);
-                var folder = Wiki.fileParent(path);
-                var exemplar = template.exemplar;
-
-                var commitMessage = "Created " + template.label;
-                var exemplarUri = Core.url("/app/wiki/exemplar/" + exemplar);
-
-                if (template.folder) {
-                    Core.notification("success", "Creating new folder " + name);
-
-                    wikiRepository.createDirectory($scope.branch, path, commitMessage, function (status) {
-                        $scope.addDialog.close();
-                        Core.$apply($scope);
-                        var link = Wiki.viewLink($scope.branch, path, $location);
-                        goToLink(link, $timeout, $location);
-                    });
-                } else if (template.profile) {
-                    function toPath(profileName) {
-                        var answer = "fabric/profiles/" + profileName;
-                        answer = answer.replace(/-/g, "/");
-                        answer = answer + ".profile";
-                        return answer;
-                    }
-
-                    function toProfileName(path) {
-                        var answer = path.replace(/^fabric\/profiles\//, "");
-                        answer = answer.replace(/\//g, "-");
-                        answer = answer.replace(/\.profile$/, "");
-                        return answer;
-                    }
-
-                    folder = folder.replace(/\/=?(\w*)\.profile$/, "");
-
-                    var concatenated = folder + "/" + name;
-
-                    var profileName = toProfileName(concatenated);
-                    var targetPath = toPath(profileName);
-
-                    var profile = Fabric.getProfile(workspace.jolokia, $scope.branch, profileName, false);
-                    if (profile) {
-                        $scope.fileExists.exists = true;
-                        $scope.fileExists.name = profileName;
-                        Core.$apply($scope);
-                        return;
-                    }
-
-                    $scope.addDialog.close();
-
-                    Fabric.createProfile(workspace.jolokia, $scope.branch, profileName, ['default'], function () {
-                        Core.$apply($scope);
-
-                        Fabric.newConfigFile(workspace.jolokia, $scope.branch, profileName, 'ReadMe.md', function () {
-                            Core.$apply($scope);
-
-                            var contents = "Here's an empty ReadMe.md for '" + profileName + "', please update!";
-
-                            Fabric.saveConfigFile(workspace.jolokia, $scope.branch, profileName, 'ReadMe.md', contents.encodeBase64(), function () {
-                                Core.$apply($scope);
-                                var link = Wiki.viewLink($scope.branch, targetPath, $location);
-                                goToLink(link, $timeout, $location);
-                            }, function (response) {
-                                Core.notification('error', 'Failed to set ReadMe.md data in profile ' + profileName + ' due to ' + response.error);
-                                Core.$apply($scope);
-                            });
-                        }, function (response) {
-                            Core.notification('error', 'Failed to create ReadMe.md in profile ' + profileName + ' due to ' + response.error);
-                            Core.$apply($scope);
-                        });
-                    }, function (response) {
-                        Core.notification('error', 'Failed to create profile ' + profileName + ' due to ' + response.error);
-                        Core.$apply($scope);
-                    });
-                } else if (template.generated) {
-                    $scope.addDialog.close();
-
-                    var generateDialog = $scope.generateDialog;
-                    $scope.formSchema = template.generated.schema;
-                    $scope.formData = template.generated.form(workspace, $scope);
-                    $scope.generate = function () {
-                        template.generated.generate(workspace, $scope.formData, function (contents) {
-                            generateDialog.close();
-                            wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, function (status) {
-                                Wiki.log.debug("Created file " + name);
-                                Wiki.onComplete(status);
-                                $scope.generateDialog.close();
-                                updateView();
-                            });
-                        }, function (error) {
-                            generateDialog.close();
-                            Core.notification('error', error);
-                        });
-                    };
-                    generateDialog.open();
-                } else {
-                    $http.get(exemplarUri).success(function (data, status, headers, config) {
-                        putPage(path, name, folder, data, commitMessage);
-                    }).error(function (data, status, headers, config) {
-                        putPage(path, name, folder, "", commitMessage);
-                    });
-                }
-                $scope.addDialog.close();
-            };
-
-            function putPage(path, name, folder, contents, commitMessage) {
-                wikiRepository.putPage($scope.branch, path, contents, commitMessage, function (status) {
-                    Wiki.log.debug("Created file " + name);
-                    Wiki.onComplete(status);
-
-                    $scope.git = wikiRepository.getPage($scope.branch, folder, $scope.objectId, function (details) {
-                        var link = null;
-                        if (details && details.children) {
-                            Wiki.log.debug("scanned the directory " + details.children.length + " children");
-                            var child = details.children.find(function (c) {
-                                return c.name === Wiki.fileName;
-                            });
-                            if (child) {
-                                link = $scope.childLink(child);
-                            } else {
-                                Wiki.log.debug("Could not find name '" + Wiki.fileName + "' in the list of file names " + JSON.stringify(details.children.map(function (c) {
-                                    return c.name;
-                                })));
-                            }
-                        }
-                        if (!link) {
-                            Wiki.log.debug("WARNING: could not find the childLink so reverting to the wiki edit page!");
-                            link = Wiki.editLink($scope.branch, path, $location);
-                        }
-                        $scope.addDialog.close();
-                        Core.$apply($scope);
-                        goToLink(link, $timeout, $location);
-                    });
-                });
-            }
 
             $scope.openDeleteDialog = function () {
                 if ($scope.gridOptions.selectedItems.length) {
@@ -51527,104 +51694,11 @@ var Wiki;
                 });
             };
 
-            function getNewDocumentPath() {
-                var template = $scope.selectedCreateDocumentTemplate;
-                if (!template) {
-                    Wiki.log.debug("No template selected.");
-                    return null;
-                }
-                var exemplar = template.exemplar || "";
-                var name = $scope.newDocumentName || exemplar;
-
-                if (name.indexOf('.') < 0) {
-                    var idx = exemplar.lastIndexOf(".");
-                    if (idx > 0) {
-                        name += exemplar.substring(idx);
-                    }
-                }
-
-                var folder = $scope.pageId;
-                if ($scope.isFile) {
-                    var idx = folder.lastIndexOf("/");
-                    if (idx <= 0) {
-                        folder = "";
-                    } else {
-                        folder = folder.substring(0, idx);
-                    }
-                }
-                var idx = name.lastIndexOf("/");
-                if (idx > 0) {
-                    folder += "/" + name.substring(0, idx);
-                    name = name.substring(idx + 1);
-                }
-                folder = Core.trimLeading(folder, "/");
-                return folder + (folder ? "/" : "") + name;
-            }
-
             function getRenameFilePath() {
                 var newFileName = $scope.rename.newFileName;
                 return ($scope.pageId && newFileName) ? $scope.pageId + "/" + newFileName : null;
             }
         }]);
-})(Wiki || (Wiki = {}));
-var Wiki;
-(function (Wiki) {
-    function getRenameDialog($dialog, $scope) {
-        return $dialog.dialog({
-            resolve: $scope,
-            templateUrl: 'app/wiki/html/modal/renameDialog.html',
-            controller: [
-                "$scope", "dialog", "callbacks", "rename", "fileExists", "fileName", function ($scope, dialog, callbacks, rename, fileExists, fileName) {
-                    $scope.rename = rename;
-                    $scope.fileExists = fileExists;
-                    $scope.fileName = fileName;
-
-                    $scope.close = function (result) {
-                        dialog.close();
-                    };
-
-                    $scope.renameAndCloseDialog = callbacks;
-                }]
-        });
-    }
-    Wiki.getRenameDialog = getRenameDialog;
-
-    function getMoveDialog($dialog, $scope) {
-        return $dialog.dialog({
-            resolve: $scope,
-            templateUrl: 'app/wiki/html/modal/moveDialog.html',
-            controller: [
-                "$scope", "dialog", "callbacks", "move", "folderNames", function ($scope, dialog, callbacks, move, folderNames) {
-                    $scope.move = move;
-                    $scope.folderNames = folderNames;
-
-                    $scope.close = function (result) {
-                        dialog.close();
-                    };
-
-                    $scope.moveAndCloseDialog = callbacks;
-                }]
-        });
-    }
-    Wiki.getMoveDialog = getMoveDialog;
-
-    function getDeleteDialog($dialog, $scope) {
-        return $dialog.dialog({
-            resolve: $scope,
-            templateUrl: 'app/wiki/html/modal/deleteDialog.html',
-            controller: [
-                "$scope", "dialog", "callbacks", "selectedFileHtml", function ($scope, dialog, callbacks, selectedFileHtml) {
-                    $scope.selectedFileHtml = selectedFileHtml;
-
-                    $scope.close = function (result) {
-                        dialog.close();
-                    };
-
-                    $scope.deleteAndCloseDialog = callbacks;
-                }]
-        });
-    }
-    Wiki.getDeleteDialog = getDeleteDialog;
 })(Wiki || (Wiki = {}));
 var Wiki;
 (function (Wiki) {

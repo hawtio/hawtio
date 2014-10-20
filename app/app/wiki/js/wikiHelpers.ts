@@ -59,6 +59,68 @@ module Wiki {
       invalid: defaultLowerCaseFileNamePatternInvalid
     },
     {
+      label: "App",
+      tooltip: "Creates a new App folder used to configure and run containers",
+      addClass: "icon-cog green",
+      exemplar: 'myapp',
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
+      extension: '',
+      generated: {
+        mbean: ['io.fabric8', { type: 'KubernetesTemplateManager' }],
+        init: (workspace, $scope) => {
+
+        },
+        generate: (workspace, form, success, error, name) => {
+          form.name = name;
+          log.debug("Got form: ", form);
+          var json = angular.toJson(form);
+          var jolokia = <Jolokia.IJolokia> Core.injector.get("jolokia");
+          jolokia.request({
+            type: 'exec',
+            mbean: 'io.fabric8:type=KubernetesTemplateManager',
+            operation: 'createAppByJson',
+            arguments: [json]
+          }, onSuccess((response) => { 
+            log.debug("Generated app, response: ", response);
+            success(undefined); 
+          }, {
+            error: (response) => { error(response.error); }
+          }));
+        },
+        form: (workspace, $scope) => {
+          return {
+
+          };
+        },
+        schema: {
+          description: 'App settings',
+          type: 'java.lang.String',
+          properties: {
+            'dockerImage': {
+              'description': 'Docker Image',
+              'type': 'java.lang.String',
+              'input-attributes': { 'required': '' }
+            },
+            'labels': {
+              'description': 'Labels',
+              'type': 'map'
+            },
+            'summaryMarkdown': {
+              'description': 'Short Description',
+              'type': 'java.lang.String',
+              'input-attributes': { 'required': '' }
+            },
+            'replicaCount': {
+              'description': 'Replica Count',
+              'type': 'java.lang.Integer',
+              'input-attributes': {  }
+            }
+          }
+        }
+      }
+    },
+    {
       label: "Fabric8 Profile",
       tooltip: "Create a new empty fabric profile. Using a hyphen ('-') will create a folder heirarchy, for example 'my-awesome-profile' will be available via the path 'my/awesome/profile'.",
       profile: true,
@@ -98,9 +160,11 @@ module Wiki {
           var response = workspace.jolokia.request( {type: "read", mbean: mbean, attribute: "SecurityProviderInfo" }, {
             success: (response)=>{
               $scope.securityProviderInfo = response.value;
+              Core.$apply($scope);
             },
             error: (response) => {
               console.log('Could not find the supported security algorithms: ', response.error);
+              Core.$apply($scope);
             }
           });
         },
@@ -179,7 +243,6 @@ module Wiki {
              }
            }
         }
-
       }
     },
     {
@@ -262,6 +325,14 @@ module Wiki {
     return Git.createGitRepository(workspace, jolokia, localStorage) !== null;
   }
 
+  export function goToLink(link, $timeout, $location) {
+    var href = Core.trimLeading(link, "#");
+    $timeout(() => {
+      log.debug("About to navigate to: " + href);
+      $location.url(href);
+    }, 100);
+  }
+
   /**
    * Returns all the links for the given branch for the custom views, starting with "/"
    * @param $scope
@@ -302,7 +373,6 @@ module Wiki {
         }
         if ( template.generated.init ) {
           template.generated.init(workspace, $scope);
-          template.generated.init = null
         }
       }
 
@@ -574,7 +644,7 @@ module Wiki {
             css = "icon-book";
             break;
           default:
-            log.debug("No match for extension: ", extension, " using a generic folder icon");
+            // log.debug("No match for extension: ", extension, " using a generic folder icon");
             css = "icon-folder-close";
         }
       } else {
@@ -594,7 +664,7 @@ module Wiki {
             css = "icon-file-text-alt";
             break;
           default:
-            log.debug("No match for extension: ", extension, " using a generic file icon");
+            // log.debug("No match for extension: ", extension, " using a generic file icon");
             css = "icon-file-alt";
         }
       }
