@@ -43,8 +43,9 @@ public class OpenMavenURL {
         this.mavenCoords = mavenCoords;
     }
 
-    public String getMavenCoords() {
-        return mavenCoords;
+    @Override
+    public String toString() {
+        return "mvn:" + mavenCoords;
     }
 
     @Override
@@ -62,6 +63,10 @@ public class OpenMavenURL {
     @Override
     public int hashCode() {
         return mavenCoords.hashCode();
+    }
+
+    public String getMavenCoords() {
+        return mavenCoords;
     }
 
     public InputStream getInputStream() throws IOException {
