@@ -189,7 +189,7 @@
         <releases>
             <enabled>true</enabled>
         </releases>
-    </repository> 
+    </repository>
   </repositories>
 
   <pluginRepositories>
