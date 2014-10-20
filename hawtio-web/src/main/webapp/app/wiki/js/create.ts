@@ -16,7 +16,6 @@ module Wiki {
     $scope.fileExists.exists = false;
     $scope.fileExists.name = "";
     $scope.newDocumentName = "";
-    $scope.generateDialog = new UI.Dialog();
 
     function returnToDirectory() {
       var link = Wiki.viewLink($scope.branch, $scope.pageId, $location)
@@ -32,11 +31,23 @@ module Wiki {
       // reset as we switch between document types
       $scope.fileExists.exists = false;
       $scope.fileExists.name = "";
-
-      $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
+      var entity = node ? node.entity : null;
+      $scope.selectedCreateDocumentTemplate = entity;
       $scope.selectedCreateDocumentTemplateRegex = $scope.selectedCreateDocumentTemplate.regex || /.*/;
       $scope.selectedCreateDocumentTemplateInvalid = $scope.selectedCreateDocumentTemplate.invalid || "invalid name";
       $scope.selectedCreateDocumentTemplateExtension = $scope.selectedCreateDocumentTemplate.extension || null;
+      log.debug("Entity: ", entity);
+      if (entity) {
+        if (entity.generated) {
+          $scope.formSchema = entity.generated.schema;
+          $scope.formData = entity.generated.form(workspace, $scope);
+        } else {
+          $scope.formSchema = {};
+          $scope.formData = {};
+        }
+        Core.$apply($scope);
+      }
+
     };
 
     $scope.addAndCloseDialog = (fileName:string) => {
@@ -126,9 +137,6 @@ module Wiki {
           return;
         }
 
-        // okay then create profile asynchronously, so we close dialog, and then create the profile
-        $scope.addDialog.close();
-
         Fabric.createProfile(workspace.jolokia, $scope.branch, profileName, ['default'], () => {
           // notification('success', 'Created profile ' + profileName);
           Core.$apply($scope);
@@ -153,40 +161,32 @@ module Wiki {
         }, (response) => {
           Core.notification('error', 'Failed to create profile ' + profileName + ' due to ' + response.error);
           Core.$apply($scope);
-        })
+        });
 
       } else if (template.generated) {
-        var generateDialog = $scope.generateDialog;
-        $scope.formSchema = template.generated.schema;
-        $scope.formData = template.generated.form(workspace, $scope);
-        $scope.generate = function () {
-          generateDialog.close();
-          Core.$apply($scope);
-          var options:Wiki.GenerateOptions = {
-            workspace: workspace,
-            form: $scope.formData,
-            name: fileName,
-            parentId: folder,
-            branch: $scope.branch,
-            success: (contents)=> {
-              if (contents) {
-                wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, (status) => {
-                  log.debug("Created file " + name);
-                  Wiki.onComplete(status);
-                  returnToDirectory();
-                });
-              } else {
+        var options:Wiki.GenerateOptions = {
+          workspace: workspace,
+          form: $scope.formData,
+          name: fileName,
+          parentId: folder,
+          branch: $scope.branch,
+          success: (contents)=> {
+            if (contents) {
+              wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, (status) => {
+                log.debug("Created file " + name);
+                Wiki.onComplete(status);
                 returnToDirectory();
-              }
-            },
-            error: (error)=> {
-              Core.notification('error', error);
-              Core.$apply($scope);
+              });
+            } else {
+              returnToDirectory();
             }
-          };
-          template.generated.generate(options);
+          },
+          error: (error)=> {
+            Core.notification('error', error);
+            Core.$apply($scope);
+          }
         };
-        generateDialog.open();
+        template.generated.generate(options);
       } else {
         // load the example data (if any) and then add the document to git and change the link to the new document
         $http.get(exemplarUri)

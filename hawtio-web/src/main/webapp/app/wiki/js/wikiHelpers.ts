@@ -102,7 +102,8 @@ module Wiki {
         },
         form: (workspace, $scope) => {
           return {
-
+            summaryMarkdown: 'Add app summary here',
+            replicaCount: 1
           };
         },
         schema: {
@@ -112,7 +113,7 @@ module Wiki {
             'dockerImage': {
               'description': 'Docker Image',
               'type': 'java.lang.String',
-              'input-attributes': { 'required': '' }
+              'input-attributes': { 'required': '', 'class': 'input-xlarge' }
             },
             'labels': {
               'description': 'Labels',
@@ -121,12 +122,14 @@ module Wiki {
             'summaryMarkdown': {
               'description': 'Short Description',
               'type': 'java.lang.String',
-              'input-attributes': { 'required': '' }
+              'input-attributes': { 'class': 'input-xlarge' }
             },
             'replicaCount': {
               'description': 'Replica Count',
               'type': 'java.lang.Integer',
-              'input-attributes': {  }
+              'input-attributes': {
+                min: '0'
+              }
             }
           }
         }
