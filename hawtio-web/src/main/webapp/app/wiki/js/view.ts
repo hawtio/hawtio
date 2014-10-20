@@ -13,8 +13,7 @@ module Wiki {
 
   // controller for handling file drops
   export var FileDropController = _module.controller("Wiki.FileDropController", ["$scope", "FileUploader", "$route", "$timeout", "userDetails", ($scope, FileUploader, $route:ng.route.IRouteService, $timeout:ng.ITimeoutService, userDetails:Core.UserDetails) => {
-    var uploadURI = Wiki.gitRestURL($scope.branch, $scope.pageId);
-    log.info("Upload URI: " + uploadURI);
+    var uploadURI = Wiki.gitRestURL($scope.branch, $scope.pageId) + '/';
     var uploader = $scope.uploader = new FileUploader({
       headers: {
         'Authorization': Core.authHeaderValue(userDetails)
