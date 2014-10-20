@@ -112,6 +112,23 @@ public class ProxyDetailsTest {
     }
 
     @Test
+    public void testHttpsWithCredentialsUrl() throws Exception {
+        HttpServletRequest mockReq = mock(HttpServletRequest.class);
+        when(mockReq.getPathInfo()).thenReturn("/https://test:user@www.myhost.com/443/myApp/jolokia/");
+
+        ProxyDetails details = new ProxyDetails(mockReq);
+
+        assertEquals("getUserName()", "test", details.getUserName());
+        assertEquals("getPassword()", "user", details.getPassword());
+        assertEquals("getHost()", "www.myhost.com", details.getHost());
+        assertEquals("getHostAndPort()", "www.myhost.com", details.getHostAndPort());
+        assertEquals("getPort()", 443, details.getPort());
+        assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
+        assertEquals("getScheme()", "https", details.getScheme());
+        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getStringProxyURL());
+    }
+
+    @Test
     public void testHttpsUrlWithNoPort() throws Exception {
         HttpServletRequest mockReq = mock(HttpServletRequest.class);
         when(mockReq.getPathInfo()).thenReturn("/https://www.myhost.com/myApp/jolokia/");

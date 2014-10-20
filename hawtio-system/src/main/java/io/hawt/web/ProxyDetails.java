@@ -22,16 +22,12 @@ public class ProxyDetails {
     private String queryString = null;
     private int port = DEFAULT_PORT;
 
-    public static final String USER_PARAM = "_user";
-    public static final String PWD_PARAM = "_pwd";
-
     private static final int DEFAULT_PORT = 80;
     private static final String DEFAULT_SCHEME = "http";
     private static final int HTTPS_PORT = 443;
     private static final String HTTPS_SCHEME = "https";
 
-    // Would be nicer to use named capture groups but only available in Java 7+...
-    private static final Pattern pathInfoPattern = Pattern.compile("^/*(?:(.+):(.+)@)?(?:(.+)://?)?(?:([^/:]+)(?:[/:](\\d+)?))([^\\?]+).*$");
+    private static final Pattern pathInfoPattern = Pattern.compile("^(?:\\/*(?:(?<scheme>[^:]+):\\/\\/?)?(?:(?<username>[^:]+):(?<password>.*)@)?)?(?<host>[^\\/]+)(?:[\\/:](?<port>\\d+)?)(?<path>[^\\?]+).*$");
 
     private static final Pattern removeIgnoredHeaderNamesPattern = Pattern.compile("(^|(?<=[?&;]))(?:_user|_pwd|_url|url)=.*?($|[&;])");
 
@@ -50,23 +46,23 @@ public class ProxyDetails {
 
         if (matcher.matches()) {
 
-            userName = matcher.group(1);
-            password = matcher.group(2);
+            userName = matcher.group("username");
+            password = matcher.group("password");
 
-            scheme = matcher.group(3);
+            scheme = matcher.group("scheme");
             if (scheme == null) {
                 scheme = DEFAULT_SCHEME;
             }
 
-            host = matcher.group(4);
+            host = matcher.group("host");
 
-            if (matcher.group(5) != null) {
-                port = Integer.parseInt(matcher.group(5));
+            if (matcher.group("port") != null) {
+                port = Integer.parseInt(matcher.group("port"));
             } else {
                 port = (scheme.equalsIgnoreCase(DEFAULT_SCHEME)) ? DEFAULT_PORT : HTTPS_PORT;
             }
 
-            path = matcher.group(6);
+            path = matcher.group("path");
             if (!path.startsWith("/")) {
                 path = "/" + path;
             }

@@ -834,6 +834,10 @@
               <key>hawtio.authenticationEnabled</key>
               <value>false</value>
             </systemProperty>
+            <systemProperty>
+              <key>hawtio.proxyDisableCertificateValidation</key>
+              <value>true</value>
+            </systemProperty>
           </systemProperties>
         </configuration>
       </plugin>

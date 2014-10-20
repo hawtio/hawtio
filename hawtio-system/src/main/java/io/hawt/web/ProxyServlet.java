@@ -3,8 +3,13 @@ package io.hawt.web;
 import org.apache.http.*;
 import org.apache.http.client.methods.AbortableHttpRequest;
 import org.apache.http.client.utils.URIUtils;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
@@ -22,6 +27,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.BitSet;
 import java.util.Enumeration;
 import java.util.Formatter;
@@ -64,10 +74,16 @@ public class ProxyServlet extends HttpServlet {
      */
     private static final String P_TARGET_URI = "targetUri";
 
+    /**
+     * Whether we accept self-signed SSL certificates
+     */
+    private static final String PROXY_ACCEPT_SELF_SIGNED_CERTS = "hawtio.proxyDisableCertificateValidation";
+
     /* MISC */
 
     protected boolean doLog = false;
     protected boolean doForwardIP = true;
+    protected boolean acceptSelfSignedCerts = false;
     /**
      * User agents shouldn't send the url fragment but what if it does?
      */
@@ -94,7 +110,34 @@ public class ProxyServlet extends HttpServlet {
             this.doLog = Boolean.parseBoolean(doLogStr);
         }
 
-        proxyClient = HttpClients.createSystem();
+        HttpClientBuilder httpClientBuilder = HttpClients.custom().useSystemProperties();
+
+        if (System.getProperty(PROXY_ACCEPT_SELF_SIGNED_CERTS) != null) {
+            acceptSelfSignedCerts = Boolean.getBoolean(PROXY_ACCEPT_SELF_SIGNED_CERTS);
+        }
+
+        if (acceptSelfSignedCerts) {
+            try {
+                SSLContextBuilder builder = new SSLContextBuilder();
+                builder.loadTrustMaterial(null, new TrustStrategy() {
+                    @Override
+                    public boolean isTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+                        return true;
+                    }
+                });
+                SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
+                        builder.build(), SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+                httpClientBuilder.setSSLSocketFactory(sslsf);
+            } catch (NoSuchAlgorithmException e) {
+                throw new ServletException(e);
+            } catch (KeyStoreException e) {
+                throw new ServletException(e);
+            } catch (KeyManagementException e) {
+                throw new ServletException(e);
+            }
+        }
+
+        proxyClient = httpClientBuilder.build();
     }
 
     @Override
