@@ -43,6 +43,26 @@ public class OpenMavenURL {
         this.mavenCoords = mavenCoords;
     }
 
+    public String getMavenCoords() {
+        return mavenCoords;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OpenMavenURL that = (OpenMavenURL) o;
+
+        if (!mavenCoords.equals(that.mavenCoords)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return mavenCoords.hashCode();
+    }
 
     public InputStream getInputStream() throws IOException {
         AetherFacadeMXBean mbean = findAetherMBean();
