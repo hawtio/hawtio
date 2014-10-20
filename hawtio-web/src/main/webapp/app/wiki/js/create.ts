@@ -141,7 +141,7 @@ module Wiki {
               Core.$apply($scope);
               var link = Wiki.viewLink($scope.branch, targetPath, $location);
               goToLink(link, $timeout, $location);
-            }, (response) => {
+  }, (response) => {
               Core.notification('error', 'Failed to set ReadMe.md data in profile ' + profileName + ' due to ' + response.error);
               Core.$apply($scope);
             });
@@ -162,20 +162,29 @@ module Wiki {
         $scope.generate = function () {
           generateDialog.close();
           Core.$apply($scope);
-          template.generated.generate(workspace, $scope.formData, (contents)=> {
-            if (contents) {
-              wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, (status) => {
-                log.debug("Created file " + name);
-                Wiki.onComplete(status);
+          var options:Wiki.GenerateOptions = {
+            workspace: workspace,
+            form: $scope.formData,
+            name: fileName,
+            parentId: folder,
+            branch: $scope.branch,
+            success: (contents)=> {
+              if (contents) {
+                wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, (status) => {
+                  log.debug("Created file " + name);
+                  Wiki.onComplete(status);
+                  returnToDirectory();
+                });
+              } else {
                 returnToDirectory();
-              });
-            } else {
-              returnToDirectory();
+              }
+            },
+            error: (error)=> {
+              Core.notification('error', error);
+              Core.$apply($scope);
             }
-          }, (error)=> {
-            Core.notification('error', error);
-            Core.$apply($scope);
-          }, name);
+          };
+          template.generated.generate(options);
         };
         generateDialog.open();
       } else {

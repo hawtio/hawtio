@@ -42,6 +42,16 @@ module Wiki {
   var defaultLowerCaseFileNamePattern = /^[a-z0-9._-]*$/;
   var defaultLowerCaseFileNamePatternInvalid = "Name must be: lower-case letters, numbers, and . _ or - characters";
 
+  export interface GenerateOptions {
+    workspace: Core.Workspace;
+    form: any;
+    name: string;
+    branch: string;
+    parentId: string;
+    success: (fileContents?:string) => void;
+    error: (error:any) => void;
+  }
+
   /**
    * The wizard tree for creating new content in the wiki
    * @property documentTemplates
@@ -71,10 +81,12 @@ module Wiki {
         init: (workspace, $scope) => {
 
         },
-        generate: (workspace, form, success, error, name) => {
-          form.name = name;
-          log.debug("Got form: ", form);
-          var json = angular.toJson(form);
+        generate: (options:GenerateOptions) => {
+          log.debug("Got options: ", options);
+          options.form.name = options.name;
+          options.form.path = options.parentId;
+          options.form.branch = options.branch;
+          var json = angular.toJson(options.form);
           var jolokia = <Jolokia.IJolokia> Core.injector.get("jolokia");
           jolokia.request({
             type: 'exec',
@@ -83,9 +95,9 @@ module Wiki {
             arguments: [json]
           }, onSuccess((response) => { 
             log.debug("Generated app, response: ", response);
-            success(undefined); 
+            options.success(undefined); 
           }, {
-            error: (response) => { error(response.error); }
+            error: (response) => { options.error(response.error); }
           }));
         },
         form: (workspace, $scope) => {
@@ -168,10 +180,10 @@ module Wiki {
             }
           });
         },
-        generate: function(workspace, form, success, error) {
-          var encodedForm = JSON.stringify(form)
+        generate: function(options:GenerateOptions) {
+          var encodedForm = JSON.stringify(options.form)
           var mbean = 'hawtio:type=KeystoreService';
-          var response = workspace.jolokia.request( {
+          var response = options.workspace.jolokia.request( {
               type: 'exec', 
               mbean: mbean,
               operation: 'createKeyStoreViaJSON(java.lang.String)',
@@ -179,10 +191,10 @@ module Wiki {
             }, {
               method:'POST',
               success:function(response) {
-                success(response.value)
+                options.success(response.value)
               },
               error:function(response){
-                error(response.error)
+                options.error(response.error)
               }
             });
         },
