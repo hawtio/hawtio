@@ -5612,10 +5612,12 @@ var Wiki;
                 mbean: ['io.fabric8', { type: 'KubernetesTemplateManager' }],
                 init: function (workspace, $scope) {
                 },
-                generate: function (workspace, form, success, error, name) {
-                    form.name = name;
-                    Wiki.log.debug("Got form: ", form);
-                    var json = angular.toJson(form);
+                generate: function (options) {
+                    Wiki.log.debug("Got options: ", options);
+                    options.form.name = options.name;
+                    options.form.path = options.parentId;
+                    options.form.branch = options.branch;
+                    var json = angular.toJson(options.form);
                     var jolokia = Core.injector.get("jolokia");
                     jolokia.request({
                         type: 'exec',
@@ -5624,15 +5626,18 @@ var Wiki;
                         arguments: [json]
                     }, onSuccess(function (response) {
                         Wiki.log.debug("Generated app, response: ", response);
-                        success(undefined);
+                        options.success(undefined);
                     }, {
                         error: function (response) {
-                            error(response.error);
+                            options.error(response.error);
                         }
                     }));
                 },
                 form: function (workspace, $scope) {
-                    return {};
+                    return {
+                        summaryMarkdown: 'Add app summary here',
+                        replicaCount: 1
+                    };
                 },
                 schema: {
                     description: 'App settings',
@@ -5641,7 +5646,7 @@ var Wiki;
                         'dockerImage': {
                             'description': 'Docker Image',
                             'type': 'java.lang.String',
-                            'input-attributes': { 'required': '' }
+                            'input-attributes': { 'required': '', 'class': 'input-xlarge' }
                         },
                         'labels': {
                             'description': 'Labels',
@@ -5650,12 +5655,14 @@ var Wiki;
                         'summaryMarkdown': {
                             'description': 'Short Description',
                             'type': 'java.lang.String',
-                            'input-attributes': { 'required': '' }
+                            'input-attributes': { 'class': 'input-xlarge' }
                         },
                         'replicaCount': {
                             'description': 'Replica Count',
                             'type': 'java.lang.Integer',
-                            'input-attributes': {}
+                            'input-attributes': {
+                                min: '0'
+                            }
                         }
                     }
                 }
@@ -5709,10 +5716,10 @@ var Wiki;
                         }
                     });
                 },
-                generate: function (workspace, form, success, error) {
-                    var encodedForm = JSON.stringify(form);
+                generate: function (options) {
+                    var encodedForm = JSON.stringify(options.form);
                     var mbean = 'hawtio:type=KeystoreService';
-                    var response = workspace.jolokia.request({
+                    var response = options.workspace.jolokia.request({
                         type: 'exec',
                         mbean: mbean,
                         operation: 'createKeyStoreViaJSON(java.lang.String)',
@@ -5720,10 +5727,10 @@ var Wiki;
                     }, {
                         method: 'POST',
                         success: function (response) {
-                            success(response.value);
+                            options.success(response.value);
                         },
                         error: function (response) {
-                            error(response.error);
+                            options.error(response.error);
                         }
                     });
                 },
@@ -49762,7 +49769,6 @@ var Wiki;
             $scope.fileExists.exists = false;
             $scope.fileExists.name = "";
             $scope.newDocumentName = "";
-            $scope.generateDialog = new UI.Dialog();
 
             function returnToDirectory() {
                 var link = Wiki.viewLink($scope.branch, $scope.pageId, $location);
@@ -49777,11 +49783,22 @@ var Wiki;
             $scope.onCreateDocumentSelect = function (node) {
                 $scope.fileExists.exists = false;
                 $scope.fileExists.name = "";
-
-                $scope.selectedCreateDocumentTemplate = node ? node.entity : null;
+                var entity = node ? node.entity : null;
+                $scope.selectedCreateDocumentTemplate = entity;
                 $scope.selectedCreateDocumentTemplateRegex = $scope.selectedCreateDocumentTemplate.regex || /.*/;
                 $scope.selectedCreateDocumentTemplateInvalid = $scope.selectedCreateDocumentTemplate.invalid || "invalid name";
                 $scope.selectedCreateDocumentTemplateExtension = $scope.selectedCreateDocumentTemplate.extension || null;
+                Wiki.log.debug("Entity: ", entity);
+                if (entity) {
+                    if (entity.generated) {
+                        $scope.formSchema = entity.generated.schema;
+                        $scope.formData = entity.generated.form(workspace, $scope);
+                    } else {
+                        $scope.formSchema = {};
+                        $scope.formData = {};
+                    }
+                    Core.$apply($scope);
+                }
             };
 
             $scope.addAndCloseDialog = function (fileName) {
@@ -49863,8 +49880,6 @@ var Wiki;
                         return;
                     }
 
-                    $scope.addDialog.close();
-
                     Fabric.createProfile(workspace.jolokia, $scope.branch, profileName, ['default'], function () {
                         Core.$apply($scope);
                         Fabric.newConfigFile(workspace.jolokia, $scope.branch, profileName, 'ReadMe.md', function () {
@@ -49887,13 +49902,13 @@ var Wiki;
                         Core.$apply($scope);
                     });
                 } else if (template.generated) {
-                    var generateDialog = $scope.generateDialog;
-                    $scope.formSchema = template.generated.schema;
-                    $scope.formData = template.generated.form(workspace, $scope);
-                    $scope.generate = function () {
-                        generateDialog.close();
-                        Core.$apply($scope);
-                        template.generated.generate(workspace, $scope.formData, function (contents) {
+                    var options = {
+                        workspace: workspace,
+                        form: $scope.formData,
+                        name: fileName,
+                        parentId: folder,
+                        branch: $scope.branch,
+                        success: function (contents) {
                             if (contents) {
                                 wikiRepository.putPageBase64($scope.branch, path, contents, commitMessage, function (status) {
                                     Wiki.log.debug("Created file " + name);
@@ -49903,12 +49918,13 @@ var Wiki;
                             } else {
                                 returnToDirectory();
                             }
-                        }, function (error) {
+                        },
+                        error: function (error) {
                             Core.notification('error', error);
                             Core.$apply($scope);
-                        }, name);
+                        }
                     };
-                    generateDialog.open();
+                    template.generated.generate(options);
                 } else {
                     $http.get(exemplarUri).success(function (data, status, headers, config) {
                         putPage(path, name, folder, data, commitMessage);
@@ -51048,8 +51064,7 @@ var Wiki;
 (function (Wiki) {
     Wiki.FileDropController = Wiki._module.controller("Wiki.FileDropController", [
         "$scope", "FileUploader", "$route", "$timeout", "userDetails", function ($scope, FileUploader, $route, $timeout, userDetails) {
-            var uploadURI = Wiki.gitRestURL($scope.branch, $scope.pageId);
-            Wiki.log.info("Upload URI: " + uploadURI);
+            var uploadURI = Wiki.gitRestURL($scope.branch, $scope.pageId) + '/';
             var uploader = $scope.uploader = new FileUploader({
                 headers: {
                     'Authorization': Core.authHeaderValue(userDetails)
