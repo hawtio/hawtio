@@ -565,7 +565,7 @@
             <Web-ContextPath>${context}</Web-ContextPath>
 
             <Embed-Directory>WEB-INF/lib</Embed-Directory>
-            <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+            <Embed-Dependency>*;scope=compile|runtime;artifactId=!org.osgi.enterprise|org.osgi.core</Embed-Dependency>
             <Embed-Transitive>true</Embed-Transitive>
 
             <!-- fix jgit, and slf4j imports -->
@@ -575,6 +575,7 @@
               io.hawt.util.introspect,
               io.hawt.util.introspect.support,
               org.osgi.framework,
+              org.osgi.util.tracker,
               org.eclipse.jetty.plus.jaas.spi;resolution:=optional,
               org.eclipse.jetty.plus.jaas.callback;resolution:=optional,
               org.apache.commons.logging;resolution:=optional,
@@ -582,6 +583,7 @@
               !org.slf4j.impl,
               !org.apache.avalon*,
               !org.apache.log*,
+              !javax.persistence,
 
               !com.jcraft.jzlib,
               !keypairgen,

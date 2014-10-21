@@ -25,9 +25,12 @@ import io.hawt.util.Zips;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,25 +40,39 @@ import java.util.List;
 
 /**
  */
-public class GitServlet extends UploadServlet {
+public class GitServlet extends UploadServlet implements ServiceTrackerCustomizer {
     private static final transient Logger LOG = LoggerFactory.getLogger(GitServlet.class);
 
     private static final int DEFAULT_BUFFER_SIZE = 10240; // 10KB.
 
+    private BundleContext bundleContext;
+    private ServiceTracker serviceTracker;
+    private GitFileManager gitFacade;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+
+        bundleContext = (BundleContext) getServletContext().getAttribute("osgi-bundlecontext");
+
+        if (bundleContext == null) {
+            gitFacade = GitFacade.getSingleton();
+        } else {
+            serviceTracker = new ServiceTracker(bundleContext, GitFileManager.class.getName(), this);
+            serviceTracker.open();
+        }
+    }
+
+    @Override
+    public void destroy() {
+        if (serviceTracker != null) {
+            serviceTracker.close();
+        }
+        super.destroy();
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        BundleContext bundleContext = (BundleContext) getServletContext().getAttribute("osgi-bundlecontext");
-
-        GitFileManager gitFacade = null;
-        if (bundleContext != null) {
-            ServiceReference serviceReference = bundleContext.getServiceReference(GitFileManager.class);
-            if (serviceReference != null) {
-                gitFacade = (GitFileManager) bundleContext.getService(serviceReference);
-            }
-        } else {
-            gitFacade = GitFacade.getSingleton();
-        }
-
         if (gitFacade == null) {
             throw new ServletException("No GitFacade object available!");
         }
@@ -118,21 +135,10 @@ public class GitServlet extends UploadServlet {
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        BundleContext bundleContext = (BundleContext) getServletContext().getAttribute("osgi-bundlecontext");
-
-        GitFileManager gitFacade = null;
-        if (bundleContext != null) {
-            ServiceReference serviceReference = bundleContext.getServiceReference(GitFileManager.class);
-            if (serviceReference != null) {
-                gitFacade = (GitFileManager) bundleContext.getService(serviceReference);
-            }
-        } else {
-            gitFacade = GitFacade.getSingleton();
-        }
-
         if (gitFacade == null) {
             throw new ServletException("No GitFacade object available!");
         }
+
         Params params = parsePararams(req, resp);
         if (params == null) {
             return;
@@ -200,6 +206,22 @@ public class GitServlet extends UploadServlet {
 
     protected void notFound(HttpServletResponse resp) throws IOException {
         resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Override
+    public Object addingService(ServiceReference serviceReference) {
+        gitFacade = (GitFileManager) bundleContext.getService(serviceReference);
+        return gitFacade;
+    }
+
+    @Override
+    public void modifiedService(ServiceReference serviceReference, Object o) {
+
+    }
+
+    @Override
+    public void removedService(ServiceReference serviceReference, Object o) {
+        gitFacade = null;
     }
 
     protected static class Params {
