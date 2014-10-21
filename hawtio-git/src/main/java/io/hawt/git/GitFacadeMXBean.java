@@ -1,7 +1,9 @@
 package io.hawt.git;
 
+import io.hawt.util.Function;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -102,6 +104,4 @@ public interface GitFacadeMXBean {
      * Returns all the branch names we can use in the local repo
      */
     List<String> branches();
-
-    void uploadFile(String branch, String path, boolean unzip, String sourceFileName, String destName) throws IOException, GitAPIException;
 }

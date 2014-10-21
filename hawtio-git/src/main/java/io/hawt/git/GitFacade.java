@@ -79,7 +79,7 @@ public class GitFacade extends GitFacadeSupport {
     private String initialImportURLs;
     private String defaultGitAttributes = "*.gif binary\n" +
             "*.jpg binary\n" +
-            "*.jepg binary\n" +
+            "*.jpeg binary\n" +
             "*.pdf binary\n" +
             "*.png binary\n";
 

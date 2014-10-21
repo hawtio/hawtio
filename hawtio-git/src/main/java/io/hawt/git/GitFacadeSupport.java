@@ -70,7 +70,7 @@ import static io.hawt.git.GitFacade.trimLeadingSlash;
 /**
  * A based class for implementations of {@link GitFacadeMXBean}
  */
-public abstract class GitFacadeSupport extends MBeanSupport implements GitFacadeMXBean {
+public abstract class GitFacadeSupport extends MBeanSupport implements GitFacadeMXBean, GitFileManager {
     private static final transient Logger LOG = LoggerFactory.getLogger(GitFacadeSupport.class);
 
     private int shortCommitIdLength = 6;
