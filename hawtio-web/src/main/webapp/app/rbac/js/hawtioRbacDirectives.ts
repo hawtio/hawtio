@@ -81,7 +81,12 @@ module RBAC {
           var mbean = Core.parseMBean(objectName);
           var folder = workspace.findMBeanWithProperties(mbean.domain, mbean.attributes);
           if (folder) {
-            var invokeRights = workspace.hasInvokeRights(folder, methodName);
+            var invokeRights;
+            if(methodName) {
+                invokeRights = workspace.hasInvokeRights(folder, methodName);
+            } else {
+                invokeRights = workspace.hasInvokeRights(folder);
+            }
             /*
             if (invokeRights) {
               log.debug("User has invoke rights on mbean: ", objectName, " methodName: ", methodName);

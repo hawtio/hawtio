@@ -715,8 +715,7 @@ module Core {
       return true;
     }
 
-    public hasInvokeRights(selection:Core.NodeSelection, ...methods:Array<Object>) {
-      methods = methods.filter((m) => m !== undefined);
+    public hasInvokeRights(selection:Core.NodeSelection, ...methods:Array<string>) {
       var canInvoke = true;
       if (selection) {
         var selectionFolder = <Core.Folder> selection;
