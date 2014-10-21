@@ -66,7 +66,7 @@ module.exports = function(config) {
       libdir + 'angular-ui.js',
       libdir + 'ui-bootstrap-0.4.0.min.js',
       libdir + 'ui-bootstrap-tpls-0.4.0.min.js',
-      libdir + 'sugar-1.3.6-custom.min.js',
+      libdir + 'sugar-1.4.1-custom.min.js',
       libdir + 'camelModel.js',
       libdir + 'jsonschema.js',
       libdir + 'dozerMapping.js',
