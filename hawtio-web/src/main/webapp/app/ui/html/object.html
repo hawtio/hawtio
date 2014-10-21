@@ -1,16 +1,16 @@
 <div>
   <script type="text/ng-template" id="primitiveValueTemplate.html">
-    <span ng-show="data">{{data}}</span>
+    <span ng-show="data" object-path="{{path}}">{{data}}</span>
   </script>
   <script type="text/ng-template" id="arrayValueListTemplate.html">
-    <ul class="zebra-list" ng-show="data">
+    <ul class="zebra-list" ng-show="data" object-path="{{path}}">
       <li ng-repeat="item in data">
-        <div hawtio-object="item"></div>
+        <div hawtio-object="item" config="config" path="path" row="row"></div>
       </li>
     </ul>
   </script>
   <script type="text/ng-template" id="arrayValueTableTemplate.html">
-    <table class="table table-striped">
+    <table class="table table-striped" object-path="{{path}}">
       <thead>
       </thead>
       <tbody>
@@ -18,33 +18,33 @@
     </table>
   </script>
   <script type="text/ng-template" id="primitiveAttributeTemplate.html">
-    <dl class="" ng-show="data">
+    <dl class="" ng-show="data" object-path="{{path}}">
       <dt>{{key}}</dt>
       <dd>{{data}}</dd>
     </dl>
   </script>
   <script type="text/ng-template" id="objectAttributeTemplate.html">
-    <dl class="" ng-show="data">
+    <dl class="" ng-show="data" object-path="{{path}}">
       <dt>{{key}}</dt>
       <dd>
-        <div hawtio-object="data"></div>
+        <div hawtio-object="data" config="config" path="path" row="row"></div>
       </dd>
     </dl>
   </script>
   <script type="text/ng-template" id="arrayAttributeListTemplate.html">
-    <dl class="" ng-show="data">
+    <dl class="" ng-show="data" object-path="{{path}}">
       <dt>{{key}}</dt>
       <dd>
         <ul class="zebra-list">
-          <li ng-repeat="item in data">
-            <div hawtio-object="item"></div>
+          <li ng-repeat="item in data" ng-init="path = path + '/' + $index">
+            <div hawtio-object="item" config="config" path="path" row="row"></div>
           </li>
         </ul>
       </dd>
     </dl>
   </script>
   <script type="text/ng-template" id="arrayAttributeTableTemplate.html">
-    <dl class="" ng-show="data">
+    <dl class="" ng-show="data" object-path="{{path}}">
       <dt>{{key}}</dt>
       <dd>
         <table class="table table-striped">

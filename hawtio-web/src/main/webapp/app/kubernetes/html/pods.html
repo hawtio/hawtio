@@ -27,8 +27,11 @@
   </div>
   <script type="text/ng-template" id="statusTemplate.html">
     <div class="ngCellText" ng-controller="Kubernetes.PodStatus" title="{{row.entity.currentState.status}}">
+      <!-- in detail view -->
+      <p ng-show="data"><strong>Status: </strong></p>
       <i ng-class="statusMapping[row.entity.currentState.status] || 'icon-question red'"></i>
-
+      <span ng-show="data">{{data}}</span>
+      <!-- in table -->
       <span ng-show="row.entity.$jolokiaUrl">
         <a class="clickable"
            href=""
@@ -41,10 +44,20 @@
   </script>
   <script type="text/ng-template" id="imageTemplate.html">
     <div class="ngCellText">
-      <span ng-repeat="container in row.entity.desiredState.manifest.containers">
-        <a target="dockerRegistry" href="https://registry.hub.docker.com/u/{{container.image}}" title="{{container.name}}">{{container.image}}</a>
+      <!-- in table -->
+      <span ng-hide="data">
+        <span ng-repeat="container in row.entity.desiredState.manifest.containers">
+          <a target="dockerRegistry" href="https://registry.hub.docker.com/u/{{container.image}}" title="{{container.name}}">{{container.image}}</a>
+        </span>
+      </span>
+      <!-- in detail view -->
+      <span ng-show="data">
+        <a target="dockerRegistry" ng-href="https://registry.hub.docker.com/u/{{data}}" title="{{data}}">{{data}}</a>
       </span>
     </div>
+  </script>
+  <script type="text/ng-template" id="configDetail.html">
+    <pre>{{data}}</pre>
   </script>
   <div class="row-fluid">
     <div class="span12" ng-show="pods.length">
@@ -86,7 +99,7 @@
   </div>
   <div class="row-fluid" ng-show="fetched && id">
     <div class="span12">
-      <div hawtio-object="item"></div>
+      <div hawtio-object="item" config="podDetail"></div>
     </div>
   </div>
 </div>

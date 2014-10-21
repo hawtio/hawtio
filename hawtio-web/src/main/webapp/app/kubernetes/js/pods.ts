@@ -13,6 +13,17 @@ module Kubernetes {
     $scope.json = '';
     $scope.itemSchema = Forms.createFormConfiguration();
 
+    $scope.podDetail = {
+      properties: {
+        'manifest/containers/image': {
+          template: $templateCache.get('imageTemplate.html') 
+        },
+        'currentState/status': {
+          template: $templateCache.get('statusTemplate.html')
+        }
+      }
+    };
+
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
 
     $scope.$on('kubeSelectedId', ($event, id) => {
