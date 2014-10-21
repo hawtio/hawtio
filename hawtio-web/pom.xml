@@ -570,6 +570,11 @@
 
             <!-- fix jgit, and slf4j imports -->
             <Import-Package>
+              io.hawt.git,
+              io.hawt.util,
+              io.hawt.util.introspect,
+              io.hawt.util.introspect.support,
+              org.osgi.framework,
               org.eclipse.jetty.plus.jaas.spi;resolution:=optional,
               org.eclipse.jetty.plus.jaas.callback;resolution:=optional,
               org.apache.commons.logging;resolution:=optional,

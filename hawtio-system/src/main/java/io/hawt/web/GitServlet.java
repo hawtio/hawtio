@@ -17,15 +17,14 @@
  */
 package io.hawt.web;
 
-import io.hawt.git.GitFacade;
-import io.hawt.git.GitHelper;
-import io.hawt.git.WriteCallback;
-import io.hawt.git.WriteContext;
+import io.hawt.git.*;
 import io.hawt.util.Files;
 import io.hawt.util.Function;
 import io.hawt.util.Strings;
 import io.hawt.util.Zips;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +44,18 @@ public class GitServlet extends UploadServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        GitFacade gitFacade = GitFacade.getSingleton();
+        BundleContext bundleContext = (BundleContext) getServletContext().getAttribute("osgi-bundlecontext");
+
+        GitFileManager gitFacade = null;
+        if (bundleContext != null) {
+            ServiceReference serviceReference = bundleContext.getServiceReference(GitFileManager.class);
+            if (serviceReference != null) {
+                gitFacade = (GitFileManager) bundleContext.getService(serviceReference);
+            }
+        } else {
+            gitFacade = GitFacade.getSingleton();
+        }
+
         if (gitFacade == null) {
             throw new ServletException("No GitFacade object available!");
         }
@@ -108,7 +118,18 @@ public class GitServlet extends UploadServlet {
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        GitFacade gitFacade = GitFacade.getSingleton();
+        BundleContext bundleContext = (BundleContext) getServletContext().getAttribute("osgi-bundlecontext");
+
+        GitFileManager gitFacade = null;
+        if (bundleContext != null) {
+            ServiceReference serviceReference = bundleContext.getServiceReference(GitFileManager.class);
+            if (serviceReference != null) {
+                gitFacade = (GitFileManager) bundleContext.getService(serviceReference);
+            }
+        } else {
+            gitFacade = GitFacade.getSingleton();
+        }
+
         if (gitFacade == null) {
             throw new ServletException("No GitFacade object available!");
         }
