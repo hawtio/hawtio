@@ -31,22 +31,39 @@ module UI {
           }
         }
 
-        function getTemplate(path, config, def) {
-          var answer = def;
-          var properties = config.properties;
-          if (properties) {
+        function getEntityConfig(path, config) {
+          var answer = undefined;
+          var properties = Core.pathGet(config, ['properties']);
+          if (!answer && properties) {
             angular.forEach(properties, (config, propertySelector) => {
-              if (path.endsWith(propertySelector) && config.template) {
-                log.debug("Found template for path: ", path, " selector: ", propertySelector);
-                answer = config.template;
+              var regex = new RegExp(propertySelector);
+              if (regex.test(path)) {
+                log.debug("Matched selector: ", propertySelector, " for path: ", path);
+                answer = config;
               }
             });
           }
           return answer;
         }
 
+        function getTemplate(path, config, def) {
+          var answer = def;
+          var config = getEntityConfig(path, config);
+          if (config && config.template) {
+            answer = config.template;
+          }
+          return answer;
+        }
+
         function compile(template, path:string, key, value, config) {
-          var interpolated = interpolate(template, path, key, value);
+          var config = getEntityConfig(path, config);
+          var interpolated = null;
+          // avoid interpolating custom templates
+          if (config && config.template) {
+            interpolated = config.template;  
+          } else {
+            interpolated = interpolate(template, path, key, value);
+          }
           var scope = $scope.$new();
           scope.row = $scope.row;
           scope.data = value;

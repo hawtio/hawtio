@@ -59,6 +59,11 @@
   <script type="text/ng-template" id="configDetail.html">
     <pre>{{data}}</pre>
   </script>
+  <script type="text/ng-template" id="envItemTemplate.html">
+    <span ng-controller="Kubernetes.EnvItem">
+      <span class="blue">{{key}}</span>=<span class="green">{{value}}</span>
+    </span>
+  </script>
   <div class="row-fluid">
     <div class="span12" ng-show="pods.length">
       <span ng-show="!id">
