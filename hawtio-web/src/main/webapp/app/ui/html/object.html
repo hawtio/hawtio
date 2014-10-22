@@ -27,7 +27,7 @@
   </script>
   <script type="text/ng-template" id="dateValueTemplate.html">
     <span ng-show="data">
-      <span ng-show="data && data.getTime() > 0" object-path="{{path}}">{{data | date:"EEEE, MMMM dd, yyyy 'at' hh : mm : ss a Z"}}}}</span>
+      <span ng-show="data && data.getTime() > 0" object-path="{{path}}">{{data | date:"EEEE, MMMM dd, yyyy 'at' hh : mm : ss a Z"}}</span>
       <span ng-show="data && data.getTime() <= 0" object-path="{{path}}"></span>
     </span>
   </script>

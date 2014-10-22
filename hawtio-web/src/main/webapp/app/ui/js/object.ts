@@ -130,7 +130,7 @@ module UI {
               if (!answer) {
                 answer = [];
               }
-              answer = Object.extended(item).keys().union(answer);
+              answer = Object.extended(item).keys().filter((key) => !angular.isFunction(item[key])).union(answer);
             } else {
               answer = <Array<string>> undefined;
               hasPrimitive = true;
@@ -212,7 +212,6 @@ module UI {
           } else if (angular.isObject(entity)) {
             return renderObjectValue(path, entity, config);
           } else if (StringHelpers.isDate(entity)) {
-            log.debug("Value is a date: ", entity);
             return renderDateValue(path, (<any> Date).create(entity), config);
           } else {
             return renderPrimitiveValue(path, entity, config);
@@ -225,14 +224,16 @@ module UI {
             return;
           }
           if (!$scope.path) {
-            log.debug("Setting entity: ", $scope.entity, " as the root element");
+            // log.debug("Setting entity: ", $scope.entity, " as the root element");
             $scope.path = "";
           }
+          /*
           if (angular.isDefined($scope.$index)) {
             log.debug("$scope.$index: ", $scope.$index);
           }
+          */
           if (!angular.isDefined($scope.row)) {
-            log.debug("Setting entity: ", entity);
+            // log.debug("Setting entity: ", entity);
             $scope.row = {
               entity: entity
             }
