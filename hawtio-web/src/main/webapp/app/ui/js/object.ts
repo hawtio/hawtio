@@ -1,4 +1,5 @@
 /// <reference path="uiPlugin.ts"/>
+/// <reference path="../../helpers/ts/stringHelpers.ts"/>
 
 module UI {
 
@@ -76,6 +77,11 @@ module UI {
           return compile(template, path, undefined, entity, config);
         }
 
+        function renderDateValue(path:string, entity, config) {
+          var template = getTemplate(path, config, $templateCache.get('dateValueTemplate.html'));
+          return compile(template, path, undefined, entity, config);
+        }
+
         function renderObjectValue(path:string, entity, config) {
           var isArray = false;
           var el = undefined;
@@ -100,6 +106,8 @@ module UI {
               } else {
                 el.append(renderObjectAttribute(path + '/' + key, key, value, config));
               }
+            } else if (StringHelpers.isDate(value)) {
+              el.append(renderDateAttribute(path + '/' + key, key, (<any> Date).create(value), config));
             } else {
               el.append(renderPrimitiveAttribute(path + '/' + key, key, value, config));
             }
@@ -177,6 +185,11 @@ module UI {
           return compile(template, path, key, value, config);
         }
 
+        function renderDateAttribute(path:string, key:string, value:any, config) {
+          var template = getTemplate(path, config, $templateCache.get('dateAttributeTemplate.html'));
+          return compile(template, path, key, value, config);
+        }
+
         function renderObjectAttribute(path:string, key:string, value:any, config) {
           var template = getTemplate(path, config, $templateCache.get('objectAttributeTemplate.html'));
           return compile(template, path, key, value, config);
@@ -198,6 +211,9 @@ module UI {
             return renderArrayValue(path, entity, config);
           } else if (angular.isObject(entity)) {
             return renderObjectValue(path, entity, config);
+          } else if (StringHelpers.isDate(entity)) {
+            log.debug("Value is a date: ", entity);
+            return renderDateValue(path, (<any> Date).create(entity), config);
           } else {
             return renderPrimitiveValue(path, entity, config);
           }
