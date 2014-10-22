@@ -14,6 +14,7 @@
 </script>
 <script type="text/ng-template" id="labelTemplate.html">
   <div class="ngCellText" ng-init="entity=row.entity" ng-controller="Kubernetes.Labels">
+    <p ng-show="data"><strong>Labels</strong></p>
     <span ng-repeat="label in labels"
           class="pod-label badge"
           ng-class="labelClass(label.key)"

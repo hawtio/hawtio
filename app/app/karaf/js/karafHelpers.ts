@@ -198,11 +198,13 @@ module Karaf {
       angular.forEach(repo["Features"], (feature) => {
 
         angular.forEach(feature, (entry) => {
-          var f = Object.extended(fullFeatures[entry['Name']][entry['Version']]).clone();
-          f["Id"] = entry["Name"] + "/" + entry["Version"];
-          f["RepositoryName"] = repo["Name"];
-          f["RepositoryURI"] = repo["Uri"];
-          features.push(f);
+          if(fullFeatures[entry['Name']] !== undefined){
+            var f = Object.extended(fullFeatures[entry['Name']][entry['Version']]).clone();
+            f["Id"] = entry["Name"] + "/" + entry["Version"];
+            f["RepositoryName"] = repo["Name"];
+            f["RepositoryURI"] = repo["Uri"];
+            features.push(f);
+          }
         });
 
       });

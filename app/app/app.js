@@ -98,6 +98,16 @@ var ActiveMQ;
 })(ActiveMQ || (ActiveMQ = {}));
 var StringHelpers;
 (function (StringHelpers) {
+    var dateRegex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:/i;
+
+    function isDate(str) {
+        if (!angular.isString(str)) {
+            return false;
+        }
+        return dateRegex.test(str);
+    }
+    StringHelpers.isDate = isDate;
+
     function obfusicate(str) {
         if (!angular.isString(str)) {
             return null;
@@ -21167,16 +21177,19 @@ var Kubernetes;
             $scope.json = '';
             return;
         }
+        if (!collection) {
+            return;
+        }
         var item = collection.find(function (item) {
             return item.id === id;
         });
-        if (!item) {
+        if (item) {
+            $scope.json = angular.toJson(item, true);
+            $scope.item = item;
+        } else {
             $scope.id = undefined;
             $scope.json = '';
             $scope.item = undefined;
-        } else {
-            $scope.json = angular.toJson(item, true);
-            $scope.item = item;
         }
     }
     Kubernetes.setJson = setJson;
@@ -21205,6 +21218,7 @@ var Kubernetes;
                     $scope.tableConfig.filterOptions.filterText = filterText + " " + text;
                 }
             }
+            $scope.id = undefined;
         });
     }
     Kubernetes.initShared = initShared;
@@ -37307,11 +37321,13 @@ var Karaf;
 
             angular.forEach(repo["Features"], function (feature) {
                 angular.forEach(feature, function (entry) {
-                    var f = Object.extended(fullFeatures[entry['Name']][entry['Version']]).clone();
-                    f["Id"] = entry["Name"] + "/" + entry["Version"];
-                    f["RepositoryName"] = repo["Name"];
-                    f["RepositoryURI"] = repo["Uri"];
-                    features.push(f);
+                    if (fullFeatures[entry['Name']] !== undefined) {
+                        var f = Object.extended(fullFeatures[entry['Name']][entry['Version']]).clone();
+                        f["Id"] = entry["Name"] + "/" + entry["Version"];
+                        f["RepositoryName"] = repo["Name"];
+                        f["RepositoryURI"] = repo["Uri"];
+                        features.push(f);
+                    }
                 });
             });
         });
@@ -38355,6 +38371,12 @@ var Kubernetes;
                     },
                     '\\/Env\\/': {
                         template: $templateCache.get('envItemTemplate.html')
+                    },
+                    '^\\/labels$': {
+                        template: $templateCache.get('labelTemplate.html')
+                    },
+                    '\\/env\\/key$': {
+                        hidden: true
                     }
                 }
             };
@@ -38628,6 +38650,14 @@ var Kubernetes;
             ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
 
             Kubernetes.initShared($scope);
+
+            $scope.detailConfig = {
+                properties: {
+                    '^\\/labels$': {
+                        template: $templateCache.get('labelTemplate.html')
+                    }
+                }
+            };
 
             $scope.tableConfig = {
                 data: 'replicationControllers',
@@ -38934,7 +38964,6 @@ var Kubernetes;
             });
 
             $scope.handleClick = function (entity, labelType, value) {
-                Kubernetes.log.debug("handleClick, entity: ", entity, " key: ", labelType, " value: ", value);
                 var filterTextSection = labelType + "=" + value.title;
                 $scope.$emit('labelFilterUpdate', filterTextSection);
             };
@@ -47149,11 +47178,15 @@ var UI;
                             angular.forEach(properties, function (config, propertySelector) {
                                 var regex = new RegExp(propertySelector);
                                 if (regex.test(path)) {
-                                    UI.log.debug("Matched selector: ", propertySelector, " for path: ", path);
-                                    answer = config;
+                                    if (answer && !answer.override && !config.override) {
+                                        answer = Object.merge(answer, config);
+                                    } else {
+                                        answer = Object.clone(config, true);
+                                    }
                                 }
                             });
                         }
+
                         return answer;
                     }
 
@@ -47168,6 +47201,9 @@ var UI;
 
                     function compile(template, path, key, value, config) {
                         var config = getEntityConfig(path, config);
+                        if (config && config.hidden) {
+                            return;
+                        }
                         var interpolated = null;
 
                         if (config && config.template) {
@@ -47177,6 +47213,7 @@ var UI;
                         }
                         var scope = $scope.$new();
                         scope.row = $scope.row;
+                        scope.entityConfig = config;
                         scope.data = value;
                         scope.path = path;
                         return $compile(interpolated)(scope);
@@ -47184,6 +47221,11 @@ var UI;
 
                     function renderPrimitiveValue(path, entity, config) {
                         var template = getTemplate(path, config, $templateCache.get('primitiveValueTemplate.html'));
+                        return compile(template, path, undefined, entity, config);
+                    }
+
+                    function renderDateValue(path, entity, config) {
+                        var template = getTemplate(path, config, $templateCache.get('dateValueTemplate.html'));
                         return compile(template, path, undefined, entity, config);
                     }
 
@@ -47211,6 +47253,8 @@ var UI;
                                 } else {
                                     el.append(renderObjectAttribute(path + '/' + key, key, value, config));
                                 }
+                            } else if (StringHelpers.isDate(value)) {
+                                el.append(renderDateAttribute(path + '/' + key, key, Date.create(value), config));
                             } else {
                                 el.append(renderPrimitiveAttribute(path + '/' + key, key, value, config));
                             }
@@ -47222,7 +47266,7 @@ var UI;
                         }
                     }
 
-                    function getColumnHeaders(entity) {
+                    function getColumnHeaders(path, entity, config) {
                         var answer = undefined;
                         if (!entity) {
                             return answer;
@@ -47233,7 +47277,15 @@ var UI;
                                 if (!answer) {
                                     answer = [];
                                 }
-                                answer = Object.extended(item).keys().union(answer);
+                                answer = Object.extended(item).keys().filter(function (key) {
+                                    return !angular.isFunction(item[key]);
+                                }).filter(function (key) {
+                                    var conf = getEntityConfig(path + '/' + key, config);
+                                    if (conf && conf.hidden) {
+                                        return false;
+                                    }
+                                    return true;
+                                }).union(answer);
                             } else {
                                 answer = undefined;
                                 hasPrimitive = true;
@@ -47256,17 +47308,17 @@ var UI;
                         var headerTemplate = $templateCache.get('headerTemplate.html');
                         var cellTemplate = $templateCache.get('cellTemplate.html');
                         var rowTemplate = $templateCache.get('rowTemplate.html');
-                        var headerRow = angular.element(rowTemplate);
+                        var headerRow = angular.element(interpolate(rowTemplate, path, undefined, undefined));
 
                         headers.forEach(function (header) {
-                            headerRow.append(interpolate(headerTemplate, path, header, undefined));
+                            headerRow.append(interpolate(headerTemplate, path + '/' + header, header, undefined));
                         });
                         thead.append(headerRow);
-                        value.forEach(function (item) {
-                            var tr = angular.element(rowTemplate);
+                        value.forEach(function (item, index) {
+                            var tr = angular.element(interpolate(rowTemplate, path + '/' + index, undefined, undefined));
                             headers.forEach(function (header) {
-                                var td = angular.element(cellTemplate);
-                                td.append(renderThing(path + '/' + header, item[header], config));
+                                var td = angular.element(interpolate(cellTemplate, path + '/' + index + '/' + header, undefined, undefined));
+                                td.append(renderThing(path + '/' + index + '/' + header, item[header], config));
                                 tr.append(td);
                             });
                             tbody.append(tr);
@@ -47275,7 +47327,7 @@ var UI;
                     }
 
                     function renderArrayValue(path, entity, config) {
-                        var headers = getColumnHeaders(entity);
+                        var headers = getColumnHeaders(path, entity, config);
                         if (!headers) {
                             var template = getTemplate(path, config, $templateCache.get('arrayValueListTemplate.html'));
                             return compile(template, path, undefined, entity, config);
@@ -47290,13 +47342,18 @@ var UI;
                         return compile(template, path, key, value, config);
                     }
 
+                    function renderDateAttribute(path, key, value, config) {
+                        var template = getTemplate(path, config, $templateCache.get('dateAttributeTemplate.html'));
+                        return compile(template, path, key, value, config);
+                    }
+
                     function renderObjectAttribute(path, key, value, config) {
                         var template = getTemplate(path, config, $templateCache.get('objectAttributeTemplate.html'));
                         return compile(template, path, key, value, config);
                     }
 
                     function renderArrayAttribute(path, key, value, config) {
-                        var headers = getColumnHeaders(value);
+                        var headers = getColumnHeaders(path, value, config);
                         if (!headers) {
                             var template = getTemplate(path, config, $templateCache.get('arrayAttributeListTemplate.html'));
                             return compile(template, path, key, value, config);
@@ -47311,6 +47368,8 @@ var UI;
                             return renderArrayValue(path, entity, config);
                         } else if (angular.isObject(entity)) {
                             return renderObjectValue(path, entity, config);
+                        } else if (StringHelpers.isDate(entity)) {
+                            return renderDateValue(path, Date.create(entity), config);
                         } else {
                             return renderPrimitiveValue(path, entity, config);
                         }
@@ -47322,14 +47381,10 @@ var UI;
                             return;
                         }
                         if (!$scope.path) {
-                            UI.log.debug("Setting entity: ", $scope.entity, " as the root element");
                             $scope.path = "";
                         }
-                        if (angular.isDefined($scope.$index)) {
-                            UI.log.debug("$scope.$index: ", $scope.$index);
-                        }
+
                         if (!angular.isDefined($scope.row)) {
-                            UI.log.debug("Setting entity: ", entity);
                             $scope.row = {
                                 entity: entity
                             };

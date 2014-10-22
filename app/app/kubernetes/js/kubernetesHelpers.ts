@@ -32,14 +32,17 @@ module Kubernetes {
       $scope.json = '';
       return;
     }
+    if (!collection) {
+      return;
+    }
     var item = collection.find((item) => { return item.id === id; });
-    if (!item) {
+    if (item) {
+      $scope.json = angular.toJson(item, true);
+      $scope.item = item;
+    } else {
       $scope.id = undefined;
       $scope.json = '';
       $scope.item = undefined;
-    } else {
-      $scope.json = angular.toJson(item, true);
-      $scope.item = item;
     }
   }
 
@@ -71,6 +74,7 @@ module Kubernetes {
           $scope.tableConfig.filterOptions.filterText = filterText + " " + text;
         }
       }
+      $scope.id = undefined;
     });
   }
 }

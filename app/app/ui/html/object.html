@@ -17,6 +17,20 @@
       </tbody>
     </table>
   </script>
+  <script type="text/ng-template" id="dateAttributeTemplate.html">
+    <dl class="" ng-show="data" object-path="{{path}}">
+      <dt>{{key}}</dt>
+      <dd ng-show="data && data.getTime() > 0">{{data | date:"EEEE, MMMM dd, yyyy 'at' hh : mm : ss a Z"}}</dd>
+      <dd ng-show="data && data.getTime() <= 0"></dd>
+
+    </dl>
+  </script>
+  <script type="text/ng-template" id="dateValueTemplate.html">
+    <span ng-show="data">
+      <span ng-show="data && data.getTime() > 0" object-path="{{path}}">{{data | date:"EEEE, MMMM dd, yyyy 'at' hh : mm : ss a Z"}}</span>
+      <span ng-show="data && data.getTime() <= 0" object-path="{{path}}"></span>
+    </span>
+  </script>
   <script type="text/ng-template" id="primitiveAttributeTemplate.html">
     <dl class="" ng-show="data" object-path="{{path}}">
       <dt>{{key}}</dt>
@@ -57,12 +71,12 @@
     </dl>
   </script>
   <script type="text/ng-template" id="headerTemplate.html">
-    <th>{{key}}</th>
+    <th object-path="{{path}}">{{key}}</th>
   </script>
   <script type="text/ng-template" id="rowTemplate.html">
-    <tr></tr>
+    <tr object-path="{{path}}"></tr>
   </script>
   <script type="text/ng-template" id="cellTemplate.html">
-    <td></td>
+    <td object-path="{{path}}"></td>
   </script>
 </div>

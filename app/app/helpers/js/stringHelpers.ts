@@ -1,6 +1,16 @@
 /// <reference path="../../baseIncludes.ts"/>
 module StringHelpers {
 
+  var dateRegex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:/i;
+
+  export function isDate(str:any) {
+    if (!angular.isString(str)) {
+      // we only deal with strings
+      return false;
+    }
+    return dateRegex.test(str);
+  }
+
   /**
    * Convert a string into a bunch of '*' of the same length
    * @param str
