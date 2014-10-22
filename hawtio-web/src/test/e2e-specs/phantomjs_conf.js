@@ -1,7 +1,7 @@
 exports.config = {
   specs: ['**/*_spec.js'],
 
-  baseUrl: 'http://localhost:8080/hawtio',
+  baseUrl: 'http://localhost:8282/hawtio',
 
   onPrepare: function () {
     // The require statement must be down here, since jasmine-reporters@1.0
