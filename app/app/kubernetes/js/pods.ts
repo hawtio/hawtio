@@ -5,6 +5,13 @@
 /// <reference path="../../forms/js/formInterfaces.ts"/>
 module Kubernetes {
 
+
+  export var EnvItem = controller("EnvItem", ["$scope", ($scope) => {
+    var parts = $scope.data.split('=');
+    $scope.key = parts.shift();
+    $scope.value = parts.join('=');
+  }]);
+
   // main controller for the page
   export var Pods = controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "jolokia", "$location", "localStorage", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, $dialog, $templateCache, jolokia:Jolokia.IJolokia, $location:ng.ILocationService, localStorage) => {
 
@@ -12,6 +19,20 @@ module Kubernetes {
     $scope.fetched = false;
     $scope.json = '';
     $scope.itemSchema = Forms.createFormConfiguration();
+
+    $scope.podDetail = {
+      properties: {
+        'manifest/containers/image$': {
+          template: $templateCache.get('imageTemplate.html') 
+        },
+        'currentState/status': {
+          template: $templateCache.get('statusTemplate.html')
+        },
+        '\\/Env\\/': {
+          template: $templateCache.get('envItemTemplate.html')
+        }
+      }
+    };
 
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
 

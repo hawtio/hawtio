@@ -1951,9 +1951,6 @@ var Core;
             for (var _i = 0; _i < (arguments.length - 1); _i++) {
                 methods[_i] = arguments[_i + 1];
             }
-            methods = methods.filter(function (m) {
-                return m !== undefined;
-            });
             var canInvoke = true;
             if (selection) {
                 var selectionFolder = selection;
@@ -38334,12 +38331,33 @@ var Kubernetes;
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
 (function (Kubernetes) {
+    Kubernetes.EnvItem = Kubernetes.controller("EnvItem", [
+        "$scope", function ($scope) {
+            var parts = $scope.data.split('=');
+            $scope.key = parts.shift();
+            $scope.value = parts.join('=');
+        }]);
+
     Kubernetes.Pods = Kubernetes.controller("Pods", [
         "$scope", "KubernetesPods", "$dialog", "$templateCache", "jolokia", "$location", "localStorage", function ($scope, KubernetesPods, $dialog, $templateCache, jolokia, $location, localStorage) {
             $scope.pods = [];
             $scope.fetched = false;
             $scope.json = '';
             $scope.itemSchema = Forms.createFormConfiguration();
+
+            $scope.podDetail = {
+                properties: {
+                    'manifest/containers/image$': {
+                        template: $templateCache.get('imageTemplate.html')
+                    },
+                    'currentState/status': {
+                        template: $templateCache.get('statusTemplate.html')
+                    },
+                    '\\/Env\\/': {
+                        template: $templateCache.get('envItemTemplate.html')
+                    }
+                }
+            };
 
             ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
 
@@ -43272,7 +43290,12 @@ var RBAC;
                             var mbean = Core.parseMBean(objectName);
                             var folder = workspace.findMBeanWithProperties(mbean.domain, mbean.attributes);
                             if (folder) {
-                                var invokeRights = workspace.hasInvokeRights(folder, methodName);
+                                var invokeRights;
+                                if (methodName) {
+                                    invokeRights = workspace.hasInvokeRights(folder, methodName);
+                                } else {
+                                    invokeRights = workspace.hasInvokeRights(folder);
+                                }
 
                                 applyInvokeRights(invokeRights, mode);
                             }
@@ -47098,36 +47121,73 @@ var UI;
                 templateUrl: UI.templatePath + "object.html",
                 scope: {
                     "entity": "=?hawtioObject",
-                    "config": "=?"
+                    "config": "=?",
+                    "path": "=?",
+                    "row": "=?"
                 },
                 link: function ($scope, $element, $attr) {
-                    function interpolate(template, key, value) {
+                    function interpolate(template, path, key, value) {
                         var interpolateFunc = $interpolate(template);
                         if (!key) {
                             return interpolateFunc({
-                                data: value
+                                data: value,
+                                path: path
                             });
                         } else {
                             return interpolateFunc({
                                 key: key.titleize(),
-                                data: value
+                                data: value,
+                                path: path
                             });
                         }
                     }
 
-                    function compile(template, key, value) {
-                        var interpolated = interpolate(template, key, value);
+                    function getEntityConfig(path, config) {
+                        var answer = undefined;
+                        var properties = Core.pathGet(config, ['properties']);
+                        if (!answer && properties) {
+                            angular.forEach(properties, function (config, propertySelector) {
+                                var regex = new RegExp(propertySelector);
+                                if (regex.test(path)) {
+                                    UI.log.debug("Matched selector: ", propertySelector, " for path: ", path);
+                                    answer = config;
+                                }
+                            });
+                        }
+                        return answer;
+                    }
+
+                    function getTemplate(path, config, def) {
+                        var answer = def;
+                        var config = getEntityConfig(path, config);
+                        if (config && config.template) {
+                            answer = config.template;
+                        }
+                        return answer;
+                    }
+
+                    function compile(template, path, key, value, config) {
+                        var config = getEntityConfig(path, config);
+                        var interpolated = null;
+
+                        if (config && config.template) {
+                            interpolated = config.template;
+                        } else {
+                            interpolated = interpolate(template, path, key, value);
+                        }
                         var scope = $scope.$new();
+                        scope.row = $scope.row;
                         scope.data = value;
+                        scope.path = path;
                         return $compile(interpolated)(scope);
                     }
 
-                    function renderPrimitiveValue(entity) {
-                        var template = $templateCache.get('primitiveValueTemplate.html');
-                        return compile(template, undefined, entity);
+                    function renderPrimitiveValue(path, entity, config) {
+                        var template = getTemplate(path, config, $templateCache.get('primitiveValueTemplate.html'));
+                        return compile(template, path, undefined, entity, config);
                     }
 
-                    function renderObjectValue(entity) {
+                    function renderObjectValue(path, entity, config) {
                         var isArray = false;
                         var el = undefined;
                         angular.forEach(entity, function (value, key) {
@@ -47144,15 +47204,15 @@ var UI;
                                 el = angular.element('<span></span>');
                             }
                             if (angular.isArray(value)) {
-                                el.append(renderArrayAttribute(key, value));
+                                el.append(renderArrayAttribute(path + '/' + key, key, value, config));
                             } else if (angular.isObject(value)) {
                                 if (Object.extended(value).size() === 0) {
-                                    el.append(renderPrimitiveAttribute(key, 'empty'));
+                                    el.append(renderPrimitiveAttribute(path + '/' + key, key, 'empty', config));
                                 } else {
-                                    el.append(renderObjectAttribute(key, value));
+                                    el.append(renderObjectAttribute(path + '/' + key, key, value, config));
                                 }
                             } else {
-                                el.append(renderPrimitiveAttribute(key, value));
+                                el.append(renderPrimitiveAttribute(path + '/' + key, key, value, config));
                             }
                         });
                         if (el) {
@@ -47188,8 +47248,8 @@ var UI;
                         return answer;
                     }
 
-                    function renderTable(template, key, value, headers) {
-                        var el = angular.element(interpolate(template, key, value));
+                    function renderTable(template, path, key, value, headers, config) {
+                        var el = angular.element(interpolate(template, path, key, value));
                         var thead = el.find('thead');
                         var tbody = el.find('tbody');
 
@@ -47199,14 +47259,14 @@ var UI;
                         var headerRow = angular.element(rowTemplate);
 
                         headers.forEach(function (header) {
-                            headerRow.append(interpolate(headerTemplate, header, undefined));
+                            headerRow.append(interpolate(headerTemplate, path, header, undefined));
                         });
                         thead.append(headerRow);
                         value.forEach(function (item) {
                             var tr = angular.element(rowTemplate);
                             headers.forEach(function (header) {
                                 var td = angular.element(cellTemplate);
-                                td.append(renderThing(item[header]));
+                                td.append(renderThing(path + '/' + header, item[header], config));
                                 tr.append(td);
                             });
                             tbody.append(tr);
@@ -47214,45 +47274,45 @@ var UI;
                         return el;
                     }
 
-                    function renderArrayValue(entity) {
+                    function renderArrayValue(path, entity, config) {
                         var headers = getColumnHeaders(entity);
                         if (!headers) {
-                            var template = $templateCache.get('arrayValueListTemplate.html');
-                            return compile(template, undefined, entity);
+                            var template = getTemplate(path, config, $templateCache.get('arrayValueListTemplate.html'));
+                            return compile(template, path, undefined, entity, config);
                         } else {
-                            var template = $templateCache.get('arrayValueTableTemplate.html');
-                            return renderTable(template, undefined, entity, headers);
+                            var template = getTemplate(path, config, $templateCache.get('arrayValueTableTemplate.html'));
+                            return renderTable(template, path, undefined, entity, headers, config);
                         }
                     }
 
-                    function renderPrimitiveAttribute(key, value) {
-                        var template = $templateCache.get('primitiveAttributeTemplate.html');
-                        return compile(template, key, value);
+                    function renderPrimitiveAttribute(path, key, value, config) {
+                        var template = getTemplate(path, config, $templateCache.get('primitiveAttributeTemplate.html'));
+                        return compile(template, path, key, value, config);
                     }
 
-                    function renderObjectAttribute(key, value) {
-                        var template = $templateCache.get('objectAttributeTemplate.html');
-                        return compile(template, key, value);
+                    function renderObjectAttribute(path, key, value, config) {
+                        var template = getTemplate(path, config, $templateCache.get('objectAttributeTemplate.html'));
+                        return compile(template, path, key, value, config);
                     }
 
-                    function renderArrayAttribute(key, value) {
+                    function renderArrayAttribute(path, key, value, config) {
                         var headers = getColumnHeaders(value);
                         if (!headers) {
-                            var template = $templateCache.get('arrayAttributeListTemplate.html');
-                            return compile(template, key, value);
+                            var template = getTemplate(path, config, $templateCache.get('arrayAttributeListTemplate.html'));
+                            return compile(template, path, key, value, config);
                         } else {
-                            var template = $templateCache.get('arrayAttributeTableTemplate.html');
-                            return renderTable(template, key, value, headers);
+                            var template = getTemplate(path, config, $templateCache.get('arrayAttributeTableTemplate.html'));
+                            return renderTable(template, path, key, value, headers, config);
                         }
                     }
 
-                    function renderThing(entity) {
+                    function renderThing(path, entity, config) {
                         if (angular.isArray(entity)) {
-                            return renderArrayValue(entity);
+                            return renderArrayValue(path, entity, config);
                         } else if (angular.isObject(entity)) {
-                            return renderObjectValue(entity);
+                            return renderObjectValue(path, entity, config);
                         } else {
-                            return renderPrimitiveValue(entity);
+                            return renderPrimitiveValue(path, entity, config);
                         }
                     }
 
@@ -47261,7 +47321,20 @@ var UI;
                             $element.empty();
                             return;
                         }
-                        $element.html(renderThing(entity));
+                        if (!$scope.path) {
+                            UI.log.debug("Setting entity: ", $scope.entity, " as the root element");
+                            $scope.path = "";
+                        }
+                        if (angular.isDefined($scope.$index)) {
+                            UI.log.debug("$scope.$index: ", $scope.$index);
+                        }
+                        if (!angular.isDefined($scope.row)) {
+                            UI.log.debug("Setting entity: ", entity);
+                            $scope.row = {
+                                entity: entity
+                            };
+                        }
+                        $element.html(renderThing($scope.path, entity, $scope.config));
                     }, true);
                 }
             };
