@@ -1,5 +1,5 @@
 /// <reference path="uiPlugin.ts"/>
-/// <reference path="../../helpers/ts/stringHelpers.ts"/>
+/// <reference path="../../helpers/js/stringHelpers.ts"/>
 
 module UI {
 
@@ -39,11 +39,18 @@ module UI {
             angular.forEach(properties, (config, propertySelector) => {
               var regex = new RegExp(propertySelector);
               if (regex.test(path)) {
-                log.debug("Matched selector: ", propertySelector, " for path: ", path);
-                answer = config;
+                // log.debug("Matched selector: ", propertySelector, " for path: ", path);
+                if (answer && !answer.override && !config.override) {
+                  // log.debug("Merged config");
+                  answer = Object.merge(answer, config);
+                } else {
+                  // log.debug("Set config");
+                  answer = Object.clone(config, true);
+                }
               }
             });
           }
+          // log.debug("Answer for path: ", path, " : ", answer);
           return answer;
         }
 
@@ -58,6 +65,9 @@ module UI {
 
         function compile(template, path:string, key, value, config) {
           var config = getEntityConfig(path, config);
+          if (config && config.hidden) {
+            return;
+          }
           var interpolated = null;
           // avoid interpolating custom templates
           if (config && config.template) {
@@ -67,6 +77,7 @@ module UI {
           }
           var scope = $scope.$new();
           scope.row = $scope.row;
+          scope.entityConfig = config; 
           scope.data = value;
           scope.path = path;
           return $compile(interpolated)(scope);
@@ -119,7 +130,7 @@ module UI {
           }
         }
 
-        function getColumnHeaders(entity:Array<any>) {
+        function getColumnHeaders(path:string, entity:Array<any>, config) {
           var answer = <Array<string>> undefined;
           if (!entity) {
             return answer;
@@ -130,7 +141,15 @@ module UI {
               if (!answer) {
                 answer = [];
               }
-              answer = Object.extended(item).keys().filter((key) => !angular.isFunction(item[key])).union(answer);
+              answer = Object.extended(item).keys().filter((key) => {
+                return !angular.isFunction(item[key]);
+              }).filter((key) => {
+                var conf = getEntityConfig(path + '/' + key, config);
+                if (conf && conf.hidden) {
+                  return false;
+                }
+                return true;
+              }).union(answer);
             } else {
               answer = <Array<string>> undefined;
               hasPrimitive = true;
@@ -151,17 +170,17 @@ module UI {
           var headerTemplate = $templateCache.get('headerTemplate.html');
           var cellTemplate = $templateCache.get('cellTemplate.html');
           var rowTemplate = $templateCache.get('rowTemplate.html');
-          var headerRow = angular.element(rowTemplate);
+          var headerRow = angular.element(interpolate(rowTemplate, path, undefined, undefined));
 
           headers.forEach((header) => {
-            headerRow.append(interpolate(headerTemplate, path, header, undefined));
+            headerRow.append(interpolate(headerTemplate, path + '/' + header, header, undefined));
           });
           thead.append(headerRow);
-          value.forEach((item) => {
-            var tr = angular.element(rowTemplate);
+          value.forEach((item, index) => {
+            var tr = angular.element(interpolate(rowTemplate, path + '/' + index, undefined, undefined));
             headers.forEach((header) => {
-              var td = angular.element(cellTemplate);
-              td.append(renderThing(path + '/' + header, item[header], config));
+              var td = angular.element(interpolate(cellTemplate, path + '/' + index + '/' + header, undefined, undefined));
+              td.append(renderThing(path + '/' + index + '/' + header, item[header], config));
               tr.append(td);
             });
             tbody.append(tr);
@@ -170,7 +189,7 @@ module UI {
         }
 
         function renderArrayValue(path:string, entity:any, config):any {
-          var headers = getColumnHeaders(entity);
+          var headers = getColumnHeaders(path, entity, config);
           if (!headers) {
             var template = getTemplate(path, config, $templateCache.get('arrayValueListTemplate.html'));
             return compile(template, path, undefined, entity, config);
@@ -196,7 +215,7 @@ module UI {
         }
 
         function renderArrayAttribute(path:string, key:string, value:any, config):any {
-          var headers = getColumnHeaders(value);
+          var headers = getColumnHeaders(path, value, config);
           if (!headers) {
             var template = getTemplate(path, config, $templateCache.get('arrayAttributeListTemplate.html'));
             return compile(template, path, key, value, config);

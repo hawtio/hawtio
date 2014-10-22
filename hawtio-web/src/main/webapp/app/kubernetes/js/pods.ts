@@ -33,6 +33,9 @@ module Kubernetes {
         },
         '^\\/labels$': {
           template: $templateCache.get('labelTemplate.html')
+        },
+        '\\/env\\/key$': {
+          hidden: true
         }
       }
     };
