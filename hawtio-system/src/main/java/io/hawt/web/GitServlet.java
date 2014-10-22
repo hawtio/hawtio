@@ -222,6 +222,7 @@ public class GitServlet extends UploadServlet implements ServiceTrackerCustomize
     @Override
     public void removedService(ServiceReference serviceReference, Object o) {
         gitFacade = null;
+        bundleContext.ungetService(serviceReference);
     }
 
     protected static class Params {
