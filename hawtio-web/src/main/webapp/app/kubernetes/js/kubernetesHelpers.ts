@@ -71,6 +71,7 @@ module Kubernetes {
           $scope.tableConfig.filterOptions.filterText = filterText + " " + text;
         }
       }
+      $scope.id = undefined;
     });
   }
 }

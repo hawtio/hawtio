@@ -79,7 +79,7 @@ module Kubernetes {
     });
 
     $scope.handleClick = (entity, labelType:string, value) => {
-      log.debug("handleClick, entity: ", entity, " key: ", labelType, " value: ", value);
+      // log.debug("handleClick, entity: ", entity, " key: ", labelType, " value: ", value);
       var filterTextSection = labelType + "=" + value.title;
       $scope.$emit('labelFilterUpdate', filterTextSection);
     };

@@ -45,6 +45,14 @@ module Kubernetes {
 
     Kubernetes.initShared($scope);
 
+    $scope.detailConfig = {
+      properties: {
+        '^\\/labels$': {
+          template: $templateCache.get('labelTemplate.html')
+        }
+      }
+    }
+
     $scope.tableConfig = {
       data: 'replicationControllers',
       showSelectionCheckbox: true,

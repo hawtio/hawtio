@@ -30,6 +30,9 @@ module Kubernetes {
         },
         '\\/Env\\/': {
           template: $templateCache.get('envItemTemplate.html')
+        },
+        '^\\/labels$': {
+          template: $templateCache.get('labelTemplate.html')
         }
       }
     };
