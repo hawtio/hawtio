@@ -17,25 +17,8 @@
  */
 package io.hawt.git;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import io.hawt.util.FileFilters;
-import io.hawt.util.Files;
-import io.hawt.util.Function;
-import io.hawt.util.IOHelper;
-import io.hawt.util.MBeanSupport;
+import io.hawt.util.*;
 import io.hawt.util.Objects;
-import io.hawt.util.Strings;
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
@@ -64,6 +47,12 @@ import org.gitective.core.filter.commit.CommitLimitFilter;
 import org.gitective.core.filter.commit.CommitListFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.*;
 
 import static io.hawt.git.GitFacade.trimLeadingSlash;
 

@@ -1,5 +1,7 @@
 package io.hawt.web;
 
+import io.hawt.util.Strings;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.*;
 import org.apache.http.client.methods.AbortableHttpRequest;
 import org.apache.http.client.utils.URIUtils;
@@ -78,6 +80,7 @@ public class ProxyServlet extends HttpServlet {
      * Whether we accept self-signed SSL certificates
      */
     private static final String PROXY_ACCEPT_SELF_SIGNED_CERTS = "hawtio.proxyDisableCertificateValidation";
+    private static final String PROXY_ACCEPT_SELF_SIGNED_CERTS_ENV = "PROXY_DISABLE_CERT_VALIDATION";
 
     /* MISC */
 
@@ -113,7 +116,9 @@ public class ProxyServlet extends HttpServlet {
         HttpClientBuilder httpClientBuilder = HttpClients.custom().useSystemProperties();
 
         if (System.getProperty(PROXY_ACCEPT_SELF_SIGNED_CERTS) != null) {
-            acceptSelfSignedCerts = Boolean.getBoolean(PROXY_ACCEPT_SELF_SIGNED_CERTS);
+            acceptSelfSignedCerts = Boolean.parseBoolean(System.getProperty(PROXY_ACCEPT_SELF_SIGNED_CERTS));
+        } else if (System.getenv(PROXY_ACCEPT_SELF_SIGNED_CERTS_ENV) != null) {
+            acceptSelfSignedCerts = Boolean.parseBoolean(System.getenv(PROXY_ACCEPT_SELF_SIGNED_CERTS_ENV));
         }
 
         if (acceptSelfSignedCerts) {
@@ -155,8 +160,10 @@ public class ProxyServlet extends HttpServlet {
             throws ServletException, IOException {
         // Make the Request
         //note: we won't transfer the protocol version because I'm not sure it would truly be compatible
+        ProxyDetails proxyDetails = new ProxyDetails(servletRequest);
+
         String method = servletRequest.getMethod();
-        String proxyRequestUri = rewriteUrlFromRequest(servletRequest);
+        String proxyRequestUri = proxyDetails.getStringProxyURL();
 
         URI targetUriObj = null;
 
@@ -179,6 +186,14 @@ public class ProxyServlet extends HttpServlet {
             proxyRequest = new BasicHttpRequest(method, proxyRequestUri);
 
         copyRequestHeaders(servletRequest, proxyRequest, targetUriObj);
+
+        String username = proxyDetails.getUserName();
+        String password = proxyDetails.getPassword();
+
+        if (Strings.isNotBlank(username) && Strings.isNotBlank(password)) {
+            String encodedCreds = Base64.encodeBase64String((username + ":" + password).getBytes());
+            proxyRequest.setHeader("Authorization", "Basic " + encodedCreds);
+        }
 
         setXForwardedForHeader(servletRequest, proxyRequest);
 
@@ -357,14 +372,6 @@ public class ProxyServlet extends HttpServlet {
             OutputStream servletOutputStream = servletResponse.getOutputStream();
             entity.writeTo(servletOutputStream);
         }
-    }
-
-    /**
-     * Reads the request URI from {@code servletRequest} and rewrites it. It's used to make the new request.
-     */
-    protected String rewriteUrlFromRequest(HttpServletRequest servletRequest) {
-        ProxyDetails details = new ProxyDetails(servletRequest);
-        return details.getStringProxyURL();
     }
 
     /**

@@ -21,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.UnknownHostException;
 
 import static io.hawt.util.Strings.isBlank;
@@ -67,7 +69,16 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
 
     @Override
     public String getKubernetesAddress() {
-        return System.getenv("KUBERNETES_MASTER");
+        String address = System.getenv("KUBERNETES_MASTER");
+
+        String username = System.getenv("KUBERNETES_USERNAME");
+        String password = System.getenv("KUBERNETES_PASSWORD");
+
+        if (Strings.isNotBlank(username) && Strings.isNotBlank(password)) {
+            address = address.replaceFirst("://", "://" + username + ":" + password + "@");
+        }
+
+        return address;
     }
 
     @Override
