@@ -346,7 +346,7 @@ module Forms {
 
       var readOnlyWidget = '{{' + rowScopeName + '}}';
       if (config.isReadOnly()) {
-        return(<JQueryStatic>$)('<ul><li ng-repeat="' + rowScopeName + ' in ' + modelName + '">' +
+        return angular.element('<ul><li ng-repeat="' + rowScopeName + ' in ' + modelName + '">' +
                 readOnlyWidget +
                 '</li></ul>');
       } else {
@@ -409,12 +409,12 @@ module Forms {
 
         var widget = Forms.createWidget(propTypeName, property, schema, itemsConfig, itemId, ignorePrefixInLabel, configScopeName, wrapInGroup, disableHumanizeLabel);
         if (!widget) {
-          widget =(<JQueryStatic>$)(readOnlyWidget);
+          widget = angular.element(readOnlyWidget);
         }
-        var markup =(<JQueryStatic>$)('<div style="white-space: nowrap" ng-repeat="' + rowScopeName + ' in ' + itemKeys + '"></div>');
+        var markup = angular.element('<div class="controls" style="white-space: nowrap" ng-repeat="' + rowScopeName + ' in ' + itemKeys + '"></div>');
         markup.append(widget);
-        markup.append((<JQueryStatic>$)('<a ng-click="' + removeMethod + '(' + rowScopeName + ')" title="Remove this value"><i class="red icon-remove"></i></a>'));
-        markup.after((<JQueryStatic>$)('<a ng-click="' + addMethod + '()" title="Add a new value"><i class="icon-plus"></i></a>'));
+        markup.append(angular.element('<a ng-click="' + removeMethod + '(' + rowScopeName + ')" title="Remove this value"><i class="red icon-remove"></i></a>'));
+        markup.after(angular.element('<a ng-click="' + addMethod + '()" title="Add a new value"><i class="icon-plus"></i></a>'));
         return markup;
       }
 
