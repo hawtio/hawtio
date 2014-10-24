@@ -5566,6 +5566,74 @@ var Git;
     })();
     Git.JolokiaGit = JolokiaGit;
 })(Git || (Git = {}));
+var PluginHelpers;
+(function (PluginHelpers) {
+    function createControllerFunction(_module, pluginName) {
+        return function (name, inlineAnnotatedConstructor) {
+            return _module.controller(pluginName + '.' + name, inlineAnnotatedConstructor);
+        };
+    }
+    PluginHelpers.createControllerFunction = createControllerFunction;
+
+    function createRoutingFunction(templateUrl) {
+        return function (templateName, reloadOnSearch) {
+            if (typeof reloadOnSearch === "undefined") { reloadOnSearch = true; }
+            return {
+                templateUrl: UrlHelpers.join(templateUrl, templateName),
+                reloadOnSearch: reloadOnSearch
+            };
+        };
+    }
+    PluginHelpers.createRoutingFunction = createRoutingFunction;
+})(PluginHelpers || (PluginHelpers = {}));
+var DockerRegistry;
+(function (DockerRegistry) {
+    DockerRegistry.context = '/docker-registry';
+    DockerRegistry.hash = UrlHelpers.join('#', DockerRegistry.context);
+    DockerRegistry.defaultRoute = UrlHelpers.join(DockerRegistry.hash, 'list');
+    DockerRegistry.basePath = UrlHelpers.join('app', DockerRegistry.context);
+    DockerRegistry.templatePath = UrlHelpers.join(DockerRegistry.basePath, 'html');
+    DockerRegistry.pluginName = 'DockerRegistry';
+    DockerRegistry.log = Logger.get(DockerRegistry.pluginName);
+    DockerRegistry.SEARCH_FRAGMENT = '/v1/search';
+
+    function getDockerImageRepositories(callback) {
+        var DockerRegistryRestURL = Core.injector.get("DockerRegistryRestURL");
+        var $http = Core.injector.get("$http");
+        DockerRegistryRestURL.then(function (restURL) {
+            $http.get(UrlHelpers.join(restURL, DockerRegistry.SEARCH_FRAGMENT)).success(function (data) {
+                callback(restURL, data);
+            }).error(function (data) {
+                DockerRegistry.log.debug("Error fetching image repositories:", data);
+                callback(restURL, null);
+            });
+        });
+    }
+    DockerRegistry.getDockerImageRepositories = getDockerImageRepositories;
+
+    function completeDockerRegistry() {
+        var $q = Core.injector.get("$q");
+        var $rootScope = Core.injector.get("$rootScope");
+        var deferred = $q.defer();
+        getDockerImageRepositories(function (restURL, repositories) {
+            if (repositories && repositories.results) {
+                var results = repositories.results;
+                results = results.sortBy(function (res) {
+                    return res.name;
+                }).first(15);
+                results = results.map(function (res) {
+                    return res.name;
+                });
+
+                deferred.resolve(results);
+            } else {
+                deferred.reject([]);
+            }
+        });
+        return deferred.promise;
+    }
+    DockerRegistry.completeDockerRegistry = completeDockerRegistry;
+})(DockerRegistry || (DockerRegistry = {}));
 var Wiki;
 (function (Wiki) {
     Wiki.log = Logger.get("Wiki");
@@ -5641,6 +5709,11 @@ var Wiki;
                     }));
                 },
                 form: function (workspace, $scope) {
+                    if (!$scope.doDockerRegistryCompletion) {
+                        $scope.fetchDockerRepositories = function () {
+                            return DockerRegistry.completeDockerRegistry();
+                        };
+                    }
                     return {
                         summaryMarkdown: 'Add app summary here',
                         replicaCount: 1
@@ -5653,7 +5726,12 @@ var Wiki;
                         'dockerImage': {
                             'description': 'Docker Image',
                             'type': 'java.lang.String',
-                            'input-attributes': { 'required': '', 'class': 'input-xlarge' }
+                            'input-attributes': {
+                                'required': '',
+                                'class': 'input-xlarge',
+                                'typeahead': 'repo for repo in fetchDockerRepositories() | filter:$viewValue',
+                                'typeahead-wait-ms': '200'
+                            }
                         },
                         'summaryMarkdown': {
                             'description': 'Short Description',
@@ -21107,51 +21185,6 @@ var DataTable;
             return new DataTable.SimpleDataTable($compile);
         }]);
 })(DataTable || (DataTable = {}));
-var PluginHelpers;
-(function (PluginHelpers) {
-    function createControllerFunction(_module, pluginName) {
-        return function (name, inlineAnnotatedConstructor) {
-            return _module.controller(pluginName + '.' + name, inlineAnnotatedConstructor);
-        };
-    }
-    PluginHelpers.createControllerFunction = createControllerFunction;
-
-    function createRoutingFunction(templateUrl) {
-        return function (templateName, reloadOnSearch) {
-            if (typeof reloadOnSearch === "undefined") { reloadOnSearch = true; }
-            return {
-                templateUrl: UrlHelpers.join(templateUrl, templateName),
-                reloadOnSearch: reloadOnSearch
-            };
-        };
-    }
-    PluginHelpers.createRoutingFunction = createRoutingFunction;
-})(PluginHelpers || (PluginHelpers = {}));
-var DockerRegistry;
-(function (DockerRegistry) {
-    DockerRegistry.context = '/docker-registry';
-    DockerRegistry.hash = UrlHelpers.join('#', DockerRegistry.context);
-    DockerRegistry.defaultRoute = UrlHelpers.join(DockerRegistry.hash, 'list');
-    DockerRegistry.basePath = UrlHelpers.join('app', DockerRegistry.context);
-    DockerRegistry.templatePath = UrlHelpers.join(DockerRegistry.basePath, 'html');
-    DockerRegistry.pluginName = 'DockerRegistry';
-    DockerRegistry.log = Logger.get(DockerRegistry.pluginName);
-    DockerRegistry.SEARCH_FRAGMENT = '/v1/search';
-
-    function getDockerImageRepositories(callback) {
-        var DockerRegistryRestURL = Core.injector.get("DockerRegistryRestURL");
-        var $http = Core.injector.get("$http");
-        DockerRegistryRestURL.then(function (restURL) {
-            $http.get(UrlHelpers.join(restURL, DockerRegistry.SEARCH_FRAGMENT)).success(function (data) {
-                callback(restURL, data);
-            }).error(function (data) {
-                DockerRegistry.log.debug("Error fetching image repositories:", data);
-                callback(restURL, null);
-            });
-        });
-    }
-    DockerRegistry.getDockerImageRepositories = getDockerImageRepositories;
-})(DockerRegistry || (DockerRegistry = {}));
 var Kubernetes;
 (function (Kubernetes) {
     Kubernetes.context = '/kubernetes';
@@ -21282,21 +21315,34 @@ var PollHelpers;
 
     function setupPolling($scope, updateFunction, period) {
         if (typeof period === "undefined") { period = 2000; }
+        if ($scope.$hasPoller) {
+            log.debug("scope already has polling set up, ignoring subsequent polling request");
+            return;
+        }
+        $scope.$hasPoller = true;
         var $timeout = Core.injector.get('$timeout');
         var jolokia = Core.injector.get('jolokia');
-
         var promise = undefined;
+        var name = $scope.name || 'anonymous scope';
 
         var refreshFunction = function () {
-            log.debug("Polling");
+            log.debug("polling for scope: ", name);
             updateFunction(function () {
-                if (jolokia.isRunning()) {
+                if (jolokia.isRunning() && $scope.$hasPoller) {
                     promise = $timeout(refreshFunction, period);
                 }
             });
         };
 
+        $scope.$on('$destroy', function () {
+            log.debug("scope", name, " being destroyed, cancelling polling");
+            delete $scope.$hasPoller;
+            $timeout.cancel(promise);
+        });
+
         $scope.$on('$routeChangeStart', function () {
+            log.debug("route changing, cancelling polling for scope: ", name);
+            delete $scope.$hasPoller;
             $timeout.cancel(promise);
         });
         return refreshFunction;
@@ -21306,11 +21352,13 @@ var PollHelpers;
 var DockerRegistry;
 (function (DockerRegistry) {
     DockerRegistry.TopLevel = DockerRegistry.controller("TopLevel", [
-        "$scope", "$http", function ($scope, $http) {
+        "$scope", "$http", "$timeout", function ($scope, $http, $timeout) {
             $scope.repositories = [];
+            $scope.fetched = false;
             $scope.restURL = '';
             DockerRegistry.getDockerImageRepositories(function (restURL, repositories) {
                 $scope.restURL = restURL;
+                $scope.fetched = true;
                 if ($scope.repositories) {
                     $scope.repositories = repositories.results;
                     var previous = angular.toJson($scope.repositories);
@@ -21333,18 +21381,33 @@ var DockerRegistry;
             });
             $scope.$watchCollection('repositories', function (repositories) {
                 if (!Core.isBlank($scope.restURL)) {
+                    if (!repositories || repositories.length === 0) {
+                        $scope.$broadcast("DockerRegistry.Repositories", $scope.restURL, repositories);
+                        return;
+                    }
+
                     var outstanding = repositories.length;
+                    function maybeNotify() {
+                        outstanding = outstanding - 1;
+                        if (outstanding <= 0) {
+                            $scope.$broadcast("DockerRegistry.Repositories", $scope.restURL, repositories);
+                        }
+                    }
                     repositories.forEach(function (repository) {
                         var tagURL = UrlHelpers.join($scope.restURL, 'v1/repositories/' + repository.name + '/tags');
-                        DockerRegistry.log.debug("Fetching tags from URL: ", tagURL);
-                        $http.get(tagURL).success(function (tags) {
-                            DockerRegistry.log.debug("Got tags: ", tags, " for image repository: ", repository.name);
-                            repository.tags = tags;
-                        }).error(function (data) {
-                            DockerRegistry.log.debug("Error fetching data for image repository: ", repository.name, " error: ", data);
-                        });
+
+                        $timeout(function () {
+                            DockerRegistry.log.debug("Fetching tags from URL: ", tagURL);
+                            $http.get(tagURL).success(function (tags) {
+                                DockerRegistry.log.debug("Got tags: ", tags, " for image repository: ", repository.name);
+                                repository.tags = tags;
+                                maybeNotify();
+                            }).error(function (data) {
+                                DockerRegistry.log.debug("Error fetching data for image repository: ", repository.name, " error: ", data);
+                                maybeNotify();
+                            });
+                        }, 500);
                     });
-                    $scope.$broadcast("DockerRegistry.Repositories", $scope.restURL, repositories);
                 }
             });
         }]);
@@ -23460,6 +23523,7 @@ var FileUpload;
 (function (FileUpload) {
     function useJolokiaTransport(uploader, jolokia, onLoad) {
         var uploaderInternal = uploader;
+        var $rootScope = Core.injector.get("$rootScope");
 
         uploaderInternal._xhrTransport = function (item) {
             var reader = new FileReader();
@@ -23470,10 +23534,12 @@ var FileUpload;
                         item.json = reader.result;
                         uploaderInternal._onSuccessItem(item, response, response.status, {});
                         uploaderInternal._onCompleteItem(item, response, response.status, {});
+                        Core.$apply($rootScope);
                     }, {
                         error: function (response) {
                             uploaderInternal._onErrorItem(item, response, response.status, {});
                             uploaderInternal._onCompleteItem(item, response, response.status, {});
+                            Core.$apply($rootScope);
                         }
                     }));
                 }
@@ -38327,7 +38393,13 @@ var Kubernetes;
                     "$scope", "$location", "$http", "jolokia", "marked", function ($scope, $location, $http, jolokia, marked) {
                         $scope.$watch('config', function (config) {
                             if (config) {
-                                Kubernetes.log.debug("Got kubernetes configuration: ", config);
+                                if (config.error) {
+                                    Kubernetes.log.debug("Error parsing kubernetes config: ", config.error);
+                                } else {
+                                    Kubernetes.log.debug("Got kubernetes configuration: ", config);
+                                }
+                            } else {
+                                Kubernetes.log.debug("Kubernetes config unset");
                             }
                         });
 
@@ -38381,6 +38453,37 @@ var Kubernetes;
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
 (function (Kubernetes) {
+    Kubernetes.FileDropController = Kubernetes.controller("FileDropController", [
+        "$scope", "jolokiaUrl", "jolokia", "FileUploader", function ($scope, jolokiaUrl, jolokia, FileUploader) {
+            $scope.uploader = new FileUploader({
+                autoUpload: true,
+                removeAfterUpload: true,
+                url: jolokiaUrl
+            });
+
+            FileUpload.useJolokiaTransport($scope.uploader, jolokia, function (json) {
+                Kubernetes.log.debug("Json: ", json);
+                return {
+                    'type': 'exec',
+                    mbean: Kubernetes.managerMBean,
+                    operation: 'apply',
+                    arguments: [json]
+                };
+            });
+
+            $scope.uploader.onBeforeUploadItem = function (item) {
+                Core.notification('info', 'Uploading ' + item);
+            };
+
+            $scope.uploader.onSuccessItem = function (item) {
+                Kubernetes.log.debug("onSuccessItem: ", item);
+            };
+
+            $scope.uploader.onErrorItem = function (item, response, status) {
+                Kubernetes.log.debug("Failed to apply, response: ", response, " status: ", status);
+            };
+        }]);
+
     Kubernetes.TopLevel = Kubernetes.controller("TopLevel", [
         "$scope", "workspace", "KubernetesVersion", function ($scope, workspace, KubernetesVersion) {
             $scope.version = undefined;
@@ -51837,7 +51940,14 @@ var Wiki;
                     if (kubernetesJson) {
                         wikiRepository.getPage($scope.branch, kubernetesJson.path, undefined, function (json) {
                             if (json && json.text) {
-                                $scope.kubernetesJson = angular.fromJson(json.text);
+                                try  {
+                                    $scope.kubernetesJson = angular.fromJson(json.text);
+                                } catch (e) {
+                                    $scope.kubernetesJson = {
+                                        errorParsing: true,
+                                        error: e
+                                    };
+                                }
                                 $scope.showAppHeader = true;
                                 Core.$apply($scope);
                             }

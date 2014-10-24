@@ -14,6 +14,7 @@
         <div class="pull-right">
           <button class="btn btn-success pull-right"
                   title="Run this application"
+                  ng-disabled="!config || config.error"
                   ng-click="apply()">Run</button>
         </div>
         <div class="pull-left span10 profile-summary-wide">

@@ -25,13 +25,24 @@
               ng-click="selectedImage = undefined"><i class="icon-list"></i></button>
     </div>
   </div>
-  <div class="row-fluid" ng-hide="selectedImage">
+  <p></p>
+  <div class="row-fluid" ng-show="!fetched">
+    <div class="span12">
+      <p class="text-center"><i class="icon-spinner icon-spin"></i></p>
+    </div>
+  </div>
+  <div class="row-fluid" ng-show="fetched && !selectedImage && imageRepositories.length === 0">
+    <div class="span12">
+      <p class="alert alert-info">No images are stored in this repository</p>
+    </div>
+  </div>
+  <div class="row-fluid" ng-show="fetched && !selectedImage && imageRepositories.length">
     <div class="span12">
       <table class="table table-condensed table-striped"
              hawtio-simple-table="tableConfig"></table>
     </div>
   </div>
-  <div class="row-fluid" ng-show="selectedImage">
+  <div class="row-fluid" ng-show="fetched && selectedImage">
     <div class="span12">
       <div hawtio-object="selectedImage"></div>
     </div>

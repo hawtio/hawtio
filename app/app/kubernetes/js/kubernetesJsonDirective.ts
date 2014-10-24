@@ -14,8 +14,14 @@ module Kubernetes {
 
         $scope.$watch('config', (config) => {
           if (config) {
-            log.debug("Got kubernetes configuration: ", config);
-          } 
+            if (config.error) {
+              log.debug("Error parsing kubernetes config: ", config.error);
+            } else {
+              log.debug("Got kubernetes configuration: ", config);
+            }
+          } else {
+            log.debug("Kubernetes config unset");
+          }
         });
 
         $scope.$on('Wiki.ViewPage.Children', ($event, pageId, children) => {

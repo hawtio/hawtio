@@ -606,7 +606,14 @@ module Wiki {
         if (kubernetesJson) {
           wikiRepository.getPage($scope.branch, kubernetesJson.path, undefined, (json) => {
             if (json && json.text) {
-              $scope.kubernetesJson = angular.fromJson(json.text);
+              try {
+                $scope.kubernetesJson = angular.fromJson(json.text);
+              } catch (e) {
+                $scope.kubernetesJson = {
+                  errorParsing: true,
+                  error: e
+                };
+              }
               $scope.showAppHeader = true;
               Core.$apply($scope);
             }

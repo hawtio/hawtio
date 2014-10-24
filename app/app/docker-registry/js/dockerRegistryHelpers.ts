@@ -35,5 +35,25 @@ module DockerRegistry {
     });
   }
 
+  export function completeDockerRegistry() {
+    var $q = <ng.IQService> Core.injector.get("$q");
+    var $rootScope = <ng.IRootScopeService> Core.injector.get("$rootScope");
+    var deferred = $q.defer();
+    getDockerImageRepositories((restURL:string, repositories:DockerImageRepositories) => {
+      if (repositories && repositories.results) {
+        // log.debug("Got back repositories: ", repositories);
+        var results = repositories.results;
+        results = results.sortBy((res) => { return res.name; }).first(15);
+        results = results.map((res) => { return res.name; });
+        // log.debug("Results: ", results);
+        deferred.resolve(results);
+      } else {
+        // log.debug("didn't get back anything, bailing");
+        deferred.reject([]);
+      }
+    });
+    return deferred.promise;
+  }
+
 
 }
