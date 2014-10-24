@@ -64,7 +64,6 @@ module DockerRegistry {
     });
 
     $scope.$on('DockerRegistry.Repositories', ($event, restURL:string, repositories:DockerImageRepositories) => {
-
       $scope.imageRepositories = repositories;
     });
   }]);
