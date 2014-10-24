@@ -4,6 +4,7 @@
 /// <reference path="../../git/js/git.ts"/>
 /// <reference path="../../fabric/js/fabricHelpers.ts"/>
 /// <reference path="../../helpers/js/urlHelpers.ts"/>
+/// <reference path="../../docker-registry/js/dockerRegistryHelpers.ts"/>
 /**
  * @module Wiki
  */
@@ -101,6 +102,11 @@ module Wiki {
           }));
         },
         form: (workspace, $scope) => {
+          if (!$scope.doDockerRegistryCompletion) {
+            $scope.fetchDockerRepositories = () => {
+              return DockerRegistry.completeDockerRegistry();
+            }
+          }
           return {
             summaryMarkdown: 'Add app summary here',
             replicaCount: 1
@@ -113,7 +119,12 @@ module Wiki {
             'dockerImage': {
               'description': 'Docker Image',
               'type': 'java.lang.String',
-              'input-attributes': { 'required': '', 'class': 'input-xlarge' }
+              'input-attributes': { 
+                'required': '', 
+                'class': 'input-xlarge',
+                'typeahead': 'repo for repo in fetchDockerRepositories() | filter:$viewValue',
+                'typeahead-wait-ms': '200'
+              }
             },
             'summaryMarkdown': {
               'description': 'Short Description',
