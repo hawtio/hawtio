@@ -41,7 +41,9 @@
         <span ng-show="version">Kubernetes version: {{version.major}}.{{version.minor}}</span>
       <li>
     </ul>
-    <div class="row-fluid" ng-view>
+    <div class="wiki-icon-view" ng-controller="Kubernetes.FileDropController" nv-file-drop nv-file-over uploader="uploader" over-class="ready-drop">
+      <div class="row-fluid" ng-view>
+      </div>
     </div>
   </div>
 </div>

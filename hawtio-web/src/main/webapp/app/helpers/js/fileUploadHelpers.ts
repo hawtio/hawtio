@@ -1,3 +1,6 @@
+/// <reference path="../../baseIncludes.ts"/>
+/// <reference path="../../baseHelpers.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
 module FileUpload {
 
   export interface IFileItem {
@@ -118,6 +121,7 @@ module FileUpload {
 
     // cast the uploader to one that lets us fiddle with it's goodies
     var uploaderInternal = <FileUploaderInternal>uploader;
+    var $rootScope = Core.injector.get("$rootScope");
 
     // replace the uploader's transport with one that can post a
     // jolokia request
@@ -131,10 +135,12 @@ module FileUpload {
             item.json = reader.result;
             uploaderInternal._onSuccessItem(item, response, response.status, {});
             uploaderInternal._onCompleteItem(item, response, response.status, {});
+            Core.$apply($rootScope);
           }, {
             error: (response) => {
               uploaderInternal._onErrorItem(item, response, response.status, {});
               uploaderInternal._onCompleteItem(item, response, response.status, {});
+              Core.$apply($rootScope);
             }
           }));
         }
