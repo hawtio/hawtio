@@ -102,4 +102,6 @@ public interface GitFacadeMXBean {
      * Returns all the branch names we can use in the local repo
      */
     List<String> branches();
+
+    void uploadFile(String branch, String path, boolean unzip, String sourceFileName, String destName) throws IOException, GitAPIException;
 }
