@@ -7,7 +7,7 @@
 </script>
 <script type="text/ng-template" id="selectorTemplate.html">
   <div class="ngCellText">
-    <span ng-repeat="(name, value) in row.entity.selector">
+    <span ng-repeat="(name, value) in row.entity.selector track by $index">
       <strong>{{name}}</strong>: {{value}}
     </span>
   </div>
@@ -15,7 +15,7 @@
 <script type="text/ng-template" id="labelTemplate.html">
   <div class="ngCellText" ng-init="entity=row.entity" ng-controller="Kubernetes.Labels">
     <p ng-show="data"><strong>Labels</strong></p>
-    <span ng-repeat="label in labels"
+    <span ng-repeat="label in labels track by $index"
           class="pod-label badge"
           ng-class="labelClass(label.key)"
           ng-click="handleClick(entity, label.key, label)"
