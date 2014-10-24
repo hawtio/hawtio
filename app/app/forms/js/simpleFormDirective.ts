@@ -1,3 +1,6 @@
+/// <reference path="../../baseIncludes.ts"/>
+/// <reference path="formHelpers.ts"/>
+/// <reference path="mappingRegistry.ts"/>
 module Forms {
 
   export class SimpleFormConfig {
@@ -205,7 +208,7 @@ module Forms {
 
         if (onSubmit === null) {
           onSubmit = function (json, form) {
-            Core.notification('error', 'No submit handler defined for form ' + form.get(0).name);
+            log.info("No submit handler defined for form:", form.get(0).name)
           }
         }
 

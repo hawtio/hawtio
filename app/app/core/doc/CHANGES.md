@@ -1,5 +1,10 @@
 ### Change Log
 
+#### 1.4.27
+
+* Reworked proxy
+* Minor fixes to git file manipulation & RBAC
+
 #### 1.4.26
 
 * You can now drag and drop files onto the wiki file listing; or from a file listing to your desktop/folders.

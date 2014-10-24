@@ -115,10 +115,6 @@ module Wiki {
               'type': 'java.lang.String',
               'input-attributes': { 'required': '', 'class': 'input-xlarge' }
             },
-            'labels': {
-              'description': 'Labels',
-              'type': 'map'
-            },
             'summaryMarkdown': {
               'description': 'Short Description',
               'type': 'java.lang.String',
@@ -129,6 +125,13 @@ module Wiki {
               'type': 'java.lang.Integer',
               'input-attributes': {
                 min: '0'
+              }
+            },
+            'labels': {
+              'description': 'Labels',
+              'type': 'map',
+              'items': {
+                'type': 'string'
               }
             }
           }

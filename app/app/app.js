@@ -5655,10 +5655,6 @@ var Wiki;
                             'type': 'java.lang.String',
                             'input-attributes': { 'required': '', 'class': 'input-xlarge' }
                         },
-                        'labels': {
-                            'description': 'Labels',
-                            'type': 'map'
-                        },
                         'summaryMarkdown': {
                             'description': 'Short Description',
                             'type': 'java.lang.String',
@@ -5669,6 +5665,13 @@ var Wiki;
                             'type': 'java.lang.Integer',
                             'input-attributes': {
                                 min: '0'
+                            }
+                        },
+                        'labels': {
+                            'description': 'Labels',
+                            'type': 'map',
+                            'items': {
+                                'type': 'string'
                             }
                         }
                     }
@@ -23821,7 +23824,7 @@ var Forms;
     Forms.configure = configure;
 
     function getControlGroup(config, arg, id) {
-        var rc = $('<div class="' + config.controlgroupclass + '"></div>');
+        var rc = angular.element('<div class="' + config.controlgroupclass + '"></div>');
         if (angular.isDefined(arg.description)) {
             rc.attr('title', arg.description);
         }
@@ -23841,24 +23844,415 @@ var Forms;
     Forms.getControlGroup = getControlGroup;
 
     function getLabel(config, arg, label) {
-        return $('<label class="' + config.labelclass + '">' + label + ': </label>');
+        return angular.element('<label class="' + config.labelclass + '">' + label + ': </label>');
     }
     Forms.getLabel = getLabel;
 
     function getControlDiv(config) {
-        return $('<div class="' + config.controlclass + '"></div>');
+        return angular.element('<div class="' + config.controlclass + '"></div>');
     }
     Forms.getControlDiv = getControlDiv;
 
     function getHelpSpan(config, arg, id) {
         var help = Core.pathGet(config.data, ['properties', id, 'help']);
         if (!Core.isBlank(help)) {
-            return $('<span class="help-block">' + help + '</span>');
+            return angular.element('<span class="help-block">' + help + '</span>');
         } else {
-            return $('<span class="help-block"></span>');
+            return angular.element('<span class="help-block"></span>');
         }
     }
     Forms.getHelpSpan = getHelpSpan;
+})(Forms || (Forms = {}));
+var Forms;
+(function (Forms) {
+    function createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName, wrapInGroup, disableHumanizeLabel) {
+        if (typeof wrapInGroup === "undefined") { wrapInGroup = true; }
+        if (typeof disableHumanizeLabel === "undefined") { disableHumanizeLabel = false; }
+        var input = null;
+        var group = null;
+
+        function copyElementAttributes(element, propertyName) {
+            var propertyAttributes = property[propertyName];
+            if (propertyAttributes) {
+                angular.forEach(propertyAttributes, function (value, key) {
+                    if (angular.isString(value)) {
+                        element.attr(key, value);
+                    }
+                });
+            }
+        }
+        function copyAttributes() {
+            copyElementAttributes(input, "input-attributes");
+            angular.forEach(property, function (value, key) {
+                if (angular.isString(value) && key.indexOf("$") < 0 && key !== "type") {
+                    var html = Core.escapeHtml(value);
+                    input.attr(key, html);
+                }
+            });
+        }
+
+        var options = {
+            valueConverter: null
+        };
+        var safeId = Forms.safeIdentifier(id);
+
+        var inputMarkup = createStandardWidgetMarkup(propTypeName, property, schema, config, options, safeId);
+
+        if (inputMarkup) {
+            input = angular.element(inputMarkup);
+
+            copyAttributes();
+
+            id = safeId;
+
+            var modelName = config.model || Core.pathGet(property, ["input-attributes", "ng-model"]);
+            if (!modelName) {
+                modelName = config.getEntity() + "." + id;
+            }
+            input.attr("ng-model", modelName);
+
+            input.attr('name', id);
+
+            try  {
+                if (config.isReadOnly()) {
+                    input.attr('readonly', 'true');
+                }
+            } catch (e) {
+            }
+            var title = property.tooltip || property.label;
+            if (title) {
+                input.attr('title', title);
+            }
+            var disableHumanizeLabelValue = disableHumanizeLabel || property.disableHumanizeLabel;
+
+            var defaultLabel = id;
+            if (ignorePrefixInLabel || property.ignorePrefixInLabel) {
+                var idx = id.lastIndexOf('.');
+                if (idx > 0) {
+                    defaultLabel = id.substring(idx + 1);
+                }
+            }
+
+            if (input.attr("type") !== "hidden" && wrapInGroup) {
+                group = this.getControlGroup(config, config, id);
+                var labelText = property.title || property.label || (disableHumanizeLabelValue ? defaultLabel : Core.humanizeValue(defaultLabel));
+                var labelElement = Forms.getLabel(config, config, labelText);
+                if (title) {
+                    labelElement.attr('title', title);
+                }
+                group.append(labelElement);
+                copyElementAttributes(labelElement, "label-attributes");
+
+                var controlDiv = Forms.getControlDiv(config);
+                controlDiv.append(input);
+                controlDiv.append(Forms.getHelpSpan(config, config, id));
+
+                group.append(controlDiv);
+
+                copyElementAttributes(controlDiv, "control-attributes");
+                copyElementAttributes(group, "control-group-attributes");
+
+                var scope = config.scope;
+                if (scope && modelName) {
+                    var onModelChange = function (newValue) {
+                        scope.$emit("hawtio.form.modelChange", modelName, newValue);
+                    };
+                    var fn = onModelChange;
+
+                    var converterFn = options.valueConverter;
+                    if (converterFn) {
+                        fn = function () {
+                            converterFn(scope, modelName);
+                            var newValue = Core.pathGet(scope, modelName);
+                            onModelChange(newValue);
+                        };
+                    }
+                    scope.$watch(modelName, fn);
+                }
+            }
+        } else {
+            input = angular.element('<div></div>');
+            input.attr(Forms.normalize(propTypeName, property, schema), '');
+
+            copyAttributes();
+
+            input.attr('entity', config.getEntity());
+            input.attr('mode', config.getMode());
+
+            var fullSchemaName = config.schemaName;
+            if (fullSchemaName) {
+                input.attr('schema', fullSchemaName);
+            }
+
+            if (configScopeName) {
+                input.attr('data', configScopeName);
+            }
+
+            if (ignorePrefixInLabel || property.ignorePrefixInLabel) {
+                input.attr('ignore-prefix-in-label', true);
+            }
+            if (disableHumanizeLabel || property.disableHumanizeLabel) {
+                input.attr('disable-humanize-label', true);
+            }
+            input.attr('name', id);
+        }
+
+        var label = property.label;
+        if (label) {
+            input.attr('title', label);
+        }
+
+        if (property.required) {
+            if (input[0].localName === "input" && input.attr("type") === "checkbox") {
+            } else {
+                input.attr('required', 'true');
+            }
+        }
+        return group ? group : input;
+    }
+    Forms.createWidget = createWidget;
+
+    function createStandardWidgetMarkup(propTypeName, property, schema, config, options, id) {
+        var type = Forms.resolveTypeNameAlias(propTypeName, schema);
+        if (!type) {
+            return '<input type="text"/>';
+        }
+        var custom = Core.pathGet(property, ["formTemplate"]);
+        if (custom) {
+            return null;
+        }
+        var inputElement = Core.pathGet(property, ["input-element"]);
+        if (inputElement) {
+            return "<" + inputElement + "></" + inputElement + ">";
+        }
+        var enumValues = Core.pathGet(property, ["enum"]);
+        if (enumValues) {
+            var required = true;
+            var valuesScopeName = null;
+            var attributes = "";
+            if (enumValues) {
+                var scope = config.scope;
+                var data = config.data;
+                if (data && scope) {
+                    var fullSchema = scope[config.schemaName];
+                    var model = angular.isString(data) ? scope[data] : data;
+
+                    var paths = id.split(".");
+                    var property = null;
+                    angular.forEach(paths, function (path) {
+                        property = Core.pathGet(model, ["properties", path]);
+                        var typeName = Core.pathGet(property, ["type"]);
+                        var alias = Forms.lookupDefinition(typeName, fullSchema);
+                        if (alias) {
+                            model = alias;
+                        }
+                    });
+                    var values = Core.pathGet(property, ["enum"]);
+                    valuesScopeName = "$values_" + id.replace(/\./g, "_");
+                    scope[valuesScopeName] = values;
+                }
+            }
+            if (valuesScopeName) {
+                attributes += ' ng-options="value for value in ' + valuesScopeName + '"';
+            }
+            var defaultOption = required ? "" : '<option value=""></option>';
+            return '<select' + attributes + '>' + defaultOption + '</select>';
+        }
+
+        if (angular.isArray(type)) {
+            return null;
+        }
+        if (!angular.isString(type)) {
+            return null;
+        }
+        var defaultValueConverter = null;
+        var defaultValue = property.default;
+        if (defaultValue) {
+            defaultValueConverter = function (scope, modelName) {
+                var value = Core.pathGet(scope, modelName);
+                if (!value) {
+                    Core.pathSet(scope, modelName, property.default);
+                }
+            };
+            options.valueConverter = defaultValueConverter;
+        }
+
+        function getModelValueOrDefault(scope, modelName) {
+            var value = Core.pathGet(scope, modelName);
+            if (!value) {
+                var defaultValue = property.default;
+                if (defaultValue) {
+                    value = defaultValue;
+                    Core.pathSet(scope, modelName, value);
+                }
+            }
+            return value;
+        }
+
+        switch (type.toLowerCase()) {
+            case "int":
+            case "integer":
+            case "long":
+            case "short":
+            case "java.lang.integer":
+            case "java.lang.long":
+            case "float":
+            case "double":
+            case "java.lang.float":
+            case "java.lang.double":
+                options.valueConverter = function (scope, modelName) {
+                    var value = getModelValueOrDefault(scope, modelName);
+                    if (value && angular.isString(value)) {
+                        var numberValue = Number(value);
+                        Core.pathSet(scope, modelName, numberValue);
+                    }
+                };
+                return '<input type="number"/>';
+
+            case "array":
+            case "java.lang.array":
+            case "java.lang.iterable":
+            case "java.util.list":
+            case "java.util.collection":
+            case "java.util.iterator":
+            case "java.util.set":
+            case "object[]":
+                return null;
+
+            case "boolean":
+            case "bool":
+            case "java.lang.boolean":
+                options.valueConverter = function (scope, modelName) {
+                    var value = getModelValueOrDefault(scope, modelName);
+                    if (value && "true" === value) {
+                        Core.pathSet(scope, modelName, true);
+                    }
+                };
+                return '<input type="checkbox"/>';
+
+            case "password":
+                return '<input type="password"/>';
+
+            case "hidden":
+                return '<input type="hidden"/>';
+
+            case "map":
+                return null;
+
+            default:
+                return '<input type="text"/>';
+        }
+    }
+    Forms.createStandardWidgetMarkup = createStandardWidgetMarkup;
+
+    function mapType(type) {
+        switch (type.toLowerCase()) {
+            case "int":
+            case "integer":
+            case "long":
+            case "short":
+            case "java.lang.integer":
+            case "java.lang.long":
+            case "float":
+            case "double":
+            case "java.lang.float":
+            case "java.lang.double":
+                return "number";
+            case "array":
+            case "java.lang.array":
+            case "java.lang.iterable":
+            case "java.util.list":
+            case "java.util.collection":
+            case "java.util.iterator":
+            case "java.util.set":
+            case "object[]":
+                return "text";
+            case "boolean":
+            case "bool":
+            case "java.lang.boolean":
+                return "checkbox";
+            case "password":
+                return "password";
+            case "hidden":
+                return "hidden";
+            default:
+                return "text";
+        }
+    }
+    Forms.mapType = mapType;
+
+    function normalize(type, property, schema) {
+        type = Forms.resolveTypeNameAlias(type, schema);
+        if (!type) {
+            return "hawtio-form-text";
+        }
+        var custom = Core.pathGet(property, ["formTemplate"]);
+        if (custom) {
+            return "hawtio-form-custom";
+        }
+        var enumValues = Core.pathGet(property, ["enum"]);
+        if (enumValues) {
+            return "hawtio-form-select";
+        }
+
+        if (angular.isArray(type)) {
+            return null;
+        }
+        if (!angular.isString(type)) {
+            try  {
+                console.log("Unsupported JSON schema type value " + JSON.stringify(type));
+            } catch (e) {
+                console.log("Unsupported JSON schema type value " + type);
+            }
+            return null;
+        }
+        switch (type.toLowerCase()) {
+            case "int":
+            case "integer":
+            case "long":
+            case "short":
+            case "java.lang.integer":
+            case "java.lang.long":
+            case "float":
+            case "double":
+            case "java.lang.float":
+            case "java.lang.double":
+                return "hawtio-form-number";
+
+            case "array":
+            case "java.lang.array":
+            case "java.lang.iterable":
+            case "java.util.list":
+            case "java.util.collection":
+            case "java.util.iterator":
+            case "java.util.set":
+            case "object[]":
+                var items = property.items;
+                if (items) {
+                    var typeName = items.type;
+                    if (typeName && typeName === "string") {
+                        return "hawtio-form-string-array";
+                    }
+                } else {
+                    return "hawtio-form-string-array";
+                }
+                Forms.log.debug("Returning hawtio-form-array for : ", property);
+                return "hawtio-form-array";
+            case "boolean":
+            case "bool":
+            case "java.lang.boolean":
+                return "hawtio-form-checkbox";
+            case "password":
+                return "hawtio-form-password";
+            case "hidden":
+                return "hawtio-form-hidden";
+            case "map":
+                return "hawtio-form-map";
+            default:
+                return "hawtio-form-text";
+        }
+    }
+    Forms.normalize = normalize;
 })(Forms || (Forms = {}));
 var Forms;
 (function (Forms) {
@@ -24045,7 +24439,7 @@ var Forms;
 
                 if (onSubmit === null) {
                     onSubmit = function (json, form) {
-                        Core.notification('error', 'No submit handler defined for form ' + form.get(0).name);
+                        Forms.log.info("No submit handler defined for form:", form.get(0).name);
                     };
                 }
 
@@ -24577,392 +24971,6 @@ var Forms;
 })(Forms || (Forms = {}));
 var Forms;
 (function (Forms) {
-    function createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName, wrapInGroup, disableHumanizeLabel) {
-        if (typeof wrapInGroup === "undefined") { wrapInGroup = true; }
-        if (typeof disableHumanizeLabel === "undefined") { disableHumanizeLabel = false; }
-        var input = null;
-        var group = null;
-
-        function copyElementAttributes(element, propertyName) {
-            var propertyAttributes = property[propertyName];
-            if (propertyAttributes) {
-                angular.forEach(propertyAttributes, function (value, key) {
-                    if (angular.isString(value)) {
-                        element.attr(key, value);
-                    }
-                });
-            }
-        }
-        function copyAttributes() {
-            copyElementAttributes(input, "input-attributes");
-            angular.forEach(property, function (value, key) {
-                if (angular.isString(value) && key.indexOf("$") < 0 && key !== "type") {
-                    var html = Core.escapeHtml(value);
-                    input.attr(key, html);
-                }
-            });
-        }
-
-        var options = {
-            valueConverter: null
-        };
-        var safeId = Forms.safeIdentifier(id);
-
-        var inputMarkup = createStandardWidgetMarkup(propTypeName, property, schema, config, options, safeId);
-
-        if (inputMarkup) {
-            input = $(inputMarkup);
-
-            copyAttributes();
-
-            id = safeId;
-
-            var modelName = config.model || Core.pathGet(property, ["input-attributes", "ng-model"]);
-            if (!modelName) {
-                modelName = config.getEntity() + "." + id;
-            }
-            input.attr("ng-model", modelName);
-
-            input.attr('name', id);
-
-            try  {
-                if (config.isReadOnly()) {
-                    input.attr('readonly', 'true');
-                }
-            } catch (e) {
-            }
-            var title = property.tooltip || property.label;
-            if (title) {
-                input.attr('title', title);
-            }
-            var disableHumanizeLabelValue = disableHumanizeLabel || property.disableHumanizeLabel;
-
-            var defaultLabel = id;
-            if (ignorePrefixInLabel || property.ignorePrefixInLabel) {
-                var idx = id.lastIndexOf('.');
-                if (idx > 0) {
-                    defaultLabel = id.substring(idx + 1);
-                }
-            }
-
-            if (input.attr("type") !== "hidden" && wrapInGroup) {
-                group = this.getControlGroup(config, config, id);
-                var labelText = property.title || property.label || (disableHumanizeLabelValue ? defaultLabel : Core.humanizeValue(defaultLabel));
-                var labelElement = Forms.getLabel(config, config, labelText);
-                if (title) {
-                    labelElement.attr('title', title);
-                }
-                group.append(labelElement);
-                copyElementAttributes(labelElement, "label-attributes");
-
-                var controlDiv = Forms.getControlDiv(config);
-                controlDiv.append(input);
-                controlDiv.append(Forms.getHelpSpan(config, config, id));
-
-                group.append(controlDiv);
-
-                copyElementAttributes(controlDiv, "control-attributes");
-                copyElementAttributes(group, "control-group-attributes");
-
-                var scope = config.scope;
-                if (scope && modelName) {
-                    var onModelChange = function (newValue) {
-                        scope.$emit("hawtio.form.modelChange", modelName, newValue);
-                    };
-                    var fn = onModelChange;
-
-                    var converterFn = options.valueConverter;
-                    if (converterFn) {
-                        fn = function () {
-                            converterFn(scope, modelName);
-                            var newValue = Core.pathGet(scope, modelName);
-                            onModelChange(newValue);
-                        };
-                    }
-                    scope.$watch(modelName, fn);
-                }
-            }
-        } else {
-            input = $('<div></div>');
-            input.attr(Forms.normalize(propTypeName, property, schema), '');
-
-            copyAttributes();
-
-            input.attr('entity', config.getEntity());
-            input.attr('mode', config.getMode());
-
-            var fullSchemaName = config.schemaName;
-            if (fullSchemaName) {
-                input.attr('schema', fullSchemaName);
-            }
-
-            if (configScopeName) {
-                input.attr('data', configScopeName);
-            }
-
-            if (ignorePrefixInLabel || property.ignorePrefixInLabel) {
-                input.attr('ignore-prefix-in-label', true);
-            }
-            if (disableHumanizeLabel || property.disableHumanizeLabel) {
-                input.attr('disable-humanize-label', true);
-            }
-            input.attr('name', id);
-        }
-
-        var label = property.label;
-        if (label) {
-            input.attr('title', label);
-        }
-
-        if (property.required) {
-            if (input[0].localName === "input" && input.attr("type") === "checkbox") {
-            } else {
-                input.attr('required', 'true');
-            }
-        }
-        return group ? group : input;
-    }
-    Forms.createWidget = createWidget;
-
-    function createStandardWidgetMarkup(propTypeName, property, schema, config, options, id) {
-        var type = Forms.resolveTypeNameAlias(propTypeName, schema);
-        if (!type) {
-            return '<input type="text"/>';
-        }
-        var custom = Core.pathGet(property, ["formTemplate"]);
-        if (custom) {
-            return null;
-        }
-        var inputElement = Core.pathGet(property, ["input-element"]);
-        if (inputElement) {
-            return "<" + inputElement + "></" + inputElement + ">";
-        }
-        var enumValues = Core.pathGet(property, ["enum"]);
-        if (enumValues) {
-            var required = true;
-            var valuesScopeName = null;
-            var attributes = "";
-            if (enumValues) {
-                var scope = config.scope;
-                var data = config.data;
-                if (data && scope) {
-                    var fullSchema = scope[config.schemaName];
-                    var model = angular.isString(data) ? scope[data] : data;
-
-                    var paths = id.split(".");
-                    var property = null;
-                    angular.forEach(paths, function (path) {
-                        property = Core.pathGet(model, ["properties", path]);
-                        var typeName = Core.pathGet(property, ["type"]);
-                        var alias = Forms.lookupDefinition(typeName, fullSchema);
-                        if (alias) {
-                            model = alias;
-                        }
-                    });
-                    var values = Core.pathGet(property, ["enum"]);
-                    valuesScopeName = "$values_" + id.replace(/\./g, "_");
-                    scope[valuesScopeName] = values;
-                }
-            }
-            if (valuesScopeName) {
-                attributes += ' ng-options="value for value in ' + valuesScopeName + '"';
-            }
-            var defaultOption = required ? "" : '<option value=""></option>';
-            return '<select' + attributes + '>' + defaultOption + '</select>';
-        }
-
-        if (angular.isArray(type)) {
-            return null;
-        }
-        if (!angular.isString(type)) {
-            return null;
-        }
-        var defaultValueConverter = null;
-        var defaultValue = property.default;
-        if (defaultValue) {
-            defaultValueConverter = function (scope, modelName) {
-                var value = Core.pathGet(scope, modelName);
-                if (!value) {
-                    Core.pathSet(scope, modelName, property.default);
-                }
-            };
-            options.valueConverter = defaultValueConverter;
-        }
-
-        function getModelValueOrDefault(scope, modelName) {
-            var value = Core.pathGet(scope, modelName);
-            if (!value) {
-                var defaultValue = property.default;
-                if (defaultValue) {
-                    value = defaultValue;
-                    Core.pathSet(scope, modelName, value);
-                }
-            }
-            return value;
-        }
-
-        switch (type.toLowerCase()) {
-            case "int":
-            case "integer":
-            case "long":
-            case "short":
-            case "java.lang.integer":
-            case "java.lang.long":
-            case "float":
-            case "double":
-            case "java.lang.float":
-            case "java.lang.double":
-                options.valueConverter = function (scope, modelName) {
-                    var value = getModelValueOrDefault(scope, modelName);
-                    if (value && angular.isString(value)) {
-                        var numberValue = Number(value);
-                        Core.pathSet(scope, modelName, numberValue);
-                    }
-                };
-                return '<input type="number"/>';
-
-            case "array":
-            case "java.lang.array":
-            case "java.lang.iterable":
-            case "java.util.list":
-            case "java.util.collection":
-            case "java.util.iterator":
-            case "java.util.set":
-            case "object[]":
-                return null;
-
-            case "boolean":
-            case "bool":
-            case "java.lang.boolean":
-                options.valueConverter = function (scope, modelName) {
-                    var value = getModelValueOrDefault(scope, modelName);
-                    if (value && "true" === value) {
-                        Core.pathSet(scope, modelName, true);
-                    }
-                };
-                return '<input type="checkbox"/>';
-
-            case "password":
-                return '<input type="password"/>';
-
-            case "hidden":
-                return '<input type="hidden"/>';
-
-            default:
-                return '<input type="text"/>';
-        }
-    }
-    Forms.createStandardWidgetMarkup = createStandardWidgetMarkup;
-
-    function mapType(type) {
-        switch (type.toLowerCase()) {
-            case "int":
-            case "integer":
-            case "long":
-            case "short":
-            case "java.lang.integer":
-            case "java.lang.long":
-            case "float":
-            case "double":
-            case "java.lang.float":
-            case "java.lang.double":
-                return "number";
-            case "array":
-            case "java.lang.array":
-            case "java.lang.iterable":
-            case "java.util.list":
-            case "java.util.collection":
-            case "java.util.iterator":
-            case "java.util.set":
-            case "object[]":
-                return "text";
-            case "boolean":
-            case "bool":
-            case "java.lang.boolean":
-                return "checkbox";
-            case "password":
-                return "password";
-            case "hidden":
-                return "hidden";
-            default:
-                return "text";
-        }
-    }
-    Forms.mapType = mapType;
-
-    function normalize(type, property, schema) {
-        type = Forms.resolveTypeNameAlias(type, schema);
-        if (!type) {
-            return "hawtio-form-text";
-        }
-        var custom = Core.pathGet(property, ["formTemplate"]);
-        if (custom) {
-            return "hawtio-form-custom";
-        }
-        var enumValues = Core.pathGet(property, ["enum"]);
-        if (enumValues) {
-            return "hawtio-form-select";
-        }
-
-        if (angular.isArray(type)) {
-            return null;
-        }
-        if (!angular.isString(type)) {
-            try  {
-                console.log("Unsupported JSON schema type value " + JSON.stringify(type));
-            } catch (e) {
-                console.log("Unsupported JSON schema type value " + type);
-            }
-            return null;
-        }
-        switch (type.toLowerCase()) {
-            case "int":
-            case "integer":
-            case "long":
-            case "short":
-            case "java.lang.integer":
-            case "java.lang.long":
-            case "float":
-            case "double":
-            case "java.lang.float":
-            case "java.lang.double":
-                return "hawtio-form-number";
-
-            case "array":
-            case "java.lang.array":
-            case "java.lang.iterable":
-            case "java.util.list":
-            case "java.util.collection":
-            case "java.util.iterator":
-            case "java.util.set":
-            case "object[]":
-                var items = property.items;
-                if (items) {
-                    var typeName = items.type;
-                    if (typeName && typeName === "string") {
-                        return "hawtio-form-string-array";
-                    }
-                } else {
-                    return "hawtio-form-string-array";
-                }
-                Forms.log.debug("Returning hawtio-form-array for : ", property);
-                return "hawtio-form-array";
-            case "boolean":
-            case "bool":
-            case "java.lang.boolean":
-                return "hawtio-form-checkbox";
-            case "password":
-                return "hawtio-form-password";
-            case "hidden":
-                return "hawtio-form-hidden";
-            default:
-                return "hawtio-form-text";
-        }
-    }
-    Forms.normalize = normalize;
-})(Forms || (Forms = {}));
-var Forms;
-(function (Forms) {
     var InputBaseConfig = (function () {
         function InputBaseConfig() {
             this.name = 'input';
@@ -25268,7 +25276,7 @@ var Forms;
 
             var readOnlyWidget = '{{' + rowScopeName + '}}';
             if (config.isReadOnly()) {
-                return $('<ul><li ng-repeat="' + rowScopeName + ' in ' + modelName + '">' + readOnlyWidget + '</li></ul>');
+                return angular.element('<ul><li ng-repeat="' + rowScopeName + ' in ' + modelName + '">' + readOnlyWidget + '</li></ul>');
             } else {
                 var scope = config.scope;
                 var fallbackSchemaName = (arg.$attr || {})["schema"] || "schema";
@@ -25323,12 +25331,12 @@ var Forms;
 
                 var widget = Forms.createWidget(propTypeName, property, schema, itemsConfig, itemId, ignorePrefixInLabel, configScopeName, wrapInGroup, disableHumanizeLabel);
                 if (!widget) {
-                    widget = $(readOnlyWidget);
+                    widget = angular.element(readOnlyWidget);
                 }
-                var markup = $('<div style="white-space: nowrap" ng-repeat="' + rowScopeName + ' in ' + itemKeys + '"></div>');
+                var markup = angular.element('<div class="controls" style="white-space: nowrap" ng-repeat="' + rowScopeName + ' in ' + itemKeys + '"></div>');
                 markup.append(widget);
-                markup.append($('<a ng-click="' + removeMethod + '(' + rowScopeName + ')" title="Remove this value"><i class="red icon-remove"></i></a>'));
-                markup.after($('<a ng-click="' + addMethod + '()" title="Add a new value"><i class="icon-plus"></i></a>'));
+                markup.append(angular.element('<a ng-click="' + removeMethod + '(' + rowScopeName + ')" title="Remove this value"><i class="red icon-remove"></i></a>'));
+                markup.after(angular.element('<a ng-click="' + addMethod + '()" title="Add a new value"><i class="icon-plus"></i></a>'));
                 return markup;
             }
         };
@@ -30987,6 +30995,49 @@ var ForceGraph;
     })();
     ForceGraph.GraphBuilder = GraphBuilder;
 })(ForceGraph || (ForceGraph = {}));
+var Forms;
+(function (Forms) {
+    var mapDirective = Forms._module.directive("hawtioFormMap", [function () {
+            return {
+                restrict: 'A',
+                replace: true,
+                templateUrl: UrlHelpers.join(Forms.templateUrl, "formMapDirective.html"),
+                scope: {
+                    description: '@',
+                    entity: '=',
+                    mode: '=',
+                    data: '=',
+                    name: '@'
+                },
+                link: function (scope, element, attr) {
+                    scope.deleteKey = function (key) {
+                        try  {
+                            delete scope.entity[scope.name]["" + key];
+                        } catch (e) {
+                            Forms.log.debug("failed to delete key: ", key, " from entity: ", scope.entity);
+                        }
+                    };
+
+                    scope.addItem = function (newItem) {
+                        if (!scope.entity) {
+                            scope.entity = {};
+                        }
+                        Core.pathSet(scope.entity, [scope.name, newItem.key], newItem.value);
+                        scope.showForm = false;
+                    };
+
+                    scope.$watch('showForm', function (newValue) {
+                        if (newValue) {
+                            scope.newItem = {
+                                key: undefined,
+                                value: undefined
+                            };
+                        }
+                    });
+                }
+            };
+        }]);
+})(Forms || (Forms = {}));
 var Forms;
 (function (Forms) {
     Forms.FormTestController = Forms._module.controller("Forms.FormTestController", [

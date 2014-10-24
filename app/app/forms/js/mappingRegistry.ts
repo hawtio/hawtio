@@ -34,8 +34,6 @@ module Forms {
       });
     }
 
-    // lets try to create standard widget markup by default
-    // as they work better than the hawtio wrappers when inside forms...
     var options = {
       valueConverter: null
     };
@@ -43,12 +41,8 @@ module Forms {
 
     var inputMarkup = createStandardWidgetMarkup(propTypeName, property, schema, config, options, safeId);
 
-    // Note if for whatever reason we need to go back to the old way of using hawtio directives for standard
-    // angularjs directives, just clear inputMarker to null here ;)
-    // inputMarkup = null;
-
     if (inputMarkup) {
-      input = (<JQueryStatic>$)(inputMarkup);
+      input = angular.element(inputMarkup);
 
       copyAttributes();
 
@@ -124,7 +118,7 @@ module Forms {
         }
       }
     } else {
-      input = (<JQueryStatic>$)('<div></div>');
+      input = angular.element('<div></div>');
       input.attr(Forms.normalize(propTypeName, property, schema), '');
 
       copyAttributes();
@@ -325,6 +319,9 @@ module Forms {
       case "hidden":
         return '<input type="hidden"/>';
 
+      case "map":
+        return null;
+
       default:
         // lets check if this name is an alias to a definition in the schema
         return '<input type="text"/>';
@@ -436,6 +433,8 @@ module Forms {
         return "hawtio-form-password";
       case "hidden":
         return "hawtio-form-hidden";
+      case "map":
+        return "hawtio-form-map";
       default:
         // lets check if this name is an alias to a definition in the schema
         return "hawtio-form-text";
