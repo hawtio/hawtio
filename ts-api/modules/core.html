@@ -793,7 +793,7 @@
 					<a name="configuredpluginsforperspectiveid" class="tsd-anchor"></a>
 					<h3>configured<wbr>Plugins<wbr>For<wbr>Perspective<wbr>Id</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
-						<li class="tsd-signature tsd-kind-icon">configured<wbr>Plugins<wbr>For<wbr>Perspective<wbr>Id<span class="tsd-signature-symbol">(</span>perspectiveId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, jolokia<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, localStorage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, workspace<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array&lt;any&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">configured<wbr>Plugins<wbr>For<wbr>Perspective<wbr>Id<span class="tsd-signature-symbol">(</span>perspectiveId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, workspace<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, jolokia<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, localStorage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array&lt;any&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
@@ -813,13 +813,13 @@
 									<h5>perspectiveId:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
+									<h5>workspace:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
 									<h5>jolokia:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
 									<h5>localStorage:         <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>workspace:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">Array&lt;any&gt;</span>
@@ -1026,7 +1026,7 @@
 					<a name="createremoteworkspace" class="tsd-anchor"></a>
 					<h3>create<wbr>Remote<wbr>Workspace</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Remote<wbr>Workspace<span class="tsd-signature-symbol">(</span>$templateCache<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;</span>null, localStorage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $rootScope<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;</span>null, $compile<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;</span>null, $location<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, userDetails<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;</span>null, remoteJolokia<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/core.workspace.html" class="tsd-signature-type">Workspace</a></li>
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Remote<wbr>Workspace<span class="tsd-signature-symbol">(</span>remoteJolokia<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $location<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, localStorage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $rootScope<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;</span>null, $compile<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;</span>null, $templateCache<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;</span>null, userDetails<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;</span>null<span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/core.workspace.html" class="tsd-signature-type">Workspace</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
@@ -1041,7 +1041,10 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>$templateCache?:         <span class="tsd-signature-type">any</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+									<h5>remoteJolokia:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>$location:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
 									<h5>localStorage:         <span class="tsd-signature-type">any</span></h5>
@@ -1053,13 +1056,10 @@
 									<h5>$compile?:         <span class="tsd-signature-type">any</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
 								</li>
 								<li>
-									<h5>$location:         <span class="tsd-signature-type">any</span></h5>
+									<h5>$templateCache?:         <span class="tsd-signature-type">any</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
 								</li>
 								<li>
 									<h5>userDetails?:         <span class="tsd-signature-type">any</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
-								</li>
-								<li>
-									<h5>remoteJolokia:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns         <a href="../classes/core.workspace.html" class="tsd-signature-type">Workspace</a>
@@ -1118,7 +1118,7 @@
 					<a name="d3forcegraph" class="tsd-anchor"></a>
 					<h3>d3<wbr>Force<wbr>Graph</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
-						<li class="tsd-signature tsd-kind-icon">d3<wbr>Force<wbr>Graph<span class="tsd-signature-symbol">(</span>scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, links<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, canvasElement<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, nodes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span></li>
+						<li class="tsd-signature tsd-kind-icon">d3<wbr>Force<wbr>Graph<span class="tsd-signature-symbol">(</span>scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, nodes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, links<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, canvasElement<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
@@ -1132,13 +1132,13 @@
 									<h5>scope:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
+									<h5>nodes:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
 									<h5>links:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
 									<h5>canvasElement:         <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>nodes:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 						</li>
@@ -1147,7 +1147,7 @@
 					<a name="dagrelayoutgraph" class="tsd-anchor"></a>
 					<h3>dagre<wbr>Layout<wbr>Graph</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
-						<li class="tsd-signature tsd-kind-icon">dagre<wbr>Layout<wbr>Graph<span class="tsd-signature-symbol">(</span>nodes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, width<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, height<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, svgElement<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, links<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">dagre<wbr>Layout<wbr>Graph<span class="tsd-signature-symbol">(</span>nodes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, links<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, width<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, height<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, svgElement<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
@@ -1161,6 +1161,9 @@
 									<h5>nodes:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
+									<h5>links:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
 									<h5>width:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
@@ -1168,9 +1171,6 @@
 								</li>
 								<li>
 									<h5>svgElement:         <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>links:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">any</span>
@@ -3045,7 +3045,7 @@
 					<a name="register" class="tsd-anchor"></a>
 					<h3>register</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
-						<li class="tsd-signature tsd-kind-icon">register<span class="tsd-signature-symbol">(</span>jolokia<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Jolokia.IJolokia</span>, arguments<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">() =&gt; void</span></li>
+						<li class="tsd-signature tsd-kind-icon">register<span class="tsd-signature-symbol">(</span>jolokia<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Jolokia.IJolokia</span>, scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, arguments<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">() =&gt; void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
@@ -3073,6 +3073,9 @@
 									<h5>jolokia:         <span class="tsd-signature-type">Jolokia.IJolokia</span></h5>
 								</li>
 								<li>
+									<h5>scope:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
 									<h5>arguments:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
@@ -3081,9 +3084,6 @@
 										<div class="lead">
 										</div>
 									</div>
-								</li>
-								<li>
-									<h5>scope:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">() =&gt; void</span>
@@ -4136,7 +4136,7 @@
 						<a name="bindmodeltosearchparam.bindmodeltosearchparam_function_signature" class="tsd-anchor"></a>
 						<h3>bind<wbr>Model<wbr>ToSearch<wbr>Param function signature</h3>
 						<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-variable">
-							<li class="tsd-signature tsd-kind-icon">bind<wbr>Model<wbr>ToSearch<wbr>Param<span class="tsd-signature-symbol">(</span>$location<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, from<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Function</span>, initialValue<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span>, modelName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, paramName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, to<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">)</span></li>
+							<li class="tsd-signature tsd-kind-icon">bind<wbr>Model<wbr>ToSearch<wbr>Param<span class="tsd-signature-symbol">(</span>$scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $location<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, modelName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, paramName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, initialValue<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span>, to<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Function</span>, from<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">)</span></li>
 						</ul>
 						<ul class="tsd-descriptions">
 							<li class="tsd-description"><aside class="tsd-sources">
@@ -4162,16 +4162,27 @@
 								<h4 class="tsd-parameters-title">Parameters</h4>
 								<ul class="tsd-parameters">
 									<li>
-										<h5>$location:         <span class="tsd-signature-type">any</span></h5>
-									</li>
-									<li>
 										<h5>$scope:         <span class="tsd-signature-type">any</span></h5>
 									</li>
 									<li>
-										<h5>from?:         <span class="tsd-signature-type">Function</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+										<h5>$location:         <span class="tsd-signature-type">any</span></h5>
+									</li>
+									<li>
+										<h5>modelName:         <span class="tsd-signature-type">string</span></h5>
+									</li>
+									<li>
+										<h5>paramName:         <span class="tsd-signature-type">string</span></h5>
+									</li>
+									<li>
+										<h5>initialValue?:         <span class="tsd-signature-type">any</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+										<div class="tsd-comment tsd-typography">
+										</div>
+									</li>
+									<li>
+										<h5>to?:         <span class="tsd-signature-type">Function</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
 										<ul class="tsd-parameters">
 											<li>
-												<h5>from function signature<span class="tsd-signature-symbol"></span></h5>
+												<h5>to function signature<span class="tsd-signature-symbol"></span></h5>
 												<ul class="tsd-signatures tsd-kind-function-type tsd-parent-kind-parameter">
 													<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 												</ul>
@@ -4193,21 +4204,10 @@
 											</ul>        </li>
 									</ul>            </li>
 									<li>
-										<h5>initialValue?:         <span class="tsd-signature-type">any</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
-										<div class="tsd-comment tsd-typography">
-										</div>
-									</li>
-									<li>
-										<h5>modelName:         <span class="tsd-signature-type">string</span></h5>
-									</li>
-									<li>
-										<h5>paramName:         <span class="tsd-signature-type">string</span></h5>
-									</li>
-									<li>
-										<h5>to?:         <span class="tsd-signature-type">Function</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+										<h5>from?:         <span class="tsd-signature-type">Function</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
 										<ul class="tsd-parameters">
 											<li>
-												<h5>to function signature<span class="tsd-signature-symbol"></span></h5>
+												<h5>from function signature<span class="tsd-signature-symbol"></span></h5>
 												<ul class="tsd-signatures tsd-kind-function-type tsd-parent-kind-parameter">
 													<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 												</ul>
@@ -4383,7 +4383,7 @@
 						<a name="reloadwhenparameterschange.reloadwhenparameterschange_function_signature" class="tsd-anchor"></a>
 						<h3>reload<wbr>When<wbr>Parameters<wbr>Change function signature</h3>
 						<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-variable">
-							<li class="tsd-signature tsd-kind-icon">reload<wbr>When<wbr>Parameters<wbr>Change<span class="tsd-signature-symbol">(</span>$location<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $route<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, parameters<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Array&lt;string&gt;</span><span class="tsd-signature-symbol"> =&nbsp;</span>[&quot;nid&quot;]<span class="tsd-signature-symbol">)</span></li>
+							<li class="tsd-signature tsd-kind-icon">reload<wbr>When<wbr>Parameters<wbr>Change<span class="tsd-signature-symbol">(</span>$route<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $location<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, parameters<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Array&lt;string&gt;</span><span class="tsd-signature-symbol"> =&nbsp;</span>[&quot;nid&quot;]<span class="tsd-signature-symbol">)</span></li>
 						</ul>
 						<ul class="tsd-descriptions">
 							<li class="tsd-description"><aside class="tsd-sources">
@@ -4409,13 +4409,13 @@
 								<h4 class="tsd-parameters-title">Parameters</h4>
 								<ul class="tsd-parameters">
 									<li>
-										<h5>$location:         <span class="tsd-signature-type">any</span></h5>
-									</li>
-									<li>
 										<h5>$route:         <span class="tsd-signature-type">any</span></h5>
 									</li>
 									<li>
 										<h5>$scope:         <span class="tsd-signature-type">any</span></h5>
+									</li>
+									<li>
+										<h5>$location:         <span class="tsd-signature-type">any</span></h5>
 									</li>
 									<li>
 										<h5>parameters?:         <span class="tsd-signature-type">Array&lt;string&gt;</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>

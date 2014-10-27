@@ -327,7 +327,7 @@
 					<a name="addroutexmlchildren" class="tsd-anchor"></a>
 					<h3>add<wbr>Route<wbr>Xml<wbr>Children</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Route<wbr>Xml<wbr>Children<span class="tsd-signature-symbol">(</span>parentNode<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;</span>null, $scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, nodes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, links<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, parentId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, parentX<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, parentY<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, parent<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array&lt;any&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Route<wbr>Xml<wbr>Children<span class="tsd-signature-symbol">(</span>$scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, parent<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, nodes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, links<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, parentId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, parentX<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, parentY<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, parentNode<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;</span>null<span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array&lt;any&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
@@ -338,10 +338,10 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>parentNode?:         <span class="tsd-signature-type">any</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+									<h5>$scope:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
-									<h5>$scope:         <span class="tsd-signature-type">any</span></h5>
+									<h5>parent:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
 									<h5>nodes:         <span class="tsd-signature-type">any</span></h5>
@@ -359,7 +359,7 @@
 									<h5>parentY:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
-									<h5>parent:         <span class="tsd-signature-type">any</span></h5>
+									<h5>parentNode?:         <span class="tsd-signature-type">any</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">Array&lt;any&gt;</span>
@@ -593,7 +593,7 @@
 					<a name="createfolderxmltree" class="tsd-anchor"></a>
 					<h3>create<wbr>Folder<wbr>Xml<wbr>Tree</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
-						<li class="tsd-signature tsd-kind-icon">create<wbr>Folder<wbr>Xml<wbr>Tree<span class="tsd-signature-symbol">(</span>treeNode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, indent<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;</span>Camel.increaseIndent(&quot;&quot;), xmlNode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Folder<wbr>Xml<wbr>Tree<span class="tsd-signature-symbol">(</span>treeNode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, xmlNode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, indent<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;</span>Camel.increaseIndent(&quot;&quot;)<span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
@@ -624,10 +624,10 @@
 									</div>
 								</li>
 								<li>
-									<h5>indent?:         <span class="tsd-signature-type">string</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+									<h5>xmlNode:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
-									<h5>xmlNode:         <span class="tsd-signature-type">any</span></h5>
+									<h5>indent?:         <span class="tsd-signature-type">string</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">any</span>
@@ -1556,7 +1556,7 @@
 					<a name="initendpointchooserscope" class="tsd-anchor"></a>
 					<h3>init<wbr>Endpoint<wbr>Chooser<wbr>Scope</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
-						<li class="tsd-signature tsd-kind-icon">init<wbr>Endpoint<wbr>Chooser<wbr>Scope<span class="tsd-signature-symbol">(</span>workspace<span class="tsd-signature-symbol">: </span><a href="../classes/workspace.html" class="tsd-signature-type">Workspace</a>, jolokia<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $location<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, localStorage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">WindowLocalStorage</span><span class="tsd-signature-symbol">)</span></li>
+						<li class="tsd-signature tsd-kind-icon">init<wbr>Endpoint<wbr>Chooser<wbr>Scope<span class="tsd-signature-symbol">(</span>$scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $location<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, localStorage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">WindowLocalStorage</span>, workspace<span class="tsd-signature-symbol">: </span><a href="../classes/workspace.html" class="tsd-signature-type">Workspace</a>, jolokia<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
@@ -1567,12 +1567,6 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>workspace:         <a href="../classes/workspace.html" class="tsd-signature-type">Workspace</a></h5>
-								</li>
-								<li>
-									<h5>jolokia:         <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
 									<h5>$scope:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
@@ -1580,6 +1574,12 @@
 								</li>
 								<li>
 									<h5>localStorage:         <span class="tsd-signature-type">WindowLocalStorage</span></h5>
+								</li>
+								<li>
+									<h5>workspace:         <a href="../classes/workspace.html" class="tsd-signature-type">Workspace</a></h5>
+								</li>
+								<li>
+									<h5>jolokia:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 						</li>
@@ -2071,7 +2071,7 @@
 					<a name="updateroutenodelabelandtooltip" class="tsd-anchor"></a>
 					<h3>update<wbr>Route<wbr>Node<wbr>Label<wbr>And<wbr>Tooltip</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
-						<li class="tsd-signature tsd-kind-icon">update<wbr>Route<wbr>Node<wbr>Label<wbr>And<wbr>Tooltip<span class="tsd-signature-symbol">(</span>folder<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, nodeSettings<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, routeXmlNode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Route<wbr>Node<wbr>Label<wbr>And<wbr>Tooltip<span class="tsd-signature-symbol">(</span>folder<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, routeXmlNode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, nodeSettings<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
@@ -2085,10 +2085,10 @@
 									<h5>folder:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
-									<h5>nodeSettings:         <span class="tsd-signature-type">any</span></h5>
+									<h5>routeXmlNode:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 								<li>
-									<h5>routeXmlNode:         <span class="tsd-signature-type">any</span></h5>
+									<h5>nodeSettings:         <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">any</span>

@@ -1388,7 +1388,6 @@ var Core;
             this.userDetails = userDetails;
             this.operationCounter = 0;
             this.tree = new Core.Folder('MBeans');
-            this.treeResponse = {};
             this.mbeanTypesToDomain = {};
             this.mbeanServicesToDomain = {};
             this.attributeColumnDefs = {};
@@ -1519,148 +1518,145 @@ var Core;
         };
 
         Workspace.prototype.populateTree = function (response) {
-            if (!Object.equal(this.treeResponse, response.value)) {
-                this.treeResponse = response.value;
-                log.debug("JMX tree has been loaded, data: ", response.value);
+            log.debug("JMX tree has been loaded, data: ", response.value);
 
-                var rootId = 'root';
-                var separator = '-';
-                this.mbeanTypesToDomain = {};
-                this.mbeanServicesToDomain = {};
-                this.keyToNodeMap = {};
-                var tree = new Core.Folder('MBeans');
-                tree.key = rootId;
-                var domains = response.value;
-                for (var domainName in domains) {
-                    var domainClass = escapeDots(domainName);
-                    var domain = domains[domainName];
-                    for (var mbeanName in domain) {
-                        var entries = {};
-                        var folder = this.folderGetOrElse(tree, domainName);
+            var rootId = 'root';
+            var separator = '-';
+            this.mbeanTypesToDomain = {};
+            this.mbeanServicesToDomain = {};
+            this.keyToNodeMap = {};
+            var tree = new Core.Folder('MBeans');
+            tree.key = rootId;
+            var domains = response.value;
+            for (var domainName in domains) {
+                var domainClass = escapeDots(domainName);
+                var domain = domains[domainName];
+                for (var mbeanName in domain) {
+                    var entries = {};
+                    var folder = this.folderGetOrElse(tree, domainName);
 
+                    folder.domain = domainName;
+                    if (!folder.key) {
+                        folder.key = rootId + separator + domainName;
+                    }
+                    var folderNames = [domainName];
+                    folder.folderNames = folderNames;
+                    folderNames = folderNames.clone();
+                    var items = mbeanName.split(',');
+                    var paths = [];
+                    var typeName = null;
+                    var serviceName = null;
+                    items.forEach(function (item) {
+                        var kv = item.split('=');
+                        var key = kv[0];
+                        var value = kv[1] || key;
+                        entries[key] = value;
+                        var moveToFront = false;
+                        var lowerKey = key.toLowerCase();
+                        if (lowerKey === "type") {
+                            typeName = value;
+
+                            if (folder.map[value]) {
+                                moveToFront = true;
+                            }
+                        }
+                        if (lowerKey === "service") {
+                            serviceName = value;
+                        }
+                        if (moveToFront) {
+                            paths.splice(0, 0, value);
+                        } else {
+                            paths.push(value);
+                        }
+                    });
+
+                    var configureFolder = function (folder, name) {
                         folder.domain = domainName;
                         if (!folder.key) {
-                            folder.key = rootId + separator + domainName;
+                            folder.key = rootId + separator + folderNames.join(separator);
                         }
-                        var folderNames = [domainName];
-                        folder.folderNames = folderNames;
-                        folderNames = folderNames.clone();
-                        var items = mbeanName.split(',');
-                        var paths = [];
-                        var typeName = null;
-                        var serviceName = null;
-                        items.forEach(function (item) {
-                            var kv = item.split('=');
-                            var key = kv[0];
-                            var value = kv[1] || key;
-                            entries[key] = value;
-                            var moveToFront = false;
-                            var lowerKey = key.toLowerCase();
-                            if (lowerKey === "type") {
-                                typeName = value;
+                        this.keyToNodeMap[folder.key] = folder;
+                        folder.folderNames = folderNames.clone();
 
-                                if (folder.map[value]) {
-                                    moveToFront = true;
-                                }
-                            }
-                            if (lowerKey === "service") {
-                                serviceName = value;
-                            }
-                            if (moveToFront) {
-                                paths.splice(0, 0, value);
-                            } else {
-                                paths.push(value);
-                            }
+                        var classes = "";
+                        var entries = folder.entries;
+                        var entryKeys = Object.keys(entries).filter(function (n) {
+                            return n.toLowerCase().indexOf("type") >= 0;
                         });
-
-                        var configureFolder = function (folder, name) {
-                            folder.domain = domainName;
-                            if (!folder.key) {
-                                folder.key = rootId + separator + folderNames.join(separator);
-                            }
-                            this.keyToNodeMap[folder.key] = folder;
-                            folder.folderNames = folderNames.clone();
-
-                            var classes = "";
-                            var entries = folder.entries;
-                            var entryKeys = Object.keys(entries).filter(function (n) {
-                                return n.toLowerCase().indexOf("type") >= 0;
+                        if (entryKeys.length) {
+                            angular.forEach(entryKeys, function (entryKey) {
+                                var entryValue = entries[entryKey];
+                                if (!folder.ancestorHasEntry(entryKey, entryValue)) {
+                                    classes += " " + domainClass + separator + entryValue;
+                                }
                             });
-                            if (entryKeys.length) {
-                                angular.forEach(entryKeys, function (entryKey) {
-                                    var entryValue = entries[entryKey];
-                                    if (!folder.ancestorHasEntry(entryKey, entryValue)) {
-                                        classes += " " + domainClass + separator + entryValue;
-                                    }
-                                });
-                            } else {
-                                var kindName = folderNames.last();
-
-                                if (kindName === name) {
-                                    kindName += "-folder";
-                                }
-                                if (kindName) {
-                                    classes += " " + domainClass + separator + kindName;
-                                }
-                            }
-                            folder.addClass = escapeTreeCssStyles(classes);
-                            return folder;
-                        };
-
-                        var lastPath = paths.pop();
-                        var ws = this;
-                        paths.forEach(function (value) {
-                            folder = ws.folderGetOrElse(folder, value);
-                            if (folder) {
-                                folderNames.push(value);
-                                angular.bind(ws, configureFolder, folder, value)();
-                            }
-                        });
-                        var key = rootId + separator + folderNames.join(separator) + separator + lastPath;
-                        var objectName = domainName + ":" + mbeanName;
-
-                        if (folder) {
-                            folder = this.folderGetOrElse(folder, lastPath);
-                            if (folder) {
-                                folder.entries = entries;
-                                folder.key = key;
-                                angular.bind(this, configureFolder, folder, lastPath)();
-                                folder.title = Core.trimQuotes(lastPath);
-                                folder.objectName = objectName;
-                                folder.mbean = domain[mbeanName];
-                                folder.typeName = typeName;
-
-                                var addFolderByDomain = function (owner, typeName) {
-                                    var map = owner[typeName];
-                                    if (!map) {
-                                        map = {};
-                                        owner[typeName] = map;
-                                    }
-                                    var value = map[domainName];
-                                    if (!value) {
-                                        map[domainName] = folder;
-                                    } else {
-                                        var array = null;
-                                        if (angular.isArray(value)) {
-                                            array = value;
-                                        } else {
-                                            array = [value];
-                                            map[domainName] = array;
-                                        }
-                                        array.push(folder);
-                                    }
-                                };
-
-                                if (serviceName) {
-                                    angular.bind(this, addFolderByDomain, this.mbeanServicesToDomain, serviceName)();
-                                }
-                                if (typeName) {
-                                    angular.bind(this, addFolderByDomain, this.mbeanTypesToDomain, typeName)();
-                                }
-                            }
                         } else {
-                            log.info("No folder found for lastPath: " + lastPath);
+                            var kindName = folderNames.last();
+
+                            if (kindName === name) {
+                                kindName += "-folder";
+                            }
+                            if (kindName) {
+                                classes += " " + domainClass + separator + kindName;
+                            }
                         }
+                        folder.addClass = escapeTreeCssStyles(classes);
+                        return folder;
+                    };
+
+                    var lastPath = paths.pop();
+                    var ws = this;
+                    paths.forEach(function (value) {
+                        folder = ws.folderGetOrElse(folder, value);
+                        if (folder) {
+                            folderNames.push(value);
+                            angular.bind(ws, configureFolder, folder, value)();
+                        }
+                    });
+                    var key = rootId + separator + folderNames.join(separator) + separator + lastPath;
+                    var objectName = domainName + ":" + mbeanName;
+
+                    if (folder) {
+                        folder = this.folderGetOrElse(folder, lastPath);
+                        if (folder) {
+                            folder.entries = entries;
+                            folder.key = key;
+                            angular.bind(this, configureFolder, folder, lastPath)();
+                            folder.title = Core.trimQuotes(lastPath);
+                            folder.objectName = objectName;
+                            folder.mbean = domain[mbeanName];
+                            folder.typeName = typeName;
+
+                            var addFolderByDomain = function (owner, typeName) {
+                                var map = owner[typeName];
+                                if (!map) {
+                                    map = {};
+                                    owner[typeName] = map;
+                                }
+                                var value = map[domainName];
+                                if (!value) {
+                                    map[domainName] = folder;
+                                } else {
+                                    var array = null;
+                                    if (angular.isArray(value)) {
+                                        array = value;
+                                    } else {
+                                        array = [value];
+                                        map[domainName] = array;
+                                    }
+                                    array.push(folder);
+                                }
+                            };
+
+                            if (serviceName) {
+                                angular.bind(this, addFolderByDomain, this.mbeanServicesToDomain, serviceName)();
+                            }
+                            if (typeName) {
+                                angular.bind(this, addFolderByDomain, this.mbeanTypesToDomain, typeName)();
+                            }
+                        }
+                    } else {
+                        log.info("No folder found for lastPath: " + lastPath);
                     }
                 }
 

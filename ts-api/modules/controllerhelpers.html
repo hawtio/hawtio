@@ -88,7 +88,7 @@
 					<a name="bindmodeltosearchparam" class="tsd-anchor"></a>
 					<h3>bind<wbr>Model<wbr>ToSearch<wbr>Param</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
-						<li class="tsd-signature tsd-kind-icon">bind<wbr>Model<wbr>ToSearch<wbr>Param<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Function</span>, modelName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, paramName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, initialValue<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span>, to<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Function</span>, $scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $location<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span></li>
+						<li class="tsd-signature tsd-kind-icon">bind<wbr>Model<wbr>ToSearch<wbr>Param<span class="tsd-signature-symbol">(</span>$scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $location<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, modelName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, paramName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, initialValue<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span>, to<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Function</span>, from<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">)</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
@@ -114,30 +114,11 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>from?:         <span class="tsd-signature-type">Function</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
-									<ul class="tsd-parameters">
-										<li>
-											<h5>from function signature<span class="tsd-signature-symbol"></span></h5>
-											<ul class="tsd-signatures tsd-kind-function-type tsd-parent-kind-parameter">
-												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
-											</ul>
-											<ul class="tsd-descriptions">
-												<li class="tsd-description"><aside class="tsd-sources">
-														<ul>
-															<li>Defined in app/helpers/js/controllerHelpers.ts:36</li>
-														</ul>
-													</aside>
-													<h4 class="tsd-parameters-title">Parameters</h4>
-													<ul class="tsd-parameters">
-														<li>
-															<h5>value:         <span class="tsd-signature-type">any</span></h5>
-														</li>
-													</ul>
-													<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">any</span>
-													</h4>
-												</li>
-										</ul>        </li>
-								</ul>            </li>
+									<h5>$scope:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>$location:         <span class="tsd-signature-type">any</span></h5>
+								</li>
 								<li>
 									<h5>modelName:         <span class="tsd-signature-type">string</span></h5>
 								</li>
@@ -177,11 +158,30 @@
 										</ul>        </li>
 								</ul>            </li>
 								<li>
-									<h5>$scope:         <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5>$location:         <span class="tsd-signature-type">any</span></h5>
-								</li>
+									<h5>from?:         <span class="tsd-signature-type">Function</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+									<ul class="tsd-parameters">
+										<li>
+											<h5>from function signature<span class="tsd-signature-symbol"></span></h5>
+											<ul class="tsd-signatures tsd-kind-function-type tsd-parent-kind-parameter">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description"><aside class="tsd-sources">
+														<ul>
+															<li>Defined in app/helpers/js/controllerHelpers.ts:36</li>
+														</ul>
+													</aside>
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>value:         <span class="tsd-signature-type">any</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">any</span>
+													</h4>
+												</li>
+										</ul>        </li>
+								</ul>            </li>
 							</ul>
 						</li>
 					</ul>
