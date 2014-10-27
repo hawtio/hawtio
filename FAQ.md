@@ -24,6 +24,11 @@ Since 1.2-M2 of hawtio we enable security by default using the underlying applic
 
 Here's how to [disable security](https://github.com/hawtio/hawtio/blob/master/docs/Configuration.md#configuring-or-disabling-security-in-karaf-servicemix-fuse) if you wish to remove the need to login to hawtio.
 
+#### Which Java version is required?
+
+Hawtio 1.4 onwards requires Java 7 or 8. 
+Hawtio 1.3 or older supports Java 6 and 7.
+
 #### How do I enable hawtio inside my Java Application / Spring Boot / DropWizard / Micro Service
 
 The easiest thing to do is add jolokia as a java agent via a java agent command line:
