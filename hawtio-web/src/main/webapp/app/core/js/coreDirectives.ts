@@ -16,7 +16,7 @@ module Core {
     return {
       restrict: 'A',
       link: ($scope, $element, $attr) => {
-        $element.click(() => {
+        $($element).click(() => {
           var log = $("#log-panel");
           var body = $('body');
           if (log.height() !== 0) {

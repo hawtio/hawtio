@@ -17,19 +17,20 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      libdir + 'angular.js',
+      libdir + 'angular-bootstrap.min.js',
+      libdir + 'angular-resource.min.js',
       // bower:js
-      libdir + '../bower_components/jquery/jquery.js',
-      libdir + '../bower_components/js-logger/logger.js',
-      libdir + '../bower_components/bootstrap/bootstrap.js',
-      libdir + '../bower_components/d3/d3.js',
+      libdir + '../../../main/webapp/bower_components/jquery/jquery.js',
+      libdir + '../../../main/webapp/bower_components/js-logger/src/logger.js',
+      libdir + '../../../main/webapp/bower_components/bootstrap/docs/assets/js/bootstrap.js',
+      libdir + '../../../main/webapp/bower_components/d3/d3.js',
+      libdir + '../../../main/webapp/bower_components/elastic.js/dist/elastic.js',
       // endbower
       libdir + 'loggingInit.js',
       libdir + 'cubism.v1.min.js',
       libdir + 'jolokia-cubism-min.js',
       libdir + 'jolokia-simple-min.js',
-      libdir + 'angular.js',
-      libdir + 'angular-bootstrap.min.js',
-      libdir + 'angular-resource.min.js',
       libdir + 'ng-grid.min.js',
       libdir + 'jquery.cookie.js',
       // has some jquery-ui dependency so throws a spurious error
@@ -43,9 +44,6 @@ module.exports = function(config) {
       libdir + 'toastr.js',
       libdir + 'dagre.min.js',
       libdir + 'jquery.jsPlumb-1.4.1-all-min.js',
-      libdir + 'elastic-angular-client.min.js',
-      libdir + 'elastic.min.js',
-      libdir + 'd3.min.js',
       libdir + 'dangle.min.js',
       libdir + 'codemirror/codemirror.js',
       libdir + 'codemirror/addon/edit/closetag.js',

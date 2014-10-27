@@ -15,7 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>hawtio</title>
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/bootstrap/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/bootstrap/docs/assets/css/bootstrap.css" />
     <link rel="stylesheet" href="bower_components/Font-Awesome/css/font-awesome.css" />
     <!-- endbower -->
 
@@ -328,24 +328,15 @@ div.log-stack-trace p:nth-child(odd) {
     <!--
       Configure logging first thing...
       -->
+    -->
 
     <!-- bower:js -->
     <script src="bower_components/jquery/jquery.js"></script>
-    <script src="bower_components/js-logger/logger.js"></script>
-    <script src="bower_components/bootstrap/bootstrap.js"></script>
+    <script src="bower_components/js-logger/src/logger.js"></script>
+    <script src="bower_components/bootstrap/docs/assets/js/bootstrap.js"></script>
     <script src="bower_components/d3/d3.js"></script>
+    <script src="bower_components/elastic.js/dist/elastic.js"></script>
     <!-- endbower -->
-
-    <script type="text/javascript" src="lib/loggingInit.js"></script>
-
-    <!-- Now load and set up the plugin loader -->
-    <script type="text/javascript" src="lib/hawtio-plugin-loader.js"></script>
-
-    <!-- charts and jolokia for jmx -->
-    <script type="text/javascript" src="lib/jolokia-min.js"></script>
-    <script type="text/javascript" src="lib/cubism.v1.min.js"></script>
-    <script type="text/javascript" src="lib/jolokia-cubism-min.js"></script>
-    <script type="text/javascript" src="lib/jolokia-simple-min.js"></script>
 
     <!--
     TODO add patch for dashboard until angular supports nested custom injections
@@ -355,8 +346,20 @@ div.log-stack-trace p:nth-child(odd) {
     <script type="text/javascript" src="lib/angular-bootstrap.min.js"></script>
     <script type="text/javascript" src="lib/angular-resource.min.js"></script>
     <!-- enable if sanitize becomes needed
-    <script type="text/javascript" src="lib/angular-sanitize.min.js"></script>
-    -->
+    <script type="text/javascript" src="lib/angular-sanitize.min.js"></script-->
+
+    <script type="text/javascript" src="lib/loggingInit.js"></script>
+
+    <script src="lib/elastic-angular-client.min.js"></script>
+
+    <!-- Now load and set up the plugin loader -->
+    <script type="text/javascript" src="lib/hawtio-plugin-loader.js"></script>
+
+    <!-- charts and jolokia for jmx -->
+    <script type="text/javascript" src="lib/jolokia-min.js"></script>
+    <script type="text/javascript" src="lib/cubism.v1.min.js"></script>
+    <script type="text/javascript" src="lib/jolokia-cubism-min.js"></script>
+    <script type="text/javascript" src="lib/jolokia-simple-min.js"></script>
 
     <!-- ng-grid -->
     <script type="text/javascript" src="lib/ng-grid.min.js"></script>
@@ -392,10 +395,6 @@ div.log-stack-trace p:nth-child(odd) {
 
     <!-- draggy droppy diagrams -->
     <script type="text/javascript" src="lib/jquery.jsPlumb-1.4.1-all-min.js"></script>
-
-    <!-- ElasticSearch -->
-    <script type="text/javascript" src="lib/elastic-angular-client.min.js"></script>
-    <script type="text/javascript" src="lib/elastic.min.js"></script>
 
     <!-- Dangle -->
     <script type="text/javascript" src="lib/dangle.min.js"></script>

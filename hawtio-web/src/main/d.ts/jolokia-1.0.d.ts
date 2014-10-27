@@ -131,6 +131,7 @@ declare module Jolokia {
 
 declare var Jolokia: {
   new(opts?:Jolokia.IParams):Jolokia.IJolokia;
+  new(url?:String):Jolokia.IJolokia;
   ():Jolokia.IJolokia;
 };
 declare var cubism: any;

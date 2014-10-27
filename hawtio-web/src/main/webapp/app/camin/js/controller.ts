@@ -1,7 +1,7 @@
 /// <reference path="camelInsightPlugin.ts"/>
 module Camin {
 
-    _module.controller("Camin.Controller", ["$scope", "jolokia", "localStorage", "$routeParams", ($scope, jolokia, localStorage, $routeParams) => {
+    _module.controller("Camin.Controller", ["$scope", "jolokia", "localStorage", "$routeParams", "ejsResource", ($scope, jolokia, localStorage, $routeParams, ejsResource) => {
 
         $scope.query = "";
         $scope.result = "";
@@ -10,89 +10,93 @@ module Camin {
         $scope.onQueryChange = function() {
             $scope.result = "Querying exchanges related to " + $scope.query;
             $scope.breadcrumbs = [ $scope.query ];
-            request();
+            searchRequest();
         }
 
-        var request = function() {
+        var esUrl = new Jolokia(Core.getJolokiaUrl()).execute("io.fabric8.insight:type=Elasticsearch","getRestUrl","insight");
+        var esClient = ejsResource(esUrl);
+
+        var request = ejs.Request()
+            .types('camel');
+
+        var searchRequest = function() {
             var queryStr = "exchange.id:\""
-                + $scope.breadcrumbs.join("\" or exchange.id:\"") + "\" or "
+                + $scope.breadcrumbs.join("\" OR exchange.id:\"") + "\" OR "
                 +"exchange.in.headers.ExtendedBreadcrumb:\""
-                + $scope.breadcrumbs.join("\" or exchange.in.headers.ExtendedBreadcrumb:\"") + "\" or "
+                + $scope.breadcrumbs.join("\" OR exchange.in.headers.ExtendedBreadcrumb:\"") + "\" OR "
                 + "exchange.out.headers.ExtendedBreadcrumb:\""
-                + $scope.breadcrumbs.join("\" or exchange.out.headers.ExtendedBreadcrumb:\"") + "\"";
-            var query = { "query": { "query_string": { "query": queryStr } },
-                          "fields": [ "exchange.id", "exchange.in.headers.ExtendedBreadcrumb", "exchange.out.headers.ExtendedBreadcrumb" ],
-                          "from":0,
-                          "size":1000
-                        };
-            var jreq = { type: 'exec',
-                         mbean: 'org.elasticsearch:service=restjmx',
-                         operation: 'exec',
-                         arguments: [ 'POST', '/_all/camel/_search', angular.toJson(query) ] };
-            jolokia.request(jreq, { method: 'POST',
-              error: function(response) {
-                $scope.result = $scope.result + "<br/>" + "Error: " + angular.toJson(response);
-              },
-              success: function(response) {
-                var data : any = jQuery.parseJSON(response.value);
+                + $scope.breadcrumbs.join("\" OR exchange.out.headers.ExtendedBreadcrumb:\"") + "\"";
+
+            var log = Logger.get("Camin");
+
+            var searchPromise = request
+                .from(0).size(1000).query(ejs.QueryStringQuery(queryStr))
+                .doSearch();
+
+            searchPromise.then(function(data) {
+                if(!(angular.isUndefined(data.error))) {
+                    log.error(data.error);
+                    return;
+                }
+                log.debug("Results", data);
+
                 var oldsize = $scope.breadcrumbs.length;
-                for (var i = 0; i < data['hits']['hits'].length; i++) {
-                    var fields = data['hits']['hits'][i].fields;
-                    var concat = function(breadcrumbs) {
-                        if ( breadcrumbs ) {
-                            if ( typeof breadcrumbs === 'string' ) {
-                                breadcrumbs = [ breadcrumbs ];
-                            }
-                            for (var j = 0; j < breadcrumbs.length; j++) {
-                                var id = breadcrumbs[j];
-                                if ( $scope.breadcrumbs.indexOf( id ) < 0 ) {
-                                    $scope.breadcrumbs.push( id );
-                                }
-                            }
+                for (var i = 0; i < data.hits.hits.length; i++) {
+                  var concat = function(breadcrumbs) {
+                    if ( breadcrumbs ) {
+                      if ( typeof breadcrumbs === 'string' ) {
+                        breadcrumbs = [ breadcrumbs ];
+                      }
+                      for (var j = 0; j < breadcrumbs.length; j++) {
+                        var id = breadcrumbs[j];
+                        if ( $scope.breadcrumbs.indexOf( id ) < 0 ) {
+                          $scope.breadcrumbs.push( id );
                         }
+                      }
                     }
-                    concat( fields["exchange.in.headers.ExtendedBreadcrumb"] );
-                    concat( fields["exchange.out.headers.ExtendedBreadcrumb"] );
+                  }
+                  if (angular.isDefined(data.hits.hits[i]._source.exchange.in)) {
+                    concat( data.hits.hits[i]._source.exchange.in.headers.ExtendedBreadcrumb );
+                  }
+                  if (angular.isDefined(data.hits.hits[i]._source.exchange.out)) {
+                    concat( data.hits.hits[i]._source.exchange.out.headers.ExtendedBreadcrumb );
+                  }
                 }
                 $scope.result = $scope.result + "<br/>" + "Found " + data.hits.total + " ids";
                 if (oldsize != $scope.breadcrumbs.length) {
-                    request();
+                  searchRequest();
                 } else {
-                    var ids = [ ];
-                    for (var i = 0; i < data['hits']['hits'].length; i++) {
-                        var id = data['hits']['hits'][i].fields["exchange.id"];
-                        if ( ids.indexOf( id ) < 0 ) {
-                            ids.push( id );
-                        }
+                  var ids = [ ];
+                  for (var i = 0; i < data.hits.hits.length; i++) {
+                    var id = data.hits.hits[i]._source.exchange.id;
+                    if ( ids.indexOf( id ) < 0 ) {
+                      ids.push( id );
                     }
-                    var queryStr = "exchange.id:\"" + ids.join("\" or exchange.id:\"") + "\"";
-                    $scope.result = $scope.result + "<br/>" + query;
-                    var query = { "query": { "query_string": { "query": queryStr } },
-                                  "from": 0,
-                                  "size": 1000,
-                                  "sort": [ "timestamp" ]
-                                };
-                    var jreq = { type: 'exec',
-                                 mbean: 'org.elasticsearch:service=restjmx',
-                                 operation: 'exec',
-                                 arguments: [ 'POST', '/_all/camel/_search', angular.toJson(query) ] };
-                    jolokia.request(jreq, { method: 'POST',
-                        error: function(response) {
-                            $scope.result = $scope.result + "<br/>" + "Error: " + angular.toJson(response);
-                        },
-                        success: function(response) {
-                            var data = jQuery.parseJSON(response.value);
-                            $scope.result = $scope.result + "<br/>" + "Found " + data['hits']['total'] + " exchanges";
-                            var events = [ ];
-                            for (var i = 0; i < data['hits']['hits'].length; i++) {
-                                var e = data['hits']['hits'][i]._source;
-                                events.push( e );
-                            }
-                            draw(events);
-                        }
-                    });
+                  }
+                  var idQueryStr = "exchange.id:\"" + ids.join("\" OR exchange.id:\"") + "\"";
+
+                  log.info(idQueryStr);
+
+                  var idSearchPromise = request
+                    .from(0).size(1000).query(ejs.QueryStringQuery(idQueryStr)).sort('@timestamp')
+                    .doSearch();
+
+                  idSearchPromise.then(function(data) {
+                    if(!(angular.isUndefined(data.error))) {
+                      log.error(data.error);
+                      return;
+                    }
+
+                    $scope.result = $scope.result + "<br/>" + "Found " + data.hits.total + " exchanges";
+                    var events = [ ];
+                    for (var i = 0; i < data.hits.hits.length; i++) {
+                      var e = data.hits.hits[i]._source;
+                      events.push( e );
+                    }
+                    draw(events);
+                  });
                 }
-            }});
+            });
         }
 
         var isoDate = function(date: string): number {
