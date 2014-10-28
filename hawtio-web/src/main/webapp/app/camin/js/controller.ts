@@ -4,20 +4,17 @@ module Camin {
     _module.controller("Camin.Controller", ["$scope", "jolokia", "localStorage", "$routeParams", "ejsResource", ($scope, jolokia, localStorage, $routeParams, ejsResource) => {
 
         $scope.query = "";
-        $scope.result = "";
         $scope.breadcrumbs = [ ];
 
         $scope.onQueryChange = function() {
-            $scope.result = "Querying exchanges related to " + $scope.query;
             $scope.breadcrumbs = [ $scope.query ];
             searchRequest();
         }
 
+        var log = Logger.get("Camin");
+
         var esUrl = new Jolokia(Core.getJolokiaUrl()).execute("io.fabric8.insight:type=Elasticsearch","getRestUrl","insight");
         var esClient = ejsResource(esUrl);
-
-        var request = ejs.Request()
-            .types('camel');
 
         var searchRequest = function() {
             var queryStr = "exchange.id:\""
@@ -27,7 +24,7 @@ module Camin {
                 + "exchange.out.headers.ExtendedBreadcrumb:\""
                 + $scope.breadcrumbs.join("\" OR exchange.out.headers.ExtendedBreadcrumb:\"") + "\"";
 
-            var log = Logger.get("Camin");
+            var request = ejs.Request().types('camel');
 
             var searchPromise = request
                 .from(0).size(1000).query(ejs.QueryStringQuery(queryStr))
@@ -62,23 +59,21 @@ module Camin {
                     concat( data.hits.hits[i]._source.exchange.out.headers.ExtendedBreadcrumb );
                   }
                 }
-                $scope.result = $scope.result + "<br/>" + "Found " + data.hits.total + " ids";
+                log.debug("Found " + data.hits.total + " ids");
                 if (oldsize != $scope.breadcrumbs.length) {
                   searchRequest();
                 } else {
                   var ids = [ ];
                   for (var i = 0; i < data.hits.hits.length; i++) {
-                    var id = data.hits.hits[i]._source.exchange.id;
+                    var id = data.hits.hits[i]._id;
                     if ( ids.indexOf( id ) < 0 ) {
                       ids.push( id );
                     }
                   }
-                  var idQueryStr = "exchange.id:\"" + ids.join("\" OR exchange.id:\"") + "\"";
 
-                  log.info(idQueryStr);
-
-                  var idSearchPromise = request
-                    .from(0).size(1000).query(ejs.QueryStringQuery(idQueryStr)).sort('@timestamp')
+                  var idSearchRequest = ejs.Request().types('camel');
+                  var idSearchPromise = idSearchRequest
+                    .from(0).size(1000).query(ejs.MatchAllQuery()).filter(ejs.IdsFilter(ids)).sort('@timestamp')
                     .doSearch();
 
                   idSearchPromise.then(function(data) {
@@ -87,7 +82,7 @@ module Camin {
                       return;
                     }
 
-                    $scope.result = $scope.result + "<br/>" + "Found " + data.hits.total + " exchanges";
+                    log.debug("Found " + data.hits.total + " exchanges");
                     var events = [ ];
                     for (var i = 0; i < data.hits.hits.length; i++) {
                       var e = data.hits.hits[i]._source;
@@ -137,7 +132,7 @@ module Camin {
             var sequence = new Sequence();
             var exchangeToExec = { };
             // Sort events
-            events = events.sort(function(a,b) { return isoDate(a.timestamp) - isoDate(b.timestamp); })
+            events = events.sort(function(a,b) { return isoDate(a['@timestamp']) - isoDate(b['@timestamp']); })
             // Extract endpoints and executions
             for (var i = 0; i < events.length; i++) {
                 if (events[i].event === 'Created') {
@@ -158,7 +153,7 @@ module Camin {
                                                      evtCompleted.exchange.routeId,
                                                      evtCompleted.exchange.contextId,
                                                      evtCompleted.host);
-                    var exec = sequence.exec( evtCreated.exchange.id, endpoint, isoDate(evtCreated.timestamp), isoDate(evtCompleted.timestamp) );
+                    var exec = sequence.exec( evtCreated.exchange.id, endpoint, isoDate(evtCreated['@timestamp']), isoDate(evtCompleted['@timestamp']) );
                     exchangeToExec[ evtCreated.exchange.id ] = exec;
                 }
             }
@@ -188,7 +183,7 @@ module Camin {
                         var execA = exchangeToExec[ evtSending.exchange.id ];
                         var execB = evtCreated ? exchangeToExec[ evtCreated.exchange.id ] : null;
                         if (evtSent !== null && evtCreated !== null && execA !== null && execB != null) {
-                            var call = sequence.call( callId, execA, execB, isoDate(evtSending.timestamp), isoDate(evtSent.timestamp) );
+                            var call = sequence.call( callId, execA, execB, isoDate(evtSending['@timestamp']), isoDate(evtSent['@timestamp']) );
                             calls[callId] = call;
                         } else {
                             console.log("Could not find Execution for exchange " + evtSending.exchange.id);
@@ -233,7 +228,7 @@ module Camin {
                                     timestamp: start2 });
                 }
             }
-            signals = signals.sort(function(a,b) { return a.timestamp - b.timestamp });
+            signals = signals.sort(function(a,b) { return a['@timestamp'] - b['@timestamp'] });
             for (var i = 0; i < signals.length; i++) {
                 diagram.signal( signals[i].actorA, signals[i].actorB, signals[i].message );
             }
@@ -269,14 +264,14 @@ module Camin {
         var draw = function(events) {
             $scope.definition = "";
 
-            events = events.sort(function (a,b) { return isoDate(a.timestamp) - isoDate(b.timestamp); });
+            events = events.sort(function (a,b) { return isoDate(a['@timestamp']) - isoDate(b['@timestamp']); });
             console.log( events );
 
             var sequence = buildSequence( events );
-            console.log( sequence );
+            log.debug( "Sequence", sequence );
 
             var gantt = buildGantt( sequence );
-            console.log( gantt );
+            log.info( "Gantt", gantt );
             $('#gantt').html('');
             drawGantt('#gantt', gantt);
 

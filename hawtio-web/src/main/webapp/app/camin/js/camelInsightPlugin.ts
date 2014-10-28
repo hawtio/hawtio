@@ -6,7 +6,7 @@
  */
 module Camin {
   var pluginName = 'camin';
-  export var _module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore', 'elasticsearch']);
+  export var _module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore', 'elasticjs.service']);
 
   _module.config(["$routeProvider", ($routeProvider) => {
     $routeProvider.
