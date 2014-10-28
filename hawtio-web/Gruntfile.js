@@ -11,7 +11,8 @@ module.exports = function(grunt) {
     bower: {
       install: {
         options: {
-          targetDir: 'src/main/webapp/bower_components'
+          targetDir: 'src/main/webapp/bower_components',
+          copy: false
         }
       }
     },
@@ -38,18 +39,16 @@ module.exports = function(grunt) {
           dependencies: true,
           overrides: {
             'js-logger': {
-              "main": "logger.js"
+              "main": "src/logger.js"
             },
             'jolokia': {
               "main": "jolokia.js"
             },
             'bootstrap': {
-              'main': ['bootstrap.css', 'bootstrap.js']
+              'main': ['docs/assets/css/bootstrap.css', 'docs/assets/js/bootstrap.js']
             },
             'Font-Awesome': {
-              main: [
-                'css/font-awesome.css'
-              ]
+              main: ['css/font-awesome.css']
             }
           }
         }
@@ -213,6 +212,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask("default", [
     "bower",
+    "wiredep",
     "typescript:base",
     "rename",
     "karma:unit",
