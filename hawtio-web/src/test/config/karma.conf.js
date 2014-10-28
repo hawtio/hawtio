@@ -26,6 +26,7 @@ module.exports = function(config) {
       libdir + '../../../main/webapp/bower_components/bootstrap/docs/assets/js/bootstrap.js',
       libdir + '../../../main/webapp/bower_components/d3/d3.js',
       libdir + '../../../main/webapp/bower_components/elastic.js/dist/elastic.js',
+      libdir + '../../../main/webapp/bower_components/underscore/underscore.js',
       // endbower
       libdir + 'loggingInit.js',
       libdir + 'cubism.v1.min.js',

@@ -136,16 +136,13 @@ module Camin {
             // Extract endpoints and executions
             for (var i = 0; i < events.length; i++) {
                 if (events[i].event === 'Created') {
-                    var evtCreated   = events[i];
-                    var evtCompleted = null;
-                    for (var j = 0; j < events.length; j++) {
-                        if (events[j].event === 'Completed' && evtCreated.exchange.id === events[j].exchange.id) {
-                            evtCompleted = events[j];
-                            break;
-                        }
-                    }
+                    var evtCreated: any = events[i];
+                    var evtCompleted: any = _.find(events, function(value: any, index) {
+                      return value.event === 'Completed' && evtCreated.exchange.id === value.exchange.id;
+                    });
+
                     if (evtCompleted === null) {
-                        console.log('Could not find matching Completed exchange for ' + evtCreated.exchange.id);
+                        log.debug('Could not find matching Completed exchange for ' + evtCreated.exchange.id);
                         continue;
                     }
                     // We use the completed event here because the created event may miss the routeId information
@@ -163,30 +160,22 @@ module Camin {
                 if (events[i].event === 'Sending' && events[i].exchange.in && events[i].exchange.in.headers) {
                     var callId = events[i].exchange.in.headers.AuditCallId;
                     if (callId && calls[callId] === undefined) {
-                        var evtSending = events[i];
-                        var evtSent    = null;
-                        var evtCreated = null;
-                        for (var j = 0; j < events.length; j++) {
-                            if (events[j].event === 'Sent' && evtSending.exchange.id === events[j].exchange.id
-                                    && events[j].exchange.in.headers.AuditCallId === callId) {
-                                evtSent = events[j];
-                                break;
-                            }
-                        }
-                        for (var j = 0; j < events.length; j++) {
-                            if (events[j].event === 'Created' && evtSending.exchange.id !== events[j].exchange.id
-                                    && events[j].exchange.in.headers.AuditCallId === callId) {
-                                evtCreated = events[j];
-                                break;
-                            }
-                        }
+                        var evtSending:any = events[i];
+                        var evtSent:any    = _.find(events, function(value: any, index) {
+                          return value.event === 'Sent' && evtSending.exchange.id === value.exchange.id
+                            && value.exchange.in.headers.AuditCallId === callId;
+                        });
+                        var evtCreated: any = _.find(events, function(value: any, index) {
+                          return value.event === 'Created' && evtSending.exchange.id !== value.exchange.id
+                            && value.exchange.in.headers.AuditCallId === callId;
+                        });
                         var execA = exchangeToExec[ evtSending.exchange.id ];
                         var execB = evtCreated ? exchangeToExec[ evtCreated.exchange.id ] : null;
                         if (evtSent !== null && evtCreated !== null && execA !== null && execB != null) {
                             var call = sequence.call( callId, execA, execB, isoDate(evtSending['@timestamp']), isoDate(evtSent['@timestamp']) );
                             calls[callId] = call;
                         } else {
-                            console.log("Could not find Execution for exchange " + evtSending.exchange.id);
+                            log.debug("Could not find Execution for exchange " + evtSending.exchange.id);
                         }
                     }
                 }
@@ -265,18 +254,18 @@ module Camin {
             $scope.definition = "";
 
             events = events.sort(function (a,b) { return isoDate(a['@timestamp']) - isoDate(b['@timestamp']); });
-            console.log( events );
+            log.debug( "Events", events );
 
             var sequence = buildSequence( events );
             log.debug( "Sequence", sequence );
 
             var gantt = buildGantt( sequence );
-            log.info( "Gantt", gantt );
+            log.debug( "Gantt", gantt );
             $('#gantt').html('');
             drawGantt('#gantt', gantt);
 
             var diagram = buildDiagram( sequence );
-            console.log( diagram );
+            log.debug( "Diagram", diagram );
             $('#diagram').html('');
             drawDiagram('#diagram', diagram);
         }
