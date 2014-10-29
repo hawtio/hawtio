@@ -9,7 +9,7 @@ module DockerRegistry {
     getDockerImageRepositories((restURL:string, repositories:DockerImageRepositories) => {
       $scope.restURL = restURL;
       $scope.fetched = true;
-      if ($scope.repositories) {
+      if (repositories) {
         $scope.repositories = repositories.results;
         var previous = angular.toJson($scope.repositories);
         $scope.fetch = PollHelpers.setupPolling($scope, (next:() => void) => {

@@ -1,0 +1,35 @@
+{
+  "name": "js-logger",
+  "version": "0.9.14",
+  "description": "Lightweight, unobtrusive, configurable JavaScript logger",
+  "author": "Jonny Reeves (http://jonnyreeves.co.uk)",
+  "homepage": "http://github.com/jonnyreeves/js-logger",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jonnyreeves/js-logger.git"
+  },
+  "bugs": {
+    "url": "http://github.com/jonnyreeves/js-logger/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/jonnyreeves/js-logger/blob/master/MIT-LICENSE.txt"
+    }
+  ],
+  "main": "src/logger.js",
+  "scripts": {
+    "test": "gulp test lint"
+  },
+  "devDependencies": {
+    "gulp": "~3.5.2",
+    "gulp-util": "~2.2.14",
+    "gulp-uglify": "~0.2.1",
+    "gulp-replace": "~0.2.0",
+    "gulp-rename": "~1.0.0",
+    "gulp-qunit": "~0.3.3",
+    "gulp-jshint": "~1.4.0",
+    "gulp-size": "~0.3.1",
+    "gulp-git": "~0.4.3"
+  }
+}

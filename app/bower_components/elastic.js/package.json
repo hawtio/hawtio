@@ -1,0 +1,51 @@
+{
+  "name": "elastic.js",
+  "description": "Javascript API for ElasticSearch",
+  "version": "1.1.1",
+  "homepage": "https://github.com/fullscale/elastic.js",
+  "keywords": [
+    "elasticsearch",
+    "search",
+    "elasticjs",
+    "elastic",
+    "elastic search",
+    "es",
+    "ejs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fullscale/elastic.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fullscale/elastic.js/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/fullscale/elastic.js/blob/master/LICENSE-MIT"
+    }
+  ],
+  "author": {
+    "name": "FullScale Labs, LLC",
+    "url": "https://github.com/fullscale/elastic.js/blob/master/AUTHORS"
+  },
+  "files": [
+    "elastic-node-client.js",
+    "elastic.js"
+  ],
+  "main": "elastic.js",
+  "scripts": {
+    "test": "grunt nodeunit",
+    "prepublish": "cp dist/elastic.js dist/elastic-node-client.js ."
+  },
+  "dependencies": {
+    "colors": "~0.6"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-jshint": "~0.5.4",
+    "grunt-contrib-uglify": "~0.2.1",
+    "grunt-contrib-nodeunit": "~0.2.0"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "elastic.js",
+  "version": "1.1.1",
+  "description": "Javascript API for ElasticSearch",
+  "license": "MIT",
+  "keywords": [
+    "elasticsearch",
+    "search",
+    "elasticjs",
+    "elastic",
+    "elastic search",
+    "es",
+    "ejs"
+  ],
+  "main": "dist/elastic.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "docs"
+  ],
+  "homepage": "https://github.com/fullscale/elastic.js",
+  "_release": "1.1.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.1.1",
+    "commit": "f4d4092287c2c3c56434aa12fd3af43eb186ae73"
+  },
+  "_source": "git://github.com/fullscale/elastic.js.git",
+  "_target": "1.1.1",
+  "_originalSource": "elastic.js"
+}

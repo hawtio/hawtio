@@ -1,0 +1,29 @@
+<div class="row-fluid" style="margin-top:10%">
+    <div class="span4 offset4">
+        <span class="span5">Found {{results.hits.total}} Results</span></span>
+        <span class="span5 offset2">
+            <a href="#/search"> <i class="icon-search"></i> Return to Search</a>
+        </span>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="doc in results.hits.hits" ng-class="{success: isFeatured(doc)}">
+					<!-- featured -->
+                    <td ng-show="isFeatured(doc)">
+						<a href="{{doc._source.url}}">{{doc._source.title}}</a>
+					</td>
+					<td ng-show="isFeatured(doc)">{{doc._source.description}}</td>
+					
+					<!-- regular results -->
+					<td ng-hide="isFeatured(doc)">{{doc._source.user}}</td>
+					<td ng-hide="isFeatured(doc)">{{doc._source.message}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

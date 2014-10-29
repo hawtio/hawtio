@@ -1,0 +1,22 @@
+{
+  "name": "elastic.js",
+  "version": "1.1.1",
+  "description": "Javascript API for ElasticSearch",
+  "license": "MIT",
+  "keywords": [
+    "elasticsearch",
+    "search",
+    "elasticjs",
+    "elastic",
+    "elastic search",
+    "es",
+    "ejs"
+  ],
+  "main": "dist/elastic.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "docs"
+  ]
+}
