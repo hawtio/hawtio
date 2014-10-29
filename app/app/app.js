@@ -21163,7 +21163,7 @@ var Kubernetes;
 (function (Kubernetes) {
     Kubernetes.context = '/kubernetes';
     Kubernetes.hash = '#' + Kubernetes.context;
-    Kubernetes.defaultRoute = Kubernetes.hash + '/pods';
+    Kubernetes.defaultRoute = Kubernetes.hash + '/overview';
     Kubernetes.pluginName = 'Kubernetes';
     Kubernetes.templatePath = 'app/kubernetes/html/';
     Kubernetes.log = Logger.get(Kubernetes.pluginName);
@@ -38262,7 +38262,7 @@ var Kubernetes;
 
     Kubernetes._module.config([
         '$routeProvider', function ($routeProvider) {
-            $routeProvider.when(UrlHelpers.join(Kubernetes.context, 'pods'), Kubernetes.route('pods.html', false)).when(UrlHelpers.join(Kubernetes.context, 'replicationControllers'), Kubernetes.route('replicationControllers.html', false)).when(UrlHelpers.join(Kubernetes.context, 'services'), Kubernetes.route('services.html', false));
+            $routeProvider.when(UrlHelpers.join(Kubernetes.context, 'pods'), Kubernetes.route('pods.html', false)).when(UrlHelpers.join(Kubernetes.context, 'replicationControllers'), Kubernetes.route('replicationControllers.html', false)).when(UrlHelpers.join(Kubernetes.context, 'services'), Kubernetes.route('services.html', false)).when(UrlHelpers.join(Kubernetes.context, 'overview'), Kubernetes.route('overview.html', false));
         }]);
 
     Kubernetes._module.factory('KubernetesApiURL', [
@@ -38470,6 +38470,139 @@ var Kubernetes;
                 KubernetesVersion.query(function (response) {
                     $scope.version = response;
                 });
+            });
+        }]);
+})(Kubernetes || (Kubernetes = {}));
+var Kubernetes;
+(function (Kubernetes) {
+    var OverviewController = Kubernetes.controller("OverviewController", [
+        "$scope", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", function ($scope, KubernetesServices, KubernetesPods, KubernetesReplicationControllers) {
+            $scope.services = null;
+            $scope.replicationControllers = null;
+            $scope.pods = null;
+
+            var services = null;
+            var replicationControllers = null;
+            var pods = null;
+
+            $scope.connectorStyle = ["Bezier"];
+
+            KubernetesServices.then(function (KubernetesServices) {
+                KubernetesReplicationControllers.then(function (KubernetesReplicationControllers) {
+                    KubernetesPods.then(function (KubernetesPods) {
+                        var lastServiceResponse, lastReplicationControllerResponse, lastPodsResponse = '';
+                        var byId = function (thing) {
+                            return thing.id;
+                        };
+                        $scope.fetch = PollHelpers.setupPolling($scope, function (next) {
+                            var ready = 0;
+                            var numServices = 3;
+                            function maybeNext(count) {
+                                ready = count;
+
+                                if (ready >= numServices) {
+                                    next();
+                                }
+                            }
+                            KubernetesServices.query(function (response) {
+                                if (response) {
+                                    var items = response.items.sortBy(byId);
+                                    var json = angular.toJson(items);
+                                    if (lastServiceResponse !== json) {
+                                        lastServiceResponse = json;
+                                        services = items;
+                                        maybeInit();
+                                    }
+                                }
+                                maybeNext(ready + 1);
+                            });
+                            KubernetesReplicationControllers.query(function (response) {
+                                if (response) {
+                                    var items = response.items.sortBy(byId);
+                                    var json = angular.toJson(items);
+                                    if (lastReplicationControllerResponse !== json) {
+                                        lastReplicationControllerResponse = json;
+                                        replicationControllers = items;
+                                        maybeInit();
+                                    }
+                                }
+                                maybeNext(ready + 1);
+                            });
+                            KubernetesPods.query(function (response) {
+                                if (response) {
+                                    var items = response.items.sortBy(byId);
+                                    var json = angular.toJson(items);
+                                    if (lastPodsResponse !== json) {
+                                        lastPodsResponse = json;
+                                        pods = items;
+                                        maybeInit();
+                                    }
+                                }
+                                maybeNext(ready + 1);
+                            });
+                        });
+                        $scope.fetch();
+                    });
+                });
+            });
+
+            function getPodIdsForLabel(label, value) {
+                var matches = pods.filter(function (pod) {
+                    return label in pod.labels;
+                });
+                matches = matches.filter(function (pod) {
+                    return pod.labels[label] === value;
+                });
+                return matches.map(function (pod) {
+                    return pod.id;
+                });
+            }
+
+            function maybeInit() {
+                if (services && replicationControllers && pods) {
+                    services.forEach(function (service) {
+                        service.podIds = [];
+                        angular.forEach(service.selector, function (value, key) {
+                            var ids = getPodIdsForLabel(key, value);
+                            service.podIds = service.podIds.union(ids);
+                        });
+                        service.connectTo = service.podIds.join(',');
+                    });
+                    replicationControllers.forEach(function (replicationController) {
+                        replicationController.podIds = getPodIdsForLabel('replicationController', replicationController.id);
+                        replicationController.connectTo = replicationController.podIds.join(',');
+                    });
+                    $scope.pods = pods;
+                    $scope.services = services;
+                    $scope.replicationControllers = replicationControllers;
+                }
+            }
+
+            $scope.$watchCollection('services', function (services) {
+                Kubernetes.log.debug("got services: ", services);
+            });
+
+            $scope.$watchCollection('replicationControllers', function (replicationControllers) {
+                Kubernetes.log.debug("got replicationControllers: ", replicationControllers);
+            });
+
+            $scope.$watchCollection('pods', function (pods) {
+                Kubernetes.log.debug("got pods: ", pods);
+                if (pods) {
+                    var hosts = {};
+                    pods.forEach(function (pod) {
+                        var host = pod.currentState.host;
+                        if (!(host in hosts)) {
+                            hosts[host] = [];
+                        }
+                        hosts[host].push(pod);
+                    });
+                    $scope.hosts = hosts;
+                }
+            });
+
+            $scope.$watch('hosts', function (hosts) {
+                Kubernetes.log.debug("hosts: ", hosts);
             });
         }]);
 })(Kubernetes || (Kubernetes = {}));
@@ -38935,7 +39068,6 @@ var Kubernetes;
                 columnDefs: [
                     { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
                     { field: 'selector', displayName: 'Selector', cellTemplate: $templateCache.get("selectorTemplate.html") },
-                    { field: 'containerPort', displayName: 'Container Port' },
                     { field: 'port', displayName: 'Port' },
                     { field: 'protocol', displayName: 'Protocol' },
                     { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
@@ -39006,12 +39138,6 @@ var Kubernetes;
                     });
                 });
                 $scope.fetch();
-            });
-
-            $scope.$watch('services', function (newValue, oldValue) {
-                if (newValue !== oldValue) {
-                    Kubernetes.log.debug("services: ", newValue);
-                }
             });
         }]);
 })(Kubernetes || (Kubernetes = {}));
@@ -46995,6 +47121,20 @@ var UI;
                     useLayout = Core.parseBooleanValue($attrs['layout']);
                 }
 
+                var nodeSep = 50;
+                var edgeSep = 10;
+                var rankSep = 50;
+
+                if (angular.isDefined($attrs['nodeSep'])) {
+                    nodeSep = Core.parseIntValue($attrs['nodeSep']);
+                }
+                if (angular.isDefined($attrs['edgeSep'])) {
+                    edgeSep = Core.parseIntValue($attrs['edgeSep']);
+                }
+                if (angular.isDefined($attrs['rankSep'])) {
+                    rankSep = Core.parseIntValue($attrs['rankSep']);
+                }
+
                 var timeout = 100;
                 if (angular.isDefined($attrs['timeout'])) {
                     timeout = Core.parseIntValue($attrs['timeout'], "timeout");
@@ -47101,6 +47241,24 @@ var UI;
                     });
                 };
 
+                $element.bind('DOMNodeInserted', function (event) {
+                    if ($scope.jsPlumb) {
+                        if (angular.isString(event.target.className) && !event.target.className.has("_jsPlumb_endpoint_anchor_") && event.target.className.has("jsplumb-node")) {
+                            gatherElements();
+                            var newNodes = nodes.filter(function (node) {
+                                return node.endpoints.isEmpty();
+                            });
+                            if (newNodes && newNodes.length) {
+                                angular.forEach(newNodes, function (node) {
+                                    createEndpoint($scope.jsPlumb, node);
+                                });
+                                $scope.jsPlumb.repaintEverything();
+                                Core.$applyLater($scope);
+                            }
+                        }
+                    }
+                });
+
                 setTimeout(function () {
                     $scope.jsPlumb = jsPlumb.getInstance({
                         Container: $element
@@ -47127,12 +47285,16 @@ var UI;
                     $scope.jsPlumbTransitions = transitions;
 
                     if (useLayout) {
-                        $scope.layout = dagre.layout().nodeSep(50).edgeSep(10).rankSep(50).nodes(nodes).edges(transitions).debugLevel(1).run();
+                        $scope.layout = dagre.layout().nodeSep(nodeSep).edgeSep(edgeSep).rankSep(rankSep).nodes(nodes).edges(transitions).debugLevel(1).run();
                     }
 
                     angular.forEach($scope.jsPlumbNodes, function (node) {
                         if (useLayout) {
-                            node.el.css({ top: node.dagre.y, left: node.dagre.x });
+                            var divWidth = node.el.width();
+                            var divHeight = node.el.height();
+                            var y = node.dagre.y - (divHeight / 2);
+                            var x = node.dagre.x - (divWidth / 2);
+                            node.el.css({ top: y, left: x });
                         }
                         createEndpoint($scope.jsPlumb, node);
                     });

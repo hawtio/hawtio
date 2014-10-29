@@ -26,7 +26,6 @@ module Kubernetes {
       columnDefs: [
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
         { field: 'selector', displayName: 'Selector', cellTemplate: $templateCache.get("selectorTemplate.html") },
-        { field: 'containerPort', displayName: 'Container Port' },
         { field: 'port', displayName: 'Port' },
         { field: 'protocol', displayName: 'Protocol' },
         { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
@@ -97,10 +96,12 @@ module Kubernetes {
       $scope.fetch();
     });
 
+    /*
     $scope.$watch('services', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         log.debug("services: ", newValue);
       }
     });
+    */
   }]);
 }

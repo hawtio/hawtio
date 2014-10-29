@@ -25,6 +25,10 @@
 <div class="row-fluid" ng-controller="Kubernetes.TopLevel">
   <div class="span12">
     <ul class="nav nav-tabs connected">
+      <li ng-class='{active : isActive("#/kubernetes/overview")}'
+          title="View an overview of the system">
+        <a ng-href="#/kubernetes/overview">Overview</a>
+      </li>
       <li ng-class='{active : isActive("#/kubernetes/pods")}'
           title="View kubernetes pods and their status">
         <a ng-href="#/kubernetes/pods">Pods</a>
