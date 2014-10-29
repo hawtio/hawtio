@@ -24,6 +24,20 @@ module UI {
         useLayout = Core.parseBooleanValue($attrs['layout']);
       }
 
+      var nodeSep = 50;
+      var edgeSep = 10;
+      var rankSep = 50;
+
+      if (angular.isDefined($attrs['nodeSep'])) {
+        nodeSep = Core.parseIntValue($attrs['nodeSep']);
+      }
+      if (angular.isDefined($attrs['edgeSep'])) {
+        edgeSep = Core.parseIntValue($attrs['edgeSep']);
+      }
+      if (angular.isDefined($attrs['rankSep'])) {
+        rankSep = Core.parseIntValue($attrs['rankSep']);
+      }
+
       var timeout = 100;
       if (angular.isDefined($attrs['timeout'])) {
         timeout = Core.parseIntValue($attrs['timeout'], "timeout");
@@ -133,7 +147,6 @@ module UI {
 
       };
 
-      /*
       $element.bind('DOMNodeInserted', (event) => {
         if ($scope.jsPlumb) {
           if (angular.isString(event.target.className)
@@ -154,8 +167,6 @@ module UI {
           }
         }
       });
-      */
-
 
       // Kick off the initial layout of elements in the container
       setTimeout(() => {
@@ -189,9 +200,9 @@ module UI {
         // of the nodes and connections
         if (useLayout) {
           $scope.layout = dagre.layout()
-              .nodeSep(50)
-              .edgeSep(10)
-              .rankSep(50)
+              .nodeSep(nodeSep)
+              .edgeSep(edgeSep)
+              .rankSep(rankSep)
               .nodes(nodes)
               .edges(transitions)
               .debugLevel(1)
@@ -200,7 +211,11 @@ module UI {
 
         angular.forEach($scope.jsPlumbNodes, (node) => {
           if (useLayout) {
-            node.el.css({top: node.dagre.y, left: node.dagre.x});
+            var divWidth = node.el.width();
+            var divHeight = node.el.height();
+            var y = node.dagre.y - (divHeight / 2);
+            var x = node.dagre.x - (divWidth / 2);
+            node.el.css({top: y, left: x});
           }
           createEndpoint($scope.jsPlumb, node);
         });
