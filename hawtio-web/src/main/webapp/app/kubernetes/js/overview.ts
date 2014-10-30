@@ -10,27 +10,93 @@ module Kubernetes {
         function interpolate(template, config) {
           return $interpolate(template)(config);
         }
-        scope.$watch('count', (count) => {
-          if (count > 0) {
-            log.debug("overview controller, scope: ", scope);
-            element.empty();
+        function createElement(template, thingName, thing) {
+          var config = {};
+          config[thingName] = thing;
+          return interpolate(template, config);
+        }
+        function createElements(template, thingName, things) {
+          return things.map((thing) => {
+            return createElement(template, thingName, thing);
+          });
+        }
+        function appendNewElements(parentEl, template, thingName, things) {
+          things.forEach((thing) => {
+            var existing = parentEl.find("#" + thing['id']);
+            if (!existing.length) {
+              parentEl.append($compile(createElement(template, thingName, thing))(scope));
+            }
+          });
+        }
+        function firstDraw() {
+          log.debug("First draw");
+          var services = scope.services;
+          var replicationControllers = scope.replicationControllers;
+          var pods = scope.pods;
+          var parentEl = angular.element($templateCache.get("overviewTemplate.html"));
+          parentEl.append(createElements($templateCache.get("serviceTemplate.html"), 'service', services));
+          parentEl.append(createElements($templateCache.get("replicationControllerTemplate.html"), 'replicationController', replicationControllers));
+          parentEl.append(createElements($templateCache.get("podTemplate.html"), 'pod', pods));
+          element.append($compile(parentEl)(scope));
+        }
+        function hasId(collection, id) {
+          return collection.any((obj) => { return obj['id'] === id; });
+        }
+        function update() {
+          scope.$emit('jsplumbDoWhileSuspended', () => {
+            log.debug("Update");
             var services = scope.services;
             var replicationControllers = scope.replicationControllers;
             var pods = scope.pods;
-            var parentEl = angular.element($templateCache.get("overviewTemplate.html"));
-            services.forEach((service) => {
-              var interpolated = interpolate($templateCache.get("serviceTemplate.html"), { service: service });
-              parentEl.append(interpolated);
+            var parentEl = element.find('[hawtio-jsplumb]');
+            var children = parentEl.find('.jsplumb-node');
+            children.each((index, c) => {
+              var child = angular.element(c);
+              var id = child.attr('id');
+              if (Core.isBlank(id)) {
+                return;
+              }
+              var type = child.attr('data-type');
+              function byId(thing) { return thing['id'] === id; }
+              switch (type) {
+                case 'service':
+                  if (hasId(services, id)) {
+                    var service = services.find(byId);
+                    child.attr('connect-to', service.connectTo);
+                    return;
+                  }
+                  break;
+                case 'pod':
+                  if (hasId(pods, id)) {
+                    return;
+                  }
+                  break;
+                case 'replicationController':
+                  if (hasId(replicationControllers, id)) {
+                    var replicationController = replicationControllers.find(byId);
+                    child.attr('connect-to', replicationControllers.connectTo);
+                    return;
+                  }
+                  break;
+                default: 
+                  log.debug("Ignoring element with unknown type");
+                  return;
+              }
+              log.debug("Removing: ", id);
+              child.remove();
             });
-            replicationControllers.forEach((replicationController) => {
-              var interpolated = interpolate($templateCache.get("replicationControllerTemplate.html"), { replicationController: replicationController });
-              parentEl.append(interpolated);
-            });
-            pods.forEach((pod) => {
-              var interpolated = interpolate($templateCache.get("podTemplate.html"), { pod: pod });
-              parentEl.append(interpolated);
-            })
-            element.append($compile(parentEl)(scope));
+            appendNewElements(parentEl, $templateCache.get("serviceTemplate.html"), "service", services); 
+            appendNewElements(parentEl, $templateCache.get("podTemplate.html"), "pod", pods); 
+            appendNewElements(parentEl, $templateCache.get("replicationControllerTemplate.html"), "replicationController", replicationControllers); 
+          });
+        }
+        scope.$watch('count', (count) => {
+          if (count > 0) {
+            if (element.children().length === 0) {
+              firstDraw();
+            } else {
+              update();
+            }
           }
         });
       }

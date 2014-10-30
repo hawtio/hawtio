@@ -1,16 +1,15 @@
 <div ng-controller="Kubernetes.OverviewController">
   <script type="text/ng-template" id="serviceTemplate.html">
-    <div
-        id="{{service.id}}"
-        anchors="Continuous"
-        connect-to="{{service.connectTo}}"
-        class="jsplumb-node ex-node">
+    <div id="{{service.id}}"
+         connect-to="{{service.connectTo}}"
+         data-type="service"
+         class="jsplumb-node ex-node">
     {{service.id}}
   </div>
   </script>
   <script type="text/ng-template" id="podTemplate.html">
     <div id="{{pod.id}}"
-         anchors="Continuous"
+         data-type="pod"
          class="jsplumb-node ex-node">
     {{pod.id}}
   </div>
@@ -18,7 +17,7 @@
   <script type="text/ng-template" id="replicationControllerTemplate.html">
     <div
         id="{{replicationController.id}}"
-        anchors="Continuous"
+        data-type="replicationController"
         connect-to="{{replicationController.connectTo}}"
         class="jsplumb-node ex-node">
     {{replicationController.id}}
@@ -27,6 +26,7 @@
   <script type="text/ng-template" id="overviewTemplate.html">
     <div class="ex-node-container gridStyle"
          hawtio-jsplumb
+         draggable="false"
          node-sep="100"
          rank-sep="250"
    </div>
