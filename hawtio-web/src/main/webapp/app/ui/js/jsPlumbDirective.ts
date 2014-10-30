@@ -147,6 +147,7 @@ module UI {
 
       };
 
+      /*
       $element.bind('DOMNodeInserted', (event) => {
         if ($scope.jsPlumb) {
           if (angular.isString(event.target.className)
@@ -167,6 +168,7 @@ module UI {
           }
         }
       });
+      */
 
       // Kick off the initial layout of elements in the container
       setTimeout(() => {

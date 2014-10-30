@@ -2,11 +2,50 @@
 /// <reference path="../../helpers/js/pollHelpers.ts"/>
 module Kubernetes {
 
-  var OverviewController = controller("OverviewController", ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", ($scope, KubernetesServices, KubernetesPods, KubernetesReplicationControllers) => {
+  var OverviewDirective = _module.directive("kubernetesOverview", ["$templateCache", "$compile", "$interpolate", ($templateCache:ng.ITemplateCacheService, $compile:ng.ICompileService, $interpolate:ng.IInterpolateService) => {
+    return {
+      restrict: 'E',
+      replace: true,
+      link: (scope, element, attr) => {
+        function interpolate(template, config) {
+          return $interpolate(template)(config);
+        }
+        scope.$watch('count', (count) => {
+          if (count > 0) {
+            log.debug("overview controller, scope: ", scope);
+            element.empty();
+            var services = scope.services;
+            var replicationControllers = scope.replicationControllers;
+            var pods = scope.pods;
+            var parentEl = angular.element($templateCache.get("overviewTemplate.html"));
+            services.forEach((service) => {
+              var interpolated = interpolate($templateCache.get("serviceTemplate.html"), { service: service });
+              parentEl.append(interpolated);
+            });
+            replicationControllers.forEach((replicationController) => {
+              var interpolated = interpolate($templateCache.get("replicationControllerTemplate.html"), { replicationController: replicationController });
+              parentEl.append(interpolated);
+            });
+            pods.forEach((pod) => {
+              var interpolated = interpolate($templateCache.get("podTemplate.html"), { pod: pod });
+              parentEl.append(interpolated);
+            })
+            element.append($compile(parentEl)(scope));
+          }
+        });
+      }
+    };
+  }]);
 
+  var scopeName = "OverviewController";
+
+  var OverviewController = controller(scopeName, ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", ($scope, KubernetesServices, KubernetesPods, KubernetesReplicationControllers) => {
+    $scope.name = scopeName;
     $scope.services = null;
     $scope.replicationControllers = null;
     $scope.pods = null;
+
+    $scope.count = 0;
 
     var services = null;
     var replicationControllers = null;
@@ -95,6 +134,7 @@ module Kubernetes {
         $scope.pods = pods;
         $scope.services = services;
         $scope.replicationControllers = replicationControllers;
+        $scope.count = $scope.count + 1;
       }
     }
 
