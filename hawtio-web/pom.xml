@@ -570,10 +570,10 @@
 
             <!-- fix jgit, and slf4j imports -->
             <Import-Package>
-              io.hawt.git;resolution:=optional,
-              io.hawt.util;resolution:=optional,
-              io.hawt.util.introspect;resolution:=optional,
-              io.hawt.util.introspect.support;resolution:=optional,
+              io.hawt.git;resolution:=optional;version="[1.4,2)",
+              io.hawt.util;resolution:=optional;version="[1.4,2)",
+              io.hawt.util.introspect;resolution:=optional;version="[1.4,2)",
+              io.hawt.util.introspect.support;resolution:=optional;version="[1.4,2)",
               org.osgi.framework,
               org.osgi.util.tracker,
               org.eclipse.jetty.plus.jaas.spi;resolution:=optional,
