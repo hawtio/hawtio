@@ -210,6 +210,8 @@ public class GitServlet extends UploadServlet implements ServiceTrackerCustomize
 
     @Override
     public Object addingService(ServiceReference serviceReference) {
+        LOG.debug("Using new git file manager");
+
         gitFacade = (GitFileManager) bundleContext.getService(serviceReference);
         return gitFacade;
     }
@@ -221,6 +223,7 @@ public class GitServlet extends UploadServlet implements ServiceTrackerCustomize
 
     @Override
     public void removedService(ServiceReference serviceReference, Object o) {
+        LOG.debug("Unsetting git file manager");
         gitFacade = null;
         bundleContext.ungetService(serviceReference);
     }
