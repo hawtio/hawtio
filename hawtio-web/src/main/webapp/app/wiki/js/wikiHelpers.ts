@@ -605,7 +605,18 @@ module Wiki {
    */
   export function gitRestURL(branch: string, path: string) {
     var url = gitRelativeURL(branch, path);
-    return Core.url('/' + url);
+    url = Core.url('/' + url);
+
+    var connectionName = Core.getConnectionNameParameter(location.search);
+    if (connectionName) {
+      var connectionOptions = Core.getConnectOptions(connectionName);
+      if (connectionOptions) {
+        connectionOptions.path = url;
+        url = <string>Core.createServerConnectionUrl(connectionOptions);
+      }
+    }
+
+    return url;
   }
 
   /**
@@ -648,7 +659,7 @@ module Wiki {
     }
     branch = branch || "master";
     var css = null;
-    var icon = null;
+    var icon:string = null;
     var extension = fileExtension(name);
     // TODO could we use different icons for markdown v xml v html
     if (xmlNamespaces && xmlNamespaces.length) {
@@ -665,6 +676,14 @@ module Wiki {
     if (iconUrl) {
       css = null;
       icon = UrlHelpers.join("git", iconUrl);
+      var connectionName = Core.getConnectionNameParameter(location.search);
+      if (connectionName) {
+        var connectionOptions = Core.getConnectOptions(connectionName);
+        if (connectionOptions) {
+          connectionOptions.path = Core.url('/' + icon);
+          icon = <string>Core.createServerConnectionUrl(connectionOptions);
+        }
+      }
     }
     if (!icon) {
       if (directory) {
@@ -684,6 +703,14 @@ module Wiki {
           case 'gif':
             css = null;
             icon = Wiki.gitRelativeURL(branch, path);
+            var connectionName = Core.getConnectionNameParameter(location.search);
+            if (connectionName) {
+              var connectionOptions = Core.getConnectOptions(connectionName);
+              if (connectionOptions) {
+                connectionOptions.path = Core.url('/' + icon);
+                icon = <string>Core.createServerConnectionUrl(connectionOptions);
+              }
+            }
             break;
           case 'json':
           case 'xml':

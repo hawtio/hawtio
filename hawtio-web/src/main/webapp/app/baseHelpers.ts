@@ -167,7 +167,7 @@ module Core {
   /**
    * Returns the connection options for the given connection name from localStorage
    */
-  export function getConnectOptions(name:string, localStorage = Core.getLocalStorage()) {
+  export function getConnectOptions(name:string, localStorage = Core.getLocalStorage()): ConnectOptions {
     if (!name) {
       return null;
     }
