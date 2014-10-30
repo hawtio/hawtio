@@ -516,6 +516,15 @@ module Fabric {
         } catch (e) {
           // ignore
         }
+        // If we're proxying...
+        var connectionName = Core.getConnectionNameParameter(location.search);
+        if (connectionName) {
+          var connectionOptions = Core.getConnectOptions(connectionName);
+          if (connectionOptions) {
+            connectionOptions.path = answer;
+            answer = <string>Core.createServerConnectionUrl(connectionOptions);
+          }
+        }
       }
       if ($scope) {
         $scope.restApiUrl = answer;
@@ -531,6 +540,15 @@ module Fabric {
    * Returns the fully qualified iconURL from the relative link
    */
   export function toIconURL($scope, iconURL) {
+    // If we're proxying...
+    var connectionName = Core.getConnectionNameParameter(location.search);
+    if (connectionName) {
+      var connectionOptions = Core.getConnectOptions(connectionName);
+      if (connectionOptions) {
+        connectionOptions.path = iconURL;
+        iconURL = <string>Core.createServerConnectionUrl(connectionOptions);
+      }
+    }
     return iconURL;
   }
 

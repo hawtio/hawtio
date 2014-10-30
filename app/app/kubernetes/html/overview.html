@@ -1,32 +1,35 @@
 <div ng-controller="Kubernetes.OverviewController">
-  <div class="ex-node-container gridStyle" 
-       hawtio-jsplumb
-       node-sep="100"
-       rank-sep="250">
-    <div ng-repeat="service in services">
-      <div
-        id="{{service.id}}"
-        anchors="Continuous"
-        connect-to="{{service.connectTo}}"
-        class="jsplumb-node ex-node">
-        {{service.id}}
-      </div>
-    </div>
-    <div ng-repeat="pod in pods">
-      <div id="{{pod.id}}"
-           anchors="Continuous"
-           class="jsplumb-node ex-node">
-        {{pod.id}}
-      </div>
-    </div>
-    <div ng-repeat="replicationController in replicationControllers">
-      <div
-          id="{{replicationController.id}}"
-          anchors="Continuous"
-          connect-to="{{replicationController.connectTo}}"
-          class="jsplumb-node ex-node">
-        {{replicationController.id}}
-      </div>
-    </div>
+  <script type="text/ng-template" id="serviceTemplate.html">
+    <div id="{{service.id}}"
+         connect-to="{{service.connectTo}}"
+         data-type="service"
+         class="jsplumb-node ex-node">
+    {{service.id}}
   </div>
+  </script>
+  <script type="text/ng-template" id="podTemplate.html">
+    <div id="{{pod.id}}"
+         data-type="pod"
+         class="jsplumb-node ex-node">
+    {{pod.id}}
+  </div>
+  </script>
+  <script type="text/ng-template" id="replicationControllerTemplate.html">
+    <div
+        id="{{replicationController.id}}"
+        data-type="replicationController"
+        connect-to="{{replicationController.connectTo}}"
+        class="jsplumb-node ex-node">
+    {{replicationController.id}}
+  </div>
+  </script>
+  <script type="text/ng-template" id="overviewTemplate.html">
+    <div class="ex-node-container gridStyle"
+         hawtio-jsplumb
+         draggable="false"
+         node-sep="100"
+         rank-sep="250"
+   </div>
+  </script>
+  <kubernetes-overview></kubernetes-overview>
 </div>

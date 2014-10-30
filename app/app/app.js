@@ -6179,7 +6179,18 @@ var Wiki;
 
     function gitRestURL(branch, path) {
         var url = gitRelativeURL(branch, path);
-        return Core.url('/' + url);
+        url = Core.url('/' + url);
+
+        var connectionName = Core.getConnectionNameParameter(location.search);
+        if (connectionName) {
+            var connectionOptions = Core.getConnectOptions(connectionName);
+            if (connectionOptions) {
+                connectionOptions.path = url;
+                url = Core.createServerConnectionUrl(connectionOptions);
+            }
+        }
+
+        return url;
     }
     Wiki.gitRestURL = gitRestURL;
 
@@ -6231,6 +6242,14 @@ var Wiki;
         if (iconUrl) {
             css = null;
             icon = UrlHelpers.join("git", iconUrl);
+            var connectionName = Core.getConnectionNameParameter(location.search);
+            if (connectionName) {
+                var connectionOptions = Core.getConnectOptions(connectionName);
+                if (connectionOptions) {
+                    connectionOptions.path = Core.url('/' + icon);
+                    icon = Core.createServerConnectionUrl(connectionOptions);
+                }
+            }
         }
         if (!icon) {
             if (directory) {
@@ -6249,6 +6268,14 @@ var Wiki;
                     case 'gif':
                         css = null;
                         icon = Wiki.gitRelativeURL(branch, path);
+                        var connectionName = Core.getConnectionNameParameter(location.search);
+                        if (connectionName) {
+                            var connectionOptions = Core.getConnectOptions(connectionName);
+                            if (connectionOptions) {
+                                connectionOptions.path = Core.url('/' + icon);
+                                icon = Core.createServerConnectionUrl(connectionOptions);
+                            }
+                        }
                         break;
                     case 'json':
                     case 'xml':
@@ -7166,6 +7193,15 @@ var Fabric;
                     }
                 } catch (e) {
                 }
+
+                var connectionName = Core.getConnectionNameParameter(location.search);
+                if (connectionName) {
+                    var connectionOptions = Core.getConnectOptions(connectionName);
+                    if (connectionOptions) {
+                        connectionOptions.path = answer;
+                        answer = Core.createServerConnectionUrl(connectionOptions);
+                    }
+                }
             }
             if ($scope) {
                 $scope.restApiUrl = answer;
@@ -7180,6 +7216,14 @@ var Fabric;
     Fabric.loadRestApi = loadRestApi;
 
     function toIconURL($scope, iconURL) {
+        var connectionName = Core.getConnectionNameParameter(location.search);
+        if (connectionName) {
+            var connectionOptions = Core.getConnectOptions(connectionName);
+            if (connectionOptions) {
+                connectionOptions.path = iconURL;
+                iconURL = Core.createServerConnectionUrl(connectionOptions);
+            }
+        }
         return iconURL;
     }
     Fabric.toIconURL = toIconURL;
@@ -38475,11 +38519,165 @@ var Kubernetes;
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
 (function (Kubernetes) {
-    var OverviewController = Kubernetes.controller("OverviewController", [
+    var OverviewDirective = Kubernetes._module.directive("kubernetesOverview", [
+        "$templateCache", "$compile", "$interpolate", function ($templateCache, $compile, $interpolate) {
+            return {
+                restrict: 'E',
+                replace: true,
+                link: function (scope, element, attr) {
+                    scope.customizeDefaultOptions = function (options) {
+                        options.Endpoint = ['Blank', {}];
+                    };
+                    scope.customizeEndpointOptions = function (jsPlumb, node, options) {
+                        var type = node.el.attr('data-type');
+                        Kubernetes.log.debug("endpoint type: ", type);
+                        switch (type) {
+                            case 'pod':
+                                break;
+                            case 'service':
+                                break;
+                            case 'replicationController':
+                                break;
+                        }
+                    };
+                    scope.customizeConnectionOptions = function (jsPlumb, edge, params, options) {
+                        var type = edge.source.el.attr('data-type');
+                        switch (type) {
+                            case 'pod':
+                                break;
+                            case 'service':
+                                params.paintStyle = {
+                                    lineWidth: 3,
+                                    strokeStyle: '#5555cc'
+                                };
+                                params.overlays = [
+                                    ['PlainArrow', { location: 2, direction: -1, width: 15, length: 12 }]
+                                ];
+                                break;
+                            case 'replicationController':
+                                params.paintStyle = {
+                                    lineWidth: 3,
+                                    dashstyle: '4 2',
+                                    strokeStyle: '#44aa44'
+                                };
+                                params.overlays = [
+                                    ['PlainArrow', { location: 1, width: 15, length: 12 }]
+                                ];
+                                break;
+                        }
+                        Kubernetes.log.debug("connection source type: ", type);
+                        return options;
+                    };
+                    function interpolate(template, config) {
+                        return $interpolate(template)(config);
+                    }
+                    function createElement(template, thingName, thing) {
+                        var config = {};
+                        config[thingName] = thing;
+                        return interpolate(template, config);
+                    }
+                    function createElements(template, thingName, things) {
+                        return things.map(function (thing) {
+                            return createElement(template, thingName, thing);
+                        });
+                    }
+                    function appendNewElements(parentEl, template, thingName, things) {
+                        things.forEach(function (thing) {
+                            var existing = parentEl.find("#" + thing['id']);
+                            if (!existing.length) {
+                                parentEl.append($compile(createElement(template, thingName, thing))(scope));
+                            }
+                        });
+                    }
+                    function firstDraw() {
+                        Kubernetes.log.debug("First draw");
+                        var services = scope.services;
+                        var replicationControllers = scope.replicationControllers;
+                        var pods = scope.pods;
+                        var parentEl = angular.element($templateCache.get("overviewTemplate.html"));
+                        parentEl.append(createElements($templateCache.get("serviceTemplate.html"), 'service', services));
+                        parentEl.append(createElements($templateCache.get("replicationControllerTemplate.html"), 'replicationController', replicationControllers));
+                        parentEl.append(createElements($templateCache.get("podTemplate.html"), 'pod', pods));
+                        element.append($compile(parentEl)(scope));
+                    }
+                    function hasId(collection, id) {
+                        return collection.any(function (obj) {
+                            return obj['id'] === id;
+                        });
+                    }
+                    function update() {
+                        scope.$emit('jsplumbDoWhileSuspended', function () {
+                            Kubernetes.log.debug("Update");
+                            var services = scope.services;
+                            var replicationControllers = scope.replicationControllers;
+                            var pods = scope.pods;
+                            var parentEl = element.find('[hawtio-jsplumb]');
+                            var children = parentEl.find('.jsplumb-node');
+                            children.each(function (index, c) {
+                                var child = angular.element(c);
+                                var id = child.attr('id');
+                                if (Core.isBlank(id)) {
+                                    return;
+                                }
+                                var type = child.attr('data-type');
+                                function byId(thing) {
+                                    return thing['id'] === id;
+                                }
+                                switch (type) {
+                                    case 'service':
+                                        if (hasId(services, id)) {
+                                            var service = services.find(byId);
+                                            child.attr('connect-to', service.connectTo);
+                                            return;
+                                        }
+                                        break;
+                                    case 'pod':
+                                        if (hasId(pods, id)) {
+                                            return;
+                                        }
+                                        break;
+                                    case 'replicationController':
+                                        if (hasId(replicationControllers, id)) {
+                                            var replicationController = replicationControllers.find(byId);
+                                            child.attr('connect-to', replicationController.connectTo);
+                                            return;
+                                        }
+                                        break;
+                                    default:
+                                        Kubernetes.log.debug("Ignoring element with unknown type");
+                                        return;
+                                }
+                                Kubernetes.log.debug("Removing: ", id);
+                                child.remove();
+                            });
+                            appendNewElements(parentEl, $templateCache.get("serviceTemplate.html"), "service", services);
+                            appendNewElements(parentEl, $templateCache.get("podTemplate.html"), "pod", pods);
+                            appendNewElements(parentEl, $templateCache.get("replicationControllerTemplate.html"), "replicationController", replicationControllers);
+                        });
+                    }
+                    scope.$watch('count', function (count) {
+                        if (count > 0) {
+                            if (element.children().length === 0) {
+                                firstDraw();
+                            } else {
+                                update();
+                            }
+                        }
+                    });
+                }
+            };
+        }]);
+
+    var scopeName = "OverviewController";
+
+    var OverviewController = Kubernetes.controller(scopeName, [
         "$scope", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", function ($scope, KubernetesServices, KubernetesPods, KubernetesReplicationControllers) {
+            $scope.name = scopeName;
             $scope.services = null;
             $scope.replicationControllers = null;
             $scope.pods = null;
+
+            $scope.count = 0;
 
             var services = null;
             var replicationControllers = null;
@@ -38575,6 +38773,7 @@ var Kubernetes;
                     $scope.pods = pods;
                     $scope.services = services;
                     $scope.replicationControllers = replicationControllers;
+                    $scope.count = $scope.count + 1;
                 }
             }
 
@@ -38832,7 +39031,9 @@ var Kubernetes;
                             var info = Core.pathGet(entity, ["currentState", "info"]);
                             var hostPort = null;
                             var currentState = entity.currentState;
+                            var desiredState = entity.desiredState;
                             var host = currentState ? currentState["host"] : null;
+                            var hasDocker = false;
                             if (currentState)
                                 angular.forEach(info, function (containerInfo, containerName) {
                                     if (!hostPort) {
@@ -38841,16 +39042,34 @@ var Kubernetes;
                                             var hostPorts = jolokiaHostPort.map("HostPort");
                                             if (hostPorts && hostPorts.length > 0) {
                                                 hostPort = hostPorts[0];
+                                                hasDocker = true;
                                             }
                                         }
                                     }
                                 });
+                            if (desiredState && !hostPort) {
+                                var containers = Core.pathGet(desiredState, ["manifest", "containers"]);
+                                angular.forEach(containers, function (container) {
+                                    if (!hostPort) {
+                                        var ports = container.ports;
+                                        angular.forEach(ports, function (port) {
+                                            if (!hostPort) {
+                                                var containerPort = port.containerPort;
+                                                var containerHostPort = port.hostPort;
+                                                if (containerPort && containerHostPort && containerPort === 8778) {
+                                                    hostPort = containerHostPort;
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
+                            }
                             if (hostPort) {
                                 if (!host) {
                                     host = "localhost";
                                 }
 
-                                if ($scope.dockerIp) {
+                                if ($scope.dockerIp && hasDocker) {
                                     if (host === "localhost" || host === "127.0.0.1" || host === $scope.hostName) {
                                         host = $scope.dockerIp;
                                     }
@@ -47103,228 +47322,242 @@ var UI;
 })(UI || (UI = {}));
 var UI;
 (function (UI) {
-    UI._module.directive('hawtioJsplumb', function () {
-        return new UI.JSPlumb();
-    });
-
-    var JSPlumb = (function () {
-        function JSPlumb() {
-            this.restrict = 'A';
-            this.link = function ($scope, $element, $attrs) {
-                var enableDragging = true;
-                if (angular.isDefined($attrs['draggable'])) {
-                    enableDragging = Core.parseBooleanValue($attrs['draggable']);
-                }
-
-                var useLayout = true;
-                if (angular.isDefined($attrs['layout'])) {
-                    useLayout = Core.parseBooleanValue($attrs['layout']);
-                }
-
-                var nodeSep = 50;
-                var edgeSep = 10;
-                var rankSep = 50;
-
-                if (angular.isDefined($attrs['nodeSep'])) {
-                    nodeSep = Core.parseIntValue($attrs['nodeSep']);
-                }
-                if (angular.isDefined($attrs['edgeSep'])) {
-                    edgeSep = Core.parseIntValue($attrs['edgeSep']);
-                }
-                if (angular.isDefined($attrs['rankSep'])) {
-                    rankSep = Core.parseIntValue($attrs['rankSep']);
-                }
-
-                var timeout = 100;
-                if (angular.isDefined($attrs['timeout'])) {
-                    timeout = Core.parseIntValue($attrs['timeout'], "timeout");
-                }
-
-                var endpointStyle = ["Dot", { radius: 10, cssClass: 'jsplumb-circle', hoverClass: 'jsplumb-circle-hover' }];
-                var labelStyles = ["Label"];
-                var arrowStyles = [
-                    "Arrow", {
-                        location: 1,
-                        id: "arrow",
-                        length: 8,
-                        width: 8,
-                        foldback: 0.8
-                    }];
-
-                var connectorStyle = ["Flowchart", { cornerRadius: 4, gap: 8 }];
-
-                if (angular.isDefined($scope.connectorStyle)) {
-                    connectorStyle = $scope.connectorStyle;
-                }
-
-                var createNode = function (nodeEl) {
-                    var el = $(nodeEl);
-                    var id = el.attr('id');
-                    var anchors = el.attr('anchors');
-                    if (anchors.has("{{") || anchors.has("}}")) {
-                        return null;
-                    }
-                    if (anchors) {
-                        anchors = anchors.split(',').map(function (anchor) {
-                            return anchor.trim();
-                        });
-                    } else {
-                        anchors = ["Top"];
+    UI._module.directive('hawtioJsplumb', [
+        "$timeout", function ($timeout) {
+            return {
+                restrict: 'A',
+                link: function ($scope, $element, $attrs) {
+                    var enableDragging = true;
+                    if (angular.isDefined($attrs['draggable'])) {
+                        enableDragging = Core.parseBooleanValue($attrs['draggable']);
                     }
 
-                    var node = {
-                        id: id,
-                        label: 'node ' + id,
-                        el: el,
-                        width: el.outerWidth(),
-                        height: el.outerHeight(),
-                        edges: [],
-                        connections: [],
-                        endpoints: [],
-                        anchors: anchors
-                    };
-
-                    return node;
-                };
-
-                var createEndpoint = function (jsPlumb, node) {
-                    var endpoint = jsPlumb.addEndpoint(node.el, {
-                        isSource: true,
-                        isTarget: true,
-                        anchor: node.anchors,
-                        connector: connectorStyle,
-                        maxConnections: -1
-                    });
-                    node.endpoints.push(endpoint);
-
-                    if (enableDragging) {
-                        jsPlumb.draggable(node.el, {
-                            containment: $element
-                        });
+                    var useLayout = true;
+                    if (angular.isDefined($attrs['layout'])) {
+                        useLayout = Core.parseBooleanValue($attrs['layout']);
                     }
-                };
 
-                var nodes = [];
-                var transitions = [];
-                var nodesById = {};
+                    var nodeSep = 50;
+                    var edgeSep = 10;
+                    var rankSep = 50;
 
-                var gatherElements = function () {
-                    var nodeEls = $element.find('.jsplumb-node');
+                    if (angular.isDefined($attrs['nodeSep'])) {
+                        nodeSep = Core.parseIntValue($attrs['nodeSep']);
+                    }
+                    if (angular.isDefined($attrs['edgeSep'])) {
+                        edgeSep = Core.parseIntValue($attrs['edgeSep']);
+                    }
+                    if (angular.isDefined($attrs['rankSep'])) {
+                        rankSep = Core.parseIntValue($attrs['rankSep']);
+                    }
 
-                    angular.forEach(nodeEls, function (nodeEl) {
-                        if (!nodesById[nodeEl.id]) {
-                            var node = createNode(nodeEl);
-                            if (node) {
-                                nodes.push(node);
-                                nodesById[node.id] = node;
-                            }
+                    var timeout = 100;
+                    if (angular.isDefined($attrs['timeout'])) {
+                        timeout = Core.parseIntValue($attrs['timeout'], "timeout");
+                    }
+
+                    var endpointStyle = ["Dot", { radius: 10, cssClass: 'jsplumb-circle', hoverClass: 'jsplumb-circle-hover' }];
+                    var labelStyles = ["Label"];
+                    var arrowStyles = [
+                        "Arrow", {
+                            location: 1,
+                            id: "arrow",
+                            length: 8,
+                            width: 8,
+                            foldback: 0.8
+                        }];
+
+                    var connectorStyle = ["Flowchart", { cornerRadius: 4, gap: 8 }];
+
+                    if (angular.isDefined($scope.connectorStyle)) {
+                        connectorStyle = $scope.connectorStyle;
+                    }
+
+                    function createNode(nodeEl) {
+                        var el = $(nodeEl);
+                        var id = el.attr('id');
+                        var anchors = el.attr('anchors');
+                        if (!Core.isBlank(anchors) && (anchors.has("{{") || anchors.has("}}"))) {
+                            return null;
                         }
-                    });
-
-                    angular.forEach(nodes, function (sourceNode) {
-                        var targets = sourceNode.el.attr('connect-to');
-                        if (targets) {
-                            targets = targets.split(',');
-                            angular.forEach(targets, function (target) {
-                                var targetNode = nodesById[target.trim()];
-                                if (targetNode) {
-                                    var edge = {
-                                        source: sourceNode,
-                                        target: targetNode
-                                    };
-                                    transitions.push(edge);
-                                    sourceNode.edges.push(edge);
-                                    targetNode.edges.push(edge);
-                                }
+                        if (!Core.isBlank(anchors)) {
+                            anchors = anchors.split(',').map(function (anchor) {
+                                return anchor.trim();
                             });
+                        } else {
+                            anchors = ["Continuous"];
                         }
-                    });
-                };
 
-                $element.bind('DOMNodeInserted', function (event) {
-                    if ($scope.jsPlumb) {
-                        if (angular.isString(event.target.className) && !event.target.className.has("_jsPlumb_endpoint_anchor_") && event.target.className.has("jsplumb-node")) {
-                            gatherElements();
-                            var newNodes = nodes.filter(function (node) {
-                                return node.endpoints.isEmpty();
-                            });
-                            if (newNodes && newNodes.length) {
-                                angular.forEach(newNodes, function (node) {
-                                    createEndpoint($scope.jsPlumb, node);
-                                });
-                                $scope.jsPlumb.repaintEverything();
-                                Core.$applyLater($scope);
-                            }
-                        }
+                        var node = {
+                            id: id,
+                            label: 'node ' + id,
+                            el: el,
+                            width: el.outerWidth(),
+                            height: el.outerHeight(),
+                            edges: [],
+                            connections: [],
+                            endpoints: [],
+                            anchors: anchors
+                        };
+
+                        return node;
                     }
-                });
+                    ;
 
-                setTimeout(function () {
-                    $scope.jsPlumb = jsPlumb.getInstance({
-                        Container: $element
-                    });
-
-                    $scope.jsPlumb.importDefaults({
-                        Anchor: "AutoDefault",
-                        Connector: "Flowchart",
-                        ConnectorStyle: connectorStyle,
-                        DragOptions: { cursor: "pointer", zIndex: 2000 },
-                        Endpoint: endpointStyle,
-                        PaintStyle: { strokeStyle: "#42a62c", lineWidth: 4 },
-                        HoverPaintStyle: { strokeStyle: "#42a62c", lineWidth: 4 },
-                        ConnectionOverlays: [
-                            arrowStyles,
-                            labelStyles
-                        ]
-                    });
-
-                    gatherElements();
-
-                    $scope.jsPlumbNodes = nodes;
-                    $scope.jsPlumbNodesById = nodesById;
-                    $scope.jsPlumbTransitions = transitions;
-
-                    if (useLayout) {
-                        $scope.layout = dagre.layout().nodeSep(nodeSep).edgeSep(edgeSep).rankSep(rankSep).nodes(nodes).edges(transitions).debugLevel(1).run();
-                    }
-
-                    angular.forEach($scope.jsPlumbNodes, function (node) {
-                        if (useLayout) {
-                            var divWidth = node.el.width();
-                            var divHeight = node.el.height();
-                            var y = node.dagre.y - (divHeight / 2);
-                            var x = node.dagre.x - (divWidth / 2);
-                            node.el.css({ top: y, left: x });
-                        }
-                        createEndpoint($scope.jsPlumb, node);
-                    });
-
-                    angular.forEach($scope.jsPlumbTransitions, function (edge) {
-                        var connection = $scope.jsPlumb.connect({
-                            source: edge.source.el,
-                            target: edge.target.el
-                        }, {
+                    function createEndpoint(jsPlumb, node) {
+                        var options = {
+                            isSource: true,
+                            isTarget: true,
+                            anchor: node.anchors,
                             connector: connectorStyle,
                             maxConnections: -1
+                        };
+                        if (angular.isFunction($scope.customizeEndpointOptions)) {
+                            $scope.customizeEndpointOptions(jsPlumb, node, options);
+                        }
+                        var endpoint = jsPlumb.addEndpoint(node.el, options);
+                        node.endpoints.push(endpoint);
+
+                        if (enableDragging) {
+                            jsPlumb.draggable(node.el, {
+                                containment: $element
+                            });
+                        }
+                    }
+                    ;
+
+                    var nodes = [];
+                    var transitions = [];
+                    var nodesById = {};
+
+                    function gatherElements() {
+                        var nodeEls = $element.find('.jsplumb-node');
+                        if (nodes.length > 0) {
+                        }
+                        angular.forEach(nodeEls, function (nodeEl) {
+                            if (!nodesById[nodeEl.id]) {
+                                var node = createNode(nodeEl);
+                                if (node) {
+                                    nodes.push(node);
+                                    nodesById[node.id] = node;
+                                }
+                            }
                         });
-                        edge.source.connections.push(connection);
-                        edge.target.connections.push(connection);
+                        angular.forEach(nodes, function (sourceNode) {
+                            var targets = sourceNode.el.attr('connect-to');
+                            if (targets) {
+                                targets = targets.split(',');
+                                angular.forEach(targets, function (target) {
+                                    var targetNode = nodesById[target.trim()];
+                                    if (targetNode) {
+                                        var edge = {
+                                            source: sourceNode,
+                                            target: targetNode
+                                        };
+                                        transitions.push(edge);
+                                        sourceNode.edges.push(edge);
+                                        targetNode.edges.push(edge);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    ;
+
+                    $scope.$on('jsplumbDoWhileSuspended', function (event, op) {
+                        if ($scope.jsPlumb) {
+                            var jsPlumb = $scope.jsPlumb;
+                            jsPlumb.doWhileSuspended(function () {
+                                UI.log.debug("Suspended jsplumb");
+                                $scope.jsPlumb.reset();
+                                op();
+                                nodes = [];
+                                nodesById = {};
+                                transitions = [];
+                                go();
+                            });
+                        }
                     });
 
-                    $scope.jsPlumb.recalculateOffsets($element);
-                    $scope.jsPlumb.repaintEverything();
+                    function go() {
+                        if (!$scope.jsPlumb) {
+                            $scope.jsPlumb = jsPlumb.getInstance({
+                                Container: $element
+                            });
+                            var defaultOptions = {
+                                Anchor: "AutoDefault",
+                                Connector: "Flowchart",
+                                ConnectorStyle: connectorStyle,
+                                DragOptions: { cursor: "pointer", zIndex: 2000 },
+                                Endpoint: endpointStyle,
+                                PaintStyle: { strokeStyle: "#42a62c", lineWidth: 4 },
+                                HoverPaintStyle: { strokeStyle: "#42a62c", lineWidth: 4 },
+                                ConnectionOverlays: [
+                                    arrowStyles,
+                                    labelStyles
+                                ]
+                            };
+                            if (!enableDragging) {
+                                defaultOptions['ConnectionsDetachable'] = false;
+                            }
+                            if (angular.isFunction($scope.customizeDefaultOptions)) {
+                                $scope.customizeDefaultOptions(defaultOptions);
+                            }
+                            $scope.jsPlumb.importDefaults(defaultOptions);
+                        }
 
-                    if (angular.isDefined($scope.jsPlumbCallback) && angular.isFunction($scope.jsPlumbCallback)) {
-                        $scope.jsPlumbCallback($scope.jsPlumb, $scope.jsPlumbNodes, $scope.jsPlumbNodesById, $scope.jsPlumbTransitions);
+                        gatherElements();
+
+                        $scope.jsPlumbNodes = nodes;
+                        $scope.jsPlumbNodesById = nodesById;
+                        $scope.jsPlumbTransitions = transitions;
+
+                        if (useLayout) {
+                            $scope.layout = dagre.layout().nodeSep(nodeSep).edgeSep(edgeSep).rankSep(rankSep).nodes(nodes).edges(transitions).run();
+                        }
+
+                        angular.forEach($scope.jsPlumbNodes, function (node) {
+                            if (useLayout) {
+                                var divWidth = node.el.width();
+                                var divHeight = node.el.height();
+                                var y = node.dagre.y - (divHeight / 2);
+                                var x = node.dagre.x - (divWidth / 2);
+                                node.el.css({ top: y, left: x });
+                            }
+                            createEndpoint($scope.jsPlumb, node);
+                        });
+
+                        angular.forEach($scope.jsPlumbTransitions, function (edge) {
+                            var options = {
+                                connector: connectorStyle,
+                                maxConnections: -1
+                            };
+                            var params = {
+                                source: edge.source.el,
+                                target: edge.target.el
+                            };
+                            if (angular.isFunction($scope.customizeConnectionOptions)) {
+                                $scope.customizeConnectionOptions($scope.jsPlumb, edge, params, options);
+                            }
+                            var connection = $scope.jsPlumb.connect(params, options);
+                            edge.source.connections.push(connection);
+                            edge.target.connections.push(connection);
+                        });
+
+                        $scope.jsPlumb.recalculateOffsets($element);
+                        if (!$scope.jsPlumb.isSuspendDrawing()) {
+                            $scope.jsPlumb.repaintEverything();
+                        }
+
+                        if (angular.isDefined($scope.jsPlumbCallback) && angular.isFunction($scope.jsPlumbCallback)) {
+                            $scope.jsPlumbCallback($scope.jsPlumb, $scope.jsPlumbNodes, $scope.jsPlumbNodesById, $scope.jsPlumbTransitions);
+                        }
                     }
 
-                    Core.$apply($scope);
-                }, timeout);
+                    $timeout(go, timeout);
+                }
             };
-        }
-        return JSPlumb;
-    })();
-    UI.JSPlumb = JSPlumb;
+        }]);
 })(UI || (UI = {}));
 var UI;
 (function (UI) {

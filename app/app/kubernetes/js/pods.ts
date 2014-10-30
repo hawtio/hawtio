@@ -234,7 +234,9 @@ module Kubernetes {
             var info = Core.pathGet(entity, ["currentState", "info"]);
             var hostPort = null;
             var currentState = entity.currentState;
+            var desiredState = entity.desiredState;
             var host = currentState ? currentState["host"] : null;
+            var hasDocker = false;
             if (currentState)
             angular.forEach(info, (containerInfo, containerName) => {
               if (!hostPort) {
@@ -243,10 +245,28 @@ module Kubernetes {
                   var hostPorts = jolokiaHostPort.map("HostPort");
                   if (hostPorts && hostPorts.length > 0) {
                     hostPort = hostPorts[0];
+                    hasDocker = true;
                   }
                 }
               }
             });
+            if (desiredState && !hostPort) {
+              var containers = Core.pathGet(desiredState, ["manifest", "containers"]);
+              angular.forEach(containers, (container) => {
+                if (!hostPort) {
+                  var ports = container.ports;
+                  angular.forEach(ports, (port) => {
+                    if (!hostPort) {
+                      var containerPort = port.containerPort;
+                      var containerHostPort = port.hostPort;
+                      if (containerPort && containerHostPort && containerPort === 8778) {
+                        hostPort = containerHostPort;
+                      }
+                    }
+                  });
+                }
+              });
+            }
             if (hostPort) {
               if (!host) {
                 host = "localhost";
@@ -254,7 +274,7 @@ module Kubernetes {
               // if Kubernetes is running locally on a platform which doesn't support docker natively
               // then docker containers will be on a different IP so lets check for localhost and
               // switch to the docker IP if its available
-              if ($scope.dockerIp) {
+              if ($scope.dockerIp && hasDocker) {
                 if (host === "localhost" || host === "127.0.0.1" || host === $scope.hostName) {
                   host = $scope.dockerIp;
                 }
