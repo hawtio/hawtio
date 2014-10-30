@@ -7,6 +7,49 @@ module Kubernetes {
       restrict: 'E',
       replace: true,
       link: (scope, element, attr) => {
+        scope.customizeDefaultOptions = (options) => {
+          options.Endpoint = ['Blank', {}];
+        };
+        scope.customizeEndpointOptions = (jsPlumb, node, options) => {
+          var type = node.el.attr('data-type');
+          log.debug("endpoint type: ", type);
+          switch (type) {
+            case 'pod':
+              break;
+            case 'service':
+              break;
+            case 'replicationController':
+              break;
+          }
+        };
+        scope.customizeConnectionOptions = (jsPlumb, edge, params, options) => {
+          var type = edge.source.el.attr('data-type');
+          switch (type) {
+            case 'pod':
+              break;
+            case 'service':
+              params.paintStyle = {
+                lineWidth: 3,
+                strokeStyle: '#5555cc'
+              };
+              params.overlays = [
+                [ 'PlainArrow', { location: 2, direction: -1, width: 15, length: 12 } ]
+              ]
+              break;
+            case 'replicationController':
+              params.paintStyle = {
+                lineWidth: 3,
+                dashstyle: '4 2',
+                strokeStyle: '#44aa44'
+              }
+              params.overlays = [
+                [ 'PlainArrow', { location: 1, width: 15, length: 12 } ]
+              ]
+              break;
+          }
+          log.debug("connection source type: ", type);
+          return options;
+        };
         function interpolate(template, config) {
           return $interpolate(template)(config);
         }

@@ -44,7 +44,7 @@ module.exports = function(config) {
       libdir + 'jquery.backstretch.min.js',
       libdir + 'toastr.js',
       libdir + 'dagre.min.js',
-      libdir + 'jquery.jsPlumb-1.4.1-all-min.js',
+      libdir + 'jquery.jsPlumb-1.6.4-min.js',
       libdir + 'dangle.min.js',
       libdir + 'codemirror/codemirror.js',
       libdir + 'codemirror/addon/edit/closetag.js',

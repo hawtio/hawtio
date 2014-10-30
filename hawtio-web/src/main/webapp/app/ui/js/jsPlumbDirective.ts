@@ -88,13 +88,17 @@ module UI {
 
 
         function createEndpoint (jsPlumb, node) {
-          var endpoint = jsPlumb.addEndpoint(node.el, {
+          var options = {
             isSource: true,
             isTarget: true,
             anchor: node.anchors,
             connector: connectorStyle,
             maxConnections: -1
-          });
+          }
+          if (angular.isFunction($scope.customizeEndpointOptions)) {
+            $scope.customizeEndpointOptions(jsPlumb, node, options);
+          }
+          var endpoint = jsPlumb.addEndpoint(node.el, options);
           node.endpoints.push(endpoint);
           //$scope.jsPlumbEndpoints[node.id] = endpoint
           if (enableDragging) {
@@ -164,7 +168,7 @@ module UI {
             $scope.jsPlumb = jsPlumb.getInstance({
               Container: $element
             });
-            $scope.jsPlumb.importDefaults({
+            var defaultOptions = {
               Anchor: "AutoDefault",
               Connector: "Flowchart",
               ConnectorStyle: connectorStyle,
@@ -176,7 +180,14 @@ module UI {
                 arrowStyles,
                 labelStyles
               ]
-            });
+            };
+            if (!enableDragging) {
+              defaultOptions['ConnectionsDetachable'] = false;
+            }
+            if (angular.isFunction($scope.customizeDefaultOptions)) {
+              $scope.customizeDefaultOptions(defaultOptions);
+            }
+            $scope.jsPlumb.importDefaults(defaultOptions);
           }
 
           gatherElements();
@@ -184,8 +195,6 @@ module UI {
           $scope.jsPlumbNodes = nodes;
           $scope.jsPlumbNodesById = nodesById;
           $scope.jsPlumbTransitions = transitions;
-          //$scope.jsPlumbEndpoints = {};
-          //$scope.jsPlumbConnections = [];
 
           // First we'll lay out the graph and then later apply jsplumb to all
           // of the nodes and connections
@@ -211,16 +220,20 @@ module UI {
           });
 
           angular.forEach($scope.jsPlumbTransitions, (edge) => {
-            var connection = $scope.jsPlumb.connect({
-              source: edge.source.el,
-              target: edge.target.el
-            }, {
+            var options = {
               connector: connectorStyle,
               maxConnections: -1
-            });
+            };
+            var params = {
+              source: edge.source.el,
+              target: edge.target.el
+            };
+            if (angular.isFunction($scope.customizeConnectionOptions)) {
+              $scope.customizeConnectionOptions($scope.jsPlumb, edge, params, options);
+            }
+            var connection = $scope.jsPlumb.connect(params, options);
             edge.source.connections.push(connection);
             edge.target.connections.push(connection);
-            //$scope.jsPlumbConnections.push(connection);
           });
 
           $scope.jsPlumb.recalculateOffsets($element);
