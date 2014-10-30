@@ -117,7 +117,7 @@ module Kubernetes {
                 case 'replicationController':
                   if (hasId(replicationControllers, id)) {
                     var replicationController = replicationControllers.find(byId);
-                    child.attr('connect-to', replicationControllers.connectTo);
+                    child.attr('connect-to', replicationController.connectTo);
                     return;
                   }
                   break;
