@@ -8,10 +8,11 @@ module Fabric {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
+    var GET_CONTAINER_MBEANS = ['getContainer(java.lang.String)', 'getContainer(java.lang.String, java.util.List)'];
     if ($scope.inDashboard) {
-      $scope.operation = 'getContainer(java.lang.String, java.util.List)';
+      $scope.operation = GET_CONTAINER_MBEANS[1];
     } else {
-      $scope.operation = 'getContainer(java.lang.String)';
+      $scope.operation = GET_CONTAINER_MBEANS[0];
     }
 
     $scope.mavenRepoUploadUri;
@@ -178,7 +179,10 @@ module Fabric {
     };
 
     $scope.getArguments = () => {
-      if ($scope.inDashboard) {
+      if($scope.inSafeMode){
+        return [$scope.containerId, ["alive", "aliveAndOK", "children", "childrenIds", "debugPort", "ensembleServer", "geoLocation", "httpUrl", "id", "ip", "jmxDomains", "jmxUrl", "jolokiaUrl", "localHostname", "localIp", "location",  "manualIp", "maximumPort", "metadata", "minimumPort", "parent", "parentId", "processId", "profileIds", "profiles", "provisionChecksums", "provisionException", "provisionList", "provisionResult", "provisionStatus", "provisionStatusMap", "provisioningComplete", "provisioningPending", "publicHostname", "publicIp", "resolver", "root", "sshUrl", "type", "version", "versionId" ]];
+      }
+      else if ($scope.inDashboard) {
         return [$scope.containerId, ['id', 'versionId', 'profileIds', 'provisionResult', 'jolokiaUrl', 'alive', 'jmxDomains', 'ensembleServer', 'debugPort']];
       }
       return [$scope.containerId];
@@ -221,6 +225,15 @@ module Fabric {
         type: 'read', mbean: managerMBean,
         attribute: ["MavenRepoURI", "MavenRepoUploadURI", "ZookeeperUrl"],
       }, onSuccess(mavenAndZookeeperUris));
+
+      try {
+        //safe programming: we require a subset of values in case of corrupted containers servers-side
+        jolokia.execute(managerMBean, $scope.operation, $scope.getArguments()) ;
+      } catch(exception){
+        //work in safe mode
+        $scope.inSafeMode = true;
+        $scope.operation = GET_CONTAINER_MBEANS[1];
+      }
 
       Core.register(jolokia, $scope, {
         type: 'exec', mbean: managerMBean,
