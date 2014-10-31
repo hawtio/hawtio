@@ -224,8 +224,8 @@ module Core {
       // rounded corners
         .attr("rx", "4")
         .attr("ry", "4")
-      // lets add shadow
-        .attr("filter", "url(#drop-shadow)")
+      // lets add shadow (do not add shadow as the filter does not work in firefox browser
+        /*.attr("filter", "url(#drop-shadow)")*/
         .attr("class", function(d) {
           return d.type;
         });
