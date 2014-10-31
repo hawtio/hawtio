@@ -62,6 +62,10 @@ public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
     }
 
     protected Class<?> getClass(String name) {
+        return getClass(name, false);
+    }
+
+    protected Class<?> getClass(String name, boolean quiet) {
         BundleContext bundleContext = null;
         Bundle currentBundle = FrameworkUtil.getBundle(getClass());
         if (currentBundle != null) {
@@ -82,7 +86,9 @@ public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
             try {
                 return Class.forName(name);
             } catch (ClassNotFoundException e) {
-                LOG.warn("Failed to find class for {}", name);
+                if (!quiet) {
+                    LOG.warn("Failed to find class for {}", name);
+                }
                 throw new RuntimeException(e);
             }
         }
@@ -125,7 +131,7 @@ public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
     private JsonSchema customizeSchema(Class<?> clazz, JsonSchema jsonSchema) {
         String customizerClassName = String.format("%s.internal.customizers.%sSchemaCustomizer", getClass().getPackage().getName(), clazz.getName());
         try {
-            Class<?> customizerClass = getClass(customizerClassName);
+            Class<?> customizerClass = getClass(customizerClassName, true);
             return ((JsonSchemaCustomizer)customizerClass.newInstance()).customize(jsonSchema);
         } catch (Exception ignored) {
             return jsonSchema;
