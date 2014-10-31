@@ -11,11 +11,19 @@ module Kubernetes {
 
   // controller for the status icon cell
   export var PodStatus = controller("PodStatus", ["$scope", ($scope) => {
-    $scope.statusMapping = {
-      'Running': 'icon-play-circle green',
-      'Waiting': 'icon-download',
-      'Terminated': 'icon-off yellow'
-    };
+    $scope.statusMapping = (text) => {
+      if (text) {
+        var lower = text.toLowerCase();
+        if (lower.startsWith("run")) {
+          return 'icon-play-circle green';
+        } else if (lower.startsWith("wait")) {
+          return 'icon-download';
+        } else if (lower.startsWith("term") || lower.startsWith("error") || lower.startsWith("fail")) {
+          return 'icon-off yellow';
+        }
+      }
+      return 'icon-question red';
+    }
   }]);
 
   // controller that deals with the labels per pod
