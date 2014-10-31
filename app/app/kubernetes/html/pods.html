@@ -29,7 +29,7 @@
     <div class="ngCellText" ng-controller="Kubernetes.PodStatus" title="{{row.entity.currentState.status}}">
       <!-- in detail view -->
       <p ng-show="data"><strong>Status: </strong></p>
-      <i ng-class="statusMapping[row.entity.currentState.status] || 'icon-question red'"></i>
+      <i ng-class="statusMapping(row.entity.currentState.status)"></i>
       <span ng-show="data">{{data}}</span>
       <!-- in table -->
       <span ng-show="row.entity.$jolokiaUrl">

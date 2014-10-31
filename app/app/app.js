@@ -17904,7 +17904,7 @@ var Core;
 
         var edges = svgGroup.selectAll("path .edge").data(transitions).enter().append("path").attr("class", "edge").attr("marker-end", "url(#arrowhead)");
 
-        var rects = nodes.append("rect").attr("rx", "4").attr("ry", "4").attr("filter", "url(#drop-shadow)").attr("class", function (d) {
+        var rects = nodes.append("rect").attr("rx", "4").attr("ry", "4").attr("class", function (d) {
             return d.type;
         });
 
@@ -26816,10 +26816,11 @@ var Fabric;
         "$scope", "$routeParams", "$location", "jolokia", "workspace", "userDetails", function ($scope, $routeParams, $location, jolokia, workspace, userDetails) {
             Fabric.initScope($scope, $location, jolokia, workspace);
 
+            var GET_CONTAINER_MBEANS = ['getContainer(java.lang.String)', 'getContainer(java.lang.String, java.util.List)'];
             if ($scope.inDashboard) {
-                $scope.operation = 'getContainer(java.lang.String, java.util.List)';
+                $scope.operation = GET_CONTAINER_MBEANS[1];
             } else {
-                $scope.operation = 'getContainer(java.lang.String)';
+                $scope.operation = GET_CONTAINER_MBEANS[0];
             }
 
             $scope.mavenRepoUploadUri;
@@ -26969,7 +26970,9 @@ var Fabric;
             };
 
             $scope.getArguments = function () {
-                if ($scope.inDashboard) {
+                if ($scope.inSafeMode) {
+                    return [$scope.containerId, ["alive", "aliveAndOK", "children", "childrenIds", "debugPort", "ensembleServer", "geoLocation", "httpUrl", "id", "ip", "jmxDomains", "jmxUrl", "jolokiaUrl", "localHostname", "localIp", "location", "manualIp", "maximumPort", "metadata", "minimumPort", "parent", "parentId", "processId", "profileIds", "profiles", "provisionChecksums", "provisionException", "provisionList", "provisionResult", "provisionStatus", "provisionStatusMap", "provisioningComplete", "provisioningPending", "publicHostname", "publicIp", "resolver", "root", "sshUrl", "type", "version", "versionId"]];
+                } else if ($scope.inDashboard) {
                     return [$scope.containerId, ['id', 'versionId', 'profileIds', 'provisionResult', 'jolokiaUrl', 'alive', 'jmxDomains', 'ensembleServer', 'debugPort']];
                 }
                 return [$scope.containerId];
@@ -27013,6 +27016,13 @@ var Fabric;
                     type: 'read', mbean: Fabric.managerMBean,
                     attribute: ["MavenRepoURI", "MavenRepoUploadURI", "ZookeeperUrl"]
                 }, onSuccess(mavenAndZookeeperUris));
+
+                try  {
+                    jolokia.execute(Fabric.managerMBean, $scope.operation, $scope.getArguments());
+                } catch (exception) {
+                    $scope.inSafeMode = true;
+                    $scope.operation = GET_CONTAINER_MBEANS[1];
+                }
 
                 Core.register(jolokia, $scope, {
                     type: 'exec', mbean: Fabric.managerMBean,
@@ -39371,10 +39381,18 @@ var Kubernetes;
 
     Kubernetes.PodStatus = Kubernetes.controller("PodStatus", [
         "$scope", function ($scope) {
-            $scope.statusMapping = {
-                'Running': 'icon-play-circle green',
-                'Waiting': 'icon-download',
-                'Terminated': 'icon-off yellow'
+            $scope.statusMapping = function (text) {
+                if (text) {
+                    var lower = text.toLowerCase();
+                    if (lower.startsWith("run")) {
+                        return 'icon-play-circle green';
+                    } else if (lower.startsWith("wait")) {
+                        return 'icon-download';
+                    } else if (lower.startsWith("term") || lower.startsWith("error") || lower.startsWith("fail")) {
+                        return 'icon-off yellow';
+                    }
+                }
+                return 'icon-question red';
             };
         }]);
 
