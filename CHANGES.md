@@ -1,5 +1,13 @@
 ### Change Log
 
+#### 1.4.29
+
+* Bug fixes
+
+#### 1.4.28
+
+* Bug fixes
+
 #### 1.4.27
 
 * Reworked proxy
