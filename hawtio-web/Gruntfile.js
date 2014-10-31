@@ -8,6 +8,8 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON("package.json"),
 
     /* task configuration */
+
+    // https://www.npmjs.org/package/grunt-bower
     bower: {
       install: {
         options: {
@@ -17,6 +19,7 @@ module.exports = function(grunt) {
       }
     },
 
+    // https://www.npmjs.org/package/grunt-wiredep
     wiredep: {
       target: {
         src: [
@@ -45,17 +48,23 @@ module.exports = function(grunt) {
               "main": "jolokia.js"
             },
             'bootstrap': {
-              'main': ['docs/assets/css/bootstrap.css', 'docs/assets/js/bootstrap.js']
+              "main": ['docs/assets/css/bootstrap.css', 'docs/assets/js/bootstrap.js']
             },
             'Font-Awesome': {
-              main: ['css/font-awesome.css']
+              "main": ['css/font-awesome.css']
+            },
+            'elastic.js': {
+              "main": ['dist/elastic.min.js']
+            },
+            'd3': {
+              "main": ['./d3.min.js']
             }
           }
         }
       }
     },
 
-    // grunt-karma
+    // https://www.npmjs.org/package/grunt-karma
     karma: {
       unit: {
         configFile: "src/test/config/karma.conf.js"
@@ -68,7 +77,7 @@ module.exports = function(grunt) {
       }
     },
 
-    // grunt-typescript (~8 seconds)
+    // https://www.npmjs.org/package/grunt-typescript (~8 seconds)
     typescript: {
       base: {
         src: [ "src/main/d.ts/*.d.ts", "src/main/webapp/app/**/*.ts" ],
@@ -87,6 +96,7 @@ module.exports = function(grunt) {
       }
     },
 
+    // https://www.npmjs.org/package/grunt-rename
     rename: {
       declaration: {
         src: 'src/main/webapp/app/app.d.ts',
@@ -94,6 +104,7 @@ module.exports = function(grunt) {
       }
     },
 
+    // https://www.npmjs.org/package/grunt-ng-annotate
     ngAnnotate: {
       app: {
         files: {
@@ -102,13 +113,14 @@ module.exports = function(grunt) {
       }
     },
 
+    // https://github.com/gruntjs/grunt-contrib-uglify
     uglify: {
       generated: {
 
       }
     },
 
-    // grunt-contrib-watch
+    // https://github.com/gruntjs/grunt-contrib-watch
     watch: {
       tsc: {
         files: [ "src/main/webapp/app/**/*.ts" ],
@@ -120,6 +132,7 @@ module.exports = function(grunt) {
       }
     },
 
+    // https://www.npmjs.org/package/grunt-angular-modules-graph
     'modules-graph': {
       options: {
         // Task-specific options go here.
@@ -131,6 +144,7 @@ module.exports = function(grunt) {
       }
     },
 
+    // https://www.npmjs.org/package/grunt-graphviz
     graphviz: {
       graph: {
         files: {
@@ -139,6 +153,7 @@ module.exports = function(grunt) {
       }
     },
 
+    // https://www.npmjs.org/package/grunt-usemin
     useminPrepare: {
       html: 'src/main/webapp/index.html',
       options: {
@@ -146,19 +161,22 @@ module.exports = function(grunt) {
       }
     },
 
+    // https://www.npmjs.org/package/grunt-usemin
     usemin: {
       html: 'dist/**/*.html'
     },
 
+    // https://www.npmjs.org/package/grunt-copy
     copy: {
       html: {
         cwd: 'src/main/webapp',
         files: [
-          {expand: true, cwd: 'src/main/webapp/', src: ['**/*', '!**/*.ts', '!**/*.map'], dest: 'dist/'}
+          { expand: true, cwd: 'src/main/webapp/', src: ['**/*', '!**/*.ts', '!**/*.map'], dest: 'dist/' }
         ]
       }
     },
 
+    // https://github.com/hollandben/grunt-cache-bust
     cacheBust: {
       options: {
         rename: false
@@ -170,15 +188,18 @@ module.exports = function(grunt) {
       }
     },
 
+    // https://www.npmjs.org/package/grunt-express
+    // https://github.com/blai/grunt-express
     express: {
       server: {
         options: {
           port: 9001,
-          bases: ['src/main/webapp', 'dist']
+          bases: [ 'src/main/webapp', 'dist' ]
         }
       }
     },
 
+    // https://github.com/teerapap/grunt-protractor-runner
     protractor: {
       options: {
         configFile: "node_modules/protractor/docs/referenceConf.js", // Default config file
@@ -201,14 +222,17 @@ module.exports = function(grunt) {
 
   /* task aliases */
 
-  // "grunt webserver" starts a webserver which hosts hawt.io without backend Java server
+  // "grunt server" starts a webserver which hosts hawt.io without backend Java server
   // this might be however very useful to connect to existing Jolokia agent
-  grunt.registerTask("server", "Starts a webserver which hosts hawt.io without backend Java server", [ "express:server" ]);
+  grunt.registerTask("server", "Starts a webserver which hosts hawt.io without backend Java server", [ "express:server", "express-keepalive" ]);
 
-  grunt.registerTask("webserver", "Starts a webserver which hosts hawt.io without backend Java server", [ "connect:devserver" ]);
+  // test related tasks
 
   grunt.registerTask("test", "Runs unit tests once", [ "karma:unit" ]);
   grunt.registerTask("test-chrome", "Runs unit tests continuously with autowatching", [ "karma:chrome" ]);
+  grunt.registerTask("e2e", [ "protractor:all" ]);
+
+  // distribution tasks
 
   grunt.registerTask("default", [
     "bower",
@@ -217,7 +241,7 @@ module.exports = function(grunt) {
     "rename",
     "karma:unit",
     "ngAnnotate:app"
-  ])
+  ]);
 
   grunt.registerTask("dist", [
     "default",
@@ -228,10 +252,6 @@ module.exports = function(grunt) {
     'uglify:generated',
     'usemin',
     'cacheBust'
-  ]);
-
-  grunt.registerTask("e2e", [
-    "protractor:all"
   ]);
 
 };

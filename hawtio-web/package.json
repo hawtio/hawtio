@@ -3,6 +3,10 @@
   "version": "1.5.0",
   "description": "hawtio :: hawtio-web",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hawtio/hawtio"
+  },
   "devDependencies": {
     "CSSwhat": "~0.4.7",
     "bower": "^1.3.12",
@@ -46,7 +50,8 @@
     "phantomjs": "~1.9.10",
     "protractor": "~1.3.1",
     "testacular": "~0.6.2",
-    "typescript": "~1.0.1"
+    "typescript": "~1.0.1",
+    "npm-check-updates": "~1.2.0"
   },
   "scripts": {
     "install": "node node_modules/protractor/bin/webdriver-manager update"

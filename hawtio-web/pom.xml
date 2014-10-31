@@ -26,11 +26,14 @@
     <gruntE2EOptions>--headless</gruntE2EOptions>
     <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
     <webappDirectory>${webapp-outdir}</webappDirectory>
-    <warSourceExcludes />
+    <warSourceExcludes>**</warSourceExcludes>
     <packagingExcludes>**/classes/OSGI-INF/**,*/debug/**</packagingExcludes>
+    <packagingIncludes />
 
     <hawtio-config-importURLs />
     <hawtio-config-cloneOnStartup>true</hawtio-config-cloneOnStartup>
+    <fabricUrl />
+    <jetty-use-file-lock />
   </properties>
 
   <dependencies>
@@ -321,7 +324,6 @@
       <scope>test</scope>
     </dependency>
 
-
     <dependency>
       <groupId>net.alchim31</groupId>
       <artifactId>livereload-jvm</artifactId>
@@ -389,13 +391,10 @@
                     </execute>
                   </action>
                 </pluginExecution>
-
-
               </pluginExecutions>
             </lifecycleMappingMetadata>
           </configuration>
         </plugin>
-
       </plugins>
     </pluginManagement>
 
@@ -482,7 +481,6 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <version>${maven-antrun-plugin-version}</version>
         <executions>
-
           <execution>
             <id>process-resources</id>
             <phase>process-resources</phase>
@@ -511,7 +509,7 @@
 
                 <echo>Copying base directory docs</echo>
                 <copy todir="${webappDirectory}/app/core/doc">
-                  <fileset dir="${basedir}/../">
+                  <fileset dir="${basedir}/..">
                     <include name="*.md" />
                   </fileset>
                 </copy>
@@ -521,14 +519,39 @@
                   <fileset dir="${warSourceDirectory}">
                     <include name="**" />
                     <exclude name="manifest.json" />
+                    <exclude name="app/*/js/**" />
+                    <exclude name="app/*/js" />
+                    <!-- sorry, couldn't do it better for now -->
+                    <exclude name="bower_components/Font-Awesome/less/**" />
+                    <exclude name="bower_components/Font-Awesome/scss/**" />
+                    <exclude name="bower_components/Font-Awesome/src/**" />
+                    <exclude name="bower_components/bootstrap/docs/build/**" />
+                    <exclude name="bower_components/bootstrap/docs/examples/**" />
+                    <exclude name="bower_components/bootstrap/docs/assets/img/example-sites/**" />
+                    <exclude name="bower_components/bootstrap/docs/assets/img/examples/**" />
+                    <exclude name="bower_components/bootstrap/less/**" />
+                    <exclude name="bower_components/d3/lib/**" />
+                    <exclude name="bower_components/d3/src/**" />
+                    <exclude name="bower_components/d3/test/**" />
+                    <exclude name="bower_components/d3/d3.js" />
+                    <exclude name="bower_components/d3/*.json" />
+                    <exclude name="bower_components/elastic.js/examples/**" />
+                    <exclude name="bower_components/elastic.js/src/**" />
+                    <exclude name="bower_components/elastic.js/tests/**" />
+                    <exclude name="bower_components/elastic.js/dist/elastic.js" />
+                    <exclude name="bower_components/jquery/build/**" />
+                    <exclude name="bower_components/jquery/speed/**" />
+                    <exclude name="bower_components/jquery/src/**" />
+                    <exclude name="bower_components/jquery/test/**" />
+                    <!-- / -->
                   </fileset>
                 </copy>
 
                 <!-- update the manifest version -->
                 <copy todir="${webappDirectory}">
                   <filterset begintoken="version&quot;: &quot;" endtoken="&quot;">
-                      <filter token="1.0.0" value="version&quot;: &quot;${chrome-version}&quot;" />
-                    </filterset>
+                    <filter token="1.0.0" value="version&quot;: &quot;${chrome-version}&quot;" />
+                  </filterset>
                   <fileset dir="${basedir}/src/main/webapp">
                     <include name="manifest.json" />
                   </fileset>
@@ -618,12 +641,12 @@
           <packagingIncludes>${packagingIncludes}</packagingIncludes>
           <warSourceExcludes>${warSourceExcludes}</warSourceExcludes>
           <failOnMissingWebXml>true</failOnMissingWebXml>
-<!--
-          TODO disabled using archiveClasses for https://github.com/hawtio/hawtio/issues/403
-          until we can figure out how to get the war to work inside OSGi again
+          <!--
+                    TODO disabled using archiveClasses for https://github.com/hawtio/hawtio/issues/403
+                    until we can figure out how to get the war to work inside OSGi again
 
-          <archiveClasses>true</archiveClasses>
--->
+                    <archiveClasses>true</archiveClasses>
+          -->
           <archive>
             <manifestFile>${basedir}/target/classes/META-INF/MANIFEST.MF</manifestFile>
           </archive>
@@ -848,6 +871,7 @@
           </systemProperties>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
 
@@ -913,20 +937,20 @@
           <artifactId>hawtio-watcher-spring-context</artifactId>
           <version>${project.version}</version>
           <scope>test</scope>
-         </dependency>
-         <dependency>
-         <groupId>io.hawt</groupId>
-           <artifactId>hawtio-watcher-blueprint-web</artifactId>
-           <version>${project.version}</version>
-           <scope>test</scope>
-         </dependency>
-         <dependency>
-           <groupId>io.hawt</groupId>
-           <artifactId>hawtio-watcher-dynamic-jaxb</artifactId>
-           <version>${project.version}</version>
-           <scope>test</scope>
-         </dependency>
-       </dependencies>
+        </dependency>
+        <dependency>
+          <groupId>io.hawt</groupId>
+          <artifactId>hawtio-watcher-blueprint-web</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>io.hawt</groupId>
+          <artifactId>hawtio-watcher-dynamic-jaxb</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
     </profile>
 
     <profile>
@@ -956,11 +980,11 @@
         </plugins>
       </build>
     </profile>
+
     <profile>
       <id>icons</id>
       <build>
         <plugins>
-
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
             <version>1.6</version>
@@ -1017,7 +1041,6 @@
       </activation>
 
       <dependencies>
-
         <dependency>
           <groupId>org.apache.activemq</groupId>
           <artifactId>apollo-broker</artifactId>
@@ -1080,7 +1103,6 @@
           <version>${scala-version}</version>
         </dependency>
       </dependencies>
-
     </profile>
 
     <profile>
@@ -1158,7 +1180,7 @@
           </plugin>
           <plugin>
             <groupId>org.codehaus.gmaven</groupId>
-            <artifactId>groovy-maven-plugin </artifactId>
+            <artifactId>groovy-maven-plugin</artifactId>
             <version>2.0</version>
             <executions>
               <execution>
@@ -1168,8 +1190,8 @@
                 <phase>verify</phase>
                 <configuration>
                   <source>
-                    def result = new AntBuilder().fileset( dir:"${basedir}/target/failsafe-reports", includes:'TEST-*.xml' ) {
-                    containsregexp expression:'(failures|errors)="[^0]'
+                    def result = new AntBuilder().fileset(dir: "${basedir}/target/failsafe-reports", includes: 'TEST-*.xml') {
+                      containsregexp expression: '(failures|errors)="[^0]'
                     }*.file
 
                     if (result.size &gt; 0) then fail('There were Protractor test failures/errors')
@@ -1258,4 +1280,5 @@
     </profile>
 
   </profiles>
+
 </project>

@@ -24,8 +24,8 @@ module.exports = function(config) {
       libdir + '../../../main/webapp/bower_components/jquery/jquery.js',
       libdir + '../../../main/webapp/bower_components/js-logger/src/logger.js',
       libdir + '../../../main/webapp/bower_components/bootstrap/docs/assets/js/bootstrap.js',
-      libdir + '../../../main/webapp/bower_components/d3/d3.js',
-      libdir + '../../../main/webapp/bower_components/elastic.js/dist/elastic.js',
+      libdir + '../../../main/webapp/bower_components/d3/d3.min.js',
+      libdir + '../../../main/webapp/bower_components/elastic.js/dist/elastic.min.js',
       libdir + '../../../main/webapp/bower_components/underscore/underscore.js',
       // endbower
       libdir + 'loggingInit.js',
