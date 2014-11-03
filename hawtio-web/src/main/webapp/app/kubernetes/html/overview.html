@@ -1,14 +1,19 @@
 <div ng-controller="Kubernetes.OverviewController">
   <link rel="stylesheet" href="app/kubernetes/html/overview.css">
+  <script type="text/ng-template" id="serviceBoxTemplate.html">
+    <div title="Service ID: {{entity.id}}">
+      {{entity.port}}
+    </div>
+  </script>
   <script type="text/ng-template" id="serviceTemplate.html">
     <div id="{{service.id}}"
          connect-to="{{service.connectTo}}"
          data-type="service"
-         class="jsplumb-node kubernetes-node ex-node"
+         class="jsplumb-node kubernetes-node kubernetes-service-node"
          ng-controller="Kubernetes.OverviewBoxController"
          ng-init="entity=getEntity('service', '{{service.id}}')"
          ng-click="viewDetails('services')">
-    {{service.id}}
+    <div ng-init="entity=entity" ng-include="'serviceBoxTemplate.html'"></div>
   </div>
   </script>
   <script type="text/ng-template" id="podTemplate.html">
@@ -27,7 +32,7 @@
         id="{{replicationController.id}}"
         data-type="replicationController"
         connect-to="{{replicationController.connectTo}}"
-        class="jsplumb-node ex-node kubernetes-node"
+        class="jsplumb-node kubernetes-replicationController-node kubernetes-node"
         ng-controller="Kubernetes.OverviewBoxController"
         ng-init="entity=getEntity('replicationController', '{{replicationController.id}}')"
         ng-click="viewDetails('replicationControllers')">
