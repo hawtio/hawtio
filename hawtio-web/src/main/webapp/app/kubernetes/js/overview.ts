@@ -9,14 +9,13 @@ module Kubernetes {
       link: (scope, element, attr) => {
         element.css({visibility: 'hidden'});
         scope.getEntity = (type:string, id:string) => {
-          function byId(obj) { return obj.id === id };
           switch (type) {
             case 'pod':
-              return scope.pods.find(byId);
+              return scope.podsById[id];
             case 'replicationController':
-              return scope.replicationControllers.find(byId);
+              return scope.replicationControllersById[id];
             case 'service':
-              return scope.services.find(byId);
+              return scope.servicesById[id];
             default:
               return undefined;
 
@@ -25,6 +24,7 @@ module Kubernetes {
         scope.customizeDefaultOptions = (options) => {
           options.Endpoint = ['Blank', {}];
         };
+        /*
         scope.customizeEndpointOptions = (jsPlumb, node, options) => {
           var type = node.el.attr('data-type');
           // log.debug("endpoint type: ", type);
@@ -37,8 +37,14 @@ module Kubernetes {
               break;
           }
         };
+        */
         scope.customizeConnectionOptions = (jsPlumb, edge, params, options) => {
           var type = edge.source.el.attr('data-type');
+          options.connector = [ "StateMachine" ];
+          params.anchors = [
+            [ "Perimeter", { shape: "Rectangle", rotation: "0" } ],
+            [ "Perimeter", { shape: "Rectangle", rotation: "0" } ]
+          ];
           switch (type) {
             case 'pod':
               break;
@@ -62,7 +68,7 @@ module Kubernetes {
               ]
               break;
           }
-          log.debug("connection source type: ", type);
+          //log.debug("connection source type: ", type);
           return options;
         };
         function interpolate(template, config) {
@@ -71,7 +77,6 @@ module Kubernetes {
         function createElement(template, thingName, thing) {
           var config = {};
           config[thingName] = thing;
-          config['entity'] = angular.toJson(thing);
           return interpolate(template, config);
         }
         function createElements(template, thingName, things) {
@@ -92,15 +97,13 @@ module Kubernetes {
           var services = scope.services;
           var replicationControllers = scope.replicationControllers;
           var pods = scope.pods;
+          log.debug("hosts: ", scope.hosts);
           var parentEl = angular.element($templateCache.get("overviewTemplate.html"));
           parentEl.append(createElements($templateCache.get("serviceTemplate.html"), 'service', services));
           parentEl.append(createElements($templateCache.get("replicationControllerTemplate.html"), 'replicationController', replicationControllers));
           parentEl.append(createElements($templateCache.get("podTemplate.html"), 'pod', pods));
           element.append($compile(parentEl)(scope));
           $timeout(() => { element.css({visibility: 'visible'}); }, 250);
-        }
-        function hasId(collection, id) {
-          return collection.any((obj) => { return obj['id'] === id; });
         }
         function update() {
           scope.$emit('jsplumbDoWhileSuspended', () => {
@@ -117,23 +120,24 @@ module Kubernetes {
                 return;
               }
               var type = child.attr('data-type');
-              function byId(thing) { return thing['id'] === id; }
               switch (type) {
                 case 'service':
-                  if (hasId(services, id)) {
-                    var service = services.find(byId);
+                  if (id in scope.servicesById) {
+                    var service = scope.servicesById[id];
                     child.attr('connect-to', service.connectTo);
                     return;
                   }
                   break;
                 case 'pod':
+                  /*
                   if (hasId(pods, id)) {
                     return;
                   }
+                  */
                   break;
                 case 'replicationController':
-                  if (hasId(replicationControllers, id)) {
-                    var replicationController = replicationControllers.find(byId);
+                  if (id in scope.replicationControllersById) {
+                    var replicationController = scope.replicationControllersById[id];
                     child.attr('connect-to', replicationController.connectTo);
                     return;
                   }
@@ -182,8 +186,6 @@ module Kubernetes {
     var services = null;
     var replicationControllers = null;
     var pods = null;
-
-    $scope.connectorStyle = [ "Bezier" ];
 
     KubernetesServices.then((KubernetesServices:ng.resource.IResourceClass) => {
       KubernetesReplicationControllers.then((KubernetesReplicationControllers:ng.resource.IResourceClass) => {
@@ -244,14 +246,17 @@ module Kubernetes {
     });
 
     function getPodIdsForLabel(label:string, value:string) {
-      var matches = pods.filter((pod) => { return label in pod.labels; });
-      matches = matches.filter((pod) => { return pod.labels[label] === value; });
+      var matches = pods.filter((pod) => { return label in pod.labels && pod.labels[label] === value; });
       return matches.map((pod) => { return pod.id; });
     }
 
     function maybeInit() {
       if (services && replicationControllers && pods) {
+        $scope.servicesById = {};
+        $scope.podsById = {};
+        $scope.replicationControllersById = {};
         services.forEach((service) => {
+          $scope.servicesById[service.id] = service;
           service.podIds = [];
           angular.forEach(service.selector, (value, key) => {
             var ids = getPodIdsForLabel(key, value);
@@ -260,9 +265,11 @@ module Kubernetes {
           service.connectTo = service.podIds.join(',');
         });
         replicationControllers.forEach((replicationController) => {
+          $scope.replicationControllersById[replicationController.id] = replicationController
           replicationController.podIds = getPodIdsForLabel('replicationController', replicationController.id);
           replicationController.connectTo = replicationController.podIds.join(',');
         });
+        pods.forEach((pod) => { $scope.podsById[pod.id] = pod });
         $scope.pods = pods;
         $scope.services = services;
         $scope.replicationControllers = replicationControllers;

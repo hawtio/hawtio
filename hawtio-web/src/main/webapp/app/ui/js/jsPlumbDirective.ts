@@ -20,6 +20,17 @@ module UI {
           useLayout = Core.parseBooleanValue($attrs['layout']);
         }
 
+        var direction = 'TB';
+        if (angular.isDefined($attrs['direction'])) {
+          switch($attrs['direction']) {
+            case 'down':
+              direction = 'LR';
+              break;
+            default:
+              direction = 'TB';
+          }
+        }
+
         var nodeSep = 50;
         var edgeSep = 10;
         var rankSep = 50;
@@ -203,6 +214,7 @@ module UI {
             .nodeSep(nodeSep)
             .edgeSep(edgeSep)
             .rankSep(rankSep)
+            .rankDir(direction)
             .nodes(nodes)
             .edges(transitions)
             .run();

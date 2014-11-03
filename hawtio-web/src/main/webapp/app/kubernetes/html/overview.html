@@ -9,6 +9,8 @@
     <div id="{{service.id}}"
          connect-to="{{service.connectTo}}"
          data-type="service"
+         data-shape="Rectangle"
+         anchor="Perimiter"
          class="jsplumb-node kubernetes-node kubernetes-service-node"
          ng-controller="Kubernetes.OverviewBoxController"
          ng-init="entity=getEntity('service', '{{service.id}}')"
@@ -19,6 +21,8 @@
   <script type="text/ng-template" id="podTemplate.html">
     <div id="{{pod.id}}"
          data-type="pod"
+         data-shape="Square"
+         anchor="Perimiter"
          title="Pod ID: {{pod.id}}"
          class="jsplumb-node kubernetes-node kubernetes-pod-node" 
          ng-controller="Kubernetes.OverviewBoxController"
@@ -31,6 +35,8 @@
     <div
         id="{{replicationController.id}}"
         data-type="replicationController"
+        data-shape="Rectangle"
+        anchor="Perimiter"
         connect-to="{{replicationController.connectTo}}"
         class="jsplumb-node kubernetes-replicationController-node kubernetes-node"
         ng-controller="Kubernetes.OverviewBoxController"
@@ -43,8 +49,9 @@
     <div class="ex-node-container gridStyle"
          hawtio-jsplumb
          draggable="false"
-         node-sep="100"
-         rank-sep="250"
+         node-sep="50"
+         rank-sep="300"
+         direction="right"
    </div>
   </script>
   <kubernetes-overview></kubernetes-overview>

@@ -9,6 +9,7 @@
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   transition: background 0.5s;
+  z-index: 1000;
 }
 
 .kubernetes-pod-node {
