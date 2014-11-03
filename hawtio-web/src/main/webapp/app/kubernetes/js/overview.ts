@@ -2,17 +2,32 @@
 /// <reference path="../../helpers/js/pollHelpers.ts"/>
 module Kubernetes {
 
-  var OverviewDirective = _module.directive("kubernetesOverview", ["$templateCache", "$compile", "$interpolate", ($templateCache:ng.ITemplateCacheService, $compile:ng.ICompileService, $interpolate:ng.IInterpolateService) => {
+  var OverviewDirective = _module.directive("kubernetesOverview", ["$templateCache", "$compile", "$interpolate", "$timeout", ($templateCache:ng.ITemplateCacheService, $compile:ng.ICompileService, $interpolate:ng.IInterpolateService, $timeout:ng.ITimeoutService) => {
     return {
       restrict: 'E',
       replace: true,
       link: (scope, element, attr) => {
+        element.css({visibility: 'hidden'});
+        scope.getEntity = (type:string, id:string) => {
+          function byId(obj) { return obj.id === id };
+          switch (type) {
+            case 'pod':
+              return scope.pods.find(byId);
+            case 'replicationController':
+              return scope.replicationControllers.find(byId);
+            case 'service':
+              return scope.services.find(byId);
+            default:
+              return undefined;
+
+          }
+        }
         scope.customizeDefaultOptions = (options) => {
           options.Endpoint = ['Blank', {}];
         };
         scope.customizeEndpointOptions = (jsPlumb, node, options) => {
           var type = node.el.attr('data-type');
-          log.debug("endpoint type: ", type);
+          // log.debug("endpoint type: ", type);
           switch (type) {
             case 'pod':
               break;
@@ -56,6 +71,7 @@ module Kubernetes {
         function createElement(template, thingName, thing) {
           var config = {};
           config[thingName] = thing;
+          config['entity'] = angular.toJson(thing);
           return interpolate(template, config);
         }
         function createElements(template, thingName, things) {
@@ -81,6 +97,7 @@ module Kubernetes {
           parentEl.append(createElements($templateCache.get("replicationControllerTemplate.html"), 'replicationController', replicationControllers));
           parentEl.append(createElements($templateCache.get("podTemplate.html"), 'pod', pods));
           element.append($compile(parentEl)(scope));
+          $timeout(() => { element.css({visibility: 'visible'}); }, 250);
         }
         function hasId(collection, id) {
           return collection.any((obj) => { return obj['id'] === id; });
@@ -144,6 +161,12 @@ module Kubernetes {
         });
       }
     };
+  }]);
+
+  var OverviewBoxController = controller("OverviewBoxController", ["$scope", "$location", ($scope, $location:ng.ILocationService) => {
+    $scope.viewDetails = (path:string) => {
+      $location.path(UrlHelpers.join('/kubernetes', path)).search({'_id': $scope.entity.id });
+    }
   }]);
 
   var scopeName = "OverviewController";
