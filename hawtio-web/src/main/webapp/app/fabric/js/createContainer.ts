@@ -40,7 +40,7 @@ module Fabric {
 
     $scope.providers = Fabric.registeredProviders(jolokia);
     //console.log("providers: ", $scope.providers);
-    $scope.selectedProvider = $scope.providers[Object.extended($scope.providers).keys().first()];
+    $scope.selectedProvider = $scope.providers[<any>Object.extended($scope.providers).keys().first()];
     $scope.resolvers = [];
     $scope.schema = {};
 

@@ -83,10 +83,22 @@ module.exports = function(grunt) {
         src: [ "src/main/d.ts/*.d.ts", "src/main/webapp/app/**/*.ts" ],
         dest: "src/main/webapp/app/app.js",
         options: {
-          comments: false,
+          removeComments: true,
           module: "commonjs",
           target: "ES5",
           declaration: true,
+          sourceMap: true,
+          watch: false
+        }
+      },
+      dev: {
+        src: [ "src/main/d.ts/*.d.ts", "src/main/webapp/app/*/**/*.ts", "src/main/webapp/app/baseHelpers.ts", "src/main/webapp/app/baseIncludes.ts" ],
+        dest: "src/main/webapp/app/app.js",
+        options: {
+          removeComments: true,
+          module: "commonjs",
+          target: "ES5",
+          declaration: false,
           sourceMap: true,
           watch: grunt.option("watch") ? {
             path: "src/main/webapp/app",
@@ -231,6 +243,9 @@ module.exports = function(grunt) {
   grunt.registerTask("test", "Runs unit tests once", [ "karma:unit" ]);
   grunt.registerTask("test-chrome", "Runs unit tests continuously with autowatching", [ "karma:chrome" ]);
   grunt.registerTask("e2e", [ "protractor:all" ]);
+
+  // TS compiler with fast incremental watcher
+  grunt.registerTask("tsc", [ "typescript:dev" ]);
 
   // distribution tasks
 
