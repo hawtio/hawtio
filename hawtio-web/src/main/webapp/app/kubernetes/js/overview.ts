@@ -10,6 +10,8 @@ module Kubernetes {
         element.css({visibility: 'hidden'});
         scope.getEntity = (type:string, id:string) => {
           switch (type) {
+            case 'host':
+              return scope.hostsById[id];
             case 'pod':
               return scope.podsById[id];
             case 'replicationController':
@@ -40,11 +42,7 @@ module Kubernetes {
         */
         scope.customizeConnectionOptions = (jsPlumb, edge, params, options) => {
           var type = edge.source.el.attr('data-type');
-          options.connector = [ "StateMachine" ];
-          params.anchors = [
-            [ "Perimeter", { shape: "Rectangle", rotation: "0" } ],
-            [ "Perimeter", { shape: "Rectangle", rotation: "0" } ]
-          ];
+          options.connector = [ "Bezier", { curviness: 300, stub: 50, alwaysRespectStubs: true } ];
           switch (type) {
             case 'pod':
               break;
@@ -56,6 +54,10 @@ module Kubernetes {
               params.overlays = [
                 [ 'PlainArrow', { location: 2, direction: -1, width: 15, length: 12 } ]
               ]
+              params.anchors = [
+                [ "Right", { } ],
+                [ "Left", { } ]
+              ];
               break;
             case 'replicationController':
               params.paintStyle = {
@@ -66,6 +68,10 @@ module Kubernetes {
               params.overlays = [
                 [ 'PlainArrow', { location: 1, width: 15, length: 12 } ]
               ]
+              params.anchors = [
+                [ "Left", { } ],
+                [ "Right", { } ]
+              ];
               break;
           }
           //log.debug("connection source type: ", type);
@@ -97,11 +103,23 @@ module Kubernetes {
           var services = scope.services;
           var replicationControllers = scope.replicationControllers;
           var pods = scope.pods;
+          var hosts = scope.hosts;
           log.debug("hosts: ", scope.hosts);
           var parentEl = angular.element($templateCache.get("overviewTemplate.html"));
-          parentEl.append(createElements($templateCache.get("serviceTemplate.html"), 'service', services));
-          parentEl.append(createElements($templateCache.get("replicationControllerTemplate.html"), 'replicationController', replicationControllers));
-          parentEl.append(createElements($templateCache.get("podTemplate.html"), 'pod', pods));
+          var servicesEl = parentEl.find(".services");
+          var hostsEl = parentEl.find(".hosts");
+          var replicationControllersEl = parentEl.find(".replicationControllers");
+
+          servicesEl.append(createElements($templateCache.get("serviceTemplate.html"), 'service', services));
+          replicationControllersEl.append(createElements($templateCache.get("replicationControllerTemplate.html"), 'replicationController', replicationControllers));
+
+          hosts.forEach((host) => {
+            var hostEl = angular.element(createElement($templateCache.get("hostTemplate.html"), 'host', host));
+            var podContainer = angular.element(hostEl.find('.pod-container'));
+            podContainer.append(createElements($templateCache.get("podTemplate.html"), "pod", host.pods));
+            hostsEl.append(hostEl);
+          });
+          //parentEl.append(createElements($templateCache.get("podTemplate.html"), 'pod', pods));
           element.append($compile(parentEl)(scope));
           $timeout(() => { element.css({visibility: 'visible'}); }, 250);
         }
@@ -121,6 +139,8 @@ module Kubernetes {
               }
               var type = child.attr('data-type');
               switch (type) {
+                case 'host':
+                  break;
                 case 'service':
                   if (id in scope.servicesById) {
                     var service = scope.servicesById[id];
@@ -277,6 +297,7 @@ module Kubernetes {
       }
     }
 
+    /*
     $scope.$watchCollection('services', (services) => {
       log.debug("got services: ", services);
     });
@@ -284,19 +305,28 @@ module Kubernetes {
     $scope.$watchCollection('replicationControllers', (replicationControllers) => {
       log.debug("got replicationControllers: ", replicationControllers);
     });
+    */
 
     $scope.$watchCollection('pods', (pods) => {
-      log.debug("got pods: ", pods);
+      //log.debug("got pods: ", pods);
       if (pods) {
-        var hosts = {};
+        var hostsById = {};
         pods.forEach((pod) => {
           var host = pod.currentState.host;
-          if (!(host in hosts)) {
-            hosts[host] = [];
+          if (!(host in hostsById)) {
+            hostsById[host] = [];
           }
-          hosts[host].push(pod);
+          hostsById[host].push(pod);
+        });
+        var hosts = [];
+        angular.forEach(hostsById, (value, key) => {
+          hosts.push({
+            id: key,
+            pods: value
+          });
         });
         $scope.hosts = hosts;
+        $scope.hostsById = hostsById;
       }
     });
 

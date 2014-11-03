@@ -1,7 +1,9 @@
 
 .kubernetes-node {
+  margin-left: auto;
+  margin-right: auto;
   cursor: pointer;
-  position: absolute;
+  display: inline-block;
   text-align: center;
   vertical-align: middle;
   border: 1px solid #d4d4d4;
@@ -12,7 +14,25 @@
   z-index: 1000;
 }
 
+.kubernetes-host-container {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  text-align: left;
+  max-width: 400px;
+  padding: 5px;
+  border: 1px solid #d4d4d4;
+  background: white;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
 .kubernetes-pod-node {
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 5px;
   width: 48px;
   height: 48px;
   padding: 0;
@@ -24,6 +44,8 @@
 }
 
 .kubernetes-service-node {
+  display: block;
+  margin-bottom: 10px;
   width: 128px;
   height: 48px;
   padding: 0;
@@ -32,6 +54,8 @@
 }
 
 .kubernetes-replicationController-node {
+  display: block;
+  margin-bottom: 10px;
   width: 256px;
   height: 48px;
   padding: 0;
