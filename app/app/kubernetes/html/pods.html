@@ -25,23 +25,6 @@
       </div>
     </div>
   </div>
-  <script type="text/ng-template" id="statusTemplate.html">
-    <div class="ngCellText" ng-controller="Kubernetes.PodStatus" title="{{row.entity.currentState.status}}">
-      <!-- in detail view -->
-      <p ng-show="data"><strong>Status: </strong></p>
-      <i ng-class="statusMapping(row.entity.currentState.status)"></i>
-      <span ng-show="data">{{data}}</span>
-      <!-- in table -->
-      <span ng-show="row.entity.$jolokiaUrl">
-        <a class="clickable"
-           href=""
-           ng-click="row.entity.$connect.doConnect(row.entity)"
-           title="Open a new window and connect to this container">
-          <i class="icon-signin"></i>
-        </a>
-      <span>
-    </div>
-  </script>
   <script type="text/ng-template" id="imageTemplate.html">
     <div class="ngCellText">
       <!-- in table -->

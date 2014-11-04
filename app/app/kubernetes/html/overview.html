@@ -1,17 +1,38 @@
 <div ng-controller="Kubernetes.OverviewController">
+  <link rel="stylesheet" href="app/kubernetes/html/overview.css">
+  <script type="text/ng-template" id="serviceBoxTemplate.html">
+    <div title="Service ID: {{entity.id}}">
+      {{entity.port}}
+    </div>
+  </script>
   <script type="text/ng-template" id="serviceTemplate.html">
     <div id="{{service.id}}"
          connect-to="{{service.connectTo}}"
          data-type="service"
-         class="jsplumb-node ex-node">
-    {{service.id}}
+         class="jsplumb-node kubernetes-node kubernetes-service-node"
+         ng-controller="Kubernetes.OverviewBoxController"
+         ng-init="entity=getEntity('service', '{{service.id}}')"
+         ng-click="viewDetails('services')">
+    <div ng-init="entity=entity" ng-include="'serviceBoxTemplate.html'"></div>
   </div>
+  </script>
+  <script type="text/ng-template" id="hostTemplate.html">
+    <div id="{{host.id}}"
+         data-type="host"
+         class="jsplumb-node kubernetes-host-container">
+      <h5>{{host.id}}</h5>
+      <div class="pod-container"></div>
+    </div>
   </script>
   <script type="text/ng-template" id="podTemplate.html">
     <div id="{{pod.id}}"
          data-type="pod"
-         class="jsplumb-node ex-node">
-    {{pod.id}}
+         title="Pod ID: {{pod.id}}"
+         class="jsplumb-node kubernetes-node kubernetes-pod-node" 
+         ng-controller="Kubernetes.OverviewBoxController"
+         ng-init="entity=getEntity('pod', '{{pod.id}}')"
+         ng-click="viewDetails('pods')">
+    <div ng-init="row={ entity: entity }" ng-include="'statusTemplate.html'"></div>
   </div>
   </script>
   <script type="text/ng-template" id="replicationControllerTemplate.html">
@@ -19,16 +40,23 @@
         id="{{replicationController.id}}"
         data-type="replicationController"
         connect-to="{{replicationController.connectTo}}"
-        class="jsplumb-node ex-node">
+        class="jsplumb-node kubernetes-replicationController-node kubernetes-node"
+        ng-controller="Kubernetes.OverviewBoxController"
+        ng-init="entity=getEntity('replicationController', '{{replicationController.id}}')"
+        ng-click="viewDetails('replicationControllers')">
     {{replicationController.id}}
   </div>
   </script>
   <script type="text/ng-template" id="overviewTemplate.html">
-    <div class="ex-node-container gridStyle"
+    <div class="row-fluid gridStyle"
          hawtio-jsplumb
          draggable="false"
-         node-sep="100"
-         rank-sep="250"
+         layout="false"
+         node-sep="50"
+         rank-sep="300">
+      <div class="span4 centered services"></div>
+      <div class="span4 centered hosts"></div>
+      <div class="span4 centered replicationControllers"></div>
    </div>
   </script>
   <kubernetes-overview></kubernetes-overview>
