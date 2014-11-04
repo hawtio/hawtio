@@ -18,7 +18,6 @@
 package io.hawt.blueprint;
 
 import org.apache.aries.blueprint.container.BlueprintContainerImpl;
-import org.omg.CORBA.ObjectHelper;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -91,8 +90,7 @@ public class HawtioBlueprintContextListener implements ServletContextListener {
                     }
                 }
             }
-            appendEnvironmentVariables(servletContext, properties);
-
+            appendEnvironmentVariablesAndSystemProperties(servletContext, properties);
 
             BlueprintContainerImpl container = new BlueprintContainerImpl(classLoader, resourcePaths, properties, true);
             servletContext.setAttribute(CONTAINER_ATTRIBUTE, container);
@@ -101,8 +99,21 @@ public class HawtioBlueprintContextListener implements ServletContextListener {
         }
     }
 
-    protected void appendEnvironmentVariables(ServletContext servletContext, Map<String, String> properties) {
+    protected void appendEnvironmentVariablesAndSystemProperties(ServletContext servletContext, Map<String, String> properties) {
         try {
+            Properties sysProperties = System.getProperties();
+            Set<Map.Entry<Object, Object>> sysEntries = sysProperties.entrySet();
+            for (Map.Entry<Object, Object> sysEntry : sysEntries) {
+                Object key = sysEntry.getKey();
+                Object value = sysEntry.getValue();
+                if (key != null && value != null) {
+                    String propertyName = key.toString();
+                    String propertyValue = key.toString();
+                    if (!properties.containsKey(propertyName)) {
+                        properties.put(propertyName, propertyValue);
+                    }
+                }
+            }
             Map<String, String> env = System.getenv();
             if (env != null) {
                 Set<Map.Entry<String, String>> entries = env.entrySet();
