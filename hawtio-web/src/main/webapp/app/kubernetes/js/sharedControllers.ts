@@ -36,7 +36,7 @@ module Kubernetes {
     };
     $scope.$watch('entity', (newValue, oldValue) => {
       if (newValue) {
-        log.debug("labels: ", newValue);
+        // log.debug("labels: ", newValue);
         // massage the labels a bit
         $scope.labels = [];
         angular.forEach($scope.entity.labels, (value, key) => {

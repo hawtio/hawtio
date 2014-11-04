@@ -2,7 +2,7 @@
 /// <reference path="../../helpers/js/pollHelpers.ts"/>
 module Kubernetes {
 
-  var OverviewDirective = _module.directive("kubernetesOverview", ["$templateCache", "$compile", "$interpolate", "$timeout", ($templateCache:ng.ITemplateCacheService, $compile:ng.ICompileService, $interpolate:ng.IInterpolateService, $timeout:ng.ITimeoutService) => {
+  var OverviewDirective = _module.directive("kubernetesOverview", ["$templateCache", "$compile", "$interpolate", "$timeout", "$window", ($templateCache:ng.ITemplateCacheService, $compile:ng.ICompileService, $interpolate:ng.IInterpolateService, $timeout:ng.ITimeoutService, $window:ng.IWindowService) => {
     return {
       restrict: 'E',
       replace: true,
@@ -26,6 +26,13 @@ module Kubernetes {
         scope.customizeDefaultOptions = (options) => {
           options.Endpoint = ['Blank', {}];
         };
+        $window.addEventListener("resize", () => {
+          if (scope.jsPlumb) {
+            scope.jsPlumb.recalculateOffsets(element);
+            scope.jsPlumb.repaintEverything();
+            log.debug("jsplumb: ", scope.jsPlumb);
+          }
+        });
         /*
         scope.customizeEndpointOptions = (jsPlumb, node, options) => {
           var type = node.el.attr('data-type');
@@ -65,7 +72,7 @@ module Kubernetes {
               */
               params.anchors = [
                 [ "ContinuousLeft", { } ],
-                [ "Perimeter", { shape: "Rectangle" } ]
+                [ "ContinuousRight", { shape: "Rectangle" } ]
               ];
               break;
             case 'replicationController':
@@ -80,7 +87,7 @@ module Kubernetes {
               ]
               */
               params.anchors = [
-                [ "Perimeter", { shape: "Rectangle" } ],
+                [ "ContinuousLeft", { shape: "Rectangle" } ],
                 [ "ContinuousRight", { } ]
               ];
               break;
@@ -115,7 +122,7 @@ module Kubernetes {
           var replicationControllers = scope.replicationControllers;
           var pods = scope.pods;
           var hosts = scope.hosts;
-          log.debug("hosts: ", scope.hosts);
+          // log.debug("hosts: ", scope.hosts);
           var parentEl = angular.element($templateCache.get("overviewTemplate.html"));
           var servicesEl = parentEl.find(".services");
           var hostsEl = parentEl.find(".hosts");
