@@ -33,6 +33,40 @@ module Kubernetes {
             log.debug("jsplumb: ", scope.jsPlumb);
           }
         });
+        scope.mouseEnter = ($event) => {
+          if (scope.jsPlumb) {
+            angular.element($event.currentTarget).addClass("hovered");
+            scope.jsPlumb.getEndpoints($event.currentTarget).forEach((endpoint) => {
+              endpoint.connections.forEach((connection) => {
+                if (!connection.isHover()) {
+                  connection.setHover(true);
+                  connection.endpoints.forEach((e) => {
+                    scope.mouseEnter({
+                      currentTarget: e.element
+                    });
+                  });
+                }
+              });
+            });
+          }
+        }
+        scope.mouseLeave = ($event) => {
+          if (scope.jsPlumb) {
+            angular.element($event.currentTarget).removeClass("hovered");
+            scope.jsPlumb.getEndpoints($event.currentTarget).forEach((endpoint) => {
+              endpoint.connections.forEach((connection) => {
+                if (connection.isHover()) {
+                  connection.setHover(false);
+                  connection.endpoints.forEach((e) => {
+                    scope.mouseLeave({
+                      currentTarget: e.element
+                    });
+                  });
+                }
+              });
+            });
+          }
+        }
         /*
         scope.customizeEndpointOptions = (jsPlumb, node, options) => {
           var type = node.el.attr('data-type');

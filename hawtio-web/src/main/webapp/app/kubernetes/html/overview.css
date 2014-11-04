@@ -81,6 +81,7 @@
 
 }
 
-.kubernetes-node:hover {
+.kubernetes-node:hover,
+.kubernetes-node.hovered {
   background: #ddddff;
 }

@@ -14,6 +14,8 @@
              class="jsplumb-node kubernetes-node kubernetes-service-node"
              ng-controller="Kubernetes.OverviewBoxController"
              ng-init="entity=getEntity('service', '{{service.id}}')"
+             ng-mouseenter="mouseEnter($event)"
+             ng-mouseleave="mouseLeave($event)"
              ng-click="viewDetails('services')">
           <div ng-init="entity=entity" ng-include="'serviceBoxTemplate.html'"></div>
         </div>
@@ -37,6 +39,8 @@
          data-type="pod"
          title="Pod ID: {{pod.id}}"
          class="jsplumb-node kubernetes-node kubernetes-pod-node" 
+         ng-mouseenter="mouseEnter($event)"
+         ng-mouseleave="mouseLeave($event)"
          ng-controller="Kubernetes.OverviewBoxController"
          ng-init="entity=getEntity('pod', '{{pod.id}}')"
          ng-click="viewDetails('pods')">
@@ -51,6 +55,8 @@
             id="{{replicationController.id}}"
             data-type="replicationController"
             connect-to="{{replicationController.connectTo}}"
+            ng-mouseenter="mouseEnter($event)"
+            ng-mouseleave="mouseLeave($event)"
             class="jsplumb-node kubernetes-replicationController-node kubernetes-node"
             ng-controller="Kubernetes.OverviewBoxController"
             ng-init="entity=getEntity('replicationController', '{{replicationController.id}}')"
