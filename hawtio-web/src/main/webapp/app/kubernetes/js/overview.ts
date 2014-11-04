@@ -42,35 +42,46 @@ module Kubernetes {
         */
         scope.customizeConnectionOptions = (jsPlumb, edge, params, options) => {
           var type = edge.source.el.attr('data-type');
-          options.connector = [ "Bezier", { curviness: 300, stub: 50, alwaysRespectStubs: true } ];
+          options.connector = [ "Bezier", { curviness: 50, stub: 25, alwaysRespectStubs: true } ];
           switch (type) {
             case 'pod':
               break;
             case 'service':
+              // swap this connection around so the arrow is pointing to the service
+              var target = edge.target;
+              var source = edge.source;
+              edge.target = source;
+              edge.source = target;
+              params.target = edge.target.el;
+              params.source = edge.source.el;
               params.paintStyle = {
-                lineWidth: 3,
+                lineWidth: 2,
                 strokeStyle: '#5555cc'
               };
+              /*
               params.overlays = [
-                [ 'PlainArrow', { location: 2, direction: -1, width: 15, length: 12 } ]
+                [ 'PlainArrow', { location: 2, direction: -1, width: 4, length: 4 } ]
               ]
+              */
               params.anchors = [
-                [ "Right", { } ],
-                [ "Left", { } ]
+                [ "ContinuousLeft", { } ],
+                [ "Perimeter", { shape: "Rectangle" } ]
               ];
               break;
             case 'replicationController':
               params.paintStyle = {
-                lineWidth: 3,
-                dashstyle: '4 2',
+                lineWidth: 2,
+                dashstyle: '2 2',
                 strokeStyle: '#44aa44'
               }
+              /*
               params.overlays = [
-                [ 'PlainArrow', { location: 1, width: 15, length: 12 } ]
+                [ 'PlainArrow', { location: 1, width: 4, length: 4 } ]
               ]
+              */
               params.anchors = [
-                [ "Left", { } ],
-                [ "Right", { } ]
+                [ "Perimeter", { shape: "Rectangle" } ],
+                [ "ContinuousRight", { } ]
               ];
               break;
           }
@@ -129,6 +140,7 @@ module Kubernetes {
             var services = scope.services;
             var replicationControllers = scope.replicationControllers;
             var pods = scope.pods;
+            var hosts = scope.hosts;
             var parentEl = element.find('[hawtio-jsplumb]');
             var children = parentEl.find('.jsplumb-node');
             children.each((index, c) => {
@@ -140,6 +152,9 @@ module Kubernetes {
               var type = child.attr('data-type');
               switch (type) {
                 case 'host':
+                  if (id in scope.hostsById) {
+                    return;
+                  }
                   break;
                 case 'service':
                   if (id in scope.servicesById) {
@@ -154,6 +169,9 @@ module Kubernetes {
                     return;
                   }
                   */
+                  if (id in scope.podsById) {
+                    return;
+                  }
                   break;
                 case 'replicationController':
                   if (id in scope.replicationControllersById) {
@@ -169,9 +187,16 @@ module Kubernetes {
               log.debug("Removing: ", id);
               child.remove();
             });
-            appendNewElements(parentEl, $templateCache.get("serviceTemplate.html"), "service", services); 
-            appendNewElements(parentEl, $templateCache.get("podTemplate.html"), "pod", pods); 
-            appendNewElements(parentEl, $templateCache.get("replicationControllerTemplate.html"), "replicationController", replicationControllers); 
+            var servicesEl = parentEl.find(".services");
+            var hostsEl = parentEl.find(".hosts");
+            var replicationControllersEl = parentEl.find(".replicationControllers");
+            appendNewElements(servicesEl, $templateCache.get("serviceTemplate.html"), "service", services); 
+            appendNewElements(replicationControllersEl, $templateCache.get("replicationControllerTemplate.html"), "replicationController", replicationControllers); 
+            appendNewElements(hostsEl, $templateCache.get("hostTemplate.html"), "host", hosts);
+            hosts.forEach((host) => {
+              var hostEl = parentEl.find("#" + host.id);
+              appendNewElements(hostEl, $templateCache.get("podTemplate.html"), "pod", host.pods);
+            });
           });
         }
         scope.$watch('count', (count) => {

@@ -1,9 +1,11 @@
-
+.kubernetes-overview {
+  position: relative;
+}
 .kubernetes-node {
   margin-left: auto;
   margin-right: auto;
   cursor: pointer;
-  display: inline-block;
+  display: block;
   text-align: center;
   vertical-align: middle;
   border: 1px solid #d4d4d4;
@@ -19,10 +21,9 @@
   margin-bottom: 5px;
   margin-left: auto;
   margin-right: auto;
-  display: block;
-  text-align: left;
-  max-width: 400px;
-  padding: 5px;
+  text-align: center;
+  max-width: 476;
+  padding: 0;
   border: 1px solid #d4d4d4;
   background: white;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
@@ -30,13 +31,14 @@
 }
 
 .kubernetes-pod-node {
-  display: block;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  width: 48px;
-  height: 48px;
+  margin: 0;
   padding: 0;
-  line-height: 43px;
+  height: 48px;
+  line-height: 40px;
+  border-radius: 0;
+  border: 1px solid transparent;
+  border-top: 1px solid #d4d4d4;
+  box-shadow: none;
 }
 
 .kubernetes-pod-node i {

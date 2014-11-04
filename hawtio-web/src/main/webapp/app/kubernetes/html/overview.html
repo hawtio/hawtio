@@ -19,7 +19,7 @@
   <script type="text/ng-template" id="hostTemplate.html">
     <div id="{{host.id}}"
          data-type="host"
-         class="jsplumb-node kubernetes-host-container">
+         class="kubernetes-host-container">
       <h5>{{host.id}}</h5>
       <div class="pod-container"></div>
     </div>
@@ -32,7 +32,8 @@
          ng-controller="Kubernetes.OverviewBoxController"
          ng-init="entity=getEntity('pod', '{{pod.id}}')"
          ng-click="viewDetails('pods')">
-    <div ng-init="row={ entity: entity }" ng-include="'statusTemplate.html'"></div>
+    <span class="pull-left" ng-init="row={ entity: entity }" ng-include="'statusTemplate.html'"></span>
+    <span class="pull-right" ng-init="row={ entity: entity }" ng-include="'labelTemplate.html'"></span>
   </div>
   </script>
   <script type="text/ng-template" id="replicationControllerTemplate.html">
@@ -48,7 +49,7 @@
   </div>
   </script>
   <script type="text/ng-template" id="overviewTemplate.html">
-    <div class="row-fluid gridStyle"
+    <div class="row-fluid kubernetes-overview"
          hawtio-jsplumb
          draggable="false"
          layout="false"
