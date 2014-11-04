@@ -131,6 +131,10 @@ Basically you need to make sure that you have JAVA_HOME/bin on your path. e.g. t
 set path=%path%;%JAVA_HOME%\jre\bin
 ```
 
+#### The Terminal plugin in Karaf does not work
+
+The terminal plugin may have trouble the first time in use, not being able to connect and show the terminal. Try selecting another plugin, and go back to the terminal plugin a bit later, and it then may be able to login. Also if the screen is all black, then pressing ENTER may help show the terminal.
+
 ### Plugin Questions
 
 Questions on using the available plugins:
