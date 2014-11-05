@@ -351,29 +351,9 @@ module Kubernetes {
           var selectedPods = selectPods(pods, replicationController.desiredState.replicaSelector);
           replicationController.connectTo = selectedPods.map((pod) => { return pod.id; }).join(',');
         });
-        pods.forEach((pod) => { $scope.podsById[pod.id] = pod });
-        $scope.pods = pods;
-        $scope.services = services;
-        $scope.replicationControllers = replicationControllers;
-        $scope.count = $scope.count + 1;
-      }
-    }
-
-    /*
-    $scope.$watchCollection('services', (services) => {
-      log.debug("got services: ", services);
-    });
-
-    $scope.$watchCollection('replicationControllers', (replicationControllers) => {
-      log.debug("got replicationControllers: ", replicationControllers);
-    });
-    */
-
-    $scope.$watchCollection('pods', (pods) => {
-      //log.debug("got pods: ", pods);
-      if (pods) {
         var hostsById = {};
         pods.forEach((pod) => {
+          $scope.podsById[pod.id] = pod;
           var host = pod.currentState.host;
           if (!(host in hostsById)) {
             hostsById[host] = [];
@@ -389,12 +369,12 @@ module Kubernetes {
         });
         $scope.hosts = hosts;
         $scope.hostsById = hostsById;
+        $scope.pods = pods;
+        $scope.services = services;
+        $scope.replicationControllers = replicationControllers;
+        $scope.count = $scope.count + 1;
       }
-    });
-
-    $scope.$watch('hosts', (hosts) => {
-      log.debug("hosts: ", hosts);
-    });
+    }
 
   }]);
 
