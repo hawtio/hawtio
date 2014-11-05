@@ -1,8 +1,9 @@
 <div ng-controller="Kubernetes.OverviewController">
   <link rel="stylesheet" href="app/kubernetes/html/overview.css">
   <script type="text/ng-template" id="serviceBoxTemplate.html">
-    <div title="Service ID: {{entity.id}}">
-      {{entity.port}}
+    <div>
+      <div class="node-header">{{entity.id}}</div>
+      <div class="node-body">{{entity.port}}</div>
     </div>
   </script>
   <script type="text/ng-template" id="serviceTemplate.html">

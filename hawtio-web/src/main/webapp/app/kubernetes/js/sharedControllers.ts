@@ -19,7 +19,7 @@ module Kubernetes {
         } else if (lower.startsWith("wait")) {
           return 'icon-download';
         } else if (lower.startsWith("term") || lower.startsWith("error") || lower.startsWith("fail")) {
-          return 'icon-off yellow';
+          return 'icon-off orange';
         }
       }
       return 'icon-question red';
