@@ -16,8 +16,8 @@ module Kubernetes {
         if (originalValue === null && replicas !== undefined) {
           originalValue = replicas;
         }
-        if (replicas < 1) {
-          $scope.row.entity.desiredState.replicas = 1;
+        if (replicas < 0) {
+          $scope.row.entity.desiredState.replicas = 0;
         }
         if (replicas !== originalValue) {
           $scope.$emit('kubernetes.dirtyController', $scope.row.entity);
