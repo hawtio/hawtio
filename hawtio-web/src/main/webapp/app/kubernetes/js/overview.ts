@@ -331,9 +331,9 @@ module Kubernetes {
       });
     });
 
-    function getPodIdsForLabel(label:string, value:string) {
-      var matches = pods.filter((pod) => { return label in pod.labels && pod.labels[label] === value; });
-      return matches.map((pod) => { return pod.id; });
+    function selectPods(pods, labels) {
+      var matchFunc = _.matches(labels);
+      return pods.filter((pod) => { return matchFunc(pod.labels, undefined, undefined); });
     }
 
     function maybeInit() {
@@ -343,17 +343,13 @@ module Kubernetes {
         $scope.replicationControllersById = {};
         services.forEach((service) => {
           $scope.servicesById[service.id] = service;
-          service.podIds = [];
-          angular.forEach(service.selector, (value, key) => {
-            var ids = getPodIdsForLabel(key, value);
-            service.podIds = service.podIds.union(ids);
-          });
-          service.connectTo = service.podIds.join(',');
+          var selectedPods = selectPods(pods, service.selector);
+          service.connectTo = selectedPods.map((pod) => { return pod.id; }).join(',');
         });
         replicationControllers.forEach((replicationController) => {
           $scope.replicationControllersById[replicationController.id] = replicationController
-          replicationController.podIds = getPodIdsForLabel('replicationController', replicationController.id);
-          replicationController.connectTo = replicationController.podIds.join(',');
+          var selectedPods = selectPods(pods, replicationController.desiredState.replicaSelector);
+          replicationController.connectTo = selectedPods.map((pod) => { return pod.id; }).join(',');
         });
         pods.forEach((pod) => { $scope.podsById[pod.id] = pod });
         $scope.pods = pods;
