@@ -34082,7 +34082,7 @@ var Kubernetes;
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
 (function (Kubernetes) {
-    var OverviewDirective = Kubernetes._module.directive("kubernetesOverview", ["$templateCache", "$compile", "$interpolate", "$timeout", function ($templateCache, $compile, $interpolate, $timeout) {
+    var OverviewDirective = Kubernetes._module.directive("kubernetesOverview", ["$templateCache", "$compile", "$interpolate", "$timeout", "$window", function ($templateCache, $compile, $interpolate, $timeout, $window) {
         return {
             restrict: 'E',
             replace: true,
@@ -34105,37 +34105,78 @@ var Kubernetes;
                 scope.customizeDefaultOptions = function (options) {
                     options.Endpoint = ['Blank', {}];
                 };
+                $window.addEventListener("resize", function () {
+                    if (scope.jsPlumb) {
+                        scope.jsPlumb.recalculateOffsets(element);
+                        scope.jsPlumb.repaintEverything();
+                        Kubernetes.log.debug("jsplumb: ", scope.jsPlumb);
+                    }
+                });
+                scope.mouseEnter = function ($event) {
+                    if (scope.jsPlumb) {
+                        angular.element($event.currentTarget).addClass("hovered");
+                        scope.jsPlumb.getEndpoints($event.currentTarget).forEach(function (endpoint) {
+                            endpoint.connections.forEach(function (connection) {
+                                if (!connection.isHover()) {
+                                    connection.setHover(true);
+                                    connection.endpoints.forEach(function (e) {
+                                        scope.mouseEnter({
+                                            currentTarget: e.element
+                                        });
+                                    });
+                                }
+                            });
+                        });
+                    }
+                };
+                scope.mouseLeave = function ($event) {
+                    if (scope.jsPlumb) {
+                        angular.element($event.currentTarget).removeClass("hovered");
+                        scope.jsPlumb.getEndpoints($event.currentTarget).forEach(function (endpoint) {
+                            endpoint.connections.forEach(function (connection) {
+                                if (connection.isHover()) {
+                                    connection.setHover(false);
+                                    connection.endpoints.forEach(function (e) {
+                                        scope.mouseLeave({
+                                            currentTarget: e.element
+                                        });
+                                    });
+                                }
+                            });
+                        });
+                    }
+                };
                 scope.customizeConnectionOptions = function (jsPlumb, edge, params, options) {
                     var type = edge.source.el.attr('data-type');
-                    options.connector = ["Bezier", { curviness: 300, stub: 50, alwaysRespectStubs: true }];
+                    options.connector = ["Bezier", { curviness: 50, stub: 25, alwaysRespectStubs: true }];
                     switch (type) {
                         case 'pod':
                             break;
                         case 'service':
+                            var target = edge.target;
+                            var source = edge.source;
+                            edge.target = source;
+                            edge.source = target;
+                            params.target = edge.target.el;
+                            params.source = edge.source.el;
                             params.paintStyle = {
-                                lineWidth: 3,
+                                lineWidth: 2,
                                 strokeStyle: '#5555cc'
                             };
-                            params.overlays = [
-                                ['PlainArrow', { location: 2, direction: -1, width: 15, length: 12 }]
-                            ];
                             params.anchors = [
-                                ["Right", {}],
-                                ["Left", {}]
+                                ["ContinuousLeft", {}],
+                                ["ContinuousRight", { shape: "Rectangle" }]
                             ];
                             break;
                         case 'replicationController':
                             params.paintStyle = {
-                                lineWidth: 3,
-                                dashstyle: '4 2',
+                                lineWidth: 2,
+                                dashstyle: '2 2',
                                 strokeStyle: '#44aa44'
                             };
-                            params.overlays = [
-                                ['PlainArrow', { location: 1, width: 15, length: 12 }]
-                            ];
                             params.anchors = [
-                                ["Left", {}],
-                                ["Right", {}]
+                                ["ContinuousLeft", { shape: "Rectangle" }],
+                                ["ContinuousRight", {}]
                             ];
                             break;
                     }
@@ -34168,7 +34209,6 @@ var Kubernetes;
                     var replicationControllers = scope.replicationControllers;
                     var pods = scope.pods;
                     var hosts = scope.hosts;
-                    Kubernetes.log.debug("hosts: ", scope.hosts);
                     var parentEl = angular.element($templateCache.get("overviewTemplate.html"));
                     var servicesEl = parentEl.find(".services");
                     var hostsEl = parentEl.find(".hosts");
@@ -34192,6 +34232,7 @@ var Kubernetes;
                         var services = scope.services;
                         var replicationControllers = scope.replicationControllers;
                         var pods = scope.pods;
+                        var hosts = scope.hosts;
                         var parentEl = element.find('[hawtio-jsplumb]');
                         var children = parentEl.find('.jsplumb-node');
                         children.each(function (index, c) {
@@ -34203,6 +34244,9 @@ var Kubernetes;
                             var type = child.attr('data-type');
                             switch (type) {
                                 case 'host':
+                                    if (id in scope.hostsById) {
+                                        return;
+                                    }
                                     break;
                                 case 'service':
                                     if (id in scope.servicesById) {
@@ -34212,6 +34256,9 @@ var Kubernetes;
                                     }
                                     break;
                                 case 'pod':
+                                    if (id in scope.podsById) {
+                                        return;
+                                    }
                                     break;
                                 case 'replicationController':
                                     if (id in scope.replicationControllersById) {
@@ -34227,9 +34274,16 @@ var Kubernetes;
                             Kubernetes.log.debug("Removing: ", id);
                             child.remove();
                         });
-                        appendNewElements(parentEl, $templateCache.get("serviceTemplate.html"), "service", services);
-                        appendNewElements(parentEl, $templateCache.get("podTemplate.html"), "pod", pods);
-                        appendNewElements(parentEl, $templateCache.get("replicationControllerTemplate.html"), "replicationController", replicationControllers);
+                        var servicesEl = parentEl.find(".services");
+                        var hostsEl = parentEl.find(".hosts");
+                        var replicationControllersEl = parentEl.find(".replicationControllers");
+                        appendNewElements(servicesEl, $templateCache.get("serviceTemplate.html"), "service", services);
+                        appendNewElements(replicationControllersEl, $templateCache.get("replicationControllerTemplate.html"), "replicationController", replicationControllers);
+                        appendNewElements(hostsEl, $templateCache.get("hostTemplate.html"), "host", hosts);
+                        hosts.forEach(function (host) {
+                            var hostEl = parentEl.find("#" + host.id);
+                            appendNewElements(hostEl, $templateCache.get("podTemplate.html"), "pod", host.pods);
+                        });
                     });
                 }
                 scope.$watch('count', function (count) {
@@ -34928,7 +34982,6 @@ var Kubernetes;
         };
         $scope.$watch('entity', function (newValue, oldValue) {
             if (newValue) {
-                Kubernetes.log.debug("labels: ", newValue);
                 $scope.labels = [];
                 angular.forEach($scope.entity.labels, function (value, key) {
                     if (key === 'fabric8') {

@@ -4,6 +4,8 @@
 
 * Bug fixes
 * Fixed Camel diagram to render in Firefox browser 
+* Hawtio Karaf Terminal now installs and works in Karaf 2.x and 3.0.x out of the box
+* Upraded to TypeScript 1.1.0
 
 #### 1.4.29
 
