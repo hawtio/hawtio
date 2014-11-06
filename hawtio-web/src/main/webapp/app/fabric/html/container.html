@@ -257,6 +257,20 @@
                   {{row.maximumPort}}
                 </dd>
               </dl>
+              <dl class="dl-horizontal" ng-show="displayJvmOpts()">
+                <dt>jvmSettings:</dt>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text"
+                         ng-model="jvmOpts"
+                         style="width: 300px">
+                  <button class="btn"
+                          title="Save"
+                          ng-click="updateJvmOpts()">
+                    Save
+                  </button>
+                </dd>
+              </dl>
             </div>
 
             <div class="tab-pane" title="URLs">
