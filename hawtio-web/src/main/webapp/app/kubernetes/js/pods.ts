@@ -3,6 +3,7 @@
 /// <reference path="../../helpers/js/controllerHelpers.ts"/>
 /// <reference path="../../ui/js/dialog.ts"/>
 /// <reference path="../../forms/js/formInterfaces.ts"/>
+/// <reference path="../../helpers/js/arrayHelpers.ts"/>
 module Kubernetes {
 
 
@@ -15,7 +16,8 @@ module Kubernetes {
   // main controller for the page
   export var Pods = controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "jolokia", "$location", "localStorage", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, $dialog, $templateCache, jolokia:Jolokia.IJolokia, $location:ng.ILocationService, localStorage) => {
 
-    $scope.pods = [];
+    $scope.pods = undefined
+    var pods = [];
     $scope.fetched = false;
     $scope.json = '';
     $scope.itemSchema = Forms.createFormConfiguration();
@@ -226,8 +228,8 @@ module Kubernetes {
       $scope.fetch = PollHelpers.setupPolling($scope, (next:() => void) => {
         KubernetesPods.query((response) => {
           $scope.fetched = true;
-          $scope.pods = (response['items'] || []).sortBy((pod:KubePod) => { return pod.id }).filter((pod:KubePod) => { return pod.id });
-          angular.forEach($scope.pods, entity => {
+          var redraw = ArrayHelpers.sync(pods, (response['items'] || []).sortBy((pod:KubePod) => { return pod.id }).filter((pod:KubePod) => { return pod.id }));
+          angular.forEach(pods, entity => {
             entity.$labelsText = Kubernetes.labelsToString(entity.labels);
 
             // lets try detect a console...
@@ -287,7 +289,10 @@ module Kubernetes {
               entity.$connect = $scope.connect;
             }
           });
-          Kubernetes.setJson($scope, $scope.id, $scope.pods);
+          Kubernetes.setJson($scope, $scope.id, pods);
+          $scope.pods = pods;
+          // technically the above won't trigger hawtio simple table's watch, so let's force it
+          $scope.$broadcast("hawtio.datatable.pods");
           //log.debug("Pods: ", $scope.pods);
           next();
         });
