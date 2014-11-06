@@ -23,16 +23,16 @@
   </div>
 </script>
 <script type="text/ng-template" id="statusTemplate.html">
-  <div class="ngCellText" ng-controller="Kubernetes.PodStatus" title="Pod {{row.entity.id}} is {{row.entity.currentState.status}}">
+  <div class="ngCellText" ng-init="entity=row.entity" ng-controller="Kubernetes.PodStatus" title="Pod {{entity.id}} is {{entity.currentState.status}}">
     <!-- in detail view -->
     <p ng-show="data"><strong>Status: </strong></p>
-    <i ng-class="statusMapping(row.entity.currentState.status)"></i>
+    <i ng-class="statusMapping(entity.currentState.status)"></i>
     <span ng-show="data">{{data}}</span>
     <!-- in table -->
-    <span ng-show="row.entity.$jolokiaUrl">
+    <span ng-show="entity.$jolokiaUrl">
       <a class="clickable"
          href=""
-         ng-click="row.entity.$connect.doConnect(row.entity)"
+         ng-click="entity.$connect.doConnect(row.entity)"
          title="Open a new window and connect to this container">
         <i class="icon-signin"></i>
       </a>

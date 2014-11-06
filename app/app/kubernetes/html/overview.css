@@ -63,9 +63,18 @@
 .kubernetes-service-node {
   display: block;
   margin-bottom: 10px;
-  width: 128px;
-  height: 48px;
+  width: 256px;
+  height: 66px;
   padding: 0;
+  line-height: 48px;
+}
+
+.node-header {
+  border-bottom: 1px solid #d4d4d4;
+  line-height: 18px;
+}
+
+.kubernetes-service-node .node-body {
   line-height: 48px;
   font-size: 20px;
 }

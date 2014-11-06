@@ -34371,12 +34371,10 @@ var Kubernetes;
                 });
             });
         });
-        function getPodIdsForLabel(label, value) {
-            var matches = pods.filter(function (pod) {
-                return label in pod.labels && pod.labels[label] === value;
-            });
-            return matches.map(function (pod) {
-                return pod.id;
+        function selectPods(pods, labels) {
+            var matchFunc = _.matches(labels);
+            return pods.filter(function (pod) {
+                return matchFunc(pod.labels, undefined, undefined);
             });
         }
         function maybeInit() {
@@ -34386,31 +34384,21 @@ var Kubernetes;
                 $scope.replicationControllersById = {};
                 services.forEach(function (service) {
                     $scope.servicesById[service.id] = service;
-                    service.podIds = [];
-                    angular.forEach(service.selector, function (value, key) {
-                        var ids = getPodIdsForLabel(key, value);
-                        service.podIds = service.podIds.union(ids);
-                    });
-                    service.connectTo = service.podIds.join(',');
+                    var selectedPods = selectPods(pods, service.selector);
+                    service.connectTo = selectedPods.map(function (pod) {
+                        return pod.id;
+                    }).join(',');
                 });
                 replicationControllers.forEach(function (replicationController) {
                     $scope.replicationControllersById[replicationController.id] = replicationController;
-                    replicationController.podIds = getPodIdsForLabel('replicationController', replicationController.id);
-                    replicationController.connectTo = replicationController.podIds.join(',');
+                    var selectedPods = selectPods(pods, replicationController.desiredState.replicaSelector);
+                    replicationController.connectTo = selectedPods.map(function (pod) {
+                        return pod.id;
+                    }).join(',');
                 });
-                pods.forEach(function (pod) {
-                    $scope.podsById[pod.id] = pod;
-                });
-                $scope.pods = pods;
-                $scope.services = services;
-                $scope.replicationControllers = replicationControllers;
-                $scope.count = $scope.count + 1;
-            }
-        }
-        $scope.$watchCollection('pods', function (pods) {
-            if (pods) {
                 var hostsById = {};
                 pods.forEach(function (pod) {
+                    $scope.podsById[pod.id] = pod;
                     var host = pod.currentState.host;
                     if (!(host in hostsById)) {
                         hostsById[host] = [];
@@ -34426,11 +34414,12 @@ var Kubernetes;
                 });
                 $scope.hosts = hosts;
                 $scope.hostsById = hostsById;
+                $scope.pods = pods;
+                $scope.services = services;
+                $scope.replicationControllers = replicationControllers;
+                $scope.count = $scope.count + 1;
             }
-        });
-        $scope.$watch('hosts', function (hosts) {
-            Kubernetes.log.debug("hosts: ", hosts);
-        });
+        }
     }]);
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
@@ -34714,8 +34703,8 @@ var Kubernetes;
                 if (originalValue === null && replicas !== undefined) {
                     originalValue = replicas;
                 }
-                if (replicas < 1) {
-                    $scope.row.entity.desiredState.replicas = 1;
+                if (replicas < 0) {
+                    $scope.row.entity.desiredState.replicas = 0;
                 }
                 if (replicas !== originalValue) {
                     $scope.$emit('kubernetes.dirtyController', $scope.row.entity);
@@ -34967,7 +34956,7 @@ var Kubernetes;
                     return 'icon-download';
                 }
                 else if (lower.startsWith("term") || lower.startsWith("error") || lower.startsWith("fail")) {
-                    return 'icon-off yellow';
+                    return 'icon-off orange';
                 }
             }
             return 'icon-question red';
