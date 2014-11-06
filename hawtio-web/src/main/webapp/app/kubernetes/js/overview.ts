@@ -1,5 +1,6 @@
 /// <reference path="kubernetesPlugin.ts"/>
 /// <reference path="../../helpers/js/pollHelpers.ts"/>
+/// <reference path="../../helpers/js/arrayHelpers.ts"/>
 module Kubernetes {
 
   var OverviewDirective = _module.directive("kubernetesOverview", ["$templateCache", "$compile", "$interpolate", "$timeout", "$window", ($templateCache:ng.ITemplateCacheService, $compile:ng.ICompileService, $interpolate:ng.IInterpolateService, $timeout:ng.ITimeoutService, $window:ng.IWindowService) => {
@@ -266,18 +267,20 @@ module Kubernetes {
     $scope.services = null;
     $scope.replicationControllers = null;
     $scope.pods = null;
+    $scope.hosts = null;
 
     $scope.count = 0;
+    var redraw = false;
 
-    var services = null;
-    var replicationControllers = null;
-    var pods = null;
+    var services = [];
+    var replicationControllers = [];
+    var pods = [];
+    var hosts = [];
+    var byId = (thing) => { return thing.id; };
 
     KubernetesServices.then((KubernetesServices:ng.resource.IResourceClass) => {
       KubernetesReplicationControllers.then((KubernetesReplicationControllers:ng.resource.IResourceClass) => {
         KubernetesPods.then((KubernetesPods:ng.resource.IResourceClass) => {
-          var lastServiceResponse, lastReplicationControllerResponse, lastPodsResponse = '';
-          var byId = (thing) => { return thing.id; };
           $scope.fetch = PollHelpers.setupPolling($scope, (next: () => void) => {
             var ready = 0;
             var numServices = 3;
@@ -286,42 +289,28 @@ module Kubernetes {
               // log.debug("Completed: ", ready);
               if (ready >= numServices) {
                 // log.debug("Fetching another round");
+                maybeInit();
                 next();
               }
             }
             KubernetesServices.query((response) => {
               if (response) {
                 var items = response.items.sortBy(byId);
-                var json = angular.toJson(items);
-                if (lastServiceResponse !== json) {
-                  lastServiceResponse = json;
-                  services = items;
-                  maybeInit();
-                }
+                redraw = ArrayHelpers.sync(services, items);
               }
               maybeNext(ready + 1);
             });
             KubernetesReplicationControllers.query((response) => {
               if (response) {
                 var items = response.items.sortBy(byId);
-                var json = angular.toJson(items);
-                if (lastReplicationControllerResponse !== json) {
-                  lastReplicationControllerResponse = json;
-                  replicationControllers = items;
-                  maybeInit();
-                }
+                redraw = ArrayHelpers.sync(replicationControllers, items);
               }
               maybeNext(ready + 1);
             });
             KubernetesPods.query((response) => {
               if (response) {
                 var items = response.items.sortBy(byId);
-                var json = angular.toJson(items);
-                if (lastPodsResponse !== json) {
-                  lastPodsResponse = json;
-                  pods = items;
-                  maybeInit();
-                }
+                redraw = ArrayHelpers.sync(pods, items);
               }
               maybeNext(ready + 1);
             });
@@ -330,12 +319,10 @@ module Kubernetes {
         });
       });
     });
-
     function selectPods(pods, labels) {
       var matchFunc = _.matches(labels);
       return pods.filter((pod) => { return matchFunc(pod.labels, undefined, undefined); });
     }
-
     function maybeInit() {
       if (services && replicationControllers && pods) {
         $scope.servicesById = {};
@@ -360,19 +347,34 @@ module Kubernetes {
           }
           hostsById[host].push(pod);
         });
-        var hosts = [];
+        var tmpHosts = [];
+        var oldHostsLength = hosts.length;
         angular.forEach(hostsById, (value, key) => {
-          hosts.push({
+          tmpHosts.push({
             id: key,
             pods: value
           });
+        });
+        redraw = ArrayHelpers.removeElements(hosts, tmpHosts);
+        tmpHosts.forEach((newHost) => {
+          var oldHost:any = hosts.find((h) => { return h.id === newHost.id });
+          if (!oldHost) {
+            redraw = true;
+            hosts.push(newHost);
+          } else {
+            redraw = ArrayHelpers.sync(oldHost.pods, newHost.pods);
+          }
         });
         $scope.hosts = hosts;
         $scope.hostsById = hostsById;
         $scope.pods = pods;
         $scope.services = services;
         $scope.replicationControllers = replicationControllers;
-        $scope.count = $scope.count + 1;
+        if (redraw) {
+          log.debug("Redrawing");
+          $scope.count = $scope.count + 1;
+          redraw = false;
+        }
       }
     }
 
