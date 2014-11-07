@@ -254,7 +254,7 @@ module Wiki {
     };
 
     $scope.fileName = (entity) => {
-      return Wiki.hideFineNameExtensions(entity.name);
+      return Wiki.hideFileNameExtensions(entity.displayName || entity.name);
     };
 
     $scope.fileClass = (entity) => {

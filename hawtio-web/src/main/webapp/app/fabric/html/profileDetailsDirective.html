@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="pull-left">
-          <h2 class="inline" title="Profile: {{row.id}}"><span class="contained c-wide3">&nbsp;{{row.id}}</span></h2>
+          <h2 class="inline" title="Profile: {{row.id}}"><span class="contained c-wide3">&nbsp;{{row.displayName || row.id}}</span></h2>
       </div>
       <div class="pull-right" ng-show="inDirective">
         <a class="btn" ng-href="#/wiki/branch/{{versionId}}/configurations/{{pageId}}" ng-show="profileJolokia || profileMetadataMBean"
