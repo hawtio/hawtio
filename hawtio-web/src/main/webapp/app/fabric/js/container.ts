@@ -143,6 +143,50 @@ module Fabric {
       });
     }
 
+    $scope.updateJvmOpts = () => {
+        jolokia.execute(managerMBean, 'setJvmOpts(java.lang.String,java.lang.String)', $scope.containerId, $scope.jvmOpts ,
+          onSuccess(
+            () => {
+              Core.$apply($scope); },
+            {
+              error : (ex) => {
+                //keep at debug level, in case of old Fabric8 versions that miss the jmx operation
+                log.debug(ex.error);
+              }
+            }
+          )
+        );
+    };
+
+    $scope.getJvmOpts = () => {
+      jolokia.execute(managerMBean, 'getJvmOpts(java.lang.String)', $scope.containerId ,
+        onSuccess(
+          (result) => {
+            $scope.jvmOpts = result;
+            Core.$apply($scope); },
+          {
+            error : (ex) => {
+              //keep at debug level, in case of old Fabric8 versions that miss the jmx operation
+              log.debug(ex.error);
+            }
+          }
+        )
+      ) ;
+    };
+
+    $scope.displayJvmOpts = () => {
+      var result = false;
+      if ($scope.row) {
+        try{
+          var providerType = $scope.row.metadata.createOptions.providerType;
+          if ($scope.row.type == "karaf" && (providerType == "child" || providerType == "ssh")){
+            result = true;
+          }
+        } catch (exception){
+        }
+      }
+      return result;
+    }
 
     $scope.getClass = (item) => {
       if (!$scope.provisionListFilter) {
@@ -283,6 +327,9 @@ module Fabric {
           if ($scope.row.jmxDomains && $scope.row.jmxDomains.length > 0) {
             // we want the JMX domains sorted ignoring case
             $scope.row.jmxDomains = $scope.row.jmxDomains.sortBy((n) => n.toString().toLowerCase());
+          }
+          if($scope.displayJvmOpts()){
+            $scope.getJvmOpts();
           }
         }
         Core.$apply($scope);
