@@ -27950,6 +27950,40 @@ var Health;
         }
     }]);
 })(Health || (Health = {}));
+var ArrayHelpers;
+(function (ArrayHelpers) {
+    function removeElements(collection, newCollection, index) {
+        if (index === void 0) { index = 'id'; }
+        var oldLength = collection.length;
+        collection.remove(function (item) {
+            return !newCollection.any(function (c) {
+                return c[index] === item[index];
+            });
+        });
+        return collection.length !== oldLength;
+    }
+    ArrayHelpers.removeElements = removeElements;
+    function sync(collection, newCollection, index) {
+        if (index === void 0) { index = 'id'; }
+        var answer = removeElements(collection, newCollection, index);
+        newCollection.forEach(function (item) {
+            var oldItem = collection.find(function (c) {
+                return c[index] === item[index];
+            });
+            if (!oldItem) {
+                answer = true;
+                collection.push(item);
+            }
+            else {
+                if (item !== oldItem) {
+                    angular.copy(item, oldItem);
+                }
+            }
+        });
+        return answer;
+    }
+    ArrayHelpers.sync = sync;
+})(ArrayHelpers || (ArrayHelpers = {}));
 var IDE;
 (function (IDE) {
     var log = Logger.get("IDE");
@@ -34310,59 +34344,47 @@ var Kubernetes;
         $scope.services = null;
         $scope.replicationControllers = null;
         $scope.pods = null;
+        $scope.hosts = null;
         $scope.count = 0;
-        var services = null;
-        var replicationControllers = null;
-        var pods = null;
+        var redraw = false;
+        var services = [];
+        var replicationControllers = [];
+        var pods = [];
+        var hosts = [];
+        var byId = function (thing) {
+            return thing.id;
+        };
         KubernetesServices.then(function (KubernetesServices) {
             KubernetesReplicationControllers.then(function (KubernetesReplicationControllers) {
                 KubernetesPods.then(function (KubernetesPods) {
-                    var lastServiceResponse, lastReplicationControllerResponse, lastPodsResponse = '';
-                    var byId = function (thing) {
-                        return thing.id;
-                    };
                     $scope.fetch = PollHelpers.setupPolling($scope, function (next) {
                         var ready = 0;
                         var numServices = 3;
                         function maybeNext(count) {
                             ready = count;
                             if (ready >= numServices) {
+                                maybeInit();
                                 next();
                             }
                         }
                         KubernetesServices.query(function (response) {
                             if (response) {
                                 var items = response.items.sortBy(byId);
-                                var json = angular.toJson(items);
-                                if (lastServiceResponse !== json) {
-                                    lastServiceResponse = json;
-                                    services = items;
-                                    maybeInit();
-                                }
+                                redraw = ArrayHelpers.sync(services, items);
                             }
                             maybeNext(ready + 1);
                         });
                         KubernetesReplicationControllers.query(function (response) {
                             if (response) {
                                 var items = response.items.sortBy(byId);
-                                var json = angular.toJson(items);
-                                if (lastReplicationControllerResponse !== json) {
-                                    lastReplicationControllerResponse = json;
-                                    replicationControllers = items;
-                                    maybeInit();
-                                }
+                                redraw = ArrayHelpers.sync(replicationControllers, items);
                             }
                             maybeNext(ready + 1);
                         });
                         KubernetesPods.query(function (response) {
                             if (response) {
                                 var items = response.items.sortBy(byId);
-                                var json = angular.toJson(items);
-                                if (lastPodsResponse !== json) {
-                                    lastPodsResponse = json;
-                                    pods = items;
-                                    maybeInit();
-                                }
+                                redraw = ArrayHelpers.sync(pods, items);
                             }
                             maybeNext(ready + 1);
                         });
@@ -34405,19 +34427,37 @@ var Kubernetes;
                     }
                     hostsById[host].push(pod);
                 });
-                var hosts = [];
+                var tmpHosts = [];
+                var oldHostsLength = hosts.length;
                 angular.forEach(hostsById, function (value, key) {
-                    hosts.push({
+                    tmpHosts.push({
                         id: key,
                         pods: value
                     });
+                });
+                redraw = ArrayHelpers.removeElements(hosts, tmpHosts);
+                tmpHosts.forEach(function (newHost) {
+                    var oldHost = hosts.find(function (h) {
+                        return h.id === newHost.id;
+                    });
+                    if (!oldHost) {
+                        redraw = true;
+                        hosts.push(newHost);
+                    }
+                    else {
+                        redraw = ArrayHelpers.sync(oldHost.pods, newHost.pods);
+                    }
                 });
                 $scope.hosts = hosts;
                 $scope.hostsById = hostsById;
                 $scope.pods = pods;
                 $scope.services = services;
                 $scope.replicationControllers = replicationControllers;
-                $scope.count = $scope.count + 1;
+                if (redraw) {
+                    Kubernetes.log.debug("Redrawing");
+                    $scope.count = $scope.count + 1;
+                    redraw = false;
+                }
             }
         }
     }]);
@@ -34430,7 +34470,8 @@ var Kubernetes;
         $scope.value = parts.join('=');
     }]);
     Kubernetes.Pods = Kubernetes.controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "jolokia", "$location", "localStorage", function ($scope, KubernetesPods, $dialog, $templateCache, jolokia, $location, localStorage) {
-        $scope.pods = [];
+        $scope.pods = undefined;
+        var pods = [];
         $scope.fetched = false;
         $scope.json = '';
         $scope.itemSchema = Forms.createFormConfiguration();
@@ -34625,12 +34666,12 @@ var Kubernetes;
             $scope.fetch = PollHelpers.setupPolling($scope, function (next) {
                 KubernetesPods.query(function (response) {
                     $scope.fetched = true;
-                    $scope.pods = (response['items'] || []).sortBy(function (pod) {
+                    var redraw = ArrayHelpers.sync(pods, (response['items'] || []).sortBy(function (pod) {
                         return pod.id;
                     }).filter(function (pod) {
                         return pod.id;
-                    });
-                    angular.forEach($scope.pods, function (entity) {
+                    }));
+                    angular.forEach(pods, function (entity) {
                         entity.$labelsText = Kubernetes.labelsToString(entity.labels);
                         var info = Core.pathGet(entity, ["currentState", "info"]);
                         var hostPort = null;
@@ -34681,7 +34722,9 @@ var Kubernetes;
                             entity.$connect = $scope.connect;
                         }
                     });
-                    Kubernetes.setJson($scope, $scope.id, $scope.pods);
+                    Kubernetes.setJson($scope, $scope.id, pods);
+                    $scope.pods = pods;
+                    $scope.$broadcast("hawtio.datatable.pods");
                     next();
                 });
             });
