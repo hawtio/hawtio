@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import static io.hawt.util.Closeables.closeQuitely;
+import static io.hawt.util.Closeables.closeQuietly;
 
 /**
  * Helper functions for working with Git

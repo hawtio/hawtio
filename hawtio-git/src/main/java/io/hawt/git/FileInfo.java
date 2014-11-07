@@ -7,9 +7,8 @@ import io.hawt.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.*;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -26,6 +25,10 @@ public class FileInfo {
     private String[] xmlNamespaces;
     private String iconUrl;
     private String summary;
+    private String displayName;
+    private String version;
+    private String groupId;
+    private String artifactId;
 
     public static FileInfo createFileInfo(File rootDir, File file, String branch) {
         if (Strings.isBlank(branch)) {
@@ -77,6 +80,19 @@ public class FileInfo {
                     answer.summary = IOHelper.readFully(summary);
                 } catch (IOException e) {
                     LOG.warn("Failed to load summary file " + summary + ". " + e, e);
+                }
+            }
+            File fabric8PropertiesFile = new File(file, "fabric8.properties");
+            if (fabric8PropertiesFile.exists() && fabric8PropertiesFile.isFile()) {
+                try {
+                    Properties fabric8Properties = new Properties();
+                    fabric8Properties.load(new FileReader(fabric8PropertiesFile));
+                    answer.displayName = fabric8Properties.getProperty("name");
+                    answer.groupId = fabric8Properties.getProperty("groupId");
+                    answer.artifactId = fabric8Properties.getProperty("artifactId");
+                    answer.version = fabric8Properties.getProperty("version");
+                } catch (IOException e) {
+                    LOG.warn("Failed to load fabric8 properties file " + fabric8PropertiesFile + ". " + e, e);
                 }
             }
         }
@@ -158,4 +174,37 @@ public class FileInfo {
     public void setSummary(String summary) {
         this.summary = summary;
     }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
+
 }
