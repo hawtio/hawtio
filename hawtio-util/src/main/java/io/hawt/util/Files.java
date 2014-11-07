@@ -102,8 +102,8 @@ public class Files {
             }
             return bos.toByteArray();
         } finally {
-            Closeables.closeQuitely(fis);
-            Closeables.closeQuitely(bos);
+            Closeables.closeQuietly(fis);
+            Closeables.closeQuietly(bos);
         }
     }
 

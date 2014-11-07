@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 
-import static io.hawt.util.Closeables.closeQuitely;
+import static io.hawt.util.Closeables.closeQuietly;
 
 /**
  * A collection of IO helpers
@@ -131,7 +131,7 @@ public class IOHelper {
                 l = is.read(b);
             }
         } finally {
-            closeQuitely(os);
+            closeQuietly(os);
         }
     }
 

@@ -31,7 +31,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import static io.hawt.util.Closeables.closeQuitely;
+import static io.hawt.util.Closeables.closeQuietly;
 import static io.hawt.util.IOHelper.copy;
 
 /**
@@ -55,7 +55,7 @@ public class Zips {
             String path = "";
             zipDirectory(log, sourceDir, zos, path, filter);
         } finally {
-            closeQuitely(zos);
+            closeQuietly(zos);
         }
     }
 
@@ -125,13 +125,13 @@ public class Zips {
                             zis.closeEntry();
                         }
                     } finally {
-                        closeQuitely(os);
+                        closeQuietly(os);
                     }
                 }
                 entry = zis.getNextEntry();
             }
         } finally {
-            closeQuitely(zis);
+            closeQuietly(zis);
         }
     }
 }

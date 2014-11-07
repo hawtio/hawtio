@@ -114,7 +114,7 @@ module Wiki {
       if ($scope.breadcrumbs.length) {
         var last = $scope.breadcrumbs[$scope.breadcrumbs.length - 1];
         // possibly trim any required file extensions
-        last.name = Wiki.hideFineNameExtensions(last.name);
+        last.name = Wiki.hideFileNameExtensions(last.name);
 
         var swizzled = false;
         angular.forEach(Wiki.customViewLinks($scope), (link) => {

@@ -26,6 +26,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import static io.hawt.util.Closeables.closeQuietly;
 
 /**
  * Helper functions for working with Git
@@ -39,8 +42,20 @@ public class GitHelper {
                 String name = uploadedFile.getName();
                 if (unzip && name.endsWith(".zip")) {
                     // lets unzip zip files into a folder
-                    String folderName = name.substring(0, name.length() - 4);
-                    File unzipDir = new File(uploadedFile.getParentFile(), folderName);
+
+                    File unzipDir = uploadedFile.getParentFile();
+
+                    ZipInputStream zis = new ZipInputStream(new FileInputStream(uploadedFile));
+                    try {
+                        ZipEntry entry = zis.getNextEntry();
+                        if (!entry.isDirectory()) {
+                            String folderName = name.substring(0, name.length() - 4);
+                            unzipDir = new File(uploadedFile.getParentFile(), folderName);
+                        }
+                    } finally {
+                        closeQuietly(zis);
+                    }
+
                     Zips.unzip(new FileInputStream(uploadedFile), unzipDir);
                     uploadedFile.delete();
                     uploadedFile = unzipDir;

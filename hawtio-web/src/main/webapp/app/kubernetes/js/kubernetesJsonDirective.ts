@@ -50,6 +50,25 @@ module Kubernetes {
             if (iconFile) {
               $scope.iconURL = Wiki.gitRestURL(iconFile.branch, iconFile.path);
             }
+            var fabric8PropertiesFile = children.find((child) => { return child.name.toLowerCase() === "fabric8.properties";});
+            var fabric8PropertiesURL:string = null;
+            if (fabric8PropertiesFile) {
+              fabric8PropertiesURL = Wiki.gitRestURL(fabric8PropertiesFile.branch, fabric8PropertiesFile.path);
+              $http.get(fabric8PropertiesURL).
+                success(function (data, status, headers, config) {
+                  var fabric8Properties = data;
+                  if (fabric8Properties) {
+                    var nameRE = /(?:name)\s*=\s*(.+)[\n|$]/;
+                    var matches = fabric8Properties.match(nameRE);
+                    if (matches[1]) {
+                      $scope.displayName = matches[1].replace(/\\/g, '');
+                    }
+                  }
+                }).
+                error(function (data, status, headers, config) {
+                  log.warn("Failed to load " + fabric8PropertiesURL + " " + data + " " + status);
+                });
+            }
           }
         });
 

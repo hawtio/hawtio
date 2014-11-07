@@ -589,7 +589,7 @@ module Wiki {
    * @param {String} name
    * @return {String}
    */
-  export function hideFineNameExtensions(name) {
+  export function hideFileNameExtensions(name) {
     if (name) {
       angular.forEach(Wiki.hideExtensions, (extension) => {
         if (name.endsWith(extension)) {
