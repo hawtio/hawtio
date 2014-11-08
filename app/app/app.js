@@ -5502,7 +5502,7 @@ var Wiki;
         return "";
     }
     Wiki.fileParent = fileParent;
-    function hideFineNameExtensions(name) {
+    function hideFileNameExtensions(name) {
         if (name) {
             angular.forEach(Wiki.hideExtensions, function (extension) {
                 if (name.endsWith(extension)) {
@@ -5512,7 +5512,7 @@ var Wiki;
         }
         return name;
     }
-    Wiki.hideFineNameExtensions = hideFineNameExtensions;
+    Wiki.hideFileNameExtensions = hideFileNameExtensions;
     function gitRestURL(branch, path) {
         var url = gitRelativeURL(branch, path);
         url = Core.url('/' + url);
@@ -23920,6 +23920,39 @@ var Fabric;
                 Core.$apply($scope);
             });
         };
+        $scope.updateJvmOpts = function () {
+            jolokia.execute(Fabric.managerMBean, 'setJvmOpts(java.lang.String,java.lang.String)', $scope.containerId, $scope.jvmOpts, onSuccess(function () {
+                Core.$apply($scope);
+            }, {
+                error: function (ex) {
+                    Fabric.log.debug(ex.error);
+                }
+            }));
+        };
+        $scope.getJvmOpts = function () {
+            jolokia.execute(Fabric.managerMBean, 'getJvmOpts(java.lang.String)', $scope.containerId, onSuccess(function (result) {
+                $scope.jvmOpts = result;
+                Core.$apply($scope);
+            }, {
+                error: function (ex) {
+                    Fabric.log.debug(ex.error);
+                }
+            }));
+        };
+        $scope.displayJvmOpts = function () {
+            var result = false;
+            if ($scope.row) {
+                try {
+                    var providerType = $scope.row.metadata.createOptions.providerType;
+                    if ($scope.row.type == "karaf" && (providerType == "child" || providerType == "ssh")) {
+                        result = true;
+                    }
+                }
+                catch (exception) {
+                }
+            }
+            return result;
+        };
         $scope.getClass = function (item) {
             if (!$scope.provisionListFilter) {
                 return 'no-filter';
@@ -24046,6 +24079,9 @@ var Fabric;
                     });
                     if ($scope.row.jmxDomains && $scope.row.jmxDomains.length > 0) {
                         $scope.row.jmxDomains = $scope.row.jmxDomains.sortBy(function (n) { return n.toString().toLowerCase(); });
+                    }
+                    if ($scope.displayJvmOpts()) {
+                        $scope.getJvmOpts();
                     }
                 }
                 Core.$apply($scope);
@@ -34056,6 +34092,25 @@ var Kubernetes;
                         });
                         if (iconFile) {
                             $scope.iconURL = Wiki.gitRestURL(iconFile.branch, iconFile.path);
+                        }
+                        var fabric8PropertiesFile = children.find(function (child) {
+                            return child.name.toLowerCase() === "fabric8.properties";
+                        });
+                        var fabric8PropertiesURL = null;
+                        if (fabric8PropertiesFile) {
+                            fabric8PropertiesURL = Wiki.gitRestURL(fabric8PropertiesFile.branch, fabric8PropertiesFile.path);
+                            $http.get(fabric8PropertiesURL).success(function (data, status, headers, config) {
+                                var fabric8Properties = data;
+                                if (fabric8Properties) {
+                                    var nameRE = /(?:name)\s*=\s*(.+)[\n|$]/;
+                                    var matches = fabric8Properties.match(nameRE);
+                                    if (matches[1]) {
+                                        $scope.displayName = matches[1].replace(/\\/g, '');
+                                    }
+                                }
+                            }).error(function (data, status, headers, config) {
+                                Kubernetes.log.warn("Failed to load " + fabric8PropertiesURL + " " + data + " " + status);
+                            });
                         }
                     }
                 });
@@ -45907,7 +45962,7 @@ var Wiki;
             var loc = $location.path();
             if ($scope.breadcrumbs.length) {
                 var last = $scope.breadcrumbs[$scope.breadcrumbs.length - 1];
-                last.name = Wiki.hideFineNameExtensions(last.name);
+                last.name = Wiki.hideFileNameExtensions(last.name);
                 var swizzled = false;
                 angular.forEach(Wiki.customViewLinks($scope), function (link) {
                     if (!swizzled && loc.startsWith(link)) {
@@ -46204,7 +46259,7 @@ var Wiki;
             return Core.createHref($location, prefix + path + postFix, ["form"]);
         };
         $scope.fileName = function (entity) {
-            return Wiki.hideFineNameExtensions(entity.name);
+            return Wiki.hideFileNameExtensions(entity.displayName || entity.name);
         };
         $scope.fileClass = function (entity) {
             if (entity.name.has(".profile")) {
