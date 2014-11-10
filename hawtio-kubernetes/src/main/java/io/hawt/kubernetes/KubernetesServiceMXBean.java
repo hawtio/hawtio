@@ -17,6 +17,8 @@
  */
 package io.hawt.kubernetes;
 
+import java.io.IOException;
+
 /**
  */
 public interface KubernetesServiceMXBean {
@@ -41,4 +43,9 @@ public interface KubernetesServiceMXBean {
     String getDockerIp();
 
     String getHostName();
+
+    /**
+     * Returns the icon path for the given kubernetes ID and git branch or null if one cannot be found
+     */
+    String iconPath(String branch, String kubernetesId) throws Exception;
 }
