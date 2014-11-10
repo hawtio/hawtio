@@ -238,20 +238,23 @@ module Kubernetes {
             var currentState = entity.currentState;
             var desiredState = entity.desiredState;
             var host = currentState ? currentState["host"] : null;
+            var podIP = currentState ? currentState["podIP"] : null;
             var hasDocker = false;
-            if (currentState)
-            angular.forEach(info, (containerInfo, containerName) => {
-              if (!hostPort) {
-                var jolokiaHostPort = Core.pathGet(containerInfo, ["detailInfo", "HostConfig", "PortBindings", "8778/tcp"]);
-                if (jolokiaHostPort) {
-                  var hostPorts = jolokiaHostPort.map("HostPort");
-                  if (hostPorts && hostPorts.length > 0) {
-                    hostPort = hostPorts[0];
-                    hasDocker = true;
+            var foundContainerPort = null;
+            if (currentState && !podIP) {
+              angular.forEach(info, (containerInfo, containerName) => {
+                if (!hostPort) {
+                  var jolokiaHostPort = Core.pathGet(containerInfo, ["detailInfo", "HostConfig", "PortBindings", "8778/tcp"]);
+                  if (jolokiaHostPort) {
+                    var hostPorts = jolokiaHostPort.map("HostPort");
+                    if (hostPorts && hostPorts.length > 0) {
+                      hostPort = hostPorts[0];
+                      hasDocker = true;
+                    }
                   }
                 }
-              }
-            });
+              });
+            }
             if (desiredState && !hostPort) {
               var containers = Core.pathGet(desiredState, ["manifest", "containers"]);
               angular.forEach(containers, (container) => {
@@ -260,14 +263,27 @@ module Kubernetes {
                   angular.forEach(ports, (port) => {
                     if (!hostPort) {
                       var containerPort = port.containerPort;
+                      var portName = port.name;
                       var containerHostPort = port.hostPort;
-                      if (containerPort && containerHostPort && containerPort === 8778) {
-                        hostPort = containerHostPort;
+                      if (containerPort === 8778 || "jolokia" === portName) {
+                        if (containerPort) {
+                          if (podIP) {
+                            foundContainerPort = containerPort;
+                          }
+                          if (containerHostPort) {
+                            hostPort = containerHostPort;
+                          }
+                        }
                       }
                     }
                   });
                 }
               });
+            }
+            if (podIP && foundContainerPort) {
+              host = podIP;
+              hostPort = foundContainerPort;
+              hasDocker = false;
             }
             if (hostPort) {
               if (!host) {
