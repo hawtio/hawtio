@@ -4,10 +4,17 @@
 /// <reference path="./uiPlugin.ts"/>
 module UI {
 
-  _module.directive('hawtioJsplumb', ["$timeout", ($timeout:ng.ITimeoutService) => {
+  _module.directive('hawtioJsplumb', ["$timeout", "$window", ($timeout:ng.ITimeoutService, $window:ng.IWindowService) => {
     return {
       restrict: 'A',
       link: ($scope, $element, $attrs) => {
+
+        $window.addEventListener("resize", () => {
+          if ($scope.jsPlumb) {
+            $scope.jsPlumb.recalculateOffsets($element);
+            $scope.jsPlumb.repaintEverything();
+          }
+        });
 
         // Whether or not each node in the graph can be dragged around
         var enableDragging = true;

@@ -43,13 +43,6 @@ module Kubernetes {
         scope.customizeDefaultOptions = (options) => {
           options.Endpoint = ['Blank', {}];
         };
-        $window.addEventListener("resize", () => {
-          if (scope.jsPlumb) {
-            scope.jsPlumb.recalculateOffsets(element);
-            scope.jsPlumb.repaintEverything();
-            log.debug("jsplumb: ", scope.jsPlumb);
-          }
-        });
         scope.mouseEnter = ($event) => {
           if (scope.jsPlumb) {
             angular.element($event.currentTarget).addClass("hovered");
