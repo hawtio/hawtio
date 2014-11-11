@@ -100,16 +100,21 @@
 }
 
 .kubernetes-replicationController-node {
+  border-radius: 64px;
   display: block;
   margin-bottom: 10px;
-  width: 256px;
-  height: 48px;
-  padding: 5px;
+  width: 64px;
+  height: 64px;
+  padding: 15px;
   line-height: 48px;
   font-weight: bold;
   vertical-align: middle;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.kubernetes-replicationController-node img {
+  width: 64px;
 }
 
 .kubernetes-node:hover,

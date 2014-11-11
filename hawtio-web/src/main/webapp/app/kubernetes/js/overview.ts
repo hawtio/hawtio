@@ -1,7 +1,23 @@
 /// <reference path="kubernetesPlugin.ts"/>
 /// <reference path="../../helpers/js/pollHelpers.ts"/>
 /// <reference path="../../helpers/js/arrayHelpers.ts"/>
+/// <reference path="../../wiki/js/wikiHelpers.ts"/>
 module Kubernetes {
+
+  var ReplicationControllerIcon = controller("ReplicationControllerIcon", ["$scope", "jolokia", ($scope, jolokia:Jolokia.IJolokia) => {
+    $scope.iconUrl = 'img/icons/kubernetes.svg';
+    jolokia.request({
+      type: 'exec',
+      mbean: Kubernetes.mbean,
+      operation: "iconPath(java.lang.String,java.lang.String)",
+      arguments: ['master', $scope.entity.id]
+    }, onSuccess((response) => {
+      if (response.value) {
+        $scope.iconUrl = Wiki.gitRelativeURL('master', response.value);
+        Core.$apply($scope);
+      }
+    }));
+  }]);
 
   var OverviewDirective = _module.directive("kubernetesOverview", ["$templateCache", "$compile", "$interpolate", "$timeout", "$window", ($templateCache:ng.ITemplateCacheService, $compile:ng.ICompileService, $interpolate:ng.IInterpolateService, $timeout:ng.ITimeoutService, $window:ng.IWindowService) => {
     return {
@@ -122,7 +138,7 @@ module Kubernetes {
               ]
               */
               params.anchors = [
-                [ "ContinuousLeft", { shape: "Rectangle" } ],
+                [ "Perimeter", { shape: "Circle" } ],
                 [ "ContinuousRight", { } ]
               ];
               break;
