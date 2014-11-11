@@ -5,7 +5,9 @@
 * Bug fixes
 * Fixed Camel diagram to render in Firefox browser 
 * Hawtio Karaf Terminal now installs and works in Karaf 2.x and 3.0.x out of the box
-* Upraded to TypeScript 1.1.0
+* Upgraded to TypeScript 1.1.0
+* Fixed jolokia connectivity to Java containers with jolokia when running Kubernetes on RHEL / Fedora / Vagrant
+* Fixes [these 14 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.30+is%3Aclosed)
 
 #### 1.4.29
 
