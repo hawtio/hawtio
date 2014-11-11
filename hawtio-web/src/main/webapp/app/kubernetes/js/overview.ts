@@ -295,21 +295,21 @@ module Kubernetes {
             }
             KubernetesServices.query((response) => {
               if (response) {
-                var items = response.items.sortBy(byId);
+                var items = (response.items || []).sortBy(byId);
                 redraw = ArrayHelpers.sync(services, items);
               }
               maybeNext(ready + 1);
             });
             KubernetesReplicationControllers.query((response) => {
               if (response) {
-                var items = response.items.sortBy(byId);
+                var items = (response.items || []).sortBy(byId);
                 redraw = ArrayHelpers.sync(replicationControllers, items);
               }
               maybeNext(ready + 1);
             });
             KubernetesPods.query((response) => {
               if (response) {
-                var items = response.items.sortBy(byId);
+                var items = (response.items || []).sortBy(byId);
                 redraw = ArrayHelpers.sync(pods, items);
               }
               maybeNext(ready + 1);
