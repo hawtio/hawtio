@@ -79,7 +79,7 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
         // First let's check if it's available as a kubernetes service like it should be...
         String address = System.getenv("KUBERNETES_SERVICE_HOST");
         if (Strings.isNotBlank(address)) {
-            address += ":" + System.getenv("KUBERNETES_SERVICE_PORT");
+            address = "http://" + address + ":" + System.getenv("KUBERNETES_SERVICE_PORT");
         } else {
             // If not then fall back to KUBERNETES_MASTER env var
             address = System.getenv("KUBERNETES_MASTER");
