@@ -30,6 +30,11 @@
     </a>
   </div>
 </script>
+<script type="text/ng-template" id="replicationControllerIconTemplate.html">
+  <div ng-init="entity = entity" ng-controller="Kubernetes.ReplicationControllerIcon">
+    <img class="icon-replication-controller" ng-src="{{iconUrl}}">
+  </div>
+</script>
 <script type="text/ng-template" id="statusTemplate.html">
   <div class="ngCellText" ng-init="entity=row.entity" ng-controller="Kubernetes.PodStatus" title="Pod {{entity.id}} is {{entity.currentState.status}}">
     <!-- in detail view -->

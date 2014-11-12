@@ -703,11 +703,6 @@ table.table thead .sorting_desc:after {
   background: url('../img/datatable/sort_desc.png') no-repeat top center;
 }
 
-.simple-table-checkbox, .simple-table-checkbox > input {
-  width: 16px;
-  max-width: 16px;
-}
-
 .dataTables_filter label {
   margin-bottom: 0px;
 }
@@ -3575,6 +3570,25 @@ th > .indicator:before {
   margin-left: 12px;
 }
 
+.simple-table-checkbox, 
+.simple-table-checkbox > input {
+  vertical-align: middle;
+  margin: 0;
+  width: 16px;
+  line-height: 16px;
+  max-width: 16px;
+}
+
+
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+.ngCellText .icon-replication-controller {
+  width: 32px;
+}
+
 .repository-browser-toolbar > .btn {
   margin-bottom: 10px;
 }
@@ -4421,3 +4435,4 @@ td > ul {
 td > .zebra-list > li {
   padding: 2px;
 }
+

@@ -63,6 +63,7 @@ module Kubernetes {
         filterText: ''
       },
       columnDefs: [
+        { field: 'id', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
         { field: 'currentState.replicas', displayName: 'Current Replicas' },
         { field: 'desiredState.replicas', displayName: 'Desired Replicas', cellTemplate:$templateCache.get("desiredReplicas.html") },

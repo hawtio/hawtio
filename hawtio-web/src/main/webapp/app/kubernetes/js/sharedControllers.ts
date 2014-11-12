@@ -1,6 +1,23 @@
 /// <reference path="kubernetesPlugin.ts"/>
 /// <reference path="../../fabric/js/fabricHelpers.ts"/>
+/// <reference path="../../wiki/js/wikiHelpers.ts"/>
 module Kubernetes {
+
+  // controller that maps a docker image to an icon path in the if possible
+  var ReplicationControllerIcon = controller("ReplicationControllerIcon", ["$scope", "jolokia", ($scope, jolokia:Jolokia.IJolokia) => {
+    $scope.iconUrl = 'img/icons/kubernetes.svg';
+    jolokia.request({
+      type: 'exec',
+      mbean: Kubernetes.mbean,
+      operation: "iconPath(java.lang.String,java.lang.String)",
+      arguments: ['master', $scope.entity.id]
+    }, onSuccess((response) => {
+      if (response.value) {
+        $scope.iconUrl = Wiki.gitRelativeURL('master', response.value);
+        Core.$apply($scope);
+      }
+    }));
+  }]);
 
   // controller that handles the 'id' field of a given view
   export var IDSelector = controller("IDSelector", ["$scope", ($scope) => {
