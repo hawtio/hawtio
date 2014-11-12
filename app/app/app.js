@@ -34171,6 +34171,20 @@ var Kubernetes;
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
 (function (Kubernetes) {
+    var ReplicationControllerIcon = Kubernetes.controller("ReplicationControllerIcon", ["$scope", "jolokia", function ($scope, jolokia) {
+        $scope.iconUrl = 'img/icons/kubernetes.svg';
+        jolokia.request({
+            type: 'exec',
+            mbean: Kubernetes.mbean,
+            operation: "iconPath(java.lang.String,java.lang.String)",
+            arguments: ['master', $scope.entity.id]
+        }, onSuccess(function (response) {
+            if (response.value) {
+                $scope.iconUrl = Wiki.gitRelativeURL('master', response.value);
+                Core.$apply($scope);
+            }
+        }));
+    }]);
     var OverviewDirective = Kubernetes._module.directive("kubernetesOverview", ["$templateCache", "$compile", "$interpolate", "$timeout", "$window", function ($templateCache, $compile, $interpolate, $timeout, $window) {
         return {
             restrict: 'E',
@@ -34194,13 +34208,6 @@ var Kubernetes;
                 scope.customizeDefaultOptions = function (options) {
                     options.Endpoint = ['Blank', {}];
                 };
-                $window.addEventListener("resize", function () {
-                    if (scope.jsPlumb) {
-                        scope.jsPlumb.recalculateOffsets(element);
-                        scope.jsPlumb.repaintEverything();
-                        Kubernetes.log.debug("jsplumb: ", scope.jsPlumb);
-                    }
-                });
                 scope.mouseEnter = function ($event) {
                     if (scope.jsPlumb) {
                         angular.element($event.currentTarget).addClass("hovered");
@@ -34264,7 +34271,7 @@ var Kubernetes;
                                 strokeStyle: '#44aa44'
                             };
                             params.anchors = [
-                                ["ContinuousLeft", { shape: "Rectangle" }],
+                                ["Perimeter", { shape: "Circle" }],
                                 ["ContinuousRight", {}]
                             ];
                             break;
@@ -34424,21 +34431,21 @@ var Kubernetes;
                         }
                         KubernetesServices.query(function (response) {
                             if (response) {
-                                var items = response.items.sortBy(byId);
+                                var items = (response.items || []).sortBy(byId);
                                 redraw = ArrayHelpers.sync(services, items);
                             }
                             maybeNext(ready + 1);
                         });
                         KubernetesReplicationControllers.query(function (response) {
                             if (response) {
-                                var items = response.items.sortBy(byId);
+                                var items = (response.items || []).sortBy(byId);
                                 redraw = ArrayHelpers.sync(replicationControllers, items);
                             }
                             maybeNext(ready + 1);
                         });
                         KubernetesPods.query(function (response) {
                             if (response) {
-                                var items = response.items.sortBy(byId);
+                                var items = (response.items || []).sortBy(byId);
                                 redraw = ArrayHelpers.sync(pods, items);
                             }
                             maybeNext(ready + 1);
@@ -42168,10 +42175,16 @@ var UI;
 })(UI || (UI = {}));
 var UI;
 (function (UI) {
-    UI._module.directive('hawtioJsplumb', ["$timeout", function ($timeout) {
+    UI._module.directive('hawtioJsplumb', ["$timeout", "$window", function ($timeout, $window) {
         return {
             restrict: 'A',
             link: function ($scope, $element, $attrs) {
+                $window.addEventListener("resize", function () {
+                    if ($scope.jsPlumb) {
+                        $scope.jsPlumb.recalculateOffsets($element);
+                        $scope.jsPlumb.repaintEverything();
+                    }
+                });
                 var enableDragging = true;
                 if (angular.isDefined($attrs['draggable'])) {
                     enableDragging = Core.parseBooleanValue($attrs['draggable']);

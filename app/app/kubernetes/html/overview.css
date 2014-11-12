@@ -46,14 +46,30 @@
 }
 
 .kubernetes-pod-node {
+  display: block;
   margin: 0;
   padding: 0;
-  height: 48px;
+  min-height: 48px;
   line-height: 40px;
   border-radius: 0;
   border: 1px solid transparent;
   border-top: 1px solid #d4d4d4;
   box-shadow: none;
+  vertical-align: middle;
+}
+
+.css-table {
+  display: table;
+  width: 100%;
+}
+
+.css-table-row {
+  display: table-row;
+}
+
+.css-table-cell {
+  display: table-cell;
+  vertical-align: middle;
 }
 
 .kubernetes-pod-node i {
@@ -63,34 +79,60 @@
 .kubernetes-service-node {
   display: block;
   margin-bottom: 10px;
-  width: 256px;
+  width: 300px;
   height: 66px;
   padding: 0;
   line-height: 48px;
 }
 
 .node-header {
-  border-bottom: 1px solid #d4d4d4;
-  line-height: 18px;
+  padding-right: 10px;
+  white-space: nowrap;
+  line-height: 64px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .kubernetes-service-node .node-body {
-  line-height: 48px;
+  padding-left: 10px;
+  line-height: 64px;
   font-size: 20px;
 }
 
 .kubernetes-replicationController-node {
+  border-radius: 64px;
   display: block;
   margin-bottom: 10px;
-  width: 256px;
-  height: 48px;
-  padding: 0;
+  width: 64px;
+  height: 64px;
+  padding: 15px;
   line-height: 48px;
   font-weight: bold;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
+.kubernetes-replicationController-node img {
+  width: 64px;
 }
 
 .kubernetes-node:hover,
 .kubernetes-node.hovered {
   background: #ddddff;
 }
+
+.pod-status-cell {
+  width: 80px;
+  line-height: 20px;
+}
+
+.pod-label-cell {
+  float: right;
+  text-align: right;
+}
+
+.pod-label-cell .ngCellText {
+  white-space: normal;
+}
+

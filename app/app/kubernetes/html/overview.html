@@ -1,9 +1,9 @@
 <div ng-controller="Kubernetes.OverviewController">
   <link rel="stylesheet" href="app/kubernetes/html/overview.css">
   <script type="text/ng-template" id="serviceBoxTemplate.html">
-    <div>
-      <div class="node-header">{{entity.id}}</div>
-      <div class="node-body">{{entity.port}}</div>
+    <div class="row-fluid">
+      <div class="span3 align-left node-body">{{entity.port}}</div>
+      <div class="span9 align-right node-header" title="{{entity.id}}">{{entity.id}}</div>
     </div>
   </script>
   <script type="text/ng-template" id="serviceTemplate.html">
@@ -45,16 +45,30 @@
          ng-controller="Kubernetes.OverviewBoxController"
          ng-init="entity=getEntity('pod', '{{pod.id}}')"
          ng-click="viewDetails('pods')">
-    <span class="pull-left" ng-init="row={ entity: entity }" ng-include="'statusTemplate.html'"></span>
-    <span class="pull-right" ng-init="row={ entity: entity }" ng-include="'labelTemplate.html'"></span>
+    <div class="css-table">
+      <div class="css-table-row">
+        <div class="pod-status-cell css-table-cell">
+          <span ng-init="row={ entity: entity }" ng-include="'statusTemplate.html'"></span>
+        </div>
+        <div class="pod-label-cell css-table-cell">
+          <span ng-init="row={ entity: entity }" ng-include="'labelTemplate.html'"></span>
+        </div>
+    </div>
   </div>
+  </script>
+  <script type="text/ng-template" id="replicationControllerIconTemplate.html">
+    <div ng-init="entity = entity" ng-controller="Kubernetes.ReplicationControllerIcon">
+      <img ng-src="{{iconUrl}}">
+    </div>
   </script>
   <script type="text/ng-template" id="replicationControllerTemplate.html">
     <div class="kubernetes-overview-row">
       <div class="kubernetes-overview-cell">
         <div
             id="{{replicationController.id}}"
+            title="{{replicationController.id}}"
             data-type="replicationController"
+            data-placement="top"
             connect-to="{{replicationController.connectTo}}"
             ng-mouseenter="mouseEnter($event)"
             ng-mouseleave="mouseLeave($event)"
@@ -62,7 +76,8 @@
             ng-controller="Kubernetes.OverviewBoxController"
             ng-init="entity=getEntity('replicationController', '{{replicationController.id}}')"
             ng-click="viewDetails('replicationControllers')">
-        {{replicationController.id}}
+          <div ng-init="entity = entity" ng-include="'replicationControllerIconTemplate.html'">
+          </div>
         </div>
       </div>
     </div>
