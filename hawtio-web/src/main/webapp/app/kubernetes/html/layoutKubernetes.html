@@ -22,6 +22,14 @@
           title="{{label.key}}">{{label.title}}</span>
   </div>
 </script>
+<script type="text/ng-template" id="portalAddress.html">
+  <div class="ngCellText">
+    <a target="openService" href="http://{{row.entity.portalIP}}:{{row.entity.port}}/"
+       ng-show="row.entity.portalIP" title="Protocol {{row.entity.protocol}}">
+      {{row.entity.portalIP}}:{{row.entity.port}}
+    </a>
+  </div>
+</script>
 <script type="text/ng-template" id="statusTemplate.html">
   <div class="ngCellText" ng-init="entity=row.entity" ng-controller="Kubernetes.PodStatus" title="Pod {{entity.id}} is {{entity.currentState.status}}">
     <!-- in detail view -->

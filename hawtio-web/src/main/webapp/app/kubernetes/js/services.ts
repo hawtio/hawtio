@@ -26,8 +26,7 @@ module Kubernetes {
       columnDefs: [
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
         { field: 'selector', displayName: 'Selector', cellTemplate: $templateCache.get("selectorTemplate.html") },
-        { field: 'port', displayName: 'Port' },
-        { field: 'protocol', displayName: 'Protocol' },
+        { field: 'portalIP', displayName: 'Address', cellTemplate: $templateCache.get("portalAddress.html") },
         { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
       ]
     };
