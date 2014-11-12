@@ -75,7 +75,15 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
 
     @Override
     public String getKubernetesAddress() {
-        String address = System.getenv("KUBERNETES_MASTER");
+
+        // First let's check if it's available as a kubernetes service like it should be...
+        String address = System.getenv("KUBERNETES_SERVICE_HOST");
+        if (Strings.isNotBlank(address)) {
+            address = "http://" + address + ":" + System.getenv("KUBERNETES_SERVICE_PORT");
+        } else {
+            // If not then fall back to KUBERNETES_MASTER env var
+            address = System.getenv("KUBERNETES_MASTER");
+        }
 
         String username = System.getenv("KUBERNETES_USERNAME");
         String password = System.getenv("KUBERNETES_PASSWORD");
