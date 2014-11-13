@@ -20,6 +20,7 @@ import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.events.TransferEvent;
 import org.apache.maven.wagon.events.TransferListener;
 import org.apache.maven.wagon.observers.AbstractTransferListener;
+import org.apache.maven.wagon.proxy.ProxyInfo;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.util.StringUtils;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -159,7 +161,9 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
                         LOG.debug(contextId + ": Download complete");
                     }
                 };
-                ResourceFetcher resourceFetcher = new WagonHelper.WagonFetcher(httpWagon, listener, null, null);
+                ProxyInfo proxyInfo = prepareProxyInfo(context.getIndexUpdateUrl());
+
+                ResourceFetcher resourceFetcher = new WagonHelper.WagonFetcher(httpWagon, listener, null, proxyInfo);
 
                 IndexUpdateRequest updateRequest = new IndexUpdateRequest(context, resourceFetcher);
                 IndexUpdateResult updateResult = indexUpdater.fetchAndUpdateIndex(updateRequest);
@@ -182,6 +186,29 @@ public class MavenIndexerFacade extends MBeanSupport implements MavenIndexerFaca
 
         if (!entries.isEmpty()) {
             LOG.info("Updated successfully {}/{} maven indexes.", entries.size() - failedRepos, entries.size());
+        }
+    }
+
+    private ProxyInfo prepareProxyInfo(String indexUpdateUrl) {
+        try {
+            URI uri = URI.create(indexUpdateUrl);
+            String scheme = uri.getScheme();
+            String host = System.getProperty(scheme + ".proxyHost");
+            if (host != null && !"".equals(host.trim())) {
+                // let's prepare ProxyInfo
+                ProxyInfo proxyInfo = new ProxyInfo();
+                proxyInfo.setType(scheme);
+                proxyInfo.setHost(host);
+                proxyInfo.setPort(Integer.parseInt(System.getProperty(scheme + ".proxyPort")));
+                proxyInfo.setUserName(System.getProperty(scheme + ".proxyUser"));
+                proxyInfo.setPassword(System.getProperty(scheme + ".proxyPassword"));
+                proxyInfo.setNonProxyHosts(System.getProperty(scheme + ".nonProxyHosts"));
+                return proxyInfo;
+            }
+            return null;
+        } catch (Exception e) {
+            LOG.warn(e.getMessage(), e);
+            return null;
         }
     }
 
