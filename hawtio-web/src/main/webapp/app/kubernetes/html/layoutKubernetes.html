@@ -59,17 +59,17 @@
           title="View an overview of the system">
         <a ng-href="#/kubernetes/overview">Overview</a>
       </li>
-      <li ng-class='{active : isActive("#/kubernetes/pods")}'
-          title="View kubernetes pods and their status">
-        <a ng-href="#/kubernetes/pods">Pods</a>
-      </li>
-      <li ng-class='{active : isActive("#/kubernetes/replicationControllers")}'
-          title="View kubernetes replication controllers and their status">
-        <a ng-href="#/kubernetes/replicationControllers">Replication Controllers</a>
-      </li>
       <li ng-class='{active : isActive("#/kubernetes/services")}'
           title="View kubernetes services and their status">
         <a ng-href="#/kubernetes/services">Services</a>
+      </li>
+      <li ng-class='{active : isActive("#/kubernetes/replicationControllers")}'
+          title="View kubernetes replication controllers and their status">
+        <a ng-href="#/kubernetes/replicationControllers">Controllers</a>
+      </li>
+      <li ng-class='{active : isActive("#/kubernetes/pods")}'
+          title="View kubernetes pods and their status">
+        <a ng-href="#/kubernetes/pods">Pods</a>
       </li>
       <li class=pull-right>
         <span ng-show="version">Kubernetes version: {{version.major}}.{{version.minor}}</span>
