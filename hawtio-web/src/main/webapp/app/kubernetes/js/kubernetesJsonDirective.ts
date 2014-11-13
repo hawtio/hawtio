@@ -82,8 +82,8 @@ module Kubernetes {
               onSuccess((response) => {
                 log.debug("Got response: ", response);
 
-                // now lets navigate to the pods page so folks see things happen
-                $location.url("/kubernetes/pods");
+                // now lets navigate to the controllers page so folks see things happen
+                $location.url("/kubernetes/replicationControllers");
                 Core.$apply($scope);
               }));
           }
