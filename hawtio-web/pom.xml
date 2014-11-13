@@ -1249,7 +1249,7 @@
       </dependencies>
 
       <properties>
-        <hawtio-config-importURLs>mvn:io.fabric8/wiki/2.0.0-SNAPSHOT/zip</hawtio-config-importURLs>
+        <hawtio-config-importURLs>mvn:io.fabric8.quickstarts/fabric8-quickstarts-parent/2.0.1/zip/app,mvn:io.fabric8.jube.images.fabric8/apps/2.0.1/zip/app</hawtio-config-importURLs>
         <hawtio-config-cloneOnStartup>false</hawtio-config-cloneOnStartup>
 
         <!--
