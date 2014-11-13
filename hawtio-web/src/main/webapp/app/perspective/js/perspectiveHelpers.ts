@@ -1,3 +1,7 @@
+/// <reference path="../../core/js/coreHelpers.ts"/>
+/// <reference path="../../kubernetes/js/kubernetesHelpers.ts"/>
+/// <reference path="../../core/js/preferenceHelpers.ts"/>
+/// <reference path="metadata.ts"/>
 /**
  * @module Perspective
  */

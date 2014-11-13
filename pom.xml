@@ -270,6 +270,7 @@
     <module>hawtio-redhat-amq-branding</module>
     <module>hawtio-fabric8-branding</module>
     <module>hawtio-karaf</module>
+    <module>hawtio-custom-app</module>
   </modules>
 
   <build>

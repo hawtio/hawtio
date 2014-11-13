@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>io.hawt</groupId>
+    <artifactId>project</artifactId>
+    <version>1.5-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>hawtio-custom-app</artifactId>
+  <packaging>jar</packaging>
+  <name>${project.artifactId}</name>
+  <description>hawtio :: hawtio-custom-app</description>
+
+  <properties>
+    <desiredPlugins>core,ui,kubernetes,forms,datatable,perspective,jmx,themes,rbac</desiredPlugins>
+
+    <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
+
+    <watch>false</watch>
+    <gruntArguments>default</gruntArguments>
+    <gruntOptions>--plugins ${desiredPlugins}</gruntOptions>
+
+    <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+    <webappDirectory>${webapp-outdir}</webappDirectory>
+    <warSourceExcludes>**</warSourceExcludes>
+    <packagingExcludes>**/classes/OSGI-INF/**,*/debug/**</packagingExcludes>
+    <packagingIncludes />
+
+    <hawtio-config-importURLs />
+    <hawtio-config-cloneOnStartup>true</hawtio-config-cloneOnStartup>
+    <fabricUrl />
+    <jetty-use-file-lock />
+  </properties>
+
+  <dependencies>
+    <!-- just including this to ensure we built after hawtio-web -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-web</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>${frontend-maven-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <nodeVersion>v0.10.32</nodeVersion>
+              <npmVersion>1.4.12</npmVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>grunt build</id>
+            <goals>
+              <goal>grunt</goal>
+            </goals>
+            <configuration>
+              <arguments>${gruntArguments} ${gruntOptions}</arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!--
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${build-helper-maven-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>target/hawtio.d.ts</file>
+                  <type>d.ts</type>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      -->
+
+    </plugins>
+  </build>
+
+
+  <profiles>
+    <profile>
+      <id>watch</id>
+      <properties>
+        <gruntOptions>--plugins ${desiredPlugins} --watch true</gruntOptions>
+        <gruntArguments>tsc</gruntArguments>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>release</id>
+      <properties>
+        <chrome-version>${project.version}</chrome-version>
+        <warSourceDirectory>${basedir}/dist</warSourceDirectory>
+        <maven.war.webxml>${basedir}/src/main/webapp/WEB-INF/web.xml</maven.war.webxml>
+        <warSourceExcludes>app/app.js.map</warSourceExcludes>
+        <gruntArguments>dist</gruntArguments>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>dist</id>
+      <properties>
+        <chrome-version>${project.version}</chrome-version>
+        <warSourceDirectory>${basedir}/dist</warSourceDirectory>
+        <maven.war.webxml>${basedir}/src/main/webapp/WEB-INF/web.xml</maven.war.webxml>
+        <warSourceExcludes>app/app.js.map</warSourceExcludes>
+        <gruntArguments>dist</gruntArguments>
+      </properties>
+    </profile>
+
+  </profiles>
+
+
+</project>
