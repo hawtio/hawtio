@@ -108,7 +108,7 @@ public class HawtioBlueprintContextListener implements ServletContextListener {
                 Object value = sysEntry.getValue();
                 if (key != null && value != null) {
                     String propertyName = key.toString();
-                    String propertyValue = key.toString();
+                    String propertyValue = value.toString();
                     if (!properties.containsKey(propertyName)) {
                         properties.put(propertyName, propertyValue);
                     }
