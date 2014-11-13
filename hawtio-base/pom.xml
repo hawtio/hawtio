@@ -44,6 +44,11 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-aether</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -203,7 +208,7 @@
                 </systemProperty>
                 <systemProperty>
                   <key>hawtio.config.importURLs</key>
-                  <value>mvn:io.fabric8.quickstarts/fabric8-quickstarts-parent/2.0.1/zip/app,mvn:io.fabric8.jube.images.fabric8/apps/2.0.1/zip/app</value>
+                  <value>mvn:io.fabric8.quickstarts/fabric8-quickstarts-parent/LATEST/zip/app,mvn:io.fabric8.jube.images.fabric8/apps/LATEST/zip/app</value>
                 </systemProperty>
                 <systemProperty>
                   <key>kubernetes.master</key>
