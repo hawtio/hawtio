@@ -147,6 +147,18 @@ module Perspective {
 
   function filterTabs(tabs, workspace) {
     var matched = [];
+
+    function pushMatchedTab(tabSpec, tab) {
+      if (tab) {
+        var content = tabSpec.content;
+        if (content) {
+          tab = angular.copy(tab)
+          tab.content = content;
+        }
+        matched.push(tab);
+      }
+    }
+
     angular.forEach(tabs, (tabSpec) => {
       var href = tabSpec.href;
       var id = tabSpec.id;
@@ -164,25 +176,19 @@ module Perspective {
           // lets assume the tab is the tabSpec
           tab = tabSpec;
         }
-        if (tab) {
-          matched.push(tab);
-        }
+        pushMatchedTab(tabSpec, tab);
       } else if (id) {
         var tab = workspace.topLevelTabs.find((t) => {
           var tid = t.id;
           return tid && tid === id;
         });
-        if (tab) {
-          matched.push(tab);
-        }
+        pushMatchedTab(tabSpec, tab);
       } else if (rhref) {
         var tab = workspace.topLevelTabs.find((t) => {
           var thref = t.href();
           return thref && thref.match(rhref);
         });
-        if (tab) {
-          matched.push(tab);
-        }
+        pushMatchedTab(tabSpec, tab);
       }
     });
     return matched;

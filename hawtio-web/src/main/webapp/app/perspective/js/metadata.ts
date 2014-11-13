@@ -30,6 +30,7 @@ module Perspective {
             id: "kubernetes"
           },
           {
+            content: "Library",
             href: "#/wiki"
           },
           {
