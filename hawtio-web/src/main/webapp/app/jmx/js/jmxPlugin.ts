@@ -12,7 +12,7 @@ module Jmx {
 
   export var currentProcessId = '';
 
-  export var _module = angular.module(pluginName, ['bootstrap', 'dangle', 'ui.bootstrap', 'ui.bootstrap.modal', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-ui', 'hawtioRbac']);
+  export var _module = angular.module(pluginName, ['bootstrap', 'dangle', 'ui.bootstrap', 'ui.bootstrap.modal']);
 
   _module.config(["$routeProvider", ($routeProvider) => {
     $routeProvider.
@@ -24,10 +24,6 @@ module Jmx {
             when('/jmx/widget/donut', {templateUrl: 'app/jmx/html/donutChart.html'}).
             when('/jmx/widget/area', {templateUrl: 'app/jmx/html/areaChart.html'});
   }]);
-
-  _module.factory('jmxTreeLazyLoadRegistry', () => {
-    return Jmx.lazyLoaders;
-  });
 
   _module.factory('jmxWidgetTypes', () => {
     return Jmx.jmxWidgetTypes;

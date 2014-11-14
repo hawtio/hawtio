@@ -6,6 +6,7 @@ module.exports = function(grunt) {
   var sourceDir = '../hawtio-web/src/main/webapp/app';
   var target = 'src/main/webapp/app';
   var appjs = target + '/app.js';
+  var appjsMap = target + '/app.js.map';
   var ngAnnotateFiles = {};
   ngAnnotateFiles[appjs] = [appjs];
   var typescriptFiles = [];
@@ -45,21 +46,6 @@ module.exports = function(grunt) {
           sourceMap: true,
           watch: false
         }
-      },
-      dev: {
-        src: [ typescriptFiles ],
-        dest: appjs,
-        options: {
-          removeComments: true,
-          module: "commonjs",
-          target: "ES5",
-          declaration: false,
-          sourceMap: true,
-          watch: grunt.option("watch") ? {
-            path: sourceDir,
-            atBegin: true
-          } : false
-        }
       }
     },
 
@@ -68,6 +54,22 @@ module.exports = function(grunt) {
       declaration: {
         src: target + '/app.d.ts',
         dest: target + '/hawtio.d.ts'
+      }
+    },
+
+    copy: {
+      main: {
+        files: [
+          { src: [appjs], dest: sourceDir + '/app.js' },
+          { src: [appjsMap], dest: sourceDir + '/app.map.js' }
+        ]
+      }
+    },
+
+    watch: {
+      tsc: {
+        files: [ sourceDir + "/**/*.ts" ],
+        tasks: [ "filterts", "typescript:base", "ngAnnotate:app", "rename", "copy" ]
       }
     },
 
@@ -82,17 +84,15 @@ module.exports = function(grunt) {
 
   require('load-grunt-tasks')(grunt);
 
-  /* task aliases */
-  // TS compiler with fast incremental watcher
-  grunt.registerTask("tsc", [ "filterts", "typescript:dev", "ngAnnotate", "rename" ]);
-
-  // distribution tasks
-
   grunt.registerTask("default", [
     "filterts",
     "typescript:base",
     "ngAnnotate:app",
     "rename"
   ]);
+
+  /* task aliases */
+  grunt.registerTask("tsc", [ "default", "copy", "watch:tsc" ]);
+
 
 };

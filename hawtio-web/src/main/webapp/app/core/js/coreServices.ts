@@ -212,4 +212,9 @@ module Core {
     }
     return answer;
   }]);
+
+  _module.factory('jmxTreeLazyLoadRegistry', () => {
+    return Core.lazyLoaders;
+  });
+
 }

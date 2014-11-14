@@ -5,10 +5,13 @@
 /// <reference path="./workspace.ts"/>
 /// <reference path="./folder.ts"/>
 /// <reference path="../../ui/js/colors.ts"/>
-/// <reference path="../../jmx/js/lazyLoaders.ts"/>
 
 module Core {
+
   export var log:Logging.Logger = Logger.get("Core");
+
+  export var lazyLoaders = {};
+
 }
 
 var numberTypeNames = {
@@ -1479,7 +1482,7 @@ module Core {
       xhr: null
     };
     // disable reload notifications
-    var jmxTreeLazyLoadRegistry = Jmx.lazyLoaders;
+    var jmxTreeLazyLoadRegistry = Core.lazyLoaders;
     var profileWorkspace = new Workspace(remoteJolokia, jolokiaStatus, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope, userDetails);
 
     log.info("Loading the profile using jolokia: " + remoteJolokia);

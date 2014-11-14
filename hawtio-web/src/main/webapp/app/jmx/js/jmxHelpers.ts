@@ -1,9 +1,8 @@
+/// <reference path="../../core/js/folder.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
 /**
  * @module Jmx
  */
-/// <reference path="../../core/js/folder.ts"/>
-/// <reference path="../../core/js/workspace.ts"/>
-/// <reference path="./lazyLoaders.ts"/>
 module Jmx {
 
   export var log:Logging.Logger = Logger.get("JMX");
@@ -25,20 +24,20 @@ module Jmx {
 
 
   export function registerLazyLoadHandler(domain: string, lazyLoaderFactory: (folder: Core.Folder) => any) {
-    if (!lazyLoaders) {
-      lazyLoaders = {};
+    if (!Core.lazyLoaders) {
+      Core.lazyLoaders = {};
     }
-    var array = lazyLoaders[domain];
+    var array = Core.lazyLoaders[domain];
     if (!array) {
       array = [];
-      lazyLoaders[domain] = array;
+      Core.lazyLoaders[domain] = array;
     }
     array.push(lazyLoaderFactory);
   }
 
   export function unregisterLazyLoadHandler(domain: string, lazyLoaderFactory: (folder: Core.Folder) => any) {
-    if (lazyLoaders) {
-      var array = lazyLoaders[domain];
+    if (Core.lazyLoaders) {
+      var array = Core.lazyLoaders[domain];
       if (array) {
         array.remove(lazyLoaderFactory);
       }
