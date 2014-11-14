@@ -3,6 +3,9 @@ package io.hawt.web;
 import java.io.IOException;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.security.auth.Subject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -36,13 +39,9 @@ public class AuthenticationFilter implements Filter {
     public static final String HAWTIO_ROLE = "hawtio.role";
     public static final String HAWTIO_ROLES = "hawtio.roles";
     public static final String HAWTIO_ROLE_PRINCIPAL_CLASSES = "hawtio.rolePrincipalClasses";
+    public static final String HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES = "hawtio.authenticationContainerDiscoveryClasses";
 
     private final AuthenticationConfiguration configuration = new AuthenticationConfiguration();
-
-    // add known SPI authentication container discovery
-    private final AuthenticationContainerDiscovery[] discoveries = new AuthenticationContainerDiscovery[]{
-            new TomcatAuthenticationContainerDiscovery()
-    };
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -53,6 +52,8 @@ public class AuthenticationFilter implements Filter {
         if (System.getProperty("karaf.name") != null) {
             defaultRolePrincipalClasses = "org.apache.karaf.jaas.boot.principal.RolePrincipal,org.apache.karaf.jaas.modules.RolePrincipal,org.apache.karaf.jaas.boot.principal.GroupPrincipal";
         }
+
+        String authDiscoveryClasses = "io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery";
 
         if (config != null) {
             configuration.setRealm(config.get("realm", "karaf"));
@@ -69,6 +70,8 @@ public class AuthenticationFilter implements Filter {
             configuration.setRolePrincipalClasses(config.get("rolePrincipalClasses", defaultRolePrincipalClasses));
             configuration.setEnabled(Boolean.parseBoolean(config.get("authenticationEnabled", "true")));
             configuration.setNoCredentials401(Boolean.parseBoolean(config.get("noCredentials401", "false")));
+
+            authDiscoveryClasses = config.get("authenticationContainerDiscoveryClasses", authDiscoveryClasses);
         }
 
         // JVM system properties can override always
@@ -90,8 +93,12 @@ public class AuthenticationFilter implements Filter {
         if (System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES) != null) {
             configuration.setRolePrincipalClasses(System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES));
         }
+        if (System.getProperty(HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES) != null) {
+            authDiscoveryClasses = System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES);
+        }
 
         if (configuration.isEnabled()) {
+            List<AuthenticationContainerDiscovery> discoveries = getDiscoveries(authDiscoveryClasses);
             for (AuthenticationContainerDiscovery discovery : discoveries) {
                 if (discovery.canAuthenticate(configuration)) {
                     LOG.info("Discovered container {} to use with hawtio authentication filter", discovery.getContainerName());
@@ -108,6 +115,26 @@ public class AuthenticationFilter implements Filter {
         } else {
             LOG.info("Starting hawtio authentication filter, JAAS authentication disabled");
         }
+    }
+
+    protected List<AuthenticationContainerDiscovery> getDiscoveries(String authDiscoveryClasses) {
+        List<AuthenticationContainerDiscovery> discoveries = new ArrayList<AuthenticationContainerDiscovery>();
+        if (authDiscoveryClasses == null || authDiscoveryClasses.trim().isEmpty()) {
+            return discoveries;
+        }
+
+        String[] discoveryClasses = authDiscoveryClasses.split(",");
+        for (String discoveryClass : discoveryClasses) {
+            try {
+                // Should have more clever classloading?
+                Class<? extends AuthenticationContainerDiscovery> clazz = (Class<? extends AuthenticationContainerDiscovery>) getClass().getClassLoader().loadClass(discoveryClass.trim());
+                AuthenticationContainerDiscovery discovery = clazz.newInstance();
+                discoveries.add(discovery);
+            } catch (Exception e) {
+                LOG.warn("Couldn't instantiate discovery " + discoveryClass, e);
+            }
+        }
+        return discoveries;
     }
 
     @Override

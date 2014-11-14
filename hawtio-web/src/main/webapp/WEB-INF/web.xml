@@ -37,6 +37,13 @@
   </env-entry>
 
   <env-entry>
+    <description>AuthenticationContainerDiscovery classes divided by comma, used to discover container environments</description>
+    <env-entry-name>hawtio/authenticationContainerDiscoveryClasses</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery</env-entry-value>
+  </env-entry>
+
+  <env-entry>
     <description>Whether or not to check and see if branding should be enabled, value is really a boolean</description>
     <env-entry-name>hawtio/useBranding</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
