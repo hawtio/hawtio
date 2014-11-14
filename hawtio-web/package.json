@@ -35,7 +35,7 @@
     "grunt-rename": "^0.1.4",
     "grunt-testacular": "~0.3.0",
     "grunt-ts": "~1.12.1",
-    "grunt-typescript": "~0.4.0",
+    "grunt-typescript": "0.4.0",
     "grunt-usemin": "~2.4.0",
     "grunt-wiredep": "^1.9.0",
     "jasmine-reporters": "~1.0.1",
