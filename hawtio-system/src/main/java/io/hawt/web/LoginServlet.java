@@ -95,7 +95,9 @@ public class LoginServlet extends HttpServlet {
 
         if (principals != null) {
             for (Principal principal : principals) {
-                if (principal.getClass().getSimpleName().equals("UserPrincipal")) {
+                // Should be name of class configurable like for Role principal?
+                String principalClass = principal.getClass().getSimpleName();
+                if (principalClass.equals("UserPrincipal") || principalClass.equals("KeycloakPrincipal")) {
                     username = principal.getName();
                     LOG.debug("Authorizing user {}", username);
                 }

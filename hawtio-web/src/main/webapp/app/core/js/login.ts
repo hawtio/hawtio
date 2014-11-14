@@ -2,6 +2,7 @@
  * @module Core
  */
 /// <reference path="corePlugin.ts"/>
+/// <reference path="keycloakLogin.ts"/>
 module Core {
 
   /**
@@ -18,9 +19,19 @@ module Core {
    * @param localStorage
    * @param branding
    */
-  _module.controller("Core.LoginController", ["$scope", "jolokia", "userDetails", "jolokiaUrl", "workspace", "localStorage", "branding", "postLoginTasks", ($scope, jolokia, userDetails:Core.UserDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) => {
+  _module.controller("Core.LoginController", ["$scope", "jolokia", "userDetails", "jolokiaUrl", "workspace", "localStorage", "branding", "keycloakContext", "postLoginTasks", "postLogoutTasks", ($scope, jolokia, userDetails:Core.UserDetails, jolokiaUrl, workspace, localStorage, branding, keycloakContext, postLoginTasks, postLogoutTasks) => {
     jolokia.stop();
 
+    $scope.keycloakEnabled = keycloakContext.enabled;
+
+    if ($scope.keycloakEnabled) {
+      keycloakLoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, keycloakContext, postLogoutTasks);
+    } else {
+      loginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks);
+    }
+  }]);
+
+  var loginController = ($scope, jolokia, userDetails:Core.UserDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) => {
     $scope.userDetails = userDetails;
     $scope.entity = <Core.UserDetails> {
       username: '',
@@ -96,5 +107,5 @@ module Core {
         }
       }
     }
-  }]);
+  };
 }

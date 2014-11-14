@@ -62,6 +62,11 @@ module Core {
     return Core.preLogoutTasks;
   });
 
+  // service to register stuff that should happen after the user logs out
+  _module.factory('postLogoutTasks', () => {
+    return Core.postLogoutTasks;
+  });
+
   // help registry for registering help topics/pages to
   _module.factory('helpRegistry', ["$rootScope", ($rootScope) => {
     return new Core.HelpRegistry($rootScope);

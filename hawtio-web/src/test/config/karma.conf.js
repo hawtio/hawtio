@@ -27,6 +27,7 @@ module.exports = function(config) {
       libdir + '../../../main/webapp/bower_components/d3/d3.min.js',
       libdir + '../../../main/webapp/bower_components/elastic.js/dist/elastic.min.js',
       libdir + '../../../main/webapp/bower_components/underscore/underscore.js',
+      libdir + '../../../main/webapp/bower_components/keycloak/dist/keycloak.js',
       // endbower
       libdir + 'loggingInit.js',
       libdir + 'cubism.v1.min.js',

@@ -27,6 +27,7 @@
     "d3": "3.0.0",
     "Font-Awesome": "3.2.1",
     "elastic.js": "1.1.1",
-    "underscore": "1.7.0"
+    "underscore": "1.7.0",
+    "keycloak": "1.1.0"
   }
 }

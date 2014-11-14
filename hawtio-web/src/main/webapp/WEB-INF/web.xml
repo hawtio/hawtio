@@ -44,6 +44,20 @@
   </env-entry>
 
   <env-entry>
+    <description>Enable/disable Keycloak integration. Value is really a boolean</description>
+    <env-entry-name>hawtio/keycloakEnabled</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>false</env-entry-value>
+  </env-entry>
+
+  <env-entry>
+    <description>Keycloak config file used for frontend. Will use default location if not provided</description>
+    <env-entry-name>hawtio/keycloakClientConfig</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value></env-entry-value>
+  </env-entry>
+
+  <env-entry>
     <description>Whether or not to check and see if branding should be enabled, value is really a boolean</description>
     <env-entry-name>hawtio/useBranding</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
@@ -214,6 +228,15 @@
   <servlet-mapping>
     <servlet-name>logout</servlet-name>
     <url-pattern>/auth/logout/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>keycloak</servlet-name>
+    <servlet-class>io.hawt.web.keycloak.KeycloakServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>keycloak</servlet-name>
+    <url-pattern>/keycloak/*</url-pattern>
   </servlet-mapping>
 
   <servlet>

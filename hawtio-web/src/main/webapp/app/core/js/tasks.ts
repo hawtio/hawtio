@@ -107,7 +107,40 @@ module Core {
     }
   }
 
+  // Same like TasksImpl, but tasks are supposed to return boolean and onComplete callback is executed just if all tasks return true
+  export class ConditionalTasksImpl extends TasksImpl {
+
+    private executeConditionalTask(name:string, task: () => boolean): boolean {
+      if (angular.isFunction(task)) {
+        log.debug("Executing task : ", name);
+        try {
+          return task();
+        } catch (error) {
+          log.debug("Failed to execute conditional task: ", name, " error: ", error);
+          return false;
+        }
+      }
+    }
+
+    public execute() {
+      if (this.tasksExecuted) {
+        return;
+      }
+
+      var success: boolean = true;
+      angular.forEach(this.tasks, (task:() => boolean, name) => {
+        success = success && this.executeConditionalTask(name, task);
+      });
+      this.tasksExecuted = true;
+
+      // Execute callback just if all tasks returned true
+      if (angular.isFunction(this._onComplete) && success) {
+        this._onComplete();
+      }
+    }
+  }
+
   export var postLoginTasks:Tasks = new Core.TasksImpl();
   export var preLogoutTasks:Tasks = new Core.TasksImpl();
-
+  export var postLogoutTasks:Tasks = new Core.ConditionalTasksImpl();
 }

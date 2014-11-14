@@ -314,6 +314,12 @@ module Core {
     Core.preLogoutTasks.execute();
   }
 
+  export function executePostLogoutTasks(onComplete: () => void) {
+    log.debug("Executing post logout tasks");
+    Core.postLogoutTasks.onComplete(onComplete);
+    Core.postLogoutTasks.execute();
+  }
+
   /**
    * log out the current user
    * @for Core
@@ -341,57 +347,69 @@ module Core {
         $.ajax(url, {
           type: "POST",
           success: () => {
-            userDetails.username = null;
-            userDetails.password = null;
-            userDetails.loginDetails = null;
-            userDetails.rememberMe = false;
-            delete localStorage['userDetails'];
-            var jvmConnect = angular.fromJson(localStorage['jvmConnect'])
-            _.each(jvmConnect, function(value) {
-              delete value['userName'];
-              delete value['password'];
-            });
-            localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+
+            if (localStorage['jvmConnect'] && localStorage['jvmConnect'] != "undefined") {
+              var jvmConnect = angular.fromJson(localStorage['jvmConnect'])
+              _.each(jvmConnect, function(value) {
+                delete value['userName'];
+                delete value['password'];
+              });
+              localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+            }
             localStorage.removeItem('activemqUserName');
             localStorage.removeItem('activemqPassword');
-            if (successCB && angular.isFunction(successCB)) {
-              successCB();
-            }
-            Core.$apply($scope);
+
+            Core.executePostLogoutTasks(() => {
+              log.debug("Executing logout callback after successfully executed postLogoutTasks");
+              userDetails.username = null;
+              userDetails.password = null;
+              userDetails.loginDetails = null;
+              userDetails.rememberMe = false;
+              delete localStorage['userDetails'];
+              if (successCB && angular.isFunction(successCB)) {
+                successCB();
+              }
+              Core.$apply($scope);
+            });
           },
           error: (xhr, textStatus, error) => {
-            userDetails.username = null;
-            userDetails.password = null;
-            userDetails.loginDetails = null;
-            userDetails.rememberMe = false;
-            delete localStorage['userDetails'];
-            var jvmConnect = angular.fromJson(localStorage['jvmConnect'])
-            _.each(jvmConnect, function(value) {
-              delete value['userName'];
-              delete value['password'];
-            });
-            localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+            if (localStorage['jvmConnect'] && localStorage['jvmConnect'] != "undefined") {
+              var jvmConnect = angular.fromJson(localStorage['jvmConnect'])
+              _.each(jvmConnect, function(value) {
+                delete value['userName'];
+                delete value['password'];
+              });
+              localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+            }
             localStorage.removeItem('activemqUserName');
             localStorage.removeItem('activemqPassword');
-            // TODO, more feedback
-            switch (xhr.status) {
-              case 401:
-                log.debug('Failed to log out, ', error);
-                break;
-              case 403:
-                log.debug('Failed to log out, ', error);
-                break;
-              case 0:
-                // this may happen during onbeforeunload -> logout, when XHR is cancelled
-                break;
-              default:
-                log.debug('Failed to log out, ', error);
-                break;
-            }
-            if (errorCB && angular.isFunction(errorCB)) {
-              errorCB();
-            }
-            Core.$apply($scope);
+
+            Core.executePostLogoutTasks(() => {
+              userDetails.username = null;
+              userDetails.password = null;
+              userDetails.loginDetails = null;
+              userDetails.rememberMe = false;
+              delete localStorage['userDetails'];
+              // TODO, more feedback
+              switch (xhr.status) {
+                case 401:
+                  log.debug('Failed to log out, ', error);
+                  break;
+                case 403:
+                  log.debug('Failed to log out, ', error);
+                  break;
+                case 0:
+                  // this may happen during onbeforeunload -> logout, when XHR is cancelled
+                  break;
+                default:
+                  log.debug('Failed to log out, ', error);
+                  break;
+              }
+              if (errorCB && angular.isFunction(errorCB)) {
+                errorCB();
+              }
+              Core.$apply($scope);
+            });
           }
         });
       });
@@ -1307,6 +1325,19 @@ module Core {
       password: options.password,
       loginDetails: {}
     };
+    putKeycloakToken(newWindow);
+  }
+
+  // Put info about keycloak access token to new window, so keycloak is initialized from here without need to go again through keycloak login flow
+  function putKeycloakToken(newWindow) {
+    var keycloakContext: KeycloakContext = <Core.KeycloakContext> Core.injector.get('keycloakContext');
+    if (keycloakContext.enabled) {
+      var tokenInfo = {
+        token: keycloakContext.keycloak.token,
+        refreshToken: keycloakContext.keycloak.refreshToken
+      };
+      newWindow['keycloakToken'] = tokenInfo;
+    }
   }
 
   /**
