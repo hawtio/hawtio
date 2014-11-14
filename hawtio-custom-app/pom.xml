@@ -192,31 +192,6 @@
         </configuration>
       </plugin>
 
-      <!--
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>${build-helper-maven-plugin-version}</version>
-        <executions>
-          <execution>
-            <id>attach-artifacts</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>target/hawtio.d.ts</file>
-                  <type>d.ts</type>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      -->
-
     </plugins>
   </build>
 
@@ -227,28 +202,6 @@
       <properties>
         <gruntOptions>--plugins ${desiredPlugins} --watch true</gruntOptions>
         <gruntArguments>tsc</gruntArguments>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>release</id>
-      <properties>
-        <chrome-version>${project.version}</chrome-version>
-        <warSourceDirectory>${basedir}/dist</warSourceDirectory>
-        <maven.war.webxml>${basedir}/src/main/webapp/WEB-INF/web.xml</maven.war.webxml>
-        <warSourceExcludes>app/app.js.map</warSourceExcludes>
-        <gruntArguments>dist</gruntArguments>
-      </properties>
-    </profile>
-
-    <profile>
-      <id>dist</id>
-      <properties>
-        <chrome-version>${project.version}</chrome-version>
-        <warSourceDirectory>${basedir}/dist</warSourceDirectory>
-        <maven.war.webxml>${basedir}/src/main/webapp/WEB-INF/web.xml</maven.war.webxml>
-        <warSourceExcludes>app/app.js.map</warSourceExcludes>
-        <gruntArguments>dist</gruntArguments>
       </properties>
     </profile>
 
