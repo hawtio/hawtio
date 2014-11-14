@@ -103,6 +103,24 @@
       <artifactId>fabric-openshift</artifactId>
         <version>${fabric-test-version}</version>
         <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.maven.wagon</groupId>
+          <artifactId>wagon-http-lightweight</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.maven.wagon</groupId>
+          <artifactId>wagon-provider-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.maven.wagon</groupId>
+          <artifactId>wagon-file</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.fabric8</groupId>
+          <artifactId>fabric-agent</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
   </dependencies>
