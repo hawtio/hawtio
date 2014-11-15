@@ -1060,10 +1060,6 @@ var Folder = (function (_super) {
 ;
 var Jmx;
 (function (Jmx) {
-    Jmx.lazyLoaders = {};
-})(Jmx || (Jmx = {}));
-var Jmx;
-(function (Jmx) {
     Jmx.log = Logger.get("JMX");
     var attributesToolBars = {};
     function findLazyLoadingFunction(workspace, folder) {
@@ -1080,20 +1076,20 @@ var Jmx;
     }
     Jmx.findLazyLoadingFunction = findLazyLoadingFunction;
     function registerLazyLoadHandler(domain, lazyLoaderFactory) {
-        if (!Jmx.lazyLoaders) {
-            Jmx.lazyLoaders = {};
+        if (!Core.lazyLoaders) {
+            Core.lazyLoaders = {};
         }
-        var array = Jmx.lazyLoaders[domain];
+        var array = Core.lazyLoaders[domain];
         if (!array) {
             array = [];
-            Jmx.lazyLoaders[domain] = array;
+            Core.lazyLoaders[domain] = array;
         }
         array.push(lazyLoaderFactory);
     }
     Jmx.registerLazyLoadHandler = registerLazyLoadHandler;
     function unregisterLazyLoadHandler(domain, lazyLoaderFactory) {
-        if (Jmx.lazyLoaders) {
-            var array = Jmx.lazyLoaders[domain];
+        if (Core.lazyLoaders) {
+            var array = Core.lazyLoaders[domain];
             if (array) {
                 array.remove(lazyLoaderFactory);
             }
@@ -2016,6 +2012,7 @@ var UI;
 var Core;
 (function (Core) {
     Core.log = Logger.get("Core");
+    Core.lazyLoaders = {};
 })(Core || (Core = {}));
 var numberTypeNames = {
     'byte': true,
@@ -3037,7 +3034,7 @@ var Core;
         var jolokiaStatus = {
             xhr: null
         };
-        var jmxTreeLazyLoadRegistry = Jmx.lazyLoaders;
+        var jmxTreeLazyLoadRegistry = Core.lazyLoaders;
         var profileWorkspace = new Core.Workspace(remoteJolokia, jolokiaStatus, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope, userDetails);
         Core.log.info("Loading the profile using jolokia: " + remoteJolokia);
         profileWorkspace.loadTree();
@@ -3208,6 +3205,65 @@ var IDE;
         return answer;
     }
     IDE.ideaOpenAndNavigate = ideaOpenAndNavigate;
+})(IDE || (IDE = {}));
+var IDE;
+(function (IDE) {
+    var log = Logger.get("IDE");
+    var OpenInIdeDirective = (function () {
+        function OpenInIdeDirective(localStorage, workspace, jolokia) {
+            var _this = this;
+            this.localStorage = localStorage;
+            this.workspace = workspace;
+            this.jolokia = jolokia;
+            this.restrict = 'E';
+            this.replace = true;
+            this.transclude = false;
+            this.scope = {
+                fileName: '@',
+                className: '@',
+                line: '@',
+                column: '@'
+            };
+            this.link = function (scope, element, attrs) {
+                return _this.doLink(scope, element, attrs);
+            };
+        }
+        OpenInIdeDirective.prototype.doLink = function ($scope, $element, $attrs) {
+            var workspace = this.workspace;
+            var jolokia = this.jolokia;
+            var mbean = IDE.getIdeMBean(workspace);
+            var fileName = $scope.fileName;
+            if (mbean && fileName) {
+                var className = $scope.className;
+                var line = $scope.line;
+                var col = $scope.col;
+                if (!angular.isDefined(line) || line === null)
+                    line = 0;
+                if (!angular.isDefined(col) || col === null)
+                    col = 0;
+                if (IDE.isOpenInIdeaSupported(workspace, localStorage)) {
+                    var ideaButton = $('<button class="btn btn-mini"><img src="app/ide/img/intellijidea.png" width="16" height="16"></button>');
+                    function onResult(absoluteName) {
+                        if (!absoluteName) {
+                            log.info("Could not find file in source code: " + fileName + " class: " + className);
+                            ideaButton.attr("title", "Could not find source file: " + fileName);
+                        }
+                        else {
+                            ideaButton.attr("title", "Opening in IDEA: " + absoluteName);
+                            IDE.ideaOpenAndNavigate(mbean, jolokia, absoluteName, line, col);
+                        }
+                    }
+                    ideaButton.on("click", function () {
+                        log.info("Finding local file name: " + fileName + " className: " + className);
+                        IDE.findClassAbsoluteFileName(mbean, jolokia, localStorage, fileName, className, onResult);
+                    });
+                    $element.append(ideaButton);
+                }
+            }
+        };
+        return OpenInIdeDirective;
+    })();
+    IDE.OpenInIdeDirective = OpenInIdeDirective;
 })(IDE || (IDE = {}));
 var IDE;
 (function (IDE) {
@@ -14589,6 +14645,615 @@ var Core;
         });
     }]);
 })(Core || (Core = {}));
+var Kubernetes;
+(function (Kubernetes) {
+    Kubernetes.context = '/kubernetes';
+    Kubernetes.hash = '#' + Kubernetes.context;
+    Kubernetes.defaultRoute = Kubernetes.hash + '/overview';
+    Kubernetes.pluginName = 'Kubernetes';
+    Kubernetes.templatePath = 'app/kubernetes/html/';
+    Kubernetes.log = Logger.get(Kubernetes.pluginName);
+    Kubernetes.appSuffix = ".app";
+    Kubernetes.mbean = Fabric.jmxDomain + ":type=Kubernetes";
+    Kubernetes.managerMBean = Fabric.jmxDomain + ":type=KubernetesManager";
+    function isKubernetes(workspace) {
+        return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, { type: "Kubernetes" });
+    }
+    Kubernetes.isKubernetes = isKubernetes;
+    function setJson($scope, id, collection) {
+        $scope.id = id;
+        if (!$scope.fetched) {
+            return;
+        }
+        if (!id) {
+            $scope.json = '';
+            return;
+        }
+        if (!collection) {
+            return;
+        }
+        var item = collection.find(function (item) {
+            return item.id === id;
+        });
+        if (item) {
+            $scope.json = angular.toJson(item, true);
+            $scope.item = item;
+        }
+        else {
+            $scope.id = undefined;
+            $scope.json = '';
+            $scope.item = undefined;
+        }
+    }
+    Kubernetes.setJson = setJson;
+    function labelsToString(labels) {
+        var answer = "";
+        angular.forEach(labels, function (value, key) {
+            var separator = answer ? "," : "";
+            answer += separator + key + "=" + value;
+        });
+        return answer;
+    }
+    Kubernetes.labelsToString = labelsToString;
+    function initShared($scope) {
+        $scope.$on("labelFilterUpdate", function ($event, text) {
+            var filterText = $scope.tableConfig.filterOptions.filterText;
+            if (Core.isBlank(filterText)) {
+                $scope.tableConfig.filterOptions.filterText = text;
+            }
+            else {
+                var expressions = filterText.split(/\s+/);
+                if (expressions.any(text)) {
+                    expressions = expressions.remove(text);
+                    $scope.tableConfig.filterOptions.filterText = expressions.join(" ");
+                }
+                else {
+                    $scope.tableConfig.filterOptions.filterText = filterText + " " + text;
+                }
+            }
+            $scope.id = undefined;
+        });
+    }
+    Kubernetes.initShared = initShared;
+})(Kubernetes || (Kubernetes = {}));
+var Core;
+(function (Core) {
+    function parsePreferencesJson(value, key) {
+        var answer = null;
+        if (angular.isDefined(value)) {
+            answer = Core.parseJsonText(value, "localStorage for " + key);
+        }
+        return answer;
+    }
+    Core.parsePreferencesJson = parsePreferencesJson;
+    function configuredPluginsForPerspectiveId(perspectiveId, workspace, jolokia, localStorage) {
+        var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspectiveId);
+        if (topLevelTabs && topLevelTabs.length > 0) {
+            topLevelTabs = topLevelTabs.filter(function (tab) {
+                var href = undefined;
+                if (angular.isFunction(tab.href)) {
+                    href = tab.href();
+                }
+                else if (angular.isString(tab.href)) {
+                    href = tab.href;
+                }
+                return href && isValidFunction(workspace, tab.isValid, perspectiveId);
+            });
+            var id = "plugins-" + perspectiveId;
+            var initPlugins = parsePreferencesJson(localStorage[id], id);
+            if (initPlugins) {
+                initPlugins = initPlugins.filter(function (p) {
+                    return topLevelTabs.some(function (tab) { return tab.id === p.id; });
+                });
+                topLevelTabs.forEach(function (tab) {
+                    var knownPlugin = initPlugins.some(function (p) { return p.id === tab.id; });
+                    if (!knownPlugin) {
+                        Core.log.info("Discovered new plugin in JVM since loading configuration: " + tab.id);
+                        initPlugins.push({ id: tab.id, index: -1, displayName: tab.content, enabled: true, isDefault: false });
+                    }
+                });
+            }
+            else {
+                initPlugins = topLevelTabs;
+            }
+        }
+        var answer = safeTabsToPlugins(initPlugins);
+        return answer;
+    }
+    Core.configuredPluginsForPerspectiveId = configuredPluginsForPerspectiveId;
+    function safeTabsToPlugins(tabs) {
+        var answer = [];
+        if (tabs) {
+            tabs.forEach(function (tab, idx) {
+                var name;
+                if (angular.isUndefined(tab.displayName)) {
+                    name = tab.content;
+                }
+                else {
+                    name = tab.displayName;
+                }
+                var enabled;
+                if (angular.isUndefined(tab.enabled)) {
+                    enabled = true;
+                }
+                else {
+                    enabled = tab.enabled;
+                }
+                var isDefault;
+                if (angular.isUndefined(tab.isDefault)) {
+                    isDefault = false;
+                }
+                else {
+                    isDefault = tab.isDefault;
+                }
+                answer.push({ id: tab.id, index: idx, displayName: name, enabled: enabled, isDefault: isDefault });
+            });
+        }
+        return answer;
+    }
+    Core.safeTabsToPlugins = safeTabsToPlugins;
+    function filterTopLevelTabs(perspective, workspace, configuredPlugins) {
+        var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspective);
+        if (perspective === "website")
+            return topLevelTabs;
+        var result = [];
+        configuredPlugins.forEach(function (p) {
+            if (p.enabled) {
+                var pid = p.id;
+                var tab = null;
+                if (pid) {
+                    tab = topLevelTabs.find(function (t) { return t.id === pid; });
+                }
+                if (tab) {
+                    result.push(tab);
+                }
+            }
+        });
+        return result;
+    }
+    Core.filterTopLevelTabs = filterTopLevelTabs;
+    function initPreferenceScope($scope, localStorage, defaults) {
+        angular.forEach(defaults, function (_default, key) {
+            $scope[key] = _default['value'];
+            var converter = _default['converter'];
+            var formatter = _default['formatter'];
+            if (!formatter) {
+                formatter = function (value) {
+                    return value;
+                };
+            }
+            if (!converter) {
+                converter = function (value) {
+                    return value;
+                };
+            }
+            if (key in localStorage) {
+                var value = converter(localStorage[key]);
+                Core.log.debug("from local storage, setting ", key, " to ", value);
+                $scope[key] = value;
+            }
+            else {
+                var value = _default['value'];
+                Core.log.debug("from default, setting ", key, " to ", value);
+                localStorage[key] = value;
+            }
+            var watchFunc = _default['override'];
+            if (!watchFunc) {
+                watchFunc = function (newValue, oldValue) {
+                    if (newValue !== oldValue) {
+                        if (angular.isFunction(_default['pre'])) {
+                            _default.pre(newValue);
+                        }
+                        var value = formatter(newValue);
+                        Core.log.debug("to local storage, setting ", key, " to ", value);
+                        localStorage[key] = value;
+                        if (angular.isFunction(_default['post'])) {
+                            _default.post(newValue);
+                        }
+                    }
+                };
+            }
+            if (_default['compareAsObject']) {
+                $scope.$watch(key, watchFunc, true);
+            }
+            else {
+                $scope.$watch(key, watchFunc);
+            }
+        });
+    }
+    Core.initPreferenceScope = initPreferenceScope;
+    function isValidFunction(workspace, validFn, perspectiveId) {
+        return !validFn || validFn(workspace, perspectiveId);
+    }
+    Core.isValidFunction = isValidFunction;
+    function getDefaultPlugin(perspectiveId, workspace, jolokia, localStorage) {
+        var plugins = Core.configuredPluginsForPerspectiveId(perspectiveId, workspace, jolokia, localStorage);
+        var defaultPlugin = null;
+        plugins.forEach(function (p) {
+            if (p.isDefault) {
+                defaultPlugin = p;
+            }
+        });
+        return defaultPlugin;
+    }
+    Core.getDefaultPlugin = getDefaultPlugin;
+})(Core || (Core = {}));
+var Insight;
+(function (Insight) {
+    Insight.managerMBean = "io.fabric8:type=Fabric";
+    Insight.allContainers = { id: '-- all --' };
+    function hasInsight(workspace) {
+        return workspace.treeContainsDomainAndProperties('io.fabric8.insight', { type: 'Elasticsearch' });
+    }
+    Insight.hasInsight = hasInsight;
+    function hasKibana(workspace) {
+        return workspace.treeContainsDomainAndProperties('hawtio', { type: 'plugin', name: 'hawtio-kibana' });
+    }
+    Insight.hasKibana = hasKibana;
+    function hasEsHead(workspace) {
+        return workspace.treeContainsDomainAndProperties('hawtio', { type: 'plugin', name: 'hawtio-eshead' });
+    }
+    Insight.hasEsHead = hasEsHead;
+    function getInsightMetricsCollectorMBean(workspace) {
+        var node = workspace.findMBeanWithProperties('io.fabric8.insight', { type: 'MetricsCollector' });
+        if (!node) {
+            node = workspace.findMBeanWithProperties('org.fusesource.insight', { type: 'MetricsCollector' });
+        }
+        return node ? node.objectName : null;
+    }
+    Insight.getInsightMetricsCollectorMBean = getInsightMetricsCollectorMBean;
+    function getChildren(node, type, field, hasHost) {
+        var children = [];
+        for (var p in node["properties"]) {
+            var obj = node["properties"][p];
+            if (obj["type"] === 'long' || obj["type"] === 'double') {
+                children.push({ title: p, field: field + p, type: type, hasHost: hasHost });
+            }
+            else if (obj["properties"]) {
+                children.push({ title: p, isFolder: true, children: getChildren(obj, type, field + p + ".", hasHost) });
+            }
+        }
+        return children;
+    }
+    Insight.getChildren = getChildren;
+    function createCharts($scope, chartsDef, element, jolokia) {
+        var chartsDiv = $(element);
+        var width = chartsDiv.width() - 80;
+        var context = cubism.context().serverDelay(interval_to_seconds('1m') * 1000).clientDelay($scope.updateRate).step(interval_to_seconds($scope.timespan) * 1000).size(width);
+        var d3Selection = d3.select(chartsDiv[0]);
+        d3Selection.html("");
+        d3Selection.selectAll(".axis").data(["top", "bottom"]).enter().append("div").attr("class", function (d) {
+            return d + " axis";
+        }).each(function (d) {
+            d3.select(this).call(context.axis().ticks(12).orient(d));
+        });
+        d3Selection.append("div").attr("class", "rule").call(context.rule());
+        context.on("focus", function (i) {
+            d3Selection.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
+        });
+        chartsDef.forEach(function (chartDef) {
+            d3Selection.call(function (div) {
+                div.append("div").data([chart(context, chartDef, jolokia)]).attr("class", "horizon").call(context.horizon());
+            });
+        });
+    }
+    Insight.createCharts = createCharts;
+    function chart(context, chartDef, jolokia) {
+        return context.metric(function (start, stop, step, callback) {
+            var values = [], value = 0, start = +start, stop = +stop;
+            var range = {
+                range: {
+                    timestamp: {
+                        from: new Date(start).toISOString(),
+                        to: new Date(stop).toISOString()
+                    }
+                }
+            };
+            var filter;
+            if (chartDef.query) {
+                filter = {
+                    fquery: {
+                        query: {
+                            filtered: {
+                                query: {
+                                    query_string: {
+                                        query: chartDef.query
+                                    }
+                                },
+                                filter: range
+                            }
+                        }
+                    }
+                };
+            }
+            else {
+                filter = range;
+            }
+            var request = {
+                size: 0,
+                facets: {
+                    histo: {
+                        date_histogram: {
+                            value_field: chartDef.field,
+                            key_field: "timestamp",
+                            interval: step + "ms"
+                        },
+                        facet_filter: filter
+                    }
+                }
+            };
+            var jreq = { type: 'exec', mbean: 'org.elasticsearch:service=restjmx', operation: 'exec', arguments: ['POST', '/_all/' + chartDef.type + '/_search', JSON.stringify(request)] };
+            jolokia.request(jreq, { success: function (response) {
+                var map = {};
+                var data = jQuery.parseJSON(response.value)["facets"]["histo"]["entries"];
+                data.forEach(function (entry) {
+                    map[entry.time] = entry.max;
+                });
+                var delta = 0;
+                if (chartDef.meta !== undefined) {
+                    if (chartDef.meta['type'] === 'trends-up' || chartDef.meta['type'] === 'peak') {
+                        delta = +1;
+                    }
+                    else if (chartDef.meta['type'] === 'trends-down') {
+                        delta = -1;
+                    }
+                }
+                while (start < stop) {
+                    var v = 0;
+                    if (delta !== 0) {
+                        if (map[start - step] !== undefined) {
+                            var d = (map[start] - map[start - step]) * delta;
+                            v = d > 0 ? d : 0;
+                        }
+                    }
+                    else {
+                        if (map[start] !== undefined) {
+                            v = map[start];
+                        }
+                    }
+                    values.push(v);
+                    start += step;
+                }
+                callback(null, values);
+            } });
+        }, chartDef.name);
+    }
+    function interval_to_seconds(string) {
+        var matches = string.match(/(\d+)([Mwdhms])/);
+        switch (matches[2]) {
+            case 'M':
+                return matches[1] * 2592000;
+                ;
+            case 'w':
+                return matches[1] * 604800;
+                ;
+            case 'd':
+                return matches[1] * 86400;
+                ;
+            case 'h':
+                return matches[1] * 3600;
+                ;
+            case 'm':
+                return matches[1] * 60;
+                ;
+            case 's':
+                return matches[1];
+        }
+    }
+    function time_ago(string) {
+        return new Date(new Date().getTime() - (interval_to_seconds(string) * 1000));
+    }
+})(Insight || (Insight = {}));
+var Site;
+(function (Site) {
+    Site.sitePluginEnabled = false;
+    function isSiteNavBarValid() {
+        return Site.sitePluginEnabled;
+    }
+    Site.isSiteNavBarValid = isSiteNavBarValid;
+})(Site || (Site = {}));
+var Perspective;
+(function (Perspective) {
+    Perspective.containerPerspectiveEnabled = true;
+    Perspective.metadata = {
+        kubernetes: {
+            icon: {
+                title: "Kubernetes",
+                type: "img",
+                src: "img/icons/kubernetes.svg"
+            },
+            label: "Kubernetes",
+            isValid: function (workspace) { return !Fabric.isFMCContainer(workspace) && Kubernetes.isKubernetes(workspace); },
+            lastPage: "#/kubernetes/pods",
+            topLevelTabs: {
+                includes: [
+                    {
+                        id: "kubernetes"
+                    },
+                    {
+                        content: "Library",
+                        href: "#/wiki"
+                    },
+                    {
+                        href: "#/docker"
+                    },
+                    {
+                        href: "#/dashboard"
+                    },
+                    {
+                        href: "#/health"
+                    }
+                ]
+            }
+        },
+        fabric: {
+            icon: {
+                title: "Fabric8",
+                type: "img",
+                src: "img/icons/fabric8_icon.svg"
+            },
+            label: "Fabric",
+            isValid: function (workspace) { return Fabric.isFMCContainer(workspace); },
+            lastPage: "#/fabric/containers",
+            topLevelTabs: {
+                includes: [
+                    {
+                        id: "kubernetes"
+                    },
+                    {
+                        id: "fabric.containers"
+                    },
+                    {
+                        id: "fabric.profiles"
+                    },
+                    {
+                        href: "#/wiki/branch/"
+                    },
+                    {
+                        href: "#/fabric"
+                    },
+                    {
+                        id: "fabric.requirements"
+                    },
+                    {
+                        href: "#/wiki/profile"
+                    },
+                    {
+                        href: "#/docker"
+                    },
+                    {
+                        href: "#/dashboard"
+                    },
+                    {
+                        href: "#/health"
+                    }
+                ]
+            }
+        },
+        container: {
+            icon: {
+                title: "Java",
+                type: "img",
+                src: "img/icons/java.svg"
+            },
+            label: "Container",
+            lastPage: "#/logs",
+            isValid: function (workspace) { return workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length; },
+            topLevelTabs: {
+                excludes: [
+                    {
+                        href: "#/fabric"
+                    },
+                    {
+                        href: "#/kubernetes"
+                    },
+                    {
+                        id: "fabric.profiles"
+                    },
+                    {
+                        id: "fabric.containers"
+                    },
+                    {
+                        id: "fabric.requirements"
+                    },
+                    {
+                        id: "fabric.kubernetes"
+                    },
+                    {
+                        href: "#/insight"
+                    },
+                    {
+                        href: "#/camin"
+                    },
+                    {
+                        id: "insight-camel"
+                    },
+                    {
+                        id: "dashboard",
+                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
+                    },
+                    {
+                        id: "health",
+                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
+                    },
+                    {
+                        id: "wiki",
+                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
+                    }
+                ]
+            }
+        },
+        limited: {
+            label: "Limited",
+            lastPage: "#/logs",
+            isValid: function (workspace) { return false; },
+            topLevelTabs: {
+                includes: [
+                    {
+                        href: "#/jmx"
+                    },
+                    {
+                        href: "#/camel"
+                    },
+                    {
+                        href: "#/activemq"
+                    },
+                    {
+                        href: "#/jetty"
+                    },
+                    {
+                        href: "#/logs"
+                    }
+                ]
+            }
+        },
+        website: {
+            label: "WebSite",
+            isValid: function (workspace) { return Site.sitePluginEnabled && Site.isSiteNavBarValid(); },
+            lastPage: "#/site/doc/index.md",
+            topLevelTabs: {
+                includes: [
+                    {
+                        content: "Get Started",
+                        title: "How to get started using hawtio",
+                        href: function () { return "#/site/doc/GetStarted.md"; },
+                        isValid: function () { return Site.isSiteNavBarValid(); }
+                    },
+                    {
+                        content: "FAQ",
+                        title: "Frequently Asked Questions",
+                        href: function () { return "#/site/FAQ.md"; },
+                        isValid: function () { return Site.isSiteNavBarValid(); }
+                    },
+                    {
+                        content: "User Guide",
+                        title: "All the docs on using hawtio",
+                        href: function () { return "#/site/book/doc/index.md"; },
+                        isValid: function () { return Site.isSiteNavBarValid(); }
+                    },
+                    {
+                        content: "Community",
+                        title: "Come on in and join our community!",
+                        href: function () { return "#/site/doc/Community.html"; },
+                        isValid: function () { return Site.isSiteNavBarValid(); }
+                    },
+                    {
+                        content: "Developers",
+                        title: "Resources for developers if you want to hack on hawtio or provide your own plugins",
+                        href: function () { return "#/site/doc/developers/index.md"; },
+                        isValid: function () { return Site.isSiteNavBarValid(); }
+                    },
+                    {
+                        content: "github",
+                        title: "Hawtio's source code and issue tracker",
+                        href: function () { return "https://github.com/hawtio/hawtio"; },
+                        isValid: function () { return Site.isSiteNavBarValid(); }
+                    }
+                ]
+            }
+        }
+    };
+})(Perspective || (Perspective = {}));
 var Perspective;
 (function (Perspective) {
     Perspective.log = Logger.get("Perspective");
@@ -14674,6 +15339,16 @@ var Perspective;
     Perspective.topLevelTabsForPerspectiveId = topLevelTabsForPerspectiveId;
     function filterTabs(tabs, workspace) {
         var matched = [];
+        function pushMatchedTab(tabSpec, tab) {
+            if (tab) {
+                var content = tabSpec.content;
+                if (content) {
+                    tab = angular.copy(tab);
+                    tab.content = content;
+                }
+                matched.push(tab);
+            }
+        }
         angular.forEach(tabs, function (tabSpec) {
             var href = tabSpec.href;
             var id = tabSpec.id;
@@ -14690,27 +15365,21 @@ var Perspective;
                 if (!tab && !id && tabSpec.content) {
                     tab = tabSpec;
                 }
-                if (tab) {
-                    matched.push(tab);
-                }
+                pushMatchedTab(tabSpec, tab);
             }
             else if (id) {
                 var tab = workspace.topLevelTabs.find(function (t) {
                     var tid = t.id;
                     return tid && tid === id;
                 });
-                if (tab) {
-                    matched.push(tab);
-                }
+                pushMatchedTab(tabSpec, tab);
             }
             else if (rhref) {
                 var tab = workspace.topLevelTabs.find(function (t) {
                     var thref = t.href();
                     return thref && thref.match(rhref);
                 });
-                if (tab) {
-                    matched.push(tab);
-                }
+                pushMatchedTab(tabSpec, tab);
             }
         });
         return matched;
@@ -15094,164 +15763,6 @@ var Core;
             }
         };
     }]);
-})(Core || (Core = {}));
-var Core;
-(function (Core) {
-    function parsePreferencesJson(value, key) {
-        var answer = null;
-        if (angular.isDefined(value)) {
-            answer = Core.parseJsonText(value, "localStorage for " + key);
-        }
-        return answer;
-    }
-    Core.parsePreferencesJson = parsePreferencesJson;
-    function configuredPluginsForPerspectiveId(perspectiveId, workspace, jolokia, localStorage) {
-        var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspectiveId);
-        if (topLevelTabs && topLevelTabs.length > 0) {
-            Core.log.debug("Found " + topLevelTabs.length + " plugins");
-            topLevelTabs = topLevelTabs.filter(function (tab) {
-                var href = tab.href();
-                return href && isValidFunction(workspace, tab.isValid, perspectiveId);
-            });
-            Core.log.debug("After filtering there are " + topLevelTabs.length + " plugins");
-            var id = "plugins-" + perspectiveId;
-            var initPlugins = parsePreferencesJson(localStorage[id], id);
-            if (initPlugins) {
-                initPlugins = initPlugins.filter(function (p) {
-                    return topLevelTabs.some(function (tab) { return tab.id === p.id; });
-                });
-                topLevelTabs.forEach(function (tab) {
-                    var knownPlugin = initPlugins.some(function (p) { return p.id === tab.id; });
-                    if (!knownPlugin) {
-                        Core.log.info("Discovered new plugin in JVM since loading configuration: " + tab.id);
-                        initPlugins.push({ id: tab.id, index: -1, displayName: tab.content, enabled: true, isDefault: false });
-                    }
-                });
-            }
-            else {
-                initPlugins = topLevelTabs;
-            }
-        }
-        var answer = safeTabsToPlugins(initPlugins);
-        return answer;
-    }
-    Core.configuredPluginsForPerspectiveId = configuredPluginsForPerspectiveId;
-    function safeTabsToPlugins(tabs) {
-        var answer = [];
-        if (tabs) {
-            tabs.forEach(function (tab, idx) {
-                var name;
-                if (angular.isUndefined(tab.displayName)) {
-                    name = tab.content;
-                }
-                else {
-                    name = tab.displayName;
-                }
-                var enabled;
-                if (angular.isUndefined(tab.enabled)) {
-                    enabled = true;
-                }
-                else {
-                    enabled = tab.enabled;
-                }
-                var isDefault;
-                if (angular.isUndefined(tab.isDefault)) {
-                    isDefault = false;
-                }
-                else {
-                    isDefault = tab.isDefault;
-                }
-                answer.push({ id: tab.id, index: idx, displayName: name, enabled: enabled, isDefault: isDefault });
-            });
-        }
-        return answer;
-    }
-    Core.safeTabsToPlugins = safeTabsToPlugins;
-    function filterTopLevelTabs(perspective, workspace, configuredPlugins) {
-        var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspective);
-        if (perspective === "website")
-            return topLevelTabs;
-        var result = [];
-        configuredPlugins.forEach(function (p) {
-            if (p.enabled) {
-                var pid = p.id;
-                var tab = null;
-                if (pid) {
-                    tab = topLevelTabs.find(function (t) { return t.id === pid; });
-                }
-                if (tab) {
-                    result.push(tab);
-                }
-            }
-        });
-        return result;
-    }
-    Core.filterTopLevelTabs = filterTopLevelTabs;
-    function initPreferenceScope($scope, localStorage, defaults) {
-        angular.forEach(defaults, function (_default, key) {
-            $scope[key] = _default['value'];
-            var converter = _default['converter'];
-            var formatter = _default['formatter'];
-            if (!formatter) {
-                formatter = function (value) {
-                    return value;
-                };
-            }
-            if (!converter) {
-                converter = function (value) {
-                    return value;
-                };
-            }
-            if (key in localStorage) {
-                var value = converter(localStorage[key]);
-                Core.log.debug("from local storage, setting ", key, " to ", value);
-                $scope[key] = value;
-            }
-            else {
-                var value = _default['value'];
-                Core.log.debug("from default, setting ", key, " to ", value);
-                localStorage[key] = value;
-            }
-            var watchFunc = _default['override'];
-            if (!watchFunc) {
-                watchFunc = function (newValue, oldValue) {
-                    if (newValue !== oldValue) {
-                        if (angular.isFunction(_default['pre'])) {
-                            _default.pre(newValue);
-                        }
-                        var value = formatter(newValue);
-                        Core.log.debug("to local storage, setting ", key, " to ", value);
-                        localStorage[key] = value;
-                        if (angular.isFunction(_default['post'])) {
-                            _default.post(newValue);
-                        }
-                    }
-                };
-            }
-            if (_default['compareAsObject']) {
-                $scope.$watch(key, watchFunc, true);
-            }
-            else {
-                $scope.$watch(key, watchFunc);
-            }
-        });
-    }
-    Core.initPreferenceScope = initPreferenceScope;
-    function isValidFunction(workspace, validFn, perspectiveId) {
-        return !validFn || validFn(workspace, perspectiveId);
-    }
-    Core.isValidFunction = isValidFunction;
-    function getDefaultPlugin(perspectiveId, workspace, jolokia, localStorage) {
-        var plugins = Core.configuredPluginsForPerspectiveId(perspectiveId, workspace, jolokia, localStorage);
-        var defaultPlugin = null;
-        plugins.forEach(function (p) {
-            if (p.isDefault) {
-                defaultPlugin = p;
-            }
-        });
-        return defaultPlugin;
-    }
-    Core.getDefaultPlugin = getDefaultPlugin;
 })(Core || (Core = {}));
 var Core;
 (function (Core) {
@@ -15786,6 +16297,9 @@ var Core;
         }
         return answer;
     }]);
+    Core._module.factory('jmxTreeLazyLoadRegistry', function () {
+        return Core.lazyLoaders;
+    });
 })(Core || (Core = {}));
 var Core;
 (function (Core) {
@@ -18912,77 +19426,6 @@ var DataTable;
     }
     DataTable._module.directive('hawtioSimpleTable', ["$compile", function ($compile) { return new DataTable.SimpleDataTable($compile); }]);
 })(DataTable || (DataTable = {}));
-var Kubernetes;
-(function (Kubernetes) {
-    Kubernetes.context = '/kubernetes';
-    Kubernetes.hash = '#' + Kubernetes.context;
-    Kubernetes.defaultRoute = Kubernetes.hash + '/overview';
-    Kubernetes.pluginName = 'Kubernetes';
-    Kubernetes.templatePath = 'app/kubernetes/html/';
-    Kubernetes.log = Logger.get(Kubernetes.pluginName);
-    Kubernetes.appSuffix = ".app";
-    Kubernetes.mbean = Fabric.jmxDomain + ":type=Kubernetes";
-    Kubernetes.managerMBean = Fabric.jmxDomain + ":type=KubernetesManager";
-    function isKubernetes(workspace) {
-        return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, { type: "Kubernetes" });
-    }
-    Kubernetes.isKubernetes = isKubernetes;
-    function setJson($scope, id, collection) {
-        $scope.id = id;
-        if (!$scope.fetched) {
-            return;
-        }
-        if (!id) {
-            $scope.json = '';
-            return;
-        }
-        if (!collection) {
-            return;
-        }
-        var item = collection.find(function (item) {
-            return item.id === id;
-        });
-        if (item) {
-            $scope.json = angular.toJson(item, true);
-            $scope.item = item;
-        }
-        else {
-            $scope.id = undefined;
-            $scope.json = '';
-            $scope.item = undefined;
-        }
-    }
-    Kubernetes.setJson = setJson;
-    function labelsToString(labels) {
-        var answer = "";
-        angular.forEach(labels, function (value, key) {
-            var separator = answer ? "," : "";
-            answer += separator + key + "=" + value;
-        });
-        return answer;
-    }
-    Kubernetes.labelsToString = labelsToString;
-    function initShared($scope) {
-        $scope.$on("labelFilterUpdate", function ($event, text) {
-            var filterText = $scope.tableConfig.filterOptions.filterText;
-            if (Core.isBlank(filterText)) {
-                $scope.tableConfig.filterOptions.filterText = text;
-            }
-            else {
-                var expressions = filterText.split(/\s+/);
-                if (expressions.any(text)) {
-                    expressions = expressions.remove(text);
-                    $scope.tableConfig.filterOptions.filterText = expressions.join(" ");
-                }
-                else {
-                    $scope.tableConfig.filterOptions.filterText = filterText + " " + text;
-                }
-            }
-            $scope.id = undefined;
-        });
-    }
-    Kubernetes.initShared = initShared;
-})(Kubernetes || (Kubernetes = {}));
 var DockerRegistry;
 (function (DockerRegistry) {
     DockerRegistry._module = angular.module(DockerRegistry.pluginName, ['hawtioCore', 'ngResource']);
@@ -19748,381 +20191,6 @@ var ES;
         });
     }]);
 })(ES || (ES = {}));
-var Insight;
-(function (Insight) {
-    Insight.managerMBean = "io.fabric8:type=Fabric";
-    Insight.allContainers = { id: '-- all --' };
-    function hasInsight(workspace) {
-        return workspace.treeContainsDomainAndProperties('io.fabric8.insight', { type: 'Elasticsearch' });
-    }
-    Insight.hasInsight = hasInsight;
-    function hasKibana(workspace) {
-        return workspace.treeContainsDomainAndProperties('hawtio', { type: 'plugin', name: 'hawtio-kibana' });
-    }
-    Insight.hasKibana = hasKibana;
-    function hasEsHead(workspace) {
-        return workspace.treeContainsDomainAndProperties('hawtio', { type: 'plugin', name: 'hawtio-eshead' });
-    }
-    Insight.hasEsHead = hasEsHead;
-    function getInsightMetricsCollectorMBean(workspace) {
-        var node = workspace.findMBeanWithProperties('io.fabric8.insight', { type: 'MetricsCollector' });
-        if (!node) {
-            node = workspace.findMBeanWithProperties('org.fusesource.insight', { type: 'MetricsCollector' });
-        }
-        return node ? node.objectName : null;
-    }
-    Insight.getInsightMetricsCollectorMBean = getInsightMetricsCollectorMBean;
-    function getChildren(node, type, field, hasHost) {
-        var children = [];
-        for (var p in node["properties"]) {
-            var obj = node["properties"][p];
-            if (obj["type"] === 'long' || obj["type"] === 'double') {
-                children.push({ title: p, field: field + p, type: type, hasHost: hasHost });
-            }
-            else if (obj["properties"]) {
-                children.push({ title: p, isFolder: true, children: getChildren(obj, type, field + p + ".", hasHost) });
-            }
-        }
-        return children;
-    }
-    Insight.getChildren = getChildren;
-    function createCharts($scope, chartsDef, element, jolokia) {
-        var chartsDiv = $(element);
-        var width = chartsDiv.width() - 80;
-        var context = cubism.context().serverDelay(interval_to_seconds('1m') * 1000).clientDelay($scope.updateRate).step(interval_to_seconds($scope.timespan) * 1000).size(width);
-        var d3Selection = d3.select(chartsDiv[0]);
-        d3Selection.html("");
-        d3Selection.selectAll(".axis").data(["top", "bottom"]).enter().append("div").attr("class", function (d) {
-            return d + " axis";
-        }).each(function (d) {
-            d3.select(this).call(context.axis().ticks(12).orient(d));
-        });
-        d3Selection.append("div").attr("class", "rule").call(context.rule());
-        context.on("focus", function (i) {
-            d3Selection.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
-        });
-        chartsDef.forEach(function (chartDef) {
-            d3Selection.call(function (div) {
-                div.append("div").data([chart(context, chartDef, jolokia)]).attr("class", "horizon").call(context.horizon());
-            });
-        });
-    }
-    Insight.createCharts = createCharts;
-    function chart(context, chartDef, jolokia) {
-        return context.metric(function (start, stop, step, callback) {
-            var values = [], value = 0, start = +start, stop = +stop;
-            var range = {
-                range: {
-                    timestamp: {
-                        from: new Date(start).toISOString(),
-                        to: new Date(stop).toISOString()
-                    }
-                }
-            };
-            var filter;
-            if (chartDef.query) {
-                filter = {
-                    fquery: {
-                        query: {
-                            filtered: {
-                                query: {
-                                    query_string: {
-                                        query: chartDef.query
-                                    }
-                                },
-                                filter: range
-                            }
-                        }
-                    }
-                };
-            }
-            else {
-                filter = range;
-            }
-            var request = {
-                size: 0,
-                facets: {
-                    histo: {
-                        date_histogram: {
-                            value_field: chartDef.field,
-                            key_field: "timestamp",
-                            interval: step + "ms"
-                        },
-                        facet_filter: filter
-                    }
-                }
-            };
-            var jreq = { type: 'exec', mbean: 'org.elasticsearch:service=restjmx', operation: 'exec', arguments: ['POST', '/_all/' + chartDef.type + '/_search', JSON.stringify(request)] };
-            jolokia.request(jreq, { success: function (response) {
-                var map = {};
-                var data = jQuery.parseJSON(response.value)["facets"]["histo"]["entries"];
-                data.forEach(function (entry) {
-                    map[entry.time] = entry.max;
-                });
-                var delta = 0;
-                if (chartDef.meta !== undefined) {
-                    if (chartDef.meta['type'] === 'trends-up' || chartDef.meta['type'] === 'peak') {
-                        delta = +1;
-                    }
-                    else if (chartDef.meta['type'] === 'trends-down') {
-                        delta = -1;
-                    }
-                }
-                while (start < stop) {
-                    var v = 0;
-                    if (delta !== 0) {
-                        if (map[start - step] !== undefined) {
-                            var d = (map[start] - map[start - step]) * delta;
-                            v = d > 0 ? d : 0;
-                        }
-                    }
-                    else {
-                        if (map[start] !== undefined) {
-                            v = map[start];
-                        }
-                    }
-                    values.push(v);
-                    start += step;
-                }
-                callback(null, values);
-            } });
-        }, chartDef.name);
-    }
-    function interval_to_seconds(string) {
-        var matches = string.match(/(\d+)([Mwdhms])/);
-        switch (matches[2]) {
-            case 'M':
-                return matches[1] * 2592000;
-                ;
-            case 'w':
-                return matches[1] * 604800;
-                ;
-            case 'd':
-                return matches[1] * 86400;
-                ;
-            case 'h':
-                return matches[1] * 3600;
-                ;
-            case 'm':
-                return matches[1] * 60;
-                ;
-            case 's':
-                return matches[1];
-        }
-    }
-    function time_ago(string) {
-        return new Date(new Date().getTime() - (interval_to_seconds(string) * 1000));
-    }
-})(Insight || (Insight = {}));
-var Site;
-(function (Site) {
-    Site.sitePluginEnabled = false;
-    function isSiteNavBarValid() {
-        return Site.sitePluginEnabled;
-    }
-    Site.isSiteNavBarValid = isSiteNavBarValid;
-})(Site || (Site = {}));
-var Perspective;
-(function (Perspective) {
-    Perspective.containerPerspectiveEnabled = true;
-    Perspective.metadata = {
-        kubernetes: {
-            icon: {
-                title: "Kubernetes",
-                type: "img",
-                src: "img/icons/kubernetes.svg"
-            },
-            label: "Kubernetes",
-            isValid: function (workspace) { return !Fabric.isFMCContainer(workspace) && Kubernetes.isKubernetes(workspace); },
-            lastPage: "#/kubernetes/pods",
-            topLevelTabs: {
-                includes: [
-                    {
-                        id: "kubernetes"
-                    },
-                    {
-                        href: "#/wiki"
-                    },
-                    {
-                        href: "#/docker"
-                    },
-                    {
-                        href: "#/dashboard"
-                    },
-                    {
-                        href: "#/health"
-                    }
-                ]
-            }
-        },
-        fabric: {
-            icon: {
-                title: "Fabric8",
-                type: "img",
-                src: "img/icons/fabric8_icon.svg"
-            },
-            label: "Fabric",
-            isValid: function (workspace) { return Fabric.isFMCContainer(workspace); },
-            lastPage: "#/fabric/containers",
-            topLevelTabs: {
-                includes: [
-                    {
-                        id: "kubernetes"
-                    },
-                    {
-                        id: "fabric.containers"
-                    },
-                    {
-                        id: "fabric.profiles"
-                    },
-                    {
-                        href: "#/wiki/branch/"
-                    },
-                    {
-                        href: "#/fabric"
-                    },
-                    {
-                        id: "fabric.requirements"
-                    },
-                    {
-                        href: "#/wiki/profile"
-                    },
-                    {
-                        href: "#/docker"
-                    },
-                    {
-                        href: "#/dashboard"
-                    },
-                    {
-                        href: "#/health"
-                    }
-                ]
-            }
-        },
-        container: {
-            icon: {
-                title: "Java",
-                type: "img",
-                src: "img/icons/java.svg"
-            },
-            label: "Container",
-            lastPage: "#/logs",
-            isValid: function (workspace) { return workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length; },
-            topLevelTabs: {
-                excludes: [
-                    {
-                        href: "#/fabric"
-                    },
-                    {
-                        href: "#/kubernetes"
-                    },
-                    {
-                        id: "fabric.profiles"
-                    },
-                    {
-                        id: "fabric.containers"
-                    },
-                    {
-                        id: "fabric.requirements"
-                    },
-                    {
-                        id: "fabric.kubernetes"
-                    },
-                    {
-                        href: "#/insight"
-                    },
-                    {
-                        href: "#/camin"
-                    },
-                    {
-                        id: "insight-camel"
-                    },
-                    {
-                        id: "dashboard",
-                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
-                    },
-                    {
-                        id: "health",
-                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
-                    },
-                    {
-                        id: "wiki",
-                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
-                    }
-                ]
-            }
-        },
-        limited: {
-            label: "Limited",
-            lastPage: "#/logs",
-            isValid: function (workspace) { return false; },
-            topLevelTabs: {
-                includes: [
-                    {
-                        href: "#/jmx"
-                    },
-                    {
-                        href: "#/camel"
-                    },
-                    {
-                        href: "#/activemq"
-                    },
-                    {
-                        href: "#/jetty"
-                    },
-                    {
-                        href: "#/logs"
-                    }
-                ]
-            }
-        },
-        website: {
-            label: "WebSite",
-            isValid: function (workspace) { return Site.sitePluginEnabled && Site.isSiteNavBarValid(); },
-            lastPage: "#/site/doc/index.md",
-            topLevelTabs: {
-                includes: [
-                    {
-                        content: "Get Started",
-                        title: "How to get started using hawtio",
-                        href: function () { return "#/site/doc/GetStarted.md"; },
-                        isValid: function () { return Site.isSiteNavBarValid(); }
-                    },
-                    {
-                        content: "FAQ",
-                        title: "Frequently Asked Questions",
-                        href: function () { return "#/site/FAQ.md"; },
-                        isValid: function () { return Site.isSiteNavBarValid(); }
-                    },
-                    {
-                        content: "User Guide",
-                        title: "All the docs on using hawtio",
-                        href: function () { return "#/site/book/doc/index.md"; },
-                        isValid: function () { return Site.isSiteNavBarValid(); }
-                    },
-                    {
-                        content: "Community",
-                        title: "Come on in and join our community!",
-                        href: function () { return "#/site/doc/Community.html"; },
-                        isValid: function () { return Site.isSiteNavBarValid(); }
-                    },
-                    {
-                        content: "Developers",
-                        title: "Resources for developers if you want to hack on hawtio or provide your own plugins",
-                        href: function () { return "#/site/doc/developers/index.md"; },
-                        isValid: function () { return Site.isSiteNavBarValid(); }
-                    },
-                    {
-                        content: "github",
-                        title: "Hawtio's source code and issue tracker",
-                        href: function () { return "https://github.com/hawtio/hawtio"; },
-                        isValid: function () { return Site.isSiteNavBarValid(); }
-                    }
-                ]
-            }
-        }
-    };
-})(Perspective || (Perspective = {}));
 var Wiki;
 (function (Wiki) {
     var GitWikiRepository = (function () {
@@ -28020,65 +28088,6 @@ var ArrayHelpers;
     }
     ArrayHelpers.sync = sync;
 })(ArrayHelpers || (ArrayHelpers = {}));
-var IDE;
-(function (IDE) {
-    var log = Logger.get("IDE");
-    var OpenInIdeDirective = (function () {
-        function OpenInIdeDirective(localStorage, workspace, jolokia) {
-            var _this = this;
-            this.localStorage = localStorage;
-            this.workspace = workspace;
-            this.jolokia = jolokia;
-            this.restrict = 'E';
-            this.replace = true;
-            this.transclude = false;
-            this.scope = {
-                fileName: '@',
-                className: '@',
-                line: '@',
-                column: '@'
-            };
-            this.link = function (scope, element, attrs) {
-                return _this.doLink(scope, element, attrs);
-            };
-        }
-        OpenInIdeDirective.prototype.doLink = function ($scope, $element, $attrs) {
-            var workspace = this.workspace;
-            var jolokia = this.jolokia;
-            var mbean = IDE.getIdeMBean(workspace);
-            var fileName = $scope.fileName;
-            if (mbean && fileName) {
-                var className = $scope.className;
-                var line = $scope.line;
-                var col = $scope.col;
-                if (!angular.isDefined(line) || line === null)
-                    line = 0;
-                if (!angular.isDefined(col) || col === null)
-                    col = 0;
-                if (IDE.isOpenInIdeaSupported(workspace, localStorage)) {
-                    var ideaButton = $('<button class="btn btn-mini"><img src="app/ide/img/intellijidea.png" width="16" height="16"></button>');
-                    function onResult(absoluteName) {
-                        if (!absoluteName) {
-                            log.info("Could not find file in source code: " + fileName + " class: " + className);
-                            ideaButton.attr("title", "Could not find source file: " + fileName);
-                        }
-                        else {
-                            ideaButton.attr("title", "Opening in IDEA: " + absoluteName);
-                            IDE.ideaOpenAndNavigate(mbean, jolokia, absoluteName, line, col);
-                        }
-                    }
-                    ideaButton.on("click", function () {
-                        log.info("Finding local file name: " + fileName + " className: " + className);
-                        IDE.findClassAbsoluteFileName(mbean, jolokia, localStorage, fileName, className, onResult);
-                    });
-                    $element.append(ideaButton);
-                }
-            }
-        };
-        return OpenInIdeDirective;
-    })();
-    IDE.OpenInIdeDirective = OpenInIdeDirective;
-})(IDE || (IDE = {}));
 var Infinispan;
 (function (Infinispan) {
     var CLI = (function () {
@@ -30947,13 +30956,10 @@ var Jmx;
 (function (Jmx) {
     var pluginName = 'jmx';
     Jmx.currentProcessId = '';
-    Jmx._module = angular.module(pluginName, ['bootstrap', 'dangle', 'ui.bootstrap', 'ui.bootstrap.modal', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-ui', 'hawtioRbac']);
+    Jmx._module = angular.module(pluginName, ['bootstrap', 'dangle', 'ui.bootstrap', 'ui.bootstrap.modal']);
     Jmx._module.config(["$routeProvider", function ($routeProvider) {
         $routeProvider.when('/jmx/attributes', { templateUrl: 'app/jmx/html/attributes.html' }).when('/jmx/operations', { templateUrl: 'app/jmx/html/operations.html' }).when('/jmx/charts', { templateUrl: 'app/jmx/html/charts.html' }).when('/jmx/chartEdit', { templateUrl: 'app/jmx/html/chartEdit.html' }).when('/jmx/help/:tabName', { templateUrl: 'app/core/html/help.html' }).when('/jmx/widget/donut', { templateUrl: 'app/jmx/html/donutChart.html' }).when('/jmx/widget/area', { templateUrl: 'app/jmx/html/areaChart.html' });
     }]);
-    Jmx._module.factory('jmxTreeLazyLoadRegistry', function () {
-        return Jmx.lazyLoaders;
-    });
     Jmx._module.factory('jmxWidgetTypes', function () {
         return Jmx.jmxWidgetTypes;
     });
@@ -32123,6 +32129,194 @@ var Jmx;
         Core.register(jolokia, $scope, $scope.reqs, onSuccess($scope.render));
     }]);
 })(Jmx || (Jmx = {}));
+var Tree;
+(function (Tree) {
+    Tree.pluginName = 'tree';
+    Tree.log = Logger.get("Tree");
+    function expandAll(el) {
+        treeAction(el, true);
+    }
+    Tree.expandAll = expandAll;
+    function contractAll(el) {
+        treeAction(el, false);
+    }
+    Tree.contractAll = contractAll;
+    function treeAction(el, expand) {
+        $(el).dynatree("getRoot").visit(function (node) {
+            node.expand(expand);
+        });
+    }
+    function sanitize(tree) {
+        if (!tree) {
+            return;
+        }
+        if (angular.isArray(tree)) {
+            tree.forEach(function (folder) {
+                Tree.sanitize(folder);
+            });
+        }
+        var title = tree['title'];
+        if (title) {
+            tree['title'] = title.unescapeHTML(true).escapeHTML();
+        }
+        if (tree.children) {
+            Tree.sanitize(tree.children);
+        }
+    }
+    Tree.sanitize = sanitize;
+    Tree._module = angular.module(Tree.pluginName, ['bootstrap', 'ngResource', 'hawtioCore']);
+    Tree._module.directive('hawtioTree', ["workspace", "$timeout", "$location", function (workspace, $timeout, $location) {
+        return function (scope, element, attrs) {
+            var tree = null;
+            var data = null;
+            var widget = null;
+            var timeoutId = null;
+            var onSelectFn = lookupFunction("onselect");
+            var onDragStartFn = lookupFunction("ondragstart");
+            var onDragEnterFn = lookupFunction("ondragenter");
+            var onDropFn = lookupFunction("ondrop");
+            function lookupFunction(attrName) {
+                var answer = null;
+                var fnName = attrs[attrName];
+                if (fnName) {
+                    answer = Core.pathGet(scope, fnName);
+                    if (!angular.isFunction(answer)) {
+                        answer = null;
+                    }
+                }
+                return answer;
+            }
+            var data = attrs.hawtioTree;
+            var queryParam = data;
+            scope.$watch(data, onWidgetDataChange);
+            scope.$on("hawtio.tree." + data, function (args) {
+                var value = Core.pathGet(scope, data);
+                onWidgetDataChange(value);
+            });
+            element.bind('$destroy', function () {
+                $timeout.cancel(timeoutId);
+            });
+            updateLater();
+            function updateWidget() {
+                Core.$applyNowOrLater(scope);
+            }
+            function onWidgetDataChange(value) {
+                tree = value;
+                if (tree) {
+                    Tree.sanitize(tree);
+                }
+                if (tree && !widget) {
+                    var treeElement = $(element);
+                    var children = Core.asArray(tree);
+                    var hideRoot = attrs["hideroot"];
+                    if ("true" === hideRoot) {
+                        children = tree['children'];
+                    }
+                    var config = {
+                        clickFolderMode: 3,
+                        onActivate: function (node) {
+                            var data = node.data;
+                            if (onSelectFn) {
+                                onSelectFn(data, node);
+                            }
+                            else {
+                                workspace.updateSelectionNode(data);
+                            }
+                            Core.$apply(scope);
+                        },
+                        onClick: function (node, event) {
+                            if (event["metaKey"]) {
+                                event.preventDefault();
+                                var url = $location.absUrl();
+                                if (node && node.data) {
+                                    var key = node.data["key"];
+                                    if (key) {
+                                        var hash = $location.search();
+                                        hash[queryParam] = key;
+                                        var idx = url.indexOf('?');
+                                        if (idx <= 0) {
+                                            url += "?";
+                                        }
+                                        else {
+                                            url = url.substring(0, idx + 1);
+                                        }
+                                        url += $.param(hash);
+                                    }
+                                }
+                                window.open(url, '_blank');
+                                window.focus();
+                                return false;
+                            }
+                            return true;
+                        },
+                        persist: false,
+                        debugLevel: 0,
+                        children: children,
+                        dnd: {
+                            onDragStart: onDragStartFn ? onDragStartFn : function (node) {
+                                console.log("onDragStart!");
+                                return true;
+                            },
+                            onDragEnter: onDragEnterFn ? onDragEnterFn : function (node, sourceNode) {
+                                console.log("onDragEnter!");
+                                return true;
+                            },
+                            onDrop: onDropFn ? onDropFn : function (node, sourceNode, hitMode) {
+                                console.log("onDrop!");
+                                sourceNode.move(node, hitMode);
+                                return true;
+                            }
+                        }
+                    };
+                    if (!onDropFn && !onDragEnterFn && !onDragStartFn) {
+                        delete config["dnd"];
+                    }
+                    widget = treeElement.dynatree(config);
+                    var activatedNode = false;
+                    var activateNodeName = attrs["activatenodes"];
+                    if (activateNodeName) {
+                        var values = scope[activateNodeName];
+                        var tree = treeElement.dynatree("getTree");
+                        if (values && tree) {
+                            angular.forEach(Core.asArray(values), function (value) {
+                                tree.activateKey(value);
+                                activatedNode = true;
+                            });
+                        }
+                    }
+                    var root = treeElement.dynatree("getRoot");
+                    if (root) {
+                        var onRootName = attrs["onroot"];
+                        if (onRootName) {
+                            var fn = scope[onRootName];
+                            if (fn) {
+                                fn(root);
+                            }
+                        }
+                        if (!activatedNode) {
+                            var children = root['getChildren']();
+                            if (children && children.length) {
+                                var child = children[0];
+                                child.expand(true);
+                                child.activate(true);
+                            }
+                        }
+                    }
+                }
+                updateWidget();
+            }
+            function updateLater() {
+                timeoutId = $timeout(function () {
+                    updateWidget();
+                }, 300);
+            }
+        };
+    }]);
+    Tree._module.run(["helpRegistry", function (helpRegistry) {
+        helpRegistry.addDevDoc(Tree.pluginName, 'app/tree/doc/developer.md');
+    }]);
+    hawtioPluginLoader.addModule(Tree.pluginName);
+})(Tree || (Tree = {}));
 var Jmx;
 (function (Jmx) {
     Jmx._module.controller("Jmx.TreeHeaderController", ["$scope", function ($scope) {
@@ -34121,7 +34315,7 @@ var Kubernetes;
                         Core.notification('info', "Running " + name);
                         jolokia.execute(Kubernetes.managerMBean, "apply", json, onSuccess(function (response) {
                             Kubernetes.log.debug("Got response: ", response);
-                            $location.url("/kubernetes/pods");
+                            $location.url("/kubernetes/replicationControllers");
                             Core.$apply($scope);
                         }));
                     }
@@ -34171,20 +34365,6 @@ var Kubernetes;
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
 (function (Kubernetes) {
-    var ReplicationControllerIcon = Kubernetes.controller("ReplicationControllerIcon", ["$scope", "jolokia", function ($scope, jolokia) {
-        $scope.iconUrl = 'img/icons/kubernetes.svg';
-        jolokia.request({
-            type: 'exec',
-            mbean: Kubernetes.mbean,
-            operation: "iconPath(java.lang.String,java.lang.String)",
-            arguments: ['master', $scope.entity.id]
-        }, onSuccess(function (response) {
-            if (response.value) {
-                $scope.iconUrl = Wiki.gitRelativeURL('master', response.value);
-                Core.$apply($scope);
-            }
-        }));
-    }]);
     var OverviewDirective = Kubernetes._module.directive("kubernetesOverview", ["$templateCache", "$compile", "$interpolate", "$timeout", "$window", function ($templateCache, $compile, $interpolate, $timeout, $window) {
         return {
             restrict: 'E',
@@ -34863,6 +35043,7 @@ var Kubernetes;
                 filterText: ''
             },
             columnDefs: [
+                { field: 'id', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
                 { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
                 { field: 'currentState.replicas', displayName: 'Current Replicas' },
                 { field: 'desiredState.replicas', displayName: 'Desired Replicas', cellTemplate: $templateCache.get("desiredReplicas.html") },
@@ -34989,8 +35170,7 @@ var Kubernetes;
             columnDefs: [
                 { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
                 { field: 'selector', displayName: 'Selector', cellTemplate: $templateCache.get("selectorTemplate.html") },
-                { field: 'port', displayName: 'Port' },
-                { field: 'protocol', displayName: 'Protocol' },
+                { field: 'portalIP', displayName: 'Address', cellTemplate: $templateCache.get("portalAddress.html") },
                 { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
             ]
         };
@@ -35061,6 +35241,20 @@ var Kubernetes;
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
 (function (Kubernetes) {
+    var ReplicationControllerIcon = Kubernetes.controller("ReplicationControllerIcon", ["$scope", "jolokia", function ($scope, jolokia) {
+        $scope.iconUrl = 'img/icons/kubernetes.svg';
+        jolokia.request({
+            type: 'exec',
+            mbean: Kubernetes.mbean,
+            operation: "iconPath(java.lang.String,java.lang.String)",
+            arguments: ['master', $scope.entity.id]
+        }, onSuccess(function (response) {
+            if (response.value) {
+                $scope.iconUrl = Wiki.gitRelativeURL('master', response.value);
+                Core.$apply($scope);
+            }
+        }));
+    }]);
     Kubernetes.IDSelector = Kubernetes.controller("IDSelector", ["$scope", function ($scope) {
         $scope.select = function (id) {
             $scope.$emit('kubeSelectedId', id);
@@ -40958,194 +41152,6 @@ var Tomcat;
         }
     }]);
 })(Tomcat || (Tomcat = {}));
-var Tree;
-(function (Tree) {
-    Tree.pluginName = 'tree';
-    Tree.log = Logger.get("Tree");
-    function expandAll(el) {
-        treeAction(el, true);
-    }
-    Tree.expandAll = expandAll;
-    function contractAll(el) {
-        treeAction(el, false);
-    }
-    Tree.contractAll = contractAll;
-    function treeAction(el, expand) {
-        $(el).dynatree("getRoot").visit(function (node) {
-            node.expand(expand);
-        });
-    }
-    function sanitize(tree) {
-        if (!tree) {
-            return;
-        }
-        if (angular.isArray(tree)) {
-            tree.forEach(function (folder) {
-                Tree.sanitize(folder);
-            });
-        }
-        var title = tree['title'];
-        if (title) {
-            tree['title'] = title.unescapeHTML(true).escapeHTML();
-        }
-        if (tree.children) {
-            Tree.sanitize(tree.children);
-        }
-    }
-    Tree.sanitize = sanitize;
-    Tree._module = angular.module(Tree.pluginName, ['bootstrap', 'ngResource', 'hawtioCore']);
-    Tree._module.directive('hawtioTree', ["workspace", "$timeout", "$location", function (workspace, $timeout, $location) {
-        return function (scope, element, attrs) {
-            var tree = null;
-            var data = null;
-            var widget = null;
-            var timeoutId = null;
-            var onSelectFn = lookupFunction("onselect");
-            var onDragStartFn = lookupFunction("ondragstart");
-            var onDragEnterFn = lookupFunction("ondragenter");
-            var onDropFn = lookupFunction("ondrop");
-            function lookupFunction(attrName) {
-                var answer = null;
-                var fnName = attrs[attrName];
-                if (fnName) {
-                    answer = Core.pathGet(scope, fnName);
-                    if (!angular.isFunction(answer)) {
-                        answer = null;
-                    }
-                }
-                return answer;
-            }
-            var data = attrs.hawtioTree;
-            var queryParam = data;
-            scope.$watch(data, onWidgetDataChange);
-            scope.$on("hawtio.tree." + data, function (args) {
-                var value = Core.pathGet(scope, data);
-                onWidgetDataChange(value);
-            });
-            element.bind('$destroy', function () {
-                $timeout.cancel(timeoutId);
-            });
-            updateLater();
-            function updateWidget() {
-                Core.$applyNowOrLater(scope);
-            }
-            function onWidgetDataChange(value) {
-                tree = value;
-                if (tree) {
-                    Tree.sanitize(tree);
-                }
-                if (tree && !widget) {
-                    var treeElement = $(element);
-                    var children = Core.asArray(tree);
-                    var hideRoot = attrs["hideroot"];
-                    if ("true" === hideRoot) {
-                        children = tree['children'];
-                    }
-                    var config = {
-                        clickFolderMode: 3,
-                        onActivate: function (node) {
-                            var data = node.data;
-                            if (onSelectFn) {
-                                onSelectFn(data, node);
-                            }
-                            else {
-                                workspace.updateSelectionNode(data);
-                            }
-                            Core.$apply(scope);
-                        },
-                        onClick: function (node, event) {
-                            if (event["metaKey"]) {
-                                event.preventDefault();
-                                var url = $location.absUrl();
-                                if (node && node.data) {
-                                    var key = node.data["key"];
-                                    if (key) {
-                                        var hash = $location.search();
-                                        hash[queryParam] = key;
-                                        var idx = url.indexOf('?');
-                                        if (idx <= 0) {
-                                            url += "?";
-                                        }
-                                        else {
-                                            url = url.substring(0, idx + 1);
-                                        }
-                                        url += $.param(hash);
-                                    }
-                                }
-                                window.open(url, '_blank');
-                                window.focus();
-                                return false;
-                            }
-                            return true;
-                        },
-                        persist: false,
-                        debugLevel: 0,
-                        children: children,
-                        dnd: {
-                            onDragStart: onDragStartFn ? onDragStartFn : function (node) {
-                                console.log("onDragStart!");
-                                return true;
-                            },
-                            onDragEnter: onDragEnterFn ? onDragEnterFn : function (node, sourceNode) {
-                                console.log("onDragEnter!");
-                                return true;
-                            },
-                            onDrop: onDropFn ? onDropFn : function (node, sourceNode, hitMode) {
-                                console.log("onDrop!");
-                                sourceNode.move(node, hitMode);
-                                return true;
-                            }
-                        }
-                    };
-                    if (!onDropFn && !onDragEnterFn && !onDragStartFn) {
-                        delete config["dnd"];
-                    }
-                    widget = treeElement.dynatree(config);
-                    var activatedNode = false;
-                    var activateNodeName = attrs["activatenodes"];
-                    if (activateNodeName) {
-                        var values = scope[activateNodeName];
-                        var tree = treeElement.dynatree("getTree");
-                        if (values && tree) {
-                            angular.forEach(Core.asArray(values), function (value) {
-                                tree.activateKey(value);
-                                activatedNode = true;
-                            });
-                        }
-                    }
-                    var root = treeElement.dynatree("getRoot");
-                    if (root) {
-                        var onRootName = attrs["onroot"];
-                        if (onRootName) {
-                            var fn = scope[onRootName];
-                            if (fn) {
-                                fn(root);
-                            }
-                        }
-                        if (!activatedNode) {
-                            var children = root['getChildren']();
-                            if (children && children.length) {
-                                var child = children[0];
-                                child.expand(true);
-                                child.activate(true);
-                            }
-                        }
-                    }
-                }
-                updateWidget();
-            }
-            function updateLater() {
-                timeoutId = $timeout(function () {
-                    updateWidget();
-                }, 300);
-            }
-        };
-    }]);
-    Tree._module.run(["helpRegistry", function (helpRegistry) {
-        helpRegistry.addDevDoc(Tree.pluginName, 'app/tree/doc/developer.md');
-    }]);
-    hawtioPluginLoader.addModule(Tree.pluginName);
-})(Tree || (Tree = {}));
 var UI;
 (function (UI) {
     UI._module.directive('hawtioAutoColumns', function () {

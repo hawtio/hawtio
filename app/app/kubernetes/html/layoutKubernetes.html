@@ -22,6 +22,19 @@
           title="{{label.key}}">{{label.title}}</span>
   </div>
 </script>
+<script type="text/ng-template" id="portalAddress.html">
+  <div class="ngCellText">
+    <a target="openService" href="http://{{row.entity.portalIP}}:{{row.entity.port}}/"
+       ng-show="row.entity.portalIP" title="Protocol {{row.entity.protocol}}">
+      {{row.entity.portalIP}}:{{row.entity.port}}
+    </a>
+  </div>
+</script>
+<script type="text/ng-template" id="replicationControllerIconTemplate.html">
+  <div ng-init="entity = entity" ng-controller="Kubernetes.ReplicationControllerIcon">
+    <img class="icon-replication-controller" ng-src="{{iconUrl}}">
+  </div>
+</script>
 <script type="text/ng-template" id="statusTemplate.html">
   <div class="ngCellText" ng-init="entity=row.entity" ng-controller="Kubernetes.PodStatus" title="Pod {{entity.id}} is {{entity.currentState.status}}">
     <!-- in detail view -->
@@ -36,7 +49,7 @@
          title="Open a new window and connect to this container">
         <i class="icon-signin"></i>
       </a>
-    <span>
+    </span>
   </div>
 </script>
 <div class="row-fluid" ng-controller="Kubernetes.TopLevel">
@@ -46,17 +59,17 @@
           title="View an overview of the system">
         <a ng-href="#/kubernetes/overview">Overview</a>
       </li>
-      <li ng-class='{active : isActive("#/kubernetes/pods")}'
-          title="View kubernetes pods and their status">
-        <a ng-href="#/kubernetes/pods">Pods</a>
-      </li>
-      <li ng-class='{active : isActive("#/kubernetes/replicationControllers")}'
-          title="View kubernetes replication controllers and their status">
-        <a ng-href="#/kubernetes/replicationControllers">Replication Controllers</a>
-      </li>
       <li ng-class='{active : isActive("#/kubernetes/services")}'
           title="View kubernetes services and their status">
         <a ng-href="#/kubernetes/services">Services</a>
+      </li>
+      <li ng-class='{active : isActive("#/kubernetes/replicationControllers")}'
+          title="View kubernetes replication controllers and their status">
+        <a ng-href="#/kubernetes/replicationControllers">Controllers</a>
+      </li>
+      <li ng-class='{active : isActive("#/kubernetes/pods")}'
+          title="View kubernetes pods and their status">
+        <a ng-href="#/kubernetes/pods">Pods</a>
       </li>
       <li class=pull-right>
         <span ng-show="version">Kubernetes version: {{version.major}}.{{version.minor}}</span>
