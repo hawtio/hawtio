@@ -1,9 +1,10 @@
+
 ### Change Log
 
 #### 1.4.31
 
-* Bug Fixes
 * Added hawtio-custom-app module to create a version of the hawtio-default war with a subset of the javascript code normally included in hawtio.
+* Fixes [these 6 issues and enhancements](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.31+is%3Aclosed)
 
 #### 1.4.30
 
