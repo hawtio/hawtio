@@ -12,7 +12,6 @@
         <div class="pull-right">
           <form class="form-inline">
             <button class="btn" ng-disabled="!gridOptions.selectedItems.length" ng-click="forwardDialog.open()"
-                    hawtio-show object-name="{{workspace.selection.objectName}}" method-name="sendBodyAndHeaders"
                     title="Forward the selected messages to another endpoint" data-placement="bottom">
               <i class="icon-forward"></i> Forward
             </button>
@@ -39,7 +38,6 @@
               <div class="btn-group" hawtio-pager="messages" on-index-change="selectRowIndex"
                    row-index="rowIndex"></div>
               <button class="btn" ng-disabled="!gridOptions.selectedItems.length" ng-click="forwardDialog.open()"
-                      hawtio-show object-name="{{workspace.selection.objectName}}" method-name="sendBodyAndHeaders"
                       title="Forward the selected messages to another endpoint" data-placement="bottom">
                 <i class="icon-forward"></i> Forward
               </button>
