@@ -180,13 +180,7 @@
               <followSymlinks>false</followSymlinks>
             </fileset>
             <fileset>
-              <directory>${basedir}/src/main/webapp/app</directory>
-              <includes>
-                <include>app.js</include>
-                <include>app.d.ts</include>
-                <include>app.js.map</include>
-                <include>hawtio.d.ts</include>
-              </includes>
+              <directory>${basedir}/src</directory>
             </fileset>
           </filesets>
         </configuration>
@@ -202,6 +196,20 @@
       <properties>
         <gruntOptions>--plugins ${desiredPlugins} --watch true</gruntOptions>
         <gruntArguments>tsc</gruntArguments>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>release</id>
+      <properties>
+        <gruntArguments>dist</gruntArguments>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>dist</id>
+      <properties>
+        <gruntArguments>dist</gruntArguments>
       </properties>
     </profile>
 

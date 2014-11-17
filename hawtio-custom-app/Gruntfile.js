@@ -3,10 +3,13 @@ module.exports = function(grunt) {
 
   grunt.log.writeln("Building hawt.io");
 
-  var sourceDir = '../hawtio-web/src/main/webapp/app';
-  var target = 'src/main/webapp/app';
-  var appjs = target + '/app.js';
-  var appjsMap = target + '/app.js.map';
+  var sourceDir = '../hawtio-web/src/main/webapp/';
+  var sourceAppDir = sourceDir + 'app';
+  var webappDir = 'src/main/webapp/';
+  var target = webappDir + 'app/';
+  var indexHtml = webappDir + 'index.html';
+  var appjs = target + 'app.js';
+  var appjsMap = target + 'app.js.map';
   var ngAnnotateFiles = {};
   ngAnnotateFiles[appjs] = [appjs];
   var typescriptFiles = [];
@@ -15,7 +18,7 @@ module.exports = function(grunt) {
     typescriptFiles.length = 0;
     var plugins = (grunt.option("plugins") || "core,kubernetes,ui").split(',');
     grunt.log.writeln("Desired plugins: ", plugins);
-    grunt.file.recurse(sourceDir, function (abspath, rootDir, subDir, fileName) {
+    grunt.file.recurse(sourceAppDir, function (abspath, rootDir, subDir, fileName) {
       if (subDir && fileName.endsWith('.ts')) {
         var plugin = subDir.split('/')[0];
         plugins.forEach(function(p) {
@@ -52,16 +55,23 @@ module.exports = function(grunt) {
     // https://www.npmjs.org/package/grunt-rename
     rename: {
       declaration: {
-        src: target + '/app.d.ts',
-        dest: target + '/hawtio.d.ts'
+        src: target + 'app.d.ts',
+        dest: target + 'hawtio.d.ts'
       }
     },
 
     copy: {
       main: {
         files: [
-          { src: [appjs], dest: sourceDir + '/app.js' },
-          { src: [appjsMap], dest: sourceDir + '/app.map.js' }
+          { expand: true, cwd: sourceDir, src: 'index.html', dest: webappDir },
+          { expand: true, cwd: sourceDir, src: '**/*.js', dest: webappDir },
+          { expand: true, cwd: sourceDir, src: '**/*.css', dest: webappDir }
+        ]
+      },
+      watch: {
+        files: [
+          { src: [appjs], dest: sourceAppDir + 'app.js' },
+          { src: [appjsMap], dest: sourceAppDir + 'app.map.js' }
         ]
       }
     },
@@ -69,9 +79,23 @@ module.exports = function(grunt) {
     watch: {
       tsc: {
         files: [ sourceDir + "/**/*.ts" ],
-        tasks: [ "filterts", "typescript:base", "ngAnnotate:app", "rename", "copy" ]
+        tasks: [ "filterts", "typescript:base", "ngAnnotate:app", "rename", "copy:watch" ]
       }
     },
+
+    // https://www.npmjs.org/package/grunt-usemin
+    useminPrepare: {
+      html: indexHtml,
+      options: {
+        dest: webappDir
+      }
+    },
+
+    // https://www.npmjs.org/package/grunt-usemin
+    usemin: {
+      html: webappDir + 'index.html'
+    },
+
 
     // https://www.npmjs.org/package/grunt-ng-annotate
     ngAnnotate: {
@@ -91,8 +115,18 @@ module.exports = function(grunt) {
     "rename"
   ]);
 
+  grunt.registerTask("dist", [
+    "copy:main",
+    "default",
+    "useminPrepare",
+    'concat:generated',
+    'cssmin:generated',
+    'uglify:generated',
+    'usemin'
+  ]);
+
   /* task aliases */
-  grunt.registerTask("tsc", [ "default", "copy", "watch:tsc" ]);
+  grunt.registerTask("tsc", [ "default", "copy:watch", "watch:tsc" ]);
 
 
 };

@@ -28,8 +28,9 @@
     "grunt-rename": "^0.1.4",
     "grunt-ts": "~1.12.1",
     "grunt-typescript": "0.4.0",
+    "grunt-usemin": "^2.6.2",
     "load-grunt-tasks": "~0.6.0",
-    "typescript": "~1.1.0-1",
-    "npm-check-updates": "~1.2.0"
+    "npm-check-updates": "~1.2.0",
+    "typescript": "~1.1.0-1"
   }
 }
