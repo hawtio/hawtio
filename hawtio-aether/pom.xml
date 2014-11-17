@@ -38,6 +38,11 @@
       <artifactId>wagon-ahc</artifactId>
       <version>1.2.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.sonatype.sisu</groupId>
+      <artifactId>sisu-inject-plexus</artifactId>
+      <version>2.3.4</version>
+    </dependency>
 
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
