@@ -711,6 +711,14 @@ module Core {
       return true;
     }
 
+    public hasInvokeRightsForName(objectName:string, ...methods:Array<string>) {
+      if (objectName) {
+        var mbean = Core.parseMBean(objectName);
+        return this.hasInvokeRights.apply(this, [this.findMBeanWithProperties(mbean.domain, mbean.attributes)].concat(methods));
+      }
+      return null;
+    }
+
     public hasInvokeRights(selection:Core.NodeSelection, ...methods:Array<string>) {
       var canInvoke = true;
       if (selection) {

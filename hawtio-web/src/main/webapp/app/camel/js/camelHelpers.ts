@@ -685,7 +685,7 @@ module Camel {
    * @method
    */
     // TODO should be a service
-  export function getSelectionCamelContextMBean(workspace:Core.Workspace) {
+  export function getSelectionCamelContextMBean(workspace:Core.Workspace) : string {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
@@ -707,7 +707,7 @@ module Camel {
     return null;
   }
 
-  export function getSelectionCamelContextEndpoints(workspace:Workspace) {
+  export function getSelectionCamelContextEndpoints(workspace:Workspace) : Core.NodeSelection {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
@@ -727,7 +727,7 @@ module Camel {
    * @method
    */
     // TODO Should be a service
-  export function getSelectionCamelTraceMBean(workspace) {
+  export function getSelectionCamelTraceMBean(workspace) : string {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
@@ -755,7 +755,7 @@ module Camel {
     return null;
   }
 
-  export function getSelectionCamelDebugMBean(workspace) {
+  export function getSelectionCamelDebugMBean(workspace) : string {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
@@ -776,7 +776,7 @@ module Camel {
     return null;
   }
 
-  export function getSelectionCamelTypeConverter(workspace) {
+  export function getSelectionCamelTypeConverter(workspace) : string {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
@@ -797,7 +797,7 @@ module Camel {
     return null;
   }
 
-  export function getSelectionCamelRestRegistry(workspace) {
+  export function getSelectionCamelRestRegistry(workspace) : string {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
@@ -818,7 +818,7 @@ module Camel {
     return null;
   }
 
-  export function getSelectionCamelRouteMetrics(workspace) {
+  export function getSelectionCamelRouteMetrics(workspace) : string {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
@@ -910,7 +910,7 @@ module Camel {
    * @method
    */
     // TODO Should be a service
-  export function getSelectionRouteMBean(workspace:Workspace, routeId:String) {
+  export function getSelectionRouteMBean(workspace:Workspace, routeId:String) : string {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
