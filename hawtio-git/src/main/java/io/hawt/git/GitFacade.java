@@ -751,7 +751,7 @@ public class GitFacade extends GitFacadeSupport {
                         InputStream inputStream = null;
                         try {
                             inputStream = ConfigFacade.getSingleton().openURL(importURL);
-                        } catch (IOException e) {
+                        } catch (Throwable e) {
                             LOG.warn("Could not load initial import URL: " + importURL + ". " + e, e);
                             return;
                         }
@@ -762,7 +762,7 @@ public class GitFacade extends GitFacadeSupport {
 
                         try {
                             Zips.unzip(inputStream, rootFolder);
-                        } catch (IOException e) {
+                        } catch (Throwable e) {
                             LOG.warn("Failed to unzip initial import URL: " + importURL + ". " + e, e);
                         }
                     }
@@ -779,7 +779,7 @@ public class GitFacade extends GitFacadeSupport {
                 if (!Objects.equals(".git", name) && !Objects.equals(".gitattributes", name)) {
                     try {
                         count += addFiles(git, rootFolder, file);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         LOG.warn("Failed to add file " + name + ". " + e, e);
                     }
                 }
@@ -791,7 +791,7 @@ public class GitFacade extends GitFacadeSupport {
             CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage("Added import URLs: " + initialImportURLs);
             try {
                 commitThenPush(git, branch, commit);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 LOG.warn("Failed to commit initial import of " + initialImportURLs + ". " + e, e);
             }
         }
