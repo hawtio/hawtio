@@ -5,6 +5,7 @@
         <div class="pull-right">
             <form class="form-inline">
                 <button class="btn" ng-disabled="!gridOptions.selectedItems.length"
+                        hawtio-show object-name="{{workspace.selection.objectName}}" method-name="removeJob"
                         ng-click="deleteJobsDialog.open()"
                         title="Delete the selected jobs">
                   <i class="icon-remove"></i> Delete

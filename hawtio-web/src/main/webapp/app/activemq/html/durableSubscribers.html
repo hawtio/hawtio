@@ -5,10 +5,12 @@
         <div class="pull-right">
             <form class="form-inline">
                 <button class="btn" ng-click="createSubscriberDialog.open()"
+                        hawtio-show object-name="{{workspace.selection.objectName}}" method-name="createDurableSubscriber"
                         title="Create durable subscriber">
                     <i class="icon-plus"></i> Create
                 </button>
                 <button class="btn" ng-click="deleteSubscriberDialog.open()"
+                        hawtio-show object-name="{{$scope.gridOptions.selectedItems[0]._id}}" method-name="destroy"
                         title="Destroy durable subscriber" ng-disabled="gridOptions.selectedItems.length != 1">
                     <i class="icon-exclamation"></i> Destroy
                 </button>
