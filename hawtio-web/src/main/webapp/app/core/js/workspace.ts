@@ -721,10 +721,10 @@ module Core {
           if (mbeanFolder) {
             return this.hasInvokeRights.apply(this, [mbeanFolder].concat(methods));
           } else {
-            log.warn("Failed to find mbean folder with name " + objectName);
+            log.debug("Failed to find mbean folder with name " + objectName);
           }
         } else {
-          log.warn("Failed to parse mbean name " + objectName);
+          log.debug("Failed to parse mbean name " + objectName);
         }
       }
       return canInvoke;
