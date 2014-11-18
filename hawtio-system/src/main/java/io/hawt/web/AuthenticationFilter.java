@@ -94,7 +94,7 @@ public class AuthenticationFilter implements Filter {
             configuration.setRolePrincipalClasses(System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES));
         }
         if (System.getProperty(HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES) != null) {
-            authDiscoveryClasses = System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES);
+            authDiscoveryClasses = System.getProperty(HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES);
         }
 
         if (configuration.isEnabled()) {
