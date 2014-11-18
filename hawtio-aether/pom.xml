@@ -32,16 +32,30 @@
       <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-connector-wagon</artifactId>
       <version>${aether-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.sonatype.sisu</groupId>
+          <artifactId>sisu-inject-plexus</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
+    <!-- added due to above exclusion -->
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-container-default</artifactId>
+      <version>1.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-classworlds</artifactId>
+      <version>2.4</version>
+    </dependency>
+
+
     <dependency>
       <groupId>org.sonatype.maven</groupId>
       <artifactId>wagon-ahc</artifactId>
       <version>1.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sonatype.sisu</groupId>
-      <artifactId>sisu-inject-plexus</artifactId>
-      <version>2.3.4</version>
     </dependency>
 
     <dependency>
