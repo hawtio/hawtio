@@ -711,6 +711,25 @@ module Core {
       return true;
     }
 
+    public hasInvokeRightsForName(objectName:string, ...methods:Array<string>) {
+      // allow invoke by default, same as in hasInvokeRight() below???
+      var canInvoke = true;
+      if (objectName) {
+        var mbean = Core.parseMBean(objectName);
+        if (mbean) {
+          var mbeanFolder = this.findMBeanWithProperties(mbean.domain, mbean.attributes);
+          if (mbeanFolder) {
+            return this.hasInvokeRights.apply(this, [mbeanFolder].concat(methods));
+          } else {
+            log.debug("Failed to find mbean folder with name " + objectName);
+          }
+        } else {
+          log.debug("Failed to parse mbean name " + objectName);
+        }
+      }
+      return canInvoke;
+    }
+
     public hasInvokeRights(selection:Core.NodeSelection, ...methods:Array<string>) {
       var canInvoke = true;
       if (selection) {
