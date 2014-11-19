@@ -135,6 +135,13 @@ set path=%path%;%JAVA_HOME%\jre\bin
 
 The terminal plugin may have trouble the first time in use, not being able to connect and show the terminal. Try selecting another plugin, and go back to the terminal plugin a bit later, and it then may be able to login. Also if the screen is all black, then pressing ENTER may help show the terminal.
 
+
+#### The Camel plugin is not visible or does not show any Camels
+
+The Camel plugin currently requires that the Camel MBeans are stored using the default domain name which is `org.apache.camel`. So if you configure Camel to use a different name, using the `mbeanObjectDomainName` configuration, then the Camel plugin will not work. See details reported in ticket [1712](https://github.com/hawtio/hawtio/issues/1712).
+
+
+
 ### Plugin Questions
 
 Questions on using the available plugins:
