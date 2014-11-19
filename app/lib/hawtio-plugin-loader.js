@@ -198,6 +198,14 @@ var hawtioPluginLoader = (function(self, window, undefined) {
           log.debug("Trying url: ", url);
 
           $.get(url, function (data) {
+                if (angular.isString(data)) {
+                  try {
+                    data = angular.fromJson(data);
+                  } catch (error) {
+                    // ignore this source of plugins
+                    return;
+                  }
+                }
                 // log.debug("got data: ", data);
                 $.extend(plugins, data);
               }).always(function() {
