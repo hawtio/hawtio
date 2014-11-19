@@ -26,6 +26,7 @@ import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
@@ -71,12 +72,27 @@ public class OpenMavenURL {
 
     public InputStream getInputStream() throws IOException {
         AetherFacadeMXBean mbean = findAetherMBean();
-        String fileName = null;
+        String fileName;
         try {
-            fileName = mbean.resolveUrlToFileName(mavenCoords);
+            fileName = mbean.resolveArtifactUrlToFileName(mavenCoords);
         } catch (Exception e) {
             throw new IOException("Failed to resolve mvn:" + mavenCoords + ". " + e, e);
         }
+        return fileNameToStream(fileName);
+    }
+
+    public InputStream getInputStream(String remoteRepositoryUrls) throws IOException {
+        AetherFacadeMXBean mbean = findAetherMBean();
+        String fileName;
+        try {
+            fileName = mbean.resolveUrlAndRepositoriesToFileName(mavenCoords, remoteRepositoryUrls);
+        } catch (Exception e) {
+            throw new IOException("Failed to resolve mvn:" + mavenCoords + ". " + e, e);
+        }
+        return fileNameToStream(fileName);
+    }
+
+    protected static InputStream fileNameToStream(String fileName) throws FileNotFoundException {
         if (fileName != null) {
             File file = new File(fileName);
             if (file.isFile() && file.exists()) {
