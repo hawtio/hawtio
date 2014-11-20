@@ -152,6 +152,7 @@
     <xbean-version>3.16</xbean-version>
     <wagon-version>2.7</wagon-version>
     <war-plugin-version>2.1.1</war-plugin-version>
+    <guava.version>15.0</guava.version>
   </properties>
 
   <repositories>
