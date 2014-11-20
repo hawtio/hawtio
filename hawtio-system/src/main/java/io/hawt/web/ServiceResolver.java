@@ -58,11 +58,11 @@ public class ServiceResolver {
         return answer != null ? answer.toString() : null;
     }
 
-    public String getPodIP(String podName) {
+    public String getPodUrl(String podName, String port) {
         ObjectName objectName = OBJECT_NAME;
-        String operationName = "getPodIP";
-        Object[] params = { podName };
-        String[] types = { String.class.getName() };
+        String operationName = "getPodUrl";
+        Object[] params = { podName, port };
+        String[] types = { String.class.getName(), String.class.getName() };
         Object answer = invokeMBeanOperation(objectName, operationName, params, types);
         return answer != null ? answer.toString() : null;
     }
