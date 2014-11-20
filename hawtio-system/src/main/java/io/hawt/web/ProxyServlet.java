@@ -7,7 +7,6 @@ import org.apache.http.client.methods.AbortableHttpRequest;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContextBuilder;
-import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -160,10 +159,14 @@ public class ProxyServlet extends HttpServlet {
             throws ServletException, IOException {
         // Make the Request
         //note: we won't transfer the protocol version because I'm not sure it would truly be compatible
-        ProxyDetails proxyDetails = new ProxyDetails(servletRequest);
+        ProxyAddress proxyAddress = parseProxyAddress(servletRequest);
+        if (proxyAddress == null) {
+            servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
 
         String method = servletRequest.getMethod();
-        String proxyRequestUri = proxyDetails.getStringProxyURL();
+        String proxyRequestUri = proxyAddress.getFullProxyUrl();
 
         URI targetUriObj = null;
 
@@ -187,8 +190,8 @@ public class ProxyServlet extends HttpServlet {
 
         copyRequestHeaders(servletRequest, proxyRequest, targetUriObj);
 
-        String username = proxyDetails.getUserName();
-        String password = proxyDetails.getPassword();
+        String username = proxyAddress.getUserName();
+        String password = proxyAddress.getPassword();
 
         if (Strings.isNotBlank(username) && Strings.isNotBlank(password)) {
             String encodedCreds = Base64.encodeBase64String((username + ":" + password).getBytes());
@@ -247,6 +250,10 @@ public class ProxyServlet extends HttpServlet {
             //Note: Don't need to close servlet outputStream:
             // http://stackoverflow.com/questions/1159168/should-one-call-close-on-httpservletresponse-getoutputstream-getwriter
         }
+    }
+
+    protected ProxyAddress parseProxyAddress(HttpServletRequest servletRequest) {
+        return new ProxyDetails(servletRequest);
     }
 
     protected boolean doResponseRedirectOrNotModifiedLogic(

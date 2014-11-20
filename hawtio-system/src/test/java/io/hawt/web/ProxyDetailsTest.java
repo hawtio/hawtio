@@ -1,7 +1,6 @@
 package io.hawt.web;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,7 +24,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 8181, details.getPort());
         assertEquals("getProxyPath()", "/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "http", details.getScheme());
-        assertEquals("getStringProxyURL()", "http://localhost:8181/jolokia/", details.getStringProxyURL());
+        assertEquals("getStringProxyURL()", "http://localhost:8181/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -42,7 +41,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 80, details.getPort());
         assertEquals("getProxyPath()", "/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "http", details.getScheme());
-        assertEquals("getStringProxyURL()", "http://localhost/jolokia/", details.getStringProxyURL());
+        assertEquals("getStringProxyURL()", "http://localhost/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -59,7 +58,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 80, details.getPort());
         assertEquals("getProxyPath()", "/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "http", details.getScheme());
-        assertEquals("getStringProxyURL()", "http://localhost/jolokia/", details.getStringProxyURL());
+        assertEquals("getStringProxyURL()", "http://localhost/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -75,7 +74,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 90, details.getPort());
         assertEquals("getProxyPath()", "/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "http", details.getScheme());
-        assertEquals("getStringProxyURL()", "http://localhost:90/jolokia/", details.getStringProxyURL());
+        assertEquals("getStringProxyURL()", "http://localhost:90/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -91,7 +90,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 80, details.getPort());
         assertEquals("getProxyPath()", "/cxf/crm/customerservice/customers/123", details.getProxyPath());
         assertEquals("getScheme()", "http", details.getScheme());
-        assertEquals("getStringProxyURL()", "http://somerest-davsclaus2.rhcloud.com/cxf/crm/customerservice/customers/123", details.getStringProxyURL());
+        assertEquals("getStringProxyURL()", "http://somerest-davsclaus2.rhcloud.com/cxf/crm/customerservice/customers/123", details.getFullProxyUrl());
     }
 
     @Test
@@ -108,7 +107,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 443, details.getPort());
         assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "https", details.getScheme());
-        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getStringProxyURL());
+        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -125,7 +124,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 443, details.getPort());
         assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "https", details.getScheme());
-        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getStringProxyURL());
+        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -142,7 +141,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 443, details.getPort());
         assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "https", details.getScheme());
-        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getStringProxyURL());
+        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -161,7 +160,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 443, details.getPort());
         assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "https", details.getScheme());
-        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/?foo=bar", details.getStringProxyURL());
+        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/?foo=bar", details.getFullProxyUrl());
     }
 
     @Test
@@ -179,7 +178,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 443, details.getPort());
         assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "https", details.getScheme());
-        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getStringProxyURL());
+        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -197,7 +196,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 443, details.getPort());
         assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "https", details.getScheme());
-        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getStringProxyURL());
+        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -215,6 +214,6 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 443, details.getPort());
         assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "https", details.getScheme());
-        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/?search=1234&page=4", details.getStringProxyURL());
+        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/?search=1234&page=4", details.getFullProxyUrl());
     }
 }

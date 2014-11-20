@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 /**
  * A helper object to store the proxy location details
  */
-public class ProxyDetails {
+public class ProxyDetails implements ProxyAddress {
     private static final transient Logger LOG = LoggerFactory.getLogger(ProxyDetails.class);
 
     private String scheme = DEFAULT_SCHEME;
@@ -39,6 +39,16 @@ public class ProxyDetails {
         if (reqQueryString != null) {
             queryString = removeIgnoredHeaderNamesPattern.matcher(reqQueryString).replaceAll("");
         }
+    }
+
+    public ProxyDetails(String scheme, String path, String userName, String password, String host, String queryString, int port) {
+        this.scheme = scheme;
+        this.path = path;
+        this.userName = userName;
+        this.password = password;
+        this.host = host;
+        this.queryString = queryString;
+        this.port = port;
     }
 
     private void parsePathInfo(String pathInfo) {
@@ -70,7 +80,7 @@ public class ProxyDetails {
             // we do not support query parameters
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Proxying to " + getStringProxyURL() + " as user: " + userName);
+                LOG.debug("Proxying to " + getFullProxyUrl() + " as user: " + userName);
             }
         }
     }
@@ -78,11 +88,12 @@ public class ProxyDetails {
     @Override
     public String toString() {
         return "ProxyDetails{" +
-                userName + "@" + getStringProxyURL()
+                userName + "@" + getFullProxyUrl()
                 + "}";
     }
 
-    public String getStringProxyURL() {
+    @Override
+    public String getFullProxyUrl() {
         return scheme + "://" + getHostAndPort() + path + (Strings.isBlank(queryString) ? "" : "?" + queryString) ;
     }
 
@@ -112,10 +123,12 @@ public class ProxyDetails {
         return port;
     }
 
+    @Override
     public String getUserName() {
         return userName;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }

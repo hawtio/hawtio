@@ -160,6 +160,15 @@
     <servlet-name>jolokia-proxy</servlet-name>
     <url-pattern>/proxy/*</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>kube-service</servlet-name>
+    <servlet-class>io.hawt.web.ServiceServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>kube-service</servlet-name>
+    <url-pattern>/service/*</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>file-upload</servlet-name>
