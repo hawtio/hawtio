@@ -263,6 +263,10 @@ set path=%path%;%JAVA_HOME%\jre\bin
 
 <p>Questions on using <a href="http://camel.apache.org/">Apache Camel</a> and hawtio.</p>
 
+<h4 id = "The_Camel_plugin_is_not_visible_or_does_not_show_any_Camels">The Camel plugin is not visible or does not show any Camels</h4>
+
+<p>The Camel plugin currently requires that the Camel MBeans are stored using the default domain name which is <code>org.apache.camel</code>. So if you configure Camel to use a different name, using the <code>mbeanObjectDomainName</code> configuration, then the Camel plugin will not work. See details reported in ticket <a href="https://github.com/hawtio/hawtio/issues/1712">1712</a>.</p>
+
 <h4 id = "Why_does_the_Debug_or_Trace_tab_not_appear_for_my_Camel_route_">Why does the Debug or Trace tab not appear for my Camel route?</h4>
 
 <p>The Debug and Trace tabs depend on the JMX MBeans provided by the Camel release you use.</p>

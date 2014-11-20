@@ -135,6 +135,9 @@ set path=%path%;%JAVA_HOME%\jre\bin
 
 The terminal plugin may have trouble the first time in use, not being able to connect and show the terminal. Try selecting another plugin, and go back to the terminal plugin a bit later, and it then may be able to login. Also if the screen is all black, then pressing ENTER may help show the terminal.
 
+
+
+
 ### Plugin Questions
 
 Questions on using the available plugins:
@@ -159,12 +162,17 @@ The workaround is to install the [Gemini Management bundle](http://www.eclipse.o
 
 Questions on using [Apache Camel](http://camel.apache.org/) and hawtio.
 
+#### The Camel plugin is not visible or does not show any Camels
+
+The Camel plugin currently requires that the Camel MBeans are stored using the default domain name which is `org.apache.camel`. So if you configure Camel to use a different name, using the `mbeanObjectDomainName` configuration, then the Camel plugin will not work. See details reported in ticket [1712](https://github.com/hawtio/hawtio/issues/1712).
+
 #### Why does the Debug or Trace tab not appear for my Camel route?
 
 The Debug and Trace tabs depend on the JMX MBeans provided by the Camel release you use.
 
 * the Debug tab requires at least version 2.12.x or later of your Camel library to be running
 * the Trace tab requires either a 2.12.x or later distro of Camel or a Fuse distro of Camel from about 2.8 or later
+
 
 ### Developer Questions
 

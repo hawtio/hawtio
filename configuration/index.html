@@ -193,6 +193,17 @@
       Whether to return HTTP status 401 when authentication is enabled, but no credentials has been provided. Returning 401 will cause the browser popup window to prompt for credentails. By default this option is false, returning HTTP status 403 instead.
     </td>
   </tr>
+  <tr>
+    <td>
+      hawtio.authenticationContainerDiscoveryClasses
+    </td>
+    <td>
+      io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery
+    </td>
+    <td>
+        List of used AuthenticationContainerDiscovery implementations separated by comma. By default there is just TomcatAuthenticationContainerDiscovery, which is used to authenticate users on Tomcat from tomcat-users.xml file. Feel free to remove it if you want to authenticate users on Tomcat from configured jaas login module or feel free to add more classes of your own.
+    </td>
+  </tr>    
   </tbody>
 </table>
 
@@ -279,6 +290,17 @@ jaas:update</code></pre>
        Whether to return HTTP status 401 when authentication is enabled, but no credentials has been provided. Returning 401 will cause the browser popup window to prompt for credentails. By default this option is false, returning HTTP status 403 instead.
     </td>
   </tr>
+  <tr>
+    <td>
+      hawtio.authenticationContainerDiscoveryClasses
+    </td>
+    <td>
+      io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery
+    </td>
+    <td>
+        List of used AuthenticationContainerDiscovery implementations separated by comma. By default there is just TomcatAuthenticationContainerDiscovery, which is used to authenticate users on Tomcat from tomcat-users.xml file. Feel free to remove it if you want to authenticate users on Tomcat from configured jaas login module or feel free to add more classes of your own.
+    </td>
+  </tr>  
   </tbody>
 </table>
 
@@ -313,6 +335,13 @@ All you have to do is to set the following <strong>CATALINA_OPTS</strong> enviro
 
 <pre><code>&lt;role rolename="manager"/&gt;
 &lt;user username="scott" password="tiger" roles="tomcat,manager"/&gt;</code></pre>
+
+<p>Note that if you still want to use your own login modules instead of conf/tomcat-users.xml file, you can do it by remove TomcatAuthenticationContainerDiscovery from <br/>
+system properties and point to login.conf file with your login modules configuration. Something like:</p>
+
+<pre><code>export CATALINA_OPTS='-Dhawtio.authenticationEnabled=true -Dhawtio.authenticationContainerDiscoveryClasses= -Dhawtio.realm=hawtio -Djava.security.auth.login.config=$CATALINA_BASE/conf/login.conf'</code></pre>
+
+<p>Then you can configure jaas in file TOMCAT_HOME/conf/login.conf (Example of file below in jetty section).     </p>
 
 <h5 id = "Configuring_security_in_Jetty">Configuring security in Jetty</h5>
 
