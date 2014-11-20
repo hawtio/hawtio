@@ -16,7 +16,7 @@ module Wiki {
     $scope.ViewMode = Wiki.ViewMode;
     $scope.setViewMode = (mode:Wiki.ViewMode) => {
       $scope.$emit('Wiki.SetViewMode', mode);
-    }
+    };
 
     wikiBranchMenu.applyMenuExtensions($scope.branchMenuConfig.items);
 

@@ -311,9 +311,16 @@ module Wiki {
       if ($scope.gridOptions.selectedItems.length) {
         $scope.selectedFileHtml = "<ul>" + $scope.gridOptions.selectedItems.map(file => "<li>" + file.name + "</li>").sort().join("") + "</ul>";
 
+        if ($scope.gridOptions.selectedItems.find((file) => { return file.name.endsWith(".profile")})) {
+          $scope.deleteWarning = "You are about to delete document(s) which represent Fabric8 profile(s). This really can't be undone! Wiki operations are low level and may lead to non-functional state of Fabric.";
+        } else {
+          $scope.deleteWarning = null;
+        }
+
         $scope.deleteDialog = Wiki.getDeleteDialog($dialog, <Wiki.DeleteDialogOptions>{
           callbacks: () => { return $scope.deleteAndCloseDialog; },
-          selectedFileHtml : () =>  { return $scope.selectedFileHtml; }
+          selectedFileHtml: () =>  { return $scope.selectedFileHtml; },
+          warning: () => { return $scope.deleteWarning; }
         });
 
         $scope.deleteDialog.open();

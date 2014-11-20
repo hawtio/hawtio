@@ -60,6 +60,7 @@ module Wiki {
   export interface DeleteDialogOptions {
     callbacks: () => String;
     selectedFileHtml: () => String;
+    warning: () => string;
   }
 
 
@@ -67,7 +68,7 @@ module Wiki {
     return $dialog.dialog({
       resolve: $scope,
       templateUrl: 'app/wiki/html/modal/deleteDialog.html',
-      controller: ["$scope", "dialog",  "callbacks", "selectedFileHtml", ($scope, dialog, callbacks, selectedFileHtml) => {
+      controller: ["$scope", "dialog",  "callbacks", "selectedFileHtml", "warning", ($scope, dialog, callbacks, selectedFileHtml, warning) => {
 
         $scope.selectedFileHtml = selectedFileHtml;
 
@@ -77,6 +78,7 @@ module Wiki {
 
         $scope.deleteAndCloseDialog = callbacks;
 
+        $scope.warning = warning;
       }]
     });
   }
