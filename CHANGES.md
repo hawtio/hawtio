@@ -1,6 +1,13 @@
 
 ### Change Log
 
+#### 1.4.36 ... 1.4.32
+
+* Bug fixes
+* Allow to configure `TomcatAuthenticationContainerDiscovery` classes to control how hawtio authenticates on Apache Tomcat
+* Excluded some not needed JARs as dependencies
+* Various improvements and fixes needed for fabric8 v2
+
 #### 1.4.31
 
 * Added hawtio-custom-app module to create a version of the hawtio-default war with a subset of the javascript code normally included in hawtio.
