@@ -31,7 +31,12 @@ public class PodServlet extends ProxyServlet {
 
     @Override
     protected ProxyAddress parseProxyAddress(HttpServletRequest servletRequest) {
+        String userName = null;
+        String password = null;
         String podName = servletRequest.getPathInfo();
+        if (podName == null) {
+            podName = "";
+        }
         if (podName.startsWith("/")) {
             podName = podName.substring(1);
         }
@@ -48,7 +53,15 @@ public class PodServlet extends ProxyServlet {
                 podPath = podPath.substring(idx);
             }
         }
-
+        if (podName.isEmpty()) {
+            // lets list the pods for /pod
+            String url = ServiceResolver.getSingleton().getServiceURL("kubernetes");
+            if (url == null) {
+                return null;
+            }
+            url += "/api/v1beta1/pods";
+            return new DefaultProxyAddress(url, userName, password);
+        }
         String url = ServiceResolver.getSingleton().getPodUrl(podName, podPort);
         if (url == null) {
             if (LOG.isDebugEnabled()) {
@@ -57,8 +70,6 @@ public class PodServlet extends ProxyServlet {
             return null;
         } else {
             url += podPath;
-            String userName = null;
-            String password = null;
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Invoking: " + url + " from pod: " + podName + " port: " + podPort + " path: " + podPath);
             }

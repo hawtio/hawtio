@@ -31,7 +31,12 @@ public class ServiceServlet extends ProxyServlet {
 
     @Override
     protected ProxyAddress parseProxyAddress(HttpServletRequest servletRequest) {
+        String userName = null;
+        String password = null;
         String serviceName = servletRequest.getPathInfo();
+        if (serviceName == null) {
+            serviceName = "";
+        }
         if (serviceName.startsWith("/")) {
             serviceName = serviceName.substring(1);
         }
@@ -40,6 +45,11 @@ public class ServiceServlet extends ProxyServlet {
         if (idx > 0) {
             servicePath = serviceName.substring(idx);
             serviceName = serviceName.substring(0, idx);
+        }
+        if (serviceName.length() == 0) {
+            // lets list the services for /service
+            serviceName = "kubernetes";
+            servicePath = "/api/v1beta1/services";
         }
 
         String url = ServiceResolver.getSingleton().getServiceURL(serviceName);
@@ -50,8 +60,6 @@ public class ServiceServlet extends ProxyServlet {
             return null;
         } else {
             url += servicePath;
-            String userName = null;
-            String password = null;
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Invoking: " + url + " from service: " + serviceName + " path: " + servicePath);
             }
