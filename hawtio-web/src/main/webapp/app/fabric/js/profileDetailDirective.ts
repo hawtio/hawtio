@@ -323,6 +323,21 @@ module Fabric {
           $scope.newProfileName = parts.join('-');
         }
 
+        // abort if already present
+
+        var existingProfile = jolokia.request({
+          type: 'exec',
+          mbean: managerMBean,
+          operation: "getProfile(java.lang.String,java.lang.String)",
+          arguments: [$scope.versionId, $scope.newProfileName]
+        });
+
+        if(existingProfile.value){
+          Core.notification('error', 'Failed to create new profile ' + $scope.newProfileName + '. A profile with the same name already exists.');
+          Core.$apply($scope);
+          return;
+        }
+
         Core.notification('info', 'Copying ' + $scope.profileId + ' to ' + $scope.newProfileName);
 
         copyProfile(jolokia, $scope.versionId, $scope.profileId, $scope.newProfileName, true, () => {
