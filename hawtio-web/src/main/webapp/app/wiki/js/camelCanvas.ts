@@ -9,6 +9,8 @@ module Wiki {
 
     var nodes = [];
     var links = [];
+    var states = [];
+    var transitions = [];
     var folders = {};
 
     var jsPlumbInstance = jsPlumb.getInstance();
@@ -52,6 +54,7 @@ module Wiki {
 
     $scope.$on('$destroy', () => {
       jsPlumbInstance.reset();
+      delete jsPlumbInstance;
     });
 
     $scope.$watch("camelContextTree", () => {
@@ -92,19 +95,64 @@ module Wiki {
         jsPlumbInstance.reset();
 
         jsPlumbInstance.bind('beforeDrop', function(info) {
-          return (info.sourceId !== info.targetId);
+          var nodeIds = _.pluck(nodes, 'cid');
+          var sourceLinkIndex = _.indexOf(nodeIds, info.sourceId);
+          var targetLinkIndex = _.indexOf(nodeIds, info.targetId);
+
+          var allow = (info.sourceId !== info.targetId) &&
+            !(_.find(links, (link) => {
+              return link.source == sourceLinkIndex && link.target == targetLinkIndex;
+            }));
+
+          return allow;
         });
 
         jsPlumbInstance.bind("click", function (c) {
           jsPlumbInstance.detach(c);
         });
 
+        jsPlumbInstance.bind('connection', function (info) {
+          var nodeIds = _.pluck(nodes, 'cid');
+          var sourceLinkIndex = _.indexOf(nodeIds, info.sourceId);
+          var targetLinkIndex = _.indexOf(nodeIds, info.targetId);
+
+          var existingLink = _.find(links, (link) => {
+            return link.source == sourceLinkIndex && link.target == targetLinkIndex;
+          });
+
+          if (!existingLink) {
+            links.push({source: sourceLinkIndex, target: targetLinkIndex});
+          }
+        });
+
+        jsPlumbInstance.bind('connectionMoved', function (info) {
+          var nodeIds = _.pluck(nodes, 'cid');
+          var sourceLinkIndex = _.indexOf(nodeIds, info.originalSourceId);
+          var targetLinkIndex = _.indexOf(nodeIds, info.originalTargetId);
+
+          links = _.filter(links, function(item) {
+            return item.source != sourceLinkIndex || item.target != targetLinkIndex;
+          });
+        });
+
+        jsPlumbInstance.bind('connectionDetached', function (info) {
+          var nodeIds = _.pluck(nodes, 'cid');
+          var sourceLinkIndex = _.indexOf(nodeIds, info.sourceId);
+          var targetLinkIndex = _.indexOf(nodeIds, info.targetId);
+
+          links = _.filter(links, function(item) {
+            return item.source != sourceLinkIndex || item.target != targetLinkIndex;
+          });
+        });
+
         containerElement.html('');
+        canvasDiv.click(() => {
+          containerElement.find('.selected').removeClass('selected');
+        });
 
         Camel.loadRouteXmlNodes($scope, $scope.doc, $scope.selectedRouteId, nodes, links, canvasDiv.width());
 
-        var transitions = [];
-        var states = Core.createGraphStates(nodes, links, transitions);
+        states = Core.createGraphStates(nodes, links, transitions);
 
         jsPlumbInstance.doWhileSuspended(() => {
           //set our container to some arbitrary initial size
@@ -114,8 +162,6 @@ module Wiki {
             'min-height': '800px',
             'min-width': '800px'
           });
-          var containerHeight = 0;
-          var containerWidth = 0;
 
           var createdNodes = [];
 
@@ -140,6 +186,13 @@ module Wiki {
               });
             }
 
+            $(div).click((event) => {
+              var div = $(event.currentTarget);
+              div.parent().find('.selected').removeClass('selected');
+              div.addClass('selected');
+              event.stopPropagation();
+            });
+
             createdNodes.push(div);
           });
 
@@ -162,53 +215,64 @@ module Wiki {
             containment: '.camel-canvas'
           });
 
-          angular.forEach(links, (link) => {
-            jsPlumbInstance.connect({
-              source: nodes[link.source].cid,
-              target: nodes[link.target].cid
-            });
-          });
-
-          var edgeSep = 10;
-
-          // Create the layout and get the buildGraph
-          dagre.layout()
-              .nodeSep(100)
-              .edgeSep(edgeSep)
-              .rankSep(75)
-              .nodes(states)
-              .edges(transitions)
-              .debugLevel(1)
-              .run();
-
-          angular.forEach(states, (node) => {
-
-            // position the node in the graph
-            var id = node.cid;
-            var div = $("#" + id);
-            var divHeight = div.height();
-            var divWidth = div.width();
-            var leftOffset = node.dagre.x + divWidth;
-            var bottomOffset = node.dagre.y + divHeight;
-            if (containerHeight < bottomOffset) {
-              containerHeight = bottomOffset + edgeSep * 2;
-            }
-            if (containerWidth < leftOffset) {
-              containerWidth = leftOffset + edgeSep * 2;
-            }
-            div.css({top: node.dagre.y, left: node.dagre.x});
-          });
-
-          // size the container to fit the graph
-          containerElement.css({
-            'width': containerWidth,
-            'height': containerHeight,
-            'min-height': containerHeight,
-            'min-width': containerWidth
-          });
+          $scope.doLayout();
         });
       }
     });
+
+    $scope.doLayout = () => {
+      jsPlumbInstance.setSuspendEvents(true);
+      jsPlumbInstance.detachEveryConnection();
+      jsPlumbInstance.setSuspendEvents(false);
+
+      var edgeSep = 10;
+
+      // Create the layout and get the buildGraph
+      dagre.layout()
+          .nodeSep(100)
+          .edgeSep(edgeSep)
+          .rankSep(75)
+          .nodes(states)
+          .edges(transitions)
+          .debugLevel(1)
+          .run();
+
+      var containerHeight = 0;
+      var containerWidth = 0;
+
+      angular.forEach(states, (node) => {
+
+        // position the node in the graph
+        var id = node.cid;
+        var div = $("#" + id);
+        var divHeight = div.height();
+        var divWidth = div.width();
+        var leftOffset = node.dagre.x + divWidth;
+        var bottomOffset = node.dagre.y + divHeight;
+        if (containerHeight < bottomOffset) {
+          containerHeight = bottomOffset + edgeSep * 2;
+        }
+        if (containerWidth < leftOffset) {
+          containerWidth = leftOffset + edgeSep * 2;
+        }
+        div.css({top: node.dagre.y, left: node.dagre.x});
+      });
+
+      angular.forEach(links, (link) => {
+        jsPlumbInstance.connect({
+          source: nodes[link.source].cid,
+          target: nodes[link.target].cid
+        });
+      });
+
+      // size the container to fit the graph
+      containerElement.css({
+        'width': containerWidth,
+        'height': containerHeight,
+        'min-height': containerHeight,
+        'min-width': containerWidth
+      });
+    }
 
   }]);
 
