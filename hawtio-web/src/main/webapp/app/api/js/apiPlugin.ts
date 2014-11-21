@@ -11,6 +11,7 @@ module API {
 
   _module.config(["$routeProvider", ($routeProvider) => {
     $routeProvider.
+            when('/api/index', {templateUrl: 'app/api/html/apis.html'}).
             when('/api/wsdl', {templateUrl: 'app/api/html/wsdl.html'}).
             when('/api/wadl', {templateUrl: 'app/api/html/wadl.html'});
   }]);
