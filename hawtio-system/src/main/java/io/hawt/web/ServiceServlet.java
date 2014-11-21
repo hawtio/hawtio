@@ -17,6 +17,7 @@
  */
 package io.hawt.web;
 
+import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,11 @@ public class ServiceServlet extends ProxyServlet {
 
     @Override
     protected ProxyAddress parseProxyAddress(HttpServletRequest servletRequest) {
+        String reqQueryString = servletRequest.getQueryString();
+        String queryPostfix = "";
+        if (Strings.isNotBlank(reqQueryString)) {
+            queryPostfix = "?" + reqQueryString;
+        }
         String userName = null;
         String password = null;
         String serviceName = servletRequest.getPathInfo();
@@ -59,7 +65,7 @@ public class ServiceServlet extends ProxyServlet {
             }
             return null;
         } else {
-            url += servicePath;
+            url += servicePath + queryPostfix;
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Invoking: " + url + " from service: " + serviceName + " path: " + servicePath);
             }

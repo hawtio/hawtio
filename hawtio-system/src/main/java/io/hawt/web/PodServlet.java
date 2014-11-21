@@ -17,6 +17,7 @@
  */
 package io.hawt.web;
 
+import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,12 @@ public class PodServlet extends ProxyServlet {
 
     @Override
     protected ProxyAddress parseProxyAddress(HttpServletRequest servletRequest) {
+        String reqQueryString = servletRequest.getQueryString();
+        String queryPostfix = "";
+        if (Strings.isNotBlank(reqQueryString)) {
+            queryPostfix = "?" + reqQueryString;
+        }
+
         String userName = null;
         String password = null;
         String podName = servletRequest.getPathInfo();
@@ -59,7 +66,7 @@ public class PodServlet extends ProxyServlet {
             if (url == null) {
                 return null;
             }
-            url += "/api/v1beta1/pods";
+            url += "/api/v1beta1/pods" + queryPostfix;
             return new DefaultProxyAddress(url, userName, password);
         }
         String url = ServiceResolver.getSingleton().getPodUrl(podName, podPort);
@@ -67,12 +74,14 @@ public class PodServlet extends ProxyServlet {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No pod for: " + podName + " port: " + podPort + " path: " + podPath);
             }
+            System.out.println("No pod for: " + podName + " port: " + podPort + " path: " + podPath);
             return null;
         } else {
-            url += podPath;
+            url += podPath + queryPostfix;
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Invoking: " + url + " from pod: " + podName + " port: " + podPort + " path: " + podPath);
             }
+            System.out.println("Invoking: " + url + " from pod: " + podName + " port: " + podPort + " path: " + podPath);
             return new DefaultProxyAddress(url, userName, password);
         }
     }

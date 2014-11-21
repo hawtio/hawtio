@@ -11,6 +11,10 @@ module API {
     $scope.selectedApis = [];
     $scope.initDone = false;
 
+    var endpointsPodsURL = Core.url("/service/api-registry/endpoints/pods");
+    var podURL = Core.url("/pod/");
+
+
     $scope.apiOptions = {
       //plugins: [searchProvider],
       data: 'apis',
@@ -51,9 +55,9 @@ module API {
           //width: 300
         },
         {
-          field: 'containerName',
-          displayName: 'Container',
-          cellTemplate: '<div class="ngCellText">{{row.entity.containerName}}</div>',
+          field: 'podId',
+          displayName: 'Pod',
+          cellTemplate: '<div class="ngCellText">{{row.entity.podId}}</div>',
           //width: 100
           width: "*"
         }
@@ -67,7 +71,7 @@ module API {
     }
 
     function loadData() {
-      var restURL = Core.url("/service/api-registry/endpoints/pods");
+      var restURL = endpointsPodsURL;
 
       $http.get(restURL)
         .success((data) => {
@@ -122,17 +126,27 @@ module API {
           // lets use proxy if external URL
           url = Core.useProxyIfExternal(url);
           value["serviceName"] = Core.trimQuotes(value["service"]);
-          var apidocs = value["swaggerUrl"];
-          var wadl = value["wadlUrl"];
-          var wsdl = value["wsdlUrl"];
-          if (apidocs) {
-            value["apidocsHref"] = addParameters("/hawtio-swagger/index.html?baseUri=" + url + apidocs);
-          }
-          if (wadl) {
-            value["wadlHref"] = addParameters("#/api/wadl?wadl=" + encodeURIComponent(url + wadl));
-          }
-          if (wsdl) {
-            value["wsdlHref"] = addParameters("#/api/wsdl?wsdl=" + encodeURIComponent(url + wsdl));
+          var podId = value["podId"];
+          if (podId) {
+            var port = value["port"] || 8080;
+            var prefix = podURL + podId + "/" + port;
+
+            function addPrefix(text) {
+              return (text) ? prefix + text : null;
+            }
+
+            var apidocs = addPrefix(value["swaggerPath"]);
+            var wadl = addPrefix(value["wadlPath"]);
+            var wsdl = addPrefix(value["wsdlPath"]);
+            if (apidocs) {
+              value["apidocsHref"] = addParameters("/hawtio-swagger/index.html?baseUri=" + apidocs);
+            }
+            if (wadl) {
+              value["wadlHref"] = addParameters("#/api/wadl?wadl=" + encodeURIComponent(wadl));
+            }
+            if (wsdl) {
+              value["wsdlHref"] = addParameters("#/api/wsdl?wsdl=" + encodeURIComponent(wsdl));
+            }
           }
         }
         array.push(value);

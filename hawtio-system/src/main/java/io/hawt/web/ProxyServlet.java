@@ -337,9 +337,12 @@ public class ProxyServlet extends HttpServlet {
                 // the correct virtual server
                 if (headerName.equalsIgnoreCase(HttpHeaders.HOST)) {
                     HttpHost host = URIUtils.extractHost(targetUriObj);
-                    headerValue = host.getHostName();
-                    if (host.getPort() != -1)
-                        headerValue += ":" + host.getPort();
+                    if (host != null) {
+                        headerValue = host.getHostName();
+                        if (headerValue != null && host.getPort() != -1) {
+                            headerValue += ":" + host.getPort();
+                        }
+                    }
                 }
                 proxyRequest.addHeader(headerName, headerValue);
             }

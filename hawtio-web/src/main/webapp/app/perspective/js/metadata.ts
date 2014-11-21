@@ -37,6 +37,9 @@ module Perspective {
             href: "#/docker"
           },
           {
+            href: "#/api/index"
+          },
+          {
             href: "#/dashboard"
           },
           {
