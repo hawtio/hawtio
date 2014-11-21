@@ -119,12 +119,10 @@ module API {
         }
 
         // lets check if we are a services object or a folder
-        var url = value["url"];
-        if (url) {
+        var path = value["path"];
+        if (path) {
           addObjectNameProperties(value);
 
-          // lets use proxy if external URL
-          url = Core.useProxyIfExternal(url);
           value["serviceName"] = Core.trimQuotes(value["service"]);
           var podId = value["podId"];
           if (podId) {
@@ -135,6 +133,10 @@ module API {
               return (text) ? prefix + text : null;
             }
 
+            var url = addPrefix(path);
+            // no need to use the proxy as we're using local URIs
+            //url = Core.useProxyIfExternal(url);
+            value["url"] = url;
             var apidocs = addPrefix(value["swaggerPath"]);
             var wadl = addPrefix(value["wadlPath"]);
             var wsdl = addPrefix(value["wsdlPath"]);
