@@ -39,6 +39,7 @@ public class OpenMavenURL {
 
     private static AetherFacade hack;
     private final String mavenCoords;
+    private boolean useAether = true;
 
     public OpenMavenURL(String mavenCoords) {
         this.mavenCoords = mavenCoords;
@@ -74,7 +75,11 @@ public class OpenMavenURL {
         AetherFacadeMXBean mbean = findAetherMBean();
         String fileName;
         try {
-            fileName = mbean.resolveArtifactUrlToFileName(mavenCoords);
+            if (useAether) {
+                fileName = mbean.resolveUrlToFileName(mavenCoords);
+            } else {
+                fileName = mbean.resolveArtifactUrlToFileName(mavenCoords);
+            }
         } catch (Exception e) {
             throw new IOException("Failed to resolve mvn:" + mavenCoords + ". " + e, e);
         }
@@ -85,11 +90,23 @@ public class OpenMavenURL {
         AetherFacadeMXBean mbean = findAetherMBean();
         String fileName;
         try {
-            fileName = mbean.resolveUrlAndRepositoriesToFileName(mavenCoords, remoteRepositoryUrls);
+            if (useAether) {
+                fileName = mbean.resolveUrlAndRepositoriesToFileName(mavenCoords, remoteRepositoryUrls);
+            } else {
+                fileName = mbean.resolveArtifactUrlAndRepositoriesToFileName(mavenCoords, remoteRepositoryUrls);
+            }
         } catch (Exception e) {
             throw new IOException("Failed to resolve mvn:" + mavenCoords + ". " + e, e);
         }
         return fileNameToStream(fileName);
+    }
+
+    public boolean isUseAether() {
+        return useAether;
+    }
+
+    public void setUseAether(boolean useAether) {
+        this.useAether = useAether;
     }
 
     protected static InputStream fileNameToStream(String fileName) throws FileNotFoundException {
