@@ -26854,6 +26854,17 @@ var Fabric;
                         parts.push($scope.newProfileName);
                         $scope.newProfileName = parts.join('-');
                     }
+                    var existingProfile = jolokia.request({
+                        type: 'exec',
+                        mbean: Fabric.managerMBean,
+                        operation: "getProfile(java.lang.String,java.lang.String)",
+                        arguments: [$scope.versionId, $scope.newProfileName]
+                    });
+                    if (existingProfile.value) {
+                        Core.notification('error', 'Failed to create new profile ' + $scope.newProfileName + '. A profile with the same name already exists.');
+                        Core.$apply($scope);
+                        return;
+                    }
                     Core.notification('info', 'Copying ' + $scope.profileId + ' to ' + $scope.newProfileName);
                     Fabric.copyProfile(jolokia, $scope.versionId, $scope.profileId, $scope.newProfileName, true, function () {
                         Core.notification('success', 'Created new profile ' + $scope.newProfileName);
@@ -46095,12 +46106,13 @@ var Wiki;
         return $dialog.dialog({
             resolve: $scope,
             templateUrl: 'app/wiki/html/modal/deleteDialog.html',
-            controller: ["$scope", "dialog", "callbacks", "selectedFileHtml", function ($scope, dialog, callbacks, selectedFileHtml) {
+            controller: ["$scope", "dialog", "callbacks", "selectedFileHtml", "warning", function ($scope, dialog, callbacks, selectedFileHtml, warning) {
                 $scope.selectedFileHtml = selectedFileHtml;
                 $scope.close = function (result) {
                     dialog.close();
                 };
                 $scope.deleteAndCloseDialog = callbacks;
+                $scope.warning = warning;
             }]
         });
     }
@@ -46358,12 +46370,23 @@ var Wiki;
         $scope.openDeleteDialog = function () {
             if ($scope.gridOptions.selectedItems.length) {
                 $scope.selectedFileHtml = "<ul>" + $scope.gridOptions.selectedItems.map(function (file) { return "<li>" + file.name + "</li>"; }).sort().join("") + "</ul>";
+                if ($scope.gridOptions.selectedItems.find(function (file) {
+                    return file.name.endsWith(".profile");
+                })) {
+                    $scope.deleteWarning = "You are about to delete document(s) which represent Fabric8 profile(s). This really can't be undone! Wiki operations are low level and may lead to non-functional state of Fabric.";
+                }
+                else {
+                    $scope.deleteWarning = null;
+                }
                 $scope.deleteDialog = Wiki.getDeleteDialog($dialog, {
                     callbacks: function () {
                         return $scope.deleteAndCloseDialog;
                     },
                     selectedFileHtml: function () {
                         return $scope.selectedFileHtml;
+                    },
+                    warning: function () {
+                        return $scope.deleteWarning;
                     }
                 });
                 $scope.deleteDialog.open();

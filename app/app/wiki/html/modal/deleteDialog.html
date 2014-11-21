@@ -10,6 +10,8 @@
         </p>
 
         <div ng-bind-html-unsafe="selectedFileHtml"></div>
+        <p class="alert alert-danger" ng-show="warning" ng-bind-html-unsafe="warning">
+        </p>
       </div>
     </div>
     <div class="modal-footer">
