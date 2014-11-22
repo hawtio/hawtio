@@ -109,7 +109,7 @@ module API {
         var childPath = path + "/" + key;
 
         function addParameters(href) {
-          angular.forEach(["container", "objectName"], (name) => {
+          angular.forEach(["podId", "port", "objectName"], (name) => {
             var param = value[name];
             if (param) {
               href += "&" + name + "=" + encodeURIComponent(param);
@@ -120,7 +120,8 @@ module API {
 
         // lets check if we are a services object or a folder
         var path = value["path"];
-        if (path) {
+        var url = value["url"];
+        if (url) {
           addObjectNameProperties(value);
 
           value["serviceName"] = Core.trimQuotes(value["service"]);
@@ -133,10 +134,10 @@ module API {
               return (text) ? prefix + text : null;
             }
 
-            var url = addPrefix(path);
+            //var url = addPrefix(path);
             // no need to use the proxy as we're using local URIs
             //url = Core.useProxyIfExternal(url);
-            value["url"] = url;
+            //value["url"] = url;
             var apidocs = addPrefix(value["swaggerPath"]);
             var wadl = addPrefix(value["wadlPath"]);
             var wsdl = addPrefix(value["wsdlPath"]);
