@@ -93,33 +93,38 @@ module Health {
 
 
       $scope.getHumanName = (name) => {
+        var answer = name;
 
-        if (name.startsWith("io.fabric8:service")) {
-            return "Fabric8";
+        if (name.startsWith("org.apache.activemq")) {
+          var nameParts = name.split(',');
+          nameParts.forEach((part) => {
+            if (part.startsWith('brokerName')) {
+              var parts = part.split('=');
+              if (parts[1]) {
+                answer = "Broker: " + parts[1];
+              }
+            }
+          });
+          return answer;
         }
 
-        var nameParts = name.split(',');
+        if (name.startsWith("io.fabric8:service")) {
+          return "Fabric8";
+        }
 
+        // see if there is a desc attribute then use that as description
+        var nameParts = name.split(',');
         nameParts.forEach((part) => {
-        
+          if (part.startsWith('desc')) {
             var parts = part.split('=');
-            
-            if (name.startsWith("org.apache.activemq")) {
-                if (part.startsWith('brokerName')) {
-                    if (parts[1]) {
-                        return "Broker: " + parts[1];
-                    }
-                }
+            if (parts[1]) {
+              answer = parts[1];
             }
-            
-            if (part.startsWith('desc=')) {
-                return parts[1];
-            }
+          }
         });
 
-        return name;
+        return answer;
       };
-
 
       $scope.getMBeans = () => {
         var healthMap:any = getHealthMBeans(workspace);
