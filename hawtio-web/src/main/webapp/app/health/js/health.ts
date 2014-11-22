@@ -93,25 +93,31 @@ module Health {
 
 
       $scope.getHumanName = (name) => {
-        if (name.startsWith("org.apache.activemq")) {
-          var answer = name;
-          var nameParts = name.split(',');
-          nameParts.forEach((part) => {
-            if (part.startsWith('brokerName')) {
-              var parts = part.split('=');
-              if (parts[1]) {
-                answer = "Broker: " + parts[1];
-              }
-            }
-          });
-          return answer;
-        }
+
         if (name.startsWith("io.fabric8:service")) {
-          return "Fabric8";
+            return "Fabric8";
         }
+
+        var nameParts = name.split(',');
+
+        nameParts.forEach((part) => {
+        
+            var parts = part.split('=');
+            
+            if (name.startsWith("org.apache.activemq")) {
+                if (part.startsWith('brokerName')) {
+                    if (parts[1]) {
+                        return "Broker: " + parts[1];
+                    }
+                }
+            }
+            
+            if (part.startsWith('desc=')) {
+                return parts[1];
+            }
+        });
 
         return name;
-
       };
 
 
