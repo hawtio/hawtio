@@ -8673,12 +8673,135 @@ var API;
     API.pluginName = 'api';
     API._module = angular.module(API.pluginName, ['bootstrap', 'hawtioCore', 'hawtio-ui']);
     API._module.config(["$routeProvider", function ($routeProvider) {
-        $routeProvider.when('/api/wsdl', { templateUrl: 'app/api/html/wsdl.html' }).when('/api/wadl', { templateUrl: 'app/api/html/wadl.html' });
+        $routeProvider.when('/api/index', { templateUrl: 'app/api/html/apis.html' }).when('/api/wsdl', { templateUrl: 'app/api/html/wsdl.html' }).when('/api/wadl', { templateUrl: 'app/api/html/wadl.html' });
     }]);
     API._module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", function ($location, workspace, viewRegistry, layoutFull, helpRegistry) {
         viewRegistry['api'] = layoutFull;
     }]);
     hawtioPluginLoader.addModule(API.pluginName);
+})(API || (API = {}));
+var API;
+(function (API) {
+    API._module.controller("API.ApisController", ["$scope", "localStorage", "$routeParams", "$location", "jolokia", "workspace", "$compile", "$templateCache", "$http", function ($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache, $http) {
+        $scope.path = "apis";
+        $scope.apis = null;
+        $scope.selectedApis = [];
+        $scope.initDone = false;
+        var endpointsPodsURL = Core.url("/service/api-registry/endpoints/pods");
+        var podURL = Core.url("/pod/");
+        $scope.apiOptions = {
+            data: 'apis',
+            showFilter: false,
+            showColumnMenu: false,
+            filterOptions: {
+                filterText: "",
+                useExternalFilter: false
+            },
+            selectedItems: $scope.selectedApis,
+            rowHeight: 32,
+            showSelectionCheckbox: false,
+            selectWithCheckboxOnly: true,
+            columnDefs: [
+                {
+                    field: 'serviceName',
+                    displayName: 'Service',
+                    cellTemplate: '<div class="ngCellText">{{row.entity.serviceName}}</div>',
+                    width: "***"
+                },
+                {
+                    field: 'wadlHref',
+                    displayName: 'APIs',
+                    cellTemplate: '<div class="ngCellText">' + '<a ng-show="row.entity.apidocsHref" ng-href="{{row.entity.apidocsHref}}"><i class="icon-puzzle-piece"></i> Swagger</a> ' + '<a ng-show="row.entity.wadlHref" ng-href="{{row.entity.wadlHref}}"><i class="icon-puzzle-piece"></i> WADL</a> ' + '<a ng-show="row.entity.wsdlHref" ng-href="{{row.entity.wsdlHref}}"><i class="icon-puzzle-piece"></i> WSDL</a>' + '</div>',
+                    width: "*"
+                },
+                {
+                    field: 'url',
+                    displayName: 'Endpoint',
+                    cellTemplate: '<div class="ngCellText"><a target="endpoint" href="{{row.entity.url}}">{{row.entity.url}}</a></div>',
+                    width: "***"
+                },
+                {
+                    field: 'podId',
+                    displayName: 'Pod',
+                    cellTemplate: '<div class="ngCellText">{{row.entity.podId}}</div>',
+                    width: "*"
+                }
+            ]
+        };
+        function matchesFilter(text) {
+            var filter = $scope.searchFilter;
+            return !filter || (text && text.has(filter));
+        }
+        function loadData() {
+            var restURL = endpointsPodsURL;
+            $http.get(restURL).success(function (data) {
+                createFlatList(restURL, data);
+            }).error(function (data) {
+                API.log.debug("Error fetching image repositories:", data);
+                createFlatList(restURL, null);
+            });
+        }
+        loadData();
+        function addObjectNameProperties(object) {
+            var objectName = object["objectName"];
+            if (objectName) {
+                var properties = Core.objectNameProperties(objectName);
+                if (properties) {
+                    angular.forEach(properties, function (value, key) {
+                        if (!object[key]) {
+                            object[key] = value;
+                        }
+                    });
+                }
+            }
+            return null;
+        }
+        function createFlatList(restURL, json, path) {
+            if (path === void 0) { path = ""; }
+            var array = [];
+            angular.forEach(json, function (value, key) {
+                var childPath = path + "/" + key;
+                function addParameters(href) {
+                    angular.forEach(["container", "objectName"], function (name) {
+                        var param = value[name];
+                        if (param) {
+                            href += "&" + name + "=" + encodeURIComponent(param);
+                        }
+                    });
+                    return href;
+                }
+                var url = value["url"];
+                if (url) {
+                    addObjectNameProperties(value);
+                    url = Core.useProxyIfExternal(url);
+                    value["serviceName"] = Core.trimQuotes(value["service"]);
+                    var podId = value["podId"];
+                    if (podId) {
+                        var port = value["port"] || 8080;
+                        var prefix = podURL + podId + "/" + port;
+                        function addPrefix(text) {
+                            return (text) ? prefix + text : null;
+                        }
+                        var apidocs = addPrefix(value["swaggerPath"]);
+                        var wadl = addPrefix(value["wadlPath"]);
+                        var wsdl = addPrefix(value["wsdlPath"]);
+                        if (apidocs) {
+                            value["apidocsHref"] = addParameters("/hawtio-swagger/index.html?baseUri=" + apidocs);
+                        }
+                        if (wadl) {
+                            value["wadlHref"] = addParameters("#/api/wadl?wadl=" + encodeURIComponent(wadl));
+                        }
+                        if (wsdl) {
+                            value["wsdlHref"] = addParameters("#/api/wsdl?wsdl=" + encodeURIComponent(wsdl));
+                        }
+                    }
+                }
+                array.push(value);
+            });
+            $scope.apis = array;
+            $scope.initDone = true;
+        }
+    }]);
 })(API || (API = {}));
 var API;
 (function (API) {
@@ -15101,6 +15224,9 @@ var Perspective;
                         href: "#/docker"
                     },
                     {
+                        href: "#/api/index"
+                    },
+                    {
                         href: "#/dashboard"
                     },
                     {
@@ -19489,35 +19615,40 @@ var DockerRegistry;
 var PollHelpers;
 (function (PollHelpers) {
     var log = Logger.get("PollHelpers");
-    function setupPolling($scope, updateFunction, period) {
+    function setupPolling($scope, updateFunction, period, $timeout, jolokia) {
         if (period === void 0) { period = 2000; }
         if ($scope.$hasPoller) {
             log.debug("scope already has polling set up, ignoring subsequent polling request");
             return;
         }
         $scope.$hasPoller = true;
-        var $timeout = Core.injector.get('$timeout');
-        var jolokia = Core.injector.get('jolokia');
+        if (!$timeout) {
+            $timeout = Core.injector.get('$timeout');
+        }
+        if (!jolokia) {
+            jolokia = Core.injector.get('jolokia');
+        }
         var promise = undefined;
         var name = $scope.name || 'anonymous scope';
         var refreshFunction = function () {
-            log.debug("polling for scope: ", name);
             updateFunction(function () {
                 if (jolokia.isRunning() && $scope.$hasPoller) {
                     promise = $timeout(refreshFunction, period);
                 }
             });
         };
-        $scope.$on('$destroy', function () {
-            log.debug("scope", name, " being destroyed, cancelling polling");
-            delete $scope.$hasPoller;
-            $timeout.cancel(promise);
-        });
-        $scope.$on('$routeChangeStart', function () {
-            log.debug("route changing, cancelling polling for scope: ", name);
-            delete $scope.$hasPoller;
-            $timeout.cancel(promise);
-        });
+        if ($scope.$on) {
+            $scope.$on('$destroy', function () {
+                log.debug("scope", name, " being destroyed, cancelling polling");
+                delete $scope.$hasPoller;
+                $timeout.cancel(promise);
+            });
+            $scope.$on('$routeChangeStart', function () {
+                log.debug("route changing, cancelling polling for scope: ", name);
+                delete $scope.$hasPoller;
+                $timeout.cancel(promise);
+            });
+        }
         return refreshFunction;
     }
     PollHelpers.setupPolling = setupPolling;
@@ -39263,6 +39394,52 @@ var RBAC;
         };
     }]);
 })(RBAC || (RBAC = {}));
+var Service;
+(function (Service) {
+    Service.pluginName = 'Service';
+    Service.log = Logger.get(Service.pluginName);
+})(Service || (Service = {}));
+var Service;
+(function (Service) {
+    Service._module = angular.module(Service.pluginName, ['hawtioCore']);
+    Service._module.factory("ServiceRegistry", ['$http', '$rootScope', function ($http, $rootScope) {
+        var self = {
+            name: 'ServiceRegistry',
+            services: [],
+            fetch: function (next) {
+                $http({
+                    method: 'GET',
+                    url: 'service'
+                }).success(function (data, status, headers, config) {
+                    self.onSuccessfulPoll(next, data, status, headers, config);
+                }).error(function (data, status, headers, config) {
+                    self.onFailedPoll(next, data, status, headers, config);
+                });
+            },
+            onSuccessfulPoll: function (next, data, status, headers, config) {
+                var triggerUpdate = ArrayHelpers.sync(self.services, data.items);
+                if (triggerUpdate) {
+                    Service.log.debug("Services updated: ", self.services);
+                    Core.$apply($rootScope);
+                }
+                next();
+            },
+            onFailedPoll: function (next, data, status, headers, config) {
+                Service.log.debug("Failed poll, data: ", data, " status: ", status);
+                next();
+            }
+        };
+        return self;
+    }]);
+    Service._module.run(['ServiceRegistry', '$timeout', 'jolokia', function (ServiceRegistry, $timeout, jolokia) {
+        ServiceRegistry.go = PollHelpers.setupPolling(ServiceRegistry, function (next) {
+            ServiceRegistry.fetch(next);
+        }, 2000, $timeout, jolokia);
+        ServiceRegistry.go();
+        Service.log.debug("Loaded");
+    }]);
+    hawtioPluginLoader.addModule(Service.pluginName);
+})(Service || (Service = {}));
 var Site;
 (function (Site) {
     var pluginName = 'site';
