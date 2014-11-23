@@ -44,6 +44,7 @@ module Wiki {
     $scope.routeIds = [];
 
     $scope.selectedRouteId = null;
+    $scope.selectedNode = null;
 
     $scope.addDialog = new UI.Dialog();
     $scope.propertiesDialog = new UI.Dialog();
@@ -87,6 +88,55 @@ module Wiki {
           log.debug("Camel route IDs:", $scope.routeIds);
           log.debug("Camel folders map:", folders);
         });
+      }
+    });
+
+    $scope.$watch("selectedNode", () => {
+      if ($scope.selectedNode) {
+        var nodeName = Camel.getFolderCamelNodeId($scope.selectedNode);
+        $scope.nodeData = Camel.getRouteFolderJSON($scope.selectedNode);
+        $scope.nodeDataChangedFields = {};
+        $scope.nodeModel = Camel.getCamelSchema(nodeName);
+        if ($scope.nodeModel) {
+          $scope.propertiesTemplate = "app/wiki/html/camelPropertiesEdit.html";
+        }
+        $scope.selectedEndpoint = null;
+        if ("endpoint" === nodeName) {
+          var uri = $scope.nodeData["uri"];
+          if (uri) {
+            // lets decompose the URI into scheme, path and parameters
+            var idx = uri.indexOf(":");
+            if (idx > 0) {
+              var endpointScheme = uri.substring(0, idx);
+              var endpointPath = uri.substring(idx + 1);
+              // for empty paths lets assume we need // on a URI
+              $scope.endpointPathHasSlashes = endpointPath ? false : true;
+              if (endpointPath.startsWith("//")) {
+                endpointPath = endpointPath.substring(2);
+                $scope.endpointPathHasSlashes = true;
+              }
+              idx = endpointPath.indexOf("?");
+              var endpointParameters = {};
+              if (idx > 0) {
+                var parameters = endpointPath.substring(idx + 1);
+                endpointPath = endpointPath.substring(0, idx);
+                endpointParameters = Core.stringToHash(parameters);
+              }
+
+              $scope.endpointScheme = endpointScheme;
+              $scope.endpointPath = endpointPath;
+              $scope.endpointParameters = endpointParameters;
+
+              console.log("endpoint " + endpointScheme + " path " + endpointPath + " and parameters " + JSON.stringify(endpointParameters));
+              $scope.loadEndpointSchema(endpointScheme);
+              $scope.selectedEndpoint = {
+                endpointScheme: endpointScheme,
+                endpointPath: endpointPath,
+                parameters: endpointParameters
+              };
+            }
+          }
+        }
       }
     });
 
@@ -148,6 +198,7 @@ module Wiki {
         containerElement.html('');
         canvasDiv.click(() => {
           containerElement.find('.selected').removeClass('selected');
+          $scope.selectedNode = null;
         });
 
         Camel.loadRouteXmlNodes($scope, $scope.doc, $scope.selectedRouteId, nodes, links, canvasDiv.width());
@@ -190,6 +241,9 @@ module Wiki {
               var div = $(event.currentTarget);
               div.parent().find('.selected').removeClass('selected');
               div.addClass('selected');
+
+              $scope.selectedNode = folders[div.attr('id')];
+
               event.stopPropagation();
             });
 
@@ -272,7 +326,7 @@ module Wiki {
         'min-height': containerHeight,
         'min-width': containerWidth
       });
-    }
+    };
 
   }]);
 
