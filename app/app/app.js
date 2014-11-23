@@ -8762,7 +8762,7 @@ var API;
             angular.forEach(json, function (value, key) {
                 var childPath = path + "/" + key;
                 function addParameters(href) {
-                    angular.forEach(["container", "objectName"], function (name) {
+                    angular.forEach(["podId", "port", "objectName"], function (name) {
                         var param = value[name];
                         if (param) {
                             href += "&" + name + "=" + encodeURIComponent(param);
@@ -8770,10 +8770,10 @@ var API;
                     });
                     return href;
                 }
+                var path = value["path"];
                 var url = value["url"];
                 if (url) {
                     addObjectNameProperties(value);
-                    url = Core.useProxyIfExternal(url);
                     value["serviceName"] = Core.trimQuotes(value["service"]);
                     var podId = value["podId"];
                     if (podId) {
@@ -8807,14 +8807,29 @@ var API;
 (function (API) {
     API._module.controller("API.WadlViewController", ["$scope", "$location", "$http", "jolokia", function ($scope, $location, $http, jolokia) {
         API.initScope($scope, $location, jolokia);
-        $scope.url = $location.search()["wadl"];
-        API.loadXml($scope.url, onWsdl);
+        var search = $location.search();
+        $scope.url = search["wadl"];
+        $scope.podId = search["podId"];
+        $scope.port = search["port"];
         $scope.$watch("apidocs", enrichApiDocsWithSchema);
         $scope.$watch("jsonSchema", enrichApiDocsWithSchema);
+        API.loadXml($scope.url, onWsdl);
         $scope.tryInvoke = function (resource, method) {
+            var useProxy = true;
             if (resource) {
                 var path = resource.fullPath || resource.path;
                 if (path) {
+                    if ($scope.podId) {
+                        var idx = path.indexOf("://");
+                        if (idx > 0) {
+                            var pathWithoutProtocol = path.substring(idx + 3);
+                            var idx = pathWithoutProtocol.indexOf("/");
+                            if (idx > 0) {
+                                path = "/hawtio/pod/" + $scope.podId + ($scope.port ? "/" + $scope.port : "") + pathWithoutProtocol.substring(idx);
+                                useProxy = false;
+                            }
+                        }
+                    }
                     angular.forEach(resource.param, function (param) {
                         var name = param.name;
                         if (name) {
@@ -8827,8 +8842,8 @@ var API;
                             path = path.replace(new RegExp("{" + name + "}", "g"), value);
                         }
                     });
-                    API.log.info("Lets invoke resource: " + path);
-                    var url = Core.useProxyIfExternal(path);
+                    var url = useProxy ? Core.useProxyIfExternal(path) : path;
+                    API.log.info("Lets invoke resource: " + url);
                     var methodName = method.name || "GET";
                     method.invoke = {
                         url: url,
@@ -8899,8 +8914,8 @@ var API;
         function enrichApiDocsWithSchema() {
             var apidocs = $scope.apidocs;
             var jsonSchema = $scope.jsonSchema;
-            if (apidocs && jsonSchema) {
-                enrichResources(jsonSchema, apidocs.resources);
+            if (apidocs) {
+                enrichResources(jsonSchema, apidocs.resources, $scope.parentUri);
             }
         }
         function enrichResources(jsonSchema, resources, parentUri) {
@@ -8909,7 +8924,12 @@ var API;
                 var base = resource.base;
                 if (base) {
                     if (parentUri) {
-                        base = parentUri + base;
+                        if (base) {
+                            var idx = base.indexOf("/");
+                            if (idx > 0) {
+                                base = parentUri + base.substring(idx);
+                            }
+                        }
                     }
                 }
                 else {
@@ -28097,8 +28117,8 @@ var Health;
             return answer;
         };
         $scope.getHumanName = function (name) {
+            var answer = name;
             if (name.startsWith("org.apache.activemq")) {
-                var answer = name;
                 var nameParts = name.split(',');
                 nameParts.forEach(function (part) {
                     if (part.startsWith('brokerName')) {
@@ -28113,7 +28133,16 @@ var Health;
             if (name.startsWith("io.fabric8:service")) {
                 return "Fabric8";
             }
-            return name;
+            var nameParts = name.split(',');
+            nameParts.forEach(function (part) {
+                if (part.startsWith('desc')) {
+                    var parts = part.split('=');
+                    if (parts[1]) {
+                        answer = parts[1];
+                    }
+                }
+            });
+            return answer;
         };
         $scope.getMBeans = function () {
             var healthMap = Health.getHealthMBeans(workspace);
