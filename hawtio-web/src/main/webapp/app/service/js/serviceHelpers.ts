@@ -39,4 +39,31 @@ module Service {
     }
     return answer;
   }
+
+  /**
+   * Returns the service link for the given service name
+   *
+   * @param ServiceRegistry
+   * @param serviceName
+   * @return {null}
+   */
+  export function serviceLink(ServiceRegistry, serviceName: string): string {
+    var service = findService(ServiceRegistry, serviceName);
+    if (service) {
+      var portalIP = service.portalIP;
+      var port = service.port;
+
+      // TODO use annotations to support other kinds of protocol?
+      var protocol = "http://";
+
+      if (portalIP) {
+        if (port) {
+          return protocol + portalIP + ":" + port + "/";
+        } else {
+          return protocol + portalIP;
+        }
+      }
+    }
+    return "";
+  }
 }

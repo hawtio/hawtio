@@ -80,7 +80,7 @@ module Kubernetes {
     return answer.promise;
   }]);
 
-  _module.run(['viewRegistry', 'workspace', (viewRegistry, workspace:Core.Workspace) => {
+  _module.run(['viewRegistry', 'workspace', 'ServiceRegistry', (viewRegistry, workspace:Core.Workspace, ServiceRegistry) => {
     log.debug("Running");
     viewRegistry['kubernetes'] = templatePath + 'layoutKubernetes.html';
     workspace.topLevelTabs.push({
@@ -90,6 +90,26 @@ module Kubernetes {
       isActive: (workspace:Core.Workspace) => workspace.isLinkActive('kubernetes'),
       href: () => defaultRoute
     });
+
+    workspace.topLevelTabs.push({
+      id: 'kibana',
+      content: 'Logs',
+      title: 'View and search all logs across all containers using Kibana and ElasticSearch',
+      isValid: (workspace) => Service.hasService(ServiceRegistry, "kibana-service"),
+      href: () => Service.serviceLink(ServiceRegistry, "kibana-service"),
+      isActive: (workspace) => false
+    });
+
+    workspace.topLevelTabs.push({
+      id: 'grafana',
+      content: 'Metrics',
+      title: 'Views metrics across all containers using Grafana and InfluxDB',
+      isValid: (workspace) => Service.hasService(ServiceRegistry, "grafana-service"),
+      href: () => Service.serviceLink(ServiceRegistry, "grafana-service"),
+      isActive: (workspace) => false
+    });
+
+
   }]);
 
   hawtioPluginLoader.addModule(pluginName);

@@ -40,6 +40,12 @@ module Perspective {
             href: "#/api/index"
           },
           {
+            id: "kibana"
+          },
+          {
+            id: "grafana"
+          },
+          {
             href: "#/dashboard"
           },
           {
