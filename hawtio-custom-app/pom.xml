@@ -13,7 +13,7 @@
   <description>hawtio :: hawtio-custom-app</description>
 
   <properties>
-    <desiredPlugins>core,ui,kubernetes,forms,datatable,perspective,themes,jmx,rbac</desiredPlugins>
+    <desiredPlugins>core,ui,kubernetes,service,forms,datatable,perspective,themes,jmx,rbac</desiredPlugins>
 
     <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
 
