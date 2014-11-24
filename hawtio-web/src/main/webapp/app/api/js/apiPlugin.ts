@@ -17,7 +17,7 @@ module API {
   }]);
 
 
-  _module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", ($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
+  _module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "ServiceRegistry", ($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry, ServiceRegistry) => {
 
     viewRegistry['api'] = layoutFull;
     /*
@@ -25,6 +25,16 @@ module API {
       return workspace.treeContainsDomainAndProperties('io.fabric8.insight', {type: 'LogQuery'});
     });
     */
+
+    workspace.topLevelTabs.push({
+      id: 'apis.index',
+      content: 'APIs',
+      title: 'View the available APIs inside this fabric',
+      isValid: (workspace) => Service.hasService(ServiceRegistry, "api-registry"),
+      href: () => '#/api/index',
+      isActive: (workspace) => workspace.isLinkActive('api/index')
+    });
+
   }]);
 
   hawtioPluginLoader.addModule(pluginName);
