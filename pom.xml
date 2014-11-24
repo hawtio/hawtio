@@ -61,17 +61,7 @@
     <schema-outdir>${basedir}/src/main/webapp/lib</schema-outdir>
     <appjs-outfile>${webapp-outdir}/app/app.js</appjs-outfile>
 
-    <!-- redhat -->
-    <!-- fabric test version points to a previous release version to break cycle with fabric -->
-    <!-- we disable redhat as that is for jboss-fuse
-    <perfectus-number>379</perfectus-number>
-    <perfectus-previous-number>355</perfectus-previous-number>
-    <perfectus-build>610${perfectus-number}</perfectus-build>
-    <fabric-test-version>1.0.0.redhat-${perfectus-previous-number}</fabric-test-version>
-    <fabric-version>1.0.0.redhat-${perfectus-number}</fabric-version>
-    -->
-
-    <!-- fabric8 -->
+    <!-- fabric8 1.x -->
     <fabric-test-version>${fabric-version}</fabric-test-version>
     <fabric-version>1.2.0.Beta4</fabric-version>
 
@@ -154,80 +144,6 @@
     <war-plugin-version>2.1.1</war-plugin-version>
     <guava.version>15.0</guava.version>
   </properties>
-
-  <repositories>
-    <repository>
-      <id>public.jboss.org</id>
-      <name>JBoss Public Repository</name>
-      <url>http://repository.jboss.org/nexus/content/groups/public</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-        <id>jboss-fs-public-repository-group</id>
-        <name>JBoss FS Public Repository Group</name>
-        <url>https://repo.fusesource.com/nexus/content/groups/fs-public</url>
-        <layout>default</layout>
-        <releases>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-        </releases>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>jboss.ea</id>
-        <name>JBoss Community Early Access Release Repository</name>
-        <url>https://repo.fusesource.com/nexus/content/groups/ea</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>public.jboss.org</id>
-      <name>JBoss Public Repository</name>
-      <url>http://repository.jboss.org/nexus/content/groups/public</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
-    <pluginRepository>
-      <id>fs-public.jboss.org</id>
-      <name>JBoss FuseSource Public Repository</name>
-      <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
-    <pluginRepository>
-      <id>ea.jboss.org</id>
-      <name>JBoss Early Access Repository</name>
-      <url>https://repository.jboss.org/nexus/content/groups/ea</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
 
   <modules>
     <module>hawtio-util</module>
@@ -452,16 +368,6 @@
       </build>
     </profile>
 
-    <profile>
-      <id>fuse60</id>
-      <properties>
-        <perfectus-number>024</perfectus-number>
-        <perfectus-build>redhat-60${perfectus-number}</perfectus-build>
-      </properties>
-      <repositories>
-      </repositories>
-    </profile>
-
     <!-- watcher profile is needed to break build cycle with fabric -->
     <profile>
       <id>watcher</id>
@@ -485,22 +391,6 @@
         <activemq-version>5.11-SNAPSHOT</activemq-version>
         <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
       </properties>
-
-      <repositories>
-<!--
-        <repository>
-          <id>fusesource-snapshots</id>
-          <name>fusesource-snapshots</name>
-          <url>http://repo.fusesource.com/nexus/content/groups/public-snapshots</url>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-        </repository>
--->
-      </repositories>
     </profile>
 
     <profile>
@@ -508,35 +398,7 @@
       <properties>
         <camel-version>2.15-SNAPSHOT</camel-version>
       </properties>
-      <repositories>
-      </repositories>
     </profile>
-
-
-    <profile>
-      <id>snapshot</id>
-      <properties>
-        <activemq-version>5.11-SNAPSHOT</activemq-version>
-        <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
-        <camel-version>2.15-SNAPSHOT</camel-version>
-        <fabric-version>99-master-SNAPSHOT</fabric-version>
-      </properties>
-
-      <repositories>
-        <repository>
-          <id>fusesource-snapshots</id>
-          <name>fusesource-snapshots</name>
-          <url>http://repo.fusesource.com/nexus/content/groups/public-snapshots</url>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-        </repository>
-      </repositories>
-    </profile>
-
 
     <profile>
       <id>jetty9</id>
