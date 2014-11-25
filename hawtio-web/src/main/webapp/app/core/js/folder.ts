@@ -224,6 +224,24 @@ module Core {
       }
     }
 
+    public insertBefore(child: Folder, referenceFolder: Folder) {
+      child.detach();
+      child.parent = this;
+      var idx = _.indexOf(this.children, referenceFolder);
+      if (idx >= 0) {
+        this.children.splice(idx, 0, child);
+      }
+    }
+
+    public insertAfter(child: Folder, referenceFolder: Folder) {
+      child.detach();
+      child.parent = this;
+      var idx = _.indexOf(this.children, referenceFolder);
+      if (idx >= 0) {
+        this.children.splice(idx + 1, 0, child);
+      }
+    }
+
     /**
      * Removes this node from my parent if I have one
      * @method detach
