@@ -950,7 +950,7 @@ module Fabric {
    */
   export function brokerConfigLink(workspace, jolokia, localStorage, brokerVersion, brokerProfile, brokerId) {
     var path = Fabric.profileLink(workspace, jolokia, localStorage, brokerVersion, brokerProfile);
-    path += "/org.fusesource.mq.fabric.server-" + brokerId + ".properties";
+    path += "/io.fabric8.mq.fabric.server-" + brokerId + ".properties";
     return path;
   }
 
