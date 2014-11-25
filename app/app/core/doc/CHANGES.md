@@ -1,6 +1,13 @@
 
 ### Change Log
 
+#### 1.4.37
+
+* Ported the [API console to work on Kubernetes](https://github.com/hawtio/hawtio/issues/1743) so that the APIs tab appears on the Kubernetes console if you run hawtio inside Kubernetes and are running the [API Registry service](https://github.com/fabric8io/quickstarts/tree/master/apps/api-registry)
+* Adds [Service wiring for Kubernetes](https://github.com/hawtio/hawtio/blob/master/docs/Services.md) so that its easy to dynamically link nav bars, buttons and menus to remote services running inside Kubernetes (e.g. to link nicely to Kibana, Grafana etc).
+* Various [bug fixes](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.37+is%3Aclosed)
+
+
 #### 1.4.36 ... 1.4.32
 
 * Bug fixes

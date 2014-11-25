@@ -8675,8 +8675,16 @@ var API;
     API._module.config(["$routeProvider", function ($routeProvider) {
         $routeProvider.when('/api/index', { templateUrl: 'app/api/html/apis.html' }).when('/api/wsdl', { templateUrl: 'app/api/html/wsdl.html' }).when('/api/wadl', { templateUrl: 'app/api/html/wadl.html' });
     }]);
-    API._module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", function ($location, workspace, viewRegistry, layoutFull, helpRegistry) {
+    API._module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "ServiceRegistry", function ($location, workspace, viewRegistry, layoutFull, helpRegistry, ServiceRegistry) {
         viewRegistry['api'] = layoutFull;
+        workspace.topLevelTabs.push({
+            id: 'apis.index',
+            content: 'APIs',
+            title: 'View the available APIs inside this fabric',
+            isValid: function (workspace) { return Service.hasService(ServiceRegistry, "api-registry"); },
+            href: function () { return '#/api/index'; },
+            isActive: function (workspace) { return workspace.isLinkActive('api/index'); }
+        });
     }]);
     hawtioPluginLoader.addModule(API.pluginName);
 })(API || (API = {}));
@@ -15245,6 +15253,12 @@ var Perspective;
                     },
                     {
                         href: "#/api/index"
+                    },
+                    {
+                        id: "kibana"
+                    },
+                    {
+                        id: "grafana"
                     },
                     {
                         href: "#/dashboard"
@@ -34416,7 +34430,7 @@ var Kubernetes;
         createResource(answer, 'services', '/api/v1beta1/services/:id');
         return answer.promise;
     }]);
-    Kubernetes._module.run(['viewRegistry', 'workspace', function (viewRegistry, workspace) {
+    Kubernetes._module.run(['viewRegistry', 'workspace', 'ServiceRegistry', function (viewRegistry, workspace, ServiceRegistry) {
         Kubernetes.log.debug("Running");
         viewRegistry['kubernetes'] = Kubernetes.templatePath + 'layoutKubernetes.html';
         workspace.topLevelTabs.push({
@@ -34425,6 +34439,22 @@ var Kubernetes;
             isValid: function (workspace) { return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, { type: 'Kubernetes' }); },
             isActive: function (workspace) { return workspace.isLinkActive('kubernetes'); },
             href: function () { return Kubernetes.defaultRoute; }
+        });
+        workspace.topLevelTabs.push({
+            id: 'kibana',
+            content: 'Logs',
+            title: 'View and search all logs across all containers using Kibana and ElasticSearch',
+            isValid: function (workspace) { return Service.hasService(ServiceRegistry, "kibana-service"); },
+            href: function () { return Service.serviceLink(ServiceRegistry, "kibana-service"); },
+            isActive: function (workspace) { return false; }
+        });
+        workspace.topLevelTabs.push({
+            id: 'grafana',
+            content: 'Metrics',
+            title: 'Views metrics across all containers using Grafana and InfluxDB',
+            isValid: function (workspace) { return Service.hasService(ServiceRegistry, "grafana-service"); },
+            href: function () { return Service.serviceLink(ServiceRegistry, "grafana-service"); },
+            isActive: function (workspace) { return false; }
         });
     }]);
     hawtioPluginLoader.addModule(Kubernetes.pluginName);
@@ -39427,6 +39457,49 @@ var Service;
 (function (Service) {
     Service.pluginName = 'Service';
     Service.log = Logger.get(Service.pluginName);
+    function hasService(ServiceRegistry, serviceName) {
+        if (!ServiceRegistry || !serviceName) {
+            return false;
+        }
+        var answer = false;
+        angular.forEach(ServiceRegistry.services, function (service) {
+            if (serviceName === service.id) {
+                answer = true;
+            }
+        });
+        return answer;
+    }
+    Service.hasService = hasService;
+    function findService(ServiceRegistry, serviceName) {
+        var answer = null;
+        if (ServiceRegistry && serviceName) {
+            angular.forEach(ServiceRegistry.services, function (service) {
+                if (serviceName === service.id) {
+                    answer = service;
+                }
+            });
+        }
+        return answer;
+    }
+    Service.findService = findService;
+    function serviceLink(ServiceRegistry, serviceName) {
+        var service = findService(ServiceRegistry, serviceName);
+        if (service) {
+            var portalIP = service.portalIP;
+            var port = service.port;
+            var protocol = "http://";
+            if (portalIP) {
+                if (port) {
+                    return protocol + portalIP + ":" + port + "/";
+                }
+                else {
+                    return protocol + portalIP;
+                }
+            }
+        }
+        return "";
+    }
+    Service.serviceLink = serviceLink;
 })(Service || (Service = {}));
 var Service;
 (function (Service) {
