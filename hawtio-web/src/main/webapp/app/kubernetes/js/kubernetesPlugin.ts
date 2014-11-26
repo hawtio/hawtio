@@ -96,7 +96,17 @@ module Kubernetes {
       content: 'Logs',
       title: 'View and search all logs across all containers using Kibana and ElasticSearch',
       isValid: (workspace) => Service.hasService(ServiceRegistry, "kibana-service"),
-      href: () => Service.serviceLink(ServiceRegistry, "kibana-service"),
+      href: () => {
+        var link = Service.serviceLink(ServiceRegistry, "kibana-service");
+        if (link) {
+          if (!link.endsWith("/")) {
+            link += "/";
+          }
+          return link + "#/discover/Fabric8";
+        } else {
+          return null;
+        }
+      },
       isActive: (workspace) => false
     });
 
