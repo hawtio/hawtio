@@ -105,6 +105,10 @@ module Kubernetes {
         var dirtyControllers = $scope.replicationControllers.filter((controller) => { return controller.$dirty });
         if (dirtyControllers.length) {
           dirtyControllers.forEach((replicationController) => {
+            var apiVersion = replicationController["apiVersion"];
+            if (!apiVersion) {
+              replicationController["apiVersion"] = Kubernetes.defaultApiVersion;
+            }
             KubernetesReplicationControllers.save(undefined, replicationController, () => {
               replicationController.$dirty = false;
               log.debug("Updated ", replicationController.id);

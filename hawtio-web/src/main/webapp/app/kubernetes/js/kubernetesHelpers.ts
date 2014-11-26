@@ -10,6 +10,8 @@ module Kubernetes {
   export var templatePath = 'app/kubernetes/html/';
   export var log:Logging.Logger = Logger.get(pluginName);
 
+  export var defaultApiVersion = "v1beta2";
+
   export var appSuffix = ".app";
 
   export interface KubePod {
