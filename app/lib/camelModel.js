@@ -1519,7 +1519,7 @@ var _apacheCamelModel = {
       "description": "Set Body",
       "tooltip": "Set Body",
       "icon": "setBody24.png",
-      "nextSiblingAddedAsChild": true,
+      "nextSiblingAddedAsChild": false,
       "properties": {
         "expression": {
           "kind": "expression",

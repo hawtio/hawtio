@@ -1006,6 +1006,22 @@ var Core;
                 this.children.push(child);
             }
         };
+        Folder.prototype.insertBefore = function (child, referenceFolder) {
+            child.detach();
+            child.parent = this;
+            var idx = _.indexOf(this.children, referenceFolder);
+            if (idx >= 0) {
+                this.children.splice(idx, 0, child);
+            }
+        };
+        Folder.prototype.insertAfter = function (child, referenceFolder) {
+            child.detach();
+            child.parent = this;
+            var idx = _.indexOf(this.children, referenceFolder);
+            if (idx >= 0) {
+                this.children.splice(idx + 1, 0, child);
+            }
+        };
         Folder.prototype.detach = function () {
             var oldParent = this.parent;
             if (oldParent) {
@@ -6859,7 +6875,7 @@ var Fabric;
     Fabric.getConfigFile = getConfigFile;
     function brokerConfigLink(workspace, jolokia, localStorage, brokerVersion, brokerProfile, brokerId) {
         var path = Fabric.profileLink(workspace, jolokia, localStorage, brokerVersion, brokerProfile);
-        path += "/org.fusesource.mq.fabric.server-" + brokerId + ".properties";
+        path += "/io.fabric8.mq.fabric.server-" + brokerId + ".properties";
         return path;
     }
     Fabric.brokerConfigLink = brokerConfigLink;
@@ -44625,6 +44641,7 @@ var Wiki;
 var Wiki;
 (function (Wiki) {
     Wiki._module.controller("Wiki.CamelCanvasController", ["$scope", "$element", "workspace", "jolokia", "wikiRepository", "$templateCache", "$interpolate", function ($scope, $element, workspace, jolokia, wikiRepository, $templateCache, $interpolate) {
+        var jsPlumbInstance = jsPlumb.getInstance();
         $scope.addDialog = new UI.Dialog();
         $scope.propertiesDialog = new UI.Dialog();
         $scope.modified = false;
@@ -44892,7 +44909,7 @@ var Wiki;
             foldback: 0.8
         }];
         var connectorStyle = ["StateMachine", { curviness: 10, proximityLimit: 50 }];
-        jsPlumb.importDefaults({
+        jsPlumbInstance.importDefaults({
             Endpoint: endpointStyle,
             HoverPaintStyle: hoverPaintStyle,
             ConnectionOverlays: [
@@ -44901,39 +44918,34 @@ var Wiki;
             ]
         });
         $scope.$on('$destroy', function () {
-            jsPlumb.reset();
+            jsPlumbInstance.reset();
+            delete jsPlumbInstance;
         });
-        jsPlumb.bind("dblclick", function (connection, originalEvent) {
-            if (jsPlumb.isSuspendDrawing()) {
+        jsPlumbInstance.bind("dblclick", function (connection, originalEvent) {
+            if (jsPlumbInstance.isSuspendDrawing()) {
                 return;
             }
             alert("double click on connection from " + connection.sourceId + " to " + connection.targetId);
         });
-        jsPlumb.bind('connection', function (info, evt) {
-            if (jsPlumb.isSuspendDrawing()) {
-                return;
-            }
-            Wiki.log.debug("Creating connection from ", info.source.get(0).id, " to ", info.target.get(0).id);
+        jsPlumbInstance.bind('connection', function (info, evt) {
+            Wiki.log.debug("Creating connection from ", info.sourceId, " to ", info.targetId);
             var link = getLink(info);
-            var source = $scope.folders[link.source];
-            var target = $scope.folders[link.target];
-            source.moveChild(target);
+            var source = $scope.nodes[link.source];
+            var sourceFolder = $scope.folders[link.source];
+            var targetFolder = $scope.folders[link.target];
+            if (Camel.isNextSiblingAddedAsChild(source.type)) {
+                sourceFolder.moveChild(targetFolder);
+            }
+            else {
+                sourceFolder.parent.insertAfter(targetFolder, sourceFolder);
+            }
             treeModified();
         });
-        jsPlumb.bind('connectionDetached', function (info, evt) {
-            if (jsPlumb.isSuspendDrawing()) {
+        jsPlumbInstance.bind("click", function (c) {
+            if (jsPlumbInstance.isSuspendDrawing()) {
                 return;
             }
-            Wiki.log.debug("Detaching connection from ", info.source.get(0).id, " to ", info.target.get(0).id);
-            var link = getLink(info);
-            var source = $scope.folders[link.source];
-            var target = $scope.folders[link.target];
-        });
-        jsPlumb.bind("click", function (c) {
-            if (jsPlumb.isSuspendDrawing()) {
-                return;
-            }
-            jsPlumb.detach(c);
+            jsPlumbInstance.detach(c);
         });
         function layoutGraph(nodes, links) {
             var transitions = [];
@@ -44942,7 +44954,7 @@ var Wiki;
             Wiki.log.debug("transitions: ", transitions);
             $scope.nodeStates = states;
             var containerElement = getContainerElement();
-            jsPlumb.doWhileSuspended(function () {
+            jsPlumbInstance.doWhileSuspended(function () {
                 containerElement.css({
                     'width': '800px',
                     'height': '800px',
@@ -44957,7 +44969,7 @@ var Wiki;
                         return el.id === getNodeId(node);
                     })) {
                         Wiki.log.debug("Removing element: ", el.id);
-                        jsPlumb.remove(el);
+                        jsPlumbInstance.remove(el);
                     }
                 });
                 angular.forEach(states, function (node) {
@@ -44971,18 +44983,18 @@ var Wiki;
                         }));
                         div.appendTo(containerElement);
                     }
-                    jsPlumb.makeSource(div, {
+                    jsPlumbInstance.makeSource(div, {
                         filter: "img.nodeIcon",
                         anchor: "Continuous",
                         connector: connectorStyle,
                         connectorStyle: { strokeStyle: "#666", lineWidth: 3 },
                         maxConnections: -1
                     });
-                    jsPlumb.makeTarget(div, {
+                    jsPlumbInstance.makeTarget(div, {
                         dropOptions: { hoverClass: "dragHover" },
                         anchor: "Continuous"
                     });
-                    jsPlumb.draggable(div, {
+                    jsPlumbInstance.draggable(div, {
                         containment: '.camel-canvas'
                     });
                     div.click(function () {
@@ -45035,21 +45047,21 @@ var Wiki;
                 containerElement.dblclick(function () {
                     $scope.propertiesDialog.open();
                 });
-                jsPlumb.setSuspendEvents(true);
-                jsPlumb.detachEveryConnection({ fireEvent: false });
+                jsPlumbInstance.setSuspendEvents(true);
+                jsPlumbInstance.detachEveryConnection({ fireEvent: false });
                 angular.forEach(links, function (link) {
-                    jsPlumb.connect({
+                    jsPlumbInstance.connect({
                         source: getNodeId(link.source),
                         target: getNodeId(link.target)
                     });
                 });
-                jsPlumb.setSuspendEvents(false);
+                jsPlumbInstance.setSuspendEvents(false);
             });
             return states;
         }
         function getLink(info) {
-            var sourceId = info.source.get(0).id;
-            var targetId = info.target.get(0).id;
+            var sourceId = info.sourceId;
+            var targetId = info.targetId;
             return {
                 source: sourceId,
                 target: targetId
