@@ -16,6 +16,7 @@ module Kubernetes {
 
   export interface KubePod {
     id:string;
+    namespace:string;
   }
 
   export var mbean = Fabric.jmxDomain + ":type=Kubernetes";
