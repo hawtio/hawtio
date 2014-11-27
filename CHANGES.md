@@ -1,6 +1,12 @@
 
 ### Change Log
 
+#### 1.4.38 ... 
+
+* Camel tracer and debugger now shows message bodies that are stream/file based
+* Camel message browser now shows the java types of the headers and body
+* Various bug fixes
+
 #### 1.4.37
 
 * Ported the [API console to work on Kubernetes](https://github.com/hawtio/hawtio/issues/1743) so that the APIs tab appears on the Kubernetes console if you run hawtio inside Kubernetes and are running the [API Registry service](https://github.com/fabric8io/quickstarts/tree/master/apps/api-registry)

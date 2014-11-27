@@ -992,6 +992,7 @@ module Camel {
         if (typeName) messageData.headerTypes[key] = typeName;
 
         headerHtml += "<tr><td class='property-name'>" + key + "</td>" +
+                "<td class='property-value'>" + (humanizeJavaType(typeName)) + "</td>" +
                 "<td class='property-value'>" + (value || "") + "</td></tr>";
       }
     });
@@ -1022,9 +1023,20 @@ module Camel {
       var bodyText = body.textContent;
       var bodyType = body.getAttribute("type");
       messageData["body"] = bodyText;
-      messageData["bodyType"] = bodyType;
+      messageData["bodyType"] = humanizeJavaType(bodyType);
     }
     return messageData;
+  }
+
+  export function humanizeJavaType(type:String) {
+    if (!type) {
+      return "";
+    }
+    // skip leading java.lang
+    if (type.startsWith("java.lang")) {
+      return type.substr(10)
+    }
+    return type;
   }
 
   export function createBrowseGridOptions() {
@@ -1384,7 +1396,7 @@ module Camel {
    */
   export function ignoreIdForLabel(localStorage) {
     var value = localStorage["camelIgnoreIdForLabel"];
-    return value && (value === "true" || value === true);
+    return Core.parseBooleanValue(value);
   }
 
   /**
@@ -1423,7 +1435,7 @@ module Camel {
    */
   export function traceOrDebugIncludeStreams(localStorage) {
     var value = localStorage["camelTraceOrDebugIncludeStreams"];
-    return value && (value === "true" || value === true);
+    return Core.parseBooleanValue(value, Camel.defaultCamelTraceOrDebugIncludeStreams);
   }
 
   /**

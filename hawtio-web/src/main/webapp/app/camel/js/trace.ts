@@ -4,8 +4,6 @@ module Camel {
 
     var log:Logging.Logger = Logger.get("CamelTracer");
 
-    $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
-    $scope.camelTraceOrDebugIncludeStreams = Camel.traceOrDebugIncludeStreams(localStorage);
     $scope.tracing = false;
     $scope.messages = [];
     $scope.graphView = null;
@@ -173,9 +171,9 @@ module Camel {
         // set max only supported on BacklogTracer
         // (the old fabric tracer does not support max length)
         if (mbean.toString().endsWith("BacklogTracer")) {
-          var max = $scope.camelMaximumTraceOrDebugBodyLength;
+          var max = Camel.maximumTraceOrDebugBodyLength(localStorage);
+          var streams = Camel.traceOrDebugIncludeStreams(localStorage);
           jolokia.setAttribute(mbean, "BodyMaxChars",  max);
-          var streams = $scope.camelTraceOrDebugIncludeStreams;
           jolokia.setAttribute(mbean, "BodyIncludeStreams", streams);
           jolokia.setAttribute(mbean, "BodyIncludeFiles", streams);
         }
