@@ -14843,6 +14843,7 @@ var Kubernetes;
     Kubernetes.pluginName = 'Kubernetes';
     Kubernetes.templatePath = 'app/kubernetes/html/';
     Kubernetes.log = Logger.get(Kubernetes.pluginName);
+    Kubernetes.defaultApiVersion = "v1beta2";
     Kubernetes.appSuffix = ".app";
     Kubernetes.mbean = Fabric.jmxDomain + ":type=Kubernetes";
     Kubernetes.managerMBean = Fabric.jmxDomain + ":type=KubernetesManager";
@@ -34461,7 +34462,18 @@ var Kubernetes;
             content: 'Logs',
             title: 'View and search all logs across all containers using Kibana and ElasticSearch',
             isValid: function (workspace) { return Service.hasService(ServiceRegistry, "kibana-service"); },
-            href: function () { return Service.serviceLink(ServiceRegistry, "kibana-service"); },
+            href: function () {
+                var link = Service.serviceLink(ServiceRegistry, "kibana-service");
+                if (link) {
+                    if (!link.endsWith("/")) {
+                        link += "/";
+                    }
+                    return link + "#/discover/Fabric8";
+                }
+                else {
+                    return null;
+                }
+            },
             isActive: function (workspace) { return false; }
         });
         workspace.topLevelTabs.push({
@@ -35317,6 +35329,10 @@ var Kubernetes;
                 });
                 if (dirtyControllers.length) {
                     dirtyControllers.forEach(function (replicationController) {
+                        var apiVersion = replicationController["apiVersion"];
+                        if (!apiVersion) {
+                            replicationController["apiVersion"] = Kubernetes.defaultApiVersion;
+                        }
                         KubernetesReplicationControllers.save(undefined, replicationController, function () {
                             replicationController.$dirty = false;
                             Kubernetes.log.debug("Updated ", replicationController.id);
