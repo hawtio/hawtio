@@ -43,8 +43,6 @@ module Kubernetes {
     $scope.json = '';
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
 
-    Kubernetes.initShared($scope);
-
     $scope.detailConfig = {
       properties: {
         '^\\/labels$': {
@@ -65,11 +63,14 @@ module Kubernetes {
       columnDefs: [
         { field: 'id', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
-        { field: 'currentState.replicas', displayName: 'Current Replicas' },
+        { field: 'currentState.replicas', displayName: 'Current Replicas', cellTemplate: $templateCache.get("currentReplicasTemplate.html") },
         { field: 'desiredState.replicas', displayName: 'Desired Replicas', cellTemplate:$templateCache.get("desiredReplicas.html") },
         { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
       ]
     };
+
+    Kubernetes.initShared($scope, $location);
+
 
     $scope.$on('kubernetes.dirtyController', ($event, replicationController) => {
       replicationController.$dirty = true;
@@ -174,6 +175,11 @@ module Kubernetes {
           $scope.replicationControllers = (response['items'] || []).sortBy((item) => { return item.id; });
           angular.forEach($scope.replicationControllers, entity => {
             entity.$labelsText = Kubernetes.labelsToString(entity.labels);
+            var desiredState = entity.desiredState || {};
+            var replicaSelector = desiredState.replicaSelector;
+            if (replicaSelector) {
+              entity.podsLink = "#/kubernetes/pods?q=" + Kubernetes.labelsToString(replicaSelector, " ");
+            }
           });
           Kubernetes.setJson($scope, $scope.id, $scope.replicationControllers);
           next();

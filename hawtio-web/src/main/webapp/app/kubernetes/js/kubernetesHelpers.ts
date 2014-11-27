@@ -52,16 +52,30 @@ module Kubernetes {
   /**
    * Returns the labels text string using the <code>key1=value1,key2=value2,....</code> format
    */
-  export function labelsToString(labels) {
+  export function labelsToString(labels, seperatorText = ",") {
     var answer = "";
     angular.forEach(labels, (value, key) => {
-      var separator = answer ? "," : "";
+      var separator = answer ? seperatorText : "";
       answer += separator + key + "=" + value;
     });
     return answer;
   }
 
-  export function initShared($scope) {
+  export function initShared($scope, $location) {
+    var currentFilter = $location.search()["q"];
+    if (currentFilter) {
+      $scope.tableConfig.filterOptions.filterText = currentFilter;
+    }
+
+    // update the URL if the filter is changed
+    $scope.$watch("tableConfig.filterOptions.filterText", () => {
+      var filter = $scope.tableConfig.filterOptions.filterText;
+      if (!filter) {
+        filter = null;
+      }
+      $location.search("q", filter);
+    });
+
     $scope.$on("labelFilterUpdate", ($event, text) => {
       var filterText = $scope.tableConfig.filterOptions.filterText;
       if (Core.isBlank(filterText)) {

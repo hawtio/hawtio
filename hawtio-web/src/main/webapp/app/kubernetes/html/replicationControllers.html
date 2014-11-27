@@ -1,8 +1,16 @@
 <div ng-controller="Kubernetes.ReplicationControllers">
+  <script type="text/ng-template" id="currentReplicasTemplate.html">
+    <div class="ngCellText">
+      <a ng-show="row.entity.podsLink" href="{{row.entity.podsLink}}">
+        <span class="badge {{row.entity.currentState.replicas > 0 ? 'badge-success' : 'badge-warning'}}">{{row.entity.currentState.replicas}}</span>
+      </a>
+      <span ng-hide="row.entity.podsLink" class="badge">{{row.entity.currentState.replicas}}</span>
+    </div>
+  </script>
   <script type="text/ng-template" id="desiredReplicas.html">
-    <div class="ngCellText" 
+    <div class="ngCellText"
          ng-controller="Kubernetes.DesiredReplicas">
-      <input type="number" 
+      <input type="number"
              class="no-bottom-margin"
              min="0"
              ng-model="row.entity.desiredState.replicas">

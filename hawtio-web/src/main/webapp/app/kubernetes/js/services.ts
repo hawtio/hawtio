@@ -12,8 +12,6 @@ module Kubernetes {
     $scope.json = '';
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
 
-    Kubernetes.initShared($scope);
-
     $scope.tableConfig = {
       data: 'services',
       showSelectionCheckbox: true,
@@ -30,6 +28,8 @@ module Kubernetes {
         { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
       ]
     };
+
+    Kubernetes.initShared($scope, $location);
 
     $scope.$on('kubeSelectedId', ($event, id) => {
       Kubernetes.setJson($scope, id, $scope.services);

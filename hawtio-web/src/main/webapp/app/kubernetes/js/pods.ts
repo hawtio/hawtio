@@ -77,8 +77,6 @@ module Kubernetes {
         }
       }));
 
-    Kubernetes.initShared($scope);
-
     $scope.tableConfig = {
       data: 'pods',
       showSelectionCheckbox: true,
@@ -120,6 +118,9 @@ module Kubernetes {
         }
       ]
     };
+
+    Kubernetes.initShared($scope, $location);
+
 
     $scope.connect = {
       dialog: new UI.Dialog(),
