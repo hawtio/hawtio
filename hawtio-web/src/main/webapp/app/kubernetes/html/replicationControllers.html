@@ -1,6 +1,6 @@
 <div ng-controller="Kubernetes.ReplicationControllers">
   <script type="text/ng-template" id="currentReplicasTemplate.html">
-    <div class="ngCellText">
+    <div class="ngCellText" title="Number of running pods for this controller">
       <a ng-show="row.entity.podsLink" href="{{row.entity.podsLink}}">
         <span class="badge {{row.entity.currentState.replicas > 0 ? 'badge-success' : 'badge-warning'}}">{{row.entity.currentState.replicas}}</span>
       </a>
