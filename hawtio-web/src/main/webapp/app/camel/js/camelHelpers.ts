@@ -12,6 +12,7 @@ module Camel {
 
   export var defaultMaximumLabelWidth = 34;
   export var defaultCamelMaximumTraceOrDebugBodyLength = 5000;
+  export var defaultCamelTraceOrDebugIncludeStreams = true;
   export var defaultCamelRouteMetricMaxSeconds = 10;
 
   /**
@@ -1414,6 +1415,15 @@ module Camel {
       value = Camel.defaultCamelMaximumTraceOrDebugBodyLength;
     }
     return value;
+  }
+
+  /**
+   * Returns whether to include streams body for tracer and debugger
+   * @method
+   */
+  export function traceOrDebugIncludeStreams(localStorage) {
+    var value = localStorage["camelTraceOrDebugIncludeStreams"];
+    return value && (value === "true" || value === true);
   }
 
   /**

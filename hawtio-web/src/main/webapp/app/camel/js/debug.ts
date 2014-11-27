@@ -2,6 +2,7 @@
 module Camel {
   _module.controller("Camel.DebugRouteController", ["$scope", "$element", "workspace", "jolokia", ($scope, $element, workspace:Workspace, jolokia) => {
     $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
+    $scope.camelTraceOrDebugIncludeStreams = Camel.traceOrDebugIncludeStreams(localStorage);
     // ignore the cached stuff in camel.ts as it seems to bork the node ids for some reason...
     $scope.ignoreRouteXmlNode = true;
 
@@ -348,7 +349,10 @@ module Camel {
       if (mbean) {
         var method = flag ? "enableDebugger" : "disableDebugger";
         var max = $scope.camelMaximumTraceOrDebugBodyLength;
-        jolokia.setAttribute(mbean, "BodyMaxChars",  max);
+        jolokia.setAttribute(mbean, "BodyMaxChars", max);
+        var streams = $scope.camelTraceOrDebugIncludeStreams;
+        jolokia.setAttribute(mbean, "BodyIncludeStreams", streams);
+        jolokia.setAttribute(mbean, "BodyIncludeFiles", streams);
         jolokia.execute(mbean, method, onSuccess(breakpointsChanged));
       }
     }

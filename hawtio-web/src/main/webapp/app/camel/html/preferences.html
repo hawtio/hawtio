@@ -1,6 +1,14 @@
 <div ng-controller="Camel.PreferencesController">
   <form class="form-horizontal">
 
+    <label class="control-label">Include Streams</label>
+    <div class="control-group">
+      <div class="controls">
+        <input type="checkbox" ng-model="camelTraceOrDebugIncludeStreams">
+        <span class="help-block">Whether to include stream based message body when using the tracer and debugger</span>
+      </div>
+    </div>
+
     <label class="control-label">Maximum body length</label>
     <div class="control-group">
       <div class="controls">
@@ -16,8 +24,8 @@
         <span class="help-block">The maximum length of a label in Camel diagrams before it is clipped</span>
       </div>
     </div>
-    <label class="control-label">Do not use ID for label</label>
 
+    <label class="control-label">Do not use ID for label</label>
     <div class="control-group">
       <div class="controls">
         <input type="checkbox" ng-model="camelIgnoreIdForLabel">

@@ -5,6 +5,7 @@ module Camel {
     var log:Logging.Logger = Logger.get("CamelTracer");
 
     $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
+    $scope.camelTraceOrDebugIncludeStreams = Camel.traceOrDebugIncludeStreams(localStorage);
     $scope.tracing = false;
     $scope.messages = [];
     $scope.graphView = null;
@@ -174,6 +175,9 @@ module Camel {
         if (mbean.toString().endsWith("BacklogTracer")) {
           var max = $scope.camelMaximumTraceOrDebugBodyLength;
           jolokia.setAttribute(mbean, "BodyMaxChars",  max);
+          var streams = $scope.camelTraceOrDebugIncludeStreams;
+          jolokia.setAttribute(mbean, "BodyIncludeStreams", streams);
+          jolokia.setAttribute(mbean, "BodyIncludeFiles", streams);
         }
         jolokia.setAttribute(mbean, "Enabled", flag, onSuccess(tracingChanged));
       }
