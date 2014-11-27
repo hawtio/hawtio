@@ -26,14 +26,16 @@ module Jmx {
     }
   ];
 
-  export var AttributesController = _module.controller("Jmx.AttributesController", ["$scope", "$element", "$location", "workspace", "jolokia", "jmxWidgets", "jmxWidgetTypes", "$templateCache", ($scope,
+  export var AttributesController = _module.controller("Jmx.AttributesController", ["$scope", "$element", "$location", "workspace", "jolokia", "jmxWidgets", "jmxWidgetTypes", "$templateCache", "localStorage", "$browser", ($scope,
                                        $element,
                                        $location,
                                        workspace:Workspace,
                                        jolokia,
                                        jmxWidgets,
                                        jmxWidgetTypes,
-                                       $templateCache) => {
+                                       $templateCache,
+                                       localStorage,
+                                        $browser) => {
     $scope.searchText = '';
     $scope.nid = 'empty';
     $scope.selectedItems = [];
@@ -73,6 +75,12 @@ module Jmx {
         'type': {
           description: 'Type',
           tooltip: 'Attribute type',
+          type: 'string',
+          readOnly: 'true'
+        },
+        'jolokia': {
+          description: 'Jolokia URL',
+          tooltip: 'Jolokia REST URL',
           type: 'string',
           readOnly: 'true'
         }
@@ -176,6 +184,9 @@ module Jmx {
       $scope.entity["key"] = row.key;
       $scope.entity["description"] = row.attrDesc;
       $scope.entity["type"] = row.type;
+
+      var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
+      $scope.entity["jolokia"] = url + localStorage["url"] + "/read/" + workspace.getSelectedMBeanName() + "/" + $scope.entity["key"] ;
       $scope.entity["rw"] = row.rw;
       var type = asJsonSchemaType(row.type, row.key);
       var readOnly = !row.rw;
