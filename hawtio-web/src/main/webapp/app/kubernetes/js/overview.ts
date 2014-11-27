@@ -258,19 +258,30 @@ module Kubernetes {
 
   var OverviewController = controller(scopeName, ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", ($scope, KubernetesServices, KubernetesPods, KubernetesReplicationControllers) => {
     $scope.name = scopeName;
+    $scope.namespaces = null;
     $scope.services = null;
     $scope.replicationControllers = null;
     $scope.pods = null;
     $scope.hosts = null;
 
     $scope.count = 0;
+    $scope.selectedNamespace = null;
     var redraw = false;
 
+    var namespaces = [];
     var services = [];
     var replicationControllers = [];
     var pods = [];
     var hosts = [];
     var byId = (thing) => { return thing.id; };
+    var byNamespace = (thing) => { return thing.namespace; };
+    var pushIfNotExists = (array, items) => {
+        angular.forEach(items, (value) => {
+            if ($.inArray(value, array) < 0) {
+              array.push(value);
+            }
+        });
+    };
 
     KubernetesServices.then((KubernetesServices:ng.resource.IResourceClass) => {
       KubernetesReplicationControllers.then((KubernetesReplicationControllers:ng.resource.IResourceClass) => {
@@ -322,6 +333,7 @@ module Kubernetes {
         $scope.servicesById = {};
         $scope.podsById = {};
         $scope.replicationControllersById = {};
+        $scope.namespaces = {};
         services.forEach((service) => {
           $scope.servicesById[service.id] = service;
           var selectedPods = selectPods(pods, service.selector);
@@ -359,6 +371,13 @@ module Kubernetes {
             redraw = ArrayHelpers.sync(oldHost.pods, newHost.pods);
           }
         });
+
+        pushIfNotExists(namespaces, pods.map(byNamespace));
+        pushIfNotExists(namespaces, services.map(byNamespace));
+        pushIfNotExists(namespaces, replicationControllers.map(byNamespace));
+
+        $scope.namespaces = namespaces;
+        $scope.selectedNamespace = $scope.selectedNamespace || $scope.namespaces[0];
         $scope.hosts = hosts;
         $scope.hostsById = hostsById;
         $scope.pods = pods;
