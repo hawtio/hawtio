@@ -180,7 +180,8 @@ module Kubernetes {
             var desiredState = entity.desiredState || {};
             var replicaSelector = desiredState.replicaSelector;
             if (replicaSelector) {
-              entity.podsLink = "#/kubernetes/pods?q=" + Kubernetes.labelsToString(replicaSelector, " ");
+              entity.podsLink = Core.url("/kubernetes/pods?q=" +
+                encodeURIComponent(Kubernetes.labelsToString(replicaSelector, " ")));
             }
           });
           Kubernetes.setJson($scope, $scope.id, $scope.replicationControllers);

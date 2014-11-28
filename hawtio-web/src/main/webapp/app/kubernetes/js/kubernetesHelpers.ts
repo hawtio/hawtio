@@ -71,9 +71,6 @@ module Kubernetes {
     // update the URL if the filter is changed
     $scope.$watch("tableConfig.filterOptions.filterText", () => {
       var filter = $scope.tableConfig.filterOptions.filterText;
-      if (!filter) {
-        filter = null;
-      }
       $location.search("q", filter);
     });
 
