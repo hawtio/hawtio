@@ -27,6 +27,7 @@ module Perspective {
       topLevelTabs: {
         includes: [
           {
+            content: "Runtime",
             id: "kubernetes"
           },
           {
