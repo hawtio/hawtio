@@ -107,5 +107,5 @@
     <select ng-model="selectedNamespace" ng-options="namespace for namespace in namespaces">
         <!--option ng-repeat="namespace in namespaces" value="{{namespace}}">{{namespace}}</option-->
     </select>
-  <kubernetes-overview></kubernetes-overview>
+  <kubernetes-overview ui-if="selectedNamespace"></kubernetes-overview>
 </div>
