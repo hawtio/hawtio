@@ -9,12 +9,13 @@
   <script type="text/ng-template" id="serviceTemplate.html">
     <div class="kubernetes-overview-row">
       <div class="kubernetes-overview-cell">
-        <div id="{{service.id}}"
+        <div id="{{service._key}}"
+             namespace="{{service.namespace}}"
              connect-to="{{service.connectTo}}"
              data-type="service"
              class="jsplumb-node kubernetes-node kubernetes-service-node"
              ng-controller="Kubernetes.OverviewBoxController"
-             ng-init="entity=getEntity('service', '{{service.id}}')"
+             ng-init="entity=getEntity('service', '{{service._key}}')"
              ng-mouseenter="mouseEnter($event)"
              ng-mouseleave="mouseLeave($event)"
              ng-click="viewDetails('services')">
@@ -36,14 +37,14 @@
     </div>
   </script>
   <script type="text/ng-template" id="podTemplate.html">
-    <div id="{{pod.id}}"
+    <div id="{{pod._key}}"
          data-type="pod"
          title="Pod ID: {{pod.id}}"
          class="jsplumb-node kubernetes-node kubernetes-pod-node" 
          ng-mouseenter="mouseEnter($event)"
          ng-mouseleave="mouseLeave($event)"
          ng-controller="Kubernetes.OverviewBoxController"
-         ng-init="entity=getEntity('pod', '{{pod.id}}')"
+         ng-init="entity=getEntity('pod', '{{pod._key}}')"
          ng-click="viewDetails('pods')">
     <div class="css-table">
       <div class="css-table-row">
@@ -60,7 +61,7 @@
     <div class="kubernetes-overview-row">
       <div class="kubernetes-overview-cell">
         <div
-            id="{{replicationController.id}}"
+            id="{{replicationController._key}}"
             title="{{replicationController.id}}"
             data-type="replicationController"
             data-placement="top"
@@ -69,7 +70,7 @@
             ng-mouseleave="mouseLeave($event)"
             class="jsplumb-node kubernetes-replicationController-node kubernetes-node"
             ng-controller="Kubernetes.OverviewBoxController"
-            ng-init="entity=getEntity('replicationController', '{{replicationController.id}}')"
+            ng-init="entity=getEntity('replicationController', '{{replicationController._key}}')"
             ng-click="viewDetails('replicationControllers')">
           <div ng-init="entity = entity" ng-include="'replicationControllerIconTemplate.html'">
           </div>
@@ -103,5 +104,8 @@
       </div>
    </div>
   </script>
-  <kubernetes-overview></kubernetes-overview>
+    <select ng-model="selectedNamespace" ng-options="namespace for namespace in namespaces">
+        <!--option ng-repeat="namespace in namespaces" value="{{namespace}}">{{namespace}}</option-->
+    </select>
+  <kubernetes-overview ui-if="selectedNamespace"></kubernetes-overview>
 </div>

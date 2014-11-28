@@ -10,16 +10,16 @@ module Kubernetes {
       replace: true,
       link: (scope, element, attr) => {
         element.css({visibility: 'hidden'});
-        scope.getEntity = (type:string, id:string) => {
+        scope.getEntity = (type:string, key:string) => {
           switch (type) {
             case 'host':
-              return scope.hostsById[id];
+              return scope.hostsByKey[key];
             case 'pod':
-              return scope.podsById[id];
+              return scope.podsByKey[key];
             case 'replicationController':
-              return scope.replicationControllersById[id];
+              return scope.replicationControllersByKey[key];
             case 'service':
-              return scope.servicesById[id];
+              return scope.servicesByKey[key];
             default:
               return undefined;
 
@@ -139,11 +139,14 @@ module Kubernetes {
         }
         function appendNewElements(parentEl, template, thingName, things) {
           things.forEach((thing) => {
-            var existing = parentEl.find("#" + thing['id']);
+            var existing = parentEl.find("#" + thing['_key']);
             if (!existing.length) {
               parentEl.append($compile(createElement(template, thingName, thing))(scope));
             }
           });
+        }
+        function namespaceFilter(item) {
+            return item.namespace === scope.selectedNamespace;
         }
         function firstDraw() {
           log.debug("First draw");
@@ -157,13 +160,13 @@ module Kubernetes {
           var hostsEl = parentEl.find(".hosts");
           var replicationControllersEl = parentEl.find(".replicationControllers");
 
-          servicesEl.append(createElements($templateCache.get("serviceTemplate.html"), 'service', services));
-          replicationControllersEl.append(createElements($templateCache.get("replicationControllerTemplate.html"), 'replicationController', replicationControllers));
+          servicesEl.append(createElements($templateCache.get("serviceTemplate.html"), 'service', services.filter(namespaceFilter)));
+          replicationControllersEl.append(createElements($templateCache.get("replicationControllerTemplate.html"), 'replicationController', replicationControllers.filter(namespaceFilter)));
 
           hosts.forEach((host) => {
             var hostEl = angular.element(createElement($templateCache.get("hostTemplate.html"), 'host', host));
             var podContainer = angular.element(hostEl.find('.pod-container'));
-            podContainer.append(createElements($templateCache.get("podTemplate.html"), "pod", host.pods));
+            podContainer.append(createElements($templateCache.get("podTemplate.html"), "pod", host.pods.filter(namespaceFilter)));
             hostsEl.append(hostEl);
           });
           //parentEl.append(createElements($templateCache.get("podTemplate.html"), 'pod', pods));
@@ -173,28 +176,28 @@ module Kubernetes {
         function update() {
           scope.$emit('jsplumbDoWhileSuspended', () => {
             log.debug("Update");
-            var services = scope.services;
-            var replicationControllers = scope.replicationControllers;
-            var pods = scope.pods;
+            var services = scope.services.filter(namespaceFilter);
+            var replicationControllers = scope.replicationControllers.filter(namespaceFilter);
+            var pods = scope.pods.filter(namespaceFilter);
             var hosts = scope.hosts;
             var parentEl = element.find('[hawtio-jsplumb]');
             var children = parentEl.find('.jsplumb-node');
             children.each((index, c) => {
               var child = angular.element(c);
-              var id = child.attr('id');
-              if (Core.isBlank(id)) {
+              var key = child.attr('id');
+              if (Core.isBlank(key)) {
                 return;
               }
               var type = child.attr('data-type');
               switch (type) {
                 case 'host':
-                  if (id in scope.hostsById) {
+                  if (key in scope.hostsByKey) {
                     return;
                   }
                   break;
                 case 'service':
-                  if (id in scope.servicesById) {
-                    var service = scope.servicesById[id];
+                  if (key in scope.servicesByKey && scope.servicesByKey[key].namespace == scope.selectedNamespace) {
+                    var service = scope.servicesByKey[key];
                     child.attr('connect-to', service.connectTo);
                     return;
                   }
@@ -205,13 +208,13 @@ module Kubernetes {
                     return;
                   }
                   */
-                  if (id in scope.podsById) {
+                  if (key in scope.podsByKey && scope.podsByKey[key].namespace == scope.selectedNamespace) {
                     return;
                   }
                   break;
                 case 'replicationController':
-                  if (id in scope.replicationControllersById) {
-                    var replicationController = scope.replicationControllersById[id];
+                  if (key in scope.replicationControllersByKey && scope.replicationControllersByKey[key].namespace == scope.selectedNamespace) {
+                    var replicationController = scope.replicationControllersByKey[key];
                     child.attr('connect-to', replicationController.connectTo);
                     return;
                   }
@@ -220,18 +223,18 @@ module Kubernetes {
                   log.debug("Ignoring element with unknown type");
                   return;
               }
-              log.debug("Removing: ", id);
+              log.debug("Removing: ", key);
               child.remove();
             });
             var servicesEl = parentEl.find(".services");
             var hostsEl = parentEl.find(".hosts");
             var replicationControllersEl = parentEl.find(".replicationControllers");
-            appendNewElements(servicesEl, $templateCache.get("serviceTemplate.html"), "service", services); 
-            appendNewElements(replicationControllersEl, $templateCache.get("replicationControllerTemplate.html"), "replicationController", replicationControllers); 
+            appendNewElements(servicesEl, $templateCache.get("serviceTemplate.html"), "service", services.filter(namespaceFilter));
+            appendNewElements(replicationControllersEl, $templateCache.get("replicationControllerTemplate.html"), "replicationController", replicationControllers.filter(namespaceFilter));
             appendNewElements(hostsEl, $templateCache.get("hostTemplate.html"), "host", hosts);
             hosts.forEach((host) => {
-              var hostEl = parentEl.find("#" + host.id);
-              appendNewElements(hostEl, $templateCache.get("podTemplate.html"), "pod", host.pods);
+              var hostEl = parentEl.find("#" + host._key);
+              appendNewElements(hostEl, $templateCache.get("podTemplate.html"), "pod", host.pods.filter(namespaceFilter));
             });
           });
         }
@@ -250,7 +253,7 @@ module Kubernetes {
 
   var OverviewBoxController = controller("OverviewBoxController", ["$scope", "$location", ($scope, $location:ng.ILocationService) => {
     $scope.viewDetails = (path:string) => {
-      $location.path(UrlHelpers.join('/kubernetes', path)).search({'_id': $scope.entity.id });
+      $location.path(UrlHelpers.join('/kubernetes/namespace', $scope.entity.namespace, path)).search({'_id': $scope.entity.id });
     }
   }]);
 
@@ -258,19 +261,46 @@ module Kubernetes {
 
   var OverviewController = controller(scopeName, ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", ($scope, KubernetesServices, KubernetesPods, KubernetesReplicationControllers) => {
     $scope.name = scopeName;
+    $scope.namespaces = null;
     $scope.services = null;
     $scope.replicationControllers = null;
     $scope.pods = null;
     $scope.hosts = null;
 
     $scope.count = 0;
+    $scope.selectedNamespace = null;
     var redraw = false;
 
+    var namespaces = [];
     var services = [];
     var replicationControllers = [];
     var pods = [];
     var hosts = [];
     var byId = (thing) => { return thing.id; };
+    var byNamespace = (thing) => { return thing.namespace; };
+
+    function pushIfNotExists(array, items) {
+        angular.forEach(items, (value) => {
+            if ($.inArray(value, array) < 0) {
+              array.push(value);
+            }
+        });
+    };
+
+    function populateKey(item) {
+        var result = item;
+        result['_key']=item.namespace+"-"+item.id;
+        return result;
+    };
+
+    function populateKeys(items:Array<any>) {
+        var result = [];
+        angular.forEach(items, (item) => {
+            result.push(populateKey(item));
+        });
+        return result;
+    };
+
 
     KubernetesServices.then((KubernetesServices:ng.resource.IResourceClass) => {
       KubernetesReplicationControllers.then((KubernetesReplicationControllers:ng.resource.IResourceClass) => {
@@ -289,22 +319,22 @@ module Kubernetes {
             }
             KubernetesServices.query((response) => {
               if (response) {
-                var items = (response.items || []).sortBy(byId);
-                redraw = ArrayHelpers.sync(services, items);
+                var items = populateKeys((response.items || []).sortBy(byId));
+                redraw = ArrayHelpers.sync(services, items, "_key");
               }
               maybeNext(ready + 1);
             });
             KubernetesReplicationControllers.query((response) => {
               if (response) {
-                var items = (response.items || []).sortBy(byId);
-                redraw = ArrayHelpers.sync(replicationControllers, items);
+                var items = populateKeys((response.items || []).sortBy(byId));
+                redraw = ArrayHelpers.sync(replicationControllers, items, "_key");
               }
               maybeNext(ready + 1);
             });
             KubernetesPods.query((response) => {
               if (response) {
-                var items = (response.items || []).sortBy(byId);
-                redraw = ArrayHelpers.sync(pods, items);
+                var items = populateKeys((response.items || []).sortBy(byId));
+                redraw = ArrayHelpers.sync(pods, items, "_key");
               }
               maybeNext(ready + 1);
             });
@@ -313,42 +343,44 @@ module Kubernetes {
         });
       });
     });
-    function selectPods(pods, labels) {
+    function selectPods(pods, namespace, labels) {
       var matchFunc = _.matches(labels);
-      return pods.filter((pod) => { return matchFunc(pod.labels, undefined, undefined); });
+      return pods.filter((pod) => { return pod.namespace === namespace && matchFunc(pod.labels, undefined, undefined); });
     }
     function maybeInit() {
       if (services && replicationControllers && pods) {
-        $scope.servicesById = {};
-        $scope.podsById = {};
-        $scope.replicationControllersById = {};
+        $scope.servicesByKey = {};
+        $scope.podsByKey = {};
+        $scope.replicationControllersByKey = {};
+        $scope.namespaces = {};
         services.forEach((service) => {
-          $scope.servicesById[service.id] = service;
-          var selectedPods = selectPods(pods, service.selector);
-          service.connectTo = selectedPods.map((pod) => { return pod.id; }).join(',');
+          $scope.servicesByKey[service._key] = service;
+          var selectedPods = selectPods(pods, service.namespace, service.selector);
+          service.connectTo = selectedPods.map((pod) => { return pod._key; }).join(',');
         });
         replicationControllers.forEach((replicationController) => {
-          $scope.replicationControllersById[replicationController.id] = replicationController
-          var selectedPods = selectPods(pods, replicationController.desiredState.replicaSelector);
-          replicationController.connectTo = selectedPods.map((pod) => { return pod.id; }).join(',');
+          $scope.replicationControllersByKey[replicationController._key] = replicationController
+          var selectedPods = selectPods(pods, replicationController.namespace, replicationController.desiredState.replicaSelector);
+          replicationController.connectTo = selectedPods.map((pod) => { return pod._key; }).join(',');
         });
-        var hostsById = {};
+        var hostsByKey = {};
         pods.forEach((pod) => {
-          $scope.podsById[pod.id] = pod;
-          var host = pod.currentState.host;
-          if (!(host in hostsById)) {
-            hostsById[host] = [];
-          }
-          hostsById[host].push(pod);
+          $scope.podsByKey[pod._key] = pod;
+          var host =  pod.currentState.host;
+          hostsByKey[host] = hostsByKey[host] || [];
+          hostsByKey[host].push(pod);
+
         });
         var tmpHosts = [];
         var oldHostsLength = hosts.length;
-        angular.forEach(hostsById, (value, key) => {
-          tmpHosts.push({
-            id: key,
-            pods: value
-          });
-        });
+
+          for (var hostKey in hostsByKey) {
+              tmpHosts.push({
+                  id: hostKey,
+                  pods: hostsByKey[hostKey]
+              });
+          }
+
         redraw = ArrayHelpers.removeElements(hosts, tmpHosts);
         tmpHosts.forEach((newHost) => {
           var oldHost:any = hosts.find((h) => { return h.id === newHost.id });
@@ -359,8 +391,15 @@ module Kubernetes {
             redraw = ArrayHelpers.sync(oldHost.pods, newHost.pods);
           }
         });
+
+        pushIfNotExists(namespaces, pods.map(byNamespace));
+        pushIfNotExists(namespaces, services.map(byNamespace));
+        pushIfNotExists(namespaces, replicationControllers.map(byNamespace));
+
+        $scope.namespaces = namespaces;
+        $scope.selectedNamespace = $scope.selectedNamespace || $scope.namespaces[0];
         $scope.hosts = hosts;
-        $scope.hostsById = hostsById;
+        $scope.hostsByKey = hostsByKey;
         $scope.pods = pods;
         $scope.services = services;
         $scope.replicationControllers = replicationControllers;

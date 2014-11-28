@@ -14,8 +14,8 @@ module Kubernetes {
   }]);
 
   // main controller for the page
-  export var Pods = controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "jolokia", "$location", "localStorage", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, $dialog, $templateCache, jolokia:Jolokia.IJolokia, $location:ng.ILocationService, localStorage) => {
-
+  export var Pods = controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "$routeParams", "jolokia", "$location", "localStorage", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, $dialog, $templateCache, $routeParams, jolokia:Jolokia.IJolokia, $location:ng.ILocationService, localStorage) => {
+    $scope.namespace = $routeParams.namespace;
     $scope.pods = undefined
     var pods = [];
     $scope.fetched = false;
@@ -92,6 +92,10 @@ module Kubernetes {
           displayName: 'ID',
           defaultSort: true,
           cellTemplate: $templateCache.get("idTemplate.html")
+        },
+        {
+              field: 'namespace',
+              displayName: 'Namespace'
         },
         {
           field: 'currentState.status',
@@ -229,7 +233,7 @@ module Kubernetes {
       $scope.fetch = PollHelpers.setupPolling($scope, (next:() => void) => {
         KubernetesPods.query((response) => {
           $scope.fetched = true;
-          var redraw = ArrayHelpers.sync(pods, (response['items'] || []).sortBy((pod:KubePod) => { return pod.id }).filter((pod:KubePod) => { return pod.id }));
+          var redraw = ArrayHelpers.sync(pods, (response['items'] || []).sortBy((pod:KubePod) => { return pod.id }).filter((pod:KubePod) => { return pod.id && (!$scope.namespace || $scope.namespace === pod.namespace)}));
           angular.forEach(pods, entity => {
             entity.$labelsText = Kubernetes.labelsToString(entity.labels);
 

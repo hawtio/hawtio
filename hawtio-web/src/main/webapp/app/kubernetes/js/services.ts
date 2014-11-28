@@ -4,9 +4,10 @@
 module Kubernetes {
 
   export var Services = controller("Services",
-    ["$scope", "KubernetesServices", "$templateCache", "$location", "jolokia",
-      ($scope, KubernetesServices:ng.IPromise<ng.resource.IResourceClass>, $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService, jolokia:Jolokia.IJolokia) => {
+    ["$scope", "KubernetesServices", "$templateCache", "$location", "$routeParams", "jolokia",
+      ($scope, KubernetesServices:ng.IPromise<ng.resource.IResourceClass>, $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService, $routeParams, jolokia:Jolokia.IJolokia) => {
 
+    $scope.namespace = $routeParams.namespace;
     $scope.services = [];
     $scope.fetched = false;
     $scope.json = '';
@@ -23,6 +24,7 @@ module Kubernetes {
       },
       columnDefs: [
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
+        { field: 'namespace', displayName: 'Namespace' },
         { field: 'selector', displayName: 'Selector', cellTemplate: $templateCache.get("selectorTemplate.html") },
         { field: 'portalIP', displayName: 'Address', cellTemplate: $templateCache.get("portalAddress.html") },
         { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
@@ -84,7 +86,7 @@ module Kubernetes {
       $scope.fetch = PollHelpers.setupPolling($scope, (next: () => void) => {
         KubernetesServices.query((response) => {
           $scope.fetched = true;
-          $scope.services = (response['items'] || []).sortBy((item) => { return item.id; });
+          $scope.services = (response['items'] || []).sortBy((item) => { return item.id; }).filter((item) => {return !$scope.namespace || $scope.namespace === item.namespace});
           Kubernetes.setJson($scope, $scope.id, $scope.services);
           angular.forEach($scope.services, entity => {
             entity.$labelsText = Kubernetes.labelsToString(entity.labels);

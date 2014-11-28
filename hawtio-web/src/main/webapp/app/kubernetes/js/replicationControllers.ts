@@ -35,9 +35,10 @@ module Kubernetes {
   }]);
 
   export var ReplicationControllers = controller("ReplicationControllers",
-    ["$scope", "KubernetesReplicationControllers", "$templateCache", "$location", "jolokia",
-      ($scope, KubernetesReplicationControllers:ng.IPromise<ng.resource.IResourceClass>, $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService, jolokia:Jolokia.IJolokia) => {
+    ["$scope", "KubernetesReplicationControllers", "$templateCache", "$location", "$routeParams", "jolokia",
+      ($scope, KubernetesReplicationControllers:ng.IPromise<ng.resource.IResourceClass>, $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService, $routeParams, jolokia:Jolokia.IJolokia) => {
 
+    $scope.namespace = $routeParams.namespace;
     $scope.replicationControllers = [];
     $scope.fetched = false;
     $scope.json = '';
@@ -63,6 +64,7 @@ module Kubernetes {
       columnDefs: [
         { field: 'id', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
+        { field: 'namespace', displayName: 'Namespace' },
         { field: 'currentState.replicas', displayName: 'Current Replicas', cellTemplate: $templateCache.get("currentReplicasTemplate.html") },
         { field: 'desiredState.replicas', displayName: 'Desired Replicas', cellTemplate:$templateCache.get("desiredReplicas.html") },
         { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
@@ -172,7 +174,7 @@ module Kubernetes {
             next();
             return;
           }
-          $scope.replicationControllers = (response['items'] || []).sortBy((item) => { return item.id; });
+          $scope.replicationControllers = (response['items'] || []).sortBy((item) => { return item.id; }).filter((item) => {return !$scope.namespace || $scope.namespace === item.namespace});
           angular.forEach($scope.replicationControllers, entity => {
             entity.$labelsText = Kubernetes.labelsToString(entity.labels);
             var desiredState = entity.desiredState || {};

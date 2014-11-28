@@ -10,9 +10,12 @@ module Kubernetes {
   export var route = PluginHelpers.createRoutingFunction(templatePath);
 
   _module.config(['$routeProvider', ($routeProvider:ng.route.IRouteProvider) => {
-    $routeProvider.when(UrlHelpers.join(context, 'pods'), route('pods.html', false))
+    $routeProvider.when(UrlHelpers.join(context, '/pods'), route('pods.html', false))
+                  .when(UrlHelpers.join(context, '/namespace/:namespace/pods'), route('pods.html', false))
                   .when(UrlHelpers.join(context, 'replicationControllers'), route('replicationControllers.html', false))
+                  .when(UrlHelpers.join(context, '/namespace/:namespace/replicationControllers'), route('replicationControllers.html', false))
                   .when(UrlHelpers.join(context, 'services'), route('services.html', false))
+                  .when(UrlHelpers.join(context, '/namespace/:namespace/services'), route('services.html', false))
                   .when(UrlHelpers.join(context, 'overview'), route('overview.html', false));
   }]);
 
