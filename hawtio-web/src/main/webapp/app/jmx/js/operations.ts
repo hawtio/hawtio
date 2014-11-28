@@ -8,10 +8,13 @@
 module Jmx {
 
   // IOperationControllerScope
-  _module.controller("Jmx.OperationController", ["$scope", "workspace", "jolokia", "$timeout", ($scope,
+  _module.controller("Jmx.OperationController", ["$scope", "workspace", "jolokia", "$timeout", "$location", "localStorage", "$browser", ($scope,
                                       workspace:Workspace,
                                       jolokia,
-                                      $timeout) => {
+                                      $timeout,
+                                      $location,
+                                      localStorage,
+                                      $browser) => {
     $scope.item = $scope.selectedOperation;
     $scope.title = $scope.item.humanReadable;
     $scope.desc = $scope.item.desc;
@@ -23,6 +26,9 @@ module Jmx {
       properties: {},
       description: $scope.objectName + "::" + $scope.item.name
     };
+
+    var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
+    $scope.jolokiaUrl = url + localStorage["url"] + "/exec/" + workspace.getSelectedMBeanName() + "/" + $scope.item.name;
 
     $scope.item.args.forEach((arg) => {
       $scope.formConfig.properties[arg.name] = {
