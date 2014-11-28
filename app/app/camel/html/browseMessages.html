@@ -30,6 +30,7 @@
             <thead>
             <tr>
               <th>Header</th>
+              <th>Type</th>
               <th>Value</th>
             </tr>
             </thead>
@@ -40,7 +41,10 @@
       </div>
 
       <div class="row-fluid">
-        <div hawtio-editor="row.body" read-only="true" mode="mode"></div>
+        <div title="Body" class="title">
+          Body (type: {{row.bodyType}})
+        </div>
+        <div hawtio-editor="row.body" read-only="true" mode="mode" text-title="row.bodyType"></div>
       </div>
 
     </div>

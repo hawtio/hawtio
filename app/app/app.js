@@ -478,9 +478,10 @@ var Core;
         return angular.isArray(value) ? value : [value];
     }
     Core.asArray = asArray;
-    function parseBooleanValue(value) {
+    function parseBooleanValue(value, defaultValue) {
+        if (defaultValue === void 0) { defaultValue = false; }
         if (!angular.isDefined(value) || !value) {
-            return false;
+            return defaultValue;
         }
         if (value.constructor === Boolean) {
             return value;
@@ -9294,6 +9295,7 @@ var Camel;
     Camel.jmxDomain = 'org.apache.camel';
     Camel.defaultMaximumLabelWidth = 34;
     Camel.defaultCamelMaximumTraceOrDebugBodyLength = 5000;
+    Camel.defaultCamelTraceOrDebugIncludeStreams = true;
     Camel.defaultCamelRouteMetricMaxSeconds = 10;
     function processRouteXml(workspace, jolokia, folder, onRoute) {
         var selectedRouteId = getSelectedRouteId(workspace, folder);
@@ -10119,7 +10121,7 @@ var Camel;
                     messageData.headers[key] = value;
                 if (typeName)
                     messageData.headerTypes[key] = typeName;
-                headerHtml += "<tr><td class='property-name'>" + key + "</td>" + "<td class='property-value'>" + (value || "") + "</td></tr>";
+                headerHtml += "<tr><td class='property-name'>" + key + "</td>" + "<td class='property-value'>" + (humanizeJavaType(typeName)) + "</td>" + "<td class='property-value'>" + (value || "") + "</td></tr>";
             }
         });
         messageData.headerHtml = headerHtml;
@@ -10146,11 +10148,21 @@ var Camel;
             var bodyText = body.textContent;
             var bodyType = body.getAttribute("type");
             messageData["body"] = bodyText;
-            messageData["bodyType"] = bodyType;
+            messageData["bodyType"] = humanizeJavaType(bodyType);
         }
         return messageData;
     }
     Camel.createMessageFromXml = createMessageFromXml;
+    function humanizeJavaType(type) {
+        if (!type) {
+            return "";
+        }
+        if (type.startsWith("java.lang")) {
+            return type.substr(10);
+        }
+        return type;
+    }
+    Camel.humanizeJavaType = humanizeJavaType;
     function createBrowseGridOptions() {
         return {
             selectedItems: [],
@@ -10472,7 +10484,7 @@ var Camel;
     Camel.camelProcessorMBeansById = camelProcessorMBeansById;
     function ignoreIdForLabel(localStorage) {
         var value = localStorage["camelIgnoreIdForLabel"];
-        return value && (value === "true" || value === true);
+        return Core.parseBooleanValue(value);
     }
     Camel.ignoreIdForLabel = ignoreIdForLabel;
     function maximumLabelWidth(localStorage) {
@@ -10497,6 +10509,11 @@ var Camel;
         return value;
     }
     Camel.maximumTraceOrDebugBodyLength = maximumTraceOrDebugBodyLength;
+    function traceOrDebugIncludeStreams(localStorage) {
+        var value = localStorage["camelTraceOrDebugIncludeStreams"];
+        return Core.parseBooleanValue(value, Camel.defaultCamelTraceOrDebugIncludeStreams);
+    }
+    Camel.traceOrDebugIncludeStreams = traceOrDebugIncludeStreams;
     function routeMetricMaxSeconds(localStorage) {
         var value = localStorage["camelRouteMetricMaxSeconds"];
         if (angular.isString(value)) {
@@ -11445,8 +11462,7 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.DebugRouteController", ["$scope", "$element", "workspace", "jolokia", function ($scope, $element, workspace, jolokia) {
-        $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
+    Camel._module.controller("Camel.DebugRouteController", ["$scope", "$element", "workspace", "jolokia", "localStorage", function ($scope, $element, workspace, jolokia, localStorage) {
         $scope.ignoreRouteXmlNode = true;
         $scope.startDebugging = function () {
             setDebugging(true);
@@ -11719,8 +11735,11 @@ var Camel;
             var mbean = Camel.getSelectionCamelDebugMBean(workspace);
             if (mbean) {
                 var method = flag ? "enableDebugger" : "disableDebugger";
-                var max = $scope.camelMaximumTraceOrDebugBodyLength;
+                var max = Camel.maximumTraceOrDebugBodyLength(localStorage);
+                var streams = Camel.traceOrDebugIncludeStreams(localStorage);
                 jolokia.setAttribute(mbean, "BodyMaxChars", max);
+                jolokia.setAttribute(mbean, "BodyIncludeStreams", streams);
+                jolokia.setAttribute(mbean, "BodyIncludeFiles", streams);
                 jolokia.execute(mbean, method, onSuccess(breakpointsChanged));
             }
         }
@@ -12715,6 +12734,10 @@ var Camel;
             'camelMaximumTraceOrDebugBodyLength': {
                 'value': Camel.defaultCamelMaximumTraceOrDebugBodyLength,
                 'converter': parseInt
+            },
+            'camelTraceOrDebugIncludeStreams': {
+                'value': Camel.defaultCamelTraceOrDebugIncludeStreams,
+                'converter': Core.parseBooleanValue
             },
             'camelRouteMetricMaxSeconds': {
                 'value': Camel.defaultCamelRouteMetricMaxSeconds,
@@ -13754,7 +13777,6 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.TraceRouteController", ["$scope", "workspace", "jolokia", "localStorage", "tracerStatus", function ($scope, workspace, jolokia, localStorage, tracerStatus) {
         var log = Logger.get("CamelTracer");
-        $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
         $scope.tracing = false;
         $scope.messages = [];
         $scope.graphView = null;
@@ -13894,8 +13916,11 @@ var Camel;
             var mbean = Camel.getSelectionCamelTraceMBean(workspace);
             if (mbean) {
                 if (mbean.toString().endsWith("BacklogTracer")) {
-                    var max = $scope.camelMaximumTraceOrDebugBodyLength;
+                    var max = Camel.maximumTraceOrDebugBodyLength(localStorage);
+                    var streams = Camel.traceOrDebugIncludeStreams(localStorage);
                     jolokia.setAttribute(mbean, "BodyMaxChars", max);
+                    jolokia.setAttribute(mbean, "BodyIncludeStreams", streams);
+                    jolokia.setAttribute(mbean, "BodyIncludeFiles", streams);
                 }
                 jolokia.setAttribute(mbean, "Enabled", flag, onSuccess(tracingChanged));
             }
@@ -14877,16 +14902,28 @@ var Kubernetes;
         }
     }
     Kubernetes.setJson = setJson;
-    function labelsToString(labels) {
+    function labelsToString(labels, seperatorText) {
+        if (seperatorText === void 0) { seperatorText = ","; }
         var answer = "";
         angular.forEach(labels, function (value, key) {
-            var separator = answer ? "," : "";
+            var separator = answer ? seperatorText : "";
             answer += separator + key + "=" + value;
         });
         return answer;
     }
     Kubernetes.labelsToString = labelsToString;
-    function initShared($scope) {
+    function initShared($scope, $location) {
+        var currentFilter = $location.search()["q"];
+        if (currentFilter) {
+            $scope.tableConfig.filterOptions.filterText = currentFilter;
+        }
+        $scope.$watch("tableConfig.filterOptions.filterText", function () {
+            var filter = $scope.tableConfig.filterOptions.filterText;
+            if (!filter) {
+                filter = null;
+            }
+            $location.search("q", filter);
+        });
         $scope.$on("labelFilterUpdate", function ($event, text) {
             var filterText = $scope.tableConfig.filterOptions.filterText;
             if (Core.isBlank(filterText)) {
@@ -35017,7 +35054,6 @@ var Kubernetes;
                 Kubernetes.log.debug("error fetching API URL: ", response);
             }
         }));
-        Kubernetes.initShared($scope);
         $scope.tableConfig = {
             data: 'pods',
             showSelectionCheckbox: true,
@@ -35059,6 +35095,7 @@ var Kubernetes;
                 }
             ]
         };
+        Kubernetes.initShared($scope, $location);
         $scope.connect = {
             dialog: new UI.Dialog(),
             saveCredentials: false,
@@ -35277,7 +35314,6 @@ var Kubernetes;
         $scope.fetched = false;
         $scope.json = '';
         ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
-        Kubernetes.initShared($scope);
         $scope.detailConfig = {
             properties: {
                 '^\\/labels$': {
@@ -35297,11 +35333,12 @@ var Kubernetes;
             columnDefs: [
                 { field: 'id', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
                 { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
-                { field: 'currentState.replicas', displayName: 'Current Replicas' },
+                { field: 'currentState.replicas', displayName: 'Current Replicas', cellTemplate: $templateCache.get("currentReplicasTemplate.html") },
                 { field: 'desiredState.replicas', displayName: 'Desired Replicas', cellTemplate: $templateCache.get("desiredReplicas.html") },
                 { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
             ]
         };
+        Kubernetes.initShared($scope, $location);
         $scope.$on('kubernetes.dirtyController', function ($event, replicationController) {
             replicationController.$dirty = true;
         });
@@ -35397,6 +35434,11 @@ var Kubernetes;
                     });
                     angular.forEach($scope.replicationControllers, function (entity) {
                         entity.$labelsText = Kubernetes.labelsToString(entity.labels);
+                        var desiredState = entity.desiredState || {};
+                        var replicaSelector = desiredState.replicaSelector;
+                        if (replicaSelector) {
+                            entity.podsLink = "#/kubernetes/pods?q=" + Kubernetes.labelsToString(replicaSelector, " ");
+                        }
                     });
                     Kubernetes.setJson($scope, $scope.id, $scope.replicationControllers);
                     next();
@@ -35413,7 +35455,6 @@ var Kubernetes;
         $scope.fetched = false;
         $scope.json = '';
         ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
-        Kubernetes.initShared($scope);
         $scope.tableConfig = {
             data: 'services',
             showSelectionCheckbox: true,
@@ -35430,6 +35471,7 @@ var Kubernetes;
                 { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
             ]
         };
+        Kubernetes.initShared($scope, $location);
         $scope.$on('kubeSelectedId', function ($event, id) {
             Kubernetes.setJson($scope, id, $scope.services);
         });

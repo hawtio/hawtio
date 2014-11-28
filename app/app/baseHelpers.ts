@@ -371,11 +371,12 @@ module Core {
    * @method parseBooleanValue
    * @for Core
    * @param {any} value
+   * @param {Boolean} defaultValue default value to use if value is not defined
    * @return {Boolean}
    */
-  export function parseBooleanValue(value:any):boolean {
+  export function parseBooleanValue(value:any, defaultValue:boolean = false):boolean {
     if (!angular.isDefined(value) || !value) {
-      return false;
+      return defaultValue;
     }
 
     if (value.constructor === Boolean) {
