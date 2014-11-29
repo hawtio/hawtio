@@ -14919,9 +14919,6 @@ var Kubernetes;
         }
         $scope.$watch("tableConfig.filterOptions.filterText", function () {
             var filter = $scope.tableConfig.filterOptions.filterText;
-            if (!filter) {
-                filter = null;
-            }
             $location.search("q", filter);
         });
         $scope.$on("labelFilterUpdate", function ($event, text) {
@@ -15296,6 +15293,7 @@ var Perspective;
             topLevelTabs: {
                 includes: [
                     {
+                        content: "Runtime",
                         id: "kubernetes"
                     },
                     {
@@ -31396,7 +31394,7 @@ var Jmx;
             cellTemplate: '<div class="ngCellText"><a href="{{row.entity.folderHref(row)}}"><i class="{{row.entity.folderIconClass(row)}}"></i> {{row.getProperty("title")}}</a></div>'
         }
     ];
-    Jmx.AttributesController = Jmx._module.controller("Jmx.AttributesController", ["$scope", "$element", "$location", "workspace", "jolokia", "jmxWidgets", "jmxWidgetTypes", "$templateCache", function ($scope, $element, $location, workspace, jolokia, jmxWidgets, jmxWidgetTypes, $templateCache) {
+    Jmx.AttributesController = Jmx._module.controller("Jmx.AttributesController", ["$scope", "$element", "$location", "workspace", "jolokia", "jmxWidgets", "jmxWidgetTypes", "$templateCache", "localStorage", "$browser", function ($scope, $element, $location, workspace, jolokia, jmxWidgets, jmxWidgetTypes, $templateCache, localStorage, $browser) {
         $scope.searchText = '';
         $scope.nid = 'empty';
         $scope.selectedItems = [];
@@ -31433,6 +31431,12 @@ var Jmx;
                 'type': {
                     description: 'Type',
                     tooltip: 'Attribute type',
+                    type: 'string',
+                    readOnly: 'true'
+                },
+                'jolokia': {
+                    description: 'Jolokia URL',
+                    tooltip: 'Jolokia REST URL',
                     type: 'string',
                     readOnly: 'true'
                 }
@@ -31510,6 +31514,8 @@ var Jmx;
             $scope.entity["key"] = row.key;
             $scope.entity["description"] = row.attrDesc;
             $scope.entity["type"] = row.type;
+            var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
+            $scope.entity["jolokia"] = url + localStorage["url"] + "/read/" + workspace.getSelectedMBeanName() + "/" + $scope.entity["key"];
             $scope.entity["rw"] = row.rw;
             var type = asJsonSchemaType(row.type, row.key);
             var readOnly = !row.rw;
@@ -32613,7 +32619,7 @@ var Jmx;
 })(Jmx || (Jmx = {}));
 var Jmx;
 (function (Jmx) {
-    Jmx._module.controller("Jmx.OperationController", ["$scope", "workspace", "jolokia", "$timeout", function ($scope, workspace, jolokia, $timeout) {
+    Jmx._module.controller("Jmx.OperationController", ["$scope", "workspace", "jolokia", "$timeout", "$location", "localStorage", "$browser", function ($scope, workspace, jolokia, $timeout, $location, localStorage, $browser) {
         $scope.item = $scope.selectedOperation;
         $scope.title = $scope.item.humanReadable;
         $scope.desc = $scope.item.desc;
@@ -32625,6 +32631,8 @@ var Jmx;
             properties: {},
             description: $scope.objectName + "::" + $scope.item.name
         };
+        var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
+        $scope.jolokiaUrl = url + localStorage["url"] + "/exec/" + workspace.getSelectedMBeanName() + "/" + $scope.item.name;
         $scope.item.args.forEach(function (arg) {
             $scope.formConfig.properties[arg.name] = {
                 type: arg.type,
@@ -34427,7 +34435,7 @@ var Kubernetes;
     Kubernetes.controller = PluginHelpers.createControllerFunction(Kubernetes._module, Kubernetes.pluginName);
     Kubernetes.route = PluginHelpers.createRoutingFunction(Kubernetes.templatePath);
     Kubernetes._module.config(['$routeProvider', function ($routeProvider) {
-        $routeProvider.when(UrlHelpers.join(Kubernetes.context, 'pods'), Kubernetes.route('pods.html', false)).when(UrlHelpers.join(Kubernetes.context, 'replicationControllers'), Kubernetes.route('replicationControllers.html', false)).when(UrlHelpers.join(Kubernetes.context, 'services'), Kubernetes.route('services.html', false)).when(UrlHelpers.join(Kubernetes.context, 'overview'), Kubernetes.route('overview.html', false));
+        $routeProvider.when(UrlHelpers.join(Kubernetes.context, '/pods'), Kubernetes.route('pods.html', false)).when(UrlHelpers.join(Kubernetes.context, '/namespace/:namespace/pods'), Kubernetes.route('pods.html', false)).when(UrlHelpers.join(Kubernetes.context, 'replicationControllers'), Kubernetes.route('replicationControllers.html', false)).when(UrlHelpers.join(Kubernetes.context, '/namespace/:namespace/replicationControllers'), Kubernetes.route('replicationControllers.html', false)).when(UrlHelpers.join(Kubernetes.context, 'services'), Kubernetes.route('services.html', false)).when(UrlHelpers.join(Kubernetes.context, '/namespace/:namespace/services'), Kubernetes.route('services.html', false)).when(UrlHelpers.join(Kubernetes.context, 'overview'), Kubernetes.route('overview.html', false));
     }]);
     Kubernetes._module.factory('KubernetesApiURL', ['jolokiaUrl', 'jolokia', '$q', '$rootScope', function (jolokiaUrl, jolokia, $q, $rootScope) {
         var answer = $q.defer();
@@ -34660,16 +34668,16 @@ var Kubernetes;
             replace: true,
             link: function (scope, element, attr) {
                 element.css({ visibility: 'hidden' });
-                scope.getEntity = function (type, id) {
+                scope.getEntity = function (type, key) {
                     switch (type) {
                         case 'host':
-                            return scope.hostsById[id];
+                            return scope.hostsByKey[key];
                         case 'pod':
-                            return scope.podsById[id];
+                            return scope.podsByKey[key];
                         case 'replicationController':
-                            return scope.replicationControllersById[id];
+                            return scope.replicationControllersByKey[key];
                         case 'service':
-                            return scope.servicesById[id];
+                            return scope.servicesByKey[key];
                         default:
                             return undefined;
                     }
@@ -34762,11 +34770,14 @@ var Kubernetes;
                 }
                 function appendNewElements(parentEl, template, thingName, things) {
                     things.forEach(function (thing) {
-                        var existing = parentEl.find("#" + thing['id']);
+                        var existing = parentEl.find("#" + thing['_key']);
                         if (!existing.length) {
                             parentEl.append($compile(createElement(template, thingName, thing))(scope));
                         }
                     });
+                }
+                function namespaceFilter(item) {
+                    return item.namespace === scope.selectedNamespace;
                 }
                 function firstDraw() {
                     Kubernetes.log.debug("First draw");
@@ -34778,12 +34789,12 @@ var Kubernetes;
                     var servicesEl = parentEl.find(".services");
                     var hostsEl = parentEl.find(".hosts");
                     var replicationControllersEl = parentEl.find(".replicationControllers");
-                    servicesEl.append(createElements($templateCache.get("serviceTemplate.html"), 'service', services));
-                    replicationControllersEl.append(createElements($templateCache.get("replicationControllerTemplate.html"), 'replicationController', replicationControllers));
+                    servicesEl.append(createElements($templateCache.get("serviceTemplate.html"), 'service', services.filter(namespaceFilter)));
+                    replicationControllersEl.append(createElements($templateCache.get("replicationControllerTemplate.html"), 'replicationController', replicationControllers.filter(namespaceFilter)));
                     hosts.forEach(function (host) {
                         var hostEl = angular.element(createElement($templateCache.get("hostTemplate.html"), 'host', host));
                         var podContainer = angular.element(hostEl.find('.pod-container'));
-                        podContainer.append(createElements($templateCache.get("podTemplate.html"), "pod", host.pods));
+                        podContainer.append(createElements($templateCache.get("podTemplate.html"), "pod", host.pods.filter(namespaceFilter)));
                         hostsEl.append(hostEl);
                     });
                     element.append($compile(parentEl)(scope));
@@ -34794,40 +34805,40 @@ var Kubernetes;
                 function update() {
                     scope.$emit('jsplumbDoWhileSuspended', function () {
                         Kubernetes.log.debug("Update");
-                        var services = scope.services;
-                        var replicationControllers = scope.replicationControllers;
-                        var pods = scope.pods;
+                        var services = scope.services.filter(namespaceFilter);
+                        var replicationControllers = scope.replicationControllers.filter(namespaceFilter);
+                        var pods = scope.pods.filter(namespaceFilter);
                         var hosts = scope.hosts;
                         var parentEl = element.find('[hawtio-jsplumb]');
                         var children = parentEl.find('.jsplumb-node');
                         children.each(function (index, c) {
                             var child = angular.element(c);
-                            var id = child.attr('id');
-                            if (Core.isBlank(id)) {
+                            var key = child.attr('id');
+                            if (Core.isBlank(key)) {
                                 return;
                             }
                             var type = child.attr('data-type');
                             switch (type) {
                                 case 'host':
-                                    if (id in scope.hostsById) {
+                                    if (key in scope.hostsByKey) {
                                         return;
                                     }
                                     break;
                                 case 'service':
-                                    if (id in scope.servicesById) {
-                                        var service = scope.servicesById[id];
+                                    if (key in scope.servicesByKey && scope.servicesByKey[key].namespace == scope.selectedNamespace) {
+                                        var service = scope.servicesByKey[key];
                                         child.attr('connect-to', service.connectTo);
                                         return;
                                     }
                                     break;
                                 case 'pod':
-                                    if (id in scope.podsById) {
+                                    if (key in scope.podsByKey && scope.podsByKey[key].namespace == scope.selectedNamespace) {
                                         return;
                                     }
                                     break;
                                 case 'replicationController':
-                                    if (id in scope.replicationControllersById) {
-                                        var replicationController = scope.replicationControllersById[id];
+                                    if (key in scope.replicationControllersByKey && scope.replicationControllersByKey[key].namespace == scope.selectedNamespace) {
+                                        var replicationController = scope.replicationControllersByKey[key];
                                         child.attr('connect-to', replicationController.connectTo);
                                         return;
                                     }
@@ -34836,18 +34847,18 @@ var Kubernetes;
                                     Kubernetes.log.debug("Ignoring element with unknown type");
                                     return;
                             }
-                            Kubernetes.log.debug("Removing: ", id);
+                            Kubernetes.log.debug("Removing: ", key);
                             child.remove();
                         });
                         var servicesEl = parentEl.find(".services");
                         var hostsEl = parentEl.find(".hosts");
                         var replicationControllersEl = parentEl.find(".replicationControllers");
-                        appendNewElements(servicesEl, $templateCache.get("serviceTemplate.html"), "service", services);
-                        appendNewElements(replicationControllersEl, $templateCache.get("replicationControllerTemplate.html"), "replicationController", replicationControllers);
+                        appendNewElements(servicesEl, $templateCache.get("serviceTemplate.html"), "service", services.filter(namespaceFilter));
+                        appendNewElements(replicationControllersEl, $templateCache.get("replicationControllerTemplate.html"), "replicationController", replicationControllers.filter(namespaceFilter));
                         appendNewElements(hostsEl, $templateCache.get("hostTemplate.html"), "host", hosts);
                         hosts.forEach(function (host) {
-                            var hostEl = parentEl.find("#" + host.id);
-                            appendNewElements(hostEl, $templateCache.get("podTemplate.html"), "pod", host.pods);
+                            var hostEl = parentEl.find("#" + host._key);
+                            appendNewElements(hostEl, $templateCache.get("podTemplate.html"), "pod", host.pods.filter(namespaceFilter));
                         });
                     });
                 }
@@ -34866,18 +34877,21 @@ var Kubernetes;
     }]);
     var OverviewBoxController = Kubernetes.controller("OverviewBoxController", ["$scope", "$location", function ($scope, $location) {
         $scope.viewDetails = function (path) {
-            $location.path(UrlHelpers.join('/kubernetes', path)).search({ '_id': $scope.entity.id });
+            $location.path(UrlHelpers.join('/kubernetes/namespace', $scope.entity.namespace, path)).search({ '_id': $scope.entity.id });
         };
     }]);
     var scopeName = "OverviewController";
     var OverviewController = Kubernetes.controller(scopeName, ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", function ($scope, KubernetesServices, KubernetesPods, KubernetesReplicationControllers) {
         $scope.name = scopeName;
+        $scope.namespaces = null;
         $scope.services = null;
         $scope.replicationControllers = null;
         $scope.pods = null;
         $scope.hosts = null;
         $scope.count = 0;
+        $scope.selectedNamespace = null;
         var redraw = false;
+        var namespaces = [];
         var services = [];
         var replicationControllers = [];
         var pods = [];
@@ -34885,6 +34899,31 @@ var Kubernetes;
         var byId = function (thing) {
             return thing.id;
         };
+        var byNamespace = function (thing) {
+            return thing.namespace;
+        };
+        function pushIfNotExists(array, items) {
+            angular.forEach(items, function (value) {
+                if ($.inArray(value, array) < 0) {
+                    array.push(value);
+                }
+            });
+        }
+        ;
+        function populateKey(item) {
+            var result = item;
+            result['_key'] = item.namespace + "-" + item.id;
+            return result;
+        }
+        ;
+        function populateKeys(items) {
+            var result = [];
+            angular.forEach(items, function (item) {
+                result.push(populateKey(item));
+            });
+            return result;
+        }
+        ;
         KubernetesServices.then(function (KubernetesServices) {
             KubernetesReplicationControllers.then(function (KubernetesReplicationControllers) {
                 KubernetesPods.then(function (KubernetesPods) {
@@ -34900,22 +34939,22 @@ var Kubernetes;
                         }
                         KubernetesServices.query(function (response) {
                             if (response) {
-                                var items = (response.items || []).sortBy(byId);
-                                redraw = ArrayHelpers.sync(services, items);
+                                var items = populateKeys((response.items || []).sortBy(byId));
+                                redraw = ArrayHelpers.sync(services, items, "_key");
                             }
                             maybeNext(ready + 1);
                         });
                         KubernetesReplicationControllers.query(function (response) {
                             if (response) {
-                                var items = (response.items || []).sortBy(byId);
-                                redraw = ArrayHelpers.sync(replicationControllers, items);
+                                var items = populateKeys((response.items || []).sortBy(byId));
+                                redraw = ArrayHelpers.sync(replicationControllers, items, "_key");
                             }
                             maybeNext(ready + 1);
                         });
                         KubernetesPods.query(function (response) {
                             if (response) {
-                                var items = (response.items || []).sortBy(byId);
-                                redraw = ArrayHelpers.sync(pods, items);
+                                var items = populateKeys((response.items || []).sortBy(byId));
+                                redraw = ArrayHelpers.sync(pods, items, "_key");
                             }
                             maybeNext(ready + 1);
                         });
@@ -34924,48 +34963,47 @@ var Kubernetes;
                 });
             });
         });
-        function selectPods(pods, labels) {
+        function selectPods(pods, namespace, labels) {
             var matchFunc = _.matches(labels);
             return pods.filter(function (pod) {
-                return matchFunc(pod.labels, undefined, undefined);
+                return pod.namespace === namespace && matchFunc(pod.labels, undefined, undefined);
             });
         }
         function maybeInit() {
             if (services && replicationControllers && pods) {
-                $scope.servicesById = {};
-                $scope.podsById = {};
-                $scope.replicationControllersById = {};
+                $scope.servicesByKey = {};
+                $scope.podsByKey = {};
+                $scope.replicationControllersByKey = {};
+                $scope.namespaces = {};
                 services.forEach(function (service) {
-                    $scope.servicesById[service.id] = service;
-                    var selectedPods = selectPods(pods, service.selector);
+                    $scope.servicesByKey[service._key] = service;
+                    var selectedPods = selectPods(pods, service.namespace, service.selector);
                     service.connectTo = selectedPods.map(function (pod) {
-                        return pod.id;
+                        return pod._key;
                     }).join(',');
                 });
                 replicationControllers.forEach(function (replicationController) {
-                    $scope.replicationControllersById[replicationController.id] = replicationController;
-                    var selectedPods = selectPods(pods, replicationController.desiredState.replicaSelector);
+                    $scope.replicationControllersByKey[replicationController._key] = replicationController;
+                    var selectedPods = selectPods(pods, replicationController.namespace, replicationController.desiredState.replicaSelector);
                     replicationController.connectTo = selectedPods.map(function (pod) {
-                        return pod.id;
+                        return pod._key;
                     }).join(',');
                 });
-                var hostsById = {};
+                var hostsByKey = {};
                 pods.forEach(function (pod) {
-                    $scope.podsById[pod.id] = pod;
+                    $scope.podsByKey[pod._key] = pod;
                     var host = pod.currentState.host;
-                    if (!(host in hostsById)) {
-                        hostsById[host] = [];
-                    }
-                    hostsById[host].push(pod);
+                    hostsByKey[host] = hostsByKey[host] || [];
+                    hostsByKey[host].push(pod);
                 });
                 var tmpHosts = [];
                 var oldHostsLength = hosts.length;
-                angular.forEach(hostsById, function (value, key) {
+                for (var hostKey in hostsByKey) {
                     tmpHosts.push({
-                        id: key,
-                        pods: value
+                        id: hostKey,
+                        pods: hostsByKey[hostKey]
                     });
-                });
+                }
                 redraw = ArrayHelpers.removeElements(hosts, tmpHosts);
                 tmpHosts.forEach(function (newHost) {
                     var oldHost = hosts.find(function (h) {
@@ -34979,8 +35017,13 @@ var Kubernetes;
                         redraw = ArrayHelpers.sync(oldHost.pods, newHost.pods);
                     }
                 });
+                pushIfNotExists(namespaces, pods.map(byNamespace));
+                pushIfNotExists(namespaces, services.map(byNamespace));
+                pushIfNotExists(namespaces, replicationControllers.map(byNamespace));
+                $scope.namespaces = namespaces;
+                $scope.selectedNamespace = $scope.selectedNamespace || $scope.namespaces[0];
                 $scope.hosts = hosts;
-                $scope.hostsById = hostsById;
+                $scope.hostsByKey = hostsByKey;
                 $scope.pods = pods;
                 $scope.services = services;
                 $scope.replicationControllers = replicationControllers;
@@ -35000,7 +35043,8 @@ var Kubernetes;
         $scope.key = parts.shift();
         $scope.value = parts.join('=');
     }]);
-    Kubernetes.Pods = Kubernetes.controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "jolokia", "$location", "localStorage", function ($scope, KubernetesPods, $dialog, $templateCache, jolokia, $location, localStorage) {
+    Kubernetes.Pods = Kubernetes.controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "$routeParams", "jolokia", "$location", "localStorage", function ($scope, KubernetesPods, $dialog, $templateCache, $routeParams, jolokia, $location, localStorage) {
+        $scope.namespace = $routeParams.namespace;
         $scope.pods = undefined;
         var pods = [];
         $scope.fetched = false;
@@ -35069,6 +35113,10 @@ var Kubernetes;
                     displayName: 'ID',
                     defaultSort: true,
                     cellTemplate: $templateCache.get("idTemplate.html")
+                },
+                {
+                    field: 'namespace',
+                    displayName: 'Namespace'
                 },
                 {
                     field: 'currentState.status',
@@ -35200,7 +35248,7 @@ var Kubernetes;
                     var redraw = ArrayHelpers.sync(pods, (response['items'] || []).sortBy(function (pod) {
                         return pod.id;
                     }).filter(function (pod) {
-                        return pod.id;
+                        return pod.id && (!$scope.namespace || $scope.namespace === pod.namespace);
                     }));
                     angular.forEach(pods, function (entity) {
                         entity.$labelsText = Kubernetes.labelsToString(entity.labels);
@@ -35309,7 +35357,8 @@ var Kubernetes;
             $scope.row.entity.desiredState.replicas = originalValue;
         });
     }]);
-    Kubernetes.ReplicationControllers = Kubernetes.controller("ReplicationControllers", ["$scope", "KubernetesReplicationControllers", "$templateCache", "$location", "jolokia", function ($scope, KubernetesReplicationControllers, $templateCache, $location, jolokia) {
+    Kubernetes.ReplicationControllers = Kubernetes.controller("ReplicationControllers", ["$scope", "KubernetesReplicationControllers", "$templateCache", "$location", "$routeParams", "jolokia", function ($scope, KubernetesReplicationControllers, $templateCache, $location, $routeParams, jolokia) {
+        $scope.namespace = $routeParams.namespace;
         $scope.replicationControllers = [];
         $scope.fetched = false;
         $scope.json = '';
@@ -35333,6 +35382,7 @@ var Kubernetes;
             columnDefs: [
                 { field: 'id', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
                 { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
+                { field: 'namespace', displayName: 'Namespace' },
                 { field: 'currentState.replicas', displayName: 'Current Replicas', cellTemplate: $templateCache.get("currentReplicasTemplate.html") },
                 { field: 'desiredState.replicas', displayName: 'Desired Replicas', cellTemplate: $templateCache.get("desiredReplicas.html") },
                 { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
@@ -35431,13 +35481,15 @@ var Kubernetes;
                     }
                     $scope.replicationControllers = (response['items'] || []).sortBy(function (item) {
                         return item.id;
+                    }).filter(function (item) {
+                        return !$scope.namespace || $scope.namespace === item.namespace;
                     });
                     angular.forEach($scope.replicationControllers, function (entity) {
                         entity.$labelsText = Kubernetes.labelsToString(entity.labels);
                         var desiredState = entity.desiredState || {};
                         var replicaSelector = desiredState.replicaSelector;
                         if (replicaSelector) {
-                            entity.podsLink = "#/kubernetes/pods?q=" + Kubernetes.labelsToString(replicaSelector, " ");
+                            entity.podsLink = Core.url("/kubernetes/pods?q=" + encodeURIComponent(Kubernetes.labelsToString(replicaSelector, " ")));
                         }
                     });
                     Kubernetes.setJson($scope, $scope.id, $scope.replicationControllers);
@@ -35450,7 +35502,8 @@ var Kubernetes;
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
 (function (Kubernetes) {
-    Kubernetes.Services = Kubernetes.controller("Services", ["$scope", "KubernetesServices", "$templateCache", "$location", "jolokia", function ($scope, KubernetesServices, $templateCache, $location, jolokia) {
+    Kubernetes.Services = Kubernetes.controller("Services", ["$scope", "KubernetesServices", "$templateCache", "$location", "$routeParams", "jolokia", function ($scope, KubernetesServices, $templateCache, $location, $routeParams, jolokia) {
+        $scope.namespace = $routeParams.namespace;
         $scope.services = [];
         $scope.fetched = false;
         $scope.json = '';
@@ -35466,6 +35519,7 @@ var Kubernetes;
             },
             columnDefs: [
                 { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
+                { field: 'namespace', displayName: 'Namespace' },
                 { field: 'selector', displayName: 'Selector', cellTemplate: $templateCache.get("selectorTemplate.html") },
                 { field: 'portalIP', displayName: 'Address', cellTemplate: $templateCache.get("portalAddress.html") },
                 { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
@@ -35525,6 +35579,8 @@ var Kubernetes;
                     $scope.fetched = true;
                     $scope.services = (response['items'] || []).sortBy(function (item) {
                         return item.id;
+                    }).filter(function (item) {
+                        return !$scope.namespace || $scope.namespace === item.namespace;
                     });
                     Kubernetes.setJson($scope, $scope.id, $scope.services);
                     angular.forEach($scope.services, function (entity) {
@@ -42139,7 +42195,13 @@ var UI;
                 $scope.$watch('text', function (oldValue, newValue) {
                     if ($scope.codeMirror && $scope.doc) {
                         if (!$scope.codeMirror.hasFocus()) {
-                            $scope.doc.setValue($scope.text || "");
+                            var text = $scope.text || "";
+                            if (angular.isArray(text) || angular.isObject(text)) {
+                                text = JSON.stringify(text, null, "  ");
+                                $scope.mode = "javascript";
+                                $scope.codeMirror.setOption("mode", "javascript");
+                            }
+                            $scope.doc.setValue(text);
                         }
                     }
                 });
