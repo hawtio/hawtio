@@ -48,11 +48,7 @@ module Kubernetes {
       // lets iterate through the services and update the counts for the pods
       angular.forEach($scope.services, (service) => {
         var selector = service.selector;
-        if (selector) {
-          service.$podCounters = createPodCounters(selector, pods);
-        } else {
-          service.$podCounters = null;
-        }
+        service.$podCounters = selector ? createPodCounters(selector, pods) : null;
       });
     }
 
@@ -124,11 +120,6 @@ module Kubernetes {
             Kubernetes.setJson($scope, $scope.id, $scope.services);
             angular.forEach($scope.services, entity => {
               entity.$labelsText = Kubernetes.labelsToString(entity.labels);
-              var selector = entity.selector;
-              if (selector) {
-                entity.$podsLink = Core.url("/kubernetes/pods?q=" +
-                encodeURIComponent(Kubernetes.labelsToString(selector, " ")));
-              }
             });
             updatePodCounts();
             maybeNext(ready + 1);
@@ -147,7 +138,6 @@ module Kubernetes {
     });
 
     function maybeInit() {
-
     }
   }]);
 }
