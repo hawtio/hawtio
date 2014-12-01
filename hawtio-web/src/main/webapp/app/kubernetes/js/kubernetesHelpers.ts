@@ -85,4 +85,53 @@ module Kubernetes {
       $scope.id = undefined;
     });
   }
+
+  /**
+   * Given the list of pods lets iterate through them and find all pods matching the selector
+   * and return counters based on the status of the pod
+   */
+  export function createPodCounters(selector, pods) {
+    var answer = {
+      podsLink: "",
+      valid: 0,
+      waiting: 0,
+      error: 0
+    };
+    if (selector) {
+      answer.podsLink = Core.url("/kubernetes/pods?q=" + encodeURIComponent(Kubernetes.labelsToString(selector, " ")));
+      angular.forEach(pods, pod => {
+        if (selectorMatches(selector, pod.labels)) {
+          var status = (pod.currentState || {}).status;
+
+          if (status) {
+            var lower = status.toLowerCase();
+            if (lower.startsWith("run")) {
+              answer.valid += 1;
+            } else if (lower.startsWith("wait")) {
+              answer.waiting += 1;
+            } else if (lower.startsWith("term") || lower.startsWith("error") || lower.startsWith("fail")) {
+              answer.error += 1;
+            }
+          } else {
+            answer.error += 1;
+          }
+        }
+      });
+    }
+    return answer;
+  }
+
+  /**
+   * Returns true if the labels object has all of the key/value pairs from the selector
+   */
+  export function selectorMatches(selector, labels) {
+    var answer = true;
+    angular.forEach(selector, (value, key) => {
+      if (answer && labels[key] !== value) {
+        answer = false;
+      }
+    });
+    return answer;
+  }
+
 }
