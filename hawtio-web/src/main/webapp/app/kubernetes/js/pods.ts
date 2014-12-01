@@ -16,11 +16,57 @@ module Kubernetes {
   // main controller for the page
   export var Pods = controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "$routeParams", "jolokia", "$location", "localStorage", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, $dialog, $templateCache, $routeParams, jolokia:Jolokia.IJolokia, $location:ng.ILocationService, localStorage) => {
     $scope.namespace = $routeParams.namespace;
-    $scope.pods = undefined
+    $scope.pods = undefined;
     var pods = [];
     $scope.fetched = false;
     $scope.json = '';
     $scope.itemSchema = Forms.createFormConfiguration();
+
+    $scope.tableConfig = {
+      data: 'pods',
+      showSelectionCheckbox: true,
+      enableRowClickSelection: false,
+      multiSelect: true,
+      selectedItems: [],
+      filterOptions: {
+        filterText: $location.search()["q"] || ''
+      },
+      columnDefs: [
+        {
+          field: 'id',
+          displayName: 'ID',
+          defaultSort: true,
+          cellTemplate: $templateCache.get("idTemplate.html")
+        },
+        {
+              field: 'namespace',
+              displayName: 'Namespace'
+        },
+        {
+          field: 'currentState.status',
+          displayName: 'Status',
+          cellTemplate: $templateCache.get("statusTemplate.html")
+        },
+        {
+          field: 'containerImages',
+          displayName: 'Images',
+          cellTemplate: $templateCache.get("imageTemplate.html")
+        },
+        {
+          field: 'currentState.host',
+          displayName: 'Host'
+        },
+        {
+          field: 'currentState.podIP',
+          displayName: 'Pod IP'
+        },
+        {
+          field: 'labels',
+          displayName: 'Labels',
+          cellTemplate: $templateCache.get("labelTemplate.html")
+        }
+      ]
+    };
 
     $scope.podDetail = {
       properties: {
@@ -77,54 +123,11 @@ module Kubernetes {
         }
       }));
 
-    $scope.tableConfig = {
-      data: 'pods',
-      showSelectionCheckbox: true,
-      enableRowClickSelection: false,
-      multiSelect: true,
-      selectedItems: [],
-      filterOptions: {
-        filterText: ''
-      },
-      columnDefs: [
-        {
-          field: 'id',
-          displayName: 'ID',
-          defaultSort: true,
-          cellTemplate: $templateCache.get("idTemplate.html")
-        },
-        {
-              field: 'namespace',
-              displayName: 'Namespace'
-        },
-        {
-          field: 'currentState.status',
-          displayName: 'Status',
-          cellTemplate: $templateCache.get("statusTemplate.html")
-        },
-        {
-          field: 'containerImages',
-          displayName: 'Images',
-          cellTemplate: $templateCache.get("imageTemplate.html")
-        },
-        {
-          field: 'currentState.host',
-          displayName: 'Host'
-        },
-        { 
-          field: 'currentState.podIP',
-          displayName: 'Pod IP'
-        },
-        {
-          field: 'labels',
-          displayName: 'Labels',
-          cellTemplate: $templateCache.get("labelTemplate.html")
-        }
-      ]
-    };
+    log.info("====== got filter: " + $scope.tableConfig.filterOptions.filterText);
 
     Kubernetes.initShared($scope, $location);
 
+    log.info("====== got filter: " + $scope.tableConfig.filterOptions.filterText);
 
     $scope.connect = {
       dialog: new UI.Dialog(),
@@ -321,5 +324,7 @@ module Kubernetes {
       // kick off polling
       $scope.fetch();
     });
+
+    log.info("====== got filter: " + $scope.tableConfig.filterOptions.filterText);
   }]);
 }

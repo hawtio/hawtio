@@ -50,7 +50,7 @@ module Kubernetes {
           template: $templateCache.get('labelTemplate.html')
         }
       }
-    }
+    };
 
     $scope.tableConfig = {
       data: 'replicationControllers',
@@ -59,7 +59,7 @@ module Kubernetes {
       multiSelect: true,
       selectedItems: [],
       filterOptions: {
-        filterText: ''
+        filterText: $location.search()["q"] || ''
       },
       columnDefs: [
         { field: 'id', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },

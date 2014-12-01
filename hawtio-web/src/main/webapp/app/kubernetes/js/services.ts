@@ -20,7 +20,7 @@ module Kubernetes {
       multiSelect: true,
       selectedItems: [],
       filterOptions: {
-        filterText: ''
+        filterText: $location.search()["q"] || ''
       },
       columnDefs: [
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },

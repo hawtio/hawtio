@@ -63,29 +63,23 @@ module Kubernetes {
   }
 
   export function initShared($scope, $location) {
-    var currentFilter = $location.search()["q"];
-    if (currentFilter) {
-      $scope.tableConfig.filterOptions.filterText = currentFilter;
-    }
-
     // update the URL if the filter is changed
-    $scope.$watch("tableConfig.filterOptions.filterText", () => {
-      var filter = $scope.tableConfig.filterOptions.filterText;
-      $location.search("q", filter);
+    $scope.$watch("tableConfig.filterOptions.filterText", (text) => {
+      $location.search("q", text);
     });
 
     $scope.$on("labelFilterUpdate", ($event, text) => {
-      var filterText = $scope.tableConfig.filterOptions.filterText;
-      if (Core.isBlank(filterText)) {
+      var currentFilter = $scope.tableConfig.filterOptions.filterText;
+      if (Core.isBlank(currentFilter)) {
         $scope.tableConfig.filterOptions.filterText = text;
       } else {
-        var expressions = filterText.split(/\s+/);
+        var expressions = currentFilter.split(/\s+/);
         if (expressions.any(text)) {
           // lets exclude this filter expression
           expressions = expressions.remove(text);
           $scope.tableConfig.filterOptions.filterText = expressions.join(" ");
         } else {
-          $scope.tableConfig.filterOptions.filterText = filterText + " " + text;
+          $scope.tableConfig.filterOptions.filterText = currentFilter + " " + text;
         }
       }
       $scope.id = undefined;
