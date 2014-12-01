@@ -53,6 +53,11 @@ module ForceGraph {
         $scope.graphLabels.attr("transform", function (d) {
           return "translate(" + d.x + "," + d.y + ")";
         });
+
+        // Only run this in IE
+        if (Object.hasOwnProperty.call(window, "ActiveXObject") || !(<any>window).ActiveXObject) {
+          $scope.svg.selectAll(".link").each(function() {this.parentNode.insertBefore(this, this); })
+        }
       };
 
       $scope.mover = (d) => {
