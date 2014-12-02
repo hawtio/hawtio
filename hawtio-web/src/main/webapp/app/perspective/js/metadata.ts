@@ -139,21 +139,36 @@ module Perspective {
           },
           {
             id: "dashboard",
-            // we only want to exclude dashboard if we are running in fabric (as they are in another perspective)
+            // we only want to include dashboard if we are running in fabric (as they are in another perspective)
             // (must use "id" attribute for the plugin, an not href, when using onCondition)
             onCondition: (workspace) => Fabric.isFMCContainer(workspace)
           },
           {
             id: "health",
-            // we only want to exclude health if we are running in fabric (as they are in another perspective)
+            // we only want to include health if we are running in fabric (as they are in another perspective)
             // (must use "id" attribute for the plugin, an not href, when using onCondition)
             onCondition: (workspace) => Fabric.isFMCContainer(workspace)
           },
           {
             id: "wiki",
-            // we only want to exclude wiki if we are running in fabric (as they are in another perspective)
+            // we only want to include wiki if we are running in fabric (as they are in another perspective)
             // (must use "id" attribute for the plugin, an not href, when using onCondition)
             onCondition: (workspace) => Fabric.isFMCContainer(workspace)
+          },
+          {
+            id: "apis.index",
+            // we only want to include APIs if we are running in kubernetes (as they are in another perspective)
+            onCondition: (workspace) => Kubernetes.isKubernetes(workspace)
+          },
+          {
+            id: "grafana",
+            // we only want to include Grafana if we are running in kubernetes (as they are in another perspective)
+            onCondition: (workspace) => Kubernetes.isKubernetes(workspace)
+          },
+          {
+            id: "kibana",
+            // we only want to include Kibana if we are running in kubernetes (as they are in another perspective)
+            onCondition: (workspace) => Kubernetes.isKubernetes(workspace)
           }
         ]
       }

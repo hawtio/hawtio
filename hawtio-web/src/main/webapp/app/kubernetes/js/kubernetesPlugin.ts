@@ -89,7 +89,7 @@ module Kubernetes {
     workspace.topLevelTabs.push({
       id: 'kubernetes',
       content: 'Kubernetes',
-      isValid: (workspace:Core.Workspace) => workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, { type: 'Kubernetes' }),
+      isValid: (workspace:Core.Workspace) => isKubernetes(workspace),
       isActive: (workspace:Core.Workspace) => workspace.isLinkActive('kubernetes'),
       href: () => defaultRoute
     });
