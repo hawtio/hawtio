@@ -73,13 +73,28 @@ public class AetherFacade extends MBeanSupport implements AetherFacadeMXBean {
                 try {
                     return new OpenMavenURL(url).getInputStream();
                 } catch (MalformedURLException e) {
-                    throw new IllegalArgumentException("Could not parse URL: " + url + ". " + e, e);
+                    throw new IllegalArgumentException("Could not parse URL: " + url + " for remote URLs " + getRemoteUrlsText() + ". " + e, e);
                 } catch (IOException e) {
-                    throw new IllegalArgumentException("Could not read URL: " + url + ". " + e, e);
+                    throw new IllegalArgumentException("Could not read URL: " + url + " for remote URLs " + getRemoteUrlsText() + ". " + e, e);
                 }
             }
         });
         super.init();
+    }
+
+    protected String getRemoteUrlsText() {
+        StringBuilder buffer = new StringBuilder();
+        List<RemoteRepository> list = getRemoteRepositories();
+        for (RemoteRepository repo : list) {
+            String url = repo.getUrl();
+            if (Strings.isNotBlank(url)) {
+                if (buffer.length() > 0) {
+                    buffer.append(", ");
+                }
+                buffer.append(url);
+            }
+        }
+        return buffer.toString();
     }
 
     @Override
