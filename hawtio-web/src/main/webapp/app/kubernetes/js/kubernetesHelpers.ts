@@ -151,4 +151,41 @@ module Kubernetes {
     }
   }
 
+
+  /**
+   * Returns a link to the kibana logs web application
+   */
+  export function kibanaLogsLink(ServiceRegistry) {
+    var link = Service.serviceLink(ServiceRegistry, "kibana-service");
+    if (link) {
+      if (!link.endsWith("/")) {
+        link += "/";
+      }
+      return link + "#/discover/Fabric8";
+    } else {
+      return null;
+    }
+  }
+
+  export function openLogsForPods(ServiceRegistry, $window, pods) {
+    var link = kibanaLogsLink(ServiceRegistry);
+    if (link) {
+      var query = "";
+      var count = 0;
+      angular.forEach(pods, (item) => {
+        var id = item.id;
+        if (id) {
+          var space = query ? " || " : "";
+          count++;
+          query += space + "%27" + id + "%27";
+        }
+      });
+      if (query) {
+        link += "?_a=(query:'k8s_pod:(" + query + ")')";
+      }
+      var newWindow = $window.open(link, "viewLogs");
+    }
+  }
+
+
 }

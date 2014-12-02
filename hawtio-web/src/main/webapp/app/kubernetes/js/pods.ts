@@ -4,6 +4,7 @@
 /// <reference path="../../ui/js/dialog.ts"/>
 /// <reference path="../../forms/js/formInterfaces.ts"/>
 /// <reference path="../../helpers/js/arrayHelpers.ts"/>
+/// <reference path="../../service/js/serviceHelpers.ts"/>
 module Kubernetes {
 
 
@@ -14,13 +15,17 @@ module Kubernetes {
   }]);
 
   // main controller for the page
-  export var Pods = controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "$routeParams", "jolokia", "$location", "localStorage", ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, $dialog, $templateCache, $routeParams, jolokia:Jolokia.IJolokia, $location:ng.ILocationService, localStorage) => {
+  export var Pods = controller("Pods", ["$scope", "KubernetesPods", "ServiceRegistry", "$dialog", "$window", "$templateCache", "$routeParams", "jolokia", "$location", "localStorage",
+    ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, ServiceRegistry, $dialog, $window, $templateCache, $routeParams, jolokia:Jolokia.IJolokia, $location:ng.ILocationService, localStorage) => {
+
     $scope.namespace = $routeParams.namespace;
     $scope.pods = undefined;
     var pods = [];
     $scope.fetched = false;
     $scope.json = '';
     $scope.itemSchema = Forms.createFormConfiguration();
+
+    $scope.hasService = (name) => Service.hasService(ServiceRegistry, name);
 
     $scope.tableConfig = {
       data: 'pods',
@@ -94,6 +99,19 @@ module Kubernetes {
     };
 
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
+
+    $scope.openLogs = () => {
+      var pods = $scope.tableConfig.selectedItems;
+      if (!pods || !pods.length) {
+        if ($scope.id) {
+          var item = $scope.item;
+          if (item) {
+            pods = [item];
+          }
+        }
+      }
+      openLogsForPods(ServiceRegistry, $window, pods);
+    };
 
     $scope.$on('kubeSelectedId', ($event, id) => {
       Kubernetes.setJson($scope, id, $scope.pods);
