@@ -16,9 +16,6 @@
              ng-model="row.entity.desiredState.replicas">
     </div>
   </script>
-  <script type="text/ng-template" id="iconCellTemplate.html">
-    <div class="ngCellText" ng-init="entity=row.entity" ng-include="'replicationControllerIconTemplate.html'">foo?</div>
-  </script>
   <div class="row-fluid">
     <div class="span12" ng-show="replicationControllers.length">
       <span ng-show="!id">

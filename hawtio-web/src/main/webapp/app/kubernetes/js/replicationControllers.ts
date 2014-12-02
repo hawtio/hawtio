@@ -64,7 +64,7 @@ module Kubernetes {
         filterText: $location.search()["q"] || ''
       },
       columnDefs: [
-        { field: 'id', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
+        { field: 'icon', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
         { field: 'namespace', displayName: 'Namespace' },
         { field: 'currentState.replicas', displayName: 'Pods', cellTemplate: $templateCache.get("podCountsAndLinkTemplate.html") },

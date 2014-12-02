@@ -32,6 +32,11 @@ module Kubernetes {
         filterText: $location.search()["q"] || ''
       },
       columnDefs: [
+/*
+        TODO can't add icons yet as we need to know the service / RC Id for a pod to be able to look up the icon
+
+        { field: 'icon', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
+*/
         {
           field: 'id',
           displayName: 'ID',
