@@ -34,7 +34,7 @@
 <script type="text/ng-template" id="portalAddress.html">
   <div class="ngCellText">
     <a target="openService" href="http://{{row.entity.portalIP}}:{{row.entity.port}}/"
-       ng-show="row.entity.portalIP" title="Protocol {{row.entity.protocol}}">
+       ng-show="row.entity.portalIP && row.entity.$podCounters.valid" title="Protocol {{row.entity.protocol}}">
       {{row.entity.portalIP}}:{{row.entity.port}}
     </a>
   </div>
