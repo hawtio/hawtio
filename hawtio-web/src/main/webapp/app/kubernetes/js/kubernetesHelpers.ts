@@ -122,6 +122,19 @@ module Kubernetes {
   }
 
   /**
+   * Returns true if the current status of the pod is running
+   */
+  export function isRunning(podCurrentState) {
+    var status = (podCurrentState || {}).status;
+    if (status) {
+      var lower = status.toLowerCase();
+      return lower.startsWith("run");
+    } else {
+      return false;
+    }
+  }
+
+  /**
    * Returns true if the labels object has all of the key/value pairs from the selector
    */
   export function selectorMatches(selector, labels) {

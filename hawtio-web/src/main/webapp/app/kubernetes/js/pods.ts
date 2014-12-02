@@ -243,10 +243,10 @@ module Kubernetes {
             // lets try detect a console...
             var info = Core.pathGet(entity, ["currentState", "info"]);
             var hostPort = null;
-            var currentState = entity.currentState;
-            var desiredState = entity.desiredState;
-            var host = currentState ? currentState["host"] : null;
-            var podIP = currentState ? currentState["podIP"] : null;
+            var currentState = entity.currentState || {};
+            var desiredState = entity.desiredState || {};
+            var host = currentState["host"];
+            var podIP = currentState["podIP"];
             var hasDocker = false;
             var foundContainerPort = null;
             if (currentState && !podIP) {
@@ -305,12 +305,14 @@ module Kubernetes {
                   host = $scope.dockerIp;
                 }
               }
-              entity.$jolokiaUrl = "http://" + host + ":" + hostPort + "/jolokia/";
+              if (isRunning(currentState)) {
+                entity.$jolokiaUrl = "http://" + host + ":" + hostPort + "/jolokia/";
 
-              // TODO note if we can't access the docker/local host we could try access via
-              // the pod IP; but typically you need to explicitly enable that inside boot2docker
-              // see: https://github.com/fabric8io/fabric8/blob/2.0/docs/getStarted.md#if-you-are-on-a-mac
-              entity.$connect = $scope.connect;
+                // TODO note if we can't access the docker/local host we could try access via
+                // the pod IP; but typically you need to explicitly enable that inside boot2docker
+                // see: https://github.com/fabric8io/fabric8/blob/2.0/docs/getStarted.md#if-you-are-on-a-mac
+                entity.$connect = $scope.connect;
+              }
             }
           });
           Kubernetes.setJson($scope, $scope.id, pods);
