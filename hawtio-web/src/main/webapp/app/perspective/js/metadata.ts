@@ -17,11 +17,11 @@ module Perspective {
   export var metadata = {
     kubernetes: {
       icon: {
-        title: "Kubernetes",
+        title: "Fabric8",
         type: "img",
-        src: "img/icons/kubernetes.svg"
+        src: "img/icons/fabric8_icon.svg"
       },
-      label: "Kubernetes",
+      label: "Fabric8",
       isValid: (workspace) => !Fabric.isFMCContainer(workspace) && Kubernetes.isKubernetes(workspace),
       lastPage: "#/kubernetes/pods",
       topLevelTabs: {
