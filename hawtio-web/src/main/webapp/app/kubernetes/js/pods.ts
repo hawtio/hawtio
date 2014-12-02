@@ -128,11 +128,7 @@ module Kubernetes {
         }
       }));
 
-    log.info("====== got filter: " + $scope.tableConfig.filterOptions.filterText);
-
     Kubernetes.initShared($scope, $location);
-
-    log.info("====== got filter: " + $scope.tableConfig.filterOptions.filterText);
 
     $scope.connect = {
       dialog: new UI.Dialog(),
@@ -331,7 +327,5 @@ module Kubernetes {
       // kick off polling
       $scope.fetch();
     });
-
-    log.info("====== got filter: " + $scope.tableConfig.filterOptions.filterText);
   }]);
 }

@@ -138,13 +138,17 @@ module Kubernetes {
    * Returns true if the labels object has all of the key/value pairs from the selector
    */
   export function selectorMatches(selector, labels) {
-    var answer = true;
-    angular.forEach(selector, (value, key) => {
-      if (answer && labels[key] !== value) {
-        answer = false;
-      }
-    });
-    return answer;
+    if (angular.isObject(labels)) {
+      var answer = true;
+      angular.forEach(selector, (value, key) => {
+        if (answer && labels[key] !== value) {
+          answer = false;
+        }
+      });
+      return answer;
+    } else {
+      return false;
+    }
   }
 
 }
