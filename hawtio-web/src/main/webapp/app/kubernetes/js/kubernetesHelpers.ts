@@ -172,12 +172,14 @@ module Kubernetes {
     if (link) {
       var query = "";
       var count = 0;
+      //var quoteText = "%27";
+      var quoteText = "";
       angular.forEach(pods, (item) => {
         var id = item.id;
         if (id) {
           var space = query ? " || " : "";
           count++;
-          query += space + "%27" + id + "%27";
+          query += space + quoteText + id + quoteText;
         }
       });
       if (query) {
