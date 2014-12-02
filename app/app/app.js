@@ -14913,33 +14913,71 @@ var Kubernetes;
     }
     Kubernetes.labelsToString = labelsToString;
     function initShared($scope, $location) {
-        var currentFilter = $location.search()["q"];
-        if (currentFilter) {
-            $scope.tableConfig.filterOptions.filterText = currentFilter;
-        }
-        $scope.$watch("tableConfig.filterOptions.filterText", function () {
-            var filter = $scope.tableConfig.filterOptions.filterText;
-            $location.search("q", filter);
+        $scope.$watch("tableConfig.filterOptions.filterText", function (text) {
+            $location.search("q", text);
         });
         $scope.$on("labelFilterUpdate", function ($event, text) {
-            var filterText = $scope.tableConfig.filterOptions.filterText;
-            if (Core.isBlank(filterText)) {
+            var currentFilter = $scope.tableConfig.filterOptions.filterText;
+            if (Core.isBlank(currentFilter)) {
                 $scope.tableConfig.filterOptions.filterText = text;
             }
             else {
-                var expressions = filterText.split(/\s+/);
+                var expressions = currentFilter.split(/\s+/);
                 if (expressions.any(text)) {
                     expressions = expressions.remove(text);
                     $scope.tableConfig.filterOptions.filterText = expressions.join(" ");
                 }
                 else {
-                    $scope.tableConfig.filterOptions.filterText = filterText + " " + text;
+                    $scope.tableConfig.filterOptions.filterText = currentFilter + " " + text;
                 }
             }
             $scope.id = undefined;
         });
     }
     Kubernetes.initShared = initShared;
+    function createPodCounters(selector, pods) {
+        var answer = {
+            podsLink: "",
+            valid: 0,
+            waiting: 0,
+            error: 0
+        };
+        if (selector) {
+            answer.podsLink = Core.url("/kubernetes/pods?q=" + encodeURIComponent(Kubernetes.labelsToString(selector, " ")));
+            angular.forEach(pods, function (pod) {
+                if (selectorMatches(selector, pod.labels)) {
+                    var status = (pod.currentState || {}).status;
+                    if (status) {
+                        var lower = status.toLowerCase();
+                        if (lower.startsWith("run")) {
+                            answer.valid += 1;
+                        }
+                        else if (lower.startsWith("wait")) {
+                            answer.waiting += 1;
+                        }
+                        else if (lower.startsWith("term") || lower.startsWith("error") || lower.startsWith("fail")) {
+                            answer.error += 1;
+                        }
+                    }
+                    else {
+                        answer.error += 1;
+                    }
+                }
+            });
+        }
+        return answer;
+    }
+    Kubernetes.createPodCounters = createPodCounters;
+    function selectorMatches(selector, labels) {
+        var answer = true;
+        angular.forEach(selector, function (value, key) {
+            if (answer && labels[key] !== value) {
+                answer = false;
+            }
+        });
+        return answer;
+    }
+    Kubernetes.selectorMatches = selectorMatches;
 })(Kubernetes || (Kubernetes = {}));
 var Core;
 (function (Core) {
@@ -27729,6 +27767,11 @@ var ForceGraph;
                     $scope.graphLabels.attr("transform", function (d) {
                         return "translate(" + d.x + "," + d.y + ")";
                     });
+                    if (Object.hasOwnProperty.call(window, "ActiveXObject") || !window.ActiveXObject) {
+                        $scope.svg.selectAll(".link").each(function () {
+                            this.parentNode.insertBefore(this, this);
+                        });
+                    }
                 };
                 $scope.mover = function (d) {
                     if (d.popup != null) {
@@ -35050,6 +35093,51 @@ var Kubernetes;
         $scope.fetched = false;
         $scope.json = '';
         $scope.itemSchema = Forms.createFormConfiguration();
+        $scope.tableConfig = {
+            data: 'pods',
+            showSelectionCheckbox: true,
+            enableRowClickSelection: false,
+            multiSelect: true,
+            selectedItems: [],
+            filterOptions: {
+                filterText: $location.search()["q"] || ''
+            },
+            columnDefs: [
+                {
+                    field: 'id',
+                    displayName: 'ID',
+                    defaultSort: true,
+                    cellTemplate: $templateCache.get("idTemplate.html")
+                },
+                {
+                    field: 'namespace',
+                    displayName: 'Namespace'
+                },
+                {
+                    field: 'currentState.status',
+                    displayName: 'Status',
+                    cellTemplate: $templateCache.get("statusTemplate.html")
+                },
+                {
+                    field: 'containerImages',
+                    displayName: 'Images',
+                    cellTemplate: $templateCache.get("imageTemplate.html")
+                },
+                {
+                    field: 'currentState.host',
+                    displayName: 'Host'
+                },
+                {
+                    field: 'currentState.podIP',
+                    displayName: 'Pod IP'
+                },
+                {
+                    field: 'labels',
+                    displayName: 'Labels',
+                    cellTemplate: $templateCache.get("labelTemplate.html")
+                }
+            ]
+        };
         $scope.podDetail = {
             properties: {
                 'manifest/containers/image$': {
@@ -35098,52 +35186,9 @@ var Kubernetes;
                 Kubernetes.log.debug("error fetching API URL: ", response);
             }
         }));
-        $scope.tableConfig = {
-            data: 'pods',
-            showSelectionCheckbox: true,
-            enableRowClickSelection: false,
-            multiSelect: true,
-            selectedItems: [],
-            filterOptions: {
-                filterText: ''
-            },
-            columnDefs: [
-                {
-                    field: 'id',
-                    displayName: 'ID',
-                    defaultSort: true,
-                    cellTemplate: $templateCache.get("idTemplate.html")
-                },
-                {
-                    field: 'namespace',
-                    displayName: 'Namespace'
-                },
-                {
-                    field: 'currentState.status',
-                    displayName: 'Status',
-                    cellTemplate: $templateCache.get("statusTemplate.html")
-                },
-                {
-                    field: 'containerImages',
-                    displayName: 'Images',
-                    cellTemplate: $templateCache.get("imageTemplate.html")
-                },
-                {
-                    field: 'currentState.host',
-                    displayName: 'Host'
-                },
-                {
-                    field: 'currentState.podIP',
-                    displayName: 'Pod IP'
-                },
-                {
-                    field: 'labels',
-                    displayName: 'Labels',
-                    cellTemplate: $templateCache.get("labelTemplate.html")
-                }
-            ]
-        };
+        Kubernetes.log.info("====== got filter: " + $scope.tableConfig.filterOptions.filterText);
         Kubernetes.initShared($scope, $location);
+        Kubernetes.log.info("====== got filter: " + $scope.tableConfig.filterOptions.filterText);
         $scope.connect = {
             dialog: new UI.Dialog(),
             saveCredentials: false,
@@ -35325,6 +35370,7 @@ var Kubernetes;
             });
             $scope.fetch();
         });
+        Kubernetes.log.info("====== got filter: " + $scope.tableConfig.filterOptions.filterText);
     }]);
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
@@ -35357,9 +35403,10 @@ var Kubernetes;
             $scope.row.entity.desiredState.replicas = originalValue;
         });
     }]);
-    Kubernetes.ReplicationControllers = Kubernetes.controller("ReplicationControllers", ["$scope", "KubernetesReplicationControllers", "$templateCache", "$location", "$routeParams", "jolokia", function ($scope, KubernetesReplicationControllers, $templateCache, $location, $routeParams, jolokia) {
+    Kubernetes.ReplicationControllers = Kubernetes.controller("ReplicationControllers", ["$scope", "KubernetesReplicationControllers", "KubernetesPods", "$templateCache", "$location", "$routeParams", "jolokia", function ($scope, KubernetesReplicationControllers, KubernetesPods, $templateCache, $location, $routeParams, jolokia) {
         $scope.namespace = $routeParams.namespace;
         $scope.replicationControllers = [];
+        var pods = [];
         $scope.fetched = false;
         $scope.json = '';
         ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
@@ -35377,18 +35424,24 @@ var Kubernetes;
             multiSelect: true,
             selectedItems: [],
             filterOptions: {
-                filterText: ''
+                filterText: $location.search()["q"] || ''
             },
             columnDefs: [
                 { field: 'id', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
                 { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
                 { field: 'namespace', displayName: 'Namespace' },
-                { field: 'currentState.replicas', displayName: 'Current Replicas', cellTemplate: $templateCache.get("currentReplicasTemplate.html") },
-                { field: 'desiredState.replicas', displayName: 'Desired Replicas', cellTemplate: $templateCache.get("desiredReplicas.html") },
+                { field: 'currentState.replicas', displayName: 'Pods', cellTemplate: $templateCache.get("podCountsAndLinkTemplate.html") },
+                { field: 'desiredState.replicas', displayName: 'Replicas', cellTemplate: $templateCache.get("desiredReplicas.html") },
                 { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
             ]
         };
         Kubernetes.initShared($scope, $location);
+        function updatePodCounts() {
+            angular.forEach($scope.replicationControllers, function (replicationController) {
+                var selector = (replicationController.desiredState || {}).replicaSelector;
+                replicationController.$podCounters = selector ? Kubernetes.createPodCounters(selector, pods) : null;
+            });
+        }
         $scope.$on('kubernetes.dirtyController', function ($event, replicationController) {
             replicationController.$dirty = true;
         });
@@ -35410,101 +35463,123 @@ var Kubernetes;
             Kubernetes.setJson($scope, $location.search()['_id'], $scope.pods);
         });
         KubernetesReplicationControllers.then(function (KubernetesReplicationControllers) {
-            $scope.save = function () {
-                var dirtyControllers = $scope.replicationControllers.filter(function (controller) {
-                    return controller.$dirty;
-                });
-                if (dirtyControllers.length) {
-                    dirtyControllers.forEach(function (replicationController) {
-                        var apiVersion = replicationController["apiVersion"];
-                        if (!apiVersion) {
-                            replicationController["apiVersion"] = Kubernetes.defaultApiVersion;
-                        }
-                        KubernetesReplicationControllers.save(undefined, replicationController, function () {
-                            replicationController.$dirty = false;
-                            Kubernetes.log.debug("Updated ", replicationController.id);
-                        }, function (error) {
-                            replicationController.$dirty = false;
-                            Kubernetes.log.debug("Failed to update ", replicationController.id, " error: ", error);
-                        });
+            KubernetesPods.then(function (KubernetesPods) {
+                $scope.save = function () {
+                    var dirtyControllers = $scope.replicationControllers.filter(function (controller) {
+                        return controller.$dirty;
                     });
-                }
-            };
-            $scope.deletePrompt = function (selected) {
-                if (angular.isString(selected)) {
-                    selected = [{
-                        id: selected
-                    }];
-                }
-                UI.multiItemConfirmActionDialog({
-                    collection: selected,
-                    index: 'id',
-                    onClose: function (result) {
-                        if (result) {
-                            function deleteSelected(selected, next) {
-                                if (!next) {
-                                    if (!jolokia.isRunning()) {
-                                        $scope.fetch();
+                    if (dirtyControllers.length) {
+                        dirtyControllers.forEach(function (replicationController) {
+                            var apiVersion = replicationController["apiVersion"];
+                            if (!apiVersion) {
+                                replicationController["apiVersion"] = Kubernetes.defaultApiVersion;
+                            }
+                            KubernetesReplicationControllers.save(undefined, replicationController, function () {
+                                replicationController.$dirty = false;
+                                Kubernetes.log.debug("Updated ", replicationController.id);
+                            }, function (error) {
+                                replicationController.$dirty = false;
+                                Kubernetes.log.debug("Failed to update ", replicationController.id, " error: ", error);
+                            });
+                        });
+                    }
+                };
+                $scope.deletePrompt = function (selected) {
+                    if (angular.isString(selected)) {
+                        selected = [{
+                            id: selected
+                        }];
+                    }
+                    UI.multiItemConfirmActionDialog({
+                        collection: selected,
+                        index: 'id',
+                        onClose: function (result) {
+                            if (result) {
+                                function deleteSelected(selected, next) {
+                                    if (!next) {
+                                        if (!jolokia.isRunning()) {
+                                            $scope.fetch();
+                                        }
+                                    }
+                                    else {
+                                        Kubernetes.log.debug("deleting: ", next.id);
+                                        KubernetesReplicationControllers.delete({
+                                            id: next.id
+                                        }, undefined, function () {
+                                            Kubernetes.log.debug("deleted: ", next.id);
+                                            deleteSelected(selected, selected.shift());
+                                        }, function (error) {
+                                            Kubernetes.log.debug("Error deleting: ", error);
+                                            deleteSelected(selected, selected.shift());
+                                        });
                                     }
                                 }
-                                else {
-                                    Kubernetes.log.debug("deleting: ", next.id);
-                                    KubernetesReplicationControllers.delete({
-                                        id: next.id
-                                    }, undefined, function () {
-                                        Kubernetes.log.debug("deleted: ", next.id);
-                                        deleteSelected(selected, selected.shift());
-                                    }, function (error) {
-                                        Kubernetes.log.debug("Error deleting: ", error);
-                                        deleteSelected(selected, selected.shift());
-                                    });
-                                }
+                                deleteSelected(selected, selected.shift());
                             }
-                            deleteSelected(selected, selected.shift());
+                        },
+                        title: 'Delete replication controllers?',
+                        action: 'The following replication controllers will be deleted:',
+                        okText: 'Delete',
+                        okClass: 'btn-danger',
+                        custom: "This operation is permanent once completed!",
+                        customClass: "alert alert-warning"
+                    }).open();
+                };
+                $scope.fetch = PollHelpers.setupPolling($scope, function (next) {
+                    var ready = 0;
+                    var numServices = 2;
+                    function maybeNext(count) {
+                        ready = count;
+                        if (ready >= numServices) {
+                            maybeInit();
+                            next();
                         }
-                    },
-                    title: 'Delete replication controllers?',
-                    action: 'The following replication controllers will be deleted:',
-                    okText: 'Delete',
-                    okClass: 'btn-danger',
-                    custom: "This operation is permanent once completed!",
-                    customClass: "alert alert-warning"
-                }).open();
-            };
-            $scope.fetch = PollHelpers.setupPolling($scope, function (next) {
-                KubernetesReplicationControllers.query(function (response) {
-                    $scope.fetched = true;
-                    if ($scope.anyDirty()) {
-                        Kubernetes.log.debug("Table has been changed, not updating local view");
-                        next();
-                        return;
                     }
-                    $scope.replicationControllers = (response['items'] || []).sortBy(function (item) {
-                        return item.id;
-                    }).filter(function (item) {
-                        return !$scope.namespace || $scope.namespace === item.namespace;
-                    });
-                    angular.forEach($scope.replicationControllers, function (entity) {
-                        entity.$labelsText = Kubernetes.labelsToString(entity.labels);
-                        var desiredState = entity.desiredState || {};
-                        var replicaSelector = desiredState.replicaSelector;
-                        if (replicaSelector) {
-                            entity.podsLink = Core.url("/kubernetes/pods?q=" + encodeURIComponent(Kubernetes.labelsToString(replicaSelector, " ")));
+                    KubernetesReplicationControllers.query(function (response) {
+                        $scope.fetched = true;
+                        if ($scope.anyDirty()) {
+                            Kubernetes.log.debug("Table has been changed, not updating local view");
+                            next();
+                            return;
                         }
+                        $scope.replicationControllers = (response['items'] || []).sortBy(function (item) {
+                            return item.id;
+                        }).filter(function (item) {
+                            return !$scope.namespace || $scope.namespace === item.namespace;
+                        });
+                        angular.forEach($scope.replicationControllers, function (entity) {
+                            entity.$labelsText = Kubernetes.labelsToString(entity.labels);
+                            var desiredState = entity.desiredState || {};
+                            var replicaSelector = desiredState.replicaSelector;
+                            if (replicaSelector) {
+                                entity.podsLink = Core.url("/kubernetes/pods?q=" + encodeURIComponent(Kubernetes.labelsToString(replicaSelector, " ")));
+                            }
+                        });
+                        Kubernetes.setJson($scope, $scope.id, $scope.replicationControllers);
+                        updatePodCounts();
+                        maybeNext(ready + 1);
                     });
-                    Kubernetes.setJson($scope, $scope.id, $scope.replicationControllers);
-                    next();
+                    KubernetesPods.query(function (response) {
+                        ArrayHelpers.sync(pods, (response['items'] || []).filter(function (pod) {
+                            return pod.id && (!$scope.namespace || $scope.namespace === pod.namespace);
+                        }));
+                        updatePodCounts();
+                        maybeNext(ready + 1);
+                    });
                 });
+                $scope.fetch();
             });
-            $scope.fetch();
         });
+        function maybeInit() {
+        }
     }]);
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
 (function (Kubernetes) {
-    Kubernetes.Services = Kubernetes.controller("Services", ["$scope", "KubernetesServices", "$templateCache", "$location", "$routeParams", "jolokia", function ($scope, KubernetesServices, $templateCache, $location, $routeParams, jolokia) {
+    Kubernetes.Services = Kubernetes.controller("Services", ["$scope", "KubernetesServices", "KubernetesPods", "$templateCache", "$location", "$routeParams", "jolokia", function ($scope, KubernetesServices, KubernetesPods, $templateCache, $location, $routeParams, jolokia) {
         $scope.namespace = $routeParams.namespace;
         $scope.services = [];
+        var pods = [];
         $scope.fetched = false;
         $scope.json = '';
         ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
@@ -35515,11 +35590,12 @@ var Kubernetes;
             multiSelect: true,
             selectedItems: [],
             filterOptions: {
-                filterText: ''
+                filterText: $location.search()["q"] || ''
             },
             columnDefs: [
                 { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
                 { field: 'namespace', displayName: 'Namespace' },
+                { field: '$podsLink', displayName: 'Pods', cellTemplate: $templateCache.get("podCountsAndLinkTemplate.html") },
                 { field: 'selector', displayName: 'Selector', cellTemplate: $templateCache.get("selectorTemplate.html") },
                 { field: 'portalIP', displayName: 'Address', cellTemplate: $templateCache.get("portalAddress.html") },
                 { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
@@ -35532,65 +35608,92 @@ var Kubernetes;
         $scope.$on('$routeUpdate', function ($event) {
             Kubernetes.setJson($scope, $location.search()['_id'], $scope.pods);
         });
+        function updatePodCounts() {
+            angular.forEach($scope.services, function (service) {
+                var selector = service.selector;
+                service.$podCounters = selector ? Kubernetes.createPodCounters(selector, pods) : null;
+            });
+        }
         KubernetesServices.then(function (KubernetesServices) {
-            $scope.deletePrompt = function (selected) {
-                if (angular.isString(selected)) {
-                    selected = [{
-                        id: selected
-                    }];
-                }
-                UI.multiItemConfirmActionDialog({
-                    collection: selected,
-                    index: 'id',
-                    onClose: function (result) {
-                        if (result) {
-                            function deleteSelected(selected, next) {
-                                if (!next) {
-                                    if (!jolokia.isRunning()) {
-                                        $scope.fetch();
+            KubernetesPods.then(function (KubernetesPods) {
+                $scope.deletePrompt = function (selected) {
+                    if (angular.isString(selected)) {
+                        selected = [{
+                            id: selected
+                        }];
+                    }
+                    UI.multiItemConfirmActionDialog({
+                        collection: selected,
+                        index: 'id',
+                        onClose: function (result) {
+                            if (result) {
+                                function deleteSelected(selected, next) {
+                                    if (!next) {
+                                        if (!jolokia.isRunning()) {
+                                            $scope.fetch();
+                                        }
+                                    }
+                                    else {
+                                        Kubernetes.log.debug("deleting: ", next.id);
+                                        KubernetesServices.delete({
+                                            id: next.id
+                                        }, undefined, function () {
+                                            Kubernetes.log.debug("deleted: ", next.id);
+                                            deleteSelected(selected, selected.shift());
+                                        }, function (error) {
+                                            Kubernetes.log.debug("Error deleting: ", error);
+                                            deleteSelected(selected, selected.shift());
+                                        });
                                     }
                                 }
-                                else {
-                                    Kubernetes.log.debug("deleting: ", next.id);
-                                    KubernetesServices.delete({
-                                        id: next.id
-                                    }, undefined, function () {
-                                        Kubernetes.log.debug("deleted: ", next.id);
-                                        deleteSelected(selected, selected.shift());
-                                    }, function (error) {
-                                        Kubernetes.log.debug("Error deleting: ", error);
-                                        deleteSelected(selected, selected.shift());
-                                    });
-                                }
+                                deleteSelected(selected, selected.shift());
                             }
-                            deleteSelected(selected, selected.shift());
+                        },
+                        title: 'Delete services?',
+                        action: 'The following services will be deleted:',
+                        okText: 'Delete',
+                        okClass: 'btn-danger',
+                        custom: "This operation is permanent once completed!",
+                        customClass: "alert alert-warning"
+                    }).open();
+                };
+                $scope.fetch = PollHelpers.setupPolling($scope, function (next) {
+                    var ready = 0;
+                    var numServices = 2;
+                    function maybeNext(count) {
+                        ready = count;
+                        if (ready >= numServices) {
+                            maybeInit();
+                            next();
                         }
-                    },
-                    title: 'Delete services?',
-                    action: 'The following services will be deleted:',
-                    okText: 'Delete',
-                    okClass: 'btn-danger',
-                    custom: "This operation is permanent once completed!",
-                    customClass: "alert alert-warning"
-                }).open();
-            };
-            $scope.fetch = PollHelpers.setupPolling($scope, function (next) {
-                KubernetesServices.query(function (response) {
-                    $scope.fetched = true;
-                    $scope.services = (response['items'] || []).sortBy(function (item) {
-                        return item.id;
-                    }).filter(function (item) {
-                        return !$scope.namespace || $scope.namespace === item.namespace;
+                    }
+                    KubernetesServices.query(function (response) {
+                        $scope.fetched = true;
+                        $scope.services = (response['items'] || []).sortBy(function (item) {
+                            return item.id;
+                        }).filter(function (item) {
+                            return !$scope.namespace || $scope.namespace === item.namespace;
+                        });
+                        Kubernetes.setJson($scope, $scope.id, $scope.services);
+                        angular.forEach($scope.services, function (entity) {
+                            entity.$labelsText = Kubernetes.labelsToString(entity.labels);
+                        });
+                        updatePodCounts();
+                        maybeNext(ready + 1);
                     });
-                    Kubernetes.setJson($scope, $scope.id, $scope.services);
-                    angular.forEach($scope.services, function (entity) {
-                        entity.$labelsText = Kubernetes.labelsToString(entity.labels);
+                    KubernetesPods.query(function (response) {
+                        ArrayHelpers.sync(pods, (response['items'] || []).filter(function (pod) {
+                            return pod.id && (!$scope.namespace || $scope.namespace === pod.namespace);
+                        }));
+                        updatePodCounts();
+                        maybeNext(ready + 1);
                     });
-                    next();
                 });
+                $scope.fetch();
             });
-            $scope.fetch();
         });
+        function maybeInit() {
+        }
     }]);
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;

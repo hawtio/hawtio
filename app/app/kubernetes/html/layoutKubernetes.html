@@ -12,6 +12,15 @@
     </span>
   </div>
 </script>
+<script type="text/ng-template" id="podCountsAndLinkTemplate.html">
+  <div class="ngCellText" title="Number of running pods for this controller">
+    <a ng-show="row.entity.$podCounters.podsLink" href="{{row.entity.$podCounters.podsLink}}" title="View pods">
+      <span ng-show="row.entity.$podCounters.valid" class="badge badge-success">{{row.entity.$podCounters.valid}}</span>
+      <span ng-show="row.entity.$podCounters.waiting" class="badge">{{row.entity.$podCounters.waiting}}</span>
+      <span ng-show="row.entity.$podCounters.error" class="badge badge-warning">{{row.entity.$podCounters.error}}</span>
+    </a>
+  </div>
+</script>
 <script type="text/ng-template" id="labelTemplate.html">
   <div class="ngCellText" ng-init="entity=row.entity" ng-controller="Kubernetes.Labels">
     <p ng-show="data"><strong>Labels</strong></p>
