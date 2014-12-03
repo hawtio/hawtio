@@ -34,10 +34,13 @@
 <script type="text/ng-template" id="portalAddress.html">
   <div class="ngCellText">
     <a target="openService" href="http://{{row.entity.portalIP}}:{{row.entity.port}}/"
-       ng-show="row.entity.portalIP" title="Protocol {{row.entity.protocol}}">
+       ng-show="row.entity.portalIP && row.entity.$podCounters.valid" title="Protocol {{row.entity.protocol}}">
       {{row.entity.portalIP}}:{{row.entity.port}}
     </a>
   </div>
+</script>
+<script type="text/ng-template" id="iconCellTemplate.html">
+  <div class="ngCellText" ng-init="entity=row.entity" ng-include="'replicationControllerIconTemplate.html'">unknown</div>
 </script>
 <script type="text/ng-template" id="replicationControllerIconTemplate.html">
   <div ng-init="entity = entity" ng-controller="Kubernetes.ReplicationControllerIcon">

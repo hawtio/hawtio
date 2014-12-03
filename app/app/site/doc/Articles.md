@@ -27,6 +27,7 @@ The following articles have been found on the web about hawtio. If you find any 
 * [Installing hawtio as web console for ActiveMQ](http://sensatic.net/activemq/activemq-and-hawtio.html) by Dejan Bosanac shows how to install hawtio as the web console in Apache ActiveMQ. Dejan also demonstrates how you can remote connect from hawtio to any ActiveMQ broker.
 * [HawtIO on JBoss Wildfly 8.1 -- step by step](http://www.christianposta.com/blog/?p=403) by [Christian Posta](http://www.christianposta.com/) How to get HawtIO running and secured on JBoss Wildfly Application Server 8.1
 * [HawtIO on OpenShift](http://jimmidyson.github.io/hawtio-on-OpenShift/) by Jimmi Dyson, how to run Apache Tomcat on OpenShift Online and install hawtio into the Tomcat.
+* [Hawtio on JBoss EAP 6](http://jcordes73.blogspot.de/2014/12/deploying-hawtio-on-jboss-eap-6.html) by Jochen Cordes how to deploy Hawtio on JBoss EAP 6
 
 
 ## Developer articles

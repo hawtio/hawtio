@@ -8698,7 +8698,7 @@ var API;
             id: 'apis.index',
             content: 'APIs',
             title: 'View the available APIs inside this fabric',
-            isValid: function (workspace) { return Service.hasService(ServiceRegistry, "api-registry"); },
+            isValid: function (workspace) { return Service.hasService(ServiceRegistry, "api-registry") && Kubernetes.isKubernetes(workspace); },
             href: function () { return '#/api/index'; },
             isActive: function (workspace) { return workspace.isLinkActive('api/index'); }
         });
@@ -14968,16 +14968,78 @@ var Kubernetes;
         return answer;
     }
     Kubernetes.createPodCounters = createPodCounters;
+    function isRunning(podCurrentState) {
+        var status = (podCurrentState || {}).status;
+        if (status) {
+            var lower = status.toLowerCase();
+            return lower.startsWith("run");
+        }
+        else {
+            return false;
+        }
+    }
+    Kubernetes.isRunning = isRunning;
     function selectorMatches(selector, labels) {
-        var answer = true;
-        angular.forEach(selector, function (value, key) {
-            if (answer && labels[key] !== value) {
-                answer = false;
-            }
-        });
-        return answer;
+        if (angular.isObject(labels)) {
+            var answer = true;
+            angular.forEach(selector, function (value, key) {
+                if (answer && labels[key] !== value) {
+                    answer = false;
+                }
+            });
+            return answer;
+        }
+        else {
+            return false;
+        }
     }
     Kubernetes.selectorMatches = selectorMatches;
+    function kibanaLogsLink(ServiceRegistry) {
+        var link = Service.serviceLink(ServiceRegistry, "kibana-service");
+        if (link) {
+            if (!link.endsWith("/")) {
+                link += "/";
+            }
+            return link + "#/discover/Fabric8";
+        }
+        else {
+            return null;
+        }
+    }
+    Kubernetes.kibanaLogsLink = kibanaLogsLink;
+    function openLogsForPods(ServiceRegistry, $window, pods) {
+        function encodePodIdInSearch(id) {
+            if (id) {
+                var idx = id.indexOf("-");
+                if (idx > 0) {
+                    id = id.substring(0, idx);
+                }
+            }
+            var quoteText = "";
+            return quoteText + id + quoteText;
+        }
+        var link = kibanaLogsLink(ServiceRegistry);
+        if (link) {
+            var query = "";
+            var count = 0;
+            angular.forEach(pods, function (item) {
+                var id = item.id;
+                if (id) {
+                    var space = query ? " || " : "";
+                    count++;
+                    query += space + encodePodIdInSearch(id);
+                }
+            });
+            if (query) {
+                if (count > 1) {
+                    query = "(" + query + ")";
+                }
+                link += "?_a=(query:'k8s_pod:" + query + "')";
+            }
+            var newWindow = $window.open(link, "viewLogs");
+        }
+    }
+    Kubernetes.openLogsForPods = openLogsForPods;
 })(Kubernetes || (Kubernetes = {}));
 var Core;
 (function (Core) {
@@ -15321,11 +15383,11 @@ var Perspective;
     Perspective.metadata = {
         kubernetes: {
             icon: {
-                title: "Kubernetes",
+                title: "Fabric8",
                 type: "img",
-                src: "img/icons/kubernetes.svg"
+                src: "img/icons/fabric8_icon.svg"
             },
-            label: "Kubernetes",
+            label: "Fabric8",
             isValid: function (workspace) { return !Fabric.isFMCContainer(workspace) && Kubernetes.isKubernetes(workspace); },
             lastPage: "#/kubernetes/pods",
             topLevelTabs: {
@@ -15443,7 +15505,7 @@ var Perspective;
                     },
                     {
                         id: "dashboard",
-                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
+                        onCondition: function (workspace) { return !Fabric.isFMCContainer(workspace); }
                     },
                     {
                         id: "health",
@@ -15452,6 +15514,18 @@ var Perspective;
                     {
                         id: "wiki",
                         onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
+                    },
+                    {
+                        id: "apis.index",
+                        onCondition: function (workspace) { return Kubernetes.isKubernetes(workspace); }
+                    },
+                    {
+                        id: "grafana",
+                        onCondition: function (workspace) { return Kubernetes.isKubernetes(workspace); }
+                    },
+                    {
+                        id: "kibana",
+                        onCondition: function (workspace) { return Kubernetes.isKubernetes(workspace); }
                     }
                 ]
             }
@@ -34541,7 +34615,7 @@ var Kubernetes;
         workspace.topLevelTabs.push({
             id: 'kubernetes',
             content: 'Kubernetes',
-            isValid: function (workspace) { return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, { type: 'Kubernetes' }); },
+            isValid: function (workspace) { return Kubernetes.isKubernetes(workspace); },
             isActive: function (workspace) { return workspace.isLinkActive('kubernetes'); },
             href: function () { return Kubernetes.defaultRoute; }
         });
@@ -34550,18 +34624,7 @@ var Kubernetes;
             content: 'Logs',
             title: 'View and search all logs across all containers using Kibana and ElasticSearch',
             isValid: function (workspace) { return Service.hasService(ServiceRegistry, "kibana-service"); },
-            href: function () {
-                var link = Service.serviceLink(ServiceRegistry, "kibana-service");
-                if (link) {
-                    if (!link.endsWith("/")) {
-                        link += "/";
-                    }
-                    return link + "#/discover/Fabric8";
-                }
-                else {
-                    return null;
-                }
-            },
+            href: function () { return Kubernetes.kibanaLogsLink(ServiceRegistry); },
             isActive: function (workspace) { return false; }
         });
         workspace.topLevelTabs.push({
@@ -35079,6 +35142,54 @@ var Kubernetes;
         }
     }]);
 })(Kubernetes || (Kubernetes = {}));
+var Service;
+(function (Service) {
+    Service.pluginName = 'Service';
+    Service.log = Logger.get(Service.pluginName);
+    function hasService(ServiceRegistry, serviceName) {
+        if (!ServiceRegistry || !serviceName) {
+            return false;
+        }
+        var answer = false;
+        angular.forEach(ServiceRegistry.services, function (service) {
+            if (serviceName === service.id) {
+                answer = true;
+            }
+        });
+        return answer;
+    }
+    Service.hasService = hasService;
+    function findService(ServiceRegistry, serviceName) {
+        var answer = null;
+        if (ServiceRegistry && serviceName) {
+            angular.forEach(ServiceRegistry.services, function (service) {
+                if (serviceName === service.id) {
+                    answer = service;
+                }
+            });
+        }
+        return answer;
+    }
+    Service.findService = findService;
+    function serviceLink(ServiceRegistry, serviceName) {
+        var service = findService(ServiceRegistry, serviceName);
+        if (service) {
+            var portalIP = service.portalIP;
+            var port = service.port;
+            var protocol = "http://";
+            if (portalIP) {
+                if (port) {
+                    return protocol + portalIP + ":" + port + "/";
+                }
+                else {
+                    return protocol + portalIP;
+                }
+            }
+        }
+        return "";
+    }
+    Service.serviceLink = serviceLink;
+})(Service || (Service = {}));
 var Kubernetes;
 (function (Kubernetes) {
     Kubernetes.EnvItem = Kubernetes.controller("EnvItem", ["$scope", function ($scope) {
@@ -35086,13 +35197,14 @@ var Kubernetes;
         $scope.key = parts.shift();
         $scope.value = parts.join('=');
     }]);
-    Kubernetes.Pods = Kubernetes.controller("Pods", ["$scope", "KubernetesPods", "$dialog", "$templateCache", "$routeParams", "jolokia", "$location", "localStorage", function ($scope, KubernetesPods, $dialog, $templateCache, $routeParams, jolokia, $location, localStorage) {
+    Kubernetes.Pods = Kubernetes.controller("Pods", ["$scope", "KubernetesPods", "ServiceRegistry", "$dialog", "$window", "$templateCache", "$routeParams", "jolokia", "$location", "localStorage", function ($scope, KubernetesPods, ServiceRegistry, $dialog, $window, $templateCache, $routeParams, jolokia, $location, localStorage) {
         $scope.namespace = $routeParams.namespace;
         $scope.pods = undefined;
         var pods = [];
         $scope.fetched = false;
         $scope.json = '';
         $scope.itemSchema = Forms.createFormConfiguration();
+        $scope.hasService = function (name) { return Service.hasService(ServiceRegistry, name); };
         $scope.tableConfig = {
             data: 'pods',
             showSelectionCheckbox: true,
@@ -35158,6 +35270,18 @@ var Kubernetes;
             }
         };
         ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
+        $scope.openLogs = function () {
+            var pods = $scope.tableConfig.selectedItems;
+            if (!pods || !pods.length) {
+                if ($scope.id) {
+                    var item = $scope.item;
+                    if (item) {
+                        pods = [item];
+                    }
+                }
+            }
+            Kubernetes.openLogsForPods(ServiceRegistry, $window, pods);
+        };
         $scope.$on('kubeSelectedId', function ($event, id) {
             Kubernetes.setJson($scope, id, $scope.pods);
         });
@@ -35186,9 +35310,7 @@ var Kubernetes;
                 Kubernetes.log.debug("error fetching API URL: ", response);
             }
         }));
-        Kubernetes.log.info("====== got filter: " + $scope.tableConfig.filterOptions.filterText);
         Kubernetes.initShared($scope, $location);
-        Kubernetes.log.info("====== got filter: " + $scope.tableConfig.filterOptions.filterText);
         $scope.connect = {
             dialog: new UI.Dialog(),
             saveCredentials: false,
@@ -35299,10 +35421,10 @@ var Kubernetes;
                         entity.$labelsText = Kubernetes.labelsToString(entity.labels);
                         var info = Core.pathGet(entity, ["currentState", "info"]);
                         var hostPort = null;
-                        var currentState = entity.currentState;
-                        var desiredState = entity.desiredState;
-                        var host = currentState ? currentState["host"] : null;
-                        var podIP = currentState ? currentState["podIP"] : null;
+                        var currentState = entity.currentState || {};
+                        var desiredState = entity.desiredState || {};
+                        var host = currentState["host"];
+                        var podIP = currentState["podIP"];
                         var hasDocker = false;
                         var foundContainerPort = null;
                         if (currentState && !podIP) {
@@ -35358,8 +35480,10 @@ var Kubernetes;
                                     host = $scope.dockerIp;
                                 }
                             }
-                            entity.$jolokiaUrl = "http://" + host + ":" + hostPort + "/jolokia/";
-                            entity.$connect = $scope.connect;
+                            if (Kubernetes.isRunning(currentState)) {
+                                entity.$jolokiaUrl = "http://" + host + ":" + hostPort + "/jolokia/";
+                                entity.$connect = $scope.connect;
+                            }
                         }
                     });
                     Kubernetes.setJson($scope, $scope.id, pods);
@@ -35370,7 +35494,6 @@ var Kubernetes;
             });
             $scope.fetch();
         });
-        Kubernetes.log.info("====== got filter: " + $scope.tableConfig.filterOptions.filterText);
     }]);
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
@@ -35427,7 +35550,7 @@ var Kubernetes;
                 filterText: $location.search()["q"] || ''
             },
             columnDefs: [
-                { field: 'id', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
+                { field: 'icon', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
                 { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
                 { field: 'namespace', displayName: 'Namespace' },
                 { field: 'currentState.replicas', displayName: 'Pods', cellTemplate: $templateCache.get("podCountsAndLinkTemplate.html") },
@@ -35593,6 +35716,7 @@ var Kubernetes;
                 filterText: $location.search()["q"] || ''
             },
             columnDefs: [
+                { field: 'icon', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
                 { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
                 { field: 'namespace', displayName: 'Namespace' },
                 { field: '$podsLink', displayName: 'Pods', cellTemplate: $templateCache.get("podCountsAndLinkTemplate.html") },
@@ -39686,54 +39810,6 @@ var RBAC;
         };
     }]);
 })(RBAC || (RBAC = {}));
-var Service;
-(function (Service) {
-    Service.pluginName = 'Service';
-    Service.log = Logger.get(Service.pluginName);
-    function hasService(ServiceRegistry, serviceName) {
-        if (!ServiceRegistry || !serviceName) {
-            return false;
-        }
-        var answer = false;
-        angular.forEach(ServiceRegistry.services, function (service) {
-            if (serviceName === service.id) {
-                answer = true;
-            }
-        });
-        return answer;
-    }
-    Service.hasService = hasService;
-    function findService(ServiceRegistry, serviceName) {
-        var answer = null;
-        if (ServiceRegistry && serviceName) {
-            angular.forEach(ServiceRegistry.services, function (service) {
-                if (serviceName === service.id) {
-                    answer = service;
-                }
-            });
-        }
-        return answer;
-    }
-    Service.findService = findService;
-    function serviceLink(ServiceRegistry, serviceName) {
-        var service = findService(ServiceRegistry, serviceName);
-        if (service) {
-            var portalIP = service.portalIP;
-            var port = service.port;
-            var protocol = "http://";
-            if (portalIP) {
-                if (port) {
-                    return protocol + portalIP + ":" + port + "/";
-                }
-                else {
-                    return protocol + portalIP;
-                }
-            }
-        }
-        return "";
-    }
-    Service.serviceLink = serviceLink;
-})(Service || (Service = {}));
 var Service;
 (function (Service) {
     Service._module = angular.module(Service.pluginName, ['hawtioCore']);
