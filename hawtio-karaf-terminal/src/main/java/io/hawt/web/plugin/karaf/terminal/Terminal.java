@@ -9,7 +9,12 @@
  */
 package io.hawt.web.plugin.karaf.terminal;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Terminal {
@@ -47,7 +52,7 @@ public class Terminal {
     private boolean vt100_mode_backspace;
     private boolean vt100_mode_column_switch;
     private boolean vt100_keyfilter_escape;
-    private int[] vt100_charset_graph = new int[] {
+    private int[] vt100_charset_graph = new int[]{
             0x25ca, 0x2026, 0x2022, 0x3f,
             0xb6, 0x3f, 0xb0, 0xb1,
             0x3f, 0x3f, 0x2b, 0x2b,
@@ -58,7 +63,7 @@ public class Terminal {
             0x2260, 0xa3, 0xb7, 0x7f
     };
     private int vt100_charset_g_sel;
-    private int[] vt100_charset_g = { 0, 0 };
+    private int[] vt100_charset_g = {0, 0};
     private Map<String, Object> vt100_saved;
     private Map<String, Object> vt100_saved2;
     private int vt100_saved_cx;
@@ -87,29 +92,29 @@ public class Terminal {
     }
 
     private void reset_hard() {
-		// Attribute mask: 0x0XFB0000
-		//	X:	Bit 0 - Underlined
-		//		Bit 1 - Negative
-		//		Bit 2 - Concealed
-		//	F:	Foreground
-		//	B:	Background
-		attr = 0x00fe0000;
-		// UTF-8 decoder
-		utf8_units_count = 0;
-		utf8_units_received = 0;
-		utf8_char = 0;
-		// Key filter
-		vt100_keyfilter_escape = false;
-		// Last char
-		vt100_lastchar = 0;
-		// Control sequences
-		vt100_parse_len = 0;
-		vt100_parse_state = State.None;
-		vt100_parse_func = 0;
-		vt100_parse_param = "";
-		// Buffers
-		vt100_out = "";
-		// Invoke other resets
+        // Attribute mask: 0x0XFB0000
+        //	X:	Bit 0 - Underlined
+        //		Bit 1 - Negative
+        //		Bit 2 - Concealed
+        //	F:	Foreground
+        //	B:	Background
+        attr = 0x00fe0000;
+        // UTF-8 decoder
+        utf8_units_count = 0;
+        utf8_units_received = 0;
+        utf8_char = 0;
+        // Key filter
+        vt100_keyfilter_escape = false;
+        // Last char
+        vt100_lastchar = 0;
+        // Control sequences
+        vt100_parse_len = 0;
+        vt100_parse_state = State.None;
+        vt100_parse_func = 0;
+        vt100_parse_param = "";
+        // Buffers
+        vt100_out = "";
+        // Invoke other resets
         reset_screen();
         reset_soft();
     }
@@ -129,22 +134,22 @@ public class Terminal {
         vt100_charset_is_single_shift = false;
         vt100_charset_is_graphical = false;
         vt100_charset_g_sel = 0;
-        vt100_charset_g = new int[] { 0, 0 };
-		// Modes
-		vt100_mode_insert = false;
-		vt100_mode_lfnewline = false;
-		vt100_mode_cursorkey = false;
-		vt100_mode_column_switch = false;
-		vt100_mode_inverse = false;
-		vt100_mode_origin = false;
-		vt100_mode_autowrap = true;
-		vt100_mode_cursor = true;
-		vt100_mode_alt_screen = false;
-		vt100_mode_backspace = false;
-		// Init DECSC state
-		esc_DECSC();
-		vt100_saved2 = vt100_saved;
-		esc_DECSC();
+        vt100_charset_g = new int[]{0, 0};
+        // Modes
+        vt100_mode_insert = false;
+        vt100_mode_lfnewline = false;
+        vt100_mode_cursorkey = false;
+        vt100_mode_column_switch = false;
+        vt100_mode_inverse = false;
+        vt100_mode_origin = false;
+        vt100_mode_autowrap = true;
+        vt100_mode_cursor = true;
+        vt100_mode_alt_screen = false;
+        vt100_mode_backspace = false;
+        // Init DECSC state
+        esc_DECSC();
+        vt100_saved2 = vt100_saved;
+        esc_DECSC();
     }
 
     private void reset_screen() {
@@ -225,13 +230,13 @@ public class Terminal {
 
     private int[] peek(int y0, int x0, int y1, int x1) {
         int from = width * y0 + x0;
-        int to = width * (y1 - 1) + x1; 
+        int to = width * (y1 - 1) + x1;
         int newLength = to - from;
         if (newLength < 0)
             throw new IllegalArgumentException(from + " > " + to);
         int[] copy = new int[newLength];
         System.arraycopy(screen, from, copy, 0,
-                         Math.min(screen.length - from, newLength));
+                Math.min(screen.length - from, newLength));
         return copy;
     }
 
@@ -244,7 +249,7 @@ public class Terminal {
         int d0 = width * y0 + x0;
         int d1 = width * (y1 - 1) + x1;
         if (d0 <= d1) {
-            Arrays.fill(screen, width * y0 + x0,  width * (y1 - 1) + x1, c);
+            Arrays.fill(screen, width * y0 + x0, width * (y1 - 1) + x1, c);
             setDirty();
         }
     }
@@ -264,7 +269,7 @@ public class Terminal {
     private void scroll_area_up(int y0, int y1, int n) {
         n = Math.min(y1 - y0, n);
         poke(y0, 0, peek(y0 + n, 0, y1, width));
-        clear(y1-n, 0, y1, width);
+        clear(y1 - n, 0, y1, width);
     }
 
     private void scroll_area_down(int y0, int y1) {
@@ -273,7 +278,7 @@ public class Terminal {
 
     private void scroll_area_down(int y0, int y1, int n) {
         n = Math.min(y1 - y0, n);
-        poke(y0 + n, 0, peek(y0, 0, y1-n, width));
+        poke(y0 + n, 0, peek(y0, 0, y1 - n, width));
         clear(y0, 0, y0 + n, width);
     }
 
@@ -311,7 +316,7 @@ public class Terminal {
     }
 
     //
-	// Cursor functions
+    // Cursor functions
     //
 
     private int[] cursor_line_width(int next_char) {
@@ -322,7 +327,7 @@ public class Terminal {
             wx += utf8_charwidth(c);
             lx += 1;
         }
-        return new int[] { wx, lx };
+        return new int[]{wx, lx};
     }
 
     private void cursor_up() {
@@ -461,7 +466,7 @@ public class Terminal {
         } else if (vt100_charset_is_graphical && ((c & 0xffe0) == 0x0060)) {
             c = vt100_charset_graph[c - 0x60];
         }
-        poke(cy, cx, new int[] { attr | c });
+        poke(cy, cx, new int[]{attr | c});
         cursor_right();
     }
 
@@ -495,25 +500,25 @@ public class Terminal {
             if ("4".equals(m)) {
                 // Insertion replacement mode
                 vt100_mode_insert = state;
-            // 5 : SRTM: Status reporting transfer
-            // 7 : VEM: Vertical editing
-            // 10 : HEM: Horizontal editing
-            // 11 : PUM: Positioning nit
-            // 12 : SRM: Send/receive
-            // 13 : FEAM: Format effector action
-            // 14 : FETM: Format effector transfer
-            // 15 : MATM: Multiple area transfer
-            // 16 : TTM: Transfer termination
-            // 17 : SATM: Selected area transfer
-            // 18 : TSM: Tabulation stop
-            // 19 : EBM: Editing boundary
+                // 5 : SRTM: Status reporting transfer
+                // 7 : VEM: Vertical editing
+                // 10 : HEM: Horizontal editing
+                // 11 : PUM: Positioning nit
+                // 12 : SRM: Send/receive
+                // 13 : FEAM: Format effector action
+                // 14 : FETM: Format effector transfer
+                // 15 : MATM: Multiple area transfer
+                // 16 : TTM: Transfer termination
+                // 17 : SATM: Selected area transfer
+                // 18 : TSM: Tabulation stop
+                // 19 : EBM: Editing boundary
             } else if ("20".equals(m)) {
                 // LNM: Line feed/new line
                 vt100_mode_lfnewline = state;
             } else if ("?1".equals(m)) {
                 // DECCKM: Cursor keys
                 vt100_mode_cursorkey = state;
-            // ?2 : DECANM: ANSI
+                // ?2 : DECANM: ANSI
             } else if ("?3".equals(m)) {
                 // DECCOLM: Column
                 if (vt100_mode_column_switch) {
@@ -524,7 +529,7 @@ public class Terminal {
                     }
                     reset_screen();
                 }
-            // ?4 : DECSCLM: Scrolling
+                // ?4 : DECSCLM: Scrolling
             } else if ("?5".equals(m)) {
                 // DECSCNM: Screen
                 vt100_mode_inverse = state;
@@ -539,28 +544,32 @@ public class Terminal {
             } else if ("?7".equals(m)) {
                 // DECAWM: Autowrap
                 vt100_mode_autowrap = state;
-            // ?8 : DECARM: Autorepeat
-            // ?9 : Interlacing
-            // ?18 : DECPFF: Print form feed
-            // ?19 : DECPEX: Printer extent
+                // ?8 : DECARM: Autorepeat
+                // ?9 : Interlacing
+                // ?18 : DECPFF: Print form feed
+                // ?19 : DECPEX: Printer extent
             } else if ("?25".equals(m)) {
                 // DECTCEM: Text cursor enable
                 vt100_mode_cursor = state;
-            // ?34 : DECRLM: Cursor direction, right to left
-            // ?35 : DECHEBM: Hebrew keyboard mapping
-            // ?36 : DECHEM: Hebrew encoding mode
+                // ?34 : DECRLM: Cursor direction, right to left
+                // ?35 : DECHEBM: Hebrew keyboard mapping
+                // ?36 : DECHEM: Hebrew encoding mode
             } else if ("?40".equals(m)) {
                 // Column switch control
                 vt100_mode_column_switch = state;
-            // ?42 : DECNRCM: National replacement character set
+                // ?42 : DECNRCM: National replacement character set
             } else if ("?47".equals(m)) {
                 // Alternate screen mode
                 if ((state && !vt100_mode_alt_screen) || (!state && vt100_mode_alt_screen)) {
-                    int[] s = screen; screen = screen2; screen2 = s;
-                    Map<String, Object> map = vt100_saved; vt100_saved = vt100_saved2; vt100_saved2 = map;
+                    int[] s = screen;
+                    screen = screen2;
+                    screen2 = s;
+                    Map<String, Object> map = vt100_saved;
+                    vt100_saved = vt100_saved2;
+                    vt100_saved2 = map;
                 }
                 vt100_mode_alt_screen = state;
-            // ?57 : DECNAKB: Greek keyboard mapping
+                // ?57 : DECNAKB: Greek keyboard mapping
             } else if ("?67".equals(m)) {
                 // DECBKM: Backarrow key
                 vt100_mode_backspace = state;
@@ -590,15 +599,19 @@ public class Terminal {
     private void esc_G0_0() {
         vt100_charset_select(0, 0);
     }
+
     private void esc_G0_1() {
         vt100_charset_select(0, 1);
     }
+
     private void esc_G0_2() {
         vt100_charset_select(0, 2);
     }
+
     private void esc_G0_3() {
         vt100_charset_select(0, 3);
     }
+
     private void esc_G0_4() {
         vt100_charset_select(0, 4);
     }
@@ -606,15 +619,19 @@ public class Terminal {
     private void esc_G1_0() {
         vt100_charset_select(1, 0);
     }
+
     private void esc_G1_1() {
         vt100_charset_select(1, 1);
     }
+
     private void esc_G1_2() {
         vt100_charset_select(1, 2);
     }
+
     private void esc_G1_3() {
         vt100_charset_select(1, 3);
     }
+
     private void esc_G1_4() {
         vt100_charset_select(1, 4);
     }
@@ -702,27 +719,27 @@ public class Terminal {
     }
 
     private void csi_ICH(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         scroll_line_right(cy, cx, ps[0]);
     }
 
     private void csi_CUU(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         cursor_up(Math.max(1, ps[0]));
     }
 
     private void csi_CUD(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         cursor_down(Math.max(1, ps[0]));
     }
 
     private void csi_CUF(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         cursor_right(Math.max(1, ps[0]));
     }
 
     private void csi_CUB(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         cursor_left(Math.max(1, ps[0]));
     }
 
@@ -737,12 +754,12 @@ public class Terminal {
     }
 
     private void csi_CHA(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         cursor_set_x(ps[0] - 1);
     }
 
     private void csi_CUP(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1, 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1, 1});
         if (vt100_mode_origin) {
             cursor_set(scroll_area_y0 + ps[0] - 1, ps[1] - 1);
         } else {
@@ -751,12 +768,12 @@ public class Terminal {
     }
 
     private void csi_CHT(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         ctrl_HT(Math.max(1, ps[0]));
     }
 
     private void csi_ED(String p) {
-        String[] ps = vt100_parse_params(p, new String[] { "0" });
+        String[] ps = vt100_parse_params(p, new String[]{"0"});
         if ("0".equals(ps[0])) {
             clear(cy, cx, height, width);
         } else if ("1".equals(ps[0])) {
@@ -767,7 +784,7 @@ public class Terminal {
     }
 
     private void csi_EL(String p) {
-        String[] ps = vt100_parse_params(p, new String[] { "0" });
+        String[] ps = vt100_parse_params(p, new String[]{"0"});
         if ("0".equals(ps[0])) {
             clear(cy, cx, cy + 1, width);
         } else if ("1".equals(ps[0])) {
@@ -778,36 +795,36 @@ public class Terminal {
     }
 
     private void csi_IL(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         if (cy >= scroll_area_y0 && cy < scroll_area_y1) {
             scroll_area_down(cy, scroll_area_y1, Math.max(1, ps[0]));
         }
     }
 
     private void csi_DL(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         if (cy >= scroll_area_y0 && cy < scroll_area_y1) {
             scroll_area_up(cy, scroll_area_y1, Math.max(1, ps[0]));
         }
     }
 
     private void csi_DCH(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         scroll_line_left(cy, cx, Math.max(1, ps[0]));
     }
 
     private void csi_SU(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         scroll_area_up(scroll_area_y0, scroll_area_y1, Math.max(1, ps[0]));
     }
 
     private void csi_SD(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         scroll_area_down(scroll_area_y0, scroll_area_y1, Math.max(1, ps[0]));
     }
 
     private void csi_CTC(String p) {
-        String[] ps = vt100_parse_params(p, new String[] { "0" });
+        String[] ps = vt100_parse_params(p, new String[]{"0"});
         for (String m : ps) {
             if ("0".equals(m)) {
                 if (tab_stops.indexOf(cx) < 0) {
@@ -823,18 +840,18 @@ public class Terminal {
     }
 
     private void csi_ECH(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         int n = Math.min(width - cx, Math.max(1, ps[0]));
         clear(cy, cx, cy + 1, cx + n);
     }
 
     private void csi_CBT(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         ctrl_HT(1 - Math.max(1, ps[0]));
     }
 
     private void csi_HPA(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         cursor_set_x(ps[0] - 1);
     }
 
@@ -843,7 +860,7 @@ public class Terminal {
     }
 
     private void csi_REP(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         if (vt100_lastchar < 32) {
             return;
         }
@@ -855,7 +872,7 @@ public class Terminal {
     }
 
     private void csi_DA(String p) {
-        String[] ps = vt100_parse_params(p, new String[] { "0" });
+        String[] ps = vt100_parse_params(p, new String[]{"0"});
         if ("0".equals(ps[0])) {
             vt100_out = "\u001b[?1;2c";
         } else if (">0".equals(ps[0]) || ">".equals(ps[0])) {
@@ -864,7 +881,7 @@ public class Terminal {
     }
 
     private void csi_VPA(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1 });
+        int[] ps = vt100_parse_params(p, new int[]{1});
         cursor_set_y(ps[0] - 1);
     }
 
@@ -877,7 +894,7 @@ public class Terminal {
     }
 
     private void csi_TBC(String p) {
-        String[] ps = vt100_parse_params(p, new String[] { "0" });
+        String[] ps = vt100_parse_params(p, new String[]{"0"});
         if ("0".equals(ps[0])) {
             csi_CTC("2");
         } else if ("3".equals(ps[0])) {
@@ -894,7 +911,7 @@ public class Terminal {
     }
 
     private void csi_SGR(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 0 });
+        int[] ps = vt100_parse_params(p, new int[]{0});
         for (int m : ps) {
             if (m == 0) {
                 attr = 0x00fe0000;
@@ -925,7 +942,7 @@ public class Terminal {
     }
 
     private void csi_DSR(String p) {
-        String[] ps = vt100_parse_params(p, new String[] { "0" });
+        String[] ps = vt100_parse_params(p, new String[]{"0"});
         if ("5".equals(ps[0])) {
             vt100_out = "\u001b[0n";
         } else if ("6".equals(ps[0])) {
@@ -951,7 +968,7 @@ public class Terminal {
     }
 
     private void csi_DECSTBM(String p) {
-        int[] ps = vt100_parse_params(p, new int[] { 1, height });
+        int[] ps = vt100_parse_params(p, new int[]{1, height});
         scroll_area_set(ps[0] - 1, ps[1]);
         if (vt100_mode_origin) {
             cursor_set(scroll_area_y0, 0);
@@ -1060,163 +1077,379 @@ public class Terminal {
     private void vt100_parse_process() {
         if (vt100_parse_state == State.Esc) {
             switch (vt100_parse_func) {
-                case 0x0036: /* DECBI */ break;
-                case 0x0037: esc_DECSC(); break;
-                case 0x0038: esc_DECRC(); break;
-                case 0x0042: /* BPH */ break;
-                case 0x0043: /* NBH */ break;
-                case 0x0044: esc_IND(); break;
-                case 0x0045: esc_NEL(); break;
-                case 0x0046: /* SSA */ esc_NEL(); break;
-                case 0x0048: esc_HTS(); break;
-                case 0x0049: /* HTJ */ break;
-                case 0x004A: /* VTS */ break;
-                case 0x004B: /* PLD */ break;
-                case 0x004C: /* PLU */ break;
-                case 0x004D: esc_RI(); break;
-                case 0x004E: esc_SS2(); break;
-                case 0x004F: esc_SS3(); break;
-                case 0x0050: esc_DCS(); break;
-                case 0x0051: /* PU1 */ break;
-                case 0x0052: /* PU2 */ break;
-                case 0x0053: /* STS */ break;
-                case 0x0054: /* CCH */ break;
-                case 0x0055: /* MW */ break;
-                case 0x0056: /* SPA */ break;
-                case 0x0057: /* ESA */ break;
-                case 0x0058: esc_SOS(); break;
-                case 0x005A: /* SCI */ break;
-                case 0x005B: esc_CSI(); break;
-                case 0x005C: esc_ST(); break;
-                case 0x005D: esc_OSC(); break;
-                case 0x005E: esc_PM(); break;
-                case 0x005F: esc_APC(); break;
-                case 0x0060: /* DMI */ break;
-                case 0x0061: /* INT */ break;
-                case 0x0062: /* EMI */ break;
-                case 0x0063: esc_RIS(); break;
-                case 0x0064: /* CMD */ break;
-                case 0x006C: /* RM */ break;
-                case 0x006E: /* LS2 */ break;
-                case 0x006F: /* LS3 */ break;
-                case 0x007C: /* LS3R */ break;
-                case 0x007D: /* LS2R */ break;
-                case 0x007E: /* LS1R */ break;
-                case 0x2338: esc_DECALN(); break;
-                case 0x2841: esc_G0_0(); break;
-                case 0x2842: esc_G0_1(); break;
-                case 0x2830: esc_G0_2(); break;
-                case 0x2831: esc_G0_3(); break;
-                case 0x2832: esc_G0_4(); break;
-                case 0x2930: esc_G1_2(); break;
-                case 0x2931: esc_G1_3(); break;
-                case 0x2932: esc_G1_4(); break;
-                case 0x2941: esc_G1_0(); break;
-                case 0x2942: esc_G1_1(); break;
+                case 0x0036: /* DECBI */
+                    break;
+                case 0x0037:
+                    esc_DECSC();
+                    break;
+                case 0x0038:
+                    esc_DECRC();
+                    break;
+                case 0x0042: /* BPH */
+                    break;
+                case 0x0043: /* NBH */
+                    break;
+                case 0x0044:
+                    esc_IND();
+                    break;
+                case 0x0045:
+                    esc_NEL();
+                    break;
+                case 0x0046: /* SSA */
+                    esc_NEL();
+                    break;
+                case 0x0048:
+                    esc_HTS();
+                    break;
+                case 0x0049: /* HTJ */
+                    break;
+                case 0x004A: /* VTS */
+                    break;
+                case 0x004B: /* PLD */
+                    break;
+                case 0x004C: /* PLU */
+                    break;
+                case 0x004D:
+                    esc_RI();
+                    break;
+                case 0x004E:
+                    esc_SS2();
+                    break;
+                case 0x004F:
+                    esc_SS3();
+                    break;
+                case 0x0050:
+                    esc_DCS();
+                    break;
+                case 0x0051: /* PU1 */
+                    break;
+                case 0x0052: /* PU2 */
+                    break;
+                case 0x0053: /* STS */
+                    break;
+                case 0x0054: /* CCH */
+                    break;
+                case 0x0055: /* MW */
+                    break;
+                case 0x0056: /* SPA */
+                    break;
+                case 0x0057: /* ESA */
+                    break;
+                case 0x0058:
+                    esc_SOS();
+                    break;
+                case 0x005A: /* SCI */
+                    break;
+                case 0x005B:
+                    esc_CSI();
+                    break;
+                case 0x005C:
+                    esc_ST();
+                    break;
+                case 0x005D:
+                    esc_OSC();
+                    break;
+                case 0x005E:
+                    esc_PM();
+                    break;
+                case 0x005F:
+                    esc_APC();
+                    break;
+                case 0x0060: /* DMI */
+                    break;
+                case 0x0061: /* INT */
+                    break;
+                case 0x0062: /* EMI */
+                    break;
+                case 0x0063:
+                    esc_RIS();
+                    break;
+                case 0x0064: /* CMD */
+                    break;
+                case 0x006C: /* RM */
+                    break;
+                case 0x006E: /* LS2 */
+                    break;
+                case 0x006F: /* LS3 */
+                    break;
+                case 0x007C: /* LS3R */
+                    break;
+                case 0x007D: /* LS2R */
+                    break;
+                case 0x007E: /* LS1R */
+                    break;
+                case 0x2338:
+                    esc_DECALN();
+                    break;
+                case 0x2841:
+                    esc_G0_0();
+                    break;
+                case 0x2842:
+                    esc_G0_1();
+                    break;
+                case 0x2830:
+                    esc_G0_2();
+                    break;
+                case 0x2831:
+                    esc_G0_3();
+                    break;
+                case 0x2832:
+                    esc_G0_4();
+                    break;
+                case 0x2930:
+                    esc_G1_2();
+                    break;
+                case 0x2931:
+                    esc_G1_3();
+                    break;
+                case 0x2932:
+                    esc_G1_4();
+                    break;
+                case 0x2941:
+                    esc_G1_0();
+                    break;
+                case 0x2942:
+                    esc_G1_1();
+                    break;
             }
             if (vt100_parse_state == State.Esc) {
                 vt100_parse_reset();
             }
         } else {
             switch (vt100_parse_func) {
-                case 0x0040: csi_ICH(vt100_parse_param); break;
-                case 0x0041: csi_CUU(vt100_parse_param); break;
-                case 0x0042: csi_CUD(vt100_parse_param); break;
-                case 0x0043: csi_CUF(vt100_parse_param); break;
-                case 0x0044: csi_CUB(vt100_parse_param); break;
-                case 0x0045: csi_CNL(vt100_parse_param); break;
-                case 0x0046: csi_CPL(vt100_parse_param); break;
-                case 0x0047: csi_CHA(vt100_parse_param); break;
-                case 0x0048: csi_CUP(vt100_parse_param); break;
-                case 0x0049: csi_CHT(vt100_parse_param); break;
-                case 0x004A: csi_ED(vt100_parse_param); break;
-                case 0x004B: csi_EL(vt100_parse_param); break;
-                case 0x004C: csi_IL(vt100_parse_param); break;
-                case 0x004D: csi_DL(vt100_parse_param); break;
-                case 0x004E: /* EF */ break;
-                case 0x004F: /* EA */ break;
-                case 0x0050: csi_DCH(vt100_parse_param); break;
-                case 0x0051: /* SEE */ break;
-                case 0x0052: /* CPR */ break;
-                case 0x0053: csi_SU(vt100_parse_param); break;
-                case 0x0054: csi_SD(vt100_parse_param); break;
-                case 0x0055: /* NP */ break;
-                case 0x0056: /* PP */ break;
-                case 0x0057: csi_CTC(vt100_parse_param); break;
-                case 0x0058: csi_ECH(vt100_parse_param); break;
-                case 0x0059: /* CVT */ break;
-                case 0x005A: csi_CBT(vt100_parse_param); break;
-                case 0x005B: /* SRS */ break;
-                case 0x005C: /* PTX */ break;
-                case 0x005D: /* SDS */ break;
-                case 0x005E: /* SIMD */ break;
-                case 0x0060: csi_HPA(vt100_parse_param); break;
-                case 0x0061: csi_HPR(vt100_parse_param); break;
-                case 0x0062: csi_REP(vt100_parse_param); break;
-                case 0x0063: csi_DA(vt100_parse_param); break;
-                case 0x0064: csi_VPA(vt100_parse_param); break;
-                case 0x0065: csi_VPR(vt100_parse_param); break;
-                case 0x0066: csi_HVP(vt100_parse_param); break;
-                case 0x0067: csi_TBC(vt100_parse_param); break;
-                case 0x0068: csi_SM(vt100_parse_param); break;
-                case 0x0069: /* MC */ break;
-                case 0x006A: /* HPB */ break;
-                case 0x006B: /* VPB */ break;
-                case 0x006C: csi_RM(vt100_parse_param); break;
-                case 0x006D: csi_SGR(vt100_parse_param); break;
-                case 0x006E: csi_DSR(vt100_parse_param); break;
-                case 0x006F: /* DAQ */ break;
-                case 0x0072: csi_DECSTBM(vt100_parse_param); break;
-                case 0x0073: csi_SCP(vt100_parse_param); break;
-                case 0x0075: csi_RCP(vt100_parse_param); break;
-                case 0x0078: csi_DECREQTPARM(vt100_parse_param); break;
-                case 0x2040: /* SL */ break;
-                case 0x2041: /* SR */ break;
-                case 0x2042: /* GSM */ break;
-                case 0x2043: /* GSS */ break;
-                case 0x2044: /* FNT */ break;
-                case 0x2045: /* TSS */ break;
-                case 0x2046: /* JFY */ break;
-                case 0x2047: /* SPI */ break;
-                case 0x2048: /* QUAD */ break;
-                case 0x2049: /* SSU */ break;
-                case 0x204A: /* PFS */ break;
-                case 0x204B: /* SHS */ break;
-                case 0x204C: /* SVS */ break;
-                case 0x204D: /* IGS */ break;
-                case 0x204E: /* deprecated: HTSA */ break;
-                case 0x204F: /* IDCS */ break;
-                case 0x2050: /* PPA */ break;
-                case 0x2051: /* PPR */ break;
-                case 0x2052: /* PPB */ break;
-                case 0x2053: /* SPD */ break;
-                case 0x2054: /* DTA */ break;
-                case 0x2055: /* SLH */ break;
-                case 0x2056: /* SLL */ break;
-                case 0x2057: /* FNK */ break;
-                case 0x2058: /* SPQR */ break;
-                case 0x2059: /* SEF */ break;
-                case 0x205A: /* PEC */ break;
-                case 0x205B: /* SSW */ break;
-                case 0x205C: /* SACS */ break;
-                case 0x205D: /* SAPV */ break;
-                case 0x205E: /* STAB */ break;
-                case 0x205F: /* GCC */ break;
-                case 0x2060: /* TAPE */ break;
-                case 0x2061: /* TALE */ break;
-                case 0x2062: /* TAC */ break;
-                case 0x2063: /* TCC */ break;
-                case 0x2064: /* TSR */ break;
-                case 0x2065: /* SCO */ break;
-                case 0x2066: /* SRCS */ break;
-                case 0x2067: /* SCS */ break;
-                case 0x2068: /* SLS */ break;
-                case 0x2069: /* SPH */ break;
-                case 0x206A: /* SPL */ break;
-                case 0x206B: /* SCP */ break;
-                case 0x2170: csi_DECSTR(vt100_parse_param); break;
-                case 0x2472: /* DECCARA */ break;
-                case 0x2477: /* DECRQPSR */ break;
+                case 0x0040:
+                    csi_ICH(vt100_parse_param);
+                    break;
+                case 0x0041:
+                    csi_CUU(vt100_parse_param);
+                    break;
+                case 0x0042:
+                    csi_CUD(vt100_parse_param);
+                    break;
+                case 0x0043:
+                    csi_CUF(vt100_parse_param);
+                    break;
+                case 0x0044:
+                    csi_CUB(vt100_parse_param);
+                    break;
+                case 0x0045:
+                    csi_CNL(vt100_parse_param);
+                    break;
+                case 0x0046:
+                    csi_CPL(vt100_parse_param);
+                    break;
+                case 0x0047:
+                    csi_CHA(vt100_parse_param);
+                    break;
+                case 0x0048:
+                    csi_CUP(vt100_parse_param);
+                    break;
+                case 0x0049:
+                    csi_CHT(vt100_parse_param);
+                    break;
+                case 0x004A:
+                    csi_ED(vt100_parse_param);
+                    break;
+                case 0x004B:
+                    csi_EL(vt100_parse_param);
+                    break;
+                case 0x004C:
+                    csi_IL(vt100_parse_param);
+                    break;
+                case 0x004D:
+                    csi_DL(vt100_parse_param);
+                    break;
+                case 0x004E: /* EF */
+                    break;
+                case 0x004F: /* EA */
+                    break;
+                case 0x0050:
+                    csi_DCH(vt100_parse_param);
+                    break;
+                case 0x0051: /* SEE */
+                    break;
+                case 0x0052: /* CPR */
+                    break;
+                case 0x0053:
+                    csi_SU(vt100_parse_param);
+                    break;
+                case 0x0054:
+                    csi_SD(vt100_parse_param);
+                    break;
+                case 0x0055: /* NP */
+                    break;
+                case 0x0056: /* PP */
+                    break;
+                case 0x0057:
+                    csi_CTC(vt100_parse_param);
+                    break;
+                case 0x0058:
+                    csi_ECH(vt100_parse_param);
+                    break;
+                case 0x0059: /* CVT */
+                    break;
+                case 0x005A:
+                    csi_CBT(vt100_parse_param);
+                    break;
+                case 0x005B: /* SRS */
+                    break;
+                case 0x005C: /* PTX */
+                    break;
+                case 0x005D: /* SDS */
+                    break;
+                case 0x005E: /* SIMD */
+                    break;
+                case 0x0060:
+                    csi_HPA(vt100_parse_param);
+                    break;
+                case 0x0061:
+                    csi_HPR(vt100_parse_param);
+                    break;
+                case 0x0062:
+                    csi_REP(vt100_parse_param);
+                    break;
+                case 0x0063:
+                    csi_DA(vt100_parse_param);
+                    break;
+                case 0x0064:
+                    csi_VPA(vt100_parse_param);
+                    break;
+                case 0x0065:
+                    csi_VPR(vt100_parse_param);
+                    break;
+                case 0x0066:
+                    csi_HVP(vt100_parse_param);
+                    break;
+                case 0x0067:
+                    csi_TBC(vt100_parse_param);
+                    break;
+                case 0x0068:
+                    csi_SM(vt100_parse_param);
+                    break;
+                case 0x0069: /* MC */
+                    break;
+                case 0x006A: /* HPB */
+                    break;
+                case 0x006B: /* VPB */
+                    break;
+                case 0x006C:
+                    csi_RM(vt100_parse_param);
+                    break;
+                case 0x006D:
+                    csi_SGR(vt100_parse_param);
+                    break;
+                case 0x006E:
+                    csi_DSR(vt100_parse_param);
+                    break;
+                case 0x006F: /* DAQ */
+                    break;
+                case 0x0072:
+                    csi_DECSTBM(vt100_parse_param);
+                    break;
+                case 0x0073:
+                    csi_SCP(vt100_parse_param);
+                    break;
+                case 0x0075:
+                    csi_RCP(vt100_parse_param);
+                    break;
+                case 0x0078:
+                    csi_DECREQTPARM(vt100_parse_param);
+                    break;
+                case 0x2040: /* SL */
+                    break;
+                case 0x2041: /* SR */
+                    break;
+                case 0x2042: /* GSM */
+                    break;
+                case 0x2043: /* GSS */
+                    break;
+                case 0x2044: /* FNT */
+                    break;
+                case 0x2045: /* TSS */
+                    break;
+                case 0x2046: /* JFY */
+                    break;
+                case 0x2047: /* SPI */
+                    break;
+                case 0x2048: /* QUAD */
+                    break;
+                case 0x2049: /* SSU */
+                    break;
+                case 0x204A: /* PFS */
+                    break;
+                case 0x204B: /* SHS */
+                    break;
+                case 0x204C: /* SVS */
+                    break;
+                case 0x204D: /* IGS */
+                    break;
+                case 0x204E: /* deprecated: HTSA */
+                    break;
+                case 0x204F: /* IDCS */
+                    break;
+                case 0x2050: /* PPA */
+                    break;
+                case 0x2051: /* PPR */
+                    break;
+                case 0x2052: /* PPB */
+                    break;
+                case 0x2053: /* SPD */
+                    break;
+                case 0x2054: /* DTA */
+                    break;
+                case 0x2055: /* SLH */
+                    break;
+                case 0x2056: /* SLL */
+                    break;
+                case 0x2057: /* FNK */
+                    break;
+                case 0x2058: /* SPQR */
+                    break;
+                case 0x2059: /* SEF */
+                    break;
+                case 0x205A: /* PEC */
+                    break;
+                case 0x205B: /* SSW */
+                    break;
+                case 0x205C: /* SACS */
+                    break;
+                case 0x205D: /* SAPV */
+                    break;
+                case 0x205E: /* STAB */
+                    break;
+                case 0x205F: /* GCC */
+                    break;
+                case 0x2060: /* TAPE */
+                    break;
+                case 0x2061: /* TALE */
+                    break;
+                case 0x2062: /* TAC */
+                    break;
+                case 0x2063: /* TCC */
+                    break;
+                case 0x2064: /* TSR */
+                    break;
+                case 0x2065: /* SCO */
+                    break;
+                case 0x2066: /* SRCS */
+                    break;
+                case 0x2067: /* SCS */
+                    break;
+                case 0x2068: /* SLS */
+                    break;
+                case 0x2069: /* SPH */
+                    break;
+                case 0x206A: /* SPL */
+                    break;
+                case 0x206B: /* SCP */
+                    break;
+                case 0x2170:
+                    csi_DECSTR(vt100_parse_param);
+                    break;
+                case 0x2472: /* DECCARA */
+                    break;
+                case 0x2477: /* DECRQPSR */
+                    break;
             }
             if (vt100_parse_state == State.Csi) {
                 vt100_parse_reset();
@@ -1236,7 +1469,7 @@ public class Terminal {
             }
         } else if ((c & 0xffe0) == 0x0080) {
             vt100_parse_reset(State.Esc);
-            vt100_parse_func = (char)(c - 0x0040);
+            vt100_parse_func = (char) (c - 0x0040);
             vt100_parse_process();
             return true;
         }
@@ -1262,7 +1495,7 @@ public class Terminal {
                             vt100_parse_func <<= 8;
                             vt100_parse_func += (char) c;
                         } else if (msb == 0x30 && vt100_parse_state == State.Csi) {
-                            vt100_parse_param += new String(new char[] { (char) c } );
+                            vt100_parse_param += new String(new char[]{(char) c});
                         } else {
                             vt100_parse_func <<= 8;
                             vt100_parse_func += (char) c;
@@ -1313,55 +1546,147 @@ public class Terminal {
                 vt100_keyfilter_escape = false;
                 if (vt100_mode_cursorkey) {
                     switch (c) {
-                        case '~': o += "~"; break;
-                        case 'A': o += "\u001bOA"; break;
-                        case 'B': o += "\u001bOB"; break;
-                        case 'C': o += "\u001bOC"; break;
-                        case 'D': o += "\u001bOD"; break;
-                        case 'F': o += "\u001bOF"; break;
-                        case 'H': o += "\u001bOH"; break;
-                        case '1': o += "\u001b[5~"; break;
-                        case '2': o += "\u001b[6~"; break;
-                        case '3': o += "\u001b[2~"; break;
-                        case '4': o += "\u001b[3~"; break;
-                        case 'a': o += "\u001bOP"; break;
-                        case 'b': o += "\u001bOQ"; break;
-                        case 'c': o += "\u001bOR"; break;
-                        case 'd': o += "\u001bOS"; break;
-                        case 'e': o += "\u001b[15~"; break;
-                        case 'f': o += "\u001b[17~"; break;
-                        case 'g': o += "\u001b[18~"; break;
-                        case 'h': o += "\u001b[19~"; break;
-                        case 'i': o += "\u001b[20~"; break;
-                        case 'j': o += "\u001b[21~"; break;
-                        case 'k': o += "\u001b[23~"; break;
-                        case 'l': o += "\u001b[24~"; break;
+                        case '~':
+                            o += "~";
+                            break;
+                        case 'A':
+                            o += "\u001bOA";
+                            break;
+                        case 'B':
+                            o += "\u001bOB";
+                            break;
+                        case 'C':
+                            o += "\u001bOC";
+                            break;
+                        case 'D':
+                            o += "\u001bOD";
+                            break;
+                        case 'F':
+                            o += "\u001bOF";
+                            break;
+                        case 'H':
+                            o += "\u001bOH";
+                            break;
+                        case '1':
+                            o += "\u001b[5~";
+                            break;
+                        case '2':
+                            o += "\u001b[6~";
+                            break;
+                        case '3':
+                            o += "\u001b[2~";
+                            break;
+                        case '4':
+                            o += "\u001b[3~";
+                            break;
+                        case 'a':
+                            o += "\u001bOP";
+                            break;
+                        case 'b':
+                            o += "\u001bOQ";
+                            break;
+                        case 'c':
+                            o += "\u001bOR";
+                            break;
+                        case 'd':
+                            o += "\u001bOS";
+                            break;
+                        case 'e':
+                            o += "\u001b[15~";
+                            break;
+                        case 'f':
+                            o += "\u001b[17~";
+                            break;
+                        case 'g':
+                            o += "\u001b[18~";
+                            break;
+                        case 'h':
+                            o += "\u001b[19~";
+                            break;
+                        case 'i':
+                            o += "\u001b[20~";
+                            break;
+                        case 'j':
+                            o += "\u001b[21~";
+                            break;
+                        case 'k':
+                            o += "\u001b[23~";
+                            break;
+                        case 'l':
+                            o += "\u001b[24~";
+                            break;
                     }
                 } else {
                     switch (c) {
-                        case '~': o += "~"; break;
-                        case 'A': o += "\u001b[A"; break;
-                        case 'B': o += "\u001b[B"; break;
-                        case 'C': o += "\u001b[C"; break;
-                        case 'D': o += "\u001b[D"; break;
-                        case 'F': o += "\u001b[F"; break;
-                        case 'H': o += "\u001b[H"; break;
-                        case '1': o += "\u001b[5~"; break;
-                        case '2': o += "\u001b[6~"; break;
-                        case '3': o += "\u001b[2~"; break;
-                        case '4': o += "\u001b[3~"; break;
-                        case 'a': o += "\u001bOP"; break;
-                        case 'b': o += "\u001bOQ"; break;
-                        case 'c': o += "\u001bOR"; break;
-                        case 'd': o += "\u001bOS"; break;
-                        case 'e': o += "\u001b[15~"; break;
-                        case 'f': o += "\u001b[17~"; break;
-                        case 'g': o += "\u001b[18~"; break;
-                        case 'h': o += "\u001b[19~"; break;
-                        case 'i': o += "\u001b[20~"; break;
-                        case 'j': o += "\u001b[21~"; break;
-                        case 'k': o += "\u001b[23~"; break;
-                        case 'l': o += "\u001b[24~"; break;
+                        case '~':
+                            o += "~";
+                            break;
+                        case 'A':
+                            o += "\u001b[A";
+                            break;
+                        case 'B':
+                            o += "\u001b[B";
+                            break;
+                        case 'C':
+                            o += "\u001b[C";
+                            break;
+                        case 'D':
+                            o += "\u001b[D";
+                            break;
+                        case 'F':
+                            o += "\u001b[F";
+                            break;
+                        case 'H':
+                            o += "\u001b[H";
+                            break;
+                        case '1':
+                            o += "\u001b[5~";
+                            break;
+                        case '2':
+                            o += "\u001b[6~";
+                            break;
+                        case '3':
+                            o += "\u001b[2~";
+                            break;
+                        case '4':
+                            o += "\u001b[3~";
+                            break;
+                        case 'a':
+                            o += "\u001bOP";
+                            break;
+                        case 'b':
+                            o += "\u001bOQ";
+                            break;
+                        case 'c':
+                            o += "\u001bOR";
+                            break;
+                        case 'd':
+                            o += "\u001bOS";
+                            break;
+                        case 'e':
+                            o += "\u001b[15~";
+                            break;
+                        case 'f':
+                            o += "\u001b[17~";
+                            break;
+                        case 'g':
+                            o += "\u001b[18~";
+                            break;
+                        case 'h':
+                            o += "\u001b[19~";
+                            break;
+                        case 'i':
+                            o += "\u001b[20~";
+                            break;
+                        case 'j':
+                            o += "\u001b[21~";
+                            break;
+                        case 'k':
+                            o += "\u001b[23~";
+                            break;
+                        case 'l':
+                            o += "\u001b[24~";
+                            break;
                     }
                 }
             } else if (c == '~') {
@@ -1428,7 +1753,9 @@ public class Terminal {
                         boolean inv = (a & 0x0200) != 0;
                         boolean inv2 = vt100_mode_inverse;
                         if (inv && !inv2 || inv2 && !inv) {
-                            int i = fg; fg = bg; bg = i;
+                            int i = fg;
+                            fg = bg;
+                            bg = i;
                         }
                         if ((a & 0x0400) != 0) {
                             fg = 0x0c;
@@ -1449,9 +1776,15 @@ public class Terminal {
                         prev_attr = a;
                     }
                     switch (c) {
-                        case '&': sb.append("&amp;"); break;
-                        case '<': sb.append("&lt;"); break;
-                        case '>': sb.append("&gt;"); break;
+                        case '&':
+                            sb.append("&amp;");
+                            break;
+                        case '<':
+                            sb.append("&lt;");
+                            break;
+                        case '>':
+                            sb.append("&gt;");
+                            break;
                         default:
                             wx += utf8_charwidth(c);
                             if (wx <= width) {

@@ -1,190 +1,100 @@
 package io.hawt.web;
 
-import io.hawt.system.AuthInfo;
-import io.hawt.system.Authenticator;
-import io.hawt.system.ExtractAuthInfoCallback;
 import io.hawt.util.Strings;
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A helper object to store the proxy location details
  */
-public class ProxyDetails {
+public class ProxyDetails implements ProxyAddress {
     private static final transient Logger LOG = LoggerFactory.getLogger(ProxyDetails.class);
 
-    private String stringProxyURL;
-    private String hostAndPort;
-    private String scheme = "http";
+    private String scheme = DEFAULT_SCHEME;
     private String path = "";
     private String userName;
     private String password;
     private String host;
-    private int port = 80;
+    private String queryString = null;
+    private int port = DEFAULT_PORT;
 
-    public static final String USER_PARAM = "_user";
-    public static final String PWD_PARAM = "_pwd";
+    private static final int DEFAULT_PORT = 80;
+    private static final String DEFAULT_SCHEME = "http";
+    private static final int HTTPS_PORT = 443;
+    private static final String HTTPS_SCHEME = "https";
 
-    private static Set<String> ignoreHeaderNames = new HashSet<String>(Arrays.asList(USER_PARAM, PWD_PARAM, "_url", "url"));
+    private static final Pattern pathInfoPattern = Pattern.compile("^(?:\\/*(?:(?<scheme>[^:]+):\\/\\/?)?(?:(?<username>[^:]+):(?<password>.*)@)?)?(?<host>[^\\/]+)(?:[\\/:](?<port>\\d+)?)(?<path>[^\\?]+).*$");
+
+    private static final Pattern removeIgnoredHeaderNamesPattern = Pattern.compile("(^|(?<=[?&;]))(?:_user|_pwd|_url|url)=.*?($|[&;])");
 
     public ProxyDetails(HttpServletRequest httpServletRequest) {
-        this(httpServletRequest.getPathInfo());
-
-        String authHeader = httpServletRequest.getHeader(Authenticator.HEADER_AUTHORIZATION);
-
-        if (authHeader != null && !authHeader.equals("")) {
-
-            final AuthInfo info = new AuthInfo();
-
-            Authenticator.extractAuthInfo(authHeader, new ExtractAuthInfoCallback() {
-                @Override
-                public void getAuthInfo(String userName, String password) {
-                    info.username = userName;
-                    info.password = password;
-                }
-            });
-
-            userName = info.username;
-            password = info.password;
-        }
+        parsePathInfo(httpServletRequest.getPathInfo());
 
         // lets add the query parameters
-        Enumeration<?> iter = httpServletRequest.getParameterNames();
-        while (iter.hasMoreElements()) {
-            Object next = iter.nextElement();
-            if (next instanceof String) {
-                String name = next.toString();
-                if (!ignoreHeaderNames.contains(name)) {
-                    String[] values = httpServletRequest.getParameterValues(name);
-                    for (String value : values) {
-                        String prefix = "?";
-                        if (stringProxyURL.contains("?")) {
-                            prefix = "&";
-                        }
-                        stringProxyURL += prefix + name + "=" + value;
-                    }
-                }
-            }
+        String reqQueryString = httpServletRequest.getQueryString();
+        if (reqQueryString != null) {
+            queryString = removeIgnoredHeaderNamesPattern.matcher(reqQueryString).replaceAll("");
         }
     }
 
-    public ProxyDetails(String pathInfo) {
-        hostAndPort = pathInfo;
+    public ProxyDetails(String scheme, String path, String userName, String password, String host, String queryString, int port) {
+        this.scheme = scheme;
+        this.path = path;
+        this.userName = userName;
+        this.password = password;
+        this.host = host;
+        this.queryString = queryString;
+        this.port = port;
+    }
 
-        if (hostAndPort == null) {
-            return;
-        }
+    private void parsePathInfo(String pathInfo) {
+        Matcher matcher = pathInfoPattern.matcher(pathInfo);
 
-        while (hostAndPort.startsWith("/")) {
-            hostAndPort = hostAndPort.substring(1);
-        }
+        if (matcher.matches()) {
 
-        // remove user/pwd
-        int idx = hostAndPort.indexOf("@");
-        if (idx > 0) {
-            userName = hostAndPort.substring(0, idx);
-            hostAndPort = hostAndPort.substring(idx + 1);
+            userName = matcher.group("username");
+            password = matcher.group("password");
 
-            idx = indexOf(userName, ":", "/");
-            if (idx > 0) {
-                password = userName.substring(idx + 1);
-                userName = userName.substring(0, idx);
-            }
-        }
-        host = hostAndPort;
-        int schemeIdx = indexOf(hostAndPort, "://");
-        if (schemeIdx > 0) {
-            scheme = hostAndPort.substring(0, schemeIdx);
-            hostAndPort = hostAndPort.substring(schemeIdx + 3);
-        }
-        idx = indexOf(hostAndPort, ":", "/");
-        if (idx > 0) {
-            host = hostAndPort.substring(0, idx);
-            String portText = hostAndPort.substring(idx + 1);
-            idx = portText.indexOf("/");
-            if (idx >= 0) {
-                path = portText.substring(idx);
-                portText = portText.substring(0, idx);
+            scheme = matcher.group("scheme");
+            if (scheme == null) {
+                scheme = DEFAULT_SCHEME;
             }
 
-            if (Strings.isNotBlank(portText)) {
-                // portText may be a port unless its default
-                try {
-                    port = Integer.parseInt(portText);
-                    hostAndPort = host + ":" + port;
-                } catch (NumberFormatException e) {
-                    port = 80;
-                    // we do not have a port, so path is the portText
-                    path = "/" + portText + path;
-                    hostAndPort = host;
-                }
+            host = matcher.group("host");
+
+            if (matcher.group("port") != null) {
+                port = Integer.parseInt(matcher.group("port"));
             } else {
-                hostAndPort = host;
+                port = (scheme.equalsIgnoreCase(DEFAULT_SCHEME)) ? DEFAULT_PORT : HTTPS_PORT;
             }
-        }
 
-        stringProxyURL = scheme + "://" + hostAndPort + path;
+            path = matcher.group("path");
+            if (!path.startsWith("/")) {
+                path = "/" + path;
+            }
 
-        // we do not support query parameters
+            // we do not support query parameters
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Proxying to " + stringProxyURL + " as user: " + userName);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Proxying to " + getFullProxyUrl() + " as user: " + userName);
+            }
         }
     }
 
     @Override
     public String toString() {
         return "ProxyDetails{" +
-                userName + "@" + hostAndPort + "/" + stringProxyURL
+                userName + "@" + getFullProxyUrl()
                 + "}";
     }
 
-    /**
-     * Returns the lowest index of the given list of values
-     */
-    protected int indexOf(String text, String... values) {
-        int answer = -1;
-        for (String value : values) {
-            int idx = text.indexOf(value);
-            if (idx >= 0) {
-                if (answer < 0 || idx < answer) {
-                    answer = idx;
-                }
-            }
-        }
-        return answer;
-    }
-
-    public HttpClient createHttpClient(HttpMethod httpMethodProxyRequest) {
-        HttpClient client = new HttpClient();
-
-        if (userName != null) {
-            //client.getParams().setAuthenticationPreemptive(true);
-            httpMethodProxyRequest.setDoAuthentication(true);
-
-            Credentials defaultcreds = new UsernamePasswordCredentials(userName, password);
-            client.getState().setCredentials(new AuthScope(host, port, AuthScope.ANY_REALM), defaultcreds);
-        }
-        return client;
-    }
-
-    public String getStringProxyURL() {
-        return stringProxyURL;
-    }
-
-    public String getProxyHostAndPort() {
-        return hostAndPort;
+    @Override
+    public String getFullProxyUrl() {
+        return scheme + "://" + getHostAndPort() + path + (Strings.isBlank(queryString) ? "" : "?" + queryString) ;
     }
 
     public String getProxyPath() {
@@ -199,20 +109,28 @@ public class ProxyDetails {
         return host;
     }
 
+    public String getHostAndPort() {
+        if (scheme.equalsIgnoreCase(DEFAULT_SCHEME) && port == DEFAULT_PORT) {
+            return host;
+        }
+        if (scheme.equalsIgnoreCase(HTTPS_SCHEME) && port == HTTPS_PORT) {
+            return host;
+        }
+        return host + ":" + port;
+    }
+
     public int getPort() {
         return port;
     }
 
+    @Override
     public String getUserName() {
         return userName;
     }
 
+    @Override
     public String getPassword() {
         return password;
-    }
-
-    public String getHostAndPort() {
-        return hostAndPort;
     }
 
     public String getPath() {
@@ -220,6 +138,6 @@ public class ProxyDetails {
     }
 
     public boolean isValid() {
-        return hostAndPort != null;
+        return host != null;
     }
 }

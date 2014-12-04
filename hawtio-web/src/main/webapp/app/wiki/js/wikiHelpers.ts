@@ -1,3 +1,10 @@
+/// <reference path="../../baseIncludes.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
+/// <reference path="../../git/js/gitHelpers.ts"/>
+/// <reference path="../../git/js/git.ts"/>
+/// <reference path="../../fabric/js/fabricHelpers.ts"/>
+/// <reference path="../../helpers/js/urlHelpers.ts"/>
+/// <reference path="../../docker-registry/js/dockerRegistryHelpers.ts"/>
 /**
  * @module Wiki
  */
@@ -11,8 +18,9 @@ module Wiki {
   export var dozerNamespaces = ["http://dozer.sourceforge.net"];
   export var activemqNamespaces = ["http://activemq.apache.org/schema/core"];
 
-
   export var excludeAdjustmentPrefixes = ["http://", "https://", "#"];
+
+  export enum ViewMode { List, Icon };
 
   /**
    * The custom views within the wiki namespace; either "/wiki/$foo" or "/wiki/branch/$branch/$foo"
@@ -21,11 +29,29 @@ module Wiki {
 
   /**
    * Which extensions do we wish to hide in the wiki file listing
-   * @property hideExtentions
+   * @property hideExtensions
    * @for Wiki
    * @type Array
    */
-  export var hideExtentions = [".profile"];
+  export var hideExtensions = [".profile"];
+
+  var defaultFileNamePattern = /^[a-zA-Z0-9._-]*$/;
+  var defaultFileNamePatternInvalid = "Name must be: letters, numbers, and . _ or - characters";
+
+  var defaultFileNameExtensionPattern = "";
+
+  var defaultLowerCaseFileNamePattern = /^[a-z0-9._-]*$/;
+  var defaultLowerCaseFileNamePatternInvalid = "Name must be: lower-case letters, numbers, and . _ or - characters";
+
+  export interface GenerateOptions {
+    workspace: Core.Workspace;
+    form: any;
+    name: string;
+    branch: string;
+    parentId: string;
+    success: (fileContents?:string) => void;
+    error: (error:any) => void;
+  }
 
   /**
    * The wizard tree for creating new content in the wiki
@@ -39,34 +65,123 @@ module Wiki {
       tooltip: "Create a new folder to contain documents",
       folder: true,
       icon: "/img/icons/wiki/folder.gif",
-      exemplar: "New Folder"
+      exemplar: "myfolder",
+      regex: defaultLowerCaseFileNamePattern,
+      invalid: defaultLowerCaseFileNamePatternInvalid
+    },
+    {
+      label: "App",
+      tooltip: "Creates a new App folder used to configure and run containers",
+      addClass: "icon-cog green",
+      exemplar: 'myapp',
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
+      extension: '',
+      generated: {
+        mbean: ['io.fabric8', { type: 'KubernetesTemplateManager' }],
+        init: (workspace, $scope) => {
+
+        },
+        generate: (options:GenerateOptions) => {
+          log.debug("Got options: ", options);
+          options.form.name = options.name;
+          options.form.path = options.parentId;
+          options.form.branch = options.branch;
+          var json = angular.toJson(options.form);
+          var jolokia = <Jolokia.IJolokia> Core.injector.get("jolokia");
+          jolokia.request({
+            type: 'exec',
+            mbean: 'io.fabric8:type=KubernetesTemplateManager',
+            operation: 'createAppByJson',
+            arguments: [json]
+          }, onSuccess((response) => { 
+            log.debug("Generated app, response: ", response);
+            options.success(undefined); 
+          }, {
+            error: (response) => { options.error(response.error); }
+          }));
+        },
+        form: (workspace, $scope) => {
+          if (!$scope.doDockerRegistryCompletion) {
+            $scope.fetchDockerRepositories = () => {
+              return DockerRegistry.completeDockerRegistry();
+            }
+          }
+          return {
+            summaryMarkdown: 'Add app summary here',
+            replicaCount: 1
+          };
+        },
+        schema: {
+          description: 'App settings',
+          type: 'java.lang.String',
+          properties: {
+            'dockerImage': {
+              'description': 'Docker Image',
+              'type': 'java.lang.String',
+              'input-attributes': { 
+                'required': '', 
+                'class': 'input-xlarge',
+                'typeahead': 'repo for repo in fetchDockerRepositories() | filter:$viewValue',
+                'typeahead-wait-ms': '200'
+              }
+            },
+            'summaryMarkdown': {
+              'description': 'Short Description',
+              'type': 'java.lang.String',
+              'input-attributes': { 'class': 'input-xlarge' }
+            },
+            'replicaCount': {
+              'description': 'Replica Count',
+              'type': 'java.lang.Integer',
+              'input-attributes': {
+                min: '0'
+              }
+            },
+            'labels': {
+              'description': 'Labels',
+              'type': 'map',
+              'items': {
+                'type': 'string'
+              }
+            }
+          }
+        }
+      }
     },
     {
       label: "Fabric8 Profile",
-      tooltip: "Create a new empty Fabric8 profile.  Using a hyphen ('-') will create a folder heirarchy, for example 'my-awesome-profile' will be available via the path 'my/awesome/profile'.",
+      tooltip: "Create a new empty fabric profile. Using a hyphen ('-') will create a folder heirarchy, for example 'my-awesome-profile' will be available via the path 'my/awesome/profile'.",
       profile: true,
       addClass: "icon-book green",
       exemplar: "user-profile",
+      regex: defaultLowerCaseFileNamePattern,
+      invalid: defaultLowerCaseFileNamePatternInvalid,
       fabricOnly: true
-    },
-    {
-      label: "Fabric8 Version",
-      tooltip: "Create a new Fabric8 version based on the latest available version.  Leave the name blank to use the next available version name.  Version names must be in the form of x.y.z, for example 1.2.foo is okay, 1.2-foo is not",
-      version: true,
-      addClass: "icon-code-fork green",
-      exemplar: "1.1.MyVersion",
-      fabricOnly: true,
-      regex: /[1-9][0-9]*(\\.[0-9]+)*/
     },
     {
       label: "Properties File",
       tooltip: "A properties file typically used to configure Java classes",
-      exemplar: "properties-file.properties"
+      exemplar: "properties-file.properties",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".properties"
+    },
+    {
+      label: "JSON File",
+      tooltip: "A file containing JSON data",
+      exemplar: "document.json",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".json"
     },
     {
       label: "Key Store File",
       tooltip: "Creates a keystore (database) of cryptographic keys, X.509 certificate chains, and trusted certificates.",
       exemplar: 'keystore.jks',
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".jks",
       generated: {
         mbean: ['hawtio', { type: 'KeystoreService' }],
         init: function(workspace, $scope) {
@@ -74,16 +189,18 @@ module Wiki {
           var response = workspace.jolokia.request( {type: "read", mbean: mbean, attribute: "SecurityProviderInfo" }, {
             success: (response)=>{
               $scope.securityProviderInfo = response.value;
+              Core.$apply($scope);
             },
             error: (response) => {
               console.log('Could not find the supported security algorithms: ', response.error);
+              Core.$apply($scope);
             }
           });
         },
-        generate: function(workspace, form, success, error) {
-          var encodedForm = JSON.stringify(form)
+        generate: function(options:GenerateOptions) {
+          var encodedForm = JSON.stringify(options.form)
           var mbean = 'hawtio:type=KeystoreService';
-          var response = workspace.jolokia.request( {
+          var response = options.workspace.jolokia.request( {
               type: 'exec', 
               mbean: mbean,
               operation: 'createKeyStoreViaJSON(java.lang.String)',
@@ -91,10 +208,10 @@ module Wiki {
             }, {
               method:'POST',
               success:function(response) {
-                success(response.value)
+                options.success(response.value)
               },
               error:function(response){
-                error(response.error)
+                options.error(response.error)
               }
             });
         },
@@ -155,23 +272,39 @@ module Wiki {
              }
            }
         }
-
       }
     },
     {
       label: "Markdown Document",
       tooltip: "A basic markup document using the Markdown wiki markup, particularly useful for ReadMe files in directories",
-      exemplar: "ReadMe.md"
+      exemplar: "ReadMe.md",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".md"
+    },
+    {
+      label: "Text Document",
+      tooltip: "A plain text file",
+      exemplar: "document.text",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".txt"
     },
     {
       label: "HTML Document",
       tooltip: "A HTML document you can edit directly using the HTML markup",
-      exemplar: "document.html"
+      exemplar: "document.html",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".html"
     },
     {
       label: "XML Document",
       tooltip: "An empty XML document",
-      exemplar: "document.xml"
+      exemplar: "document.xml",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".xml"
     },
     {
       label: "Integration Flows",
@@ -181,32 +314,52 @@ module Wiki {
           label: "Camel XML document",
           tooltip: "A vanilla Camel XML document for integration flows",
           icon: "/img/icons/camel.svg",
-          exemplar: "camel.xml"
+          exemplar: "camel.xml",
+          regex: defaultFileNamePattern,
+          invalid: defaultFileNamePatternInvalid,
+          extension: ".xml"
         },
         {
           label: "Camel OSGi Blueprint XML document",
           tooltip: "A vanilla Camel XML document for integration flows when using OSGi Blueprint",
           icon: "/img/icons/camel.svg",
-          exemplar: "camel-blueprint.xml"
+          exemplar: "camel-blueprint.xml",
+          regex: defaultFileNamePattern,
+          invalid: defaultFileNamePatternInvalid,
+          extension: ".xml"
         },
         {
           label: "Camel Spring XML document",
           tooltip: "A vanilla Camel XML document for integration flows when using the Spring framework",
           icon: "/img/icons/camel.svg",
-          exemplar: "camel-spring.xml"
+          exemplar: "camel-spring.xml",
+          regex: defaultFileNamePattern,
+          invalid: defaultFileNamePatternInvalid,
+          extension: ".xml"
         }
       ]
     },
     {
       label: "Data Mapping Document",
       tooltip: "Dozer based configuration of mapping documents",
-      icon: "/app/dozer/img/dozer.gif",
-      exemplar: "dozerMapping.xml"
+      icon: "/img/icons/dozer/dozer.gif",
+      exemplar: "dozer-mapping.xml",
+      regex: defaultFileNamePattern,
+      invalid: defaultFileNamePatternInvalid,
+      extension: ".xml"
     }
   ];
 
   export function isWikiEnabled(workspace:Workspace, jolokia, localStorage) {
     return Git.createGitRepository(workspace, jolokia, localStorage) !== null;
+  }
+
+  export function goToLink(link, $timeout, $location) {
+    var href = Core.trimLeading(link, "#");
+    $timeout(() => {
+      log.debug("About to navigate to: " + href);
+      $location.url(href);
+    }, 100);
   }
 
   /**
@@ -249,7 +402,6 @@ module Wiki {
         }
         if ( template.generated.init ) {
           template.generated.init(workspace, $scope);
-          template.generated.init = null
         }
       }
 
@@ -268,7 +420,7 @@ module Wiki {
       node.key = parentKey ? parentKey + "_" + key : key;
       var icon = template.icon;
       if (icon) {
-        node.icon = url(icon);
+        node.icon = Core.url(icon);
       }
       // compiler was complaining about 'label' had no idea where it's coming from
       // var tooltip = value["tooltip"] || value["description"] || label;
@@ -334,13 +486,19 @@ module Wiki {
 
   export function editLink(branch:string, pageId:string, $location) {
     var link:string = null;
-    var start = startLink(branch);
-    if (pageId) {
-      link = start + "/edit/" + encodePath(pageId);
-    } else {
-      // lets use the current path
-      var path = $location.path();
-      link = "#" + path.replace(/(view|create)/, "edit");
+    var format = Wiki.fileFormat(pageId);
+    switch (format) {
+      case "image":
+        break;
+      default:
+      var start = startLink(branch);
+      if (pageId) {
+        link = start + "/edit/" + encodePath(pageId);
+      } else {
+        // lets use the current path
+        var path = $location.path();
+        link = "#" + path.replace(/(view|create)/, "edit");
+      }
     }
     return link;
   }
@@ -372,9 +530,12 @@ module Wiki {
     return pageId.split("/").map(decodeURIComponent).join("/");
   }
 
-  export function fileFormat(name:string, fileExtensionTypeRegistry) {
+  export function fileFormat(name:string, fileExtensionTypeRegistry?) {
     var extension = fileExtension(name);
     var answer = null;
+    if (!fileExtensionTypeRegistry) {
+      fileExtensionTypeRegistry = Core.injector.get("fileExtensionTypeRegistry");
+    }
     angular.forEach(fileExtensionTypeRegistry, (array, key) => {
       if (array.indexOf(extension) >= 0) {
         answer = key;
@@ -428,9 +589,9 @@ module Wiki {
    * @param {String} name
    * @return {String}
    */
-  export function hideFineNameExtensions(name) {
+  export function hideFileNameExtensions(name) {
     if (name) {
-      angular.forEach(Wiki.hideExtentions, (extension) => {
+      angular.forEach(Wiki.hideExtensions, (extension) => {
         if (name.endsWith(extension)) {
           name = name.substring(0, name.length - extension.length);
         }
@@ -438,6 +599,35 @@ module Wiki {
     }
     return name;
   }
+
+  /**
+   * Returns the URL to perform a GET or POST for the given branch name and path
+   */
+  export function gitRestURL(branch: string, path: string) {
+    var url = gitRelativeURL(branch, path);
+    url = Core.url('/' + url);
+
+    var connectionName = Core.getConnectionNameParameter(location.search);
+    if (connectionName) {
+      var connectionOptions = Core.getConnectOptions(connectionName);
+      if (connectionOptions) {
+        connectionOptions.path = url;
+        url = <string>Core.createServerConnectionUrl(connectionOptions);
+      }
+    }
+
+    return url;
+  }
+
+  /**
+   * Returns a relative URL to perform a GET or POST for the given branch/path
+   */
+  export function gitRelativeURL(branch: string, path: string) {
+    branch = branch || "master";
+    path = path || "/";
+    return UrlHelpers.join("git/" + branch, path);
+  }
+
 
   /**
    * Takes a row containing the entity object; or can take the entity directly.
@@ -453,18 +643,24 @@ module Wiki {
    */
   export function fileIconHtml(row) {
     var name = row.name;
+    var path = row.path;
+    var branch = row.branch ;
     var directory = row.directory;
     var xmlNamespaces = row.xmlNamespaces;
+    var iconUrl = row.iconUrl;
     var entity = row.entity;
     if (entity) {
       name = name || entity.name;
+      path = path || entity.path;
+      branch = branch || entity.branch;
       directory = directory || entity.directory;
       xmlNamespaces = xmlNamespaces || entity.xmlNamespaces;
+      iconUrl = iconUrl || entity.iconUrl;
     }
+    branch = branch || "master";
     var css = null;
-    var icon = null;
+    var icon:string = null;
     var extension = fileExtension(name);
-
     // TODO could we use different icons for markdown v xml v html
     if (xmlNamespaces && xmlNamespaces.length) {
       if (xmlNamespaces.any((ns) => Wiki.camelNamespaces.any(ns))) {
@@ -474,25 +670,63 @@ module Wiki {
       } else if (xmlNamespaces.any((ns) => Wiki.activemqNamespaces.any(ns))) {
         icon = "img/icons/messagebroker.svg";
       } else {
-        console.log("file " + name + " has namespaces " + xmlNamespaces);
+        log.debug("file " + name + " has namespaces " + xmlNamespaces);
       }
     }
-
+    if (iconUrl) {
+      css = null;
+      icon = UrlHelpers.join("git", iconUrl);
+      var connectionName = Core.getConnectionNameParameter(location.search);
+      if (connectionName) {
+        var connectionOptions = Core.getConnectOptions(connectionName);
+        if (connectionOptions) {
+          connectionOptions.path = Core.url('/' + icon);
+          icon = <string>Core.createServerConnectionUrl(connectionOptions);
+        }
+      }
+    }
     if (!icon) {
       if (directory) {
-        if ("profile" === extension) {
-          css = "icon-book";
-        } else {
-          css = "icon-folder-close";
+        switch (extension) {
+          case 'profile':
+            css = "icon-book";
+            break;
+          default:
+            // log.debug("No match for extension: ", extension, " using a generic folder icon");
+            css = "icon-folder-close";
         }
-      } else if ("xml" === extension) {
-        css = "icon-file-text";
       } else {
-        css = "icon-file-alt";
+        switch (extension) {
+          case 'png':
+          case 'svg':
+          case 'jpg':
+          case 'gif':
+            css = null;
+            icon = Wiki.gitRelativeURL(branch, path);
+            var connectionName = Core.getConnectionNameParameter(location.search);
+            if (connectionName) {
+              var connectionOptions = Core.getConnectOptions(connectionName);
+              if (connectionOptions) {
+                connectionOptions.path = Core.url('/' + icon);
+                icon = <string>Core.createServerConnectionUrl(connectionOptions);
+              }
+            }
+            break;
+          case 'json':
+          case 'xml':
+            css = "icon-file-text";
+            break;
+          case 'md':
+            css = "icon-file-text-alt";
+            break;
+          default:
+            // log.debug("No match for extension: ", extension, " using a generic file icon");
+            css = "icon-file-alt";
+        }
       }
     }
     if (icon) {
-      return "<img src='" + url(icon) + "'>";
+      return "<img src='" + Core.url(icon) + "'>";
     } else {
       return "<i class='" + css + "'></i>";
     }
@@ -506,7 +740,9 @@ module Wiki {
       return "icon-folder-close";
     }
     if ("xml" === extension) {
-      return "icon-cog";
+        return "icon-cog";
+    } else if ("md" === extension) {
+        return "icon-file-text-alt";
     }
     // TODO could we use different icons for markdown v xml v html
     return "icon-file-alt";
@@ -536,22 +772,38 @@ module Wiki {
    *
    * @param wikiRepository
    * @param $scope
+   * @param isFmc whether we run as fabric8 or as hawtio
    */
-  export function loadBranches(wikiRepository, $scope) {
-    wikiRepository.branches((response) => {
-      // lets sort by version number
-      $scope.branches = response.sortBy((v) => Core.versionToSortableString(v), true);
+  export function loadBranches(jolokia, wikiRepository, $scope, isFmc = false) {
+    if (isFmc) {
+      // when using fabric then the branches is the fabric versions, so we should use that instead
+      $scope.branches = Fabric.getVersionIds(jolokia);
+      var defaultVersion = Fabric.getDefaultVersionId(jolokia);
 
-      // default the branch name if we have 'master'
-      if (!$scope.branch && $scope.branches.find((branch) => {
-        return branch === "master";
-      })) {
-        $scope.branch = "master";
+      // use current default version as default branch
+      if (!$scope.branch) {
+        $scope.branch = defaultVersion;
       }
-      Core.$apply($scope);
-    });
-  }
 
+      // lets sort by version number
+      $scope.branches = $scope.branches.sortBy((v) => Core.versionToSortableString(v), true);
+
+      Core.$apply($scope);
+    } else {
+      wikiRepository.branches((response) => {
+        // lets sort by version number
+        $scope.branches = response.sortBy((v) => Core.versionToSortableString(v), true);
+
+        // default the branch name if we have 'master'
+        if (!$scope.branch && $scope.branches.find((branch) => {
+          return branch === "master";
+        })) {
+          $scope.branch = "master";
+        }
+        Core.$apply($scope);
+      });
+    }
+  }
 
   /**
    * Extracts the pageId from the route parameters
@@ -622,7 +874,7 @@ module Wiki {
       try {
         return JSON.parse(text);
       } catch (e) {
-        notification("error", "Failed to parse JSON: " + e);
+        Core.notification("error", "Failed to parse JSON: " + e);
       }
     }
     return null;

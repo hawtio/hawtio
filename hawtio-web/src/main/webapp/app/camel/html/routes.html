@@ -5,13 +5,11 @@
     fill: #f88;
   }
 
-  .node:hover {
+  .node:hover,
+  .node > *:hover,
+  rect > *:hover {
     cursor: pointer;
     opacity: 0.6;
-  }
-
-  .node.selected rect {
-    fill: url(#rect-select-gradient);
   }
 
   path.edge {

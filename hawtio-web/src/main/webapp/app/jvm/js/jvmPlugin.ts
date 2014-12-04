@@ -2,7 +2,7 @@
  * @module JVM
  * @main JVM
  */
-/// <reference path="./jvmHelpers.ts"/>
+/// <reference path="jvmHelpers.ts"/>
 module JVM {
 
   export var rootPath = 'app/jvm';
@@ -20,7 +20,7 @@ module JVM {
 
   _module.constant('mbeanName', 'hawtio:type=JVMList');
 
-  _module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry", ($location, workspace:Workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) => {
+  _module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry", "ConnectOptions", ($location, workspace:Workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry, connectOptions:Core.ConnectOptions) => {
 
     viewRegistry[pluginName] = templatePath + 'layoutConnect.html';
     helpRegistry.addUserDoc('jvm', 'app/jvm/doc/help.md');
@@ -31,7 +31,10 @@ module JVM {
       id: "connect",
       content: "Connect",
       title: "Connect to other JVMs",
-      isValid: (workspace) => true,
+      isValid: (workspace) => {
+        // we only want to be valid if we are not already connected from another hawtio
+        return connectOptions == null || connectOptions.name == null
+      },
       href: () => {
         return '#/jvm/connect';
       },

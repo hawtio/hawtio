@@ -93,7 +93,7 @@ module Forms {
 
     $scope.callThis = (json, form) => {
       $scope.basicFormEx1Result = angular.toJson(json, true);
-      notification('success', 'Form "' + form.get(0).name + '" submitted...');
+      Core.notification('success', 'Form "' + form.get(0).name + '" submitted...');
       Core.$apply($scope);
     };
 
@@ -112,15 +112,15 @@ module Forms {
     };
 
     $scope.onCancel = (form) => {
-      notification('success', 'Cancel clicked on form "' + form.get(0).name + '"');
+      Core.notification('success', 'Cancel clicked on form "' + form.get(0).name + '"');
     };
 
     $scope.onSubmit = (json, form) => {
-      notification('success', 'Form "' + form.get(0).name + '" submitted... (well not really), data:' + JSON.stringify(json));
+      Core.notification('success', 'Form "' + form.get(0).name + '" submitted... (well not really), data:' + JSON.stringify(json));
     };
 
     $scope.derp = (json, form) => {
-      notification('error', 'derp with json ' + JSON.stringify(json));
+      Core.notification('error', 'derp with json ' + JSON.stringify(json));
     };
 
     $scope.inputTableData = {

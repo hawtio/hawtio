@@ -2,6 +2,7 @@
  * @module Core
  */
 /// <reference path="coreHelpers.ts"/>
+/// <reference path="../../perspective/js/perspectiveHelpers.ts"/>
 module Core {
 
    /**
@@ -25,13 +26,18 @@ module Core {
     // grab the top level tabs which is the plugins we can select as our default plugin
     var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspectiveId);
     if (topLevelTabs && topLevelTabs.length > 0) {
-      log.debug("Found " + topLevelTabs.length + " plugins");
+      // log.debug("Found " + topLevelTabs.length + " plugins");
       // exclude invalid tabs at first
-      topLevelTabs = topLevelTabs.filter(tab => {
-        var href = tab.href();
-        return href && isValidFunction(workspace, tab.isValid);
+      topLevelTabs = topLevelTabs.filter((tab) => {
+        var href = undefined;
+        if (angular.isFunction(tab.href)) {
+          href = tab.href();
+        } else if (angular.isString(tab.href)) {
+          href = tab.href;
+        }
+        return href && isValidFunction(workspace, tab.isValid, perspectiveId);
       });
-      log.debug("After filtering there are " + topLevelTabs.length + " plugins");
+      // log.debug("After filtering there are " + topLevelTabs.length + " plugins");
 
       var id = "plugins-" + perspectiveId;
       var initPlugins = parsePreferencesJson(localStorage[id], id);
@@ -171,10 +177,11 @@ module Core {
    * @for Perspective
    * @param {Core.Workspace} workspace
    * @param {Function} validFn
+   * @param {string} perspectiveId
    * @return {Boolean}
    */
-  export function isValidFunction(workspace, validFn) {
-    return !validFn || validFn(workspace);
+  export function isValidFunction(workspace, validFn, perspectiveId) {
+    return !validFn || validFn(workspace, perspectiveId);
   }
 
   /**

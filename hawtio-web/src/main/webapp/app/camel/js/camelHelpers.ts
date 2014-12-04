@@ -1,3 +1,6 @@
+/// <reference path="../../baseHelpers.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
 /**
  * @module Camel
  */
@@ -9,6 +12,8 @@ module Camel {
 
   export var defaultMaximumLabelWidth = 34;
   export var defaultCamelMaximumTraceOrDebugBodyLength = 5000;
+  export var defaultCamelTraceOrDebugIncludeStreams = true;
+  export var defaultCamelRouteMetricMaxSeconds = 10;
 
   /**
    * Looks up the route XML for the given context and selected route and
@@ -206,7 +211,7 @@ module Camel {
     }
     if (nodeSettings) {
       var imageName = nodeSettings["icon"] || "generic24.png";
-      return url("/img/icons/camel/" + imageName);
+      return Core.url("/img/icons/camel/" + imageName);
     } else {
       return null;
     }
@@ -681,17 +686,17 @@ module Camel {
    * @method
    */
     // TODO should be a service
-  export function getSelectionCamelContextMBean(workspace:Workspace) {
+  export function getSelectionCamelContextMBean(workspace:Core.Workspace) : string {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
-      var tree = workspace.tree;
+      var tree:Core.Folder = workspace.tree;
       if (tree && selection) {
         var domain = selection.domain;
         if (domain && contextId) {
           var result = tree.navigate(domain, contextId, "context");
           if (result && result.children) {
-            var contextBean = result.children.first();
+            var contextBean:any = result.children.first();
             if (contextBean.title) {
               var contextName = contextBean.title;
               return "" + domain + ":context=" + contextId + ',type=context,name="' + contextName + '"';
@@ -703,7 +708,7 @@ module Camel {
     return null;
   }
 
-  export function getSelectionCamelContextEndpoints(workspace:Workspace) {
+  export function getSelectionCamelContextEndpoints(workspace:Workspace) : Core.NodeSelection {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
@@ -723,7 +728,7 @@ module Camel {
    * @method
    */
     // TODO Should be a service
-  export function getSelectionCamelTraceMBean(workspace) {
+  export function getSelectionCamelTraceMBean(workspace) : string {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
@@ -751,7 +756,7 @@ module Camel {
     return null;
   }
 
-  export function getSelectionCamelDebugMBean(workspace) {
+  export function getSelectionCamelDebugMBean(workspace) : string {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
@@ -772,7 +777,7 @@ module Camel {
     return null;
   }
 
-  export function getSelectionCamelTypeConverter(workspace) {
+  export function getSelectionCamelTypeConverter(workspace) : string {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
@@ -793,19 +798,66 @@ module Camel {
     return null;
   }
 
+  export function getSelectionCamelRestRegistry(workspace) : string {
+    if (workspace) {
+      var contextId = getContextId(workspace);
+      var selection = workspace.selection;
+      var tree = workspace.tree;
+      if (tree && selection) {
+        var domain = selection.domain;
+        if (domain && contextId) {
+          var result = tree.navigate(domain, contextId, "services");
+          if (result && result.children) {
+            var mbean = result.children.find(m => m.title.startsWith("DefaultRestRegistry"));
+            if (mbean) {
+              return mbean.objectName;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  export function getSelectionCamelRouteMetrics(workspace) : string {
+    if (workspace) {
+      var contextId = getContextId(workspace);
+      var selection = workspace.selection;
+      var tree = workspace.tree;
+      if (tree && selection) {
+        var domain = selection.domain;
+        if (domain && contextId) {
+          var result = tree.navigate(domain, contextId, "services");
+          if (result && result.children) {
+            var mbean = result.children.find(m => m.title.startsWith("MetricsRegistryService"));
+            if (mbean) {
+              return mbean.objectName;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   // TODO should be a service
   export function getContextId(workspace:Workspace) {
     var selection = workspace.selection;
     if (selection) {
-      var tree = workspace.tree;
-      var folderNames = selection.folderNames;
-      var entries = selection.entries;
-      var contextId;
-      if (tree) {
-        if (folderNames && folderNames.length > 1) {
-          contextId = folderNames[1];
-        } else if (entries) {
-          contextId = entries["context"];
+      // find the camel context and find ancestors in the tree until we find the camel context selection
+      // this is either if the title is 'context' or if the parent title is 'org.apache.camel' (the Camel tree is a bit special)
+      selection = selection.findAncestor(s => s.title === 'context' || s.parent != null && s.parent.title === 'org.apache.camel');
+      if (selection) {
+        var tree = workspace.tree;
+        var folderNames = selection.folderNames;
+        var entries = selection.entries;
+        var contextId;
+        if (tree) {
+          if (folderNames && folderNames.length > 1) {
+            contextId = folderNames[1];
+          } else if (entries) {
+            contextId = entries["context"];
+          }
         }
       }
     }
@@ -847,7 +899,7 @@ module Camel {
         var typeName = selection.entries["type"];
         var name = selection.entries["name"];
         if ("routes" === typeName && name) {
-          selectedRouteId = trimQuotes(name);
+          selectedRouteId = Core.trimQuotes(name);
         }
       }
     }
@@ -859,7 +911,7 @@ module Camel {
    * @method
    */
     // TODO Should be a service
-  export function getSelectionRouteMBean(workspace:Workspace, routeId:String) {
+  export function getSelectionRouteMBean(workspace:Workspace, routeId:String) : string {
     if (workspace) {
       var contextId = getContextId(workspace);
       var selection = workspace.selection;
@@ -869,7 +921,7 @@ module Camel {
         if (domain && contextId) {
           var result = tree.navigate(domain, contextId, "routes");
           if (result && result.children) {
-            var mbean = result.children.find(m => m.title === routeId);
+            var mbean:any = result.children.find(m => m.title === routeId);
             if (mbean) {
               return mbean.objectName;
             }
@@ -881,13 +933,35 @@ module Camel {
   }
 
   export function getCamelVersion(workspace:Workspace, jolokia) {
-    var mbean = getSelectionCamelContextMBean(workspace);
-    if (mbean) {
-      // must use onSuccess(null) that means sync as we need the version asap
-      return jolokia.getAttribute(mbean, "CamelVersion", onSuccess(null));
-    } else {
-      return null;
+    if (workspace) {
+      var contextId = getContextId(workspace);
+      var selection = workspace.selection;
+      var tree = workspace.tree;
+      if (tree && selection) {
+        var domain = selection.domain;
+        if (domain && contextId) {
+          var result = tree.navigate(domain, contextId, "context");
+          if (result && result.children) {
+            var contextBean:any = result.children.first();
+            if (contextBean.version) {
+              // read the cached version
+              return contextBean.version;
+            }
+            if (contextBean.title) {
+              // okay no version cached, so need to get the version using jolokia
+              var contextName = contextBean.title;
+              var mbean = "" + domain + ":context=" + contextId + ',type=context,name="' + contextName + '"';
+              // must use onSuccess(null) that means sync as we need the version asap
+              var version = jolokia.getAttribute(mbean, "CamelVersion", onSuccess(null));
+              // cache version so we do not need to read it again using jolokia
+              contextBean.version = version;
+              return version;
+            }
+          }
+        }
+      }
     }
+    return null;
   }
 
   export function createMessageFromXml(exchange) {
@@ -918,6 +992,7 @@ module Camel {
         if (typeName) messageData.headerTypes[key] = typeName;
 
         headerHtml += "<tr><td class='property-name'>" + key + "</td>" +
+                "<td class='property-value'>" + (humanizeJavaType(typeName)) + "</td>" +
                 "<td class='property-value'>" + (value || "") + "</td></tr>";
       }
     });
@@ -948,9 +1023,20 @@ module Camel {
       var bodyText = body.textContent;
       var bodyType = body.getAttribute("type");
       messageData["body"] = bodyText;
-      messageData["bodyType"] = bodyType;
+      messageData["bodyType"] = humanizeJavaType(bodyType);
     }
     return messageData;
+  }
+
+  export function humanizeJavaType(type:String) {
+    if (!type) {
+      return "";
+    }
+    // skip leading java.lang
+    if (type.startsWith("java.lang")) {
+      return type.substr(10)
+    }
+    return type;
   }
 
   export function createBrowseGridOptions() {
@@ -1048,7 +1134,7 @@ module Camel {
             if (componentScheme) {
               var value = Camel.getEndpointIcon(componentScheme);
               if (value) {
-                imageUrl = url(value);
+                imageUrl = Core.url(value);
               }
             }
           }
@@ -1310,7 +1396,7 @@ module Camel {
    */
   export function ignoreIdForLabel(localStorage) {
     var value = localStorage["camelIgnoreIdForLabel"];
-    return value && (value === "true" || value === true);
+    return Core.parseBooleanValue(value);
   }
 
   /**
@@ -1339,6 +1425,30 @@ module Camel {
     }
     if (!value) {
       value = Camel.defaultCamelMaximumTraceOrDebugBodyLength;
+    }
+    return value;
+  }
+
+  /**
+   * Returns whether to include streams body for tracer and debugger
+   * @method
+   */
+  export function traceOrDebugIncludeStreams(localStorage) {
+    var value = localStorage["camelTraceOrDebugIncludeStreams"];
+    return Core.parseBooleanValue(value, Camel.defaultCamelTraceOrDebugIncludeStreams);
+  }
+
+  /**
+   * Returns the max value for seconds in the route metrics UI
+   * @method
+   */
+  export function routeMetricMaxSeconds(localStorage) {
+    var value = localStorage["camelRouteMetricMaxSeconds"];
+    if (angular.isString(value)) {
+      value = parseInt(value);
+    }
+    if (!value) {
+      value = Camel.defaultCamelRouteMetricMaxSeconds;
     }
     return value;
   }

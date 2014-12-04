@@ -8,9 +8,9 @@
     </div>
 
     <div class="section-controls">
-      <a href="" title="Create a new container" ng-click="createContainer()">
+      <!--a href="" title="Create a new container" ng-click="createContainer()">
         <i class="icon-plus"></i> Container
-      </a>
+      </a-->
       <a href="" ng-click="editRequirements.dialogOpen(null)"
          title="Configure the minimum number of required instances for each profile. If you are on OpenShift or using an Auto Scaler they are then created automatically; otherwise click on the count button to manually provision required containers">
         <i class="icon-resize-vertical"></i>
@@ -18,10 +18,9 @@
       </a>
     </div>
 
-    <div class="active-profile-count-title" title="The actual number of instances of each profile that are currently running">
-      Count
-    </div>
-
+  </div>
+  <div class="active-profile-count-title" title="The actual number of instances of each profile that are currently running">
+    Count
   </div>
   <div class="active-profile-list" ng-repeat="profile in activeProfiles" ng-show="profileMatchesFilter(profile)">
     <div class="expandable" model="profile">
@@ -169,7 +168,7 @@
         <div class="modal-footer">
           <input class="btn btn-success" ng-disabled="!requirementsForm.$valid"
                  ng-click="updateRequirements(editRequirements.entity)" type="button" value="Update">
-          <input class="btn btn-primary" ng-click="editRequirements.dialog.close()" type="button" value="Cancel">
+          <input class="btn-warning cancel" ng-click="editRequirements.dialog.close()" type="button" value="Cancel">
         </div>
       </form>
     </div>

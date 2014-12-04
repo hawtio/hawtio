@@ -55,7 +55,7 @@ module Osgi {
           var name = packageEntry["Name"];
           var version = packageEntry["Version"];
           if (name && !name.startsWith("#")) {
-            packageEntry["VersionLink"] = "<a href='" + url("#/osgi/package/" + name + "/" + version + workspace.hash()) + "'>" + version + "</a>";
+            packageEntry["VersionLink"] = "<a href='" + Core.url("#/osgi/package/" + name + "/" + version + workspace.hash()) + "'>" + version + "</a>";
             var importingBundles = row["ImportingBundles"] || packageEntry["ImportingBundles"];
             var exportingBundles = row["ExportingBundles"] || packageEntry["ExportingBundles"];
             packageEntry["ImportingBundleLinks"] = bundleLinks(workspace, importingBundles);
@@ -86,7 +86,7 @@ module Osgi {
         angular.forEach(values, (row) => {
             var map = {};
             map["Pid"] = row[0];
-            map["PidLink"] = "<a href='" + url("#/osgi/pid/" + row[0] + workspace.hash()) + "'>" + row[0] + "</a>";
+            map["PidLink"] = "<a href='" + Core.url("#/osgi/pid/" + row[0] + workspace.hash()) + "'>" + row[0] + "</a>";
             map["Bundle"] = row[1];
             array.push(map);
         });
@@ -205,7 +205,7 @@ module Osgi {
             }
             var info = allValues[value] || {};
             var labelText = info.SymbolicName;
-            answer += prefix + "<a class='label' href='" + url("#/osgi/bundle/" + value + workspace.hash()) + "'>" + labelText + "</a>";
+            answer += prefix + "<a class='label' href='" + Core.url("#/osgi/bundle/" + value + workspace.hash()) + "'>" + labelText + "</a>";
         });
         return answer;
     }
@@ -218,7 +218,7 @@ module Osgi {
             if (answer.length > 0) {
                 prefix = " ";
             }
-            answer += prefix + "<a class='label' href='" + url("#/osgi/bundle/" + value + workspace.hash()) + "'>" + value + "</a>";
+            answer += prefix + "<a class='label' href='" + Core.url("#/osgi/bundle/" + value + workspace.hash()) + "'>" + value + "</a>";
         });
         return answer;
     }
@@ -231,7 +231,7 @@ module Osgi {
             if (answer.length > 0) {
                 prefix = " ";
             }
-            answer += prefix + "<a href='" + url("#/osgi/bundle/" + value + workspace.hash()) + "'>" + value + "</a>";
+            answer += prefix + "<a href='" + Core.url("#/osgi/bundle/" + value + workspace.hash()) + "'>" + value + "</a>";
         });
         return answer;
     }
@@ -335,6 +335,16 @@ module Osgi {
         return null;
     }
 
+    export function getProfileMetadataMBean(workspace:Workspace):string {
+        if (workspace) {
+          var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
+          var typeFolder = mbeanTypesToDomain["ProfileMetadata"] || {};
+          var mbeanFolder = typeFolder["io.fabric8"] || {};
+          return mbeanFolder["objectName"];
+        }
+        return null;
+    }
+
     export function getHawtioOSGiToolsMBean(workspace:Workspace):string {
         if (workspace) {
             var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
@@ -347,8 +357,8 @@ module Osgi {
     export function getHawtioConfigAdminMBean(workspace:Workspace):string {
         if (workspace) {
             var mbeanTypesToDomain = workspace.mbeanTypesToDomain;
-            var typeFolder = mbeanTypesToDomain["ConfigAdmin"];
-            var mbeanFolder = typeFolder["hawtio"];
+            var typeFolder = mbeanTypesToDomain["ConfigAdmin"] || {};
+            var mbeanFolder = typeFolder["hawtio"] || {};
             return mbeanFolder["objectName"];
         }
         return null;
@@ -358,25 +368,20 @@ module Osgi {
   /**
    * Creates a link to the given configuration pid and/or factoryPid
    */
-    export function createConfigPidLink($scope, workspace, pid, factoryPid = null) {
-      return url("#" + createConfigPidPath($scope, pid, factoryPid) + workspace.hash())
+    export function createConfigPidLink($scope, workspace, pid, isFactory = false) {
+      return Core.url("#" + createConfigPidPath($scope, pid, isFactory) + workspace.hash())
     }
 
   /**
    * Creates a path to the given configuration pid and/or factoryPid
    */
-    export function createConfigPidPath($scope, pid, factoryPid = null) {
-    var link;
-    pid = pid || "";
-    if (factoryPid) {
-      link = pid + "/" + factoryPid;
-    } else {
-      link = pid;
-    }
+    export function createConfigPidPath($scope, pid, isFactory = false) {
+    var link = pid;
     var versionId = $scope.versionId;
     var profileId = $scope.profileId;
     if (versionId && versionId) {
-      return "/wiki/branch/" + versionId + "/configuration/" + link + "/" + $scope.pageId;
+      var configPage = isFactory ? "/newConfiguration/" : "/configuration/";
+      return "/wiki/branch/" + versionId + configPage + link + "/" + $scope.pageId;
     } else {
       return "/osgi/pid/" + link;
     }
@@ -399,17 +404,33 @@ module Osgi {
     }
     var versionId = $scope.versionId;
     var profileId = $scope.profileId;
-    if (versionId && versionId) {
+    $scope.profileNotRunning = false;
+    $scope.profileMetadataMBean = null;
+    if (versionId && profileId) {
       $scope.inFabricProfile = true;
       $scope.configurationsLink = "/wiki/branch/" + versionId + "/configurations/" + $scope.pageId;
-
-      Fabric.profileJolokia(jolokia, profileId, versionId, (profileJolokia) => {
-        $scope.jolokia = profileJolokia;
-        if (profileJolokia) {
-          $scope.workspace = Core.createRemoteWorkspace(profileJolokia, $location, localStorage);
-        }
+      $scope.profileMetadataMBean = getProfileMetadataMBean(workspace);
+      if ($scope.profileMetadataMBean) {
+        $scope.profileNotRunning = true;
+        $scope.jolokia = jolokia;
+        $scope.workspace = workspace;
         initFn();
-      });
+      } else {
+        Fabric.profileJolokia(jolokia, profileId, versionId, (profileJolokia) => {
+          if (profileJolokia) {
+            $scope.jolokia = profileJolokia;
+            $scope.workspace = Core.createRemoteWorkspace(profileJolokia, $location, localStorage);
+          } else {
+            // lets deal with the case we have no profile running right now so we have to have a plan B
+            // for fetching the profile configuration metadata
+            $scope.jolokia = jolokia;
+            $scope.workspace = workspace;
+            $scope.profileNotRunning = true;
+            $scope.profileMetadataMBean = getProfileMetadataMBean(workspace);
+          }
+          initFn();
+        });
+      }
     } else {
       $scope.configurationsLink = "/osgi/configurations";
       $scope.jolokia = jolokia;

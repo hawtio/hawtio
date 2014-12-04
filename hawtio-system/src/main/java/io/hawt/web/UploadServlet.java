@@ -1,5 +1,16 @@
 package io.hawt.web;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import io.hawt.jmx.UploadManager;
 import io.hawt.util.Strings;
 import org.apache.commons.fileupload.FileItem;
@@ -9,17 +20,6 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -31,14 +31,19 @@ public class UploadServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String uploadDirectory = UploadManager.UPLOAD_DIRECTORY;
+        File uploadDir = new File(uploadDirectory);
 
+        uploadFiles(request, response, uploadDir);
+    }
+
+    protected List<File> uploadFiles(HttpServletRequest request, HttpServletResponse response, File uploadDir) throws IOException, ServletException {
         response.setContentType("text/html");
         final PrintWriter out = response.getWriter();
-
+        List<File> uploadedFiles = new ArrayList<>();
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         if (isMultipart) {
             ServletContext context = this.getServletConfig().getServletContext();
-            File uploadDir = new File(UploadManager.UPLOAD_DIRECTORY);
             if (!uploadDir.exists()) {
                 LOG.info("Creating directory {}" + uploadDir);
                 if (!uploadDir.mkdirs()) {
@@ -53,15 +58,17 @@ public class UploadServlet extends HttpServlet {
 
             upload.setProgressListener(new ProgressListener() {
 
-                private long kBytesRead = 0;
+                private long mBytesRead = 0;
 
                 @Override
                 public void update(long pBytesRead, long pContentLength, int pItems) {
-                    long nowkBytesRead = pBytesRead / 1024;
-                    if (nowkBytesRead > kBytesRead) {
-                        kBytesRead = nowkBytesRead;
-                        LOG.debug("On item {}, read {}Kb, total: {}Kb", new Object[]{pItems, kBytesRead, pContentLength / 1024});
-                        out.write("<p>item: " + pItems + " read:" + kBytesRead + "Kb total: " + (pContentLength / 1024) + "Kb</p>");
+                    long nowMBytesRead = pBytesRead / 1024 / 1024;
+                    long lengthMBytes = pContentLength / 1024 / 1024;
+                    long anEighth = lengthMBytes / 8;
+                    if (nowMBytesRead > mBytesRead && nowMBytesRead % anEighth == 0) {
+                        mBytesRead = nowMBytesRead;
+                        LOG.debug("On item {}, read {}mb, total: {}mb", new Object[]{pItems, mBytesRead, lengthMBytes});
+                        out.write("<p>item: " + pItems + " read:" + mBytesRead + "mb total: " + lengthMBytes + "mb</p>");
                     }
                 }
             });
@@ -69,7 +76,6 @@ public class UploadServlet extends HttpServlet {
 
             try {
                 List<FileItem> items = upload.parseRequest(request);
-
                 for (FileItem item : items) {
                     if (item.isFormField()) {
                         String name = item.getFieldName();
@@ -92,8 +98,7 @@ public class UploadServlet extends HttpServlet {
                             LOG.info("Skipping field " + fieldName + " no filename given");
                             continue;
                         }
-
-                        File target = new File(UploadManager.UPLOAD_DIRECTORY + File.separator + fileName);
+                        File target = new File(uploadDir, fileName);
 
                         try {
                             item.write(target);
@@ -124,13 +129,18 @@ public class UploadServlet extends HttpServlet {
                     LOG.info("Renaming {} to {}", file, dest);
                     if (!file.renameTo(dest)) {
                         LOG.warn("Failed to rename {} to {}", file, dest);
+                    } else {
+                        uploadedFiles.add(dest);
                     }
                 }
+            } else {
+                uploadedFiles = files;
             }
 
         } else {
             super.doPost(request, response);
         }
+        return uploadedFiles;
     }
 
 }

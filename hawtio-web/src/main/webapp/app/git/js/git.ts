@@ -25,8 +25,9 @@ module Git {
      * @param {String} branch
      * @param {String} path
      * @param {Function} fn
+     * @return is used if no function is provided to trigger a synchronous call, returns true if file exists, false otherwise
      */
-    exists(branch:string, path:string, fn);
+    exists(branch:string, path:string, fn): Boolean;
 
     /**
      * Read the contents of a file or directory
@@ -210,8 +211,18 @@ module Git {
       }, {error: error}));
     }
 
-    public exists(branch:string, path:string, fn) {
-      return this.jolokia.execute(this.mbean, "exists", branch, path, onSuccess(fn));
+    public exists(branch:string, path:string, fn):Boolean {
+      var result;
+      if (angular.isDefined(fn) && fn) {
+        result = this.jolokia.execute(this.mbean, "exists", branch, path, onSuccess(fn));
+      } else {
+        result = this.jolokia.execute(this.mbean, "exists", branch, path);
+      }
+      if (angular.isDefined(result) && result) {
+        return true;
+      } else {
+        return false;
+      }
     }
 
     public read(branch:string, path:string, fn) {

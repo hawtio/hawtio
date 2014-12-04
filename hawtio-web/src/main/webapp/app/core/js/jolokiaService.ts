@@ -2,41 +2,34 @@
  * @module Core
  */
 /// <reference path="corePlugin.ts"/>
+/// <reference path="coreInterfaces.ts"/>
 module Core {
 
-  _module.factory('jolokia',["$location", "localStorage", "jolokiaStatus", "$rootScope", "userDetails", "jolokiaParams", ($location:ng.ILocationService, localStorage, jolokiaStatus, $rootScope, userDetails, jolokiaParams) => {
+  export interface DummyJolokia extends Jolokia.IJolokia {
+    running:boolean;
+  }
+
+  _module.factory('jolokia',["$location", "localStorage", "jolokiaStatus", "$rootScope", "userDetails", "jolokiaParams", "jolokiaUrl", ($location:ng.ILocationService, localStorage, jolokiaStatus, $rootScope, userDetails:Core.UserDetails, jolokiaParams, jolokiaUrl):Jolokia.IJolokia => {
     // TODO - Maybe have separate URLs or even jolokia instances for loading plugins vs. application stuff
-    // var jolokiaUrl = $location.search()['url'] || url("/jolokia");
+    // var jolokiaUrl = $location.search()['url'] || Core.url("/jolokia");
     log.debug("Jolokia URL is " + jolokiaUrl);
     if (jolokiaUrl) {
 
-      var credentials = hawtioPluginLoader.getCredentials(jolokiaUrl);
+      var connectionName = Core.getConnectionNameParameter($location.search());
+      var connectionOptions = Core.getConnectOptions(connectionName);
+
       // pass basic auth credentials down to jolokia if set
-      var username = null;
-      var password = null;
+      var username:String = null;
+      var password:String = null;
 
-      //var userDetails = angular.fromJson(localStorage[jolokiaUrl]);
-
-      if (credentials.length === 2) {
-        username = credentials[0];
-        password = credentials[1];
-
-        // TODO we should try avoid both permutations of username / userName :)
-
+      if (connectionOptions) {
+        username = connectionOptions.userName;
+        password = connectionOptions.password;
       } else if (angular.isDefined(userDetails) &&
                   angular.isDefined(userDetails.username) &&
                   angular.isDefined(userDetails.password)) {
-
         username = userDetails.username;
         password = userDetails.password;
-
-      } else if (angular.isDefined(userDetails) &&
-                  angular.isDefined(userDetails.userName) &&
-                  angular.isDefined(userDetails.password)) {
-
-        username = userDetails.userName;
-        password = userDetails.password;
-
       } else {
         // lets see if they are passed in via request parameter...
         var search = hawtioPluginLoader.parseQueryString();
@@ -47,21 +40,12 @@ module Core {
       }
 
       if (username && password) {
-
-        /*
-        TODO can't use this, sets the username/password in the URL on every request, plus jolokia passes them on to $.ajax() which causes a fatal exception in firefox
-        jolokiaParams['username'] = username;
-        jolokiaParams['password'] = password;
-        */
-
-        //console.log("Using user / pwd " + username + " / " + password);
-
         userDetails.username = username;
         userDetails.password = password;
 
         $.ajaxSetup({
           beforeSend: (xhr) => {
-            xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(userDetails.username, userDetails.password));
+            xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(<string>userDetails.username, <string>userDetails.password));
           }
         });
 
@@ -95,6 +79,7 @@ module Core {
         if (xhr.status === 401 || xhr.status === 403) {
           userDetails.username = null;
           userDetails.password = null;
+          delete userDetails.loginDetails;
         } else {
           jolokiaStatus.xhr = xhr;
           if (!xhr.responseText && error) {
@@ -110,22 +95,21 @@ module Core {
       return jolokia;
     } else {
 
-      var answer = {
+      var answer = <DummyJolokia> {
         running: false,
-        request: () => null,
-        register: () => null,
-        list: () => null,
-        search: () => null,
-        read: () => null,
-        execute: () => null,
-
-        start: () => {
+        request: (req:any, opts?:Jolokia.IParams) => null,
+        register: (req:any, opts?:Jolokia.IParams) => <number>null,
+        list: (path, opts?) => null,
+        search: (mBeanPatter, opts?) => null,
+        getAttribute: (mbean, attribute, path?, opts?) => null,
+        setAttribute: (mbean, attribute, value, path?, opts?) => {},
+        version: (opts?) => <Jolokia.IVersion>null,
+        execute: (mbean, operation, ...args) => null,
+        start: (period) => {
           answer.running = true;
-          return null;
         },
         stop: () => {
           answer.running = false;
-          return null;
         },
         isRunning: () => answer.running,
         jobs: () => []

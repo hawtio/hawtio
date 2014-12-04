@@ -15,7 +15,7 @@ module Camel {
           var operation = "createEndpoint(java.lang.String)";
           jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
         } else {
-          notification("error", "Could not find the CamelContext MBean!");
+          Core.notification("error", "Could not find the CamelContext MBean!");
         }
       }
     };
@@ -60,7 +60,7 @@ module Camel {
       $scope.endpointName = "";
       $scope.workspace.operationCounter += 1;
       Core.$apply($scope);
-      notification("success", $scope.message);
+      Core.notification("success", $scope.message);
     }
 
     function deleteSuccess() {
@@ -73,7 +73,7 @@ module Camel {
       }
       $scope.workspace.operationCounter += 1;
       Core.$apply($scope);
-      notification("success", $scope.message);
+      Core.notification("success", $scope.message);
     }
   }]);
 }

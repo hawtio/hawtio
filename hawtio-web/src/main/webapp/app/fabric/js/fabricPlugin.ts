@@ -2,16 +2,21 @@
  * @module Fabric
  * @main Fabric
  */
+/// <reference path="../../core/js/corePlugin.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
+/// <reference path="../../perspective/js/perspectiveHelpers.ts"/>
+/// <reference path="../../perspective/js/metadata.ts"/>
+/// <reference path="../../insight/js/insightHelpers.ts"/>
 /// <reference path="fabricHelpers.ts"/>
+/// <reference path="fabricDialogs.ts"/>
+/// <reference path="./iconRegistry.ts"/>
+/// <reference path="../../wiki/js/wikiPlugin.ts"/>
 module Fabric {
 
   export var templatePath = 'app/fabric/html/';
   export var activeMQTemplatePath = 'app/activemq/html/';
 
-  export var currentContainerId = '';
-  export var currentContainer = {};
-
-  export var _module = angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'ngDragDrop', 'wiki']);
+  export var _module = angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'wiki']);
 
   _module.config(["$routeProvider", ($routeProvider) => {
     $routeProvider.
@@ -22,10 +27,8 @@ module Fabric {
             when('/fabric/container/:containerId', {templateUrl: templatePath + 'container.html', reloadOnSearch: false}).
             when('/fabric/assignProfile', {templateUrl: templatePath + 'assignProfile.html'}).
             when('/fabric/activeProfiles', {templateUrl: templatePath + 'activeProfiles.html'}).
-            //when('/fabric/profile/:versionId/:profileId', {templateUrl: templatePath + 'profile.html'}).
             when('/wiki/profile/:versionId/:profileId/editFeatures', {templateUrl: templatePath + 'editFeatures.html'}).
             when('/fabric/profile/:versionId/:profileId/:fname', {templateUrl: templatePath + 'pid.html'}).
-            when('/fabric/view', { templateUrl: templatePath + 'fabricView.html', reloadOnSearch: false }).
             when('/fabric/migrate', { templateUrl: templatePath + 'migrateVersions.html' }).
             when('/fabric/patching', { templateUrl: templatePath + 'patching.html' }).
             when('/fabric/configurations/:versionId/:profileId', { templateUrl: 'app/osgi/html/configurations.html' }).
@@ -42,7 +45,10 @@ module Fabric {
             when('/fabric/api/wsdl', {templateUrl: 'app/api/html/wsdl.html'}).
             when('/fabric/api/wadl', {templateUrl: 'app/api/html/wadl.html'}).
 
-            when('/fabric/test', { templateUrl: templatePath + 'test.html' });
+            when('/fabric/test', { templateUrl: templatePath + 'test.html' }).
+            when('/fabric/profileView', { templateUrl: templatePath + 'profileView.html', reloadOnSearch: false }).
+            when('/fabric/containerView', { templateUrl: templatePath + 'containerView.html', reloadOnSearch: false });
+
   }]);
 
 
@@ -53,7 +59,7 @@ module Fabric {
     return Fabric.containerIconRegistry;
   });
 
-  _module.run(["$location", "workspace", "jolokia", "viewRegistry", "pageTitle", "helpRegistry", "$rootScope", "postLoginTasks", "preferencesRegistry", "wikiBranchMenu", ($location: ng.ILocationService,
+  _module.run(["$location", "workspace", "jolokia", "viewRegistry", "pageTitle", "helpRegistry", "$rootScope", "postLoginTasks", "preferencesRegistry", "wikiBranchMenu", "$dialog", "layoutFull", ($location: ng.ILocationService,
                workspace: Workspace,
                jolokia,
                viewRegistry,
@@ -62,32 +68,35 @@ module Fabric {
                $rootScope,
                postLoginTasks:Core.Tasks,
                preferencesRegistry,
-               wikiBranchMenu) => {
+               wikiBranchMenu:Wiki.BranchMenu,
+               $dialog, layoutFull) => {
 
-    viewRegistry['fabric'] = templatePath + 'layoutFabric.html';
+    var layoutFabric = templatePath + 'layoutFabric.html';
+    var layoutNoTabs = templatePath + 'layoutNoTabs.html';
+
+    // let's not take up the whole /fabric with the fabric sub-tabs
+    // other plugins might want to hang stuff off of /fabric
+    viewRegistry['fabric/assignProfile'] = layoutFabric;
+    viewRegistry['fabric/profileView'] = layoutNoTabs;
+    viewRegistry['fabric/containerView'] = layoutNoTabs;
+    viewRegistry['fabric/migrate'] = layoutNoTabs;
+    viewRegistry['fabric/patching'] = layoutNoTabs;
+    viewRegistry['fabric/map'] = layoutFabric;
+    viewRegistry['fabric/clusters'] = layoutFabric;
+    viewRegistry['fabric/container'] = layoutFabric;
+    viewRegistry['fabric/activeProfiles'] = layoutFabric;
+    viewRegistry['fabric/containers'] = layoutFabric;
+    viewRegistry['fabric/configurations'] = layoutFabric;
+    viewRegistry['fabric/configuration'] = layoutFabric;
+    viewRegistry['fabric/mq'] = layoutFabric;
+    viewRegistry['fabric/camel'] = layoutFabric;
+    viewRegistry['fabric/api'] = layoutFabric;
 
     pageTitle.addTitleElement(() => {
       return Fabric.currentContainerId;
     });
 
-    wikiBranchMenu.addExtension({
-      title: "Delete Version",
-      valid: () => {
-        return Fabric.isFMCContainer(workspace);
-      },
-      action: () => {
-        log.debug("Delete version");
-      }
-    });
-    wikiBranchMenu.addExtension({
-      title: "Patch Version",
-      valid: () => {
-        return Fabric.isFMCContainer(workspace);
-      },
-      action: () => {
-        log.debug("Patch version");
-      }
-    });
+    addWikiBranchMenuExtensions(wikiBranchMenu, $dialog, workspace);
 
     postLoginTasks.addTask('fabricFetchContainerName', () => {
       if (Fabric.currentContainerId === '' && Fabric.fabricCreated(workspace)) {
@@ -101,7 +110,6 @@ module Fabric {
             return;
           }
           Fabric.currentContainer = response.value;
-
           Fabric.currentContainerId = currentContainer['id'];
           if ('container' in Perspective.metadata) {
             Core.pathSet(Perspective.metadata, ['container', 'label'], Fabric.currentContainerId);
@@ -116,24 +124,48 @@ module Fabric {
       return Fabric.isFMCContainer(workspace);
     });
 
-    workspace.topLevelTabs.push( {
+    workspace.topLevelTabs.push({
       id: "fabric.runtime",
-      content: "Runtime",
+      content: "Services",
       title: "Manage your containers in this fabric",
       isValid: (workspace) => Fabric.isFMCContainer(workspace),
       href: () => "#/fabric/containers",
-      isActive: (workspace: Workspace) => workspace.isLinkActive("fabric")
+      isActive: (workspace: Workspace) => workspace.isLinkActive("fabric") 
+                                       && !workspace.isLinkActive("fabric/profileView") 
+                                       && !workspace.isLinkActive("fabric/containerView")
+                                       && !workspace.isLinkActive("fabric/deploy")
+                                       && !workspace.isLinkActive("fabric/requirements")
     });
-    workspace.topLevelTabs.push( {
+
+    workspace.topLevelTabs.push({
+      id: "fabric.profiles",
+      content: "Profiles",
+      title: "Select and deploy profiles into this fabric",
+      isValid: (workspace) => Fabric.isFMCContainer(workspace),
+      href: () => "#/fabric/profileView",
+      isActive: (workspace) => workspace.isLinkActive("fabric/profileView")
+    });
+
+    workspace.topLevelTabs.push({
+      id: 'fabric.containers',
+      content: 'Containers',
+      title: 'View and manage containers in this fabric',
+      isValid: (workspace) => Fabric.isFMCContainer(workspace),
+      href: () => '#/fabric/containerView',
+      isActive: (workspace) => workspace.isLinkActive('fabric/containerView')
+    });
+
+    workspace.topLevelTabs.push(<Core.NavMenuItem>{
       id: "fabric.configuration",
       content: "Wiki",
       title: "View the documentation and configuration of your profiles in Fabric",
-      isValid: (workspace) => {
+      isValid: (workspace: Workspace, perspectiveId: string) => {
         var answer = Fabric.isFMCContainer(workspace);
         if (answer) {
           // must be in fabric perspective as we have wiki in container perspective as well which is not this plugin
+          // [ENTESB-1701] special case when checking what plugins to show in Preferences -> Plugins page
           var currentId = Perspective.currentPerspectiveId($location, workspace, jolokia, localStorage);
-          answer = "fabric" === currentId;
+          answer = "fabric" === (perspectiveId === undefined ? currentId : perspectiveId);
         }
         return answer;
       },
@@ -141,18 +173,6 @@ module Fabric {
         return "#/wiki/branch/" + Fabric.getActiveVersion($location) + "/view/fabric/profiles";
       },
       isActive: (workspace: Workspace) => workspace.isLinkActive("/wiki") && (workspace.linkContains("fabric", "profiles") || workspace.linkContains("editFeatures"))
-    });
-    workspace.topLevelTabs.push( {
-      id: "fabric.insight",
-      content: "Insight",
-      title: "View insight into your fabric looking at logs, metrics and messages across the fabric",
-      isValid: (workspace) => {
-        return Fabric.isFMCContainer(workspace) && Insight.hasInsight(workspace)
-      },
-      href: () => {
-        return "#/insight/all?p=insight";
-      },
-      isActive: (workspace:Workspace) => workspace.isLinkActive("/insight")
     });
 
     helpRegistry.addUserDoc('fabric', 'app/fabric/doc/help.md', () => {

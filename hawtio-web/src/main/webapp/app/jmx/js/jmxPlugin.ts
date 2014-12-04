@@ -2,13 +2,17 @@
  * @module Jmx
  * @main Jmx
  */
+/// <reference path="../../baseHelpers.ts"/>
 /// <reference path="./jmxHelpers.ts"/>
+/// <reference path="./widgetRepository.ts"/>
+/// <reference path="../../core/js/pageTitle.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
 module Jmx {
   var pluginName = 'jmx';
 
   export var currentProcessId = '';
 
-  export var _module = angular.module(pluginName, ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.modal', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-ui', 'hawtioRbac']);
+  export var _module = angular.module(pluginName, ['bootstrap', 'dangle', 'ui.bootstrap', 'ui.bootstrap.modal']);
 
   _module.config(["$routeProvider", ($routeProvider) => {
     $routeProvider.
@@ -21,10 +25,6 @@ module Jmx {
             when('/jmx/widget/area', {templateUrl: 'app/jmx/html/areaChart.html'});
   }]);
 
-  _module.factory('jmxTreeLazyLoadRegistry', () => {
-    return Jmx.lazyLoaders;
-  });
-
   _module.factory('jmxWidgetTypes', () => {
     return Jmx.jmxWidgetTypes;
   });
@@ -33,7 +33,7 @@ module Jmx {
     return Jmx.jmxWidgets;
   });
 
-  _module.run(["$location", "workspace", "viewRegistry", "layoutTree", "jolokia", "pageTitle", "helpRegistry", ($location: ng.ILocationService, workspace:Workspace, viewRegistry, layoutTree, jolokia, pageTitle:Core.PageTitle, helpRegistry) => {
+  _module.run(["$location", "workspace", "viewRegistry", "layoutTree", "jolokia", "pageTitle", "helpRegistry", ($location: ng.ILocationService, workspace:Core.Workspace, viewRegistry, layoutTree, jolokia, pageTitle:Core.PageTitle, helpRegistry) => {
 
     viewRegistry['jmx'] = layoutTree;
     helpRegistry.addUserDoc('jmx', 'app/jmx/doc/help.md');
@@ -62,13 +62,14 @@ module Jmx {
       isActive: (workspace: Workspace) => workspace.isTopTabActive("jmx")
     });
 
-
-    workspace.subLevelTabs.push( {
+    // we want attributes to be listed first, so add it at index 0
+    workspace.subLevelTabs.add( {
       content: '<i class="icon-list"></i> Attributes',
       title: "View the attribute values on your selection",
       isValid: (workspace: Workspace) => true,
-      href: () => "#/jmx/attributes"
-    });
+      href: () => "#/jmx/attributes",
+      index: -1
+    }, 0);
     workspace.subLevelTabs.push( {
       content: '<i class="icon-leaf"></i> Operations',
       title: "Execute operations on your selection",

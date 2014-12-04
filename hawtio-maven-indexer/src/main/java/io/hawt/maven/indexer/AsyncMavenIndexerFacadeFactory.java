@@ -22,7 +22,7 @@ public class AsyncMavenIndexerFacadeFactory {
     private boolean updateIndexOnStartup = true;
     private ObjectName objectName;
     private MBeanServer mBeanServer;
-    private String[] repositories;
+    private String repositories;
     private String indexDirectory;
     private Timer timer;
     private TimerTask task;
@@ -100,11 +100,11 @@ public class AsyncMavenIndexerFacadeFactory {
         this.objectName = objectName;
     }
 
-    public String[] getRepositories() {
+    public String getRepositories() {
         return repositories;
     }
 
-    public void setRepositories(String[] repositories) {
+    public void setRepositories(String repositories) {
         this.repositories = repositories;
     }
 

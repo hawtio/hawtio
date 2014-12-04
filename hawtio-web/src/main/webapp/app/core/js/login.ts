@@ -4,10 +4,6 @@
 /// <reference path="corePlugin.ts"/>
 module Core {
 
-  // TODO - these need to go in favor of having them in userDetails
-  export var username: string = null;
-  export var password: string = null;
-
   /**
    * Controller that handles the login page and actually logging in
    *
@@ -22,24 +18,32 @@ module Core {
    * @param localStorage
    * @param branding
    */
-  _module.controller("Core.LoginController", ["$scope", "jolokia", "userDetails", "jolokiaUrl", "workspace", "localStorage", "branding", "postLoginTasks", ($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) => {
+  _module.controller("Core.LoginController", ["$scope", "jolokia", "userDetails", "jolokiaUrl", "workspace", "localStorage", "branding", "postLoginTasks", ($scope, jolokia, userDetails:Core.UserDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) => {
     jolokia.stop();
 
-    $scope.entity = {
+    $scope.userDetails = userDetails;
+    $scope.entity = <Core.UserDetails> {
       username: '',
       password: ''
     };
     $scope.backstretch = (<any>$).backstretch(branding.loginBg);
-
     $scope.rememberMe = false;
+    if ('userDetails' in localStorage) {
+      $scope.rememberMe = true;
+      var details = angular.fromJson(localStorage['userDetails']);
+      $scope.entity.username = details.username;
+      $scope.entity.password = details.password;
+    }
     $scope.branding = branding;
 
-    var details = angular.fromJson(localStorage[jolokiaUrl]);
-    if (details) {
-      $scope.entity.username = details['username'];
-      $scope.entity.password = details['password'];
-      $scope.rememberMe = details['rememberMe'];
-    }
+    $scope.$watch('userDetails', (newValue:Core.UserDetails) => {
+      if (newValue.username) {
+        $scope.entity.username = newValue.username;
+      }
+      if (newValue.password) {
+        $scope.entity.password = newValue.password;
+      }
+    }, true);
 
     $scope.$on('$routeChangeStart', function() {
       if ($scope.backstretch) {
@@ -47,20 +51,9 @@ module Core {
       }
     });
 
-    jQuery(window).bind(
-      "beforeunload",
-      function() {
-        // auto logout if we should not remember me
-        if (!userDetails.rememberMe) {
-          console.log("Auto logging out as remember me is off");
-          logout(jolokiaUrl, userDetails, localStorage, $scope);
-        }
-      }
-    );
-
     $scope.doLogin = () => {
       if (jolokiaUrl) {
-        var url = jolokiaUrl.replace("jolokia", "auth/login/");
+        var url = "auth/login/";
 
         if ($scope.entity.username.trim() != '') {
           $.ajax(url, {
@@ -68,15 +61,12 @@ module Core {
             success: (response) => {
               userDetails.username = $scope.entity.username;
               userDetails.password = $scope.entity.password;
-              userDetails.rememberMe = $scope.rememberMe;
               userDetails.loginDetails = response;
 
-              Core.username = $scope.entity.username;
-              Core.password = $scope.entity.password;
               if ($scope.rememberMe) {
-                localStorage[jolokiaUrl] = angular.toJson(userDetails);
+                localStorage['userDetails'] = angular.toJson(userDetails);
               } else {
-                delete localStorage[jolokiaUrl];
+                delete localStorage['userDetails'];
               }
 
               jolokia.start();
@@ -102,9 +92,6 @@ module Core {
             beforeSend: (xhr) => {
               xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader($scope.entity.username, $scope.entity.password));
             }
-
-            //username: $scope.entity.username,
-            //password: $scope.entity.password
           });
         }
       }

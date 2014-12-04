@@ -35,7 +35,6 @@ module Fabric {
     }
 
     public getIcon(thing:string) {
-      log.debug("Returning icon for: ", thing);
       return this.icons[thing];
     }
 
@@ -52,16 +51,16 @@ module Fabric {
   export var serviceIconRegistry = new IconRegistry();
 
   serviceIconRegistry.addIcons({
+    title: "Kubernetes",
+    type: "img",
+    src: "img/icons/kubernetes.svg"
+  }, "io.kubernetes");
+
+  serviceIconRegistry.addIcons({
     title: "Fabric8",
     type: "img",
     src: "img/icons/fabric8_icon.svg"
   }, "io.fabric8", "org.fusesource.fabric");
-
-  serviceIconRegistry.addIcons({
-    title: "Fabric8 Insight",
-    type: "icon",
-    src: "icon-eye-open"
-  }, "org.fusesource.insight", "io.fabric8.insight");
 
   serviceIconRegistry.addIcons({
     title: "hawtio",
@@ -112,6 +111,12 @@ module Fabric {
   }, "Catalina", "Tomcat");
 
   serviceIconRegistry.addIcons({
+    title: "WildFly",
+    type: "img",
+    src: "img/icons/wildfly.svg"
+  }, "jboss", "wildfly");
+
+  serviceIconRegistry.addIcons({
     title: "Apache Cassandra",
     type: "img",
     src: "img/icons/cassandra.svg",
@@ -153,6 +158,18 @@ module Fabric {
     type: "img",
     src: "img/icons/jetty.svg"
   }, "Jetty");
+
+  containerIconRegistry.addIcons({
+    title: "Kubernetes",
+    type: "img",
+    src: "img/icons/kubernetes.svg"
+  }, "kubelet");
+
+  containerIconRegistry.addIcons({
+    title: "WildFly",
+    type: "img",
+    src: "img/icons/wildfly.svg"
+  }, "WildFly");
 
   // TODO - placeholder for Java containers
   containerIconRegistry.addIcons(javaIcon, "java");

@@ -2,9 +2,6 @@ package io.hawt.web.plugin.karaf.terminal;
 
 import org.apache.felix.service.threadio.ThreadIO;
 
-/**
- *
- */
 public class ThreadIOHolder {
 
     private static ThreadIO threadIO;

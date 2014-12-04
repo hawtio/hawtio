@@ -32,22 +32,26 @@
       <div class="configuration-filter">
         <input type="text" class="span8 search-query" placeholder="Filter..." ng-model="filterText">
         <i class="icon-remove clickable" title="Clear filter" ng-click="filterText = ''"></i>
-        <button class="btn pull-right" ng-click="addPidDialog.open()" title="Add a new configuration"><i
+        <button class="btn pull-right" ng-click="addPidDialog.open()" title="Add a new configuration" hawtio-show object-name="{{hawtioConfigAdminMBean}}" method-name="configAdminUpdate"><i
                 class="icon-plus"></i> Configuration
         </button>
       </div>
     </div>
   </div>
 
+  <div class="row-fluid centered" ng-hide="configurations.length">
+    <i class="icon-spinner icon-spin"></i>
+  </div>
+
   <ul class="configurations">
     <li ng-repeat='config in configurations | filter:filterText' class='{{config.class}} bundle-item'>
       <a ng-href="{{config.pidLink}}" title="{{config.description}}">
-        <span class="{{config.kind.class}}" title="{{config.kind.title}}">{{config.name}}</span>
+        <span class="{{config.kind.class}}">{{config.name}}</span>
       </a>
       <ul ng-show="config.isFactory">
         <li ng-repeat="child in config.children" class='{{child.class}} bundle-item'>
           <a ng-href="{{child.pidLink}}" title="{{child.description}}">
-            <span class="{{child.kind.class}}" title="{{child.kind.title}}">{{child.name}}</span>
+            <span class="{{child.kind.class}}">{{child.name}}</span>
           </a>
         </li>
       </ul>

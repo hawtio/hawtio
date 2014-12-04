@@ -15,6 +15,9 @@
   <properties>
     <fuse.osgi.export>
       io.hawt.git,
+      io.hawt.util,
+      io.hawt.util.introspect,
+      io.hawt.util.introspect.support,
       com.jcraft.jzlib;version=${jcraft-jzlib-version},
       com.jcraft.jsch;version=${jcraft-version},
       org.gitective*;version=${gitective-version},
@@ -52,6 +55,11 @@
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-util</artifactId>
       <version>${project.version}</version>
     </dependency>
 

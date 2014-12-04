@@ -45,7 +45,7 @@
       </div>
 
       <div class="mq-profiles" hawtio-horizontal-viewport adjust-parent="true">
-        <div class="mq-profile-canvas" hawtio-row>
+        <div class="mq-profile-canvas">
           <div class="mq-profile-rectangle" ng-repeat="profile in group.profiles"
                title="profile: {{profile.id}} version: {{ profile.version}}" ng-show="profileMatchesFilter(profile)">
 
@@ -62,7 +62,7 @@
               </a>
             </div>
 
-            <div class="mq-broker-area" hawtio-row>
+            <div class="mq-broker-area">
 
               <div class="mq-broker-rectangle" ng-repeat="broker in profile.brokers"
                    ng-show="brokerMatchesFilter(broker)"
@@ -85,7 +85,7 @@
                   </div>
                 </div>
 
-                <div ng-show="broker.containers.length" class="mq-container-row" hawtio-row>
+                <div ng-show="broker.containers.length" class="mq-container-row">
                   <div class="mq-container-rectangle" ng-class="{master : container.master}"
                        ng-repeat="container in broker.containers"
                        ng-show="containerMatchesFilter(container)"

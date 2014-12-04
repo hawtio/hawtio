@@ -5,11 +5,11 @@
 @import url("../fonts/Droid-Sans-Mono/stylesheet.css");
 
 * {
-  font-family: OpenSansRegular;
+  font-family: OpenSans;
 }
 
 body {
-  font-family: OpenSansRegular;
+  font-family: OpenSans;
 }
 
 #log-panel-statements li {
@@ -208,12 +208,11 @@ body {
   color: #888;
 }
 
-
+.selected,
 .box.selected {
-  color: #202020;
-  background-color: #353535;
+  color: #202020 !important;
+  background-color: #353535 !important;
 }
-
 
 a {
   color: #888888;

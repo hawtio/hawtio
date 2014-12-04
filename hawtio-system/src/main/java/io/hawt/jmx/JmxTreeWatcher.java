@@ -42,7 +42,7 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
         if (mBeanServer != null) {
             try {
                 mBeanServer.registerMBean(this, objectName);
-            } catch(InstanceAlreadyExistsException iaee) {
+            } catch (InstanceAlreadyExistsException iaee) {
                 // Try to remove and re-register
                 mBeanServer.unregisterMBean(objectName);
                 mBeanServer.registerMBean(this, objectName);
@@ -51,7 +51,7 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
             Object handback = null;
 
             listener = getNotificationListener();
-            filter =  getNotificationFilter();
+            filter = getNotificationFilter();
 
             mBeanServer.addNotificationListener(MBeanServerDelegate.DELEGATE_NAME, listener, filter, handback);
         }
@@ -106,6 +106,7 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
     protected NotificationFilter getNotificationFilter() {
         return new NotificationFilter() {
             private static final long serialVersionUID = 1L;
+
             @Override
             public boolean isNotificationEnabled(Notification notification) {
                 return true;

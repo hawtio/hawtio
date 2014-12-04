@@ -1,9 +1,15 @@
 /// <reference path="fabricPlugin.ts"/>
+/// <reference path="../../helpers/js/selectionHelpers.ts"/>
 module Fabric {
-  _module.controller("Fabric.AssignProfileController", ["$scope", "jolokia", "$location", "$routeParams", "workspace", ($scope, jolokia, $location, $routeParams, workspace) => {
+  export var AssignProfileController = _module.controller("Fabric.AssignProfileController", ["$scope", "jolokia", "$location", "$routeParams", "workspace", "ProfileCart", ($scope, jolokia, $location, $routeParams, workspace, ProfileCart:Profile[]) => {
 
     $scope.profileId = $routeParams['pid'];
     $scope.versionId = $routeParams['vid'];
+
+    if (ProfileCart.length > 0) {
+      $scope.profileId = ProfileCart.map((p:Profile) => { return p.id; });
+      $scope.versionId = (<Profile>ProfileCart.first()).versionId;
+    }
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
@@ -11,24 +17,28 @@ module Fabric {
 
     var valid = true;
 
-    if (Core.isBlank($scope.profileId)) {
-      log.warn("No profile ID specified, redirecting to Fabric management view");
+    if (!$scope.profileId) {
+      log.debug("No profile ID specified, redirecting to app view");
       valid = false;
     }
 
-    if (Core.isBlank($scope.versionId)) {
-      log.warn("No version ID specified, redirecting to Fabric management view");
+    if (!$scope.versionId && valid) {
+      log.debug("No version ID specified, redirecting to app view");
       valid = false;
     }
 
     if (!valid) {
-      $location.path("/fabric/view");
+      $location.path("/profiles");
     }
 
     $scope.gotoCreate = () => {
+      var ids = $scope.profileId;
+      if (angular.isArray(ids)) {
+        ids = ids.join(',');
+      }
       $location.path('/fabric/containers/createContainer').search({
         versionId: $scope.versionId,
-        profileIds: $scope.profileId
+        profileIds: ids
       });
     };
 
@@ -40,24 +50,29 @@ module Fabric {
 
     $scope.assignProfiles = () => {
       var requests = [];
+      var profileIds = $scope.profileId;
+      if (!angular.isArray(profileIds)) {
+        profileIds = [profileIds];
+      }
       $scope.selected.forEach((c) => {
         requests.push({
           type: 'exec', mbean: Fabric.managerMBean,
           operation: 'addProfilesToContainer',
-          arguments: [c.id, [$scope.profileId]]
+          arguments: [c.id, profileIds]
         });
       });
-      notification('info', "Applying " + $scope.profileId + " to the selected containers");
+      //notification('info', "Applying " + $scope.profileId + " to the selected containers");
       var outstanding = requests.length;
       jolokia.request(requests, onSuccess(() => {
         outstanding = outstanding - 1;
         if (outstanding === 0) {
-          notification('success', "Applied " + $scope.profileId);
+          Core.notification('success', "Applied " + $scope.profileId);
+          SelectionHelpers.clearGroup(ProfileCart);
           Core.$apply($scope);
         }
       }));
       setTimeout(() => {
-        $location.path("/fabric/activeProfiles");
+        $location.path("/fabric/containers");
         Core.$apply($scope);
       }, 30);
     }

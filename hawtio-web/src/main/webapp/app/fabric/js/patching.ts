@@ -24,7 +24,7 @@ module Fabric {
         message = "patch: " + $scope.files[0].fileName;
       }
 
-      notification('info', "Applying " + message);
+      Core.notification('info', "Applying " + message);
 
       if ($scope.saveJmxCredentials) {
         localStorage['fabric.userName'] = $scope.proxyUser;
@@ -35,7 +35,7 @@ module Fabric {
 
       applyPatches(jolokia, files, $scope.targetVersion, $scope.newVersionName, $scope.proxyUser, $scope.proxyPassword,
           () => {
-        notification('success', "Successfully applied " + message);
+        Core.notification('success', "Successfully applied " + message);
         $location.url("/fabric/view");
         Core.$apply($scope);
       }, (response) => {

@@ -44,6 +44,24 @@
   </env-entry>
 
   <filter>
+    <filter-name>SessionExpiryFilter</filter-name>
+    <filter-class>io.hawt.web.SessionExpiryFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>SessionExpiryFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>XFrameOptionsFilter</filter-name>
+    <filter-class>io.hawt.web.XFrameOptionsFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>XFrameOptionsFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
     <filter-name>CORSFilter</filter-name>
     <filter-class>io.hawt.web.CORSFilter</filter-class>
   </filter>
@@ -105,6 +123,25 @@
     <servlet-name>jolokia-proxy</servlet-name>
     <url-pattern>/proxy/*</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>kube-service</servlet-name>
+    <servlet-class>io.hawt.web.ServiceServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>kube-service</servlet-name>
+    <url-pattern>/service/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>kube-pod</servlet-name>
+    <servlet-class>io.hawt.web.PodServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>kube-pod</servlet-name>
+    <url-pattern>/pod/*</url-pattern>
+  </servlet-mapping>
+
 
   <servlet>
     <servlet-name>file-upload</servlet-name>
@@ -114,6 +151,15 @@
   <servlet-mapping>
     <servlet-name>file-upload</servlet-name>
     <url-pattern>/upload/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>user</servlet-name>
+    <servlet-class>io.hawt.web.UserServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>user</servlet-name>
+    <url-pattern>/user/*</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -161,6 +207,15 @@
     <url-pattern>/git/*</url-pattern>
   </servlet-mapping>
 -->
+  <servlet>
+    <servlet-name>gitServlet</servlet-name>
+    <servlet-class>io.hawt.web.GitServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>gitServlet</servlet-name>
+    <url-pattern>/git/*</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>maven-source</servlet-name>
@@ -179,7 +234,7 @@
     <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
   </listener>
   <listener>
-    <listener-class>org.apache.aries.blueprint.web.BlueprintContextListener</listener-class>
+    <listener-class>io.hawt.blueprint.HawtioBlueprintContextListener</listener-class>
   </listener>
 
   <context-param>
@@ -190,6 +245,11 @@
     <param-name>blueprintLocation</param-name>
     <param-value>OSGI-INF/blueprint/blueprint.xml</param-value>
   </context-param>
+
+  <error-page>
+    <error-code>404</error-code>
+    <location>/index.html</location>
+  </error-page>
 
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>

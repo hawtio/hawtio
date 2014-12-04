@@ -3,6 +3,9 @@ package io.hawt.web;
 import java.io.IOException;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.security.auth.Subject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -34,14 +37,11 @@ public class AuthenticationFilter implements Filter {
     public static final String HAWTIO_AUTHENTICATION_ENABLED = "hawtio.authenticationEnabled";
     public static final String HAWTIO_REALM = "hawtio.realm";
     public static final String HAWTIO_ROLE = "hawtio.role";
+    public static final String HAWTIO_ROLES = "hawtio.roles";
     public static final String HAWTIO_ROLE_PRINCIPAL_CLASSES = "hawtio.rolePrincipalClasses";
+    public static final String HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES = "hawtio.authenticationContainerDiscoveryClasses";
 
     private final AuthenticationConfiguration configuration = new AuthenticationConfiguration();
-
-    // add known SPI authentication container discovery
-    private final AuthenticationContainerDiscovery[] discoveries = new AuthenticationContainerDiscovery[]{
-            new TomcatAuthenticationContainerDiscovery()
-    };
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -53,12 +53,25 @@ public class AuthenticationFilter implements Filter {
             defaultRolePrincipalClasses = "org.apache.karaf.jaas.boot.principal.RolePrincipal,org.apache.karaf.jaas.modules.RolePrincipal,org.apache.karaf.jaas.boot.principal.GroupPrincipal";
         }
 
+        String authDiscoveryClasses = "io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery";
+
         if (config != null) {
             configuration.setRealm(config.get("realm", "karaf"));
-            configuration.setRole(config.get("role", "admin"));
+            // we have either role or roles
+            String roles = config.get("role", null);
+            if (roles == null) {
+                roles = config.get("roles", null);
+            }
+            if (roles == null) {
+                // use default roles (karaf roles)
+                roles = "admin,viewer";
+            }
+            configuration.setRole(roles);
             configuration.setRolePrincipalClasses(config.get("rolePrincipalClasses", defaultRolePrincipalClasses));
             configuration.setEnabled(Boolean.parseBoolean(config.get("authenticationEnabled", "true")));
             configuration.setNoCredentials401(Boolean.parseBoolean(config.get("noCredentials401", "false")));
+
+            authDiscoveryClasses = config.get("authenticationContainerDiscoveryClasses", authDiscoveryClasses);
         }
 
         // JVM system properties can override always
@@ -74,11 +87,18 @@ public class AuthenticationFilter implements Filter {
         if (System.getProperty(HAWTIO_ROLE) != null) {
             configuration.setRole(System.getProperty(HAWTIO_ROLE));
         }
+        if (System.getProperty(HAWTIO_ROLES) != null) {
+            configuration.setRole(System.getProperty(HAWTIO_ROLES));
+        }
         if (System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES) != null) {
             configuration.setRolePrincipalClasses(System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES));
         }
+        if (System.getProperty(HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES) != null) {
+            authDiscoveryClasses = System.getProperty(HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES);
+        }
 
         if (configuration.isEnabled()) {
+            List<AuthenticationContainerDiscovery> discoveries = getDiscoveries(authDiscoveryClasses);
             for (AuthenticationContainerDiscovery discovery : discoveries) {
                 if (discovery.canAuthenticate(configuration)) {
                     LOG.info("Discovered container {} to use with hawtio authentication filter", discovery.getContainerName());
@@ -87,12 +107,34 @@ public class AuthenticationFilter implements Filter {
             }
         }
 
+        filterConfig.getServletContext().setAttribute("authenticationEnabled", configuration.isEnabled());
+
         if (configuration.isEnabled()) {
-            LOG.info("Starting hawtio authentication filter, JAAS realm: \"{}\" authorized role: \"{}\" role principal classes: \"{}\"",
+            LOG.info("Starting hawtio authentication filter, JAAS realm: \"{}\" authorized role(s): \"{}\" role principal classes: \"{}\"",
                     new Object[]{configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses()});
         } else {
             LOG.info("Starting hawtio authentication filter, JAAS authentication disabled");
         }
+    }
+
+    protected List<AuthenticationContainerDiscovery> getDiscoveries(String authDiscoveryClasses) {
+        List<AuthenticationContainerDiscovery> discoveries = new ArrayList<AuthenticationContainerDiscovery>();
+        if (authDiscoveryClasses == null || authDiscoveryClasses.trim().isEmpty()) {
+            return discoveries;
+        }
+
+        String[] discoveryClasses = authDiscoveryClasses.split(",");
+        for (String discoveryClass : discoveryClasses) {
+            try {
+                // Should have more clever classloading?
+                Class<? extends AuthenticationContainerDiscovery> clazz = (Class<? extends AuthenticationContainerDiscovery>) getClass().getClassLoader().loadClass(discoveryClass.trim());
+                AuthenticationContainerDiscovery discovery = clazz.newInstance();
+                discoveries.add(discovery);
+            } catch (Exception e) {
+                LOG.warn("Couldn't instantiate discovery " + discoveryClass, e);
+            }
+        }
+        return discoveries;
     }
 
     @Override
@@ -120,10 +162,11 @@ public class AuthenticationFilter implements Filter {
         LOG.debug("Doing authentication and authorization for path {}", path);
         switch (Authenticator.authenticate(configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses(),
                 configuration.getConfiguration(), httpRequest, new PrivilegedCallback() {
-            public void execute(Subject subject) throws Exception {
-                executeAs(request, response, chain, subject);
-            }
-        })) {
+                    public void execute(Subject subject) throws Exception {
+                        executeAs(request, response, chain, subject);
+                    }
+                }
+        )) {
             case AUTHORIZED:
                 // request was executed using the authenticated subject, nothing more to do
                 break;
@@ -133,7 +176,7 @@ public class AuthenticationFilter implements Filter {
             case NO_CREDENTIALS:
                 if (configuration.isNoCredentials401()) {
                     // return auth prompt 401
-                    Helpers.doAuthPrompt(configuration.getRealm(), (HttpServletResponse)response);
+                    Helpers.doAuthPrompt(configuration.getRealm(), (HttpServletResponse) response);
                 } else {
                     // return forbidden 403 so the browser login does not popup
                     Helpers.doForbidden((HttpServletResponse) response);

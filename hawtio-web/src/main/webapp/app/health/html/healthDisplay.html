@@ -1,0 +1,43 @@
+<div>
+  <div ng-hide="hideTitle"
+       class="health-title centered"
+       ng-bind-html-unsafe="getTitle(value)"></div>
+  <div class="health-chart">
+    <fs-donut bind="value.data"
+              color-map="value.colorMap"
+              outer-radius="200"
+              inner-radius="75"
+              duration="250"></fs-donut>
+  </div>
+  <div class="health-status" hawtio-message-panel="50%" speed="0.5s">
+    <div class="health-message-wrap">
+      <span class="health-message">{{value.message}}</span>
+    </div>
+  </div>
+  <div class="health-details-toggle"
+       ng-click="showDetails = !showDetails"
+       title="Show detail panel">
+    <i class="icon-info-sign clickable"></i>
+  </div>
+  <div class="health-details"
+       hawtio-info-panel="left"
+       speed="0.5s"
+       toggle="showDetails">
+    <div class="health-details-wrap">
+      <div class="align-right" style="padding-right: 4px">
+        <a href="" ng-click="showDetails = false" title="Close panel">
+          <i class="icon-remove"></i>
+        </a>
+      </div>
+      <table class="zebra-list">
+        <tbody>
+        <tr ng-repeat="(k, v) in sanitize(value) track by $index">
+          <td>{{k | humanize}}</td>
+          <td title="{{v}}" ng-if="isPercentage(k)">{{ v * 100 | number:0}}%</td>
+          <td title="{{v}}" ng-if="!isPercentage(k)">{{v}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

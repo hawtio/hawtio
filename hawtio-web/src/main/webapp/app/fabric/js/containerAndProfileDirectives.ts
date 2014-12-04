@@ -1,4 +1,6 @@
 /// <reference path="fabricPlugin.ts"/>
+/// <reference path="../../helpers/js/selectionHelpers.ts"/>
+/// <reference path="../../ui/js/dialog.ts"/>
 module Fabric {
 
   // this is only referenced by the directive definition below
@@ -336,37 +338,6 @@ module Fabric {
         profile.selected = true;
       };
 
-
-      $scope.startSelectedContainers = () => {
-        $scope.selectedContainers.each((c) => {
-          $scope.startContainer(c.id);
-        });
-      };
-
-      $scope.stopSelectedContainers = () => {
-        $scope.selectedContainers.each((c) => {
-          $scope.stopContainer(c.id);
-        });
-      };
-
-      $scope.startContainer = (name) => {
-        doStartContainer($scope, jolokia, name);
-      };
-
-      $scope.stopContainer = (name) => {
-        doStopContainer($scope, jolokia, name);
-      };
-
-      $scope.anySelectionAlive = (state) => {
-        var selected = $scope.selectedContainers;
-        return selected.length > 0 && selected.any((s) => s.alive === state);
-      };
-
-      $scope.everySelectionAlive = (state) => {
-        var selected = $scope.selectedContainers;
-        return selected.length > 0 && selected.every((s) => s.alive === state);
-      };
-
       Core.register(jolokia, $scope, [
         {type: 'exec', mbean: Fabric.managerMBean, operation: $scope.containersOp, arguments: [$scope.containerArgs, $scope.profileFields]},
         {type: 'read', mbean: Fabric.clusterManagerMBean, attribute: $scope.ensembleContainerIdListOp}
@@ -427,7 +398,7 @@ module Fabric {
       $scope.updateRequirements = (requirements) => {
         function onRequirementsSaved(response) {
           $scope.requirements = requirements;
-          notification("success", "Updated the requirements");
+          Core.notification("success", "Updated the requirements");
           $scope.updateActiveProfiles();
           Core.$apply($scope);
         };

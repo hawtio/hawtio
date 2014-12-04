@@ -17,20 +17,16 @@
  */
 package io.hawt.git;
 
-import io.hawt.util.FileFilters;
-import io.hawt.util.IOHelper;
-import io.hawt.util.MBeanSupport;
+import io.hawt.util.*;
 import io.hawt.util.Objects;
-import io.hawt.util.Strings;
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
-
+import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
@@ -56,19 +52,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import static io.hawt.git.GitFacade.trimLeadingSlash;
 
 /**
  * A based class for implementations of {@link GitFacadeMXBean}
  */
-public abstract class GitFacadeSupport extends MBeanSupport implements GitFacadeMXBean {
+public abstract class GitFacadeSupport extends MBeanSupport implements GitFacadeMXBean, GitFileManager {
     private static final transient Logger LOG = LoggerFactory.getLogger(GitFacadeSupport.class);
 
     private int shortCommitIdLength = 6;
@@ -291,7 +282,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
     protected RevCommit doRemove(Git git, File rootDir, String branch, String path, String commitMessage, PersonIdent personIdent) throws Exception {
         File file = getFile(rootDir, path);
         if (file.exists()) {
-            file.delete();
+            Files.recursiveDelete(file);
 
             String filePattern = getFilePattern(path);
             git.rm().addFilepattern(filePattern).call();
@@ -429,7 +420,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
                 File[] files = file.listFiles();
                 for (File child : files) {
                     if (!isIgnoreFile(child)) {
-                        children.add(FileInfo.createFileInfo(rootDir, child));
+                        children.add(FileInfo.createFileInfo(rootDir, child, branch));
                     }
                 }
             }
@@ -437,13 +428,67 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         }
     }
 
+    /**
+     * Performs a read only operation on the file
+     */
+    protected <T> T doReadFile(Git git, File rootDir, String branch, String pathOrEmpty, Function<File, T> callback) throws IOException, GitAPIException {
+        checkoutBranch(git, branch);
+        String path = Strings.isBlank(pathOrEmpty) ? "/" : pathOrEmpty;
+        File file = getFile(rootDir, path);
+        T results = callback.apply(file);
+        return results;
+    }
+
+    /**
+     * Performs a write operation on the file
+     */
+    protected <T> T doWriteFile(Git git, File rootDir, String branch, String pathOrEmpty, WriteCallback callback) throws Exception {
+        checkoutBranch(git, branch);
+        String path = Strings.isBlank(pathOrEmpty) ? "/" : pathOrEmpty;
+        File file = getFile(rootDir, path);
+        WriteContext context = new WriteContext(git, rootDir, file);
+        T results = (T) callback.apply(context);
+        if (context.isRequiresCommit()) {
+            PersonIdent author = context.getAuthor();
+            String message = context.getMessage();
+            if (Strings.isBlank(message)) {
+                message = "Updated " + Files.getRelativePath(rootDir, file);
+            }
+            CommitCommand command = git.commit().setAll(true).setMessage(message);
+            if (author != null) {
+                command = command.setAuthor(author);
+            }
+            RevCommit revCommit = commitThenPush(git, branch, command);
+            createCommitInfo(revCommit);
+        }
+        return results;
+    }
+
     protected FileInfo doExists(Git git, File rootDir, String branch, String pathOrEmpty) throws GitAPIException {
+        return doExists(git, rootDir, branch, pathOrEmpty, false);
+    }
+
+    protected FileInfo doExists(Git git, File rootDir, String branch, String pathOrEmpty, final boolean caseSensitive) throws GitAPIException {
         checkoutBranch(git, branch);
         final String path = Strings.isBlank(pathOrEmpty) ? "/" : pathOrEmpty;
+
         File file = getFile(rootDir, path);
-        if (file.exists()) {
-            return FileInfo.createFileInfo(rootDir, file);
+        File parent = file.getParentFile();
+
+        // need to list the files, so we can grab the actual file name
+        File[] files = parent.listFiles(new FileFilter() {
+            String match = caseSensitive ? path : path.toLowerCase(Locale.US);
+            @Override
+            public boolean accept(File pathname) {
+                String name = caseSensitive ? pathname.getName() : pathname.getName().toLowerCase(Locale.US);
+                return match.endsWith(name);
+            }
+        });
+
+        if (files != null && files.length == 1) {
+            return FileInfo.createFileInfo(rootDir, files[0], branch);
         }
+
         return null;
     }
 
@@ -512,7 +557,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
                             buffer.append(child.getName());
                             buffer.append("\": ");
                             buffer.append(text);
-                            children.add(FileInfo.createFileInfo(rootDir, child));
+                            children.add(FileInfo.createFileInfo(rootDir, child, branch));
                         }
                     }
                 }

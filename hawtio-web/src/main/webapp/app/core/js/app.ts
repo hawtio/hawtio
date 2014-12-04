@@ -2,6 +2,7 @@
  * @module Core
  */
 /// <reference path="corePlugin.ts"/>
+/// <reference path="../../perspective/js/perspectiveHelpers.ts"/>
 module Core {
 
   /**
@@ -15,7 +16,7 @@ module Core {
    * @param {*} $element
    * @param {*} $templateCache
    */
-  _module.controller("Core.ConsoleController", ["$scope", "$element", "$templateCache", ($scope, $element, $templateCache) => {
+  export var ConsoleController = _module.controller("Core.ConsoleController", ["$scope", "$element", "$templateCache", ($scope, $element, $templateCache) => {
 
     $scope.setHandler = (clip) => {
 
@@ -40,9 +41,11 @@ module Core {
 
       function copyToClipboard() {
         var text = $templateCache.get("logClipboardTemplate").lines();
+        // remove start/end comment tags
         text.removeAt(0);
         text.removeAt(text.length - 1);
-        $element.find('#log-panel-statements').children().each(function(index, child) {
+        text.push('<ul>');
+        $element.find('#log-panel-statements').children().each(function(index, child:HTMLElement) {
           text.push('  <li>' + child.innerHTML + '</li>');
         });
         text.push('</ul>');
@@ -75,13 +78,7 @@ module Core {
    * @param {*} jolokiaUrl
    * @param {*} branding
    */
-  _module.controller("Core.AppController", ["$scope", "$location", "workspace", "jolokia", "jolokiaStatus", "$document", "pageTitle", "localStorage", "userDetails", "lastLocation", "jolokiaUrl", "branding", ($scope, $location, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding) => {
-    if (!userDetails) {
-      userDetails = {};
-    }
-    if (userDetails.username === null) {
-      $location.url(defaultPage());
-    }
+  export var AppController = _module.controller("Core.AppController", ["$scope", "$location", "workspace", "jolokia", "jolokiaStatus", "$document", "pageTitle", "localStorage", "userDetails", "lastLocation", "jolokiaUrl", "branding", "ConnectOptions", "$timeout", "locationChangeStartTasks", "$route", ($scope, $location:ng.ILocationService, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation:{ url:string }, jolokiaUrl, branding, ConnectOptions:Core.ConnectOptions, $timeout:ng.ITimeoutService, locationChangeStartTasks:Core.ParameterizedTasks, $route:ng.route.IRouteService) => {
 
     $scope.collapse = '';
     $scope.match = null;
@@ -102,10 +99,9 @@ module Core {
       }
     };
 
-    setTimeout(() => {
+    $timeout(() => {
       if ('showPrefs' in localStorage) {
         $scope.showPrefs = Core.parseBooleanValue(localStorage['showPrefs']);
-        Core.$apply($scope);
       }
     }, 500);
 
@@ -137,7 +133,7 @@ module Core {
             }
             // lets tone down the size of the headers
             html.each((idx, e) => {
-              var name = e.localName;
+              var name:string = e.localName;
               if (name && name.startsWith("h")) {
                 $(e).addClass("ajaxError");
               }
@@ -171,7 +167,7 @@ module Core {
 
     $scope.setPageTitle = () => {
       $scope.pageTitle = pageTitle.getTitleArrayExcluding([branding.appName]);
-      var tab = workspace.getActiveTab();
+      var tab:any = workspace.getActiveTab();
       if (tab && tab.content) {
         setPageTitleWithTab($document, pageTitle, tab.content);
       } else {
@@ -225,16 +221,24 @@ module Core {
 
     $scope.$watch(() => { return localStorage['regexs'] }, $scope.setRegexIndicator);
 
+    $scope.reloaded = false;
+
     $scope.maybeRedirect = () => {
       if (userDetails.username === null) {
         var currentUrl = $location.url();
         if (!currentUrl.startsWith('/login')) {
           lastLocation.url = currentUrl;
           $location.url('/login');
+        } else {
+          // ensures that the login page loads correctly if the user happens to click refresh
+          if (!$scope.reloaded) {
+            $route.reload();
+            $scope.reloaded = true;
+          }
         }
       } else {
         if ($location.url().startsWith('/login')) {
-          var url:Object = defaultPage();
+          var url:string = defaultPage();
           if (angular.isDefined(lastLocation.url)) {
             url = lastLocation.url;
           }
@@ -262,13 +266,13 @@ module Core {
       $scope.maybeRedirect();
     });
 
-    $scope.$on('$routeChangeSuccess', function() {
-      $scope.setPageTitle();
-      $scope.setRegexIndicator();
+    $scope.$on('$routeChangeSuccess', () => {
+      $scope.setPageTitle($document, PageTitle);
+      $scope.maybeRedirect();
     });
 
     $scope.fullScreen = () => {
-      if ($location.url().startsWith("/login")) {
+      if ($location.path().startsWith("/login")) {
         return branding.fullscreenLogin;
       }
       var tab = $location.search()['tab'];
@@ -276,11 +280,11 @@ module Core {
         return tab === "fullscreen";
       }
       return false;
-    }
+    };
 
     $scope.login = () => {
-      return $location.url().startsWith("/login");
-    }
+      return $location.path().startsWith("/login");
+    };
 
     function defaultPage() {
       return Perspective.defaultPage($location, workspace, jolokia, localStorage);

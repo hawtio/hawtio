@@ -1,7 +1,8 @@
+/// <reference path="jmxPlugin.ts"/>
+/// <reference path="../../tree/js/treePlugin.ts"/>
 /**
  * @module Jmx
  */
-/// <reference path="./jmxPlugin.ts"/>
 module Jmx {
 
   _module.controller("Jmx.TreeHeaderController", ["$scope", ($scope) => {

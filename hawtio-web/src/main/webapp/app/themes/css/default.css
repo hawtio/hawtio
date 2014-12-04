@@ -1,19 +1,17 @@
-
 /* fonts */
-
 @import url("../fonts/Open-Sans/stylesheet.css");
 @import url("../fonts/Droid-Sans-Mono/stylesheet.css");
 
 * {
-  font-family: OpenSansRegular;
+  font-family: OpenSans;
 }
 
 body {
-  font-family: OpenSansRegular;
+  font-family: OpenSans;
 }
 
 #log-panel-statements li {
-  font-family: DroidSansMonoRegular;
+  font-family: OpenSans;
 }
 
 #log-panel-statements li pre span {
@@ -42,7 +40,7 @@ div.stack-line {
   font-size: 12px;
 }
 
-.log-table *:not('.icon*') {
+.log-table *:not(i) {
   font-family: DroidSansMonoRegular;
 }
 
@@ -368,7 +366,7 @@ div#main div ul.nav li.active a:hover {
   text-shadow: 0 1px 0 #FFFFFF;
 }
 
-div#main div ul.nav li a {
+div#main div ul.nav li a:not(.btn) {
   border: 1px;
   border-radius: 2px;
   background: inherit;
@@ -383,7 +381,7 @@ div#main div ul.nav li div.separator {
     float: left;
 }
 
-div#main div ul.nav li a:hover {
+div#main div ul.nav li a:hover:not(.btn) {
   border: 1px;
   border-radius: 2px;
   background: inherit;
@@ -686,9 +684,10 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
   border-top: 1px solid transparent;
 }
 
+.selected, 
 .box.selected {
   color: normal;
-  background-color: #f0f0ff;
+  background-color: #f0f0ff !important;
   text-shadow: none;
 }
 
@@ -764,10 +763,6 @@ input[type="checkbox"].ng-invalid {
   background-color: #f3f3f3;
 }
 
-.fabric-page-header {
-  border-bottom: 1px solid #d4d4d4;
-}
-
 pre.stack-line {
   color: #333333;
   background: inherit;
@@ -840,7 +835,10 @@ div#main div ul.nav li a.nav-primary .caret {
   background: inherit !important;
 }
 
-.file-icon i.icon-folder-close {
+.file-icon i.icon-folder-close,
+.file-icon i.icon-folder-close-alt,
+.app-logo .icon-folder-close,
+.app-logo .icon-folder-close-alt {
   color: #EECA7C;
 }
 
@@ -946,12 +944,20 @@ a.dashboard-link {
 }
 
 .provision-list ul li:nth-child(even) {
-  background-color: #f3f3f3;
+  background-color: #f9f9f9;
+}
+
+.zebra-list > li,
+ol.zebra-list > li {
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
 }
 
 .zebra-list > li:nth-child(even),
 ol.zebra-list > li:nth-child(even):before {
-  background-color: #f3f3f3;
+  border-top: 1px solid #d4d4d4;
+  border-bottom: 1px solid #d4d4d4;
+  background-color: #f9f9f9;
 }
 
 .add-link {
@@ -1287,6 +1293,8 @@ strong.new,
   -moz-box-shadow: 2px 2px 19px #e0e0e0;
   -moz-border-radius: 4px;
   border-radius: 4px;
+  background-color: lightgrey;
+  fill: lightgrey;
 }
 
 .window-inner.from,
@@ -1325,22 +1333,10 @@ strong.new,
   fill: lightcyan;
 }
 
-.window-inner.setBody,
-.node > .setBody {
-  background-color: #d3d3d3;
-  fill: #d3d3d3;
-}
-
 .window-inner.onException,
 .node > .onException {
   background-color: lightpink;
   fill: lightpink;
-}
-
-.window-inner.delay,
-.node > .delay {
-  background-color: lightgrey;
-  fill: lightgrey;
 }
 
 .window-inner.bean,
@@ -1392,18 +1388,28 @@ img.nodeIcon:hover {
 }
 
 .pane-bar {
-  border-left: 1px solid #d4d4d4;
-  border-right: 1px solid #d4d4d4;
   background: white;
+}
+
+.pane-viewport {
+  border-top: 1px solid #d4d4d4;
+}
+
+.pane.right .pane-bar {
+  border-left: 1px solid #d4d4d4;
+}
+
+.pane.left .pane-bar {
+  border-right: 1px solid #d4d4d4;
 }
 
 .pane {
   background: #fff;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.05);
+  /* box-shadow: 0 0 50px rgba(0, 0, 0, 0.05); */
 }
 
 .pane-header-wrapper {
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 0 50px rgba(0, 0, 0, 0.2); */ 
 }
 
 .navbar .nav > li > .dropdown-menu:before,
@@ -1439,3 +1445,38 @@ img.nodeIcon:hover {
 .prefs .tabbable > .nav > li > a:hover {
   background-color: #EEEEEE    
 }
+
+.column-box {
+  /* border: 1px solid #d4d4d4; */
+}
+
+.column-box-square {
+  border: 1px solid #d4d4d4;
+}
+
+.column-box-square.selected {
+  background-color: #f0f0ff;
+}
+
+.wiki-icon-view-header h5 {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.wiki-icon-view {
+  border-radius: 10px;
+  border: 4px solid transparent;
+}
+
+.wiki-icon-view .column-box {
+  margin: 5px;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+}
+
+.ready-drop {
+  border-radius: 10px;
+  border: 4px dashed #aaffaa;
+  background: #ddffdd;
+  min-height: 150px;
+}
+

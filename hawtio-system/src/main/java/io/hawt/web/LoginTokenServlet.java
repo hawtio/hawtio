@@ -1,13 +1,13 @@
 package io.hawt.web;
 
-import org.apache.commons.codec.binary.Base64;
-
-import javax.security.auth.Subject;
-import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
+import javax.security.auth.Subject;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.codec.binary.Base64;
 
 public class LoginTokenServlet extends LoginServlet {
 
@@ -20,7 +20,7 @@ public class LoginTokenServlet extends LoginServlet {
 
         String token = (String) session.getAttribute(LOGIN_TOKEN);
 
-        if ( token == null) {
+        if (token == null) {
             byte[] seed = (subject.toString() + Long.toString(System.currentTimeMillis())).getBytes();
             SecureRandom random = new SecureRandom(seed);
             byte[] tokenBytes = new byte[128];

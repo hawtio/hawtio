@@ -1,10 +1,15 @@
 package io.hawt.jmx;
 
+import java.util.concurrent.atomic.AtomicLong;
+import javax.management.MBeanServerNotification;
+import javax.management.MalformedObjectNameException;
+import javax.management.Notification;
+import javax.management.NotificationFilter;
+import javax.management.NotificationListener;
+import javax.management.ObjectName;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.management.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  *
@@ -49,10 +54,11 @@ public class PluginRegistry extends JmxTreeWatcher implements PluginRegistryMBea
     protected NotificationFilter getNotificationFilter() {
         return new NotificationFilter() {
             private static final long serialVersionUID = 1L;
+
             @Override
             public boolean isNotificationEnabled(Notification notification) {
                 if (notification instanceof MBeanServerNotification) {
-                    MBeanServerNotification n = (MBeanServerNotification)notification;
+                    MBeanServerNotification n = (MBeanServerNotification) notification;
                     return comparator.apply(n.getMBeanName());
                 }
                 return false;

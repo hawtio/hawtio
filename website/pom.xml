@@ -175,12 +175,23 @@
                 </ac:for>
 
                 <!-- copy the directives site -->
+<!--
                 <mkdir dir="${project.build.directory}/sitegen/directives"/>
                 <copy todir="${project.build.directory}/sitegen/directives">
                   <fileset dir="${basedir}/../hawtio-directives/target/hawtio-directives-${project.version}">
                     <include name="**/*.*"/>
                   </fileset>
                 </copy>
+-->
+
+                <!-- copy the api docs -->
+                <mkdir dir="${project.build.directory}/sitegen/ts-api"/>
+                <copy todir="${project.build.directory}/sitegen/ts-api">
+                  <fileset dir="${basedir}/../hawtio-api-docs/target/hawtio-api-docs-${project.version}">
+                    <include name="**/*.*"/>
+                  </fileset>
+                </copy>
+
               </target>
             </configuration>
             <goals>
@@ -276,7 +287,7 @@
       </plugin>
 
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>${jetty-plugin-groupId}</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty-plugin-version}</version>
         <configuration>
@@ -398,7 +409,7 @@
           <excludedLinks>
             <value>http://github.com/</value>
             <value>http://git.or.cz/</value>
-            <value>http://localhost:8080/</value>
+            <value>http://localhost:8282/</value>
             <value>http://repo.fusesource.com/</value>
             <value>http://search.twitter.com/</value>
             <value>http://www.chengin.com/</value>

@@ -1,12 +1,16 @@
 package io.hawt.web;
 
-import io.hawt.system.ConfigManager;
-import io.hawt.system.Helpers;
-import org.jolokia.converter.Converters;
-import org.jolokia.converter.json.JsonConvertOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.security.AccessControlContext;
+import java.security.AccessController;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.security.auth.Subject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -14,12 +18,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.security.AccessControlContext;
-import java.security.AccessController;
-import java.security.Principal;
-import java.util.*;
+
+import io.hawt.system.ConfigManager;
+import io.hawt.system.Helpers;
+import org.jolokia.converter.Converters;
+import org.jolokia.converter.json.JsonConvertOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -28,26 +33,28 @@ public class LoginServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final transient Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
+    private static final int DEFAULT_SESSION_TIMEOUT = 1800;
 
     protected Converters converters = new Converters();
     protected JsonConvertOptions options = JsonConvertOptions.DEFAULT;
     protected ConfigManager config;
-    private Integer timeout;
+    private Integer timeout = DEFAULT_SESSION_TIMEOUT;
 
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         config = (ConfigManager) servletConfig.getServletContext().getAttribute("ConfigManager");
         if (config != null) {
-            String s = config.get("sessionTimeout", null);
+            String s = config.get("sessionTimeout", "" + DEFAULT_SESSION_TIMEOUT);
             if (s != null) {
                 try {
                     timeout = Integer.parseInt(s);
                     // timeout of 0 means default timeout
                     if (timeout == 0) {
-                        timeout = null;
+                        timeout = DEFAULT_SESSION_TIMEOUT;
                     }
                 } catch (Exception e) {
-                    // ignore and use default timeout value
+                    // ignore and use our own default of 1/2 hour
+                    timeout = DEFAULT_SESSION_TIMEOUT;
                 }
             }
         }

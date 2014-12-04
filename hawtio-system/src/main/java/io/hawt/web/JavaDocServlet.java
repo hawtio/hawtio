@@ -1,5 +1,7 @@
 package io.hawt.web;
 
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -8,8 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
 
 /**
  * A servlet for returning the javadoc files for a given set of maven coordinates and file paths
@@ -29,7 +29,7 @@ public class JavaDocServlet extends HttpServlet {
                 mbeanServer = ManagementFactory.getPlatformMBeanServer();
             }
             if (objectName == null) {
-                objectName = new ObjectName("org.fusesource.insight:type=LogQuery");
+                objectName = new ObjectName("io.fabric8.insight:type=LogQuery");
             }
         } catch (MalformedObjectNameException e) {
             throw new ServletException("Failed to initialise LogQuery MBean: " + e, e);

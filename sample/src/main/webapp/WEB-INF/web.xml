@@ -8,6 +8,13 @@
   <description>Example hawt.io</description>
   <display-name>Example hawt.io</display-name>
 
+  <env-entry>
+    <description>Enable/disable hawtio's authentication filter, value is really a boolean</description>
+    <env-entry-name>hawtio/authenticationEnabled</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>false</env-entry-value>
+  </env-entry>
+
   <servlet>
     <servlet-name>jolokia-agent</servlet-name>
     <servlet-class>org.jolokia.http.AgentServlet</servlet-class>
@@ -27,6 +34,25 @@
     <servlet-name>jolokia-proxy</servlet-name>
     <url-pattern>/proxy/*</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>kube-service</servlet-name>
+    <servlet-class>io.hawt.web.ServiceServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>kube-service</servlet-name>
+    <url-pattern>/service/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>kube-pod</servlet-name>
+    <servlet-class>io.hawt.web.PodServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>kube-pod</servlet-name>
+    <url-pattern>/pod/*</url-pattern>
+  </servlet-mapping>
+
 
   <servlet>
     <servlet-name>maven-source</servlet-name>
@@ -38,11 +64,32 @@
     <url-pattern>/javadoc/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>user</servlet-name>
+    <servlet-class>io.hawt.web.UserServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>user</servlet-name>
+    <url-pattern>/user/*</url-pattern>
+  </servlet-mapping>
+
+  <filter>
+    <filter-name>RedirectFilter</filter-name>
+    <filter-class>io.hawt.web.RedirectFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>RedirectFilter</filter-name>
+    <url-pattern>*</url-pattern>
+  </filter-mapping>
+
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
   <listener>
-    <listener-class>org.apache.aries.blueprint.web.BlueprintContextListener</listener-class>
+    <listener-class>io.hawt.blueprint.HawtioBlueprintContextListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>io.hawt.HawtioContextListener</listener-class>
   </listener>
 
   <context-param>

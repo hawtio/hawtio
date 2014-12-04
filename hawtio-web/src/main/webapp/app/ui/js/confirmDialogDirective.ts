@@ -93,12 +93,12 @@ module UI {
       okButtonText: '@',
       showOkButton: '@',
       cancelButtonText: '@',
-      onCancel: '&',
-      onOk: '&',
-      onClose: '&'
+      onCancel: '&?',
+      onOk: '&?',
+      onClose: '&?'
     };
 
-    public controller = ($scope, $element, $attrs, $transclude, $compile) => {
+    public controller = ["$scope", "$element", "$attrs", "$transclude", "$compile" ,($scope, $element, $attrs, $transclude, $compile) => {
 
       $scope.clone = null;
 
@@ -160,7 +160,7 @@ module UI {
         checkClosed();
       };
 
-    };
+    }];
 
     public constructor () {
 

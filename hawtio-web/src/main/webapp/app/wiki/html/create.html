@@ -1,0 +1,73 @@
+<div class="row-fluid" ng-controller="Wiki.CreateController">
+  <div class="row-fluid">
+    <div class="span12">
+      <form name="createForm"
+            novalidate
+            class="form-horizontal no-bottom-margin"
+            ng-submit="addAndCloseDialog(newDocumentName)">
+        <fieldset>
+
+          <div class="row-fluid">
+            <div class="span12">
+              <h4>Create Document</h4>
+            </div>
+          </div>
+
+          <div class="row-fluid">
+            <div class="span2">
+            </div>
+            <div class="span4">
+              <div hawtio-tree="createDocumentTree"
+                     hideRoot="true"
+                     onSelect="onCreateDocumentSelect"
+                     activateNodes="createDocumentTreeActivations"></div>
+            </div>
+            <div class="span4">
+              <div class="row-fluid">
+                <div class="well">
+                  {{selectedCreateDocumentTemplate.tooltip}}
+                </div>
+              </div>
+              <div class="row-fluid">
+                <div ng-show="fileExists.exists" class="alert">
+                  Please choose a different name as <b>{{fileExists.name}}</b> already exists
+                </div>
+                <div ng-show="fileExtensionInvalid" class="alert">
+                  {{fileExtensionInvalid}}
+                </div>
+                <div ng-show="!createForm.$valid" class="alert">
+                  {{selectedCreateDocumentTemplateInvalid}}
+                </div>
+                <div class="control-group">
+                  <label class="control-label" for="fileName">Name: </label>
+                  <div class="controls">
+                    <input name="fileName" id="fileName"
+                           class="input-xlarge"
+                           type="text"
+                           ng-pattern="selectedCreateDocumentTemplateRegex"
+                           ng-model="newDocumentName"
+                           placeholder="{{selectedCreateDocumentTemplate.exemplar}}">
+                  </div>
+                </div>
+              </div>
+              <div class="row-fluid">
+                <div simple-form data="formSchema" entity="formData" onSubmit="generate()"></div>
+              </div>
+              <div class="row-fluid">
+                <input class="btn btn-primary add pull-right"
+                       type="submit"
+                       ng-disabled="!selectedCreateDocumentTemplate.exemplar || !createForm.$valid"
+                       value="Create">
+                <span class="pull-right">&nbsp;</span>
+                <button class="btn btn-warning cancel pull-right" type="button" ng-click="cancel()">Cancel</button>
+              </div>
+            </div>
+            <div class="span2">
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+
+</div>

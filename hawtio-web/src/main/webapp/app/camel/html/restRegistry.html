@@ -1,0 +1,33 @@
+<div class="row-fluid" ng-controller="Camel.RestServiceController">
+
+  <div ng-show="selectedMBean">
+
+    <div class="row-fluid" ng-show="data.length > 0">
+      <div class="pull-right">
+        <form class="form-inline no-bottom-margin">
+          <fieldset>
+            <div class="control-group inline-block">
+              <input type="text" class="search-query" placeholder="Filter..."
+                     ng-model="gridOptions.filterOptions.filterText">
+            </div>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+
+    <div class="row-fluid" ng-show="data.length > 0">
+      <table class="table table-condensed table-striped" hawtio-simple-table="gridOptions"></table>
+    </div>
+    <div class="row-fluid well" ng-show="data.length == 0">
+      <form>
+        <p>There are no Rest Services registered in this CamelContext.</p>
+      </form>
+    </div>
+  </div>
+
+  <div ng-hide="selectedMBean">
+    <i class="icon-spinner icon-spin centered"></i>
+  </div>
+
+</div>
+

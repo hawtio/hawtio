@@ -1,4 +1,5 @@
 /// <reference path="activemqPlugin.ts"/>
+/// <reference path="../../fabric/js/fabricHelpers.ts"/>
 module ActiveMQ {
 
   _module.controller("ActiveMQ.BrokerDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", ($scope, $compile, $location, localStorage, jolokia, workspace) => {
@@ -97,7 +98,7 @@ module ActiveMQ {
           view += "&" + postfix;
         }
         log.info("Opening view " + view);
-        var path = url("/#" + view);
+        var path = Core.url("/#" + view);
         window.open(path, '_destination');
         window.focus();
         //$location.path(view);
@@ -216,7 +217,7 @@ module ActiveMQ {
         angular.forEach(value, (v, k) => {
           if (onlyShowKeys ? onlyShowKeys.indexOf(k) >= 0: ignoreKeys.indexOf(k) < 0) {
             var formattedValue = Core.humanizeValueHtml(v);
-            properties.push({key: humanizeValue(k), value: formattedValue});
+            properties.push({key: Core.humanizeValue(k), value: formattedValue});
           }
         });
         properties = properties.sortBy("key");

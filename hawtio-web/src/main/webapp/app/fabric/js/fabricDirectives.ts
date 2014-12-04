@@ -166,6 +166,9 @@ module Fabric {
         link: ($scope, $element, $attrs, $ctrl) => {
           $ctrl.$parsers.unshift(function(viewValue) {
             var found = $scope.child.rootContainers.indexOf(viewValue);
+            if (found === -1) {
+              found = $scope.allContainers.indexOf(viewValue);
+            }
             if (found !== -1) {
               // it is invalid, return undefined (no model update)
               $ctrl.$setValidity('taken', false);

@@ -8,7 +8,15 @@ module Insight {
   export var allContainers = { id: '-- all --' };
 
   export function hasInsight(workspace) {
-    return workspace.treeContainsDomainAndProperties('org.elasticsearch', {service: 'restjmx'});
+    return workspace.treeContainsDomainAndProperties('io.fabric8.insight', {type: 'Elasticsearch'});
+  }
+
+  export function hasKibana(workspace) {
+    return workspace.treeContainsDomainAndProperties('hawtio', {type: 'plugin', name: 'hawtio-kibana'});
+  }
+
+  export function hasEsHead(workspace) {
+    return workspace.treeContainsDomainAndProperties('hawtio', {type: 'plugin', name: 'hawtio-eshead'});
   }
 
   export function getInsightMetricsCollectorMBean(workspace) {

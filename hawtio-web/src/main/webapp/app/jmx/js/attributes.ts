@@ -10,12 +10,12 @@ module Jmx {
       displayName: 'Property',
       width: "27%",
       cellTemplate: '<div class="ngCellText" title="{{row.entity.attrDesc}}" ' +
-        'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="row.entity.getDashboardWidgets()"></div>{{row.entity.name}}</div>'},
+        'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="row.entity.getDashboardWidgets()"></div><a href="" ng-click="row.entity.onViewAttribute()">{{row.entity.name}}</a></div>'},
     {
       field: 'value',
       displayName: 'Value',
       width: "70%",
-      cellTemplate: '<div class="ngCellText" ng-click="row.entity.onViewAttribute()" title="{{row.entity.tooltip}}" ng-bind-html-unsafe="row.entity.summary"></div>'
+      cellTemplate: '<div class="ngCellText mouse-pointer" ng-click="row.entity.onViewAttribute()" title="{{row.entity.tooltip}}" ng-bind-html-unsafe="row.entity.summary"></div>'
     }
   ];
 
@@ -26,15 +26,18 @@ module Jmx {
     }
   ];
 
-  _module.controller("Jmx.AttributesController", ["$scope", "$element", "$location", "workspace", "jolokia", "jmxWidgets", "jmxWidgetTypes", "$templateCache", ($scope,
+  export var AttributesController = _module.controller("Jmx.AttributesController", ["$scope", "$element", "$location", "workspace", "jolokia", "jmxWidgets", "jmxWidgetTypes", "$templateCache", "localStorage", "$browser", ($scope,
                                        $element,
                                        $location,
                                        workspace:Workspace,
                                        jolokia,
                                        jmxWidgets,
                                        jmxWidgetTypes,
-                                       $templateCache) => {
+                                       $templateCache,
+                                       localStorage,
+                                        $browser) => {
     $scope.searchText = '';
+    $scope.nid = 'empty';
     $scope.selectedItems = [];
 
     $scope.lastKey = null;
@@ -72,6 +75,12 @@ module Jmx {
         'type': {
           description: 'Type',
           tooltip: 'Attribute type',
+          type: 'string',
+          readOnly: 'true'
+        },
+        'jolokia': {
+          description: 'Jolokia URL',
+          tooltip: 'Jolokia REST URL',
           type: 'string',
           readOnly: 'true'
         }
@@ -117,6 +126,8 @@ module Jmx {
         workspace.selection = null;
         $scope.lastKey = null;
       }
+      $scope.nid = $location.search()['nid'];
+      log.debug("nid: ", $scope.nid);
 
       setTimeout(updateTableContents, 50);
     });
@@ -158,7 +169,7 @@ module Jmx {
       if (mbean) {
         jolokia.setAttribute(mbean, key, value,
           onSuccess((response) => {
-              notification("success", "Updated attribute " + key);
+              Core.notification("success", "Updated attribute " + key);
             }
           ));
       }
@@ -173,6 +184,9 @@ module Jmx {
       $scope.entity["key"] = row.key;
       $scope.entity["description"] = row.attrDesc;
       $scope.entity["type"] = row.type;
+
+      var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
+      $scope.entity["jolokia"] = url + localStorage["url"] + "/read/" + workspace.getSelectedMBeanName() + "/" + $scope.entity["key"] ;
       $scope.entity["rw"] = row.rw;
       var type = asJsonSchemaType(row.type, row.key);
       var readOnly = !row.rw;
@@ -385,11 +399,21 @@ module Jmx {
       $scope.gridData = [];
       $scope.mbeanIndex = null;
       var mbean = workspace.getSelectedMBeanName();
-      var request = null;
+      var request = <any>null;
       var node = workspace.selection;
       if (node === null || angular.isUndefined(node) || node.key !== $scope.lastKey) {
         // cache attributes info, so we know if the attribute is read-only or read-write, and also the attribute description
         $scope.attributesInfoCache = null;
+
+        if(mbean == null) {
+          // in case of refresh
+          var _key = $location.search()['nid'];
+          var _node = workspace.keyToNodeMap[_key];
+          if (_node) {
+            mbean = _node.objectName;
+          }
+        }
+
         if (mbean) {
           var asQuery = (node) => {
             var path = escapeMBeanPath(node);
@@ -411,7 +435,7 @@ module Jmx {
 
       if (mbean) {
         request = { type: 'read', mbean: mbean };
-        if (node.key !== $scope.lastKey) {
+        if (node === null || angular.isUndefined(node) || node.key !== $scope.lastKey) {
           $scope.gridOptions.columnDefs = propertiesColumnDefs;
           $scope.gridOptions.enableRowClickSelection = false;
         }
@@ -507,7 +531,7 @@ module Jmx {
                   if (!map[key]) {
                     extraDefs.push({
                       field: key,
-                      displayName: key === '_id' ? 'Object name' : humanizeValue(key),
+                      displayName: key === '_id' ? 'Object name' : Core.humanizeValue(key),
                       visible: defaultSize === 0
                     });
                   }
@@ -555,7 +579,7 @@ module Jmx {
         $scope.gridOptions.enableRowClickSelection = false;
         var showAllAttributes = true;
         if (angular.isObject(data)) {
-          var properties = [];
+          var properties = Array();
           angular.forEach(data, (value, key) => {
             if (showAllAttributes || includePropertyValue(key, value)) {
               // always skip keys which start with _
@@ -573,7 +597,7 @@ module Jmx {
                 }
                 // the value must be string as the sorting/filtering of the table relies on that
                 var type = lookupAttributeType(key);
-                var data = {key: key, name: humanizeValue(key), value: safeNullAsString(value, type)};
+                var data = {key: key, name: Core.humanizeValue(key), value: safeNullAsString(value, type)};
 
                 generateSummaryAndDetail(key, data);
                 properties.push(data);
@@ -640,8 +664,8 @@ module Jmx {
         angular.forEach(keys, (key) => {
           var value = object[key];
           detailHtml += "<tr><td>"
-            + humanizeValue(key) + "</td><td>" + value + "</td></tr>";
-          summary += "" + humanizeValue(key) + ": " + value + "  "
+            + Core.humanizeValue(key) + "</td><td>" + value + "</td></tr>";
+          summary += "" + Core.humanizeValue(key) + ": " + value + "  "
         });
         detailHtml += "</table>";
         data.summary = summary;

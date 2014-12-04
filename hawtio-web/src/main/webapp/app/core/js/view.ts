@@ -7,7 +7,7 @@ module Core {
   // NOTE - $route is brought in here to ensure the factory for that service
   // has been called, otherwise the ng-include directive doesn't show the partial
   // after a refresh until you click a top-level link.
-  _module.controller("Core.ViewController", ["$scope", "$route", "$location", "layoutTree", "layoutFull", "viewRegistry", ($scope, $route, $location:ng.ILocationService, layoutTree, layoutFull, viewRegistry) => {
+  export var ViewController = _module.controller("Core.ViewController", ["$scope", "$route", "$location", "layoutTree", "layoutFull", "viewRegistry", ($scope, $route, $location:ng.ILocationService, layoutTree, layoutFull, viewRegistry) => {
 
     findViewPartial();
 

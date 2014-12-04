@@ -1,13 +1,10 @@
 <div ng-controller="Log.LogController">
   <div ng-hide="inDashboard" class="logbar">
     <div class="logbar-container">
-      <div class="control-group inline-block log-filter">
-        <input class="search-query" type="text" id="logSearch" ng-model="searchText" placeholder="Filter logs...">
-      </div>
-
+      <hawtio-filter ng-model="searchText" placeholder="Filter logs..." save-as="logs-text-filter"></hawtio-filter>
       <div class="control-group inline-block">
         <form class="form-inline no-bottom-margin">
-          <label>Level: </label>
+          <label>&nbsp;&nbsp;&nbsp;Level: </label>
 
           <select ng-model="filter.logLevelQuery" id="logLevelQuery">
             <option value="" selected="selected">None...</option>

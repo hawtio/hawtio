@@ -37,6 +37,13 @@
   </env-entry>
 
   <env-entry>
+    <description>AuthenticationContainerDiscovery classes divided by comma, used to discover container environments</description>
+    <env-entry-name>hawtio/authenticationContainerDiscoveryClasses</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery</env-entry-value>
+  </env-entry>
+
+  <env-entry>
     <description>Whether or not to check and see if branding should be enabled, value is really a boolean</description>
     <env-entry-name>hawtio/useBranding</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
@@ -56,6 +63,15 @@
     <env-entry-type>java.lang.String</env-entry-type>
     <env-entry-value></env-entry-value>
   </env-entry>
+
+  <filter>
+    <filter-name>SessionExpiryFilter</filter-name>
+    <filter-class>io.hawt.web.SessionExpiryFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>SessionExpiryFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
   <filter>
     <filter-name>cache</filter-name>
@@ -96,6 +112,13 @@
     <filter-name>AuthenticationFilter</filter-name>
     <url-pattern>/auth/*</url-pattern>
   </filter-mapping>
+
+  <!-- plugin discovery needs to be authenticated for rbac in karaf 3.x onwards
+       or we need a wait to have hawtio in the whitelist out of the box
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/plugin/*</url-pattern>
+  </filter-mapping> -->
   <!--
        don't want to try and interpret the authentication header
        intended for the proxy
@@ -137,17 +160,25 @@
     <servlet-name>jolokia-proxy</servlet-name>
     <url-pattern>/proxy/*</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>kube-service</servlet-name>
+    <servlet-class>io.hawt.web.ServiceServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>kube-service</servlet-name>
+    <url-pattern>/service/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>kube-pod</servlet-name>
+    <servlet-class>io.hawt.web.PodServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>kube-pod</servlet-name>
+    <url-pattern>/pod/*</url-pattern>
+  </servlet-mapping>
 
-    <servlet>
-        <servlet-name>springBatch</servlet-name>
-        <servlet-class>io.hawt.web.SpringBatchConfigServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>springBatch</servlet-name>
-        <url-pattern>/springBatch/*</url-pattern>
-    </servlet-mapping>
-    
   <servlet>
     <servlet-name>file-upload</servlet-name>
     <servlet-class>io.hawt.web.UploadServlet</servlet-class>
@@ -222,11 +253,11 @@
   </servlet-mapping>
 -->
 
-  <servlet>
-    <servlet-name>maven-source</servlet-name>
-    <servlet-class>io.hawt.web.JavaDocServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
+    <servlet>
+      <servlet-name>maven-source</servlet-name>
+      <servlet-class>io.hawt.web.JavaDocServlet</servlet-class>
+      <load-on-startup>1</load-on-startup>
+    </servlet>
     <servlet-mapping>
         <servlet-name>maven-source</servlet-name>
         <url-pattern>/javadoc/*</url-pattern>
@@ -240,6 +271,16 @@
         <servlet-name>contextFormatter</servlet-name>
         <url-pattern>/contextFormatter/*</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>gitServlet</servlet-name>
+        <servlet-class>io.hawt.web.GitServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>gitServlet</servlet-name>
+        <url-pattern>/git/*</url-pattern>
+    </servlet-mapping>
+
     <listener>
         <listener-class>io.hawt.HawtioContextListener</listener-class>
     </listener>
@@ -248,8 +289,14 @@
         <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
     </listener>
 
+    <error-page>
+      <error-code>404</error-code>
+      <location>/index.html</location>
+    </error-page>
+
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+
 </web-app>
 

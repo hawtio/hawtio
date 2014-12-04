@@ -1,7 +1,7 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.BrowseEndpointController", ["$scope", "$routeParams", "workspace", "jolokia", ($scope, $routeParams, workspace:Workspace, jolokia) => {
+  export var BrowseEndpointController = _module.controller("Camel.BrowseEndpointController", ["$scope", "$routeParams", "workspace", "jolokia", ($scope, $routeParams, workspace:Workspace, jolokia) => {
     $scope.workspace = workspace;
 
     $scope.forwardDialog = new UI.Dialog();
@@ -21,31 +21,16 @@ module Camel {
       loadData();
     });
 
-
     // TODO can we share these 2 methods from activemq browse / camel browse / came trace?
     $scope.openMessageDialog = (message) => {
-      var idx = Core.pathGet(message, ["rowIndex"]);
-      $scope.selectRowIndex(idx);
+      ActiveMQ.selectCurrentMessage(message, "id", $scope);
       if ($scope.row) {
         $scope.mode = CodeEditor.detectTextFormat($scope.row.body);
         $scope.showMessageDetails = true;
       }
     };
 
-    $scope.selectRowIndex = (idx) => {
-      $scope.rowIndex = idx;
-      var selected = $scope.gridOptions.selectedItems;
-      selected.splice(0, selected.length);
-      if (idx >= 0 && idx < $scope.messages.length) {
-        $scope.row = $scope.messages[idx];
-        if ($scope.row) {
-          selected.push($scope.row);
-        }
-      } else {
-        $scope.row = null;
-      }
-    };
-
+    ActiveMQ.decorate($scope);
 
     $scope.forwardMessagesAndCloseForwardDialog = () => {
       var mbean = getSelectionCamelContextMBean(workspace);
@@ -82,7 +67,7 @@ module Camel {
         $scope.messageDialog.close();
       }
       $scope.gridOptions.selectedItems.splice(0);
-      notification("success", $scope.message);
+      Core.notification("success", $scope.message);
       setTimeout(loadData, 50);
     }
 

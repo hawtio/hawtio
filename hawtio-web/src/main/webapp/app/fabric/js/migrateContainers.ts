@@ -77,13 +77,13 @@ module Fabric {
       var containerIds = $scope.selectedContainers.map((container) => { return container.id });
       var versionId = $scope.selectedVersion[0].id;
 
-      notification('info', "Moving containers to version " + versionId);
+      Core.notification('info', "Moving containers to version " + versionId);
       $location.path("/fabric/containers");
 
       migrateContainers(jolokia, versionId, containerIds, () => {
-        notification('success', "Successfully migrated containers");
+        Core.notification('success', "Successfully migrated containers");
       }, (response) => {
-        notification('error', "Failed to migrate containers due to " + response.error);
+        Core.notification('error', "Failed to migrate containers due to " + response.error);
       });
     };
 

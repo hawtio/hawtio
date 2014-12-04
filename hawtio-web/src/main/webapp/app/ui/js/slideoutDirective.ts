@@ -44,28 +44,23 @@ module UI {
           $scope.body.html($compile($scope.clone.html())($scope.$parent));
         }
       });
+
+      $scope.hidePanel = ($event) => {
+        log.debug("Event: ", $event);
+        $scope.show = false;
+
+      };
     }];
 
     public link = ($scope, $element, $attrs) => {
-
-      $scope.element = $($element);
-
-      $scope.element.blur(function() {
-        $scope.show = false;
-        Core.$apply($scope);
-        return false;
-      });
-
       $scope.$watch('show', function() {
         if ($scope.show) {
-          $scope.element.addClass('out');
-          $scope.element.focus();
+          $element.addClass('out');
+          $element.focus();
         } else {
-          $scope.element.removeClass('out');
+          $element.removeClass('out');
         }
       });
-
-
     };
 
 

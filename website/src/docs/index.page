@@ -34,6 +34,14 @@ title: read up on hawtio!
       </dl>
       <dl>
         <dt>
+          <a href="/changelog.html">Change Log</a>
+        </dt>
+        <dd>
+          View the latest release details.
+        </dd>
+      </dl>
+      <dl>
+        <dt>
           <a href="/plugins/index.html">Plugins</a>
         </dt>
         <dd>

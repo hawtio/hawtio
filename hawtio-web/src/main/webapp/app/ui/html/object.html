@@ -1,0 +1,82 @@
+<div>
+  <script type="text/ng-template" id="primitiveValueTemplate.html">
+    <span ng-show="data" object-path="{{path}}">{{data}}</span>
+  </script>
+  <script type="text/ng-template" id="arrayValueListTemplate.html">
+    <ul class="zebra-list" ng-show="data" object-path="{{path}}">
+      <li ng-repeat="item in data">
+        <div hawtio-object="item" config="config" path="path" row="row"></div>
+      </li>
+    </ul>
+  </script>
+  <script type="text/ng-template" id="arrayValueTableTemplate.html">
+    <table class="table table-striped" object-path="{{path}}">
+      <thead>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </script>
+  <script type="text/ng-template" id="dateAttributeTemplate.html">
+    <dl class="" ng-show="data" object-path="{{path}}">
+      <dt>{{key}}</dt>
+      <dd ng-show="data && data.getTime() > 0">{{data | date:"EEEE, MMMM dd, yyyy 'at' hh : mm : ss a Z"}}</dd>
+      <dd ng-show="data && data.getTime() <= 0"></dd>
+
+    </dl>
+  </script>
+  <script type="text/ng-template" id="dateValueTemplate.html">
+    <span ng-show="data">
+      <span ng-show="data && data.getTime() > 0" object-path="{{path}}">{{data | date:"EEEE, MMMM dd, yyyy 'at' hh : mm : ss a Z"}}</span>
+      <span ng-show="data && data.getTime() <= 0" object-path="{{path}}"></span>
+    </span>
+  </script>
+  <script type="text/ng-template" id="primitiveAttributeTemplate.html">
+    <dl class="" ng-show="data" object-path="{{path}}">
+      <dt>{{key}}</dt>
+      <dd>{{data}}</dd>
+    </dl>
+  </script>
+  <script type="text/ng-template" id="objectAttributeTemplate.html">
+    <dl class="" ng-show="data" object-path="{{path}}">
+      <dt>{{key}}</dt>
+      <dd>
+        <div hawtio-object="data" config="config" path="path" row="row"></div>
+      </dd>
+    </dl>
+  </script>
+  <script type="text/ng-template" id="arrayAttributeListTemplate.html">
+    <dl class="" ng-show="data" object-path="{{path}}">
+      <dt>{{key}}</dt>
+      <dd>
+        <ul class="zebra-list">
+          <li ng-repeat="item in data" ng-init="path = path + '/' + $index">
+            <div hawtio-object="item" config="config" path="path" row="row"></div>
+          </li>
+        </ul>
+      </dd>
+    </dl>
+  </script>
+  <script type="text/ng-template" id="arrayAttributeTableTemplate.html">
+    <dl class="" ng-show="data" object-path="{{path}}">
+      <dt>{{key}}</dt>
+      <dd>
+        <table class="table table-striped">
+          <thead>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </dd>
+    </dl>
+  </script>
+  <script type="text/ng-template" id="headerTemplate.html">
+    <th object-path="{{path}}">{{key}}</th>
+  </script>
+  <script type="text/ng-template" id="rowTemplate.html">
+    <tr object-path="{{path}}"></tr>
+  </script>
+  <script type="text/ng-template" id="cellTemplate.html">
+    <td object-path="{{path}}"></td>
+  </script>
+</div>

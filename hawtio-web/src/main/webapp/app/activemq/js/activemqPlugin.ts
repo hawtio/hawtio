@@ -2,7 +2,8 @@
  * @module ActiveMQ
  * @main ActiveMQ
  */
-/// <reference path="activemqHelpers.ts"/>
+/// <reference path="./activemqHelpers.ts"/>
+/// <reference path="../../core/js/corePlugin.ts"/>
 module ActiveMQ {
 
   export var pluginName = 'activemq';
@@ -102,13 +103,13 @@ module ActiveMQ {
     workspace.subLevelTabs.push({
       content: '<i class="icon-envelope"></i> Browse',
       title: "Browse the messages on the queue",
-      isValid: (workspace:Workspace) => isQueue(workspace),
+      isValid: (workspace:Workspace) => isQueue(workspace) && workspace.hasInvokeRights(workspace.selection, "browse()"),
       href: () => "#/activemq/browseQueue"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-pencil"></i> Send',
       title: "Send a message to this destination",
-      isValid: (workspace:Workspace) => isQueue(workspace) || isTopic(workspace),
+      isValid: (workspace:Workspace) => (isQueue(workspace) || isTopic(workspace)) && workspace.hasInvokeRights(workspace.selection, "sendTextMessage(java.util.Map,java.lang.String,java.lang.String,java.lang.String)"),
       href: () => "#/activemq/sendMessage"
     });
     workspace.subLevelTabs.push({
@@ -120,31 +121,31 @@ module ActiveMQ {
     workspace.subLevelTabs.push({
       content: '<i class="icon-plus"></i> Create',
       title: "Create a new destination",
-      isValid: (workspace:Workspace) => isBroker(workspace),
+      isValid: (workspace:Workspace) => isBroker(workspace) && workspace.hasInvokeRights(getBroker(workspace), "addQueue", "addTopic"),
       href: () => "#/activemq/createDestination"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-plus"></i> Create',
       title: "Create a new queue",
-      isValid: (workspace:Workspace) => isQueuesFolder(workspace),
+      isValid: (workspace:Workspace) => isQueuesFolder(workspace) && workspace.hasInvokeRights(getBroker(workspace), "addQueue"),
       href: () => "#/activemq/createQueue"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-plus"></i> Create',
       title: "Create a new topic",
-      isValid: (workspace:Workspace) => isTopicsFolder(workspace),
+      isValid: (workspace:Workspace) => isTopicsFolder(workspace) && workspace.hasInvokeRights(getBroker(workspace), "addQueue"),
       href: () => "#/activemq/createTopic"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-remove"></i> Delete Topic',
       title: "Delete this topic",
-      isValid: (workspace:Workspace) => isTopic(workspace),
+      isValid: (workspace:Workspace) => isTopic(workspace) && workspace.hasInvokeRights(getBroker(workspace), "removeTopic"),
       href: () => "#/activemq/deleteTopic"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-remove"></i> Delete',
       title: "Delete or purge this queue",
-      isValid: (workspace:Workspace) => isQueue(workspace),
+      isValid: (workspace:Workspace) => isQueue(workspace) && workspace.hasInvokeRights(getBroker(workspace), "removeQueue"),
       href: () => "#/activemq/deleteQueue"
     });
     workspace.subLevelTabs.push({
@@ -187,7 +188,7 @@ module ActiveMQ {
       }
     }
 
-    function setConsumerType(node) {
+    function setConsumerType(node:Core.Folder) {
       if (node) {
         var parent = node.parent;
         var entries = node.entries;
@@ -200,7 +201,7 @@ module ActiveMQ {
           var connectorName = entries["connectorName"];
           if (connectorName && !node.icon) {
             // lets default a connector icon
-            node.icon = url("/img/icons/activemq/connector.png");
+            node.icon = Core.url("/img/icons/activemq/connector.png");
           }
         }
         angular.forEach(node.children, (child) => setConsumerType(child));
@@ -209,6 +210,24 @@ module ActiveMQ {
   }]);
 
   hawtioPluginLoader.addModule(pluginName);
+
+  export function getBroker(workspace:Workspace) {
+    var answer:Core.Folder = null;
+    var selection = workspace.selection;
+    if (selection) {
+      answer = <Core.Folder> selection.findAncestor((current:Core.Folder) => {
+        // log.debug("Checking current: ", current);
+        var entries = <any> current.entries;
+        if (entries) {
+          return (('type' in entries && entries.type === 'Broker') && 'brokerName' in entries && !('destinationName' in entries) && !('destinationType' in entries))
+        } else {
+          return false;
+        }
+      });
+      // log.debug("Found ancestor: ", answer);
+    }
+    return answer;
+  }
 
   export function isQueue(workspace:Workspace) {
     //return workspace.selectionHasDomainAndType(jmxDomain, 'Queue');

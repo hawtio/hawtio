@@ -11,6 +11,7 @@
       <ext:property name="hawtio.config.pullTimePeriod" value="60000"/>
       <ext:property name="hawtio.config.cloneOnStartup" value="true"/>
       <ext:property name="hawtio.config.remote" value="origin"/>
+      <ext:property name="hawtio.config.importURLs" value=""/>
     </ext:default-properties>
   </ext:property-placeholder>
 
@@ -22,6 +23,7 @@
     <property name="pullTimePeriod" value="${hawtio.config.pullTimePeriod}"/>
     <property name="cloneRemoteRepoOnStartup" value="${hawtio.config.cloneOnStartup}"/>
     <property name="remote" value="${hawtio.config.remote}"/>
+    <property name="initialImportURLs" value="${hawtio.config.importURLs}"/>
   </bean>
 
 </blueprint>

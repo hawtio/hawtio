@@ -1,0 +1,15 @@
+{
+  "name": "hawtio-api-docs",
+  "version": "1.5.0",
+  "description": "hawtio :: hawtio-api-docs",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-cli": "~0.1.13",
+    "grunt-typedoc": "~0.2.1",
+    "grunt-contrib-copy": "~0.6.0",
+    "load-grunt-tasks": "~0.6.0",
+    "grunt-cache-bust": "~0.4.4",
+    "grunt-express": "~1.4.1"
+  }
+}

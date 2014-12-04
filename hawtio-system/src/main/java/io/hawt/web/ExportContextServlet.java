@@ -1,5 +1,13 @@
 package io.hawt.web;
 
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Map;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.json.simple.JSONArray;
@@ -7,14 +15,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Map;
 
 public class ExportContextServlet extends HttpServlet {
     public static final String RENDER_JSON_ERROR_MESSAGES = "ERROR_MESSAGES";
@@ -30,7 +30,7 @@ public class ExportContextServlet extends HttpServlet {
         String exportCsvString = "Content not available";
         if ((serverUrl != null && !serverUrl.isEmpty())) {
             if ((jobExecutionId != null && !jobExecutionId.isEmpty())) {
-                jsonStringResponse = executeHttpGetRequest(getServerUrl(serverUrl) + "jobs/executions/" + jobExecutionId + "/context.json");
+                jsonStringResponse = executeHttpGetRequest(getServerUrl(serverUrl) + "jobs/executions/" + jobExecutionId + "/execution-context.json");
                 JSONObject jsonObject = parseStringToJSON(jsonStringResponse);
 
                 Object entryObject = getEntryObject(jsonObject);
@@ -70,9 +70,9 @@ public class ExportContextServlet extends HttpServlet {
         if ((serverUrl != null && !serverUrl.isEmpty())) {
             if ((jobExecutionId != null && !jobExecutionId.isEmpty())) {
                 if (stepId != null && !stepId.isEmpty()) {
-                    jsonStringResponse = executeHttpGetRequest(getServerUrl(serverUrl) + "jobs/executions/" + jobExecutionId + "/steps/" + stepId + "/context.json");
+                    jsonStringResponse = executeHttpGetRequest(getServerUrl(serverUrl) + "jobs/executions/" + jobExecutionId + "/steps/" + stepId + "/execution-context.json");
                 } else {
-                    jsonStringResponse = executeHttpGetRequest(getServerUrl(serverUrl) + "jobs/executions/" + jobExecutionId + "/context.json");
+                    jsonStringResponse = executeHttpGetRequest(getServerUrl(serverUrl) + "jobs/executions/" + jobExecutionId + "/execution-context.json");
                 }
                 JSONObject jsonObject = parseStringToJSON(jsonStringResponse);
                 Object entryObject = (stepId != null && !stepId.isEmpty()) ? getEntryObject(jsonObject, "stepExecutionContext") : getEntryObject(jsonObject);

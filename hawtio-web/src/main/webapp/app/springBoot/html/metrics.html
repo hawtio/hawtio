@@ -1,0 +1,28 @@
+<div class="row-fluid" ng-controller="SpringBoot.MetricsController">
+
+    <p>
+        {{loadingError}}
+    </p>
+
+    <script type="text/ng-template" id="metricDetails">
+        <table>
+            <tbody>
+            <tr>
+                <td>Metric code</td>
+                <td>{{row.entity.code}}</td>
+            </tr>
+            <tr>
+                <td>Metric name</td>
+                <td>{{row.entity.name}}</td>
+            </tr>
+            <tr>
+                <td>Current value</td>
+                <td>{{row.entity.value}}</td>
+            </tr>
+            </tbody>
+            </table>
+    </script>
+
+    <table class="table table-condensed table-striped" hawtio-simple-table="metricsGridOptions"></table>
+
+</div>

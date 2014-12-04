@@ -1,0 +1,45 @@
+<div class="row-fluid" ng-controller="SpringBoot.BeansController">
+
+    <p>
+        {{loadingError}}
+    </p>
+
+    <script type="text/ng-template" id="beansDetails">
+        <table>
+            <tbody>
+            <tr>
+                <td>Name</td>
+                <td>{{bean.bean}}</td>
+            </tr>
+            <tr>
+                <td>Type:</td>
+                <td>{{bean.type}}</td>
+            </tr>
+            <tr>
+                <td>Scope</td>
+                <td>{{bean.scope}}</td>
+            </tr>
+            <tr>
+                <td>Resource:</td>
+                <td>{{bean.resource}}</td>
+            </tr>
+            <tr>
+                <td>Depends on:</td>
+                <td>{{bean.dependencies}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </script>
+
+    <table class="table table-condensed table-striped">
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+        </tr>
+        <tr ng-repeat="bean in beans">
+            <td hawtio-template-popover content="beansDetails" title="Bean details">{{bean.bean}}</td>
+            <td hawtio-template-popover content="beansDetails" title="Bean details">{{bean.type}}</td>
+        </tr>
+    </table>
+
+</div>

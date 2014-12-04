@@ -2,7 +2,7 @@
 
 This plugin provides an easy way, given a [JSON Schema](http://json-schema.org/) model of generating a form with 2 way binding to some JSON data.
 
-For an example of it in action, see the [test.html](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/forms/html/test.html) or run it via [http://localhost:8080/hawtio/#/forms/test](http://localhost:8080/hawtio/#/forms/test).
+For an example of it in action, see the [test.html](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/forms/html/test.html) or run it via [http://localhost:8282/hawtio/#/forms/test](http://localhost:8282/hawtio/#/forms/test).
 
 ## Customizing the UI with tabs
 
@@ -53,6 +53,21 @@ If you wish to specify a custom label for a property (as by default it will just
    }
 
 The **label** and **tooltip** properties are not part of JSON Schema; but an extension like the **tabs** property above.
+
+### Disabling the 'humanize' of default labels
+
+If your schema doesn't have actual labels the default behaviour is to take the property keys and to _humanize_ them; to turn camelCaseWords into "Camel case words" and so forth.
+
+However if you wish to preserve exactly the keys/ids of the model on the form, you can specify the **disableHumanizeLabel** flag on the schema...
+
+        schema: {
+          disableHumanizeLabel: true
+          properties: {
+            foo: {
+              type: "string",
+            }
+          }
+        }
 
 ## Customising the element or attributes of the control
 

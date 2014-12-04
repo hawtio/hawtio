@@ -213,7 +213,7 @@ module JUnit {
         $scope.testResults = inProgressStatus.result;
 
         // publish notification
-        notification(notificationClass, message);
+        Core.notification(notificationClass, message);
 
         Core.$apply($scope);
       }

@@ -13,7 +13,6 @@ Check out <a class="btn btn-primary btn-large" href="http://hawt.io/building/ind
 You may want to check out:
 
 * [Current hawtio plugins](http://hawt.io/plugins/index.html)
-* [Hawtio AngularJS Directives](http://hawt.io/directives/)
 * [External AngularJS Directives](http://hawt.io/developers/directives.html)
 * [How plugins work](http://hawt.io/plugins/howPluginsWork.html)
 
@@ -21,6 +20,7 @@ You may want to check out:
 
 The following are recommended if you want to contribute to the code
 
+* [hawtio Typescript API documentation](http://hawt.io/ts-api/index.html) Typedoc output for all of the typescript code on hawtio's master branch
 * [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) as this has TypeScript support and is the daddy of IDEs!
 * [There are other TypeScript plugins](http://blogs.msdn.com/b/interoperability/archive/2012/10/01/sublime-text-vi-emacs-typescript-enabled.aspx) if you prefer Sublime, Emacs or VIM. (Unfortunately we're not aware of an eclipse plugin yet).
 * [AngularJS plugin for IDEA](http://plugins.jetbrains.com/plugin/?id=6971) if you use [IDEA](http://www.jetbrains.com/idea/) then this plugin really helps work with Angular JS

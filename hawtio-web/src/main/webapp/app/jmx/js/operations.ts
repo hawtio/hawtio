@@ -2,13 +2,19 @@
 * @module Jmx
 */
 /// <reference path="./jmxPlugin.ts"/>
+/// <reference path="../../core/js/corePlugin.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
+/// <reference path="../../ui/js/CodeEditor.ts"/>
 module Jmx {
 
   // IOperationControllerScope
-  _module.controller("Jmx.OperationController", ["$scope", "workspace", "jolokia", "$timeout", ($scope,
+  _module.controller("Jmx.OperationController", ["$scope", "workspace", "jolokia", "$timeout", "$location", "localStorage", "$browser", ($scope,
                                       workspace:Workspace,
                                       jolokia,
-                                      $timeout) => {
+                                      $timeout,
+                                      $location,
+                                      localStorage,
+                                      $browser) => {
     $scope.item = $scope.selectedOperation;
     $scope.title = $scope.item.humanReadable;
     $scope.desc = $scope.item.desc;
@@ -20,6 +26,9 @@ module Jmx {
       properties: {},
       description: $scope.objectName + "::" + $scope.item.name
     };
+
+    var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
+    $scope.jolokiaUrl = url + localStorage["url"] + "/exec/" + workspace.getSelectedMBeanName() + "/" + $scope.item.name;
 
     $scope.item.args.forEach((arg) => {
       $scope.formConfig.properties[arg.name] = {
@@ -148,7 +157,7 @@ module Jmx {
   _module.controller("Jmx.OperationsController", ["$scope", "workspace", "jolokia", "rbacACLMBean", "$templateCache", ($scope,
                                        workspace:Workspace,
                                        jolokia,
-                                       rbacACLMBean,
+                                       rbacACLMBean:ng.IPromise<string>,
                                        $templateCache) => {
 
     $scope.operations = {};
@@ -186,7 +195,7 @@ module Jmx {
       }
     });
 
-    var fetch = Core.throttled(() => {
+    var fetch = <() => void>Core.throttled(() => {
       var node = workspace.selection;
       if (!node) {
         return;
@@ -211,7 +220,7 @@ module Jmx {
       for (var item in value) {
         item = "" + item;
         value[item].name = item;
-        value[item].humanReadable = humanizeValue(item);
+        value[item].humanReadable = Core.humanizeValue(item);
       }
       return value;
     }
@@ -262,24 +271,28 @@ module Jmx {
         map[objectName].push(value.name);
       });
 
-      jolokia.request({
-        type: 'exec',
-        mbean: rbacACLMBean,
-        operation: 'canInvoke(java.util.Map)',
-        arguments: [map]
-      }, onSuccess((response) => {
-        var map = response.value;
-        angular.forEach(map[objectName], (value, key) => {
-          operations[key]['canInvoke'] = value['CanInvoke'];
-        });
-        //log.debug("Got operations: ", $scope.operations);
-        Core.$apply($scope);
-      }, {
-        error: (response) => {
-          // silently ignore
+      rbacACLMBean.then((rbacACLMBean) => {
+        jolokia.request({
+          type: 'exec',
+          mbean: rbacACLMBean,
+          operation: 'canInvoke(java.util.Map)',
+          arguments: [map]
+        }, onSuccess((response) => {
+          var map = response.value;
+          angular.forEach(map[objectName], (value, key) => {
+            operations[key]['canInvoke'] = value['CanInvoke'];
+          });
+          log.debug("Got operations: ", $scope.operations);
           Core.$apply($scope);
-        }
-      }));
+        }, {
+          error: (response) => {
+            // silently ignore
+            log.debug("Failed to fetch ACL for operations: ", response);
+            Core.$apply($scope);
+          }
+        }));
+      });
+
     }
 
     function render(response) {
@@ -296,11 +309,11 @@ module Jmx {
         }
       });
       $scope.operations = sanitize(answer);
-      if (Core.isBlank(rbacACLMBean) || $scope.isOperationsEmpty()) {
+      if ($scope.isOperationsEmpty()) {
         Core.$apply($scope);
-        return;
       } else {
         fetchPermissions($scope.objectName, $scope.operations);
+        Core.$apply($scope);
       }
     }
 

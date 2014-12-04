@@ -30,7 +30,7 @@ module Site {
 
     /*
       helpRegistry.addUserDoc('log', 'app/log/doc/help.md', () => {
-      return workspace.treeContainsDomainAndProperties('org.fusesource.insight', {type: 'LogQuery'});
+      return workspace.treeContainsDomainAndProperties('io.fabric8.insight', {type: 'LogQuery'});
       });
 
       */

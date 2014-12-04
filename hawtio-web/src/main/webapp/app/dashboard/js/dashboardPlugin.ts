@@ -41,7 +41,7 @@ module Dashboard {
   });
 
 
-  _module.run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
+  _module.run(["$location", "workspace", "viewRegistry", "helpRegistry", ($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry) => {
     viewRegistry['dashboard'] = 'app/dashboard/html/layoutDashboard.html';
     helpRegistry.addUserDoc('dashboard', 'app/dashboard/doc/help.md');
 
@@ -54,7 +54,7 @@ module Dashboard {
       isActive: (workspace: Workspace) => workspace.isTopTabActive("dashboard")
     });
 
-  });
+  }]);
 
   hawtioPluginLoader.addModule(pluginName);
 }

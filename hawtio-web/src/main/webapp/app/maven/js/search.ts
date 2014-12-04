@@ -98,7 +98,7 @@ module Maven {
                   onSuccess(render));
         }
       } else {
-        notification("error", "Cannot find the Maven Indexer MBean!");
+        Core.notification("error", "Cannot find the Maven Indexer MBean!");
       }
     };
 

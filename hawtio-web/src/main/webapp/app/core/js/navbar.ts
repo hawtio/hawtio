@@ -1,10 +1,26 @@
+/// <reference path="corePlugin.ts"/>
+/// <reference path="preferenceHelpers.ts"/>
+/// <reference path="../../perspective/js/perspectiveHelpers.ts"/>
 /**
  * @module Core
  */
-/// <reference path="corePlugin.ts"/>
 module Core {
 
-  _module.controller("Core.NavBarController", ["$scope", "$location", "workspace", "$route", "jolokia", "localStorage", ($scope, $location:ng.ILocationService, workspace:Workspace, $route, jolokia, localStorage) => {
+
+  export interface NavBarViewCustomLink {
+    title: string;
+    icon: string;
+    href: string;
+    action: () => void;
+  }
+
+  export interface NavBarViewCustomLinks {
+    list: Array<NavBarViewCustomLink>;
+    dropDownLabel: string;
+  }
+
+
+  export var NavBarController = _module.controller("Core.NavBarController", ["$scope", "$location", "workspace", "$route", "jolokia", "localStorage", "NavBarViewCustomLinks", ($scope, $location:ng.ILocationService, workspace:Workspace, $route, jolokia, localStorage, NavBarViewCustomLinks:Core.NavBarViewCustomLinks) => {
 
     $scope.hash = workspace.hash();
     $scope.topLevelTabs = [];
@@ -13,13 +29,21 @@ module Core {
     $scope.localStorage = localStorage;
     $scope.recentConnections = [];
 
+    $scope.goTo = (destination) => {
+      //Logger.debug("going to: " + destination);
+      $location.url(destination);
+    };
+
     $scope.$watch('localStorage.recentConnections', (newValue, oldValue) => {
       $scope.recentConnections = Core.getRecentConnections(localStorage);
-      log.debug("recent containers: ", $scope.recentConnections);
+      //Logger.debug("recent containers: ", $scope.recentConnections);
     });
 
     $scope.openConnection = (connection) => {
-      window.open(connection.url);
+      var connectOptions = Core.getConnectOptions(connection);
+      if (connectOptions) {
+        Core.connectToServer(localStorage, connectOptions);
+      }
     };
 
     $scope.goHome = () => {
@@ -121,10 +145,11 @@ module Core {
       if (angular.isString(nav)) {
         href = nav;
       } else {
-        href = nav.href();
+        href = angular.isObject(nav) ? nav.href() : null;
       }
+      href = href || "";
       var removeParams = ['tab', 'nid', 'chapter', 'pref', 'q'];
-      if (!includePerspective) {
+      if (!includePerspective && href) {
         if (href.indexOf("?p=") >= 0 || href.indexOf("&p=") >= 0) {
           removeParams.push("p");
         }
@@ -185,11 +210,17 @@ module Core {
       return tab ? tab['content'] : "";
     };
 
+    $scope.navBarViewCustomLinks = NavBarViewCustomLinks;
+
+    $scope.isCustomLinkSet = () => {
+      return $scope.navBarViewCustomLinks.list.length;
+    }
+
     function reloadPerspective() {
       var perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
       var currentId = Perspective.currentPerspectiveId($location, workspace, jolokia, localStorage);
 
-      console.log("Reloading current perspective: " + currentId);
+      // console.log("Reloading current perspective: " + currentId);
 
       // any tabs changed
       var newTopLevelTabs = Perspective.getTopLevelTabsForPerspective($location, workspace, jolokia, localStorage);
@@ -204,10 +235,19 @@ module Core {
           return p['id'] === currentId;
         });
 
-        console.log("Refreshing top level tabs for current perspective: " + currentId);
+        // console.log("Refreshing top level tabs for current perspective: " + currentId);
         // make sure to update the UI as the top level tabs changed
         Core.$apply($scope);
       }
+    }
+  }]);
+
+  // service that can be used by other modules to add additional links in top right corner
+  _module.service("NavBarViewCustomLinks", ['$location', '$rootScope', ($location, $rootScope) => {
+    //return a Map<String, Core.NavBarViewCustomLink>
+    return <NavBarViewCustomLinks>{
+      list: [],
+      dropDownLabel: "Extra"
     }
   }]);
 

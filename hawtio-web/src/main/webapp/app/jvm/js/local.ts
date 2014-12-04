@@ -4,15 +4,24 @@
 /// <reference path="./jvmPlugin.ts"/>
 module JVM {
 
-  _module.controller("JVM.JVMsController", ["$scope", "$window", "$location", "workspace", "jolokia", "mbeanName", ($scope, $window, $location, workspace, jolokia, mbeanName) => {
+  _module.controller("JVM.JVMsController", ["$scope", "$window", "$location", "localStorage", "workspace", "jolokia", "mbeanName", ($scope, $window, $location, localStorage:WindowLocalStorage, workspace, jolokia, mbeanName) => {
 
     JVM.configureScope($scope, $location, workspace);
     $scope.data = [];
     $scope.deploying = false;
     $scope.status = '';
+    $scope.initDone = false;
+    $scope.filter = '';
+
+    $scope.filterMatches = (jvm) => {
+      if (Core.isBlank($scope.filter)) {
+        return true;
+      } else {
+        return jvm.alias.toLowerCase().has($scope.filter.toLowerCase());
+      }
+    };
 
     $scope.fetch = () => {
-      notification('info', 'Discovering local JVM processes, please wait...');
       jolokia.request({
         type: 'exec', mbean: mbeanName,
         operation: 'listLocalJVMs()',
@@ -21,43 +30,55 @@ module JVM {
         success: render,
         error: (response) => {
           $scope.data = [];
+          $scope.initDone = true;
           $scope.status = 'Could not discover local JVM processes: ' + response.error;
           Core.$apply($scope);
         }
       });
-    }
+    };
 
     $scope.stopAgent = (pid) => {
-      notification('info', "Attempting to detach agent from PID " + pid);
       jolokia.request({
         type: 'exec', mbean: mbeanName,
         operation: 'stopAgent(java.lang.String)',
         arguments: [pid]
       }, onSuccess(function() {
-        notification('success', "Detached agent from PID " + pid);
         $scope.fetch()
       }));
-    }
+    };
 
     $scope.startAgent = (pid) => {
-      notification('info', "Attempting to attach agent to PID " + pid);
       jolokia.request({
         type: 'exec', mbean: mbeanName,
         operation: 'startAgent(java.lang.String)',
         arguments: [pid]
       }, onSuccess(function() {
-        notification('success', "Attached agent to PID " + pid);
         $scope.fetch()
       }));
-    }
+    };
 
-    $scope.connectTo = (url) => {
-      $window.open("?url=" + encodeURIComponent(url));
-    }
+    $scope.connectTo = (url, scheme, host, port, path) => {
+      // we only need the port and path from the url, as we got the rest
+      var options = {};
+      options["scheme"] = scheme;
+      options["host"] = host;
+      options["port"] = port;
+      options["path"] = path;
+      // add empty username as we dont need login
+      options["userName"] = "";
+      options["password"] = "";
 
+      var con = Core.createConnectToServerOptions(options);
+      con.name = "local";
+
+      log.debug("Connecting to local JVM agent: " + url);
+      Core.connectToServer(localStorage, con);
+      Core.$apply($scope);
+    };
 
     function render(response) {
-      $scope.data = response.value
+      $scope.initDone = true;
+      $scope.data = response.value;
       if ($scope.data.length === 0) {
         $scope.status = 'Could not discover local JVM processes';
       }
@@ -66,6 +87,5 @@ module JVM {
 
     $scope.fetch();
   }]);
-
 
 }

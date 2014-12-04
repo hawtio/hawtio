@@ -2,14 +2,20 @@
  * @module RBAC
  * @main RBAC
  */
-/// <reference path="./rbacHelpers.ts"/>
+/// <reference path="../../baseIncludes.ts"/>
+/// <reference path="../../baseHelpers.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
+/// <reference path="rbacHelpers.ts"/>
+/// <reference path="rbacTasks.ts"/>
 module RBAC {
 
   export var pluginName:string = "hawtioRbac";
-  export var log:Logging.Logger = Logger.get("RBAC");
   export var _module = angular.module(pluginName, ["hawtioCore"]);
 
-  _module.factory('rbacTasks', ["postLoginTasks", "jolokia", (postLoginTasks:Core.Tasks, jolokia) => {
+  _module.factory('rbacTasks', ["postLoginTasks", "jolokia", "$q",  (postLoginTasks:Core.Tasks, jolokia, $q:ng.IQService) => {
+
+    RBAC.rbacTasks = new RBAC.RBACTasksImpl($q.defer());
+
     postLoginTasks.addTask("FetchJMXSecurityMBeans", () => {
       jolokia.request({
         type: 'search',
@@ -61,53 +67,92 @@ module RBAC {
       rbacTasks.reset();
     });
 
-    rbacTasks.addTask("init", () => {
-      log.info("Initializing role based access support using mbean: ", rbacTasks.getACLMBean());
-    });
-
     // add info to the JMX tree if we have access to invoke on mbeans
     // or not
     rbacTasks.addTask("JMXTreePostProcess", () => {
       workspace.addTreePostProcessor((tree) => {
-        var mbeans = {};
-        flattenMBeanTree(mbeans, tree);
-        var requests = [];
-        angular.forEach(mbeans, (value, key) => {
-          if (!('canInvoke' in value)) {
-            requests.push({
-              type: 'exec',
-              mbean: rbacTasks.getACLMBean(),
-              operation: 'canInvoke(java.lang.String)',
-              arguments: [key]
-            });
-          }
-        });
-        var numResponses:number = 0;
-        var maybeRedraw = () => {
-          numResponses = numResponses + 1;
-          if (numResponses >= requests.length) {
-            workspace.redrawTree();
-            Core.$apply($rootScope);
-          }
-        };
-        jolokia.request(requests, onSuccess((response) => {
-          var mbean = response.request.arguments[0];
-          if (mbean) {
-            mbeans[mbean]['canInvoke'] = response.value;
-            var toAdd:string = "cant-invoke";
-            if (response.value) {
-              toAdd = "can-invoke";
+        rbacTasks.getACLMBean().then((mbean) => {
+          // log.debug("JMX tree is: ", tree);
+          var mbeans = {};
+          flattenMBeanTree(mbeans, tree);
+          // log.debug("Flattened MBeans: ", mbeans);
+          var requests = [];
+          var bulkRequest = {};
+          angular.forEach(mbeans, (value, key) => {
+            if (!('canInvoke' in value)) {
+              requests.push({
+                type: 'exec',
+                mbean: mbean,
+                operation: 'canInvoke(java.lang.String)',
+                arguments: [key]
+              });
+              if (value.mbean && value.mbean.op) {
+                var ops:Core.JMXOperations = value.mbean.op;
+                value.mbean.opByString = {};
+                var opList = [];
+                angular.forEach(ops, (op:any, opName:string) => {
+
+                  function addOp(opName:string, op:Core.JMXOperation) {
+                    var operationString = Core.operationToString(opName, op.args);
+                    // enrich the mbean by indexing the full operation string so we can easily look it up later
+                    value.mbean.opByString[operationString] = op;
+                    opList.push(operationString);
+                  }
+                  if (angular.isArray(op)) {
+                    (<Array<any>>op).forEach((op) => {
+                      addOp(opName, op);
+                    });
+
+                  } else {
+                    addOp(opName, op);
+                  }
+                });
+                bulkRequest[key] = opList;
+              }
             }
-            mbeans[mbean]['addClass'] = stripClasses(mbeans[mbean]['addClass']);
-            mbeans[mbean]['addClass'] = addClass(mbeans[mbean]['addClass'], toAdd);
-            maybeRedraw();
-          }
-        }, {
-          error: (response) => {
-            // silently ignore, but still track if we need to redraw
-            maybeRedraw();
-          }
-        }));
+          });
+          requests.push({
+            type: 'exec',
+            mbean: mbean,
+            operation: 'canInvoke(java.util.Map)',
+            arguments: [bulkRequest]
+          });
+          var numResponses:number = 0;
+          var maybeRedraw = () => {
+            numResponses = numResponses + 1;
+            if (numResponses >= requests.length) {
+              workspace.redrawTree();
+              log.debug("Enriched workspace tree: ", tree);
+              Core.$apply($rootScope);
+            }
+          };
+          jolokia.request(requests, onSuccess((response) => {
+            var mbean = response.request.arguments[0];
+            if (mbean && angular.isString(mbean)) {
+              mbeans[mbean]['canInvoke'] = response.value;
+              var toAdd:string = "cant-invoke";
+              if (response.value) {
+                toAdd = "can-invoke";
+              }
+              mbeans[mbean]['addClass'] = stripClasses(mbeans[mbean]['addClass']);
+              mbeans[mbean]['addClass'] = addClass(mbeans[mbean]['addClass'], toAdd);
+              maybeRedraw();
+            } else {
+              var responseMap = response.value;
+              angular.forEach(responseMap, (operations, mbeanName) => {
+                angular.forEach(operations, (data, operationName) => {
+                  mbeans[mbeanName].mbean.opByString[operationName]['canInvoke'] = data['CanInvoke'];
+                });
+              });
+              maybeRedraw();
+            }
+          }, {
+            error: (response) => {
+              // silently ignore, but still track if we need to redraw
+              maybeRedraw();
+            }
+          }));
+        });
       });
     });
   }]);

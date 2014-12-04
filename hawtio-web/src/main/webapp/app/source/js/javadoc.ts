@@ -4,7 +4,7 @@
 /// <reference path="./sourcePlugin.ts"/>
 module Source {
 
-  _module.controller("Source.JavaDocController", ["$scope", "$location", "$routeParams", "workspace", "fileExtensionTypeRegistry", ($scope, $location, $routeParams, workspace:Workspace, fileExtensionTypeRegistry, jolokia) => {
+  _module.controller("Source.JavaDocController", ["$scope", "$location", "$routeParams", "workspace", "fileExtensionTypeRegistry", "jolokia", ($scope, $location, $routeParams, workspace:Workspace, fileExtensionTypeRegistry, jolokia) => {
     $scope.pageId = Wiki.pageId($routeParams, $location);
     var mavenCoords = $routeParams["mavenCoords"];
     var fileName = $scope.pageId;
@@ -36,7 +36,7 @@ module Source {
         var time = new Date().getTime();
         if (!$scope.lastErrorTime || time - $scope.lastErrorTime > 3000) {
           $scope.lastErrorTime = time;
-          notification("error", "Could not download the source code for the maven artifacts: " + mavenCoords);
+          Core.notification("error", "Could not download the source code for the maven artifacts: " + mavenCoords);
         }
       }
       Core.$apply($scope);

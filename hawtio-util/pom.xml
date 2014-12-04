@@ -11,9 +11,6 @@
   <name>${project.artifactId}</name>
   <description>hawtio :: hawtio-util</description>
 
-  <properties>
-  </properties>
-
   <dependencies>
     <!-- logging -->
     <dependency>

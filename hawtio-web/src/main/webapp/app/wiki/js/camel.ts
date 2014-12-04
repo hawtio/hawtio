@@ -100,7 +100,7 @@ module Wiki {
           node.key = key;
           node["nodeModel"] = value;
           var tooltip = value["tooltip"] || value["description"] || label;
-          var imageUrl = url(value["icon"] || Camel.endpointIcon);
+          var imageUrl = Core.url(value["icon"] || Camel.endpointIcon);
           node.icon = imageUrl;
           node.tooltip = tooltip;
 
@@ -218,7 +218,7 @@ module Wiki {
             var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
             wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
               Wiki.onComplete(status);
-              notification("success", "Saved " + $scope.pageId);
+              Core.notification("success", "Saved " + $scope.pageId);
               $scope.modified = false;
               goToView();
               Core.$apply($scope);

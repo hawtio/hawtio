@@ -4,7 +4,7 @@
 /// <reference path="./sourcePlugin.ts"/>
 module Source {
 
-  _module.controller("Source.SourceController", ["$scope", "$location", "$routeParams", "workspace", "fileExtensionTypeRegistry", ($scope, $location, $routeParams, workspace:Workspace, fileExtensionTypeRegistry, jolokia) => {
+  _module.controller("Source.SourceController", ["$scope", "$location", "$routeParams", "workspace", "fileExtensionTypeRegistry", "jolokia", ($scope, $location, $routeParams, workspace:Workspace, fileExtensionTypeRegistry, jolokia) => {
 
     $scope.pageId = Wiki.pageId($routeParams, $location);
     $scope.format = Wiki.fileFormat($scope.pageId, fileExtensionTypeRegistry);

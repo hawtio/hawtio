@@ -1,3 +1,4 @@
+/// <reference path="coreHelpers.ts"/>
 /**
  * @module Core
  */
@@ -54,7 +55,7 @@ module Core {
      * @type NodeSelection
      * @optional
      */
-    children?:NodeSelection[];
+    children?:Array<NodeSelection>;
     /**
      * @property parent
      * @type NodeSelection
@@ -66,6 +67,12 @@ module Core {
      * @return {boolean}
      */
     isFolder?: () => boolean;
+    /**
+     * @property version
+     * @type string
+     * @optional
+     */
+    version?: string;
     /**
      * @method get
      * @param {String} key
@@ -85,6 +92,20 @@ module Core {
      * @return {Boolean}
      */
     ancestorHasEntry(key:string, value): boolean;
+
+    /**
+     * @method findDescendant
+     * @param {Function} filter
+     * @return {NodeSelection}
+     */
+    findDescendant(filter): NodeSelection
+
+    /**
+     * @method findAncestor
+     * @param {Function} filter
+     * @return {NodeSelection}
+     */
+    findAncestor(filter): NodeSelection
   }
 
   /**
@@ -98,18 +119,20 @@ module Core {
 
     key:string = null;
     typeName:string = null;
-    children:NodeSelection[] = [];
+    children = <Array<NodeSelection>>[];
     folderNames:string[] = [];
     domain:string = null;
     objectName:string = null;
     map = {};
     entries = {};
-    addClass = null;
-    parent: Folder = null;
-    isLazy: boolean = false;
-    icon: string = null;
-    tooltip: string = null;
-    entity: any = null;
+    addClass:string = null;
+    parent:Folder = null;
+    isLazy:boolean = false;
+    icon:string = null;
+    tooltip:string = null;
+    entity:any = null;
+    version:string = null;
+    mbean:JMXMBean = null;
 
     get(key:string):NodeSelection {
       return this.map[key];
@@ -125,7 +148,7 @@ module Core {
      * @param {Array} paths
      * @return {NodeSelection}
      */
-    public navigate(...paths:string[]) {
+    public navigate(...paths:string[]):NodeSelection {
       var node:NodeSelection = this;
       paths.forEach((path) => {
         if (node) {
@@ -201,6 +224,24 @@ module Core {
       }
     }
 
+    public insertBefore(child: Folder, referenceFolder: Folder) {
+      child.detach();
+      child.parent = this;
+      var idx = _.indexOf(this.children, referenceFolder);
+      if (idx >= 0) {
+        this.children.splice(idx, 0, child);
+      }
+    }
+
+    public insertAfter(child: Folder, referenceFolder: Folder) {
+      child.detach();
+      child.parent = this;
+      var idx = _.indexOf(this.children, referenceFolder);
+      if (idx >= 0) {
+        this.children.splice(idx + 1, 0, child);
+      }
+    }
+
     /**
      * Removes this node from my parent if I have one
      * @method detach
@@ -240,6 +281,25 @@ module Core {
         }
       });
       return answer;
+    }
+
+    /**
+     * Searches this folder and all its ancestors for the first folder to match the filter
+     * @method findDescendant
+     * @for Folder
+     * @param {Function} filter
+     * @return {Folder}
+     */
+    public findAncestor(filter) {
+      if (filter(this)) {
+        return this;
+      }
+
+      if (this.parent != null) {
+        return this.parent.findAncestor(filter);
+      } else {
+        return null;
+      }
     }
 
   }

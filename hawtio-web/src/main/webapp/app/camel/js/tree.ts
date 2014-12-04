@@ -90,7 +90,8 @@ module Camel {
                 var contextNode = contextsFolder.children[0];
                 if (contextNode) {
                   var title = contextNode.title;
-                  if (!contextFilterText || (title && title.indexOf(contextFilterText) >= 0)) {
+                  var match = Core.matchFilterIgnoreCase(title, contextFilterText);
+                  if (match) {
                     var folder = new Folder(title);
                     folder.addClass = "org-apache-camel-context";
                     folder.domain = domainName;
@@ -98,6 +99,7 @@ module Camel {
                     folder.entries = contextNode.entries;
                     folder.typeName = contextNode.typeName;
                     folder.key = contextNode.key;
+                    folder.version = contextNode.version
                     if (routesNode) {
                       var routesFolder = new Folder("Routes");
                       routesFolder.addClass = "org-apache-camel-routes-folder";

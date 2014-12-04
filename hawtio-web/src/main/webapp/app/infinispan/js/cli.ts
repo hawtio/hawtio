@@ -18,7 +18,7 @@ module Infinispan {
 
     public setCacheName(name:string) {
       if (name) {
-        name = trimQuotes(name);
+        name = Core.trimQuotes(name);
         var postfix = "(local)";
         if (name.endsWith(postfix)) {
           name = name.substring(0, name.length - postfix.length);
@@ -66,7 +66,7 @@ module Infinispan {
             this.warnMissingMBean();
           }
         } else {
-          notification("warning", "Cannot evaluate SQL as we don't have a sessionId yet!");
+          Core.notification("warning", "Cannot evaluate SQL as we don't have a sessionId yet!");
         }
       }
     }
@@ -76,7 +76,7 @@ module Infinispan {
     }
 
     warnMissingMBean() {
-      notification("error", "No Interpreter MBean available");
+      Core.notification("error", "No Interpreter MBean available");
     }
   }
 }

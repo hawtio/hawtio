@@ -1,6 +1,9 @@
 /**
  * @module Perspective
  */
+/// <reference path="../../insight/js/insightHelpers.ts"/>
+/// <reference path="../../fabric/js/fabricHelpers.ts"/>
+/// <reference path="../../site/js/siteHelpers.ts"/>
 module Perspective {
 
   export var containerPerspectiveEnabled = true;
@@ -12,6 +15,46 @@ module Perspective {
    * @type {any}
    */
   export var metadata = {
+    kubernetes: {
+      icon: {
+        title: "Fabric8",
+        type: "img",
+        src: "img/icons/fabric8_icon.svg"
+      },
+      label: "Fabric8",
+      isValid: (workspace) => !Fabric.isFMCContainer(workspace) && Kubernetes.isKubernetes(workspace),
+      lastPage: "#/kubernetes/pods",
+      topLevelTabs: {
+        includes: [
+          {
+            content: "Runtime",
+            id: "kubernetes"
+          },
+          {
+            content: "Library",
+            href: "#/wiki"
+          },
+          {
+            href: "#/docker"
+          },
+          {
+            href: "#/api/index"
+          },
+          {
+            id: "kibana"
+          },
+          {
+            id: "grafana"
+          },
+          {
+            href: "#/dashboard"
+          },
+          {
+            href: "#/health"
+          }
+        ]
+      }
+    },
     fabric: {
       icon: {
         title: "Fabric8",
@@ -24,53 +67,34 @@ module Perspective {
       topLevelTabs: {
         includes: [
           {
-            href: "#/fabric"
+            id: "kubernetes"
           },
           {
-            href: "#/docker"
+            id: "fabric.containers"
+          },
+          {
+            id: "fabric.profiles"
           },
           {
             href: "#/wiki/branch/"
           },
           {
+            href: "#/fabric"
+          },
+          {
+            id: "fabric.requirements"
+          },
+          {
             href: "#/wiki/profile"
+          },
+          {
+            href: "#/docker"
           },
           {
             href: "#/dashboard"
           },
           {
             href: "#/health"
-          },
-          {
-            id: "fabric.insight"
-          }
-        ]
-      }
-    },
-    insight: {
-      icon: {
-        title: "Fabric8 Insight",
-        type: "icon",
-        src: "icon-eye-open"
-      },
-      label: "Insight",
-      isValid: (workspace) => Insight.hasInsight(workspace),
-      topLevelTabs: {
-        includes: [
-          {
-            href: "#/kibanalogs"
-          },
-          {
-            href: "#/insight"
-          },
-          {
-            href: "#/kibanacamel"
-          },
-          {
-            href: "#/camin"
-          },
-          {
-            href: "#/eshead"
           }
         ]
       }
@@ -90,37 +114,61 @@ module Perspective {
             href: "#/fabric"
           },
           {
+            href: "#/kubernetes"
+          },
+          {
+            id: "fabric.profiles"
+          },
+          {
+            id: "fabric.containers"
+          },
+          {
+            id: "fabric.requirements"
+          },
+          {
+            id: "fabric.kubernetes"
+          },
+          {
             href: "#/insight"
           },
           {
             href: "#/camin"
           },
           {
-            href: "#/kibanalogs"
-          },
-          {
-            href: "#/kibanacamel"
-          },
-          {
-            href: "#/eshead"
+            id: "insight-camel"
           },
           {
             id: "dashboard",
-            // we only want to exclude dashboard if we are running in fabric (as they are in another perspective)
+            // we only want to include dashboard if we are running in fabric (as they are in another perspective)
             // (must use "id" attribute for the plugin, an not href, when using onCondition)
-            onCondition: (workspace) => Fabric.isFMCContainer(workspace)
+            onCondition: (workspace) => !Fabric.isFMCContainer(workspace)
           },
           {
             id: "health",
-            // we only want to exclude health if we are running in fabric (as they are in another perspective)
+            // we only want to include health if we are running in fabric (as they are in another perspective)
             // (must use "id" attribute for the plugin, an not href, when using onCondition)
             onCondition: (workspace) => Fabric.isFMCContainer(workspace)
           },
           {
             id: "wiki",
-            // we only want to exclude wiki if we are running in fabric (as they are in another perspective)
+            // we only want to include wiki if we are running in fabric (as they are in another perspective)
             // (must use "id" attribute for the plugin, an not href, when using onCondition)
             onCondition: (workspace) => Fabric.isFMCContainer(workspace)
+          },
+          {
+            id: "apis.index",
+            // we only want to include APIs if we are running in kubernetes (as they are in another perspective)
+            onCondition: (workspace) => Kubernetes.isKubernetes(workspace)
+          },
+          {
+            id: "grafana",
+            // we only want to include Grafana if we are running in kubernetes (as they are in another perspective)
+            onCondition: (workspace) => Kubernetes.isKubernetes(workspace)
+          },
+          {
+            id: "kibana",
+            // we only want to include Kibana if we are running in kubernetes (as they are in another perspective)
+            onCondition: (workspace) => Kubernetes.isKubernetes(workspace)
           }
         ]
       }

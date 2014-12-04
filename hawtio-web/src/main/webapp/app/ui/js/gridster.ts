@@ -13,9 +13,9 @@ module UI {
     public restrict = 'A';
     public replace = true;
 
-    public controller = ($scope, $element, $attrs) => {
+    public controller = ["$scope", "$element", "$attrs", ($scope, $element, $attrs) => {
 
-    };
+    }];
 
     public link = ($scope, $element, $attrs) => {
 

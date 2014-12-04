@@ -17,8 +17,8 @@
         </a>
       </div>
 
-      <div class="input-append">
-        <input class="input-large"
+      <div class="input-append" hawtio-show object-name="{{frameworkMBean}}" method-name="installBundle">
+        <input class="input-xxlarge"
                type="text"
                placeholder="Install Bundle..."
                ng-model="bundleUrl">
@@ -34,17 +34,21 @@
 
 
     <div class="pull-right">
-      <strong>Show: </strong>
+      <strong>Show bundles: </strong>
       &nbsp;
-      <label for="showCxfBundles">CXF bundles</label>
-      <input id="showCxfBundles" type="checkbox" ng-model="display.showCxfBundles">
+      <label for="showActiveMQBundles">ActiveMQ</label>
+      <input id="showActiveMQBundles" type="checkbox" ng-model="display.showActiveMQBundles">
       &nbsp;
       &nbsp;
-      <label for="showCamelBundles">Camel bundles</label>
+      <label for="showCamelBundles">Camel</label>
       <input id="showCamelBundles" type="checkbox" ng-model="display.showCamelBundles">
       &nbsp;
       &nbsp;
-      <label for="showPlatformBundles">Platform bundles</label>
+      <label for="showCxfBundles">CXF</label>
+      <input id="showCxfBundles" type="checkbox" ng-model="display.showCxfBundles">
+      &nbsp;
+      &nbsp;
+      <label for="showPlatformBundles">Platform</label>
       <input id="showPlatformBundles" type="checkbox" ng-model="display.showPlatformBundles">
       &nbsp;
       &nbsp;
@@ -61,9 +65,7 @@
       <input class="input-small search-query" type="number" min="0"
              ng-model="display.startLevelFilter"
              placeholder="Start Level..."/>
-      <input class="input-large search-query" type="text"
-             ng-model="display.bundleFilter"
-             placeholder="Filter..."/>
+      <hawtio-filter ng-model="display.bundleFilter" placeholder="Filter..." save-as="osgi-bundle-list-text-filter"></hawtio-filter>
     </div>
 
   </div>
@@ -85,7 +87,7 @@
 </small>
     </script>
 
-    <div class="bundle-list"
+    <div class="bundle-list centered"
          hawtio-auto-columns=".bundle-item">
       <div ng-repeat="bundle in bundles"
            class="bundle-item"

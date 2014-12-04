@@ -4,7 +4,9 @@
 /// <reference path="./wikiPlugin.ts"/>
 module Wiki {
 
-  _module.controller("Wiki.HistoryController", ["$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", ($scope, $location, $routeParams, $templateCache, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) => {
+  _module.controller("Wiki.HistoryController", ["$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "jolokia", ($scope, $location, $routeParams, $templateCache, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, jolokia) => {
+
+    var isFmc = Fabric.isFMCContainer(workspace);
 
     Wiki.initScope($scope, $routeParams, $location);
     $scope.selectedItems = [];
@@ -75,7 +77,7 @@ module Wiki {
           wikiRepository.revertTo($scope.branch, objectId, $scope.pageId, commitMessage, (result) => {
             Wiki.onComplete(result);
             // now lets update the view
-            notification('success', "Successfully reverted " + $scope.pageId);
+            Core.notification('success', "Successfully reverted " + $scope.pageId);
             updateView();
           });
         }
@@ -119,7 +121,7 @@ module Wiki {
         $scope.logs = logArray;
         Core.$apply($scope);
       });
-      Wiki.loadBranches(wikiRepository, $scope);
+      Wiki.loadBranches(jolokia, wikiRepository, $scope, isFmc);
     }
   }]);
 }

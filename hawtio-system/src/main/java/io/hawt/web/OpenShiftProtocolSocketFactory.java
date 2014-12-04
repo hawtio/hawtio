@@ -1,12 +1,12 @@
 package io.hawt.web;
 
-import org.apache.commons.httpclient.protocol.DefaultProtocolSocketFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+
+import org.apache.commons.httpclient.protocol.DefaultProtocolSocketFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A custom implementation which works on PaaS environments like OpenShift

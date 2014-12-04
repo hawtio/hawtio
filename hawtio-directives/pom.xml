@@ -109,13 +109,6 @@
                   </fileset>
                 </copy>
 
-                <echo>Copying font files</echo>
-                <copy todir="${tmp-output}/font">
-                  <fileset dir="${webapp-base}/font">
-                    <include name="**" />
-                  </fileset>
-                </copy>
-
                 <echo>Copying image files</echo>
                 <copy todir="${tmp-output}/img">
                   <fileset dir="${webapp-base}/img">

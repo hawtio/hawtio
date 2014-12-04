@@ -3,10 +3,14 @@ module Camel {
 
   _module.controller("Camel.BreadcrumbBarController", ["$scope", "$routeParams", "workspace", "jolokia", ($scope, $routeParams, workspace:Workspace, jolokia) => {
     $scope.workspace = workspace;
-    $scope.contextId = $routeParams["contextId"];
-    $scope.endpointPath = $routeParams["endpointPath"];
-    $scope.endpointName = tidyJmxName($scope.endpointPath);
-    $scope.routeId = $routeParams["routeId"];
+
+    // if we are in dashboard then $routeParams may be null
+    if ($routeParams != null) {
+      $scope.contextId = $routeParams["contextId"];
+      $scope.endpointPath = $routeParams["endpointPath"];
+      $scope.endpointName = tidyJmxName($scope.endpointPath);
+      $scope.routeId = $routeParams["routeId"];
+    }
 
     $scope.treeViewLink = linkToTreeView();
 
@@ -191,7 +195,7 @@ module Camel {
     }
 
     function tidyJmxName(jmxName) {
-      return jmxName ? trimQuotes(jmxName) : jmxName;
+      return jmxName ? Core.trimQuotes(jmxName) : jmxName;
     }
   }]);
 }

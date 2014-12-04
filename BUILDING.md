@@ -1,34 +1,13 @@
 We love [contributions](http://hawt.io/contributing/index.html)! You may also want to know [how to hack on the hawtio code](http://hawt.io/developers/index.html)
 
-[hawtio](http://hawt.io/) can now be built **without** having to install node.js or anything first thanks to the [typescript-maven-plugin](https://github.com/hawtio/typescript-maven-plugin).  However [hawtio](http://hawt.io/) will build faster if typescript is installed, so when possible it's recommended to install it.
-
-## Installing npm and TypeScript for faster builds
-
-To install all of the required dependencies you first need to install [npm](https://npmjs.org/) e.g. by [installing nodejs](http://nodejs.org/). If you're on OS X we recommend just installing [npm](https://npmjs.org/) directly rather than via things like homebrew to get the latest npm crack.
-
-In order to make use of [TypeScript](http://typescriptlang.org/) you will need to install the compiler globally. Installing a dependency globally allows you to access the the dependency directly from your shell.
-
-You can do this by running:
-
-    npm install -g typescript
-
-Note, if you are using Ubuntu then you may need to use the `sudo` command:
-
-    sudo npm install -g typescript
-
-To run the tests you'll also need to install phantomjs:
-
-    sudo npm install -g phantomjs
-
-If you want to be able to generate the JavaScript documentation reference docs then also do:
-
-    npm -g install yuidocjs
+[hawtio](http://hawt.io/) can now be built **without** having to install node.js or anything first thanks to the [frontend-maven-plugin](https://github.com/eirslett/frontend-maven-plugin). This
+will install node.js & npm into a subdirectory, run `npm install` to install dependencies & run the build like normal.
 
 ## Building
 
 After you've cloned hawtio's git repo the first thing you should do is build the whole project.  First ```cd``` into the root directory of the hawtio project and run:
 
-    mvn install
+    mvn clean install
 
 This will ensure all dependencies within the hawtio repo are built and any dependencies are downloaded and in your local repo.
 
@@ -44,6 +23,17 @@ Or if you want to just run an empty hawtio and connect in hawtio to a remote con
 
     cd hawtio-web
     mvn clean jetty:run
+
+### How to resolve building error of hawtio-web
+
+In case you get any building error of `hawtio-web`, then it may be due permission error of your local `.npm` directory. This has been known to happen for osx users. To remedy this
+
+    cd ~
+    cd .npm
+    sudo chown -R yourusernamehere *
+
+Where `yourusernamehere` is your username. This will change the file permissions of the node files so you can build the project. After this try building the hawtio source code again.
+
 
 ### Trying Different Containers
 
@@ -88,24 +78,44 @@ Now when you do **Tools** -> **watchTsc** you should get a output in the Run tab
 
 I spotted a handy tip on [this issue](http://youtrack.jetbrains.com/issue/IDEA-74931), if you move the cursor to the end of the Run window after some compiler output has been generated - pressing keys _META_ + _end_ (which on OS X is the _fn_ and the _option/splat_ and right cursor keys) then IDEA keeps scrolling to the end of the output automatically; you don't have to then keep pressing the "Scroll to end" button ;)
 
+## Adding additional Javascript dependencies
+
+Hawtio is (finally) adopting [bower](http://bower.io/) for managing dependencies, these are automatically pulled in when building the project.  It's now really easy to add third-party Javascript/CSS stuff to hawtio:
+
+* cd into 'hawtio-web', and build it
+* source 'setenv.sh' to add bower to your PATH (it's under node_modules) if you haven't installed it globally
+* run 'bower install --save some-awesome-tool'
+* run 'grunt bower wiredep' to update index.html
+* commit the change to bower.json and index.html
+
+When running in development mode be sure you've run 'grunt bower' if you see 404 errors for the bower package you've installed.  This is normally done for you when running 'mvn clean install'
+
 ## Using LiveReload
 
 The LiveReload support allows you to edit the code and for the browser to automatically reload once things are compiled. This makes for a much more fun and RAD development environment!!
 
-Here's how to do it:
+The easiest method to run with LiveReload support is to cd into the "hawtio-web" module and run the following:
 
-Install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar)
+mvn test-compile exec:java
 
-When you run "mvn test-compile exec:java" the sample server runs an embedded Live Reload server that's already configured to look at src/main/webapp for file changes.  The Live Reload server implementation is provided by [livereload-jvm](https://github.com/davidB/livereload-jvm).  When using other methods run run hawtio like "mvn jetty:run" or "mvn tomcat:run" you can run [livereload-jvm](https://github.com/davidB/livereload-jvm) directly, for example from the hawtio-web directory:
+The sample server runs an embedded LiveReload server that's all set up to look at src/main/webapp for file changes.  If you don't want to load all of the sample apps because you're connecting to another JVM you don't have to:
+
+mvn test-compile exec:java -DloadApps=false
+
+
+The Live Reload server implementation is provided by [livereload-jvm](https://github.com/davidB/livereload-jvm).  When using other methods run run hawtio like "mvn jetty:run" or "mvn tomcat:run" you can run [livereload-jvm](https://github.com/davidB/livereload-jvm) directly, for example from the hawtio-web directory:
 
     java -jar livereload-jvm-0.2.0-SNAPSHOT-onejar.jar -d src/main/webapp/ -e .*\.ts$
+
+Install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar).  There is also a LiveReload plugin for Firefox, you can get it straight from the [LiveReload site](http://livereload.com).
+
 
 In another shell (as mentioned above in the "Incrementally compile TypeScript" section you probably want to auto-recompile all the TypeScript files into app.js in *another shell* via this command:
 
     cd hawtio-web
-    ./watchTsc
+    mvn compile -Pwatch
 
-Enable Live Reload in your browser (open [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) then click on the Live Reload icon to the right of the location bar).
+Enable Live Reload in your browser (open [http://localhost:8282/hawtio/](http://localhost:8282/hawtio/) then click on the Live Reload icon to the right of the location bar).
 
 Now if you change any source (HTML, CSS, TypeScript, JS library) the browser will auto reload on the fly. No more context-switching between your IDE and your browser! :)
 
@@ -128,6 +138,19 @@ Then use [livereload-jvm](https://github.com/davidB/livereload-jvm) manually as 
 
 Now just run Tomcat as normal. You should have full LiveReload support and should not have to stop/start Tomcat or recreate the WAR etc!
 
+### Running hawtio against Kubernetes / OpenShift
+
+To try run a [local OpenShift V3 based on Kubernetes / Docker](http://fabric8.io/v2/getStarted.html) first
+
+    opeshift start
+
+Then run the following:
+
+    export KUBERNETES_MASTER=http://localhost:8080
+    mvn test-compile exec:java
+
+You should now see the Kubernetes / OpenShift console at http://localhost:8282/
+
 #### Using your build from inside Jetty
 
 For jetty you need to name the symlink directory **hawtio.war** for [Jetty to recognise it](http://www.eclipse.org/jetty/documentation/current/automatic-webapp-deployment.html).
@@ -137,7 +160,7 @@ For jetty you need to name the symlink directory **hawtio.war** for [Jetty to re
 
 Another thing is for symlinks jetty uses the real directory name rather than the symlink name for the context path.
 
-So to open the application in Jetty open [http://localhost:8080/hawtio-web-1.3-SNAPSHOT/](http://localhost:8080/hawtio-web-1.3-SNAPSHOT/)
+So to open the application in Jetty open [http://localhost:8282/hawtio-web-1.3-SNAPSHOT/](http://localhost:8282/hawtio-web-1.3-SNAPSHOT/)
 
 
 ## Running Unit Tests
@@ -147,42 +170,25 @@ You can run the unit tests via maven:
     cd hawtio-web
     mvn test
 
-
-If you have a local build (or ideally are using the _mvn -Pwatch_ command to do incremental compiles as you edit the source), you can open the unit test runner via the following:
-
-    cd hawtio-web
-    open src/test/specs/SpecRunner.html
-
-This then runs the [unit test specifications](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/test/specs/spec) using [Jasmine](http://pivotal.github.com/jasmine/) in your browser. From this web page you can use the browser's debugger and console to debug and introspect unit test cases as required.
-
 If you are using the [LiveReload plugin for Chrome](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) you can then hit the LiveReload icon to the right of the address bar and if you are running the watch profile, the tests are re-run every time there is a compile:
 
-    mvn -Pwatch
+    mvn test -Pwatch
 
 Now the unit tests are all re-run whenever you edit the source.
 
+## Running integration Tests
 
-## Running the End-to-End Integration Tests
+You can run the Protractor integration tests via maven:
 
-Install [testacular](http://vojtajina.github.com/testacular/):
+    cd hawtio-web
+    mvn verify -Pitests
 
-    npm -g install testacular
+This will run the tests headlessly, in [Phantomjs](http://phantomjs.org/).
 
-To get the latest greatest testacular crack (e.g. so console.log() statements output to the command shell, etc.) you need 0.5.x or later use this command:
+If you want to see the tests running, you can run them in Chrome with:
 
-    npm install -g testacular@"~0.5.7"
-
-
-### Running Tests With Testacular
-
-In a shell in the `hawtio-web` directory run:
-
-    mvn test-compile exec:java
-
-In another in the same directory run the following:
-
-    testacular start src/test/config/e2e-config.js
-
+    cd hawtio-web
+    mvn verify -Pitests,chrome
 
 ## How to Get Started Hacking the Code
 

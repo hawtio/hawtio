@@ -111,6 +111,12 @@ public class IgnorePropertiesBackedByTransientFields implements VisibilityChecke
             }
             return false;
         }
+        if (method != null && Throwable.class.isAssignableFrom(method.getReturnType())) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Ignoring getter " + method + " due to return Throwable class");
+            }
+            return false;
+        }
         return true;
     }
 

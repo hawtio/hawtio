@@ -1,0 +1,132 @@
+<div class="row-fluid" ng-controller="Fabric.ContainerViewController">
+
+  <div class="row-fluid">
+    <div class="span12 page-padded">
+      <p></p>
+      <div class="pull-left">
+        Group by:
+        <div class="btn-group" style="padding-left: 10px">
+          <button class="btn"
+                  ng-class="groupByClass('profileIds', groupBy)"
+                  ng-click="groupBy='profileIds'">Profiles
+          </button>
+          <button class="btn"
+                  ng-class="groupByClass('location', groupBy)"
+                  ng-click="groupBy='location'">Location
+          </button>
+          <button class="btn"
+                  ng-class="groupByClass('none', groupBy)"
+                  ng-click="groupBy='none'">Containers
+          </button>
+        </div>
+        <span class="badge badge-success mouse-pointer"
+          ng-show="versionIdFilter || profileIdFilter"
+          ng-click="versionIdFilter=''; profileIdFilter='';">
+          {{versionIdFilter}} {{profileIdFilter}}
+          <i class="icon-remove"></i>
+        </span>
+        <span class="badge badge-success mouse-pointer" 
+          ng-show="locationIdFilter"
+          ng-click="locationIdFilter=''">
+          {{locationIdFilter}}
+          <i class="icon-remove"></i>
+        </span>
+      </div>
+      <div class="pull-right">
+        <span class="inline-block"
+              ng-show="maybeShowLocation()"
+              hawtio-show
+              object-name="{{managerMBean}}"
+              method-name="setContainerProperty">
+          <div hawtio-drop-down="locationMenu"></div>
+        </span>
+        <span ng-show="selectedContainers.length != 0"
+              title="Migrate the selected containers to a different version"
+              hawtio-show
+              object-name="{{managerMBean}}"
+              method-name="applyVersionToContainers">
+          <span class="inline-block"
+               fabric-version-selector="targetVersion"
+               use-menu="true"
+               menu-bind="versionTitle"
+               on-pick="onVersionChange(version)"
+               use-icon="icon-edit"
+               desc
+               exclude='{{getVersionsToExclude()}}'></span>
+        </span>
+        <a class="btn" ng-click="startSelectedContainers()" ng-show="anySelectionStartable()"
+           title="Start containers"
+           hawtio-show
+           object-name="{{managerMBean}}"
+           method-name="startContainer">
+          <i class="icon-play-circle clickable"></i>
+          Start
+        </a>
+        <a class="btn" ng-click="stopSelectedContainers()" ng-show="anySelectionStoppable()"
+           title="Stop containers"
+           hawtio-show
+           object-name="{{managerMBean}}"
+           method-name="stopContainer">
+          <i class="icon-off"></i>
+          Stop
+        </a>
+        <a class="btn"
+           ng-click="confirmDeleteDialog.open()"
+           ng-show="selectedContainers.length != 0"
+           title="Delete container"
+           hawtio-show
+           object-name="{{managerMBean}}"
+           method-name="destroyContainer">
+          <i class="icon-remove-sign"></i> Delete
+        </a>
+        <hawtio-filter ng-model="filter"
+                       placeholder="Filter Containers..."
+                       save-as="fabric-container-view-text-filter"></hawtio-filter>
+      </div>
+    </div>
+  </div>
+  <div class="row-fluid"
+       ng-show="groupBy=='profileIds'">
+    <div class="span12 page-padded">
+      <p></p>
+      <div ng-repeat="(versionId, version) in versions">
+        <strong class="container-header-version">Version: {{versionId}}</strong>
+        <hr>
+        <div>
+          <div class="column-box" 
+               ng-repeat="profile in version.profiles"
+               ng-include="'app/fabric/html/profileBox.html'">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row-fluid"
+       ng-show="groupBy=='location'">
+    <div class="span12 page-padded">
+      <div class="column-box-variable location-box"
+           ng-repeat="(locationId, location) in locations">
+        <strong class="mouse-pointer" ng-click="showContainersFor(locationId)">{{locationId}}</strong>
+        <div>
+          <div class="column-box-square mouse-pointer" 
+            ng-repeat="container in location.containers | orderBy:['!alive', 'provisionResult', 'id']"
+            ng-show="filterContainer(container)"
+            ng-class="getSelectedClass(container)"
+            ng-click="select(containers, container, $event)">
+            <i title="{{container.id}} / {{container.versionId}}" ng-class='statusIcon(container)'></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row-fluid"
+      ng-show="groupBy=='none'">
+    <div class="span12 page-padded">
+      <div>
+        <i class="icon-circle-blank clickable" title="Clear selection" ng-click="selectNone(containers)"></i>
+        <i class="icon-circle clickable" title="Select all" ng-click="selectAll(containers, filterContainer)"></i>
+      </div>
+      <div ng-include="'app/fabric/html/containerList.html'"></div>
+    </div>
+  </div>
+</div>

@@ -24,6 +24,11 @@ Since 1.2-M2 of hawtio we enable security by default using the underlying applic
 
 Here's how to [disable security](https://github.com/hawtio/hawtio/blob/master/docs/Configuration.md#configuring-or-disabling-security-in-karaf-servicemix-fuse) if you wish to remove the need to login to hawtio.
 
+#### Which Java version is required?
+
+Hawtio 1.4 onwards requires Java 7 or 8. 
+Hawtio 1.3 or older supports Java 6 and 7.
+
 #### How do I enable hawtio inside my Java Application / Spring Boot / DropWizard / Micro Service
 
 The easiest thing to do is add jolokia as a java agent via a java agent command line:
@@ -97,6 +102,11 @@ Here are some [sample](https://github.com/hawtio/hawtio/issues/103) [issues](htt
 
 So whether the hawtio wiki is used for documentation, to link to various hawtio and external resources, to create custom mashups or happy pages or to provide new plugin views--all the content of the wiki is audited, versioned and stored in git so it's easy to see who changed what, when and to roll back changes, etc.
 
+#### How to I install hawtio as web console for Apache ActiveMQ
+
+You can use hawtio to remote manage any ActiveMQ brokers without the need to co-install hawtio together with the ActiveMQ broker. However you can also install hawtio with the broker if you want. Dejan Bosanac [blogged how to do this](http://sensatic.net/activemq/activemq-and-hawtio.html). 
+
+
 ### Problems/General Questions about using hawtio
 
 Questions relating to errors you get while using hawtio or other general questions:
@@ -120,6 +130,13 @@ Basically you need to make sure that you have JAVA_HOME/bin on your path. e.g. t
 ```
 set path=%path%;%JAVA_HOME%\jre\bin
 ```
+
+#### The Terminal plugin in Karaf does not work
+
+The terminal plugin may have trouble the first time in use, not being able to connect and show the terminal. Try selecting another plugin, and go back to the terminal plugin a bit later, and it then may be able to login. Also if the screen is all black, then pressing ENTER may help show the terminal.
+
+
+
 
 ### Plugin Questions
 
@@ -145,12 +162,17 @@ The workaround is to install the [Gemini Management bundle](http://www.eclipse.o
 
 Questions on using [Apache Camel](http://camel.apache.org/) and hawtio.
 
+#### The Camel plugin is not visible or does not show any Camels
+
+The Camel plugin currently requires that the Camel MBeans are stored using the default domain name which is `org.apache.camel`. So if you configure Camel to use a different name, using the `mbeanObjectDomainName` configuration, then the Camel plugin will not work. See details reported in ticket [1712](https://github.com/hawtio/hawtio/issues/1712).
+
 #### Why does the Debug or Trace tab not appear for my Camel route?
 
 The Debug and Trace tabs depend on the JMX MBeans provided by the Camel release you use.
 
 * the Debug tab requires at least version 2.12.x or later of your Camel library to be running
 * the Trace tab requires either a 2.12.x or later distro of Camel or a Fuse distro of Camel from about 2.8 or later
+
 
 ### Developer Questions
 

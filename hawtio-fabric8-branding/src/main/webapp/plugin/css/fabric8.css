@@ -5,11 +5,11 @@
 @import url("../../../hawtio/app/themes/fonts/Droid-Sans-Mono/stylesheet.css");
 
 * {
-  font-family: OpenSansRegular;
+  font-family: OpenSans;
 }
 
 body {
-  font-family: OpenSansRegular;
+  font-family: OpenSans;
 }
 
 #log-panel-statements li {
@@ -138,7 +138,10 @@ ul.dynatree-container li {
 
 .horizon .title,
 .horizon .value {
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  text-shadow: 0 0 7px rgba(255, 255, 255, 1);
+  /*padding: 0 8px;*/
+  /*background-color: rgba(255, 255, 255, 0.1);*/
+  /*border-radius: 15px;*/
 }
 
 .line {
@@ -698,11 +701,12 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
   border-top: 1px solid transparent;
 }
 
+.selected,
 .box.selected,
 .box.selected a,
 .box.selected i {
-  color: #333333;
-  background: #A3C7D9;  
+  color: #333333 !important;
+  background: #A3C7D9 !important;  
 }
 
 .box.selected .box-right i {
@@ -1590,6 +1594,9 @@ textarea[readonly] {
   border: none;
 }
 
+.perspective-selector img {
+  vertical-align: middle;
+}
 .dropdown.perspective-selector .dropdown-menu > div > p,
 .hawtio-dropdown p {
   border-top: 1px solid #d4d4d4;

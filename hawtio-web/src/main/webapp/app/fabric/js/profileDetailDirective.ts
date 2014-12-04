@@ -1,4 +1,6 @@
 /// <reference path="fabricPlugin.ts"/>
+/// <reference path="../../osgi/js/osgiHelpers.ts"/>
+/// <reference path="../../maven/js/mavenHelpers.ts"/>
 module Fabric {
 
   export class ProfileDetails {
@@ -11,11 +13,13 @@ module Fabric {
       profileId: '='
     };
 
-    public controller = ["$scope", "$element", "$attrs", "$routeParams", "jolokia", "$location", "workspace", "$q", ($scope, $element, $attrs, $routeParams, jolokia, $location, workspace, $q) => {
+    public controller = ["$scope", "$element", "$attrs", "$routeParams", "jolokia", "$location", "workspace", "marked", "$q", ($scope, $element, $attrs, $routeParams, jolokia, $location, workspace, marked, $q) => {
 
       $scope.inDirective = true;
+      $scope.managerMBean = Fabric.managerMBean;
 
       Fabric.initScope($scope, $location, jolokia, workspace);
+      Fabric.loadRestApi(jolokia, workspace, $scope);
 
       $scope.loading = true;
 
@@ -43,80 +47,29 @@ module Fabric {
       $scope.profilePath = Fabric.profilePath;
       $scope.pageId = fabricTopLevel + Fabric.profilePath($scope.profileId);
 
+      $scope.gotoCreateContainer = () => {
+        var me = $location.path();
+        $location.path('/fabric/containers/createContainer').search({
+          versionId: $scope.versionId,
+          profileIds: $scope.profileId,
+          hideProfileSelector: true,
+          returnTo: me,
+          nextPage: me
+        });
+      };
+
       var versionId = $scope.versionId;
       var profileId = $scope.profileId;
       if (versionId && versionId) {
         Fabric.profileJolokia(jolokia, profileId, versionId, (profileJolokia) => {
           $scope.profileJolokia = profileJolokia;
+          if (!profileJolokia) {
+            // lets deal with the case we have no profile running right now so we have to have a plan B
+            // for fetching the profile configuration metadata
+            $scope.profileNotRunning = true;
+            $scope.profileMetadataMBean = Osgi.getProfileMetadataMBean(workspace);
+          }
         });
-      }
-
-      if ($scope.inDirective &&
-          angular.isDefined($scope.$parent.childActions) &&
-          $scope.versionId) {
-        var actions = $scope.$parent.childActions;
-
-        if ($scope.profileId) {
-          actions.push({
-            doAction: () => {
-              $scope.showChangeParentsDialog();
-            },
-            title: "Edit parent profiles",
-            icon: "icon-edit",
-            name: "Change Parents"
-          });
-          actions.push({
-            doAction: () => {
-              $scope.copyProfileDialog = true;
-            },
-            title: "Copy Profile",
-            icon: "icon-copy",
-            name: "Copy Profile"
-          });
-          actions.push({
-            doAction: () => {
-              $scope.goto('/wiki/profile/' + $scope.versionId + '/' + $scope.profileId + '/editFeatures');
-            },
-            title: "Edit the features defined in this profile",
-            icon: "icon-edit",
-            name: "Edit Features"
-          });
-          actions.push({
-            doAction: () => {
-              $location.url('/fabric/assignProfile').search({
-                vid: $scope.versionId,
-                pid: $scope.profileId
-              });
-            },
-            title: "Assign profile to existing containers",
-            icon: "icon-truck",
-            name: "Assign to Container"
-          });
-          actions.push({
-            doAction: () => {
-              $location.url('/fabric/containers/createContainer').search({
-                versionId: $scope.versionId,
-                profileIds: $scope.profileId
-              });
-            },
-            title: "Create a new container with this profile",
-            icon: "icon-truck",
-            name: "New Container"
-          });
-        }
-        /*
-        var createVersionDialog = $scope.createVersionDialog;
-        if (createVersionDialog) {
-          actions.push({
-            doAction: () => {
-              $scope.createVersionDialog.open();
-            },
-            title: "Create a new version of this configuration so you can edit it and then perform rolling upgrades",
-            icon: "icon-plus",
-            name: "New Version"
-          });
-        }
-        */
       }
 
       $scope.$watch('activeTab', (newValue, oldValue) => {
@@ -214,10 +167,10 @@ module Fabric {
       $scope.doRemoveParentProfile = () => {
         var parents = $scope.row.parentIds.exclude($scope.markedForDeletion);
         changeProfileParents(jolokia, $scope.versionId, $scope.profileId, parents, () => {
-          notification('success', 'Removed parent profile ' + $scope.markedForDeletion + ' from ' + $scope.profileId);
+          Core.notification('success', 'Removed parent profile ' + $scope.markedForDeletion + ' from ' + $scope.profileId);
           Core.$apply($scope);
         }, (response) => {
-          notification('error', 'Failed to change parent profiles of ' + $scope.profileId + ' due to ' + response.error);
+          Core.notification('error', 'Failed to change parent profiles of ' + $scope.profileId + ' due to ' + response.error);
           Core.$apply($scope);
         });
       };
@@ -232,13 +185,11 @@ module Fabric {
           arguments: [$scope.versionId, $scope.profileId, attribute, value]
         }, {
           success: () => {
-            // TODO - we're secretly hiding that the ng-click event is firing twice...
-            // notification('success', "Set attribute " + attribute + " to " + value);
+            log.debug("Set attribute ", attribute, " to ", value);
             Core.$apply($scope);
           },
           error: (response) => {
-            console.log("Failed to set attribute " + attribute + " to " + value + " due to " + response.error);
-            // notification('error', "Failed to set attribute " + attribute + " to " + value + " due to " + response.error);
+            log.debug("Failed to set attribute ", attribute, " to ", value, " due to ", response.error);
             Core.$apply($scope);
           }
         });
@@ -251,10 +202,10 @@ module Fabric {
           return parent.id;
         });
         changeProfileParents(jolokia, $scope.versionId, $scope.profileId, parents, () => {
-          notification('success', 'Successfully changed parent profiles of ' + $scope.profileId);
+          log.debug('Successfully changed parent profiles of ', $scope.profileId);
           Core.$apply($scope);
         }, (response) => {
-          notification('error', 'Failed to change parent profiles of ' + $scope.profileId + ' due to ' + response.error);
+          log.debug('Failed to change parent profiles of ', $scope.profileId, ' due to ', response.error);
           Core.$apply($scope);
         });
       };
@@ -303,12 +254,12 @@ module Fabric {
         }, {
           method: 'POST',
           success: () => {
-            notification('success', success + ' ' + thing);
+            Core.notification('success', success + ' ' + thing);
             $scope.newThingName = '';
             Core.$apply($scope);
           },
           error: (response) => {
-            notification('error', 'Failed to ' + error + ' ' + thing + ' due to ' + response.error);
+            Core.notification('error', 'Failed to ' + error + ' ' + thing + ' due to ' + response.error);
             Core.$apply($scope);
           }
         });
@@ -329,7 +280,7 @@ module Fabric {
           $scope.callSetProfileThing('Added', 'add', $scope.newThingName);
 
         } else {
-          notification('error', 'There is already a ' + $scope.thingName + ' with the name ' + $scope.newThingName);
+          Core.notification('error', 'There is already a ' + $scope.thingName + ' with the name ' + $scope.newThingName);
         }
       };
 
@@ -342,11 +293,11 @@ module Fabric {
       $scope.doDeleteFile = () => {
         $scope.deleteFileDialog = false;
         deleteConfigFile(jolokia, $scope.versionId, $scope.profileId, $scope.markedForDeletion, () => {
-          notification('success', 'Deleted file ' + $scope.markedForDeletion);
+          Core.notification('success', 'Deleted file ' + $scope.markedForDeletion);
           $scope.markedForDeletion = '';
           Core.$apply($scope);
         }, (response) => {
-          notification('error', 'Failed to delete file ' + $scope.markedForDeletion + ' due to ' + response.error);
+          Core.notification('error', 'Failed to delete file ' + $scope.markedForDeletion + ' due to ' + response.error);
           $scope.markedForDeletion = '';
           Core.$apply($scope);
         });
@@ -355,10 +306,10 @@ module Fabric {
       $scope.doCreateFile = () => {
         $scope.newFileDialog = false;
         newConfigFile(jolokia, $scope.versionId, $scope.profileId, $scope.newFileName, () => {
-          notification('success', 'Created new configuration file ' + $scope.newFileName);
+          Core.notification('success', 'Created new configuration file ' + $scope.newFileName);
           $location.path("/fabric/profile/" + $scope.versionId + "/" + $scope.profileId + "/" + $scope.newFileName);
         }, (response) => {
-          notification('error', 'Failed to create ' + $scope.newFileName + ' due to ' + response.error);
+          Core.notification('error', 'Failed to create ' + $scope.newFileName + ' due to ' + response.error);
         })
       };
 
@@ -372,14 +323,29 @@ module Fabric {
           $scope.newProfileName = parts.join('-');
         }
 
-        notification('info', 'Copying ' + $scope.profileId + ' to ' + $scope.newProfileName);
+        // abort if already present
+
+        var existingProfile = jolokia.request({
+          type: 'exec',
+          mbean: managerMBean,
+          operation: "getProfile(java.lang.String,java.lang.String)",
+          arguments: [$scope.versionId, $scope.newProfileName]
+        });
+
+        if(existingProfile.value){
+          Core.notification('error', 'Failed to create new profile ' + $scope.newProfileName + '. A profile with the same name already exists.');
+          Core.$apply($scope);
+          return;
+        }
+
+        Core.notification('info', 'Copying ' + $scope.profileId + ' to ' + $scope.newProfileName);
 
         copyProfile(jolokia, $scope.versionId, $scope.profileId, $scope.newProfileName, true, () => {
-          notification('success', 'Created new profile ' + $scope.newProfileName);
+          Core.notification('success', 'Created new profile ' + $scope.newProfileName);
           Fabric.gotoProfile(workspace, jolokia, localStorage, $location, $scope.versionId, {id: $scope.newProfileName });
           Core.$apply($scope);
         }, (response) => {
-          notification('error', 'Failed to create new profile ' + $scope.newProfileName + ' due to ' + response.error);
+          Core.notification('error', 'Failed to create new profile ' + $scope.newProfileName + ' due to ' + response.error);
           Core.$apply($scope);
         });
       };
@@ -399,6 +365,13 @@ module Fabric {
           var id = $scope.row.id;
           var version = $scope.row.version;
 
+          // make sure the summary markdown is rendered
+          if (angular.isDefined($scope.row) && $scope.row.summaryMarkdown != null) {
+            $scope.summaryHtml = marked($scope.row.summaryMarkdown);
+          } else {
+            $scope.summaryHtml = null;
+          }
+
           // extract system properties
           $scope.row.systemProperties = [];
           angular.forEach($scope.row.containerConfiguration, (v, k) => {
@@ -415,6 +388,9 @@ module Fabric {
           if ($scope.hasFabricWiki() && id && version) {
             $scope.configFolderLink = "#/wiki/branch/" + version + "/view/fabric/profiles/" + Fabric.profilePath(id);
           }
+          // lets resolve the icon to a fully qualified URL
+          $scope.row.iconURL = Fabric.toIconURL($scope, response.value.iconURL);
+          log.info("Icon URL " + $scope.row.iconURL);
           Core.$apply($scope);
         }
       }
@@ -463,11 +439,11 @@ module Fabric {
         }, {
           method: 'POST',
           success: () => {
-            notification('success', "System properties updated");
+            Core.notification('success', "System properties updated");
             Core.$apply($scope);
           },
           error: (response) => {
-            notification('error', 'Failed to update system properties due to ' + response.error);
+            Core.notification('error', 'Failed to update system properties due to ' + response.error);
             Core.$apply($scope);
           }
         });

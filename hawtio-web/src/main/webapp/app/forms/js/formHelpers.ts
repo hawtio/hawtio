@@ -1,7 +1,11 @@
+/// <reference path="../../core/js/coreHelpers.ts"/>
+/// <reference path="../../baseIncludes.ts"/>
 /**
  * @module Forms
  */
 module Forms {
+
+  export var log:Logging.Logger = Logger.get("Forms");
 
   /**
    * Default any values in the schema on the entity if they are not already present
@@ -132,8 +136,8 @@ module Forms {
    * @param {String} property
    * @param {any} schema
    */
-  export function findArrayItemsSchema(property, schema) {
-    var items = null;
+  export function findArrayItemsSchema(property, schema):any {
+    var items:any = null;
     if (property && schema) {
       items = property.items;
       if (items) {
@@ -192,7 +196,7 @@ module Forms {
   }
 
   export function getControlGroup(config, arg, id) {
-    var rc = $('<div class="' + config.controlgroupclass + '"></div>');
+    var rc = angular.element('<div class="' + config.controlgroupclass + '"></div>');
     if (angular.isDefined(arg.description)) {
       rc.attr('title', arg.description);
     }
@@ -212,25 +216,19 @@ module Forms {
   }
 
   export function getLabel(config, arg, label) {
-    return $('<label class="' + config.labelclass + '">' + label + ': </label>');
+    return angular.element('<label class="' + config.labelclass + '">' + label + ': </label>');
   }
 
   export function getControlDiv(config) {
-    return $('<div class="' + config.controlclass + '"></div>');
+    return angular.element('<div class="' + config.controlclass + '"></div>');
   }
 
   export function getHelpSpan(config, arg, id) {
     var help = Core.pathGet(config.data, ['properties', id, 'help']);
     if (!Core.isBlank(help)) {
-      return $('<span class="help-block">' + help + '</span>');
+      return angular.element('<span class="help-block">' + help + '</span>');
     } else {
-      return $('<span class="help-block"></span>');
+      return angular.element('<span class="help-block"></span>');
     }
   }
-
-
-
-
-
-
 }

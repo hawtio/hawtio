@@ -71,7 +71,7 @@ module ActiveMQ {
           var mbean = getBrokerMBean(jolokia);
           if (mbean) {
               jolokia.execute(mbean, "createDurableSubscriber(java.lang.String, java.lang.String, java.lang.String, java.lang.String)", $scope.clientId, $scope.subscriberName, $scope.topicName, $scope.subSelector, onSuccess(function() {
-                  notification('success', "Created durable subscriber " + clientId);
+                  Core.notification('success', "Created durable subscriber " + clientId);
                   $scope.clientId = '';
                   $scope.subscriberName = '';
                   $scope.topicName = '';
@@ -79,7 +79,7 @@ module ActiveMQ {
                   loadTable();
               }));
           } else {
-              notification("error", "Could not find the Broker MBean!");
+              Core.notification("error", "Could not find the Broker MBean!");
           }
       }
 
@@ -87,7 +87,7 @@ module ActiveMQ {
         var mbean = $scope.gridOptions.selectedItems[0]._id;
         jolokia.execute(mbean, "destroy()",  onSuccess(function() {
             $scope.showSubscriberDialog.close();
-            notification('success', "Deleted durable subscriber");
+            Core.notification('success', "Deleted durable subscriber");
             loadTable();
             $scope.gridOptions.selectedItems = [];
         }));

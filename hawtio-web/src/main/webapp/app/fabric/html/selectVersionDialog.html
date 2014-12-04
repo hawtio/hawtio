@@ -1,0 +1,12 @@
+<div>
+  <div class="modal-header"><h4>{{title}}</h4></div>
+  <div class="modal-body">
+    <p>{{text}}</p>
+    <div fabric-version-selector='selectedVersion'></div>
+    <p ng-show="warning" class="alert alert-warning">{{warning}}</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-danger" ng-disabled="invalid" ng-click="close(true)">{{action}}</button>
+    <button class="btn btn-primary" ng-click="close(false)">{{cancel}}</button>
+  </div>
+</div>

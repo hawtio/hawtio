@@ -60,7 +60,13 @@ module UI {
         $scope.$watch('text', function(oldValue, newValue) {
           if ($scope.codeMirror && $scope.doc) {
             if (!$scope.codeMirror.hasFocus()) {
-              $scope.doc.setValue($scope.text || "");
+              var text = $scope.text || "";
+              if (angular.isArray(text) || angular.isObject(text)) {
+                text = JSON.stringify(text, null, "  ");
+                $scope.mode = "javascript";
+                $scope.codeMirror.setOption("mode", "javascript");
+              }
+              $scope.doc.setValue(text);
             }
           }
         });

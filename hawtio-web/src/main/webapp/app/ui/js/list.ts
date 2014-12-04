@@ -37,8 +37,12 @@ module UI {
         $scope.rowTemplate = $templateCache.get('rowTemplate.html');
 
         var columnDefs = $scope.config['columnDefs'];
+        var fieldName = 'name';
+        var displayName = 'Name';
         if (columnDefs && columnDefs.length > 0) {
           var def = columnDefs.first();
+          fieldName = def['field'] || fieldName;
+          displayName = def['displayName'] || displayName;
           if (def['cellTemplate']) {
             $scope.cellTemplate = def['cellTemplate'];
           }
@@ -53,22 +57,25 @@ module UI {
 
         $scope.listRoot = () => {
           return $element.find('.list-root');
-        }
+        };
 
         $scope.getContents = (row) => {
           //first make our row
-          var innerScope = $scope.$new();
+          var innerScope = <any>$scope.$new();
           innerScope.row = row;
           var rowEl = $compile($scope.rowTemplate)(innerScope);
 
 
           //now compile the cell but use the parent scope
-          var innerParentScope = $scope.parentScope.$new();
+          var innerParentScope = <any>$scope.parentScope.$new();
           innerParentScope.row = row;
+          innerParentScope.col = {
+            field: fieldName
+          };
           var cellEl = $compile($scope.cellTemplate)(innerParentScope);
           $(rowEl).find('.list-row-contents').append(cellEl);
           return rowEl;
-        }
+        };
 
 
         $scope.setRows = (data) => {
@@ -78,13 +85,19 @@ module UI {
           if (data) {
             data.forEach((row) => {
               var newRow = {
-                entity: row
+                entity: row,
+                getProperty: (name:string) => {
+                  if (!angular.isDefined(name)) {
+                    return null;
+                  }
+                  return row[name];
+                }
               };
               list.append($scope.getContents(newRow));
               $scope.rows.push(newRow);
             });
           }
-        }
+        };
 
         // find the parent scope that has our configuration
         var parentScope = findParentWith($scope, configName);

@@ -11,7 +11,9 @@ module SpringBatch {
         $scope.subLevelTabs = subLevelTabs;
 
         $scope.isActive = (tab) => {
-            return ('/springbatch/'+tab.uri === $location.path());
+          return false;
+            // TODO: spring-batch is not complete
+            // return ('/springbatch/'+tab.uri === $location.path());
         };
     }]);
 }

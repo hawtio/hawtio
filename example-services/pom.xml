@@ -10,7 +10,7 @@
   </parent>
 
   <groupId>io.hawt.example.services</groupId>
-  <artifactId>project</artifactId>
+  <artifactId>example-services</artifactId>
 
   <name>examples-services</name>
   <description>hawtio :: hawtio example services</description>

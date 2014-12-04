@@ -3,7 +3,12 @@ package io.hawt;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import io.hawt.jmx.*;
+import io.hawt.jmx.About;
+import io.hawt.jmx.JMXSecurity;
+import io.hawt.jmx.JmxTreeWatcher;
+import io.hawt.jmx.PluginRegistry;
+import io.hawt.jmx.QuartzFacade;
+import io.hawt.jmx.UploadManager;
 import io.hawt.system.ConfigManager;
 
 /**

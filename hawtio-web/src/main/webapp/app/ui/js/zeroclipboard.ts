@@ -19,7 +19,7 @@ module UI {
         clip.on('complete', (client, args) => {
 
           if (args.text && angular.isString(args.text)) {
-            notification('info', "Copied text to clipboard: " + args.text.truncate(20));
+            Core.notification('info', "Copied text to clipboard: " + args.text.truncate(20));
           }
           Core.$apply($scope);
         });

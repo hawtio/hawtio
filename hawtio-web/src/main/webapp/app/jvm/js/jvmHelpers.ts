@@ -1,12 +1,14 @@
 /**
  * @module JVM
  */
+/// <reference path="../../baseIncludes.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
 module JVM {
 
   export var log:Logging.Logger = Logger.get("JVM");
 
   export var connectControllerKey = "jvmConnectSettings";
-  export var connectionSettingsKey = "jvmConnect";
+  export var connectionSettingsKey = Core.connectionSettingsKey;
 
   export var logoPath = 'img/icons/jvm/';
 

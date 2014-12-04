@@ -52,6 +52,7 @@ module Camel {
       var obj = response.value;
       if (obj) {
 
+        // the JMX tabular data has 2 indexes so we need to dive 2 levels down to grab the data
         var arr = [];
         for (var key in obj) {
           var values = obj[key];

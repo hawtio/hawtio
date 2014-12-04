@@ -12,9 +12,10 @@ module Osgi {
       sortField: "Identifier",
       bundleFilter: "",
       startLevelFilter: 0,
-      showPlatformBundles: false,
+      showActiveMQBundles: false,
+      showCamelBundles: false,
       showCxfBundles: false,
-      showCamelBundles: true
+      showPlatformBundles: false
     };
 
     if ('bundleList' in localStorage) {
@@ -49,7 +50,7 @@ module Osgi {
             success: function (response) {
               var isFragment = response.value;
               if (isFragment) {
-                notification("success", "Fragment installed succesfully.");
+                Core.notification("success", "Fragment installed successfully.");
                 $scope.bundleUrl = "";
                 Core.$apply($scope);
               } else {
@@ -60,23 +61,23 @@ module Osgi {
                   arguments: [bundleID]
                 }, {
                   success: function (response) {
-                    notification("success", "Bundle installed and started successfully.");
+                    Core.notification("success", "Bundle installed and started successfully.");
                     $scope.bundleUrl = "";
                     Core.$apply($scope);
                   },
                   error: function (response) {
-                    notification("error", response.error)
+                    Core.notification("error", response.error)
                   }
                 });
               }
             },
             error: function (response) {
-              notification("error", response.error)
+              Core.notification("error", response.error)
             }
           });
         },
         error: function (response) {
-          notification("error", response.error);
+          Core.notification("error", response.error);
         }
       });
     };
@@ -116,6 +117,9 @@ module Osgi {
         var answer = true;
         if (!$scope.display.showPlatformBundles) {
           answer = !Karaf.isPlatformBundle(bundle['SymbolicName']);
+        }
+        if (answer && !$scope.display.showActiveMQBundles) {
+          answer = !Karaf.isActiveMQBundle(bundle['SymbolicName']);
         }
         if (answer && !$scope.display.showCxfBundles) {
           answer = !Karaf.isCxfBundle(bundle['SymbolicName']);

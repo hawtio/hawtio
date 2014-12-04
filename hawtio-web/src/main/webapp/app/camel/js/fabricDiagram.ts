@@ -85,7 +85,7 @@ module Camel {
       }
     };
 
-    function connectToContainer(container, postfix, viewPrefix = "/jmx/attributes?tab=camel") {
+    function connectToContainer(container, postfix, viewPrefix = "#/jmx/attributes?tab=camel") {
       var view = viewPrefix;
       if (postfix) {
         view += postfix;
@@ -179,7 +179,7 @@ module Camel {
         angular.forEach(value, (v, k) => {
           if (onlyShowKeys ? onlyShowKeys.indexOf(k) >= 0 : ignoreKeys.indexOf(k) < 0) {
             var formattedValue = Core.humanizeValueHtml(v);
-            properties.push({key: humanizeValue(k), value: formattedValue});
+            properties.push({key: Core.humanizeValue(k), value: formattedValue});
           }
         });
         properties = properties.sortBy("key");
@@ -316,7 +316,7 @@ module Camel {
           var attributes = details['attributes'];
           var contextId = attributes["context"];
           if (!routeId) {
-            routeId = trimQuotes(attributes["name"]);
+            routeId = Core.trimQuotes(attributes["name"]);
           }
           attributes["routeId"] = routeId;
           attributes["mbean"] = objectName;
@@ -384,7 +384,7 @@ module Camel {
           //log.info("attributes: " + angular.toJson(attributes));
           var contextId = attributes["context"];
           if (!uri) {
-            uri = trimQuotes(attributes["name"]);
+            uri = Core.trimQuotes(attributes["name"]);
           }
           attributes["uri"] = uri;
           attributes["mbean"] = objectName;
@@ -528,7 +528,7 @@ module Camel {
             var details = Core.parseMBean(objectName);
             var attributes = details['attributes'];
             var contextId = attributes["context"];
-            var uri = trimQuotes(attributes["name"]);
+            var uri = Core.trimQuotes(attributes["name"]);
             getOrCreateCamelContext(contextId, objectName);
           });
           //graphModelUpdated();

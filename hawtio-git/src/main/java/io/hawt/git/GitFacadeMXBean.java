@@ -13,7 +13,10 @@ public interface GitFacadeMXBean {
    String getRepositoryLabel();
 
     /**
-     * Checks if the file exists and if so what its file metadata is
+     * Checks if the file exists and if so what its file metadata is.
+     * <p/>
+     * Will by default be case in-sensitive, eg checking if <tt>readme.md</tt> exists, will
+     * return file data, if the file in git is named <tt>ReadMe.md</tt>.
      *
      * @return the metadata for the given file or null if it does not exist
      */
@@ -89,7 +92,6 @@ public interface GitFacadeMXBean {
      */
     String diff(String objectId, String baseObjectId, String blobPath);
 
-
     /**
      * Reverts the file to a previous value
      */
@@ -100,4 +102,6 @@ public interface GitFacadeMXBean {
      * Returns all the branch names we can use in the local repo
      */
     List<String> branches();
+
+    void uploadFile(String branch, String path, boolean unzip, String sourceFileName, String destName) throws IOException, GitAPIException;
 }

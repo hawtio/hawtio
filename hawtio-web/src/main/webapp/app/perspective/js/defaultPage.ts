@@ -1,7 +1,7 @@
 /**
  * @module Perspective
  */
-/// <reference path="./perspectivePlugin.ts"/>
+/// <reference path="perspectivePlugin.ts"/>
 module Perspective {
 
   /**
@@ -14,13 +14,14 @@ module Perspective {
    * @param {Core.Workspace} workspace
    */
   export function DefaultPageController($scope, $location, localStorage, workspace:Workspace, jolokia) {
+    var params = $location.search();
     var url = Perspective.defaultPage($location, workspace, jolokia, localStorage);
     var path = Core.trimLeading(url, "#");
     if (path) {
-      console.log("redirecting to default page: " + path);
+      log.debug("Redirecting to default page: ", path, " page params: ", params);
       $location.url(path);
     } else {
-      console.log("No default page could be chosen!");
+      log.debug("No default page could be chosen");
     }
   }
 

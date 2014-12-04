@@ -40,7 +40,7 @@ public class SocialMedia implements SocialMediaMBean {
                 mBeanServer.registerMBean(this, objectName);
             } catch (InstanceAlreadyExistsException iaee) {
                 // Try to remove and re-register
-                LOG.info("Re-registering SchemaLookup MBean");
+                LOG.info("Re-registering Social MBean");
                 mBeanServer.unregisterMBean(objectName);
                 mBeanServer.registerMBean(this, objectName);
             }

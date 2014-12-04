@@ -1,8 +1,13 @@
-///<reference path="formHelpers.ts"/>
+/// <reference path="formHelpers.ts"/>
+/// <reference path="simpleFormDirective.ts"/>
+/// <reference path="inputTableDirective.ts"/>
+/// <reference path="baseDirectives.ts"/>
+/// <reference path="submitDirective.ts"/>
+/// <reference path="resetDirective.ts"/>
 module Forms {
 
   export var pluginName = 'hawtio-forms';
-  export var log:Logging.Logger = Logger.get("Forms");
+  export var templateUrl = 'app/forms/html/';
 
   export var _module = angular.module(Forms.pluginName, ['bootstrap', 'ngResource', 'hawtioCore', 'datatable', 'ui.bootstrap', 'ui.bootstrap.dialog', 'hawtio-ui']);
 
@@ -12,8 +17,12 @@ module Forms {
       when('/forms/testTable', {templateUrl: 'app/forms/html/testTable.html'});
   }]);
 
-  // TODO - rename this to hawtio-form or something
   _module.directive('simpleForm', ["workspace", "$compile", (workspace, $compile) => {
+    return new Forms.SimpleForm(workspace, $compile);
+  }]);
+
+  // an alias of the above so we can support older views still
+  _module.directive('hawtioForm', ["workspace", "$compile", (workspace, $compile) => {
     return new Forms.SimpleForm(workspace, $compile);
   }]);
 

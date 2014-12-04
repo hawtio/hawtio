@@ -20,7 +20,7 @@ module Fabric {
     // console.log("Schema: ", schema);
 
     Core.pathSet(schema, ["properties", "name", "required"], true);
-    Core.pathSet(schema, ['properties', 'name', 'input-attributes', 'ng-pattern'], "/^[a-zA-Z0-9_-]*$/");
+    Core.pathSet(schema, ['properties', 'name', 'input-attributes', 'ng-pattern'], "/^[a-z0-9_-]*$/");
 
     delete schema.properties['metadataMap'];
     delete schema.properties['zookeeperUrl'];
@@ -89,10 +89,12 @@ module Fabric {
         delete schema.properties['minimumPort'];
         delete schema.properties['maximumPort'];
         schema.properties['jmxPassword']['type'] = 'password';
+        /*
         schema.properties['saveJmxCredentials'] = {
           'type': 'boolean'
         };
         Core.pathSet(schema.properties, ['saveJmxCredentials', 'tooltip'], 'Remember credentials when connecting to container (avoid prompting user to enter credentials)');
+        */
 
         Core.pathSet(schema.properties, ['parent', 'label'], 'Parent Container');
         Core.pathSet(schema.properties, ['parent', 'tooltip'], 'The name of the parent container used to create the child container');
@@ -101,7 +103,7 @@ module Fabric {
 
         bulkSet(schema, ["jmxUser", "jmxPassword", "parent"], 'required', true);
         schema['tabs'] = {
-          'Common': ['name', 'parent', 'jmxUser', 'jmxPassword', 'saveJmxCredentials', 'number'],
+          'Common': ['name', 'parent', 'jmxUser', 'jmxPassword', 'number'],
           'Advanced': ['*']
         };
         break;
@@ -145,7 +147,7 @@ module Fabric {
         delete schema.properties['hostNameContext'];
         delete schema.properties['resolver'];
 
-        schema.properties['serverUrl']['default'] = 'openshift.redhat.com';
+//        schema.properties['serverUrl']['default'] = 'openshift.redhat.com';
 
         // openshift must select publichostname as the resolver
         Core.pathSet(schema.properties, ['resolver', 'default'], 'publichostname');
@@ -204,6 +206,26 @@ module Fabric {
         break;
 
       case 'docker':
+        delete schema.properties['jmxUser'];
+        delete schema.properties['jmxPassword'];
+        delete schema.properties['parent'];
+        delete schema.properties['manualIp'];
+        delete schema.properties['preferredAddress'];
+        delete schema.properties['resolver'];
+        delete schema.properties['ensembleServer'];
+        delete schema.properties['proxyUri'];
+        delete schema.properties['adminAccess'];
+        delete schema.properties['path'];
+        delete schema.properties['bindAddress'];
+        delete schema.properties['hostNameContext'];
+
+        schema['tabs'] = {
+          'Common': ['name', 'number'],
+          'Advanced': ['environmentalVariables', 'jvmOpts', '*']
+        };
+        break;
+
+      case 'kubernetes':
         delete schema.properties['jmxUser'];
         delete schema.properties['jmxPassword'];
         delete schema.properties['parent'];

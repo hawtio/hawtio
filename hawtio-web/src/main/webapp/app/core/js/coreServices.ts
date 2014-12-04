@@ -3,7 +3,29 @@
  */
 
 /// <reference path="corePlugin.ts"/>
+/// <reference path="./helpRegistry.ts"/>
+/// <reference path="./preferencesRegistry.ts"/>
+/// <reference path="../../themes/js/themesPlugin.ts"/>
 module Core {
+
+  // Create the workspace object used in all kinds of places
+  _module.factory('workspace',["$location", "jmxTreeLazyLoadRegistry","$compile", "$templateCache", "localStorage", "jolokia", "jolokiaStatus", "$rootScope", "userDetails", ($location:ng.ILocationService,jmxTreeLazyLoadRegistry, $compile:ng.ICompileService,$templateCache:ng.ITemplateCacheService, localStorage:WindowLocalStorage, jolokia, jolokiaStatus, $rootScope, userDetails) => {
+
+      var answer = new Workspace(jolokia, jolokiaStatus, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope, userDetails);
+      answer.loadTree();
+      return answer;
+  }]);
+
+  _module.service('ConnectOptions', ['$location', ($location:ng.ILocationService) => {
+    var connectionName = Core.ConnectionName;
+    if (!Core.isBlank(connectionName)) {
+      var answer = Core.getConnectOptions(connectionName);
+      log.debug("ConnectOptions: ", answer);
+      return answer;
+    }
+    log.debug("No connection options, connected to local JVM");
+    return null;
+  }]);
 
   // local storage service to wrap the HTML5 browser storage
   _module.service('localStorage',() => {
@@ -24,6 +46,10 @@ module Core {
   // should hold the last URL that the user was on after a route change
   _module.factory('lastLocation', () => {
     return {};
+  });
+
+  _module.factory('locationChangeStartTasks', () => {
+    return new Core.ParameterizedTasksImpl();
   });
 
   // service to register stuff that should happen when the user logs in
@@ -57,6 +83,17 @@ module Core {
     return answer;
   }]);
 
+  // service for the codehale metrics
+  _module.factory('metricsWatcher', ["$window", ($window) => {
+    var answer: any = $window.metricsWatcher;
+    if (!answer) {
+      // lets avoid any NPEs
+      answer = {};
+      $window.metricsWatcher = metricsWatcher;
+    }
+    return answer;
+  }]);
+
   // service for xml2json, should replace with angular.to/from json functions
   _module.factory('xml2json', () => {
     var jquery:any = $;
@@ -75,10 +112,9 @@ module Core {
     };
   });
 
-  export var DEFAULT_MAX_DEPTH = 5;
+  export var DEFAULT_MAX_DEPTH = 7;
   export var DEFAULT_MAX_COLLECTION_SIZE = 500;
 
-  // jolokia settings, probably could be a constant
   _module.factory('jolokiaParams', ["jolokiaUrl", "localStorage", (jolokiaUrl, localStorage) => {
     var answer = {
       canonicalNaming: false,
@@ -109,43 +145,76 @@ module Core {
     return branding;
   });
 
+  // service that holds cached jolokia responses, indexed by mbean name
+  _module.factory('ResponseHistory', () => {
+    var answer = Core.getResponseHistory();
+    return answer;
+  });
+
   // user detail service, contains username/password
-  _module.factory('userDetails', ["jolokiaUrl", "localStorage", (jolokiaUrl, localStorage)  => {
-    var answer = angular.fromJson(localStorage[jolokiaUrl]);
-    if (!angular.isDefined(answer) && jolokiaUrl) {
-      answer = {
-        username: '',
+  _module.factory('userDetails', ["ConnectOptions", "localStorage", "$window", "$rootScope", (ConnectOptions:Core.ConnectOptions, localStorage:WindowLocalStorage, $window:ng.IWindowService, $rootScope:ng.IRootScopeService)  => {
+    var answer = <UserDetails> {
+      username: null,
+      password: null
+    };
+    if('userDetails' in $window) {
+      answer = $window['userDetails'];
+      log.debug("User details loaded from parent window: ", StringHelpers.toString(answer));
+      executePostLoginTasks();
+    } else if ('userDetails' in localStorage) {
+      answer = angular.fromJson(localStorage['userDetails']);
+      log.debug("User details loaded from local storage: ", StringHelpers.toString(answer));
+      executePostLoginTasks();
+    } else if (Core.isChromeApp()) {
+      answer = <Core.UserDetails> {
+        username: 'user',
         password: ''
       };
-
+      log.debug("Running as a Chrome app, using fake UserDetails: ");
+      executePostLoginTasks();
+    } else {
       log.debug("No username set, checking if we have a session");
       // fetch the username if we've already got a session at the server
-      var userUrl = jolokiaUrl.replace("jolokia", "user");
-      $.ajax(userUrl, {
+      var userUrl = "user";
+      $.ajax(userUrl, <JQueryAjaxSettings> {
         type: "GET",
         success: (response) => {
           log.debug("Got user response: ", response);
-          executePostLoginTasks();
-          /*
-          // We'll only touch these if they're not set
-          if (response !== '' && response !== null) {
-            answer.username = response;
-            if (!('loginDetails' in answer)) {
-              answer['loginDetails'] = {};
-            }
+          if (response === null) {
+            answer.username = null;
+            answer.password = null;
+            log.debug("user response was null, no session available");
+            Core.$apply($rootScope);
+            return;
           }
-          */
+          answer.username = response;
+          // 'user' is what the UserServlet returns if authenticationEnabled is off
+          if (response === 'user') {
+            log.debug("Authentication disabled, using dummy credentials");
+            // use a dummy login details
+            answer.loginDetails = {};
+          } else {
+            log.debug("User details loaded from existing session: ", StringHelpers.toString(answer));
+          }
+          executePostLoginTasks();
+          Core.$apply($rootScope);
         },
         error: (xhr, textStatus, error) => {
+          answer.username = null;
+          answer.password = null;
           log.debug("Failed to get session username: ", error);
-          executePostLoginTasks();
+          Core.$apply($rootScope);
+          //executePostLoginTasks();
           // silently ignore, we could be using the proxy
         }
       });
-      return answer;
-    } else {
-      return answer;
+      log.debug("Created empty user details to be filled in: ", StringHelpers.toString(answer));
     }
-
+    return answer;
   }]);
+
+  _module.factory('jmxTreeLazyLoadRegistry', () => {
+    return Core.lazyLoaders;
+  });
+
 }

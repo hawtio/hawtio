@@ -5,7 +5,10 @@
  * @main Core
  */
 
-/// <reference path="coreHelpers.ts"/>
+/// <reference path="./coreHelpers.ts"/>
+/// <reference path="../../ide/js/idePlugin.ts"/>
+/// <reference path="../../helpers/js/urlHelpers.ts"/>
+/// <reference path="./pageTitle.ts"/>
 module Core {
 
   /**
@@ -33,31 +36,32 @@ module Core {
    */
   // TODO - maybe we can make discovering this async before we call hawtioPluginLoader.loadPlugins() to avoid the blocking HTTP requests it makes currently
   export var jolokiaUrl = getJolokiaUrl();
-  log.debug("jolokiaUrl " + jolokiaUrl);
+  Logger.get("Core").debug("jolokiaUrl " + jolokiaUrl);
 
   /**
    * The main hawtio core App module
    */
-  export var _module = angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dialog', 'hawtio-ui']);
+  export var _module:ng.IModule = angular.module(Core.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dialog', 'hawtio-ui']);
 
   // configure the module
-  _module.config(["$routeProvider", "$dialogProvider", ($routeProvider, $dialogProvider) => {
+  _module.config(["$locationProvider", "$routeProvider", "$dialogProvider", ($locationProvider: ng.ILocationProvider, $routeProvider:ng.route.IRouteProvider, $dialogProvider) => {
+
+    $locationProvider.html5Mode(true);
+
     $dialogProvider.options({
       backdropFade: true,
       dialogFade: true
     });
 
     $routeProvider.
-            when('/login', {templateUrl: Core.templatePath + 'login.html'}).
-            when('/welcome', {templateUrl: Core.templatePath + 'welcome.html'}).
-            when('/about', {templateUrl: Core.templatePath + 'about.html'}).
             when('/help', {
               redirectTo: '/help/index'
             }).
+            when('/login', {templateUrl: Core.templatePath + 'login.html'}).
+            when('/welcome', {templateUrl: Core.templatePath + 'welcome.html'}).
+            when('/about', {templateUrl: Core.templatePath + 'about.html'}).
             when('/help/:topic/', {templateUrl: Core.templatePath + 'help.html'}).
-            when('/help/:topic/:subtopic', {templateUrl: Core.templatePath + 'help.html'}).
-
-            otherwise({redirectTo: '/perspective/defaultPage'});
+            when('/help/:topic/:subtopic', {templateUrl: Core.templatePath + 'help.html'});
   }]);
 
   _module.constant('layoutTree', Core.templatePath + 'layoutTree.html');
@@ -79,10 +83,15 @@ module Core {
                "pageTitle", 
                "branding", 
                "toastr", 
-               "userDetails", 
+               "metricsWatcher",
+               "userDetails",
                "preferencesRegistry", 
                "postLoginTasks", 
-               "preLogoutTasks", 
+               "preLogoutTasks",
+               "$location",
+               "ConnectOptions",
+               "locationChangeStartTasks",
+               "$http",
                ($rootScope,
                $routeParams,
                jolokia,
@@ -94,10 +103,15 @@ module Core {
                pageTitle:Core.PageTitle,
                branding,
                toastr,
-               userDetails,
+               metricsWatcher,
+               userDetails:Core.UserDetails,
                preferencesRegistry,
                postLoginTasks:Core.Tasks,
-               preLogoutTasks:Core.Tasks) => {
+               preLogoutTasks:Core.Tasks,
+               $location:ng.ILocationService,
+               ConnectOptions:Core.ConnectOptions,
+               locationChangeStartTasks:Core.ParameterizedTasks,
+               $http:ng.IHttpService) => {
 
     postLoginTasks.addTask("ResetPreLogoutTasks", () => {
       preLogoutTasks.reset();
@@ -106,8 +120,6 @@ module Core {
     preLogoutTasks.addTask("ResetPostLoginTasks", () => {
       postLoginTasks.reset();
     });
-
-    $.support.cors = true;
 
     /*
       * Count the number of lines in the given text
@@ -148,10 +160,43 @@ module Core {
       if (rate > 0) {
         jolokia.start(rate);
       }
-      log.debug("Set update rate to: ", rate);
+      Logger.get("Core").debug("Set update rate to: ", rate);
     });
 
     $rootScope.$emit('UpdateRate', localStorage['updateRate']);
+    $rootScope.$on('$locationChangeStart', ($event, newUrl, oldUrl) => {
+      locationChangeStartTasks.execute($event, newUrl, oldUrl);
+    });
+
+    // ensure that if the connection parameter is present, that we keep it
+    locationChangeStartTasks.addTask('ConParam', ($event:ng.IAngularEvent, newUrl:string, oldUrl:string) => {
+      // we can't execute until the app is initialized...
+      if (!Core.injector) {
+        return;
+      }
+      var $location:ng.ILocationService = Core.injector.get('$location');
+      var ConnectOptions:Core.ConnectOptions = Core.injector.get('ConnectOptions');
+      //log.debug("ConParam task firing, newUrl: ", newUrl, " oldUrl: ", oldUrl, " ConnectOptions: ", ConnectOptions);
+      if (!ConnectOptions.name || !newUrl) {
+        return;
+      }
+      var newQuery:any = $location.search();
+      if (!newQuery.con) {
+        log.debug("Lost connection parameter (", ConnectOptions.name, ") from query params: ", newQuery, " resetting");
+        newQuery['con'] = ConnectOptions.name;
+        $location.search(newQuery);
+      }
+    });
+
+    locationChangeStartTasks.addTask('UpdateSession', () => {
+      log.debug("Updating session expiry");
+      $http({ method: 'post', url: 'refresh' }).success((data) => {
+        log.debug("Updated session, response: ", data);  
+      }).error(() => {
+        log.debug("Failed to update session expiry");
+      });
+      log.debug("Made request");
+    });
 
     /*
       * Debugging Tools
@@ -197,51 +242,60 @@ module Core {
 
     //helpRegistry.discoverHelpFiles(hawtioPluginLoader.getModules());
 
-    var opts = localStorage['CodeMirrorOptions'];
-    if (opts) {
-      opts = angular.fromJson(opts);
-      CodeEditor.GlobalCodeMirrorOptions = angular.extend(CodeEditor.GlobalCodeMirrorOptions, opts);
-    }
-
-
     toastr.options = {
       'closeButton': true,
       'showMethod': 'slideDown',
       'hideMethod': 'slideUp'
     };
 
+    var throttledError = {
+      level: <string>null,
+      message: <string>null,
+      action: Core.throttled(() => {
+        if (throttledError.level === "WARN") {
+          notification('warning', throttledError.message);
+        }
+        if (throttledError.level === "ERROR") {
+          notification('error', throttledError.message);
+        }
+
+      }, 500)
+    };
 
     window['logInterceptors'].push((level, message) => {
-        if (level === "WARN") {
-          notification('warning', message);
-        }
-        if (level === "ERROR") {
-          notification('error', message);
-        }
-
+      throttledError.level = level;
+      throttledError.message = message;
+      throttledError.action();
     });
 
     setTimeout(() => {
-      $("#main-body").fadeIn(2000).after(() => {
-        log.info(branding.appName + " started");
+      (<JQueryStatic>$)("#main-body").fadeIn(2000).after(() => {
+        Logger.get("Core").info(branding.appName + " started");
         Core.$apply($rootScope);
-        $(window).trigger('resize');
+        (<JQueryStatic>$)(window).trigger('resize');
       });
     }, 500);
   }]); // end _module.run
-}; // end module Core
+} // end module Core
 
 // bootstrap plugin loader
-hawtioPluginLoader.addUrl(url("/plugin"));
+hawtioPluginLoader.addUrl("plugin");
 
-// add our module
+// add our module and any dependant third party modules
 hawtioPluginLoader.addModule(Core.pluginName);
+hawtioPluginLoader.addModule('angularFileUpload');
 
 // register some tasks to run before bootstrap
 
+// enable CORS support
+hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
+  (<JQueryStatic>$).support.cors = true;
+  nextTask();
+});
+
 // add bootstrap style tooltips
 hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
-  $("a[title]").tooltip({
+  (<JQueryStatic>$)("a[title]").tooltip({
     selector: '',
     delay: { show: 1000, hide: 100 }
   });
@@ -252,7 +306,7 @@ hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
 // viewport
 hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
   Core.adjustHeight();
-  $(window).resize(Core.adjustHeight);
+  (<JQueryStatic>$)(window).resize(Core.adjustHeight);
   nextTask();
 });
 
@@ -261,7 +315,7 @@ hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
   if (Core._module && Core.isChromeApp()) {
     Core._module.config([
       '$compileProvider',
-      function ($compileProvider) {
+      function ($compileProvider:ng.ICompileProvider) {
         //$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
         $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
         // Angular before v1.2 uses $compileProvider.urlSanitizationWhitelist(...)
@@ -270,16 +324,3 @@ hawtioPluginLoader.registerPreBootstrapTask((nextTask) => {
   }
   nextTask();
 });
-
-
-// bootstrap the whole app here
-$(() => {
-  hawtioPluginLoader.loadPlugins(() => {
-    var doc = $(document);
-    angular.bootstrap(doc, hawtioPluginLoader.getModules());
-    $(document.documentElement).attr('xmlns:ng', "http://angularjs.org");
-    $(document.documentElement).attr('ng-app', 'hawtioCore');
-  });
-});
-
-

@@ -1,0 +1,4 @@
+src/
+.tmp/
+node_modules/
+node/

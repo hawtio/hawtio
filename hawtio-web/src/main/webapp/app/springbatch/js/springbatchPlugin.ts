@@ -21,16 +21,6 @@ module SpringBatch {
             .when('/springbatch/jobs/:host/:port', {templateUrl: SpringBatch.templatePath + 'jobs.html'})
     }]);
 
-    _module.value('ui.config', {
-        // The ui-jq directive namespace
-        jq: {
-            gridster: {
-                widget_margins: [10, 10],
-                widget_base_dimensions: [140, 140]
-            }
-        }
-    });
-
     _module.run(["$location", "workspace", "viewRegistry", "$rootScope", "$resource", ($location:ng.ILocationService, workspace:Workspace, viewRegistry, $rootScope, $resource ) => {
 
         viewRegistry['springbatch'] = 'app/springbatch/html/layoutSpringBatch.html';
@@ -47,7 +37,8 @@ module SpringBatch {
 
 
         // TODO: server list should not be hardcoded
-        var serverListRes = $resource('/hawtio/springBatch');
+        /*
+        var serverListRes = $resource('/hawtio/springbatch');
         serverListRes.get(function(data){
             $rootScope.springBatchServerList = data.springBatchServerList || [
                 'localhost\\:8080/spring-batch-admin-sample/',
@@ -55,7 +46,7 @@ module SpringBatch {
             ];
 
   //                $rootScope.springBatchServer = $rootScope.springBatchServerList[0];
-        });
+        });*/
 
         $rootScope.proxyUrl = '/hawtio/proxy/';
 
@@ -72,5 +63,6 @@ module SpringBatch {
         };
     }]);
 
-    hawtioPluginLoader.addModule(pluginName);
+    // TODO: spring batch is not ready
+    // hawtioPluginLoader.addModule(pluginName);
 }

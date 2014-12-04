@@ -49,54 +49,35 @@ var hawtioPluginLoader = (function(self, window, undefined) {
   /**
    * Parses the given query search string of the form "?foo=bar&whatnot"
    * @param text
-   * @return a map of key/values
+   * @return {*} a map of key/values
    */
   self.parseQueryString = function(text) {
-      var query = (text || window.location.search || '?');
-      var idx = -1;
-      if (angular.isArray(query)) {
-        query = query[0];
-      }
-      idx = query.indexOf("?");
-      if (idx >= 0) {
-        query = query.substr(idx + 1);
-      }
-      // if query string ends with #/ then lets remove that too
-      idx = query.indexOf("#/");
-      if (idx > 0) {
-        query = query.substr(0, idx);
-      }
-      var map = {};
-      query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
-          (map[key] = map[key] || []).push(value); 
-        });
-      return map;
-  };
-
-  /**
-   * Parses the username:password from a http basic auth URL, e.g.
-   * http://foo:bar@example.com
-   */
-  self.getCredentials = function(urlString) {
-/*
-    No Uri class outside of IE right?
-
-    var uri = new Uri(url);
-    var credentials = uri.userInfo();
-*/
-    if (urlString) {
-      var credentialsRegex = new RegExp(/.*:\/\/([^@]+)@.*/);
-      var m = urlString.match(credentialsRegex);
-      if (m && m.length > 1) {
-        var credentials = m[1];
-        if (credentials && credentials.indexOf(':') > -1) {
-          return credentials.split(':');
-        }
-      }
+    // just look in window.location.href, sometimes location.search isn't set yet when this functin is run
+    var search = null;
+    var parts = window.location.href.split('?');
+    if (parts) {
+      search = parts.last(parts.length - 1).join('');
     }
-    return [];
+    var query = (text || search || '?');
+    var idx = -1;
+    if (angular.isArray(query)) {
+      query = query[0];
+    }
+    idx = query.indexOf("?");
+    if (idx >= 0) {
+      query = query.substr(idx + 1);
+    }
+    // if query string ends with #/ then lets remove that too
+    idx = query.indexOf("#/");
+    if (idx > 0) {
+      query = query.substr(0, idx);
+    }
+    var map = {};
+    query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
+        (map[key] = map[key] || []).push(value);
+      });
+    return map;
   };
-
 
   self.loaderCallback = null;
 
@@ -177,7 +158,7 @@ var hawtioPluginLoader = (function(self, window, undefined) {
         $.ajaxSetup({async:true});
         bootstrap();
       }
-    }
+    };
 
     if (urlsToLoad == 0) {
       loadScripts();
@@ -201,7 +182,7 @@ var hawtioPluginLoader = (function(self, window, undefined) {
           parts = parts.reverse();
           parts.pop();
 
-          var url = parts.pop();
+          url = parts.pop();
           var attribute = parts.reverse().join(':');
           var jolokia = new Jolokia(url);
 
@@ -217,6 +198,14 @@ var hawtioPluginLoader = (function(self, window, undefined) {
           log.debug("Trying url: ", url);
 
           $.get(url, function (data) {
+                if (angular.isString(data)) {
+                  try {
+                    data = angular.fromJson(data);
+                  } catch (error) {
+                    // ignore this source of plugins
+                    return;
+                  }
+                }
                 // log.debug("got data: ", data);
                 $.extend(plugins, data);
               }).always(function() {
