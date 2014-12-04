@@ -1081,7 +1081,7 @@ module Camel {
     });
   }
 
-  export function addRouteXmlChildren($scope, parent, nodes, links, parentId, parentX, parentY, parentNode = null) {
+  export function addRouteXmlChildren($scope, parent, nodes, links, parentId, parentX, parentY, parentNode = null, fullTree = parent) {
     var delta = 150;
     var x = parentX;
     var y = parentY + delta;
@@ -1143,10 +1143,11 @@ module Camel {
         //console.log("Image URL is " + imageUrl);
         var cid = route.getAttribute("_cid") || route.getAttribute("id");
         node = { "name": name, "label": label, "labelSummary": labelSummary, "group": 1, "id": id, "elementId": elementID,
-          "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid, "tooltip": tooltip, "type": nodeId};
+          "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid, "tooltip": tooltip, "type": nodeId, "parentId" : parentId, "jQueryNode" : route};
         if (rid) {
           node["rid"] = rid;
-          if (!$scope.routeNodes) $scope.routeNodes = {};
+          if (!$scope.routeNodes)
+            $scope.routeNodes = {};
           $scope.routeNodes[rid] = node;
         }
         if (!cid) {
@@ -1154,21 +1155,67 @@ module Camel {
         }
         if (cid) {
           node["cid"] = cid;
-          if (!$scope.nodes) $scope.nodes = {};
+          if (!$scope.nodes)
+            $scope.nodes = {};
           $scope.nodes[cid] = node;
         }
         // only use the route id on the first from node
         rid = null;
         nodes.push(node);
+        //we are setting parent-children links here
         if (parentId !== null && parentId !== id) {
           if (siblingNodes.length === 0 || parenNodeName === "choice") {
             links.push({"source": parentId, "target": id, "value": 1});
           } else {
-            siblingNodes.forEach(function (nodeId) {
-              links.push({"source": nodeId, "target": id, "value": 1});
+
+            // the nearest of the next node elder brothers
+
+            var elderBrothers =  nodes.filter(function(n){
+              return parentId === n.parentId && n.id != id
             });
-            siblingNodes.length = 0;
+            var firstChild = true;
+            if(elderBrothers.length === 0){
+              // first child so no elder brothers
+              elderBrothers = [nodes.length - 2];
+            } else{
+              // we are not the first child of a node
+              var nodesToLinkFrom:any[] = null ;
+
+              var elderBrother = nodes.find(function(n){
+                return n.id == elderBrothers.last().id;
+              });
+
+              var elderBrotherNode = elderBrother.jQueryNode;
+
+              if(isParallel(elderBrotherNode)){
+                var nephew:JQuery = elderBrotherNode;
+                nodesToLinkFrom = findNodesToLinkFrom(nephew);
+              } else{
+                // navigate down
+                // find the last of first level children of the brother
+                var nephew:JQuery = $(elderBrotherNode).children().last();
+                if(nephew.length === 0){
+                  //brother doesn't have children
+                  nodesToLinkFrom = [elderBrotherNode];
+                } else{
+                  nodesToLinkFrom = findNodesToLinkFrom(nephew);
+                }
+              }
+
+              var relevantNodes = nodes.filter(function(n){return nodesToLinkFrom.indexOf(n.jQueryNode) >= 0 });
+              elderBrothers = relevantNodes.map(function(n){
+                return n.id;
+              });
+            }
+
+            //elderBrothers = [elderBrothers.last()];
+            siblingNodes = elderBrothers;
+            siblingNodes.forEach(function (_nodeId) {
+              links.push({"source": _nodeId, "target": id, "value": 1});
+            });
+
           }
+          siblingNodes.length = 0;
         }
       } else {
         // ignore non EIP nodes, though we should add expressions...
@@ -1185,7 +1232,7 @@ module Camel {
           }
         }
       }
-      var siblings = addRouteXmlChildren($scope, route, nodes, links, id, x, y, node);
+      var siblings = addRouteXmlChildren($scope, route, nodes, links, id, x, y, node, fullTree);
       if (parenNodeName === "choice") {
         siblingNodes = siblingNodes.concat(siblings);
         x += delta;
@@ -1198,6 +1245,56 @@ module Camel {
       }
     });
     return siblingNodes;
+  }
+
+  // identifies nodes that can have multiple leaf nodes, that could have an outgoing arrow
+  export function isParallel(_node){
+    var result = false;
+
+    if(_node.localName === "choice" ||
+      _node.localName === "multicast"
+    ){
+      result = true;
+    }
+    return result;
+  }
+
+  export function isAnEIPNode(_jQueryNode){
+    return !!getCamelSchema(_jQueryNode.localName);
+  }
+
+  export function findNodesToLinkFrom(_node){
+    var nodesToLinkFrom:any[] = null;
+
+    // fetch all last leaves of this node
+    var grandChildren = $(_node).find(":last-child:not(:has(*))");
+    if(grandChildren.length === 0){
+      //no grandchildren
+
+      // ignore non EIP nodes
+      var EIP = isAnEIPNode(_node[0]);
+      while(!EIP ){
+        _node = _node.parent();
+        EIP = isAnEIPNode(_node[0]);
+      }
+
+      nodesToLinkFrom = $.makeArray( _node );
+    }else{
+      // ignore non EIP nodes
+      var EIPonly = grandChildren.map(function(n,m){
+
+        var nephew = $(m);
+        var EIP = isAnEIPNode(nephew);
+
+        while(!EIP ){
+          nephew = nephew.parent();
+          EIP = isAnEIPNode(nephew[0]);
+        }
+
+      });
+      nodesToLinkFrom = $.makeArray( grandChildren );
+    }
+    return nodesToLinkFrom;
   }
 
   export function getCanvasHeight(canvasDiv) {
