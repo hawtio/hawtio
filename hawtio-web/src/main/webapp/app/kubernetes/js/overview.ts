@@ -259,7 +259,7 @@ module Kubernetes {
 
   var scopeName = "OverviewController";
 
-  var OverviewController = controller(scopeName, ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", ($scope, KubernetesServices, KubernetesPods, KubernetesReplicationControllers) => {
+  var OverviewController = controller(scopeName, ["$scope", "$location", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", ($scope, $location:ng.ILocationService, KubernetesServices, KubernetesPods, KubernetesReplicationControllers) => {
     $scope.name = scopeName;
     $scope.namespaces = null;
     $scope.services = null;
@@ -268,6 +268,7 @@ module Kubernetes {
     $scope.hosts = null;
 
     $scope.count = 0;
+    $scope.paramNamespace = null;
     $scope.selectedNamespace = null;
     var redraw = false;
 
@@ -301,6 +302,7 @@ module Kubernetes {
         return result;
     };
 
+    ControllerHelpers.bindModelToSearchParam($scope, $location, 'paramNamespace', 'namespace', undefined);
 
     KubernetesServices.then((KubernetesServices:ng.resource.IResourceClass) => {
       KubernetesReplicationControllers.then((KubernetesReplicationControllers:ng.resource.IResourceClass) => {
@@ -397,7 +399,7 @@ module Kubernetes {
         pushIfNotExists(namespaces, replicationControllers.map(byNamespace));
 
         $scope.namespaces = namespaces;
-        $scope.selectedNamespace = $scope.selectedNamespace || $scope.namespaces[0];
+        $scope.selectedNamespace = $scope.selectedNamespace || $scope.paramNamespace || $scope.namespaces[0];
         $scope.hosts = hosts;
         $scope.hostsByKey = hostsByKey;
         $scope.pods = pods;

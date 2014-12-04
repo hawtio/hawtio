@@ -104,8 +104,9 @@
       </div>
    </div>
   </script>
-    <select ng-model="selectedNamespace" ng-options="namespace for namespace in namespaces">
-        <!--option ng-repeat="namespace in namespaces" value="{{namespace}}">{{namespace}}</option-->
-    </select>
+    <div ng-hide="paramNamespace"> <!-- Hide it if a namespace has been explicitly specified in the URL -->
+        <select ng-model="selectedNamespace" ng-options="namespace for namespace in namespaces">
+        </select>
+    </div>
   <kubernetes-overview ui-if="selectedNamespace"></kubernetes-overview>
 </div>
