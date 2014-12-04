@@ -4,7 +4,7 @@
 /// <reference path="../../wiki/js/wikiHelpers.ts"/>
 module Kubernetes {
 
-  var OverviewDirective = _module.directive("kubernetesOverview", ["$templateCache", "$compile", "$interpolate", "$timeout", "$window", ($templateCache:ng.ITemplateCacheService, $compile:ng.ICompileService, $interpolate:ng.IInterpolateService, $timeout:ng.ITimeoutService, $window:ng.IWindowService) => {
+  var OverviewDirective = _module.directive("kubernetesOverview", ["$templateCache", "$compile", "$interpolate", "$timeout", "$window", "KubernetesState", ($templateCache:ng.ITemplateCacheService, $compile:ng.ICompileService, $interpolate:ng.IInterpolateService, $timeout:ng.ITimeoutService, $window:ng.IWindowService, KubernetesState) => {
     return {
       restrict: 'E',
       replace: true,
@@ -24,7 +24,10 @@ module Kubernetes {
               return undefined;
 
           }
-        }
+        };
+
+        scope.kubernetes = KubernetesState;
+
         scope.customizeDefaultOptions = (options) => {
           options.Endpoint = ['Blank', {}];
         };
@@ -146,7 +149,7 @@ module Kubernetes {
           });
         }
         function namespaceFilter(item) {
-            return item.namespace === scope.selectedNamespace;
+            return item.namespace === scope.kubernetes.selectedNamespace;
         }
         function firstDraw() {
           log.debug("First draw");
@@ -196,7 +199,7 @@ module Kubernetes {
                   }
                   break;
                 case 'service':
-                  if (key in scope.servicesByKey && scope.servicesByKey[key].namespace == scope.selectedNamespace) {
+                  if (key in scope.servicesByKey && scope.servicesByKey[key].namespace == scope.kubernetes.selectedNamespace) {
                     var service = scope.servicesByKey[key];
                     child.attr('connect-to', service.connectTo);
                     return;
@@ -208,12 +211,12 @@ module Kubernetes {
                     return;
                   }
                   */
-                  if (key in scope.podsByKey && scope.podsByKey[key].namespace == scope.selectedNamespace) {
+                  if (key in scope.podsByKey && scope.podsByKey[key].namespace == scope.kubernetes.selectedNamespace) {
                     return;
                   }
                   break;
                 case 'replicationController':
-                  if (key in scope.replicationControllersByKey && scope.replicationControllersByKey[key].namespace == scope.selectedNamespace) {
+                  if (key in scope.replicationControllersByKey && scope.replicationControllersByKey[key].namespace == scope.kubernetes.selectedNamespace) {
                     var replicationController = scope.replicationControllersByKey[key];
                     child.attr('connect-to', replicationController.connectTo);
                     return;

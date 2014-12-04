@@ -83,6 +83,14 @@ module Kubernetes {
     return answer.promise;
   }]);
 
+  _module.factory('KubernetesState', [() => {
+    return {
+      namespaces: [],
+      selectedNamespace: null
+    };
+  }]);
+
+
   _module.run(['viewRegistry', 'workspace', 'ServiceRegistry', (viewRegistry, workspace:Core.Workspace, ServiceRegistry) => {
     log.debug("Running");
     viewRegistry['kubernetes'] = templatePath + 'layoutKubernetes.html';

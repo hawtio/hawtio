@@ -35,7 +35,7 @@ module Kubernetes {
 
   }]);
 
-  export var TopLevel = controller("TopLevel", ["$scope", "workspace", "KubernetesVersion", ($scope, workspace:Core.Workspace, KubernetesVersion:ng.IPromise<ng.resource.IResourceClass>) => {
+  export var TopLevel = controller("TopLevel", ["$scope", "workspace", "KubernetesVersion", "KubernetesState", ($scope, workspace:Core.Workspace, KubernetesVersion:ng.IPromise<ng.resource.IResourceClass>, KubernetesState) => {
 
     $scope.version = undefined;
 
@@ -43,10 +43,7 @@ module Kubernetes {
       return workspace.isLinkActive(href);
     };
 
-    $scope.kubernetes = {
-      namespaces: [],
-      selectedNamespace: null
-    };
+    $scope.kubernetes = KubernetesState;
 
     KubernetesVersion.then((KubernetesVersion:ng.resource.IResourceClass) => {
       KubernetesVersion.query((response) => {

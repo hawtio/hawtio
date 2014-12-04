@@ -4,12 +4,13 @@
 module Kubernetes {
 
   export var Services = controller("Services",
-    ["$scope", "KubernetesServices", "KubernetesPods", "$templateCache", "$location", "$routeParams", "jolokia",
-      ($scope, KubernetesServices:ng.IPromise<ng.resource.IResourceClass>, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>,
+    ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesState", "$templateCache", "$location", "$routeParams", "jolokia",
+      ($scope, KubernetesServices:ng.IPromise<ng.resource.IResourceClass>, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, KubernetesState,
        $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService, $routeParams, jolokia:Jolokia.IJolokia) => {
 
     $scope.namespace = $routeParams.namespace;
     $scope.services = [];
+    $scope.kubernetes = KubernetesState;
     var pods = [];
     $scope.fetched = false;
     $scope.json = '';

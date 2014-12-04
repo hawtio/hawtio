@@ -35,11 +35,12 @@ module Kubernetes {
   }]);
 
   export var ReplicationControllers = controller("ReplicationControllers",
-    ["$scope", "KubernetesReplicationControllers", "KubernetesPods", "$templateCache", "$location", "$routeParams", "jolokia",
-      ($scope, KubernetesReplicationControllers:ng.IPromise<ng.resource.IResourceClass>, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>,
+    ["$scope", "KubernetesReplicationControllers", "KubernetesPods", "KubernetesState", "$templateCache", "$location", "$routeParams", "jolokia",
+      ($scope, KubernetesReplicationControllers:ng.IPromise<ng.resource.IResourceClass>, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, KubernetesState,
        $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService, $routeParams, jolokia:Jolokia.IJolokia) => {
 
     $scope.namespace = $routeParams.namespace;
+    $scope.kubernetes = KubernetesState;
     $scope.replicationControllers = [];
     var pods = [];
     $scope.fetched = false;

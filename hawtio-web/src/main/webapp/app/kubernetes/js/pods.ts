@@ -15,8 +15,8 @@ module Kubernetes {
   }]);
 
   // main controller for the page
-  export var Pods = controller("Pods", ["$scope", "KubernetesPods", "ServiceRegistry", "$dialog", "$window", "$templateCache", "$routeParams", "jolokia", "$location", "localStorage",
-    ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, ServiceRegistry, $dialog, $window, $templateCache, $routeParams, jolokia:Jolokia.IJolokia, $location:ng.ILocationService, localStorage) => {
+  export var Pods = controller("Pods", ["$scope", "KubernetesPods", "KubernetesState", "ServiceRegistry", "$dialog", "$window", "$templateCache", "$routeParams", "jolokia", "$location", "localStorage",
+    ($scope, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, KubernetesState, ServiceRegistry, $dialog, $window, $templateCache, $routeParams, jolokia:Jolokia.IJolokia, $location:ng.ILocationService, localStorage) => {
 
     $scope.namespace = $routeParams.namespace;
     $scope.pods = undefined;
@@ -24,6 +24,8 @@ module Kubernetes {
     $scope.fetched = false;
     $scope.json = '';
     $scope.itemSchema = Forms.createFormConfiguration();
+
+    $scope.kubernetes = KubernetesState;
 
     $scope.hasService = (name) => Service.hasService(ServiceRegistry, name);
 
