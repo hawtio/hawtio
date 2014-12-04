@@ -336,6 +336,8 @@ module Kubernetes {
           });
           Kubernetes.setJson($scope, $scope.id, pods);
           $scope.pods = pods;
+          updateNamespaces($scope.kubernetes, pods);
+
           // technically the above won't trigger hawtio simple table's watch, so let's force it
           $scope.$broadcast("hawtio.datatable.pods");
           //log.debug("Pods: ", $scope.pods);

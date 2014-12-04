@@ -82,6 +82,8 @@ module Kubernetes {
         var selector = (replicationController.desiredState || {}).replicaSelector;
         replicationController.$podCounters = selector ? createPodCounters(selector, pods) : null;
       });
+
+      updateNamespaces($scope.kubernetes, pods, $scope.replicationControllers);
     }
 
     $scope.$on('kubernetes.dirtyController', ($event, replicationController) => {

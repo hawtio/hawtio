@@ -41,7 +41,12 @@ module Kubernetes {
 
     $scope.isActive = (href) => {
       return workspace.isLinkActive(href);
-    }
+    };
+
+    $scope.kubernetes = {
+      namespaces: [],
+      selectedNamespace: null
+    };
 
     KubernetesVersion.then((KubernetesVersion:ng.resource.IResourceClass) => {
       KubernetesVersion.query((response) => {

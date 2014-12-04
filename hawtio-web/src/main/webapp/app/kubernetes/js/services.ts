@@ -51,6 +51,8 @@ module Kubernetes {
         var selector = service.selector;
         service.$podCounters = selector ? createPodCounters(selector, pods) : null;
       });
+
+      updateNamespaces($scope.kubernetes, pods, [], $scope.services);
     }
 
     KubernetesServices.then((KubernetesServices:ng.resource.IResourceClass) => {

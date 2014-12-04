@@ -30,6 +30,31 @@ module Kubernetes {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "KubernetesTemplateManager"});
   }
 
+  /**
+   * Updates the namespaces value in the kubernetes object from the namespace values in the pods, controllers, services
+   */
+  export function updateNamespaces(kubernetes, pods = [], replicationControllers = [], services = []) {
+    var byNamespace = (thing) => { return thing.namespace; };
+
+    function pushIfNotExists(array, items) {
+        angular.forEach(items, (value) => {
+            if ($.inArray(value, array) < 0) {
+              array.push(value);
+            }
+        });
+    }
+    var namespaces = [];
+
+    pushIfNotExists(namespaces, pods.map(byNamespace));
+    pushIfNotExists(namespaces, services.map(byNamespace));
+    pushIfNotExists(namespaces, replicationControllers.map(byNamespace));
+
+    namespaces = namespaces.sort();
+
+    kubernetes.namespaces = namespaces;
+    kubernetes.selectedNamespace = kubernetes.selectedNamespace || namespaces[0];
+  }
+
   export function setJson($scope, id, collection) {
     $scope.id = id;
     if (!$scope.fetched) {

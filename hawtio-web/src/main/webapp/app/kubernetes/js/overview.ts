@@ -261,37 +261,28 @@ module Kubernetes {
 
   var OverviewController = controller(scopeName, ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", ($scope, KubernetesServices, KubernetesPods, KubernetesReplicationControllers) => {
     $scope.name = scopeName;
-    $scope.namespaces = null;
+    $scope.kubernetes.namespaces = null;
     $scope.services = null;
     $scope.replicationControllers = null;
     $scope.pods = null;
     $scope.hosts = null;
 
     $scope.count = 0;
-    $scope.selectedNamespace = null;
+    $scope.kubernetes.selectedNamespace = null;
     var redraw = false;
 
-    var namespaces = [];
     var services = [];
     var replicationControllers = [];
     var pods = [];
     var hosts = [];
     var byId = (thing) => { return thing.id; };
-    var byNamespace = (thing) => { return thing.namespace; };
 
-    function pushIfNotExists(array, items) {
-        angular.forEach(items, (value) => {
-            if ($.inArray(value, array) < 0) {
-              array.push(value);
-            }
-        });
-    };
 
     function populateKey(item) {
         var result = item;
         result['_key']=item.namespace+"-"+item.id;
         return result;
-    };
+    }
 
     function populateKeys(items:Array<any>) {
         var result = [];
@@ -299,7 +290,7 @@ module Kubernetes {
             result.push(populateKey(item));
         });
         return result;
-    };
+    }
 
 
     KubernetesServices.then((KubernetesServices:ng.resource.IResourceClass) => {
@@ -352,7 +343,7 @@ module Kubernetes {
         $scope.servicesByKey = {};
         $scope.podsByKey = {};
         $scope.replicationControllersByKey = {};
-        $scope.namespaces = {};
+        $scope.kubernetes.namespaces = {};
         services.forEach((service) => {
           $scope.servicesByKey[service._key] = service;
           var selectedPods = selectPods(pods, service.namespace, service.selector);
@@ -392,12 +383,8 @@ module Kubernetes {
           }
         });
 
-        pushIfNotExists(namespaces, pods.map(byNamespace));
-        pushIfNotExists(namespaces, services.map(byNamespace));
-        pushIfNotExists(namespaces, replicationControllers.map(byNamespace));
+        updateNamespaces($scope.kubernetes, pods, replicationControllers, services);
 
-        $scope.namespaces = namespaces;
-        $scope.selectedNamespace = $scope.selectedNamespace || $scope.namespaces[0];
         $scope.hosts = hosts;
         $scope.hostsByKey = hostsByKey;
         $scope.pods = pods;
