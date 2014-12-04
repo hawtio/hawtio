@@ -27,6 +27,7 @@ module ArrayHelpers {
         } else {
           if (item !== oldItem) {
             angular.copy(item, oldItem);
+            answer = true;
           }
         }
       });
