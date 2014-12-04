@@ -145,10 +145,11 @@ module Core {
       if (angular.isString(nav)) {
         href = nav;
       } else {
-        href = nav.href();
+        href = angular.isObject(nav) ? nav.href() : null;
       }
+      href = href || "";
       var removeParams = ['tab', 'nid', 'chapter', 'pref', 'q'];
-      if (!includePerspective) {
+      if (!includePerspective && href) {
         if (href.indexOf("?p=") >= 0 || href.indexOf("&p=") >= 0) {
           removeParams.push("p");
         }
