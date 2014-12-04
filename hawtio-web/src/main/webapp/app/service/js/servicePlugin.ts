@@ -2,6 +2,7 @@
 /// <reference path="serviceHelpers.ts"/>
 /// <reference path="../../helpers/js/pollHelpers.ts"/>
 /// <reference path="../../helpers/js/arrayHelpers.ts"/>
+/// <reference path="../../kubernetes/js/kubernetesHelpers.ts"/>
 
 module Service {
   export interface SelectorMap {
@@ -19,20 +20,22 @@ module Service {
     items: Array<Service>;
   }
   export var _module = angular.module(pluginName, ['hawtioCore']);
-  _module.factory("ServiceRegistry", ['$http', '$rootScope', ($http:ng.IHttpService, $rootScope:ng.IRootScopeService) => {
+  _module.factory("ServiceRegistry", ['$http', '$rootScope', 'workspace', ($http:ng.IHttpService, $rootScope:ng.IRootScopeService, workspace) => {
     var self:any = {
       name: 'ServiceRegistry',
       services: [],
       fetch: (next: () => void) => {
-        $http({
-          method: 'GET',
-          url: 'service'
-        }).success((data, status, headers, config) => {
-          self.onSuccessfulPoll(next, data, status, headers, config);
-          
-        }).error((data, status, headers, config) => {
-          self.onFailedPoll(next, data, status, headers, config);
-        })
+        if (Kubernetes.iKubernetesTemplateManager(workspace) || Service.pollServices) {
+          $http({
+            method: 'GET',
+            url: 'service'
+          }).success((data, status, headers, config) => {
+            self.onSuccessfulPoll(next, data, status, headers, config);
+
+          }).error((data, status, headers, config) => {
+            self.onFailedPoll(next, data, status, headers, config);
+          })
+        }
       },
       onSuccessfulPoll: (next: () => void, data:ServiceResponse, status, headers: (name: string) => string, config) => {
         var triggerUpdate = ArrayHelpers.sync(self.services, data.items);

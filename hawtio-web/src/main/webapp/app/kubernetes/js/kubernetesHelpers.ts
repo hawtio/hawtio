@@ -26,6 +26,10 @@ module Kubernetes {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Kubernetes"});
   }
 
+  export function iKubernetesTemplateManager(workspace) {
+    return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "KubernetesTemplateManager"});
+  }
+
   export function setJson($scope, id, collection) {
     $scope.id = id;
     if (!$scope.fetched) {

@@ -6,6 +6,11 @@ module Service {
   export var log:Logging.Logger = Logger.get(pluginName);
 
   /**
+   * Used to specify whether the "service" URL should be polled for services using kubernetes or kubernetes-like service discover.
+   * For more details see: https://github.com/hawtio/hawtio/blob/master/docs/Services.md
+   */
+  export var pollServices = false;
+  /**
    * Returns true if there is a service available for the given ID or false
    */
   export function hasService(ServiceRegistry, serviceName: string) {
