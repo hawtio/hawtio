@@ -262,7 +262,7 @@ module Kubernetes {
 
   var scopeName = "OverviewController";
 
-  var OverviewController = controller(scopeName, ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", "KubernetesState", ($scope, KubernetesServices, KubernetesPods, KubernetesReplicationControllers, KubernetesState) => {
+  var OverviewController = controller(scopeName, ["$scope", "$location", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", "KubernetesState", ($scope, $location, KubernetesServices, KubernetesPods, KubernetesReplicationControllers, KubernetesState) => {
     $scope.name = scopeName;
     $scope.kubernetes = KubernetesState;
     $scope.services = null;
@@ -294,6 +294,7 @@ module Kubernetes {
         return result;
     }
 
+    ControllerHelpers.bindModelToSearchParam($scope, $location, 'kubernetes.selectedNamespace', 'namespace', undefined);
 
     KubernetesServices.then((KubernetesServices:ng.resource.IResourceClass) => {
       KubernetesReplicationControllers.then((KubernetesReplicationControllers:ng.resource.IResourceClass) => {
