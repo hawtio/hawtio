@@ -62,7 +62,7 @@
           <p class="alert alert-info">There are no replication controllers currently available.</p>
         </div>
         <div ng-show="replicationControllers.length">
-          <table class="table table-condensed table-striped"
+          <table class="table table-condensed table-striped" ui-if="kubernetes.selectedNamespace"
                  hawtio-simple-table="tableConfig"></table>
         </div>
       </div>

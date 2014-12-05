@@ -10,6 +10,7 @@ module Kubernetes {
 
     $scope.namespace = $routeParams.namespace;
     $scope.services = [];
+    $scope.allServices = [];
     $scope.kubernetes = KubernetesState;
     var pods = [];
     $scope.fetched = false;
@@ -53,7 +54,7 @@ module Kubernetes {
         service.$podCounters = selector ? createPodCounters(selector, pods) : null;
       });
 
-      updateNamespaces($scope.kubernetes, pods, [], $scope.services);
+      updateNamespaces($scope.kubernetes, pods, [], $scope.allServices);
     }
 
     KubernetesServices.then((KubernetesServices:ng.resource.IResourceClass) => {
@@ -116,11 +117,13 @@ module Kubernetes {
 
           KubernetesServices.query((response) => {
             $scope.fetched = true;
-            $scope.services = (response['items'] || []).sortBy((item) => {
+            $scope.allServices = (response['items'] || []).sortBy((item) => {
               return item.id;
-            }).filter((item) => {
-              return !$scope.namespace || $scope.namespace === item.namespace
             });
+            $scope.services = $scope.allServices.filter((item) => {
+              return !$scope.kubernetes.selectedNamespace || $scope.kubernetes.selectedNamespace === item.namespace
+            });
+
             Kubernetes.setJson($scope, $scope.id, $scope.services);
             angular.forEach($scope.services, entity => {
               entity.$labelsText = Kubernetes.labelsToString(entity.labels);

@@ -42,6 +42,7 @@ module Kubernetes {
     $scope.namespace = $routeParams.namespace;
     $scope.kubernetes = KubernetesState;
     $scope.replicationControllers = [];
+    $scope.allReplicationControllers = [];
     var pods = [];
     $scope.fetched = false;
     $scope.json = '';
@@ -84,7 +85,7 @@ module Kubernetes {
         replicationController.$podCounters = selector ? createPodCounters(selector, pods) : null;
       });
 
-      updateNamespaces($scope.kubernetes, pods, $scope.replicationControllers);
+      updateNamespaces($scope.kubernetes, pods, $scope.allReplicationControllers);
     }
 
     $scope.$on('kubernetes.dirtyController', ($event, replicationController) => {
@@ -204,10 +205,11 @@ module Kubernetes {
               next();
               return;
             }
-            $scope.replicationControllers = (response['items'] || []).sortBy((item) => {
+            $scope.allReplicationControllers = (response['items'] || []).sortBy((item) => {
               return item.id;
-            }).filter((item) => {
-              return !$scope.namespace || $scope.namespace === item.namespace
+            });
+            $scope.replicationControllers = $scope.allReplicationControllers.filter((item) => {
+              return !$scope.kubernetes.selectedNamespace || $scope.kubernetes.selectedNamespace === item.namespace
             });
             angular.forEach($scope.replicationControllers, entity => {
               entity.$labelsText = Kubernetes.labelsToString(entity.labels);
