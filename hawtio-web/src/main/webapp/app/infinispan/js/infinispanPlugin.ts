@@ -5,7 +5,10 @@
 /// <reference path="infinispanHelpers.ts"/>
 module Infinispan {
   var pluginName = 'infinispan';
-  export var jmxDomain = 'org.infinispan';
+  export var jmxDomain = "";
+
+  var jmxDomain1 = 'org.infinispan';
+  var jmxDomain2 = 'jboss.infinispan';
 
   var toolBar = "app/infinispan/html/attributeToolBar.html";
 
@@ -19,6 +22,14 @@ module Infinispan {
   _module.filter('infinispanCacheName', () => infinispanCacheName);
 
   _module.run(["workspace", "viewRegistry", "helpRegistry", (workspace:Workspace, viewRegistry, helpRegistry) => {
+
+    if (workspace.treeContainsDomainAndProperties(jmxDomain2)) {
+      // we may run in wildfly/jboss which may alter the domain name
+      jmxDomain = jmxDomain2;
+    } else {
+      // lets fallback and use the default name
+      jmxDomain = jmxDomain1;
+    }
 
     viewRegistry['infinispan'] = 'app/infinispan/html/layoutCacheTree.html';
     helpRegistry.addUserDoc('infinispan', 'app/infinispan/doc/help.md', () => {
