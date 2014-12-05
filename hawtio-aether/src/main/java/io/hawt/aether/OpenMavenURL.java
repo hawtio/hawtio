@@ -133,10 +133,10 @@ public class OpenMavenURL {
                     }
                 }
             } catch (Exception e) {
-                LOG.warn("Could not find MBean " + mbeanName + " so using a default implementation of AetherFacadeMXBean");
+                LOG.info("Could not find MBean " + mbeanName + " so using a default implementation of AetherFacadeMXBean");
             }
         } else {
-            LOG.warn("No MBeanServer so using a default implementation of AetherFacadeMXBean");
+            LOG.info("No MBeanServer so using a default implementation of AetherFacadeMXBean");
         }
         if (hack == null) {
             hack = new AetherFacade();
