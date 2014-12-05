@@ -203,6 +203,9 @@ var angular = {
   isArray: function(v) {
     return _angular.isArray(v);
   },
+  isString: function(v) {
+    return _angular.isString(v);
+  },
   forEach: function(obj, iterator, context) {
     return _angular.forEach(obj, iterator, context);
   }
