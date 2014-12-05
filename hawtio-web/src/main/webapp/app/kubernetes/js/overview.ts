@@ -262,16 +262,15 @@ module Kubernetes {
 
   var scopeName = "OverviewController";
 
-  var OverviewController = controller(scopeName, ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", ($scope, KubernetesServices, KubernetesPods, KubernetesReplicationControllers) => {
+  var OverviewController = controller(scopeName, ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", "KubernetesState", ($scope, KubernetesServices, KubernetesPods, KubernetesReplicationControllers, KubernetesState) => {
     $scope.name = scopeName;
-    $scope.kubernetes.namespaces = null;
+    $scope.kubernetes = KubernetesState;
     $scope.services = null;
     $scope.replicationControllers = null;
     $scope.pods = null;
     $scope.hosts = null;
 
     $scope.count = 0;
-    $scope.kubernetes.selectedNamespace = null;
     var redraw = false;
 
     var services = [];
