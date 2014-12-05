@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<jboss-deployment-structure>
+  <deployment>
+    <dependencies>
+      <module name="org.apache.log4j"/>
+      <module name="org.slf4j"/>
+      <module name="org.slf4j.impl"/>
+    </dependencies>
+  </deployment>
+</jboss-deployment-structure>
