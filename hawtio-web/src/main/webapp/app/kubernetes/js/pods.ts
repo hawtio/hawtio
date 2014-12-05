@@ -337,7 +337,7 @@ module Kubernetes {
             }
           });
           Kubernetes.setJson($scope, $scope.id, pods);
-          $scope.pods = pods;
+          $scope.pods = pods.filter((item)=> {return item.namespace === $scope.kubernetes.selectedNamespace});
           updateNamespaces($scope.kubernetes, pods);
 
           // technically the above won't trigger hawtio simple table's watch, so let's force it
