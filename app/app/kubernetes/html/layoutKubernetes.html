@@ -68,7 +68,7 @@
   <div class="span12">
     <ul class="nav nav-tabs connected">
       <li ng-class='{active : isActive("#/kubernetes/overview")}'
-          title="View an overview of the system">
+          title="View an overview of the system. Version: {{version.major}}.{{version.minor}}">
         <a ng-href="#/kubernetes/overview">Overview</a>
       </li>
       <li ng-class='{active : isActive("#/kubernetes/services")}'
@@ -84,7 +84,9 @@
         <a ng-href="#/kubernetes/pods">Pods</a>
       </li>
       <li class=pull-right>
-        <span ng-show="version">Kubernetes version: {{version.major}}.{{version.minor}}</span>
+        namespace: <select ng-model="kubernetes.selectedNamespace" ng-options="namespace for namespace in kubernetes.namespaces" title="choose the namespace - which is a selection of resources in kubernetes">
+            <!--option ng-repeat="namespace in namespaces" value="{{namespace}}">{{namespace}}</option-->
+        </select>
       <li>
     </ul>
     <div class="wiki-icon-view" ng-controller="Kubernetes.FileDropController" nv-file-drop nv-file-over uploader="uploader" over-class="ready-drop">

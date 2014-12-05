@@ -4437,3 +4437,8 @@ td > .zebra-list > li {
   padding: 2px;
 }
 
+ul.nav select {
+  margin-bottom: 0px;
+  height: 25px;
+}
+
