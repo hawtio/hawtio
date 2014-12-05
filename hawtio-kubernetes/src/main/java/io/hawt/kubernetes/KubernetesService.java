@@ -110,7 +110,7 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
 
     public GitFacade getGit() {
         if (git == null) {
-            LOG.warn("No GitFacade injected! Defaulting to the singleton");
+            LOG.info("No GitFacade injected! Defaulting to the singleton");
             git = GitFacade.getSingleton();
         }
         return git;
