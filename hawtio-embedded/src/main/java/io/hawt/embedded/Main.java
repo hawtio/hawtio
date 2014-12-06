@@ -75,12 +75,14 @@ public class Main {
         Slf4jLog log = new Slf4jLog("jetty");
         Log.setLog(log);
 
-        HandlerCollection handlers = new HandlerCollection();
-
         Server server = new Server(options.getPort());
+
+        HandlerCollection handlers = new HandlerCollection();
+        handlers.setServer(server);
         server.setHandler(handlers);
 
         WebAppContext webapp = new WebAppContext();
+        webapp.setServer(server);
         webapp.setContextPath(options.getContextPath());
         String war = findWar(options.getWarLocation());
         if (war == null) {
@@ -160,13 +162,18 @@ public class Main {
                     }
 
                     WebAppContext plugin = new WebAppContext();
+                    plugin.setServer(handlers.getServer());
                     plugin.setContextPath(contextPath);
-                    plugin.setWar("file://" + war.getPath());
-                    plugin.setParentLoaderPriority(true);
+                    plugin.setWar("file://" + war.getAbsolutePath());
+                    // plugin.setParentLoaderPriority(true);
                     plugin.setLogUrlOnStart(true);
-                    plugin.setTempDirectory(tempDir);
+
+                    // need to have private sub directory for each plugin
+                    File pluginTempDir = new File(tempDir, war.getName());
+                    pluginTempDir.mkdirs();
+
+                    plugin.setTempDirectory(pluginTempDir);
                     plugin.setThrowUnavailableOnStartupException(true);
-                    plugin.setExtraClasspath(options.getExtraClassPath());
 
                     try {
                         plugin.start();
