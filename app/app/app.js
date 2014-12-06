@@ -28615,7 +28615,9 @@ var Infinispan;
 var Infinispan;
 (function (Infinispan) {
     var pluginName = 'infinispan';
-    Infinispan.jmxDomain = 'org.infinispan';
+    Infinispan.jmxDomain = "";
+    var jmxDomain1 = 'org.infinispan';
+    var jmxDomain2 = 'jboss.infinispan';
     var toolBar = "app/infinispan/html/attributeToolBar.html";
     Infinispan._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'hawtioCore']);
     Infinispan._module.config(["$routeProvider", function ($routeProvider) {
@@ -28623,6 +28625,12 @@ var Infinispan;
     }]);
     Infinispan._module.filter('infinispanCacheName', function () { return Infinispan.infinispanCacheName; });
     Infinispan._module.run(["workspace", "viewRegistry", "helpRegistry", function (workspace, viewRegistry, helpRegistry) {
+        if (workspace.treeContainsDomainAndProperties(jmxDomain2)) {
+            Infinispan.jmxDomain = jmxDomain2;
+        }
+        else {
+            Infinispan.jmxDomain = jmxDomain1;
+        }
         viewRegistry['infinispan'] = 'app/infinispan/html/layoutCacheTree.html';
         helpRegistry.addUserDoc('infinispan', 'app/infinispan/doc/help.md', function () {
             return workspace.treeContainsDomainAndProperties(Infinispan.jmxDomain);
@@ -35024,15 +35032,14 @@ var Kubernetes;
         };
     }]);
     var scopeName = "OverviewController";
-    var OverviewController = Kubernetes.controller(scopeName, ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", function ($scope, KubernetesServices, KubernetesPods, KubernetesReplicationControllers) {
+    var OverviewController = Kubernetes.controller(scopeName, ["$scope", "$location", "KubernetesServices", "KubernetesPods", "KubernetesReplicationControllers", "KubernetesState", function ($scope, $location, KubernetesServices, KubernetesPods, KubernetesReplicationControllers, KubernetesState) {
         $scope.name = scopeName;
-        $scope.kubernetes.namespaces = null;
+        $scope.kubernetes = KubernetesState;
         $scope.services = null;
         $scope.replicationControllers = null;
         $scope.pods = null;
         $scope.hosts = null;
         $scope.count = 0;
-        $scope.kubernetes.selectedNamespace = null;
         var redraw = false;
         var services = [];
         var replicationControllers = [];
@@ -35053,6 +35060,7 @@ var Kubernetes;
             });
             return result;
         }
+        ControllerHelpers.bindModelToSearchParam($scope, $location, 'kubernetes.selectedNamespace', 'namespace', undefined);
         KubernetesServices.then(function (KubernetesServices) {
             KubernetesReplicationControllers.then(function (KubernetesReplicationControllers) {
                 KubernetesPods.then(function (KubernetesPods) {
@@ -35508,7 +35516,9 @@ var Kubernetes;
                         }
                     });
                     Kubernetes.setJson($scope, $scope.id, pods);
-                    $scope.pods = pods;
+                    $scope.pods = pods.filter(function (item) {
+                        return item.namespace === $scope.kubernetes.selectedNamespace;
+                    });
                     Kubernetes.updateNamespaces($scope.kubernetes, pods);
                     $scope.$broadcast("hawtio.datatable.pods");
                     next();
@@ -35552,6 +35562,7 @@ var Kubernetes;
         $scope.namespace = $routeParams.namespace;
         $scope.kubernetes = KubernetesState;
         $scope.replicationControllers = [];
+        $scope.allReplicationControllers = [];
         var pods = [];
         $scope.fetched = false;
         $scope.json = '';
@@ -35587,7 +35598,7 @@ var Kubernetes;
                 var selector = (replicationController.desiredState || {}).replicaSelector;
                 replicationController.$podCounters = selector ? Kubernetes.createPodCounters(selector, pods) : null;
             });
-            Kubernetes.updateNamespaces($scope.kubernetes, pods, $scope.replicationControllers);
+            Kubernetes.updateNamespaces($scope.kubernetes, pods, $scope.allReplicationControllers);
         }
         $scope.$on('kubernetes.dirtyController', function ($event, replicationController) {
             replicationController.$dirty = true;
@@ -35689,10 +35700,11 @@ var Kubernetes;
                             next();
                             return;
                         }
-                        $scope.replicationControllers = (response['items'] || []).sortBy(function (item) {
+                        $scope.allReplicationControllers = (response['items'] || []).sortBy(function (item) {
                             return item.id;
-                        }).filter(function (item) {
-                            return !$scope.namespace || $scope.namespace === item.namespace;
+                        });
+                        $scope.replicationControllers = $scope.allReplicationControllers.filter(function (item) {
+                            return !$scope.kubernetes.selectedNamespace || $scope.kubernetes.selectedNamespace === item.namespace;
                         });
                         angular.forEach($scope.replicationControllers, function (entity) {
                             entity.$labelsText = Kubernetes.labelsToString(entity.labels);
@@ -35726,6 +35738,7 @@ var Kubernetes;
     Kubernetes.Services = Kubernetes.controller("Services", ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesState", "$templateCache", "$location", "$routeParams", "jolokia", function ($scope, KubernetesServices, KubernetesPods, KubernetesState, $templateCache, $location, $routeParams, jolokia) {
         $scope.namespace = $routeParams.namespace;
         $scope.services = [];
+        $scope.allServices = [];
         $scope.kubernetes = KubernetesState;
         var pods = [];
         $scope.fetched = false;
@@ -35762,7 +35775,7 @@ var Kubernetes;
                 var selector = service.selector;
                 service.$podCounters = selector ? Kubernetes.createPodCounters(selector, pods) : null;
             });
-            Kubernetes.updateNamespaces($scope.kubernetes, pods, [], $scope.services);
+            Kubernetes.updateNamespaces($scope.kubernetes, pods, [], $scope.allServices);
         }
         KubernetesServices.then(function (KubernetesServices) {
             KubernetesPods.then(function (KubernetesPods) {
@@ -35819,10 +35832,11 @@ var Kubernetes;
                     }
                     KubernetesServices.query(function (response) {
                         $scope.fetched = true;
-                        $scope.services = (response['items'] || []).sortBy(function (item) {
+                        $scope.allServices = (response['items'] || []).sortBy(function (item) {
                             return item.id;
-                        }).filter(function (item) {
-                            return !$scope.namespace || $scope.namespace === item.namespace;
+                        });
+                        $scope.services = $scope.allServices.filter(function (item) {
+                            return !$scope.kubernetes.selectedNamespace || $scope.kubernetes.selectedNamespace === item.namespace;
                         });
                         Kubernetes.setJson($scope, $scope.id, $scope.services);
                         angular.forEach($scope.services, function (entity) {

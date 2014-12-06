@@ -84,7 +84,7 @@
           <p class="alert alert-info">There are no pods currently running.</p>
         </div>
         <div ng-show="pods.length">
-          <table class="table table-condensed table-striped"
+          <table class="table table-condensed table-striped" ui-if="kubernetes.selectedNamespace"
                  hawtio-simple-table="tableConfig"></table>
         </div>
       </div>
