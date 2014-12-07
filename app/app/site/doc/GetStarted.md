@@ -234,6 +234,10 @@ Then opening [http://localhost:8282/hawtio/](http://localhost:8282/hawtio/) shou
 
 A good MBean for real time values and charts is `java.lang/OperatingSystem`. Try looking at queues or Camel routes. Notice that as you change selections in the tree the list of tabs available changes dynamically based on the content.
 
+## Using Third Party Plugins
+
+**hawtio** is fully pluggable, and allows to integrate with custom plugins, as if they are out of the box. There is different approaches how you can install and use custom plugins with hawtio, which you can read more about at [How Plugin Works](http://hawt.io/plugins/howPluginsWork.html).
+
 ## Using hawtio Maven Plugins
 
 **hawtio** offers a number of [Maven Plugins](http://hawt.io/maven/), so that users can bootup Maven projects and have hawtio embedded in the running JVM.

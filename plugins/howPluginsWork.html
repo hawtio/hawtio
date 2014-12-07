@@ -154,9 +154,24 @@
 
 <p>The plugin then needs to expose a hawtio plugin MBean instance which describes how to load the plugin artifacts (e.g. local URLs inside the container or public URLs to some website). See the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-plugin-examples">plugin examples</a> for more details.</p>
 
-<p>So plugins can be deployed into the JVM via whatever container you prefer (web container, OSGi, JEE).</p>
+<p>So plugins can be deployed into the JVM via whatever container you prefer (web container, OSGi, JEE). </p>
 
 <p>To see how this works check out the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-plugin-examples/readme.md">plugin examples and detailed description</a>.</p>
+
+<p>For example WAR deployment units can easily be deployed in a web container such as Apache Tomcat. Just drop the plugin in the deploy directory along with the hawtio WAR. And hawtio will automatic detect the custom plugin.</p>
+
+<p>The standalone hawtio application (hawtio-app) is also capable of using custom plugins as WAR files. This can be done by copying the plugin WARs to the plugins sub directory where hawtio-app is launched.</p>
+
+<p>For example the current directory is <code>myfolder</code>, where we create a sub directory named <code>plugins</code>, and then copy our custom plugins as WAR files to that directory. And then just launch hawtio-app as usual.</p>
+
+<pre><code>myfolder$
+mkdir plugins
+cp ~/mycustomplugin.war plugins
+java -jar hawtio-app-1.4.40.jar</code></pre>
+
+<p>You can copy as many custom plugins to the <code>plugins</code> directory.</p>
+
+<p>An important aspect however, is that the name of the WAR file must match the context-path name, that has been configured in the <code>web.xml</code> file. For example the groovy-shell example plugin has configured <code>groovy-shell-plugin</code> as its context-path, which means the name of the WAR file must be <code>groovy-shell-plugin.war</code>. Here is the name configured <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-plugin-examples/groovy-shell-plugin/pom.xml#L23">here</a>, which will be used as placeholder in the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-plugin-examples/groovy-shell-plugin/src/main/resources/WEB-INF/web.xml#L14">web.xml</a> file.</p>
 
 <h3 id = "Using_a_Registry">Using a Registry</h3>
 
