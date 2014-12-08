@@ -37,6 +37,7 @@
        ng-show="row.entity.portalIP && row.entity.$podCounters.valid" title="Protocol {{row.entity.protocol}}">
       {{row.entity.portalIP}}:{{row.entity.port}}
     </a>
+    <span ng-hide="row.entity.portalIP && row.entity.$podCounters.valid">{{row.entity.portalIP}}:{{row.entity.port}}</span>
   </div>
 </script>
 <script type="text/ng-template" id="iconCellTemplate.html">
