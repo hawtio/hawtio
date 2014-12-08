@@ -40,9 +40,9 @@ module API {
           field: 'wadlHref',
           displayName: 'APIs',
           cellTemplate: '<div class="ngCellText">' +
-            '<a ng-show="row.entity.apidocsHref" ng-href="{{row.entity.apidocsHref}}"><i class="icon-puzzle-piece"></i> Swagger</a> ' +
-            '<a ng-show="row.entity.wadlHref" ng-href="{{row.entity.wadlHref}}"><i class="icon-puzzle-piece"></i> WADL</a> ' +
-            '<a ng-show="row.entity.wsdlHref" ng-href="{{row.entity.wsdlHref}}"><i class="icon-puzzle-piece"></i> WSDL</a>' +
+            '<a ng-show="row.entity.apidocsHref" ng-href="{{row.entity.apidocsHref}}" target="swagger"><i class="icon-puzzle-piece"></i> Swagger</a> ' +
+            '<a ng-show="row.entity.wadlHref" ng-href="{{row.entity.wadlHref}}" target="wadl"><i class="icon-puzzle-piece"></i> WADL</a> ' +
+            '<a ng-show="row.entity.wsdlHref" ng-href="{{row.entity.wsdlHref}}" target="wsdl"><i class="icon-puzzle-piece"></i> WSDL</a>' +
             '</div>',
           //width: 100
           width: "*"
