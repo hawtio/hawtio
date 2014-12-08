@@ -124,7 +124,7 @@ module API {
         if (url) {
           addObjectNameProperties(value);
 
-          value["serviceName"] = Core.trimQuotes(value["service"]);
+          value["serviceName"] = Core.trimQuotes(value["service"]) || value["containerName"];
           var podId = value["podId"];
           if (podId) {
             var port = value["port"] || 8080;
@@ -134,13 +134,21 @@ module API {
               return (text) ? prefix + text : null;
             }
 
+            function maybeUseProxy(value) {
+              if (value) {
+                return Core.useProxyIfExternal(value);
+              } else {
+                return value;
+              }
+            }
+
             //var url = addPrefix(path);
             // no need to use the proxy as we're using local URIs
             //url = Core.useProxyIfExternal(url);
             //value["url"] = url;
-            var apidocs = addPrefix(value["swaggerPath"]);
-            var wadl = addPrefix(value["wadlPath"]);
-            var wsdl = addPrefix(value["wsdlPath"]);
+            var apidocs = maybeUseProxy(value["swaggerUrl"]) || addPrefix(value["swaggerPath"]);
+            var wadl = maybeUseProxy(value["wadlUrl"]) || addPrefix(value["wadlPath"]);
+            var wsdl = maybeUseProxy(value["wsdlUrl"]) || addPrefix(value["wsdlPath"]);
             if (apidocs) {
               value["apidocsHref"] = addParameters("/hawtio-swagger/index.html?baseUri=" + apidocs);
             }
