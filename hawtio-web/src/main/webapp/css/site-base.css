@@ -3779,8 +3779,12 @@ span.hawtio-dropdown .dropdown-menu {
 }
 
 .modal {
+  z-index: 5000;
   width: 660px;
   margin: -250px 0 0 -320px;
+}
+.modal-backdrop {
+  z-index: 4090;
 }
 
 .scrollable-section {
