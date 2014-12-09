@@ -11,7 +11,7 @@
   <groupId>io.hawt</groupId>
   <artifactId>project</artifactId>
   <packaging>pom</packaging>
-  <version>1.4.41</version>
+  <version>1.5-SNAPSHOT</version>
   <name>project</name>
   <description>hawtio :: project</description>
   <url>http://hawt.io/</url>
@@ -28,7 +28,7 @@
     <connection>scm:git:git@github.com:hawtio/hawtio.git</connection>
     <developerConnection>scm:git:git@github.com:hawtio/hawtio.git</developerConnection>
     <url>git@github.com:hawtio/hawtio.git</url>
-    <tag>hawtio-1.4.41</tag>
+    <tag>hawtio-1.4.3</tag>
   </scm>
 
   <distributionManagement>
