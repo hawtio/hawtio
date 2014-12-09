@@ -78,6 +78,20 @@ module Camel {
         cellFilter: null,
         width: "*",
         resizable: true
+      },
+      {
+        field: 'routeId',
+        displayName: 'Route Id',
+        cellFilter: null,
+        width: "*",
+        resizable: true
+      },
+      {
+        field: 'description',
+        displayName: 'Description',
+        cellFilter: null,
+        width: "*",
+        resizable: true
       }
     ];
 
@@ -115,7 +129,9 @@ module Camel {
                 produces: entry.produces,
                 inType: entry.inType,
                 outType: entry.outType,
-                state: entry.state
+                state: entry.state,
+                routeId: entry.routeId,
+                description: entry.description
               }
             );
           }
