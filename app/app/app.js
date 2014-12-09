@@ -8736,7 +8736,7 @@ var API;
                 {
                     field: 'wadlHref',
                     displayName: 'APIs',
-                    cellTemplate: '<div class="ngCellText">' + '<a ng-show="row.entity.apidocsHref" ng-href="{{row.entity.apidocsHref}}"><i class="icon-puzzle-piece"></i> Swagger</a> ' + '<a ng-show="row.entity.wadlHref" ng-href="{{row.entity.wadlHref}}"><i class="icon-puzzle-piece"></i> WADL</a> ' + '<a ng-show="row.entity.wsdlHref" ng-href="{{row.entity.wsdlHref}}"><i class="icon-puzzle-piece"></i> WSDL</a>' + '</div>',
+                    cellTemplate: '<div class="ngCellText">' + '<a ng-show="row.entity.apidocsHref" ng-href="{{row.entity.apidocsHref}}" target="swagger"><i class="icon-puzzle-piece"></i> Swagger</a> ' + '<a ng-show="row.entity.wadlHref" ng-href="{{row.entity.wadlHref}}" target="wadl"><i class="icon-puzzle-piece"></i> WADL</a> ' + '<a ng-show="row.entity.wsdlHref" ng-href="{{row.entity.wsdlHref}}" target="wsdl"><i class="icon-puzzle-piece"></i> WSDL</a>' + '</div>',
                     width: "*"
                 },
                 {
@@ -8799,7 +8799,7 @@ var API;
                 var url = value["url"];
                 if (url) {
                     addObjectNameProperties(value);
-                    value["serviceName"] = Core.trimQuotes(value["service"]);
+                    value["serviceName"] = Core.trimQuotes(value["service"]) || value["containerName"];
                     var podId = value["podId"];
                     if (podId) {
                         var port = value["port"] || 8080;
@@ -8807,9 +8807,17 @@ var API;
                         function addPrefix(text) {
                             return (text) ? prefix + text : null;
                         }
-                        var apidocs = addPrefix(value["swaggerPath"]);
-                        var wadl = addPrefix(value["wadlPath"]);
-                        var wsdl = addPrefix(value["wsdlPath"]);
+                        function maybeUseProxy(value) {
+                            if (value) {
+                                return Core.useProxyIfExternal(value);
+                            }
+                            else {
+                                return value;
+                            }
+                        }
+                        var apidocs = maybeUseProxy(value["swaggerUrl"]) || addPrefix(value["swaggerPath"]);
+                        var wadl = maybeUseProxy(value["wadlUrl"]) || addPrefix(value["wadlPath"]);
+                        var wsdl = maybeUseProxy(value["wsdlUrl"]) || addPrefix(value["wsdlPath"]);
                         if (apidocs) {
                             value["apidocsHref"] = addParameters("/hawtio-swagger/index.html?baseUri=" + apidocs);
                         }
