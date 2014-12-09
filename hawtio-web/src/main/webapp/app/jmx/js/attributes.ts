@@ -107,7 +107,9 @@ module Jmx {
       columnDefs: propertiesColumnDefs
     };
 
-    $scope.$watch('gridOptions.selectedItems', (newValue, oldValue) => {
+    $scope.$watch(function($scope) {
+      return $scope.gridOptions.selectedItems.map(item => item.key);
+    }, (newValue, oldValue) => {
       if (newValue !== oldValue) {
         log.debug("Selected items: ", newValue);
         $scope.selectedItems = newValue;
