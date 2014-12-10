@@ -10,7 +10,7 @@ Available sub-topics for each plugin can be selected via the secondary navigatio
 ![Help Sub-Topic Navigation Bar](app/core/doc/img/help-subtopic-nav.png "Help Sub-Topic Navigation Bar")
 
 ##### Preferences #####
-The [Preferences](#/preferences) is accessible by clicking the user icon (<i class='icon-user'></i>) in the main navigation bar,
+The Preferences is accessible by clicking the user icon (<i class='icon-user'></i>) in the main navigation bar,
 and then clicking the Preferences icon (<i class='icon-cogs'></i>), as shown below:
 
 ![Preferences](app/core/doc/img/help-preferences.png "Preferences")
@@ -18,7 +18,7 @@ and then clicking the Preferences icon (<i class='icon-cogs'></i>), as shown bel
 ##### Logging Console #####
 The logging console is accessible by clicking the icon (<i class='icon-desktop'></i>) in the main navigation bar.
 Information from the console can be useful when reporting issues to the <a href="http://hawt.io/community/index.html">hawtio community</a>.
-And from the [Preferences](#/preferences) you can configure the logging level use by the console logger.
+And from the Preferences you can configure the logging level use by the console logger.
 
 ##### Further Reading #####
 - [hawtio](http://hawt.io "hawtio") website
