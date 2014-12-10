@@ -3730,8 +3730,9 @@ var ActiveMQ;
     ActiveMQ.isJobScheduler = isJobScheduler;
     function isBroker(workspace) {
         if (workspace.selectionHasDomainAndType(ActiveMQ.jmxDomain, 'Broker')) {
+            var self = Core.pathGet(workspace, ["selection"]);
             var parent = Core.pathGet(workspace, ["selection", "parent"]);
-            return !(parent && parent.ancestorHasType('Broker'));
+            return !(parent && (parent.ancestorHasType('Broker') || self.ancestorHasType('Broker')));
         }
         return false;
     }
@@ -13123,6 +13124,20 @@ var Camel;
                 cellFilter: null,
                 width: "*",
                 resizable: true
+            },
+            {
+                field: 'routeId',
+                displayName: 'Route Id',
+                cellFilter: null,
+                width: "*",
+                resizable: true
+            },
+            {
+                field: 'description',
+                displayName: 'Description',
+                cellFilter: null,
+                width: "*",
+                resizable: true
             }
         ];
         $scope.gridOptions = {
@@ -13155,7 +13170,9 @@ var Camel;
                             produces: entry.produces,
                             inType: entry.inType,
                             outType: entry.outType,
-                            state: entry.state
+                            state: entry.state,
+                            routeId: entry.routeId,
+                            description: entry.description
                         });
                     }
                 }
@@ -16073,7 +16090,7 @@ $(function () {
     hawtioPluginLoader.loadPlugins(function () {
         var doc = angular.element(document);
         var docEl = angular.element(document.documentElement);
-        Core.injector = angular.bootstrap(doc, hawtioPluginLoader.getModules());
+        Core.injector = angular.bootstrap(docEl, hawtioPluginLoader.getModules());
         Logger.get("Core").debug("Bootstrapped application, injector: ", Core.injector);
         docEl.attr('xmlns:ng', "http://angularjs.org");
         docEl.attr('ng-app', 'hawtioCore');
@@ -31621,7 +31638,9 @@ var Jmx;
             data: 'gridData',
             columnDefs: Jmx.propertiesColumnDefs
         };
-        $scope.$watch('gridOptions.selectedItems', function (newValue, oldValue) {
+        $scope.$watch(function ($scope) {
+            return $scope.gridOptions.selectedItems.map(function (item) { return item.key; });
+        }, function (newValue, oldValue) {
             if (newValue !== oldValue) {
                 Jmx.log.debug("Selected items: ", newValue);
                 $scope.selectedItems = newValue;
