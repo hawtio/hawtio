@@ -28,7 +28,7 @@ The following articles have been found on the web about hawtio. If you find any 
 * [HawtIO on JBoss Wildfly 8.1 -- step by step](http://www.christianposta.com/blog/?p=403) by [Christian Posta](http://www.christianposta.com/) How to get HawtIO running and secured on JBoss Wildfly Application Server 8.1
 * [HawtIO on OpenShift](http://jimmidyson.github.io/hawtio-on-OpenShift/) by Jimmi Dyson, how to run Apache Tomcat on OpenShift Online and install hawtio into the Tomcat.
 * [Hawtio on JBoss EAP 6](http://jcordes73.blogspot.de/2014/12/deploying-hawtio-on-jboss-eap-6.html) by Jochen Cordes how to deploy Hawtio on JBoss EAP 6
-
+* Hawtio on Talend ESB part [1](https://www.youtube.com/watch?v=lzdgxcHwfcY), [2](https://www.youtube.com/watch?v=_vjp8rg1DNQ), [3](https://www.youtube.com/watch?v=uJqG2JbXfkM) by [Robin Huiser](http://nl.linkedin.com/in/robinhuiser)
 
 ## Developer articles
 
