@@ -113,11 +113,15 @@ module Core {
                locationChangeStartTasks:Core.ParameterizedTasks,
                $http:ng.IHttpService) => {
 
+    checkInjectorLoaded();
+
     postLoginTasks.addTask("ResetPreLogoutTasks", () => {
+      checkInjectorLoaded();
       preLogoutTasks.reset();
     });
 
     preLogoutTasks.addTask("ResetPostLoginTasks", () => {
+      checkInjectorLoaded();
       postLoginTasks.reset();
     });
 
@@ -269,6 +273,7 @@ module Core {
     });
 
     setTimeout(() => {
+      checkInjectorLoaded();
       (<JQueryStatic>$)("#main-body").fadeIn(2000).after(() => {
         Logger.get("Core").info(branding.appName + " started");
         Core.$apply($rootScope);

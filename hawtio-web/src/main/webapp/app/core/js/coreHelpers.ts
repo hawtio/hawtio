@@ -1231,6 +1231,13 @@ module Core {
     return connectUrl;
   }
 
+  export function checkInjectorLoaded() {
+    // TODO sometimes the injector is not yet initialised; so lets try initialise it here just in case
+    if (!Core.injector) {
+      Core.injector = angular.element(document.documentElement).injector();
+    }
+  }
+
   export function getRecentConnections(localStorage) {
     if (Core.isBlank(localStorage['recentConnections'])) {
       Core.clearConnections();
