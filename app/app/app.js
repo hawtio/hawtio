@@ -2886,6 +2886,12 @@ var Core;
         return connectUrl;
     }
     Core.useProxyIfExternal = useProxyIfExternal;
+    function checkInjectorLoaded() {
+        if (!Core.injector) {
+            Core.injector = angular.element(document.documentElement).injector();
+        }
+    }
+    Core.checkInjectorLoaded = checkInjectorLoaded;
     function getRecentConnections(localStorage) {
         if (Core.isBlank(localStorage['recentConnections'])) {
             Core.clearConnections();
@@ -3375,10 +3381,13 @@ var Core;
     Core._module.filter('humanizeMs', function () { return Core.humanizeMilliseconds; });
     Core._module.filter('maskPassword', function () { return Core.maskPassword; });
     Core._module.run(["$rootScope", "$routeParams", "jolokia", "workspace", "localStorage", "viewRegistry", "layoutFull", "helpRegistry", "pageTitle", "branding", "toastr", "metricsWatcher", "userDetails", "preferencesRegistry", "postLoginTasks", "preLogoutTasks", "$location", "ConnectOptions", "locationChangeStartTasks", "$http", function ($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry, pageTitle, branding, toastr, metricsWatcher, userDetails, preferencesRegistry, postLoginTasks, preLogoutTasks, $location, ConnectOptions, locationChangeStartTasks, $http) {
+        Core.checkInjectorLoaded();
         postLoginTasks.addTask("ResetPreLogoutTasks", function () {
+            Core.checkInjectorLoaded();
             preLogoutTasks.reset();
         });
         preLogoutTasks.addTask("ResetPostLoginTasks", function () {
+            Core.checkInjectorLoaded();
             postLoginTasks.reset();
         });
         $rootScope.lineCount = lineCount;
@@ -3477,6 +3486,7 @@ var Core;
             throttledError.action();
         });
         setTimeout(function () {
+            Core.checkInjectorLoaded();
             $("#main-body").fadeIn(2000).after(function () {
                 Logger.get("Core").info(branding.appName + " started");
                 Core.$apply($rootScope);
