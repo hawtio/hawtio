@@ -99,19 +99,19 @@ module Core {
       }
     };
 
-    $timeout(() => {
-      if ('showPrefs' in localStorage) {
-        $scope.showPrefs = Core.parseBooleanValue(localStorage['showPrefs']);
-      }
-    }, 500);
+    //$timeout(() => {
+    //  if ('showPrefs' in localStorage) {
+    //    $scope.showPrefs = Core.parseBooleanValue(localStorage['showPrefs']);
+    //  }
+    //}, 500);
 
     $scope.branding = branding;
 
-    $scope.$watch('showPrefs', (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        localStorage['showPrefs'] = newValue;
-      }
-    });
+    //$scope.$watch('showPrefs', (newValue, oldValue) => {
+    //  if (newValue !== oldValue) {
+    //    localStorage['showPrefs'] = newValue;
+    //  }
+    //});
 
     $scope.hasMBeans = () => workspace.hasMBeans();
 
