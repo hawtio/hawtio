@@ -57,7 +57,7 @@ Use it like:
       };
     };
 
-    public controller = ["$scope", "$element", "timeout", ($scope, $element, $timeout) => {
+    public controller = ["$scope", "$element", "$timeout", ($scope, $element, $timeout) => {
 
       $scope.popout = false;
 

@@ -73,7 +73,7 @@ module Core {
     };
 
     $scope.moveUp = (index) => {
-      var tmp = $scope.hosts[index];
+      var tmp = $scope.regexs[index];
       $scope.regexs[index] = $scope.regexs[index - 1];
       $scope.regexs[index - 1] = tmp
     };
