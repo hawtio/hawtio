@@ -48,4 +48,6 @@ public interface KubernetesServiceMXBean {
      * Returns the icon path for the given kubernetes ID and git branch or null if one cannot be found
      */
     String iconPath(String branch, String kubernetesId) throws Exception;
+
+    String appPath(String branch, String kubernetesId) throws Exception;
 }

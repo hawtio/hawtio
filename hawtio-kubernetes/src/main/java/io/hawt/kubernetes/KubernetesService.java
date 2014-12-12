@@ -131,6 +131,22 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
         });
     }
 
+    @Override
+    public String appPath(final String branch, final String kubernetesId) throws Exception {
+        GitFacade facade = getGit();
+        return facade.readFile(branch, "/", new Function<File, String>() {
+            @Override
+            public String apply(File rootFolder) {
+                File file = findAppFolder(rootFolder, kubernetesId);
+                if (file != null) {
+                    return relativePath(rootFolder, file);
+                } else {
+                    return null;
+                }
+            }
+        });
+    }
+
     protected String doFindIconPath(File rootFolder, String kubernetesId) {
         File appFolder = findAppFolder(rootFolder, kubernetesId);
         if (appFolder != null) {
@@ -140,17 +156,21 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
                     String name = file.getName();
                     if (name.startsWith("icon.") &&
                             (name.endsWith(".svg") || name.endsWith(".png") || name.endsWith(".gif") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".pdf"))) {
-                        try {
-                            return Files.getRelativePath(rootFolder, file);
-                        } catch (IOException e) {
-                            LOG.warn("failed to get relative folder of " + file.getAbsolutePath() + ". " + e, e);
-                            return null;
-                        }
+                        return relativePath(rootFolder, file);
                     }
                 }
             }
         }
         return null;
+    }
+
+    protected static String relativePath(File rootFolder, File file) {
+        try {
+            return Files.getRelativePath(rootFolder, file);
+        } catch (IOException e) {
+            LOG.warn("failed to get relative folder of " + file.getAbsolutePath() + ". " + e, e);
+            return null;
+        }
     }
 
     protected File findAppFolder(File fileOrDirectory, String kubernetesId) {
