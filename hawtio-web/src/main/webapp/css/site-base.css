@@ -2556,7 +2556,9 @@ ol.zebra-list > li:before {
 .container-profile-settings span.folder-title {
   font-weight: bold;
 }
-
+li.profile-selector-folder span.folder-title:hover, li.profile div.profile-selector-name>span>span:hover {
+  color: #005580;
+}
 .widget-body div div .wiki-fixed {
   margin: 3px;
 }
