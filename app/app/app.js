@@ -15927,17 +15927,7 @@ var Core;
                 return "with-text";
             }
         };
-        $timeout(function () {
-            if ('showPrefs' in localStorage) {
-                $scope.showPrefs = Core.parseBooleanValue(localStorage['showPrefs']);
-            }
-        }, 500);
         $scope.branding = branding;
-        $scope.$watch('showPrefs', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                localStorage['showPrefs'] = newValue;
-            }
-        });
         $scope.hasMBeans = function () { return workspace.hasMBeans(); };
         $scope.$watch('jolokiaStatus.xhr', function () {
             var failure = jolokiaStatus.xhr;
@@ -16237,7 +16227,7 @@ var Core;
             $scope.regexs.removeAt(index);
         };
         $scope.moveUp = function (index) {
-            var tmp = $scope.hosts[index];
+            var tmp = $scope.regexs[index];
             $scope.regexs[index] = $scope.regexs[index - 1];
             $scope.regexs[index - 1] = tmp;
         };
@@ -42117,7 +42107,7 @@ var UI;
                     }
                 };
             };
-            this.controller = ["$scope", "$element", "timeout", function ($scope, $element, $timeout) {
+            this.controller = ["$scope", "$element", "$timeout", function ($scope, $element, $timeout) {
                 $scope.popout = false;
                 $scope.$watch('popout', function () {
                     $element.find('.color-picker-popout').toggleClass('popout-open', $scope.popout);
