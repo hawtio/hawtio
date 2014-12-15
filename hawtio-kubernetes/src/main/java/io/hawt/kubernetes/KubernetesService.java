@@ -25,9 +25,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import static io.hawt.util.Strings.isBlank;
@@ -147,21 +151,42 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
         });
     }
 
+    @Override
+    public List<AppDTO> findApps(final String branch) throws Exception {
+        GitFacade facade = getGit();
+        return facade.readFile(branch, "/", new Function<File, List<AppDTO>>() {
+            @Override
+            public List<AppDTO> apply(File rootFolder) {
+                List<AppDTO> answer = new ArrayList<AppDTO>();
+                doAddApps(rootFolder, rootFolder, answer);
+                return answer;
+            }
+        });
+    }
+
     protected String doFindIconPath(File rootFolder, String kubernetesId) {
         File appFolder = findAppFolder(rootFolder, kubernetesId);
+        return doFindAppIconPath(rootFolder, appFolder);
+    }
+
+    protected String doFindAppIconPath(File rootFolder, File appFolder) {
         if (appFolder != null) {
             File[] files = appFolder.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    String name = file.getName();
-                    if (name.startsWith("icon.") &&
-                            (name.endsWith(".svg") || name.endsWith(".png") || name.endsWith(".gif") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".pdf"))) {
+                    if (isIconFile(file)) {
                         return relativePath(rootFolder, file);
                     }
                 }
             }
         }
         return null;
+    }
+
+    public static boolean isIconFile(File file) {
+        String name = file.getName();
+        return name.startsWith("icon.") &&
+                (name.endsWith(".svg") || name.endsWith(".png") || name.endsWith(".gif") || name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".pdf"));
     }
 
     protected static String relativePath(File rootFolder, File file) {
@@ -188,11 +213,53 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
     }
 
 
+    protected void doAddApps(File rootFolder, File fileOrDirectory, List<AppDTO> apps) {
+        if (fileOrDirectory != null && fileOrDirectory.exists()) {
+            if (fileOrDirectory.isFile()) {
+                if (isKubernetesMetadataFile(fileOrDirectory)) {
+                    AppDTO app = createAppDto(rootFolder, fileOrDirectory);
+                    if (app != null) {
+                        apps.add(app);
+                    }
+                }
+            } else if (fileOrDirectory.isDirectory()) {
+                File[] files = fileOrDirectory.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        doAddApps(rootFolder, file, apps);
+                    }
+                }
+            }
+        }
+    }
+
+    protected AppDTO createAppDto(File rootFolder, File kubeFile) {
+        File appFolder = kubeFile.getParentFile();
+        String appPath = relativePath(rootFolder, appFolder);
+        String iconPath = doFindAppIconPath(rootFolder, appFolder);
+        Properties properties = new Properties();
+        File propertiesFile = new File(appFolder, "fabric8.properties");
+        if (propertiesFile.exists() && propertiesFile.isFile()) {
+            try {
+                properties.load(new FileInputStream(propertiesFile));
+            } catch (Exception e) {
+                LOG.warn("Failed to load fabric8 properties file " + propertiesFile + ". " + e, e);
+            }
+        }
+
+        String name = properties.getProperty("name", appFolder.getName());
+        String description = properties.getProperty("description");
+        String version = properties.getProperty("version");
+        String groupId = properties.getProperty("groupId");
+        String artifactId = properties.getProperty("artifactId");
+        return new AppDTO(appPath, iconPath, name, description, version, groupId, artifactId);
+    }
+
+
     protected File findAppFolder(File fileOrDirectory, Pattern pattern) {
         if (fileOrDirectory != null && fileOrDirectory.exists()) {
             if (fileOrDirectory.isFile()) {
-                String name = fileOrDirectory.getName();
-                if (name.equals("kubernetes.json")) {
+                if (isKubernetesMetadataFile(fileOrDirectory)) {
                     if (fileTextMatchesPattern(fileOrDirectory, pattern)) {
                         return fileOrDirectory.getParentFile();
                     }
@@ -210,6 +277,11 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
             }
         }
         return null;
+    }
+
+    public static boolean isKubernetesMetadataFile(File fileOrDirectory) {
+        String name = fileOrDirectory.getName();
+        return name.equals("kubernetes.json") || name.equals("kubernetes.yml") || name.equals("kubernetes.yaml");
     }
 
     /**

@@ -39,6 +39,8 @@ module Kubernetes {
 
     $scope.version = undefined;
 
+    $scope.showAppView = isAppView(workspace);
+
     $scope.isActive = (href) => {
       return workspace.isLinkActive(href);
     };

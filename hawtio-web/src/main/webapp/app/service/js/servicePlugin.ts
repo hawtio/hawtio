@@ -25,7 +25,7 @@ module Service {
       name: 'ServiceRegistry',
       services: [],
       fetch: (next: () => void) => {
-        if (Kubernetes.iKubernetesTemplateManager(workspace) || Service.pollServices) {
+        if (Kubernetes.isKubernetesTemplateManager(workspace) || Service.pollServices) {
           $http({
             method: 'GET',
             url: 'service'

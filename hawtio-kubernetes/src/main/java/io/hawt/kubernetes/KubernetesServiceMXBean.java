@@ -18,6 +18,7 @@
 package io.hawt.kubernetes;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  */
@@ -50,4 +51,6 @@ public interface KubernetesServiceMXBean {
     String iconPath(String branch, String kubernetesId) throws Exception;
 
     String appPath(String branch, String kubernetesId) throws Exception;
+
+    List<AppDTO> findApps(String branch) throws Exception;
 }

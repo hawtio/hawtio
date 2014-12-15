@@ -1,0 +1,80 @@
+<style type="text/css">
+  .app-name {
+    padding-left: 10px;
+  }
+  .ngCellText .icon-replication-controller {
+    vertical-align: middle;
+  }
+</style>
+<div ng-controller="Kubernetes.Apps">
+  <script type="text/ng-template" id="appIconTemplate.html">
+    <div class="ngCellText" title="{{row.entity.$info.description}}">
+      <a ng-href="row.entity.$appUrl">
+        <img ng-show="row.entity.$iconUrl" class="icon-replication-controller" ng-src="{{row.entity.$iconUrl}}">
+      </a>
+      <span class="app-name">
+        <a ng-href="{{row.entity.$appUrl}}">
+          {{row.entity.$info.name}}
+        </a>
+      </span>
+    </div>
+  </script>
+  <script type="text/ng-template" id="appServicesTemplate.html">
+    <div class="ngCellText">
+      <span ng-repeat="service in row.entity.services">
+        <a href="#/kubernetes/services?_id={{service.id}}">
+          <span class="badge">{{service.name || service.id}}</span>
+        </a>
+      </span>
+    </div>
+  </script>
+  <script type="text/ng-template" id="appReplicationControllerTemplate.html">
+    <div class="ngCellText">
+      <span ng-repeat="controller in row.entity.replicationControllers">
+        <a href="#/kubernetes/replicationControllers?_id={{controller.id}}">
+          <span class="badge">{{controller.id}}</span>
+        </a>
+      </span>
+    </div>
+  </script>
+  <div class="row-fluid">
+    <div class="span12" ng-show="services.length">
+      <span ng-hide="id">
+        <hawtio-filter ng-model="tableConfig.filterOptions.filterText"
+                       css-class="input-xxlarge"
+                       placeholder="Filter apps..."></hawtio-filter>
+      </span>
+      <button ng-show="fetched"
+              class="btn btn-danger pull-right"
+              ng-disabled="!id && tableConfig.selectedItems.length == 0"
+              ng-click="deletePrompt(id || tableConfig.selectedItems)">
+        <i class="icon-remove"></i> Delete
+      </button>
+      <span class="pull-right">&nbsp;</span>
+      <button ng-show="id"
+              class="btn btn-primary pull-right"
+              ng-click="id = undefined"><i class="icon-list"></i></button>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <div ng-hide="fetched">
+        <div class="align-center">
+          <i class="icon-spinner icon-spin"></i>
+        </div>
+      </div>
+      <div ng-show="fetched && !id">
+        <div ng-hide="apps.length" class="align-center">
+          <p class="alert alert-info">There are no apps currently available.</p>
+        </div>
+        <div ng-show="apps.length">
+          <table class="table table-condensed table-striped" hawtio-simple-table="tableConfig"></table>
+        </div>
+      </div>
+      <div ng-show="fetched && id">
+        <p></p>
+        <div hawtio-object="item"></div>
+      </div>
+    </div>
+  </div>
+</div>
