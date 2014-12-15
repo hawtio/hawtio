@@ -42,7 +42,7 @@ Now you can use hawtio (e.g. the Google Chrome Extension or the stand alone hawt
 
 #### How do I connect to my remote JVM?
 
-All thats required for hawtio to connect to any remote JVM is that a [jolokia agent](http://jolokia.org/agent.html) can be added to it. This can be done in various ways.
+All that's required for hawtio to connect to any remote JVM is that a [jolokia agent](http://jolokia.org/agent.html) is attached to the JVM you wish to connect to. This can be done in various ways.
 
 Firstly if you are using [Fuse](http://www.jboss.org/products/fuse) or [Apache ActiveMQ 5.9.x or later](http://activemq.apache.org/) then you already have jolokia enabled by default.
 
