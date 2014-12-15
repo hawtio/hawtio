@@ -29,11 +29,11 @@ module Kubernetes {
       columnDefs: [
         { field: 'icon', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
-        { field: 'namespace', displayName: 'Namespace' },
         { field: '$podsLink', displayName: 'Pods', cellTemplate: $templateCache.get("podCountsAndLinkTemplate.html") },
         { field: 'selector', displayName: 'Selector', cellTemplate: $templateCache.get("selectorTemplate.html") },
         { field: 'portalIP', displayName: 'Address', cellTemplate: $templateCache.get("portalAddress.html") },
-        { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
+        { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") },
+        { field: 'namespace', displayName: 'Namespace' }
       ]
     };
 

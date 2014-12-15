@@ -68,10 +68,10 @@ module Kubernetes {
       columnDefs: [
         { field: 'icon', displayName: '', cellTemplate: $templateCache.get("iconCellTemplate.html") },
         { field: 'id', displayName: 'ID', cellTemplate: $templateCache.get("idTemplate.html") },
-        { field: 'namespace', displayName: 'Namespace' },
         { field: 'currentState.replicas', displayName: 'Pods', cellTemplate: $templateCache.get("podCountsAndLinkTemplate.html") },
         { field: 'desiredState.replicas', displayName: 'Replicas', cellTemplate:$templateCache.get("desiredReplicas.html") },
-        { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") }
+        { field: 'labelsText', displayName: 'Labels', cellTemplate: $templateCache.get("labelTemplate.html") },
+        { field: 'namespace', displayName: 'Namespace' }
       ]
     };
 

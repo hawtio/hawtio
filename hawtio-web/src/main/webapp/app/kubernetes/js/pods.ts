@@ -51,10 +51,6 @@ module Kubernetes {
           cellTemplate: $templateCache.get("idTemplate.html")
         },
         {
-              field: 'namespace',
-              displayName: 'Namespace'
-        },
-        {
           field: 'currentState.status',
           displayName: 'Status',
           cellTemplate: $templateCache.get("statusTemplate.html")
@@ -76,6 +72,10 @@ module Kubernetes {
           field: 'labels',
           displayName: 'Labels',
           cellTemplate: $templateCache.get("labelTemplate.html")
+        },
+        {
+              field: 'namespace',
+              displayName: 'Namespace'
         }
       ]
     };
