@@ -72,6 +72,10 @@
           title="View an overview of the system. Version: {{version.major}}.{{version.minor}}">
         <a ng-href="#/kubernetes/overview">Overview</a>
       </li>
+      <li ng-class='{active : isActive("#/kubernetes/apps")}' ng-show="showAppView"
+          title="View all of the Apps running right now">
+        <a ng-href="#/kubernetes/apps">Apps</a>
+      </li>
       <li ng-class='{active : isActive("#/kubernetes/services")}'
           title="View kubernetes services and their status">
         <a ng-href="#/kubernetes/services">Services</a>
