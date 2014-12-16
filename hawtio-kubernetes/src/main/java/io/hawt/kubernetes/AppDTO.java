@@ -25,15 +25,17 @@ public class AppDTO {
     private final String iconPath;
     private final String name;
     private final String description;
+    private final String metadataPath;
     private final String version;
     private final String groupId;
     private final String artifactId;
 
-    public AppDTO(String appPath, String iconPath, String name, String description, String version, String groupId, String artifactId) {
+    public AppDTO(String appPath, String iconPath, String name, String description, String metadataPath, String version, String groupId, String artifactId) {
         this.appPath = appPath;
         this.iconPath = iconPath;
         this.name = name;
         this.description = description;
+        this.metadataPath = metadataPath;
         this.version = version;
         this.groupId = groupId;
         this.artifactId = artifactId;
@@ -70,6 +72,10 @@ public class AppDTO {
 
     public String getIconPath() {
         return iconPath;
+    }
+
+    public String getMetadataPath() {
+        return metadataPath;
     }
 
     public String getName() {

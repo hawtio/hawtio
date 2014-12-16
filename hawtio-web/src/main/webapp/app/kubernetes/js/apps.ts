@@ -4,9 +4,9 @@
 module Kubernetes {
 
   export var Apps = controller("Apps",
-    ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesState", "$templateCache", "$location", "$routeParams", "workspace", "jolokia",
+    ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesState", "$templateCache", "$location", "$routeParams", "$http", "workspace", "jolokia",
       ($scope, KubernetesServices:ng.IPromise<ng.resource.IResourceClass>, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, KubernetesState,
-       $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService, $routeParams, workspace, jolokia:Jolokia.IJolokia) => {
+       $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService, $routeParams, $http, workspace, jolokia:Jolokia.IJolokia) => {
 
     $scope.namespace = $routeParams.namespace;
     $scope.apps = [];
@@ -15,6 +15,101 @@ module Kubernetes {
     $scope.fetched = false;
     $scope.json = '';
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
+    ControllerHelpers.bindModelToSearchParam($scope, $location, 'appSelectorShow', 'openApp', undefined);
+    var branch = $scope.branch || "master";
+
+    function appMatches(app) {
+      var filterText = $scope.appSelector.filterText;
+      if (filterText) {
+        return Core.matchFilterIgnoreCase(app.groupId, filterText) ||
+          Core.matchFilterIgnoreCase(app.artifactId, filterText) ||
+          Core.matchFilterIgnoreCase(app.name, filterText) ||
+          Core.matchFilterIgnoreCase(app.description, filterText);
+      } else {
+        return true;
+      }
+    }
+
+    $scope.appSelector = {
+      filterText: "",
+      folders: [],
+      selectedApps: [],
+
+      isOpen: (folder) => {
+        if ($scope.appSelector.filterText !== '' || folder.expanded) {
+          return "opened";
+        }
+        return "closed";
+      },
+
+      showApp: (app) => {
+        return appMatches(app);
+      },
+
+      showFolder: (folder) => {
+        return !$scope.appSelector.filterText || folder.apps.some((app) => appMatches(app));
+      },
+
+      clearSelected: () => {
+        angular.forEach($scope.appSelector.folders, (folder) => {
+          angular.forEach(folder.apps, (app) => {
+            app.selected = false;
+          });
+        });
+        $scope.appSelector.selectedApps = [];
+        Core.$apply($scope);
+      },
+
+      updateSelected: () => {
+        // lets update the selected apps
+        var selectedApps = [];
+        angular.forEach($scope.appSelector.folders, (folder) => {
+          var apps = folder.apps.filter((app) => app.selected);
+          if (apps) {
+            selectedApps = selectedApps.concat(apps);
+          }
+        });
+        $scope.appSelector.selectedApps = selectedApps.sortBy("name");
+      },
+
+      select: (app, flag) => {
+        app.selected = flag;
+        $scope.appSelector.updateSelected();
+      },
+
+      hasSelection: () => {
+        return $scope.appSelector.folders.any((folder) => folder.apps.any((app) => app.selected));
+      },
+
+      runSelectedApps: () => {
+        // lets run all the selected apps
+        angular.forEach($scope.appSelector.selectedApps, (app) => {
+          var name = app.name;
+          var metadataPath = app.metadataPath;
+          if (metadataPath) {
+            // lets load the json/yaml
+            var url = Wiki.gitRelativeURL(branch, metadataPath);
+            if (url) {
+              $http.get(url).
+                success(function (data, status, headers, config) {
+                  if (data) {
+                    // lets convert the json object structure into a string
+                    var json = angular.toJson(data);
+                    Kubernetes.runApp($location, jolokia, $scope, json, name);
+                  }
+                }).
+                error(function (data, status, headers, config) {
+                  $scope.summaryHtml = null;
+                  log.warn("Failed to load " + url + " " + data + " " + status);
+                });
+            }
+          }
+        });
+        // lets go back to the apps view
+        $scope.appSelector.clearSelected();
+        $scope.appSelectorShow = false;
+      }
+    };
 
     $scope.tableConfig = {
       data: 'apps',
@@ -45,7 +140,6 @@ module Kubernetes {
     });
 
     if (isKubernetes(workspace)) {
-      var branch = $scope.branch || "master";
       Core.register(jolokia, $scope, {type: 'exec', mbean: Kubernetes.mbean, operation: "findApps", arguments: [branch]}, onSuccess(onAppData));
     }
     if (isAppView(workspace)) {
@@ -55,14 +149,34 @@ module Kubernetes {
     function updateData() {
       if ($scope.appInfos && $scope.appViews) {
         $scope.fetched = true;
-
+        var folderMap = {};
+        var folders = [];
         var appMap = {};
         angular.forEach($scope.appInfos, (appInfo) => {
           var appPath = appInfo.appPath;
           if (appPath) {
             appMap[appPath] = appInfo;
+            var idx = appPath.lastIndexOf("/");
+            var folderPath = "";
+            if (idx >= 0) {
+              folderPath = appPath.substring(0, idx);
+            }
+            folderPath = Core.trimLeading(folderPath, "/");
+            var folder = folderMap[folderPath];
+            if (!folder) {
+              folder = {
+                path: folderPath,
+                expanded: true,
+                apps: []
+              };
+              folders.push(folder);
+              folderMap[folderPath] = folder;
+            }
+            folder.apps.push(appInfo);
           }
         });
+        $scope.appSelector.folders = folders.sortBy("path");
+
         var apps = [];
         angular.forEach($scope.appViews, (appView) => {
           var appPath = appView.appPath;
@@ -72,11 +186,11 @@ module Kubernetes {
               appView.$info = appInfo;
               var iconPath = appInfo.iconPath;
               if (iconPath) {
-                appView.$iconUrl = Wiki.gitRelativeURL('master', iconPath);
+                appView.$iconUrl = Wiki.gitRelativeURL(branch, iconPath);
               }
               apps.push(appView);
             }
-            appView.$appUrl = Wiki.viewLink('master', appPath, $location);
+            appView.$appUrl = Wiki.viewLink(branch, appPath, $location);
           }
           appView.$podCounters = createAppViewPodCounters(appView);
         });

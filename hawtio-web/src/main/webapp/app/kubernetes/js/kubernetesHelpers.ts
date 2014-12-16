@@ -156,6 +156,25 @@ module Kubernetes {
   }
 
   /**
+   * Runs the given application JSON
+   */
+  export function runApp($location, jolokia, $scope, json, name = "App", onSuccessFn = null) {
+    if (json) {
+      name = name || "App";
+      Core.notification('info', "Running " + name);
+      jolokia.execute(Kubernetes.managerMBean, "apply", json,
+        onSuccess((response) => {
+          log.debug("Got response: ", response);
+          if (onSuccessFn) {
+            onSuccessFn();
+          }
+          Core.$apply($scope);
+        }));
+    }
+  }
+
+
+  /**
    * Returns true if the current status of the pod is running
    */
   export function isRunning(podCurrentState) {

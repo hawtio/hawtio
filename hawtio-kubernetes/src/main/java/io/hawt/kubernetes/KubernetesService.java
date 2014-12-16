@@ -236,6 +236,7 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
     protected AppDTO createAppDto(File rootFolder, File kubeFile) {
         File appFolder = kubeFile.getParentFile();
         String appPath = relativePath(rootFolder, appFolder);
+        String kubePath = relativePath(rootFolder, kubeFile);
         String iconPath = doFindAppIconPath(rootFolder, appFolder);
         Properties properties = new Properties();
         File propertiesFile = new File(appFolder, "fabric8.properties");
@@ -252,7 +253,7 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
         String version = properties.getProperty("version");
         String groupId = properties.getProperty("groupId");
         String artifactId = properties.getProperty("artifactId");
-        return new AppDTO(appPath, iconPath, name, description, version, groupId, artifactId);
+        return new AppDTO(appPath, iconPath, name, description, kubePath, version, groupId, artifactId);
     }
 
 

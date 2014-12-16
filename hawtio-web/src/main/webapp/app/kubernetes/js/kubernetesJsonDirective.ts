@@ -74,19 +74,11 @@ module Kubernetes {
 
         $scope.apply = () => {
           var json = angular.toJson($scope.config);
-          if (json) {
-            var name = $scope.appTitle || "App";
-            Core.notification('info', "Running " + name);
-
-            jolokia.execute(Kubernetes.managerMBean, "apply", json,
-              onSuccess((response) => {
-                log.debug("Got response: ", response);
-
-                // now lets navigate to the controllers page so folks see things happen
-                $location.url("/kubernetes/replicationControllers");
-                Core.$apply($scope);
-              }));
-          }
+          var name = $scope.appTitle || "App";
+          runApp($location, jolokia, $scope, json, name, () => {
+            // now lets navigate to the apps page so folks see things happen
+            $location.url("/kubernetes/apps");
+          });
         };
       }]
     };
