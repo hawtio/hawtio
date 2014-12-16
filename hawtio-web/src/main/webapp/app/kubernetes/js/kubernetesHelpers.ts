@@ -158,18 +158,25 @@ module Kubernetes {
   /**
    * Runs the given application JSON
    */
-  export function runApp($location, jolokia, $scope, json, name = "App", onSuccessFn = null) {
+  export function runApp($location, jolokia, $scope, json, name = "App", onSuccessFn = null, namespace = null) {
     if (json) {
       name = name || "App";
-      Core.notification('info', "Running " + name);
-      jolokia.execute(Kubernetes.managerMBean, "apply", json,
-        onSuccess((response) => {
-          log.debug("Got response: ", response);
-          if (onSuccessFn) {
-            onSuccessFn();
-          }
-          Core.$apply($scope);
-        }));
+      var postfix = namespace ? " in namespace " + namespace : "";
+      Core.notification('info', "Running " + name + postfix);
+
+      var callback = onSuccess((response) => {
+        log.debug("Got response: ", response);
+        if (angular.isFunction(onSuccessFn)) {
+          onSuccessFn();
+        }
+        Core.$apply($scope);
+      });
+
+      if (namespace) {
+        jolokia.execute(Kubernetes.managerMBean, "applyInNamespace", json, namespace, callback);
+      } else {
+        jolokia.execute(Kubernetes.managerMBean, "apply", json, callback);
+      }
     }
   }
 

@@ -17,6 +17,7 @@ module Kubernetes {
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'appSelectorShow', 'openApp', undefined);
     var branch = $scope.branch || "master";
+    var namespace = null;
     var defaultIconUrl = Core.url("/img/icons/kubernetes.svg");
 
     function appMatches(app) {
@@ -30,6 +31,80 @@ module Kubernetes {
         return true;
       }
     }
+
+    $scope.tableConfig = {
+      data: 'apps',
+      showSelectionCheckbox: true,
+      enableRowClickSelection: false,
+      multiSelect: true,
+      selectedItems: [],
+      filterOptions: {
+        filterText: $location.search()["q"] || ''
+      },
+      columnDefs: [
+        { field: 'icon', displayName: 'App', cellTemplate: $templateCache.get("appIconTemplate.html") },
+        { field: 'services', displayName: 'Services', cellTemplate: $templateCache.get("appServicesTemplate.html") },
+        { field: 'replicationControllers', displayName: 'Controllers', cellTemplate: $templateCache.get("appReplicationControllerTemplate.html") },
+        { field: '$podsLink', displayName: 'Pods', cellTemplate: $templateCache.get("podCountsAndLinkTemplate.html") },
+        { field: 'namespace', displayName: 'Namespace' }
+      ]
+    };
+
+    Kubernetes.initShared($scope, $location);
+
+    $scope.$on('kubeSelectedId', ($event, id) => {
+      Kubernetes.setJson($scope, id, $scope.apps);
+    });
+
+    $scope.$on('$routeUpdate', ($event) => {
+      Kubernetes.setJson($scope, $location.search()['_id'], $scope.apps);
+    });
+
+    if (isKubernetes(workspace)) {
+      Core.register(jolokia, $scope, {type: 'exec', mbean: Kubernetes.mbean, operation: "findApps", arguments: [branch]}, onSuccess(onAppData));
+    }
+    if (isAppView(workspace)) {
+      Core.register(jolokia, $scope, {type: 'exec', mbean: Kubernetes.appViewMBean, operation: "findAppSummariesJson"}, onSuccess(onAppViewData));
+    }
+
+    function deleteApp(app, onCompleteFn) {
+      // TODO lets resize the controllers
+    }
+
+    $scope.deletePrompt = (selected) => {
+      if (angular.isString(selected)) {
+        selected = [{
+          id: selected
+        }];
+      }
+      UI.multiItemConfirmActionDialog(<UI.MultiItemConfirmActionOptions>{
+        collection: selected,
+        index: 'id',
+        onClose: (result:boolean) => {
+          if (result) {
+            function deleteSelected(selected, next) {
+              if (next) {
+                var id = next.name;
+                log.debug("deleting: ", id);
+                deleteApp(next, () => {
+                  log.debug("deleted: ", id);
+                  deleteSelected(selected, selected.shift());
+                });
+              }
+            }
+
+            deleteSelected(selected, selected.shift());
+          }
+        },
+        title: 'Delete Apps?',
+        action: 'The following Apps will be deleted:',
+        okText: 'Delete',
+        okClass: 'btn-danger',
+        custom: "This operation is permanent once completed!",
+        customClass: "alert alert-warning"
+      }).open();
+    };
+
 
     $scope.appSelector = {
       filterText: "",
@@ -92,6 +167,7 @@ module Kubernetes {
         return $scope.appSelector.folders.any((folder) => folder.apps.any((app) => app.selected));
       },
 
+
       runSelectedApps: () => {
         // lets run all the selected apps
         angular.forEach($scope.appSelector.selectedApps, (app) => {
@@ -106,7 +182,8 @@ module Kubernetes {
                   if (data) {
                     // lets convert the json object structure into a string
                     var json = angular.toJson(data);
-                    Kubernetes.runApp($location, jolokia, $scope, json, name);
+                    var fn = () => {};
+                    Kubernetes.runApp($location, jolokia, $scope, json, name, fn, namespace);
                   }
                 }).
                 error(function (data, status, headers, config) {
@@ -122,40 +199,7 @@ module Kubernetes {
       }
     };
 
-    $scope.tableConfig = {
-      data: 'apps',
-      showSelectionCheckbox: true,
-      enableRowClickSelection: false,
-      multiSelect: true,
-      selectedItems: [],
-      filterOptions: {
-        filterText: $location.search()["q"] || ''
-      },
-      columnDefs: [
-        { field: 'icon', displayName: 'App', cellTemplate: $templateCache.get("appIconTemplate.html") },
-        { field: 'services', displayName: 'Services', cellTemplate: $templateCache.get("appServicesTemplate.html") },
-        { field: 'replicationControllers', displayName: 'Controllers', cellTemplate: $templateCache.get("appReplicationControllerTemplate.html") },
-        { field: '$podsLink', displayName: 'Pods', cellTemplate: $templateCache.get("podCountsAndLinkTemplate.html") },
-        { field: 'namespace', displayName: 'Namespace' }
-      ]
-    };
 
-    Kubernetes.initShared($scope, $location);
-
-    $scope.$on('kubeSelectedId', ($event, id) => {
-      Kubernetes.setJson($scope, id, $scope.apps);
-    });
-
-    $scope.$on('$routeUpdate', ($event) => {
-      Kubernetes.setJson($scope, $location.search()['_id'], $scope.apps);
-    });
-
-    if (isKubernetes(workspace)) {
-      Core.register(jolokia, $scope, {type: 'exec', mbean: Kubernetes.mbean, operation: "findApps", arguments: [branch]}, onSuccess(onAppData));
-    }
-    if (isAppView(workspace)) {
-      Core.register(jolokia, $scope, {type: 'exec', mbean: Kubernetes.appViewMBean, operation: "findAppSummariesJson"}, onSuccess(onAppViewData));
-    }
 
     function updateData() {
       if ($scope.appInfos && $scope.appViews) {
