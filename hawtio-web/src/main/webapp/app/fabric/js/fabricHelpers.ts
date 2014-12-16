@@ -540,12 +540,15 @@ module Fabric {
    * Returns the fully qualified iconURL from the relative link
    */
   export function toIconURL($scope, iconURL) {
+    if (!iconURL) {
+      return iconURL;
+    }
     // If we're proxying...
     var connectionName = Core.getConnectionNameParameter(location.search);
     if (connectionName) {
       var connectionOptions = Core.getConnectOptions(connectionName);
       if (connectionOptions) {
-        connectionOptions.path = iconURL;
+        connectionOptions.path = Core.url("/git/") + iconURL;
         iconURL = <string>Core.createServerConnectionUrl(connectionOptions);
       }
     }
