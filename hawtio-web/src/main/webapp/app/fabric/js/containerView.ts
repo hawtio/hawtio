@@ -107,6 +107,10 @@ module Fabric {
 
     $scope.filterContainer = $scope.filterContainers;
 
+    $scope.viewProfile = (profile:Profile) => {
+      Fabric.gotoProfile(workspace, jolokia, workspace.localStorage, $location, profile.version, profile.id);
+    };
+
     function maybeAdd(group: Array<any>, thing:any, index:string) {
       if (angular.isArray(thing)) {
         thing.forEach((i) => { maybeAdd(group, i, index); });
