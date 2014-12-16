@@ -17,6 +17,7 @@ module Kubernetes {
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'appSelectorShow', 'openApp', undefined);
     var branch = $scope.branch || "master";
+    var defaultIconUrl = Core.url("/img/icons/kubernetes.svg");
 
     function appMatches(app) {
       var filterText = $scope.appSelector.filterText;
@@ -154,6 +155,12 @@ module Kubernetes {
         var appMap = {};
         angular.forEach($scope.appInfos, (appInfo) => {
           var appPath = appInfo.appPath;
+          var iconPath = appInfo.iconPath;
+          if (iconPath) {
+            appInfo.$iconUrl = Wiki.gitRelativeURL(branch, iconPath);
+          } else {
+            appInfo.$iconUrl = defaultIconUrl;
+          }
           if (appPath) {
             appMap[appPath] = appInfo;
             var idx = appPath.lastIndexOf("/");
@@ -184,10 +191,7 @@ module Kubernetes {
             var appInfo = appMap[appPath];
             if (appInfo) {
               appView.$info = appInfo;
-              var iconPath = appInfo.iconPath;
-              if (iconPath) {
-                appView.$iconUrl = Wiki.gitRelativeURL(branch, iconPath);
-              }
+              appView.$iconUrl = appInfo.$iconUrl;
               apps.push(appView);
             }
             appView.$appUrl = Wiki.viewLink(branch, appPath, $location);

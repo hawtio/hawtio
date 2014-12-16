@@ -3,8 +3,29 @@
     padding-left: 10px;
   }
 
+  .profile-selector-name .app-name {
+    padding-left: 4px;
+  }
+
   .ngCellText .icon-replication-controller {
     vertical-align: middle;
+  }
+
+  img.icon-small-app {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+  }
+
+  img.icon-selected-app {
+    width: 64px;
+    height: 64px;
+    vertical-align: middle;
+  }
+
+  .selected-app-name {
+    line-height: 36px;
+    padding-left: 5px;
   }
 </style>
 <div ng-controller="Kubernetes.Apps">
@@ -117,8 +138,10 @@
                       <div class="inline-block profile-selector-name" ng-class="getSelectedClass(profile)">
                         <span class="contained c-max">
                           <a href="" ng-click="appSelector.select(profile, !profile.selected)"
-                             title="Details for {{profile.id}}"><i
-                                  class="icon-book green"></i> {{profile.name}}</a>
+                             title="Details for {{profile.id}}">
+                              <img ng-show="profile.$iconUrl" class="icon-small-app" ng-src="{{profile.$iconUrl}}">
+                              <span class="app-name">{{profile.name}}</span>
+                          </a>
                         </span>
                       </div>
                     </div>
@@ -168,7 +191,8 @@
 
           <ul class="zebra-list pull-right">
             <li ng-repeat="app in appSelector.selectedApps">
-              <strong class="green">{{app.name}}</strong>
+              <img ng-show="app.$iconUrl" class="icon-selected-app" ng-src="{{app.$iconUrl}}">
+              <strong class="green selected-app-name">{{app.name}}</strong>
               &nbsp;
               <i class="red clickable icon-remove"
                  title="Remove appp"
