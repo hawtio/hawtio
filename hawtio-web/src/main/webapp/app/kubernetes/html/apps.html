@@ -14,7 +14,11 @@
   img.icon-small-app {
     width: 24px;
     height: 24px;
-    vertical-align: middle;
+    vertical-align: text-bottom;
+  }
+
+  .profile-selector-name {
+    line-height: 24px;
   }
 
   img.icon-selected-app {
@@ -135,7 +139,7 @@
                         <input type="checkbox" ng-model="profile.selected"
                                ng-change="appSelector.updateSelected()">
                       </div>
-                      <div class="inline-block profile-selector-name" ng-class="getSelectedClass(profile)">
+                      <div class="inline-block profile-selector-name" ng-class="appSelector.getSelectedClass(profile)">
                         <span class="contained c-max">
                           <a href="" ng-click="appSelector.select(profile, !profile.selected)"
                              title="Details for {{profile.id}}">

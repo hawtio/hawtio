@@ -43,6 +43,16 @@ module Kubernetes {
         return "closed";
       },
 
+      getSelectedClass: (app) => {
+        if (app.abstract) {
+          return "abstract";
+        }
+        if (app.selected) {
+          return "selected";
+        }
+        return "";
+      },
+
       showApp: (app) => {
         return appMatches(app);
       },
