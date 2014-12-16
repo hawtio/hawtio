@@ -171,9 +171,12 @@ module Osgi {
                         var services = this.getServices();
 
                         bundle.RegisteredServices.forEach( (sid) => {
-                            var svcNode = this.buildSvcNode(services[sid]);
-                            this.graphBuilder.addNode(svcNode);
-                            this.graphBuilder.addLink(bundleNode.id, svcNode.id, "registered");
+                            var svc = services[sid];
+                            if (svc) {
+                                var svcNode = this.buildSvcNode(services[sid]);
+                                this.graphBuilder.addNode(svcNode);
+                                this.graphBuilder.addLink(bundleNode.id, svcNode.id, "registered");
+                            }
                         })
                     }
                 }
