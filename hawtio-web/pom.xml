@@ -34,6 +34,10 @@
     <hawtio-config-cloneOnStartup>true</hawtio-config-cloneOnStartup>
     <fabricUrl />
     <jetty-use-file-lock />
+
+    <!-- allow a http proxy to be specified on the command line -->
+    <http.proxyHost></http.proxyHost>
+    <http.proxyPort></http.proxyPort>
   </properties>
 
   <dependencies>
@@ -867,6 +871,15 @@
             <systemProperty>
               <key>hawtio.proxyDisableCertificateValidation</key>
               <value>true</value>
+            </systemProperty>
+
+            <systemProperty>
+              <key>http.proxyHost</key>
+              <value>${http.proxyHost}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>http.proxyPort</key>
+              <value>${http.proxyPort}</value>
             </systemProperty>
           </systemProperties>
         </configuration>
