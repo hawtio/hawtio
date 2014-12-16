@@ -4,8 +4,8 @@
 module Kubernetes {
 
   export var Apps = controller("Apps",
-    ["$scope", "KubernetesServices", "KubernetesPods", "KubernetesState", "$templateCache", "$location", "$routeParams", "$http", "workspace", "jolokia",
-      ($scope, KubernetesServices:ng.IPromise<ng.resource.IResourceClass>, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, KubernetesState,
+    ["$scope", "KubernetesServices", "KubernetesReplicationControllers", "KubernetesPods", "KubernetesState", "$templateCache", "$location", "$routeParams", "$http", "workspace", "jolokia",
+      ($scope, KubernetesServices:ng.IPromise<ng.resource.IResourceClass>, KubernetesReplicationControllers:ng.IPromise<ng.resource.IResourceClass>, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, KubernetesState,
        $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService, $routeParams, $http, workspace, jolokia:Jolokia.IJolokia) => {
 
     $scope.namespace = $routeParams.namespace;
@@ -68,7 +68,82 @@ module Kubernetes {
     }
 
     function deleteApp(app, onCompleteFn) {
-      // TODO lets resize the controllers
+      function deleteServices(services, service, onCompletedFn) {
+        if (!service || !services) {
+          return onCompletedFn();
+        }
+        var id = service.id;
+        if (!id) {
+          log.warn("No ID for service " + angular.toJson(service));
+        } else {
+          KubernetesServices.then((KubernetesServices:ng.resource.IResourceClass) => {
+            KubernetesServices.delete({
+              id: id
+            }, undefined, () => {
+              log.debug("Deleted service: ", id);
+              deleteServices(services, services.shift(), onCompletedFn);
+            }, (error) => {
+              log.debug("Error deleting service: ", error);
+              deleteServices(services, services.shift(), onCompletedFn);
+            });
+          });
+        }
+      }
+
+      function deleteReplicationControllers(replicationControllers, replicationController, onCompletedFn) {
+        if (!replicationController || !replicationControllers) {
+          return onCompletedFn();
+        }
+        var id = replicationController.id;
+        if (!id) {
+          log.warn("No ID for replicationController " + angular.toJson(replicationController));
+        } else {
+          KubernetesReplicationControllers.then((KubernetesReplicationControllers:ng.resource.IResourceClass) => {
+            KubernetesReplicationControllers.delete({
+              id: id
+            }, undefined, () => {
+              log.debug("Deleted replicationController: ", id);
+              deleteReplicationControllers(replicationControllers, replicationControllers.shift(), onCompletedFn);
+            }, (error) => {
+              log.debug("Error deleting replicationController: ", error);
+              deleteReplicationControllers(replicationControllers, replicationControllers.shift(), onCompletedFn);
+            });
+          });
+        }
+      }
+
+      function deletePods(pods, pod, onCompletedFn) {
+        if (!pod || !pods) {
+          return onCompletedFn();
+        }
+        var id = pod.id;
+        if (!id) {
+          log.warn("No ID for pod " + angular.toJson(pod));
+        } else {
+          KubernetesPods.then((KubernetesPods:ng.resource.IResourceClass) => {
+            KubernetesPods.delete({
+              id: id
+            }, undefined, () => {
+              log.debug("Deleted pod: ", id);
+              deletePods(pods, pods.shift(), onCompletedFn);
+            }, (error) => {
+              log.debug("Error deleting pod: ", error);
+              deletePods(pods, pods.shift(), onCompletedFn);
+            });
+          });
+        }
+      }
+
+      var services = [].concat(app.services);
+      deleteServices(services, services.shift(), () => {
+
+        var replicationControllers = [].concat(app.replicationControllers);
+        deleteReplicationControllers(replicationControllers, replicationControllers.shift(), () => {
+
+          var pods = [].concat(app.pods);
+          deletePods(pods, pods.shift(), onCompleteFn);
+        });
+      });
     }
 
     $scope.deletePrompt = (selected) => {
@@ -79,7 +154,7 @@ module Kubernetes {
       }
       UI.multiItemConfirmActionDialog(<UI.MultiItemConfirmActionOptions>{
         collection: selected,
-        index: 'id',
+        index: '$name',
         onClose: (result:boolean) => {
           if (result) {
             function deleteSelected(selected, next) {
@@ -245,6 +320,7 @@ module Kubernetes {
             var appInfo = appMap[appPath];
             if (appInfo) {
               appView.$info = appInfo;
+              appView.$name = appInfo.name;
               appView.$iconUrl = appInfo.$iconUrl;
               apps.push(appView);
             }
