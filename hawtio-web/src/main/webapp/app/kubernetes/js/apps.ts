@@ -32,6 +32,10 @@ module Kubernetes {
       }
     }
 
+    function appRunning(app) {
+      return $scope.apps.any((running) => running.appPath === app.appPath);
+    }
+
     $scope.tableConfig = {
       data: 'apps',
       showSelectionCheckbox: true,
@@ -204,11 +208,11 @@ module Kubernetes {
       },
 
       showApp: (app) => {
-        return appMatches(app);
+        return appMatches(app) && !appRunning(app);
       },
 
       showFolder: (folder) => {
-        return !$scope.appSelector.filterText || folder.apps.some((app) => appMatches(app));
+        return !$scope.appSelector.filterText || folder.apps.some((app) => appMatches(app) && !appRunning(app));
       },
 
       clearSelected: () => {
