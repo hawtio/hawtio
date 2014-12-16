@@ -547,7 +547,7 @@ module Fabric {
     var connectionName = Core.getConnectionNameParameter(location.search);
     if (connectionName) {
       var connectionOptions = Core.getConnectOptions(connectionName);
-      if (connectionOptions) {
+      if (connectionOptions && !/^proxy\/http/.test(iconURL)) {
         connectionOptions.path = Core.url("/git/") + iconURL;
         iconURL = <string>Core.createServerConnectionUrl(connectionOptions);
       }
