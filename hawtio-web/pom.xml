@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.4.42</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -36,8 +36,8 @@
     <jetty-use-file-lock />
 
     <!-- allow a http proxy to be specified on the command line -->
-    <http.proxyHost></http.proxyHost>
-    <http.proxyPort></http.proxyPort>
+    <http.proxyHost />
+    <http.proxyPort />
   </properties>
 
   <dependencies>
