@@ -49,7 +49,7 @@ module Kubernetes {
         { field: 'icon', displayName: 'App', cellTemplate: $templateCache.get("appIconTemplate.html") },
         { field: 'services', displayName: 'Services', cellTemplate: $templateCache.get("appServicesTemplate.html") },
         { field: 'replicationControllers', displayName: 'Controllers', cellTemplate: $templateCache.get("appReplicationControllerTemplate.html") },
-        { field: '$podsLink', displayName: 'Pods', cellTemplate: $templateCache.get("podCountsAndLinkTemplate.html") },
+        { field: '$podsLink', displayName: 'Pods', cellTemplate: $templateCache.get("appPodCountsAndLinkTemplate.html") },
         { field: 'namespace', displayName: 'Namespace' }
       ]
     };
@@ -338,16 +338,24 @@ module Kubernetes {
     }
 
     function createAppViewPodCounters(appView) {
-      var answer = {
-        podsLink: "",
-        valid: 0,
-        waiting: 0,
-        error: 0
-      };
-      var selector = {};
-      answer.podsLink = Core.url("/kubernetes/pods?q=" + encodeURIComponent(Kubernetes.labelsToString(selector, " ")));
+      var array = [];
+      var map = {};
       var pods = appView.pods;
       angular.forEach(pods, pod => {
+        var selector = pod.labels;
+        var selectorText = Kubernetes.labelsToString(selector, " ");
+        var answer = map[selector];
+        if (!answer) {
+          answer = {
+            labelText: selectorText,
+            podsLink: Core.url("/kubernetes/pods?q=" + encodeURIComponent(selectorText)),
+            valid: 0,
+            waiting: 0,
+            error: 0
+          };
+          map[selector] = answer;
+          array.push(answer);
+        }
         var status = pod.status;
         if ("OK" === status) {
           answer.valid += 1;
@@ -357,7 +365,7 @@ module Kubernetes {
           answer.error += 1;
         }
       });
-      return answer;
+      return array;
     }
 
     function onAppData(response) {

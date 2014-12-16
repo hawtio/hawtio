@@ -63,6 +63,17 @@
       </span>
     </div>
   </script>
+  <script type="text/ng-template" id="appPodCountsAndLinkTemplate.html">
+    <div class="ngCellText" title="Number of running pods for this controller">
+      <div ng-repeat="podCounters in row.entity.$podCounters track by $index">
+        <a ng-show="podCounters.podsLink" href="{{podCounters.podsLink}}" title="{{podCounters.labelText}}">
+          <span ng-show="podCounters.valid" class="badge badge-success">{{podCounters.valid}}</span>
+          <span ng-show="podCounters.waiting" class="badge">{{podCounters.waiting}}</span>
+          <span ng-show="podCounters.error" class="badge badge-warning">{{podCounters.error}}</span>
+        </a>
+      </div>
+    </div>
+  </script>
 
   <div ng-hide="appSelectorShow">
     <div class="row-fluid">
