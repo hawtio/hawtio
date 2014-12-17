@@ -201,7 +201,6 @@ module Core {
         this.map[key] = answer;
         this.children.push(answer);
         answer.parent = this;
-        this.children = this.children.sortBy("title");
       }
       return answer;
     }
