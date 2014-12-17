@@ -4281,7 +4281,7 @@ ul.dynatree-container {
 
 .pane.left {
   left: 0;
-  z-index: 1000;
+  z-index: 39;
 }
 
 .pane.left .pane-viewport {

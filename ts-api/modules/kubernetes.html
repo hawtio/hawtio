@@ -84,6 +84,7 @@
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="kubernetes.html#kibanalogslink" class="tsd-kind-icon">kibana<wbr>Logs<wbr>Link</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="kubernetes.html#labelstostring" class="tsd-kind-icon">labels<wbr>ToString</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="kubernetes.html#openlogsforpods" class="tsd-kind-icon">open<wbr>Logs<wbr>For<wbr>Pods</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-container"><a href="kubernetes.html#runapp" class="tsd-kind-icon">run<wbr>App</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="kubernetes.html#selectormatches" class="tsd-kind-icon">selector<wbr>Matches</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="kubernetes.html#setjson" class="tsd-kind-icon">set<wbr>Json</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="kubernetes.html#updatenamespaces" class="tsd-kind-icon">update<wbr>Namespaces</a></li>
@@ -283,7 +284,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/kubernetes/js/kubernetesHelpers.ts:161</li>
+									<li>Defined in app/kubernetes/js/kubernetesHelpers.ts:187</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -309,7 +310,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/kubernetes/js/kubernetesHelpers.ts:192</li>
+									<li>Defined in app/kubernetes/js/kubernetesHelpers.ts:218</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -364,7 +365,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/kubernetes/js/kubernetesHelpers.ts:204</li>
+									<li>Defined in app/kubernetes/js/kubernetesHelpers.ts:230</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -382,6 +383,48 @@
 						</li>
 					</ul>
 					</section>            <section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-container">
+					<a name="runapp" class="tsd-anchor"></a>
+					<h3>run<wbr>App</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
+						<li class="tsd-signature tsd-kind-icon">run<wbr>App<span class="tsd-signature-symbol">(</span>$location<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, jolokia<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, $scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, json<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;</span>&quot;App&quot;, onSuccessFn<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;</span>null, namespace<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;</span>null<span class="tsd-signature-symbol">)</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description"><aside class="tsd-sources">
+								<ul>
+									<li>Defined in app/kubernetes/js/kubernetesHelpers.ts:161</li>
+								</ul>
+								</aside>        <div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Runs the given application JSON</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>$location:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>jolokia:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>$scope:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>json:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>name?:         <span class="tsd-signature-type">string</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+								</li>
+								<li>
+									<h5>onSuccessFn?:         <span class="tsd-signature-type">any</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+								</li>
+								<li>
+									<h5>namespace?:         <span class="tsd-signature-type">any</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+								</li>
+							</ul>
+						</li>
+					</ul>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-container">
 					<a name="selectormatches" class="tsd-anchor"></a>
 					<h3>selector<wbr>Matches</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
@@ -390,7 +433,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/kubernetes/js/kubernetesHelpers.ts:174</li>
+									<li>Defined in app/kubernetes/js/kubernetesHelpers.ts:200</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -847,6 +890,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-container">
 						<a href="kubernetes.html#openlogsforpods" class="tsd-kind-icon">open<wbr>Logs<wbr>For<wbr>Pods</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-container">
+						<a href="kubernetes.html#runapp" class="tsd-kind-icon">run<wbr>App</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-container">
 						<a href="kubernetes.html#selectormatches" class="tsd-kind-icon">selector<wbr>Matches</a>

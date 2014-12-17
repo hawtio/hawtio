@@ -2,8 +2,34 @@
   .app-name {
     padding-left: 10px;
   }
+
+  .profile-selector-name .app-name {
+    padding-left: 4px;
+  }
+
   .ngCellText .icon-replication-controller {
     vertical-align: middle;
+  }
+
+  img.icon-small-app {
+    width: 24px;
+    height: 24px;
+    vertical-align: text-bottom;
+  }
+
+  .profile-selector-name {
+    line-height: 24px;
+  }
+
+  img.icon-selected-app {
+    width: 64px;
+    height: 64px;
+    vertical-align: middle;
+  }
+
+  .selected-app-name {
+    line-height: 36px;
+    padding-left: 5px;
   }
 </style>
 <div ng-controller="Kubernetes.Apps">
@@ -37,43 +63,158 @@
       </span>
     </div>
   </script>
-  <div class="row-fluid">
-    <div class="span12" ng-show="services.length">
-      <span ng-hide="id">
-        <hawtio-filter ng-model="tableConfig.filterOptions.filterText"
+  <script type="text/ng-template" id="appPodCountsAndLinkTemplate.html">
+    <div class="ngCellText" title="Number of running pods for this controller">
+      <div ng-repeat="podCounters in row.entity.$podCounters track by $index">
+        <a ng-show="podCounters.podsLink" href="{{podCounters.podsLink}}" title="{{podCounters.labelText}}">
+          <span ng-show="podCounters.valid" class="badge badge-success">{{podCounters.valid}}</span>
+          <span ng-show="podCounters.waiting" class="badge">{{podCounters.waiting}}</span>
+          <span ng-show="podCounters.error" class="badge badge-warning">{{podCounters.error}}</span>
+        </a>
+      </div>
+    </div>
+  </script>
+
+  <div ng-hide="appSelectorShow">
+    <div class="row-fluid">
+      <div class="span12">
+        <span ng-show="apps.length && !id">
+          <hawtio-filter ng-model="tableConfig.filterOptions.filterText"
+                         css-class="input-xxlarge"
+                         placeholder="Filter apps..."></hawtio-filter>
+        </span>
+        <button ng-show="apps.length"
+                class="btn btn-danger pull-right"
+                ng-disabled="!id && tableConfig.selectedItems.length == 0"
+                ng-click="deletePrompt(id || tableConfig.selectedItems)">
+          <i class="icon-remove"></i> Delete
+        </button>
+        <span class="pull-right">&nbsp;</span>
+        <button ng-show="appSelector.folders.length"
+                class="btn btn-success pull-right"
+                ng-click="appSelectorShow = true"
+                title="Run an application">
+          <i class="icon-play-circle"></i> Run ...
+        </button>
+        <span class="pull-right">&nbsp;</span>
+        <button ng-show="id"
+                class="btn btn-primary pull-right"
+                ng-click="id = undefined"><i class="icon-list"></i></button>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span12">
+        <div ng-hide="fetched">
+          <div class="align-center">
+            <i class="icon-spinner icon-spin"></i>
+          </div>
+        </div>
+        <div ng-show="fetched && !id">
+          <div ng-hide="apps.length" class="align-center">
+            <p class="alert alert-info">There are no apps currently available.</p>
+          </div>
+          <div ng-show="apps.length">
+            <table class="table table-condensed table-striped" hawtio-simple-table="tableConfig"></table>
+          </div>
+        </div>
+        <div ng-show="fetched && id">
+          <p></p>
+
+          <div hawtio-object="item"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div ng-show="appSelectorShow">
+    <div class="span7">
+      <div class="row-fluid">
+        <hawtio-filter ng-model="appSelector.filterText"
                        css-class="input-xxlarge"
                        placeholder="Filter apps..."></hawtio-filter>
-      </span>
-      <button ng-show="fetched"
-              class="btn btn-danger pull-right"
-              ng-disabled="!id && tableConfig.selectedItems.length == 0"
-              ng-click="deletePrompt(id || tableConfig.selectedItems)">
-        <i class="icon-remove"></i> Delete
-      </button>
-      <span class="pull-right">&nbsp;</span>
-      <button ng-show="id"
-              class="btn btn-primary pull-right"
-              ng-click="id = undefined"><i class="icon-list"></i></button>
+      </div>
+      <div class="row-fluid">
+        <ul>
+          <li class="no-list profile-selector-folder" ng-repeat="folder in appSelector.folders"
+              ng-show="appSelector.showFolder(folder)">
+            <div class="expandable" ng-class="appSelector.isOpen(folder)">
+              <div title="{{folder.path}}" class="title">
+                <i class="expandable-indicator folder"></i> <span class="folder-title" ng-show="folder.path">{{folder.path.capitalize(true)}}</span><span
+                      class="folder-title" ng-hide="folder.path">Uncategorized</span>
+              </div>
+              <div class="expandable-body">
+                <ul>
+                  <li class="no-list profile" ng-repeat="profile in folder.apps" ng-show="appSelector.showApp(profile)">
+                    <div class="profile-selector-item">
+                      <div class="inline-block profile-selector-checkbox">
+                        <input type="checkbox" ng-model="profile.selected"
+                               ng-change="appSelector.updateSelected()">
+                      </div>
+                      <div class="inline-block profile-selector-name" ng-class="appSelector.getSelectedClass(profile)">
+                        <span class="contained c-max">
+                          <a href="" ng-click="appSelector.select(profile, !profile.selected)"
+                             title="Details for {{profile.id}}">
+                              <img ng-show="profile.$iconUrl" class="icon-small-app" ng-src="{{profile.$iconUrl}}">
+                              <span class="app-name">{{profile.name}}</span>
+                          </a>
+                        </span>
+                      </div>
+                    </div>
+
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
-  <div class="row-fluid">
-    <div class="span12">
-      <div ng-hide="fetched">
-        <div class="align-center">
-          <i class="icon-spinner icon-spin"></i>
-        </div>
+    <div class="span5">
+      <div class="row-fluid">
+        <button class="btn btn-primary pull-right"
+                ng-click="appSelectorShow = undefined"><i class="icon-circle-arrow-left"></i> Back
+        </button>
+        <span class="pull-right">&nbsp;</span>
+        <button class="btn pull-right"
+                ng-disabled="!appSelector.selectedApps.length"
+                title="Clears the selected Apps"
+                ng-click="appSelector.clearSelected()"><i class="icon-check-empty"></i> Clear
+        </button>
+        <span class="pull-right">&nbsp;</span>
+        <button class="btn btn-success pull-right"
+                ng-disabled="!appSelector.selectedApps.length"
+                ng-click="appSelector.runSelectedApps()"
+                title="Run the selected apps">
+          <i class="icon-play-circle"></i>
+          <ng-pluralize count="appSelector.selectedApps.length"
+                        when="{'0': 'No App Selected',
+                                       '1': 'Run App',
+                                       'other': 'Run {} Apps'}"></ng-pluralize>
+
+        </button>
       </div>
-      <div ng-show="fetched && !id">
-        <div ng-hide="apps.length" class="align-center">
-          <p class="alert alert-info">There are no apps currently available.</p>
+      <div class="row-fluid">
+<!--
+        <div ng-hide="appSelector.selectedApps.length">
+          <p class="alert pull-right">
+            Please select an App
+          </p>
         </div>
-        <div ng-show="apps.length">
-          <table class="table table-condensed table-striped" hawtio-simple-table="tableConfig"></table>
+-->
+
+        <div ng-show="appSelector.selectedApps.length">
+
+          <ul class="zebra-list pull-right">
+            <li ng-repeat="app in appSelector.selectedApps">
+              <img ng-show="app.$iconUrl" class="icon-selected-app" ng-src="{{app.$iconUrl}}">
+              <strong class="green selected-app-name">{{app.name}}</strong>
+              &nbsp;
+              <i class="red clickable icon-remove"
+                 title="Remove appp"
+                 ng-click="appSelector.select(app, false)"></i>
+            </li>
+          </ul>
         </div>
-      </div>
-      <div ng-show="fetched && id">
-        <p></p>
-        <div hawtio-object="item"></div>
       </div>
     </div>
   </div>
