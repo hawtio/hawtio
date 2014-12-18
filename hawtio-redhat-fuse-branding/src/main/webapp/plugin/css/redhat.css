@@ -374,6 +374,11 @@ div#main div ul.nav li a {
   text-shadow: 0 1px 0 #FFFFFF;
 }
 
+div#main div ul.nav li div.separator {
+  padding: 6px 12px;
+  line-height: 20px;
+}
+
 div#main div ul.nav li a:hover {
   border: 1px;
   border-radius: 2px;
@@ -1682,10 +1687,10 @@ a:hover {
 }
 
 #main.container-fluid div .nav li {
-  margin-bottom: 0px;
-  margin-top: 0px;
-  padding-left: 20px;
-  padding-right: 20px;
+  margin-bottom: 0;
+  margin-top: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 #main.container-fluid div .nav li a {
@@ -1694,10 +1699,7 @@ a:hover {
   color: #4d5258;
   border-radius: 0;
   border: 1px solid inherit;
-  padding-left: 0px;
-  padding-right: 0px;
-  padding-top: 6px;
-  padding-bottom: 5px;
+  padding: 6px 20px 5px 20px;
 }
 
 #main.container-fluid div .nav li a:hover {
