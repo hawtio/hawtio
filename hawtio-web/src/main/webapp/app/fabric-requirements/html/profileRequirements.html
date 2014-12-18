@@ -17,8 +17,8 @@
   </div>
 
   <div ng-show="requirements.profileRequirements.length > 0" class="row-fluid">
-    <div class="span10">
-      <div class="column-box-half-screen" ng-repeat="profileRequirement in requirements.profileRequirements">
+    <div class="span11">
+      <div class="column-box-half-screen" ng-repeat="profileRequirement in requirements.profileRequirements" style="min-width: 600px">
 
         <div class="row-fluid">
           <div class="span11">
@@ -110,7 +110,7 @@
       </div>
 
     </div>
-    <div class="span2">
+    <div class="span1">
       <div ng-include="'app/fabric-requirements/html/hostTags.html'"></div>
     </div>
 
