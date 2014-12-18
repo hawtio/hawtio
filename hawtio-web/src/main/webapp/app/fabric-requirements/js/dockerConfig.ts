@@ -30,6 +30,10 @@ module FabricRequirements {
         ['password', 'passPhrase'].forEach((s) => {
           Core.pathSet(dockerHostConfigurationSchema, ['properties', s, 'type'], 'password');
         });
+        ['maximumContainerCount', 'port'].forEach((s) => {
+          Core.pathSet(dockerHostConfigurationSchema, ['properties', s, 'type'], 'integer');
+          Core.pathSet(dockerHostConfigurationSchema, ['properties', s, 'input-attributes', 'min'], '1');
+        });
 
         $scope.gridConfig.rowSchema = dockerHostConfigurationSchema;
         $scope.gridConfig.rowName = "docker host";

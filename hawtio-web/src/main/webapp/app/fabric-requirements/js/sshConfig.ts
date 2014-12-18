@@ -42,8 +42,14 @@ module FabricRequirements {
         ['defaultPassword', 'defaultPassPhrase'].forEach((s) => {
           Core.pathSet(sshConfigurationSchema, ['properties', s, 'type'], 'password');
         });
+        Core.pathSet(sshConfigurationSchema, ['properties', 'defaultPort', 'type'], 'integer');
+        Core.pathSet(sshConfigurationSchema, ['properties', 'defaultPort', 'input-attributes', 'min'], '1');
         ['password', 'passPhrase'].forEach((s) => {
           Core.pathSet(hostConfigurationSchema, ['properties', s, 'type'], 'password');
+        });
+        ['maximumContainerCount', 'port'].forEach((s) => {
+          Core.pathSet(hostConfigurationSchema, ['properties', s, 'type'], 'integer');
+          Core.pathSet(hostConfigurationSchema, ['properties', s, 'input-attributes', 'min'], '1');
         });
 
         // Order the form elements nicely

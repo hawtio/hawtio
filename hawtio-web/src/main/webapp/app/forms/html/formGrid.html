@@ -25,7 +25,15 @@
     <td>
       <editable-property ng-model="{{row}}"
                          type="{{type}}"
-                         property="{{key}}"></editable-property>
+                         property="{{key}}" min="2"></editable-property>
+    </td>
+  </script>
+
+  <script type="text/ng-template" id="cellNumberTemplate.html">
+    <td>
+      <editable-property ng-model="{{row}}"
+                         type="{{type}}"
+                         property="{{key}}" min="{{min}}" max="{{max}}"></editable-property>
     </td>
   </script>
 

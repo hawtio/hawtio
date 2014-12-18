@@ -81,14 +81,26 @@ module Forms {
           rows.forEach((row, index) => {
             var tr = newBodyRow();
             columns.forEach((property) => {
-              var template = property.template || $templateCache.get('cellTemplate.html');
-              var interpolateFunc = $interpolate(template);
               var type = Forms.mapType(property.type);
-              tr.append(interpolateFunc({
-                row: 'configuration.rows[' + index + ']',
-                type: type,
-                key: property.key
-              }));
+              if (type === "number" && "input-attributes" in property) {
+                var template = property.template || $templateCache.get('cellNumberTemplate.html');
+                var interpolateFunc = $interpolate(template);
+                tr.append(interpolateFunc({
+                  row: 'configuration.rows[' + index + ']',
+                  type: type,
+                  key: property.key,
+                  min: (property["input-attributes"].min ? property["input-attributes"].min : ""),
+                  max: (property["input-attributes"].max ? property["input-attributes"].max : "")
+                }));
+              } else {
+                var template = property.template || $templateCache.get('cellTemplate.html');
+                var interpolateFunc = $interpolate(template);
+                tr.append(interpolateFunc({
+                  row: 'configuration.rows[' + index + ']',
+                  type: type,
+                  key: property.key
+                }));
+              }
             });
             var func = $interpolate($templateCache.get("deleteRowTemplate.html"));
             tr.append(func({
