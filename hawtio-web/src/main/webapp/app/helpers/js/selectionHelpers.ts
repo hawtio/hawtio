@@ -147,6 +147,7 @@ module SelectionHelpers {
     $scope.clearGroup = clearGroup;
     $scope.toggleSelectionFromGroup = toggleSelectionFromGroup;
     $scope.isInGroup = isInGroup;
+    $scope.viewOnly = false; // true=disable checkmarks
     $scope.filterByGroup = filterByGroup;
   }
 

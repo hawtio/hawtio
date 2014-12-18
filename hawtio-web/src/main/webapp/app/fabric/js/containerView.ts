@@ -28,6 +28,8 @@ module Fabric {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
     SelectionHelpers.decorate($scope);
+    // when viewing profile boxes in container view, disable checkboxes
+    $scope.viewOnly = true;
 
     StorageHelpers.bindModelToLocalStorage({
       $scope: $scope,
