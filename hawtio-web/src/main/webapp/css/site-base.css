@@ -898,6 +898,10 @@ table.dataTable tbody tr td {
   padding-top: 20px;
 }
 
+.help-display p {
+  text-align: justify;
+}
+
 .help-display h5 {
   margin-top: 2em;
 }
