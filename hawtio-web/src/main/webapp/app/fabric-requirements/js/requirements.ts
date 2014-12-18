@@ -53,7 +53,7 @@ module FabricRequirements {
       if (tag && !$scope.requirements.$tags.some((t) => { return t === tag; })) {
         $scope.requirements.$tags.push(tag);
         $scope.newTag = '';
-        $element.find('.input-mini').val('');
+        $element.find('#inputNewTag').val('');
       }
     };
 
