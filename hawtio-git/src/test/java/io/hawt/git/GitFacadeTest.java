@@ -25,7 +25,6 @@ import static org.junit.Assert.fail;
 /**
  * Tests we create a configuration directory
  */
-@Ignore
 public class GitFacadeTest {
     GitFacade git = createTestGitFacade();
 
@@ -92,6 +91,9 @@ public class GitFacadeTest {
         assertNotNull(info);
         assertEquals("ReadMe.md", info.getName());
 
+        FileInfo info2 = git.exists(branch, "xxReadMe.md");
+        assertNull(info2);
+
         info = git.exists(branch, "readme.md");
         assertNotNull(info);
         assertEquals("ReadMe.md", info.getName());
@@ -101,6 +103,7 @@ public class GitFacadeTest {
     }
 
     @Test
+    @Ignore
     public void createFileAndListDirectory() throws Exception {
         assertConfigDirectoryExists(git);
 

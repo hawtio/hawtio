@@ -477,11 +477,11 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
 
         // need to list the files, so we can grab the actual file name
         File[] files = parent.listFiles(new FileFilter() {
-            String match = caseSensitive ? path : path.toLowerCase(Locale.US);
+            String match = new File(caseSensitive ? path : path.toLowerCase(Locale.US)).getName();
             @Override
             public boolean accept(File pathname) {
                 String name = caseSensitive ? pathname.getName() : pathname.getName().toLowerCase(Locale.US);
-                return match.endsWith(name);
+                return match.equals(name);
             }
         });
 
