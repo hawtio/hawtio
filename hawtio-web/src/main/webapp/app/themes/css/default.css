@@ -1424,6 +1424,9 @@ img.nodeIcon:hover {
   border-bottom: 1px solid #d4d4d4;
   background-image: linear-gradient(to bottom, #fff, #e5e5e5);
 }
+.dropdown.perspective-selector .dropdown-menu li.clear-recent {
+  border-top: 1px dashed #d4d4d4;
+}
 
 .prefs .tabbable > .nav {
   border-right: 1px solid #d4d4d4;    

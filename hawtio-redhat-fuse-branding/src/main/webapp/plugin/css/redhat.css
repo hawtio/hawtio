@@ -2360,6 +2360,9 @@ div[ng-controller="Log.LogController"] .logbar .logbar-container {
   border-bottom: 1px solid #d4d4d4;
   background-image: linear-gradient(to bottom, #fff, #e5e5e5);
 }
+.dropdown.perspective-selector .dropdown-menu li.clear-recent {
+  border-top: 1px dashed #d4d4d4;
+}
 
 ng-include > .nav.nav-tabs {
     border-left: none;

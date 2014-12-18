@@ -202,6 +202,9 @@ span {
   color: #000;
   background-color: #fff;
 }
+.dropdown.perspective-selector .dropdown-menu li.clear-recent {
+  border-top: 1px dashed #0f0;
+}
 
 .nav-tabs .dropdown-menu {
   border-radius: 0;
