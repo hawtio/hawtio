@@ -26,7 +26,7 @@ public class ConfigFacade extends MBeanSupport implements ConfigFacadeMBean {
 
     public static ConfigFacade getSingleton() {
         if (singleton == null) {
-            LOG.warn("No ConfigFacade constructed yet so using default configuration for now");
+            LOG.debug("No ConfigFacade constructed yet so using default configuration for now");
             singleton = new ConfigFacade();
         }
         return singleton;
