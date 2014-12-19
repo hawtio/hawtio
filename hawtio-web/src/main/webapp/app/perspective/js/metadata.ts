@@ -38,7 +38,7 @@ module Perspective {
             href: "#/docker"
           },
           {
-            href: "#/api/index"
+            id: "apis.index"
           },
           {
             id: "kibana"

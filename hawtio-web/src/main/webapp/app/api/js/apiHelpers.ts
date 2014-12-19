@@ -328,4 +328,87 @@ module API {
     return answer;
   }
 
+
+  /*
+   * Pulls all the properties out of the objectName and adds them to the object
+   */
+  function addObjectNameProperties(object) {
+    var objectName = object["objectName"];
+    if (objectName) {
+      var properties = Core.objectNameProperties(objectName);
+      if (properties) {
+        angular.forEach(properties, (value, key) => {
+          if (!object[key]) {
+            object[key] = value;
+          }
+        })
+      }
+    }
+    return null;
+  }
+
+  export function processApiData($scope, json, podURL, path = "") {
+    var array = [];
+    angular.forEach(json, (value, key) => {
+      var childPath = path + "/" + key;
+
+      function addParameters(href) {
+        angular.forEach(["podId", "port", "objectName"], (name) => {
+          var param = value[name];
+          if (param) {
+            href += "&" + name + "=" + encodeURIComponent(param);
+          }
+        });
+        return href;
+      }
+
+      // lets check if we are a services object or a folder
+      var path = value["path"];
+      var url = value["url"];
+      if (url) {
+        addObjectNameProperties(value);
+
+        value["serviceName"] = Core.trimQuotes(value["service"]) || value["containerName"];
+        var podId = value["podId"];
+        var prefix = "";
+        if (podId) {
+          var port = value["port"] || 8080;
+          prefix = podURL + podId + "/" + port;
+        }
+
+        function addPrefix(text) {
+          return (text) ? prefix + text : null;
+        }
+
+        function maybeUseProxy(value) {
+          if (value) {
+            return Core.useProxyIfExternal(value);
+          } else {
+            return value;
+          }
+        }
+
+        //var url = addPrefix(path);
+        // no need to use the proxy as we're using local URIs
+        //url = Core.useProxyIfExternal(url);
+        //value["url"] = url;
+        var apidocs = maybeUseProxy(value["swaggerUrl"]) || addPrefix(value["swaggerPath"]);
+        var wadl = maybeUseProxy(value["wadlUrl"]) || addPrefix(value["wadlPath"]);
+        var wsdl = maybeUseProxy(value["wsdlUrl"]) || addPrefix(value["wsdlPath"]);
+        if (apidocs) {
+          value["apidocsHref"] = addParameters("/hawtio-swagger/index.html?baseUri=" + apidocs);
+        }
+        if (wadl) {
+          value["wadlHref"] = addParameters("#/api/wadl?wadl=" + encodeURIComponent(wadl));
+        }
+        if (wsdl) {
+          value["wsdlHref"] = addParameters("#/api/wsdl?wsdl=" + encodeURIComponent(wsdl));
+        }
+      }
+      array.push(value);
+    });
+    $scope.apis = array;
+    $scope.initDone = true;
+  }
+
 }

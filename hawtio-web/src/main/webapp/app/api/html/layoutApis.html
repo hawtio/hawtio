@@ -1,0 +1,38 @@
+<script type="text/ng-template" id="apiContractLinksTemplate.html">
+  <div class="ngCellText">
+    <a ng-show="row.entity.apidocsHref" ng-href="{{row.entity.apidocsHref}}" target="swagger"><i
+            class="icon-puzzle-piece"></i> Swagger</a>
+    <a ng-show="row.entity.wadlHref" ng-href="{{row.entity.wadlHref}}" target="wadl"><i class="icon-puzzle-piece"></i>
+      WADL</a>
+    <a ng-show="row.entity.wsdlHref" ng-href="{{row.entity.wsdlHref}}" target="wsdl"><i class="icon-puzzle-piece"></i>
+      WSDL</a>
+  </div>
+</script>
+<script type="text/ng-template" id="apiUrlTemplate.html">
+  <div class="ngCellText"><a target="endpoint" href="{{row.entity.url}}">{{row.entity.url}}</a></div>
+</script>
+<script type="text/ng-template" id="apiServiceLinkTemplate.html">
+  <div class="ngCellText"><a ng-show="row.entity.serviceId" href="#/kubernetes/services/?_id={{row.entity.serviceId}}" title="View the service">{{row.entity.serviceName || row.entity.serviceId}}</a></div>
+</script>
+<script type="text/ng-template" id="apiPodLinkTemplate.html">
+  <div class="ngCellText"><a ng-show="row.entity.podId" href="#/kubernetes/pods/?_id={{row.entity.podId}}" title="View the pod">{{row.entity.podId}}</a></div>
+</script>
+<div class="row-fluid" ng-controller="Kubernetes.TopLevel">
+  <div class="span12">
+    <ul class="nav nav-tabs connected">
+      <li ng-class='{active : isActive("#/api/services")}'
+          title="View all of the APIs in each service">
+        <a ng-href="#/api/services">Services</a>
+      </li>
+      <li ng-class='{active : isActive("#/api/pods")}'
+          title="View all of the APIs in each pod">
+        <a ng-href="#/api/pods">Pods</a>
+      </li>
+    </ul>
+    <div class="wiki-icon-view">
+      <div class="row-fluid" ng-view>
+      </div>
+    </div>
+  </div>
+</div>
+
