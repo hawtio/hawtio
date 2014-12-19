@@ -94,7 +94,7 @@ At first a git-based wiki might not seem terribly relevant to hawtio. A wiki can
 
 From a hawtio perspective though its wiki pages can be HTML or Markdown and then be an AngularJS HTML partial. So it can include JavaScript widgets; or it can include [AngularJS directives](http://docs.angularjs.org/guide/directive).
 
-This lets us use HTML and Markdown files to define custom views using HTML directives (custom tags) from any any [hawtio plugins](http://hawt.io/plugins/index.html). Hopefully over time we can build a large library of HTML directives that folks can use inside HTML or Markdown files to show attribute values or charts from MBeans in real time, to show a panel from a dashboard, etc. Then folks can make their own mashups and happy pages showing just the information they want.
+This lets us use HTML and Markdown files to define custom views using HTML directives (custom tags) from any [hawtio plugins](http://hawt.io/plugins/index.html). Hopefully over time we can build a large library of HTML directives that folks can use inside HTML or Markdown files to show attribute values or charts from MBeans in real time, to show a panel from a dashboard, etc. Then folks can make their own mashups and happy pages showing just the information they want.
 
 So another way to think of hawtio wiki pages is as a kind of plugin or a custom format of a dashboard page. Right now each dashboard page assumes a grid layout of rectangular widgets which you can add to and then move around. However with a wiki page you can choose to render whatever information & widgets you like in whatever layout you like. You have full control over the content and layout of the page!
 
@@ -194,7 +194,7 @@ Anything you like :). So long as it runs on a web browser, you're good to go. Pl
 
 #### Do I have to use TypeScript?
 
-You can write hawtio plugins in anything that runs in a browser and ideally compiles to JavaScript. So use pure JavaScript,  CoffeeScript, EcmaScript6-transpiler, TypeScript, GWT, Kotlin, Ceylon, ClojureScript, ScalaJS and [any language that compiles to JavaScript](http://altjs.org/).
+You can write hawtio plugins in anything that runs in a browser and ideally compiles to JavaScript. So use pure JavaScript,  CoffeeScript, EcmaScript6-transpiler, TypeScript, GWT, Kotlin, Ceylon, ClojureScript, ScalaJS and [any language that compiles to JavaScript](https://github.com/jashkenas/coffeescript/wiki/List-of-languages-that-compile-to-JS).
 
 So take your pick; the person who creates a plugin can use whatever language they prefer, so please contribute a [new plugin](http://hawt.io/contributing/index.html) :).
 

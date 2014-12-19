@@ -6562,7 +6562,7 @@ var Fabric;
         if (connectionName) {
             var connectionOptions = Core.getConnectOptions(connectionName);
             if (connectionOptions && !/^proxy\/http/.test(iconURL)) {
-                connectionOptions.path = Core.url("/git/") + iconURL;
+                connectionOptions.path = /^\//.test(iconURL) ? iconURL : Core.url("/git/") + iconURL;
                 iconURL = Core.createServerConnectionUrl(connectionOptions);
             }
         }
@@ -21243,6 +21243,7 @@ var SelectionHelpers;
         $scope.clearGroup = clearGroup;
         $scope.toggleSelectionFromGroup = toggleSelectionFromGroup;
         $scope.isInGroup = isInGroup;
+        $scope.viewOnly = false;
         $scope.filterByGroup = filterByGroup;
     }
     SelectionHelpers.decorate = decorate;
@@ -21493,12 +21494,12 @@ var FabricRequirements;
         $scope.template = '';
         $scope.newTag = '';
         $scope.addTag = function (tag) {
-            if (!$scope.requirements.$tags.some(function (t) {
+            if (tag && !$scope.requirements.$tags.some(function (t) {
                 return t === tag;
             })) {
                 $scope.requirements.$tags.push(tag);
                 $scope.newTag = '';
-                $element.find('.input-mini').val('');
+                $element.find('#inputNewTag').val('');
             }
         };
         $scope.cancelChanges = function () {
@@ -23415,14 +23416,27 @@ var Forms;
                     rows.forEach(function (row, index) {
                         var tr = newBodyRow();
                         columns.forEach(function (property) {
-                            var template = property.template || $templateCache.get('cellTemplate.html');
-                            var interpolateFunc = $interpolate(template);
                             var type = Forms.mapType(property.type);
-                            tr.append(interpolateFunc({
-                                row: 'configuration.rows[' + index + ']',
-                                type: type,
-                                key: property.key
-                            }));
+                            if (type === "number" && "input-attributes" in property) {
+                                var template = property.template || $templateCache.get('cellNumberTemplate.html');
+                                var interpolateFunc = $interpolate(template);
+                                tr.append(interpolateFunc({
+                                    row: 'configuration.rows[' + index + ']',
+                                    type: type,
+                                    key: property.key,
+                                    min: (property["input-attributes"].min ? property["input-attributes"].min : ""),
+                                    max: (property["input-attributes"].max ? property["input-attributes"].max : "")
+                                }));
+                            }
+                            else {
+                                var template = property.template || $templateCache.get('cellTemplate.html');
+                                var interpolateFunc = $interpolate(template);
+                                tr.append(interpolateFunc({
+                                    row: 'configuration.rows[' + index + ']',
+                                    type: type,
+                                    key: property.key
+                                }));
+                            }
                         });
                         var func = $interpolate($templateCache.get("deleteRowTemplate.html"));
                         tr.append(func({
@@ -23488,6 +23502,10 @@ var FabricRequirements;
                 FabricRequirements.log.debug("Received dockerHostConfigurationSchema: ", dockerHostConfigurationSchema);
                 ['password', 'passPhrase'].forEach(function (s) {
                     Core.pathSet(dockerHostConfigurationSchema, ['properties', s, 'type'], 'password');
+                });
+                ['maximumContainerCount', 'port'].forEach(function (s) {
+                    Core.pathSet(dockerHostConfigurationSchema, ['properties', s, 'type'], 'integer');
+                    Core.pathSet(dockerHostConfigurationSchema, ['properties', s, 'input-attributes', 'min'], '1');
                 });
                 $scope.gridConfig.rowSchema = dockerHostConfigurationSchema;
                 $scope.gridConfig.rowName = "docker host";
@@ -23689,8 +23707,14 @@ var FabricRequirements;
                 ['defaultPassword', 'defaultPassPhrase'].forEach(function (s) {
                     Core.pathSet(sshConfigurationSchema, ['properties', s, 'type'], 'password');
                 });
+                Core.pathSet(sshConfigurationSchema, ['properties', 'defaultPort', 'type'], 'integer');
+                Core.pathSet(sshConfigurationSchema, ['properties', 'defaultPort', 'input-attributes', 'min'], '1');
                 ['password', 'passPhrase'].forEach(function (s) {
                     Core.pathSet(hostConfigurationSchema, ['properties', s, 'type'], 'password');
+                });
+                ['maximumContainerCount', 'port'].forEach(function (s) {
+                    Core.pathSet(hostConfigurationSchema, ['properties', s, 'type'], 'integer');
+                    Core.pathSet(hostConfigurationSchema, ['properties', s, 'input-attributes', 'min'], '1');
                 });
                 sshConfigurationSchema['tabs'] = {
                     'Defaults': ['defaultUsername', 'defaultPassword', 'defaultPort', 'defaultPrivateKeyFile', 'defaultPassPhrase', 'defaultPath', '*']
@@ -25017,6 +25041,7 @@ var Fabric;
         var profileFields = ['id', 'hidden', 'version', 'summaryMarkdown', 'iconURL', 'tags'];
         Fabric.initScope($scope, $location, jolokia, workspace);
         SelectionHelpers.decorate($scope);
+        $scope.viewOnly = true;
         StorageHelpers.bindModelToLocalStorage({
             $scope: $scope,
             $location: $location,

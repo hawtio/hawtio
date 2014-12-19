@@ -2,17 +2,18 @@
   <div class="span10">
     <div class="row-fluid">
       <div class="span2">
-        <div class="app-logo mouse-pointer">
+        <div class="app-logo mouse-pointer" ng-click="toggleSelectionFromGroup(cartItems, profile)">
           <img ng-src="{{profile.iconURL}}" ng-show="profile.iconURL">
           <img src="img/icons/fabric8_icon.svg" ng-hide="profile.iconURL">
         </div>
       </div>
       <div class="span10">
-        <div class="row-fluid mouse-pointer">
+        <div class="row-fluid mouse-pointer"
+             ng-click="toggleSelectionFromGroup(cartItems, profile)">
           <div class="span12">
             <h4 class="column-box-header">{{profile.id}}
               <i class="icon-ok green"
-                 ng-show="isInGroup(cartItems, profile)"></i>
+                 ng-show="!viewOnly && isInGroup(cartItems, profile)"></i>
             </h4>
           </div>
         </div>
@@ -20,7 +21,8 @@
           <div class="span11">
             <ul class="unstyled label-list">
               <li class="inline-block mouse-pointer"
-                  ng-repeat="tag in profile.tags | orderBy">
+                  ng-repeat="tag in profile.tags | orderBy"
+                  ng-click="toggleSelectionFromGroup(selectedTags, tag)">
                 <span class="badge"
                       ng-class="isInGroup(selectedTags, tag, 'badge-success', '')">{{tag}}</span>
               </li>

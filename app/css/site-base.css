@@ -898,6 +898,10 @@ table.dataTable tbody tr td {
   padding-top: 20px;
 }
 
+.help-display p {
+  text-align: justify;
+}
+
 .help-display h5 {
   margin-top: 2em;
 }
@@ -3684,6 +3688,10 @@ th > .indicator:before {
   margin-top: 0;
 }
 
+.dropdown.perspective-selector .dropdown-menu > div > ul > li.clear-recent > a {
+  padding: 3px 5px;
+}
+
 .dropdown-menu > li:hover > a {
   text-shadow:0px 0px 1px white;
 }
@@ -4448,3 +4456,9 @@ ul.nav select {
   height: 25px;
 }
 
+/* ENTESB-2249: fixing bootstrap forms with tooltips */
+.form-horizontal input + div + .help-block,
+.form-horizontal select + div + .help-block,
+.form-horizontal textarea + div + .help-block {
+  margin-top: 10px;
+}

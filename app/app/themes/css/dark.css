@@ -524,6 +524,9 @@ td.deleting {
   border-bottom: 1px solid #444;
   background-image: linear-gradient(to bottom, #333, #222);
 }
+.dropdown.perspective-selector .dropdown-menu li.clear-recent {
+  border-top: 1px dashed #444;
+}
 
 .bundle-item-details {
   background: white;
