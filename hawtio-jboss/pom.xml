@@ -35,6 +35,13 @@
       <type>war</type>
     </dependency>
 
+    <!-- need a newer version of commons-logging -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>${commons-logging-version}</version>
+    </dependency>
+
     <!-- lets mark dependencies from the WAR as provided to avoid jetty:run adding duplicates -->
     <dependency>
       <groupId>io.hawt</groupId>
@@ -63,7 +70,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>${war-plugin-version}</version>
         <configuration>
-          <packagingExcludes>**/lib/slf4j*.jar,**/lib/guava-${guava.version}.jar,**/classes/log4j.properties</packagingExcludes>
+          <packagingExcludes>**/lib/slf4j*.jar,**/lib/commons-logging-1.0.3.jar,**/lib/guava-14.0.1.jar,**/lib/guava-${guava.version}.jar,**/classes/log4j.properties</packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>

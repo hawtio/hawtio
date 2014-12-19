@@ -78,12 +78,26 @@
           <groupId>commons-io</groupId>
           <artifactId>commons-io</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-aether</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.hawt</groupId>
@@ -109,11 +123,16 @@
     </dependency>
 
 
-    <!-- override old version of commons-codec -->
+    <!-- override old version of commons-codec / commons-logging -->
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>${commons-codec-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>${commons-logging-version}</version>
     </dependency>
     <dependency>
       <groupId>io.fabric8.insight</groupId>
@@ -124,6 +143,18 @@
 
   <build>
     <plugins>
+
+      <!-- exclude duplicate JARs which for some odd reason gets included -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${war-plugin-version}</version>
+        <configuration>
+          <packagingExcludes>**/lib/commons-logging-1.0.3.jar,**/lib/httpclient-4.3.4.jar</packagingExcludes>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>${jetty-plugin-groupId}</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
