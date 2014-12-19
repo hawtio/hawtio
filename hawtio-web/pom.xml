@@ -1228,10 +1228,10 @@
       <id>kube</id>
 
       <properties>
-        <fabric8.release.version>2.0.15</fabric8.release.version>
-        <fabric8.v2.version>2.1-SNAPSHOT</fabric8.v2.version>
+        <fabric8.release.version>2.0.17</fabric8.release.version>
+        <fabric8.v2.version>${fabric8.release.version}</fabric8.v2.version>
 <!--
-        <fabric8.v2.version>2.0.15</fabric8.v2.version>
+        <fabric8.v2.version>2.1-SNAPSHOT</fabric8.v2.version>
 -->
 
         <hawtio-config-importURLs>mvn:io.fabric8.quickstarts/fabric8-quickstarts-parent/${fabric8.release.version}/zip/app,mvn:io.fabric8.jube.images.fabric8/apps/${fabric8.release.version}/zip/app</hawtio-config-importURLs>
