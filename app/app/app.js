@@ -8697,30 +8697,102 @@ var API;
         return answer;
     }
     API.concatArrays = concatArrays;
+    function addObjectNameProperties(object) {
+        var objectName = object["objectName"];
+        if (objectName) {
+            var properties = Core.objectNameProperties(objectName);
+            if (properties) {
+                angular.forEach(properties, function (value, key) {
+                    if (!object[key]) {
+                        object[key] = value;
+                    }
+                });
+            }
+        }
+        return null;
+    }
+    function processApiData($scope, json, podURL, path) {
+        if (path === void 0) { path = ""; }
+        var array = [];
+        angular.forEach(json, function (value, key) {
+            var childPath = path + "/" + key;
+            function addParameters(href) {
+                angular.forEach(["podId", "port", "objectName"], function (name) {
+                    var param = value[name];
+                    if (param) {
+                        href += "&" + name + "=" + encodeURIComponent(param);
+                    }
+                });
+                return href;
+            }
+            var path = value["path"];
+            var url = value["url"];
+            if (url) {
+                addObjectNameProperties(value);
+                value["serviceName"] = Core.trimQuotes(value["service"]) || value["containerName"];
+                var podId = value["podId"];
+                var prefix = "";
+                if (podId) {
+                    var port = value["port"] || 8080;
+                    prefix = podURL + podId + "/" + port;
+                }
+                function addPrefix(text) {
+                    return (text) ? prefix + text : null;
+                }
+                function maybeUseProxy(value) {
+                    if (value) {
+                        return Core.useProxyIfExternal(value);
+                    }
+                    else {
+                        return value;
+                    }
+                }
+                var apidocs = maybeUseProxy(value["swaggerUrl"]) || addPrefix(value["swaggerPath"]);
+                var wadl = maybeUseProxy(value["wadlUrl"]) || addPrefix(value["wadlPath"]);
+                var wsdl = maybeUseProxy(value["wsdlUrl"]) || addPrefix(value["wsdlPath"]);
+                if (apidocs) {
+                    value["apidocsHref"] = addParameters("/hawtio-swagger/index.html?baseUri=" + apidocs);
+                }
+                if (wadl) {
+                    value["wadlHref"] = addParameters("#/api/wadl?wadl=" + encodeURIComponent(wadl));
+                }
+                if (wsdl) {
+                    value["wsdlHref"] = addParameters("#/api/wsdl?wsdl=" + encodeURIComponent(wsdl));
+                }
+            }
+            array.push(value);
+        });
+        $scope.apis = array;
+        $scope.initDone = true;
+    }
+    API.processApiData = processApiData;
 })(API || (API = {}));
 var API;
 (function (API) {
     API.pluginName = 'api';
+    API.templatePath = 'app/' + API.pluginName + '/html/';
     API._module = angular.module(API.pluginName, ['bootstrap', 'hawtioCore', 'hawtio-ui']);
     API._module.config(["$routeProvider", function ($routeProvider) {
-        $routeProvider.when('/api/index', { templateUrl: 'app/api/html/apis.html' }).when('/api/wsdl', { templateUrl: 'app/api/html/wsdl.html' }).when('/api/wadl', { templateUrl: 'app/api/html/wadl.html' });
+        $routeProvider.when('/api/pods', { templateUrl: 'app/api/html/apiPods.html' }).when('/api/services', { templateUrl: 'app/api/html/apiServices.html' }).when('/api/wsdl', { templateUrl: 'app/api/html/wsdl.html' }).when('/api/wadl', { templateUrl: 'app/api/html/wadl.html' });
     }]);
     API._module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "ServiceRegistry", function ($location, workspace, viewRegistry, layoutFull, helpRegistry, ServiceRegistry) {
+        viewRegistry['api/pods'] = API.templatePath + "layoutApis.html";
+        viewRegistry['api/services'] = API.templatePath + "layoutApis.html";
         viewRegistry['api'] = layoutFull;
         workspace.topLevelTabs.push({
             id: 'apis.index',
             content: 'APIs',
             title: 'View the available APIs inside this fabric',
             isValid: function (workspace) { return Service.hasService(ServiceRegistry, "api-registry") && Kubernetes.isKubernetes(workspace); },
-            href: function () { return '#/api/index'; },
-            isActive: function (workspace) { return workspace.isLinkActive('api/index'); }
+            href: function () { return '#/api/services'; },
+            isActive: function (workspace) { return workspace.isLinkActive('api/'); }
         });
     }]);
     hawtioPluginLoader.addModule(API.pluginName);
 })(API || (API = {}));
 var API;
 (function (API) {
-    API._module.controller("API.ApisController", ["$scope", "localStorage", "$routeParams", "$location", "jolokia", "workspace", "$compile", "$templateCache", "$http", function ($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache, $http) {
+    API._module.controller("API.ApiPodsController", ["$scope", "localStorage", "$routeParams", "$location", "jolokia", "workspace", "$compile", "$templateCache", "$http", function ($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache, $http) {
         $scope.path = "apis";
         $scope.apis = null;
         $scope.selectedApis = [];
@@ -8742,26 +8814,25 @@ var API;
             columnDefs: [
                 {
                     field: 'serviceName',
-                    displayName: 'Service',
-                    cellTemplate: '<div class="ngCellText">{{row.entity.serviceName}}</div>',
+                    displayName: 'Endpoint',
                     width: "***"
                 },
                 {
-                    field: 'wadlHref',
+                    field: 'contracts',
                     displayName: 'APIs',
-                    cellTemplate: '<div class="ngCellText">' + '<a ng-show="row.entity.apidocsHref" ng-href="{{row.entity.apidocsHref}}" target="swagger"><i class="icon-puzzle-piece"></i> Swagger</a> ' + '<a ng-show="row.entity.wadlHref" ng-href="{{row.entity.wadlHref}}" target="wadl"><i class="icon-puzzle-piece"></i> WADL</a> ' + '<a ng-show="row.entity.wsdlHref" ng-href="{{row.entity.wsdlHref}}" target="wsdl"><i class="icon-puzzle-piece"></i> WSDL</a>' + '</div>',
+                    cellTemplate: $templateCache.get("apiContractLinksTemplate.html"),
                     width: "*"
                 },
                 {
                     field: 'url',
-                    displayName: 'Endpoint',
-                    cellTemplate: '<div class="ngCellText"><a target="endpoint" href="{{row.entity.url}}">{{row.entity.url}}</a></div>',
+                    displayName: 'URL',
+                    cellTemplate: $templateCache.get("apiUrlTemplate.html"),
                     width: "***"
                 },
                 {
                     field: 'podId',
                     displayName: 'Pod',
-                    cellTemplate: '<div class="ngCellText">{{row.entity.podId}}</div>',
+                    cellTemplate: $templateCache.get("apiPodLinkTemplate.html"),
                     width: "*"
                 }
             ]
@@ -8780,72 +8851,71 @@ var API;
             });
         }
         loadData();
-        function addObjectNameProperties(object) {
-            var objectName = object["objectName"];
-            if (objectName) {
-                var properties = Core.objectNameProperties(objectName);
-                if (properties) {
-                    angular.forEach(properties, function (value, key) {
-                        if (!object[key]) {
-                            object[key] = value;
-                        }
-                    });
-                }
-            }
-            return null;
-        }
         function createFlatList(restURL, json, path) {
             if (path === void 0) { path = ""; }
-            var array = [];
-            angular.forEach(json, function (value, key) {
-                var childPath = path + "/" + key;
-                function addParameters(href) {
-                    angular.forEach(["podId", "port", "objectName"], function (name) {
-                        var param = value[name];
-                        if (param) {
-                            href += "&" + name + "=" + encodeURIComponent(param);
-                        }
-                    });
-                    return href;
+            return API.processApiData($scope, json, podURL, path);
+        }
+    }]);
+})(API || (API = {}));
+var API;
+(function (API) {
+    API._module.controller("API.ApiServicesController", ["$scope", "localStorage", "$routeParams", "$location", "jolokia", "workspace", "$compile", "$templateCache", "$http", function ($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache, $http) {
+        $scope.path = "apis";
+        $scope.apis = null;
+        $scope.selectedApis = [];
+        $scope.initDone = false;
+        var endpointsPodsURL = Core.url("/service/api-registry/endpoints/services");
+        var podURL = Core.url("/pod/");
+        $scope.apiOptions = {
+            data: 'apis',
+            showFilter: false,
+            showColumnMenu: false,
+            filterOptions: {
+                filterText: "",
+                useExternalFilter: false
+            },
+            selectedItems: $scope.selectedApis,
+            rowHeight: 32,
+            showSelectionCheckbox: false,
+            selectWithCheckboxOnly: true,
+            columnDefs: [
+                {
+                    field: 'serviceName',
+                    displayName: 'Service',
+                    cellTemplate: $templateCache.get("apiServiceLinkTemplate.html"),
+                    width: "***"
+                },
+                {
+                    field: 'contracts',
+                    displayName: 'APIs',
+                    cellTemplate: $templateCache.get("apiContractLinksTemplate.html"),
+                    width: "*"
+                },
+                {
+                    field: 'url',
+                    displayName: 'URL',
+                    cellTemplate: $templateCache.get("apiUrlTemplate.html"),
+                    width: "***"
                 }
-                var path = value["path"];
-                var url = value["url"];
-                if (url) {
-                    addObjectNameProperties(value);
-                    value["serviceName"] = Core.trimQuotes(value["service"]) || value["containerName"];
-                    var podId = value["podId"];
-                    if (podId) {
-                        var port = value["port"] || 8080;
-                        var prefix = podURL + podId + "/" + port;
-                        function addPrefix(text) {
-                            return (text) ? prefix + text : null;
-                        }
-                        function maybeUseProxy(value) {
-                            if (value) {
-                                return Core.useProxyIfExternal(value);
-                            }
-                            else {
-                                return value;
-                            }
-                        }
-                        var apidocs = maybeUseProxy(value["swaggerUrl"]) || addPrefix(value["swaggerPath"]);
-                        var wadl = maybeUseProxy(value["wadlUrl"]) || addPrefix(value["wadlPath"]);
-                        var wsdl = maybeUseProxy(value["wsdlUrl"]) || addPrefix(value["wsdlPath"]);
-                        if (apidocs) {
-                            value["apidocsHref"] = addParameters("/hawtio-swagger/index.html?baseUri=" + apidocs);
-                        }
-                        if (wadl) {
-                            value["wadlHref"] = addParameters("#/api/wadl?wadl=" + encodeURIComponent(wadl));
-                        }
-                        if (wsdl) {
-                            value["wsdlHref"] = addParameters("#/api/wsdl?wsdl=" + encodeURIComponent(wsdl));
-                        }
-                    }
-                }
-                array.push(value);
+            ]
+        };
+        function matchesFilter(text) {
+            var filter = $scope.searchFilter;
+            return !filter || (text && text.has(filter));
+        }
+        function loadData() {
+            var restURL = endpointsPodsURL;
+            $http.get(restURL).success(function (data) {
+                createFlatList(restURL, data);
+            }).error(function (data) {
+                API.log.debug("Error fetching image repositories:", data);
+                createFlatList(restURL, null);
             });
-            $scope.apis = array;
-            $scope.initDone = true;
+        }
+        loadData();
+        function createFlatList(restURL, json, path) {
+            if (path === void 0) { path = ""; }
+            return API.processApiData($scope, json, podURL, path);
         }
     }]);
 })(API || (API = {}));
@@ -15497,7 +15567,7 @@ var Perspective;
                         href: "#/docker"
                     },
                     {
-                        href: "#/api/index"
+                        id: "apis.index"
                     },
                     {
                         id: "kibana"

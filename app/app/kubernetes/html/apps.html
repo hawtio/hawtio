@@ -1,4 +1,8 @@
 <style type="text/css">
+  .filter-header {
+    padding-bottom: 10px;
+  }
+
   .app-name {
     padding-left: 10px;
   }
@@ -76,7 +80,7 @@
   </script>
 
   <div ng-hide="appSelectorShow">
-    <div class="row-fluid">
+    <div class="row-fluid filter-header">
       <div class="span12">
         <span ng-show="apps.length && !id">
           <hawtio-filter ng-model="tableConfig.filterOptions.filterText"

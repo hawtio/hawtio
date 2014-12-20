@@ -77,6 +77,7 @@
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-container tsd-is-not-exported"><a href="api.html#addobjectnameproperties" class="tsd-kind-icon">add<wbr>Object<wbr>Name<wbr>Properties</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="api.html#concatarrays" class="tsd-kind-icon">concat<wbr>Arrays</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="api.html#convertwadljsontoswagger" class="tsd-kind-icon">convert<wbr>Wadl<wbr>Json<wbr>ToSwagger</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="api.html#convertwadltojson" class="tsd-kind-icon">convert<wbr>Wadl<wbr>ToJson</a></li>
@@ -87,6 +88,7 @@
 								<li class="tsd-kind-function tsd-parent-kind-container tsd-is-not-exported"><a href="api.html#nodename" class="tsd-kind-icon">node<wbr>Name</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="api.html#onwadlxmlloaded" class="tsd-kind-icon">on<wbr>Wadl<wbr>Xml<wbr>Loaded</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="api.html#parsejson" class="tsd-kind-icon">parse<wbr>Json</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-container"><a href="api.html#processapidata" class="tsd-kind-icon">process<wbr>Api<wbr>Data</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -95,6 +97,7 @@
 								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="api.html#_module" class="tsd-kind-icon">_module</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="api.html#log" class="tsd-kind-icon">log</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="api.html#pluginname" class="tsd-kind-icon">plugin<wbr>Name</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="api.html#templatepath" class="tsd-kind-icon">template<wbr>Path</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="api.html#wadlnamespace" class="tsd-kind-icon">wadl<wbr>Namespace</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-container tsd-is-not-exported"><a href="api.html#wadlxmltojavaconfig" class="tsd-kind-icon">wadl<wbr>Xml<wbr>ToJava<wbr>Config</a></li>
 							</ul>
@@ -103,7 +106,29 @@
 				</section>
 				</section>            <section class="tsd-panel-group tsd-member-group ">
 				<h2>Functions</h2>
-				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-container">
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-container tsd-is-not-exported">
+					<a name="addobjectnameproperties" class="tsd-anchor"></a>
+					<h3>add<wbr>Object<wbr>Name<wbr>Properties</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Object<wbr>Name<wbr>Properties<span class="tsd-signature-symbol">(</span>object<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description"><aside class="tsd-sources">
+								<ul>
+									<li>Defined in app/api/js/apiHelpers.ts:335</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>object:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">any</span>
+							</h4>
+						</li>
+					</ul>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-container">
 					<a name="concatarrays" class="tsd-anchor"></a>
 					<h3>concat<wbr>Arrays</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
@@ -439,6 +464,35 @@
 							</h4>
 						</li>
 					</ul>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-container">
+					<a name="processapidata" class="tsd-anchor"></a>
+					<h3>process<wbr>Api<wbr>Data</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
+						<li class="tsd-signature tsd-kind-icon">process<wbr>Api<wbr>Data<span class="tsd-signature-symbol">(</span>$scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, json<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, podURL<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, path<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;</span>&quot;&quot;<span class="tsd-signature-symbol">)</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description"><aside class="tsd-sources">
+								<ul>
+									<li>Defined in app/api/js/apiHelpers.ts:350</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>$scope:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>json:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>podURL:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>path?:         <span class="tsd-signature-type">string</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+								</li>
+							</ul>
+						</li>
+					</ul>
 				</section></section>        <section class="tsd-panel-group tsd-member-group ">
 				<h2>Variables</h2>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
@@ -447,7 +501,7 @@
 					<div class="tsd-signature tsd-kind-icon">_module<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">ng.IModule</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/api/js/apiPlugin.ts:10</li>
+							<li>Defined in app/api/js/apiPlugin.ts:12</li>
 						</ul>
 					</aside>
 					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
@@ -466,6 +520,15 @@
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in app/api/js/apiPlugin.ts:9</li>
+						</ul>
+					</aside>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
+					<a name="templatepath" class="tsd-anchor"></a>
+					<h3>template<wbr>Path</h3>
+					<div class="tsd-signature tsd-kind-icon">template<wbr>Path<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in app/api/js/apiPlugin.ts:10</li>
 						</ul>
 					</aside>
 					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
@@ -501,6 +564,9 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-function tsd-parent-kind-container tsd-is-not-exported">
+						<a href="api.html#addobjectnameproperties" class="tsd-kind-icon">add<wbr>Object<wbr>Name<wbr>Properties</a>
+					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-container">
 						<a href="api.html#concatarrays" class="tsd-kind-icon">concat<wbr>Arrays</a>
 					</li>
@@ -531,6 +597,9 @@
 					<li class=" tsd-kind-function tsd-parent-kind-container">
 						<a href="api.html#parsejson" class="tsd-kind-icon">parse<wbr>Json</a>
 					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-container">
+						<a href="api.html#processapidata" class="tsd-kind-icon">process<wbr>Api<wbr>Data</a>
+					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-container">
 						<a href="api.html#_module" class="tsd-kind-icon">_module</a>
 					</li>
@@ -539,6 +608,9 @@
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-container">
 						<a href="api.html#pluginname" class="tsd-kind-icon">plugin<wbr>Name</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-container">
+						<a href="api.html#templatepath" class="tsd-kind-icon">template<wbr>Path</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-container">
 						<a href="api.html#wadlnamespace" class="tsd-kind-icon">wadl<wbr>Namespace</a>
