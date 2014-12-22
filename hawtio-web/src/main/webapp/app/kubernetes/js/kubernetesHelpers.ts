@@ -5,7 +5,7 @@ module Kubernetes {
 
   export var context = '/kubernetes';
   export var hash = '#' + context;
-  export var defaultRoute = hash + '/overview';
+  export var defaultRoute = hash + '/apps';
   export var pluginName = 'Kubernetes';
   export var templatePath = 'app/kubernetes/html/';
   export var log:Logging.Logger = Logger.get(pluginName);

@@ -23,7 +23,7 @@ module Perspective {
       },
       label: "Fabric8",
       isValid: (workspace) => !Fabric.isFMCContainer(workspace) && Kubernetes.isKubernetes(workspace),
-      lastPage: "#/kubernetes/pods",
+      lastPage: "#/kubernetes/apps",
       topLevelTabs: {
         includes: [
           {
