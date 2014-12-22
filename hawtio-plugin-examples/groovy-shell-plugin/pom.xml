@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>hawtio-plugin-examples</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.4.43</version>
     <relativePath>..</relativePath>
   </parent>
 
