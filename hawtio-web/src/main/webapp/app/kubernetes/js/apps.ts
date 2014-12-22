@@ -4,9 +4,9 @@
 module Kubernetes {
 
   export var Apps = controller("Apps",
-    ["$scope", "KubernetesServices", "KubernetesReplicationControllers", "KubernetesPods", "KubernetesState", "$templateCache", "$location", "$routeParams", "$http", "workspace", "jolokia",
-      ($scope, KubernetesServices:ng.IPromise<ng.resource.IResourceClass>, KubernetesReplicationControllers:ng.IPromise<ng.resource.IResourceClass>, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, KubernetesState,
-       $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService, $routeParams, $http, workspace, jolokia:Jolokia.IJolokia) => {
+    ["$scope", "KubernetesServices", "KubernetesReplicationControllers", "KubernetesPods", "KubernetesState", "KubernetesApiURL", "$templateCache", "$location", "$routeParams", "$http", "$dialog", "$timeout", "workspace", "jolokia",
+      ($scope, KubernetesServices:ng.IPromise<ng.resource.IResourceClass>, KubernetesReplicationControllers:ng.IPromise<ng.resource.IResourceClass>, KubernetesPods:ng.IPromise<ng.resource.IResourceClass>, KubernetesState, KubernetesApiURL,
+       $templateCache:ng.ITemplateCacheService, $location:ng.ILocationService, $routeParams, $http, $dialog, $timeout, workspace, jolokia:Jolokia.IJolokia) => {
 
     $scope.namespace = $routeParams.namespace;
     $scope.apps = [];
@@ -279,6 +279,23 @@ module Kubernetes {
     };
 
 
+    $scope.resizeDialog = {
+      dialog: new UI.Dialog(),
+      onOk: () => {
+        $scope.resizeDialog.dialog.close();
+        resizeController($http, KubernetesApiURL, $scope.resize.controller.id, $scope.resize.newReplicas, () => {
+          // lets immediately update the replica count to avoid waiting for the next poll
+          $scope.resize.controller.replicas = $scope.resize.newReplicas;
+          Core.$apply($scope);
+        })
+      },
+      open: () => {
+        $scope.resizeDialog.dialog.open();
+      },
+      close: () => {
+        $scope.resizeDialog.dialog.close();
+      }
+    };
 
     function updateData() {
       if ($scope.appInfos && $scope.appViews) {
@@ -329,6 +346,17 @@ module Kubernetes {
               apps.push(appView);
             }
             appView.$appUrl = Wiki.viewLink(branch, appPath, $location);
+            appView.$openResizeControllerDialog = (controller) => {
+              $scope.resize = {
+                controller: controller,
+                newReplicas: controller.replicas
+              };
+              $scope.resizeDialog.dialog.open();
+
+              $timeout(() => {
+                $('#replicas').focus();
+              }, 50);
+            };
           }
           appView.$podCounters = createAppViewPodCounters(appView);
         });

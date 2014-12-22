@@ -265,5 +265,35 @@ module Kubernetes {
     }
   }
 
-
+  export function resizeController($http, KubernetesApiURL, id, newReplicas, onCompleteFn = null) {
+    KubernetesApiURL.then((KubernetesApiURL) => {
+      var url = UrlHelpers.join(KubernetesApiURL, "/api/v1beta1/replicationControllers/" + id);
+      $http.get(url).
+        success(function (data, status, headers, config) {
+          if (data) {
+            var desiredState = data.desiredState;
+            if (!desiredState) {
+              desiredState = {};
+              data.desiredState = desiredState;
+            }
+            desiredState.replicas = newReplicas;
+            $http.put(url, data).
+              success(function (data, status, headers, config) {
+                log.debug("updated controller " + url);
+                if (angular.isFunction(onCompleteFn)) {
+                  onCompleteFn();
+                }
+              }).
+              error(function (data, status, headers, config) {
+                log.warn("Failed to save " + url + " " + data + " " + status);
+              });
+          }
+        }).
+        error(function (data, status, headers, config) {
+          log.warn("Failed to load " + url + " " + data + " " + status);
+        });
+    }, (response) => {
+      log.debug("Failed to get rest API URL, can't resize controller " + id + " resource: ", response);
+    });
+  }
 }
