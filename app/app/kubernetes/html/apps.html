@@ -53,7 +53,7 @@
     <div class="ngCellText">
       <span ng-repeat="service in row.entity.services">
         <a href="#/kubernetes/services?_id={{service.id}}">
-          <span class="badge">{{service.name || service.id}}</span>
+          <span>{{service.name || service.id}}</span>
         </a>
       </span>
     </div>
@@ -62,8 +62,10 @@
     <div class="ngCellText">
       <span ng-repeat="controller in row.entity.replicationControllers">
         <a href="#/kubernetes/replicationControllers?_id={{controller.id}}">
-          <span class="badge">{{controller.id}}</span>
+          <span>{{controller.id}}</span>
         </a>
+        &nbsp;
+        <span class="btn btn-small" ng-click="row.entity.$openResizeControllerDialog(controller)" title="Edit the number of replicas of this controller">{{controller.replicas}}</span>
       </span>
     </div>
   </script>
@@ -221,5 +223,26 @@
         </div>
       </div>
     </div>
+  </div>
+  <div modal="resizeDialog.dialog.show">
+    <form class="form-horizontal" ng-submit="resizeDialog.onOk()">
+        <div class="modal-header"><h4>Resize {{resize.controller.id}}</h4></div>
+        <div class="modal-body">
+          <div class="control-group">
+            <label class="control-label" for="replicas">Replica count</label>
+
+            <div class="controls">
+              <input type="number" min="0" id="replicas" ng-model="resize.newReplicas">
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <input class="btn btn-primary" type="submit"
+                 ng-disabled="resize.newReplicas === resize.controller.replicas"
+                 value="Resize">
+          <button class="btn btn-warning cancel" type="button" ng-click="resizeDialog.close()">Cancel</button>
+        </div>
+      </form>
   </div>
 </div>

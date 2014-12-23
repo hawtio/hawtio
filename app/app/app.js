@@ -14971,7 +14971,7 @@ var Kubernetes;
 (function (Kubernetes) {
     Kubernetes.context = '/kubernetes';
     Kubernetes.hash = '#' + Kubernetes.context;
-    Kubernetes.defaultRoute = Kubernetes.hash + '/overview';
+    Kubernetes.defaultRoute = Kubernetes.hash + '/apps';
     Kubernetes.pluginName = 'Kubernetes';
     Kubernetes.templatePath = 'app/kubernetes/html/';
     Kubernetes.log = Logger.get(Kubernetes.pluginName);
@@ -15203,6 +15203,35 @@ var Kubernetes;
         }
     }
     Kubernetes.openLogsForPods = openLogsForPods;
+    function resizeController($http, KubernetesApiURL, id, newReplicas, onCompleteFn) {
+        if (onCompleteFn === void 0) { onCompleteFn = null; }
+        KubernetesApiURL.then(function (KubernetesApiURL) {
+            var url = UrlHelpers.join(KubernetesApiURL, "/api/v1beta1/replicationControllers/" + id);
+            $http.get(url).success(function (data, status, headers, config) {
+                if (data) {
+                    var desiredState = data.desiredState;
+                    if (!desiredState) {
+                        desiredState = {};
+                        data.desiredState = desiredState;
+                    }
+                    desiredState.replicas = newReplicas;
+                    $http.put(url, data).success(function (data, status, headers, config) {
+                        Kubernetes.log.debug("updated controller " + url);
+                        if (angular.isFunction(onCompleteFn)) {
+                            onCompleteFn();
+                        }
+                    }).error(function (data, status, headers, config) {
+                        Kubernetes.log.warn("Failed to save " + url + " " + data + " " + status);
+                    });
+                }
+            }).error(function (data, status, headers, config) {
+                Kubernetes.log.warn("Failed to load " + url + " " + data + " " + status);
+            });
+        }, function (response) {
+            Kubernetes.log.debug("Failed to get rest API URL, can't resize controller " + id + " resource: ", response);
+        });
+    }
+    Kubernetes.resizeController = resizeController;
 })(Kubernetes || (Kubernetes = {}));
 var Core;
 (function (Core) {
@@ -15552,7 +15581,7 @@ var Perspective;
             },
             label: "Fabric8",
             isValid: function (workspace) { return !Fabric.isFMCContainer(workspace) && Kubernetes.isKubernetes(workspace); },
-            lastPage: "#/kubernetes/pods",
+            lastPage: "#/kubernetes/apps",
             topLevelTabs: {
                 includes: [
                     {
@@ -34839,7 +34868,7 @@ var Kubernetes;
 })(Kubernetes || (Kubernetes = {}));
 var Kubernetes;
 (function (Kubernetes) {
-    Kubernetes.Apps = Kubernetes.controller("Apps", ["$scope", "KubernetesServices", "KubernetesReplicationControllers", "KubernetesPods", "KubernetesState", "$templateCache", "$location", "$routeParams", "$http", "workspace", "jolokia", function ($scope, KubernetesServices, KubernetesReplicationControllers, KubernetesPods, KubernetesState, $templateCache, $location, $routeParams, $http, workspace, jolokia) {
+    Kubernetes.Apps = Kubernetes.controller("Apps", ["$scope", "KubernetesServices", "KubernetesReplicationControllers", "KubernetesPods", "KubernetesState", "KubernetesApiURL", "$templateCache", "$location", "$routeParams", "$http", "$dialog", "$timeout", "workspace", "jolokia", function ($scope, KubernetesServices, KubernetesReplicationControllers, KubernetesPods, KubernetesState, KubernetesApiURL, $templateCache, $location, $routeParams, $http, $dialog, $timeout, workspace, jolokia) {
         $scope.namespace = $routeParams.namespace;
         $scope.apps = [];
         $scope.allApps = [];
@@ -35077,6 +35106,22 @@ var Kubernetes;
                 $scope.appSelectorShow = false;
             }
         };
+        $scope.resizeDialog = {
+            dialog: new UI.Dialog(),
+            onOk: function () {
+                $scope.resizeDialog.dialog.close();
+                Kubernetes.resizeController($http, KubernetesApiURL, $scope.resize.controller.id, $scope.resize.newReplicas, function () {
+                    $scope.resize.controller.replicas = $scope.resize.newReplicas;
+                    Core.$apply($scope);
+                });
+            },
+            open: function () {
+                $scope.resizeDialog.dialog.open();
+            },
+            close: function () {
+                $scope.resizeDialog.dialog.close();
+            }
+        };
         function updateData() {
             if ($scope.appInfos && $scope.appViews) {
                 $scope.fetched = true;
@@ -35126,6 +35171,16 @@ var Kubernetes;
                             apps.push(appView);
                         }
                         appView.$appUrl = Wiki.viewLink(branch, appPath, $location);
+                        appView.$openResizeControllerDialog = function (controller) {
+                            $scope.resize = {
+                                controller: controller,
+                                newReplicas: controller.replicas
+                            };
+                            $scope.resizeDialog.dialog.open();
+                            $timeout(function () {
+                                $('#replicas').focus();
+                            }, 50);
+                        };
                     }
                     appView.$podCounters = createAppViewPodCounters(appView);
                 });
