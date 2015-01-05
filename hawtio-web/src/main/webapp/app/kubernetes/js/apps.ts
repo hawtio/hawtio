@@ -16,6 +16,7 @@ module Kubernetes {
     $scope.json = '';
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
     ControllerHelpers.bindModelToSearchParam($scope, $location, 'appSelectorShow', 'openApp', undefined);
+    ControllerHelpers.bindModelToSearchParam($scope, $location, 'mode', 'mode', 'list');
     var branch = $scope.branch || "master";
     var namespace = null;
     var defaultIconUrl = Core.url("/img/icons/kubernetes.svg");
@@ -55,10 +56,6 @@ module Kubernetes {
     };
 
     Kubernetes.initShared($scope, $location);
-
-    $scope.$on('kubeSelectedId', ($event, id) => {
-      Kubernetes.setJson($scope, id, $scope.apps);
-    });
 
     $scope.$on('$routeUpdate', ($event) => {
       Kubernetes.setJson($scope, $location.search()['_id'], $scope.apps);
@@ -340,9 +337,17 @@ module Kubernetes {
           if (appPath) {
             var appInfo = appMap[appPath];
             if (appInfo) {
+              appView.id = appPath;
               appView.$info = appInfo;
               appView.$name = appInfo.name;
               appView.$iconUrl = appInfo.$iconUrl;
+
+              appView.$select = () => {
+                log.info("clicked on " + appView);
+                var id = appPath;
+                Kubernetes.setJson($scope, id, $scope.apps);
+              };
+
               apps.push(appView);
             }
             appView.$appUrl = Wiki.viewLink(branch, appPath, $location);
@@ -359,6 +364,7 @@ module Kubernetes {
             };
           }
           appView.$podCounters = createAppViewPodCounters(appView);
+          appView.$serviceViews = createAppViewServiceViews(appView);
         });
         $scope.apps = apps;
         Core.$apply($scope);
@@ -393,6 +399,37 @@ module Kubernetes {
           answer.error += 1;
         }
       });
+      return array;
+    }
+
+    function createAppViewServiceViews(appView) {
+      var array = [];
+      var pods = appView.pods;
+      angular.forEach(pods, pod => {
+        pod.statusClass = statusTextToCssClass(pod.status);
+      });
+
+      var services = appView.services || [];
+      var replicationControllers = appView.replicationControllers || [];
+      var size = Math.max(services.length, replicationControllers.length);
+      for (var i = 0; i < size; i++) {
+        var service = services[i];
+        var replicationController = replicationControllers[i];
+        if (service || replicationController) {
+          var name = (service || {}).id;
+          var address = (service || {}).portalIP;
+          var controllerId = (replicationController || {}).id;
+          var view = {
+            name: name,
+            address: address,
+            controllerId: controllerId,
+            service: service,
+            replicationController: replicationController,
+            pods: pods
+          };
+          array.push(view);
+        }
+      }
       return array;
     }
 

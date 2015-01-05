@@ -296,4 +296,18 @@ module Kubernetes {
       log.debug("Failed to get rest API URL, can't resize controller " + id + " resource: ", response);
     });
   }
+
+  export function statusTextToCssClass(text) {
+    if (text) {
+      var lower = text.toLowerCase();
+      if (lower.startsWith("run") || lower.startsWith("ok")) {
+        return 'icon-play-circle green';
+      } else if (lower.startsWith("wait")) {
+        return 'icon-download';
+      } else if (lower.startsWith("term") || lower.startsWith("error") || lower.startsWith("fail")) {
+        return 'icon-off orange';
+      }
+    }
+    return 'icon-question red';
+  }
 }

@@ -35,6 +35,79 @@
     line-height: 36px;
     padding-left: 5px;
   }
+
+  .service-view-rectangle {
+    position: relative;
+    margin-left: 0;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-top: 0;
+    background-color: #fafafa;
+
+    border-width:  1px;
+    border-style: solid;
+    border-color: #eeeeee;
+  }
+
+  .service-view-header {
+    padding-left: 10px;
+    padding-top: 8px;
+    padding-bottom: 5px;
+  }
+
+  .service-view-name {
+    font-size: larger;
+    font-weight: bold;
+  }
+
+  .service-view-address {
+    padding-left: 30px;
+  }
+
+  .service-view-detail-header {
+    display: flex;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .service-view-detail-rectangle {
+    background-color: #eeeeee;
+  }
+
+  .service-view-detail-rectangle .value {
+    font-weight: 600;
+  }
+
+  .service-view-detail-pod-box {
+    background-color: #eeeeee;
+    padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 10px;
+  }
+
+  .service-view-detail-pod-summary {
+    display: inline-block;
+    width: 400px;
+    height: 100px;
+    margin: 1em;
+
+    background-color: #ffffff;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .service-view-detail-header {
+  }
+
+  .service-view-detail-pod-template {
+  }
+
+  .service-view-detail-pod-counts {
+  }
+
 </style>
 <div ng-controller="Kubernetes.Apps">
   <script type="text/ng-template" id="appIconTemplate.html">
@@ -43,7 +116,7 @@
         <img ng-show="row.entity.$iconUrl" class="icon-replication-controller" ng-src="{{row.entity.$iconUrl}}">
       </a>
       <span class="app-name">
-        <a ng-href="{{row.entity.$appUrl}}">
+        <a ng-click="row.entity.$select()">
           {{row.entity.$info.name}}
         </a>
       </span>
@@ -106,6 +179,16 @@
         <button ng-show="id"
                 class="btn btn-primary pull-right"
                 ng-click="id = undefined"><i class="icon-list"></i></button>
+
+        <span class="pull-right">&nbsp;</span>
+        <span class="pull-right">
+          <div class="btn-group">
+            <a class="btn btn-small" ng-disabled="mode == 'list'" href="" ng-click="mode = 'list'">
+              <i class="icon-list"></i></a>
+            <a class="btn btn-small" ng-disabled="mode == 'detail'" href="" ng-click="mode = 'detail'">
+              <i class="icon-th-large"></i></a>
+          </div>
+        </span>
       </div>
     </div>
     <div class="row-fluid">
@@ -120,13 +203,75 @@
             <p class="alert alert-info">There are no apps currently available.</p>
           </div>
           <div ng-show="apps.length">
-            <table class="table table-condensed table-striped" hawtio-simple-table="tableConfig"></table>
+            <div ng-show="mode == 'list'">
+              <table class="table table-condensed table-striped" hawtio-simple-table="tableConfig"></table>
+            </div>
+            <div ng-show="mode == 'detail'">
+              <div class="app-detail" ng-repeat="item in apps | filter:tableConfig.filterOptions.filterText">
+                <div class="service-view-rectangle" ng-repeat="view in item.$serviceViews">
+                  <div class="service-view-header">
+                    <span class="service-view-name">{{view.name}}</span>
+                    <span class="service-view-address">{{view.address}}</span>
+                  </div>
+
+                  <div class="service-view-detail-rectangle">
+                    <div class="service-view-detail-header">
+                      <div class="span4 service-view-detail-deployed">
+                        deployed:
+                        <span class="value">{{view.deployed}}</span>
+                      </div>
+                      <div class="span4 service-view-detail-pod-template">
+                        pod template:
+                        <span class="value">{{view.controllerId}}</span>
+                      </div>
+                      <div class="span4 service-view-detail-pod-counts">
+                        <span class="value pull-right">{{view.pods.length}} pod</span>
+                      </div>
+                    </div>
+
+                    <div class="service-view-detail-pod-box">
+                      <div class="service-view-detail-pod-summary" ng-repeat="pod in item.pods">
+                        <div class="service-view-detail-pod-status">
+                          <i ng-class="pod.statusClass"></i>
+                        </div>
+                        <div class="service-view-detail-pod-id">
+                          <span class="value">Pod {{pod.id}}</span>
+                        </div>
+                        <div class="service-view-detail-pod-template">
+                          status:
+                          <span class="value">{{pod.status}}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+<!--
+                  <a href="#/kubernetes/replicationControllers?_id={{controller.id}}">
+                    <span>{{controller.id}}</span>
+                  </a>
+                  &nbsp;
+                  <span class="btn btn-small" ng-click="row.entity.$openResizeControllerDialog(controller)" title="Edit the number of replicas of this controller">{{controller.replicas}}</span>
+-->
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div ng-show="fetched && id">
-          <p></p>
+          <div class="app-detail">
+            <div class="app-header">
+              <span class="app-name">{{item.$name}}</span>
+              <span class="app-address">{{item.$name}}</span>
+            </div>
 
-          <div hawtio-object="item"></div>
+            <div class="replication-controller-detail" ng-repeat="controller in item.replicationControllers">
+              <a href="#/kubernetes/replicationControllers?_id={{controller.id}}">
+                <span>{{controller.id}}</span>
+              </a>
+              &nbsp;
+              <span class="btn btn-small" ng-click="row.entity.$openResizeControllerDialog(controller)" title="Edit the number of replicas of this controller">{{controller.replicas}}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
