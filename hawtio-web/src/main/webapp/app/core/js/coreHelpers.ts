@@ -346,6 +346,14 @@ module Core {
             userDetails.loginDetails = null;
             userDetails.rememberMe = false;
             delete localStorage['userDetails'];
+            var jvmConnect = angular.fromJson(localStorage['jvmConnect'])
+            _.each(jvmConnect, function(value) {
+              delete value['userName'];
+              delete value['password'];
+            });
+            localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+            localStorage.removeItem('activemqUserName');
+            localStorage.removeItem('activemqPassword');
             if (successCB && angular.isFunction(successCB)) {
               successCB();
             }
@@ -357,6 +365,14 @@ module Core {
             userDetails.loginDetails = null;
             userDetails.rememberMe = false;
             delete localStorage['userDetails'];
+            var jvmConnect = angular.fromJson(localStorage['jvmConnect'])
+            _.each(jvmConnect, function(value) {
+              delete value['userName'];
+              delete value['password'];
+            });
+            localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+            localStorage.removeItem('activemqUserName');
+            localStorage.removeItem('activemqPassword');
             // TODO, more feedback
             switch (xhr.status) {
               case 401:
@@ -1242,7 +1258,7 @@ module Core {
     if (Core.isBlank(localStorage['recentConnections'])) {
       Core.clearConnections();
     }
-    return angular.fromJson(localStorage['recentConnections']);    
+    return angular.fromJson(localStorage['recentConnections']);
   }
 
   export function addRecentConnection(localStorage, name) {
