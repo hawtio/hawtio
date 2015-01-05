@@ -233,7 +233,8 @@
                         <span class="value">{{view.controllerId}}</span>
                       </div>
                       <div class="span4 service-view-detail-pod-counts">
-                        <span class="value pull-right">{{view.pods.length}} pod</span>
+                        <span class="value pull-right">{{view.pods.length}} <ng-pluralize count="view.pods.length"
+                                                when="{'1': 'pod', 'other': 'pods'}"></ng-pluralize></span>
                       </div>
                     </div>
 
