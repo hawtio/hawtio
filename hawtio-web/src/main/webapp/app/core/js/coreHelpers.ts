@@ -329,7 +329,7 @@ module Core {
    */
   export function logout(jolokiaUrl,
                   userDetails,
-                  localStorage:WindowLocalStorage,
+                  localStorage:Storage,
                   $scope,
                   successCB: () => void = null,
                   errorCB: () => void = null) {
