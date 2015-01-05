@@ -108,6 +108,14 @@
   .service-view-detail-pod-counts {
   }
 
+  .service-view-detail-pod-status {
+    line-height: 48px;
+  }
+
+  .service-view-detail-pod-status i {
+    font-size: 48px;
+  }
+
 </style>
 <div ng-controller="Kubernetes.Apps">
   <script type="text/ng-template" id="appIconTemplate.html">
@@ -232,15 +240,21 @@
                     <div class="service-view-detail-pod-box">
                       <div class="service-view-detail-pod-summary" ng-repeat="pod in item.pods">
                         <div class="service-view-detail-pod-status">
-                          <i ng-class="pod.statusClass"></i>
+                          <i ng-class="pod.statusClass" class="icon-3"></i>
                         </div>
-                        <div class="service-view-detail-pod-id">
-                          <span class="value">Pod {{pod.id}}</span>
+                        <div class="service-view-detail-pod-id" title="{{pod.id}}">
+                          <span class="value">Pod {{pod.idAbbrev}}</span>
                         </div>
-                        <div class="service-view-detail-pod-template">
+                        <div class="service-view-detail-pod-ip">
+                          IP:
+                          <span class="value">{{pod.podIP}}</span>
+                        </div>
+<!--
+                        <div class="service-view-detail-pod-status">
                           status:
                           <span class="value">{{pod.status}}</span>
                         </div>
+-->
                       </div>
                     </div>
 

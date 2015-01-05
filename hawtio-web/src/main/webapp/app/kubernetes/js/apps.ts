@@ -406,6 +406,15 @@ module Kubernetes {
       var array = [];
       var pods = appView.pods;
       angular.forEach(pods, pod => {
+        var id = pod.id;
+        if (id) {
+          var abbrev = id;
+          var idx = id.indexOf("-");
+          if (idx > 1) {
+            abbrev = id.substring(0, idx);
+          }
+          pod.idAbbrev = abbrev;
+        }
         pod.statusClass = statusTextToCssClass(pod.status);
       });
 
