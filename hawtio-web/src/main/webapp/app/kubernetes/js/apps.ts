@@ -425,6 +425,7 @@ module Kubernetes {
     function createAppViewServiceViews(appView) {
       var array = [];
       var pods = appView.pods;
+      var lowestDate = null;
       angular.forEach(pods, pod => {
         var id = pod.id;
         if (id) {
@@ -436,6 +437,13 @@ module Kubernetes {
           pod.idAbbrev = abbrev;
         }
         pod.statusClass = statusTextToCssClass(pod.status);
+        var creationTimestamp = pod.creationTimestamp;
+        if (creationTimestamp) {
+          var date = new Date(creationTimestamp);
+          if (!lowestDate || date < lowestDate) {
+            lowestDate = date;
+          }
+        }
       });
 
       var services = appView.services || [];
@@ -452,9 +460,15 @@ module Kubernetes {
           if (i > 0) {
             appName = name;
           }
+          var deployedText = null;
+          if (lowestDate) {
+            deployedText = lowestDate.relative()
+          }
           var view = {
             appName: appName,
             name: name,
+            createdDate: lowestDate,
+            deployedText: deployedText,
             address: address,
             controllerId: controllerId,
             service: service,

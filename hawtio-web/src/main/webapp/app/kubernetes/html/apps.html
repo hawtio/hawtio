@@ -207,9 +207,9 @@
 
       <div class="service-view-detail-rectangle">
         <div class="service-view-detail-header">
-          <div class="span4 service-view-detail-deployed">
+          <div class="span4 service-view-detail-deployed" ng-show="view.deployedText" title="deployed at: {{view.createdDate | date:'yyyy-MMM-dd HH:mm:ss Z'}}">
             deployed:
-            <span class="value">{{view.deployed}}</span>
+            <span class="value">{{view.deployedText}}</span>
           </div>
           <div class="span4 service-view-detail-pod-template">
             pod template:
