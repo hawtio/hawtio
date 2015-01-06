@@ -57,6 +57,29 @@ module Kubernetes {
 
     Kubernetes.initShared($scope, $location);
 
+    $scope.expandedPods = [];
+
+    $scope.podExpanded = (pod) => {
+      var id = (pod || {}).id;
+      return id && ($scope.expandedPods || []).indexOf(id) >= 0;
+    };
+
+    $scope.expandPod = (pod) => {
+      var id = pod.id;
+      if (id) {
+        $scope.expandedPods.push(id);
+        log.info("Attempt to expand pod " + id);
+      }
+    };
+
+    $scope.collapsePod = (pod) => {
+      var id = pod.id;
+      if (id) {
+        $scope.expandedPods = $scope.expandedPods.remove((v) => id === v);
+        log.info("Now has expanded pods: " + $scope.expandedPods);
+      }
+    };
+
     $scope.$on('$routeUpdate', ($event) => {
       Kubernetes.setJson($scope, $location.search()['_id'], $scope.apps);
     });

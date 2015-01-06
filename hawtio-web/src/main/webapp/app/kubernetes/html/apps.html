@@ -105,12 +105,13 @@
 
   .service-view-detail-pod-box {
     background-color: #eeeeee;
+    display: inline-block;
+    font-size: smaller;
   }
 
-  .service-view-detail-pod-summary {
+  .service-view-detail-pod-summary,
+  .service-view-detail-pod-summary-expand {
     display: inline-block;
-    width: 220px;
-    height: 38px;
 
     padding-top: 4px;
     padding-bottom: 4px;
@@ -131,12 +132,19 @@
 
   .service-view-detail-pod-status {
     line-height: 36px;
-    float: left;
+    /*float: left;
+    */
     padding-right: 20px;
   }
 
   .service-view-detail-pod-status i {
     font-size: 36px;
+  }
+
+  .service-view-detail-pod-expand {
+    color: #a0a0a0;
+    font-size: 18px;
+    padding-right: 0px;
   }
 
   .service-view-detail-pod-id {
@@ -262,32 +270,75 @@
                         <span class="value">{{view.controllerId}}</span>
                       </div>
                       <div class="span4 service-view-detail-pod-counts">
-                        <a class="value pull-right" ng-click="item.$openResizeControllerDialog(view.replicationController)" title="Edit the number of pods">{{view.pods.length}} <ng-pluralize count="view.pods.length"
-                                                when="{'1': 'pod', 'other': 'pods'}"></ng-pluralize></a>
+                        <a class="value pull-right"
+                           ng-click="item.$openResizeControllerDialog(view.replicationController)"
+                           title="Edit the number of pods">{{view.pods.length}}
+                          <ng-pluralize count="view.pods.length"
+                                        when="{'1': 'pod', 'other': 'pods'}"></ng-pluralize>
+                        </a>
                       </div>
                     </div>
 
-                    <div class="service-view-detail-pod-box">
-                      <div class="service-view-detail-pod-summary" ng-repeat="pod in item.pods">
-                        <div class="service-view-detail-pod-status">
-                          <i ng-class="pod.statusClass" class="icon-3"></i>
-                        </div>
-                        <div class="service-view-detail-pod-id" title="{{pod.id}}">
-                          <span class="value">Pod {{pod.idAbbrev}}</span>
-                        </div>
-                        <div class="service-view-detail-pod-ip">
-                          IP:
-                          <span class="value">{{pod.podIP}}</span>
-                        </div>
-<!--
-                        <div class="service-view-detail-pod-status">
-                          status:
-                          <span class="value">{{pod.status}}</span>
-                        </div>
--->
+                    <div class="service-view-detail-pod-box" ng-repeat="pod in item.pods">
+                      <div ng-show="podExpanded(pod)" class="service-view-detail-pod-summary-expand">
+                        <table>
+                          <tr>
+                            <td class="service-view-detail-pod-status">
+                              <i ng-class="pod.statusClass"></i>
+                            </td>
+                            <td>
+                              <div class="service-view-detail-pod-id" title="{{pod.id}}">
+                                <span class="value">Pod {{pod.idAbbrev}}</span>
+                              </div>
+                              <div class="service-view-detail-pod-ip">
+                                IP:
+                                <span class="value">{{pod.podIP}}</span>
+                              </div>
+                            </td>
+                            <td>
+                              <div class="service-view-detail-pod-ports">
+                                ports: <span class="value">{{pod.containerPorts.join(", ")}}</span>
+                              </div>
+                              <div class="service-view-detail-pod-minion">
+                                minion:
+                                <span class="value">{{pod.host}}</span>
+                              </div>
+                            </td>
+                            <td class="service-view-detail-pod-expand" ng-click="collapsePod(pod)">
+                              <i class="icon-chevron-left"></i>
+                            </td>
+                          </tr>
+                        </table>
+                        <!--
+                                                  <div class="service-view-detail-pod-status">
+                                                    status:
+                                                    <span class="value">{{pod.status}}</span>
+                                                  </div>
+                        -->
+                      </div>
+
+                      <div ng-hide="podExpanded(pod)" class="service-view-detail-pod-summary">
+                        <table>
+                          <tr>
+                            <td class="service-view-detail-pod-status">
+                              <i ng-class="pod.statusClass"></i>
+                            </td>
+                            <td>
+                              <div class="service-view-detail-pod-id" title="{{pod.id}}">
+                                <span class="value">Pod {{pod.idAbbrev}}</span>
+                              </div>
+                              <div class="service-view-detail-pod-ip">
+                                IP:
+                                <span class="value">{{pod.podIP}}</span>
+                              </div>
+                            </td>
+                            <td class="service-view-detail-pod-expand" ng-click="expandPod(pod)">
+                              <i class="icon-chevron-right"></i>
+                            </td>
+                          </tr>
+                        </table>
                       </div>
                     </div>
-
                   </div>
                 </div>
               </div>
