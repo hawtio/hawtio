@@ -39,8 +39,8 @@
   .service-view-rectangle {
     position: relative;
     margin-left: 0;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    margin-right: 0px;
+    margin-bottom: 15px;
     margin-top: 0;
     background-color: #fafafa;
 
@@ -50,9 +50,16 @@
   }
 
   .service-view-header {
-    padding-left: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
     padding-top: 8px;
     padding-bottom: 5px;
+  }
+
+  .service-view-icon img {
+    width: 24px;
+    height: 24px;
+    padding-right: 6px;
   }
 
   .service-view-name {
@@ -65,15 +72,31 @@
   }
 
   .service-view-detail-header {
-    display: flex;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 0px;
+    padding-right: 0px;
     padding-top: 5px;
-    padding-bottom: 5px;
+    padding-bottom: 0px;
+    height: 20px;
+    min-height: 20px;
+    max-height: 20px;
+  }
+
+  .service-view-detail-header .span4,
+  .service-view-detail-header .value {
+    height: 20px;
+    min-height: 20px;
+    max-height: 20px;
+  }
+
+  .service-view-detail-header a {
+    color: black;
   }
 
   .service-view-detail-rectangle {
     background-color: #eeeeee;
+
+    padding-left: 20px;
+    padding-right: 20px;
   }
 
   .service-view-detail-rectangle .value {
@@ -82,24 +105,22 @@
 
   .service-view-detail-pod-box {
     background-color: #eeeeee;
-    padding-left: 20px;
-    padding-top: 5px;
-    padding-bottom: 10px;
   }
 
   .service-view-detail-pod-summary {
     display: inline-block;
-    width: 400px;
-    height: 100px;
-    margin: 1em;
+    width: 220px;
+    height: 38px;
+
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    margin-right: 8px;
+    margin-bottom: 8px;
 
     background-color: #ffffff;
-    padding-left: 10px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-  }
-
-  .service-view-detail-header {
   }
 
   .service-view-detail-pod-template {
@@ -109,11 +130,16 @@
   }
 
   .service-view-detail-pod-status {
-    line-height: 48px;
+    line-height: 36px;
+    float: left;
+    padding-right: 20px;
   }
 
   .service-view-detail-pod-status i {
-    font-size: 48px;
+    font-size: 36px;
+  }
+
+  .service-view-detail-pod-id {
   }
 
 </style>
@@ -194,7 +220,7 @@
             <a class="btn btn-small" ng-disabled="mode == 'list'" href="" ng-click="mode = 'list'">
               <i class="icon-list"></i></a>
             <a class="btn btn-small" ng-disabled="mode == 'detail'" href="" ng-click="mode = 'detail'">
-              <i class="icon-th-large"></i></a>
+              <i class="icon-table"></i></a>
           </div>
         </span>
       </div>
@@ -218,7 +244,10 @@
               <div class="app-detail" ng-repeat="item in apps | filter:tableConfig.filterOptions.filterText">
                 <div class="service-view-rectangle" ng-repeat="view in item.$serviceViews">
                   <div class="service-view-header">
-                    <span class="service-view-name">{{view.name}}</span>
+                    <span class="service-view-icon">
+                      <img ng-show="item.$iconUrl" ng-src="{{item.$iconUrl}}">
+                    </span>
+                    <span class="service-view-name" title="{{view.name}}">{{view.appName}}</span>
                     <span class="service-view-address">{{view.address}}</span>
                   </div>
 
@@ -233,8 +262,8 @@
                         <span class="value">{{view.controllerId}}</span>
                       </div>
                       <div class="span4 service-view-detail-pod-counts">
-                        <span class="value pull-right">{{view.pods.length}} <ng-pluralize count="view.pods.length"
-                                                when="{'1': 'pod', 'other': 'pods'}"></ng-pluralize></span>
+                        <a class="value pull-right" ng-click="item.$openResizeControllerDialog(view.replicationController)" title="Edit the number of pods">{{view.pods.length}} <ng-pluralize count="view.pods.length"
+                                                when="{'1': 'pod', 'other': 'pods'}"></ng-pluralize></a>
                       </div>
                     </div>
 
@@ -260,13 +289,6 @@
                     </div>
 
                   </div>
-<!--
-                  <a href="#/kubernetes/replicationControllers?_id={{controller.id}}">
-                    <span>{{controller.id}}</span>
-                  </a>
-                  &nbsp;
-                  <span class="btn btn-small" ng-click="row.entity.$openResizeControllerDialog(controller)" title="Edit the number of replicas of this controller">{{controller.replicas}}</span>
--->
                 </div>
               </div>
             </div>

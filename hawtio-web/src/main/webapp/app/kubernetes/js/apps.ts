@@ -421,6 +421,7 @@ module Kubernetes {
       var services = appView.services || [];
       var replicationControllers = appView.replicationControllers || [];
       var size = Math.max(services.length, replicationControllers.length);
+      var appName = appView.$info.name;
       for (var i = 0; i < size; i++) {
         var service = services[i];
         var replicationController = replicationControllers[i];
@@ -428,7 +429,11 @@ module Kubernetes {
           var name = (service || {}).id;
           var address = (service || {}).portalIP;
           var controllerId = (replicationController || {}).id;
+          if (i > 0) {
+            appName = name;
+          }
           var view = {
+            appName: appName,
             name: name,
             address: address,
             controllerId: controllerId,
