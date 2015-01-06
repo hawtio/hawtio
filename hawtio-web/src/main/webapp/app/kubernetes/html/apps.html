@@ -175,7 +175,7 @@
   </script>
   <script type="text/ng-template" id="appDeployedTemplate.html">
     <div class="ngCellText" title="deployed at: {{row.entity.$creationDate | date:'yyyy-MMM-dd HH:mm:ss Z'}}">
-      {{row.entity.$deployedText}}
+      {{row.entity.$creationDate.relative()}}
     </div>
   </script>
   <script type="text/ng-template" id="appReplicationControllerTemplate.html">
@@ -212,21 +212,28 @@
 
       <div class="service-view-detail-rectangle">
         <div class="service-view-detail-header">
-          <div class="span4 service-view-detail-deployed" ng-show="view.deployedText" title="deployed at: {{view.createdDate | date:'yyyy-MMM-dd HH:mm:ss Z'}}">
-            deployed:
-            <span class="value">{{view.deployedText}}</span>
+          <div class="span4">
+            <div class="service-view-detail-deployed" ng-show="view.createdDate"
+                 title="deployed at: {{view.createdDate | date:'yyyy-MMM-dd HH:mm:ss Z'}}">
+              deployed:
+              <span class="value">{{view.createdDate.relative()}}</span>
+            </div>
           </div>
-          <div class="span4 service-view-detail-pod-template">
-            pod template:
-            <span class="value">{{view.controllerId}}</span>
+          <div class="span4">
+            <div class="service-view-detail-pod-template" ng-show="view.controllerId">
+              pod template:
+              <span class="value">{{view.controllerId}}</span>
+            </div>
           </div>
           <div class="span4 service-view-detail-pod-counts">
-            <a class="value pull-right"
+            <a ng-show="view.replicationController" class="value pull-right"
                ng-click="item.$openResizeControllerDialog(view.replicationController)"
-               title="Edit the number of pods">{{view.pods.length}}
-              <ng-pluralize count="view.pods.length"
-                            when="{'1': 'pod', 'other': 'pods'}"></ng-pluralize>
+               title="Edit the number of pods">
+              {{view.podCountText}}
             </a>
+            <span ng-hide="view.replicationController" class="value pull-right">
+              {{view.podCountText}}
+            </span>
           </div>
         </div>
 

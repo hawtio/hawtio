@@ -354,36 +354,38 @@ module Kubernetes {
         $scope.appSelector.folders = folders.sortBy("path");
 
         var apps = [];
+        var defaultInfo = {
+          $iconUrl: defaultIconUrl,
+          name: ""
+        };
+
         angular.forEach($scope.appViews, (appView) => {
           var appPath = appView.appPath;
+          appView.$info = defaultInfo;
+          appView.$select = () => {
+            Kubernetes.setJson($scope, appView.id, $scope.apps);
+          };
+          var appInfo = defaultInfo;
           if (appPath) {
-            var appInfo = appMap[appPath];
-            if (appInfo) {
-              appView.id = appPath;
-              appView.$info = appInfo;
-              appView.$name = appInfo.name;
-              appView.$iconUrl = appInfo.$iconUrl;
-
-              appView.$select = () => {
-                var id = appPath;
-                Kubernetes.setJson($scope, id, $scope.apps);
-              };
-
-              apps.push(appView);
-            }
-            appView.$appUrl = Wiki.viewLink(branch, appPath, $location);
-            appView.$openResizeControllerDialog = (controller) => {
-              $scope.resize = {
-                controller: controller,
-                newReplicas: controller.replicas
-              };
-              $scope.resizeDialog.dialog.open();
-
-              $timeout(() => {
-                $('#replicas').focus();
-              }, 50);
-            };
+            appInfo = appMap[appPath] || defaultInfo;
           }
+          appView.$info = appInfo;
+          appView.id = appPath;
+          appView.$name = appInfo.name;
+          appView.$iconUrl = appInfo.$iconUrl;
+          appView.$appUrl = Wiki.viewLink(branch, appPath, $location);
+          appView.$openResizeControllerDialog = (controller) => {
+            $scope.resize = {
+              controller: controller,
+              newReplicas: controller.replicas
+            };
+            $scope.resizeDialog.dialog.open();
+
+            $timeout(() => {
+              $('#replicas').focus();
+            }, 50);
+          };
+          apps.push(appView);
           appView.$podCounters = createAppViewPodCounters(appView);
           appView.$serviceViews = createAppViewServiceViews(appView);
         });
@@ -428,12 +430,7 @@ module Kubernetes {
           }
         }
       });
-      var deployedText = null;
-      if (lowestDate) {
-        deployedText = lowestDate.relative()
-      }
       appView.$creationDate = lowestDate;
-      appView.$deployedText = deployedText;
       return array;
     }
 
@@ -455,31 +452,40 @@ module Kubernetes {
 
       var services = appView.services || [];
       var replicationControllers = appView.replicationControllers || [];
-      var size = Math.max(services.length, replicationControllers.length);
+      var size = Math.max(services.length, replicationControllers.length, 1);
       var appName = appView.$info.name;
       for (var i = 0; i < size; i++) {
         var service = services[i];
         var replicationController = replicationControllers[i];
-        if (service || replicationController) {
-          var name = (service || {}).id;
-          var address = (service || {}).portalIP;
-          var controllerId = (replicationController || {}).id;
-          if (i > 0) {
-            appName = name;
-          }
-          var view = {
-            appName: appName,
-            name: name,
-            createdDate: appView.$creationDate,
-            deployedText: appView.$deployedText,
-            address: address,
-            controllerId: controllerId,
-            service: service,
-            replicationController: replicationController,
-            pods: pods
-          };
-          array.push(view);
+        var controllerId = (replicationController || {}).id;
+        var name = (service || {}).id || controllerId;
+        var address = (service || {}).portalIP;
+        if (!name && pods.length) {
+          name = pods[0].idAbbrev;
         }
+        if (!appView.$info.name) {
+          appView.$info.name = name;
+        }
+        if (!appView.id && pods.length) {
+          appView.id = pods[0].id;
+        }
+        if (i > 0) {
+          appName = name;
+        }
+        var podCount = pods.length;
+        var podCountText = podCount + " pod" + (podCount > 1 ? "s" : "");
+        var view = {
+          appName: appName || name,
+          name: name,
+          createdDate: appView.$creationDate,
+          podCountText: podCountText,
+          address: address,
+          controllerId: controllerId,
+          service: service,
+          replicationController: replicationController,
+          pods: pods
+        };
+        array.push(view);
       }
       return array;
     }
