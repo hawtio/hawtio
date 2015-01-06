@@ -195,6 +195,100 @@
       </div>
     </div>
   </script>
+  <script type="text/ng-template" id="appDetailTemplate.html">
+    <div class="service-view-rectangle" ng-repeat="view in item.$serviceViews">
+      <div class="service-view-header">
+        <span class="service-view-icon">
+          <img ng-show="item.$iconUrl" ng-src="{{item.$iconUrl}}">
+        </span>
+        <span class="service-view-name" title="{{view.name}}">{{view.appName}}</span>
+        <span class="service-view-address">{{view.address}}</span>
+      </div>
+
+      <div class="service-view-detail-rectangle">
+        <div class="service-view-detail-header">
+          <div class="span4 service-view-detail-deployed">
+            deployed:
+            <span class="value">{{view.deployed}}</span>
+          </div>
+          <div class="span4 service-view-detail-pod-template">
+            pod template:
+            <span class="value">{{view.controllerId}}</span>
+          </div>
+          <div class="span4 service-view-detail-pod-counts">
+            <a class="value pull-right"
+               ng-click="item.$openResizeControllerDialog(view.replicationController)"
+               title="Edit the number of pods">{{view.pods.length}}
+              <ng-pluralize count="view.pods.length"
+                            when="{'1': 'pod', 'other': 'pods'}"></ng-pluralize>
+            </a>
+          </div>
+        </div>
+
+        <div class="service-view-detail-pod-box" ng-repeat="pod in item.pods">
+          <div ng-show="podExpanded(pod)" class="service-view-detail-pod-summary-expand">
+            <table>
+              <tr>
+                <td class="service-view-detail-pod-status">
+                  <i ng-class="pod.statusClass"></i>
+                </td>
+                <td>
+                  <div class="service-view-detail-pod-id" title="{{pod.id}}">
+                    <span class="value">Pod {{pod.idAbbrev}}</span>
+                  </div>
+                  <div class="service-view-detail-pod-ip">
+                    IP:
+                    <span class="value">{{pod.podIP}}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="service-view-detail-pod-ports">
+                    ports: <span class="value">{{pod.containerPorts.join(", ")}}</span>
+                  </div>
+                  <div class="service-view-detail-pod-minion">
+                    minion:
+                    <span class="value">{{pod.host}}</span>
+                  </div>
+                </td>
+                <td class="service-view-detail-pod-expand" ng-click="collapsePod(pod)">
+                  <i class="icon-chevron-left"></i>
+                </td>
+              </tr>
+            </table>
+            <!--
+                                      <div class="service-view-detail-pod-status">
+                                        status:
+                                        <span class="value">{{pod.status}}</span>
+                                      </div>
+            -->
+          </div>
+
+          <div ng-hide="podExpanded(pod)" class="service-view-detail-pod-summary">
+            <table>
+              <tr>
+                <td class="service-view-detail-pod-status">
+                  <i ng-class="pod.statusClass"></i>
+                </td>
+                <td>
+                  <div class="service-view-detail-pod-id" title="{{pod.id}}">
+                    <span class="value">Pod {{pod.idAbbrev}}</span>
+                  </div>
+                  <div class="service-view-detail-pod-ip">
+                    IP:
+                    <span class="value">{{pod.podIP}}</span>
+                  </div>
+                </td>
+                <td class="service-view-detail-pod-expand" ng-click="expandPod(pod)">
+                  <i class="icon-chevron-right"></i>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
 
   <div ng-hide="appSelectorShow">
     <div class="row-fluid filter-header">
@@ -223,7 +317,7 @@
                 ng-click="id = undefined"><i class="icon-list"></i></button>
 
         <span class="pull-right">&nbsp;</span>
-        <span class="pull-right">
+        <span ng-hide="id" class="pull-right">
           <div class="btn-group">
             <a class="btn btn-small" ng-disabled="mode == 'list'" href="" ng-click="mode = 'list'">
               <i class="icon-list"></i></a>
@@ -250,115 +344,14 @@
             </div>
             <div ng-show="mode == 'detail'">
               <div class="app-detail" ng-repeat="item in apps | filter:tableConfig.filterOptions.filterText">
-                <div class="service-view-rectangle" ng-repeat="view in item.$serviceViews">
-                  <div class="service-view-header">
-                    <span class="service-view-icon">
-                      <img ng-show="item.$iconUrl" ng-src="{{item.$iconUrl}}">
-                    </span>
-                    <span class="service-view-name" title="{{view.name}}">{{view.appName}}</span>
-                    <span class="service-view-address">{{view.address}}</span>
-                  </div>
-
-                  <div class="service-view-detail-rectangle">
-                    <div class="service-view-detail-header">
-                      <div class="span4 service-view-detail-deployed">
-                        deployed:
-                        <span class="value">{{view.deployed}}</span>
-                      </div>
-                      <div class="span4 service-view-detail-pod-template">
-                        pod template:
-                        <span class="value">{{view.controllerId}}</span>
-                      </div>
-                      <div class="span4 service-view-detail-pod-counts">
-                        <a class="value pull-right"
-                           ng-click="item.$openResizeControllerDialog(view.replicationController)"
-                           title="Edit the number of pods">{{view.pods.length}}
-                          <ng-pluralize count="view.pods.length"
-                                        when="{'1': 'pod', 'other': 'pods'}"></ng-pluralize>
-                        </a>
-                      </div>
-                    </div>
-
-                    <div class="service-view-detail-pod-box" ng-repeat="pod in item.pods">
-                      <div ng-show="podExpanded(pod)" class="service-view-detail-pod-summary-expand">
-                        <table>
-                          <tr>
-                            <td class="service-view-detail-pod-status">
-                              <i ng-class="pod.statusClass"></i>
-                            </td>
-                            <td>
-                              <div class="service-view-detail-pod-id" title="{{pod.id}}">
-                                <span class="value">Pod {{pod.idAbbrev}}</span>
-                              </div>
-                              <div class="service-view-detail-pod-ip">
-                                IP:
-                                <span class="value">{{pod.podIP}}</span>
-                              </div>
-                            </td>
-                            <td>
-                              <div class="service-view-detail-pod-ports">
-                                ports: <span class="value">{{pod.containerPorts.join(", ")}}</span>
-                              </div>
-                              <div class="service-view-detail-pod-minion">
-                                minion:
-                                <span class="value">{{pod.host}}</span>
-                              </div>
-                            </td>
-                            <td class="service-view-detail-pod-expand" ng-click="collapsePod(pod)">
-                              <i class="icon-chevron-left"></i>
-                            </td>
-                          </tr>
-                        </table>
-                        <!--
-                                                  <div class="service-view-detail-pod-status">
-                                                    status:
-                                                    <span class="value">{{pod.status}}</span>
-                                                  </div>
-                        -->
-                      </div>
-
-                      <div ng-hide="podExpanded(pod)" class="service-view-detail-pod-summary">
-                        <table>
-                          <tr>
-                            <td class="service-view-detail-pod-status">
-                              <i ng-class="pod.statusClass"></i>
-                            </td>
-                            <td>
-                              <div class="service-view-detail-pod-id" title="{{pod.id}}">
-                                <span class="value">Pod {{pod.idAbbrev}}</span>
-                              </div>
-                              <div class="service-view-detail-pod-ip">
-                                IP:
-                                <span class="value">{{pod.podIP}}</span>
-                              </div>
-                            </td>
-                            <td class="service-view-detail-pod-expand" ng-click="expandPod(pod)">
-                              <i class="icon-chevron-right"></i>
-                            </td>
-                          </tr>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <ng-include src="'appDetailTemplate.html'"/>
               </div>
             </div>
           </div>
         </div>
         <div ng-show="fetched && id">
           <div class="app-detail">
-            <div class="app-header">
-              <span class="app-name">{{item.$name}}</span>
-              <span class="app-address">{{item.$name}}</span>
-            </div>
-
-            <div class="replication-controller-detail" ng-repeat="controller in item.replicationControllers">
-              <a href="#/kubernetes/replicationControllers?_id={{controller.id}}">
-                <span>{{controller.id}}</span>
-              </a>
-              &nbsp;
-              <span class="btn btn-small" ng-click="row.entity.$openResizeControllerDialog(controller)" title="Edit the number of replicas of this controller">{{controller.replicas}}</span>
-            </div>
+            <ng-include src="'appDetailTemplate.html'"/>
           </div>
         </div>
       </div>
