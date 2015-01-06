@@ -2305,6 +2305,14 @@ var Core;
                         userDetails.loginDetails = null;
                         userDetails.rememberMe = false;
                         delete localStorage['userDetails'];
+                        var jvmConnect = angular.fromJson(localStorage['jvmConnect']);
+                        _.each(jvmConnect, function (value) {
+                            delete value['userName'];
+                            delete value['password'];
+                        });
+                        localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+                        localStorage.removeItem('activemqUserName');
+                        localStorage.removeItem('activemqPassword');
                         if (successCB && angular.isFunction(successCB)) {
                             successCB();
                         }
@@ -2316,6 +2324,14 @@ var Core;
                         userDetails.loginDetails = null;
                         userDetails.rememberMe = false;
                         delete localStorage['userDetails'];
+                        var jvmConnect = angular.fromJson(localStorage['jvmConnect']);
+                        _.each(jvmConnect, function (value) {
+                            delete value['userName'];
+                            delete value['password'];
+                        });
+                        localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+                        localStorage.removeItem('activemqUserName');
+                        localStorage.removeItem('activemqPassword');
                         switch (xhr.status) {
                             case 401:
                                 Core.log.debug('Failed to log out, ', error);
