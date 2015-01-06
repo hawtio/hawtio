@@ -173,6 +173,11 @@
       </span>
     </div>
   </script>
+  <script type="text/ng-template" id="appDeployedTemplate.html">
+    <div class="ngCellText" title="deployed at: {{row.entity.$creationDate | date:'yyyy-MMM-dd HH:mm:ss Z'}}">
+      {{row.entity.$deployedText}}
+    </div>
+  </script>
   <script type="text/ng-template" id="appReplicationControllerTemplate.html">
     <div class="ngCellText">
       <span ng-repeat="controller in row.entity.replicationControllers">

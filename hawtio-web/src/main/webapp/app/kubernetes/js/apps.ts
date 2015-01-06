@@ -51,6 +51,7 @@ module Kubernetes {
         { field: 'services', displayName: 'Services', cellTemplate: $templateCache.get("appServicesTemplate.html") },
         { field: 'replicationControllers', displayName: 'Controllers', cellTemplate: $templateCache.get("appReplicationControllerTemplate.html") },
         { field: '$podsLink', displayName: 'Pods', cellTemplate: $templateCache.get("appPodCountsAndLinkTemplate.html") },
+        { field: '$deployedText', displayName: 'Deployed', cellTemplate: $templateCache.get("appDeployedTemplate.html") },
         { field: 'namespace', displayName: 'Namespace' }
       ]
     };
@@ -395,6 +396,7 @@ module Kubernetes {
       var array = [];
       var map = {};
       var pods = appView.pods;
+      var lowestDate = null;
       angular.forEach(pods, pod => {
         var selector = pod.labels;
         var selectorText = Kubernetes.labelsToString(selector, " ");
@@ -418,14 +420,26 @@ module Kubernetes {
         } else {
           answer.error += 1;
         }
+        var creationTimestamp = pod.creationTimestamp;
+        if (creationTimestamp) {
+          var d = new Date(creationTimestamp);
+          if (!lowestDate || d < lowestDate) {
+            lowestDate = d;
+          }
+        }
       });
+      var deployedText = null;
+      if (lowestDate) {
+        deployedText = lowestDate.relative()
+      }
+      appView.$creationDate = lowestDate;
+      appView.$deployedText = deployedText;
       return array;
     }
 
     function createAppViewServiceViews(appView) {
       var array = [];
       var pods = appView.pods;
-      var lowestDate = null;
       angular.forEach(pods, pod => {
         var id = pod.id;
         if (id) {
@@ -437,13 +451,6 @@ module Kubernetes {
           pod.idAbbrev = abbrev;
         }
         pod.statusClass = statusTextToCssClass(pod.status);
-        var creationTimestamp = pod.creationTimestamp;
-        if (creationTimestamp) {
-          var date = new Date(creationTimestamp);
-          if (!lowestDate || date < lowestDate) {
-            lowestDate = date;
-          }
-        }
       });
 
       var services = appView.services || [];
@@ -460,15 +467,11 @@ module Kubernetes {
           if (i > 0) {
             appName = name;
           }
-          var deployedText = null;
-          if (lowestDate) {
-            deployedText = lowestDate.relative()
-          }
           var view = {
             appName: appName,
             name: name,
-            createdDate: lowestDate,
-            deployedText: deployedText,
+            createdDate: appView.$creationDate,
+            deployedText: appView.$deployedText,
             address: address,
             controllerId: controllerId,
             service: service,
