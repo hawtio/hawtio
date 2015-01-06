@@ -68,7 +68,6 @@ module Kubernetes {
       var id = pod.id;
       if (id) {
         $scope.expandedPods.push(id);
-        log.info("Attempt to expand pod " + id);
       }
     };
 
@@ -76,7 +75,6 @@ module Kubernetes {
       var id = pod.id;
       if (id) {
         $scope.expandedPods = $scope.expandedPods.remove((v) => id === v);
-        log.info("Now has expanded pods: " + $scope.expandedPods);
       }
     };
 
@@ -366,7 +364,6 @@ module Kubernetes {
               appView.$iconUrl = appInfo.$iconUrl;
 
               appView.$select = () => {
-                log.info("clicked on " + appView);
                 var id = appPath;
                 Kubernetes.setJson($scope, id, $scope.apps);
               };
