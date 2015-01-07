@@ -41,7 +41,7 @@ module Log {
       id: "logs",
       content: "Logs",
       title: "View and search the logs of this container",
-      isValid: (workspace:Workspace) => treeContainsLogQueryMBean(workspace) && !(Fabric.hasFabric(workspace) && Insight.hasInsight(workspace) && Insight.hasKibana(workspace)),
+      isValid: (workspace:Workspace) => treeContainsLogQueryMBean(workspace),
       href: () => "#/logs"
     });
 
