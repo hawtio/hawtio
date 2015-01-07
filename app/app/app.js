@@ -15248,6 +15248,22 @@ var Kubernetes;
         });
     }
     Kubernetes.resizeController = resizeController;
+    function statusTextToCssClass(text) {
+        if (text) {
+            var lower = text.toLowerCase();
+            if (lower.startsWith("run") || lower.startsWith("ok")) {
+                return 'icon-play-circle green';
+            }
+            else if (lower.startsWith("wait")) {
+                return 'icon-download';
+            }
+            else if (lower.startsWith("term") || lower.startsWith("error") || lower.startsWith("fail")) {
+                return 'icon-off orange';
+            }
+        }
+        return 'icon-question red';
+    }
+    Kubernetes.statusTextToCssClass = statusTextToCssClass;
 })(Kubernetes || (Kubernetes = {}));
 var Core;
 (function (Core) {
@@ -34893,6 +34909,7 @@ var Kubernetes;
         $scope.json = '';
         ControllerHelpers.bindModelToSearchParam($scope, $location, 'id', '_id', undefined);
         ControllerHelpers.bindModelToSearchParam($scope, $location, 'appSelectorShow', 'openApp', undefined);
+        ControllerHelpers.bindModelToSearchParam($scope, $location, 'mode', 'mode', 'list');
         var branch = $scope.branch || "master";
         var namespace = null;
         var defaultIconUrl = Core.url("/img/icons/kubernetes.svg");
@@ -34922,13 +34939,28 @@ var Kubernetes;
                 { field: 'services', displayName: 'Services', cellTemplate: $templateCache.get("appServicesTemplate.html") },
                 { field: 'replicationControllers', displayName: 'Controllers', cellTemplate: $templateCache.get("appReplicationControllerTemplate.html") },
                 { field: '$podsLink', displayName: 'Pods', cellTemplate: $templateCache.get("appPodCountsAndLinkTemplate.html") },
+                { field: '$deployedText', displayName: 'Deployed', cellTemplate: $templateCache.get("appDeployedTemplate.html") },
                 { field: 'namespace', displayName: 'Namespace' }
             ]
         };
         Kubernetes.initShared($scope, $location);
-        $scope.$on('kubeSelectedId', function ($event, id) {
-            Kubernetes.setJson($scope, id, $scope.apps);
-        });
+        $scope.expandedPods = [];
+        $scope.podExpanded = function (pod) {
+            var id = (pod || {}).id;
+            return id && ($scope.expandedPods || []).indexOf(id) >= 0;
+        };
+        $scope.expandPod = function (pod) {
+            var id = pod.id;
+            if (id) {
+                $scope.expandedPods.push(id);
+            }
+        };
+        $scope.collapsePod = function (pod) {
+            var id = pod.id;
+            if (id) {
+                $scope.expandedPods = $scope.expandedPods.remove(function (v) { return id === v; });
+            }
+        };
         $scope.$on('$routeUpdate', function ($event) {
             Kubernetes.setJson($scope, $location.search()['_id'], $scope.apps);
         });
@@ -35176,29 +35208,38 @@ var Kubernetes;
                 });
                 $scope.appSelector.folders = folders.sortBy("path");
                 var apps = [];
+                var defaultInfo = {
+                    $iconUrl: defaultIconUrl,
+                    name: ""
+                };
                 angular.forEach($scope.appViews, function (appView) {
                     var appPath = appView.appPath;
+                    appView.$info = defaultInfo;
+                    appView.$select = function () {
+                        Kubernetes.setJson($scope, appView.id, $scope.apps);
+                    };
+                    var appInfo = defaultInfo;
                     if (appPath) {
-                        var appInfo = appMap[appPath];
-                        if (appInfo) {
-                            appView.$info = appInfo;
-                            appView.$name = appInfo.name;
-                            appView.$iconUrl = appInfo.$iconUrl;
-                            apps.push(appView);
-                        }
-                        appView.$appUrl = Wiki.viewLink(branch, appPath, $location);
-                        appView.$openResizeControllerDialog = function (controller) {
-                            $scope.resize = {
-                                controller: controller,
-                                newReplicas: controller.replicas
-                            };
-                            $scope.resizeDialog.dialog.open();
-                            $timeout(function () {
-                                $('#replicas').focus();
-                            }, 50);
-                        };
+                        appInfo = appMap[appPath] || defaultInfo;
                     }
+                    appView.$info = appInfo;
+                    appView.id = appPath;
+                    appView.$name = appInfo.name;
+                    appView.$iconUrl = appInfo.$iconUrl;
+                    appView.$appUrl = Wiki.viewLink(branch, appPath, $location);
+                    appView.$openResizeControllerDialog = function (controller) {
+                        $scope.resize = {
+                            controller: controller,
+                            newReplicas: controller.replicas
+                        };
+                        $scope.resizeDialog.dialog.open();
+                        $timeout(function () {
+                            $('#replicas').focus();
+                        }, 50);
+                    };
+                    apps.push(appView);
                     appView.$podCounters = createAppViewPodCounters(appView);
+                    appView.$serviceViews = createAppViewServiceViews(appView);
                 });
                 $scope.apps = apps;
                 Core.$apply($scope);
@@ -35208,6 +35249,7 @@ var Kubernetes;
             var array = [];
             var map = {};
             var pods = appView.pods;
+            var lowestDate = null;
             angular.forEach(pods, function (pod) {
                 var selector = pod.labels;
                 var selectorText = Kubernetes.labelsToString(selector, " ");
@@ -35233,7 +35275,69 @@ var Kubernetes;
                 else {
                     answer.error += 1;
                 }
+                var creationTimestamp = pod.creationTimestamp;
+                if (creationTimestamp) {
+                    var d = new Date(creationTimestamp);
+                    if (!lowestDate || d < lowestDate) {
+                        lowestDate = d;
+                    }
+                }
             });
+            appView.$creationDate = lowestDate;
+            return array;
+        }
+        function createAppViewServiceViews(appView) {
+            var array = [];
+            var pods = appView.pods;
+            angular.forEach(pods, function (pod) {
+                var id = pod.id;
+                if (id) {
+                    var abbrev = id;
+                    var idx = id.indexOf("-");
+                    if (idx > 1) {
+                        abbrev = id.substring(0, idx);
+                    }
+                    pod.idAbbrev = abbrev;
+                }
+                pod.statusClass = Kubernetes.statusTextToCssClass(pod.status);
+            });
+            var services = appView.services || [];
+            var replicationControllers = appView.replicationControllers || [];
+            var size = Math.max(services.length, replicationControllers.length, 1);
+            var appName = appView.$info.name;
+            for (var i = 0; i < size; i++) {
+                var service = services[i];
+                var replicationController = replicationControllers[i];
+                var controllerId = (replicationController || {}).id;
+                var name = (service || {}).id || controllerId;
+                var address = (service || {}).portalIP;
+                if (!name && pods.length) {
+                    name = pods[0].idAbbrev;
+                }
+                if (!appView.$info.name) {
+                    appView.$info.name = name;
+                }
+                if (!appView.id && pods.length) {
+                    appView.id = pods[0].id;
+                }
+                if (i > 0) {
+                    appName = name;
+                }
+                var podCount = pods.length;
+                var podCountText = podCount + " pod" + (podCount > 1 ? "s" : "");
+                var view = {
+                    appName: appName || name,
+                    name: name,
+                    createdDate: appView.$creationDate,
+                    podCountText: podCountText,
+                    address: address,
+                    controllerId: controllerId,
+                    service: service,
+                    replicationController: replicationController,
+                    pods: pods
+                };
+                array.push(view);
+            }
             return array;
         }
         function onAppData(response) {
@@ -36463,19 +36567,7 @@ var Kubernetes;
     }]);
     Kubernetes.PodStatus = Kubernetes.controller("PodStatus", ["$scope", function ($scope) {
         $scope.statusMapping = function (text) {
-            if (text) {
-                var lower = text.toLowerCase();
-                if (lower.startsWith("run")) {
-                    return 'icon-play-circle green';
-                }
-                else if (lower.startsWith("wait")) {
-                    return 'icon-download';
-                }
-                else if (lower.startsWith("term") || lower.startsWith("error") || lower.startsWith("fail")) {
-                    return 'icon-off orange';
-                }
-            }
-            return 'icon-question red';
+            return Kubernetes.statusTextToCssClass(text);
         };
     }]);
     Kubernetes.Labels = Kubernetes.controller("Labels", ["$scope", "workspace", "jolokia", "$location", function ($scope, workspace, jolokia, $location) {
