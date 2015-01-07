@@ -138,6 +138,9 @@ module Perspective {
             id: "insight-camel"
           },
           {
+            id: "insight-logs"
+          },
+          {
             id: "dashboard",
             // we only want to include dashboard if we are running in fabric (as they are in another perspective)
             // (must use "id" attribute for the plugin, an not href, when using onCondition)
