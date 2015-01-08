@@ -15728,6 +15728,9 @@ var Perspective;
                         id: "insight-camel"
                     },
                     {
+                        id: "insight-logs"
+                    },
+                    {
                         id: "dashboard",
                         onCondition: function (workspace) { return !Fabric.isFMCContainer(workspace); }
                     },
@@ -36675,7 +36678,7 @@ var Log;
             id: "logs",
             content: "Logs",
             title: "View and search the logs of this container",
-            isValid: function (workspace) { return Log.treeContainsLogQueryMBean(workspace) && !(Fabric.hasFabric(workspace) && Insight.hasInsight(workspace) && Insight.hasKibana(workspace)); },
+            isValid: function (workspace) { return Log.treeContainsLogQueryMBean(workspace); },
             href: function () { return "#/logs"; }
         });
         workspace.subLevelTabs.push({
