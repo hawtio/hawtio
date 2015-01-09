@@ -260,12 +260,12 @@
       <version>${camel-version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
+    <!--dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-all</artifactId>
       <version>${activemq-version}</version>
       <scope>test</scope>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-jaas</artifactId>
@@ -338,6 +338,16 @@
   </dependencies>
 
   <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>false</filtering>
+      </testResource>
+      <testResource>
+        <directory>src/test/resources-filtered</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -770,6 +780,10 @@
             <systemProperty>
               <key>hawtio.forceBranding</key>
               <value>true</value>
+            </systemProperty>
+            <systemProperty>
+              <key>java.security.auth.login.config</key>
+              <value>${build.testOutputDirectory}/login.conf</value>
             </systemProperty>
           </systemProperties>
         </configuration>
