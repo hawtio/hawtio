@@ -55,12 +55,6 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${guava.version}</version>
-      <classifier>cdi1.0</classifier>
-    </dependency>
   </dependencies>
 
   <build>
@@ -70,7 +64,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>${war-plugin-version}</version>
         <configuration>
-          <packagingExcludes>**/lib/slf4j*.jar,**/lib/commons-logging-1.0.3.jar,**/lib/guava-14.0.1.jar,**/lib/guava-${guava.version}.jar,**/classes/log4j.properties</packagingExcludes>
+          <packagingExcludes>**/lib/slf4j*.jar,**/lib/commons-logging-*.jar,**/classes/log4j.properties,**/lib/guava-*.jar,**/lib/maven-aether-provider-*.jar,**/lib/maven-model-*.jar,**/lib/maven-model-builder-*.jar,**/lib/maven-repository-metadata-*.jar,**/lib/netty-*.jar,**/lib/org.apache.aries.blueprint.web-*.jar,**/lib/plexus-classworlds-*.jar,**/lib/plexus-component-annotations-*.jar,**/lib/plexus-interpolation-*.jar,**/lib/plexus-utils-*.jar,**/lib/wagon-ahc-*.jar,**/lib/wagon-provider-api-*.jar,**/lib/xbean-reflect-*.jar</packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
