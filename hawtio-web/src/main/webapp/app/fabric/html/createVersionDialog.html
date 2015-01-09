@@ -3,8 +3,9 @@
     <div class="modal-header"><h4>Create new Version</h4></div>
     <div class="modal-body">
       <label>Version name: </label>
+      <!-- Synch with Fabric8 io.fabric8.utils.FabricValidations -->
       <input name="id" class="input-xlarge" type="text" ng-model="name"
-             ng-pattern="/^[1-9][0-9]*(\.[0-9]+)*$/">
+             ng-pattern="/^[a-z0-9]+[\.a-z0-9_-]*$/">
         <span class="help-block"
               ng-hide="createVersion.id.$invalid">Leave blank to use the next available version number.</span>
         <span class="help-block"
