@@ -22,21 +22,36 @@ module Core {
       var username:String = null;
       var password:String = null;
 
-      if (connectionOptions) {
-        username = connectionOptions.userName;
-        password = connectionOptions.password;
-      } else if (angular.isDefined(userDetails) &&
-                  angular.isDefined(userDetails.username) &&
-                  angular.isDefined(userDetails.password)) {
-        username = userDetails.username;
-        password = userDetails.password;
-      } else {
-        // lets see if they are passed in via request parameter...
-        var search = hawtioPluginLoader.parseQueryString();
-        username = search["_user"];
-        password = search["_pwd"];
-        if (angular.isArray(username)) username = username[0];
-        if (angular.isArray(password)) password = password[0];
+      var found = false;
+
+      // search for passed credentials when connecting to remote server
+      try {
+        if (window.opener && "passUserDetails" in window.opener) {
+          username = window.opener["passUserDetails"].username;
+          password = window.opener["passUserDetails"].password;
+          found = true;
+        }
+      } catch (securityException) {
+        // ignore
+      }
+
+      if (!found) {
+        if (connectionOptions && connectionOptions.userName && connectionOptions.password) {
+          username = connectionOptions.userName;
+          password = connectionOptions.password;
+        } else if (angular.isDefined(userDetails) &&
+                    angular.isDefined(userDetails.username) &&
+                    angular.isDefined(userDetails.password)) {
+          username = userDetails.username;
+          password = userDetails.password;
+        } else {
+          // lets see if they are passed in via request parameter...
+          var search = hawtioPluginLoader.parseQueryString();
+          username = search["_user"];
+          password = search["_pwd"];
+          if (angular.isArray(username)) username = username[0];
+          if (angular.isArray(password)) password = password[0];
+        }
       }
 
       if (username && password) {
@@ -80,6 +95,9 @@ module Core {
           userDetails.username = null;
           userDetails.password = null;
           delete userDetails.loginDetails;
+          if (found) {
+            delete window.opener["passUserDetails"];
+          }
         } else {
           jolokiaStatus.xhr = xhr;
           if (!xhr.responseText && error) {

@@ -1302,7 +1302,7 @@ module Core {
     url = url.replace(/&/, "?");
     var newWindow = $window.open(url);
     newWindow['con'] = options.name;
-    newWindow['userDetails'] = {
+    $window['passUserDetails'] = {
       username: options.userName,
       password: options.password,
       loginDetails: {}
