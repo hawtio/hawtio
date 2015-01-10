@@ -399,6 +399,8 @@
       <id>camelSnapshot</id>
       <properties>
         <camel-version>2.15-SNAPSHOT</camel-version>
+        <spring-version>4.1.4.RELEASE</spring-version>
+        <jetty-version>8.1.15.v20140411</jetty-version>
       </properties>
     </profile>
 
