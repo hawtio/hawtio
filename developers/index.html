@@ -254,6 +254,23 @@ In the console type the following</p>
 
 <p>You have now defined a variable called <em>s</em> which contains all the values in the active AngularJS scope so you can navigate into the scope and inspect values or invoke functions in the REPL, etc.</p>
 
+<h4 id = "Handy_JQuery_debugging_tip">Handy JQuery debugging tip</h4>
+
+<p>Open the JavaScript Console and select the <em>Console</em> tab so you can type expressions into the shell.
+Select a DOM element (e.g., button) for which you want to check what jquery event handlers are attached.
+In the console type:</p>
+
+<pre><code>jQuery._data($0, "events")</code></pre>
+
+<p>You'll get array of events. When you expand the events and go to &ldquo;handler&rdquo; member (e.g., <code>click-&gt;0-&gt;handler</code>), you can:</p>
+
+<ul>
+<li>in Firebug right click <code>function()</code> and select <em>Inspect in Script Panel</em></li>
+<li>in Chrome dev tools right click <code>function()</code> and select <em>Show Function Definition</em></li>
+</ul>
+
+<p>to see the body of handler method.</p>
+
 <h3 id = "Handy_AngularJS_programming_tips">Handy AngularJS programming tips</h3>
 
 <h4 id = "Use_a_nested_scope_object_to_own_state_for_2_way_binding">Use a nested scope object to own state for 2 way binding</h4>

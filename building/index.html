@@ -333,6 +333,23 @@ bin/fusefabric</p></li>
 <pre><code>cd hawtio-web
 mvn test-compile exec:java -Psnapshot,fabric</code></pre>
 
+<h3 id = "Running_hawtio_using__code_jetty-maven-plugin__code__with_authentication_enabled">Running hawtio using <code>jetty-maven-plugin</code> with authentication enabled</h3>
+
+<p>Running hawtio using <code>mvn jetty:run</code> will switch hawtio configuration to use system (instead of JNDI) properties. The default configuration uses
+<code>&lt;systemProperties&gt;/&lt;systemProperty&gt;</code> list inside <code>jetty-maven-plugin</code> configuration.</p>
+
+<p>One of those properties is standard JAAS property <code>java.security.auth.login.config</code> pointing at Jetty-Plus JAAS LoginModule which uses <code>src/test/resources/users.properties</code> file for mapping
+users to password and roles.</p>
+
+<p>By default this mapping is:</p>
+
+<pre><code>admin=admin,admin,viewer</code></pre>
+
+<p>However <code>hawtio.authenticationEnabled</code> is disabled (<code>false</code>) by default. So in order to run hawtio using Jetty Maven plugin with authentication enabled, you can either
+change this property in <code>hawtio-web/pom.xml</code>, or simply run:</p>
+
+<pre><code>mvn jetty:run -Dhawtio.authenticationEnabled=true</code></pre>
+
 <p></div>
   </div></p>
     </div>

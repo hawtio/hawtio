@@ -132,6 +132,21 @@ In the console type the following
 
 You have now defined a variable called _s_ which contains all the values in the active AngularJS scope so you can navigate into the scope and inspect values or invoke functions in the REPL, etc.
 
+#### Handy JQuery debugging tip
+
+Open the JavaScript Console and select the _Console_ tab so you can type expressions into the shell.
+Select a DOM element (e.g., button) for which you want to check what jquery event handlers are attached.
+In the console type:
+
+    jQuery._data($0, "events")
+
+You'll get array of events. When you expand the events and go to "handler" member (e.g., `click->0->handler`), you can:
+
+* in Firebug right click `function()` and select _Inspect in Script Panel_
+* in Chrome dev tools right click `function()` and select _Show Function Definition_
+
+to see the body of handler method.
+
 ### Handy AngularJS programming tips
 
 #### Use a nested scope object to own state for 2 way binding

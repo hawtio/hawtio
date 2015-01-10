@@ -2956,7 +2956,7 @@ var Core;
         url = url.replace(/&/, "?");
         var newWindow = $window.open(url);
         newWindow['con'] = options.name;
-        newWindow['userDetails'] = {
+        $window['passUserDetails'] = {
             username: options.userName,
             password: options.password,
             loginDetails: {}
@@ -17387,22 +17387,34 @@ var Core;
             var connectionOptions = Core.getConnectOptions(connectionName);
             var username = null;
             var password = null;
-            if (connectionOptions) {
-                username = connectionOptions.userName;
-                password = connectionOptions.password;
+            var found = false;
+            try {
+                if (window.opener && "passUserDetails" in window.opener) {
+                    username = window.opener["passUserDetails"].username;
+                    password = window.opener["passUserDetails"].password;
+                    found = true;
+                }
             }
-            else if (angular.isDefined(userDetails) && angular.isDefined(userDetails.username) && angular.isDefined(userDetails.password)) {
-                username = userDetails.username;
-                password = userDetails.password;
+            catch (securityException) {
             }
-            else {
-                var search = hawtioPluginLoader.parseQueryString();
-                username = search["_user"];
-                password = search["_pwd"];
-                if (angular.isArray(username))
-                    username = username[0];
-                if (angular.isArray(password))
-                    password = password[0];
+            if (!found) {
+                if (connectionOptions && connectionOptions.userName && connectionOptions.password) {
+                    username = connectionOptions.userName;
+                    password = connectionOptions.password;
+                }
+                else if (angular.isDefined(userDetails) && angular.isDefined(userDetails.username) && angular.isDefined(userDetails.password)) {
+                    username = userDetails.username;
+                    password = userDetails.password;
+                }
+                else {
+                    var search = hawtioPluginLoader.parseQueryString();
+                    username = search["_user"];
+                    password = search["_pwd"];
+                    if (angular.isArray(username))
+                        username = username[0];
+                    if (angular.isArray(password))
+                        password = password[0];
+                }
             }
             if (username && password) {
                 userDetails.username = username;
@@ -17440,6 +17452,9 @@ var Core;
                     userDetails.username = null;
                     userDetails.password = null;
                     delete userDetails.loginDetails;
+                    if (found) {
+                        delete window.opener["passUserDetails"];
+                    }
                 }
                 else {
                     jolokiaStatus.xhr = xhr;
@@ -31831,9 +31846,7 @@ var Jmx;
             data: 'gridData',
             columnDefs: Jmx.propertiesColumnDefs
         };
-        $scope.$watch(function ($scope) {
-            return $scope.gridOptions.selectedItems.map(function (item) { return item.key; });
-        }, function (newValue, oldValue) {
+        $scope.$watch("gridOptions.selectedItems", function (newValue, oldValue) {
             if (newValue !== oldValue) {
                 Jmx.log.debug("Selected items: ", newValue);
                 $scope.selectedItems = newValue;
@@ -47145,12 +47158,11 @@ var Wiki;
     Wiki._module.controller("Wiki.HistoryController", ["$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "jolokia", function ($scope, $location, $routeParams, $templateCache, workspace, marked, fileExtensionTypeRegistry, wikiRepository, jolokia) {
         var isFmc = Fabric.isFMCContainer(workspace);
         Wiki.initScope($scope, $routeParams, $location);
-        $scope.selectedItems = [];
         $scope.dateFormat = 'EEE, MMM d, y : hh:mm:ss a';
         $scope.gridOptions = {
             data: 'logs',
             showFilter: false,
-            selectedItems: $scope.selectedItems,
+            selectedItems: [],
             showSelectionCheckbox: true,
             displaySelectionCheckbox: true,
             filterOptions: {
@@ -47194,11 +47206,11 @@ var Wiki;
             }
         });
         $scope.canRevert = function () {
-            return $scope.selectedItems.length === 1 && $scope.selectedItems[0] !== $scope.logs[0];
+            return $scope.gridOptions.selectedItems.length === 1 && $scope.gridOptions.selectedItems[0] !== $scope.logs[0];
         };
         $scope.revert = function () {
-            if ($scope.selectedItems.length > 0) {
-                var objectId = $scope.selectedItems[0].name;
+            if ($scope.gridOptions.selectedItems.length > 0) {
+                var objectId = $scope.gridOptions.selectedItems[0].name;
                 if (objectId) {
                     var commitMessage = "Reverting file " + $scope.pageId + " to previous version " + objectId;
                     wikiRepository.revertTo($scope.branch, objectId, $scope.pageId, commitMessage, function (result) {
@@ -47207,19 +47219,19 @@ var Wiki;
                         updateView();
                     });
                 }
-                $scope.selectedItems.splice(0, $scope.selectedItems.length);
+                $scope.gridOptions.selectedItems.splice(0, $scope.gridOptions.selectedItems.length);
             }
         };
         $scope.diff = function () {
             var defaultValue = " ";
             var objectId = defaultValue;
-            if ($scope.selectedItems.length > 0) {
-                objectId = $scope.selectedItems[0].name || defaultValue;
+            if ($scope.gridOptions.selectedItems.length > 0) {
+                objectId = $scope.gridOptions.selectedItems[0].name || defaultValue;
             }
             var baseObjectId = defaultValue;
-            if ($scope.selectedItems.length > 1) {
-                baseObjectId = $scope.selectedItems[1].name || defaultValue;
-                if ($scope.selectedItems[0].date < $scope.selectedItems[1].date) {
+            if ($scope.gridOptions.selectedItems.length > 1) {
+                baseObjectId = $scope.gridOptions.selectedItems[1].name || defaultValue;
+                if ($scope.gridOptions.selectedItems[0].date < $scope.gridOptions.selectedItems[1].date) {
                     var _ = baseObjectId;
                     baseObjectId = objectId;
                     objectId = _;
