@@ -26,6 +26,7 @@ module Camel {
             when('/camel/typeConverter', {templateUrl: 'app/camel/html/typeConverter.html', reloadOnSearch: false}).
             when('/camel/restRegistry', {templateUrl: 'app/camel/html/restRegistry.html', reloadOnSearch: false}).
             when('/camel/routeMetrics', {templateUrl: 'app/camel/html/routeMetrics.html', reloadOnSearch: false}).
+            when('/camel/inflight', {templateUrl: 'app/camel/html/inflight.html', reloadOnSearch: false}).
             when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false}).
             when('/camel/source', {templateUrl: 'app/camel/html/source.html'}).
             when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html'}).
@@ -226,6 +227,15 @@ module Camel {
         && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia)
         && workspace.hasInvokeRightsForName(getSelectionCamelRouteMetrics(workspace), "dumpStatisticsAsJson"),
       href: () => "#/camel/routeMetrics"
+    });
+    workspace.subLevelTabs.push({
+      content: '<i class="icon-list"></i> Inflight Exchanges',
+      title: "View the entire JVMs Camel inflight exchanges",
+      isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
+        && !workspace.isEndpointsFolder() && !workspace.isRoute()
+        && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia)
+        && workspace.hasInvokeRightsForName(getSelectionCamelInflightRepository(workspace), "browse"),
+      href: () => "#/camel/inflight"
     });
     workspace.subLevelTabs.push({
       content: '<i class=" icon-file-alt"></i> Source',
