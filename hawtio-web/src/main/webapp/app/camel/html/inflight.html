@@ -3,23 +3,11 @@
   <div ng-show="initDone">
 
     <div class="row-fluid">
-      <div class="span12">
+      <div class="pull-right">
         <hawtio-filter ng-model="gridOptions.filterOptions.filterText"
                        placeholder="Filter..."></hawtio-filter>
       </div>
     </div>
-
-      <!--<div class="pull-right">-->
-        <!--<form class="form-inline no-bottom-margin">-->
-          <!--<fieldset>-->
-            <!--<div class="control-group inline-block">-->
-              <!--<input type="text" class="search-query" placeholder="Filter..."-->
-                     <!--ng-model="gridOptions.filterOptions.filterText">-->
-            <!--</div>-->
-          <!--</fieldset>-->
-        <!--</form>-->
-      <!--</div>-->
-    <!--</div>-->
 
     <div class="row-fluid">
       <table class="table table-condensed table-striped" hawtio-simple-table="gridOptions"></table>
