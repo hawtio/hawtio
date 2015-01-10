@@ -232,7 +232,8 @@ module Camel {
       content: '<i class="icon-list"></i> Inflight Exchanges',
       title: "View the entire JVMs Camel inflight exchanges",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
-        && !workspace.isEndpointsFolder() && !workspace.isRoute()
+        && !workspace.isEndpointsFolder()
+        && (workspace.isRoute() || workspace.isRoutesFolder() || workspace.isCamelContext())
         && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia)
         && workspace.hasInvokeRightsForName(getSelectionCamelInflightRepository(workspace), "browse"),
       href: () => "#/camel/inflight"

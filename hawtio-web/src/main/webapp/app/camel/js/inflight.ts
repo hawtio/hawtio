@@ -4,7 +4,7 @@ module Camel {
   _module.controller("Camel.InflightController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
     $scope.data = [];
-    $scope.selectedMBean = null;
+    $scope.initDone = false;
 
     $scope.mbeanAttributes = {};
 
@@ -84,11 +84,9 @@ module Camel {
         // okay we have the data then set the selected mbean which allows UI to display data
         $scope.selectedMBean = response.request.mbean;
 
-      } else {
-
-        // set the mbean to a value so the ui can get updated
-        $scope.selectedMBean = "true";
       }
+
+      $scope.initDone = "true";
 
       // ensure web page is updated
       Core.$apply($scope);
@@ -100,6 +98,13 @@ module Camel {
 
     function loadRestRegistry() {
       console.log("Loading inflight data...");
+
+      // pre-select filter if we have selected a route
+      var routeId = getSelectedRouteId(workspace);
+      if (routeId != null) {
+        $scope.gridOptions.filterOptions.filterText = routeId;
+      }
+
       var mbean = getSelectionCamelInflightRepository(workspace);
       if (mbean) {
 
