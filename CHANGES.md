@@ -1,10 +1,16 @@
 
 ### Change Log
 
-#### 1.4.38 ... 
+#### 1.4.45
+
+* Camel plugin supports new inflight exchanges from Camel 2.15 onwards
+* Fixed Camel plugin to show convertBodyTo in the route diagram
+
+#### 1.4.38 ... 1.4.44
 
 * Camel tracer and debugger now shows message bodies that are stream/file based
 * Camel message browser now shows the java types of the headers and body
+* Various improvements for fabric8 v2
 * Various bug fixes
 
 #### 1.4.37
