@@ -445,15 +445,16 @@ var _apacheCamelModel = {
       "acceptOutput": true,
       "properties": {}
     },
-    "convertBody": {
+    // must be named convertBodyTo
+    "convertBodyTo": {
       "type": "object",
       "extends": {
         "type": "org.apache.camel.model.OptionalIdentifiedDefinition"
       },
-      "title": "Convert Body",
+      "title": "Convert Body To",
       "group": "Transformation",
-      "description": "Convert Body",
-      "tooltip": "Convert Body",
+      "description": "Convert Body To",
+      "tooltip": "Convert Body To",
       "icon": "convertBody24.png",
       "nextSiblingAddedAsChild": true,
       "properties": {
