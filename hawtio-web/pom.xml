@@ -622,7 +622,7 @@
               org.eclipse.jetty.plus.jaas.spi;resolution:=optional,
               org.eclipse.jetty.plus.jaas.callback;resolution:=optional,
               org.apache.commons.logging;resolution:=optional,
-              org.slf4j;resolution:=optional,
+              org.slf4j;resolution:=optional;version="[1.6,2)",
               !org.slf4j.impl,
               !org.apache.avalon*,
               !org.apache.log*,

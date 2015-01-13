@@ -135,8 +135,9 @@
     <org-json-version>20070829</org-json-version>
     <servlet-api-version>2.5</servlet-api-version>
 
-    <slf4j-api-version>1.7.5</slf4j-api-version>
-    <slf4j-version>1.7.5</slf4j-version>
+    <!-- use slf4j-api 1.6.x to be easy compatible with older Karaf/Camel releases -->
+    <slf4j-api-version>1.6.6</slf4j-api-version>
+    <slf4j-version>1.7.10</slf4j-version>
 
     <spring-version>3.2.11.RELEASE</spring-version>
     <spring-boot-version>1.2.0.RELEASE</spring-boot-version>
