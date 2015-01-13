@@ -617,7 +617,7 @@
               io.hawt.util;resolution:=optional;version="[1.4,2)",
               io.hawt.util.introspect;resolution:=optional;version="[1.4,2)",
               io.hawt.util.introspect.support;resolution:=optional;version="[1.4,2)",
-              org.osgi.framework,
+              org.osgi.framework;version="[1.5,2)",
               org.osgi.util.tracker,
               org.eclipse.jetty.plus.jaas.spi;resolution:=optional,
               org.eclipse.jetty.plus.jaas.callback;resolution:=optional,
