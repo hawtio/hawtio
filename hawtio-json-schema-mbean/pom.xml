@@ -23,6 +23,7 @@
     <fuse.osgi.import>
       io.hawt.jsonschema*;resolution:=optional,
       io.hawt.introspect*;resolution:=optional,
+      org.slf4j;resolution:=optional;version="[1.6,2)",
       *
     </fuse.osgi.import>
   </properties>
