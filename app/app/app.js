@@ -42758,7 +42758,7 @@ var UI;
             scope: {
                 config: '='
             },
-            controller: function ($scope, $element, $attrs) {
+            controller: ["$scope", "$element", "$attrs", function ($scope, $element, $attrs) {
                 $scope.action = "itemClicked(config, $event)";
                 $scope.levels = {};
                 $scope.itemClicked = function (config, $event) {
@@ -42855,7 +42855,7 @@ var UI;
                     addAction($scope.config, 0);
                     $scope.levels['0'] = $scope.config;
                 });
-            }
+            }]
         };
     }
     UI.hawtioBreadcrumbs = hawtioBreadcrumbs;
