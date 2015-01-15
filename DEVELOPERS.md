@@ -2,6 +2,10 @@ We love [contributions](http://hawt.io/contributing/index.html). This page is in
 
 Welcome and enjoy! Its hawt, but stay cool! :)
 
+<div class="alert alert-info">
+Hawtio 2.x Overview!  Ooh, shiny shiny...  <a href="https://github.com/hawtio/hawtio/blob/master/docs/Overview2dotX.md">look here!</a>
+</div>
+
 ## Building the code
 
 Check out <a class="btn btn-primary btn-large" href="http://hawt.io/building/index.html">How To Build The Code</a> if you want to start hacking on the source.
