@@ -31,5 +31,5 @@ The following articles have been found on the web about hawtio. If you find any 
 
 ## Developer articles
 
-* [Creating a directive in hawtio](http://www.wayofquality.de/index.php/de/blog/entry/creating-a-directive-for-hawtio) by [Andreas Gies](http://www.wayofquality.de/index.php/blog)
-* [Using a data factory to encapsulate backend data in hawtio](http://www.wayofquality.de/index.php/en/blog/entry/using-a-data-factory-in-hawtio-panels) by [Andreas Gies](http://www.wayofquality.de/index.php/blog)
+* [Creating a directive in hawtio](http://www.wayofquality.de/open%20source/hawtio/creating-a-hwatio-directive/) by [Andreas Gies](http://www.wayofquality.de/index.php/blog)
+* [Using a data factory to encapsulate backend data in hawtio](http://www.wayofquality.de/open%20source/hawtio/using-a-datafactory-in-hawtio/) by [Andreas Gies](http://www.wayofquality.de/index.php/blog)
