@@ -26,7 +26,7 @@
     <description>JAAS classname that would contain the role principal, empty string disables authorization</description>
     <env-entry-name>hawtio/rolePrincipalClasses</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>${hawtio.rolePrincipalClasses}</env-entry-value>
+    <env-entry-value>${hawtio.rolePrincipalClasses:}</env-entry-value>
   </env-entry>
 
   <env-entry>
@@ -40,7 +40,7 @@
     <description>Path to store file uploads, defaults to ${java.io.tmpdir}/uploads if blank</description>
     <env-entry-name>hawtio/uploadDirectory</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>${hawtio.uploadDirectory}</env-entry-value>
+    <env-entry-value>${hawtio.uploadDirectory:}</env-entry-value>
   </env-entry>
 
   <filter>

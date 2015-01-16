@@ -64,7 +64,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>${war-plugin-version}</version>
         <configuration>
-          <packagingExcludes>**/lib/slf4j*.jar,**/lib/commons-logging-*.jar,**/classes/log4j.properties,**/lib/guava-*.jar,**/lib/maven-aether-provider-*.jar,**/lib/maven-model-*.jar,**/lib/maven-model-builder-*.jar,**/lib/maven-repository-metadata-*.jar,**/lib/netty-*.jar,**/lib/org.apache.aries.blueprint.web-*.jar,**/lib/plexus-classworlds-*.jar,**/lib/plexus-component-annotations-*.jar,**/lib/plexus-interpolation-*.jar,**/lib/plexus-utils-*.jar,**/lib/wagon-ahc-*.jar,**/lib/wagon-provider-api-*.jar,**/lib/xbean-reflect-*.jar</packagingExcludes>
+          <packagingExcludes>**/lib/slf4j*.jar,**/lib/commons-logging-*.jar,**/classes/log4j.properties,**/lib/guava-*.jar,**/lib/maven-aether-provider-*.jar,**/lib/maven-model-*.jar,**/lib/maven-model-builder-*.jar,**/lib/maven-repository-metadata-*.jar,**/lib/netty-*.jar,**/lib/org.apache.aries.blueprint*.jar,**/lib/plexus-classworlds-*.jar,**/lib/plexus-component-annotations-*.jar,**/lib/plexus-interpolation-*.jar,**/lib/plexus-utils-*.jar,**/lib/wagon-ahc-*.jar,**/lib/wagon-provider-api-*.jar,**/lib/xbean-reflect-*.jar</packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
