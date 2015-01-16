@@ -9,6 +9,10 @@ module Camel {
         'value': false,
         'converter': Core.parseBooleanValue
       },
+      'camelShowInflightCounter': {
+        'value': true,
+        'converter': Core.parseBooleanValue
+      },
       'camelMaximumLabelWidth': {
         'value': Camel.defaultMaximumLabelWidth,
         'converter': parseInt

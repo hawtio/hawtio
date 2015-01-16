@@ -1412,6 +1412,17 @@ module Camel {
   }
 
   /**
+   * Returns true if we should show inflight counter in Camel route diagram
+   * @method
+   */
+  export function showInflightCounter(localStorage) {
+    var value = localStorage["camelShowInflightCounter"];
+    // is default enabled
+    return Core.parseBooleanValue(value, true);
+  }
+
+
+  /**
    * Returns true if we should ignore ID values for labels in camel diagrams
    * @method
    */

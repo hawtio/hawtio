@@ -16,6 +16,7 @@ module Camel {
 
     $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
     $scope.camelMaximumLabelWidth = Camel.maximumLabelWidth(localStorage);
+    $scope.camelShowInflightCounter = Camel.showInflightCounter(localStorage);
 
     var updateRoutes = Core.throttled(doUpdateRoutes, 1000);
 
@@ -232,6 +233,7 @@ module Camel {
         // we could have used a function instead of the boolean isRoute parameter (but sometimes that is easier)
         var id = stat.getAttribute("id");
         var completed = stat.getAttribute("exchangesCompleted");
+        var inflight = stat.hasAttribute("exchangesInflight") ? stat.getAttribute("exchangesInflight") : 0;
         var tooltip = "";
         if (id && completed) {
           var container = isRoute ? $scope.routeNodes: $scope.nodes;
@@ -253,9 +255,12 @@ module Camel {
             var mean = stat.getAttribute("meanProcessingTime");
             var min = stat.getAttribute("minProcessingTime");
             var max = stat.getAttribute("maxProcessingTime");
-            tooltip = "last: " + last + " (ms)\nmean: " + mean + " (ms)\nmin: " + min + " (ms)\nmax: " + max + " (ms)";
+            tooltip = "totoal: " + total + "\ninflight:" + inflight + "\nlast: " + last + " (ms)\nmean: " + mean + " (ms)\nmin: " + min + " (ms)\nmax: " + max + " (ms)";
 
             node["counter"] = total;
+            if ($scope.camelShowInflightCounter) {
+              node["inflight"] = inflight;
+            }
             var labelSummary = node["labelSummary"];
             if (labelSummary) {
               tooltip = labelSummary + "\n\n" + tooltip;
@@ -263,10 +268,6 @@ module Camel {
             node["tooltip"] = tooltip;
           } else {
             // we are probably not showing the route for these stats
-/*
-            var keys = Object.keys(container).sort();
-            log.info("Warning, could not find node for " + id + " when keys were: " + keys);
-*/
           }
         }
       }
