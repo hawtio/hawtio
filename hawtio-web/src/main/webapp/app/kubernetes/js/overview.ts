@@ -86,11 +86,6 @@ module Kubernetes {
             case 'pod':
               break;
             case 'service':
-              // swap this connection around so the arrow is pointing to the service
-              var target = edge.target;
-              var source = edge.source;
-              edge.target = source;
-              edge.source = target;
               params.target = edge.target.el;
               params.source = edge.source.el;
               params.paintStyle = {
@@ -103,8 +98,8 @@ module Kubernetes {
               ]
               */
               params.anchors = [
-                [ "ContinuousLeft", { } ],
-                [ "ContinuousRight", { shape: "Rectangle" } ]
+                [ "ContinuousRight", { } ],
+                [ "ContinuousLeft", { } ]
               ];
               break;
             case 'replicationController':
@@ -338,8 +333,14 @@ module Kubernetes {
       });
     });
     function selectPods(pods, namespace, labels) {
-      var matchFunc = _.matches(labels);
-      return pods.filter((pod) => { return pod.namespace === namespace && matchFunc(pod.labels, undefined, undefined); });
+      if (labels) {
+        var matchFunc = _.matches(labels);
+        return pods.filter((pod) => {
+          return pod.namespace === namespace && matchFunc(pod.labels, undefined, undefined);
+        });
+      } else {
+        return [];
+      }
     }
     function maybeInit() {
       if (services && replicationControllers && pods) {
