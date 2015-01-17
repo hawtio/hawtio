@@ -10610,6 +10610,11 @@ var Camel;
         return answer;
     }
     Camel.camelProcessorMBeansById = camelProcessorMBeansById;
+    function showInflightCounter(localStorage) {
+        var value = localStorage["camelShowInflightCounter"];
+        return Core.parseBooleanValue(value, true);
+    }
+    Camel.showInflightCounter = showInflightCounter;
     function ignoreIdForLabel(localStorage) {
         var value = localStorage["camelIgnoreIdForLabel"];
         return Core.parseBooleanValue(value);
@@ -12956,6 +12961,10 @@ var Camel;
                 'value': false,
                 'converter': Core.parseBooleanValue
             },
+            'camelShowInflightCounter': {
+                'value': true,
+                'converter': Core.parseBooleanValue
+            },
             'camelMaximumLabelWidth': {
                 'value': Camel.defaultMaximumLabelWidth,
                 'converter': parseInt
@@ -13515,6 +13524,7 @@ var Camel;
         }
         $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
         $scope.camelMaximumLabelWidth = Camel.maximumLabelWidth(localStorage);
+        $scope.camelShowInflightCounter = Camel.showInflightCounter(localStorage);
         var updateRoutes = Core.throttled(doUpdateRoutes, 1000);
         var delayUpdatingRoutes = 300;
         $scope.$on("$routeChangeSuccess", function (event, current, previous) {
@@ -13670,6 +13680,7 @@ var Camel;
             function addTooltipToNode(isRoute, stat) {
                 var id = stat.getAttribute("id");
                 var completed = stat.getAttribute("exchangesCompleted");
+                var inflight = stat.hasAttribute("exchangesInflight") ? stat.getAttribute("exchangesInflight") : 0;
                 var tooltip = "";
                 if (id && completed) {
                     var container = isRoute ? $scope.routeNodes : $scope.nodes;
@@ -13691,8 +13702,11 @@ var Camel;
                         var mean = stat.getAttribute("meanProcessingTime");
                         var min = stat.getAttribute("minProcessingTime");
                         var max = stat.getAttribute("maxProcessingTime");
-                        tooltip = "last: " + last + " (ms)\nmean: " + mean + " (ms)\nmin: " + min + " (ms)\nmax: " + max + " (ms)";
+                        tooltip = "totoal: " + total + "\ninflight:" + inflight + "\nlast: " + last + " (ms)\nmean: " + mean + " (ms)\nmin: " + min + " (ms)\nmax: " + max + " (ms)";
                         node["counter"] = total;
+                        if ($scope.camelShowInflightCounter) {
+                            node["inflight"] = inflight;
+                        }
                         var labelSummary = node["labelSummary"];
                         if (labelSummary) {
                             tooltip = labelSummary + "\n\n" + tooltip;
@@ -17243,6 +17257,7 @@ var Core;
             return d.imageUrl;
         }).attr("x", -12).attr("y", -20).attr("height", 24).attr("width", 24);
         var counters = nodes.append("text").attr("text-anchor", "end").attr("class", "counter").attr("x", 0).attr("dy", 0).text(_counterFunction);
+        var inflights = nodes.append("text").attr("text-anchor", "middle").attr("class", "inflight").attr("x", 10).attr("dy", -32).text(_inflightFunction);
         var labels = nodes.append("text").attr("text-anchor", "middle").attr("x", 0);
         labels.append("tspan").attr("x", 0).attr("dy", 28).text(function (d) {
             return d.label;
@@ -17321,6 +17336,7 @@ var Core;
     function dagreUpdateGraphData(data) {
         var svg = d3.select("svg");
         svg.selectAll("text.counter").text(_counterFunction);
+        svg.selectAll("text.inflight").text(_inflightFunction);
         svg.selectAll("g .node title").text(function (d) {
             return d.tooltip || "";
         });
@@ -17328,6 +17344,9 @@ var Core;
     Core.dagreUpdateGraphData = dagreUpdateGraphData;
     function _counterFunction(d) {
         return d.counter || "";
+    }
+    function _inflightFunction(d) {
+        return d.inflight || "";
     }
 })(Core || (Core = {}));
 var Core;
@@ -35699,10 +35718,6 @@ var Kubernetes;
                         case 'pod':
                             break;
                         case 'service':
-                            var target = edge.target;
-                            var source = edge.source;
-                            edge.target = source;
-                            edge.source = target;
                             params.target = edge.target.el;
                             params.source = edge.source.el;
                             params.paintStyle = {
@@ -35710,8 +35725,8 @@ var Kubernetes;
                                 strokeStyle: '#5555cc'
                             };
                             params.anchors = [
-                                ["ContinuousLeft", {}],
-                                ["ContinuousRight", { shape: "Rectangle" }]
+                                ["ContinuousRight", {}],
+                                ["ContinuousLeft", {}]
                             ];
                             break;
                         case 'replicationController':
@@ -35923,10 +35938,15 @@ var Kubernetes;
             });
         });
         function selectPods(pods, namespace, labels) {
-            var matchFunc = _.matches(labels);
-            return pods.filter(function (pod) {
-                return pod.namespace === namespace && matchFunc(pod.labels, undefined, undefined);
-            });
+            if (labels) {
+                var matchFunc = _.matches(labels);
+                return pods.filter(function (pod) {
+                    return pod.namespace === namespace && matchFunc(pod.labels, undefined, undefined);
+                });
+            }
+            else {
+                return [];
+            }
         }
         function maybeInit() {
             if (services && replicationControllers && pods) {

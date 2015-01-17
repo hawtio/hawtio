@@ -40,6 +40,21 @@ Here's a rundown of the current hawtio 2.x components:
 
 ### Getting started
 
+#### working with existing projects
+
+Git clone any of the above projects and then cd into the folder. 
+
+Then get npm and bower to install their stuff:
+
+    npm install
+    bower install
+
+you are now ready to run the default build with gulp
+
+    gulp
+
+and you should be able to open a web browser and work on the code and have things rebuild etc.
+
 #### initial setup
 
 To get started, first off make sure you're running a relatively recent version node/npm.  [Go download it](http://nodejs.org/) and re-install/upgrade if you're not sure.  Make sure you update your npm packages with a `sudo npm update -g`.  Then install a few tools:
