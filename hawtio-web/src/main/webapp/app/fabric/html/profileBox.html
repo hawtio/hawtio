@@ -2,13 +2,13 @@
   <div class="span10">
     <div class="row-fluid">
       <div class="span2">
-        <div class="app-logo mouse-pointer" ng-click="toggleSelectionFromGroup(cartItems, profile)">
+        <div class="app-logo" ng-class="{'mouse-pointer': !viewOnly}" ng-click="toggleSelectionFromGroup(cartItems, profile)">
           <img ng-src="{{profile.iconURL}}" ng-show="profile.iconURL">
           <img src="img/icons/fabric8_icon.svg" ng-hide="profile.iconURL">
         </div>
       </div>
       <div class="span10">
-        <div class="row-fluid mouse-pointer"
+        <div class="row-fluid" ng-class="{'mouse-pointer': !viewOnly}"
              ng-click="toggleSelectionFromGroup(cartItems, profile)">
           <div class="span12">
             <h4 class="column-box-header">{{profile.id}}
@@ -20,7 +20,7 @@
         <div class="row-fluid">
           <div class="span11">
             <ul class="unstyled label-list">
-              <li class="inline-block mouse-pointer"
+              <li class="inline-block" ng-class="{'mouse-pointer': !viewOnly}"
                   ng-repeat="tag in profile.tags | orderBy"
                   ng-click="toggleSelectionFromGroup(selectedTags, tag)">
                 <span class="badge"
@@ -48,7 +48,7 @@
       <div class="span12">
         <div ng-show="profile.aliveCount" 
              ng-click="showContainersFor(profile)"
-             class="badge badge-success mouse-pointer">Alive: {{profile.aliveCount}}</div>
+             class="badge badge-success">Alive: {{profile.aliveCount}}</div>
         <div ng-show="profile.deadCount" 
              ng-click="showContainersFor(profile)"
              class="badge mouse-pointer">Dead: {{profile.deadCount}}</div>
