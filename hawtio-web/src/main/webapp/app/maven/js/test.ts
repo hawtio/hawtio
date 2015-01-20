@@ -1,8 +1,9 @@
 /**
  * @module Maven
  */
+/// <reference path="./mavenPlugin.ts"/>
 module Maven {
-  export function TestController($scope, workspace, jolokia, $q, $templateCache) {
+  _module.controller("Maven.TestController", ["$scope", "workspace", "jolokia", "$q", "$templateCache", ($scope, workspace, jolokia, $q, $templateCache) => {
 
     $scope.html = "text/html";
 
@@ -31,5 +32,5 @@ module Maven {
       return Maven.completeMavenUri($q, $scope, workspace, jolokia, something);
     }
 
-  }
+  }]);
 }

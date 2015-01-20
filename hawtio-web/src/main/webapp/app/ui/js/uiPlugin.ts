@@ -4,92 +4,86 @@
  * @module UI
  * @main UI
  */
+/// <reference path="../../core/js/corePlugin.ts"/>
+/// <reference path="./CodeEditor.ts"/>
+/// <reference path="./uiHelpers.ts"/>
 module UI {
 
   export var pluginName = 'hawtio-ui';
 
   export var templatePath = 'app/ui/html/';
 
-  angular.module(UI.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap']).
-      config( ($routeProvider) => {
-        $routeProvider.
-            when('/ui/test', {templateUrl: templatePath + 'test.html'})
-      }).factory('UI', () => {
-        return UI;
-      }).factory('marked',function () {
-        marked.setOptions({
-          gfm: true,
-          tables: true,
-          breaks: false,
-          pedantic: true,
-          sanitize: false,
-          smartLists: true,
-          langPrefix: 'language-'
-        });
-        return marked;
-      }).directive('hawtioConfirmDialog', function() {
-        return new UI.ConfirmDialog();
-      }).directive('hawtioSlideout', function() {
-        return new UI.SlideOut();
-      }).directive('hawtioPager', function() {
-        return new UI.TablePager();
-      }).directive('hawtioEditor', function($parse) {
-        return UI.Editor($parse);
-      }).directive('hawtioColorPicker', function() {
-        return new UI.ColorPicker()
-      }).directive('expandable', () => {
-        return new UI.Expandable();
-      }).directive('gridster', () => {
-        return new UI.GridsterDirective();
-      }).directive('editableProperty', ($parse) => {
-        return new UI.EditableProperty($parse);
-      }).directive('hawtioViewport', () => {
-        return new UI.ViewportHeight();
-      }).directive('hawtioHorizontalViewport', () => {
-        return new UI.HorizontalViewport();
-      }).directive('hawtioRow', () => {
-        return new UI.DivRow();
-      }).directive('hawtioJsplumb', () => {
-        return new UI.JSPlumb();
-      }).directive('zeroClipboard', ($parse) => {
-        return UI.ZeroClipboardDirective($parse);
-      }).directive('hawtioAutoDropdown', () => {
-        return UI.AutoDropDown;
-      }).directive('hawtioMessagePanel', () => {
-        return new UI.MessagePanel();
-      }).directive('hawtioInfoPanel', () => {
-        return new UI.InfoPanel();
-      }).directive('hawtioAutoColumns', () => {
-        return new UI.AutoColumns();
-      }).directive('hawtioTemplatePopover', ($templateCache, $compile, $document) => {
-        return UI.TemplatePopover($templateCache, $compile, $document);
-      }).directive('hawtioTocDisplay', (marked, $location, $anchorScroll, $compile) => {
-        return UI.HawtioTocDisplay(marked, $location, $anchorScroll, $compile);
-      }).directive('hawtioDropDown', ($templateCache) => {
-        return UI.hawtioDropDown($templateCache);
-      }).directive('hawtioBreadcrumbs', () => {
-        return UI.hawtioBreadcrumbs();
-      }).directive('compile', ['$compile', ($compile) => {
-        return (scope, element, attrs) => {
-          scope.$watch(
-              function(scope) {
-                // watch the 'compile' expression for changes
-                return scope.$eval(attrs.compile);
-              },
-              function(value) {
-                // when the 'compile' expression changes
-                // assign it into the current DOM
-                element.html(value);
+  export var _module = angular.module(UI.pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap']);
 
-                // compile the new DOM and link it to the current
-                // scope.
-                // NOTE: we only compile .childNodes so that
-                // we don't get into infinite loop compiling ourselves
-                $compile(element.contents())(scope);
-              }
-          );
-        };
-      }]);
+  _module.config(["$routeProvider", ($routeProvider) => {
+    $routeProvider.
+      when('/ui/developerPage', {templateUrl: templatePath + 'developerPage.html', reloadOnSearch: false});
+  }]);
+
+  _module.factory('UI', () => {
+    return UI;
+  });
+
+  _module.factory('marked', () => {
+    marked.setOptions({
+      gfm: true,
+      tables: true,
+      breaks: false,
+      pedantic: true,
+      sanitize: false,
+      smartLists: true,
+      langPrefix: 'language-'
+    });
+    return marked;
+  });
+
+  _module.directive('compile', ['$compile', ($compile) => {
+    return (scope, element, attrs) => {
+      scope.$watch(
+        (scope) => {
+          // watch the 'compile' expression for changes
+          return scope.$eval(attrs.compile);
+        },
+        (value) => {
+          // when the 'compile' expression changes
+          // assign it into the current DOM
+          element.html(value);
+
+          // compile the new DOM and link it to the current
+          // scope.
+          // NOTE: we only compile .childNodes so that
+          // we don't get into infinite loop compiling ourselves
+          $compile(element.contents())(scope);
+        }
+      );
+    };
+  }]);
+
+  UI._module.controller("CodeEditor.PreferencesController", ["$scope", "localStorage", "$templateCache", ($scope, localStorage, $templateCache) => {
+    $scope.exampleText = $templateCache.get("exampleText");
+    $scope.codeMirrorEx = $templateCache.get("codeMirrorExTemplate");
+    $scope.javascript = "javascript";
+
+    $scope.preferences = CodeEditor.GlobalCodeMirrorOptions;
+
+    // If any of the preferences change, make sure to save them automatically
+    $scope.$watch("preferences", function(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        // such a cheap and easy way to update the example view :-)
+        $scope.codeMirrorEx += " ";
+        localStorage['CodeMirrorOptions'] = angular.toJson(angular.extend(CodeEditor.GlobalCodeMirrorOptions, $scope.preferences));
+      }
+    }, true);
+
+  }]);
+
+  _module.run(["localStorage", (localStorage) => {
+    var opts = localStorage['CodeMirrorOptions'];
+    if (opts) {
+      opts = angular.fromJson(opts);
+      CodeEditor.GlobalCodeMirrorOptions = angular.extend(CodeEditor.GlobalCodeMirrorOptions, opts);
+    }
+  }]);
 
   hawtioPluginLoader.addModule(pluginName);
 

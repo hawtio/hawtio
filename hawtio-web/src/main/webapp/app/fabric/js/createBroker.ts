@@ -1,6 +1,7 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
-  export function CreateBrokerController($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache) {
+  export var CreateBrokerController = _module.controller("Fabric.CreateBrokerController", ["$scope", "localStorage", "$routeParams", "$location", "jolokia", "workspace", "$compile", "$templateCache", ($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache) => {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
@@ -12,7 +13,10 @@ module Fabric {
     $scope.profiles = [];
     $scope.parentProfiles = [];
     $scope.entity = {
-      group: $scope.defaultGroup
+      // default options
+      group: $scope.defaultGroup,
+      ssl: true
+
     };
     $scope.otherEntity = {
       networkConnectAll: false
@@ -23,7 +27,7 @@ module Fabric {
 
     $scope.onSubmit = (json, form) => {
       $scope.message = ($scope.entity.brokerName || "unknown") + " in group " + ($scope.entity.group || "unknown");
-      notification("info", "Creating broker " + $scope.message);
+      Core.notification("info", "Creating broker " + $scope.message);
       var tmpJson = JSON.stringify($scope.entity, null, '  ');
       jolokia.execute(Fabric.mqManagerMBean, "saveBrokerConfigurationJSON", tmpJson, onSuccess(onSave));
 
@@ -110,17 +114,18 @@ module Fabric {
       Core.pathSet(schema.properties, ['clientParentProfile', 'tooltip'], 'The parent profile used by the client profile.');
       Core.pathSet(schema.properties, ['clientParentProfile', 'input-attributes', 'typeahead'], 'p.id for p in parentProfiles | filter:$viewValue');
       Core.pathSet(schema.properties, ['clientParentProfile', 'input-attributes', 'typeahead-editable'], 'false');
+      Core.pathSet(schema.properties, ['clientParentProfile', 'input-attributes', 'placeholder'], 'mq-client-base');
       Core.pathSet(schema.properties, ['parentProfile', 'input-attributes', "placeholder"], "default");
-
-
 
       Core.pathSet(schema.properties, ['data', 'input-attributes', "placeholder"], "${karaf.base}/data/{{entity.brokerName || 'brokerName'}}");
       Core.pathSet(schema.properties, ['configUrl', 'input-attributes', "placeholder"], "profile:broker.xml");
 
       Core.pathSet(schema.properties, ['replicas', 'control-group-attributes', "ng-show"], isReplicated);
-      Core.pathSet(schema.properties, ['replicas', 'input-attributes', "placeholder"], "3");
+      Core.pathSet(schema.properties, ['replicas', 'input-attributes', "value"], "{{3}}");
+      Core.pathSet(schema.properties, ['replicas', 'input-attributes', "min"], "1");
       Core.pathSet(schema.properties, ['minimumInstances', 'control-group-attributes', "ng-hide"], isReplicated);
-      Core.pathSet(schema.properties, ['minimumInstances', 'input-attributes', "placeholder"], "{{" + isStandalone + " ? 1 : 2}}");
+      Core.pathSet(schema.properties, ['minimumInstances', 'input-attributes', "value"], "{{" + isStandalone + " ? 1 : 2}}");
+      Core.pathSet(schema.properties, ['minimumInstances', 'input-attributes', "min"], "1");
 
       Core.pathSet(schema.properties, ['networksPassword', 'type'], 'password');
       Core.pathSet(schema.properties, ['networks', 'items', 'input-attributes', 'typeahead-editable'], 'true');
@@ -164,8 +169,8 @@ module Fabric {
     }
 
     function onSave(response) {
-      notification("success", "Created broker " + $scope.message);
+      Core.notification("success", "Created broker " + $scope.message);
       Core.$apply($scope);
     }
-  }
+  }]);
 }

@@ -1,12 +1,16 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
 module Wiki {
-  export function DozerMappingsController($scope, $location, $routeParams, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache) {
+  _module.controller("Wiki.DozerMappingsController", ["$scope", "$location", "$routeParams", "workspace", "jolokia", "wikiRepository", "$templateCache", ($scope, $location, $routeParams, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache) => {
     var log:Logging.Logger = Logger.get("Dozer");
 
     Wiki.initScope($scope, $routeParams, $location);
     Dozer.schemaConfigure();
+
+    $scope.profileId = Fabric.pagePathToProfileId($scope.pageId);
+    $scope.versionId = $scope.branch || "1.0";
 
     $scope.schema = {};
     $scope.addDialog = new UI.Dialog();
@@ -25,7 +29,7 @@ module Wiki {
     $scope.connectorStyle = [ "Bezier" ];
 
     $scope.main = "";
-    $scope.tab = "Draggy Droppy";
+    $scope.tab = "Mappings";
 
     $scope.gridOptions = {
       selectedItems: $scope.selectedItems,
@@ -49,6 +53,13 @@ module Wiki {
         }
       ]
     };
+
+    if ($scope.profileId) {
+      Fabric.profileJolokia(jolokia, $scope.profileId, $scope.versionId, (containerJolokia) => {
+        $scope.containerJolokia = containerJolokia;
+        $scope.missingContainer = !containerJolokia ? true : false;
+      });
+    }
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -97,8 +108,9 @@ module Wiki {
 
     $scope.fetchProperties = (className, target, anchor) => {
       var introspectorMBean = Dozer.getIntrospectorMBean(workspace);
-      if (introspectorMBean) {
-        jolokia.request({
+      if (introspectorMBean && !$scope.missingContainer) {
+        var aJolokia: any = $scope.containerJolokia || jolokia;
+        aJolokia.request({
           type: 'exec',
           mbean: introspectorMBean,
           operation: 'getProperties(java.lang.String)',
@@ -139,8 +151,6 @@ module Wiki {
             Core.$apply($scope);
           }
         });
-      } else {
-        log.warn("No dozer introspector mbean found!");
       }
     };
 
@@ -331,7 +341,7 @@ module Wiki {
         wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
           Wiki.onComplete(status);
           $scope.modified = false;
-          notification("success", "Saved " + $scope.pageId)
+          Core.notification("success", "Saved " + $scope.pageId)
           goToView();
           Core.$apply($scope);
         });
@@ -339,7 +349,7 @@ module Wiki {
     };
 
     $scope.save = () => {
-      if ($scope.tab === "Draggy Droppy") {
+      if ($scope.tab === "Mappings") {
         $scope.saveMappings();
         return;
       }
@@ -352,7 +362,7 @@ module Wiki {
           wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
             Wiki.onComplete(status);
             $scope.modified = false;
-            notification("success", "Saved " + $scope.pageId)
+            Core.notification("success", "Saved " + $scope.pageId)
             goToView();
             Core.$apply($scope);
           });
@@ -468,19 +478,21 @@ module Wiki {
 
     function onResults(response) {
       var text = response.text;
-      if (text && $scope.responseText !== text) {
-        $scope.responseText = text;
-        // lets remove any dodgy characters so we can use it as a DOM id
-        $scope.model = Dozer.loadDozerModel(text, $scope.pageId);
+      if (text) {
+        if ($scope.responseText !== text) {
+          $scope.responseText = text;
+          // lets remove any dodgy characters so we can use it as a DOM id
+          $scope.model = Dozer.loadDozerModel(text, $scope.pageId);
 
-        $scope.mappings = Core.pathGet($scope.model, ["mappings"]);
+          $scope.mappings = Core.pathGet($scope.model, ["mappings"]);
 
-        $scope.mappingTree = Dozer.createDozerTree($scope.model);
-        if (!angular.isDefined($scope.selectedMapping)) {
-          $scope.selectedMapping = $scope.mappings.first();
+          $scope.mappingTree = Dozer.createDozerTree($scope.model);
+          if (!angular.isDefined($scope.selectedMapping)) {
+            $scope.selectedMapping = $scope.mappings.first();
+          }
+
+          $scope.main = $templateCache.get("pageTemplate.html");
         }
-
-        $scope.main = $templateCache.get("pageTemplate.html");
       } else {
         log.warn("No XML found for page " + $scope.pageId);
       }
@@ -504,5 +516,5 @@ module Wiki {
        }
        */
     }
-  }
+  }]);
 }

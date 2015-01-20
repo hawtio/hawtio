@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>io.hawt</groupId>
+    <artifactId>project</artifactId>
+    <version>1.5-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>hawtio-custom-app</artifactId>
+  <packaging>war</packaging>
+  <name>${project.artifactId}</name>
+  <description>hawtio :: hawtio-custom-app</description>
+
+  <properties>
+    <desiredPlugins>core,ui,kubernetes,service,forms,datatable,perspective,themes,jmx,rbac</desiredPlugins>
+
+    <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
+
+    <watch>false</watch>
+    <gruntArguments>default</gruntArguments>
+    <gruntOptions>--plugins ${desiredPlugins}</gruntOptions>
+
+    <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+    <webappDirectory>${webapp-outdir}</webappDirectory>
+    <warSourceExcludes>**</warSourceExcludes>
+    <packagingExcludes>**/classes/OSGI-INF/**,*/debug/**</packagingExcludes>
+    <packagingIncludes />
+
+    <hawtio-config-importURLs />
+    <hawtio-config-cloneOnStartup>true</hawtio-config-cloneOnStartup>
+    <fabricUrl />
+    <jetty-use-file-lock />
+  </properties>
+
+  <dependencies>
+    <!-- just including this to ensure we built after hawtio-web -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-default</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- lets mark dependencies from the WAR as provided to avoid jetty:run adding duplicates -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-git</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.aries.blueprint</groupId>
+      <artifactId>org.apache.aries.blueprint.web</artifactId>
+      <version>${blueprint-web-version}</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-servlet_2.5_spec</artifactId>
+        </exclusion>
+        <!-- ignore old versions -->
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>${frontend-maven-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>install node and npm</id>
+            <goals>
+              <goal>install-node-and-npm</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <nodeVersion>v0.10.32</nodeVersion>
+              <npmVersion>1.4.12</npmVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>grunt build</id>
+            <goals>
+              <goal>grunt</goal>
+            </goals>
+            <configuration>
+              <arguments>${gruntArguments} ${gruntOptions}</arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>${jetty-plugin-groupId}</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty-version}</version>
+        <configuration>
+          <webAppSourceDirectory>${project.build.directory}/${project.name}</webAppSourceDirectory>
+          <scanIntervalSeconds>1</scanIntervalSeconds>
+          <webAppConfig>
+            <contextPath>${context}</contextPath>
+          </webAppConfig>
+          <connectors>
+            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+              <port>${jettyPort}</port>
+              <maxIdleTime>60000</maxIdleTime>
+            </connector>
+          </connectors>
+          <systemProperties>
+            <systemProperty>
+              <key>hawtio.config.dir</key>
+              <value>${hawtio-config-dir}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>hawtio.config.repo</key>
+              <value>${hawtio-config-repo}</value>
+            </systemProperty>
+          </systemProperties>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.0</version>
+        <configuration>
+          <port>9090</port>
+          <path>${context}</path>
+          <systemProperties>
+          </systemProperties>
+          <useTestClasspath>false</useTestClasspath>
+          <!--
+                    <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
+          -->
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}/overlays</directory>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>${basedir}/src</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+
+  <profiles>
+    <profile>
+      <id>watch</id>
+      <properties>
+        <gruntOptions>--plugins ${desiredPlugins} --watch true</gruntOptions>
+        <gruntArguments>tsc</gruntArguments>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>release</id>
+      <properties>
+        <gruntArguments>dist</gruntArguments>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>dist</id>
+      <properties>
+        <gruntArguments>dist</gruntArguments>
+      </properties>
+    </profile>
+
+  </profiles>
+
+
+</project>

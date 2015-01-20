@@ -1,9 +1,10 @@
 /**
  * @module Karaf
  */
+/// <reference path="./karafPlugin.ts"/>
 module Karaf {
 
-  export function FeaturesController($scope, $location, workspace, jolokia) {
+  _module.controller("Karaf.FeaturesController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace, jolokia) => {
 
     $scope.hasFabric = Fabric.hasFabric(workspace);
     $scope.responseJson = '';
@@ -82,9 +83,9 @@ module Karaf {
 
     $scope.installRepository = () => {
       var repoURL = $scope.newRepositoryURI;
-      notification('info', 'Adding feature repository URL');
+      Core.notification('info', 'Adding feature repository URL');
       Karaf.installRepository(workspace, jolokia, repoURL, () => {
-        notification('success', 'Added feature repository URL');
+        Core.notification('success', 'Added feature repository URL');
         $scope.selectedRepository = {};
         $scope.selectedRepositoryId = '';
         $scope.responseJson = null;
@@ -98,9 +99,9 @@ module Karaf {
 
     $scope.uninstallRepository = () => {
       var repoURI = $scope.selectedRepository['uri'];
-      notification('info', 'Removing feature repository ' + repoURI);
+      Core.notification('info', 'Removing feature repository ' + repoURI);
       Karaf.uninstallRepository(workspace, jolokia, repoURI, () => {
-        notification('success', 'Removed feature repository ' + repoURI);
+        Core.notification('success', 'Removed feature repository ' + repoURI);
         $scope.responseJson = null;
         $scope.selectedRepositoryId = '';
         $scope.selectedRepository = {};
@@ -125,9 +126,9 @@ module Karaf {
         return;
       }
       //$('.popover').remove();
-      notification('info', 'Installing feature ' + feature.Name);
+      Core.notification('info', 'Installing feature ' + feature.Name);
       installFeature(workspace, jolokia, feature.Name, feature.Version, () => {
-        notification('success', 'Installed feature ' + feature.Name);
+        Core.notification('success', 'Installed feature ' + feature.Name);
         $scope.installedFeatures.add(feature);
         $scope.responseJson = null;
         $scope.triggerRefresh();
@@ -144,9 +145,9 @@ module Karaf {
         return;
       }
       //$('.popover').remove();
-      notification('info', 'Uninstalling feature ' + feature.Name);
+      Core.notification('info', 'Uninstalling feature ' + feature.Name);
       uninstallFeature(workspace, jolokia, feature.Name, feature.Version, () => {
-        notification('success', 'Uninstalled feature ' + feature.Name);
+        Core.notification('success', 'Uninstalled feature ' + feature.Name);
         $scope.installedFeatures.remove(feature);
         $scope.responseJson = null;
         $scope.triggerRefresh();
@@ -287,5 +288,5 @@ module Karaf {
         Core.$apply($scope);
       }
     }
-  }
+  }]);
 }

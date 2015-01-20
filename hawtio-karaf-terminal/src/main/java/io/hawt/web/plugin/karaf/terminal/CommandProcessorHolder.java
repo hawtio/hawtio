@@ -2,9 +2,6 @@ package io.hawt.web.plugin.karaf.terminal;
 
 import org.apache.felix.service.command.CommandProcessor;
 
-/**
- *
- */
 public class CommandProcessorHolder {
 
     private static CommandProcessor commandProcessor;
@@ -14,7 +11,7 @@ public class CommandProcessorHolder {
     }
 
     public void setCommandProcessor(CommandProcessor commandProcessor) {
-        this.commandProcessor = commandProcessor;
+        CommandProcessorHolder.commandProcessor = commandProcessor;
     }
 
 }

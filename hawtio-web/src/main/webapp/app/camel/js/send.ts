@@ -1,5 +1,9 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
-  export function SendMessageController($route, $scope, $element, $timeout, workspace:Workspace, jolokia, localStorage, $location) {
+
+   var DELIVERY_PERSISTENT = "2";
+
+  _module.controller("Camel.SendMessageController", ["$route", "$scope", "$element", "$timeout", "workspace", "jolokia", "localStorage", "$location", "activeMQMessage", ($route, $scope, $element, $timeout, workspace:Workspace, jolokia, localStorage, $location, activeMQMessage) => {
     var log:Logging.Logger = Logger.get("Camel");
 
     log.info("Loaded page!");
@@ -10,6 +14,9 @@ module Camel {
     $scope.profileFileNameToProfileId = {};
     $scope.selectedFiles = {};
     $scope.container = {};
+    $scope.message = "\n\n\n\n";
+    $scope.headers = [];
+
 
     // bind model values to search params...
     Core.bindModelToSearchParam($scope, $location, "tab", "subtab", "compose");
@@ -18,15 +25,36 @@ module Camel {
     // only reload the page if certain search parameters change
     Core.reloadWhenParametersChange($route, $scope, $location);
 
+    $scope.checkCredentials = () => {
+      $scope.noCredentials = (Core.isBlank(localStorage['activemqUserName']) || Core.isBlank(localStorage['activemqPassword']));
+    }
+
     if ($location.path().has('activemq')) {
-      if (!localStorage['activemqUserName'] || !localStorage['activemqPassword']) {
-        $scope.noCredentials = true;
-      }
+      $scope.localStorage = localStorage;
+      $scope.$watch('localStorage.activemqUserName', $scope.checkCredentials);
+      $scope.$watch('localStorage.activemqPassword', $scope.checkCredentials);
+
+        //prefill if it's a resent
+        if(activeMQMessage.message !== null){
+           $scope.message = activeMQMessage.message.bodyText;
+           if( activeMQMessage.message.PropertiesText !== null){
+               for( var p in activeMQMessage.message.StringProperties){
+                   $scope.headers.push({name: p, value: activeMQMessage.message.StringProperties[p]});
+               }
+           }
+        }
+        // always reset at the end
+        activeMQMessage.message = null;
+    }
+
+    $scope.openPrefs = () => {
+      $location.search('pref', 'ActiveMQ');
+      $scope.$emit("hawtioOpenPrefs");
     }
 
     var LANGUAGE_FORMAT_PREFERENCE = "defaultLanguageFormat";
     var sourceFormat = workspace.getLocalStorage(LANGUAGE_FORMAT_PREFERENCE) || "javascript";
-    $scope.message = "\n\n\n\n";
+
     // TODO Remove this if possible
     $scope.codeMirror = undefined;
     var options = {
@@ -41,8 +69,6 @@ module Camel {
       }
     };
     $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
-
-    $scope.headers = [];
 
     $scope.addHeader = () => {
       $scope.headers.push({name: "", value: ""});
@@ -97,7 +123,7 @@ module Camel {
 
     var sendWorked = () => {
       $scope.message = "";
-      notification("success", "Message sent!");
+      Core.notification("success", "Message sent!");
     };
 
     $scope.autoFormat = () => {
@@ -135,27 +161,45 @@ module Camel {
             var uri = target['uri'];
             mbean = target['mbean'];
             if (mbean && uri) {
-              if (headers) {
-                jolokia.execute(mbean, "sendBodyAndHeaders(java.lang.String, java.lang.Object, java.util.Map)", uri, body, headers, callback);
-              } else {
-                jolokia.execute(mbean, "sendStringBody(java.lang.String, java.lang.String)", uri, body, callback);
+
+              // if we are running Camel 2.14 we can check if its posible to send to the endppoint
+              var ok = true;
+              if (Camel.isCamelVersionEQGT(2, 14, workspace, jolokia)) {
+                var reply = jolokia.execute(mbean, "canSendToEndpoint(java.lang.String)", uri);
+                if (!reply) {
+                  Core.notification("warning", "Camel does not support sending to this endpoint.");
+                  ok = false;
+                }
+              }
+
+              if (ok) {
+                if (headers) {
+                  jolokia.execute(mbean, "sendBodyAndHeaders(java.lang.String, java.lang.Object, java.util.Map)", uri, body, headers, callback);
+                } else {
+                  jolokia.execute(mbean, "sendStringBody(java.lang.String, java.lang.String)", uri, body, callback);
+                }
               }
             } else {
               if (!mbean) {
-                notification("error", "Could not find CamelContext MBean!");
+                Core.notification("error", "Could not find CamelContext MBean!");
               } else {
-                notification("error", "Failed to determine endpoint name!");
+                Core.notification("error", "Failed to determine endpoint name!");
               }
               log.debug("Parsed context and endpoint: ", target);
             }
           } else {
             var user = localStorage["activemqUserName"];
             var pwd = localStorage["activemqPassword"];
-            if (headers) {
-              jolokia.execute(mbean, "sendTextMessage(java.util.Map, java.lang.String, java.lang.String, java.lang.String)", headers, body, user, pwd, callback);
-            } else {
-              jolokia.execute(mbean, "sendTextMessage(java.lang.String, java.lang.String, java.lang.String)", body, user, pwd, callback);
+
+            // AMQ is sending non persistent by default, so make sure we tell to sent persistent by default
+            if (!headers) {
+              headers = {};
             }
+            if (!headers["JMSDeliveryMode"]) {
+              headers["JMSDeliveryMode"] = DELIVERY_PERSISTENT;
+            }
+
+            jolokia.execute(mbean, "sendTextMessage(java.util.Map, java.lang.String, java.lang.String, java.lang.String)", headers, body, user, pwd, callback);
           }
         }
       }
@@ -193,7 +237,7 @@ module Camel {
           }
         } else {
           var text = Core.maybePlural(fileCount, "Message") + " sent!";
-          notification("success", text);
+          Core.notification("success", text);
         }
       }
 
@@ -220,10 +264,13 @@ module Camel {
 
     function onFabricConfigFiles(response) {
       $scope.profileFileNameToProfileId = response;
-      $scope.profileFileNames = Object.keys(response).sort();
-      $scope.showChoose = $scope.profileFileNames.length ? true : false;
+      // we only want files from the data dir
+      $scope.profileFileNames = Object.keys(response).filter(key => {
+        return key.toLowerCase().startsWith('data/');
+      }).sort();
+       $scope.showChoose = $scope.profileFileNames.length ? true : false;
       $scope.selectedFiles = {};
       Core.$apply($scope);
     }
-  }
+  }]);
 }

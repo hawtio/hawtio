@@ -1,9 +1,10 @@
 /**
  * @module API
  */
+/// <reference path="apiPlugin.ts"/>
 module API {
 
-  export function WsdlViewController($scope, $location, jolokia) {
+  _module.controller("API.WsdlViewController", ["$scope", "$location", "jolokia", ($scope, $location, jolokia) => {
 
     var log:Logging.Logger = Logger.get("API");
 
@@ -99,5 +100,5 @@ module API {
       });
       Core.$apply($scope);
     }
-  }
+  }]);
 }

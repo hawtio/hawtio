@@ -1,5 +1,6 @@
+/// <reference path="./springbatchPlugin.ts"/>
 module SpringBatch {
-    export function ConnectSpringBatchController($scope, $routeParams, $location, workspace:Workspace, $rootScope, $resource, $http) {
+    _module.controller("SpringBatch.ConnectSpringBatchController", ["$scope", "$routeParams", "$location", "workspace", "$rootScope", "$resource", "$http", ($scope, $routeParams, $location, workspace:Workspace, $rootScope, $resource, $http) => {
 
         $scope.host= 'localhost';
         $scope.port= 8080;
@@ -70,5 +71,5 @@ module SpringBatch {
                 });
 
         }
-    }
+    }]);
 }

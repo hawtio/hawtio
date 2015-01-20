@@ -1,9 +1,10 @@
 /**
  * @module Dashboard
  */
+/// <reference path="dashboardPlugin.ts"/>
 module Dashboard {
 
-  export function EditDashboardsController($scope, $routeParams, $route, $location, $rootScope, dashboardRepository:DefaultDashboardRepository, jolokia, workspace:Workspace) {
+  _module.controller("Dashboard.EditDashboardsController", ["$scope", "$routeParams", "$route", "$location", "$rootScope", "dashboardRepository", "jolokia", "workspace", ($scope, $routeParams, $route, $location, $rootScope, dashboardRepository:DefaultDashboardRepository, jolokia, workspace:Workspace) => {
 
     $scope.hash = workspace.hash();
     $scope.selectedItems = [];
@@ -288,7 +289,8 @@ module Dashboard {
       var newDash = dashboardRepository.createDashboard({title: title});
 
       dashboardRepository.putDashboards([newDash], "Created new dashboard: " + title, (dashboards) => {
-        $scope.selectedItems.push(newDash);
+        // let's just be safe and ensure there's no selections
+        $scope.selectedItems.splice(0);
         dashboardLoaded(null, dashboards);
       });
 
@@ -305,7 +307,7 @@ module Dashboard {
       });
 
       // let's just be safe and ensure there's no selections
-      $scope.selectedItems = [];
+      $scope.selectedItems.splice(0);
 
       commitMessage = commitMessage + newDashboards.map((d) => { return d.title }).join(',');
       dashboardRepository.putDashboards(newDashboards, commitMessage, (dashboards) => {
@@ -316,7 +318,8 @@ module Dashboard {
     $scope.delete = () => {
       if ($scope.hasSelection()) {
         dashboardRepository.deleteDashboards($scope.selectedItems, (dashboards) => {
-          $scope.selectedItems = [];
+          // let's just be safe and ensure there's no selections
+          $scope.selectedItems.splice(0);
           dashboardLoaded(null, dashboards);
         });
       }
@@ -368,13 +371,5 @@ module Dashboard {
     }
 
     updateData();
-
-    /*
-     // TODO for case where we navigate to the add view
-     // for some reason the route update event isn't enough...
-     // and we need to do this async to avoid the size calculation being wrong
-     // bit of a hack - would love to remove! :)
-     setTimeout(updateData, 100);
-   */
-  }
+  }]);
 }

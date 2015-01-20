@@ -1,23 +1,41 @@
 /**
  * @module API
  */
+/// <reference path="apiPlugin.ts"/>
 module API {
 
-  export function WadlViewController($scope, $location, $http, jolokia) {
+  _module.controller("API.WadlViewController", ["$scope", "$location", "$http", "jolokia", ($scope, $location, $http, jolokia) => {
 
     API.initScope($scope, $location, jolokia);
 
-    $scope.url = $location.search()["wadl"];
-    loadXml($scope.url, onWsdl);
+    var search = $location.search();
+    $scope.url = search["wadl"];
+    $scope.podId = search["podId"];
+    $scope.port = search["port"];
 
     $scope.$watch("apidocs", enrichApiDocsWithSchema);
     $scope.$watch("jsonSchema", enrichApiDocsWithSchema);
 
+    loadXml($scope.url, onWsdl);
+
     $scope.tryInvoke = (resource, method) => {
+      var useProxy = true;
       if (resource) {
         var path = resource.fullPath || resource.path;
         if (path) {
-          // lets substitue the parameters
+          if ($scope.podId) {
+            var idx = path.indexOf("://");
+            if (idx > 0) {
+              var pathWithoutProtocol = path.substring(idx + 3);
+              var idx = pathWithoutProtocol.indexOf("/");
+              if (idx > 0) {
+                path = "/hawtio/pod/" + $scope.podId + ($scope.port ? "/" + $scope.port : "") + pathWithoutProtocol.substring(idx);
+                useProxy = false;
+              }
+            }
+          }
+
+          // lets substitute the parameters
           angular.forEach(resource.param, (param) => {
             var name = param.name;
             if (name) {
@@ -30,8 +48,8 @@ module API {
               path = path.replace(new RegExp("{" + name + "}", "g"), value);
             }
           });
-          log.info("Lets invoke resource: " + path);
-          var url = Core.useProxyIfExternal(path);
+          var url = useProxy ? Core.useProxyIfExternal(path) : path;
+          log.info("Lets invoke resource: " + url);
           var methodName = method.name || "GET";
           method.invoke = {
             url: url,
@@ -112,8 +130,8 @@ module API {
     function enrichApiDocsWithSchema() {
       var apidocs = $scope.apidocs;
       var jsonSchema = $scope.jsonSchema;
-      if (apidocs && jsonSchema) {
-        enrichResources(jsonSchema, apidocs.resources)
+      if (apidocs) {
+        enrichResources(jsonSchema, apidocs.resources, $scope.parentUri);
       }
     }
 
@@ -123,7 +141,13 @@ module API {
         var base = resource.base;
         if (base) {
           if (parentUri) {
-            base = parentUri + base;
+            // lets find the first / and replace the prefix
+            if (base) {
+              var idx = base.indexOf("/");
+              if (idx > 0) {
+                base = parentUri + base.substring(idx);
+              }
+            }
           }
         } else {
           base = parentUri;
@@ -210,5 +234,5 @@ module API {
       //log.info("API docs: " + JSON.stringify($scope.apidocs, null, "  "));
       Core.$apply($scope);
     }
-  }
+  }]);
 }

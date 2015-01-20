@@ -1,6 +1,7 @@
+/// <reference path="./tomcatPlugin.ts"/>
 module Tomcat {
 
-    export function SessionsController($scope, $location, workspace:Workspace, jolokia) {
+    _module.controller("Tomcat.SessionsController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | tomcatIconClass}}"></i></div>';
 
@@ -153,5 +154,5 @@ module Tomcat {
           console.log("Loading tomcat session data...");
           jolokia.search("*:type=Manager,*", onSuccess(render));
         }
-    }
+    }]);
 }

@@ -1,0 +1,88 @@
+<div class="chat-display row-fluid gridStyle" ng-controller="IRC.ChatController">
+
+  <div class="span2">
+    <div class="channel-window">
+      <div class="channel-window-inner">
+        <ul class="zebra-list">
+          <li ng-repeat="(channel, obj) in channels | orderBy:sortChannel" ng-class="isSelectedChannel(channel)" ng-click="selectChannel(channel)">
+            {{channel}} <i class="icon-remove red pull-right" title="Click to part" ng-click="partChannel(channel)"></i>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="channel-control-buttons">
+      <button class="btn pull-left" title="Disconnect" ng-click="disconnect()"><i class="icon-asterisk"></i></button>
+      <button class="btn pull-right" title="Join Channel" ng-click="showChannelPrompt()"><i class="icon-plus"></i></button>
+    </div>
+  </div>
+  <div class="span8">
+    <div ng-hide="hasTopic()" class="topic-window">
+      {{selectedChannelObject.topic.topic}}
+    </div>
+    <div class="chat-window" ng-class="hasTopic()" scroll-glue>
+      <div class="chat-window-inner">
+        <ul class="zebra-list">
+          <li ng-repeat="message in selectedChannelObject.messages track by $index">
+            <div ng-switch="message.type">
+              <div ng-switch-when="reply">
+                {{message.timestamp | date : 'mediumTime'}} {{message.value}} {{message.message}}
+              </div>
+              <div ng-switch-when="notice">
+                {{message.timestamp | date : 'mediumTime'}} &lt;{{message.user.nick}}&gt; {{message.message}}
+              </div>
+              <div ng-switch-when="privmsg">
+                {{message.timestamp | date : 'mediumTime'}} &lt;{{message.user.nick}}&gt; {{message.message}}
+              </div>
+              <div ng-switch-when="join">
+                {{message.timestamp | date : 'mediumTime'}} {{message.user.nick}} has joined {{message.chan}}
+              </div>
+              <div ng-switch-when="part">
+                {{message.timestamp | date : 'mediumTime'}} {{message.user.nick}} has left {{message.chan}} <span ng-show="message.message"> - {{message.message}}</span>
+              </div>
+              <div ng-switch-default>
+                {{message.timestamp | date : 'mediumTime'}} {{message}}
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="input-widget">
+      <form name="inputForm" ng-submit="sendMessage()">
+        <div>
+          <input type="text" class="entry-widget"
+                 typeahead="nick for nick in getNames() | filter:$viewValue"
+                 ng-model="newMessage">
+        </div>
+        <input type="submit" class="btn btn-success" ng-disabled="!newMessage" value="Send">
+      </form>
+    </div>
+  </div>
+  <div class="span2">
+    <div class="nickname-window">
+      <div class="nickname-window-inner">
+        <ul class="zebra-list">
+          <li ng-repeat="nick in selectedChannelObject.names | orderBy:sortNick" ng-click="openQuery(nick)">
+            {{nick}}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div hawtio-confirm-dialog="showNewChannelDialog.show"
+       title="Join Channel..."
+       ok-button-text="Join"
+       cancel-button-text="Cancel"
+       on-ok="newChannel(target)">
+    <div class="dialog-body">
+      <p>Enter the name of a channel to join (include the '#')</p>
+      <input type="text" class="input input-xlarge" ng-model="target">
+    </div>
+
+  </div>
+
+
+
+</div>

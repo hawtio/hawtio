@@ -67,7 +67,7 @@ module Karaf {
   }
 
   export function featureLinks(workspace, name, version) {
-    return  "<a href='" + url("#/karaf/feature/" + name + "/" + version + workspace.hash()) + "'>" + version + "</a>";
+    return  "<a href='" + Core.url("#/karaf/feature/" + name + "/" + version + workspace.hash()) + "'>" + version + "</a>";
   }
 
   export function extractFeature(attributes, name, version) {
@@ -106,12 +106,20 @@ module Karaf {
     "^org.apache.commons",
     "^org.apache.felix",
     "^io.fabric8",
+    "^io.fabric8.fab",
+    "^io.fabric8.insight",
+    "^io.fabric8.mq",
+    "^io.fabric8.patch",
+    "^io.fabric8.runtime",
+    "^io.fabric8.security",
     "^org.apache.geronimo.specs",
     "^org.apache.servicemix.bundles",
     "^org.objectweb.asm",
     "^io.hawt",
     "^javax.mail",
+    "^javax",
     "^org.jvnet",
+    "^org.mvel2",
     "^org.apache.mina.core",
     "^org.apache.sshd.core",
     "^org.apache.neethi",
@@ -122,14 +130,17 @@ module Karaf {
     "^groovy-all",
     "^com.google.guava",
     "jackson-\\w+-asl",
+    "^com.fasterxml.jackson",
     "^org.ops4j",
     "^org.springframework",
     "^bcprov$",
     "^jline$",
-    "^scala-library$",
+    "scala-library$",
+    "^org.scala-lang",
     "^stax2-api$",
     "^woodstox-core-asl",
     "^org.jboss.amq.mq-fabric",
+    "^gravia-",
     "^joda-time$",
     "^org.apache.ws",
     "-commands$",
@@ -138,19 +149,29 @@ module Karaf {
     "activeio-core",
     "activemq-osgi",
     "^org.eclipse.jetty",
-    "org.codehaus.jettison.jettison"
+    "org.codehaus.jettison.jettison",
+    "org.jledit.core",
+    "org.fusesource.jansi",
+    "org.eclipse.equinox.region"
   ];
 
   var platformBundleRegex = new RegExp(platformBundlePatterns.join('|'));
 
-  var camelBundlePatterns = ["^org.apache.camel", "activemq-camel$"];
+  var camelBundlePatterns = ["^org.apache.camel", "camel-karaf-commands$", "activemq-camel$"];
   var camelBundleRegex = new RegExp(camelBundlePatterns.join('|'));
 
   var cxfBundlePatterns = ["^org.apache.cxf"];
   var cxfBundleRegex = new RegExp(cxfBundlePatterns.join('|'));
 
+  var activemqBundlePatterns = ["^org.apache.activemq", "activemq-camel$"];
+  var activemqBundleRegex = new RegExp(activemqBundlePatterns.join('|'));
+
   export function isPlatformBundle(symbolicName:string):boolean {
     return platformBundleRegex.test(symbolicName);
+  }
+
+  export function isActiveMQBundle(symbolicName:string):boolean {
+    return activemqBundleRegex.test(symbolicName);
   }
 
   export function isCamelBundle(symbolicName:string):boolean {
@@ -177,11 +198,13 @@ module Karaf {
       angular.forEach(repo["Features"], (feature) => {
 
         angular.forEach(feature, (entry) => {
-          var f = Object.extended(fullFeatures[entry['Name']][entry['Version']]).clone();
-          f["Id"] = entry["Name"] + "/" + entry["Version"];
-          f["RepositoryName"] = repo["Name"];
-          f["RepositoryURI"] = repo["Uri"];
-          features.push(f);
+          if(fullFeatures[entry['Name']] !== undefined){
+            var f = Object.extended(fullFeatures[entry['Name']][entry['Version']]).clone();
+            f["Id"] = entry["Name"] + "/" + entry["Version"];
+            f["RepositoryName"] = repo["Name"];
+            f["RepositoryURI"] = repo["Uri"];
+            features.push(f);
+          }
         });
 
       });

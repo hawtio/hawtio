@@ -4,7 +4,7 @@
       <div class="mq-filter">
         <div class="section-filter">
           <input type="text" class="search-query" placeholder="Filter..." ng-model="searchFilter">
-          <i class="icon-remove clickable" title="Clear Filter" ng-click="searchFilter = ''"></i>
+          <i class="icon-remove clickable" title="Clear filter" ng-click="searchFilter = ''"></i>
         </div>
       </div>
 
@@ -57,7 +57,7 @@
                           <i class="expandable-indicator" ng-show="broker.containers.length"></i>
                         </span>
                         <span class="title mq-broker-icon">
-                          <img title="Apache ActiveMQ" src="app/fabric/img/message_broker.png">
+                          <img title="Apache ActiveMQ" src="img/icons/messagebroker.svg">
                         </span>
                         <span class="title mq-broker-name">
                           <a href="" ng-click="showBroker(broker)">{{broker.id}}</a>
@@ -70,7 +70,7 @@
                           <div class="mq-container-row"
                                title="A container (JVM) which implements one or more logical brokers within this profile">
                             <i ng-show="!container.selected && showSelect" class="icon-circle-blank clickable"
-                               title="Not Selected"
+                               title="Not selected"
                                ng-click="container.selected = true"></i>
                             <i ng-show="container.selected && showSelect" class="icon-circle clickable"
                                title="Status of the container" ng-click="container.selected = false"></i>

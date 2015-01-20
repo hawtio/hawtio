@@ -10,8 +10,8 @@
         </div>
         <div class="pull-right">
           <button class="btn" ng-show="row.jolokiaUrl" title="Open" ng-click="doConnect(container)"><i class="icon-signin"></i></button>
-          <button class="btn" ng-show="row.alive" ng-click="stop()" title="Stop"><i class="icon-off"></i></button>
-          <button class="btn" ng-hide="row.alive" ng-click="start()" title="Start"><i class="icon-play-circle"></i></button>
+          <button class="btn" ng-show="row.alive" ng-click="stop()" title="Stop" hawtio-show object-name="{{managerMBean}}" method-name="stopContainer"><i class="icon-off"></i></button>
+          <button class="btn" ng-hide="row.alive" ng-click="start()" title="Start" hawtio-show object-name="{{managerMBean}}" method-name="startContainer"><i class="icon-play-circle"></i></button>
         </div>
       </div>
       <div class="row-fluid container-dashboard-status-table">
@@ -34,7 +34,7 @@
         <div class="btn-group container-dashboard-profile-controls">
           <button class="btn" ng-click="addProfileDialog.open()" title="Add new profiles to this container"><i class="icon-plus"></i></button>
           <button class="btn" ng-click="deleteProfileDialog.open()" ng-disabled="selectedProfiles.length == 0"
-                  title="Removes the selected profiles from this container"><i class="icon-minus"></i></button>
+                  title="Removes the selected profiles from this container"><i class="icon-remove-sign"></i></button>
         </div>
         <div fabric-profile-selector="selectedProfiles" version-id="row.versionId" included-profiles="row.profileIds" show-links="true" expanded="true"></div>
       </div>
@@ -51,7 +51,8 @@
 
       <div class="fabric-page-header row-fluid">
         <!-- TODO - rework this header in the css -->
-        <h2 style="display: inline-block; margin: 0"><i ng-class="statusIcon()"></i> Container: <span class="contained c-wide" title="{{row.id}}">{{row.id}}</span></h2>
+        <!-- need the 1px padding so the header and value is aligned -->
+        <h2 style="display: inline-block; margin: 0"><i ng-class="statusIcon()"></i> Container: <span class="contained c-wide" style="padding-bottom: 1px" title="{{row.id}}">{{row.id}}</span></h2>
         <div class="pull-right">
           <button class="btn"
                   ng-show="canConnect(row)"
@@ -59,7 +60,7 @@
             <i class="icon-signin"></i> Open
           </button>
           <span class="btn"
-                ng-show="availableVersions && availableVersions.length > 0">
+                ng-show="availableVersions && availableVersions.length > 0" hawtio-show object-name="{{managerMBean}}" method-name="applyVersionToContainers">
             <span fabric-version-selector="targetVersion"
                   available-versions="availableVersions"
                   menu-bind="versionTitle"
@@ -71,9 +72,9 @@
 
           </span>
 
-          <button class="btn" ng-show="row.alive" ng-click="stop()"><i class="icon-off"></i> Stop</button>
-          <button class="btn" ng-hide="row.alive" ng-click="start()"><i class="icon-play-circle"></i> Start</button>
-          <button class="btn" ng-click="confirmDeleteDialog.open()"><i class="icon-remove"></i> Delete</button>
+          <button class="btn" ng-show="row.alive" ng-click="stop()" hawtio-show object-name="{{managerMBean}}" method-name="stopContainer"><i class="icon-off"></i> Stop</button>
+          <button class="btn" ng-hide="row.alive" ng-click="start()" hawtio-show object-name="{{managerMBean}}" method-name="startContainer"><i class="icon-play-circle"></i> Start</button>
+          <button class="btn" ng-click="confirmDeleteDialog.open()" hawtio-show object-name="{{managerMBean}}" method-name="destroyContainer"><i class="icon-remove"></i> Delete</button>
           <a class="btn" ng-href="{{addToDashboardLink()}}" title="Add this view to a dashboard" data-placement="bottom">
             <i class="icon-share"></i></a>
         </div>
@@ -84,17 +85,27 @@
         <div class="span4 offset1 container-profile-settings">
           <p></p>
           <h4>Associated Profiles</h4>
-          <p>This is the current set of profiles that are assigned to this container.  Use the add and remove buttons to manage this list.</p>
+          <p>This is the current set of profiles that are assigned to this container.  Use the add and remove buttons to manage this set.</p>
 
           <div class="container-detail-profiles">
-            <div class="btn-group pull-right container-detail-profile-buttons">
-              <button class="btn" ng-click="addProfileDialog.open()" title="Add new profiles to this container"><i class="icon-plus"></i> Add</button>
+            <div class="pull-right container-detail-profile-buttons">
+              <button class="btn" ng-click="addProfileDialog.open()" title="Add new profiles to this container" hawtio-show object-name="{{managerMBean}}" method-name="addProfilesToContainer"><i class="icon-plus"></i> Add</button>
               <button class="btn" ng-click="deleteProfileDialog.open()" ng-disabled="selectedProfiles.length == 0"
-                title="Removes the selected profiles from this container"><i class="icon-remove"></i> Remove</button>
+                title="Removes the selected profiles from this container" hawtio-show object-name="{{managerMBean}}" method-name="removeProfilesFromContainer"><i class="icon-remove"></i> Remove</button>
             </div>
           </div>
           <div fabric-profile-selector="selectedProfiles" version-id="row.versionId" included-profiles="row.profileIds" show-links="true" expanded="true"></div>
         </div>
+
+        <!-- the dl need to be wider so we can see the labels -->
+        <style>
+          .dl-horizontal dt {
+            width: 180px;
+          }
+          .dl-horizontal dd {
+            margin-left: 200px;
+          }
+        </style>
 
         <div class="span5 offset1 container-settings">
           <div class="tabbable hawtio-form-tabs" ng-model="tab">
@@ -149,8 +160,8 @@
               <dl class="dl-horizontal" ng-show="services.length > 0">
                 <dt>Services:</dt>
                 <dd>
-                  <ul class="inline">
-                    <li ng-repeat="service in services" ng-switch="service.type">
+                  <ul class="service-list">
+                    <li ng-repeat="service in services track by $index" ng-switch="service.type">
                       <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
                       <img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}">
                     </li>
@@ -171,68 +182,151 @@
               <p>This tab has various settings for the container.  Below are the detected hostnames, as well as any manually configure IP/hostname.  Select the desired hostname that this container should advertise using the radio buttons.  Changes are effective immediately.</p>
               <dl class="dl-horizontal">
                 <dt>Location:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="location" on-save="updateContainerProperty('location', row)"></editable-property>
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.location}}
                 </dd>
               </dl>
               <dl class="dl-horizontal" title="Advertise services using the local IP address">
                 <dt>Local IP:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="localIp" on-save="updateContainerProperty('localIp', row)"></editable-property>
                   <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="localip">
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.localIp}}
                 </dd>
               </dl>
               <dl class="dl-horizontal" title="Advertise services using the local hostname">
                 <dt>Local Hostname:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="localHostname" on-save="updateContainerProperty('localHostname', row)"></editable-property>
                   <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="localhostname">
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.localHostname}}
                 </dd>
               </dl>
               <dl class="dl-horizontal" title="Advertise services using the public IP address">
                 <dt>Public IP:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="publicIp" on-save="updateContainerProperty('publicIp', row)"></editable-property>
                   <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="publicip">
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.publicIp}}
                 </dd>
               </dl>
               <dl class="dl-horizontal" title="Advertise services using the public hostname">
                 <dt>Public Hostname:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="publicHostname" on-save="updateContainerProperty('publicHostname', row)"></editable-property>
                   <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="publichostname">
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.publicHostname}}
                 </dd>
               </dl>
               <dl class="dl-horizontal" title="Advertise services using a custom IP address or hostname">
                 <dt>Manual IP:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="manualIp" on-save="updateContainerProperty('manualIp', row)"></editable-property>
                   <input class="pull-right" type="radio" name="resolver" ng-model="row.resolver" value="manualip">
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.manualIp}}
                 </dd>
               </dl>
               <dl class="dl-horizontal">
                 <dt>Minimum Port:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="minimumPort" on-save="updateContainerProperty('minimumPort', row)"></editable-property>
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.minimumPort}}
                 </dd>
               </dl>
               <dl class="dl-horizontal">
                 <dt>Maximum Port:</dt>
-                <dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="remove">
                   <editable-property ng-model="row" property="maximumPort" on-save="updateContainerProperty('maximumPort', row)"></editable-property>
-
+                </dd>
+                <dd hawtio-show object-name="{{managerMBean}}" method-name="setContainerProperty" mode="inverse">
+                  {{row.maximumPort}}
+                </dd>
+              </dl>
+              <dl class="dl-horizontal" ng-show="displayJvmOpts()">
+                <dt>jvmSettings:</dt>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text"
+                         ng-model="jvmOpts"
+                         style="width: 300px">
+                  <button class="btn"
+                          title="Save"
+                          ng-click="updateJvmOpts()">
+                    Save
+                  </button>
                 </dd>
               </dl>
             </div>
 
             <div class="tab-pane" title="URLs">
-              <p>This is a list of URLs for various services running in the container.  Use the <i class="icon-copy"></i> button to copy the shown command to the clipboard.
+              <p>This is a list of URLs for various services running in the container or accessible to the container. Use the <i class="icon-copy"></i> button to copy the shown command to the clipboard.
+              <dl class="dl-horizontal" ng-show="row.httpUrl" title="The url to access the http service of this container">
+                <dt>Http Url:</dt>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{row.httpUrl | maskPassword}}"
+                         style="width: 300px">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{row.httpUrl}}"
+                          title="Click to copy this host to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
+              </dl>
+              <dl class="dl-horizontal" ng-show="row.debugPort && row.debugHost" title="The host used to remotely debug this container in your IDE">
+                <dt>JVM Debug Host:</dt>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{row.debugHost}}"
+                         style="width: 300px">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{row.debugHost}}"
+                          title="Click to copy this host to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
+              </dl>
+              <dl class="dl-horizontal" ng-show="row.debugPort" title="The port used to remotely debug this container in your IDE">
+                <dt>JVM Debug Port:</dt>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{row.debugPort}}"
+                         style="width: 300px">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{row.debugPort}}"
+                          title="Click to copy this port to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
+              </dl>
               <dl class="dl-horizontal">
                 <dt>Git:</dt>
                 <dd>
                   <input class="no-bottom-margin"
                          type="text" readonly
-                         value="{{getGitURL(row.jolokiaUrl)}}">
+                         value="{{getGitURL(row.jolokiaUrl) | maskPassword}}"
+                         style="width: 300px">
                   <button class="btn"
                           zero-clipboard
                           data-clipboard-text="{{getGitURL(row.jolokiaUrl)}}"
@@ -241,12 +335,13 @@
                   </button>
                 </dd>
               </dl>
-              <dl class="dl-horizontal">
+              <dl class="dl-horizontal" ng-show="getSshURL(row.sshUrl)">
                 <dt>SSH:</dt>
                 <dd>
                   <input class="no-bottom-margin"
                          type="text" readonly
-                         value="{{getSshURL(row.sshUrl)}}">
+                         value="{{getSshURL(row.sshUrl) | maskPassword}}"
+                         style="width: 300px">
                   <button class="btn"
                           zero-clipboard
                           data-clipboard-text="{{getSshURL(row.sshUrl)}}"
@@ -255,12 +350,13 @@
                   </button>
                 </dd>
               </dl>
-              <dl class="dl-horizontal">
+              <dl class="dl-horizontal" ng-show="getJmxURL(row.jmxUrl)">
                 <dt>JMX:</dt>
                 <dd>
                   <input class="no-bottom-margin"
                          type="text" readonly
-                         value="{{getJmxURL(row.jmxUrl)}}">
+                         value="{{getJmxURL(row.jmxUrl) | maskPassword}}"
+                         style="width: 300px">
                   <button class="btn"
                           zero-clipboard
                           data-clipboard-text="{{getJmxURL(row.jmxUrl)}}"
@@ -274,7 +370,8 @@
                 <dd>
                   <input class="no-bottom-margin"
                          type="text" readonly
-                         value="{{row.jolokiaUrl}}">
+                         value="{{row.jolokiaUrl | maskPassword}}"
+                         style="width: 300px">
                   <button class="btn"
                           zero-clipboard
                           data-clipboard-text="{{row.jolokiaUrl}}"
@@ -283,9 +380,54 @@
                   </button>
                 </dd>
               </dl>
+              <dl class="dl-horizontal" ng-show="zookeeperUrl">
+                <dt>ZooKeeper:</dt>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{zookeeperUrl | maskPassword}}"
+                         style="width: 300px">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{zookeeperUrl}}"
+                          title="Click to copy this URL to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
+              </dl>
+              <dl class="dl-horizontal" ng-show="mavenRepoUploadUri">
+                <dt>Maven Proxy Upload:</dt>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{mavenRepoUploadUri | maskPassword}}"
+                         style="width: 300px">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{mavenRepoUploadUri}}"
+                          title="Click to copy this URL to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
+              </dl>
+              <dl class="dl-horizontal"  ng-show="mavenRepoDownloadUri">
+                <dt>Maven Proxy Download:</dt>
+                <dd>
+                  <input class="no-bottom-margin"
+                         type="text" readonly
+                         value="{{mavenRepoDownloadUri | maskPassword}}"
+                         style="width: 300px">
+                  <button class="btn"
+                          zero-clipboard
+                          data-clipboard-text="{{mavenRepoDownloadUri}}"
+                          title="Click to copy this URL to the clipboard">
+                    <i class="icon-copy"></i>
+                  </button>
+                </dd>
+              </dl>
             </div>
 
-            <div class="tab-pane" title="Provision List">
+            <div class="tab-pane" title="Provision list">
               <p>This is a list of bundles that the fabric8 agent has currently deployed to the container.</p>
               <dl>
                 <dt class="provision-list-title">
@@ -327,7 +469,7 @@
   </div>
 
   <div hawtio-confirm-dialog="deleteProfileDialog.show"
-       ok-button-text="Delete"
+       ok-button-text="Remove"
        on-ok="deleteProfiles()">
     <div class="dialog-body">
       <p>You are about to remove
@@ -355,14 +497,13 @@
       <div class="modal-footer">
         <input class="btn btn-success" ng-disabled="selectedProfilesDialog.length == 0" type="submit"
                value="Add">
-        <input class="btn btn-primary" ng-click="addProfileDialog.close()" value="Cancel">
+        <input class="btn btn-primary" ng-click="addProfileDialog.close()" type="button" value="Cancel">
       </div>
     </form>
   </div>
 
   <div ng-include="'app/fabric/html/deleteContainers.html'"></div>
-  <div ng-include="'app/fabric/html/changeVersionDialog.html'"></div>
-
+  
 </div>
 
 

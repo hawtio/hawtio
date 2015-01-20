@@ -1,0 +1,121 @@
+<div ng-controller="FabricRequirements.ProfileRequirementsController">
+
+  <script type="text/ng-template" id="healthTemplate.html">
+    <div class="span12 health-displays">
+      <div class="health-display"
+           ng-include="'app/health/html/healthDisplay.html'"
+           ng-init="value=fabricHealth[profileRequirement.profile]"></div>
+    </div>
+  </script>
+
+  <div ng-hide="requirements.profileRequirements.length > 0">
+    <div class="hero-unit">
+      <h3>No profile requirements set</h3>
+      <p>Head over to the <a href="#/fabric/profileView"><strong>profiles</strong></a> page and select some profiles, then click "Add Requirements" to configure the fabric8 auto scaler.</p>
+      <p>Or, you can drag and drop a requirements JSON file here to import your requirements.</p>
+    </div>
+  </div>
+
+  <div ng-show="requirements.profileRequirements.length > 0" class="row-fluid">
+    <div class="span11">
+      <div class="column-box-half-screen" ng-repeat="profileRequirement in requirements.profileRequirements" style="min-width: 600px">
+
+        <div class="row-fluid">
+          <div class="span11">
+            <h4>{{profileRequirement.profile}}</h4>
+          </div>
+          <div class="span1">
+            <i class="mouse-pointer red icon-remove" ng-click="remove(profileRequirement)"></i>
+          </div>
+        </div>
+
+        <div class="row-fluid">
+          <div class="span6">
+            <div compile="healthTemplate"></div>
+          </div>
+          <div class="span6">
+            <h6>Dependent Profiles</h6>
+            <p ng-repeat="profile in profileRequirement.dependentProfiles">{{profile}}</p>
+
+            <label>Minimum Instances:</label>
+            <input type="number"
+                   class="input-mini"
+                   ng-model="profileRequirement.minimumInstances"
+                   min="0"
+                   ng-change="onChange()">
+
+            <label>Maximum Instances:</label>
+            <input type="number"
+                   class="input-mini"
+                   ng-model="profileRequirement.maximumInstances"
+                   min="0"
+                   ng-change="onChange()">
+
+            <label>Maximum Instances Per Host:</label>
+            <input type="number"
+                   class="input-mini"
+                   ng-model="profileRequirement.maximumInstancesPerHost"
+                   min="0"
+                   ng-change="onChange()">
+
+          </div>
+        </div>
+
+        <div class="row-fluid" ng-show="profileRequirement.sshScalingRequirements">
+          <div class="span12">
+            <div class="row-fluid">
+              <div class="span12">
+                <h5 class="no-bottom-margin"> Scaling Requirements:</h5>
+              </div>
+            </div>
+            <div class="row-fluid">
+              <div class="span6" ng-show="profileRequirement.sshScalingRequirements.hostPatterns">
+                <h6>Host Patterns</h6>
+                <p ng-repeat="pattern in profileRequirement.sshScalingRequirements.hostPatterns">{{pattern}}</p>
+              </div>
+              <div class="span6" hawtio-drop ng-model="profileRequirement.sshScalingRequirements" property="hostTags">
+                <div ng-show="profileRequirement.sshScalingRequirements.hostTags">
+                  <h6>Host Tags</h6>
+                  <hawtio-tag-list ng-model="profileRequirement.sshScalingRequirements" property="hostTags" on-change="onChange()"></hawtio-tag-list>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row-fluid" ng-show="profileRequirement.dockerScalingRequirements">
+          <div class="span12">
+            <div class="row-fluid">
+              <div class="span12">
+                <h5 class="no-bottom-margin">Docker Scaling Requirements:</h5>
+              </div>
+            </div>
+            <div class="row-fluid">
+              <div class="span6" ng-show="profileRequirement.dockerScalingRequirements.hostPatterns">
+                <h6>Host Patterns</h6>
+                <p ng-repeat="pattern in profileRequirement.dockerScalingRequirements.hostPatterns">{{pattern}}</p>
+              </div>
+              <div class="span6" hawtio-drop ng-model="profileRequirement.dockerScalingRequirements" property="hostTags">
+                <div ng-show="profileRequirement.dockerScalingRequirements.hostTags">
+                  <h6>Host Tags</h6>
+                  <hawtio-tag-list ng-model="profileRequirement.dockerScalingRequirements" property="hostTags" on-change="onChange()"></hawtio-tag-list>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+      </div>
+
+    </div>
+    <div class="span1">
+      <div ng-include="'app/fabric-requirements/html/hostTags.html'"></div>
+    </div>
+
+  </div>
+
+
+  <!-- <div hawtio-editor="profileRequirementsString"></div> -->
+</div>

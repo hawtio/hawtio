@@ -1,9 +1,10 @@
 /**
  * @module Jclouds
  */
+/// <reference path="./jcloudsPlugin.ts"/>
 module Jclouds {
 
-    export function ApiController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {
+    _module.controller("JClouds.ApiController", ["$scope", "$filter", "workspace", "$routeParams", ($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) => {
         $scope.apiId = $routeParams.apiId;
 
         updateTableContents();
@@ -25,5 +26,5 @@ module Jclouds {
                 );
             }
         }
-   }
+   }]);
 }

@@ -15,7 +15,7 @@
 
     though you get this enabled by default if you use hawtio-default.war
    -->
-  <bean id="logQuery" class="org.fusesource.insight.log.log4j.Log4jLogQuery" lazy-init="false" scope="singleton"
+  <bean id="logQuery" class="io.fabric8.insight.log.log4j.Log4jLogQuery" lazy-init="false" scope="singleton"
         init-method="start" destroy-method="stop"/>
 
   <!-- This creates an embedded ActiveMQ Broker -->
@@ -77,6 +77,9 @@
       <property name="domainName" value="org.apache.camel"/>
   </bean>
 
+  <!-- use camel-metrics route policy to gather metrics for all routes -->
+  <bean id="metricsRoutePolicyFactory" class="org.apache.camel.component.metrics.routepolicy.MetricsRoutePolicyFactory"/>
+
   <!-- Here is a sample which processes the input files
          (leaving them in place - see the 'noop' flag), and
          sends them on a JMS queue. This queue is watched by
@@ -105,9 +108,11 @@
     </route>
     <!-- route for having something trigger all the time -->
     <route id="timerToAMQ">
-      <from uri="timer:foo?period=5000"/>
-      <setBody><constant>Hello World</constant></setBody>
-      <delay><constant>500</constant></delay>
+      <from uri="timer:foo?period=1000"/>
+      <transform>
+        <constant>Hello World</constant>
+      </transform>
+      <delay><constant>1500</constant></delay>
       <setBody><constant>A Delayed Hello World</constant></setBody>
       <setHeader headerName="myHeader">
         <constant>This is a new header value</constant>
@@ -117,9 +122,11 @@
     </route>
 
     <route id="bytesToAMQ">
-      <from uri="timer:foo?period=5000"/>
-      <setBody><constant>Hello World</constant></setBody>
-      <delay><constant>500</constant></delay>
+      <from uri="timer:foo?period=2000"/>
+      <transform>
+        <constant>Hello World</constant>
+      </transform>
+      <delay><constant>1000</constant></delay>
       <setBody><constant>A Delayed Hello World</constant></setBody>
       <setHeader headerName="myHeader">
         <constant>This is a new header value</constant>
@@ -201,7 +208,30 @@
     </route>
   </camelContext>
 
+  <!-- lets have a Camel with the Rest DSL too -->
+  <camelContext id="restCamel" xmlns="http://camel.apache.org/schema/spring">
+
+    <restConfiguration component="jetty" bindingMode="json">
+      <dataFormatProperty key="prettyPrint" value="true"/>
+    </restConfiguration>
+
+    <rest path="/user" consumes="application/json" produces="application/json">
+      <get uri="/view/{id}" outType="io.hawt.camel.rest.User">
+        <to uri="bean:userService?method=getUser(${header.id})"/>
+      </get>
+      <get uri="/list" outType="io.hawt.camel.rest.User[]">
+        <to uri="bean:userService?method=listUsers"/>
+      </get>
+      <put uri="/update" type="io.hawt.camel.rest.UserService" outType="io.hawt.camel.rest.User">
+        <to uri="bean:userService?method=updateUser"/>
+      </put>
+    </rest>
+
+  </camelContext>
+
   <!-- dummy bean for camel routes -->
+  <bean id="userService" class="io.hawt.camel.rest.UserService"/>
+
   <bean id="myBean" class="io.hawt.camel.sample.CheeseBean"/>
 
   <bean id="quartz2" class="org.apache.camel.component.quartz2.QuartzComponent">

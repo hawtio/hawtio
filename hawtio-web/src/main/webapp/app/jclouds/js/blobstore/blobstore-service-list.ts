@@ -1,8 +1,9 @@
 /**
  * @module Jclouds
  */
+/// <reference path="../jcloudsPlugin.ts"/>
 module Jclouds {
-    export function BlobstoreListController($scope, $location, workspace, jolokia) {
+    _module.controller("Jclouds.BlobstoreListController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace, jolokia) => {
 
         $scope.result = {};
         $scope.blobstoreServiceIds = [];
@@ -58,5 +59,5 @@ module Jclouds {
                 Core.$apply($scope);
             }
         }
-    }
+    }]);
 }

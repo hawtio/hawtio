@@ -1,6 +1,7 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
-  export function PIDController($scope, $routeParams, jolokia, $location) {
+  _module.controller("Fabric.PIDController", ["$scope", "$routeParams", "jolokia", "$location", ($scope, $routeParams, jolokia, $location) => {
     $scope.versionId = $routeParams.versionId;
     $scope.profileId = $routeParams.profileId;
     $scope.fname = $routeParams.fname;
@@ -37,10 +38,10 @@ module Fabric {
     $scope.save = () => {
       saveConfigFile(jolokia, $scope.versionId, $scope.profileId, $scope.fname, $scope.data.encodeBase64(), () => {
         $scope.dirty = false;
-        notification('success', "Saved " + $scope.fname);
+        Core.notification('success', "Saved " + $scope.fname);
         $location.path("/fabric/profile/" + $scope.versionId + "/" + $scope.profileId);
       }, (response) => {
-        notification('error', "Failed to save " + $scope.fname + " due to " + response.error);
+        Core.notification('error', "Failed to save " + $scope.fname + " due to " + response.error);
       });
     };
 
@@ -64,6 +65,5 @@ module Fabric {
         Core.$apply($scope);
       }
     }
-      
-  }
+  }]);
 }

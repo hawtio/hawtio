@@ -1,10 +1,8 @@
-
-
 Logger.setLevel({"value": 1, "name": "DEBUG"});
 
 // initialize our module
 var App;
-(function(App) {
+(function (App) {
   var pluginName = "App";
   App.pluginName = pluginName;
 
@@ -13,11 +11,11 @@ var App;
   var module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ui', 'ui.bootstrap.dialog', 'hawtio-ui']);
   App.module = module;
 
-  module.factory('log', function() {
+  module.factory('log', function () {
     return log;
   });
 
-  module.run(function() {
+  module.run(function () {
     log.info("App started...");
   });
 
@@ -27,25 +25,25 @@ var App;
 
 
 // now we can just add controllers
-App.ViewController = function($scope, log, $http) {
-  log.debug("In view controller");
+App.ViewController = function ($scope, log, $http) {
 
-  $scope.links = {
-    'test1.html': 'app/ui/html/test1.html',
-    'test2.html': 'app/ui/html/test2.html'
-  };
+  $scope.directivesPage = 'app/ui/html/developerPage.html';
+  $scope.overviewPage = 'overview.html';
 
-  $scope.getContents = function(filename, cb) {
-    $http({method: 'GET', url: $scope.links[filename]})
-        .success(function(data, status, headers, config) {
-          cb(data);
-        })
-        .error(function(data, status, headers, config) {
-          cb("Failed to fetch " + filename + ": " + data);
-        });
+  $scope.viewPartial = $scope.directivesPage;
+
+  $scope.getContents = function (filename, cb) {
+    var fullUrl = "app/ui/html/test/" + filename;
+    log.info("Finding file: " + fullUrl);
+    $http({method: 'GET', url: fullUrl})
+            .success(function (data, status, headers, config) {
+              cb(data);
+            })
+            .error(function (data, status, headers, config) {
+              cb("Failed to fetch " + filename + ": " + data);
+            });
   };
 };
-
 
 // bootstrap app via plugin loader
 $(function () {

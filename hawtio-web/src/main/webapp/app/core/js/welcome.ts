@@ -1,9 +1,11 @@
 /**
  * @module Core
  */
+/// <reference path="corePlugin.ts"/>
 module Core {
 
-  export function WelcomeController($scope, $location, branding, localStorage) {
+  _module.controller("Core.WelcomeController", ["$scope", "$location", "branding", "localStorage", ($scope, $location, branding, localStorage) => {
+    $scope.branding = branding;
 
     var log:Logging.Logger = Logger.get("Welcome");
 
@@ -14,24 +16,24 @@ module Core {
       $location.path("/");
     };
 
-    // load the welcome.md file
-    $.ajax({
-      url: "app/core/doc/welcome.md",
-      dataType: 'html',
-      cache: false,
-      success: function (data, textStatus, jqXHR) {
-        $scope.html = "Unable to download welcome.md";
-        if (angular.isDefined(data)) {
-          $scope.html = marked(data);
-          $scope.branding = branding;
+    $scope.$watch('branding.welcomePageUrl', (newValue, oldValue) => {
+      // load the welcome.md file
+      $.ajax({
+        url: branding.welcomePageUrl,
+        dataType: 'html',
+        cache: false,
+        success: function (data, textStatus, jqXHR) {
+          $scope.html = "Unable to download welcome.md";
+          if (angular.isDefined(data)) {
+            $scope.html = branding.onWelcomePage(data);
+          }
+          Core.$apply($scope);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          $scope.html = "Unable to download welcome.md";
+          Core.$apply($scope);
         }
-        Core.$apply($scope);
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        $scope.html = "Unable to download welcome.md";
-        Core.$apply($scope);
-      }
-    })
-  }
-
+      });
+    });
+  }]);
 }

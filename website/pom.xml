@@ -5,7 +5,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>website</artifactId>
@@ -16,6 +16,10 @@
 
   <properties>
     <jettyPort>8000</jettyPort>
+
+    <!-- lets use the latest greatest! :) -->
+    <hawtio-release-version>${project.version}</hawtio-release-version>
+
     <scala-version>2.9.0</scala-version>
 <!--
     TODO lets not use 2.10 scala yet as it seems the 1.6.1 distro of scalate borks the scalate plugin
@@ -103,6 +107,39 @@
         </executions>
       </plugin>
 
+      <!-- unpack the web app -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.8</version>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>io.hawt</groupId>
+                  <artifactId>hawtio-web</artifactId>
+                  <version>${hawtio-release-version}</version>
+                  <type>war</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.directory}/sitegen/app</outputDirectory>
+                  <excludes>WEB-INF/**, META-INF/**</excludes>
+                </artifactItem>
+              </artifactItems>
+              <excludes>WEB-INF/**, META-INF/**</excludes>
+              <outputDirectory>${project.build.directory}/sitegen/app</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- lets copy any images for the plugins -->
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
@@ -136,6 +173,25 @@
                     </copy>
                   </sequential>
                 </ac:for>
+
+                <!-- copy the directives site -->
+<!--
+                <mkdir dir="${project.build.directory}/sitegen/directives"/>
+                <copy todir="${project.build.directory}/sitegen/directives">
+                  <fileset dir="${basedir}/../hawtio-directives/target/hawtio-directives-${project.version}">
+                    <include name="**/*.*"/>
+                  </fileset>
+                </copy>
+-->
+
+                <!-- copy the api docs -->
+                <mkdir dir="${project.build.directory}/sitegen/ts-api"/>
+                <copy todir="${project.build.directory}/sitegen/ts-api">
+                  <fileset dir="${basedir}/../hawtio-api-docs/target/hawtio-api-docs-${project.version}">
+                    <include name="**/*.*"/>
+                  </fileset>
+                </copy>
+
               </target>
             </configuration>
             <goals>
@@ -231,7 +287,7 @@
       </plugin>
 
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>${jetty-plugin-groupId}</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty-plugin-version}</version>
         <configuration>
@@ -266,6 +322,45 @@
           <scanIntervalSeconds>0</scanIntervalSeconds>
         </configuration>
       </plugin>
+
+      <!-- livereload -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec-maven-plugin-version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>net.alchim31</groupId>
+            <artifactId>livereload-jvm</artifactId>
+            <version>0.2.0</version>
+            <type>jar</type>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <includeProjectDependencies>false</includeProjectDependencies>
+          <includePluginDependencies>true</includePluginDependencies>
+          <executableDependency>
+            <groupId>net.alchim31</groupId>
+            <artifactId>livereload-jvm</artifactId>
+          </executableDependency>
+          <mainClass>net_alchim31_livereload.Main</mainClass>
+          <classpathScope>test</classpathScope>
+          <arguments>
+            <argument>-d</argument>
+            <argument>${basedir}/src</argument>
+          </arguments>
+          <systemProperties>
+          </systemProperties>
+        </configuration>
+      </plugin>
+
     </plugins>
 
 
@@ -314,7 +409,7 @@
           <excludedLinks>
             <value>http://github.com/</value>
             <value>http://git.or.cz/</value>
-            <value>http://localhost:8080/</value>
+            <value>http://localhost:8282/</value>
             <value>http://repo.fusesource.com/</value>
             <value>http://search.twitter.com/</value>
             <value>http://www.chengin.com/</value>

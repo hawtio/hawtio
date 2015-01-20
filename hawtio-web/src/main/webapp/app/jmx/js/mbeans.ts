@@ -1,9 +1,23 @@
+/// <reference path="jmxPlugin.ts"/>
+/// <reference path="../../tree/js/treePlugin.ts"/>
 /**
  * @module Jmx
  */
-
 module Jmx {
-  export function MBeansController($scope, $location: ng.ILocationService, workspace: Workspace) {
+
+  _module.controller("Jmx.TreeHeaderController", ["$scope", ($scope) => {
+    $scope.expandAll = () => {
+      Tree.expandAll("#jmxtree");
+    };
+
+    $scope.contractAll = () => {
+      Tree.contractAll("#jmxtree");
+    };
+  }]);
+
+  _module.controller("Jmx.MBeansController", ["$scope", "$location", "workspace", ($scope, $location: ng.ILocationService, workspace: Workspace) => {
+
+    $scope.num = 1;
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -30,5 +44,5 @@ module Jmx {
     $scope.$on('jmxTreeUpdated', $scope.populateTree);
 
     $scope.populateTree();
-  }
+  }]);
 }

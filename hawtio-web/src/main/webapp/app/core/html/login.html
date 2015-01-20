@@ -6,8 +6,10 @@
       <form name="login" class="form-horizontal no-bottom-margin" ng-submit="doLogin()">
         <fieldset>
           <div class="login-logo">
-            <img ng-src="{{branding.appLogo}}" ng-show="branding.appLogo">
-            <span ng-show="branding.appName">{{branding.appName}}</span>
+            <img ng-src="{{branding.appLogo}}" 
+                 ng-show="branding.appLogo"
+                 ng-class="branding.logoClass()">
+            <span ng-show="branding.appName && !branding.logoOnly">{{branding.appName}}</span>
           </div>
           <div class="control-group">
             <label class="control-label" for="username">Username </label>
@@ -27,7 +29,7 @@
               <label class="checkbox" for="rememberMe">
                 <input id="rememberMe" type="checkbox" ng-model="rememberMe"> Remember me
               </label>
-              <button type="submit" class="btn btn-success" ng-disabled="!login.$valid"></i> Log In</button>
+              <button type="submit" class="btn btn-success"></i> Log in</button>
             </div>
           </div>
 

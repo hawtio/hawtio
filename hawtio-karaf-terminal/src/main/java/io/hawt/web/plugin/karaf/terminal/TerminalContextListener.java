@@ -1,38 +1,36 @@
 package io.hawt.web.plugin.karaf.terminal;
 
-import io.hawt.system.ConfigManager;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-/**
- * @author Stan Lewis
- */
+import io.hawt.system.ConfigManager;
+
 public class TerminalContextListener implements ServletContextListener {
 
-  private ConfigManager configManager = new ConfigManager();
+    private ConfigManager configManager = new ConfigManager();
 
-  @Override
-  public void contextInitialized(ServletContextEvent sce) {
-    try {
-      configManager.init();
-    } catch (Exception e) {
-      throw createServletException(e);
-    }
-    sce.getServletContext().setAttribute("ConfigManager", configManager);
-  }
-
-  @Override
-  public void contextDestroyed(ServletContextEvent sce) {
-    try {
-      configManager.destroy();
-    } catch (Exception e) {
-      throw createServletException(e);
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        try {
+            configManager.init();
+        } catch (Exception e) {
+            throw createServletException(e);
+        }
+        sce.getServletContext().setAttribute("ConfigManager", configManager);
     }
 
-  }
-  protected RuntimeException createServletException(Exception e) {
-    return new RuntimeException(e);
-  }
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        try {
+            configManager.destroy();
+        } catch (Exception e) {
+            throw createServletException(e);
+        }
+
+    }
+
+    protected RuntimeException createServletException(Exception e) {
+        return new RuntimeException(e);
+    }
 
 }

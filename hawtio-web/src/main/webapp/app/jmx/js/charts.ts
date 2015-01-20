@@ -1,8 +1,9 @@
 /**
  * @module Jmx
  */
+/// <reference path="./jmxPlugin.ts"/>
 module Jmx {
-  export function ChartController($scope, $element, $location, workspace:Workspace, localStorage, jolokiaUrl, jolokiaParams) {
+  _module.controller("Jmx.ChartController", ["$scope", "$element", "$location", "workspace", "localStorage", "jolokiaUrl", "jolokiaParams", ($scope, $element, $location, workspace:Workspace, localStorage, jolokiaUrl, jolokiaParams) => {
 
 
     $scope.metrics = [];
@@ -52,7 +53,7 @@ module Jmx {
       }
     };
 
-    var doRender = Core.throttled(render, 200);
+    var doRender:()=>any = Core.throttled(render, 200);
 
     $scope.deregRouteChange = $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -69,6 +70,10 @@ module Jmx {
     function render() {
 
       var node = workspace.selection;
+      if (node == null) {
+        return;
+      }
+
       if (!angular.isDefined(node) || !angular.isDefined($scope.updateRate) || $scope.updateRate === 0) {
         // Called render too early, let's retry
         setTimeout(doRender, 500);
@@ -138,12 +143,16 @@ module Jmx {
                 foundNames = filtered;
               }
             }
+
+            // sort the names
+            foundNames = foundNames.sort();
+
             angular.forEach(foundNames, (key) => {
               var metric = $scope.jolokiaContext.metric({
                 type: 'read',
                 mbean: mbean,
                 attribute: key
-              }, humanizeValue(key));
+              }, Core.humanizeValue(key));
               if (metric) {
                 $scope.metrics.push(metric);
               }
@@ -170,10 +179,13 @@ module Jmx {
             }
           });
 
+          // sort the names
+          attributeNames = attributeNames.sort();
+
           // lets create the metrics
           attributeNames.forEach((key) => {
             angular.forEach(mbeans, (mbean, name) => {
-              var attributeTitle = humanizeValue(key);
+              var attributeTitle = Core.humanizeValue(key);
               // for now lets always be verbose
               var title = name + ": " + attributeTitle;
 
@@ -260,5 +272,5 @@ module Jmx {
 
     };
 
-  }
+  }]);
 }

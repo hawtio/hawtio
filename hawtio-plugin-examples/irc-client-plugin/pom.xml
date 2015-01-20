@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>hawtio-plugin-examples</artifactId>
+    <groupId>io.hawt</groupId>
+    <version>1.5-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <packaging>war</packaging>
+  <artifactId>irc-client-plugin</artifactId>
+  <description>hawtio :: hawtio IRC client plugin example</description>
+
+  <properties>
+    <!-- filtered plugin properties -->
+    <plugin-context>/irc-plugin</plugin-context>
+    <plugin-name>${project.artifactId}</plugin-name>
+    <plugin-domain />
+
+    <fuse.osgi.import>
+      javax.servlet,
+      javax.security.auth,
+      *;resolution:=optional
+    </fuse.osgi.import>
+  </properties>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-plugin-mbean</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.schwering</groupId>
+      <artifactId>irclib</artifactId>
+      <version>1.10</version>
+    </dependency>
+
+    <!-- servlet API is provided by the container -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>${servlet-api-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-version}</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
+
+
+    <plugins>
+
+      <!-- We use maven-antrun-plugin to build up a list of
+           javascript files for our plugin mbean, this means
+           it needs to run before the maven-resources-plugin
+           copies and filters the web.xml, since for this
+           example we use contextParam settings to configure
+           our plugin mbean -->
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${maven-antrun-plugin-version}</version>
+        <executions>
+
+          <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <echo>Building plugin javascript file list</echo>
+                <fileset id="javascript-files" dir="${basedir}/src/main/webapp">
+                  <!-- Ensure that ircPlugin.js is included first
+                       as it's our entrypoint -->
+                  <include name="plugin/js/ircPlugin.js" />
+                  <include name="**/*.js" />
+                </fileset>
+                <pathconvert pathsep="," dirsep="/" property="plugin-scripts" refid="javascript-files">
+                  <map from="${basedir}/src/main/webapp/" to="" />
+                </pathconvert>
+                <echo>Files: ${plugin-scripts}</echo>
+                <echo>Copying log4j.properties</echo>
+                <copy file="src/main/resources/log4j.properties" todir="target/classes" />
+              </target>
+              <exportAntProperties>true</exportAntProperties>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven-resources-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>${maven-bundle-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <manifestLocation>${webapp-outdir}/META-INF</manifestLocation>
+          <supportedProjectTypes>
+            <supportedProjectType>jar</supportedProjectType>
+            <supportedProjectType>bundle</supportedProjectType>
+            <supportedProjectType>war</supportedProjectType>
+          </supportedProjectTypes>
+          <instructions>
+            <Webapp-Context>${plugin-context}</Webapp-Context>
+            <Web-ContextPath>${plugin-context}</Web-ContextPath>
+
+            <Embed-Directory>WEB-INF/lib</Embed-Directory>
+            <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+            <Embed-Transitive>true</Embed-Transitive>
+
+            <Export-Package>${fuse.osgi.export}</Export-Package>
+            <Import-Package>${fuse.osgi.import}</Import-Package>
+            <DynamicImport-Package>${fuse.osgi.dynamic}</DynamicImport-Package>
+            <Private-Package>${fuse.osgi.private.pkg}</Private-Package>
+
+            <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
+
+            <Bundle-Name>${project.description}</Bundle-Name>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Implementation-Title>HawtIO</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+          </instructions>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>${war-plugin-version}</version>
+        <configuration>
+          <outputFileNameMapping>@{artifactId}@-@{baseVersion}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
+          <packagingExcludes>**/classes/OSGI-INF/**</packagingExcludes>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <archive>
+            <manifestFile>${webapp-outdir}/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+          <webResources>
+            <resource>
+              <filtering>true</filtering>
+              <directory>src/main/resources</directory>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+              <excludes>
+                <exclude>log4j.properties</exclude>
+              </excludes>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+</project>

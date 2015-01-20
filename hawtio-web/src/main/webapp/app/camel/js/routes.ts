@@ -1,18 +1,22 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  export function RouteController($scope, $routeParams, $element, $timeout, workspace:Workspace, jolokia, localStorage) {
+  _module.controller("Camel.RouteController", ["$scope", "$routeParams", "$element", "$timeout", "workspace", "$location", "jolokia", "localStorage", ($scope, $routeParams, $element, $timeout, workspace:Workspace, $location, jolokia, localStorage) => {
     var log:Logging.Logger = Logger.get("Camel");
 
     $scope.routes = [];
     $scope.routeNodes = {};
 
-    $scope.contextId = $routeParams["contextId"];
-    $scope.routeId = trimQuotes($routeParams["routeId"]);
-
-    $scope.isJmxTab = !$routeParams["contextId"] || !$routeParams["routeId"];
+    // if we are in dashboard then $routeParams may be null
+    if ($routeParams != null) {
+      $scope.contextId = $routeParams["contextId"];
+      $scope.routeId = Core.trimQuotes($routeParams["routeId"]);
+      $scope.isJmxTab = !$routeParams["contextId"] || !$routeParams["routeId"];
+    }
 
     $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
     $scope.camelMaximumLabelWidth = Camel.maximumLabelWidth(localStorage);
+    $scope.camelShowInflightCounter = Camel.showInflightCounter(localStorage);
 
     var updateRoutes = Core.throttled(doUpdateRoutes, 1000);
 
@@ -61,6 +65,7 @@ module Camel {
         $scope.nodes = {};
         var nodes = [];
         var links = [];
+        $scope.processorTree = camelProcessorMBeansById(workspace);
         Camel.addRouteXmlChildren($scope, routeXmlNode, nodes, links, null, 0, 0);
         showGraph(nodes, links);
       } else if ($scope.mbean) {
@@ -87,6 +92,7 @@ module Camel {
       }
       if (data) {
         var doc = $.parseXML(data);
+        $scope.processorTree = camelProcessorMBeansById(workspace);
         Camel.loadRouteXmlNodes($scope, doc, selectedRouteId, nodes, links, getWidth());
         showGraph(nodes, links);
       } else {
@@ -151,6 +157,37 @@ module Camel {
         Core.$apply($scope);
       });
 
+      // TODO: https://github.com/hawtio/hawtio/issues/1261
+      // we need some kind of right-click menu on d3
+      // disabled code below as its work in progress
+/*      gNodes.dblclick(function() {
+        //var allStats = $(doc).find("processorStat");
+        var cid = this.getAttribute("data-cid");
+        log.info("You double clicked " + cid);
+
+        // find the node of the cid we clicked, and then find the folder in the Camel tree
+        // to grab the folder key, which is the nid for the location in the JMX plugin to
+        // view the processor mbean
+        var node = $scope.nodes[cid];
+        if (node) {
+          var pid = node.elementId;
+
+          var processors = camelProcessorMBeansById(workspace);
+          var processor = processors[pid];
+          if (processor) {
+            var key = processor.key;
+            // change url to jmx attributes so we can see the jmx stats for the selected processor
+            $location.search("nid", key);
+            var url = "/jmx/attributes";
+            var href = Core.createHref($location, url);
+            // change path to the jmx attributes page so we can see the processor mbean
+            log.info("Changing to path: " + href);
+            $location.url(href);
+            Core.$apply($scope);
+          }
+        }
+      });*/
+
       if ($scope.mbean) {
         Core.register(jolokia, $scope, {
           type: 'exec', mbean: $scope.mbean,
@@ -196,6 +233,7 @@ module Camel {
         // we could have used a function instead of the boolean isRoute parameter (but sometimes that is easier)
         var id = stat.getAttribute("id");
         var completed = stat.getAttribute("exchangesCompleted");
+        var inflight = stat.hasAttribute("exchangesInflight") ? stat.getAttribute("exchangesInflight") : 0;
         var tooltip = "";
         if (id && completed) {
           var container = isRoute ? $scope.routeNodes: $scope.nodes;
@@ -217,9 +255,12 @@ module Camel {
             var mean = stat.getAttribute("meanProcessingTime");
             var min = stat.getAttribute("minProcessingTime");
             var max = stat.getAttribute("maxProcessingTime");
-            tooltip = "last: " + last + " (ms)\nmean: " + mean + " (ms)\nmin: " + min + " (ms)\nmax: " + max + " (ms)";
+            tooltip = "totoal: " + total + "\ninflight:" + inflight + "\nlast: " + last + " (ms)\nmean: " + mean + " (ms)\nmin: " + min + " (ms)\nmax: " + max + " (ms)";
 
             node["counter"] = total;
+            if ($scope.camelShowInflightCounter) {
+              node["inflight"] = inflight;
+            }
             var labelSummary = node["labelSummary"];
             if (labelSummary) {
               tooltip = labelSummary + "\n\n" + tooltip;
@@ -227,17 +268,11 @@ module Camel {
             node["tooltip"] = tooltip;
           } else {
             // we are probably not showing the route for these stats
-/*
-            var keys = Object.keys(container).sort();
-            log.info("Warning, could not find node for " + id + " when keys were: " + keys);
-*/
           }
         }
       }
     }
-
-  }
-
+  }]);
 }
 
 

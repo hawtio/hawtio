@@ -1,18 +1,22 @@
 package io.hawt.web;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.*;
 
 public class ContextFormatterServlet extends HttpServlet {
 
@@ -32,10 +36,10 @@ public class ContextFormatterServlet extends HttpServlet {
         }
 
         if (contextType.equals("jobExecution")) {
-            url = server + "jobs/executions/" + jobExecutionId + "/context.json";
+            url = server + "jobs/executions/" + jobExecutionId + "/execution-context.json";
             paramString = "jobExecutionContext";
         } else if (contextType.equals("stepExecution")) {
-            url = server + "jobs/executions/" + jobExecutionId + "/steps/" + stepExecutionId + "/context.json";
+            url = server + "jobs/executions/" + jobExecutionId + "/steps/" + stepExecutionId + "/execution-context.json";
             paramString = "stepExecutionContext";
         }
         HttpClient client = new HttpClient();

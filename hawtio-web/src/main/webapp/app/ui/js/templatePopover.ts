@@ -1,9 +1,8 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
-
-
   export function TemplatePopover($templateCache, $compile, $document) {
 
     return {
@@ -41,7 +40,11 @@ module UI {
           title: title,
           trigger: trigger,
           html: html,
-          content: () => $compile(template)($scope),
+          content: () => {
+            var res = $compile(template)($scope);
+            Core.$digest($scope);
+            return  res;
+          },
           delay: delay,
           container: container,
           selector: selector,
@@ -78,5 +81,7 @@ module UI {
       }
     };
   }
+
+  _module.directive('hawtioTemplatePopover', ["$templateCache", "$compile", "$document", UI.TemplatePopover]);
 
 }

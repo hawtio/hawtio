@@ -29,7 +29,7 @@
               ng-class="selectedFilterClass('NONE')">
             <span class="clickable no-fade total">Total:</span> {{unfilteredThreads.length}}
           </li>
-          <li ng-repeat="(state, total) in totals"
+          <li ng-repeat="(state, total) in totals track by $index"
               ng-click="filterOn(state)"
               title="Filter by {{state}}"
               ng-class="selectedFilterClass(state)">
@@ -56,8 +56,9 @@
 
 
   <div class="wiki-fixed">
-
-    <input class="search-query span12" type="text" ng-model="searchFilter" placeholder="Filter...">
+    <div class="pull-right">
+      <hawtio-filter ng-model="searchFilter" placeholder="Filter..." save-as="threads-text-filter"></hawtio-filter>
+    </div>
 
     <p></p>
 

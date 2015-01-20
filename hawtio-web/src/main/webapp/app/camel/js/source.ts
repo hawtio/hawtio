@@ -1,5 +1,6 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
-  export function SourceController($scope, workspace:Workspace) {
+  _module.controller("Camel.SourceController", ["$scope", "workspace", ($scope, workspace:Workspace) => {
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -11,12 +12,7 @@ module Camel {
       updateRoutes();
     });
 
-    var options = {
-      mode: {
-        name: 'xml'
-      }
-    };
-    $scope.codeMirrorOptions = CodeEditor.createEditorSettings(options);
+    $scope.mode = 'xml';
 
     function getSource(routeXmlNode) {
       function removeCrappyHeaders(idx, e) {
@@ -52,7 +48,7 @@ module Camel {
         if (!$scope.mbean) {
           // maybe the parent is the camel context folder (when we have selected the routes folder),
           // then grab the object name from parent
-          var parent = workspace.selection.parent;
+          var parent: any = Core.pathGet(workspace, ["selection", "parent"]);
           if (parent && parent.title === "context") {
             $scope.mbean = parent.children[0].objectName;
           }
@@ -86,7 +82,7 @@ module Camel {
     };
     
     var saveWorked = () => {
-      notification("success", "Route updated!");
+      Core.notification("success", "Route updated!");
       // lets clear the cached route XML so we reload the new value
       clearSelectedRouteNode(workspace);
       updateRoutes();
@@ -102,11 +98,11 @@ module Camel {
         if (mbean) {
           jolokia.execute(mbean, "addOrUpdateRoutesFromXml(java.lang.String)", decoded, onSuccess(saveWorked));
         } else {
-          notification("error", "Could not find CamelContext MBean!");
+          Core.notification("error", "Could not find CamelContext MBean!");
         }
       }
     };
-  }
+  }]);
 }
 
 

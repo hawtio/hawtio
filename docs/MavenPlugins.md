@@ -5,7 +5,7 @@
 
 ## Maven Goals
 
-**hawtio** offers the following Maven Goals, and each goal is futther documented below:
+**hawtio** offers the following Maven Goals, and each goal is further documented below:
 
 <table class="table">
   <tr>
@@ -81,7 +81,7 @@ Currently all of the **hawtio** Maven Plugins provides the following common opti
   </tr>  
   <tr>
     <td>port</td>
-    <td>8080</td>
+    <td>8282</td>
     <td>The port number to use for the embedded hawtio web console.</td>
   </tr>  
   <tr>
@@ -217,7 +217,7 @@ In the Maven pom.xml file, the **hawtio** plugin is configured by adding the fol
     <plugin>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-maven-plugin</artifactId>
-      <version>1.2.3</version>
+      <version>1.4.14</version>
       <configuration>
         <!-- configuration options goes here -->
       </configuration>
@@ -229,7 +229,7 @@ In the &lt;configuration&gt; section we can configure the plugin with any of the
         <logClasspath>true</logClasspath>
       </configuration>
 
-And to change the port number from 8080 to 8090 do:
+And to change the port number from 8282 to 8090 do:
 
       <configuration>
         <logClasspath>true</logClasspath>
@@ -264,9 +264,9 @@ To run the same example with **hawtio** embedded as a web console, you simply do
     cd examples
     cd camel-example-console
     mvn compile
-    mvn io.hawt:hawtio-maven-plugin:1.2.3:camel
+    mvn io.hawt:hawtio-maven-plugin:1.4.14:camel
 
-Where 1.2.3 is the **hawtio** version to use.
+Where 1.4.14 is the **hawtio** version to use.
 
 ### Adding hawtio plugin to the Apache Camel examples
 
@@ -277,7 +277,7 @@ In the &lt;build&gt;&lt;plugin&gt;section add the following xml code:
     <plugin>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-maven-plugin</artifactId>
-      <version>1.2.3</version>
+      <version>1.4.14</version>
     </plugin>
 
 And you can run the console example simply by typing

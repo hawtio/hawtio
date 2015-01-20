@@ -4,11 +4,36 @@
       <td></td>
       <td class="less-big">
         <div class="btn-group">
-          <button ng-click="stopBundle(bundleId)" class="btn" title="stop"><i class="icon-off"/></button>
-          <button ng-click="startBundle(bundleId)" class="btn" title="start"><i class="icon-play-circle"/></button>
-          <button ng-click="refreshBundle(bundleId)" class="btn" title="refresh"><i class="icon-refresh"/></button>
-          <button ng-click="updateBundle(bundleId)" class="btn" title="update"><i class="icon-cloud-download"/></button>
-          <button ng-click="uninstallBundle(bundleId)" class="btn" title="uninstall"><i class="icon-eject"/></button>
+          <button ng-click="stopBundle(bundleId)" 
+                  class="btn" 
+                  hawtio-show
+                  object-name="{{frameworkMBean}}"
+                  method-name="stopBundle"
+                  title="stop"><i class="icon-off"/></button>
+          <button ng-click="startBundle(bundleId)" 
+                  class="btn" 
+                  hawtio-show
+                  object-name="{{frameworkMBean}}"
+                  method-name="startBundle"
+                  title="start"><i class="icon-play-circle"/></button>
+          <button ng-click="refreshBundle(bundleId)" 
+                  class="btn" 
+                  hawtio-show
+                  object-name="{{frameworkMBean}}"
+                  method-name="refreshBundle"
+                  title="refresh"><i class="icon-refresh"/></button>
+          <button ng-click="updateBundle(bundleId)" 
+                  class="btn" 
+                  hawtio-show
+                  object-name="{{frameworkMBean}}"
+                  method-name="updateBundle"
+                  title="update"><i class="icon-cloud-download"/></button>
+          <button ng-click="uninstallBundle(bundleId)" 
+                  class="btn" 
+                  hawtio-show
+                  object-name="{{frameworkMBean}}"
+                  method-name="uninstallBundle"
+                  title="uninstall"><i class="icon-eject"/></button>
         </div>
       </td>
     </tr>
@@ -92,19 +117,19 @@
               </a>
             </div>
             <div id="collapseInspectClassloading" class="accordion-body collapse in">
-              <form class="form-inline">
+              <form class="form-inline" hawtio-show object-name="{{osgiToolsMBean}}" operation-name="getLoadClassOrigin">
                 <fieldset>
                   &nbsp;&nbsp;
                   <input class="input-xlarge" type="text" ng-model="classToLoad" placeHolder="Enter Class Name to Load...">
-                  <button class="btn btn-success execute" ng-click="executeLoadClass(classToLoad)">Load Class</button>
+                  <button class="btn btn-success execute" ng-click="executeLoadClass(classToLoad)">Load class</button>
                 </fieldset>
               </form>
-              <form class="form-inline">
+              <form class="form-inline" hawtio-show object-name="{{osgiToolsMBean}}" operation-name="getResourceURL">
                 <fieldset>
                   &nbsp;&nbsp;
                   <input class="input-xlarge" type="text" ng-model="resourceToLoad"
                          placeHolder="Enter Resource Name to Find...">
-                  <button class="btn btn-success execute" ng-click="executeFindResource(resourceToLoad)">Get Resource
+                  <button class="btn btn-success execute" ng-click="executeFindResource(resourceToLoad)">Get resource
                   </button>
                 </fieldset>
               </form>

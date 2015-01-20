@@ -1,13 +1,33 @@
 /**
  * @module Osgi
  */
+/// <reference path="osgiPlugin.ts"/>
+/// <reference path="metadata.ts"/>
+/// <reference path="../../ui/js/dialog.ts"/>
+/// <reference path="../../core/js/workspace.ts"/>
+/// <reference path="../../fabric/js/fabricGlobals.ts"/>
 module Osgi {
-  export function PidController($scope, $timeout, $routeParams, $location, workspace:Workspace, jolokia) {
+  _module.controller("Osgi.PidController", ["$scope", "$timeout", "$routeParams", "$location", "workspace", "jolokia", ($scope, $timeout, $routeParams, $location, workspace:Core.Workspace, jolokia) => {
     $scope.deletePropDialog = new UI.Dialog();
     $scope.deletePidDialog = new UI.Dialog();
     $scope.addPropertyDialog = new UI.Dialog();
     $scope.factoryPid = $routeParams.factoryPid;
-    $scope.pid = $routeParams.pid || $scope.factoryPid;
+    $scope.pid = $routeParams.pid;
+    $scope.createForm = {
+      pidInstanceName: null
+    };
+    $scope.newPid = $scope.factoryPid && !$scope.pid;
+    if ($scope.newPid) {
+      $scope.editMode = true;
+    }
+
+    if ($scope.pid && !$scope.factoryPid) {
+      var idx = $scope.pid.indexOf("-");
+      if (idx > 0) {
+        $scope.factoryPid = $scope.pid.substring(0, idx);
+        $scope.factoryInstanceName = $scope.pid.substring(idx + 1, $scope.pid.length);
+      }
+    }
 
     $scope.selectValues = {};
 
@@ -39,11 +59,11 @@ module Osgi {
 
     function updatePid(mbean, pid, data) {
       var completeFn = (response) => {
-        notification("success", "Successfully updated pid: " + pid);
+        Core.notification("success", "Successfully updated pid: " + pid);
 
-        if (pid && $scope.factoryPid && !$routeParams.pid && !$scope.zkPid) {
+        if (pid && $scope.factoryPid && $scope.newPid) {
           // we've just created a new pid so lets move to the full pid URL
-          var newPath = createConfigPidPath($scope, pid, $scope.factoryPid);
+          var newPath = createConfigPidPath($scope, pid);
           $location.path(newPath);
         } else {
           $scope.setEditMode(false);
@@ -71,19 +91,19 @@ module Osgi {
           text = value.toString();
         }
         if (angular.isDefined(text)) {
-          data[decodeKey(key)] = text;
+          data[decodeKey(key, $scope.pid)] = text;
         }
       });
 
       //log.info("about to update value " + angular.toJson(data));
 
       var mbean = getHawtioConfigAdminMBean(workspace);
-      if (mbean) {
+      if (mbean || $scope.inFabricProfile) {
         var pidMBean = getSelectionConfigAdminMBean($scope.workspace);
         var pid = $scope.pid;
         var zkPid = $scope.zkPid;
         var factoryPid = $scope.factoryPid;
-        if (factoryPid && pidMBean && !zkPid) {
+        if (!$scope.inFabricProfile && factoryPid && pidMBean && !zkPid) {
           // lets generate a new pid
           $scope.jolokia.execute(pidMBean, "createFactoryConfiguration", factoryPid, onSuccess((response) => {
             pid = response;
@@ -92,7 +112,13 @@ module Osgi {
             }
           }, errorHandler("Failed to create new PID: ")));
         } else {
-          if (zkPid) {
+          if ($scope.newPid) {
+            var pidInstanceName = $scope.createForm.pidInstanceName;
+            if (!pidInstanceName || !factoryPid) {
+              return;
+            }
+            pid = factoryPid + "-" + pidInstanceName;
+          } else if (zkPid) {
             pid = zkPid;
           }
           updatePid(mbean, pid, data);
@@ -103,7 +129,7 @@ module Osgi {
     function errorHandler(message) {
        return {
          error: (response) => {
-           notification("error", message + "\n" + response['error'] || response);
+           Core.notification("error", message + "\n" + response['error'] || response);
            Core.defaultJolokiaErrorHandler(response);
          }
        }
@@ -141,22 +167,35 @@ module Osgi {
     $scope.deletePidConfirmed = () => {
       $scope.deletePidDialog.close();
 
-      var mbean = getSelectionConfigAdminMBean($scope.workspace);
-      if (mbean) {
-        $scope.jolokia.request({
-          type: "exec",
-          mbean: mbean,
-          operation: 'delete',
-          arguments: [$scope.pid]
-        }, {
-          error: function (response) {
-            notification("error", response.error);
-          },
-          success: function (response) {
-            notification("success", "Successfully deleted pid: " + $scope.pid);
-            $location.path($scope.configurationsLink);
-          }
-        });
+      function errorFn(response) {
+        Core.notification("error", response.error);
+      }
+
+      function successFn(response) {
+        Core.notification("success", "Successfully deleted pid: " + $scope.pid);
+        $location.path($scope.configurationsLink);
+      }
+
+      if ($scope.inFabricProfile) {
+        if ($scope.pid) {
+          var configFile = $scope.pid + ".properties";
+          jolokia.execute(Fabric.managerMBean, "deleteConfigurationFile",
+            $scope.versionId, $scope.profileId, configFile,
+            onSuccess(successFn, {error: errorFn}));
+        }
+      } else {
+        var mbean = getSelectionConfigAdminMBean($scope.workspace);
+        if (mbean) {
+          $scope.jolokia.request({
+            type: "exec",
+            mbean: mbean,
+            operation: 'delete',
+            arguments: [$scope.pid]
+          }, {
+            error: errorFn,
+            success: successFn
+          });
+        }
       }
     };
 
@@ -189,17 +228,24 @@ module Osgi {
 
     function updateSchemaAndLoadMetaType() {
       updateSchema();
-      var metaTypeMBean = getMetaTypeMBean($scope.workspace);
       var configValues = $scope.configValues;
-      if (metaTypeMBean && configValues) {
-        var locale = null;
-        var pid = null;
-        var factoryId = configValues["service.factoryPid"];
-        if (factoryId) {
-          pid = factoryId["Value"];
+      if (configValues) {
+        if ($scope.profileNotRunning && $scope.profileMetadataMBean && $scope.versionId && $scope.profileId) {
+          var pid = $scope.factoryPid || $scope.pid;
+          jolokia.execute($scope.profileMetadataMBean, "getPidMetaTypeObject", $scope.versionId, $scope.profileId, pid, onSuccess(onMetaType));
+        } else {
+          var locale = null;
+          var pid = null;
+          var factoryId = configValues["service.factoryPid"];
+          if (factoryId && !pid) {
+            pid = factoryId["Value"];
+          }
+
+          var metaTypeMBean = getMetaTypeMBean($scope.workspace);
+          if (metaTypeMBean) {
+            $scope.jolokia.execute(metaTypeMBean, "getPidMetaTypeObject", pid, locale, onSuccess(onMetaType));
+          }
         }
-        pid = pid || $scope.pid;
-        $scope.jolokia.execute(metaTypeMBean, "getPidMetaTypeObject", pid, locale, onSuccess(onMetaType));
       }
       Core.$apply($scope);
     }
@@ -224,23 +270,27 @@ module Osgi {
         required: required,
         properties: properties
       };
-      $scope.schema = schema;
       var inputClass = "span12";
       var labelClass = "control-label";
 
-      var inputClassArray = "span11";
+      //var inputClassArray = "span11";
+      var inputClassArray = "";
       var labelClassArray = labelClass;
 
       var metaType = $scope.metaType;
       if (metaType) {
-        schema["id"] = metaType.id;
-        schema["name"] = metaType.name;
-        schema["description"] = metaType.description;
+        var pidMetadata = Osgi.configuration.pidMetadata;
+        var pid = metaType.id;
+        schema["id"] = pid;
+        schema["name"] = Core.pathGet(pidMetadata, [pid, "name"]) || metaType.name;
+        schema["description"] = Core.pathGet(pidMetadata, [pid, "description"]) || metaType.description;
+
+        var disableHumanizeLabel = Core.pathGet(pidMetadata, [pid, "schemaExtensions", "disableHumanizeLabel"]);
 
         angular.forEach(metaType.attributes, (attribute) => {
           var id = attribute.id;
           if (isValidProperty(id)) {
-            var key = encodeKey(id);
+            var key = encodeKey(id, pid);
             var typeName = asJsonSchemaType(attribute.typeName, attribute.id);
             var attributeProperties = {
               title: attribute.name,
@@ -254,12 +304,17 @@ module Osgi {
               type: typeName
 
             };
+            if (disableHumanizeLabel) {
+              attributeProperties.title = id;
+            }
             if (attribute.typeName === "char") {
               attributeProperties["maxLength"] = 1;
               attributeProperties["minLength"] = 1;
             }
             var cardinality = attribute.cardinality;
             if (cardinality) {
+              // lets clear the span on arrays to fix layout issues
+              attributeProperties['input-attributes']['class'] = null;
               attributeProperties.type = "array";
               attributeProperties["items"] = {
                 'input-attributes': {
@@ -299,13 +354,20 @@ module Osgi {
             properties[key] = attributeProperties;
           }
         });
+
+        // now lets override anything from the custom metadata
+        var schemaExtensions = Core.pathGet(Osgi.configuration.pidMetadata, [pid, "schemaExtensions"]);
+        if (schemaExtensions) {
+          // now lets copy over the schema extensions
+          overlayProperties(schema, schemaExtensions);
+        }
       }
 
       // now add all the missing properties...
       var entity = {};
       angular.forEach($scope.configValues, (value, rawKey) => {
         if (isValidProperty(rawKey)) {
-          var key = encodeKey(rawKey);
+          var key = encodeKey(rawKey, pid);
           var attrValue = value;
           var attrType = "string";
           if (angular.isObject(value)) {
@@ -314,7 +376,7 @@ module Osgi {
           }
           var property = properties[key];
           if (!property) {
-            properties[key] = {
+            property = {
               'input-attributes': {
                 class: inputClass
               },
@@ -322,7 +384,8 @@ module Osgi {
                 class: labelClass
               },
               type: attrType
-            }
+            };
+            properties[key] = property;
           } else {
             var propertyType = property["type"];
             if ("array" === propertyType) {
@@ -331,6 +394,12 @@ module Osgi {
               }
             }
           }
+          if (disableHumanizeLabel) {
+            property.title = rawKey;
+          }
+
+          //comply with Forms.safeIdentifier in 'forms/js/formHelpers.ts'
+          key = key.replace(/-/g, "_");
           entity[key] = attrValue;
         }
       });
@@ -343,8 +412,34 @@ module Osgi {
           entity[key] = value;
         }
       });
+
       //log.info("default values: " + angular.toJson($scope.defaultValues));
       $scope.entity = entity;
+      $scope.schema = schema;
+      $scope.fullSchema = schema;
+    }
+
+    /**
+     * Recursively overlays the properties in the overlay into the object; so any atttributes are added into the object
+     * and any nested objects in the overlay are inserted into the object at the correct path.
+     */
+    function overlayProperties(object, overlay) {
+      if (angular.isObject(object)) {
+        if (angular.isObject(overlay)) {
+          angular.forEach(overlay, (value, key) => {
+            if (angular.isObject(value)) {
+              var child = object[key];
+              if (!child) {
+                child = {};
+                object[key] = child;
+              }
+              overlayProperties(child, value);
+            } else {
+              object[key] = value;
+            }
+          });
+        }
+      }
     }
 
     var ignorePropertyIds = ["service.pid", "service.factoryPid", "fabric.zookeeper.pid"];
@@ -353,12 +448,12 @@ module Osgi {
       return id && ignorePropertyIds.indexOf(id) < 0;
     }
 
-    function encodeKey(key) {
-      return key.replace(/\./g, "__");
+    function encodeKey(key, pid) {
+        return key.replace(/\./g, "__");
     }
 
-    function decodeKey(key) {
-      return key.replace(/__/g, ".");
+    function decodeKey(key, pid) {
+        return key.replace(/__/g, ".");
     }
 
     function asJsonSchemaType(typeName, id) {
@@ -383,9 +478,31 @@ module Osgi {
       }
     }
 
+    function onProfilePropertiesLoaded(response) {
+      $scope.modelLoaded = true;
+      var configValues = {};
+      $scope.configValues = configValues;
+      angular.forEach(response, (value, oKey) => {
+        // lets remove any dodgy characters
+        var key = oKey.replace(/:/g, '_').replace(/\//g, '_');
+        configValues[key] = {
+          Key: key,
+          Value: value
+        };
+      });
+      $scope.zkPid = Core.pathGet(configValues, ["fabric.zookeeper.pid", "Value"]);
+      updateSchemaAndLoadMetaType();
+      Core.$apply($scope);
+    }
+
+
     function updateTableContents() {
       $scope.modelLoaded = false;
-      Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, $scope.pid, populateTable);
+      if ($scope.inFabricProfile || $scope.profileNotRunning) {
+        jolokia.execute(Fabric.managerMBean, "getOverlayProfileProperties", $scope.versionId, $scope.profileId, $scope.pid, onSuccess(onProfilePropertiesLoaded));
+      } else {
+        Osgi.getConfigurationProperties($scope.workspace, $scope.jolokia, $scope.pid, populateTable);
+      }
     }
-  }
+  }]);
 }

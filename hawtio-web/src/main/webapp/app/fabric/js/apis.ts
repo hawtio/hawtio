@@ -1,6 +1,6 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
-
-  export function FabricApisController($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache) {
+  _module.controller("Fabric.FabricApisController", ["$scope", "localStorage", "$routeParams", "$location", "jolokia", "workspace", "$compile", "$templateCache", ($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache) => {
 
     $scope.path = "apis";
 
@@ -8,6 +8,7 @@ module Fabric {
 
     $scope.apis = null;
     $scope.selectedApis = [];
+    $scope.initDone = false;
 
     $scope.versionId = Fabric.getDefaultVersionId(jolokia);
 
@@ -22,6 +23,7 @@ module Fabric {
       },
       selectedItems: $scope.selectedApis,
       rowHeight: 32,
+      showSelectionCheckbox: false,
       selectWithCheckboxOnly: true,
       columnDefs: [
         {
@@ -73,14 +75,9 @@ module Fabric {
     }
 
     if (Fabric.fabricCreated(workspace)) {
-      Core.register(jolokia, $scope, {
-          type: 'exec',
-          mbean: Fabric.managerMBean,
-          operation: "clusterJson",
-          arguments: [$scope.path]},
-        onSuccess(onClusterData, {error: onClusterDataError}));
+      var query = {type: 'exec', mbean: Fabric.managerMBean, operation: 'clusterJson', arguments: [$scope.path]};
+      scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(onClusterData, query));
     }
-
 
     /*
      * Pulls all the properties out of the objectName and adds them to the object
@@ -125,7 +122,7 @@ module Fabric {
 
             // lets use proxy if external URL
             url = Core.useProxyIfExternal(url);
-            value["serviceName"] = trimQuotes(value["service"]);
+            value["serviceName"] = Core.trimQuotes(value["service"]);
             var apidocs = value["apidocs"];
             var wadl = value["wadl"];
             var wsdl = value["wsdl"];
@@ -147,6 +144,8 @@ module Fabric {
     }
 
     function onClusterData(response) {
+      $scope.initDone = true;
+
       var responseJson = null;
       if (response) {
         responseJson = response.value;
@@ -167,12 +166,5 @@ module Fabric {
       }
     }
 
-    function onClusterDataError(response) {
-      // make sure we initialise the apis so we know to show the warning of no
-      // APIs available yet
-      $scope.apis = [];
-      Core.$apply($scope);
-      Core.defaultJolokiaErrorHandler(response);
-    }
-  }
+  }]);
 }

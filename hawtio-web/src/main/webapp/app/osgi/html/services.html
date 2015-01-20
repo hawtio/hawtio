@@ -6,8 +6,8 @@
     <tr>
       <td>
         <ul>
-          <li ng-repeat="name in row.UsingBundles">
-            <a href='#/osgi/bundle/{{name}}{{hash}}'>{{name}}</a>
+          <li ng-repeat="b in row.UsingBundles">
+            <a href='#/osgi/bundle/{{b.Identifier}}{{hash}}'>{{b.SymbolicName}}</a>
           </li>
         </ul>
       </td>

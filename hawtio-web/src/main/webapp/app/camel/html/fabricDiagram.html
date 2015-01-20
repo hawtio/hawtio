@@ -1,9 +1,8 @@
 <style type="text/css">
 
-  .span4.node-panel {
-    margin-top: 10px;
-    margin-left: 10px;
-    width: 33%;
+  .span5.node-panel {
+    margin-top: 5px;
+    margin-left: 5px;
   }
 
   .node-attributes dl {
@@ -12,11 +11,11 @@
   }
 
   .node-attributes dt {
-    width: 150px;
+    width: 270px;
   }
 
   .node-attributes dd {
-    margin-left: 160px;
+    margin-left: 280px;
   }
 
   .node-attributes dd a {
@@ -70,7 +69,6 @@
     fill: none;
     stroke: #666;
     stroke-width: 1.5px;
-    b
   }
 
   marker.context {
@@ -84,7 +82,8 @@
   }
 
   circle.route {
-    fill: #00c;
+    fill: #c0c;
+    stroke-width: 1.3px;
   }
 
   circle.notActive {
@@ -151,28 +150,8 @@
     fill: #c0c;
   }
 
-  circle.endpoint {
+  circle.endpoint, circle.endpoints {
     fill: #00c;
-  }
-
-  circle.consumer {
-    fill: #cfc;
-  }
-
-  circle.producer {
-    fill: #ccf;
-  }
-
-  path.link.producer {
-    stroke: #ccc;
-  }
-
-  path.link.consumer {
-    stroke: #ccc;
-  }
-
-  path.link.network {
-    stroke: #ccc;
   }
 
   circle.selected {
@@ -203,7 +182,7 @@
 
       <div class="section-filter">
         <input type="text" class="search-query" placeholder="Filter..." ng-model="searchFilter">
-        <i class="icon-remove clickable" title="Clear Filter" ng-click="searchFilter = ''"></i>
+        <i class="icon-remove clickable" title="Clear filter" ng-click="searchFilter = ''"></i>
       </div>
 
       <div class="section-controls">
@@ -236,6 +215,11 @@
               <input type="checkbox" ng-model="viewSettings.route"> Route
             </label>
           </li>
+          <li>
+            <label class="checkbox">
+              <input type="checkbox" ng-model="viewSettings.context"> Context
+            </label>
+          </li>
           <!--
                     <li>
                       <label class="checkbox">
@@ -251,7 +235,7 @@
           <li class="divider"></li>
           <li title="Should we show the details panel on the left">
             <label class="checkbox">
-              <input type="checkbox" ng-model="viewSettings.panel"> Details Panel
+              <input type="checkbox" ng-model="viewSettings.panel"> Details panel
             </label>
           </li>
           <li title="Show the summary popup as you hover over nodes">
@@ -283,13 +267,13 @@
 
   <div class="row-fluid">
     <div ng-show="containerCount">
-      <div class="{{viewSettings.panel ? 'span8' : 'span12'}} canvas context-canvas">
+      <div class="{{viewSettings.panel ? 'span7' : 'span12'}} canvas context-canvas">
         <div hawtio-force-graph graph="graph" selected-model="selectedNode" link-distance="150" charge="-600"
              nodesize="10" marker-kind="marker-end"
              style="min-height: 800px">
         </div>
       </div>
-      <div ng-show="viewSettings.panel" class="span4 node-panel">
+      <div ng-show="viewSettings.panel" class="span5 node-panel">
         <div ng-show="selectedNode" class="node-attributes">
           <dl ng-repeat="property in selectedNodeProperties" class="dl-horizontal">
             <dt title="{{property.key}}">{{property.key}}:</dt>

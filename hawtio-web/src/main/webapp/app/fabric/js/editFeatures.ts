@@ -1,23 +1,20 @@
+/// <reference path="fabricPlugin.ts"/>
+/// <reference path="../../helpers/js/filterHelpers.ts"/>
+/// <reference path="../../helpers/js/selectionHelpers.ts"/>
 module Fabric {
 
-  export function FeatureEditController($scope, $routeParams, $location, jolokia, xml2json, workspace:Core.Workspace) {
-
+  _module.controller("Fabric.FeatureEditController", ["$scope", "$routeParams", "$location", "jolokia", "xml2json", "workspace", ($scope, $routeParams, $location, jolokia, xml2json, workspace:Core.Workspace) => {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
+    SelectionHelpers.decorate($scope);
 
     $scope.getProfileFeaturesOp = "getProfileFeatures(java.lang.String, java.lang.String)";
     $scope.versionId = $routeParams.versionId;
     $scope.profileId = $routeParams.profileId;
-
-    $scope.response = {};
-
     $scope.features = [];
-
     $scope.selectedRepoFeatures = [];
-
     $scope.deletingFeatures = [];
     $scope.addingFeatures = [];
-
     $scope.selectedRepoSelectedFeatures = [];
 
     $scope.featureGridOptions = {
@@ -42,6 +39,9 @@ module Fabric {
       ]
     }
 
+    $scope.filter = (feature) => {
+      return FilterHelpers.searchObject(feature, $scope.featureGridOptions.filterOptions.filterText, 2);
+    }
 
     $scope.$watch('features', (newValue, oldValue) => {
       if (newValue !== oldValue) {
@@ -57,36 +57,6 @@ module Fabric {
 
       }
     }, true);
-
-
-    $scope.dispatch = (response) => {
-      var responseJson = angular.toJson(response.value);
-      if (responseJson !== $scope.responseJson) {
-        if (angular.isDefined($scope.responseJson)) {
-          notification('info', "Profile feature definitions updated");
-        }
-        $scope.responseJson = responseJson;
-        $scope.features = response.value.featureDefinitions;
-        var repositories = response.value.repositoryDefinitions;
-
-        $scope.selectedRepoFeatures = [];
-
-        repositories.forEach((repo) => {
-          var repoJson = xml2json(repo['data']);
-          if ('feature' in repoJson) {
-            var features = repoJson['feature'];
-            if (!angular.isArray(features)) {
-              features = [features];
-            }
-            $scope.selectedRepoFeatures.add(features);
-          }
-        });
-
-        $scope.selectedRepoFeatures = $scope.selectedRepoFeatures.sortBy('name');
-
-        Core.$apply($scope);
-      }
-    };
 
 
     $scope.getClass = (feature) => {
@@ -110,22 +80,16 @@ module Fabric {
 
 
     $scope.addSelectedFeatures = (withVersion) => {
-
-      $scope.selectedRepoSelectedFeatures.each((feature) => {
-
+      $scope.selectedRepoSelectedFeatures.forEach((feature) => {
         var id = feature.name;
-
         if (withVersion) {
           id = id + "/" + feature.version;
         }
-
         $scope.features.push({
           id: id,
           adding: true
         });
-
       });
-
     };
 
 
@@ -159,22 +123,38 @@ module Fabric {
       configFile = lines.join('\n');
 
       saveConfigFile(jolokia, $scope.versionId, $scope.profileId, 'io.fabric8.agent.properties', configFile.encodeBase64(), () => {
-          notification('success', "Updated feature definitions...");
-          Core.$apply($scope);
-        }, (response) => {
-          notification('error', "Failed to save feature definitions due to " + response.error);
+          Core.notification('success', "Updated feature definitions...");
           Core.$apply($scope);
         });
     };
 
+    $scope.selectFeature = (feature, $event) => {
+      SelectionHelpers.select($scope.selectedRepoFeatures, feature, $event);
+      $scope.selectedRepoSelectedFeatures = $scope.selectedRepoFeatures.filter((f) => SelectionHelpers.isSelected(f));
+    }
 
-    Core.register(jolokia, $scope, [{
-      type: 'exec', mbean: managerMBean, operation: $scope.getProfileFeaturesOp,
-        arguments: [$scope.versionId, $scope.profileId]
-      }], onSuccess($scope.dispatch));
-
-
-  }
-
-
+    Core.registerForChanges(jolokia, $scope, {
+      type: 'exec', 
+      mbean: managerMBean, 
+      operation: $scope.getProfileFeaturesOp,
+      arguments: [$scope.versionId, $scope.profileId]
+    }, (response) => {
+      $scope.features = response.value.featureDefinitions;
+      var repositories = response.value.repositoryDefinitions;
+      var selectedRepoFeatures = [];
+      repositories.forEach((repo) => {
+        var repoJson = xml2json(repo['data']);
+        if ('feature' in repoJson) {
+          var features = repoJson['feature'];
+          if (!angular.isArray(features)) {
+            features = [features];
+          }
+          selectedRepoFeatures = selectedRepoFeatures.include(features);
+        }
+      });
+      $scope.selectedRepoSelectedFeatures = SelectionHelpers.sync($scope.selectedRepoSelectedFeatures, selectedRepoFeatures, 'id');
+      $scope.selectedRepoFeatures = selectedRepoFeatures.sortBy('name');
+      Core.$apply($scope);
+    });
+  }]);
 }

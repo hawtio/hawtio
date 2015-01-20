@@ -1,96 +1,116 @@
 /*
  * Simple script loader and registry
  */
-
-(function( window, undefined) {
+var hawtioPluginLoader = (function(self, window, undefined) {
   var log = Logger.get('PluginLoader');
-  var hawtioPluginLoader = {
-    urls: [],
-    modules: []
+  self.log = log;
+
+  /**
+   * List of URLs that the plugin loader will try and discover
+   * plugins from
+   * @type {Array}
+   */
+  self.urls = [];
+
+  /**
+   * Holds all of the angular modules that need to be bootstrapped
+   * @type {Array}
+   */
+  self.modules = [];
+
+  /**
+   * Tasks to be run before bootstrapping, tasks can be async.
+   * Supply a function that takes the next task to be
+   * executed as an argument and be sure to call the passed
+   * in function.
+   *
+   * @type {Array}
+   */
+  self.tasks = [];
+
+  self.registerPreBootstrapTask = function(task) {
+    self.tasks.push(task);
   };
 
-  hawtioPluginLoader.addModule = function(module) {
+  self.addModule = function(module) {
     log.debug("Adding module: " + module);
-    hawtioPluginLoader.modules.push(module);
+    self.modules.push(module);
   };
 
-  hawtioPluginLoader.addUrl = function(url) {
+  self.addUrl = function(url) {
     log.debug("Adding URL: " + url);
-    hawtioPluginLoader.urls.push(url);
+    self.urls.push(url);
   };
 
-  hawtioPluginLoader.getModules = function() {
-    return hawtioPluginLoader.modules.clone();
+  self.getModules = function() {
+    return self.modules.clone();
   };
 
   /**
    * Parses the given query search string of the form "?foo=bar&whatnot"
    * @param text
-   * @return a map of key/values
+   * @return {*} a map of key/values
    */
-  hawtioPluginLoader.parseQueryString = function(text) {
-      var query = (text || window.location.search || '?');
-      var idx = -1;
-      if (angular.isArray(query)) {
-        query = query[0];
-      }
-      idx = query.indexOf("?");
-      if (idx >= 0) {
-        query = query.substr(idx + 1);
-      }
-      // if query string ends with #/ then lets remove that too
-      idx = query.indexOf("#/");
-      if (idx > 0) {
-        query = query.substr(0, idx);
-      }
-      var map = {};
-      query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
-          (map[key] = map[key] || []).push(value); 
-        });
-      return map;
-  };
-
-  /**
-   * Parses the username:password from a http basic auth URL, e.g.
-   * http://foo:bar@example.com
-   */
-  hawtioPluginLoader.getCredentials = function(urlString) {
-/*
-    No Uri class outside of IE right?
-
-    var uri = new Uri(url);
-    var credentials = uri.userInfo();
-*/
-    if (urlString) {
-      var credentialsRegex = new RegExp(/.*:\/\/([^@]+)@.*/);
-      var m = urlString.match(credentialsRegex);
-      if (m && m.length > 1) {
-        var credentials = m[1];
-        if (credentials && credentials.indexOf(':') > -1) {
-          return credentials.split(':');
-        }
-      }
+  self.parseQueryString = function(text) {
+    // just look in window.location.href, sometimes location.search isn't set yet when this functin is run
+    var search = null;
+    var parts = window.location.href.split('?');
+    if (parts) {
+      search = parts.last(parts.length - 1).join('');
     }
-    return [];
+    var query = (text || search || '?');
+    var idx = -1;
+    if (angular.isArray(query)) {
+      query = query[0];
+    }
+    idx = query.indexOf("?");
+    if (idx >= 0) {
+      query = query.substr(idx + 1);
+    }
+    // if query string ends with #/ then lets remove that too
+    idx = query.indexOf("#/");
+    if (idx > 0) {
+      query = query.substr(0, idx);
+    }
+    var map = {};
+    query.replace(/([^&=]+)=?([^&]*)(?:&+|$)/g, function(match, key, value) {
+        (map[key] = map[key] || []).push(value);
+      });
+    return map;
+  };
+
+  self.loaderCallback = null;
+
+  self.setLoaderCallback = function(cb) {
+    self.loaderCallback = cb;
+    log.debug("Setting callback to : ", self.loaderCallback);
   };
 
 
-  hawtioPluginLoader.loaderCallback = null;
+  self.loadPlugins = function(callback) {
 
-  hawtioPluginLoader.setLoaderCallback = function(cb) {
-    hawtioPluginLoader.loaderCallback = cb;
-    log.debug("Setting callback to : ", hawtioPluginLoader.loaderCallback);
-  };
-
-
-  hawtioPluginLoader.loadPlugins = function(callback) {
-
-    var lcb = hawtioPluginLoader.loaderCallback;
+    var lcb = self.loaderCallback;
 
     var plugins = {};
 
-    var urlsToLoad = hawtioPluginLoader.urls.length;
+    var urlsToLoad = self.urls.length;
     var totalUrls = urlsToLoad;
+
+    var bootstrap = function() {
+      self.tasks.push(callback);
+      var numTasks = self.tasks.length;
+
+      var executeTask = function() {
+        var task = self.tasks.shift();
+        if (task) {
+          self.log.debug("Executing task ", numTasks - self.tasks.length);
+          task(executeTask);
+        } else {
+          self.log.debug("All tasks executed");
+        }
+      };
+      executeTask();
+    };
 
     var loadScripts = function() {
 
@@ -109,7 +129,7 @@
           lcb.scriptLoaderCallback(lcb, totalScripts, loaded + 1);
         }
         if (loaded == 0) {
-          callback();
+          bootstrap();
         }
       };
 
@@ -128,7 +148,7 @@
                   log.debug("Loaded script: ", scriptName);
                 })
                 .fail(function(jqxhr, settings, exception) {
-                  log.debug("Failed loading script: ", exception);
+                  log.info("Failed loading script: \"", exception.message, "\" (<a href=\"", scriptName, ":", exception.lineNumber, "\">", scriptName, ":", exception.lineNumber, "</a>)");
                 })
                 .always(scriptLoaded);
           });
@@ -136,14 +156,13 @@
       } else {
         // no scripts to load, so just do the callback
         $.ajaxSetup({async:true});
-        callback();
+        bootstrap();
       }
-    }
+    };
 
     if (urlsToLoad == 0) {
       loadScripts();
     } else {
-
       var urlLoaded = function () {
         urlsToLoad = urlsToLoad - 1;
         if (lcb) {
@@ -156,14 +175,14 @@
 
       var regex = new RegExp(/^jolokia:/);
 
-      $.each(hawtioPluginLoader.urls, function(index, url) {
+      $.each(self.urls, function(index, url) {
 
         if (regex.test(url)) {
           var parts = url.split(':');
           parts = parts.reverse();
           parts.pop();
 
-          var url = parts.pop();
+          url = parts.pop();
           var attribute = parts.reverse().join(':');
           var jolokia = new Jolokia(url);
 
@@ -179,6 +198,14 @@
           log.debug("Trying url: ", url);
 
           $.get(url, function (data) {
+                if (angular.isString(data)) {
+                  try {
+                    data = angular.fromJson(data);
+                  } catch (error) {
+                    // ignore this source of plugins
+                    return;
+                  }
+                }
                 // log.debug("got data: ", data);
                 $.extend(plugins, data);
               }).always(function() {
@@ -189,23 +216,23 @@
     }
   };
 
-  hawtioPluginLoader.debug = function() {
+  self.debug = function() {
     log.debug("urls and modules");
-    log.debug(hawtioPluginLoader.urls);
-    log.debug(hawtioPluginLoader.modules);
+    log.debug(self.urls);
+    log.debug(self.modules);
   };
 
-  hawtioPluginLoader.setLoaderCallback({
+  self.setLoaderCallback({
     scriptLoaderCallback: function (self, total, remaining) {
-      Logger.get("Core").debug("Total scripts: ", total, " Remaining: ", remaining);
+      log.debug("Total scripts: ", total, " Remaining: ", remaining);
     },
     urlLoaderCallback: function (self, total, remaining) {
-      Logger.get("Core").debug("Total URLs: ", total, " Remaining: ", remaining);
+      log.debug("Total URLs: ", total, " Remaining: ", remaining);
     }
   });
 
-  window.hawtioPluginLoader = hawtioPluginLoader;
+  return self;
 
-})(window);
+})(hawtioPluginLoader || {}, window, undefined);
 
 

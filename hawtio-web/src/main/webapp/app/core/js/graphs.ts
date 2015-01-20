@@ -224,8 +224,8 @@ module Core {
       // rounded corners
         .attr("rx", "4")
         .attr("ry", "4")
-      // lets add shadow
-        .attr("filter", "url(#drop-shadow)")
+      // lets add shadow (do not add shadow as the filter does not work in firefox browser
+        /*.attr("filter", "url(#drop-shadow)")*/
         .attr("class", function(d) {
           return d.type;
         });
@@ -247,6 +247,14 @@ module Core {
             .attr("x", 0)
             .attr("dy", 0)
             .text(_counterFunction);
+
+    var inflights = nodes
+            .append("text")
+            .attr("text-anchor", "middle")
+            .attr("class", "inflight")
+            .attr("x", 10)
+            .attr("dy", -32)
+            .text(_inflightFunction);
 
     // Append text
     var labels = nodes
@@ -381,6 +389,7 @@ module Core {
   export function dagreUpdateGraphData(data) {
     var svg = d3.select("svg");
     svg.selectAll("text.counter").text(_counterFunction);
+    svg.selectAll("text.inflight").text(_inflightFunction);
 
     // add tooltip
     svg.selectAll("g .node title").text(function (d) {
@@ -398,7 +407,11 @@ module Core {
   }
 
   function _counterFunction(d) {
-    return d.counter || "";
+      return d.counter || "";
+  }
+
+  function _inflightFunction(d) {
+    return d.inflight || "";
   }
 
 }

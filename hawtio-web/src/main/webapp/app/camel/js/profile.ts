@@ -1,6 +1,7 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
 
-    export function ProfileRouteController($scope, $location, workspace:Workspace, jolokia) {
+    _module.controller("Camel.ProfileRouteController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
         $scope.data = [];
         $scope.calcManually = true;
@@ -266,7 +267,7 @@ module Camel {
               index : 0
             };
             entry.index = -1;
-            entry.img = "<img src='app/camel/img/camel_route.png'>";
+            entry.img = "<img src='img/icons/camel/camel_route.png'>";
             $scope.icons[$scope.selectedRouteId] = entry;
 
             // then each processor id and icons
@@ -317,5 +318,5 @@ module Camel {
           scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(populateProfileMessages, query));
        }
 
-    }
+    }]);
 }

@@ -50,7 +50,7 @@ By selecting a route in the Camel Tree
 
 ![Route Diagram](app/camel/doc/img/route-diagram.png "Route Diagram")
 
-If you however the mouse over the nodes in the diagram, a tool tip is presented with additional details.
+If you hover the mouse over the nodes in the diagram, a tool tip is presented with additional details.
 
 ##### Source #####
 
@@ -160,6 +160,19 @@ The metrics shown in the table are as follows:
 * Max = Time in ms. for the highest processing time.
 * Total = Accumulated self time in ms. for processing messages.
 * Self = Total time in ms. for processing message in this processor only.
+
+
+##### Route Metrics #####
+
+This page shows a summary for each route about the performance.
+
+* Frequency - Shows number of messages processed per second
+* Duration - Shows how long time to process a message
+* Histogram - Shows the statistics distribution of the time to process messages
+
+This information requires Camel 2.14 onwards, and using the camel-metrics route policy.
+
+![Route Metrics](app/camel/doc/img/route-metrics.jpg "Route Metrics")
 
 
 #### Endpoint Tree ####

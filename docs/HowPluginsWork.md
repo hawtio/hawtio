@@ -1,6 +1,6 @@
 Currently hawtio uses JMX to discover which MBeans are present and then dynamically updates the navigation bars and tabs based on what it finds. The UI is updated whenever hawtio reloads the mbeans JSON; which it does periodically or a plugin can trigger explicitly.
 
-So you can deploy the standard [hawtio-web.war](https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-web/1.2.3/hawtio-web-1.2.3.war); then as you deploy more services to your container, hawtio will update itself to reflect the suitable plugins in the UI.
+So you can deploy the standard [hawtio-web.war](https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-web/1.4.19/hawtio-web-1.4.19.war); then as you deploy more services to your container, hawtio will update itself to reflect the suitable plugins in the UI.
 
 Relying on JMX for discovery doesn't mean though that plugins can only interact with JMX; they can do anything at all that a browser can. e.g. a plugin could use REST to discover UI capabilities and other plugins.
 
@@ -21,7 +21,7 @@ In terms of JS code, we're using JavaScript modules to keep things separated, so
 
 If you want so see some example code, here's a [log plugin](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts) designed to work with an MBean which queries the log statements from SLF4J/log4j, etc.
 
-* We can [map single page URIs templates](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L5) to HTML templates (partials) and controllers. This will add the view at http://localhost:8080/hawtio/#/logs if you are running hawtio locally.
+* We can [map single page URIs templates](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L5) to HTML templates (partials) and controllers. This will add the view at http://localhost:8282/hawtio/#/logs if you are running hawtio locally.
 * These AngularJS modules can be added and removed at runtime inside the same single page application without requiring a reload.
 * [Here's where we register a top-level navigation bar item](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L12) for this the new log tab.
 * Here's a [sub tab in the JMX plugin](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L19) which is only visible if you select a node in the JMX tree.
@@ -44,9 +44,25 @@ Plugins can be packaged up as a separate deployment unit (WAR, OSGi bundle, EAR,
 
 The plugin then needs to expose a hawtio plugin MBean instance which describes how to load the plugin artifacts (e.g. local URLs inside the container or public URLs to some website). See the [plugin examples](https://github.com/hawtio/hawtio/tree/master/hawtio-plugin-examples) for more details.
 
-So plugins can be deployed into the JVM via whatever container you prefer (web container, OSGi, JEE).
+So plugins can be deployed into the JVM via whatever container you prefer (web container, OSGi, JEE). 
 
 To see how this works check out the [plugin examples and detailed description](https://github.com/hawtio/hawtio/blob/master/hawtio-plugin-examples/readme.md).
+
+For example WAR deployment units can easily be deployed in a web container such as Apache Tomcat. Just drop the plugin in the deploy directory along with the hawtio WAR. And hawtio will automatic detect the custom plugin.
+
+The standalone hawtio application (hawtio-app) is also capable of using custom plugins as WAR files. This can be done by copying the plugin WARs to the plugins sub directory where hawtio-app is launched.
+
+For example the current directory is `myfolder`, where we create a sub directory named `plugins`, and then copy our custom plugins as WAR files to that directory. And then just launch hawtio-app as usual.
+
+    myfolder$
+    mkdir plugins
+    cp ~/mycustomplugin.war plugins
+    java -jar hawtio-app-1.4.40.jar
+    
+You can copy as many custom plugins to the `plugins` directory.
+
+An important aspect however, is that the name of the WAR file must match the context-path name, that has been configured in the `web.xml` file. For example the groovy-shell example plugin has configured `groovy-shell-plugin` as its context-path, which means the name of the WAR file must be `groovy-shell-plugin.war`. Here is the name configured [here](https://github.com/hawtio/hawtio/blob/master/hawtio-plugin-examples/groovy-shell-plugin/pom.xml#L23), which will be used as placeholder in the [web.xml](https://github.com/hawtio/hawtio/blob/master/hawtio-plugin-examples/groovy-shell-plugin/src/main/resources/WEB-INF/web.xml#L14) file.
+
 
 ### Using a Registry
 

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>io.hawt</groupId>
+    <artifactId>project</artifactId>
+    <version>1.5-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>hawtio-karaf-git</artifactId>
+  <packaging>bundle</packaging>
+  <name>${project.artifactId}</name>
+  <description>hawtio :: hawtio-karaf-git</description>
+
+  <properties>
+    <fuse.osgi.export>
+      io.hawt.git,
+      com.jcraft.jzlib;version=${jcraft-jzlib-version},
+      com.jcraft.jsch;version=${jcraft-version},
+      org.gitective*;version=${gitective-version},
+      javaewah*;version=${javaewah-version},
+    </fuse.osgi.export>
+    <fuse.osgi.import>
+      org.gitective*;version=${gitective-version},
+      javaewah*;version=${javaewah-version},
+      !javax.servlet,
+      !keypairgen,
+      !signature,
+      !userauth,
+      *
+    </fuse.osgi.import>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-git</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>${maven-bundle-plugin-version}</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <supportedProjectTypes>
+            <supportedProjectType>jar</supportedProjectType>
+            <supportedProjectType>bundle</supportedProjectType>
+            <supportedProjectType>war</supportedProjectType>
+          </supportedProjectTypes>
+          <instructions>
+            <Export-Package>${fuse.osgi.export}</Export-Package>
+            <Import-Package>${fuse.osgi.import}</Import-Package>
+            <Private-Package>
+                io.hawt*;-split-package:=merge-last,
+                org.eclipse.jgit*,
+                org.gitective.*,
+                com.jcraft*
+            </Private-Package>
+
+            <!-- TODO note we're embedding hawtio-core in here as its not yet a bundle and is often included in the war -->
+            <!--
+            <Embed-Dependency>*;inline=true;artifactId=hawtio-core|hawtio-util|gitective-core|jsch|jzlib|JavaEWAH|org.eclipse.jgit*</Embed-Dependency>
+            <Embed-Transitive>true</Embed-Transitive>
+            -->
+            
+            <Bundle-Name>${project.description}</Bundle-Name>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+
+            <Implementation-Title>HawtIO</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -1,3 +1,7 @@
+/// <reference path="../../core/js/coreHelpers.ts"/>
+/// <reference path="../../kubernetes/js/kubernetesHelpers.ts"/>
+/// <reference path="../../core/js/preferenceHelpers.ts"/>
+/// <reference path="metadata.ts"/>
 /**
  * @module Perspective
  */
@@ -30,7 +34,6 @@ module Perspective {
    */
   export var defaultPageLocation: string = null;
 
-
   /**
    * Returns the current perspective ID based on the query parameter or the current
    * discovered perspective
@@ -42,7 +45,7 @@ module Perspective {
    * @param {any} localStorage
    * @return {String}
    */
-  export function currentPerspectiveId($location, workspace, jolokia, localStorage) {
+  export function currentPerspectiveId($location:ng.ILocationService, workspace:Core.Workspace, jolokia, localStorage:Storage) {
     var perspective = $location.search()[perspectiveSearchId];
     if (!perspective) {
       perspective = Perspective.choosePerspective($location, workspace, jolokia, localStorage);
@@ -117,7 +120,7 @@ module Perspective {
           var metaTab = metaData.topLevelTabs.excludes.find(et => {
             var etid = et.id;
             return etid && etid === t.id;
-          })
+          });
           if (metaTab != null && angular.isFunction(metaTab.onCondition)) {
             // not all tabs has on condition function, so use try .. catch
             var answer = metaTab.onCondition(workspace);
@@ -148,6 +151,18 @@ module Perspective {
 
   function filterTabs(tabs, workspace) {
     var matched = [];
+
+    function pushMatchedTab(tabSpec, tab) {
+      if (tab) {
+        var content = tabSpec.content;
+        if (content) {
+          tab = angular.copy(tab)
+          tab.content = content;
+        }
+        matched.push(tab);
+      }
+    }
+
     angular.forEach(tabs, (tabSpec) => {
       var href = tabSpec.href;
       var id = tabSpec.id;
@@ -165,25 +180,19 @@ module Perspective {
           // lets assume the tab is the tabSpec
           tab = tabSpec;
         }
-        if (tab) {
-          matched.push(tab);
-        }
+        pushMatchedTab(tabSpec, tab);
       } else if (id) {
         var tab = workspace.topLevelTabs.find((t) => {
           var tid = t.id;
           return tid && tid === id;
         });
-        if (tab) {
-          matched.push(tab);
-        }
+        pushMatchedTab(tabSpec, tab);
       } else if (rhref) {
         var tab = workspace.topLevelTabs.find((t) => {
           var thref = t.href();
           return thref && thref.match(rhref);
         });
-        if (tab) {
-          matched.push(tab);
-        }
+        pushMatchedTab(tabSpec, tab);
       }
     });
     return matched;
@@ -244,23 +253,29 @@ module Perspective {
   export function choosePerspective($location, workspace: Workspace, jolokia, localStorage) {
     var answer;
 
+    var url = $location.url();
     var inFMC = Fabric.isFMCContainer(workspace);
     if (inFMC) {
-      var url = $location.url();
 
       // noisy!
       //log.debug("Checking url: ", url);
+
+      // TODO - this needs to be refactored so that plugins can extend how the perspective is chosen, as this breaks really easily
 
       // we want first time users on welcome/index/default page to be in the fabric perspective
       if (url.startsWith("/perspective/defaultPage") || url.startsWith("/login") || url.startsWith("/welcome") || url.startsWith("/index") ||
           // see metadata.ts for the fabric configuration for which plugins we want to be in the fabric perspective
           url.startsWith("/fabric") ||
+          url.startsWith("/kubernetes") ||
+          url.startsWith("/profiles") ||
           url.startsWith("/dashboard") ||
           url.startsWith("/health") ||
           (url.startsWith("/wiki") && url.has("/fabric/profiles")) ||
           (url.startsWith("/wiki") && url.has("/editFeatures"))) {
         answer = "fabric";
       }
+    } else if (Kubernetes.isKubernetes(workspace)) {
+      answer = "kubernetes";
     }
     answer = answer || Perspective.defaultPerspective || "container";
 
@@ -280,7 +295,11 @@ module Perspective {
    * @return {String}
    */
   export function defaultPage($location, workspace: Workspace, jolokia, localStorage) {
-    if (shouldShowWelcomePage(localStorage) && !Core.isChromeApp()) {
+    // we should not show welcome screen from proxy or form chrome app
+    var isProxy = Core.isProxyUrl($location);
+    var isChomeApp = Core.isChromeApp();
+
+    if (!isProxy && !isChomeApp && shouldShowWelcomePage(localStorage)) {
       return "/welcome/";
     }
 

@@ -5,8 +5,14 @@
         <div class="pull-right">
             <form class="form-inline">
                 <button class="btn" ng-click="createSubscriberDialog.open()"
+                        hawtio-show object-name="{{workspace.selection.objectName}}" method-name="createDurableSubscriber"
                         title="Create durable subscriber">
                     <i class="icon-plus"></i> Create
+                </button>
+                <button class="btn" ng-click="deleteSubscriberDialog.open()"
+                        hawtio-show object-name="{{$scope.gridOptions.selectedItems[0]._id}}" method-name="destroy"
+                        title="Destroy durable subscriber" ng-disabled="gridOptions.selectedItems.length != 1">
+                    <i class="icon-exclamation"></i> Destroy
                 </button>
                 <button class="btn" ng-click="refresh()"
                         title="Refreshes the list of subscribers">
@@ -27,16 +33,16 @@
         <div class="modal-body">
           <label>Client Id: </label>
           <input name="clientId" class="input-xlarge" type="text" ng-model="clientId" required>
-          <label>Subscriber Name: </label>
+          <label>Subscriber name: </label>
           <input name="subscriberName" class="input-xlarge" type="text" ng-model="subscriberName" required>
-          <label>Topic Name: </label>
+          <label>Topic name: </label>
           <input name="topicName" class="input-xlarge" type="text" ng-model="topicName" required typeahead="title for title in topicNames($viewValue) | filter:$viewValue" typeahead-editable='true'>
           <label>Selector: </label>
           <input name="subSelector" class="input-xlarge" type="text" ng-model="subSelector">
         </div>
         <div class="modal-footer">
           <input class="btn btn-success" type="submit" value="Create">
-          <input class="btn btn-primary" ng-click="createSubscriberDialog.close()" value="Cancel">
+          <input class="btn btn-primary" type="button" ng-click="createSubscriberDialog.close()" value="Cancel">
         </div>
       </form>
     </div>

@@ -2,10 +2,13 @@
  * @module Jclouds
  * @main Jclouds
  */
+/// <reference path="./jcloudsHelpers.ts"/>
 module Jclouds {
     var pluginName = 'jclouds';
 
-    angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore']).config(($routeProvider) => {
+    export var _module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'hawtioCore']);
+    
+    _module.config(["$routeProvider", ($routeProvider) => {
         $routeProvider.
             when('/jclouds/api', {templateUrl: 'app/jclouds/html/api-list.html'}).
             when('/jclouds/api/:apiId', {templateUrl: 'app/jclouds/html/api.html'}).
@@ -28,26 +31,27 @@ module Jclouds {
             when('/jclouds/blobstore/container/:blobstoreId', {templateUrl: 'app/jclouds/html/blobstore/container-list.html'}).
             when('/jclouds/blobstore/container/:blobstoreId/:containerId', {templateUrl: 'app/jclouds/html/blobstore/container.html'}).
             when('/jclouds/blobstore/container/:blobstoreId/:containerId/*directory', {templateUrl: 'app/jclouds/html/blobstore/container.html'})
-    }).
-        run((workspace:Workspace, viewRegistry, helpRegistry) => {
+    }]);
 
-            viewRegistry['jclouds'] = "app/jclouds/html/layoutJclouds.html";
-            helpRegistry.addUserDoc('jclouds', 'app/' + 'jclouds' + '/doc/help.md', () => {
-              return workspace.treeContainsDomainAndProperties("org.jclouds");
-            });
+    _module.run(["workspace", "viewRegistry", "helpRegistry", (workspace:Workspace, viewRegistry, helpRegistry) => {
 
-
-            workspace.topLevelTabs.push({
-                id: "jclouds",
-                content: "jclouds",
-                title: "Visualise and manage the Jclouds Compute/BlobStore providers and apis",
-                isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties("org.jclouds"),
-                href: () => "#/jclouds/api",
-                isActive: (workspace:Workspace) => workspace.isLinkActive("jclouds")
-            });
-
-
+        viewRegistry['jclouds'] = "app/jclouds/html/layoutJclouds.html";
+        helpRegistry.addUserDoc('jclouds', 'app/' + 'jclouds' + '/doc/help.md', () => {
+          return workspace.treeContainsDomainAndProperties("org.jclouds");
         });
+
+
+        workspace.topLevelTabs.push({
+            id: "jclouds",
+            content: "jclouds",
+            title: "Visualise and manage the Jclouds Compute/BlobStore providers and apis",
+            isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties("org.jclouds"),
+            href: () => "#/jclouds/api",
+            isActive: (workspace:Workspace) => workspace.isLinkActive("jclouds")
+        });
+
+
+    }]);
 
     hawtioPluginLoader.addModule(pluginName);
 }

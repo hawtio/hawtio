@@ -1,31 +1,39 @@
 /**
  * @module Core
  */
+
+/// <reference path="corePlugin.ts"/>
+/// <reference path="jolokiaInterfaces.ts"/>
+/// <reference path="folder.ts"/>
+/// <reference path="../../jmx/js/jmxHelpers.ts"/>
 module Core {
+
   /**
-   * @class MenuItem
+   * @class NavMenuItem
    */
-  export interface MenuItem {
+  export interface NavMenuItem {
+    id: string;
     content: string;
     title?: string;
-    isValid?: (Workspace) => any;
-    isActive?: (Workspace) => boolean;
+    isValid?: (workspace:Core.Workspace, perspectiveId?:string) => any;
+    isActive?: (worksace:Core.Workspace) => boolean;
     href: () => any;
   }
 
+
+  var log:Logging.Logger = Logger.get("Core");
   /**
    * @class Workspace
    */
   export class Workspace {
     public operationCounter = 0;
     public selection:NodeSelection;
-    public tree:any = new Folder('MBeans');
-    public treeResponse = {};
+    public tree:Folder = new Folder('MBeans');
     public mbeanTypesToDomain = {};
     public mbeanServicesToDomain = {};
     public attributeColumnDefs = {};
     public treePostProcessors = [];
-    public topLevelTabs = [];
+    public topLevelTabs = <Array<NavMenuItem>>[];
     public subLevelTabs = [];
     public keyToNodeMap = {};
     public pluginRegisterHandle = null;
@@ -81,8 +89,7 @@ module Core {
     public loadTree() {
       // Make an initial blocking call to ensure the JMX tree is populated while the
       // app is initializing...
-      //var flags = {error: initialLoadError, ajaxError: initialLoadError, maxDepth: 2};
-      var flags = {ignoreErrors: true, maxDepth: 2};
+      var flags = {ignoreErrors: true, maxDepth: 7};
       var data = this.jolokia.list(null, onSuccess(null, flags));
 
       if (data) {
@@ -91,8 +98,6 @@ module Core {
       this.populateTree({
         value: data
       });
-      // we now only reload the tree if the TreeWatcher mbean is present...
-      // Core.register(this.jolokia, this, {type: 'list', maxDepth: 2}, onSuccess(angular.bind(this, this.populateTree), {maxDepth: 2}));
     }
 
 
@@ -102,7 +107,7 @@ module Core {
      * @method addTreePostProcessor
      * @param {Function} processor
      */
-    public addTreePostProcessor(processor) {
+    public addTreePostProcessor(processor:(tree:any) => void) {
       this.treePostProcessors.push(processor);
 
       var tree = this.tree;
@@ -137,16 +142,6 @@ module Core {
             mbean: "hawtio:type=TreeWatcher",
             attribute: "Counter"
           });
-        } else {
-          // lets keep using the existing register handle
-
-          /* we don't need to unregister lets keep using it
-          if (this.treeWatchRegisterHandle !== null) {
-            this.jolokia.unregister(this.treeWatchRegisterHandle);
-            this.treeWatchRegisterHandle = null;
-            this.treeWatcherCounter = null;
-          }
-          */
         }
       }
     }
@@ -187,90 +182,88 @@ module Core {
         try {
           return folder.getOrElse(value);
         } catch (e) {
-          Core.log.warn("Failed to find value " + value + " on folder " + folder);
+          log.warn("Failed to find value " + value + " on folder " + folder);
         }
       }
       return null;
     }
 
     public populateTree(response) {
-      if (!Object.equal(this.treeResponse, response.value)) {
-        this.treeResponse = response.value;
-        Core.log.debug("JMX tree has been loaded!");
+      log.debug("JMX tree has been loaded, data: ", response.value);
 
-        var rootId = 'root';
-        var separator = '-';
-        this.mbeanTypesToDomain = {};
-        this.mbeanServicesToDomain = {};
-        this.keyToNodeMap = {};
-        var tree = new Folder('MBeans');
-        tree.key = rootId;
-        var domains = response.value;
-        for (var domain in domains) {
-          var domainClass = escapeDots(domain);
-          var mbeans = domains[domain];
-          for (var path in mbeans) {
-            var entries = {};
-            var folder = this.folderGetOrElse(tree, domain);
-            //if (!folder) continue;
-            folder.domain = domain;
-            if (!folder.key) {
-              folder.key = rootId + separator + domain;
+      var rootId = 'root';
+      var separator = '-';
+      this.mbeanTypesToDomain = {};
+      this.mbeanServicesToDomain = {};
+      this.keyToNodeMap = {};
+      var tree = new Folder('MBeans');
+      tree.key = rootId;
+      var domains = <Core.JMXDomains> response.value;
+      for (var domainName in domains) {
+        var domainClass = escapeDots(domainName);
+        var domain = <Core.JMXDomain> domains[domainName];
+        for (var mbeanName in domain) {
+          var entries = {};
+          var folder = this.folderGetOrElse(tree, domainName);
+          //if (!folder) continue;
+          folder.domain = domainName;
+          if (!folder.key) {
+            folder.key = rootId + separator + domainName;
+          }
+          var folderNames = [domainName];
+          folder.folderNames = folderNames;
+          folderNames = folderNames.clone();
+          var items = mbeanName.split(',');
+          var paths = [];
+          var typeName = null;
+          var serviceName = null;
+          items.forEach(item => {
+            var kv = item.split('=');
+            var key = kv[0];
+            var value = kv[1] || key;
+            entries[key] = value;
+            var moveToFront = false;
+            var lowerKey = key.toLowerCase();
+            if (lowerKey === "type") {
+              typeName = value;
+              // if the type name value already exists in the root node
+              // of the domain then lets move this property around too
+              if (folder.map[value]) {
+                moveToFront = true;
+              }
             }
-            var folderNames = [domain];
-            folder.folderNames = folderNames;
-            folderNames = folderNames.clone();
-            var items = path.split(',');
-            var paths = [];
-            var typeName = null;
-            var serviceName = null;
-            items.forEach(item => {
-              var kv = item.split('=');
-              var key = kv[0];
-              var value = kv[1] || key;
-              entries[key] = value;
-              var moveToFront = false;
-              var lowerKey = key.toLowerCase();
-              if (lowerKey === "type") {
-                typeName = value;
-                // if the type name value already exists in the root node
-                // of the domain then lets move this property around too
-                if (folder.map[value]) {
-                  moveToFront = true;
-                }
-              }
-              if (lowerKey === "service") {
-                serviceName = value;
-              }
-              if (moveToFront) {
-                paths.splice(0, 0, value);
-              } else {
-                paths.push(value);
-              }
-            });
+            if (lowerKey === "service") {
+              serviceName = value;
+            }
+            if (moveToFront) {
+              paths.splice(0, 0, value);
+            } else {
+              paths.push(value);
+            }
+          });
 
 
           var configureFolder = function(folder: Folder, name: string) {
-              folder.domain = domain;
-              if (!folder.key) {
-                folder.key = rootId + separator + folderNames.join(separator);
-              }
-              this.keyToNodeMap[folder.key] = folder;
-              folder.folderNames = folderNames.clone();
-              //var classes = escapeDots(folder.key);
-              var classes = "";
-              var entries = folder.entries;
-              var entryKeys = Object.keys(entries).filter((n) => n.toLowerCase().indexOf("type") >= 0);
-              if (entryKeys.length) {
-                angular.forEach(entryKeys, (entryKey) => {
-                  var entryValue = entries[entryKey];
-                  if (!folder.ancestorHasEntry(entryKey, entryValue)) {
-                    classes += " " + domainClass + separator + entryValue;
-                  }
-                });
-              } else {
-                var kindName = folderNames.last();
-                /*if (folder.parent && folder.parent.title === typeName) {
+            folder.domain = domainName;
+            if (!folder.key) {
+              folder.key = rootId + separator + folderNames.join(separator);
+            }
+            this.keyToNodeMap[folder.key] = folder;
+            folder.folderNames = folderNames.clone();
+            //var classes = escapeDots(folder.key);
+            var classes = "";
+            var entries = folder.entries;
+            var entryKeys = Object.keys(entries).filter((n) => n.toLowerCase().indexOf("type") >= 0);
+            if (entryKeys.length) {
+              angular.forEach(entryKeys, (entryKey) => {
+                var entryValue = entries[entryKey];
+                if (!folder.ancestorHasEntry(entryKey, entryValue)) {
+                  classes += " " + domainClass + separator + entryValue;
+                }
+              });
+            } else {
+              var kindName = folderNames.last();
+              /*if (folder.parent && folder.parent.title === typeName) {
                  kindName = typeName;
                  } else */
                 if (kindName === name) {
@@ -279,65 +272,65 @@ module Core {
                 if (kindName) {
                   classes += " " + domainClass + separator + kindName;
                 }
-              }
-              folder.addClass = escapeTreeCssStyles(classes);
-              return folder;
-            };
-
-            var lastPath = paths.pop();
-            var ws = this;
-            paths.forEach((value) => {
-              folder = ws.folderGetOrElse(folder, value);
-              if (folder) {
-                folderNames.push(value);
-                angular.bind(ws, configureFolder, folder, value)();
-              }
-            });
-            var key = rootId + separator + folderNames.join(separator) + separator + lastPath;
-            var objectName = domain + ":" + path;
-
-            if (folder) {
-              folder = this.folderGetOrElse(folder, lastPath);
-              if (folder) {
-                // lets add the various data into the folder
-                folder.entries = entries;
-                folder.key = key;
-                angular.bind(this, configureFolder, folder, lastPath)();
-                folder.title = trimQuotes(lastPath);
-                folder.objectName = objectName;
-                folder.typeName = typeName;
-
-                var addFolderByDomain = function(owner, typeName) {
-                    var map = owner[typeName];
-                    if (!map) {
-                      map = {};
-                      owner[typeName] = map;
-                    }
-                    var value = map[domain];
-                    if (!value) {
-                      map[domain] = folder;
-                    } else {
-                      var array = null;
-                      if (angular.isArray(value)) {
-                        array = value;
-                      } else {
-                        array = [value];
-                        map[domain] = array;
-                      }
-                      array.push(folder);
-                    }
-                  };
-
-                if (serviceName) {
-                  angular.bind(this, addFolderByDomain, this.mbeanServicesToDomain, serviceName)();
-                }
-                if (typeName) {
-                  angular.bind(this, addFolderByDomain, this.mbeanTypesToDomain, typeName)();
-                }
-              }
-            } else {
-              Core.log.info("No folder found for lastPath: " + lastPath);
             }
+            folder.addClass = escapeTreeCssStyles(classes);
+            return folder;
+          };
+
+          var lastPath = paths.pop();
+          var ws = this;
+          paths.forEach((value) => {
+            folder = ws.folderGetOrElse(folder, value);
+            if (folder) {
+              folderNames.push(value);
+              angular.bind(ws, configureFolder, folder, value)();
+            }
+          });
+          var key = rootId + separator + folderNames.join(separator) + separator + lastPath;
+          var objectName = domainName + ":" + mbeanName;
+
+          if (folder) {
+            folder = this.folderGetOrElse(folder, lastPath);
+            if (folder) {
+              // lets add the various data into the folder
+              folder.entries = entries;
+              folder.key = key;
+              angular.bind(this, configureFolder, folder, lastPath)();
+              folder.title = trimQuotes(lastPath);
+              folder.objectName = objectName;
+              folder.mbean = domain[mbeanName];
+              folder.typeName = typeName;
+
+              var addFolderByDomain = function(owner, typeName) {
+                var map = owner[typeName];
+                if (!map) {
+                  map = {};
+                  owner[typeName] = map;
+                }
+                var value = map[domainName];
+                if (!value) {
+                  map[domainName] = folder;
+                } else {
+                  var array = null;
+                  if (angular.isArray(value)) {
+                    array = value;
+                  } else {
+                    array = [value];
+                    map[domainName] = array;
+                  }
+                  array.push(folder);
+                }
+              };
+
+              if (serviceName) {
+                angular.bind(this, addFolderByDomain, this.mbeanServicesToDomain, serviceName)();
+              }
+              if (typeName) {
+                angular.bind(this, addFolderByDomain, this.mbeanTypesToDomain, typeName)();
+              }
+            }
+          } else {
+            log.info("No folder found for lastPath: " + lastPath);
           }
         }
 
@@ -521,7 +514,7 @@ module Core {
         var validFn = tab['isValid'];
         return !angular.isDefined(validFn) || validFn(workspace);
       } else {
-        Core.log.info("Could not find tab for " + uri);
+        log.info("Could not find tab for " + uri);
         return false;
       }
   /*
@@ -550,7 +543,9 @@ module Core {
           // would be nice to eagerly remove the tree node too?
           var idx = parent.children.indexOf(selection);
           if (idx < 0) {
-            idx = parent.children.findIndex({key: selection.key});
+            idx = parent.children.findIndex(n =>
+              n.key === selection.key
+            );
           }
           if (idx >= 0) {
             parent.children.splice(idx, 1);
@@ -588,7 +583,7 @@ module Core {
      * @return {String}
      */
     public selectionConfigKey(prefix: string = ""):string {
-      var key = null;
+      var key:string = null;
       var selection = this.selection;
       if (selection) {
         // lets make a unique string for the kind of select
@@ -615,7 +610,7 @@ module Core {
           this.setLocalStorage(key, uri);
           return false;
         } else {
-          Core.log.info("the uri '" + uri + "' is not valid for this selection");
+          log.info("the uri '" + uri + "' is not valid for this selection");
           // lets look up the previous preferred value for this type
           var defaultPath = this.getLocalStorage(key);
           if (!defaultPath || !this.validSelection(defaultPath)) {
@@ -631,7 +626,7 @@ module Core {
           if (!defaultPath) {
             defaultPath = "#/jmx/help";
           }
-          Core.log.info("moving the URL to be " + defaultPath);
+          log.info("moving the URL to be " + defaultPath);
           if (defaultPath.startsWith("#")) {
             defaultPath = defaultPath.substring(1);
           }
@@ -646,7 +641,7 @@ module Core {
     public updateSelectionNode(node) {
       var originalSelection = this.selection;
       this.selection = <NodeSelection> node;
-      var key = null;
+      var key:string = null;
       if (node) {
         key = node['key'];
       }
@@ -676,9 +671,16 @@ module Core {
      * @method redrawTree
      */
     public redrawTree() {
-      var treeElement = this.treeElement;
-      if (treeElement) {
-        treeElement.dynatree("getTree").reload();
+      var treeElement:any = this.treeElement;
+      if (treeElement && angular.isDefined(treeElement.dynatree) && angular.isFunction(treeElement.dynatree)) {
+        var node:any = treeElement.dynatree("getTree");
+        if (angular.isDefined(node)) {
+          try {
+            node.reload();
+          } catch (e) {
+            // ignore as we may get an error if starting hawtio from incognito window on chrome
+          }
+        }
       }
     }
 
@@ -689,10 +691,10 @@ module Core {
      * @param {Boolean} flag
      */
     public expandSelection(flag) {
-      var treeElement = this.treeElement;
-      if (treeElement) {
-        var node = treeElement.dynatree("getActiveNode");
-        if (node) {
+      var treeElement:any = this.treeElement;
+      if (treeElement && angular.isDefined(treeElement.dynatree) && angular.isFunction(treeElement.dynatree)) {
+        var node:DynaTreeNode = treeElement.dynatree("getActiveNode");
+        if (angular.isDefined(node)) {
           node.expand(flag);
         }
       }
@@ -707,6 +709,63 @@ module Core {
         }
       }
       return true;
+    }
+
+    public hasInvokeRightsForName(objectName:string, ...methods:Array<string>) {
+      // allow invoke by default, same as in hasInvokeRight() below???
+      var canInvoke = true;
+      if (objectName) {
+        var mbean = Core.parseMBean(objectName);
+        if (mbean) {
+          var mbeanFolder = this.findMBeanWithProperties(mbean.domain, mbean.attributes);
+          if (mbeanFolder) {
+            return this.hasInvokeRights.apply(this, [mbeanFolder].concat(methods));
+          } else {
+            log.debug("Failed to find mbean folder with name " + objectName);
+          }
+        } else {
+          log.debug("Failed to parse mbean name " + objectName);
+        }
+      }
+      return canInvoke;
+    }
+
+    public hasInvokeRights(selection:Core.NodeSelection, ...methods:Array<string>) {
+      var canInvoke = true;
+      if (selection) {
+        var selectionFolder = <Core.Folder> selection;
+        var mbean = selectionFolder.mbean;
+        if (mbean) {
+          if (angular.isDefined(mbean.canInvoke)) {
+            canInvoke = mbean.canInvoke;
+          }
+          if (canInvoke && methods && methods.length > 0) {
+            var opsByString = mbean['opByString'];
+            var ops = mbean['op'];
+            if (opsByString && ops) {
+              methods.forEach((method) => {
+                if (!canInvoke) {
+                  return;
+                }
+                var op = null;
+                if (method.endsWith(')')) {
+                  op = opsByString[method];
+                } else {
+                  op = ops[method];
+                }
+                if (!op) {
+                  log.debug("Could not find method:", method, " to check permissions, skipping");
+                  return;
+                }
+                if (angular.isDefined(op.canInvoke)) {
+                  canInvoke = op.canInvoke;
+                }
+              });
+            }
+          }
+        }
+      } 
+      return canInvoke;
     }
 
     public treeContainsDomainAndProperties(domainName, properties = null) {
@@ -878,8 +937,8 @@ module Core {
     }
   }
 
+
 }
 
 // TODO refactor other code to use Core.Workspace
 class Workspace extends Core.Workspace {};
-interface MenuItem extends Core.MenuItem {};

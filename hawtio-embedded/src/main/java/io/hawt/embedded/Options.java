@@ -28,6 +28,7 @@ public class Options {
     private String warLocation;
     private String war;
     private String contextPath = "/hawtio";
+    private String plugins = "plugins";
     private Integer port = 8080;
     private String extraClassPath;
     private boolean help;
@@ -113,9 +114,15 @@ public class Options {
             }
         });
 
-        addOption(new ParameterOption("l", "warLocation", "Director to search for .war files") {
+        addOption(new ParameterOption("l", "warLocation", "Directory to search for .war files") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 warLocation = parameter;
+            }
+        });
+
+        addOption(new ParameterOption("p", "plugins", "Directory to search for .war files to install as 3rd party plugins") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                plugins = parameter;
             }
         });
 
@@ -180,6 +187,9 @@ public class Options {
         if (extraClassPath != null) {
             sb.append("\n\textraClassPath=").append(extraClassPath);
         }
+        if (plugins != null) {
+            sb.append("\n\tplugins=").append(plugins);
+        }
         sb.append("\n\tjointServerThread=").append(jointServerThread);
         sb.append("\n\thelp=").append(help);
         sb.append("]");
@@ -241,6 +251,14 @@ public class Options {
 
     public void setPort(Integer port) {
         this.port = port;
+    }
+
+    public String getPlugins() {
+        return plugins;
+    }
+
+    public void setPlugins(String plugins) {
+        this.plugins = plugins;
     }
 
     public String getExtraClassPath() {

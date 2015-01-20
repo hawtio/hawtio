@@ -9,7 +9,7 @@ module Fabric {
       case 'child': answer = []; break;
       case 'ssh': answer = ['localip', 'localhostname', 'publicip', 'publichostname', 'manualip']; break;
       case 'jclouds': answer = ['localip', 'localhostname', 'publicip', 'publichostname', 'manualip']; break;
-      case 'openshift': answer = ['publichostname']; break;
+      case 'openshift': answer = []; break;
       case 'docker': answer = []; break;
     }
     return answer;
@@ -20,7 +20,7 @@ module Fabric {
     // console.log("Schema: ", schema);
 
     Core.pathSet(schema, ["properties", "name", "required"], true);
-    Core.pathSet(schema, ['properties', 'name', 'input-attributes', 'ng-pattern'], "/^[a-zA-Z0-9_-]*$/");
+    Core.pathSet(schema, ['properties', 'name', 'input-attributes', 'ng-pattern'], "/^[a-z0-9_-]*$/");
 
     delete schema.properties['metadataMap'];
     delete schema.properties['zookeeperUrl'];
@@ -32,6 +32,8 @@ module Fabric {
     delete schema.properties['autoImportEnabled'];
     delete schema.properties['importPath'];
     delete schema.properties['users'];
+    // we cannot pass in system properties (you can use jvmOpt instead)
+    delete schema.properties['systemProperties'];
 
     ['zooKeeperServerInitLimit',
       'zooKeeperServerTickTime',
@@ -49,11 +51,19 @@ module Fabric {
     Core.pathSet(schema, ['properties','version', 'type'], 'hidden');
 
     Core.pathSet(schema.properties, ['name', 'label'], 'Container Name');
+    Core.pathSet(schema.properties, ['name', 'container-name-available'], 'true');
+
+
     Core.pathSet(schema.properties, ['name', 'tooltip'], 'Name of the container to create (or prefix of the container name if you create multiple containers)');
 
     Core.pathSet(schema.properties, ['number', 'label'], 'Number of containers');
-    Core.pathSet(schema.properties, ['number', 'tooltip'], 'The number of containers to create; when set higher than 1 a number will be appended to each container name');
+    Core.pathSet(schema.properties, ['number', 'tooltip'], 'The number of containers to create; when set higher than 1 a number will be appended to each container name. Max value: 99');
     Core.pathSet(schema.properties, ['number', 'input-attributes', 'min'], '1');
+    Core.pathSet(schema.properties, ['number', 'input-attributes', 'max'], '99');
+    Core.pathSet(schema.properties, ['number', 'input-attributes', 'ng-pattern'], "/^[1-9][0-9]?$/");
+    Core.pathSet(schema.properties, ['number', 'required'], true);
+
+
 
     // mark properties as autofill to avoid issues with angular missing autofill events
     Core.pathSet(schema.properties, ['login', 'input-attributes', "autofill"], "true");
@@ -76,11 +86,15 @@ module Fabric {
         delete schema.properties['ensembleServer'];
         delete schema.properties['proxyUri'];
         delete schema.properties['adminAccess'];
+        delete schema.properties['minimumPort'];
+        delete schema.properties['maximumPort'];
         schema.properties['jmxPassword']['type'] = 'password';
+        /*
         schema.properties['saveJmxCredentials'] = {
           'type': 'boolean'
         };
         Core.pathSet(schema.properties, ['saveJmxCredentials', 'tooltip'], 'Remember credentials when connecting to container (avoid prompting user to enter credentials)');
+        */
 
         Core.pathSet(schema.properties, ['parent', 'label'], 'Parent Container');
         Core.pathSet(schema.properties, ['parent', 'tooltip'], 'The name of the parent container used to create the child container');
@@ -89,7 +103,7 @@ module Fabric {
 
         bulkSet(schema, ["jmxUser", "jmxPassword", "parent"], 'required', true);
         schema['tabs'] = {
-          'Common': ['name', 'parent', 'jmxUser', 'jmxPassword', 'saveJmxCredentials', 'number'],
+          'Common': ['name', 'parent', 'jmxUser', 'jmxPassword', 'number'],
           'Advanced': ['*']
         };
         break;
@@ -131,9 +145,12 @@ module Fabric {
         delete schema.properties['path'];
         delete schema.properties['bindAddress'];
         delete schema.properties['hostNameContext'];
+        delete schema.properties['resolver'];
 
-        schema.properties['serverUrl']['default'] = 'openshift.redhat.com';
+//        schema.properties['serverUrl']['default'] = 'openshift.redhat.com';
 
+        // openshift must select publichostname as the resolver
+        Core.pathSet(schema.properties, ['resolver', 'default'], 'publichostname');
         Core.pathSet(schema.properties, ['serverUrl', 'label'], 'OpenShift Broker');
         Core.pathSet(schema.properties, ['serverUrl', 'tooltip'], 'The OpenShift broker host name of the cloud to create the container inside. This is either the URL for your local OpenShift Enterprise installation, or its the public OpenShift online URL: openshift.redhat.com');
         Core.pathSet(schema.properties, ['login', 'label'], 'OpenShift Login');
@@ -143,8 +160,8 @@ module Fabric {
         Core.pathSet(schema.properties, ['password', 'tooltip'], 'Your personal password on the OpenShift portal');
         Core.pathSet(schema.properties, ['password', 'type'], 'password');
 
-        // openshift only allows a-z and numbers
-        Core.pathSet(schema.properties, ['name', 'input-attributes', 'ng-pattern'], "/^[a-zA-Z0-9]*$/");
+        // openshift only allows lowercase a-z and numbers
+        Core.pathSet(schema.properties, ['name', 'input-attributes', 'ng-pattern'], "/^[a-z0-9]*$/");
 
         // add an extra property to make it easy to login
 /*
@@ -184,7 +201,7 @@ module Fabric {
         bulkSet(schema, ['serverUrl', 'login', 'password', 'domain'], 'required', true);
         schema['tabs'] = {
           'Common': ['name', 'serverUrl', 'login', 'password', 'tryLogin', 'domain', 'gearProfile', 'number'],
-          'Advanced': ['environmentalVariables', 'systemProperties', 'jvmOpts', '*']
+          'Advanced': ['environmentalVariables', 'jvmOpts', '*']
         };
         break;
 
@@ -204,7 +221,27 @@ module Fabric {
 
         schema['tabs'] = {
           'Common': ['name', 'number'],
-          'Advanced': ['environmentalVariables', 'systemProperties', 'jvmOpts', '*']
+          'Advanced': ['environmentalVariables', 'jvmOpts', '*']
+        };
+        break;
+
+      case 'kubernetes':
+        delete schema.properties['jmxUser'];
+        delete schema.properties['jmxPassword'];
+        delete schema.properties['parent'];
+        delete schema.properties['manualIp'];
+        delete schema.properties['preferredAddress'];
+        delete schema.properties['resolver'];
+        delete schema.properties['ensembleServer'];
+        delete schema.properties['proxyUri'];
+        delete schema.properties['adminAccess'];
+        delete schema.properties['path'];
+        delete schema.properties['bindAddress'];
+        delete schema.properties['hostNameContext'];
+
+        schema['tabs'] = {
+          'Common': ['name', 'number'],
+          'Advanced': ['environmentalVariables', 'jvmOpts', '*']
         };
         break;
 

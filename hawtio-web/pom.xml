@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -15,10 +15,30 @@
   <properties>
     <!-- when not doing a release lets use a dummy version number to test out the replacement in the manifest.json -->
     <chrome-version>1.0.1</chrome-version>
+    <!--
     <phantomjs-executable>/usr/local/bin/phantomjs</phantomjs-executable>
+    -->
+    <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
     <watch>false</watch>
-  </properties>
+    <gruntArguments>default</gruntArguments>
+    <gruntOptions />
+    <gruntE2EArguments>e2e</gruntE2EArguments>
+    <gruntE2EOptions>--headless</gruntE2EOptions>
+    <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+    <webappDirectory>${webapp-outdir}</webappDirectory>
+    <warSourceExcludes>**</warSourceExcludes>
+    <packagingExcludes>**/classes/OSGI-INF/**,*/debug/**</packagingExcludes>
+    <packagingIncludes />
 
+    <hawtio-config-importURLs />
+    <hawtio-config-cloneOnStartup>true</hawtio-config-cloneOnStartup>
+    <fabricUrl />
+    <jetty-use-file-lock />
+
+    <!-- allow a http proxy to be specified on the command line -->
+    <http.proxyHost />
+    <http.proxyPort />
+  </properties>
 
   <dependencies>
     <dependency>
@@ -27,7 +47,6 @@
       <version>${servlet-api-version}</version>
       <scope>provided</scope>
     </dependency>
-
 
     <dependency>
       <groupId>org.jolokia</groupId>
@@ -40,6 +59,7 @@
       <artifactId>hawtio-core</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-system</artifactId>
@@ -63,6 +83,13 @@
 
     <dependency>
       <groupId>io.hawt</groupId>
+      <artifactId>hawtio-kubernetes</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.hawt</groupId>
       <artifactId>hawtio-maven-indexer</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
@@ -78,6 +105,13 @@
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-local-jvm-mbean</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-keystore-mbean</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
@@ -152,6 +186,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-util</artifactId>
+      <version>${jetty-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>${jetty-plugin-groupId}</groupId>
       <artifactId>jetty-maven-plugin</artifactId>
       <version>${jetty-version}</version>
@@ -160,10 +200,6 @@
         <exclusion>
           <groupId>org.eclipse.jetty.orbit</groupId>
           <artifactId>javax.servlet</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.eclipse.jetty</groupId>
-          <artifactId>jetty-jsp</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -208,19 +244,37 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty</artifactId>
+      <version>${camel-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-metrics</artifactId>
+      <version>${camel-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-quartz2</artifactId>
       <version>${camel-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-all</artifactId>
+      <artifactId>activemq-jaas</artifactId>
       <version>${activemq-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-jaas</artifactId>
+      <artifactId>activemq-kahadb-store</artifactId>
+      <version>${activemq-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-pool</artifactId>
       <version>${activemq-version}</version>
       <scope>test</scope>
     </dependency>
@@ -261,9 +315,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.fusesource.insight</groupId>
+      <groupId>io.fabric8.insight</groupId>
       <artifactId>insight-log4j</artifactId>
-      <version>${insight-log4j.version}</version>
+      <version>${insight-log4j-version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -280,7 +334,6 @@
       <scope>test</scope>
     </dependency>
 
-
     <dependency>
       <groupId>net.alchim31</groupId>
       <artifactId>livereload-jvm</artifactId>
@@ -291,6 +344,16 @@
   </dependencies>
 
   <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>false</filtering>
+      </testResource>
+      <testResource>
+        <directory>src/test/resources-filtered</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -348,40 +411,80 @@
                     </execute>
                   </action>
                 </pluginExecution>
-
-
               </pluginExecutions>
             </lifecycleMappingMetadata>
           </configuration>
         </plugin>
-
       </plugins>
     </pluginManagement>
 
     <plugins>
 
       <plugin>
-        <groupId>io.hawt</groupId>
-        <artifactId>typescript-maven-plugin</artifactId>
-        <version>0.0.1</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}/src/main/webapp/bower_components</directory>
+            </fileset>
+            <fileset>
+              <directory>${basedir}/src/main/webapp/app</directory>
+              <includes>
+                <include>app.js</include>
+                <include>app.min.js</include>
+                <include>*.map</include>
+              </includes>
+            </fileset>
+            <fileset>
+              <directory>${basedir}/dist</directory>
+            </fileset>
+            <fileset>
+              <directory>${basedir}/.tmp</directory>
+            </fileset>
+            <fileset>
+              <directory>${basedir}/tmp</directory>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>${frontend-maven-plugin-version}</version>
         <executions>
           <execution>
-            <id>compile</id>
-            <phase>compile</phase>
+            <id>install node and npm</id>
             <goals>
-              <goal>tsc</goal>
+              <goal>install-node-and-npm</goal>
             </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <nodeVersion>v0.10.32</nodeVersion>
+              <npmVersion>1.4.12</npmVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm install</id>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>grunt build</id>
+            <goals>
+              <goal>grunt</goal>
+            </goals>
+            <configuration>
+              <arguments>${gruntArguments} ${gruntOptions}</arguments>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <sourceDirectory>src/main/webapp/app</sourceDirectory>
-          <libraryDirectory>src/main/d.ts</libraryDirectory>
-          <noStandardLib>false</noStandardLib>
-          <useTsc>true</useTsc>
-          <targetVersion>ES5</targetVersion>
-          <targetFile>${appjs-outfile}</targetFile>
-          <watch>${watch}</watch>
-        </configuration>
       </plugin>
 
       <plugin>
@@ -396,55 +499,27 @@
 
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.6</version>
+        <version>${maven-antrun-plugin-version}</version>
         <executions>
-
           <execution>
-            <id>test</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
+            <id>process-resources</id>
+            <phase>process-resources</phase>
             <configuration>
               <target>
+                <mkdir dir="${project.build.outputDirectory}" />
 
-                <echo>Copying stuff to src/test/unit</echo>
-                <copy todir="src/test/unit">
-                  <fileset dir="${webapp-outdir}">
-                    <include name="**" />
-                  </fileset>
-                </copy>
-
-              </target>
-            </configuration>
-          </execution>
-
-          <execution>
-            <id>generate-sources</id>
-            <phase>generate-sources</phase>
-            <configuration>
-              <target>
-                <mkdir dir="${basedir}/target/classes" />
-
-                <!-- copy the markdown docs into the site plugin  -->
                 <echo>Writing version to index.html</echo>
-                <copy tofile="${webapp-outdir}/index.html" file="${basedir}/src/main/webapp/index.html" overwrite="true">
-                  <filterchain>
-                    <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
-                      <param type="token" name="VERSION" value="${project.version}" />
-                    </filterreader>
-                  </filterchain>
-                </copy>
+                <copy tofile="${webappDirectory}/index.html" file="${warSourceDirectory}/index.html" overwrite="true" />
 
                 <echo>Coping help files to site</echo>
-                <copy todir="${webapp-outdir}/app/site" overwrite="true">
+                <copy todir="${webappDirectory}/app/site" overwrite="true">
                   <fileset dir="${basedir}/..">
                     <include name="*.md" />
                   </fileset>
                 </copy>
 
                 <echo>Copying site documentation</echo>
-                <copy todir="${webapp-outdir}/app/site/doc" overwrite="true">
+                <copy todir="${webappDirectory}/app/site/doc" overwrite="true">
                   <fileset dir="${basedir}/../docs">
                     <include name="**/*.md" />
                     <include name="**/*.html" />
@@ -453,34 +528,50 @@
                 </copy>
 
                 <echo>Copying base directory docs</echo>
-                <copy todir="${webapp-outdir}/app/core/doc">
-                  <fileset dir="${basedir}/../">
+                <copy todir="${webappDirectory}/app/core/doc">
+                  <fileset dir="${basedir}/..">
                     <include name="*.md" />
                   </fileset>
                 </copy>
 
                 <echo>Copying static non-ts resources to exploded war directory</echo>
-                <copy todir="${webapp-outdir}">
-<!--
-                  <filterchain>
-                    <filterreader classname="org.apache.tools.ant.filters.ReplaceTokens">
-                      <param type="token" name="VERSION" value="${project.version}" />
-                    </filterreader>
-                  </filterchain>
--->
-                  <fileset dir="${basedir}/src/main/webapp">
+                <copy todir="${webappDirectory}">
+                  <fileset dir="${warSourceDirectory}">
                     <include name="**" />
-                    <exclude name="**/*.ts" />
-                    <exclude name="index.html" />
                     <exclude name="manifest.json" />
+                    <exclude name="app/*/js/**" />
+                    <exclude name="app/*/js" />
+                    <!-- sorry, couldn't do it better for now -->
+                    <exclude name="bower_components/Font-Awesome/less/**" />
+                    <exclude name="bower_components/Font-Awesome/scss/**" />
+                    <exclude name="bower_components/Font-Awesome/src/**" />
+                    <exclude name="bower_components/bootstrap/docs/build/**" />
+                    <exclude name="bower_components/bootstrap/docs/examples/**" />
+                    <exclude name="bower_components/bootstrap/docs/assets/img/example-sites/**" />
+                    <exclude name="bower_components/bootstrap/docs/assets/img/examples/**" />
+                    <exclude name="bower_components/bootstrap/less/**" />
+                    <exclude name="bower_components/d3/lib/**" />
+                    <exclude name="bower_components/d3/src/**" />
+                    <exclude name="bower_components/d3/test/**" />
+                    <exclude name="bower_components/d3/d3.js" />
+                    <exclude name="bower_components/d3/*.json" />
+                    <exclude name="bower_components/elastic.js/examples/**" />
+                    <exclude name="bower_components/elastic.js/src/**" />
+                    <exclude name="bower_components/elastic.js/tests/**" />
+                    <exclude name="bower_components/elastic.js/dist/elastic.js" />
+                    <exclude name="bower_components/jquery/build/**" />
+                    <exclude name="bower_components/jquery/speed/**" />
+                    <exclude name="bower_components/jquery/src/**" />
+                    <exclude name="bower_components/jquery/test/**" />
+                    <!-- / -->
                   </fileset>
                 </copy>
 
                 <!-- update the manifest version -->
-                <copy todir="${webapp-outdir}">
+                <copy todir="${webappDirectory}">
                   <filterset begintoken="version&quot;: &quot;" endtoken="&quot;">
-                      <filter token="1.0.0" value="version&quot;: &quot;${chrome-version}&quot;" />
-                    </filterset>
+                    <filter token="1.0.0" value="version&quot;: &quot;${chrome-version}&quot;" />
+                  </filterset>
                   <fileset dir="${basedir}/src/main/webapp">
                     <include name="manifest.json" />
                   </fileset>
@@ -494,7 +585,6 @@
           </execution>
         </executions>
       </plugin>
-
 
       <plugin>
         <groupId>org.apache.felix</groupId>
@@ -511,8 +601,6 @@
         </executions>
         <configuration>
           <supportedProjectTypes>
-            <supportedProjectType>jar</supportedProjectType>
-            <supportedProjectType>bundle</supportedProjectType>
             <supportedProjectType>war</supportedProjectType>
           </supportedProjectTypes>
           <instructions>
@@ -520,18 +608,25 @@
             <Web-ContextPath>${context}</Web-ContextPath>
 
             <Embed-Directory>WEB-INF/lib</Embed-Directory>
-            <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+            <Embed-Dependency>*;scope=compile|runtime;artifactId=!org.osgi.enterprise|org.osgi.core</Embed-Dependency>
             <Embed-Transitive>true</Embed-Transitive>
 
             <!-- fix jgit, and slf4j imports -->
             <Import-Package>
+              io.hawt.git;resolution:=optional;version="[1.4,2)",
+              io.hawt.util;resolution:=optional;version="[1.4,2)",
+              io.hawt.util.introspect;resolution:=optional;version="[1.4,2)",
+              io.hawt.util.introspect.support;resolution:=optional;version="[1.4,2)",
+              org.osgi.framework;version="[1.5,2)",
+              org.osgi.util.tracker,
               org.eclipse.jetty.plus.jaas.spi;resolution:=optional,
               org.eclipse.jetty.plus.jaas.callback;resolution:=optional,
               org.apache.commons.logging;resolution:=optional,
-              org.slf4j;resolution:=optional,
+              org.slf4j;resolution:=optional;version="[1.6,2)",
               !org.slf4j.impl,
               !org.apache.avalon*,
               !org.apache.log*,
+              !javax.persistence,
 
               !com.jcraft.jzlib,
               !keypairgen,
@@ -560,33 +655,21 @@
         <version>${war-plugin-version}</version>
         <configuration>
           <outputFileNameMapping>@{artifactId}@-@{baseVersion}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>
-          <warSourceDirectory>${webapp-outdir}</warSourceDirectory>
-          <packagingExcludes>
-            **/classes/OSGI-INF/**,
-            **/*.ts,
-            */debug/**
-          </packagingExcludes>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-<!--
-          TODO disabled using archiveClasses for https://github.com/hawtio/hawtio/issues/403
-          until we can figure out how to get the war to work inside OSGi again
+          <warSourceDirectory>${warSourceDirectory}</warSourceDirectory>
+          <webappDirectory>${webappDirectory}</webappDirectory>
+          <packagingExcludes>${packagingExcludes}</packagingExcludes>
+          <packagingIncludes>${packagingIncludes}</packagingIncludes>
+          <warSourceExcludes>${warSourceExcludes}</warSourceExcludes>
+          <failOnMissingWebXml>true</failOnMissingWebXml>
+          <!--
+                    TODO disabled using archiveClasses for https://github.com/hawtio/hawtio/issues/403
+                    until we can figure out how to get the war to work inside OSGi again
 
-          <archiveClasses>true</archiveClasses>
--->
+                    <archiveClasses>true</archiveClasses>
+          -->
           <archive>
             <manifestFile>${basedir}/target/classes/META-INF/MANIFEST.MF</manifestFile>
           </archive>
-<!--
-          <webResources>
-            <resource>
-              <filtering>true</filtering>
-              <directory>src/main/resources</directory>
-              <includes>
-                <include>**/*.*</include>
-              </includes>
-            </resource>
-          </webResources>
--->
         </configuration>
       </plugin>
 
@@ -596,6 +679,7 @@
         <version>${project.version}</version>
         <executions>
           <execution>
+            <phase>generate-sources</phase>
             <goals>
               <goal>generate-json-schema</goal>
             </goals>
@@ -627,17 +711,42 @@
       </plugin>
 
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${build-helper-maven-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>target/hawtio.d.ts</file>
+                  <type>d.ts</type>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>${jetty-plugin-groupId}</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty-version}</version>
+        <version>${jetty-plugin-version}</version>
         <configuration>
           <webAppConfig>
             <contextPath>${context}</contextPath>
             <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-              <resourcesAsCSV>src/main/webapp,${webapp-outdir}</resourcesAsCSV>
+              <resourcesAsCSV>${warSourceDirectory},${webappDirectory}</resourcesAsCSV>
             </baseResource>
           </webAppConfig>
           <scanIntervalSeconds>0</scanIntervalSeconds>
+          <stopKey>foo</stopKey>
+          <stopPort>9999</stopPort>
           <useTestScope>true</useTestScope>
           <connectors>
             <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
@@ -655,6 +764,14 @@
               <value>${hawtio-config-repo}</value>
             </systemProperty>
             <systemProperty>
+              <key>hawtio.config.importURLs</key>
+              <value>${hawtio-config-importURLs}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>hawtio.config.cloneOnStartup</key>
+              <value>${hawtio-config-cloneOnStartup}</value>
+            </systemProperty>
+            <systemProperty>
               <key>karaf.data</key>
               <value>${project.build.directory}/karaf-data</value>
             </systemProperty>
@@ -670,6 +787,10 @@
               <key>hawtio.forceBranding</key>
               <value>true</value>
             </systemProperty>
+            <systemProperty>
+              <key>java.security.auth.login.config</key>
+              <value>${project.build.testOutputDirectory}/login.conf</value>
+            </systemProperty>
           </systemProperties>
         </configuration>
       </plugin>
@@ -684,7 +805,7 @@
           <systemProperties>
           </systemProperties>
           <useTestClasspath>false</useTestClasspath>
-          <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
+          <warSourceDirectory>${warSourceDirectory}</warSourceDirectory>
         </configuration>
       </plugin>
 
@@ -702,7 +823,7 @@
             </systemProperty>
           </systemProperties>
           <useTestClasspath>false</useTestClasspath>
-          <warSourceDirectory>${project.build.directory}/${project.name}-${project.version}</warSourceDirectory>
+          <warSourceDirectory>${warSourceDirectory}</warSourceDirectory>
         </configuration>
       </plugin>
 
@@ -767,9 +888,23 @@
               <key>hawtio.authenticationEnabled</key>
               <value>false</value>
             </systemProperty>
+            <systemProperty>
+              <key>hawtio.proxyDisableCertificateValidation</key>
+              <value>true</value>
+            </systemProperty>
+
+            <systemProperty>
+              <key>http.proxyHost</key>
+              <value>${http.proxyHost}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>http.proxyPort</key>
+              <value>${http.proxyPort}</value>
+            </systemProperty>
           </systemProperties>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
 
@@ -779,7 +914,7 @@
       <id>watch</id>
       <properties>
         <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
-        <watch>true</watch>
+        <gruntArguments>bower watch</gruntArguments>
       </properties>
     </profile>
 
@@ -792,7 +927,9 @@
       </activation>
       <properties>
         <tsc-executable>tsc.cmd</tsc-executable>
+        <!--
         <phantomjs-executable>phantomjs.cmd</phantomjs-executable>
+        -->
         <jetty-use-file-lock>false</jetty-use-file-lock>
       </properties>
     </profile>
@@ -833,20 +970,20 @@
           <artifactId>hawtio-watcher-spring-context</artifactId>
           <version>${project.version}</version>
           <scope>test</scope>
-         </dependency>
-         <dependency>
-         <groupId>io.hawt</groupId>
-           <artifactId>hawtio-watcher-blueprint-web</artifactId>
-           <version>${project.version}</version>
-           <scope>test</scope>
-         </dependency>
-         <dependency>
-           <groupId>io.hawt</groupId>
-           <artifactId>hawtio-watcher-dynamic-jaxb</artifactId>
-           <version>${project.version}</version>
-           <scope>test</scope>
-         </dependency>
-       </dependencies>
+        </dependency>
+        <dependency>
+          <groupId>io.hawt</groupId>
+          <artifactId>hawtio-watcher-blueprint-web</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>io.hawt</groupId>
+          <artifactId>hawtio-watcher-dynamic-jaxb</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
     </profile>
 
     <profile>
@@ -876,11 +1013,11 @@
         </plugins>
       </build>
     </profile>
+
     <profile>
       <id>icons</id>
       <build>
         <plugins>
-
           <plugin>
             <artifactId>maven-antrun-plugin</artifactId>
             <version>1.6</version>
@@ -937,7 +1074,6 @@
       </activation>
 
       <dependencies>
-
         <dependency>
           <groupId>org.apache.activemq</groupId>
           <artifactId>apollo-broker</artifactId>
@@ -1000,53 +1136,193 @@
           <version>${scala-version}</version>
         </dependency>
       </dependencies>
-
     </profile>
 
-    <!--
-    this profile is here so we disable the jasmine profile when releasing
-    as for some reason it fails when ran inside mvn release:prepare
-    -->
     <profile>
       <id>release</id>
       <properties>
         <chrome-version>${project.version}</chrome-version>
+        <warSourceDirectory>${basedir}/dist</warSourceDirectory>
+        <maven.war.webxml>${basedir}/src/main/webapp/WEB-INF/web.xml</maven.war.webxml>
+        <warSourceExcludes>app/app.js.map</warSourceExcludes>
+        <gruntArguments>dist</gruntArguments>
       </properties>
     </profile>
 
     <profile>
-      <id>jasmine-test</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-        <file><exists>${phantomjs-executable}</exists></file>
-      </activation>
+      <id>dist</id>
+      <properties>
+        <chrome-version>${project.version}</chrome-version>
+        <warSourceDirectory>${basedir}/dist</warSourceDirectory>
+        <maven.war.webxml>${basedir}/src/main/webapp/WEB-INF/web.xml</maven.war.webxml>
+        <warSourceExcludes>app/app.js.map</warSourceExcludes>
+        <gruntArguments>dist</gruntArguments>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>chrome</id>
+      <properties>
+        <gruntE2EOptions />
+      </properties>
+    </profile>
+
+    <profile>
+      <id>itests</id>
       <build>
         <plugins>
           <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>${exec-maven-plugin-version}</version>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
             <executions>
               <execution>
-                <id>PhantomJS Unit Testing</id>
-                <phase>test</phase>
+                <id>grunt e2e</id>
                 <goals>
-                  <goal>exec</goal>
+                  <goal>grunt</goal>
+                </goals>
+                <phase>integration-test</phase>
+                <configuration>
+                  <arguments>${gruntE2EArguments} ${gruntE2EOptions}</arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>${jetty-plugin-groupId}</groupId>
+            <artifactId>jetty-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>start-jetty</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+                <configuration>
+                  <daemon>true</daemon>
+                  <scanIntervalSeconds>0</scanIntervalSeconds>
+                </configuration>
+              </execution>
+              <execution>
+                <id>stop-jetty</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
                 </goals>
               </execution>
             </executions>
-            <configuration>
-              <executable>${phantomjs-executable}</executable>
-              <workingDirectory>src/test/specs</workingDirectory>
-              <arguments>
-                <argument>phantomjs_jasminexml_runner.js</argument>
-                <argument>SpecRunner.html</argument>
-                <argument>${project.build.directory}/surefire-reports</argument>
-              </arguments>
-            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.gmaven</groupId>
+            <artifactId>groovy-maven-plugin</artifactId>
+            <version>2.0</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <phase>verify</phase>
+                <configuration>
+                  <source>
+                    def result = new AntBuilder().fileset(dir: "${basedir}/target/failsafe-reports", includes: 'TEST-*.xml') {
+                      containsregexp expression: '(failures|errors)="[^0]'
+                    }*.file
+
+                    if (result.size &gt; 0) then fail('There were Protractor test failures/errors')
+                  </source>
+                </configuration>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-all</artifactId>
+                <version>2.3.7</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>kube</id>
+
+      <properties>
+        <fabric8.release.version>2.0.17</fabric8.release.version>
+        <fabric8.v2.version>${fabric8.release.version}</fabric8.v2.version>
+<!--
+        <fabric8.v2.version>2.1-SNAPSHOT</fabric8.v2.version>
+-->
+
+        <hawtio-config-importURLs>mvn:io.fabric8.quickstarts/fabric8-quickstarts-parent/${fabric8.release.version}/zip/app,mvn:io.fabric8.jube.images.fabric8/apps/${fabric8.release.version}/zip/app</hawtio-config-importURLs>
+        <hawtio-config-cloneOnStartup>false</hawtio-config-cloneOnStartup>
+
+        <!--
+        this points to the local build of fabric8 so that you can modify the wiki to add/remove apps
+        without messing with the clean curated wiki generated by the fabric8 build ;)
+        -->
+<!--
+        <hawtio-config-dir>../../fabric8/wiki/target/hawtioConfig</hawtio-config-dir>
+-->
+        <hawtio-config-dir>${basedir}/target/kubeWikiConfig</hawtio-config-dir>
+      </properties>
+
+      <dependencies>
+        <dependency>
+          <groupId>io.fabric8</groupId>
+          <artifactId>kubernetes-api</artifactId>
+          <version>${fabric8.v2.version}</version>
+          <scope>test</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.apache.karaf.features</groupId>
+              <artifactId>org.apache.karaf.features.core</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.osgi</groupId>
+              <artifactId>org.osgi.core</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>io.fabric8</groupId>
+          <artifactId>kubernetes-template</artifactId>
+          <version>${fabric8.v2.version}</version>
+          <scope>test</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.apache.karaf.features</groupId>
+              <artifactId>org.apache.karaf.features.core</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.osgi</groupId>
+              <artifactId>org.osgi.core</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
+
+
+<!--
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-clean-plugin</artifactId>
+            <version>2.5</version>
+            <configuration>
+              <filesets>
+                <fileset>
+                  <directory>${basedir}/hawtio-config</directory>
+                  <followSymlinks>false</followSymlinks>
+                </fileset>
+              </filesets>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+-->
+    </profile>
+
   </profiles>
+
 </project>

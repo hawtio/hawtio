@@ -2,6 +2,10 @@ We love [contributions](http://hawt.io/contributing/index.html). This page is in
 
 Welcome and enjoy! Its hawt, but stay cool! :)
 
+<div class="alert alert-info">
+Hawtio 2.x Overview!  Ooh, shiny shiny...  <a href="https://github.com/hawtio/hawtio/blob/master/docs/Overview2dotX.md">look here!</a>
+</div>
+
 ## Building the code
 
 Check out <a class="btn btn-primary btn-large" href="http://hawt.io/building/index.html">How To Build The Code</a> if you want to start hacking on the source.
@@ -12,14 +16,15 @@ Check out <a class="btn btn-primary btn-large" href="http://hawt.io/building/ind
 
 You may want to check out:
 
-* [current list of the available plugins](http://hawt.io/plugins/index.html)
-* [how plugins work](http://hawt.io/plugins/howPluginsWork.html)
-* [available AngularJS Directives](http://hawt.io/developers/directives.html)
+* [Current hawtio plugins](http://hawt.io/plugins/index.html)
+* [External AngularJS Directives](http://hawt.io/developers/directives.html)
+* [How plugins work](http://hawt.io/plugins/howPluginsWork.html)
 
 ## Developer Tools
 
 The following are recommended if you want to contribute to the code
 
+* [hawtio Typescript API documentation](http://hawt.io/ts-api/index.html) Typedoc output for all of the typescript code on hawtio's master branch
 * [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) as this has TypeScript support and is the daddy of IDEs!
 * [There are other TypeScript plugins](http://blogs.msdn.com/b/interoperability/archive/2012/10/01/sublime-text-vi-emacs-typescript-enabled.aspx) if you prefer Sublime, Emacs or VIM. (Unfortunately we're not aware of an eclipse plugin yet).
 * [AngularJS plugin for IDEA](http://plugins.jetbrains.com/plugin/?id=6971) if you use [IDEA](http://www.jetbrains.com/idea/) then this plugin really helps work with Angular JS
@@ -130,6 +135,21 @@ In the console type the following
     s = angular.element($0).scope()
 
 You have now defined a variable called _s_ which contains all the values in the active AngularJS scope so you can navigate into the scope and inspect values or invoke functions in the REPL, etc.
+
+#### Handy JQuery debugging tip
+
+Open the JavaScript Console and select the _Console_ tab so you can type expressions into the shell.
+Select a DOM element (e.g., button) for which you want to check what jquery event handlers are attached.
+In the console type:
+
+    jQuery._data($0, "events")
+
+You'll get array of events. When you expand the events and go to "handler" member (e.g., `click->0->handler`), you can:
+
+* in Firebug right click `function()` and select _Inspect in Script Panel_
+* in Chrome dev tools right click `function()` and select _Show Function Definition_
+
+to see the body of handler method.
 
 ### Handy AngularJS programming tips
 

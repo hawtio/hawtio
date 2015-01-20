@@ -1,7 +1,57 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
 module UI {
+
+  export interface MenuItem {
+    /**
+     * If set this menu item will be a separator
+     * with a heading to help group related menu
+     * items
+     */
+    heading?:string
+    /**
+     * The string displayed in the menu
+     */
+    title?:string;
+    /**
+     * An optional icon, if not provided a spacer
+     * is used to ensure the menu is laid out
+     * correctly
+     */
+    icon?:string
+    /**
+     * Used in extensible menus to determine whether
+     * or not the menu item should be shown
+     */
+    valid?: () => boolean;
+    /**
+     * Can be a string with an expression to evaluate
+     * or a function
+     */
+    action?: any;
+    /**
+     * A submenu for this item
+     */
+    items?:MenuItem[];
+
+    /**
+     * Object name for RBAC checking
+     */
+    objectName?: string;
+
+    /**
+     * method name for RBAC checking
+     */
+    methodName?: string;
+
+    /**
+     * argument types for RBAC checking
+     */
+    argumentTypes?: string;
+  }
 
   export function hawtioDropDown($templateCache) {
     return {
@@ -11,7 +61,7 @@ module UI {
       scope: {
         config: '=hawtioDropDown'
       },
-      controller: ($scope, $element, $attrs) => {
+      controller: ["$scope", "$element", "$attrs", ($scope, $element, $attrs) => {
 
         if (!$scope.config) {
           $scope.config = {};
@@ -29,9 +79,9 @@ module UI {
             $event.stopPropagation();
           } else if ('action' in config) {
             //log.debug("executing action: ", config.action);
-            var action = config['action'];
+            var action:() => void = config['action'];
             if (angular.isFunction(action)) {
-              action.apply();
+              action();
             } else if (angular.isString(action)) {
               $scope.$parent.$eval(action, {
                 config: config,
@@ -70,7 +120,7 @@ module UI {
           return 'open';
         };
 
-      },
+      }],
       link: ($scope, $element, $attrs) => {
         $scope.menuStyle = $templateCache.get("withsubmenus.html");
 
@@ -83,5 +133,7 @@ module UI {
       }
     };
   }
+
+  _module.directive('hawtioDropDown', ["$templateCache", UI.hawtioDropDown]);
 
 }

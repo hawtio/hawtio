@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('hawtioConfirmDialog', () => {
+    return new UI.ConfirmDialog();
+  });
 
   /**
    * Configuration object for the ConfirmDialog directive
@@ -88,12 +93,12 @@ module UI {
       okButtonText: '@',
       showOkButton: '@',
       cancelButtonText: '@',
-      onCancel: '&',
-      onOk: '&',
-      onClose: '&'
+      onCancel: '&?',
+      onOk: '&?',
+      onClose: '&?'
     };
 
-    public controller = ($scope, $element, $attrs, $transclude, $compile) => {
+    public controller = ["$scope", "$element", "$attrs", "$transclude", "$compile" ,($scope, $element, $attrs, $transclude, $compile) => {
 
       $scope.clone = null;
 
@@ -113,7 +118,7 @@ module UI {
 
       $attrs.$observe('okButtonText', function(value) {
         if (!angular.isDefined(value)) {
-          $scope.okButtonText = "Ok";
+          $scope.okButtonText = "OK";
         }
       });
       $attrs.$observe('cancelButtonText', function(value) {
@@ -155,7 +160,7 @@ module UI {
         checkClosed();
       };
 
-    };
+    }];
 
     public constructor () {
 

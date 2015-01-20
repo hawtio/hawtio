@@ -1,10 +1,17 @@
+/// <reference path="./tomcatPlugin.ts"/>
 module Tomcat {
 
-    export function TomcatController($scope, $location, workspace:Workspace, jolokia) {
+    _module.controller("Tomcat.TomcatController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | tomcatIconClass}}"></i></div>';
+        var urlTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">' +
+          '<a ng-href="{{row.getProperty(col.field)}}" target="_blank">{{row.getProperty(col.field)}}</a>' +
+          '</div>';
 
-        $scope.uninstallDialog = new UI.Dialog()
+      $scope.uninstallDialog = new UI.Dialog()
+
+        $scope.httpPort;
+        $scope.httpScheme = "http";
 
         $scope.webapps = [];
         $scope.selected = [];
@@ -25,6 +32,14 @@ module Tomcat {
                 cellFilter: null,
                 width: "*",
                 resizable: true
+            },
+            {
+              field: 'url',
+              displayName: 'Url',
+              cellTemplate: urlTemplate,
+              cellFilter: null,
+              width: "*",
+              resizable: true
             },
             {
                 field: 'startTime',
@@ -53,6 +68,14 @@ module Tomcat {
                 resizable: true
             },
             {
+              field: 'url',
+              displayName: 'Url',
+              cellTemplate: urlTemplate,
+              cellFilter: null,
+              width: "*",
+              resizable: true
+            },
+            {
                 field: 'startTime',
                 displayName: 'Start Time',
                 cellFilter: null,
@@ -79,11 +102,19 @@ module Tomcat {
                 resizable: true
             },
             {
-                field: 'displayName',
-                displayName: 'Display Name',
-                cellFilter: null,
-                width: "*",
-                resizable: true
+              field: 'displayName',
+              displayName: 'Display Name',
+              cellFilter: null,
+              width: "*",
+              resizable: true
+            },
+            {
+              field: 'url',
+              displayName: 'Url',
+              cellTemplate: urlTemplate,
+              cellFilter: null,
+              width: "*",
+              resizable: true
             },
             {
                 field: 'startTime',
@@ -116,6 +147,11 @@ module Tomcat {
             if (obj) {
               obj.mbean = response.request.mbean;
               var mbean = obj.mbean;
+
+              // compute the url for the webapp, and we want to use http as scheme
+              var hostname = Core.extractTargetUrl($location, $scope.httpScheme, $scope.httpPort);
+              obj.url = hostname + obj['path'];
+
               if (mbean) {
 
                 // format the start time as readable date format
@@ -212,6 +248,29 @@ module Tomcat {
 
         function loadData() {
           console.log("Loading tomcat webapp data...");
+          // must load connectors first, before showing applications, so we do this call synchronously
+          var connectors = jolokia.search("*:type=Connector,*");
+          if (connectors) {
+            var found = false;
+            angular.forEach(connectors, function (key, value) {
+              var mbean = key;
+              if (!found) {
+                var data = jolokia.request({type: "read", mbean: mbean, attribute: ["port", "scheme", "protocol"]});
+                if (data && data.value) {
+                  function isHttp(value) {
+                    return value && value.toString().toLowerCase().indexOf("http") >= 0;
+                  }
+
+                  // protocol must be http
+                  if (isHttp(data.value.protocol)) {
+                    found = true;
+                    $scope.httpPort = data.value.port;
+                    $scope.httpScheme = data.value.scheme;
+                  }
+                }
+              }
+            });
+          }
           jolokia.search("*:j2eeType=WebModule,*", onSuccess(render));
         }
 
@@ -238,5 +297,5 @@ module Tomcat {
           $scope.gridOptions.columnDefs = columnDefsTomcat7;
         }
 
-    }
+    }]);
 }

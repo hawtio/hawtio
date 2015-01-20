@@ -1,6 +1,8 @@
 /**
  * @module Core
  */
+
+/// <reference path="corePlugin.ts"/>
 module Core {
 
   /**
@@ -52,7 +54,10 @@ module Core {
         return false;
       });
     }
+  }// end class GridStyle
 
-  }
+  _module.directive('gridStyle', ["$window", ($window) => {
+    return new Core.GridStyle($window);
+  }]);
 
 }

@@ -24,9 +24,25 @@ Since 1.2-M2 of hawtio we enable security by default using the underlying applic
 
 Here's how to [disable security](https://github.com/hawtio/hawtio/blob/master/docs/Configuration.md#configuring-or-disabling-security-in-karaf-servicemix-fuse) if you wish to remove the need to login to hawtio.
 
+#### Which Java version is required?
+
+Hawtio 1.4 onwards requires Java 7 or 8. 
+Hawtio 1.3 or older supports Java 6 and 7.
+
+#### How do I enable hawtio inside my Java Application / Spring Boot / DropWizard / Micro Service
+
+The easiest thing to do is add jolokia as a java agent via a java agent command line:
+```
+java -javaagent:jolokia-agent.jar=host=0.0.0.0 -jar foo.jar
+```
+
+Then by default you can connect on http;//localhost:8778/jolokia to access the jolokia REST API.
+
+Now you can use hawtio (e.g. the Google Chrome Extension or the stand alone hawtio application) to connect to it - and it then minimises the effect of hawtio/jolokia on your app (e.g. you don't need to mess about with whats inside your application or even change the classpath)
+
 #### How do I connect to my remote JVM?
 
-All thats required for hawtio to connect to any remote JVM is that a [jolokia agent](http://jolokia.org/agent.html) can be added to it. This can be done in various ways.
+All that's required for hawtio to connect to any remote JVM is that a [jolokia agent](http://jolokia.org/agent.html) is attached to the JVM you wish to connect to. This can be done in various ways.
 
 Firstly if you are using [Fuse](http://www.jboss.org/products/fuse) or [Apache ActiveMQ 5.9.x or later](http://activemq.apache.org/) then you already have jolokia enabled by default.
 
@@ -50,7 +66,7 @@ Assuming you have jolokia working in your JVM, then you can use the **Remote** t
 
 After trying the above if you have problems connecting to your JVM, please [let us know](http://hawt.io/community/index.html) by [raising an issue](https://github.com/hawtio/hawtio/issues?state=open) and we'll try to help.
 
-#### How do I install a plugin?
+#### How do I install a plugin?
 
 Each hawtio distro has these [browser based plugins](http://hawt.io/plugins/index.html) inside already; plus hawtio can discover any other external plugins deployed in the same JVM too.
 
@@ -78,13 +94,18 @@ At first a git-based wiki might not seem terribly relevant to hawtio. A wiki can
 
 From a hawtio perspective though its wiki pages can be HTML or Markdown and then be an AngularJS HTML partial. So it can include JavaScript widgets; or it can include [AngularJS directives](http://docs.angularjs.org/guide/directive).
 
-This lets us use HTML and Markdown files to define custom views using HTML directives (custom tags) from any any [hawtio plugins](http://hawt.io/plugins/index.html). Hopefully over time we can build a large library of HTML directives that folks can use inside HTML or Markdown files to show attribute values or charts from MBeans in real time, to show a panel from a dashboard, etc. Then folks can make their own mashups and happy pages showing just the information they want.
+This lets us use HTML and Markdown files to define custom views using HTML directives (custom tags) from any [hawtio plugins](http://hawt.io/plugins/index.html). Hopefully over time we can build a large library of HTML directives that folks can use inside HTML or Markdown files to show attribute values or charts from MBeans in real time, to show a panel from a dashboard, etc. Then folks can make their own mashups and happy pages showing just the information they want.
 
 So another way to think of hawtio wiki pages is as a kind of plugin or a custom format of a dashboard page. Right now each dashboard page assumes a grid layout of rectangular widgets which you can add to and then move around. However with a wiki page you can choose to render whatever information & widgets you like in whatever layout you like. You have full control over the content and layout of the page!
 
 Here are some [sample](https://github.com/hawtio/hawtio/issues/103) [issues](https://github.com/hawtio/hawtio/issues/62) on this if you want to help!
 
 So whether the hawtio wiki is used for documentation, to link to various hawtio and external resources, to create custom mashups or happy pages or to provide new plugin views--all the content of the wiki is audited, versioned and stored in git so it's easy to see who changed what, when and to roll back changes, etc.
+
+#### How to I install hawtio as web console for Apache ActiveMQ
+
+You can use hawtio to remote manage any ActiveMQ brokers without the need to co-install hawtio together with the ActiveMQ broker. However you can also install hawtio with the broker if you want. Dejan Bosanac [blogged how to do this](http://sensatic.net/activemq/activemq-and-hawtio.html). 
+
 
 ### Problems/General Questions about using hawtio
 
@@ -110,6 +131,13 @@ Basically you need to make sure that you have JAVA_HOME/bin on your path. e.g. t
 set path=%path%;%JAVA_HOME%\jre\bin
 ```
 
+#### The Terminal plugin in Karaf does not work
+
+The terminal plugin may have trouble the first time in use, not being able to connect and show the terminal. Try selecting another plugin, and go back to the terminal plugin a bit later, and it then may be able to login. Also if the screen is all black, then pressing ENTER may help show the terminal.
+
+
+
+
 ### Plugin Questions
 
 Questions on using the available plugins:
@@ -134,12 +162,17 @@ The workaround is to install the [Gemini Management bundle](http://www.eclipse.o
 
 Questions on using [Apache Camel](http://camel.apache.org/) and hawtio.
 
+#### The Camel plugin is not visible or does not show any Camels
+
+The Camel plugin currently requires that the Camel MBeans are stored using the default domain name which is `org.apache.camel`. So if you configure Camel to use a different name, using the `mbeanObjectDomainName` configuration, then the Camel plugin will not work. See details reported in ticket [1712](https://github.com/hawtio/hawtio/issues/1712).
+
 #### Why does the Debug or Trace tab not appear for my Camel route?
 
 The Debug and Trace tabs depend on the JMX MBeans provided by the Camel release you use.
 
 * the Debug tab requires at least version 2.12.x or later of your Camel library to be running
 * the Trace tab requires either a 2.12.x or later distro of Camel or a Fuse distro of Camel from about 2.8 or later
+
 
 ### Developer Questions
 
@@ -161,7 +194,7 @@ Anything you like :). So long as it runs on a web browser, you're good to go. Pl
 
 #### Do I have to use TypeScript?
 
-You can write hawtio plugins in anything that runs in a browser and ideally compiles to JavaScript. So use pure JavaScript,  CoffeeScript, EcmaScript6-transpiler, TypeScript, GWT, Kotlin, Ceylon, ClojureScript, ScalaJS and [any language that compiles to JavaScript](http://altjs.org/).
+You can write hawtio plugins in anything that runs in a browser and ideally compiles to JavaScript. So use pure JavaScript,  CoffeeScript, EcmaScript6-transpiler, TypeScript, GWT, Kotlin, Ceylon, ClojureScript, ScalaJS and [any language that compiles to JavaScript](https://github.com/jashkenas/coffeescript/wiki/List-of-languages-that-compile-to-JS).
 
 So take your pick; the person who creates a plugin can use whatever language they prefer, so please contribute a [new plugin](http://hawt.io/contributing/index.html) :).
 
@@ -174,3 +207,9 @@ Check out [how plugins work](http://hawt.io/plugins/index.html). You can then ei
 * Fork this project and submit your plugin by [creating a Github pull request](https://help.github.com/articles/creating-a-pull-request) then we'll include your plugin by default in the hawtio distribution.
 * Make your own WAR with your plugin added (by depending on the hawtio-web.war in your pom.xml)
 * Host your plugin at some canonical website (e.g. with Github pages) then [submit an issue](https://github.com/hawtio/hawtio/issues?state=open) to tell us about it and we can add it to the plugin registry JSON file.
+
+#### How can I reuse those awesome AngularJS directives in my application?
+
+We hope that folks can just write plugins for hawtio to be able to reuse all the various [plugins](http://hawt.io/plugins/index.html) in hawtio.
+
+However if you are writing your own stand alone web application using AngularJS then please check out the [Hawtio Directives](http://hawt.io/directives/) which you should be able to reuse in any AngularJS application

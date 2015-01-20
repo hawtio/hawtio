@@ -5,13 +5,11 @@
     fill: #f88;
   }
 
-  .node:hover {
+  .node:hover,
+  .node > *:hover,
+  rect > *:hover {
     cursor: pointer;
     opacity: 0.6;
-  }
-
-  .node.selected rect {
-    fill: url(#rect-select-gradient);
   }
 
   path.edge {
@@ -27,6 +25,10 @@
 
   text.counter {
     stroke: #080;
+  }
+
+  text.inflight {
+    stroke: #08f;
   }
 </style>
 <div ng-class="{'wiki-fixed' : !isJmxTab}" id="canvas" ng-controller="Camel.RouteController">

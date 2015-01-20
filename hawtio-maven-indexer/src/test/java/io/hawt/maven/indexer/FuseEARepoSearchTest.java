@@ -19,7 +19,7 @@ public class FuseEARepoSearchTest {
     @BeforeClass
     public static void init() throws Exception {
         facade = new MavenIndexerFacade();
-        String[] repositories = {"http://repo.fusesource.com/nexus/content/groups/ea@fusesource-ea-repo"};
+        String repositories = "http://repo.fusesource.com/nexus/content/groups/ea@fusesource-ea-repo";
         facade.setRepositories(repositories);
         facade.setCacheDirectory(new File(targetDir(), "fuse-ea-mavenIndexer"));
         facade.init();

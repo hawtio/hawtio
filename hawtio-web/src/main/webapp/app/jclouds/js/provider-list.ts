@@ -1,8 +1,9 @@
 /**
  * @module Jclouds
  */
+/// <reference path="./jcloudsPlugin.ts"/>
 module Jclouds {
-    export function ProviderListController($scope, $location, workspace, jolokia) {
+    _module.controller("Jclouds.ProviderListController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace, jolokia) => {
 
         $scope.result = {};
         $scope.providers = [];
@@ -106,5 +107,5 @@ module Jclouds {
                 Core.$apply($scope);
             }
         }
-    }
+    }]);
 }

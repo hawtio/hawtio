@@ -1,11 +1,14 @@
+/// <reference path="../../wiki/js/wikiHelpers.ts"/>
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
-
-  export function ClusterController($scope, $location, $routeParams, workspace:Workspace, jolokia) {
+  _module.controller("Fabric.ClusterController", ["$scope", "$location", "$routeParams", "workspace", "jolokia", "$templateCache", ($scope, $location, $routeParams, workspace:Workspace, jolokia, $templateCache:ng.ITemplateCacheService) => {
 
     $scope.path = $routeParams["page"] || "/";
     if (!$scope.path.startsWith("/")) {
       $scope.path = "/" + $scope.path;
     }
+
+    $scope.getIconClass = Wiki.iconClass;
 
     $scope.gridOptions = {
       data: 'children',
@@ -15,7 +18,9 @@ module Fabric {
         {
           field: 'name',
           displayName: 'Name',
-          cellTemplate: '<div class="ngCellText"><a href="{{childLink(row.entity)}}"><i class="{{row | fileIconClass}}"></i> {{row.getProperty(col.field)}}</a></div>',
+          cellTemplate: $templateCache.get('fileCellTemplate.html'),
+          headerCellTemplate: $templateCache.get('fileColumnTemplate.html'),
+          //cellTemplate: '<div class="ngCellText"><a href="{{childLink(row.entity)}}"><i class="{{row | fileIconClass}}"></i> {{row.getProperty(col.field)}}</a></div>',
           cellFilter: ""
         }
       ]
@@ -98,5 +103,5 @@ module Fabric {
         }
       });
     }
-  }
+  }]);
 }

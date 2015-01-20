@@ -5,10 +5,12 @@ import io.hawt.jsonschema.test.objects.ObjectWithTransientModifiers;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
+
 public class SchemaLookupTest {
 
     @Test
-    public void testLookupSchema() throws Exception {
+    public void testLookupSchemaForJavaLangString() throws Exception {
         SchemaLookup lookup = createSchemaLookup();
         String result = lookup.getSchemaForClass("java.lang.String");
     }
@@ -46,6 +48,15 @@ public class SchemaLookupTest {
         SchemaLookup lookup = createSchemaLookup();
         String result = lookup.getSchemaForClass("io.hawt.jsonschema.test.objects.ObjectWithJaxbAnnotations");
         System.out.println("testObjectWithJaxbAnnotations - Got: \n\n" + result + "\n\n");
+        assertTrue(result.contains("\"default\" : \"default-value\""));
+    }
+
+    @Test
+    public void testCreateOpenshiftContainerOptions() throws Exception {
+        SchemaLookup lookup = createSchemaLookup();
+        String result = lookup.getSchemaForClass("io.fabric8.openshift.CreateOpenshiftContainerOptions");
+        System.out.println("testCreateOpenshiftContainerOptions - Got: \n\n" + result + "\n\n");
+        assertTrue(result.contains("\"default\" : \"openshift.redhat.com\""));
     }
 
     @Test

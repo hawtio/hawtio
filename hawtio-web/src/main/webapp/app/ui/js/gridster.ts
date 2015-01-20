@@ -1,16 +1,21 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('gridster', () => {
+    return new UI.GridsterDirective();
+  });
 
   export class GridsterDirective {
 
     public restrict = 'A';
     public replace = true;
 
-    public controller = ($scope, $element, $attrs) => {
+    public controller = ["$scope", "$element", "$attrs", ($scope, $element, $attrs) => {
 
-    };
+    }];
 
     public link = ($scope, $element, $attrs) => {
 

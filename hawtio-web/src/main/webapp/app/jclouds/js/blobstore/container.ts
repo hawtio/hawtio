@@ -1,9 +1,10 @@
 /**
  * @module Jclouds
  */
+/// <reference path="../jcloudsPlugin.ts"/>
 module Jclouds {
 
-    export function BlobstoreContainerController($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) {
+    _module.controller("Jclouds.BlobstoreContainerController", ["$scope", "$filter", "workspace", "$routeParams", ($scope, $filter:ng.IFilterService, workspace:Workspace, $routeParams) => {
         $scope.blobstoreId = $routeParams.blobstoreId
         $scope.containerId = $routeParams.containerId;
         $scope.directory = $routeParams.directory;
@@ -97,5 +98,5 @@ module Jclouds {
             });
             return breadcrumbs;
         }
-   }
+   }]);
 }

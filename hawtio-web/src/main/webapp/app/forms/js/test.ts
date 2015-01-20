@@ -1,11 +1,12 @@
+///<reference path="formPlugin.ts"/>
 module Forms {
 
-  export function FormTestController($scope, workspace) {
+  export var FormTestController = _module.controller("Forms.FormTestController", ["$scope", ($scope) => {
 
     $scope.editing = false;
 
-    $scope.html = "text/html"
-    $scope.javascript = "javascript"
+    $scope.html = "text/html";
+    $scope.javascript = "javascript";
 
     $scope.basicFormEx1Entity = {
       'key': 'Some key',
@@ -24,17 +25,17 @@ module Forms {
         return "view";
       }
       return "edit";
-    }
+    };
 
     $scope.basicFormEx1 = '<div simple-form name="some-form" action="#/forms/test" method="post" data="basicFormEx1SchemaObject" entity="basicFormEx1Entity" onSubmit="callThis()"></div>';
 
     $scope.toObject = (str) => {
       return angular.fromJson(str.replace("'", "\""));
-    }
+    };
 
     $scope.fromObject = (str) => {
       return angular.toJson($scope[str], true);
-    }
+    };
 
     //TODO - I totally did this backwards :-/
     $scope.basicFormEx1Schema = '' +
@@ -80,11 +81,11 @@ module Forms {
 
     $scope.updateSchema = () => {
       $scope.basicFormEx1SchemaObject = $scope.toObject($scope.basicFormEx1Schema);
-    }
+    };
 
     $scope.updateEntity = () => {
       $scope.basicFormEx1Entity = angular.fromJson($scope.basicFormEx1EntityString);
-    }
+    };
 
     $scope.hawtioResetEx = '<a class="btn" href="" hawtio-reset="some-form"><i class="icon-refresh"></i> Clear</a>';
 
@@ -92,9 +93,9 @@ module Forms {
 
     $scope.callThis = (json, form) => {
       $scope.basicFormEx1Result = angular.toJson(json, true);
-      notification('success', 'Form "' + form.get(0).name + '" submitted...');
+      Core.notification('success', 'Form "' + form.get(0).name + '" submitted...');
       Core.$apply($scope);
-    }
+    };
 
     $scope.config = {
       name: 'form-with-config-object',
@@ -111,36 +112,43 @@ module Forms {
     };
 
     $scope.onCancel = (form) => {
-      notification('success', 'Cancel clicked on form "' + form.get(0).name + '"');
+      Core.notification('success', 'Cancel clicked on form "' + form.get(0).name + '"');
     };
 
     $scope.onSubmit = (json, form) => {
-      notification('success', 'Form "' + form.get(0).name + '" submitted... (well not really), data:' + JSON.stringify(json));
+      Core.notification('success', 'Form "' + form.get(0).name + '" submitted... (well not really), data:' + JSON.stringify(json));
     };
 
     $scope.derp = (json, form) => {
-      notification('error', 'derp with json ' + JSON.stringify(json));
+      Core.notification('error', 'derp with json ' + JSON.stringify(json));
     };
 
-    $scope.inputTableSchema = {
-      properties: {
-        'id': {
-          description: 'Object ID',
-          type: 'java.lang.String'
-        }
-      },
-      description: 'Some objects'
-    }
-
-    $scope.inputTableData = [
-      { id: "object1", name: 'foo' },
-      { id: "object2", name: 'bar' }
-    ];
+    $scope.inputTableData = {
+      rows: [
+        { id: "object1", name: 'foo' },
+        { id: "object2", name: 'bar' }
+      ]
+    };
 
     $scope.inputTableConfig = {
-      data: 'inputTableData',
+      data: 'inputTableData.rows',
       displayFooter: false,
       showFilter: false,
+      showSelectionCheckbox: false,
+      enableRowClickSelection: true,
+      primaryKeyProperty: 'id',
+      properties: {
+        'rows': { items: { type: 'string', properties: {
+          'id': {
+            description: 'Object ID',
+            type: 'java.lang.String'
+          },
+          'name': {
+            description: 'Object Name',
+            type: 'java.lang.String'
+          }
+        } } }
+      },
       columnDefs: [
         {
           field: 'id',
@@ -153,6 +161,6 @@ module Forms {
 
       ]
     };
-  }
+  }]);
 
 }

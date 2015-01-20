@@ -1,9 +1,10 @@
 /**
  * @module Maven
  */
+/// <reference path="./mavenPlugin.ts"/>
 module Maven {
 
-  export function VersionsController($scope, $routeParams, workspace:Workspace, jolokia) {
+  _module.controller("Maven.VersionsController", ["$scope", "$routeParams", "workspace", "jolokia", ($scope, $routeParams, workspace:Workspace, jolokia) => {
     $scope.artifacts = [];
     $scope.group = $routeParams["group"] || "";
     $scope.artifact = $routeParams["artifact"] || "";
@@ -22,7 +23,7 @@ module Maven {
 
     var columnDefs:any[] = [
       {
-        field: 'versionNumber',
+        field: 'version',
         displayName: columnTitle,
         cellTemplate: '<div class="ngCellText"><a href="#/maven/artifact/{{row.entity.groupId}}/{{row.entity.artifactId}}/{{row.entity.version}}">{{row.entity.version}}</a></div>',
       }
@@ -86,5 +87,5 @@ module Maven {
       });
       Core.$apply($scope);
     }
-  }
+  }]);
 }

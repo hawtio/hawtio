@@ -1,6 +1,7 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  export function FabricDiagramController($scope, $compile, $location, localStorage, jolokia, workspace) {
+  _module.controller("Camel.FabricDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", ($scope, $compile, $location, localStorage, jolokia, workspace) => {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
@@ -17,6 +18,7 @@ module Camel {
       container: false,
       endpoint: true,
       route: true,
+      context: false,
       consumer: true,
       producer: true
     };
@@ -25,7 +27,9 @@ module Camel {
     };
 
     $scope.shapeSize = {
-      context: 14
+      context: 12,
+      route: 10,
+      endpoint: 7
     };
 
     var graphBuilder = new ForceGraph.GraphBuilder();
@@ -67,7 +71,7 @@ module Camel {
       var selectedNode = $scope.selectedNode;
       if (selectedNode) {
         var container = selectedNode["container"] || selectedNode;
-        var postfix: string = null;
+        var postfix:string = null;
         connectToContainer(container, postfix);
       }
     };
@@ -76,25 +80,17 @@ module Camel {
       var selectedNode = $scope.selectedNode;
       if (selectedNode) {
         var container = selectedNode["container"] || selectedNode;
-        var postfix: string = null;
-/*
-        var brokerName = selectedNode["brokerName"];
-        var destinationType = selectedNode["destinationType"];
-        var destinationName = selectedNode["destinationName"];
-        if (brokerName && destinationType && destinationName) {
-          postfix = "nid=root-org.apache.activemq-Broker-" + brokerName + "-" + destinationType + "-" + destinationName;
-        }
-*/
+        var postfix:string = null;
         connectToContainer(container, postfix);
       }
     };
 
-    function connectToContainer(container, postfix, viewPrefix = "/jmx/attributes?tab=camel") {
+    function connectToContainer(container, postfix, viewPrefix = "#/jmx/attributes?tab=camel") {
       var view = viewPrefix;
       if (postfix) {
         view += postfix;
       }
-        // TODO if local just link to local view!
+      // TODO if local just link to local view!
       $scope.doConnect(container, view);
     }
 
@@ -152,7 +148,7 @@ module Camel {
     ];
 
     var ignoreNodeAttributesByType = {
-      context: ["ApplicationContextClassName", "CamelId", "ClassResolver","ManagementName", "PackageScanClassResolver", "Properties"],
+      context: ["ApplicationContextClassName", "CamelId", "ClassResolver", "ManagementName", "PackageScanClassResolver", "Properties"],
       endpoint: ["Camel", "Endpoint"],
       route: ["Description"]
     };
@@ -181,46 +177,18 @@ module Camel {
         var onlyShowKeys = onlyShowAttributesByType[nodeType];
 
         angular.forEach(value, (v, k) => {
-          if (onlyShowKeys ? onlyShowKeys.indexOf(k) >= 0: ignoreKeys.indexOf(k) < 0) {
+          if (onlyShowKeys ? onlyShowKeys.indexOf(k) >= 0 : ignoreKeys.indexOf(k) < 0) {
             var formattedValue = Core.humanizeValueHtml(v);
-            properties.push({key: humanizeValue(k), value: formattedValue});
+            properties.push({key: Core.humanizeValue(k), value: formattedValue});
           }
         });
         properties = properties.sortBy("key");
 
-/*
-        var brokerProperty: any = null;
-        if (brokerName) {
-          var html = brokerName;
-          if (version && profile) {
-            var brokerLink = Fabric.brokerConfigLink(workspace, jolokia, localStorage, version, profile, brokerName);
-            if (brokerLink) {
-              html = $compile('<a target="broker" ng-click="connectToContext()">' +
-                '<img title="Apache ActiveMQ" src="app/fabric/img/message_broker.png"> ' + brokerName +
-                '</a> <a title="configuration settings" target="brokerConfig" href="' + brokerLink +
-                '"><i class="icon-tasks"></i></a>')($scope);
-            }
-          }
-          brokerProperty = {key: "Broker", value: html};
-          if (!isBroker) {
-            properties.splice(0, 0, brokerProperty);
-          }
-        }
-
-*/
         if (containerId && isFmc) {
-          var containerModel = "selectedNode.container";
-          properties.splice(0, 0, {key: "Container", value: $compile('<div fabric-container-link="' + containerModel + '"></div>')($scope)});
+          //var containerModel = "selectedNode.container";
+          properties.splice(0, 0, {key: "Container", value: $compile('<div fabric-container-link="' + selectedNode['container']['id'] + '"></div>')($scope)});
         }
 
-/*
-        var destinationName = value["DestinationName"] || selectedNode["destinationName"];
-        if (destinationName && (nodeType !== "queue" && nodeType !== "topic")) {
-          var destinationTypeName = getDestinationTypeName(value);
-          var html = createDestinationLink(destinationName, destinationTypeName);
-          properties.splice(0, 0, {key: destinationTypeName, value: html});
-        }
-*/
 
         var typeLabel = selectedNode["typeLabel"];
         var name = selectedNode["name"] || selectedNode["id"] || selectedNode['objectName'];
@@ -230,11 +198,6 @@ module Camel {
             html = createDestinationLink(name, nodeType);
           }
           var typeProperty = {key: typeLabel, value: html};
-/*
-          if (isBroker && brokerProperty) {
-            typeProperty = brokerProperty;
-          }
-*/
           properties.splice(0, 0, typeProperty);
         }
       }
@@ -248,9 +211,9 @@ module Camel {
      */
     function createDestinationLink(destinationName, destinationType = "queue") {
       return $compile('<a target="destination" title="' + destinationName + '" ng-click="connectToEndpoint()">' +
-                                  //'<img title="View destination" src="app/activemq/img/' + destinationType + '.png"> ' +
-                                  destinationName +
-                                  '</a>')($scope);
+        //'<img title="View destination" src="img/icons/activemq/' + destinationType + '.png"> ' +
+        destinationName +
+        '</a>')($scope);
     }
 
     $scope.$watch("searchFilter", (newValue, oldValue) => {
@@ -321,7 +284,7 @@ module Camel {
           Fabric.containerJolokia(jolokia, id, (containerJolokia) => onContainerJolokia(containerJolokia, container));
         }
       });
-      $scope.graph = graphBuilder.buildGraph();
+      //$scope.graph = graphBuilder.buildGraph();
       Core.$apply($scope);
     }
 
@@ -342,115 +305,235 @@ module Camel {
         var idPrefix = containerId + ":";
 
         var endpointUriToObject = {};
+        var startedLoadMetaDataFromEndpointMBeans = false;
 
-        function getOrCreateCamelContext(contextId) {
+        function getOrCreateRoute(objectName, properties, addEndpointLink, routeId = null, contextId = null, camelContext = null) {
+          if (!objectName) {
+            // lets try guess the mbean name
+            objectName = Camel.jmxDomain + ':context=' + contextId + ',type=routes,name="' + routeId + '"';
+          }
+          var details = Core.parseMBean(objectName);
+          var attributes = details['attributes'];
+          var contextId = attributes["context"];
+          if (!routeId) {
+            routeId = Core.trimQuotes(attributes["name"]);
+          }
+          attributes["routeId"] = routeId;
+          attributes["mbean"] = objectName;
+          attributes["container"] = container;
+          attributes["type"] = "route";
+
+          var route = null;
+          if (routeId && matchesContextId(contextId)) {
+            route = getOrAddNode("route", idPrefix + routeId, attributes, () => {
+              return {
+                name: routeId,
+                typeLabel: "Route",
+                container: container,
+                objectName: objectName,
+                jolokia: containerJolokia,
+                popup: {
+                  title: "Route: " + routeId,
+                  content: "<p>context: " + contextId + "</p>"
+                }
+              };
+            });
+            if (addEndpointLink) {
+              var uri = properties["EndpointUri"];
+              if (uri && route) {
+                var endpoint = null;
+                var escaledUrl = Camel.escapeEndpointUriNameForJmx(uri);
+                var urlsToTry = [uri, escaledUrl];
+
+                angular.forEach(urlsToTry, (key) => {
+                  if (!endpoint) {
+                    endpoint = endpointUriToObject[key];
+                  }
+                });
+                if (!endpoint) {
+                  angular.forEach(urlsToTry, (key) => {
+                    if (!endpoint) {
+                      var idx = key.lastIndexOf("?");
+                      if (idx > 0) {
+                        var prefix = key.substring(0, idx);
+                        endpoint = endpointUriToObject[prefix];
+                      }
+                    }
+                  });
+                }
+                addLink(route, endpoint, "consumer");
+              }
+            }
+            if ($scope.viewSettings.route && $scope.viewSettings.context) {
+              if (!camelContext) {
+                camelContext = getOrCreateCamelContext(contextId);
+              }
+              addLink(camelContext, route, "route");
+            }
+          }
+          return route;
+        }
+
+        function getOrCreateEndpoint(objectName, uri = null, contextId = null) {
+          if (!objectName) {
+            // lets try guess the mbean name
+            objectName = Camel.jmxDomain + ':context=' + contextId + ',type=endpoints,name="' + Camel.escapeEndpointUriNameForJmx(uri) + '"';
+          }
+          var details = Core.parseMBean(objectName);
+          var attributes = details['attributes'];
+          //log.info("attributes: " + angular.toJson(attributes));
+          var contextId = attributes["context"];
+          if (!uri) {
+            uri = Core.trimQuotes(attributes["name"]);
+          }
+          attributes["uri"] = uri;
+          attributes["mbean"] = objectName;
+          attributes["container"] = container;
+          attributes["contextId"] = contextId;
+
+          var endpoint = null;
+          if (uri && matchesContextId(contextId)) {
+            endpoint = getOrAddNode("endpoint", idPrefix + uri, attributes, () => {
+              return {
+                name: uri,
+                typeLabel: "Endpoint",
+                container: container,
+                objectName: objectName,
+                jolokia: containerJolokia,
+                popup: {
+                  title: "Endpoint: " + uri,
+                  content: "<p>context: " + contextId + "</p>"
+                }
+              };
+            });
+            if (endpoint) {
+              endpointUriToObject[uri] = endpoint;
+            }
+          }
+          return endpoint;
+        }
+
+        // lets use the old way for pre-camel 2.13 versions
+        function loadMetaDataFromEndpointMBeans() {
+           // find routes
+          if ($scope.viewSettings.route) {
+            containerJolokia.request({type: "read", mbean: "org.apache.camel:type=routes,*", attribute: ["EndpointUri"]}, onSuccess((response) => {
+              angular.forEach(response.value, (properties, objectName) => {
+                getOrCreateRoute(objectName, properties, true);
+              });
+              graphModelUpdated();
+            }));
+          }
+
+          if ($scope.viewSettings.endpoint) {
+            containerJolokia.search("org.apache.camel:type=endpoints,*", onSuccess((response) => {
+              angular.forEach(response, (objectName) => {
+                var endpoint = getOrCreateEndpoint(objectName);
+                var camelContext = getOrCreateCamelContext(null, objectName);
+                addLink(camelContext, endpoint, "endpoint");
+              });
+              graphModelUpdated();
+            }));
+          }
+
+        }
+
+        function getOrCreateCamelContext(contextId, contextMBean = null) {
           var answer = null;
           if (matchesContextId(contextId)) {
-            // try guess the mbean name
-            var contextMBean = Camel.jmxDomain + ':context=' + contextId + ',type=context,name="' + contextId + '"';
+            if (!contextMBean) {
+              // try guess the mbean name
+              contextMBean = Camel.jmxDomain + ':context=' + contextId + ',type=context,name="' + contextId + '"';
+            }
+            if (!contextId && contextMBean) {
+              var details = Core.parseMBean(contextMBean);
+              var attributes = details['attributes'];
+              contextId = attributes["context"];
+            }
             var contextAttributes = {
               contextId: contextId
             };
 
-            answer = getOrAddNode("context", idPrefix + contextId, contextAttributes, () => {
-              return {
-                name: contextId,
-                typeLabel: "CamelContext",
-                container: container,
-                objectName: contextMBean,
-                jolokia: containerJolokia,
-                popup: {
-                  title: "CamelContext: " + contextId,
-                  content: ""
+            if ($scope.viewSettings.context) {
+              answer = getOrAddNode("context", idPrefix + contextId, contextAttributes, () => {
+                return {
+                  name: contextId,
+                  typeLabel: "CamelContext",
+                  container: container,
+                  objectName: contextMBean,
+                  jolokia: containerJolokia,
+                  popup: {
+                    title: "CamelContext: " + contextId,
+                    content: ""
+                  }
+                };
+              });
+            }
+
+            // lets try out the new Camel 2.13 API to find endpoint usage...
+            containerJolokia.execute(contextMBean, "createRouteStaticEndpointJson", onSuccess((response) => {
+              if (angular.isString(response)) {
+                var text = response;
+                var data = null;
+                try {
+                  data = JSON.parse(text);
+                } catch (e) {
+                  // there's a bug in 2.13.0 - lets try trimming the final '}' to see if that makes it valid json ;)
+                  text = Core.trimTrailing(text.trim(), "}");
+                  try {
+                    data = JSON.parse(text);
+                  } catch (e2) {
+                    log.debug("Ignored invalid json: " + e + " from text: " + response);
+                  }
                 }
-              };
-            });
+              }
+              if (data) {
+                angular.forEach(data["routes"], (routeData, routeId) => {
+                  angular.forEach(routeData["inputs"], (inputEndpoint) => {
+                    var inputUri = inputEndpoint["uri"];
+                    if (inputUri) {
+                      var route = getOrCreateRoute(null, {}, false, routeId, contextId, answer);
+                      var input = getOrCreateEndpoint(null, inputUri, contextId);
+                      var nextStep = route;
+                      addLink(input, route, "endpoint");
+                      angular.forEach(routeData["outputs"], (outputEndpoint) => {
+                        var outputUri = outputEndpoint["uri"];
+                        if (outputUri) {
+                          var output = getOrCreateEndpoint(null, outputUri, contextId);
+                          addLink(nextStep, output, "endpoint");
+                          nextStep = output;
+                        }
+                      });
+                    }
+                  })
+                });
+                log.info("Updating graph model!");
+                graphModelUpdated();
+              }
+            }, {
+              error: (response) => {
+                // probably a pre-2.13 Camel implementation so lets use the old way
+                if (!startedLoadMetaDataFromEndpointMBeans) {
+                  startedLoadMetaDataFromEndpointMBeans = true;
+                  loadMetaDataFromEndpointMBeans();
+                }
+              }
+            }))
           }
           return answer;
         }
 
-        // find endpoints
-        if ($scope.viewSettings.endpoint) {
-          containerJolokia.search("org.apache.camel:type=endpoints,*", onSuccess((response) => {
-            angular.forEach(response, (objectName) => {
-              var details = Core.parseMBean(objectName);
-              var attributes = details['attributes'];
-              //log.info("attributes: " + angular.toJson(attributes));
-              var contextId = attributes["context"];
-              var uri = trimQuotes(attributes["name"]);
-              log.info("context " + contextId + " endpoint " + uri);
-              attributes["uri"] = uri;
-              attributes["mbean"] = objectName;
-              attributes["container"] = container;
+        containerJolokia.search("org.apache.camel:type=context,*", onSuccess((response) => {
+          angular.forEach(response, (objectName) => {
+            var details = Core.parseMBean(objectName);
+            var attributes = details['attributes'];
+            var contextId = attributes["context"];
+            var uri = Core.trimQuotes(attributes["name"]);
+            getOrCreateCamelContext(contextId, objectName);
+          });
+          //graphModelUpdated();
+        }));
 
-              if (uri && matchesContextId(contextId)) {
-                var endpoint = getOrAddNode("endpoint", idPrefix + uri, attributes, () => {
-                  return {
-                    name: uri,
-                    typeLabel: "Endpoint",
-                    container: container,
-                    objectName: objectName,
-                    jolokia: containerJolokia,
-                    popup: {
-                      title: "Endpoint: " + uri,
-                      content: "<p>context: " + contextId + "</p>"
-                    }
-                  };
-                });
-                if (endpoint) {
-                  endpointUriToObject[uri] = endpoint;
-                }
-                var camelContext = getOrCreateCamelContext(contextId);
-                addLink(camelContext, endpoint, "endpoint");
-              }
-            });
-            graphModelUpdated();
-          }));
-        }
-
-        // find routes
-        if ($scope.viewSettings.route) {
-          containerJolokia.request({type: "read", mbean: "org.apache.camel:type=routes,*", attribute: ["EndpointUri"]}, onSuccess((response) => {
-            angular.forEach(response.value, (properties, objectName) => {
-              var details = Core.parseMBean(objectName);
-              var attributes = details['attributes'];
-              log.info("route attributes: " + angular.toJson(attributes) + " properties: " + angular.toJson(properties));
-              var contextId = attributes["context"];
-              var routeId = trimQuotes(attributes["name"]);
-              log.info("context " + contextId + " routeId " + routeId);
-              attributes["routeId"] = routeId;
-              attributes["mbean"] = objectName;
-              attributes["container"] = container;
-              attributes["type"] = "route";
-
-              if (routeId && matchesContextId(contextId)) {
-                var route = getOrAddNode("route", idPrefix + routeId, attributes, () => {
-                  return {
-                    name: routeId,
-                    typeLabel: "Route",
-                    container: container,
-                    objectName: objectName,
-                    jolokia: containerJolokia,
-                    popup: {
-                      title: "Route: " + routeId,
-                      content: "<p>context: " + contextId + "</p>"
-                    }
-                  };
-                });
-                var uri = properties["EndpointUri"];
-                if (uri && route) {
-                  var endpoint = endpointUriToObject[uri];
-                  log.info("found route endpoint " + endpoint + " for uri " + uri);
-                  addLink(route, endpoint, "consumer");
-                }
-                var camelContext = getOrCreateCamelContext(contextId);
-                addLink(camelContext, route, "route");
-              }
-
-            });
-            graphModelUpdated();
-          }));
-        }
       }
     }
 
@@ -493,7 +576,7 @@ module Camel {
             // lets not add nodes which are defined as being disabled
             var enabled = $scope.viewSettings[typeName];
             if (enabled || !angular.isDefined(enabled)) {
-              //log.info("Adding node " + nodeId + " of type + " + typeName);
+              //log.info("==== Adding node " + nodeId + " of type + " + typeName);
               graphBuilder.addNode(node);
             } else {
               //log.info("Ignoring node " + nodeId + " of type + " + typeName);
@@ -512,6 +595,7 @@ module Camel {
 
     function addLinkIds(id1, id2, linkType) {
       if (id1 && id2) {
+        //log.info("==== Linking " + id1 + " to " + id2);
         graphBuilder.addLink(id1, id2, linkType);
       }
     }
@@ -533,5 +617,5 @@ module Camel {
       properties.isQueue = !typeName.startsWith("t");
       properties['destType'] = typeName;
     }
-  }
+  }]);
 }

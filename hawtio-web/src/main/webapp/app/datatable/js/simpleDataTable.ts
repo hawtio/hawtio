@@ -1,3 +1,5 @@
+/// <reference path="datatablePlugin.ts"/>
+/// <reference path="../../helpers/js/filterHelpers.ts"/>
 /**
  * @module DataTable
  */
@@ -46,9 +48,23 @@ module DataTable {
           Core.pathSet(scope, dataName, value);
         }
 
-        if (!('sortInfo' in config)) {
+        if (!('sortInfo' in config) && 'columnDefs' in config) {
+          // an optional defaultSort can be used to indicate a column
+          // should not automatic be the default sort
+          var ds = config.columnDefs.first()['defaultSort'];
+          var sortField;
+          if (angular.isUndefined(ds) || ds === true) {
+            sortField = config.columnDefs.first()['field'];
+          } else {
+            sortField = config.columnDefs.slice(1).first()['field']
+          }
           config['sortInfo'] = {
-            sortBy: config.columnDefs.first()['field'],
+            sortBy: sortField,
+            ascending: true
+          }
+        } else {
+          config['sortInfo'] = {
+            sortBy: '',
             ascending: true
           }
         }
@@ -193,8 +209,23 @@ module DataTable {
         if (Core.isBlank(filter)) {
           return true;
         }
-        var rowJson = angular.toJson(row);
-        return rowJson.toLowerCase().has(filter.toLowerCase());
+
+        var data = null;
+
+        // it may be a node selection (eg JMX plugin with Folder tree structure) then use the title
+        try {
+            data = row['entity']['title'];
+        } catch (e) {
+          // ignore
+        }
+
+        if (!data) {
+          // use the row as-is
+          data = row.entity;
+        }
+
+        var match = FilterHelpers.search(data, filter);
+        return match;
       };
 
       $scope.isSelected = (row) => {
@@ -208,7 +239,7 @@ module DataTable {
           config.selectedItems.splice(idx, 1);
         } else {
           if (!config.multiSelect) {
-            config.selectedItems = [];
+            config.selectedItems.length = 0;
           }
           log.debug("Selecting row at index " + row.index);
           // need to enrich entity with index, as we push row.entity to the selected items
@@ -238,10 +269,10 @@ module DataTable {
         var toggleAllHtml = isMultiSelect() ?
           "<input type='checkbox' ng-show='rows.length' ng-model='config.allRowsSelected' ng-change='toggleAllSelections()'>" : "";
 
-        headHtml += "\n<th>" +
+        headHtml += "\n<th class='simple-table-checkbox'>" +
           toggleAllHtml +
           "</th>"
-        bodyHtml += "\n<td><input type='checkbox' ng-model='row.selected' ng-change='toggleRowSelection(row)'></td>"
+        bodyHtml += "\n<td class='simple-table-checkbox'><input type='checkbox' ng-model='row.selected' ng-change='toggleRowSelection(row)'></td>"
       }
       angular.forEach(config.columnDefs, (colDef) => {
         var field = colDef.field;
@@ -281,4 +312,8 @@ module DataTable {
     });
     return answer;
   }
+
+  _module.directive('hawtioSimpleTable', ["$compile", ($compile) => new DataTable.SimpleDataTable($compile)]);
+
 }
+

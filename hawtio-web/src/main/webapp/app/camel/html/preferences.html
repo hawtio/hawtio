@@ -1,0 +1,53 @@
+<div ng-controller="Camel.PreferencesController">
+  <form class="form-horizontal">
+
+    <label class="control-label">Include Streams</label>
+    <div class="control-group">
+      <div class="controls">
+        <input type="checkbox" ng-model="camelTraceOrDebugIncludeStreams">
+        <span class="help-block">Whether to include stream based message body when using the tracer and debugger</span>
+      </div>
+    </div>
+
+    <label class="control-label">Maximum body length</label>
+    <div class="control-group">
+      <div class="controls">
+        <input type="number" ng-model="camelMaximumTraceOrDebugBodyLength" min="0">
+        <span class="help-block">The maximum length of the body before its clipped when using the tracer and debugger</span>
+      </div>
+    </div>
+
+    <label class="control-label">Maximum label length</label>
+    <div class="control-group">
+      <div class="controls">
+        <input type="number" ng-model="camelMaximumLabelWidth" min="0">
+        <span class="help-block">The maximum length of a label in Camel diagrams before it is clipped</span>
+      </div>
+    </div>
+
+    <label class="control-label">Do not use ID for label</label>
+    <div class="control-group">
+      <div class="controls">
+        <input type="checkbox" ng-model="camelIgnoreIdForLabel">
+        <span class="help-block">If enabled then we will ignore the ID value when viewing a pattern in a Camel diagram; otherwise we will use the ID value as the label (the tooltip will show the actual detail)</span>
+      </div>
+    </div>
+
+    <label class="control-label">Show Inflight Counter</label>
+    <div class="control-group">
+      <div class="controls">
+        <input type="checkbox" ng-model="camelShowInflightCounter">
+        <span class="help-block">Whether to show inflight counter in route diagram</span>
+      </div>
+    </div>
+
+    <label class="control-label">Route Metrics maximum seconds</label>
+    <div class="control-group">
+      <div class="controls">
+        <input type="number" ng-model="camelRouteMetricMaxSeconds" min="1" max="100">
+        <span class="help-block">The maximum value in seconds used by the route metrics duration and histogram charts</span>
+      </div>
+    </div>
+
+  </form>
+</div>

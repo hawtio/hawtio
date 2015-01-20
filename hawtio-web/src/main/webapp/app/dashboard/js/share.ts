@@ -1,8 +1,9 @@
 /**
  * @module Dashboard
  */
+/// <reference path="dashboardPlugin.ts"/>
 module Dashboard {
-  export function ShareController($scope, $location, $routeParams, workspace:Workspace, dashboardRepository:DashboardRepository) {
+  export var ShareController = _module.controller("Dashboard.ShareController", ["$scope", "$location", "$routeParams", "workspace", "dashboardRepository", ($scope, $location, $routeParams, workspace:Workspace, dashboardRepository:DashboardRepository) => {
     var id = $routeParams["dashboardId"];
     dashboardRepository.getDashboard(id, onDashboardLoad);
 
@@ -29,5 +30,5 @@ module Dashboard {
       $scope.source = JSON.stringify($scope.dashboard, null, "  ");
       Core.$applyNowOrLater($scope);
     }
-  }
+  }]);
 }

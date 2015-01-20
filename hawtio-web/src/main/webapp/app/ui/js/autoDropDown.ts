@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('hawtioAutoDropdown', () => {
+    return UI.AutoDropDown;
+  });
 
   /**
    * TODO turn this into a normal directive function
@@ -31,8 +36,16 @@ module UI {
         Logger.info("overflowEl offset: ", overflowEl.offset());
         Logger.info("overflowEl position: ", overflowEl.position());
         */
-        var margin = overflowEl.outerWidth() - overflowEl.innerWidth();
-        var availableWidth = overflowEl.position().left - $element.position().left - 50;
+        var margin = 0;
+        var availableWidth = 0;
+
+        try {
+          margin = overflowEl.outerWidth() - overflowEl.innerWidth();
+          availableWidth = overflowEl.position().left - $element.position().left - 50;
+        } catch (e) {
+          log.debug("caught " + e);
+        }
+
 
         $element.children('li:not(.overflow):not(.pull-right):not(:hidden)').each(function() {
           var self = $(this);

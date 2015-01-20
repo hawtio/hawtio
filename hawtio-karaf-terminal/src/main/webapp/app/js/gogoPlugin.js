@@ -1,7 +1,10 @@
 
-var Gogo = (function() {
+var Gogo = (function(Gogo) {
   // create our angular module and tell angular what route(s) it will handle
   var pluginName = "gogo";
+
+  Gogo.context = "/hawtio-karaf-terminal";
+  Gogo.templateUrl = Gogo.context + "/app/html/";
 
   var simplePlugin = angular.module(pluginName, ['hawtioCore'])
     .factory('log', function() {
@@ -9,7 +12,7 @@ var Gogo = (function() {
     }).config(function($routeProvider) {
       $routeProvider.
         when('/gogo', {
-            templateUrl: 'hawtio-karaf-terminal/app/html/gogo.html'
+            templateUrl: Gogo.templateUrl + 'gogo.html'
           });
     }).directive('gogoTerminal', function(log, userDetails) {
       return {
@@ -17,32 +20,9 @@ var Gogo = (function() {
         link: function(scope, element, attrs) {
 
           scope.$on("$destroy", function(e) {
-            scope.destroyed = true;
             document.onkeypress = null;
             document.onkeydown = null;
-            if (!('term' in scope)) {
-              return;
-            }
-            var url = "hawtio-karaf-terminal/auth/logout/";
-            delete scope.term;
-            $.ajax(url, {
-              type: "POST",
-              success: function (response) {
-                log.debug("logged out of terminal");
-                Core.$apply(scope);
-              },
-              error: function (xhr, textStatus, error) {
-                log.info("Failed to log out of terminal: ", error);
-              },
-              beforeSend: function (xhr) {
-                xhr.setRequestHeader('Authorization', authHeader);
-              }
-            })
           });
-
-          if (scope.destroyed) {
-            return;
-          }
 
           var width = 120;
           var height = 39;
@@ -62,8 +42,24 @@ var Gogo = (function() {
 
           div.remove();
 
-          // compensate for internal horizontal padding
-          var cssWidth = width * charWidth + 20;
+          div = $('<div><div style="height: 300px">AAA</div></div>').css({
+            position: 'absolute',
+            left: -1000,
+            top: -1000,
+            display: 'block',
+            padding: 0,
+            margin: 0,
+            'font-family': 'monospace',
+            'overflow-y': 'scroll',
+            'max-height': '100px'
+          }).appendTo($('body'));
+
+          var scrollWidth = div.width() - $("div", div).width();
+
+          div.remove();
+
+          // compensate for internal horizontal padding (10px for Firefox...)
+          var cssWidth = width * charWidth + 20 + scrollWidth + 10;
           // Add an extra line for the status bar and divider
           var cssHeight = (height * charHeight) + charHeight + 2;
 
@@ -71,24 +67,27 @@ var Gogo = (function() {
           log.debug("console size in pixels, width: ", cssWidth, " height: ", cssHeight);
           log.debug("character size in pixels, width: ", charWidth, " height: ", charHeight);
 
+          // make sure it has minimum width of 1024 + 26 (some slack is needed), otherwise the terminal has interlaced empty lines
+          if (cssWidth < 1050) {
+            log.debug("Minimum width changed from " + cssWidth + " to 1050");
+            cssWidth = 1050;
+          }
+
           element.css({
             width: cssWidth,
             height: cssHeight,
             'min-width': cssWidth,
-            'min-height': cssHeight
+            'min-height': cssHeight,
+            'margin-bottom': '3em'
           });
 
           var authHeader = Core.getBasicAuthHeader(userDetails.username, userDetails.password);
 
-          var url = "hawtio-karaf-terminal/auth/login/";
+          var url = Gogo.context + "/auth/login/";
 
           $.ajax(url, {
             type: "POST",
             success: function (response) {
-              if (scope.destroyed) {
-                log.debug("Scope's been destroyed since we made our request, let's not create a terminal instance");
-                return;
-              }
               log.debug("got back response: ", response);
               if ('term' in scope) {
                 log.debug("Previous terminal created, let's clean it up");
@@ -96,9 +95,8 @@ var Gogo = (function() {
                 document.onkeydown = null;
                 delete scope.term;
               }
-              scope.term = gogo.Terminal(element.get(0), width, height, response['token']);
+              scope.term = gogo.Terminal(element.get(0), width, height, cssWidth, cssHeight, scrollWidth, charHeight, response['token']);
               Core.$apply(scope);
-
             },
             error: function (xhr, textStatus, error) {
               log.warn("Failed to log into terminal: ", error);
@@ -116,7 +114,7 @@ var Gogo = (function() {
       // to get the JMX tree or provide a URL to a custom layout
       viewRegistry[pluginName] = layoutFull;
 
-      helpRegistry.addUserDoc('Terminal', 'hawtio-karaf-terminal/app/doc/help.md');
+      helpRegistry.addUserDoc('Terminal', Gogo.context + '/app/doc/help.md');
 
       // Set up top-level link to our plugin
       workspace.topLevelTabs.push({
@@ -134,7 +132,7 @@ var Gogo = (function() {
       link.attr({
         rel: 'stylesheet',
         type: 'text/css',
-        href: 'hawtio-karaf-terminal/css/gogo.css'
+        href: Gogo.context + '/css/gogo.css'
       });
 
     });
@@ -154,5 +152,5 @@ var Gogo = (function() {
     }
   };
 
-
-})();
+  return Gogo;
+})(Gogo || {});

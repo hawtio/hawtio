@@ -1,9 +1,10 @@
 /**
  * @module Karaf
  */
+/// <reference path="./karafPlugin.ts"/>
 module Karaf {
 
-  export function ServerController($scope, $location, workspace:Workspace, jolokia) {
+  _module.controller("Karaf.ServerController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
     $scope.data = {
       name: "",
@@ -106,5 +107,5 @@ module Karaf {
       // ensure web page is updated
       Core.$apply($scope);
     }
-  }
+  }]);
 }

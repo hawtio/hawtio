@@ -2,46 +2,51 @@
  * @module JUnit
  * @main JUnit
  */
+/// <reference path="./junitHelpers.ts"/>
 module JUnit {
   var pluginName = 'junit';
-  angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']).
-          config(($routeProvider) => {
-            $routeProvider.
-                    when('/junit/tests', {templateUrl: 'app/junit/html/tests.html', reloadOnSearch: false})
-          }).
-          factory('inProgressStatus',function () {
-            return {
-              jhandle: null,
-              data: null,
-              result: null,
-              alertClass: "success"
-            };
-          }).
-          run(($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
 
-            viewRegistry['junit'] = 'app/junit/html/layoutJUnitTree.html';
+  export var _module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']);
 
-            helpRegistry.addUserDoc('junit', 'app/junit/doc/help.md', () => {
-              return isJUnitPluginEnabled(workspace);
-            });
+  _module.config(["$routeProvider", ($routeProvider) => {
+    $routeProvider.
+            when('/junit/tests', {templateUrl: 'app/junit/html/tests.html', reloadOnSearch: false})
+  }]);
 
-            workspace.topLevelTabs.push({
-              id: "junit",
-              content: "JUnit",
-              title: "View and run test cases in this process",
-              isValid: (workspace:Workspace) => isJUnitPluginEnabled(workspace),
-              href: () => "#/junit/tests"
-            });
+  _module.factory('inProgressStatus', () => {
+    return {
+      jhandle: null,
+      data: null,
+      result: null,
+      alertClass: "success"
+    };
+  });
+
+  _module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", ($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
+
+    viewRegistry['junit'] = 'app/junit/html/layoutJUnitTree.html';
+
+    helpRegistry.addUserDoc('junit', 'app/junit/doc/help.md', () => {
+      return isJUnitPluginEnabled(workspace);
+    });
+
+    workspace.topLevelTabs.push({
+      id: "junit",
+      content: "JUnit",
+      title: "View and run test cases in this process",
+      isValid: (workspace:Workspace) => isJUnitPluginEnabled(workspace),
+      href: () => "#/junit/tests"
+    });
 
 /*
-            workspace.subLevelTabs.push({
-              content: '<i class="icon-list-alt"></i> JUnit',
-              title: "View the logs in this process",
-              isValid: (workspace:Workspace) => workspace.hasDomainAndProperties('org.fusesource.insight', {type: 'JUnitQuery'}),
-              href: () => "#/logs"
-            });
+    workspace.subLevelTabs.push({
+      content: '<i class="icon-list-alt"></i> JUnit',
+      title: "View the logs in this process",
+      isValid: (workspace:Workspace) => workspace.hasDomainAndProperties('io.fabric8.insight', {type: 'JUnitQuery'}),
+      href: () => "#/logs"
+    });
 */
-          });
+  }]);
 
   hawtioPluginLoader.addModule(pluginName);
 }

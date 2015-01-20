@@ -4,6 +4,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import io.hawt.jmx.About;
+import io.hawt.jmx.JMXSecurity;
 import io.hawt.jmx.JmxTreeWatcher;
 import io.hawt.jmx.PluginRegistry;
 import io.hawt.jmx.QuartzFacade;
@@ -21,6 +22,7 @@ public class HawtioContextListener implements ServletContextListener {
     private PluginRegistry registry = new PluginRegistry();
     private UploadManager uploadManager = new UploadManager();
     private ConfigManager configManager = new ConfigManager();
+    private JMXSecurity jmxSecurity = new JMXSecurity();
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         try {
@@ -30,6 +32,7 @@ public class HawtioContextListener implements ServletContextListener {
             treeWatcher.init();
             registry.init();
             uploadManager.init(configManager);
+            jmxSecurity.init();
         } catch (Exception e) {
             throw createServletException(e);
         }
@@ -44,6 +47,7 @@ public class HawtioContextListener implements ServletContextListener {
             registry.destroy();
             uploadManager.destroy();
             configManager.destroy();
+            jmxSecurity.destroy();
         } catch (Exception e) {
             throw createServletException(e);
         }

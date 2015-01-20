@@ -1536,7 +1536,7 @@ interface Number {
 	upto(num: number, fn?: Function, step?: number): number[];
 }
 
-interface Array {
+interface Array<T> {
 	
 	/***
 	* @short Alternate array constructor.

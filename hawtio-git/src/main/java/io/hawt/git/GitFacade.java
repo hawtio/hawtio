@@ -1,10 +1,31 @@
 package io.hawt.git;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Callable;
+
 import io.hawt.config.ConfigFacade;
+import io.hawt.util.Files;
+import io.hawt.util.Function;
+import io.hawt.util.IOHelper;
 import io.hawt.util.Objects;
 import io.hawt.util.Strings;
+import io.hawt.util.Zips;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
@@ -20,16 +41,11 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.Callable;
+import static io.hawt.git.GitHelper.doUploadFiles;
 
 /**
  * A git bean to create a local git repo for configuration data which if configured will push/pull
@@ -37,6 +53,8 @@ import java.util.concurrent.Callable;
  */
 public class GitFacade extends GitFacadeSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(GitFacade.class);
+
+    private static GitFacade singleton;
 
     private String configDirName;
     private File configDirectory;
@@ -58,6 +76,17 @@ public class GitFacade extends GitFacadeSupport {
     private String defaultBranch;
     private boolean firstPull = true;
     private ConfigFacade config;
+    private String initialImportURLs;
+    private String defaultGitAttributes = "*.gif binary\n" +
+            "*.jpg binary\n" +
+            "*.jpeg binary\n" +
+            "*.pdf binary\n" +
+            "*.png binary\n";
+
+
+    public static GitFacade getSingleton() {
+        return singleton;
+    }
 
     public static String trimLeadingSlash(String path) {
         String name = path;
@@ -113,6 +142,7 @@ public class GitFacade extends GitFacadeSupport {
             t.schedule(task, timePeriod, timePeriod);
         }
         super.init();
+        singleton = this;
     }
 
     @Override
@@ -259,14 +289,22 @@ public class GitFacade extends GitFacadeSupport {
         this.defaultBranch = defaultBranch;
     }
 
+    public String getInitialImportURLs() {
+        return initialImportURLs;
+    }
+
+    /**
+     * Sets the URLs which are used to import content in a newly created git repository
+     */
+    public void setInitialImportURLs(String initialImportURLs) {
+        this.initialImportURLs = initialImportURLs;
+    }
+
     @Override
     public String getContent(String objectId, String blobPath) {
         return doGetContent(git, objectId, blobPath);
     }
 
-    /**
-     * Reads the file contents of the given path
-     */
     public FileContents read(final String branch, final String pathOrEmpty) throws IOException, GitAPIException {
         return gitOperation(getStashPersonIdent(), new Callable<FileContents>() {
             @Override
@@ -281,11 +319,34 @@ public class GitFacade extends GitFacadeSupport {
         });
     }
 
-    /**
-     * Checks if the file exists at the given path and returns the file metadata or null if it does not exist
-     *
-     * @return the metadata for the given file or null if it does not exist
-     */
+    public <T> T readFile(final String branch, final String pathOrEmpty, final Function<File,T> callback) throws IOException, GitAPIException {
+        return gitOperation(getStashPersonIdent(), new Callable<T>() {
+            @Override
+            public String toString() {
+                return "doReadFile(" + branch + ", " + pathOrEmpty + ", " + callback + ")";
+            }
+
+            @Override
+            public T call() throws Exception {
+                return doReadFile(git, getRootGitDirectory(), branch, pathOrEmpty, callback);
+            }
+        });
+    }
+
+    public <T> T writeFile(final String branch, final String pathOrEmpty, final WriteCallback<T> callback) throws IOException, GitAPIException {
+        return gitOperation(getStashPersonIdent(), new Callable<T>() {
+            @Override
+            public String toString() {
+                return "doWriteFile(" + branch + ", " + pathOrEmpty + ", " + callback + ")";
+            }
+
+            @Override
+            public T call() throws Exception {
+                return doWriteFile(git, getRootGitDirectory(), branch, pathOrEmpty, callback);
+            }
+        });
+    }
+
     @Override
     public FileInfo exists(final String branch, final String pathOrEmpty) throws IOException, GitAPIException {
         return gitOperation(getStashPersonIdent(), new Callable<FileInfo>() {
@@ -297,14 +358,11 @@ public class GitFacade extends GitFacadeSupport {
             @Override
             public FileInfo call() throws Exception {
                 File rootDir = getRootGitDirectory();
-                return doExists(git, rootDir, branch, pathOrEmpty);
+                return doExists(git, rootDir, branch, pathOrEmpty, false);
             }
         });
     }
 
-    /**
-     * Provides a file/path completion hook so we can start typing the name of a file or directory
-     */
     public List<String> completePath(final String branch, final String completionText, final boolean directoriesOnly) {
         return gitOperation(getStashPersonIdent(), new Callable<List<String>>() {
             @Override
@@ -320,9 +378,6 @@ public class GitFacade extends GitFacadeSupport {
         });
     }
 
-    /**
-     * Reads the child JSON file contents which match the given search string (if specified) and which match the given file name wildcard (using * to match any characters in the name).
-     */
     @Override
     public String readJsonChildContent(final String branch, final String path, String fileNameWildcardOrBlank, final String search) throws IOException {
         final String fileNameWildcard = (Strings.isBlank(fileNameWildcardOrBlank)) ? "*.json" : fileNameWildcardOrBlank;
@@ -340,8 +395,17 @@ public class GitFacade extends GitFacadeSupport {
         });
     }
 
+    @Override
+    public CommitInfo writeBase64(String branch, String path, String commitMessage, String authorName, String authorEmail, String contentsBase64) {
+        return write(branch, path, commitMessage, authorName, authorEmail, Base64.decode(contentsBase64));
+    }
+
     public CommitInfo write(final String branch, final String path, final String commitMessage,
                       final String authorName, final String authorEmail, final String contents) {
+        return write(branch, path, commitMessage, authorName, authorEmail, contents.getBytes());
+    }
+
+    private CommitInfo write(final String branch, final String path, final String commitMessage, String authorName, String authorEmail, final byte[] data) {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
         return gitOperation(personIdent, new Callable<CommitInfo>() {
             @Override
@@ -352,16 +416,11 @@ public class GitFacade extends GitFacadeSupport {
             public CommitInfo call() throws Exception {
                 checkoutBranch(git, branch);
                 File rootDir = getRootGitDirectory();
-                return doWrite(git, rootDir, branch, path, contents, personIdent, commitMessage);
+                return doWrite(git, rootDir, branch, path, data, personIdent, commitMessage);
             }
         });
     }
 
-    /**
-     * Creates a new file if it doesn't already exist
-     *
-     * @return the commit metadata for the newly created file or null if it already exists
-     */
     @Override
     public CommitInfo createDirectory(final String branch, final String path, final String commitMessage,
                                      final String authorName, final String authorEmail) {
@@ -502,6 +561,14 @@ public class GitFacade extends GitFacadeSupport {
         return doGetHead(git);
     }
 
+    public String getDefaultGitAttributes() {
+        return defaultGitAttributes;
+    }
+
+    public void setDefaultGitAttributes(String defaultGitAttributes) {
+        this.defaultGitAttributes = defaultGitAttributes;
+    }
+
     @Override
     public List<CommitInfo> history(String branch, String objectId, String path, int limit) {
         try {
@@ -528,6 +595,48 @@ public class GitFacade extends GitFacadeSupport {
     public String diff(String objectId, String baseObjectId, String path) {
         return doDiff(git, objectId, baseObjectId, path);
     }
+
+    /**
+     * Uploads the given local file name to the given branch and path; unzipping any zips if the flag is true
+     */
+    @Override
+    public void uploadFile(String branch, String path, boolean unzip, String sourceFileName, String destName) throws IOException, GitAPIException {
+        Map<String, File> uploadedFiles = new HashMap<>();
+        File sourceFile = new File(sourceFileName);
+        if (!sourceFile.exists()) {
+            throw new IllegalArgumentException("Source file does not exist: " + sourceFile);
+        }
+        uploadedFiles.put(destName, sourceFile);
+        uploadFiles(branch, path, unzip, uploadedFiles);
+    }
+
+    /**
+     * Uploads a list of files to the given branch and path
+     */
+    public void uploadFiles(String branch, String path, final boolean unzip, final Map<String, File> uploadFiles) throws IOException, GitAPIException {
+        LOG.info("uploadFiles: branch: " + branch + " path: " + path + " unzip: " + unzip + " uploadFiles: " + uploadFiles);
+
+        WriteCallback<Object> callback = new WriteCallback<Object>() {
+            @Override
+            public Object apply(WriteContext context) throws IOException, GitAPIException {
+                File folder = context.getFile();
+                // lets copy the files into the folder so we can add them to git
+                List<File> copiedFiles = new ArrayList<>();
+                Set<Map.Entry<String, File>> entries = uploadFiles.entrySet();
+                for (Map.Entry<String, File> entry : entries) {
+                    String name = entry.getKey();
+                    File uploadFile = entry.getValue();
+                    File copiedFile = new File(folder, name);
+                    Files.copy(uploadFile, copiedFile);
+                    copiedFiles.add(copiedFile);
+                }
+                doUploadFiles(context, folder, unzip, copiedFiles);
+                return null;
+            }
+        };
+        writeFile(branch, path, callback);
+    }
+
 
     public File getRootGitDirectory() {
         if (configDirectory == null) {
@@ -590,6 +699,8 @@ public class GitFacade extends GitFacadeSupport {
 
             String branch = git.getRepository().getBranch();
             configureBranch(branch);
+
+            importInitialContent(git, confDir, branch);
         } else {
             Repository repository = builder.setGitDir(gitDir)
                     .readEnvironment() // scan environment GIT_* variables
@@ -605,6 +716,105 @@ public class GitFacade extends GitFacadeSupport {
             }
         }
     }
+
+    /**
+     * When creating an empty initial git repository lets see if there are a list of URLs for zips
+     * of content to include
+     * @param git
+     * @param branch
+     */
+    protected void importInitialContent(Git git, File rootFolder, String branch) {
+        PersonIdent personIdent = getStashPersonIdent();
+
+        // lets add a default .gitattributes file so if we add binary files they don't get broken as we add them
+        File gitAttributes = new File(rootFolder, ".gitattributes");
+        if (!gitAttributes.exists()) {
+            try {
+                IOHelper.write(gitAttributes, getDefaultGitAttributes());
+                git.add().addFilepattern(".gitattributes").call();
+                CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage("Added default .gitattributes");
+                try {
+                    commitThenPush(git, branch, commit);
+                } catch (Exception e) {
+                    LOG.warn("Failed to commit initial .gitattributes. " + e, e);
+                }
+            } catch (Exception e) {
+                LOG.warn("Failed to write git " + gitAttributes + ". " + e, e);
+            }
+        }
+        System.out.println("Importing initial URLs: " + initialImportURLs);
+        if (Strings.isNotBlank(initialImportURLs)) {
+            String[] split = initialImportURLs.split(",");
+            if (split != null) {
+                for (String importURL : split) {
+                    if (Strings.isNotBlank(importURL)) {
+                        InputStream inputStream = null;
+                        try {
+                            inputStream = ConfigFacade.getSingleton().openURL(importURL);
+                        } catch (Throwable e) {
+                            LOG.warn("Could not load initial import URL: " + importURL + ". " + e, e);
+                            return;
+                        }
+                        if (inputStream == null) {
+                            LOG.warn("Could not load initial import URL: " + importURL);
+                            return;
+                        }
+
+                        try {
+                            Zips.unzip(inputStream, rootFolder);
+                        } catch (Throwable e) {
+                            LOG.warn("Failed to unzip initial import URL: " + importURL + ". " + e, e);
+                        }
+                    }
+                }
+            }
+        }
+
+        // now lets add any expanded stuff to git
+        int count = 0;
+        File[] files = rootFolder.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                String name = file.getName();
+                if (!Objects.equals(".git", name) && !Objects.equals(".gitattributes", name)) {
+                    try {
+                        count += addFiles(git, rootFolder, file);
+                    } catch (Throwable e) {
+                        LOG.warn("Failed to add file " + name + ". " + e, e);
+                    }
+                }
+            }
+        }
+
+        // commit any changes
+        if (count > 0) {
+            CommitCommand commit = git.commit().setAll(true).setAuthor(personIdent).setMessage("Added import URLs: " + initialImportURLs);
+            try {
+                commitThenPush(git, branch, commit);
+            } catch (Throwable e) {
+                LOG.warn("Failed to commit initial import of " + initialImportURLs + ". " + e, e);
+            }
+        }
+    }
+
+    private int addFiles(Git git, File rootDir, File... files) throws GitAPIException, IOException {
+        int counter = 0;
+        for (File file : files) {
+            String relativePath = getFilePattern(rootDir, file);
+            git.add().addFilepattern(relativePath).call();
+            counter++;
+        }
+        return counter;
+    }
+
+    private String getFilePattern(File rootDir, File file) throws IOException {
+        String relativePath = Files.getRelativePath(rootDir, file);
+        if (relativePath.startsWith(File.separator)) {
+            relativePath = relativePath.substring(1);
+        }
+        return relativePath.replace(File.separatorChar, '/');
+    }
+
 
     protected void doPull() {
         CredentialsProvider cp = getCredentials();
@@ -756,6 +966,5 @@ public class GitFacade extends GitFacadeSupport {
         }
         return localBranchExists;
     }
-
 
 }

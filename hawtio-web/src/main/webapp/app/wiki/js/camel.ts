@@ -1,9 +1,10 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
 module Wiki {
 
-  export function CamelController($scope, $location, $routeParams, localStorage:WindowLocalStorage, workspace:Workspace, wikiRepository:GitWikiRepository, jolokia) {
+  _module.controller("Wiki.CamelController", ["$scope", "$location", "$routeParams", "localStorage", "workspace", "wikiRepository", "jolokia", ($scope, $location, $routeParams, localStorage:WindowLocalStorage, workspace:Workspace, wikiRepository:GitWikiRepository, jolokia) => {
     Wiki.initScope($scope, $routeParams, $location);
     Camel.initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia);
     $scope.schema = Camel.getConfiguredCamelModel();
@@ -99,7 +100,7 @@ module Wiki {
           node.key = key;
           node["nodeModel"] = value;
           var tooltip = value["tooltip"] || value["description"] || label;
-          var imageUrl = url(value["icon"] || Camel.endpointIcon);
+          var imageUrl = Core.url(value["icon"] || Camel.endpointIcon);
           node.icon = imageUrl;
           node.tooltip = tooltip;
 
@@ -217,7 +218,7 @@ module Wiki {
             var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
             wikiRepository.putPage($scope.branch, $scope.pageId, text, commitMessage, (status) => {
               Wiki.onComplete(status);
-              notification("success", "Saved " + $scope.pageId);
+              Core.notification("success", "Saved " + $scope.pageId);
               $scope.modified = false;
               goToView();
               Core.$apply($scope);
@@ -461,5 +462,5 @@ module Wiki {
        }
        */
     }
-  }
+  }]);
 }

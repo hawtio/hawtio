@@ -1,5 +1,6 @@
+/// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
-  export function DestinationController($scope, workspace:Workspace, jolokia) {
+  _module.controller("ActiveMQ.DestinationController", ["$scope", "workspace", "jolokia", ($scope, workspace:Workspace, jolokia) => {
     $scope.workspace = workspace;
     $scope.message = "";
     $scope.queueType = 'true';
@@ -25,7 +26,7 @@ module ActiveMQ {
       $scope.destinationName = "";
       $scope.workspace.operationCounter += 1;
       Core.$apply($scope);
-      notification("success", $scope.message);
+      Core.notification("success", $scope.message);
       $scope.workspace.loadTree();
     }
 
@@ -34,7 +35,7 @@ module ActiveMQ {
       workspace.removeAndSelectParentNode();
       $scope.workspace.operationCounter += 1;
       Core.$apply($scope);
-      notification("success", $scope.message);
+      Core.notification("success", $scope.message);
       $scope.workspace.loadTree();
     }
 
@@ -75,7 +76,7 @@ module ActiveMQ {
         if (mbean) {
           jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
         } else {
-          notification("error", "Could not find the Broker MBean!");
+          Core.notification("error", "Could not find the Broker MBean!");
         }
       }
     };
@@ -87,6 +88,7 @@ module ActiveMQ {
       if (mbean && selection && jolokia && entries) {
         var domain = selection.domain;
         var name = entries["Destination"] || entries["destinationName"] || selection.title;
+        name = name.unescapeHTML();
         var isQueue = "Topic" !== (entries["Type"] || entries["destinationType"]);
         var operation;
         if (isQueue) {
@@ -106,6 +108,7 @@ module ActiveMQ {
       var entries = selection.entries;
       if (mbean && selection && jolokia && entries) {
         var name = entries["Destination"] || entries["destinationName"] || selection.title;
+        name = name.unescapeHTML();
         var operation = "purge()";
         $scope.message = "Purged queue " + name;
         jolokia.execute(mbean, operation, onSuccess(operationSuccess));
@@ -119,5 +122,5 @@ module ActiveMQ {
       }
       return null;
     }
-  }
+  }]);
 }

@@ -37,40 +37,29 @@
   </env-entry>
 
   <env-entry>
-    <description>Whether or not to check and see if branding should be enabled, value is really a boolean</description>
-    <env-entry-name>hawtio/useBranding</env-entry-name>
-    <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>true</env-entry-value>
-  </env-entry>
-
-  <env-entry>
-    <description>Enable the Red Hat branding by default, value is really a boolean</description>
-    <env-entry-name>hawtio/forceBranding</env-entry-name>
-    <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>false</env-entry-value>
-  </env-entry>
-
-  <env-entry>
-    <description>Properties to check when figuring out what branding to use, comma separated values</description>
-    <env-entry-name>hawtio/propertiesToCheck</env-entry-name>
-    <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>karaf.version</env-entry-value>
-  </env-entry>
-
-  <env-entry>
-    <description>The strings that will enable branding, comma separated values</description>
-    <env-entry-name>hawtio/wantedStrings</env-entry-name>
-    <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>redhat,fuse</env-entry-value>
-  </env-entry>
-
-  <env-entry>
     <description>Path to store file uploads, defaults to ${java.io.tmpdir}/uploads if blank</description>
     <env-entry-name>hawtio/uploadDirectory</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
     <env-entry-value></env-entry-value>
   </env-entry>
 
+  <filter>
+    <filter-name>SessionExpiryFilter</filter-name>
+    <filter-class>io.hawt.web.SessionExpiryFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>SessionExpiryFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>XFrameOptionsFilter</filter-name>
+    <filter-class>io.hawt.web.XFrameOptionsFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>XFrameOptionsFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
   <filter>
     <filter-name>CORSFilter</filter-name>
@@ -134,6 +123,25 @@
     <servlet-name>jolokia-proxy</servlet-name>
     <url-pattern>/proxy/*</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>kube-service</servlet-name>
+    <servlet-class>io.hawt.web.ServiceServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>kube-service</servlet-name>
+    <url-pattern>/service/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>kube-pod</servlet-name>
+    <servlet-class>io.hawt.web.PodServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>kube-pod</servlet-name>
+    <url-pattern>/pod/*</url-pattern>
+  </servlet-mapping>
+
 
   <servlet>
     <servlet-name>file-upload</servlet-name>
@@ -143,6 +151,15 @@
   <servlet-mapping>
     <servlet-name>file-upload</servlet-name>
     <url-pattern>/upload/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>user</servlet-name>
+    <servlet-class>io.hawt.web.UserServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>user</servlet-name>
+    <url-pattern>/user/*</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -172,15 +189,6 @@
     <url-pattern>/plugin/*</url-pattern>
   </servlet-mapping>
 
-  <servlet>
-    <servlet-name>branding</servlet-name>
-    <servlet-class>io.hawt.web.BrandingServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>branding</servlet-name>
-    <url-pattern>/branding/*</url-pattern>
-  </servlet-mapping>
-
 <!--
   <servlet>
     <servlet-name>GitServlet</servlet-name>
@@ -199,6 +207,15 @@
     <url-pattern>/git/*</url-pattern>
   </servlet-mapping>
 -->
+  <servlet>
+    <servlet-name>gitServlet</servlet-name>
+    <servlet-class>io.hawt.web.GitServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>gitServlet</servlet-name>
+    <url-pattern>/git/*</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>maven-source</servlet-name>
@@ -217,7 +234,7 @@
     <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
   </listener>
   <listener>
-    <listener-class>org.apache.aries.blueprint.web.BlueprintContextListener</listener-class>
+    <listener-class>io.hawt.blueprint.HawtioBlueprintContextListener</listener-class>
   </listener>
 
   <context-param>
@@ -228,6 +245,11 @@
     <param-name>blueprintLocation</param-name>
     <param-value>OSGI-INF/blueprint/blueprint.xml</param-value>
   </context-param>
+
+  <error-page>
+    <error-code>404</error-code>
+    <location>/index.html</location>
+  </error-page>
 
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>

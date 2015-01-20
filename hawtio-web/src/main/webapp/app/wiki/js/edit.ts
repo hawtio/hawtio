@@ -1,8 +1,9 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
 module Wiki {
-  export function EditController($scope, $location, $routeParams, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
+  _module.controller("Wiki.EditController", ["$scope", "$location", "$routeParams", "fileExtensionTypeRegistry", "wikiRepository", ($scope, $location, $routeParams, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) => {
 
     Wiki.initScope($scope, $routeParams, $location);
     $scope.entity = {
@@ -148,10 +149,10 @@ module Wiki {
       wikiRepository.putPage($scope.branch, path, contents, commitMessage, (status) => {
         Wiki.onComplete(status);
         $scope.modified = false;
-        notification("success", "Saved " + path);
+        Core.notification("success", "Saved " + path);
         goToView();
         Core.$apply($scope);
       });
     }
-  }
+  }]);
 }

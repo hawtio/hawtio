@@ -1,9 +1,9 @@
 /**
  * @module Dashboard
  */
+/// <reference path="dashboardPlugin.ts"/>
 module Dashboard {
-  export function NavBarController($scope, $routeParams, $rootScope, workspace:Workspace,
-                                   dashboardRepository: DefaultDashboardRepository) {
+  _module.controller("Dashboard.NavBarController", ["$scope", "$routeParams", "$rootScope", "workspace", "dashboardRepository", ($scope, $routeParams, $rootScope, workspace:Workspace, dashboardRepository: DefaultDashboardRepository) => {
 
     $scope.hash = workspace.hash();
     $scope._dashboards = [];
@@ -49,5 +49,5 @@ module Dashboard {
         Core.$apply($scope);
       });
     }
-  }
+  }]);
 }

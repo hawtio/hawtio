@@ -11,6 +11,11 @@
                   title="Moves the dead letter queue message back to its original destination so it can be retried" data-placement="bottom">
             <i class="icon-reply"></i> Retry
           </button>
+          <button class="btn" ng-disabled="gridOptions.selectedItems.length !== 1" ng-click="resendMessage()"
+                    title="Edit the message to resend it" data-placement="bottom">
+           <i class="icon-share-alt"></i> Resend
+          </button>
+
           <button class="btn" ng-disabled="!gridOptions.selectedItems.length" ng-click="moveDialog = true"
                   title="Move the selected messages to another destination" data-placement="bottom">
             <i class="icon-share-alt"></i> Move
@@ -41,7 +46,6 @@
           <form class="form-horizontal no-bottom-margin">
 
             <div class="btn-group"
-                 style="margin-top: 9px;"
                  hawtio-pager="messages"
                  on-index-change="selectRowIndex"
                  row-index="rowIndex"></div>
@@ -120,7 +124,7 @@
         <ng-pluralize count="gridOptions.selectedItems.length"
                       when="{'1': 'message', 'other': '{} messages'}"></ng-pluralize>
         to: <input type="text" ng-model="queueName" placeholder="Queue name"
-                   typeahead="title for title in queueNames($viewValue) | filter:$viewValue" typeahead-editable='true'></p>
+                   typeahead="title.unescapeHTML() for title in queueNames($viewValue) | filter:$viewValue" typeahead-editable='true'></p>
       <p>
         You cannot undo this operation.<br>
         Though after the move you can always move the

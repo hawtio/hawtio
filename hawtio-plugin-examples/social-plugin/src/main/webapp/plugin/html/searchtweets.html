@@ -1,0 +1,20 @@
+<div class="row-fluid gridStyle" ng-controller="SOCIAL.FormController">
+    <div class="row-fluid">
+        <div class="span12">
+            <div>
+                <form name="inputForm" ng-submit="searchTweets()">
+                    <div>
+                        Keyword(s) : <input type="text" class="entry-widget" ng-model="keywords">
+                    </div>
+                    <p class="span4 centered">
+                        <input type="submit" class="btn btn-success" ng-disabled="!keywords" value="Search information">
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <div class="span8">
+            <div class="gridStyle" ng-grid="tweetsGrid"/>
+        </div>
+    </div>
+</div>

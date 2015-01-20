@@ -3,14 +3,14 @@
     <div class="active-profile-filter">
       <div class="section-filter">
         <input type="text" class="search-query" placeholder="Filter..." ng-model="searchFilter">
-        <i class="icon-remove clickable" title="Clear Filter" ng-click="searchFilter = ''"></i>
+        <i class="icon-remove clickable" title="Clear filter" ng-click="searchFilter = ''"></i>
       </div>
     </div>
 
     <div class="section-controls">
-      <a href="" title="Create a new container" ng-click="createContainer()">
+      <!--a href="" title="Create a new container" ng-click="createContainer()">
         <i class="icon-plus"></i> Container
-      </a>
+      </a-->
       <a href="" ng-click="editRequirements.dialogOpen(null)"
          title="Configure the minimum number of required instances for each profile. If you are on OpenShift or using an Auto Scaler they are then created automatically; otherwise click on the count button to manually provision required containers">
         <i class="icon-resize-vertical"></i>
@@ -18,10 +18,9 @@
       </a>
     </div>
 
-    <div class="active-profile-count-title" title="The actual number of instances of each profile that are currently running">
-      Count
-    </div>
-
+  </div>
+  <div class="active-profile-count-title" title="The actual number of instances of each profile that are currently running">
+    Count
   </div>
   <div class="active-profile-list" ng-repeat="profile in activeProfiles" ng-show="profileMatchesFilter(profile)">
     <div class="expandable" model="profile">
@@ -59,54 +58,10 @@
 
       </div>
       <div class="expandable-body">
-        <ul>
-          <li class="no-list" ng-repeat="container in containersForProfile(profile.id)"
-              ng-show="containerMatchesFilter(container)">
-
-            <div class="box" ng-class="getSelectedClass(container)">
-
-              <div class="box-left">
-
-                <i ng-show="!container.selected && showSelect" class="icon-circle-blank clickable" title="Not Selected"
-                   ng-click="container.selected = true"></i>
-                <i ng-show="container.selected && showSelect" class="icon-circle clickable"
-                   title="Status of the container" ng-click="container.selected = false"></i>
-
-                <i class="clickable" title="{{getStatusTitle(container)}}" ng-class='statusIcon(container)'
-                   ng-click="container.selected = !container.selected"></i>
-
-                <div ng-click="container.selected = !container.selected">
-                  <span class="contained c-wide" title="{{container.id}} / {{container.versionId}}">
-                    <a ng-click="showContainer(container)">{{container.id}}</a> / {{container.versionId}}
-                  </span>
-                </div>
-
-                <i class="icon-cloud clickable" title="Ensemble member" ng-click="showContainer(container)"
-                   ng-show="isEnsembleContainer(container.id)"></i>
-              </div>
-
-              <div class="box-middle">
-                <ul class="inline">
-                  <li ng-repeat="service in container.services" ng-switch="service.type">
-                    <i ng-switch-when="icon" class="{{service.src}}" title="{{service.title}}"></i>
-                    <img ng-switch-when="img" ng-src="{{service.src}}" title="{{service.title}}">
-                  </li>
-                </ul>
-              </div>
-
-              <div class="box-right">
-
-                <i class="icon-plus clickable" ng-show="container.root && container.alive"
-                   title="Create a new child container" ng-click="createChildContainer(container)"></i>
-
-                <i class="icon-signin clickable"
-                   ng-show="canConnect(container)"
-                   title="Open a new window and connect to this container" ng-click="doConnect(container)"></i>
-              </div>
-
-            </div>
-          </li>
-        </ul>
+        <div ng-repeat="container in containersForProfile(profile.id)"
+              ng-show="containerMatchesFilter(container)"
+              ng-include="'app/fabric/html/containerItem.html'"> 
+        </div>
       </div>
     </div>
   </div>
@@ -118,7 +73,7 @@
         </h4>
       </div>
       <div class="modal-body">
-        <div fabric-profile-selector="editRequirements.selectedProfiles"
+        <div fabric-profile-selector="editRequirements.selectedProfiles" no-links="true"
              version-id="editRequirements.versionId"
              excluded-profiles="editRequirements.excludeProfiles"></div>
       </div>
@@ -190,11 +145,11 @@
               </td>
               <td>
                 <input name="minimumInstances" type="number" ng-model="requirement.minimumInstances" ng-required="false"
-                       class="input-small">
+                       class="input-small" min="0">
               </td>
               <td>
                 <input name="maximumInstances" type="number" ng-model="requirement.maximumInstances" ng-required="false"
-                       class="input-small">
+                       class="input-small" min="0">
               </td>
               <td>
                 <div ng-repeat="dependentProfile in requirement.dependentProfiles">
@@ -212,8 +167,8 @@
         </div>
         <div class="modal-footer">
           <input class="btn btn-success" ng-disabled="!requirementsForm.$valid"
-                 ng-click="updateRequirements(editRequirements.entity)" value="Update">
-          <input class="btn btn-primary" ng-click="editRequirements.dialog.close()" value="Cancel">
+                 ng-click="updateRequirements(editRequirements.entity)" type="button" value="Update">
+          <input class="btn-warning cancel" ng-click="editRequirements.dialog.close()" type="button" value="Cancel">
         </div>
       </form>
     </div>

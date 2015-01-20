@@ -6,17 +6,20 @@
       <div class="section-header">
 
         <div class="selection-controls">
-          <i class="icon-circle-blank clickable" title="Clear Selection" ng-click="setActiveContainer(null)"></i>
-          <i class="icon-circle clickable" title="Select All" ng-click="selectAllContainers()"></i>
+          <i class="icon-circle-blank clickable" title="Clear selection" ng-click="selectNone(containers)"></i>
+          <i class="icon-circle clickable" title="Select all" ng-click="selectAll(containers, filterContainer)"></i>
         </div>
 
         <div class="section-title"></div>
 
         <div class="section-controls">
+          <span class="inline-block"
+                ng-show="selectedContainers.length != 0">
+                <div hawtio-drop-down="locationMenu"></div>
+          </span>
           <a ng-hide="inDashboard" ng-href="{{addToDashboardLink()}}" title="Add this view to a dashboard" data-placement="bottom">
             <i class="icon-share"></i>
           </a>
-
           <a ng-click="createContainer()" title="Create new containers">
             <i class="icon-plus"></i> Create
           </a>
@@ -31,27 +34,27 @@
                  desc
                  exclude='{{getVersionsToExclude()}}'></span>
           </span>
-          <a ng-click="startSelectedContainers()" ng-show="anySelectionAlive(false)"
-             title="Start Containers">
+          <a ng-click="startSelectedContainers()" ng-show="anySelectionStartable()"
+             title="Start containers">
             <i class="icon-play-circle clickable"></i>
             Start
           </a>
-          <a ng-click="stopSelectedContainers()" ng-show="anySelectionAlive(true)"
-             title="Stop Containers">
+          <a ng-click="stopSelectedContainers()" ng-show="anySelectionStoppable()"
+             title="Stop containers">
             <i class="icon-off"></i>
             Stop
           </a>
           <a class="nav-danger"
              ng-click="confirmDeleteDialog.open()"
              ng-show="selectedContainers.length != 0"
-             title="Delete Container">
-            <i class="icon-minus"></i> Delete
+             title="Delete container">
+            <i class="icon-remove-sign"></i> Delete
           </a>
         </div>
 
         <div class="section-filter">
           <input type="text" class="search-query" placeholder="Filter..." ng-model="containerIdFilter">
-          <i class="icon-remove clickable" title="Clear Filter" ng-click="containerIdFilter = ''"></i>
+          <i class="icon-remove clickable" title="Clear filter" ng-click="containerIdFilter = ''"></i>
         </div>
       </div>
 

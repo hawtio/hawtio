@@ -1,0 +1,37 @@
+<div class="control-group">
+  <label class="control-label" for="keyValueList">{{data[name].label || name | humanize}}:</label>
+  <div class="controls">
+    <ul id="keyValueList" class="zebra-list">
+      <li ng-repeat="(key, value) in entity[name]">
+        <strong>Key:</strong>&nbsp;{{key}}&nbsp;<strong>Value:</strong>&nbsp;{{value}}
+        <i class="pull-right icon-remove red mouse-pointer" ng-click="deleteKey(key)"></i>
+      </li>
+      <li>
+        <button class="btn btn-success"  ng-click="showForm = true" ng-hide="showForm"><i class="icon-plus"></i></button>
+        <div class="well" ng-show="showForm">
+          <form class="form-horizontal">
+            <fieldset>
+              <div class="control-group">
+                <label class="control-label" for="newItemKey">Key:</label>
+                <div class="controls">
+                  <input id="newItemKey" type="text" ng-model="newItem.key">
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" for="newItemKey">Value:</label>
+                <div id="valueInput" class="controls">
+                  <input id="newItemValue" type="text" ng-model="newItem.value">
+                </div>
+              </div>
+              <p>
+              <input type="submit" class="btn btn-success pull-right" ng-disabled="!newItem.key && !newItem.value" ng-click="addItem(newItem)" value="Add">
+              <span class="pull-right">&nbsp;</span>
+              <button class="btn pull-right" ng-click="showForm = false">Cancel</button>
+              </p>
+            </fieldset>
+          </form>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

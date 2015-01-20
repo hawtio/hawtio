@@ -1,5 +1,6 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
-  export function EndpointController($scope, $location, localStorage:WindowLocalStorage, workspace:Workspace, jolokia) {
+  _module.controller("Camel.EndpointController", ["$scope", "$location", "localStorage", "workspace", "jolokia", ($scope, $location, localStorage:WindowLocalStorage, workspace:Workspace, jolokia) => {
     Camel.initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia);
 
     $scope.workspace = workspace;
@@ -14,7 +15,7 @@ module Camel {
           var operation = "createEndpoint(java.lang.String)";
           jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
         } else {
-          notification("error", "Could not find the CamelContext MBean!");
+          Core.notification("error", "Could not find the CamelContext MBean!");
         }
       }
     };
@@ -59,20 +60,20 @@ module Camel {
       $scope.endpointName = "";
       $scope.workspace.operationCounter += 1;
       Core.$apply($scope);
-      notification("success", $scope.message);
+      Core.notification("success", $scope.message);
     }
 
     function deleteSuccess() {
       // lets set the selection to the parent
       if (workspace.selection) {
-        var parent = workspace.selection.parent;
+        var parent = Core.pathGet(workspace, ["selection", "parent"]);
         if (parent) {
           $scope.workspace.updateSelectionNode(parent);
         }
       }
       $scope.workspace.operationCounter += 1;
       Core.$apply($scope);
-      notification("success", $scope.message);
+      Core.notification("success", $scope.message);
     }
-  }
+  }]);
 }

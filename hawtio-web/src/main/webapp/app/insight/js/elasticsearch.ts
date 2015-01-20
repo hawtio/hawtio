@@ -1,9 +1,10 @@
 /**
  * @module Insight
  */
+/// <reference path="insightPlugin.ts"/>
 module Insight {
 
-    export function ElasticSearchController($scope, jolokia, localStorage) {
+    _module.controller("Insight.ElasticSearchController", ["$scope", "jolokia", "localStorage", ($scope, jolokia, localStorage) => {
 
         $scope.time_options = ['1m','5m','15m','1h','6h','12h'];
         $scope.timespan = '1m';
@@ -29,5 +30,5 @@ module Insight {
         function rebuildCharts() {
             createCharts($scope, chartsDef, mainDiv, jolokia);
         }
-    }
+    }]);
 }

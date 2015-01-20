@@ -1,9 +1,9 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
-  export function TraceRouteController($scope, workspace:Workspace, jolokia, localStorage, tracerStatus) {
+  _module.controller("Camel.TraceRouteController", ["$scope", "workspace", "jolokia", "localStorage", "tracerStatus", ($scope, workspace:Workspace, jolokia, localStorage, tracerStatus) => {
 
     var log:Logging.Logger = Logger.get("CamelTracer");
 
-    $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
     $scope.tracing = false;
     $scope.messages = [];
     $scope.graphView = null;
@@ -171,8 +171,11 @@ module Camel {
         // set max only supported on BacklogTracer
         // (the old fabric tracer does not support max length)
         if (mbean.toString().endsWith("BacklogTracer")) {
-          var max = $scope.camelMaximumTraceOrDebugBodyLength;
+          var max = Camel.maximumTraceOrDebugBodyLength(localStorage);
+          var streams = Camel.traceOrDebugIncludeStreams(localStorage);
           jolokia.setAttribute(mbean, "BodyMaxChars",  max);
+          jolokia.setAttribute(mbean, "BodyIncludeStreams", streams);
+          jolokia.setAttribute(mbean, "BodyIncludeFiles", streams);
         }
         jolokia.setAttribute(mbean, "Enabled", flag, onSuccess(tracingChanged));
       }
@@ -181,6 +184,6 @@ module Camel {
     log.info("Re-activating tracer with " + tracerStatus.messages.length + " existing messages");
     $scope.messages = tracerStatus.messages;
     $scope.tracing = tracerStatus.jhandle != null;
-  }
+  }]);
 
 }

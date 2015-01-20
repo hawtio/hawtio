@@ -1,6 +1,6 @@
 ### Health 
 
-It's very handy to add health checks to Java code running in a JVM and exposing those health checks over JMX. e.g. see the [dropwizard notes](http://dropwizard.codahale.com/getting-started/#creating-a-health-check) and the [metrics library health checks](http://metrics.codahale.com/getting-started/#health-checks).
+It's very handy to add health checks to Java code running in a JVM and exposing those health checks over JMX. e.g. see the [dropwizard notes](http://dropwizard.io/manual/core.html#health-checks) and the [metrics library health checks](https://dropwizard.github.io/metrics/3.1.0/manual/healthchecks/).
 
 This document outlines a Health check MBean convention that if folks adopt its then easier to discover and will be included in the Console's Health tab.
 

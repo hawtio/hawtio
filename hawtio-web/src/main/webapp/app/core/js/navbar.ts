@@ -1,14 +1,57 @@
+/// <reference path="corePlugin.ts"/>
+/// <reference path="preferenceHelpers.ts"/>
+/// <reference path="../../perspective/js/perspectiveHelpers.ts"/>
 /**
  * @module Core
  */
 module Core {
 
-  export function NavBarController($scope, $location:ng.ILocationService, workspace:Workspace, $route, jolokia, localStorage) {
+
+  export interface NavBarViewCustomLink {
+    title: string;
+    icon: string;
+    href: string;
+    action: () => void;
+  }
+
+  export interface NavBarViewCustomLinks {
+    list: Array<NavBarViewCustomLink>;
+    dropDownLabel: string;
+  }
+
+
+  export var NavBarController = _module.controller("Core.NavBarController", ["$scope", "$location", "workspace", "$route", "jolokia", "localStorage", "NavBarViewCustomLinks", ($scope, $location:ng.ILocationService, workspace:Workspace, $route, jolokia, localStorage, NavBarViewCustomLinks:Core.NavBarViewCustomLinks) => {
 
     $scope.hash = workspace.hash();
     $scope.topLevelTabs = [];
     $scope.subLevelTabs = workspace.subLevelTabs;
     $scope.currentPerspective = null;
+    $scope.localStorage = localStorage;
+    $scope.recentConnections = [];
+
+    $scope.goTo = (destination) => {
+      //Logger.debug("going to: " + destination);
+      $location.url(destination);
+    };
+
+    $scope.$watch('localStorage.recentConnections', (newValue, oldValue) => {
+      $scope.recentConnections = Core.getRecentConnections(localStorage);
+      //Logger.debug("recent containers: ", $scope.recentConnections);
+    });
+
+    $scope.openConnection = (connection) => {
+      var connectOptions = Core.getConnectOptions(connection);
+      if (connectOptions) {
+        Core.connectToServer(localStorage, connectOptions);
+      }
+    };
+
+    $scope.goHome = () => {
+      window.open(".");
+    };
+
+    $scope.clearConnections = Core.clearConnections;
+
     $scope.perspectiveDetails = {
       perspective: null
     };
@@ -21,18 +64,23 @@ module Core {
       return workspace.topLevelTabs;
     };
 
-
     $scope.$on('jmxTreeUpdated', function () {
       reloadPerspective();
     });
 
-    //$scope.subLevelTabs = () => workspace.subLevelTabs;
+    $scope.$watch('workspace.topLevelTabs', function () {
+      reloadPerspective();
+    });
 
     $scope.validSelection = (uri) => workspace.validSelection(uri);
 
     $scope.isValid = (nav) => nav && nav.isValid(workspace);
 
     $scope.switchPerspective = (perspective) => {
+      if (perspective.onSelect && angular.isFunction(perspective.onSelect)) {
+        perspective.onSelect.apply();
+        return;
+      }
       var searchPerspectiveId = $location.search()[Perspective.perspectiveSearchId];
       if (perspective && ($scope.currentPerspective !== perspective ||  perspective.id !== searchPerspectiveId)) {
         Logger.debug("Changed the perspective to " + JSON.stringify(perspective) + " from search id " + searchPerspectiveId);
@@ -97,10 +145,11 @@ module Core {
       if (angular.isString(nav)) {
         href = nav;
       } else {
-        href = nav.href();
+        href = angular.isObject(nav) ? nav.href() : null;
       }
+      href = href || "";
       var removeParams = ['tab', 'nid', 'chapter', 'pref', 'q'];
-      if (!includePerspective) {
+      if (!includePerspective && href) {
         if (href.indexOf("?p=") >= 0 || href.indexOf("&p=") >= 0) {
           removeParams.push("p");
         }
@@ -122,7 +171,7 @@ module Core {
         var size = {
           size_x: 4,
           size_y: 3
-        }
+        };
 
         answer += "&size=" + encodeURIComponent(angular.toJson(size));
       }
@@ -161,23 +210,45 @@ module Core {
       return tab ? tab['content'] : "";
     };
 
+    $scope.navBarViewCustomLinks = NavBarViewCustomLinks;
+
+    $scope.isCustomLinkSet = () => {
+      return $scope.navBarViewCustomLinks.list.length;
+    }
+
     function reloadPerspective() {
       var perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);
       var currentId = Perspective.currentPerspectiveId($location, workspace, jolokia, localStorage);
 
-      console.log("reloading perspectives for " + currentId);
+      // console.log("Reloading current perspective: " + currentId);
 
-      if (currentId != $scope.perspectiveId || angular.toJson($scope.perspectives) !== angular.toJson(perspectives)) {
+      // any tabs changed
+      var newTopLevelTabs = Perspective.getTopLevelTabsForPerspective($location, workspace, jolokia, localStorage);
+      var diff = newTopLevelTabs.subtract($scope.topLevelTabs);
+
+      if (diff && diff.length > 0) {
+        $scope.topLevelTabs = newTopLevelTabs;
+
         $scope.perspectiveId = currentId;
         $scope.perspectives = perspectives;
         $scope.perspectiveDetails.perspective = $scope.perspectives.find((p) => {
           return p['id'] === currentId;
         });
-        console.log("Current perspective ID: " + currentId);
-        $scope.topLevelTabs = Perspective.getTopLevelTabsForPerspective($location, workspace, jolokia, localStorage);
+
+        // console.log("Refreshing top level tabs for current perspective: " + currentId);
+        // make sure to update the UI as the top level tabs changed
+        Core.$apply($scope);
       }
     }
+  }]);
 
-    //reloadPerspective();
-  }
+  // service that can be used by other modules to add additional links in top right corner
+  _module.service("NavBarViewCustomLinks", ['$location', '$rootScope', ($location, $rootScope) => {
+    //return a Map<String, Core.NavBarViewCustomLink>
+    return <NavBarViewCustomLinks>{
+      list: [],
+      dropDownLabel: "Extra"
+    }
+  }]);
+
 }

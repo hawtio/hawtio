@@ -1,27 +1,43 @@
 /**
  * @module Jmx
  */
+/// <reference path="./jmxPlugin.ts"/>
 module Jmx {
 
   export var propertiesColumnDefs = [
-    {field: 'name', displayName: 'Property', width: "27%",
+    {
+      field: 'name',
+      displayName: 'Property',
+      width: "27%",
       cellTemplate: '<div class="ngCellText" title="{{row.entity.attrDesc}}" ' +
-        'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="getDashboardWidgets(row.entity)"></div>{{row.entity.name}}</div>'},
-    {field: 'value', displayName: 'Value', width: "70%",
-      cellTemplate: '<div class="ngCellText" ng-click="onViewAttribute(row.entity)" title="{{row.entity.tooltip}}" ng-bind-html-unsafe="row.entity.summary"></div>'
+        'data-placement="bottom"><div ng-show="!inDashboard" class="inline" compile="row.entity.getDashboardWidgets()"></div><a href="" ng-click="row.entity.onViewAttribute()">{{row.entity.name}}</a></div>'},
+    {
+      field: 'value',
+      displayName: 'Value',
+      width: "70%",
+      cellTemplate: '<div class="ngCellText mouse-pointer" ng-click="row.entity.onViewAttribute()" title="{{row.entity.tooltip}}" ng-bind-html-unsafe="row.entity.summary"></div>'
     }
   ];
 
   export var foldersColumnDefs = [
     {
       displayName: 'Name',
-      cellTemplate: '<div class="ngCellText"><a href="{{folderHref(row)}}"><i class="{{folderIconClass(row)}}"></i> {{row.getProperty("title")}}</a></div>'
+      cellTemplate: '<div class="ngCellText"><a href="{{row.entity.folderHref(row)}}"><i class="{{row.entity.folderIconClass(row)}}"></i> {{row.getProperty("title")}}</a></div>'
     }
   ];
 
-  export function AttributesController($scope, $element, $location, workspace:Workspace, jolokia, jmxWidgets, jmxWidgetTypes) {
+  export var AttributesController = _module.controller("Jmx.AttributesController", ["$scope", "$element", "$location", "workspace", "jolokia", "jmxWidgets", "jmxWidgetTypes", "$templateCache", "localStorage", "$browser", ($scope,
+                                       $element,
+                                       $location,
+                                       workspace:Workspace,
+                                       jolokia,
+                                       jmxWidgets,
+                                       jmxWidgetTypes,
+                                       $templateCache,
+                                       localStorage,
+                                        $browser) => {
     $scope.searchText = '';
-    $scope.columnDefs = [];
+    $scope.nid = 'empty';
     $scope.selectedItems = [];
 
     $scope.lastKey = null;
@@ -29,6 +45,18 @@ module Jmx {
 
     $scope.entity = {};
     $scope.attributeSchema = {};
+    $scope.gridData = [];
+    $scope.attributes = ""
+
+    $scope.$watch('gridData.length', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        if (newValue > 0) {
+          $scope.attributes = $templateCache.get('gridTemplate');
+        } else {
+          $scope.attributes = "";
+        }
+      }
+    });
 
     var attributeSchemaBasic = {
       properties: {
@@ -49,15 +77,23 @@ module Jmx {
           tooltip: 'Attribute type',
           type: 'string',
           readOnly: 'true'
+        },
+        'jolokia': {
+          description: 'Jolokia URL',
+          tooltip: 'Jolokia REST URL',
+          type: 'string',
+          readOnly: 'true'
         }
       }
     };
 
     $scope.gridOptions = {
-      selectedItems: $scope.selectedItems,
+      scope: $scope,
+      selectedItems: [],
       showFilter: false,
       canSelectRows: false,
-      enableRowSelection: true,
+      enableRowSelection: false,
+      enableRowClickSelection: false,
       keepLastSelected: false,
       multiSelect: true,
       showColumnMenu: true,
@@ -68,8 +104,15 @@ module Jmx {
       // TODO disabled for now as it causes https://github.com/hawtio/hawtio/issues/262
       //sortInfo: { field: 'name', direction: 'asc'},
       data: 'gridData',
-      columnDefs: 'columnDefs'
+      columnDefs: propertiesColumnDefs
     };
+
+    $scope.$watch("gridOptions.selectedItems", (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        log.debug("Selected items: ", newValue);
+        $scope.selectedItems = newValue;
+      }
+    }, true);
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -83,6 +126,8 @@ module Jmx {
         workspace.selection = null;
         $scope.lastKey = null;
       }
+      $scope.nid = $location.search()['nid'];
+      log.debug("nid: ", $scope.nid);
 
       setTimeout(updateTableContents, 50);
     });
@@ -92,11 +137,16 @@ module Jmx {
         Core.unregister(jolokia, $scope);
         return;
       }
-      updateTableContents();
+      setTimeout(() => {
+        $scope.gridData = [];
+        Core.$apply($scope);
+        setTimeout(() => {
+          updateTableContents();
+        }, 10);
+      }, 10);
     });
 
     $scope.hasWidget = (row) => {
-      console.log("Row: ", row);
       return true;
     };
 
@@ -119,18 +169,24 @@ module Jmx {
       if (mbean) {
         jolokia.setAttribute(mbean, key, value,
           onSuccess((response) => {
-              notification("success", "Updated attribute " + key);
+              Core.notification("success", "Updated attribute " + key);
             }
           ));
       }
     };
 
     $scope.onViewAttribute = (row) => {
+      if (!row.summary) {
+        return;
+      }
       // create entity and populate it with data from the selected row
       $scope.entity = {};
       $scope.entity["key"] = row.key;
       $scope.entity["description"] = row.attrDesc;
       $scope.entity["type"] = row.type;
+
+      var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
+      $scope.entity["jolokia"] = url + localStorage["url"] + "/read/" + workspace.getSelectedMBeanName() + "/" + $scope.entity["key"] ;
       $scope.entity["rw"] = row.rw;
       var type = asJsonSchemaType(row.type, row.key);
       var readOnly = !row.rw;
@@ -224,10 +280,14 @@ module Jmx {
         return '';
       }
 
+      row.addChartToDashboard = (type) => {
+        $scope.addChartToDashboard(row, type);
+      }
+
       var rc = [];
       potentialCandidates.forEach((widget) => {
         var widgetType = Jmx.getWidgetType(widget);
-        rc.push("<i class=\"" + widgetType['icon'] + " clickable\" title=\"" + widgetType['title'] + "\" ng-click=\"addChartToDashboard(row.entity, '" + widgetType['type'] + "')\"></i>");
+        rc.push("<i class=\"" + widgetType['icon'] + " clickable\" title=\"" + widgetType['title'] + "\" ng-click=\"row.entity.addChartToDashboard('" + widgetType['type'] + "')\"></i>");
 
       });
       return rc.join() + "&nbsp;";
@@ -301,6 +361,9 @@ module Jmx {
     };
 
     $scope.folderHref = (row) => {
+      if (!row.getProperty) {
+        return "";
+      }
       var key = row.getProperty("key");
       if (key) {
         return Core.createHref($location, "#" + $location.path() + "?nid=" + key, ["nid"]);
@@ -319,6 +382,9 @@ module Jmx {
        return classes;
        }
        */
+      if (!row.getProperty) {
+        return "";
+      }
       return row.getProperty("objectName") ? "icon-cog" : "icon-folder-close";
     };
 
@@ -333,11 +399,21 @@ module Jmx {
       $scope.gridData = [];
       $scope.mbeanIndex = null;
       var mbean = workspace.getSelectedMBeanName();
-      var request = null;
+      var request = <any>null;
       var node = workspace.selection;
       if (node === null || angular.isUndefined(node) || node.key !== $scope.lastKey) {
         // cache attributes info, so we know if the attribute is read-only or read-write, and also the attribute description
         $scope.attributesInfoCache = null;
+
+        if(mbean == null) {
+          // in case of refresh
+          var _key = $location.search()['nid'];
+          var _node = workspace.keyToNodeMap[_key];
+          if (_node) {
+            mbean = _node.objectName;
+          }
+        }
+
         if (mbean) {
           var asQuery = (node) => {
             var path = escapeMBeanPath(node);
@@ -359,12 +435,14 @@ module Jmx {
 
       if (mbean) {
         request = { type: 'read', mbean: mbean };
-        if (node.key !== $scope.lastKey) {
-          $scope.columnDefs = propertiesColumnDefs;
+        if (node === null || angular.isUndefined(node) || node.key !== $scope.lastKey) {
+          $scope.gridOptions.columnDefs = propertiesColumnDefs;
+          $scope.gridOptions.enableRowClickSelection = false;
         }
       } else if (node) {
         if (node.key !== $scope.lastKey) {
-          $scope.columnDefs = [];
+          $scope.gridOptions.columnDefs = [];
+          $scope.gridOptions.enableRowClickSelection = true;
         }
         // lets query each child's details
         var children = node.children;
@@ -399,20 +477,23 @@ module Jmx {
         Core.register(jolokia, $scope, request, callback);
       } else if (node) {
         if (node.key !== $scope.lastKey) {
-          $scope.columnDefs = foldersColumnDefs;
+          $scope.gridOptions.columnDefs = foldersColumnDefs;
+          $scope.gridOptions.enableRowClickSelection = true;
         }
         $scope.gridData = node.children;
+        addHandlerFunctions($scope.gridData);
       }
       if (node) {
         $scope.lastKey = node.key;
       }
+      Core.$apply($scope);
     }
 
     function render(response) {
       var data = response.value;
       var mbeanIndex = $scope.mbeanIndex;
       var mbean = response.request['mbean'];
-      log.debug("mbean: ", mbean);
+
       if (mbean) {
         // lets store the mbean in the row for later
         data["_id"] = mbean;
@@ -431,7 +512,7 @@ module Jmx {
             $scope.selectedIndices = $scope.selectedItems.map((item) => $scope.gridData.indexOf(item));
             $scope.gridData = [];
 
-            if (!$scope.columnDefs.length) {
+            if (!$scope.gridOptions.columnDefs.length) {
               // lets update the column definitions based on any configured defaults
               var key = workspace.selectionConfigKey();
               var defaultDefs = workspace.attributeColumnDefs[key] || [];
@@ -450,7 +531,7 @@ module Jmx {
                   if (!map[key]) {
                     extraDefs.push({
                       field: key,
-                      displayName: key === '_id' ? 'Object name' : humanizeValue(key),
+                      displayName: key === '_id' ? 'Object name' : Core.humanizeValue(key),
                       visible: defaultSize === 0
                     });
                   }
@@ -472,11 +553,13 @@ module Jmx {
                 defaultDefs.push(e);
               })
 
-              $scope.columnDefs = defaultDefs;
+              $scope.gridOptions.columnDefs = defaultDefs;
+              $scope.gridOptions.enableRowClickSelection = true;
             }
           }
           // assume 1 row of data per mbean
           $scope.gridData[idx] = data;
+          addHandlerFunctions($scope.gridData);
 
           var count = $scope.mbeanCount;
           if (!count || idx + 1 >= count) {
@@ -492,10 +575,11 @@ module Jmx {
           console.log("No mbean name in request " + JSON.stringify(response.request));
         }
       } else {
-        $scope.columnDefs = propertiesColumnDefs;
+        $scope.gridOptions.columnDefs = propertiesColumnDefs;
+        $scope.gridOptions.enableRowClickSelection = false;
         var showAllAttributes = true;
         if (angular.isObject(data)) {
-          var properties = [];
+          var properties = Array();
           angular.forEach(data, (value, key) => {
             if (showAllAttributes || includePropertyValue(key, value)) {
               // always skip keys which start with _
@@ -513,7 +597,7 @@ module Jmx {
                 }
                 // the value must be string as the sorting/filtering of the table relies on that
                 var type = lookupAttributeType(key);
-                var data = {key: key, name: humanizeValue(key), value: safeNullAsString(value, type)};
+                var data = {key: key, name: Core.humanizeValue(key), value: safeNullAsString(value, type)};
 
                 generateSummaryAndDetail(key, data);
                 properties.push(data);
@@ -536,9 +620,27 @@ module Jmx {
           data = properties;
         }
         $scope.gridData = data;
-        // log.debug("gridData: ", $scope.gridData);
+        addHandlerFunctions($scope.gridData);
         Core.$apply($scope);
       }
+    }
+
+    function addHandlerFunctions(data) {
+      data.forEach((item) => {
+        item['inDashboard'] = $scope.inDashboard;
+        item['getDashboardWidgets'] = () => {
+          return $scope.getDashboardWidgets(item);
+        };
+        item['onViewAttribute'] = () => {
+          $scope.onViewAttribute(item);
+        };
+        item['folderIconClass'] = (row) => {
+          return $scope.folderIconClass(row);            
+        };
+        item['folderHref'] = (row) => {
+          return $scope.folderHref(row);
+        };
+      });
     }
 
     function unwrapObjectName(value) {
@@ -562,8 +664,8 @@ module Jmx {
         angular.forEach(keys, (key) => {
           var value = object[key];
           detailHtml += "<tr><td>"
-            + humanizeValue(key) + "</td><td>" + value + "</td></tr>";
-          summary += "" + humanizeValue(key) + ": " + value + "  "
+            + Core.humanizeValue(key) + "</td><td>" + value + "</td></tr>";
+          summary += "" + Core.humanizeValue(key) + ": " + value + "  "
         });
         detailHtml += "</table>";
         data.summary = summary;
@@ -639,6 +741,6 @@ module Jmx {
       return "string";
     }
 
-  }
+  }]);
 
 }

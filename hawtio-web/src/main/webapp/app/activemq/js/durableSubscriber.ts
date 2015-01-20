@@ -1,5 +1,6 @@
+/// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
-  export function DurableSubscriberController($scope, workspace:Workspace, jolokia) {
+  _module.controller("ActiveMQ.DurableSubscriberController", ["$scope", "workspace", "jolokia", ($scope, workspace:Workspace, jolokia) => {
 
       $scope.refresh = loadTable;
 
@@ -70,7 +71,7 @@ module ActiveMQ {
           var mbean = getBrokerMBean(jolokia);
           if (mbean) {
               jolokia.execute(mbean, "createDurableSubscriber(java.lang.String, java.lang.String, java.lang.String, java.lang.String)", $scope.clientId, $scope.subscriberName, $scope.topicName, $scope.subSelector, onSuccess(function() {
-                  notification('success', "Created durable subscriber " + clientId);
+                  Core.notification('success', "Created durable subscriber " + clientId);
                   $scope.clientId = '';
                   $scope.subscriberName = '';
                   $scope.topicName = '';
@@ -78,21 +79,18 @@ module ActiveMQ {
                   loadTable();
               }));
           } else {
-              notification("error", "Could not find the Broker MBean!");
+              Core.notification("error", "Could not find the Broker MBean!");
           }
       }
 
       $scope.deleteSubscribers = () => {
-        var mbean = getBrokerMBean(jolokia);
-        if (mbean) {
-            jolokia.execute(mbean, "destroyDurableSubscriber(java.lang.String, java.lang.String)", $scope.showSubscriberDialog.subscriber.ClientId, $scope.showSubscriberDialog.subscriber.SubscriptionName, onSuccess(function() {
-                $scope.showSubscriberDialog.close();
-                notification('success', "Deleted durable subscriber");
-                loadTable();
-            }));
-        } else {
-            notification("error", "Could not find the Broker MBean!");
-        }
+        var mbean = $scope.gridOptions.selectedItems[0]._id;
+        jolokia.execute(mbean, "destroy()",  onSuccess(function() {
+            $scope.showSubscriberDialog.close();
+            Core.notification('success', "Deleted durable subscriber");
+            loadTable();
+            $scope.gridOptions.selectedItems = [];
+        }));
       };
 
     $scope.openSubscriberDialog = (subscriber) => {
@@ -139,8 +137,12 @@ module ActiveMQ {
               var objectName = o["objectName"];
               var entries = Core.objectNameProperties(objectName);
               if ( !('objectName' in o)) {
+                if ( 'canonicalName' in o){
+                    objectName = o['canonicalName'];
+                }
                 entries = Object.extended(o['keyPropertyList']).clone();
               }
+
               entries["_id"] = objectName;
               entries["status"] = status;
               return entries;
@@ -171,6 +173,5 @@ module ActiveMQ {
         }
         return mbean;
       }
-
-  }
+  }]);
 }

@@ -3,7 +3,7 @@
   <parent>
     <artifactId>project</artifactId>
     <groupId>io.hawt</groupId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -16,7 +16,7 @@
 
   <properties>
     <!-- filtered plugin properties -->
-    <plugin-context>/hawtio/hawtio-karaf-terminal</plugin-context>
+    <plugin-context>/hawtio-karaf-terminal</plugin-context>
     <plugin-name>${project.artifactId}</plugin-name>
     <plugin-domain />
     <plugin-scripts>app/js/gogoPlugin.js,app/js/gogo.js</plugin-scripts>
@@ -57,14 +57,13 @@
       <scope>provided</scope>
     </dependency>
 
-
+    <!-- karaf 3 support -->
     <dependency>
       <groupId>org.apache.karaf.shell</groupId>
       <artifactId>org.apache.karaf.shell.console</artifactId>
-      <version>${karaf-version}</version>
+      <version>3.0.1</version>
       <scope>provided</scope>
     </dependency>
-
 
     <dependency>
       <groupId>jline</groupId>
@@ -139,15 +138,13 @@
               org.ops4j.pax.web.service,
               org.osgi.service.blueprint.container,
               org.osgi.service.http,
-              jline;-split-package:=merge-first
-              org.apache.karaf.shell.console.jline;version="[2.2,3.0)",
+              jline;version="[2.11,3.0)";-split-package:=merge-first,
+              org.apache.karaf.shell.console.jline;resolution:=optional;version="[2.2,4)",
               org.osgi.framework,
               javax.management,
               *;resolution:=optional
             </Import-Package>
-
             <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
-
             <Bundle-Name>${project.description}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
             <Implementation-Title>hawtio karaf terminal plugin</Implementation-Title>

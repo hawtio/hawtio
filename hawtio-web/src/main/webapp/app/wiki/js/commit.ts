@@ -1,9 +1,12 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
 module Wiki {
 
-  export function CommitController($scope, $location, $routeParams, $templateCache, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
+  _module.controller("Wiki.CommitController", ["$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "jolokia", ($scope, $location, $routeParams, $templateCache, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, jolokia) => {
+
+    var isFmc = Fabric.isFMCContainer(workspace);
 
     Wiki.initScope($scope, $routeParams, $location);
     $scope.commitId = $scope.objectId;
@@ -92,7 +95,7 @@ module Wiki {
     function updateView() {
       var commitId = $scope.commitId;
 
-      Wiki.loadBranches(wikiRepository, $scope);
+      Wiki.loadBranches(jolokia, wikiRepository, $scope, isFmc);
 
       wikiRepository.commitInfo(commitId, (commitInfo) => {
         $scope.commitInfo = commitInfo;
@@ -131,5 +134,5 @@ module Wiki {
         Core.$apply($scope);
       });
     }
-  }
+  }]);
 }

@@ -1,9 +1,10 @@
 /**
  * @module Jmx
  */
+/// <reference path="./jmxPlugin.ts"/>
 module Jmx {
 
-  export function AttributeController($scope, jolokia) {
+  _module.controller("Jmx.AttributeController", ["$scope", "jolokia", ($scope, jolokia) => {
 
     $scope.init = (mbean, attribute) => {
       $scope.mbean = mbean;
@@ -22,10 +23,9 @@ module Jmx {
         Core.$apply($scope);
       }
     }
+  }]);
 
-  }
-
-  export function AttributeChartController($scope, jolokia, $document) {
+  _module.controller("Jmx.AttributeChartController", ["$scope", "jolokia", "$document", ($scope, jolokia, $document) => {
 
     $scope.init = (mbean, attribute) => {
       $scope.mbean = mbean;
@@ -83,8 +83,5 @@ module Jmx {
       }
 
     }
-
-
-  }
-
+  }]);
 }

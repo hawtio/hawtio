@@ -1,6 +1,7 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
-  export function CreateFabricController($scope, jolokia, $location, workspace:Workspace, branding) {
+  _module.controller("Fabric.CreateFabricController", ["$scope", "jolokia", "$location", "workspace", "branding", ($scope, jolokia, $location, workspace:Workspace, branding) => {
 
     $scope.$on('$routeChangeSuccess', () => {
       if (workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"})) {
@@ -43,22 +44,22 @@ module Fabric {
         jolokia.execute(Fabric.clusterBootstrapManagerMBean, 'createCluster(java.util.Map)', angular.toJson(json), {
           method: 'post',
           success: (response) => {
-            notification('success', "Created fabric!");
+            Core.notification('success', "Created fabric!");
             $location.url("/fabric/containers");
             Core.$apply($scope);
           },
           error: (response) => {
-            notification('error', "Error creating fabric: " + response.error);
+            Core.notification('error', "Error creating fabric: " + response.error);
             Core.$apply($scope);
           }
         });
-        notification('info', "Creating fabric, please wait...");
-        $location.url("/logs");
+        Core.notification('info', "Creating fabric, please wait...");
+        $location.url("/openlogs");
         Core.$apply($scope);
       }, 30);
 
     }
 
-  }
+  }]);
 
 }

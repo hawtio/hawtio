@@ -1,13 +1,14 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
 module Wiki {
 
-  export function HistoryController($scope, $location, $routeParams, $templateCache,
-                                    workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository) {
+  _module.controller("Wiki.HistoryController", ["$scope", "$location", "$routeParams", "$templateCache", "workspace", "marked", "fileExtensionTypeRegistry", "wikiRepository", "jolokia", ($scope, $location, $routeParams, $templateCache, workspace:Workspace, marked, fileExtensionTypeRegistry, wikiRepository:GitWikiRepository, jolokia) => {
+
+    var isFmc = Fabric.isFMCContainer(workspace);
 
     Wiki.initScope($scope, $routeParams, $location);
-    $scope.selectedItems = [];
 
     // TODO we could configure this?
     $scope.dateFormat = 'EEE, MMM d, y : hh:mm:ss a';
@@ -15,7 +16,7 @@ module Wiki {
     $scope.gridOptions = {
       data: 'logs',
       showFilter: false,
-      selectedItems: $scope.selectedItems,
+      selectedItems: [],
       showSelectionCheckbox: true,
       displaySelectionCheckbox : true, // old pre 2.0 config!
       filterOptions: {
@@ -64,33 +65,40 @@ module Wiki {
       }
     });
     $scope.canRevert = () => {
-      return $scope.selectedItems.length === 1 && $scope.selectedItems[0] !== $scope.logs[0];
+      return $scope.gridOptions.selectedItems.length === 1 && $scope.gridOptions.selectedItems[0] !== $scope.logs[0];
     };
 
     $scope.revert = () => {
-      if ($scope.selectedItems.length > 0) {
-        var objectId = $scope.selectedItems[0].name;
+      if ($scope.gridOptions.selectedItems.length > 0) {
+        var objectId = $scope.gridOptions.selectedItems[0].name;
         if (objectId) {
           var commitMessage = "Reverting file " + $scope.pageId + " to previous version " + objectId;
           wikiRepository.revertTo($scope.branch, objectId, $scope.pageId, commitMessage, (result) => {
             Wiki.onComplete(result);
             // now lets update the view
-            notification('success', "Successfully reverted " + $scope.pageId);
+            Core.notification('success', "Successfully reverted " + $scope.pageId);
             updateView();
           });
         }
+        $scope.gridOptions.selectedItems.splice(0, $scope.gridOptions.selectedItems.length);
       }
     };
 
     $scope.diff = () => {
       var defaultValue = " ";
       var objectId = defaultValue;
-      if ($scope.selectedItems.length > 0) {
-        objectId = $scope.selectedItems[0].name || defaultValue;
+      if ($scope.gridOptions.selectedItems.length > 0) {
+        objectId = $scope.gridOptions.selectedItems[0].name || defaultValue;
       }
       var baseObjectId = defaultValue;
-      if ($scope.selectedItems.length > 1) {
-        baseObjectId = $scope.selectedItems[1].name ||defaultValue;
+      if ($scope.gridOptions.selectedItems.length > 1) {
+        baseObjectId = $scope.gridOptions.selectedItems[1].name ||defaultValue;
+        // make the objectId (the one that will start with b/ path) always newer than baseObjectId
+        if ($scope.gridOptions.selectedItems[0].date < $scope.gridOptions.selectedItems[1].date) {
+          var _ = baseObjectId;
+          baseObjectId = objectId;
+          objectId = _;
+        }
       }
       var link = startLink($scope.branch) + "/diff/" + $scope.pageId + "/" + objectId + "/" + baseObjectId;
       var path = Core.trimLeading(link, "#");
@@ -112,7 +120,7 @@ module Wiki {
         $scope.logs = logArray;
         Core.$apply($scope);
       });
-      Wiki.loadBranches(wikiRepository, $scope);
+      Wiki.loadBranches(jolokia, wikiRepository, $scope, isFmc);
     }
-  }
+  }]);
 }

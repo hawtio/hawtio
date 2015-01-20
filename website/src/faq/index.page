@@ -1,16 +1,12 @@
 ---
 title: hawtio FAQ
 --- pipeline:ssp,markdown
-  <div id="content-header">
-    <div class="container">
-      <h1>FAQ</h1>
-    </div>
-  </div>
   <div class="container">
-    <div id="content">
-
+    <div class="row">
+      <div class="col-md-12">
+      <h1>FAQ</h1>
 ${unescape(loadText(new FileInputStream("../FAQ.md")))}
-
-</div>
   </div>
+    </div>
+      </div>
 

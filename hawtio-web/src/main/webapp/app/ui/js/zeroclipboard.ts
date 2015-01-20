@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('zeroClipboard', ["$parse", ($parse) => {
+    return UI.ZeroClipboardDirective($parse);
+  }]);
 
   export function ZeroClipboardDirective($parse) {
     return {
@@ -14,7 +19,7 @@ module UI {
         clip.on('complete', (client, args) => {
 
           if (args.text && angular.isString(args.text)) {
-            notification('info', "Copied text to clipboard: " + args.text.truncate(20));
+            Core.notification('info', "Copied text to clipboard: " + args.text.truncate(20));
           }
           Core.$apply($scope);
         });

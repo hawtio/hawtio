@@ -5,12 +5,12 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
   <groupId>io.hawt.example.services</groupId>
-  <artifactId>project</artifactId>
+  <artifactId>example-services</artifactId>
 
   <name>examples-services</name>
   <description>hawtio :: hawtio example services</description>

@@ -1,6 +1,7 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
 
   export function hawtioBreadcrumbs() {
@@ -12,7 +13,7 @@ module UI {
       scope: {
         config: '='
       },
-      controller: ($scope, $element, $attrs) => {
+      controller: ["$scope", "$element", "$attrs", ($scope, $element, $attrs) => {
 
         $scope.action = "itemClicked(config, $event)";
 
@@ -133,8 +134,10 @@ module UI {
           addAction($scope.config, 0);
           $scope.levels['0'] = $scope.config;
         });
-      }
+      }]
     }
   }
+
+  _module.directive('hawtioBreadcrumbs', UI.hawtioBreadcrumbs);
 
 }

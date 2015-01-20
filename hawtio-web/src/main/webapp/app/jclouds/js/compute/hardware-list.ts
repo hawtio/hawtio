@@ -1,8 +1,9 @@
 /**
  * @module Jclouds
  */
+/// <reference path="../jcloudsPlugin.ts"/>
 module Jclouds {
-    export function HardwareListController($scope, $location, workspace, jolokia, $routeParams) {
+    _module.controller("Jclouds.HardwareListController", ["$scope", "$location", "workspace", "jolokia", "$routeParams", ($scope, $location, workspace, jolokia, $routeParams) => {
         $scope.computeId = $routeParams.computeId;
 
         $scope.result = {};
@@ -76,5 +77,5 @@ module Jclouds {
                 return 'icon-thumbs-down';
             }
         }
-    }
+    }]);
 }

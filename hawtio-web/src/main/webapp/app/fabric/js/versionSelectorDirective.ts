@@ -1,3 +1,4 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
   export function VersionSelector($templateCache) {
@@ -12,7 +13,7 @@ module Fabric {
         menuBind: '=?',
         exclude: '@'
       },
-      controller: ($scope, $element, $attrs, jolokia) => {
+      controller: ["$scope", "$element", "$attrs", "jolokia", ($scope, $element, $attrs, jolokia) => {
         $scope.versions = [];
         $scope.responseJson = '';
 
@@ -114,7 +115,7 @@ module Fabric {
             ['id', 'defaultVersion']
           ]
         }, onSuccess($scope.render));
-      },
+      }],
 
       link: ($scope, $element, $attrs) => {
         $scope.template = $templateCache.get('withSelect');

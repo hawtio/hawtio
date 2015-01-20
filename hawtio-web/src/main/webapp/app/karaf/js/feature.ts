@@ -1,9 +1,10 @@
 /**
  * @module Karaf
  */
+/// <reference path="./karafPlugin.ts"/>
 module Karaf {
 
-    export function FeatureController($scope, jolokia, workspace:Workspace, $routeParams) {
+    _module.controller("Karaf.FeatureController", ["$scope", "jolokia", "workspace", "$routeParams", ($scope, jolokia, workspace:Workspace, $routeParams) => {
         $scope.hasFabric = Fabric.hasFabric(workspace);
         $scope.name = $routeParams.name;
         $scope.version = $routeParams.version;
@@ -14,17 +15,17 @@ module Karaf {
 
         $scope.install = () => {
           installFeature(workspace, jolokia, $scope.name, $scope.version, function () {
-            notification('success', 'Installed feature ' + $scope.name);
+            Core.notification('success', 'Installed feature ' + $scope.name);
           }, function (response) {
-            notification('error', 'Failed to install feature ' + $scope.name + ' due to ' + response.error);
+            Core.notification('error', 'Failed to install feature ' + $scope.name + ' due to ' + response.error);
           });
         }
 
         $scope.uninstall = () => {
           uninstallFeature(workspace, jolokia, $scope.name, $scope.version, function () {
-            notification('success', 'Uninstalled feature ' + $scope.name);
+            Core.notification('success', 'Uninstalled feature ' + $scope.name);
           }, function (response) {
-            notification('error', 'Failed to uninstall feature ' + $scope.name + ' due to ' + response.error);
+            Core.notification('error', 'Failed to uninstall feature ' + $scope.name + ' due to ' + response.error);
           });
         }
 
@@ -102,5 +103,5 @@ module Karaf {
             });
             feature["BundleDetails"] = bundleDetails;
         }
-    }
+    }]);
 }

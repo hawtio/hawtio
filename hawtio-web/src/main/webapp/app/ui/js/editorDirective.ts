@@ -1,7 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
 module UI {
+
+  _module.directive('hawtioEditor', ["$parse", ($parse) => {
+    return UI.Editor($parse);
+  }]);
 
   export function Editor($parse) {
 
@@ -19,7 +24,7 @@ module UI {
         name: '@'
       },
 
-      controller: ($scope, $element, $attrs) => {
+      controller: ["$scope", "$element", "$attrs", ($scope, $element, $attrs) => {
         
         $scope.codeMirror = null;
         $scope.doc = null;
@@ -55,12 +60,18 @@ module UI {
         $scope.$watch('text', function(oldValue, newValue) {
           if ($scope.codeMirror && $scope.doc) {
             if (!$scope.codeMirror.hasFocus()) {
-              $scope.doc.setValue($scope.text || "");
+              var text = $scope.text || "";
+              if (angular.isArray(text) || angular.isObject(text)) {
+                text = JSON.stringify(text, null, "  ");
+                $scope.mode = "javascript";
+                $scope.codeMirror.setOption("mode", "javascript");
+              }
+              $scope.doc.setValue(text);
             }
           }
         });
 
-      },
+      }],
 
       link: ($scope, $element, $attrs) => {
 
@@ -122,6 +133,12 @@ module UI {
           }
           if (newValue !== oldValue && 'dirtyTarget' in $scope) {
             $scope.$parent[$scope.dirtyTarget] = $scope.dirty;
+          }
+        });
+
+        $scope.$watch(() => { return $element.is(':visible'); }, (newValue, oldValue) => {
+          if (newValue !== oldValue && $scope.codeMirror) {
+              $scope.codeMirror.refresh();
           }
         });
 

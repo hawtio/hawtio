@@ -1,9 +1,10 @@
 /**
  * @module Jmx
  */
+/// <reference path="./jmxPlugin.ts"/>
 module Jmx {
 
-  export function DonutChartController($scope, $routeParams, jolokia, $templateCache) {
+  export var DonutChartController = _module.controller("Jmx.DonutChartController", ["$scope", "$routeParams", "jolokia", "$templateCache", ($scope, $routeParams, jolokia, $templateCache) => {
 
     /*
     console.log("routeParams: ", $routeParams);
@@ -86,7 +87,7 @@ module Jmx {
 
       var freeTerm = null;
       if ($scope.remainder && $scope.remainder !== "-") {
-        freeTerm = $scope.data.terms.find((term) => {
+        freeTerm = $scope.data.terms.find((term:any) => {
           return term.term === $scope.remainder;
         });
       }
@@ -95,7 +96,7 @@ module Jmx {
         if (response.request.attribute === $scope.total) {
           $scope.data.total = response.value;
         } else {
-          var term = $scope.data.terms.find((term) => {
+          var term = $scope.data.terms.find((term:any) => {
             return term.term === response.request.attribute;
           });
           if (term) {
@@ -140,6 +141,6 @@ module Jmx {
     };
 
     Core.register(jolokia, $scope, $scope.reqs, onSuccess($scope.render));
-  }
+  }]);
 
 }

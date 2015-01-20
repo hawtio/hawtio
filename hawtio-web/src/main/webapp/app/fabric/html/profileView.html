@@ -1,0 +1,87 @@
+<div class="row-fluid" ng-controller="Fabric.AppViewController">
+
+  <div>
+    <div class="row-fluid">
+      <div class="span12">
+        <div class="row-fluid">
+          <p></p>
+          <div class="span12 centered">
+            <div fabric-version-selector="selectedVersion"></div>
+          </div>
+        </div>
+        <div class="row-fluid centered" ng-show="profiles.length == 0">
+          <i class="icon-spinner icon-spin"></i>
+        </div>
+        <div class="row-fluid" ng-hide="profiles.length == 0">
+          <div class="column-box" 
+              ng-repeat="profile in profiles" 
+              ng-class="isInGroup(cartItems, profile, 'column-box-selected', 'column-box-unselected')" 
+              ng-show="filterProfiles(profile)" 
+              ng-include="'app/fabric/html/profileBox.html'"></div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/ng-template" id="headerTemplate.html">
+      <div class="tree-header fabric-app-view-header" ng-controller="Fabric.AppViewPaneHeaderController">
+        <div class="row-fluid">
+          <div class="span12 centered">
+            <p></p>
+            <hawtio-filter ng-model="filter"
+                           placeholder="Filter Profiles..."
+                           save-as="fabric-appview-text-filter"></hawtio-filter>
+            <p></p>
+          </div>
+        </div>
+        <div class="row-fluid">
+          <!--
+          <div class="span6">
+            <div class="alert alert-info">
+              Selected: {{cartItems.length}}
+            </div>
+          </div>
+          -->
+          <div class="span12">
+            <p ng-repeat="button in actionButtons track by $index | orderBy:index">
+              <button class="btn"
+                      ng-disabled="!cartItems.length"
+                      ng-class="button.buttonClass"
+                      ng-click="button.action()"
+                      title="{{button.title}}"
+                      hawtio-show
+                      object-name="{{button.objectName}}"
+                      method-name="{{button.methodName}}"
+                      argument-types="{{button.argumentTypes}}">
+                <i ng-class="button.icon"></i> {{button.name}}
+              </button>
+            </p>
+            <p>
+              <button class="btn"
+                      ng-disabled="!cartItems.length"
+                      title="Clear selected Profiles"
+                      ng-click="clearGroup(cartItems)">
+                <i class="icon-remove"
+                   title="Unselect all selected profiles"></i> Unselect All
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    </script>
+
+
+    <hawtio-pane position="right" header="headerTemplate.html">
+      <div class="row-fluid">
+        <div class="span12">
+          <p></p>
+          <hawtio-tag-filter tags="tags"
+                             selected="selectedTags"
+                             collection="profiles"
+                             collection-property="tags"
+                             save-as="fabric-appview-tag-filter"></hawtio-tag-filter>
+        </div>
+      </div>
+    </hawtio-pane>
+
+  </div>
+</div>

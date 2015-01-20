@@ -1,0 +1,30 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Angular UI Map</title>
+</head>
+<body>
+<div ng-repeat="marker in myMarkers"></div>
+<div id="map" ng-controller="mapCtrl">
+    <input type="textbox" ng-model="address">
+    <input type="button" value="Geocode" ng-click="codeAddress()">
+    <div id="map_canvas"
+         style="height:300px;width:500px"
+         ui-map="myMap"
+         ui-event="{'map-click':'addMarker($event, $params)'}"
+         ui-options="mapOptions">
+    </div>
+</div>
+<script type="text/javascript" src="../bower_components/angular/angular.js"></script>
+<script type="text/javascript" src="../bower_components/angular-ui-utils/event.js"></script>
+<script type="text/javascript" src="../bower_components/angular-ui-map/ui-map.js"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&callback=onGoogleReady"></script>
+<script type="text/javascript" src="demo1.js"></script>
+<script>
+    function onGoogleReady(){
+        angular.bootstrap(document.getElementById("map"),['mapApp']);
+    }
+</script>
+</body>
+</html>
+

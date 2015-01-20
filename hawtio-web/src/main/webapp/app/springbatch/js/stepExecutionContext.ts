@@ -1,7 +1,6 @@
+/// <reference path="./springbatchPlugin.ts"/>
 module SpringBatch{
-
-
-    export function stepExecutionContextController($scope,$routeParams, $http, $rootScope) {
+    _module.controller("SpringBatch.stepExecutionContextController", ["$scope", "$routeParams", "$http", "$rootScope", ($scope, $routeParams, $http, $rootScope) => {
         var springBatchServerOrigin = $rootScope.springBatchServer;
         var proxyUrl = '/hawtio';
         var jobExecutionId=$routeParams.jobExecutionId;
@@ -16,10 +15,6 @@ module SpringBatch{
             });
         $scope.jobName=jobName;
         $scope.jobId=jobId;
-
-
-
-    }
-
+    }]);
 }
 

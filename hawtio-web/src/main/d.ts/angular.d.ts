@@ -235,6 +235,8 @@ declare module ng {
 
         $parent: IScope;
 
+        $root: IRootScopeService;
+
         $id: number;
 
         // Hidden members
@@ -524,6 +526,8 @@ declare module ng {
 
         // Undocumented, but it is there...
         directive(directivesMap: any): ICompileProvider;
+
+        urlSanitizationWhitelist(regexp: RegExp): ICompileProvider;
     }
 
     interface ITemplateLinkingFunction {

@@ -5,7 +5,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
@@ -17,6 +17,9 @@
   <modules>
     <module>simple-plugin</module>
     <module>custom-perspective</module>
+    <module>irc-client-plugin</module>
+    <module>social-plugin</module>
+    <module>groovy-shell-plugin</module>
   </modules>
 
 </project>

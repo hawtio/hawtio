@@ -1,11 +1,11 @@
 package io.hawt.system;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -19,13 +19,13 @@ public class ConfigManager {
     }
 
     public void init() {
-        if (Boolean.parseBoolean((String)System.getProperty("hawtio.forceProperties", "false"))) {
+        if (Boolean.parseBoolean((String) System.getProperty("hawtio.forceProperties", "false"))) {
             LOG.info("Forced using system properties");
             return;
         }
 
         try {
-            envContext = (Context) new InitialContext().lookup("java:/comp/env");
+            envContext = (Context) new InitialContext().lookup("java:comp/env");
             LOG.info("Configuration will be discovered via JNDI");
         } catch (NamingException e) {
             LOG.debug("Failed to look up environment context: ", e);

@@ -1,0 +1,35 @@
+<div ng-controller="FabricRequirements.RequirementsController">
+  <script type="text/ng-template" id="tagCell.html">
+    <td class="td-fixed-width-150"
+        hawtio-drop ng-model="{{row}}" property="{{key}}">
+      <hawtio-tag-list ng-model="{{row}}" property="{{key}}"></hawtio-tag-list>
+    </td>
+  </script>
+  <script type="text/ng-template" id="pageTemplate.html">
+    <div>
+      <ul class="nav nav-tabs connected">
+        <li ng-repeat="(index, tab) in tabs track by $index | orderBy:index"
+            ng-class="{active : tab.isActive()}">
+          <a ng-href="{{tab.href()}}">{{tab.name}}</a>
+        </li>
+        <li class="pull-right">
+          <a href=""
+             class=""
+             ng-click="saveChanges()"
+             ng-disabled="!requirements.$dirty"><i class="icon-save"></i> Save</a>
+        </li>
+        <li class="pull-right">
+          <a href=""
+             class=""
+             ng-click="cancelChanges()"
+             ng-disabled="!requirements.$dirty"><i class="icon-remove"></i> Cancel</a>
+        </li>
+      </ul>
+    </div>
+
+    <div nv-file-drop="" uploader="uploader">
+      <div ng-view></div>
+    </div>
+  </script>
+  <div compile="template"></div>
+</div>

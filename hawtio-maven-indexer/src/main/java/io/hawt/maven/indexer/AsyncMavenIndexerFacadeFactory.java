@@ -22,7 +22,7 @@ public class AsyncMavenIndexerFacadeFactory {
     private boolean updateIndexOnStartup = true;
     private ObjectName objectName;
     private MBeanServer mBeanServer;
-    private String[] repositories;
+    private String repositories;
     private String indexDirectory;
     private Timer timer;
     private TimerTask task;
@@ -58,7 +58,7 @@ public class AsyncMavenIndexerFacadeFactory {
             }
         };
         timer.schedule(task, 3000);
-        LOG.debug("Started the async timer to create the MavenIndexerFacade after the application starts up");
+        LOG.info("Started the async timer to create the MavenIndexerFacade after the application starts up");
         if (repositories != null) {
             LOG.debug("Using remote repositories: " + Arrays.asList(repositories));
         }
@@ -100,11 +100,11 @@ public class AsyncMavenIndexerFacadeFactory {
         this.objectName = objectName;
     }
 
-    public String[] getRepositories() {
+    public String getRepositories() {
         return repositories;
     }
 
-    public void setRepositories(String[] repositories) {
+    public void setRepositories(String repositories) {
         this.repositories = repositories;
     }
 

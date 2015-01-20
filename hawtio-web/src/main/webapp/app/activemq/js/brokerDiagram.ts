@@ -1,6 +1,8 @@
+/// <reference path="activemqPlugin.ts"/>
+/// <reference path="../../fabric/js/fabricHelpers.ts"/>
 module ActiveMQ {
 
-  export function BrokerDiagramController($scope, $compile, $location, localStorage, jolokia, workspace) {
+  _module.controller("ActiveMQ.BrokerDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", ($scope, $compile, $location, localStorage, jolokia, workspace) => {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
@@ -96,7 +98,7 @@ module ActiveMQ {
           view += "&" + postfix;
         }
         log.info("Opening view " + view);
-        var path = url("/#" + view);
+        var path = Core.url("/#" + view);
         window.open(path, '_destination');
         window.focus();
         //$location.path(view);
@@ -152,16 +154,19 @@ module ActiveMQ {
         }
         var dummyResponse = {value: node.panelProperties || {}};
         if (mbean && nodeJolokia) {
+          log.debug("reading ", mbean, " on remote container");
           $scope.unregisterFn = Core.register(nodeJolokia, $scope, {
             type: 'read', mbean: mbean
-          }, onSuccess(renderNodeAttributes, {error: (response) => {
-            // probably we've got a wrong mbean name?
-            // so lets render at least
-            renderNodeAttributes(dummyResponse);
-            Core.defaultJolokiaErrorHandler(response);
-          }}));
-
+          }, onSuccess(renderNodeAttributes, {
+             error: (response) => {
+               // probably we've got a wrong mbean name?
+               // so lets render at least
+               renderNodeAttributes(dummyResponse);
+               Core.defaultJolokiaErrorHandler(response);
+             }
+          }));
         } else {
+          log.debug("no mbean or jolokia available, using dummy response");
           renderNodeAttributes(dummyResponse);
         }
       }
@@ -212,7 +217,7 @@ module ActiveMQ {
         angular.forEach(value, (v, k) => {
           if (onlyShowKeys ? onlyShowKeys.indexOf(k) >= 0: ignoreKeys.indexOf(k) < 0) {
             var formattedValue = Core.humanizeValueHtml(v);
-            properties.push({key: humanizeValue(k), value: formattedValue});
+            properties.push({key: Core.humanizeValue(k), value: formattedValue});
           }
         });
         properties = properties.sortBy("key");
@@ -220,7 +225,7 @@ module ActiveMQ {
         var brokerProperty: any = null;
         if (brokerName) {
           var brokerHtml = '<a target="broker" ng-click="connectToBroker()">' +
-            '<img title="Apache ActiveMQ" src="app/fabric/img/message_broker.png"> ' + brokerName +
+            '<img title="Apache ActiveMQ" src="img/icons/messagebroker.svg"> ' + brokerName +
             '</a>';
           if (version && profile) {
             var brokerLink = Fabric.brokerConfigLink(workspace, jolokia, localStorage, version, profile, brokerName);
@@ -237,8 +242,8 @@ module ActiveMQ {
         }
 
         if (containerId) {
-          var containerModel = "selectedNode" + (selectedNode['brokerContainer'] ? ".brokerContainer" : "");
-          properties.splice(0, 0, {key: "Container", value: $compile('<div fabric-container-link="' + containerModel + '"></div>')($scope)});
+          //var containerModel = "selectedNode" + (selectedNode['brokerContainer'] ? ".brokerContainer" : "");
+          properties.splice(0, 0, {key: "Container", value: $compile('<div fabric-container-link="' + selectedNode['container'] + '"></div>')($scope)});
         }
 
         var destinationName = value["DestinationName"] || selectedNode["destinationName"];
@@ -272,7 +277,7 @@ module ActiveMQ {
      */
     function createDestinationLink(destinationName, destinationType = "queue") {
       return $compile('<a target="destination" title="' + destinationName + '" ng-click="connectToDestination()">' +
-                                  //'<img title="View destination" src="app/activemq/img/' + destinationType + '.png"> ' +
+                                  //'<img title="View destination" src="img/icons/activemq/' + destinationType + '.png"> ' +
                                   destinationName +
                                   '</a>')($scope);
     }
@@ -333,7 +338,7 @@ module ActiveMQ {
             /*
              navUrl: ,
              image: {
-             url: "/hawtio/app/osgi/img/bundle.png",
+             url: "/hawtio/img/icons/osgi/bundle.png",
              width: 32,
              height:32
              },
@@ -785,5 +790,5 @@ module ActiveMQ {
       properties.isQueue = !typeName.startsWith("t");
       properties['destType'] = typeName;
     }
-  }
+  }]);
 }

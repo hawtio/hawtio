@@ -1,3 +1,4 @@
+///<reference path="formHelpers.ts"/>
 module Forms {
 
   export class InputTableConfig {
@@ -40,6 +41,7 @@ module Forms {
     public onedit = 'onedit';
     public onremove = 'onRemove';
 
+    public primaryKeyProperty = undefined;
     // TODO - add toggles to turn off add or edit buttons
 
     public getTableConfig() {
@@ -77,6 +79,8 @@ module Forms {
       var propertyName = attrs["property"] || "arrayData";
       var entityPath = entityName + "." + propertyName;
 
+      var primaryKeyProperty = config.primaryKeyProperty;
+
       // TODO better name?
       var tableName = config["title"] || entityName;
 
@@ -86,16 +90,18 @@ module Forms {
         config.data = scope[config.data];
       }
 
-      scope.selectedItems = [];
-
-      var div = $("<div></div>");
+      var div = (<any>$)("<div></div>");
 
       // TODO lets ensure we have some default columns in the column configuration?
       var tableConfig = Core.pathGet(scope, configName);
       if (!tableConfig) {
         console.log("No table configuration for table " + tableName);
       } else {
-        tableConfig["selectedItems"] = scope.selectedItems;
+        // TOCHECK: it seems that we can't do tableConfig['selectedItems'] = scope.selectedItems = []
+        // and operate on scope.selectedItems here...
+        // the nested simple-data-table operates on different selectedItems then...
+        tableConfig["selectedItems"] = [];
+        scope.config = tableConfig;
       }
 
       var table = this.createTable(config, configName);
@@ -124,7 +130,7 @@ module Forms {
       }
 
       function removeSelected(data) {
-        angular.forEach(scope.selectedItems, (selected) => {
+        angular.forEach(scope.config.selectedItems, (selected) => {
           var id = selected["_id"];
           if (angular.isArray(data)) {
             data = data.remove((value) => Object.equal(value, selected));
@@ -154,11 +160,11 @@ module Forms {
         return data;
       }
 
-      var add = null;
-      var edit = null;
-      var remove = null;
-      var addDialog = null;
-      var editDialog = null;
+      var add:any = null;
+      var edit:any = null;
+      var remove:any = null;
+      var addDialog:any = null;
+      var editDialog:any = null;
       var readOnly = attrs["readonly"];
       if (!readOnly) {
         var property = null;
@@ -186,7 +192,7 @@ module Forms {
           var childDataModelName = "addFormConfig";
           if (!addDialog) {
             var title = "Add " + tableName;
-            addDialog = $('<div modal="showAddDialog" close="closeAddDialog()" options="addDialogOptions">\n' +
+            addDialog = (<any>$)('<div modal="showAddDialog" close="closeAddDialog()" options="addDialogOptions">\n' +
               '<div class="modal-header"><h4>' + title + '</h4></div>\n' +
               '<div class="modal-body"><div simple-form="addFormConfig" entity="addEntity" data="'
               + childDataModelName + '" schema="' + schemaName + '"></div></div>\n' +
@@ -212,6 +218,11 @@ module Forms {
           if (newData) {
             updateData((data) => {
               // TODO deal with non arrays
+              // find by primary key
+              // TODO something better than replace by primary key
+              if (primaryKeyProperty) {
+                data.remove((entity) => entity[primaryKeyProperty] === newData[primaryKeyProperty]);
+              }
               data.push(newData);
               return data;
             });
@@ -228,7 +239,7 @@ module Forms {
         scope.showEditDialog = false;
 
         scope.openEditDialog = () => {
-          var selected = scope.selectedItems;
+          var selected = scope.config.selectedItems;
           // lets make a deep copy for the value being edited
           var editObject = {};
           if (selected && selected.length) {
@@ -240,7 +251,7 @@ module Forms {
           // lets lazily create the edit dialog
           if (!editDialog) {
             var title = "Edit " + tableName;
-            editDialog = $('<div modal="showEditDialog" close="closeEditDialog()" options="editDialogOptions">\n' +
+            editDialog = (<any>$)('<div modal="showEditDialog" close="closeEditDialog()" options="editDialogOptions">\n' +
                     '<div class="modal-header"><h4>' + title + '</h4></div>\n' +
                     '<div class="modal-body"><div simple-form="editFormConfig" entity="editEntity"></div></div>\n' +
                     '<div class="modal-footer">' +
@@ -341,31 +352,31 @@ module Forms {
         controlDiv.append(remove);
       }
 
-      $(div).append(group);
-      $(div).append(table);
-      $(element).append(div);
+      (<any>$)(div).append(group);
+      (<any>$)(div).append(table);
+      (<any>$)(element).append(div);
 
       // compile the template
       this.$compile(div)(scope);
     }
 
     private getAddButton(config) {
-      return $('<button type="button" class="btn add"><i class="' + config.addicon + '"></i> ' + config.addtext + '</button>');
+      return (<any>$)('<button type="button" class="btn add"><i class="' + config.addicon + '"></i> ' + config.addtext + '</button>');
     }
 
     private getEditButton(config) {
-      return $('<button type="button" class="btn edit" ng-disabled="!selectedItems.length"><i class="' + config.editicon + '"></i> ' + config.edittext + '</button>');
+      return (<any>$)('<button type="button" class="btn edit" ng-disabled="!config.selectedItems.length"><i class="' + config.editicon + '"></i> ' + config.edittext + '</button>');
     }
 
     private getRemoveButton(config) {
-      return $('<button type="remove" class="btn remove" ng-disabled="!selectedItems.length"><i class="' + config.removeicon + '"></i> ' + config.removetext + '</button>');
+      return (<any>$)('<button type="remove" class="btn remove" ng-disabled="!config.selectedItems.length"><i class="' + config.removeicon + '"></i> ' + config.removetext + '</button>');
     }
 
 
     private createTable(config, tableConfig) {
       //var tableType = "hawtio-datatable";
       var tableType = "hawtio-simple-table";
-      var table = $('<div class="' + config.tableclass + '" ' + tableType + '="' + tableConfig + '">');
+      var table = (<any>$)('<table class="' + config.tableclass + '" ' + tableType + '="' + tableConfig + '"></table>');
       //table.find('fieldset').append(this.getLegend(config));
       return table;
     }
@@ -381,7 +392,7 @@ module Forms {
 
 
     private getControlGroup(config, arg, id) {
-      var rc = $('<div class="' + config.controlgroupclass + '"></div>');
+      var rc = (<any>$)('<div class="' + config.controlgroupclass + '"></div>');
       if (angular.isDefined(arg.description)) {
         rc.attr('title', arg.description);
       }
@@ -389,12 +400,12 @@ module Forms {
     }
 
     private getControlDiv(config) {
-      return $('<div class="' + config.controlclass + '"></div>');
+      return (<any>$)('<div class="' + config.controlclass + '"></div>');
     }
 
 
     private getHelpSpan(config, arg, id) {
-      var rc = $('<span class="help-block"></span>');
+      var rc = (<any>$)('<span class="help-block"></span>');
       if (angular.isDefined(arg.type) && config.showtypes !== 'false') {
         rc.append('Type: ' + arg.type);
       }

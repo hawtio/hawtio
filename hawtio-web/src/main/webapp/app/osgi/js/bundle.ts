@@ -1,9 +1,80 @@
 /**
  * @module Osgi
  */
+/// <reference path="./osgiPlugin.ts"/>
 module Osgi {
 
-  export function BundleController($scope, $location, workspace:Workspace, $routeParams, jolokia) {
+  // These functions are exported independently to facilitate unit testing
+  export function readBSNHeaderData(header:string):string {
+    var idx = header.indexOf(";");
+    if (idx <= 0) {
+      return "";
+    }
+    return header.substring(idx + 1).trim();
+  }
+
+  export function formatAttributesAndDirectivesForPopover(data:{}, skipVersion:boolean):string {
+    var str = "";
+    if (!data) {
+      return str;
+    }
+    var sortedKeys = Object.keys(data).sort();
+    for (var i = 0; i < sortedKeys.length; i++) {
+      var da:any = sortedKeys[i];
+      var type = da.charAt(0);
+
+      var separator = "";
+      var txtClass;
+      if (type === "A") {
+        separator = "=";
+        txtClass = "text-info";
+      }
+      if (type === "D") {
+        separator = ":=";
+        txtClass = "muted";
+      }
+
+      if (separator !== "") {
+        if (skipVersion) {
+          if (da === "Aversion") {
+            // We're using the 'ReportedVersion' as it comes from PackageAdmin
+            continue;
+          }
+        }
+
+        var value = data[da];
+        if (value.length > 15) {
+          value = value.replace(/[,]/g, ",<br/>&nbsp;&nbsp;");
+        }
+        str += "<tr><td><strong class='" + txtClass + "'>" + da.substring(1) + "</strong>" + separator + value + "</td></tr>";
+      }
+    }
+    return str;
+  }
+
+  export function formatServiceName(objClass:any):string {
+    if (Object.isArray(objClass)) {
+      return formatServiceNameArray(objClass);
+    }
+    var name = objClass.toString();
+    var idx = name.lastIndexOf('.');
+    return name.substring(idx + 1);
+  }
+
+  function formatServiceNameArray(objClass:string[]):string {
+    var rv = [];
+    for (var i = 0; i < objClass.length; i++) {
+      rv.add(formatServiceName(objClass[i]));
+    }
+    rv = rv.filter(function (elem, pos, self) {
+      return self.indexOf(elem) === pos;
+    });
+
+    rv.sort();
+    return rv.toString();
+  }
+
+  _module.controller("Osgi.BundleController", ["$scope", "$location", "workspace", "$routeParams", "jolokia", ($scope, $location, workspace:Workspace, $routeParams, jolokia) => {
     $scope.bundleId = $routeParams.bundleId;
 
     updateTableContents();
@@ -327,72 +398,6 @@ module Osgi {
                 onSuccess(populateTable));
       }
     }
-  }
+  }]);
 
-  // These functions are exported independently to facilitate unit testing
-  export function readBSNHeaderData(header:string):string {
-    var idx = header.indexOf(";");
-    if (idx <= 0) {
-      return "";
-    }
-    return header.substring(idx + 1).trim();
-  }
-
-  export function formatAttributesAndDirectivesForPopover(data:{}, skipVersion:boolean):string {
-    var str = "";
-    var sortedKeys = Object.keys(data).sort();
-    for (var i = 0; i < sortedKeys.length; i++) {
-      var da:any = sortedKeys[i];
-      var type = da.charAt(0);
-
-      var separator = "";
-      var txtClass;
-      if (type === "A") {
-        separator = "=";
-        txtClass = "text-info";
-      }
-      if (type === "D") {
-        separator = ":=";
-        txtClass = "muted";
-      }
-
-      if (separator !== "") {
-        if (skipVersion) {
-          if (da === "Aversion") {
-            // We're using the 'ReportedVersion' as it comes from PackageAdmin
-            continue;
-          }
-        }
-
-        var value = data[da];
-        if (value.length > 15) {
-          value = value.replace(/[,]/g, ",<br/>&nbsp;&nbsp;");
-        }
-        str += "<tr><td><strong class='" + txtClass + "'>" + da.substring(1) + "</strong>" + separator + value + "</td></tr>";
-      }
-    }
-    return str;
-  }
-
-  export function formatServiceName(objClass:any):string {
-    if (Object.isArray(objClass)) {
-      return formatServiceNameArray(objClass);
-    }
-    var name = objClass.toString();
-    var idx = name.lastIndexOf('.');
-    return name.substring(idx + 1);
-  }
-
-  function formatServiceNameArray(objClass:string[]):string {
-    var rv = [];
-    for (var i = 0; i < objClass.length; i++) {
-      rv.add(formatServiceName(objClass[i]));
-    }
-    rv = rv.filter(function (elem, pos, self) {
-      return self.indexOf(elem) === pos;
-    });
-
-    rv.sort();
-    return rv.toString();
-  }
 }

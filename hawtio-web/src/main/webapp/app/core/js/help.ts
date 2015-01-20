@@ -1,8 +1,10 @@
 /**
  * @module Core
  */
+/// <reference path="corePlugin.ts"/>
 module Core {
-  export function HelpController($scope, $routeParams, marked, helpRegistry, branding) {
+
+  _module.controller("Core.HelpController", ["$scope", "$routeParams", "marked", "helpRegistry", "branding", ($scope, $routeParams, marked, helpRegistry, branding) => {
 
     $scope.branding = branding;
     $scope.topics = helpRegistry.getTopics();
@@ -50,6 +52,17 @@ module Core {
         label: "Developers"
       }
     ];
+
+    $scope.sectionLink = (section) => {
+     var topic = section.topic || "";
+      var subTopic = section.subTopic || "";
+      var link = Core.pathGet(helpRegistry.topics, [topic, subTopic]);
+      if (link && link.indexOf("#") >= 0) {
+        return link;
+      } else {
+        return "#/help/" + topic + "/" + subTopic;
+      }  
+    };
 
     // lets select the active tab
     var activeBreadcrumb = $scope.breadcrumbs.find(b => b.topic === $scope.topic && b.subTopic === $scope.subTopic);
@@ -99,5 +112,5 @@ module Core {
         }
       })
     }
-  }
+  }]);
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+           xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.2.0">
+
+  <cm:property-placeholder persistent-id="hawtio-git">
+    <cm:default-properties>
+      <cm:property name="label" value="Configuration"/>
+      <cm:property name="dir" value="./etc"/>
+      <cm:property name="repo" value=""/>
+      <cm:property name="pullOnStartup" value="false"/>
+      <cm:property name="pullBeforeOperation" value="false"/>
+      <cm:property name="pullTimePeriod" value="60000"/>
+      <cm:property name="cloneOnStartup" value="false"/>
+      <cm:property name="remote" value="origin"/>
+    </cm:default-properties>
+  </cm:property-placeholder>
+
+  <bean id="gitKarafFacade" class="io.hawt.git.GitFacade" init-method="init" destroy-method="destroy" scope="singleton">
+    <property name="repositoryLabel" value="${label}"/>
+    <property name="configDirName" value="${dir}"/>
+    <property name="remoteRepository" value="${repo}"/>
+    <property name="pullOnStartup" value="${pullOnStartup}"/>
+    <property name="pullBeforeOperation" value="${pullBeforeOperation}"/>
+    <property name="pullTimePeriod" value="${pullTimePeriod}"/>
+    <property name="cloneRemoteRepoOnStartup" value="${cloneOnStartup}"/>
+    <property name="remote" value="${remote}"/>
+  </bean>
+
+</blueprint>
+

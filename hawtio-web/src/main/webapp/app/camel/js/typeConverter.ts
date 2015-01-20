@@ -1,6 +1,7 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  export function TypeConverterController($scope, $location, workspace:Workspace, jolokia) {
+  _module.controller("Camel.TypeConverterController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
     $scope.data = [];
     $scope.selectedMBean = null;
@@ -31,6 +32,7 @@ module Camel {
       canSelectRows: false,
       enableSorting: true,
       columnDefs: columnDefs,
+      selectedItems: [],
       filterOptions: {
         filterText: ''
       }
@@ -50,6 +52,7 @@ module Camel {
       var obj = response.value;
       if (obj) {
 
+        // the JMX tabular data has 2 indexes so we need to dive 2 levels down to grab the data
         var arr = [];
         for (var key in obj) {
           var values = obj[key];
@@ -109,6 +112,6 @@ module Camel {
 
     // load converters
     loadConverters();
-  }
+  }]);
 
 }

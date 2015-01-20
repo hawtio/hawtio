@@ -1,9 +1,16 @@
+/// <reference path="jbossPlugin.ts"/>
 module JBoss {
-    export function JBossController($scope, $location:ng.ILocationService, jolokia) {
+    _module.controller("JBoss.JBossController", ["$scope", "$location", "jolokia", ($scope, $location:ng.ILocationService, jolokia) => {
 
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jbossIconClass}}"></i></div>';
+        var urlTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">' +
+          '<a ng-href="{{row.getProperty(col.field)}}" target="_blank">{{row.getProperty(col.field)}}</a>' +
+          '</div>';
 
-        $scope.uninstallDialog = new UI.Dialog()
+      $scope.uninstallDialog = new UI.Dialog()
+
+        $scope.httpPort;
+        $scope.httpScheme = "http";
 
         $scope.webapps = [];
         $scope.selected = [];
@@ -32,6 +39,14 @@ module JBoss {
                 width: "*",
                 resizable: true
             },
+            {
+              field: 'url',
+              displayName: 'Url',
+              cellTemplate: urlTemplate,
+              cellFilter: null,
+              width: "*",
+              resizable: true
+            }
         ];
 
         $scope.gridOptions = {
@@ -55,9 +70,34 @@ module JBoss {
               if (obj) {
                 obj.mbean = response.request.mbean;
                 var mbean = obj.mbean;
+
                 if (mbean) {
                   obj.name = JBoss.cleanWebAppName(obj.name);
                   obj.contextPath = JBoss.cleanContextPath(obj.name);
+
+                  // compute the url for the webapp, and we want to use http as scheme
+                  var hostname = Core.extractTargetUrl($location, $scope.httpScheme, $scope.httpPort);
+
+                  function updateUrl() {
+                    obj.url = hostname + obj['contextPath'];
+                  }
+
+                  updateUrl();
+
+                  // lets try find the undertow contextPath
+                  var undertowMBean = mbean + ",subsystem=undertow";
+                  jolokia.request( {type: "read", mbean: undertowMBean, attribute: ["contextRoot"]}, onSuccess((response) => {
+                    var value = response.value;
+                    if (value) {
+                      var contextPath = value["contextRoot"];
+                      if (contextPath) {
+                        obj.contextPath = contextPath;
+                        updateUrl();
+                        Core.$apply($scope);
+                      }
+                    }
+                  }));
+
                   var idx = $scope.mbeanIndex[mbean];
                   if (angular.isDefined(idx)) {
                     $scope.webapps[mbean] = obj;
@@ -138,6 +178,22 @@ module JBoss {
 
         function loadData() {
             console.log("Loading JBoss webapp data...");
+            // must load connectors first, before showing applications, so we do this call synchronously
+            var connectors = jolokia.search("jboss.as:socket-binding-group=standard-sockets,*");
+            if (connectors) {
+              var found = false;
+              angular.forEach(connectors, function (key, value) {
+                var mbean = key;
+                if (!found) {
+                  var data = jolokia.request({type: "read", mbean: mbean, attribute: ["port", "name"]});
+                  if (data && data.value && data.value.name && data.value.name.toString().toLowerCase() === 'http') {
+                    found = true;
+                    $scope.httpPort = data.value.port;
+                    $scope.httpScheme = "http";
+                  }
+                }
+              });
+            }
             jolokia.search("jboss.as:deployment=*", onSuccess(render));
         }
 
@@ -168,5 +224,5 @@ module JBoss {
             }
         }
 
-    }
+    }]);
 }

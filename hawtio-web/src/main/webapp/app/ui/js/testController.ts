@@ -1,9 +1,12 @@
 /**
  * @module UI
  */
+/// <reference path="./uiPlugin.ts"/>
+/// <reference path="./dropDown.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
 module UI {
 
-    export function UITestController2($scope, $templateCache) {
+    _module.controller("UI.UITestController2", ["$scope", "$templateCache", ($scope, $templateCache) => {
 
       $scope.fileUploadExMode = 'text/html';
 
@@ -33,7 +36,7 @@ module UI {
 
       $scope.someVal = 1;
 
-      $scope.dropDownConfig = {
+      $scope.dropDownConfig = <UI.MenuItem>{
         icon: 'icon-cogs',
         title: 'My Awesome Menu',
         items: [{
@@ -65,7 +68,7 @@ module UI {
         }, {
           title: "Call a function!",
           action: () => {
-            notification("info", "Function called!");
+            Core.notification("info", "Function called!");
           }
         }]
       };
@@ -140,10 +143,10 @@ module UI {
       $scope.autoColumnEx = $templateCache.get("autoColumnTemplate");
 
 
-    }
+    }]);
 
 
-    export function UITestController1($scope, $templateCache) {
+    _module.controller("UI.UITestController1", ["$scope", "$templateCache", ($scope, $templateCache) => {
 
 
     $scope.jsplumbEx = $templateCache.get("jsplumbTemplate");
@@ -199,10 +202,10 @@ module UI {
     $scope.colorPickerEx = 'My Color ({{myColor}}): <div hawtio-color-picker="myColor"></div>';
 
     $scope.confirmationEx1 = '' +
-        '<button class="btn" ng-click="showDeleteOne.open()">Delete Stuff</button>\n' +
+        '<button class="btn" ng-click="showDeleteOne.open()">Delete stuff</button>\n' +
         '\n' +
         '<div hawtio-confirm-dialog="showDeleteOne.show"\n' +
-        'title="Delete Stuff?"\n' +
+        'title="Delete stuff?"\n' +
         'ok-button-text="Yes, Delete the Stuff"\n' +
         'cancel-button-text="No, Keep the Stuff"\n' +
         'on-cancel="onCancelled(\'One\')"\n' +
@@ -215,7 +218,7 @@ module UI {
         '</div>\n';
 
     $scope.confirmationEx2 = '' +
-        '<button class="btn" ng-click="showDeleteTwo.open()">Delete Other Stuff</button>\n' +
+        '<button class="btn" ng-click="showDeleteTwo.open()">Delete other stuff</button>\n' +
         '\n' +
         '<!-- Use more defaults -->\n' +
         '<div hawtio-confirm-dialog="showDeleteTwo.show\n"' +
@@ -230,7 +233,7 @@ module UI {
 
 
     $scope.sliderEx1 = '' +
-        '<button class="btn" ng-click="showSlideoutRight = !showSlideoutRight">Show Slideout Right</button>\n' +
+        '<button class="btn" ng-click="showSlideoutRight = !showSlideoutRight">Show slideout right</button>\n' +
         '<div hawtio-slideout="showSlideoutRight" title="Hey look a slider!">\n' +
         '   <div class="dialog-body">\n' +
         '     <div>\n' +
@@ -240,7 +243,7 @@ module UI {
         '</div>';
 
     $scope.sliderEx2 = '' +
-        '<button class="btn" ng-click="showSlideoutLeft = !showSlideoutLeft">Show Slideout Left</button>\n' +
+        '<button class="btn" ng-click="showSlideoutLeft = !showSlideoutLeft">Show slideout left</button>\n' +
         '<div hawtio-slideout="showSlideoutLeft" direction="left" title="Hey, another slider!">\n' +
         '   <div class="dialog-body">\n' +
         '     <div hawtio-editor="someText" mode="javascript"></div>\n' +
@@ -265,11 +268,11 @@ module UI {
     $scope.transcludedValue = "and this is transcluded";
 
     $scope.onCancelled = (number) => {
-      notification('info', 'cancelled ' + number);
+      Core.notification('info', 'cancelled ' + number);
     }
 
     $scope.onOk = (number) => {
-      notification('info', number + ' ok!');
+      Core.notification('info', number + ' ok!');
     }
 
     $scope.showSlideoutRight = false;
@@ -296,6 +299,6 @@ module UI {
     }, true);
 
 
-  }
+  }]);
 
 }

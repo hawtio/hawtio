@@ -1,9 +1,10 @@
 /**
  * @module Maven
  */
+/// <reference path="./mavenPlugin.ts"/>
 module Maven {
 
-  export function ArtifactController($scope, $routeParams, workspace:Workspace, jolokia) {
+  _module.controller("Maven.ArtifactController", ["$scope", "$routeParams", "workspace", "jolokia", ($scope, $routeParams, workspace:Workspace, jolokia) => {
     $scope.row = {
       groupId: $routeParams["group"] || "",
       artifactId: $routeParams["artifact"] || "",
@@ -47,5 +48,5 @@ module Maven {
       }
       Core.$apply($scope);
     }
-  }
+  }]);
 }

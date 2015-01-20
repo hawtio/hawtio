@@ -1,3 +1,5 @@
+/// <reference path="../../baseIncludes.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
 /**
  * @module DataTable
  */
@@ -6,7 +8,6 @@ module DataTable {
   /**
    * @class TableWidget
    */
-  // TODO would make sense to move this to UI
   export class TableWidget {
     private ignoreColumnHash = {};
     private flattenColumnHash = {};
@@ -131,7 +132,7 @@ module DataTable {
                 angular.forEach(value, (value, key) => checkForNewColumn(value, key, childPrefix));
               }
             } else {
-              addColumn(prefix + key, humanizeValue(key))
+              addColumn(prefix + key, Core.humanizeValue(key))
             }
           }
         };
@@ -161,6 +162,10 @@ module DataTable {
         if (this.sortColumns) {
           this.dataTableConfig["aaSorting"] = this.sortColumns;
         }
+
+        this.dataTableConfig["oLanguage"] = {
+          "sSearch": "Filter:"
+        };
 
         if (this.dataTable) {
           this.dataTable.fnClearTable(false);

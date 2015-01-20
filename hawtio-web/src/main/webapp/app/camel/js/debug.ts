@@ -1,6 +1,6 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
-  export function DebugRouteController($scope, $element, workspace:Workspace, jolokia) {
-    $scope.camelMaximumTraceOrDebugBodyLength = Camel.maximumTraceOrDebugBodyLength(localStorage);
+  _module.controller("Camel.DebugRouteController", ["$scope", "$element", "workspace", "jolokia", "localStorage", ($scope, $element, workspace:Workspace, jolokia, localStorage) => {
     // ignore the cached stuff in camel.ts as it seems to bork the node ids for some reason...
     $scope.ignoreRouteXmlNode = true;
 
@@ -301,8 +301,8 @@ module Camel {
       return svg.selectAll("g .node");
     }
 
-    var breakpointImage = url("/app/camel/doc/img/debug/breakpoint.gif");
-    var suspendedBreakpointImage = url("/app/camel/doc/img/debug/breakpoint-suspended.gif");
+    var breakpointImage = Core.url("/app/camel/doc/img/debug/breakpoint.gif");
+    var suspendedBreakpointImage = Core.url("/app/camel/doc/img/debug/breakpoint-suspended.gif");
 
     function updateBreakpointIcons(nodes = getDiagramNodes()) {
       nodes.each(function (object) {
@@ -346,10 +346,13 @@ module Camel {
       var mbean = getSelectionCamelDebugMBean(workspace);
       if (mbean) {
         var method = flag ? "enableDebugger" : "disableDebugger";
-        var max = $scope.camelMaximumTraceOrDebugBodyLength;
-        jolokia.setAttribute(mbean, "BodyMaxChars",  max);
+        var max = Camel.maximumTraceOrDebugBodyLength(localStorage);
+        var streams = Camel.traceOrDebugIncludeStreams(localStorage);
+        jolokia.setAttribute(mbean, "BodyMaxChars", max);
+        jolokia.setAttribute(mbean, "BodyIncludeStreams", streams);
+        jolokia.setAttribute(mbean, "BodyIncludeFiles", streams);
         jolokia.execute(mbean, method, onSuccess(breakpointsChanged));
       }
     }
-  }
+  }]);
 }

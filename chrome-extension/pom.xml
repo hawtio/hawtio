@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>io.hawt</groupId>
+    <artifactId>project</artifactId>
+    <version>1.5-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>chrome-extension</artifactId>
+  <packaging>pom</packaging>
+  <name>${project.artifactId}</name>
+  <description>hawtio :: Chrome Extension</description>
+  <properties>
+    <build.dir>${basedir}/target</build.dir>
+    <zip.file>${build.dir}/extension.zip</zip.file>
+   <timestamp>${maven.build.timestamp}</timestamp>
+   <maven.build.timestamp.format>yyDDD</maven.build.timestamp.format>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-web</artifactId>
+      <version>${hawtio-release-version}</version>
+      <!--
+        NOTE this WAR dependency type which enables this WAR to
+        inherit all the plugins and content from the core hawtio-base WAR
+      -->
+      <type>war</type>
+    </dependency>
+  </dependencies>
+  <build>
+    
+    <plugins>
+       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.9</version>
+        <executions>
+          <execution>
+            <id>parse-version</id>
+            <goals>
+              <goal>parse-version</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>stage-crx</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>exploded</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- lets make absolutely sure the old manifest isn't used ;) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${maven-antrun-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>crx</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <echo>Removing the old manifest just to be sure!</echo>
+                <echo>old manifest: ${project.build.directory}/${artifactId}-${project.version}/manifest.json</echo>
+                <delete failonerror="true" verbose="true" file="${project.build.directory}/${artifactId}-${project.version}/manifest.json" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.4</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/extension-zip.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

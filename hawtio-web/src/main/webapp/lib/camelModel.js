@@ -122,10 +122,6 @@ var _apacheCamelModel = {
         "id": {
           "type": "string"
         },
-        "description": {
-          "type": "string",
-          "formTemplate": "<textarea class='input-xxlarge' rows='8'></textarea>"
-        },
         "inheritErrorHandler": {
           "type": "java.lang.Boolean"
         }
@@ -449,15 +445,16 @@ var _apacheCamelModel = {
       "acceptOutput": true,
       "properties": {}
     },
-    "convertBody": {
+    // must be named convertBodyTo
+    "convertBodyTo": {
       "type": "object",
       "extends": {
         "type": "org.apache.camel.model.OptionalIdentifiedDefinition"
       },
-      "title": "Convert Body",
+      "title": "Convert Body To",
       "group": "Transformation",
-      "description": "Convert Body",
-      "tooltip": "Convert Body",
+      "description": "Convert Body To",
+      "tooltip": "Convert Body To",
       "icon": "convertBody24.png",
       "nextSiblingAddedAsChild": true,
       "properties": {
@@ -1523,7 +1520,7 @@ var _apacheCamelModel = {
       "description": "Set Body",
       "tooltip": "Set Body",
       "icon": "setBody24.png",
-      "nextSiblingAddedAsChild": true,
+      "nextSiblingAddedAsChild": false,
       "properties": {
         "expression": {
           "kind": "expression",

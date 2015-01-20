@@ -1,9 +1,10 @@
 /**
  * @module OpenEJB
  */
+/// <reference path="./openejbPlugin.ts"/>
 module OpenEJB {
 
-  export function TreeController($scope, $location:ng.ILocationService, workspace:Workspace) {
+  _module.controller("OpenEJB.TreeController", ["$scope", "$location", "workspace", ($scope, $location:ng.ILocationService, workspace:Workspace) => {
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -34,5 +35,5 @@ module OpenEJB {
     function updateSelectionFromURL() {
       Jmx.updateTreeSelectionFromURL($location, $("#openejbTree"), true);
     }
-  }
+  }]);
 }

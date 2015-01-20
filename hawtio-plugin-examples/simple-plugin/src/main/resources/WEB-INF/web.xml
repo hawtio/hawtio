@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	      xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+	      http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	      version="2.4">
+
+  <description>Simple hawtio hello-world type plugin</description>
+  <display-name>hawt.io simple plugin</display-name>
+
+  <context-param>
+    <description>Plugin's path on the server</description>
+    <param-name>plugin-context</param-name>
+    <param-value>${plugin-context}</param-value>
+  </context-param>
+
+  <context-param>
+    <description>Plugin's path on the server</description>
+    <param-name>plugin-name</param-name>
+    <param-value>${project.artifactId}</param-value>
+  </context-param>
+
+  <context-param>
+    <description>Plugin's path on the server</description>
+    <param-name>plugin-domain</param-name>
+    <param-value>${plugin-domain}</param-value>
+  </context-param>
+
+  <context-param>
+    <description>Plugin's path on the server</description>
+    <param-name>plugin-scripts</param-name>
+    <param-value>${plugin-scripts}</param-value>
+  </context-param>
+
+  <listener>
+    <listener-class>io.hawt.example.simpleplugin.PluginContextListener</listener-class>
+  </listener>
+
+
+</web-app>
+

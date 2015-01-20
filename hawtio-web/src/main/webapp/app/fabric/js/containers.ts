@@ -1,9 +1,14 @@
+/// <reference path="fabricPlugin.ts"/>
+/// <reference path="fabricInterfaces.ts"/>
+/// <reference path="containerHelpers.ts"/>
 module Fabric {
 
-  export function ContainersController($scope, $location, $route, jolokia, workspace) {
+  _module.controller("Fabric.ContainersController", ["$scope", "$location", "$route", "jolokia", "workspace", "$dialog", ($scope, $location, $route, jolokia, workspace, $dialog) => {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
+    $scope.selectedContainers = <Array<Container>>[];
+    $scope.createLocationDialog = ContainerHelpers.getCreateLocationDialog($scope, $dialog);
     // bind model values to search params...
     Core.bindModelToSearchParam($scope, $location, "containerIdFilter", "q", "");
 
@@ -25,16 +30,13 @@ module Fabric {
       if (oldValue !== newValue) {
         $scope.selectedContainers = $scope.containers.filter((c) => { return c.selected; });
 
+        var locations = ContainerHelpers.extractLocations($scope.containers);
+        $scope.locationMenu = ContainerHelpers.buildLocationMenu($scope, jolokia, locations)
+
         if ($scope.selectedContainers.length > 0) {
           $scope.activeContainerId = '';
         }
       }
     }, true);
-
-
-    $scope.showChangeVersionDialog = () => {
-      $scope.changeVersionDialog.open($scope.selectedContainers);
-    };
-  }
-
+  }]);
 }

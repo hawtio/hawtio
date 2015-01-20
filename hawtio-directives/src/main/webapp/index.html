@@ -42,23 +42,51 @@
   </head>
   <body>
 
-    <div ng-controller="App.ViewController">
+  <div id="main-body" ng-controller="App.ViewController">
+    <!--  navbar-inverse -->
+    <div id="main-nav" class="navbar navbar-fixed-top">
 
-      <div hawtio-toc-display
-           get-contents="getContents(filename, cb)">
-        <ul>
-          <li>
-            <a href="app/ui/html/test1.html" chapter-id="test_1">UI Test 1</a>
-          </li>
-          <li>
-            <a href="app/ui/html/test2.html" chapter-id="test_2">UI Test 2</a>
-          </li>
-        </ul>
+      <div class="navbar-inner main-nav-upper">
 
+        <div class="container">
+          <div class="pull-left">
+            <a ng-href="http://hawt.io/"
+               title="Go to home"
+               class="brand"
+               data-placement="bottom">
+              <img src="img/logo-16px.png"/>
+              <strong>hawtio</strong>
+            </a>
+          </div>
+        </div>
 
       </div>
 
+      <div class="navbar-inner main-nav-lower">
+        <div class="container">
+          <ul class="nav">
+            <li>
+              <a href="http://hawt.io/" title="Hawtio">Home</a>
+            </li>
+            <li ng-class="{active : viewPartial === overviewPage}">
+              <a ng-click="viewPartial = overviewPage" title="Overview of how to use the Hawtio Directives">Overview</a>
+            </li>
+            <li ng-class="{active : viewPartial === directivesPage}">
+              <a ng-click="viewPartial = directivesPage" title="Hawtio Directives">Hawtio Directives</a>
+            </li>
+            <li>
+              <a href="http://hawt.io/developers/directives.html" title="External Directives we reuse from external projects">External Directives</a>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
+
+    <div id="main" class="container-fluid">
+      <ng-include src="viewPartial"></ng-include>
+    </div>
+  </div>
+
 
 
 
@@ -69,7 +97,6 @@
     <script type="text/javascript" src="lib/language/javascript.js?v=@VERSION@"></script>
     <script type="text/javascript" src="lib/language/generic.js?v=@VERSION@"></script>
     <script type="text/javascript" src="lib/logger.min.js?v=@VERSION@"></script>
-    <script type="text/javascript" src="lib/json2-min.js?v=@VERSION@"></script>
 
     <script type="text/javascript" src="lib/loggingInit.js?v=@VERSION@"></script>
 

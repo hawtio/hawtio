@@ -1,28 +1,22 @@
 /**
  * @module Fabric
  */
+/// <reference path="fabricInterfaces.ts"/>
+/// <reference path="fabricGlobals.ts"/>
+/// <reference path="jolokiaHelpers.ts"/>
+/// <reference path="containerHelpers.ts"/>
+/// <reference path="schemaConfigure.ts"/>
+/// <reference path="../../git/js/gitHelpers.ts"/>
+/// <reference path="../../ui/js/dialog.ts"/>
+/// <reference path="../../wiki/js/wikiHelpers.ts"/>
+/// <reference path="iconRegistry.ts"/>
+/// <reference path="../../core/js/login.ts"/>
 module Fabric {
 
-  export var log:Logging.Logger = Logger.get("Fabric");
-
-  export var jmxDomain = 'io.fabric8';
-
-  export var managerMBean = Fabric.jmxDomain + ":type=Fabric";
-  export var clusterManagerMBean = Fabric.jmxDomain + ":type=ClusterServiceManager";
-  export var clusterBootstrapManagerMBean = Fabric.jmxDomain + ":type=ClusterBootstrapManager";
-  export var openShiftFabricMBean = Fabric.jmxDomain + ":type=OpenShift";
-  export var mqManagerMBean = Fabric.jmxDomain + ":type=MQManager";
-
-  var schemaLookupDomain = "hawtio";
-  var schemaLookupType = "SchemaLookup";
-
-  export var schemaLookupMBean = schemaLookupDomain + ":type=" + schemaLookupType;
-
-  export var useDirectoriesInGit = true;
-  export var fabricTopLevel = "fabric/profiles/";
-  export var profileSuffix = ".profile";
-
-  export var jolokiaWebAppGroupId = jmxDomain + ".fabric-jolokia";
+  export var OpenShiftCredentials = <Core.UserDetails> {
+    username: null,
+    password: null
+  };
 
   export function fabricCreated(workspace) {
     return workspace.treeContainsDomainAndProperties(Fabric.jmxDomain, {type: "Fabric"});
@@ -65,15 +59,12 @@ module Fabric {
     var hasSchemaMBean = Fabric.hasSchemaMBean(workspace);
     var hasGitMBean = Fabric.hasGitMBean(workspace);
 
-    // Too noisy...
-    // log.debug("is FMC container, hasFabric: ", hasFabric, " hasSchemaMBean:", hasSchemaMBean, " hasGitMBean:", hasGitMBean);
-
     return hasFabric &&
            hasSchemaMBean &&
            hasGitMBean;
   }
 
-  export function hasFabric(workspace):boolean{
+  export function hasFabric(workspace):boolean {
     // lets make sure we only have a fabric if we have
     // the ClusterServiceManager or ClusterBootstrapManager available
     // so that we hide Fabric for 6.0 or earlier of JBoss Fuse
@@ -91,45 +82,20 @@ module Fabric {
    * @paran {*} jolokia
    * @param {Workspace} workspace
    */
-  export function initScope($scope, $location, jolokia, workspace) {
+  export function initScope($scope:any, $location, jolokia, workspace) {
+
+    // Let's avoid re-defining everything if the $scope
+    // has already been initialized here
+    if ($scope.fabricInitialized) {
+      return;
+    } else {
+      $scope.fabricInitialized = true;
+    }
+
+    ContainerHelpers.decorate($scope, $location, jolokia);
 
     $scope.gotoProfile = (versionId:string, profileId:string) => {
       Fabric.gotoProfile(workspace, jolokia, workspace.localStorage, $location, versionId, profileId);
-    };
-
-    $scope.getStatusTitle = (container) => {
-      return Fabric.statusTitle(container);
-    };
-
-    $scope.isCurrentContainer = (container) => {
-      if (!container) {
-        return false;
-      }
-      if (Core.isBlank(Fabric.currentContainerId)) {
-        return false;
-      }
-      if (angular.isObject(container)) {
-        return container['id'] === Fabric.currentContainerId;
-      }
-      if (angular.isString(container)) {
-        return container === Fabric.currentContainerId;
-      }
-
-      return false;
-    };
-
-    $scope.canConnect = (container) => {
-      if (!container) {
-        return false;
-      }
-      if (Core.isBlank(container['jolokiaUrl'])) {
-        return false;
-      }
-
-      if (!Core.parseBooleanValue(container['alive'])) {
-        return false;
-      }
-      return true;
     };
 
     $scope.refreshProfile = (versionId, profileId) => {
@@ -145,7 +111,7 @@ module Fabric {
       }, {
         method: 'POST',
         success: () => {
-          notification('success', 'Triggered refresh of profile ' + profileId + '/' + versionId);
+          Core.notification('success', 'Triggered refresh of profile ' + profileId + '/' + versionId);
           Core.$apply($scope);
         },
         error: (response) => {
@@ -173,10 +139,6 @@ module Fabric {
       return Git.isGitMBeanFabric(workspace);
     };
 
-    $scope.showContainer = (container) => {
-      $location.path('/fabric/container/' + container.id);
-    };
-
     $scope.createRequiredContainers = (profile) => {
       var profileId = profile.id;
       var args = {};
@@ -201,7 +163,7 @@ module Fabric {
     };
 
     $scope.createContainer = () => {
-      var kind = null;
+      var kind:string = null;
       // lets see if there is an openshift option
       var providers = registeredProviders(jolokia);
       angular.forEach(["openshift", "docker", "jclouds"], (value) => {
@@ -216,11 +178,9 @@ module Fabric {
     };
 
     $scope.createChildContainer = (container) => {
-      $location.url('/fabric/containers/createContainer').search({ 'tab': 'child', 'parentId': container.id });
-    };
-
-
-    $scope.createChildContainer = (container) => {
+      if (!container.root || !container.alive) {
+        return;
+      }
       $location.url('/fabric/containers/createContainer').search({ 'tab': 'child', 'parentId': container.id });
     };
 
@@ -240,18 +200,12 @@ module Fabric {
       return answer.join(' ');
     };
 
-    $scope.statusIcon = (row) => {
-      return Fabric.statusIcon(row);
-    };
-
-
     $scope.isEnsembleContainer = (containerId) => {
-      if ($scope.ensembleContainerIds) {
+      if (angular.isArray($scope.ensembleContainerIds)) {
         return $scope.ensembleContainerIds.any(containerId);
       }
       return false;
     };
-
 
     // for connection dialog
     $scope.connect = {
@@ -265,9 +219,12 @@ module Fabric {
       onOK: () => {
         var userName = $scope.connect.userName;
         var password = $scope.connect.password;
-        var container = $scope.connect.container;
-        log.info("Logging into container " + container + " with user " + userName);
-
+        var userDetails = <Core.UserDetails> Core.injector.get('userDetails');
+        if (!userDetails.password) {
+          // this can get unset if the user happens to refresh and hasn't checked rememberMe
+          userDetails.password = password;
+        }
+        var container = <Fabric.Container>$scope.connect.container;
         if ($scope.connect.saveCredentials) {
           $scope.connect.saveCredentials = false;
           if (userName) {
@@ -277,10 +234,15 @@ module Fabric {
             localStorage['fabric.password'] = password;
           }
         }
-        console.log("Connecting as user " + userName);
-        var options =  new Core.ConnectToServerOptions();
-        options.view = $scope.connect.view;
-        Fabric.connect(localStorage, container, userName, password, true, options);
+        var options = Core.createConnectOptions({
+          jolokiaUrl: container.jolokiaUrl,
+          userName: userName,
+          password: password,
+          useProxy: true,
+          view: $scope.connect.view,
+          name: container.id
+        });
+        Core.connectToServer(localStorage, options);
         $scope.connect.container = {};
         setTimeout(() => {
           $scope.connect.dialog.close();
@@ -290,11 +252,14 @@ module Fabric {
     };
 
     $scope.doConnect = (container, view) => {
-      // TODO at least obfusicate this
-      $scope.connect.userName = Core.username || localStorage['fabric.userName'];
-      $scope.connect.password = Core.password || localStorage['fabric.password'];
+      if (!$scope.canConnect(container)) {
+        return;
+      }
+      var userDetails = <Core.UserDetails> Core.injector.get('userDetails');
+      $scope.connect.userName = userDetails.username;
+      $scope.connect.password = userDetails.password;
       $scope.connect.container = container;
-      $scope.connect.view = view || "/logs";
+      $scope.connect.view = view || "#/openlogs";
 
       var alwaysPrompt = localStorage['fabricAlwaysPrompt'];
       if ((alwaysPrompt && alwaysPrompt !== "false") || !$scope.connect.userName || !$scope.connect.password) {
@@ -313,14 +278,12 @@ module Fabric {
           Core.unregister(jolokia, $scope);
           $location.path('/fabric/containers');
 
-          Fabric.doDeleteContainer($scope, jolokia, $scope.containerId);
+          ContainerHelpers.doDeleteContainer($scope, jolokia, $scope.containerId);
 
         } else if (angular.isDefined($scope.selectedContainers)) {
-
           $scope.selectedContainers.each((c) => {
-            doDeleteContainer($scope, jolokia, c.id);
+            ContainerHelpers.doDeleteContainer($scope, jolokia, c.id);
           });
-
         } else {
           // bail...
           log.info("Asked to delete containers but no containerId or selectedContainers attributes available");
@@ -331,21 +294,6 @@ module Fabric {
       },
       close: () => {
         $scope.confirmDeleteDialog.dialog.close();
-      }
-    };
-
-    $scope.createVersionDialog = {
-      dialog: new UI.Dialog(),
-      newVersionName: "",
-
-      open: () => {
-        $scope.createVersionDialog.newVersionName = "";
-        $scope.createVersionDialog.dialog.open();
-      },
-      onOk: () => {
-        Fabric.doCreateVersion($scope, jolokia, $location, $scope.createVersionDialog.newVersionName);
-        $scope.createVersionDialog.newVersionName = "";
-        $scope.createVersionDialog.dialog.close();
       }
     };
 
@@ -371,7 +319,7 @@ module Fabric {
       log.info("Setting version to " + version + " on containers: " + containerIds);
 
       Fabric.migrateContainers(jolokia, version, containerIds, () => {
-        notification('success', "Initiated container migration to version <strong>" + version + "</strong>, changes make take some time to complete");
+        Core.notification('success', "Initiated container migration to version <strong>" + version + "</strong>, changes make take some time to complete");
         Core.$apply($scope);
       }, (response) => {
         log.error("Failed to migrate containers due to ", response.error);
@@ -380,30 +328,33 @@ module Fabric {
       });
     };
 
+    var verbose = workspace.localStorage['fabricVerboseNotifications'];
+    $scope.fabricVerboseNotifications = verbose && verbose !== "false";
   }
 
+  export function viewVersion(versionId, $location, $scope) {
+    var defaultTarget = '/wiki/branch/' + versionId + '/view/fabric/profiles';
+    var path:string = $location.path();
+    var branch = $scope.branch || $scope.$parent.branch;
+    if (!path.startsWith('/wiki/branch/') || !branch) {
+      $location.path(defaultTarget);
+    } else {
+      path = path.replace('/branch/' + branch, '/branch/' + versionId);
+      $location.path(path);
+    }
+  }
 
   export function doCreateVersion($scope, jolokia, $location, newVersionName) {
     var success = function (response) {
-      notification('success', "Created version <strong>" + response.value.id + "</strong>, switching to this new version");
+      var newVersion = response.value.id;
+      Core.notification('success', "Created version <strong>" + newVersion + "</strong>, switching to this new version");
 
       // broadcast events to force reloads
       var $rootScope = $scope.$root || $scope.$rootScope || $scope;
       if ($rootScope) {
         $rootScope.$broadcast('wikiBranchesUpdated');
       }
-
-      var defaultTarget = '/wiki/branch/' + response.value.id + '/view/fabric/profiles';
-
-      var path = $location.path();
-      var branch = $scope.branch || $scope.$parent.branch;
-
-      if (!path.startsWith('/wiki/branch/') || !branch) {
-        $location.path(defaultTarget);
-      } else {
-        path = path.replace('/branch/' + branch, '/branch/' + response.value.id);
-        $location.path(path);
-      }
+      viewVersion(newVersion, $location, $scope);
       Core.$apply($scope);
     };
 
@@ -420,9 +371,6 @@ module Fabric {
     }
 
   }
-
-
-
 
   export function sortVersions(versions, order:boolean) {
     return (versions || []).sortBy((v) => {
@@ -511,6 +459,11 @@ module Fabric {
     }
   }
 
+  export function gotoContainer(containerId:string) {
+    var $location = Core.injector.get('$location');
+    $location.path(UrlHelpers.join('/fabric/container', containerId));
+  }
+
   export function setSelect(selection, group) {
     if (!angular.isDefined(selection)) {
       return group[0];
@@ -523,42 +476,6 @@ module Fabric {
     }
   }
 
-  export function doDeleteContainer($scope, jolokia, name, onDelete:() => any = null) {
-    notification('info', "Deleting " + name);
-    destroyContainer(jolokia, name, () => {
-      notification('success', "Deleted " + name);
-      if (onDelete) {
-        onDelete();
-      }
-      Core.$apply($scope);
-    }, (response) => {
-      notification('error', "Failed to delete " + name + " due to " + response.error);
-      Core.$apply($scope);
-    });
-  }
-
-  export function doStartContainer($scope, jolokia, name) {
-    notification('info', "Starting " + name);
-    startContainer(jolokia, name, () => {
-      notification('success', "Started " + name);
-      Core.$apply($scope);
-    }, (response) => {
-      notification('error', "Failed to start " + name + " due to " + response.error);
-      Core.$apply($scope);
-    });
-  }
-
-  export function doStopContainer($scope, jolokia, name) {
-    notification('info', "Stopping " + name);
-    stopContainer(jolokia, name, () => {
-      notification('success', "Stopped " + name);
-      Core.$apply($scope);
-    }, (response) => {
-      notification('error', "Failed to stop " + name + " due to " + response.error);
-      Core.$apply($scope);
-    });
-  }
-
   export var urlResolvers = ['http:', 'ftp:', 'mvn:'];
 
   export function completeUri ($q, $scope, workspace, jolokia, something) {
@@ -566,89 +483,94 @@ module Fabric {
 
   }
 
-  export function applyPatches(jolokia, files, targetVersion, newVersionName, proxyUser, proxyPass, success, error) {
-    doAction('applyPatches(java.util.List,java.lang.String,java.lang.String,java.lang.String,java.lang.String)', jolokia, [files, targetVersion, newVersionName, proxyUser, proxyPass], success, error);
-  }
-
-  export function setContainerProperty(jolokia, containerId, property, value, success, error) {
-    doAction('setContainerProperty(java.lang.String, java.lang.String, java.lang.Object)', jolokia, [containerId, property, value], success, error);
-  }
-
-  export function deleteConfigFile(jolokia, version, profile, pid, success, error) {
-    doAction('deleteConfigurationFile(java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, pid], success, error);
-  }
-
-  export function newConfigFile(jolokia, version, profile, pid, success, error) {
-    doAction('setConfigurationFile(java.lang.String, java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, pid, ''], success, error);
-  }
-
-  export function saveConfigFile(jolokia, version, profile, pid, data, success, error) {
-    doAction('setConfigurationFile(java.lang.String, java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, pid, data], success, error);
-  }
-
-  export function addProfilesToContainer(jolokia, container, profiles, success, error) {
-    doAction('addProfilesToContainer(java.lang.String, java.util.List)', jolokia, [container, profiles], success, error);
-  }
-
-  export function removeProfilesFromContainer(jolokia, container, profiles, success, error) {
-    doAction('removeProfilesFromContainer(java.lang.String, java.util.List)', jolokia, [container, profiles], success, error);
-  }
-
-  export function applyProfiles(jolokia, version, profiles, containers, success, error) {
-    doAction('applyProfilesToContainers(java.lang.String, java.util.List, java.util.List)', jolokia, [version, profiles, containers], success, error);
-  }
-
-  export function migrateContainers(jolokia, version, containers, success, error) {
-    doAction('applyVersionToContainers(java.lang.String, java.util.List)', jolokia, [version, containers], success, error);
-  }
-
-  export function changeProfileParents(jolokia, version, id, parents, success, error) {
-    doAction('changeProfileParents(java.lang.String, java.lang.String, java.util.List)', jolokia, [version, id, parents], success, error);
-  }
-
-  export function createProfile(jolokia, version, id, parents, success, error) {
-    doAction('createProfile(java.lang.String, java.lang.String, java.util.List)', jolokia, [version, id, parents], success, error);
-  }
-
-  export function copyProfile(jolokia, version, sourceName, targetName, force, success, error) {
-    doAction('copyProfile(java.lang.String, java.lang.String, java.lang.String, boolean)', jolokia, [version, sourceName, targetName, force], success, error);
-  }
-
-  export function createVersionWithParentAndId(jolokia, base, id, success, error) {
-    doAction('createVersion(java.lang.String, java.lang.String)', jolokia, [base, id], success, error);
-  }
-
-  export function createVersionWithId(jolokia, id, success, error) {
-    doAction('createVersion(java.lang.String)', jolokia, [id], success, error);
-  }
-
-  export function createVersion(jolokia, success, error) {
-    doAction('createVersion()', jolokia, [], success, error);
-  }
-
-  export function deleteVersion(jolokia, id, success, error) {
-    doAction('deleteVersion(java.lang.String)', jolokia, [id], success, error);
-  }
-
   // TODO cache the current active version? Then clear the cached value if we delete it
-  export function activeVersion($location) {
+  export function getActiveVersion($location) {
     return $location.search()['cv'] || "1.0";
   }
 
-  export function getContainerIdsForProfile(jolokia, version, profileId) {
-    return jolokia.execute(Fabric.managerMBean, "containerIdsForProfile", version, profileId, { method: 'POST' });
+  export interface IScopeWithApiURL extends ng.IScope {
+    restApiUrl:string;
+  };
+
+  /**
+   * Loads the restApiUrl property into the given $scope and added the helper function
+   */
+  export function loadRestApi(jolokia, workspace: Workspace, $scope:IScopeWithApiURL, callback:(response:any) => void = undefined) {
+    if ($scope && !$scope.restApiUrl) {
+      $scope.restApiUrl = DEFAULT_REST_API;
+    }
+    Fabric.restApiUrl(jolokia, (response) => {
+      var answer: string = response.value || DEFAULT_REST_API;
+      // if we are running inside a root fabric8 node then lets strip off the host and port
+      // because on Docker / Kubernetes / OpenShift this could could be a port which is not
+      // accessible to the browser
+      if (Fabric.isFMCContainer(workspace)) {
+        // lets strip the host/port from the URL
+        try {
+          var url = new URI(answer);
+          var path = url.pathname();
+          if (path) {
+            answer = path;
+            response.value = answer;
+          }
+        } catch (e) {
+          // ignore
+        }
+        // If we're proxying...
+        var connectionName = Core.getConnectionNameParameter(location.search);
+        if (connectionName) {
+          var connectionOptions = Core.getConnectOptions(connectionName);
+          if (connectionOptions) {
+            connectionOptions.path = answer;
+            answer = <string>Core.createServerConnectionUrl(connectionOptions);
+          }
+        }
+      }
+      if ($scope) {
+        $scope.restApiUrl = answer;
+        log.info("got REST API: " + $scope.restApiUrl);
+        Core.$apply($scope);
+      } if (callback) {
+        callback(response);
+      }
+    });
   }
 
-  export function deleteProfile(jolokia, version, id, success, error) {
-    doAction('deleteProfile(java.lang.String, java.lang.String)', jolokia, [version, id], success, error);
+  /**
+   * Returns the fully qualified iconURL from the relative link
+   */
+  export function toIconURL($scope, iconURL) {
+    if (!iconURL) {
+      return iconURL;
+    }
+    // If we're proxying...
+    var connectionName = Core.getConnectionNameParameter(location.search);
+    if (connectionName) {
+      var connectionOptions = Core.getConnectOptions(connectionName);
+      if (connectionOptions && !/^proxy\/http/.test(iconURL)) {
+        // relative URLs are prefixed with /<base>/git/
+        connectionOptions.path = /^\//.test(iconURL) ? iconURL : Core.url("/git/") + iconURL;
+        iconURL = <string>Core.createServerConnectionUrl(connectionOptions);
+      }
+    }
+    return iconURL;
   }
 
-  export function profileWebAppURL(jolokia, webAppId, profileId, versionId, success, error) {
-    doAction('profileWebAppURL', jolokia, [webAppId, profileId, versionId], success, error);
+  export function getVersionsInUse(jolokia, callback:(used:string[]) => void) {
+    doAction('containers(java.util.List, java.util.List)', jolokia, [["versionId"], []],
+     (response) => {
+       var versionIds = response.value.map((el) => {
+         return el['versionId'];
+       }).unique();
+       callback(versionIds);
+     }, (response) => {
+       log.debug("Failed to get versions in use: ", response);
+       log.debug("Stack Trace: ", response.stacktrace);
+     });
   }
 
   function onJolokiaUrlCreateJolokia(response, fn) {
-    var jolokia = null;
+    var jolokia:any = null;
     if (response) {
       var url = response.value;
       if (url) {
@@ -657,7 +579,8 @@ module Fabric {
         jolokia = Fabric.createJolokia(url);
       } else {
         if (response.error) {
-          log.warn(response.error, response.stacktrace);
+          log.debug("Failed to fetch remote jolokia URL: ", response.error);
+          log.debug("Stack trace: ", response.stacktrace);
         }
       }
       if (fn) {
@@ -679,7 +602,7 @@ module Fabric {
    * @param {String} versionId
    * @param {Function} onJolokia a function to receive the jolokia object or null if one cannot be created
    */
-  export function profileJolokia(jolokia, profileId, versionId, onJolokia) {
+  export function profileJolokia(jolokia, profileId, versionId, onJolokia):any {
     function onJolokiaUrl(response) {
       return onJolokiaUrlCreateJolokia(response, onJolokia);
     }
@@ -687,6 +610,7 @@ module Fabric {
       return Fabric.profileWebAppURL(jolokia, jolokiaWebAppGroupId, profileId, versionId, onJolokiaUrl, onJolokiaUrl);
     } else {
       onJolokia(null);
+      return null;
     }
   }
 
@@ -705,101 +629,50 @@ module Fabric {
     return Fabric.containerWebAppURL(jolokia, jolokiaWebAppGroupId, containerId, onJolokiaUrl, onJolokiaUrl);
   }
 
-  export function containerWebAppURL(jolokia, webAppId, containerId, success, error) {
-    doAction('containerWebAppURL', jolokia, [webAppId, containerId], success, error);
-  }
-
-  export function doAction(action, jolokia, arguments, success, error) {
-    jolokia.request(
-        {
-          type: 'exec', mbean: managerMBean,
-          operation: action,
-          arguments: arguments
-        },
-        {
-          method: 'POST',
-          success: success,
-          error: error
-        });
-  }
-  
-  export function stopContainer(jolokia, id, success, error) {
-    doAction('stopContainer(java.lang.String)', jolokia, [id], success, error);
-  }
-
-  export function destroyContainer(jolokia, id, success, error) {
-    doAction('destroyContainer(java.lang.String)', jolokia, [id], success, error);
-  }
-
-  export function startContainer(jolokia, id, success, error) {
-    doAction('startContainer(java.lang.String)', jolokia, [id], success, error);
-  }
-  
-  
+  /**
+   * Get a list of icons for the container's JMX domains
+   * @param container
+   * @returns {Array}
+   */
   export function getServiceList(container) {
     var answer = [];
+    var javaContainer = true;
     if (angular.isDefined(container) && angular.isDefined(container.jmxDomains) && angular.isArray(container.jmxDomains) && container.alive) {
-
-      container.jmxDomains.forEach((domain) => {
-        if (domain === "org.apache.cxf") {
-          answer.push({
-            title: "Apache CXF",
-            type: "icon",
-            src: "icon-puzzle-piece"
-          });
-        }
-        if (domain === "org.fusesource.insight") {
-          answer.push({
-            title: "Fabric8 Insight",
-            type: "icon",
-            src: "icon-eye-open"
-          });
-        }
-        if (domain === "org.apache.activemq") {
-          answer.push({
-            title: "Apache ActiveMQ",
-            type: "img",
-            src: "app/fabric/img/message_broker.png"
-          });
-        }
-        if (domain === "org.apache.camel") {
-          answer.push({
-            title: "Apache Camel",
-            type: "img",
-            src: "app/fabric/img/camel.png"
-          });
-        }
-        if (domain === "io.fabric8") {
-          answer.push({
-            title: "Fabric8",
-            type: "img",
-            src: "app/fabric/img/fabric.png"
-          });
-        }
-        if (domain === "hawtio") {
-          answer.push({
-            title: "hawtio",
-            type: "img",
-            src: "app/fabric/img/hawtio.png"
-          });
-        }
-        if (domain === "org.apache.karaf") {
-          answer.push({
-            title: "Apache Karaf",
-            type: "icon",
-            src: "icon-beaker"
-          })
-        }
-        if (domain === "org.apache.zookeeper") {
-          answer.push({
-            title: "Apache Zookeeper",
-            type: "icon",
-            src: "icon-group"
-          })
-        }
-      });
+      answer = Fabric.serviceIconRegistry.getIcons(container.jmxDomains);
     }
     return answer;
+  }
+
+  /**
+   * Get an icon that represents the type of the container
+   * @param container
+   * @returns {*}
+   */
+  export function getTypeIcon(container:Container) {
+    var type = container.type;
+    // use the type in the metadata if it's there...
+    if (container.metadata && container.metadata.containerType) {
+      type = container.metadata.containerType;
+    }
+    var answer = Fabric.containerIconRegistry.getIcon(type);
+    if (!answer) {
+      return Fabric.javaIcon;
+    } else {
+      return answer;
+    }
+  }
+
+  /**
+   * Perform an action on a profile if it's found in the group
+   * @param group
+   * @param targetId
+   * @param action
+   */
+  export function usingProfile(group:Profile[], targetId:string, action:(profile:Profile) => void):void {
+    var profile:Profile = group.find((p:Profile) => { return p.id === targetId; });
+    if (profile) {
+      action(profile);
+    }
   }
 
   /**
@@ -820,7 +693,11 @@ module Fabric {
     return jolokia.execute(managerMBean, "defaultVersion()");
   }
 
-
+  export function setDefaultVersion(jolokia, newVersion, callback:() => void) {
+    jolokia.setAttribute(Fabric.managerMBean, "DefaultVersion", newVersion, onSuccess((response) => {
+      callback();
+    }));
+  }
   /**
    * Default the values that are missing in the returned JSON
    * @method defaultContainerValues
@@ -848,14 +725,14 @@ module Fabric {
 
 
       var versionId = row["versionId"];
-      var versionHref = url("#/fabric/profiles?v=" + versionId);
+      var versionHref = Core.url("#/fabric/profiles?v=" + versionId);
       var versionLink =  "<a href='" + versionHref + "'>" + versionId + "</a>"
       row["versionHref"] = versionHref;
       row["versionLink"] = versionLink;
 
       var id = row['id'] || "";
       var title = "container " + id + " ";
-      var img = "red-dot.png";
+      var img:string = "red-dot.png";
       if (row['managed'] === false) {
         img = "spacer.gif";
       } else if (!row['alive']) {
@@ -884,11 +761,11 @@ module Fabric {
   export function containerLinks(workspace, values) {
     var answer = "";
     angular.forEach(toCollection(values), function (value, key) {
-      var prefix = "";
+      var prefix:string = "";
       if (answer.length > 0) {
         prefix = " ";
       }
-      answer += prefix + "<a href='" + url("#/fabric/container/" + value + workspace.hash()) + "'>" + value + "</a>";
+      answer += prefix + "<a href='" + Core.url("#/fabric/container/" + value + workspace.hash()) + "'>" + value + "</a>";
     });
     return answer;
   }
@@ -896,11 +773,11 @@ module Fabric {
   export function profileLinks(workspace, versionId, values) {
     var answer = "";
     angular.forEach(toCollection(values), function (value, key) {
-      var prefix = "";
+      var prefix:string = "";
       if (answer.length > 0) {
         prefix = " ";
       }
-      answer += prefix + "<a href='" + url("#/fabric/profile/" + versionId + "/" + value + workspace.hash()) + "'>" + value + "</a>";
+      answer += prefix + "<a href='" + Core.url("#/fabric/profile/" + versionId + "/" + value + workspace.hash()) + "'>" + value + "</a>";
     });
     return answer;
   }
@@ -917,7 +794,7 @@ module Fabric {
       var id = row["id"];
       row["link"] = profileLinks(workspace, versionId, id);
       row["parentLinks"] = profileLinks(workspace, versionId, row["parentIds"]);
-      var containersHref = url("#/fabric/containers?p=" + id);
+      var containersHref = Core.url("#/fabric/containers?p=" + id);
       var containerCount = row["containerCount"];
       var containersLink = "";
       if (containerCount) {
@@ -934,60 +811,8 @@ module Fabric {
     return Core.pathGet(folder, "objectName");
   }
 
-  export function statusTitle(container) {
-    var answer = 'Alive';
-    if (!container.alive) {
-      answer = 'Not Running';
-    } else {
-      answer += ' - ' + humanizeValue(container.provisionResult);
-    }
-    return answer;
-  }
-
-  export function statusIcon(row) {
-    if (row) {
-      if (row.alive) {
-        switch(row.provisionResult) {
-          case 'success':
-            return "green icon-play-circle";
-          case 'downloading':
-            return "icon-download-alt";
-          case 'installing':
-            return "icon-hdd";
-          case 'analyzing':
-          case 'finalizing':
-            return "icon-refresh icon-spin";
-          case 'resolving':
-            return "icon-sitemap";
-          case 'error':
-            return "red icon-warning-sign";
-        }
-      } else {
-        return "orange icon-off";
-      }
-    }
-    return "icon-refresh icon-spin";
-  }
-
-  /**
-   * Opens a window connecting to the given container row details if the jolokiaUrl is available
-   * @method connect
-   * @param {any} localStorage
-   * @param {any} row
-   * @param {String} userName
-   * @param {String} password
-   * @param {Boolean} useProxy
-   * @param {ConnectToServerOptions} options
-   */
-  export function connect(localStorage, row, userName = "", password = "", useProxy = true, options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions()) {
-    options.jolokiaUrl = row.jolokiaUrl;
-    options.userName = userName;
-    options.password = password;
-    options.useProxy = useProxy;
-
-    Core.connectToServer(localStorage, options);
-
-  }
+  export var statusTitle = ContainerHelpers.statusTitle;
+  export var statusIcon = ContainerHelpers.statusIcon;
 
   /**
    * Creates a jolokia object for connecting to the container with the given remote jolokia URL
@@ -996,26 +821,13 @@ module Fabric {
    */
   export function createJolokia(url: string) {
     // lets default to the user/pwd for the login
-    // TODO maybe allow these to be configured to other values?
-    var username = Core.username;
-    var password = Core.password;
-    if (!username) {
-      // lets try reverse engineer the user/pwd from the stored user/pwd
-      var jsonText = localStorage[url];
-      if (jsonText) {
-        var obj = Wiki.parseJson(jsonText);
-        if (obj) {
-          username = obj["username"];
-          password = obj["password"];
-        }
-      }
-    }
-    log.info("Logging into remote jolokia " + url + " using username: " + username);
-    return Core.createJolokia(url, username, password);
+    var userDetails = <Core.UserDetails> Core.injector.get("userDetails");
+    log.info("Logging into remote jolokia " + url + " using user details: " + StringHelpers.toString(userDetails));
+    return Core.createJolokia(url, <string> userDetails.username, <string> userDetails.password);
   }
 
   export function registeredProviders(jolokia) {
-    var providers = jolokia.execute(Fabric.managerMBean, 'registeredProviders()');
+    var providers = jolokia.execute(Fabric.managerMBean, 'registeredValidProviders()');
     var answer = {};
     angular.forEach(providers, (value, key) => {
       answer[key] = {
@@ -1057,8 +869,8 @@ module Fabric {
 
   export function getRootContainers(jolokia) {
     var fields = ["id", "root"];
-    var answer = jolokia.execute(Fabric.managerMBean, "containers(java.util.List)", fields, { method: 'POST' });
-    return answer.filter({root: true}).map(v => v["id"]);
+    var answer:Array<Container> = jolokia.execute(Fabric.managerMBean, "containers(java.util.List)", fields, { method: 'POST' });
+    return answer.filter((c) => { return c.root }).map(v => v["id"]);
   }
 
   /**
@@ -1142,7 +954,7 @@ module Fabric {
    */
   export function brokerConfigLink(workspace, jolokia, localStorage, brokerVersion, brokerProfile, brokerId) {
     var path = Fabric.profileLink(workspace, jolokia, localStorage, brokerVersion, brokerProfile);
-    path += "/org.fusesource.mq.fabric.server-" + brokerId + ".properties";
+    path += "/io.fabric8.mq.fabric.server-" + brokerId + ".properties";
     return path;
   }
 
@@ -1151,7 +963,7 @@ module Fabric {
    * Connects to the broker in a new window
    */
   export function connectToBroker($scope, container, postfix = null) {
-    var view = "/jmx/attributes?tab=activemq";
+    var view = "#/jmx/attributes?tab=activemq";
     if (postfix) {
       view += "&" + postfix;
     }

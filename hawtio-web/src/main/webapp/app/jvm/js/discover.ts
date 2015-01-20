@@ -1,9 +1,11 @@
 /**
  * @module JVM
  */
+/// <reference path="../../core/js/coreInterfaces.ts"/>
+/// <reference path="jvmPlugin.ts"/>
 module JVM {
 
-  export function DiscoveryController($scope, localStorage, jolokia) {
+  _module.controller("JVM.DiscoveryController", ["$scope", "localStorage", "jolokia", ($scope, localStorage, jolokia) => {
 
     $scope.discovering = true;
 
@@ -14,15 +16,15 @@ module JVM {
     }, true);
 
     $scope.closePopover = ($event) => {
-      $($event.currentTarget).parents('.popover').prev().popover('hide');
+      (<JQueryStatic>$)($event.currentTarget).parents('.popover').prev().popover('hide');
     };
 
     function doConnect(agent) {
       if (!agent.url) {
-        notification('warning', 'No URL available to connect to agent');
+        Core.notification('warning', 'No URL available to connect to agent');
         return;
       }
-      var options:Core.ConnectToServerOptions = new Core.ConnectToServerOptions();
+      var options:Core.ConnectToServerOptions = Core.createConnectOptions();
 
       var urlObject = Core.parseUrl(agent.url);
       angular.extend(options, urlObject);
@@ -39,7 +41,7 @@ module JVM {
 
     $scope.gotoServer = ($event, agent) => {
       if (agent.secured) {
-        $($event.currentTarget).popover('show');
+        (<JQueryStatic>$)($event.currentTarget).popover('show');
       } else {
         doConnect(agent);
       }
@@ -79,14 +81,14 @@ module JVM {
     };
 
     function render(response) {
+      $scope.discovering = false;
       if (!response.value) {
+        Core.$apply($scope);
         return;
       }
+
       var responseJson = angular.toJson(response.value.sortBy((agent) => agent['agent_id']), true);
       if ($scope.responseJson !== responseJson) {
-        if ($scope.discovering) {
-          $scope.discovering = false;
-        }
         $scope.responseJson = responseJson;
         log.debug("agents: ", $scope.agents);
         $scope.agents = response.value;
@@ -94,22 +96,15 @@ module JVM {
       }
     }
 
-    var updateRate = localStorage['updateRate'];
-    if (updateRate > 0) {
-      Core.register(jolokia, $scope, {
-        type: 'exec', mbean: 'jolokia:type=Discovery',
-        operation: 'lookupAgentsWithTimeout',
-        arguments: [updateRate]
-      }, onSuccess(render));
-    } else {
-      Core.register(jolokia, $scope, {
-        type: 'exec', mbean: 'jolokia:type=Discovery',
-        operation: 'lookupAgents',
-        arguments: []
-      }, onSuccess(render));
-    }
+    $scope.fetch = () => {
+      $scope.discovering = true;
+      Core.$apply($scope);
 
+      // use 30 sec timeout
+      jolokia.execute('jolokia:type=Discovery', 'lookupAgentsWithTimeout(int)', 30 * 1000, onSuccess(render));
+    };
 
-  }
+    $scope.fetch();
+  }]);
 
 }

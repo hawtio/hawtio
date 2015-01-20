@@ -1,6 +1,7 @@
+/// <reference path="./springbatchPlugin.ts"/>
 module SpringBatch {
 
-    export function JobListController($scope, $location, workspace:Workspace, jolokia, $resource, $rootScope, $http, $routeParams) {
+    _module.controller("SpringBatch.JobListController", ["$scope", "$location", "workspace", "jolokia", "$resource", "$rootScope", "$http", "$routeParams", ($scope, $location, workspace:Workspace, jolokia, $resource, $rootScope, $http, $routeParams) => {
         var targetServerHost = $routeParams.host;
         var targetServerPort = $routeParams.port;
         var targetServerSuffix = $routeParams.serverSuffix;
@@ -67,6 +68,5 @@ module SpringBatch {
                     });
             }
         }
-    }
-
+    }]);
 }

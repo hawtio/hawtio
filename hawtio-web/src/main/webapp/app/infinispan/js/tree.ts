@@ -1,6 +1,7 @@
+/// <reference path="infinispanPlugin.ts"/>
 module Infinispan {
 
-  export function TreeController($scope, $location:ng.ILocationService, workspace:Workspace) {
+  _module.controller("Infinispan.TreeController", ["$scope", "$location", "workspace", ($scope, $location:ng.ILocationService, workspace:Workspace) => {
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -42,7 +43,7 @@ module Infinispan {
           angular.forEach(folder.children, (value, key) => {
             if (value.objectName && value.title === "Statistics") {
               var cacheName = value.parent.parent.title || value.title;
-              var name = humanizeValue(cacheName);
+              var name = Core.humanizeValue(cacheName);
               var cacheFolder = new Folder(name);
               cacheFolder.addClass = "org-infinispn-cache";
               cacheFolder.typeName = "Cache";
@@ -62,5 +63,5 @@ module Infinispan {
     function updateSelectionFromURL() {
       Jmx.updateTreeSelectionFromURL($location, $("#infinispantree"), true);
     }
-  }
+  }]);
 }

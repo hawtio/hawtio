@@ -1,3 +1,4 @@
+/// <reference path="fabricPlugin.ts"/>
 module Fabric {
 
   export class ProfileSelector {
@@ -20,7 +21,7 @@ module Fabric {
       includedProfiles: '='
     };
 
-    public controller = ($scope, $element, $attrs, workspace, jolokia, localStorage, $location) => {
+    public controller = ["$scope", "$element", "$attrs", "workspace", "jolokia", "localStorage", "$location", ($scope, $element, $attrs, workspace, jolokia, localStorage, $location) => {
       $scope.profiles = [];
       $scope.responseJson = '';
       $scope.filterText = '';
@@ -34,11 +35,14 @@ module Fabric {
       $scope.tree = [];
 
       $scope.showProfile = (profile) => {
-        return $scope.filterText.isBlank() || profile.id.has($scope.filterText);
+        return Core.matchFilterIgnoreCase(profile.id, $scope.filterText);
       };
 
       $scope.showBranch = (branch) => {
-        return $scope.filterText.isBlank() || branch.profiles.some((profile) => { return profile.id.has($scope.filterText) });
+        return $scope.filterText.isBlank() ||
+               branch.profiles.some((profile) => {
+                 return Core.matchFilterIgnoreCase(profile.id, $scope.filterText)
+               });
       };
 
       $scope.goto = (profile) => {
@@ -135,6 +139,10 @@ module Fabric {
       }, true);
 
 
+      $scope.abstract = () => {
+        return $scope.profiles.filter((profile) => { return profile['abstract']; });
+      };
+
       $scope.selected = () => {
         return $scope.profiles.filter((profile) => { return profile['selected']; });
       };
@@ -152,6 +160,9 @@ module Fabric {
 
 
       $scope.getSelectedClass = (profile) => {
+        if (profile.abstract) {
+          return "abstract";
+        }
         if (profile.selected) {
           return "selected";
         }
@@ -160,15 +171,11 @@ module Fabric {
 
 
       $scope.$watch('selectedAll', (newValue, oldValue) => {
-        if (newValue !== oldValue) {
-          if ($scope.indeterminate) {
-            $scope.selectNone();
+        if (!$scope.indeterminate && newValue !== oldValue) {
+          if (newValue) {
+            $scope.selectAll();
           } else {
-            if (newValue) {
-              $scope.selectAll();
-            } else {
-              $scope.selectNone();
-            }
+            $scope.selectNone();
           }
         }
       });
@@ -196,6 +203,7 @@ module Fabric {
 
 
       $scope.init = () => {
+        log.debug("Initializing profile selector, version: ", $scope.versionId);
         $scope.responseJson = null;
         Core.unregister(jolokia, $scope);
         if( $scope.versionId !== '' ) {
@@ -207,15 +215,24 @@ module Fabric {
               type: 'exec',
               mbean: managerMBean,
               operation: 'getProfiles(java.lang.String, java.util.List)',
-              arguments: [$scope.versionId, ['id', 'hidden']]
-            }, onSuccess($scope.render));
+              arguments: [$scope.versionId, ['id', 'hidden', 'abstract']]
+            }, onSuccess($scope.render, {
+              error: (response) => {
+                // TODO somewhere this directive is kinda getting leaked, need to track down
+                log.debug("Error fetching profiles: ", response.error, " unregistering poller");
+                Core.unregister(jolokia, $scope);
+              }
+            }));
           }
         }
       };
 
 
       $scope.$watch('versionId', (newValue, oldValue) => {
+        log.debug("versionId, newValue: ", newValue, " oldValue: ", oldValue);
         if ($scope.versionId && $scope.versionId !== '') {
+          log.debug("Unregistering old poller");
+          Core.unregister(jolokia, $scope);
           jolokia.request({
             type: 'exec',
             mbean: Fabric.managerMBean,
@@ -227,21 +244,19 @@ module Fabric {
               if (response.value.some((version) => {
                 return version.id === newValue;
               })) {
+                log.debug("registering new poller");
                 $scope.init();
-              } else {
-                Core.unregister(jolokia, $scope);
+                Core.$apply($scope);
               }
-              Core.$apply($scope);
             },
             error: (response) => {
-              Core.unregister(jolokia, $scope);
               Core.$apply($scope);
             }
           });
         }
       });
 
-    };
+    }];
 
 
     public link = ($scope, $element, $attrs) => {
@@ -298,8 +313,6 @@ module Fabric {
           }
         }
       }, true);
-
-
     };
   }
 }

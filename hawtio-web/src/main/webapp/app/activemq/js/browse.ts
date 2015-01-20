@@ -1,8 +1,10 @@
+/// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
-  export function BrowseQueueController($scope, workspace:Workspace, jolokia, localStorage) {
+  export var BrowseQueueController = _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", ($scope, workspace:Workspace, jolokia, localStorage, location, activeMQMessage, $timeout) => {
 
     $scope.searchText = '';
 
+    $scope.allMessages = [];
     $scope.messages = [];
     $scope.headers = {};
     $scope.mode = 'text';
@@ -18,8 +20,10 @@ module ActiveMQ {
       showColumnMenu: true,
       enableColumnResize: true,
       enableColumnReordering: true,
+      enableHighlighting: true,
       filterOptions: {
-        filterText: ''
+        filterText: '',
+        useExternalFilter: true
       },
       selectWithCheckboxOnly: true,
       showSelectionCheckbox: true,
@@ -74,15 +78,20 @@ module ActiveMQ {
       "DoubleProperties", "StringProperties"];
 
     $scope.$watch('workspace.selection', function () {
-      if (workspace.moveIfViewInvalid()) return;
+      if (workspace.moveIfViewInvalid()) {
+        return;
+      }
 
       // lets defer execution as we may not have the selection just yet
       setTimeout(loadTable, 50);
     });
 
+    $scope.$watch('gridOptions.filterOptions.filterText', (filterText) => {
+      filterMessages(filterText);
+    });
+
     $scope.openMessageDialog = (message) => {
-      var idx = Core.pathGet(message, ["rowIndex"]);
-      $scope.selectRowIndex(idx);
+      ActiveMQ.selectCurrentMessage(message, "JMSMessageID", $scope);
       if ($scope.row) {
         $scope.mode = CodeEditor.detectTextFormat($scope.row.Text);
         $scope.showMessageDetails = true;
@@ -91,26 +100,14 @@ module ActiveMQ {
 
     $scope.refresh = loadTable;
 
-    $scope.selectRowIndex = (idx) => {
-      $scope.rowIndex = idx;
-      var selected = $scope.gridOptions.selectedItems;
-      selected.splice(0, selected.length);
-      if (idx >= 0 && idx < $scope.messages.length) {
-        $scope.row = $scope.messages[idx];
-        if ($scope.row) {
-          selected.push($scope.row);
-        }
-      } else {
-        $scope.row = null;
-      }
-    };
+    ActiveMQ.decorate($scope);
 
     $scope.moveMessages = () => {
         var selection = workspace.selection;
         var mbean = selection.objectName;
         if (mbean && selection) {
-          var selectedItems = $scope.gridOptions.selectedItems;
-          $scope.message = "Moved " + Core.maybePlural(selectedItems.length, "message" + " to " + $scope.queueName);
+            var selectedItems = $scope.gridOptions.selectedItems;
+            $scope.message = "Moved " + Core.maybePlural(selectedItems.length, "message" + " to " + $scope.queueName);
             var operation = "moveMessageTo(java.lang.String, java.lang.String)";
             angular.forEach(selectedItems, (item, idx) => {
                 var id = item.JMSMessageID;
@@ -119,6 +116,17 @@ module ActiveMQ {
                     jolokia.execute(mbean, operation, id, $scope.queueName, onSuccess(callback));
                 }
             });
+        }
+    };
+
+    $scope.resendMessage = () => {
+        var selection = workspace.selection;
+        var mbean = selection.objectName;
+        if (mbean && selection) {
+            var selectedItems = $scope.gridOptions.selectedItems;
+            //always assume a single message
+            activeMQMessage.message = selectedItems[0];
+            location.path('activemq/sendMessage');
         }
     };
 
@@ -161,21 +169,23 @@ module ActiveMQ {
       return (queuesFolder) ? queuesFolder.children.map(n => n.title) : [];
     };
 
+
     function populateTable(response) {
       var data = response.value;
       if (!angular.isArray(data)) {
-        $scope.messages = [];
+        $scope.allMessages = [];
         angular.forEach(data, (value, idx) => {
-          $scope.messages.push(value);
+          $scope.allMessages.push(value);
         });
       } else {
-        $scope.messages = data;
+        $scope.allMessages = data;
       }
-      angular.forEach($scope.messages, (message) => {
+      angular.forEach($scope.allMessages, (message) => {
         message.headerHtml = createHeaderHtml(message);
         message.bodyText = createBodyText(message);
       });
       Core.$apply($scope);
+      filterMessages($scope.gridOptions.filterOptions.filterText);
     }
 
     /*
@@ -321,18 +331,26 @@ module ActiveMQ {
     }
 
     function loadTable() {
-      var selection = workspace.selection;
-      if (selection) {
-        var mbean = selection.objectName;
-        if (mbean) {
-          $scope.dlq = false;
-          jolokia.getAttribute(mbean, "DLQ", onSuccess(onDlq, {silent: true}));
-          jolokia.request(
-                  {type: 'exec', mbean: mbean, operation: 'browse()'},
-                  onSuccess(populateTable));
-        }
+      var objName;
+
+      if(workspace.selection){
+        objName = workspace.selection.objectName;
+      } else{
+        // in case of refresh
+        var key = location.search()['nid'];
+        var node = workspace.keyToNodeMap[key];
+        objName = node.objectName;
+      }
+
+      if (objName) {
+        $scope.dlq = false;
+        jolokia.getAttribute(objName, "DLQ", onSuccess(onDlq, {silent: true}));
+        jolokia.request(
+          {type: 'exec', mbean: objName, operation: 'browse()'},
+          onSuccess(populateTable));
       }
     }
+
 
     function onDlq(response) {
       $scope.dlq = response;
@@ -345,7 +363,7 @@ module ActiveMQ {
     function operationSuccess() {
       $scope.messageDialog = false;
       $scope.gridOptions.selectedItems.splice(0);
-      notification("success", $scope.message);
+      Core.notification("success", $scope.message);
       setTimeout(loadTable, 50);
     }
 
@@ -353,5 +371,101 @@ module ActiveMQ {
         operationSuccess();
         workspace.loadTree();
     }
-  }
+
+    function filterMessages(filter) {
+      var searchConditions = buildSearchConditions(filter);
+
+      evalFilter(searchConditions);
+    }
+
+    function evalFilter(searchConditions) {
+      if (!searchConditions || searchConditions.length === 0) {
+        $scope.messages = $scope.allMessages;
+      } else {
+        log.debug("Filtering conditions:", searchConditions);
+        $scope.messages = $scope.allMessages.filter((message) => {
+          log.debug("Message:", message);
+
+          var matched = true;
+
+          $.each(searchConditions, (index, condition) => {
+            if (!condition.column) {
+              matched = matched && evalMessage(message, condition.regex);
+            } else {
+              matched = matched &&
+                        (message[condition.column] && condition.regex.test(message[condition.column])) ||
+                        (message.StringProperties && message.StringProperties[condition.column] && condition.regex.test(message.StringProperties[condition.column]));
+            }
+          });
+
+          return matched;
+        });
+      }
+    }
+
+    function evalMessage(message, regex) {
+      var jmsHeaders = ['JMSDestination', 'JMSDeliveryMode', 'JMSExpiration', 'JMSPriority', 'JMSMessageID', 'JMSTimestamp', 'JMSCorrelationID', 'JMSReplyTo', 'JMSType', 'JMSRedelivered'];
+      for(var i = 0; i < jmsHeaders.length; i++) {
+        var header = jmsHeaders[i];
+        if (message[header] && regex.test(message[header])) {
+          return true;
+        }
+      }
+
+      if (message.StringProperties) {
+        for (var property in message.StringProperties) {
+          if (regex.test(message.StringProperties[property])) {
+            return true;
+          }
+        }
+      }
+
+      if (message.bodyText && regex.test(message.bodyText)) {
+        return true;
+      }
+
+      return false;
+    }
+
+    function getRegExp(str, modifiers) {
+      try {
+        return new RegExp(str, modifiers);
+      } catch (err) {
+        return new RegExp(str.replace(/(\^|\$|\(|\)|<|>|\[|\]|\{|\}|\\|\||\.|\*|\+|\?)/g, '\\$1'));
+      }
+    }
+
+    function buildSearchConditions(filterText) {
+      var searchConditions = [];
+      var qStr;
+      if (!(qStr = $.trim(filterText))) {
+        return;
+      }
+      var columnFilters = qStr.split(";");
+      for (var i = 0; i < columnFilters.length; i++) {
+        var args = columnFilters[i].split(':');
+        if (args.length > 1) {
+          var columnName = $.trim(args[0]);
+          var columnValue = $.trim(args[1]);
+          if (columnName && columnValue) {
+            searchConditions.push({
+              column: columnName,
+              columnDisplay: columnName.replace(/\s+/g, '').toLowerCase(),
+              regex: getRegExp(columnValue, 'i')
+            });
+          }
+        } else {
+          var val = $.trim(args[0]);
+          if (val) {
+            searchConditions.push({
+              column: '',
+              regex: getRegExp(val, 'i')
+            });
+          }
+        }
+      }
+      return searchConditions;
+    }
+
+  }]);
 }

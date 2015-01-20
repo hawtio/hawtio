@@ -1,0 +1,26 @@
+#main-nav > .navbar-inner.main-nav-upper > .container > .pull-left > .brand {
+  /*
+  padding-top: 6px;
+  */
+  white-space: nowrap;
+}
+
+
+#main-nav > .navbar-inner.main-nav-upper > .container > .pull-left > .brand > img {
+  display: inline-block;
+  position: relative;
+  left: -3px;
+  height: 11px;
+}
+
+#main-nav > .navbar-inner.main-nav-upper > .container > .pull-left > .brand > strong {
+  font-weight: normal;
+  font-size: 11px;
+  position: relative;
+  top: 1px;
+  left: 0;
+}
+
+.brand > .with-text {
+  margin-top: 0;
+}

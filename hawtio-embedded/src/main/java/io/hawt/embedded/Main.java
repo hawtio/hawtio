@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Slf4jLog;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -74,9 +75,15 @@ public class Main {
         Slf4jLog log = new Slf4jLog("jetty");
         Log.setLog(log);
 
-        WebAppContext webapp = new WebAppContext();
-        webapp.setContextPath(options.getContextPath());
+        Server server = new Server(options.getPort());
 
+        HandlerCollection handlers = new HandlerCollection();
+        handlers.setServer(server);
+        server.setHandler(handlers);
+
+        WebAppContext webapp = new WebAppContext();
+        webapp.setServer(server);
+        webapp.setContextPath(options.getContextPath());
         String war = findWar(options.getWarLocation());
         if (war == null) {
             war = options.getWar();
@@ -90,22 +97,26 @@ public class Main {
         webapp.setExtraClasspath(options.getExtraClassPath());
 
         // lets set a temporary directory so jetty doesn't bork if some process zaps /tmp/*
-        String homeDir = System.getProperty("user.home", ".") + "/.hawtio";
+        String homeDir = System.getProperty("user.home", ".") + System.getProperty("hawtio.dirname", "/.hawtio");
         String tempDirPath = homeDir + "/tmp";
         File tempDir = new File(tempDirPath);
         tempDir.mkdirs();
         log.info("using temp directory for jetty: " + tempDir.getPath());
         webapp.setTempDirectory(tempDir);
 
-        Server server = new Server(options.getPort());
-        server.setHandler(webapp);
+        // check for 3rd party plugins before we add hawtio, so they are initialized before hawtio
+        findThirdPartyPlugins(log, handlers, tempDir);
 
+        // add hawtio
+        handlers.addHandler(webapp);
+
+        // create server and add the handlers
         if (welcome) {
             System.out.println("Embedded hawtio: You can use --help to show usage");
             System.out.println(options.usedOptionsSummary());
         }
 
-        System.out.println("About to start war " + war);
+        System.out.println("About to start hawtio " + war);
         server.start();
 
         if (welcome) {
@@ -122,6 +133,60 @@ public class Main {
                 System.out.println("Joining the Jetty server thread");
             }
             server.join();
+        }
+    }
+
+    protected void findThirdPartyPlugins(Slf4jLog log, HandlerCollection handlers, File tempDir) {
+        File dir = new File(options.getPlugins());
+        if (dir.exists() && dir.isDirectory()) {
+
+            log.info("Scanning for 3rd party plugins in directory: " + dir.getName());
+
+            // find any .war files
+            File[] wars = dir.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    return isWarFileName(name);
+                }
+            });
+            if (wars != null) {
+                for (File war : wars) {
+
+                    // custom plugins must not use same context-path as hawtio
+                    String contextPath = "/" + war.getName();
+                    if (contextPath.endsWith(".war")) {
+                        contextPath = contextPath.substring(0, contextPath.length() - 4);
+                    }
+                    if (contextPath.equals(options.getContextPath())) {
+                        throw new IllegalArgumentException("3rd party plugin " + war.getName() + " cannot have same name as hawtio context path. Rename the plugin file to avoid the clash.");
+                    }
+
+                    WebAppContext plugin = new WebAppContext();
+                    plugin.setServer(handlers.getServer());
+                    plugin.setContextPath(contextPath);
+                    plugin.setWar("file://" + war.getAbsolutePath());
+                    // plugin.setParentLoaderPriority(true);
+                    plugin.setLogUrlOnStart(true);
+
+                    // need to have private sub directory for each plugin
+                    File pluginTempDir = new File(tempDir, war.getName());
+                    pluginTempDir.mkdirs();
+
+                    plugin.setTempDirectory(pluginTempDir);
+                    plugin.setThrowUnavailableOnStartupException(true);
+
+                    try {
+                        plugin.start();
+                        handlers.addHandler(plugin);
+
+                        log.info("Added 3rd party plugin with context-path: " + contextPath);
+                        System.out.println("Added 3rd party plugin with context-path: " + contextPath);
+                    } catch (Exception e) {
+                        log.warn("Failed to add and start 3rd party plugin with context-path: " + contextPath + " due " + e.getMessage(), e);
+                    }
+                }
+            }
+
         }
     }
 

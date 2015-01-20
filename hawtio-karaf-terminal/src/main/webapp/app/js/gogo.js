@@ -6,9 +6,9 @@
 
 gogo = { };
 
-gogo.Terminal_ctor = function(div, width, height, token) {
+gogo.Terminal_ctor = function(div, width, height, cssWidth, cssHeight, scrollWidth, charHeight, token) {
 
-   var query0 = "w=" + width + "&h=" + height;
+   var query0 = "w=" + width + "&h=" + (height*20);
    var query1 = query0 + "&k=";
    var buf = "";
    var timeout;
@@ -18,10 +18,17 @@ gogo.Terminal_ctor = function(div, width, height, token) {
    var rmax = 1;
    var force = 1;
 
+  var lineHeight = charHeight;
+  // to optimize element.scrollTop
+  var lastScrollPosition = -1;
+
    var dstat = document.createElement('pre');
    var sled = document.createElement('span');
    var sdebug = document.createElement('span');
    var dterm = document.createElement('div');
+   dterm.style.width = (cssWidth - scrollWidth) + "px";
+
+  var scrollableDiv;
 
    function debug(s) {
        sdebug.innerHTML = s;
@@ -46,7 +53,7 @@ gogo.Terminal_ctor = function(div, width, height, token) {
                query = query + "&f=1";
                force = 0;
            }
-           r.open("POST", "hawtio-karaf-terminal/term", true);
+           r.open("POST", "/hawtio-karaf-terminal/term", true);
            r.setRequestHeader('LoginToken', token);
            r.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
            r.onreadystatechange = function () {
@@ -55,6 +62,13 @@ gogo.Terminal_ctor = function(div, width, height, token) {
                        window.clearTimeout(error_timeout);
                        if (r.responseText.length > 0) {
                            dterm.innerHTML = r.responseText;
+                           // find where the prompt is (a bit fragile)
+                           var lines = r.responseText.slice(0, r.responseText.lastIndexOf("f15 b12"));
+                           var lineCount = lines.split("\n").length;
+                           var newScrollTop = lineHeight*(lineCount - height);
+                           if (lastScrollPosition != newScrollTop) {
+                             lastScrollPosition = scrollableDiv.scrollTop = newScrollTop;
+                           }
                            rmax = 100;
                        } else {
                            rmax *= 2;
@@ -68,7 +82,7 @@ gogo.Terminal_ctor = function(div, width, height, token) {
                        debug("Connection error status:" + r.status);
                    }
                }
-           }
+           };
            error_timeout = window.setTimeout(error, 5000);
            r.send(query);
        }
@@ -212,9 +226,12 @@ gogo.Terminal_ctor = function(div, width, height, token) {
        dstat.appendChild(sdebug);
        dstat.className = 'stat';
        div.appendChild(dstat);
-       var d = document.createElement('div');
-       d.appendChild(dterm);
-       div.appendChild(d);
+       scrollableDiv = document.createElement('div');
+       scrollableDiv.style.overflowY = "scroll";
+       scrollableDiv.style.maxHeight = cssHeight + "px";
+
+       scrollableDiv.appendChild(dterm);
+       div.appendChild(scrollableDiv);
        document.onkeypress = keypress;
        document.onkeydown = keydown;
        timeout = window.setTimeout(update, 100);
@@ -222,9 +239,9 @@ gogo.Terminal_ctor = function(div, width, height, token) {
 
    init();
 
-}
+};
 
-gogo.Terminal = function(div, width, height, token) {
-   return new this.Terminal_ctor(div, width, height, token);
-}
+gogo.Terminal = function(div, width, height, cssWidth, cssHeight, scrollWidth, charHeight, token) {
+   return new this.Terminal_ctor(div, width, height, cssWidth, cssHeight, scrollWidth, charHeight, token);
+};
 

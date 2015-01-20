@@ -6,20 +6,25 @@
     <div class="fabric-page-header row-fluid">
 
       <div class="pull-left">
-        <h2 class="inline" title="Profile: {{row.id}}"><span class="contained c-wide">{{row.id}}</span></h2>
+        <div class="app-logo">
+          <img ng-src="{{row.iconURL}}" ng-show="row.iconURL">&nbsp;
+        </div>
       </div>
-
+      <div class="pull-left">
+          <h2 class="inline" title="Profile: {{row.id}}"><span class="contained c-wide3">&nbsp;{{row.displayName || row.id}}</span></h2>
+      </div>
       <div class="pull-right" ng-show="inDirective">
-        <a class="btn" ng-href="#/wiki/branch/{{versionId}}/configurations/{{pageId}}" ng-show="profileJolokia"
-           title="View the configurations of this profile"><i class="icon-edit"> Configuration</i></a>
-        <a class="btn" href="" title="Manually trigger provisioning of this profile on all associated containers" ng-click="refreshProfile(versionId, profileId)"><i class="icon-refresh"> Refresh</i></a>
-        <a class="btn" href="" title="Create a new profile that is a copy of this one" ng-click="copyProfileDialog = true"><i class="icon-copy"></i> Copy</a>
-        <a class="btn" ng-href="#/fabric/assignProfile?vid={{versionId}}&pid={{profileId}}" title="Assign this this profile to an existing container"><i class="icon-truck"></i> Assign</a>
-        <a class="btn" ng-href="#/fabric/containers/createContainer?versionId={{versionId}}&profileIds={{profileId}}" title="Deploy this profile to a new container"><i class="icon-truck"></i> New</a>
+        <a class="btn" ng-href="#/wiki/branch/{{versionId}}/configurations/{{pageId}}" ng-show="profileJolokia || profileMetadataMBean"
+           title="View the configurations of this profile"><i class="icon-edit"></i> Configuration</a>
+        <a class="btn" href="" title="Manually trigger provisioning of this profile on all associated containers" ng-click="refreshProfile(versionId, profileId)" hawtio-show object-name="{{managerMBean}}" method-name="refreshProfile"><i class="icon-refresh"></i> Refresh</a>
+        <a class="btn" href="" title="Create a new profile that is a copy of this one" ng-click="copyProfileDialog = true" hawtio-show object-name="{{managerMBean}}" method-name="copyProfile"><i class="icon-copy"></i> Copy</a>
+        <a class="btn" ng-href="#/fabric/assignProfile?vid={{versionId}}&pid={{profileId}}" title="Assign this profile to an existing container" hawtio-show object-name="{{managerMBean}}" method-name="addProfilesToContainer"><i class="icon-truck"></i> Assign</a>
+        <a class="btn" href="" ng-click="gotoCreateContainer()" title="Deploy this profile to a new container" hawtio-show object-name="{{managerMBean}}" method-name="createContainers"><i class="icon-truck"></i> New</a>
       </div>
-      <div class="pull-right" ng-hide="inDirective">
-        <a class="btn" ng-href="#/fabric/containers/createContainer?versionId={{versionId}}&profileIds={{profileId}}" title="Deploy this profile to a new container"><i class="icon-truck"></i> Create Container</a>
-        <a class="btn" href="" title="Create a new profile that is a copy of this one" ng-click="copyProfileDialog = true"><i class="icon-copy"></i> Copy</a>
+      <div class="pull-left span10 profile-summary-wide">
+        <div
+             ng-show="summaryHtml"
+             ng-bind-html-unsafe="summaryHtml"></div>
       </div>
     </div>
 
@@ -44,10 +49,11 @@
       <div class="span3">
 
         <ul class="unstyled switches">
-          <li>
-            <div class="switch-container" title="Abstract profiles cannot be directly instantiated; they must be inherited by other profiles.
-
-So they are for implementation inheritance rather like Abstract Base Classes in Java">
+          <li hawtio-show object-name="{{managerMBean}}" method-name="setProfileAttribute" mode="inverse">
+            <strong>Abstract: </strong> {{row.abstract}}
+          </li>
+          <li hawtio-show object-name="{{managerMBean}}" method-name="setProfileAttribute" mode="remove">
+            <div class="switch-container" title="Abstract profiles cannot be directly instantiated; they must be inherited by other profiles. So they are for implementation inheritance rather like Abstract Base Classes in Java">
               <label class="switch-light switch-ios" ng-click="changeAttribute('abstract', !row.abstract)">
                 <input type="checkbox" ng-checked="row.abstract">
                 <span>Abstract
@@ -58,7 +64,10 @@ So they are for implementation inheritance rather like Abstract Base Classes in 
               </label>
             </div>
           </li>
-          <li>
+          <li hawtio-show object-name="{{managerMBean}}" method-name="setProfileAttribute" mode="inverse">
+            <strong>Locked: </strong> {{row.locked}}
+          </li>
+          <li hawtio-show object-name="{{managerMBean}}" method-name="setProfileAttribute" mode="remove">
             <div class="switch-container" title="Locking a profile means that no changes can be made to it until its unlocked first.">
               <label class="switch-light switch-ios" ng-click="changeAttribute('locked', !row.locked)">
                 <input type="checkbox" ng-checked="row.locked">
@@ -73,10 +82,16 @@ So they are for implementation inheritance rather like Abstract Base Classes in 
         </ul>
 
 
-        <dl ng-show="row.parentIds.length > 0">
+        <dl>
           <dt>Parents:</dt>
           <dd>
-            <ul class="unstyled">
+            <ul class="unstyled" hawtio-show object-name="{{managerMBean}}" method-name="changeProfileParents" mode="inverse">
+              <li ng-repeat="profile in row.parentIds">
+                <a href="#/wiki/branch/{{versionId}}/view/fabric/profiles/{{profilePath(profile)}}{{hash}}">{{profile}}</a>
+              </li>
+            </ul>
+
+            <ul class="unstyled" hawtio-show object-name="{{managerMBean}}" method-name="changeProfileParents" mode="remove">
               <li ng-repeat="profile in row.parentIds">
                 <i class="red clickable icon-remove" title="Remove parent {{profile}}" ng-click="removeParentProfile(profile)"></i>
                 <a href="#/wiki/branch/{{versionId}}/view/fabric/profiles/{{profilePath(profile)}}{{hash}}">{{profile}}</a>
@@ -100,84 +115,108 @@ So they are for implementation inheritance rather like Abstract Base Classes in 
       </div>
 
 
-      <div class="span9">
-
-        <div class="tabbable hawtio-form-tabs" ng-model="activeTab">
-
-          <div class="tab-pane" value="features" title="Features ({{row.features.length}})">
-            <ul class="unstyled">
-              <li ng-repeat="feature in row.features">
-                <i class="red clickable icon-remove" title="Delete {{feature}}" ng-click="deleteThing('Feature', 'Features', row.features, feature)"></i>
-                <editable-property ng-model="row.features" property="$index" on-save="updateThing('Feature', 'Features',  row.features)"></editable-property>
-              </li>
-              <li class="add green">
-                <i class="clickable icon-edit green" ng-click="goto('/wiki/profile/{{versionId}}/{{profileId}}/editFeatures')" title="Edit features"></i>
-              </li>
-            </ul>
-          </div>
-
-
-          <div class="tab-pane" value="repos" title="Feature Repositories ({{row.repositories.length}})">
-            <ul class="unstyled">
-              <li ng-repeat="repository in row.repositories">
-                <i class="red clickable icon-remove" title="Delete {{repository}}" ng-click="deleteThing('Feature Repository', 'Repositories', row.repositories, repository)"></i>
-                <editable-property ng-model="row.repositories" property="$index" on-save="updateThing('Feature Repository', 'Repositories',  row.repositories)"></editable-property>
-              </li>
-              <li class="add">
-                <form ng-submit="addNewThing('Feature Repository', 'Repositories', row.repositories)">
+      <div class="span9 deployment-pane">
+        <div hawtio-show object-name="{{managerMBean}}" method-name="setProfileBundles" mode="remove">
+          <h3>Deployments</h3>
+          <ul class="unstyled">
+            <li class="add">
+              <div>
+                <form ng-submit="addNewThing('Bundle', 'Bundles', row.bundles)">
                   <span><strong>Add: </strong></span>
-                  <input class="input-xxlarge" type="text" ng-model="newThingName" typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue" typeahead-wait-ms="200">
-                  <i class="clickable icon-plus green" ng-click="addNewThing('Feature Repository', 'Repositories', row.repositories)" title="Add Feature Repository"></i>
+                  <input class="input-xxlarge" type="text" ng-model="newThingName"
+                         typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue"
+                         typeahead-wait-ms="200">
+                  <i class="clickable icon-plus green" ng-click="addNewThing('Bundle', 'Bundles', row.bundles)"
+                     title="Add Bundle"></i>
+                                <span class="help-block">
+                                  example: "mvn:group.id/artifact.id/version"
+                                </span>
+                </form>
+              </div>
+              <div>
+                <div fabric-deploy-artifact version-id="{{versionId}}" profile-id="{{row.id}}"></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Artifacts ({{row.bundles.length + row.fabs.length}})</h4>
+          <ul class="unstyled" hawtio-show object-name="{{managerMBean}}" method-name="setProfileBundles" mode="inverse">
+            <li ng-repeat="bundle in row.bundles">
+              <a ng-href="{{mavenLink(bundle)}}">{{bundle}}</a>
+            </li>
+          </ul>
+          <ul class="unstyled" hawtio-show object-name="{{managerMBean}}" method-name="setProfileBundles" mode="remove">
+            <li ng-repeat="bundle in row.bundles">
+              <i class="red clickable icon-remove" title="Delete {{bundle}}"
+                 ng-click="deleteThing('Bundle', 'Bundles', row.bundles, bundle)"></i>
+              <a ng-href="{{mavenLink(bundle)}}">
+                <editable-property ng-model="row.bundles" property="$index"
+                                   on-save="updateThing('Bundle', 'Bundles',  row.bundles)"></editable-property>
+              </a>
+            </li>
+          </ul>
+          <ul class="unstyled" hawtio-show object-name="{{managerMBean}}" method-name="setProfileFabs" mode="inverse">
+            <li ng-repeat="fab in row.fabs">{{fab}}</li>
+          </ul>
+          <ul class="unstyled" hawtio-show object-name="{{managerMBean}}" method-name="setProfileBundles" mode="remove">
+            <li ng-repeat="fab in row.fabs">
+              <i class="red clickable icon-remove" title="Delete {{fab}}"
+                 ng-click="deleteThing('Fuse Application Bundle', 'Fabs', row.fabs, fab)"></i>
+              <editable-property ng-model="row.fabs" property="$index"
+                                 on-save="updateThing('Fuse Application Bundle', 'Fabs',  row.fabs)"></editable-property>
+
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Features ({{row.features.length}})</h4>
+          <ul class="unstyled" hawtio-show object-name="{{managerMBean}}" method-name="setProfileFeatures" mode="inverse">
+            <li ng-repeat="feature in row.features">{{feature}}</li>
+          </ul>
+          <ul class="unstyled" hawtio-show object-name="{{managerMBean}}" method-name="setProfileFeatures" mode="remove">
+            <li ng-repeat="feature in row.features">
+              <i class="red clickable icon-remove" title="Delete {{feature}}"
+                 ng-click="deleteThing('Feature', 'Features', row.features, feature)"></i>
+              <editable-property ng-model="row.features" property="$index"
+                                 on-save="updateThing('Feature', 'Features',  row.features)"></editable-property>
+            </li>
+            <li class="add green">
+              <i class="clickable icon-edit green"
+                 ng-click="goto('/wiki/profile/{{versionId}}/{{profileId}}/editFeatures')" title="Edit features"></i>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Feature Repositories ({{row.repositories.length}})</h4>
+          <ul class="unstyled" hawtio-show object-name="{{managerMBean}}" method-name="setProfileRepositories" mode="inverse">
+            <li ng-repeat="repository in row.repositories">{{repository}}</li>
+          </ul>
+          <ul class="unstyled" hawtio-show object-name="{{managerMBean}}" method-name="setProfileRepositories" mode="remove">
+            <li ng-repeat="repository in row.repositories">
+              <i class="red clickable icon-remove" title="Delete {{repository}}"
+                 ng-click="deleteThing('Feature Repository', 'Repositories', row.repositories, repository)"></i>
+              <editable-property ng-model="row.repositories" property="$index"
+                                 on-save="updateThing('Feature Repository', 'Repositories',  row.repositories)"></editable-property>
+            </li>
+            <li class="add">
+              <form ng-submit="addNewThing('Feature Repository', 'Repositories', row.repositories)">
+                <span><strong>Add: </strong></span>
+                <input class="input-xxlarge" type="text" ng-model="newThingName"
+                       typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue"
+                       typeahead-wait-ms="200">
+                <i class="clickable icon-plus green"
+                   ng-click="addNewThing('Feature Repository', 'Repositories', row.repositories)"
+                   title="Add Feature Repository"></i>
                   <span class="help-block">
                     example: "mvn:group.id/artifact.id/version/xml/features"
                   </span>
-                </form>
-              </li>
-            </ul>
-          </div>
-
-          <div class="tab-pane" value="bundles" title="Bundles ({{row.bundles.length}})">
-            <ul class="unstyled">
-              <li ng-repeat="bundle in row.bundles">
-                <i class="red clickable icon-remove" title="Delete {{bundle}}" ng-click="deleteThing('Bundle', 'Bundles', row.bundles, bundle)"></i>
-                <a ng-href="{{mavenLink(bundle)}}">
-                  <editable-property ng-model="row.bundles" property="$index" on-save="updateThing('Bundle', 'Bundles',  row.bundles)"></editable-property>
-                </a>
-              </li>
-              <li class="add">
-                <form ng-submit="addNewThing('Bundle', 'Bundles', row.bundles)">
-                  <span><strong>Add: </strong></span>
-                  <input class="input-xxlarge" type="text" ng-model="newThingName" typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue" typeahead-wait-ms="200">
-                  <i class="clickable icon-plus green" ng-click="addNewThing('Bundle', 'Bundles', row.bundles)" title="Add Bundle"></i>
-                  <span class="help-block">
-                    example: "mvn:group.id/artifact.id/version"
-                  </span>
-                </form>
-              </li>
-            </ul>
-          </div>
-
-          <div class="tab-pane" value="fabs" title="FABs ({{row.fabs.length}})">
-            <ul class="unstyled">
-              <li ng-repeat="fab in row.fabs">
-                <i class="red clickable icon-remove" title="Delete {{fab}}" ng-click="deleteThing('Fuse Application Bundle', 'Fabs', row.fabs, fab)"></i>
-                <editable-property ng-model="row.fabs" property="$index" on-save="updateThing('Fuse Application Bundle', 'Fabs',  row.fabs)"></editable-property>
-
-              </li>
-              <li class="add">
-                <form ng-submit="addNewThing('Fuse Application Bundle', 'Fabs', row.fabs)">
-                  <span><strong>Add: </strong></span>
-                  <input class="input-xxlarge" type="text" ng-model="newThingName" typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue" typeahead-wait-ms="200">
-                  <i class="clickable icon-plus green" ng-click="addNewThing('Fuse Application Bundle', 'Fabs', row.fabs)" title="Add Fuse Application Bundle"></i>
-                  <span class="help-block">
-                    example: "mvn:group.id/artifact.id/version"
-                  </span>
-                </form>
-              </li>
-            </ul>
-          </div>
-
+              </form>
+            </li>
+          </ul>
         </div>
+
+
       </div>
     </div>
   </div>
@@ -216,7 +255,7 @@ So they are for implementation inheritance rather like Abstract Base Classes in 
   <div hawtio-confirm-dialog="changeParentsDialog" title="Change {{row.id}} parent profiles..." ok-button-text="Change Parents" on-ok="doChangeParents()">
     <div class="dialog-body">
       <p>Select what profiles this profile should inherit from.</p>
-      <div fabric-profile-selector="selectedParents" version-id="versionId"></div>
+      <div fabric-profile-selector="selectedParents" no-links="true" version-id="versionId"></div>
     </div>
   </div>
 
@@ -224,7 +263,7 @@ So they are for implementation inheritance rather like Abstract Base Classes in 
     <form name="newFile" class="form-horizontal no-bottom-margin" ng-submit="doCreateFile()">
       <div class="modal-header"><h4>Create new configuration file...</h4></div>
       <div class="modal-body">
-        <label style="display: inline">File Name: </label>
+        <label style="display: inline">File name: </label>
         <input name="id" class="input-xlarge" type="text" ng-model="newFileName" required
                ng-pattern="/^[.a-zA-Z0-9_-]*$/">
         <span class="help-block" ng-show="newFile.id.$error.required">Please enter a file name</span>
@@ -232,11 +271,10 @@ So they are for implementation inheritance rather like Abstract Base Classes in 
       </div>
       <div class="modal-footer">
         <input class="btn btn-success" ng-disabled="!newFile.$valid" type="submit" value="Create">
-        <input class="btn btn-primary" ng-click="newFileDialog = false" value="Cancel">
+        <input class="btn btn-primary" ng-click="newFileDialog = false" type="button" value="Cancel">
       </div>
     </form>
   </div>
-  <div ng-include="'app/fabric/html/changeVersionDialog.html'"></div>
 </div>
 
 

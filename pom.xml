@@ -3,15 +3,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>7</version>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>14</version>
   </parent>
 
   <groupId>io.hawt</groupId>
   <artifactId>project</artifactId>
   <packaging>pom</packaging>
-  <version>1.3-SNAPSHOT</version>
+  <version>1.5-SNAPSHOT</version>
   <name>project</name>
   <description>hawtio :: project</description>
   <url>http://hawt.io/</url>
@@ -28,7 +28,7 @@
     <connection>scm:git:git@github.com:hawtio/hawtio.git</connection>
     <developerConnection>scm:git:git@github.com:hawtio/hawtio.git</developerConnection>
     <url>git@github.com:hawtio/hawtio.git</url>
-    <tag>HEAD</tag>
+    <tag>hawtio-1.4.3</tag>
   </scm>
 
   <distributionManagement>
@@ -45,25 +45,27 @@
   </distributionManagement>
 
   <prerequisites>
-    <maven>3.0.4</maven>
+    <maven>3.1.1</maven>
   </prerequisites>
 
   <properties>
-    <jettyPort>8080</jettyPort>
+    <jettyPort>8282</jettyPort>
     <context>/hawtio</context>
     <hawtio-config-dir>${basedir}/hawtio-config</hawtio-config-dir>
     <hawtio-config-repo>https://github.com/hawtio/hawtio-config.git</hawtio-config-repo>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
 
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
-    <schema-outdir>${webapp-outdir}/lib</schema-outdir>
+    <schema-outdir>${basedir}/src/main/webapp/lib</schema-outdir>
     <appjs-outfile>${webapp-outdir}/app/app.js</appjs-outfile>
 
-    <!-- versions -->
-    <perfectus-number>368</perfectus-number>
-    <perfectus-previous-number>355</perfectus-previous-number>
-    <perfectus-build>610${perfectus-number}</perfectus-build>
-    <activemq-version>5.9.0.redhat-${perfectus-build}</activemq-version>
+    <!-- fabric8 1.x -->
+    <fabric-test-version>${fabric-version}</fabric-test-version>
+    <fabric-version>1.2.0.Beta4</fabric-version>
+
+    <activemq-version>5.10.0</activemq-version>
     <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
     <aether-version>1.13.1</aether-version>
     <apollo-version>99-trunk-SNAPSHOT</apollo-version>
@@ -71,19 +73,17 @@
     <atmosphere-version>1.0.18</atmosphere-version>
     <blueprint-web-version>1.0.0</blueprint-web-version>
     <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
-    <camel-version>2.12.0.redhat-${perfectus-build}</camel-version>
+    <camel-version>2.14.1</camel-version>
     <commons-codec-version>1.6</commons-codec-version>
     <commons-fileupload-version>1.3.1</commons-fileupload-version>
     <commons-httpclient-version>3.1</commons-httpclient-version>
     <commons-io-version>2.2</commons-io-version>
-    <cxf-version>2.7.0.redhat-${perfectus-build}</cxf-version>
-    <dozer-version>5.4.0</dozer-version>
+    <commons-logging-version>1.1.3</commons-logging-version>
+    <cxf-version>3.0.2</cxf-version>
+    <dozer-version>5.5.1</dozer-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
-
-    <!-- fabric test version points to a previous release version to break cycle with fabric -->
-    <fabric-test-version>1.0.0.redhat-${perfectus-previous-number}</fabric-test-version>
-    <fabric-version>1.0.0.redhat-${perfectus-number}</fabric-version>
     <felix.gogo.version>0.10.0</felix.gogo.version>
+    <frontend-maven-plugin-version>0.0.16</frontend-maven-plugin-version>
     <gitective-version>0.9.9</gitective-version>
 
     <!-- We are using an old guava to avoid breaking ActiveMQ in the test cases of hawtio-web -->
@@ -91,17 +91,19 @@
         <guava-version>13.0.1</guava-version>
     -->
     <guava-version>10.0</guava-version>
+    <hawtio-release-version>1.4.19</hawtio-release-version>
     <infinispan-version>5.3.0.Final</infinispan-version>
 <!--
     TODO doesn't yet work - I think the config changed?
     <infinispan-version>6.0.0.Final</infinispan-version>
 -->
 
-    <!-- TODO until build 16 is done we need snapshot to get maven coords on stack frames -->
-    <insight-log4j.version>${fabric-test-version}</insight-log4j.version>
-    <jackson-version>2.3.1</jackson-version>
+    <insight-log4j-version>${fabric-test-version}</insight-log4j-version>
+    <!-- make sure to align jackson with fabric8 -->
+    <jackson-version>2.4.1</jackson-version>
     <javaewah-version>0.5.6</javaewah-version>
-    <jaxb-version>2.1.13</jaxb-version>
+    <!-- make sure to align jaxb with fabric8 -->
+    <jaxb-version>2.2.7</jaxb-version>
     <jcraft-version>0.1.49</jcraft-version>
     <jcraft-jzlib-version>1.1.3</jcraft-jzlib-version>
 
@@ -111,16 +113,17 @@
 -->
     <jetty-version>7.6.9.v20130131</jetty-version>
     <jetty-plugin-groupId>org.mortbay.jetty</jetty-plugin-groupId>
-    <jetty-plugin-version>7.6.9.v20130131</jetty-plugin-version>
+    <jetty-plugin-version>7.6.16.v20140903</jetty-plugin-version>
     <jetty-webapp-artifactId>jetty-webapp</jetty-webapp-artifactId>
 
     <jgit-version>3.0.0.201306101825-r</jgit-version>
-    <jline.version>2.11</jline.version>
-    <jolokia-version>1.2.0</jolokia-version>
+    <jline.version>2.12</jline.version>
+    <jolokia-version>1.2.3</jolokia-version>
     <junit-version>4.11</junit-version>
-    <karaf-version>2.3.0.redhat-${perfectus-build}</karaf-version>
+    <karaf-version>2.4.0</karaf-version>
     <log4j-version>1.2.17</log4j-version>
     <maven-version>3.0.4</maven-version>
+    <maven-antrun-plugin-version>1.7</maven-antrun-plugin-version>
     <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
     <maven-plugin-version>3.2</maven-plugin-version>
     <maven-source-plugin-version>2.1.2</maven-source-plugin-version>
@@ -132,126 +135,17 @@
     <org-json-version>20070829</org-json-version>
     <servlet-api-version>2.5</servlet-api-version>
 
+    <!-- use slf4j-api 1.6.x to be easy compatible with older Karaf/Camel releases -->
     <slf4j-api-version>1.6.6</slf4j-api-version>
-    <slf4j-version>1.6.6</slf4j-version>
+    <slf4j-version>1.7.10</slf4j-version>
 
-    <spring-version>3.2.8.RELEASE</spring-version>
-    <xbean-version>3.15</xbean-version>
-    <wagon-version>2.4</wagon-version>
+    <spring-version>3.2.11.RELEASE</spring-version>
+    <spring-boot-version>1.2.0.RELEASE</spring-boot-version>
+    <xbean-version>3.16</xbean-version>
+    <wagon-version>2.7</wagon-version>
     <war-plugin-version>2.1.1</war-plugin-version>
+    <guava.version>14.0.1</guava.version>
   </properties>
-
-  <repositories>
-    <repository>
-      <id>repo2.maven.org</id>
-      <name>Central Maven Repository</name>
-      <url>repo2.maven.org/maven2</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>public.jboss.org</id>
-      <name>JBoss Public Repository</name>
-      <url>http://repository.jboss.org/nexus/content/groups/public</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-        <id>jboss-fs-public-repository-group</id>
-        <name>JBoss FS Public Repository Group</name>
-        <url>https://repo.fusesource.com/nexus/content/groups/public</url>
-        <layout>default</layout>
-        <releases>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-        </releases>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-    </repository>
-    <repository>
-        <id>jboss.ea</id>
-        <name>JBoss Community Early Access Release Repository</name>
-        <url>https://repo.fusesource.com/nexus/content/groups/ea</url>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-    </repository>
-<!--
-    <repository>
-        <id>fusesource.m2-snapshot</id>
-        <name>FuseSource Community Snapshot Repository</name>
-        <url>https://repo.fusesource.com/nexus/content/groups/public-snapshots</url>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-        <releases>
-            <enabled>false</enabled>
-        </releases>
-    </repository>
--->
-
-    <!-- for blueprint-web-version snapshots -->
-    <repository>
-      <id>apache.snapshots</id>
-      <name>Apache Development Snapshot Repository</name>
-      <url>https://repository.apache.org/content/repositories/snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>public.jboss.org</id>
-      <name>JBoss Public Repository</name>
-      <url>http://repository.jboss.org/nexus/content/groups/public</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
-    <pluginRepository>
-      <id>fs-public.jboss.org</id>
-      <name>JBoss FuseSource Public Repository</name>
-      <url>https://repository.jboss.org/nexus/content/groups/fs-public</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
-    <pluginRepository>
-      <id>ea.jboss.org</id>
-      <name>JBoss Early Access Repository</name>
-      <url>https://repository.jboss.org/nexus/content/groups/ea</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
 
   <modules>
     <module>hawtio-util</module>
@@ -263,30 +157,40 @@
     <module>hawtio-git</module>
     <module>hawtio-ide</module>
     <module>hawtio-junit</module>
+    <module>hawtio-kubernetes</module>
     <module>hawtio-maven-indexer</module>
     <module>hawtio-maven-plugin</module>
     <module>hawtio-json-schema-mbean</module>
     <module>hawtio-json-schema-generator</module>
     <module>hawtio-local-jvm-mbean</module>
+    <module>hawtio-keystore-mbean</module>
     <module>hawtio-plugin-mbean</module>
     <module>example-services</module>
     <module>hawtio-web</module>
+    <module>hawtio-api-docs</module>
     <module>hawtio-base</module>
     <module>hawtio-default</module>
     <module>hawtio-default-offline</module>
     <module>hawtio-no-slf4j</module>
+    <module>hawtio-jboss</module>
     <module>hawtio-embedded</module>
     <module>hawtio-app</module>
     <module>hawtio-osgi-jmx</module>
     <module>hawtio-osgi-devmode</module>
     <module>hawtio-plugin-examples</module>
-    <module>hawtio-karaf</module>
     <module>sample</module>
+    <module>hawtio-springboot</module>
+    <module>hawtio-sample-springboot</module>
     <module>hawtio-karaf-terminal</module>
+    <module>hawtio-karaf-git</module>
+    <!-- TODO - a bit broken at the moment
     <module>hawtio-directives</module>
-    <!--
-    <module>hawtio-api-docs</module>
     -->
+    <module>hawtio-redhat-fuse-branding</module>
+    <module>hawtio-redhat-amq-branding</module>
+    <module>hawtio-fabric8-branding</module>
+    <module>hawtio-karaf</module>
+    <module>hawtio-custom-app</module>
   </modules>
 
   <build>
@@ -306,14 +210,6 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.5.1</version>
-          <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
-          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -416,7 +312,7 @@
         </configuration>
       </plugin>
 
-      <plugin>
+      <!-- plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.8</version>
@@ -428,13 +324,14 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin -->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin-version}</version>
         <configuration>
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
           <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
@@ -454,14 +351,24 @@
   </build>
 
   <profiles>
+
     <profile>
-      <id>fuse60</id>
-      <properties>
-        <perfectus-number>024</perfectus-number>
-        <perfectus-build>redhat-60${perfectus-number}</perfectus-build>
-      </properties>
-      <repositories>
-      </repositories>
+      <id>doclint-java8-disable</id>
+      <activation>
+        <jdk>[1.8, 2)</jdk>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <additionalparam>-Xdoclint:none</additionalparam>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
     <!-- watcher profile is needed to break build cycle with fabric -->
@@ -484,61 +391,19 @@
     <profile>
       <id>amqSnapshot</id>
       <properties>
-        <activemq-version>5.9-SNAPSHOT</activemq-version>
+        <activemq-version>5.11-SNAPSHOT</activemq-version>
         <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
       </properties>
-
-      <repositories>
-<!--
-        <repository>
-          <id>fusesource-snapshots</id>
-          <name>fusesource-snapshots</name>
-          <url>http://repo.fusesource.com/nexus/content/groups/public-snapshots</url>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-        </repository>
--->
-      </repositories>
     </profile>
 
     <profile>
       <id>camelSnapshot</id>
       <properties>
-        <camel-version>2.13-SNAPSHOT</camel-version>
+        <camel-version>2.15-SNAPSHOT</camel-version>
+        <spring-version>4.1.4.RELEASE</spring-version>
+        <jetty-version>8.1.15.v20140411</jetty-version>
       </properties>
-      <repositories>
-      </repositories>
     </profile>
-
-
-    <profile>
-      <id>snapshot</id>
-      <properties>
-        <activemq-version>5.9-SNAPSHOT</activemq-version>
-        <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
-        <camel-version>2.13-SNAPSHOT</camel-version>
-        <fabric-version>99-master-SNAPSHOT</fabric-version>
-      </properties>
-
-      <repositories>
-        <repository>
-          <id>fusesource-snapshots</id>
-          <name>fusesource-snapshots</name>
-          <url>http://repo.fusesource.com/nexus/content/groups/public-snapshots</url>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-          <releases>
-            <enabled>false</enabled>
-          </releases>
-        </repository>
-      </repositories>
-    </profile>
-
 
     <profile>
       <id>jetty9</id>
@@ -579,6 +444,9 @@
 
     <profile>
       <id>release</id>
+      <properties>
+        <schema-outdir>${basedir}/target/${webapp-dir}/lib</schema-outdir>
+      </properties>
       <!--
       TODO when using the release profile you should add your ~/.m2/settings.xml something like this:
 
@@ -592,6 +460,56 @@
           </profile>
           ...
       -->
+
+      <!--
+            Run the release /w the -P release flag to enable the release profile.
+          -->
+      <build>
+        <plugins>
+          <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <configuration>
+              <passphrase>${gpg.passphrase}</passphrase>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <encoding>${project.build.sourceEncoding}</encoding>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
 
@@ -654,6 +572,13 @@
         </plugins>
       </build>
     </profile>
+
+      <profile>
+          <id>apidocs</id>
+          <modules>
+              <module>hawtio-api-docs</module>
+          </modules>
+      </profile>
 
   </profiles>
 </project>

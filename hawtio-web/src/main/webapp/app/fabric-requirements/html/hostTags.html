@@ -1,0 +1,17 @@
+<div>
+  <h6>Host Tags</h6>
+  <ul class=unstyled>
+    <li ng-repeat="tag in requirements.$tags">
+      <span class="badge mouse-pointer"
+            hawtio-drag="tag">{{tag}}</span>
+    </li>
+    <li ng-hide="hideTagInput">
+      <input class="input-mini" id="inputNewTag"
+             type="text"
+             ng-model="newTag"
+             placeholder="Add tag"
+             ng-keypress="($event.which === 13) ? addTag(newTag) : 0">
+      <i class="icon-plus mouse-pointer green" ng-click="addTag(newTag)"></i>
+    </li>
+  </ul>
+</div>

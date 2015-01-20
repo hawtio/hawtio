@@ -1,9 +1,10 @@
 /**
  * @module Maven
  */
+/// <reference path="./mavenPlugin.ts"/>
 module Maven {
 
-  export function PomXmlController($scope) {
+  _module.controller("Maven.PomXmlController", ["$scope", ($scope) => {
     $scope.mavenPomXml = "\n" +
             "  <dependency>\n" +
             "    <groupId>" + orBlank($scope.row.groupId) + "</groupId>\n" +
@@ -14,5 +15,5 @@ module Maven {
     function orBlank(text:string) {
       return text || "";
     }
-  }
+  }]);
 }

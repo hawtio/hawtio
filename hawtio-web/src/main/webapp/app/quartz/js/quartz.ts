@@ -1,9 +1,10 @@
 /**
  * @module Quartz
  */
+/// <reference path="./quartzPlugin.ts"/>
 module Quartz {
 
-  export function QuartzController($scope, $location:ng.ILocationService, workspace:Workspace, jolokia) {
+  _module.controller("Quartz.QuartzController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location:ng.ILocationService, workspace:Workspace, jolokia) => {
 
     var log:Logging.Logger = Logger.get("Quartz");
 
@@ -216,14 +217,14 @@ module Quartz {
             if (job) {
               var repeatCounter;
               var repeatInterval;
-
-              t.type = job.jobDataMap["CamelQuartzTriggerType"];
+              var jobDataMap = job.jobDataMap || {};
+              t.type = jobDataMap["CamelQuartzTriggerType"];
               if (t.type && t.type == "cron") {
-                t.expression = job.jobDataMap["CamelQuartzTriggerCronExpression"];
+                t.expression = jobDataMap["CamelQuartzTriggerCronExpression"];
               } else if (t.type && t.type == "simple") {
-                t.expression = "every " + job.jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"] + " ms.";
-                repeatCounter = job.jobDataMap["CamelQuartzTriggerSimpleRepeatCounter"];
-                repeatInterval = job.jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"];
+                t.expression = "every " + jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"] + " ms.";
+                repeatCounter = jobDataMap["CamelQuartzTriggerSimpleRepeatCounter"];
+                repeatInterval = jobDataMap["CamelQuartzTriggerSimpleRepeatInterval"];
                 if (repeatCounter > 0) {
                   t.expression += " (" + repeatCounter + " times)";
                 } else {
@@ -233,7 +234,7 @@ module Quartz {
                 t.repeatInterval = repeatInterval;
               } else {
                 // fallback and grab from Camel endpoint if that is possible (supporting older Camel releases)
-                var uri = job.jobDataMap["CamelQuartzEndpoint"];
+                var uri = jobDataMap["CamelQuartzEndpoint"];
                 if (uri) {
                   var cron = Core.getQueryParameterValue(uri, "cron");
                   if (cron) {
@@ -305,7 +306,7 @@ module Quartz {
         jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
           operation: "standby"},
         onSuccess((response) => {
-          notification("success", "Paused scheduler " + $scope.selectedScheduler.SchedulerName);
+          Core.notification("success", "Paused scheduler " + $scope.selectedScheduler.SchedulerName);
         }
         ));
       }
@@ -316,7 +317,7 @@ module Quartz {
         jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
           operation: "start"},
         onSuccess((response) => {
-          notification("success", "Started scheduler " + $scope.selectedScheduler.SchedulerName);
+          Core.notification("success", "Started scheduler " + $scope.selectedScheduler.SchedulerName);
         }
         ));
       }
@@ -342,7 +343,7 @@ module Quartz {
         jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
           operation: "pauseTrigger", arguments: [triggerName, groupName]},
           onSuccess((response) => {
-            notification("success", "Paused trigger " + groupName + "/" + triggerName);
+            Core.notification("success", "Paused trigger " + groupName + "/" + triggerName);
           }
         ));
       }
@@ -356,7 +357,7 @@ module Quartz {
         jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
           operation: "resumeTrigger", arguments: [triggerName, groupName]},
           onSuccess((response) => {
-            notification("success", "Resumed trigger " + groupName + "/" + triggerName);
+            Core.notification("success", "Resumed trigger " + groupName + "/" + triggerName);
           }
         ));
       }
@@ -414,7 +415,7 @@ module Quartz {
             cron,
             null]},
           onSuccess((response) => {
-            notification("success", "Updated trigger " + groupName + "/" + triggerName);
+            Core.notification("success", "Updated trigger " + groupName + "/" + triggerName);
           }
         ));
       } else if (repeatCounter || repeatInterval) {
@@ -437,7 +438,7 @@ module Quartz {
               repeatCounter,
               repeatInterval]},
           onSuccess((response) => {
-              notification("success", "Updated trigger " + groupName + "/" + triggerName);
+              Core.notification("success", "Updated trigger " + groupName + "/" + triggerName);
             }
           ));
       }
@@ -523,7 +524,7 @@ module Quartz {
         $scope.selectedSchedulerMBean = selectionKey;
 
         // TODO: is there a better way to add our nid to the uri parameter?
-        $location.search({nid: data.key});
+        $location.search("nid", data.key);
 
         var request = [
           {type: "read", mbean: $scope.selectedSchedulerMBean}
@@ -552,6 +553,6 @@ module Quartz {
 
     // reload tree on startup
     reloadTree();
-  }
+  }]);
 
 }

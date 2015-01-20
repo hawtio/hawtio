@@ -1,8 +1,9 @@
+/// <reference path="jbossPlugin.ts"/>
 module JBoss {
 
-  export function DmrController($scope, $location, workspace:Workspace) {
+  _module.controller("JBoss.DmrController", ["$scope", "$location", "workspace", ($scope, $location, workspace:Workspace) => {
     var search = $location.search();
-    var connectUrl = url("/proxy/localhost/9990/management");
+    var connectUrl = Core.url("/proxy/localhost/9990/management");
     var user = search["_user"] || "";
     var pwd = search["_pwd"] || "";
     if (user) {
@@ -71,5 +72,5 @@ module JBoss {
         console.log("Response: " + JSON.stringify(json, null, "  "));
       }
     }
-  }
+  }]);
 }

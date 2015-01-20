@@ -1,19 +1,23 @@
+/// <reference path="../../baseIncludes.ts"/>
+/// <reference path="../../baseHelpers.ts"/>
+/// <reference path="tables.ts"/>
 /**
  * @module DataTable
  * @main DataTable
  */
 module DataTable {
 
-  var pluginName = 'datatable';
+  export var pluginName = 'datatable';
   export var log:Logging.Logger = Logger.get("DataTable");
 
-  angular.module(pluginName, ['bootstrap', 'ngResource']).
-    config( ($routeProvider) => {
-      $routeProvider.
-          when('/datatable/test', {templateUrl: 'app/datatable/html/test.html'})
-    }).
-          directive('hawtioSimpleTable', ($compile) => new DataTable.SimpleDataTable($compile)).
-          directive('hawtioDatatable', function ($templateCache, $compile, $timeout, $filter) {
+  export var _module = angular.module(pluginName, ['bootstrap', 'ngResource']);
+
+  _module.config(["$routeProvider", ($routeProvider) => {
+    $routeProvider.
+        when('/datatable/test', {templateUrl: 'app/datatable/html/test.html'});
+  }]);
+
+  _module.directive('hawtioDatatable', ["$templateCache", "$compile", "$timeout", "$filter", ($templateCache, $compile, $timeout, $filter) => {
             // return the directive link function. (compile function not needed)
             return function (scope, element, attrs) {
               var gridOptions = null;
@@ -278,7 +282,7 @@ module DataTable {
 
               updateLater(); // kick off the UI update process.
             }
-          }
+          }]
   );
 
   hawtioPluginLoader.addModule(pluginName);

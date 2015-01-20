@@ -1,8 +1,11 @@
 /**
  * @module Wiki
  */
+/// <reference path="./wikiPlugin.ts"/>
 module Wiki {
-  export function CamelCanvasController($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache, $interpolate) {
+  _module.controller("Wiki.CamelCanvasController", ["$scope", "$element", "workspace", "jolokia", "wikiRepository", "$templateCache", "$interpolate", ($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache, $interpolate) => {
+    var jsPlumbInstance = jsPlumb.getInstance();
+
     $scope.addDialog = new UI.Dialog();
     $scope.propertiesDialog = new UI.Dialog();
     $scope.modified = false;
@@ -86,15 +89,15 @@ module Wiki {
     };
 
     /* TODO
-    $scope.resetForms = () => {
+     $scope.resetForms = () => {
 
-    }
-    */
+     }
+     */
 
     /*
      * Converts a path and a set of endpoint parameters into a URI we can then use to store in the XML
      */
-    function createEndpointURI(endpointScheme: string, slashesText: string, endpointPath: string, endpointParameters: any) {
+    function createEndpointURI(endpointScheme:string, slashesText:string, endpointPath:string, endpointParameters:any) {
       console.log("scheme " + endpointScheme + " path " + endpointPath + " parameters " + endpointParameters);
       // now lets create the new URI from the path and parameters
       // TODO should we use JMX for this?
@@ -113,19 +116,20 @@ module Wiki {
       if (uri) {
         $scope.nodeData.uri = uri;
       }
+
+      var key = null;
       var selectedFolder = $scope.selectedFolder;
       if (selectedFolder) {
-        var nodeName = Camel.getFolderCamelNodeId(selectedFolder);
-        if (nodeName) {
-          var nodeSettings = Camel.getCamelSchema(nodeName);
-          if (nodeSettings) {
-            // update the title and tooltip etc
-            Camel.updateRouteNodeLabelAndTooltip(selectedFolder, selectedFolder["routeXmlNode"], nodeSettings);
-            // TODO update the div directly rather than a full layout?
-          }
-        }
-        // TODO not sure we need this to be honest
-        selectedFolder["camelNodeData"] = $scope.nodeData;
+        key = selectedFolder.key;
+
+        // lets delete the current selected node's div so its updated with the new template values
+        var elements = $element.find(".canvas").find("[id='" + key + "']").first().remove();
+      }
+
+      treeModified();
+
+      if (key) {
+        updateSelection(key)
       }
 
       if ($scope.isFormDirty()) {
@@ -136,7 +140,6 @@ module Wiki {
       }
 
       Core.$apply($scope);
-      treeModified();
     };
 
     $scope.save = () => {
@@ -153,7 +156,7 @@ module Wiki {
             var commitMessage = $scope.commitMessage || "Updated page " + $scope.pageId;
             wikiRepository.putPage($scope.branch, $scope.pageId, decoded, commitMessage, (status) => {
               Wiki.onComplete(status);
-              notification("success", "Saved " + $scope.pageId);
+              Core.notification("success", "Saved " + $scope.pageId);
               $scope.modified = false;
               goToView();
               Core.$apply($scope);
@@ -318,7 +321,7 @@ module Wiki {
     }
 
     function getSelectedOrRouteFolder() {
-      return $scope.selectedFolder ||  getRouteFolder($scope.rootFolder, $scope.selectedRouteId);
+      return $scope.selectedFolder || getRouteFolder($scope.rootFolder, $scope.selectedRouteId);
     }
 
     function getContainerElement() {
@@ -327,29 +330,6 @@ module Wiki {
       if (!containerElement || !containerElement.length) containerElement = rootElement;
       return containerElement;
     }
-
-    // context menu (right click) on any component.
-    /* TODO disabling this for now just so I can look at elements easily in the dev tools
-    jsPlumb.bind("contextmenu", function (component, originalEvent) {
-      alert("context menu on component " + component.id);
-      originalEvent.preventDefault();
-      return false;
-    });
-    */
-
-
-
-    /*
-    function clearCanvasLayout(jsPlumb, containerElement) {
-      try {
-        containerElement.empty();
-        jsPlumb.reset();
-      } catch (e) {
-        // ignore errors
-      }
-      return jsPlumb;
-    }
-    */
 
     // configure canvas layout and styles
     var endpointStyle:any[] = ["Dot", { radius: 4, cssClass: 'camel-canvas-endpoint' }];
@@ -365,7 +345,7 @@ module Wiki {
     } ];
     var connectorStyle:any[] = [ "StateMachine", { curviness: 10, proximityLimit: 50 } ];
 
-    jsPlumb.importDefaults({
+    jsPlumbInstance.importDefaults({
       Endpoint: endpointStyle,
       HoverPaintStyle: hoverPaintStyle,
       ConnectionOverlays: [
@@ -375,48 +355,39 @@ module Wiki {
     });
 
     $scope.$on('$destroy', () => {
-      jsPlumb.reset();
+      jsPlumbInstance.reset();
+      delete jsPlumbInstance;
     });
 
     // double click on any connection
-    jsPlumb.bind("dblclick", function (connection, originalEvent) {
-      if (jsPlumb.isSuspendDrawing()) {
+    jsPlumbInstance.bind("dblclick", function (connection, originalEvent) {
+      if (jsPlumbInstance.isSuspendDrawing()) {
         return;
       }
       alert("double click on connection from " + connection.sourceId + " to " + connection.targetId);
     });
 
-    jsPlumb.bind('connection', function(info, evt) {
-      if (jsPlumb.isSuspendDrawing()) {
-        return;
-      }
+    jsPlumbInstance.bind('connection', function (info, evt) {
       //log.debug("Connection event: ", info);
-      log.debug("Creating connection from ", info.source.get(0).id, " to ", info.target.get(0).id);
+      log.debug("Creating connection from ", info.sourceId, " to ", info.targetId);
       var link = getLink(info);
-      var source:Folder = $scope.folders[link.source];
-      var target:Folder = $scope.folders[link.target];
-      source.moveChild(target);
+      var source = $scope.nodes[link.source];
+      var sourceFolder = $scope.folders[link.source];
+      var targetFolder = $scope.folders[link.target];
+      if (Camel.isNextSiblingAddedAsChild(source.type)) {
+        sourceFolder.moveChild(targetFolder);
+      } else {
+        sourceFolder.parent.insertAfter(targetFolder, sourceFolder);
+      }
       treeModified();
     });
 
-    jsPlumb.bind('connectionDetached', function(info, evt) {
-      if (jsPlumb.isSuspendDrawing()) {
-        return;
-      }
-      //log.debug("Connection detach event: ", info);
-      log.debug("Detaching connection from ", info.source.get(0).id, " to ", info.target.get(0).id);
-      var link = getLink(info);
-      var source:Folder = $scope.folders[link.source];
-      var target:Folder = $scope.folders[link.target];
-      // TODO orphan target folder without actually deleting it
-    });
-
     // lets delete connections on click
-    jsPlumb.bind("click", function (c) {
-      if (jsPlumb.isSuspendDrawing()) {
+    jsPlumbInstance.bind("click", function (c) {
+      if (jsPlumbInstance.isSuspendDrawing()) {
         return;
       }
-      jsPlumb.detach(c);
+      jsPlumbInstance.detach(c);
     });
 
 
@@ -430,7 +401,7 @@ module Wiki {
       $scope.nodeStates = states;
       var containerElement = getContainerElement();
 
-      jsPlumb.doWhileSuspended(() => {
+      jsPlumbInstance.doWhileSuspended(() => {
 
         //set our container to some arbitrary initial size
         containerElement.css({
@@ -445,10 +416,10 @@ module Wiki {
         containerElement.find('div.component').each((i, el) => {
           log.debug("Checking: ", el, " ", i);
           if (!states.any((node) => {
-            return el.id === getNodeId(node);  
-          })) {
+                return el.id === getNodeId(node);
+              })) {
             log.debug("Removing element: ", el.id);
-            jsPlumb.remove(el);
+            jsPlumbInstance.remove(el);
           }
         });
 
@@ -466,7 +437,7 @@ module Wiki {
           }
 
           // Make the node a jsplumb source
-          jsPlumb.makeSource(div, {
+          jsPlumbInstance.makeSource(div, {
             filter: "img.nodeIcon",
             anchor: "Continuous",
             connector: connectorStyle,
@@ -475,12 +446,12 @@ module Wiki {
           });
 
           // and also a jsplumb target
-          jsPlumb.makeTarget(div, {
+          jsPlumbInstance.makeTarget(div, {
             dropOptions: { hoverClass: "dragHover" },
             anchor: "Continuous"
           });
 
-          jsPlumb.draggable(div, {
+          jsPlumbInstance.draggable(div, {
             containment: '.camel-canvas'
           });
 
@@ -517,13 +488,13 @@ module Wiki {
 
         // Create the layout and get the buildGraph
         dagre.layout()
-                .nodeSep(100)
-                .edgeSep(edgeSep)
-                .rankSep(75)
-                .nodes(states)
-                .edges(transitions)
-                .debugLevel(1)
-                .run();
+            .nodeSep(100)
+            .edgeSep(edgeSep)
+            .rankSep(75)
+            .nodes(states)
+            .edges(transitions)
+            .debugLevel(1)
+            .run();
 
         angular.forEach(states, (node) => {
 
@@ -556,28 +527,27 @@ module Wiki {
           $scope.propertiesDialog.open();
         });
 
-        jsPlumb.setSuspendEvents(true);
+        jsPlumbInstance.setSuspendEvents(true);
         // Detach all the current connections and reconnect everything based on the updated graph
-        jsPlumb.detachEveryConnection({fireEvent: false});
+        jsPlumbInstance.detachEveryConnection({fireEvent: false});
 
         angular.forEach(links, (link) => {
-          jsPlumb.connect({
+          jsPlumbInstance.connect({
             source: getNodeId(link.source),
             target: getNodeId(link.target)
           });
         });
-        jsPlumb.setSuspendEvents(false);
+        jsPlumbInstance.setSuspendEvents(false);
 
       });
-
 
 
       return states;
     }
 
     function getLink(info) {
-      var sourceId = info.source.get(0).id;
-      var targetId = info.target.get(0).id;
+      var sourceId = info.sourceId;
+      var targetId = info.targetId;
       return {
         source: sourceId,
         target: targetId
@@ -676,22 +646,12 @@ module Wiki {
           if (!answer) {
             var id = getFolderIdAttribute(route);
             if (routeId === id) {
-                answer = route;
-              }
+              answer = route;
+            }
           }
         });
       }
       return answer;
     }
-
-    /*
-     if (jsPlumb) {
-     jsPlumb.bind("ready", setup);
-     }
-
-     function setup() {
-     $scope.jsPlumbSetup = true;
-     }
-     */
-  }
+  }]);
 }

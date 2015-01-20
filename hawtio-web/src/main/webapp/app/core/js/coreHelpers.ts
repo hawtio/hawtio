@@ -1,8 +1,18 @@
+/// <reference path="../../baseHelpers.ts"/>
+/// <reference path="../../helpers/js/controllerHelpers.ts"/>
+/// <reference path="coreInterfaces.ts"/>
+/// <reference path="./tasks.ts"/>
+/// <reference path="./workspace.ts"/>
+/// <reference path="./folder.ts"/>
+/// <reference path="../../ui/js/colors.ts"/>
 
-// TODO Get these functions and variables out of the global namespace
-var logQueryMBean = 'org.fusesource.insight:type=LogQuery';
+module Core {
 
-var _urlPrefix: string = null;
+  export var log:Logging.Logger = Logger.get("Core");
+
+  export var lazyLoaders = {};
+
+}
 
 var numberTypeNames = {
   'byte': true,
@@ -37,24 +47,6 @@ function lineCount(value): number {
   return rows;
 }
 
-function url(path: string): string {
-  if (path) {
-    if (path.startsWith && path.startsWith("/")) {
-      if (!_urlPrefix) {
-        _urlPrefix = window.location.pathname || "";
-        var idx = _urlPrefix.lastIndexOf("/");
-        if (idx >= 0) {
-          _urlPrefix = _urlPrefix.substring(0, idx);
-        }
-      }
-      if (_urlPrefix) {
-        return _urlPrefix + path;
-      }
-    }
-  }
-  return path;
-}
-
 function safeNull(value:any):string {
   if (typeof value === 'boolean') {
     return value;
@@ -78,9 +70,13 @@ function safeNullAsString(value:any, type:string):string {
   } else if (typeof value === 'string') {
     // its a string
     return "" + value;
-  } else if (angular.isArray(value)) {
-    // join array with new line, and do not sort as the order in the array may matter
-    return value.join("\n");
+  } else if (type === 'javax.management.openmbean.CompositeData' || type === '[Ljavax.management.openmbean.CompositeData;' || type === 'java.util.Map') {
+    // composite data or composite data array, we just display as json
+    // use json representation
+    var data = angular.toJson(value, true);
+    return data;
+  } else if (type === 'javax.management.ObjectName') {
+    return "" + (value == null ? "" : value.canonicalName);
   } else if (type === 'javax.management.openmbean.TabularData') {
     // tabular data is a key/value structure so loop each field and convert to array we can
     // turn into a String
@@ -93,6 +89,9 @@ function safeNullAsString(value:any, type:string):string {
     // sort array so the values is listed nicely
     arr = arr.sortBy(row => row.toString());
     return arr.join("\n");
+  } else if (angular.isArray(value)) {
+    // join array with new line, and do not sort as the order in the array may matter
+    return value.join("\n");
   } else if (value) {
     // force as string
     return "" + value;
@@ -274,9 +273,20 @@ function logLevelClass(level:string) {
  */
 module Core {
 
+  export function toPath(hashUrl:string) {
+    if (Core.isBlank(hashUrl)) {
+      return hashUrl;
+    }
+    if (hashUrl.startsWith("#")) {
+      return hashUrl.substring(1);
+    } else {
+      return hashUrl;
+    }
+  }
+
   export function parseMBean(mbean) {
-    var answer = {};
-    var parts = mbean.split(":");
+    var answer:any = {};
+    var parts:any = mbean.split(":");
     if (parts.length > 1) {
       answer['domain'] = parts.first();
       parts = parts.exclude(parts.first());
@@ -285,7 +295,7 @@ module Core {
       var nameValues = parts.split(",");
       nameValues.forEach((str) => {
         var nameValue = str.split('=');
-        var name = nameValue.first().trim();
+        var name = (<string>nameValue.first()).trim();
         nameValue = nameValue.exclude(nameValue.first());
         answer['attributes'][name] = nameValue.join('=').trim();
       });
@@ -293,7 +303,16 @@ module Core {
     return answer;
   }
 
+  export function executePostLoginTasks() {
+    log.debug("Executing post login tasks");
+    Core.postLoginTasks.execute();
+  }
 
+  export function executePreLogoutTasks(onComplete: () => void) {
+    log.debug("Executing pre logout tasks");
+    Core.preLogoutTasks.onComplete(onComplete);
+    Core.preLogoutTasks.execute();
+  }
 
   /**
    * log out the current user
@@ -310,51 +329,75 @@ module Core {
    */
   export function logout(jolokiaUrl,
                   userDetails,
-                  localStorage,
+                  localStorage:Storage,
                   $scope,
                   successCB: () => void = null,
                   errorCB: () => void = null) {
 
     if (jolokiaUrl) {
-      var url = jolokiaUrl.replace("jolokia", "auth/logout/");
+      var url = "auth/logout/";
 
-      $.ajax(url, {
-        type: "POST",
-        success: () => {
-          userDetails.username = null;
-          userDetails.password = null;
-          userDetails.loginDetails = null;
-          userDetails.rememberMe = false;
-          localStorage[jolokiaUrl] = angular.toJson(userDetails);
-          if (successCB && angular.isFunction(successCB)) {
-            successCB();
+      Core.executePreLogoutTasks(() => {
+        $.ajax(url, {
+          type: "POST",
+          success: () => {
+            userDetails.username = null;
+            userDetails.password = null;
+            userDetails.loginDetails = null;
+            userDetails.rememberMe = false;
+            delete localStorage['userDetails'];
+            var jvmConnect = angular.fromJson(localStorage['jvmConnect'])
+            _.each(jvmConnect, function(value) {
+              delete value['userName'];
+              delete value['password'];
+            });
+            localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+            localStorage.removeItem('activemqUserName');
+            localStorage.removeItem('activemqPassword');
+            if (successCB && angular.isFunction(successCB)) {
+              successCB();
+            }
+            Core.$apply($scope);
+          },
+          error: (xhr, textStatus, error) => {
+            userDetails.username = null;
+            userDetails.password = null;
+            userDetails.loginDetails = null;
+            userDetails.rememberMe = false;
+            delete localStorage['userDetails'];
+            var jvmConnect = angular.fromJson(localStorage['jvmConnect'])
+            _.each(jvmConnect, function(value) {
+              delete value['userName'];
+              delete value['password'];
+            });
+            localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+            localStorage.removeItem('activemqUserName');
+            localStorage.removeItem('activemqPassword');
+            // TODO, more feedback
+            switch (xhr.status) {
+              case 401:
+                log.debug('Failed to log out, ', error);
+                break;
+              case 403:
+                log.debug('Failed to log out, ', error);
+                break;
+              case 0:
+                // this may happen during onbeforeunload -> logout, when XHR is cancelled
+                break;
+              default:
+                log.debug('Failed to log out, ', error);
+                break;
+            }
+            if (errorCB && angular.isFunction(errorCB)) {
+              errorCB();
+            }
+            Core.$apply($scope);
           }
-          Core.$apply($scope);
-        },
-        error: (xhr, textStatus, error) => {
-          // TODO, more feedback
-          switch (xhr.status) {
-            case 401:
-              log.error('Failed to log out, ', error);
-              break;
-            case 403:
-              log.error('Failed to log out, ', error);
-              break;
-            default:
-              log.error('Failed to log out, ', error);
-              break;
-          }
-          if (errorCB && angular.isFunction(errorCB)) {
-            errorCB();
-          }
-          Core.$apply($scope);
-        }
+        });
       });
     }
 
   }
-
-  export var log:Logging.Logger = Logger.get("Core");
 
   /**
    * Creates a link by appending the current $location.search() hash to the given href link,
@@ -379,42 +422,6 @@ module Core {
       href += prefix + hash;
     }
     return href;
-  }
-
-  /**
-   * Trims the leading prefix from a string if its present
-   * @method trimLeading
-   * @for Core
-   * @static
-   * @param {String} text
-   * @param {String} prefix
-   * @return {String}
-   */
-  export function trimLeading(text:string, prefix:string) {
-    if (text && prefix) {
-      if (text.startsWith(prefix)) {
-        return text.substring(prefix.length);
-      }
-    }
-    return text;
-  }
-
-  /**
-   * Trims the trailing postfix from a string if its present
-   * @method trimTrailing
-   * @for Core
-   * @static
-   * @param {String} trim
-   * @param {String} postfix
-   * @return {String}
-   */
-  export function trimTrailing(text:string, postfix:string) {
-    if (text && postfix) {
-      if (text.endsWith(postfix)) {
-        return text.substring(0, text.length - postfix.length);
-      }
-    }
-    return text;
   }
 
   /**
@@ -458,6 +465,166 @@ module Core {
   }
 
   /**
+   * Register a JMX operation to poll for changes, only
+   * calls back when a change occurs
+   *
+   * @param jolokia
+   * @param scope
+   * @param arguments
+   * @param callback
+   * @param options
+   * @returns Object
+   */
+  export function registerForChanges(jolokia, $scope, arguments, callback:(response:any) => void, options?:any):() => void {
+    var decorated = {
+      responseJson: '',
+      success: (response) => {
+        var json = angular.toJson(response.value);
+        if (decorated.responseJson !== json) {
+          decorated.responseJson = json;
+          callback(response);
+        }
+      }
+    };
+    angular.extend(decorated, options);
+    return Core.register(jolokia, $scope, arguments, onSuccess(undefined, decorated));
+  }
+
+  // Jolokia caching stuff, try and cache responses so we don't always have to wait
+  // for the server
+
+  export interface IResponseHistory {
+    [name:string]:any;
+  }
+
+  var responseHistory:IResponseHistory = null;
+
+  export function getOrInitObjectFromLocalStorage(key:string):any {
+    var answer:any = undefined;
+    if (!(key in localStorage)) {
+      localStorage[key] = angular.toJson({});
+    }
+    return angular.fromJson(localStorage[key]);
+  }
+
+  function argumentsToString(arguments:Array<any>) {
+    return StringHelpers.toString(arguments);
+  }
+
+  function keyForArgument(argument:any) {
+    if (!('type' in argument)) {
+      return null;
+    }
+    var answer = <string>argument['type'];
+    switch(answer.toLowerCase()) {
+      case 'exec':
+        answer += ':' + argument['mbean'] + ':' + argument['operation'];
+        var argString = argumentsToString(argument['arguments']);
+        if (!Core.isBlank(argString)) {
+          answer += ':' + argString;
+        }
+        break;
+      case 'read':
+        answer += ':' + argument['mbean'] + ':' + argument['attribute'];
+        break;
+      default:
+        return null;
+    }
+    return answer;
+  }
+
+  function createResponseKey(arguments:any) {
+    var answer = '';
+    if (angular.isArray(arguments)) {
+      answer = arguments.map((arg) => { return keyForArgument(arg); }).join(':');
+    } else {
+      answer = keyForArgument(arguments);
+    }
+    return answer;
+  }
+
+  export function getResponseHistory():any {
+    if (responseHistory === null) {
+      //responseHistory = getOrInitObjectFromLocalStorage('responseHistory');
+      responseHistory = {};
+      log.debug("Created response history", responseHistory);
+    }
+    return responseHistory;
+  }
+
+  export var MAX_RESPONSE_CACHE_SIZE = 20;
+
+  function getOldestKey(responseHistory:IResponseHistory) {
+    var oldest:number = null;
+    var oldestKey:string = null;
+    angular.forEach(responseHistory, (value:any, key:string) => {
+      //log.debug("Checking entry: ", key);
+      //log.debug("Oldest timestamp: ", oldest, " key: ", key, " value: ", value);
+      if (!value || !value.timestamp) {
+        // null value is an excellent candidate for deletion
+        oldest = 0;
+        oldestKey = key;
+      } else if (oldest === null || value.timestamp < oldest) {
+        oldest = value.timestamp;
+        oldestKey = key;
+      }
+    });
+    return oldestKey;
+  }
+
+  function addResponse(arguments:any, value:any) {
+    var responseHistory = getResponseHistory();
+    var key = createResponseKey(arguments);
+    if (key === null) {
+      log.debug("key for arguments is null, not caching: ", StringHelpers.toString(arguments));
+      return;
+    }
+    //log.debug("Adding response to history, key: ", key, " value: ", value);
+    // trim the cache if needed
+    var keys = Object.extended(responseHistory).keys();
+    //log.debug("Number of stored responses: ", keys.length);
+    if (keys.length >= MAX_RESPONSE_CACHE_SIZE) {
+      log.debug("Cache limit (", MAX_RESPONSE_CACHE_SIZE, ") met or  exceeded (", keys.length, "), trimming oldest response");
+      var oldestKey = getOldestKey(responseHistory);
+      if (oldestKey !== null) {
+        // delete the oldest entry
+        log.debug("Deleting key: ", oldestKey);
+        delete responseHistory[oldestKey];
+      } else {
+        log.debug("Got null key, could be a cache problem, wiping cache");
+        keys.forEach((key) => {
+          log.debug("Deleting key: ", key);
+          delete responseHistory[key];
+        });
+      }
+    }
+
+    responseHistory[key] = value;
+    //localStorage['responseHistory'] = angular.toJson(responseHistory);
+  }
+
+  function getResponse(jolokia, arguments:any, callback:any) {
+    var responseHistory = getResponseHistory();
+    var key = createResponseKey(arguments);
+    if (key === null) {
+      jolokia.request(arguments, callback);
+      return;
+    }
+    if (key in responseHistory && 'success' in callback) {
+      var value = responseHistory[key];
+      // do this async, the controller might not handle us immediately calling back
+      setTimeout(() => {
+        callback['success'](value);
+      }, 10);
+    } else {
+      log.debug("Unable to find existing response for key: ", key);
+      jolokia.request(arguments, callback);
+    }
+  }
+  // end jolokia caching stuff
+
+
+  /**
    * Register a JMX operation to poll for changes
    * @method register
    * @for Core
@@ -468,9 +635,19 @@ module Core {
    * @param {Object} arguments
    * @param {Function} callback
    */
-  export function register(jolokia, scope, arguments: any, callback) {
+  export function register(jolokia:Jolokia.IJolokia, scope, arguments: any, callback) {
+    /*
+    if (scope && !Core.isBlank(scope.name)) {
+      Core.log.debug("Calling register from scope: ", scope.name);
+    } else {
+      Core.log.debug("Calling register from anonymous scope");
+    }
+    */
     if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
+      //log.debug("No existing handle set, creating one");
       scope.$jhandle = [];
+    } else {
+      //log.debug("Using existing handle set");
     }
     if (angular.isDefined(scope.$on)) {
       scope.$on('$destroy', function (event) {
@@ -478,25 +655,34 @@ module Core {
       });
     }
 
-    var handle = null;
+    var handle:number = null;
+
+    if ('success' in callback) {
+      var cb = callback.success;
+      var args = arguments;
+      callback.success = (response) => {
+        addResponse(args, response);
+        cb(response);
+      }
+    }
 
     if (angular.isArray(arguments)) {
       if (arguments.length >= 1) {
         // TODO can't get this to compile in typescript :)
         //var args = [callback].concat(arguments);
-        var args = [callback];
+        var args = <any>[callback];
         angular.forEach(arguments, (value) => args.push(value));
         //var args = [callback];
         //args.push(arguments);
         var registerFn = jolokia.register;
         handle = registerFn.apply(jolokia, args);
         scope.$jhandle.push(handle);
-        jolokia.request(arguments, callback);
+        getResponse(jolokia, arguments, callback);
       }
     } else {
       handle = jolokia.register(callback, arguments);
       scope.$jhandle.push(handle);
-      jolokia.request(arguments, callback);
+      getResponse(jolokia, arguments, callback);
     }
     return () => {
       if (handle !== null) {
@@ -506,46 +692,49 @@ module Core {
     };
   }
 
-    /**
-     * Register a JMX operation to poll for changes using a jolokia search using the given mbean pattern
-     * @method registerSearch
-     * @for Core
-     * @static
-     * @paran {*} jolokia
-     * @param {*} scope
-     * @param {String} mbeanPattern
-     * @param {Function} callback
-     */
-    export function registerSearch(jolokia, scope, mbeanPattern:string, callback) {
-        if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
-            scope.$jhandle = [];
-        }
-        if (angular.isDefined(scope.$on)) {
-            scope.$on('$destroy', function (event) {
-                unregister(jolokia, scope);
-            });
-        }
-        if (angular.isArray(arguments)) {
-            if (arguments.length >= 1) {
-                // TODO can't get this to compile in typescript :)
-                //var args = [callback].concat(arguments);
-                var args = [callback];
-                angular.forEach(arguments, (value) => args.push(value));
-                //var args = [callback];
-                //args.push(arguments);
-                var registerFn = jolokia.register;
-                var handle = registerFn.apply(jolokia, args);
-                scope.$jhandle.push(handle);
-                jolokia.search(mbeanPattern, callback);
-            }
-        } else {
-            var handle = jolokia.register(callback, arguments);
-            scope.$jhandle.push(handle);
-            jolokia.search(mbeanPattern, callback);
-        }
-    }
+  /**
+   * Register a JMX operation to poll for changes using a jolokia search using the given mbean pattern
+   * @method registerSearch
+   * @for Core
+   * @static
+   * @paran {*} jolokia
+   * @param {*} scope
+   * @param {String} mbeanPattern
+   * @param {Function} callback
+   */
+  /*
+  TODO - won't compile, and where is 'arguments' coming from?
+  export function registerSearch(jolokia:Jolokia.IJolokia, scope, mbeanPattern:string, callback) {
+      if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
+          scope.$jhandle = [];
+      }
+      if (angular.isDefined(scope.$on)) {
+          scope.$on('$destroy', function (event) {
+              unregister(jolokia, scope);
+          });
+      }
+      if (angular.isArray(arguments)) {
+          if (arguments.length >= 1) {
+              // TODO can't get this to compile in typescript :)
+              //var args = [callback].concat(arguments);
+              var args = [callback];
+              angular.forEach(arguments, (value) => args.push(value));
+              //var args = [callback];
+              //args.push(arguments);
+              var registerFn = jolokia.register;
+              var handle = registerFn.apply(jolokia, args);
+              scope.$jhandle.push(handle);
+              jolokia.search(mbeanPattern, callback);
+          }
+      } else {
+          var handle = jolokia.register(callback, arguments);
+          scope.$jhandle.push(handle);
+          jolokia.search(mbeanPattern, callback);
+      }
+  }
+  */
 
-    export function unregister(jolokia, scope) {
+  export function unregister(jolokia:Jolokia.IJolokia, scope) {
     if (angular.isDefined(scope.$jhandle)) {
       scope.$jhandle.forEach(function (handle) {
         jolokia.unregister(handle);
@@ -572,15 +761,27 @@ module Core {
           // such as its been removed
           // or if we run against older containers
           Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
-          Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
+          // Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
         } else {
           Core.log.warn("Operation ", operation, " failed due to: ", response['error']);
-          Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
+          // Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
         }
       } else {
         Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
-        Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
+        // Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
       }
+    }
+  }
+
+  /**
+   * Logs any failed operation and stack traces
+   */
+  export function logJolokiaStackTrace(response) {
+    var stacktrace = response.stacktrace;
+    if (stacktrace) {
+      var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
+      Core.log.info("Operation ", operation, " failed due to: ", response['error']);
+      // Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
     }
   }
 
@@ -947,7 +1148,11 @@ module Core {
     return answer;
   }
 
-  export function getBasicAuthHeader(username, password) {
+  export function authHeaderValue(userDetails:Core.UserDetails) {
+    return getBasicAuthHeader(<string>userDetails.username, <string>userDetails.password);
+  }
+
+  export function getBasicAuthHeader(username:string, password:string) {
     var authInfo = username + ":" + password;
     authInfo = authInfo.encodeBase64();
     return "Basic " + authInfo;
@@ -1003,18 +1208,6 @@ module Core {
     }
   }
 
-  export class ConnectToServerOptions {
-    public scheme:string = "http";
-    public host:string;
-    public port:number;
-    public path:string;
-    public useProxy:boolean = true;
-    public jolokiaUrl:string;
-    public userName:string;
-    public password:string;
-    public view:string;
-  }
-
   export function getDocHeight() {
     var D = document;
     return Math.max(
@@ -1049,150 +1242,149 @@ module Core {
         connectUrl = connectUrl.replace(":", "/");
         connectUrl = Core.trimLeading(connectUrl, "/");
         connectUrl = Core.trimTrailing(connectUrl, "/");
-        connectUrl = url("/proxy/" + connectUrl);
+        connectUrl = Core.url("/proxy/" + connectUrl);
     }
     return connectUrl;
   }
 
-  export function connectToServer(localStorage, options:ConnectToServerOptions) {
-    var connectUrl = options.jolokiaUrl;
+  export function checkInjectorLoaded() {
+    // TODO sometimes the injector is not yet initialised; so lets try initialise it here just in case
+    if (!Core.injector) {
+      Core.injector = angular.element(document.documentElement).injector();
+    }
+  }
 
-    var userDetails = {
-      username: options['userName'],
-      password: options['password']
+  export function getRecentConnections(localStorage) {
+    if (Core.isBlank(localStorage['recentConnections'])) {
+      Core.clearConnections();
+    }
+    return angular.fromJson(localStorage['recentConnections']);
+  }
+
+  export function addRecentConnection(localStorage, name) {
+    var recent = getRecentConnections(localStorage);
+    recent = recent.add(name).unique().first(5);
+    localStorage['recentConnections'] = angular.toJson(recent);
+  }
+
+  export function removeRecentConnection(localStorage, name) {
+    var recent = getRecentConnections(localStorage);
+    recent = recent.exclude((n) => { return n === name; });
+    localStorage['recentConnections'] = angular.toJson(recent);
+  }
+
+  export function clearConnections() {
+    localStorage['recentConnections'] = '[]';
+  }
+
+  export function saveConnection(options: Core.ConnectOptions) {
+    var connectionMap = Core.loadConnectionMap();
+    // use a copy so we can leave the original one alone
+    var clone = <Core.ConnectOptions>Object.clone(options);
+    delete clone.userName;
+    delete clone.password;
+    connectionMap[<string>options.name] = clone;
+    Core.saveConnectionMap(connectionMap);
+  }
+
+  export function connectToServer(localStorage, options:Core.ConnectToServerOptions) {
+    log.debug("Connecting with options: ", StringHelpers.toString(options));
+    addRecentConnection(localStorage, options.name);
+    if (!('userName' in options)) {
+      var userDetails = <Core.UserDetails> Core.injector.get('userDetails');
+      options.userName = userDetails.username;
+      options.password = userDetails.password;
+    }
+    saveConnection(options);
+    var $window:ng.IWindowService = Core.injector.get('$window');
+    var url = (options.view || '#/welcome') + '?con=' + options.name;
+    url = url.replace(/\?/g, "&");
+    url = url.replace(/&/, "?");
+    var newWindow = $window.open(url);
+    newWindow['con'] = options.name;
+    $window['passUserDetails'] = {
+      username: options.userName,
+      password: options.password,
+      loginDetails: {}
     };
+  }
 
-    // TODO we should replace this and just store the real, final connectUrl!
-
-    var json = angular.toJson(userDetails);
-    if (connectUrl) {
-      localStorage[connectUrl] = json;
+  /**
+   * Extracts the url of the target, eg usually http://localhost:port, but if we use fabric to proxy to another host,
+   * then we return the url that we proxied too (eg the real target)
+   *
+   * @param {ng.ILocationService} $location
+   * @param {String} scheme to force use a specific scheme, otherwise the scheme from location is used
+   * @param {Number} port to force use a specific port number, otherwise the port from location is used
+   */
+  export function extractTargetUrl($location, scheme, port) {
+    if (angular.isUndefined(scheme)) {
+      scheme = $location.scheme();
     }
-    var view = options.view;
-    var full = "";
-    var useProxy = options.useProxy && !Core.isChromeApp();
-    if (connectUrl) {
-      if (useProxy) {
-        // lets remove the http stuff
-        var idx = connectUrl.indexOf("://");
+
+    var host = $location.host();
+
+    //  $location.search()['url']; does not work for some strange reason
+    // var qUrl = $location.search()['url'];
+
+    // if its a proxy request using hawtio-proxy servlet, then the url parameter
+    // has the actual host/port
+    var qUrl = $location.absUrl();
+    var idx = qUrl.indexOf("url=");
+    if (idx > 0) {
+      qUrl = qUrl.substr(idx + 4);
+      var value = decodeURIComponent(qUrl);
+      if (value) {
+        idx = value.indexOf("/proxy/");
+        // after proxy we have host and optional port (if port is not 80)
         if (idx > 0) {
-          connectUrl = connectUrl.substring(idx + 3);
+          value = value.substr(idx + 7);
+          // if the path has http:// or some other scheme in it lets trim that off
+          idx = value.indexOf("://");
+          if (idx > 0) {
+            value = value.substr(idx + 3);
+          }
+          var data = value.split("/");
+          if (data.length >= 1) {
+            host = data[0];
+          }
+          if (angular.isUndefined(port) && data.length >= 2) {
+            var qPort = Core.parseIntValue(data[1], "port number");
+            if (qPort) {
+              port = qPort;
+            }
+          }
         }
-        // lets replace the : with a /
-        connectUrl = connectUrl.replace(":", "/");
-        connectUrl = Core.trimLeading(connectUrl, "/");
-        connectUrl = Core.trimTrailing(connectUrl, "/");
-        connectUrl = url("/proxy/" + connectUrl);
-      } else {
-        if (connectUrl.indexOf("://") < 0) {
-          connectUrl = options.scheme + "://" + connectUrl;
-        }
-      }
-      console.log("going to server: " + connectUrl + " as user " + options.userName);
-      localStorage[connectUrl] = json;
-
-      full = "?url=" + encodeURIComponent(connectUrl);
-      if (view) {
-        full += "#" + view;
-      }
-    } else {
-
-      var host = options.host || "localhost";
-      var port = options.port;
-      var path = Core.trimLeading(options.path || "jolokia", "/");
-      path = Core.trimTrailing(path, "/");
-
-      if (port > 0) {
-        host += ":" + port;
-      }
-      var connectUrl = host + "/" + path;
-      localStorage[connectUrl] = json;
-      if (useProxy) {
-        connectUrl = url("/proxy/" + connectUrl);
-      } else {
-        if (connectUrl.indexOf("://") < 0) {
-          connectUrl = options.scheme + "://" + connectUrl;
-        }
-      }
-      console.log("going to server: " + connectUrl + " as user " + options.userName);
-      localStorage[connectUrl] = json;
-
-      full = "?url=" + encodeURIComponent(connectUrl);
-      if (view) {
-        full += "#" + view;
       }
     }
-    if (full) {
-      log.info("Full URL is: " + full);
-      window.open(full);
+
+    if (angular.isUndefined(port)) {
+      port = $location.port();
     }
 
+    var url = scheme + "://" + host;
+    if (port != 80) {
+      url += ":" + port;
+    }
+    return url;
   }
-
 
   /**
-   * Binds a $location.search() property to a model on a scope; so that its initialised correctly on startup
-   * and its then watched so as the model changes, the $location.search() is updated to reflect its new value
-   * @method bindModelToSearchParam
-   * @for Core
-   * @static
-   * @param {*} $scope
-   * @param {ng.ILocationService} $location
-   * @param {String} modelName
-   * @param {String} paramName
-   * @param {Object} initialValue
+   * Returns true if the $location is from the hawtio proxy
    */
-  export function bindModelToSearchParam($scope, $location, modelName, paramName, initialValue = null) {
-    function currentValue() {
-      return $location.search()[paramName] || initialValue;
-    }
-
-    var value = currentValue();
-    Core.pathSet($scope, modelName, value);
-    $scope.$watch(modelName, () => {
-      var current = Core.pathGet($scope, modelName);
-      if (current) {
-        var params = $location.search();
-        var old = currentValue();
-        if (current !== old) {
-          $location.search(paramName, current);
-        }
-      } else {
-        $location.search(paramName, null);
-      }
-    });
+  export function isProxyUrl($location:ng.ILocationService) {
+    var url = $location.url();
+    return url.indexOf('/hawtio/proxy/') > 0;
   }
-
 
   /**
-   * For controllers where reloading is disabled via "reloadOnSearch: false" on the registration; lets pick which
-   * query parameters need to change to force the reload. We default to the JMX selection parameter 'nid'
-   * @method reloadWhenParametersChange
-   * @for Core
-   * @static
-   * @param {Object} $route
-   * @param {*} $scope
-   * @param {ng.ILocationService} $location
-   * @param {Array[String]} parameters
-   */
-  export function reloadWhenParametersChange($route, $scope, $location, parameters = ["nid"]) {
-    var initial = angular.copy($location.search());
-    $scope.$on('$routeUpdate', () => {
-      // lets check if any of the parameters changed
-      var current = $location.search();
-      var changed = [];
-      angular.forEach(parameters, (param) => {
-        if (current[param] !== initial[param]) {
-          changed.push(param);
-        }
-      });
-      if (changed.length) {
-        log.info("Reloading page due to change to parameters: " + changed);
-        $route.reload();
-      }
-    });
-  }
+   * handy do nothing converter for the below function
+   **/
+  export function doNothing(value:any) { return value; }
 
+  // moved these into their own helper file
+  export var bindModelToSearchParam = ControllerHelpers.bindModelToSearchParam;
+  export var reloadWhenParametersChange = ControllerHelpers.reloadWhenParametersChange;
 
   /**
    * Creates a jolokia object for connecting to the container with the given remote jolokia URL,
@@ -1206,7 +1398,7 @@ module Core {
    * @return {Object}
    */
   export function createJolokia(url: string, username: string, password: string) {
-    var jolokiaParams = {
+    var jolokiaParams:Jolokia.IParams = {
       url: url,
       username: username,
       password: password,
@@ -1234,7 +1426,7 @@ module Core {
         nextInvokeTime = now + millis;
         lastAnswer = fn();
       } else {
-        log.debug("Not invoking function as we did call " + (now - (nextInvokeTime - millis)) + " ms ago");
+        //log.debug("Not invoking function as we did call " + (now - (nextInvokeTime - millis)) + " ms ago");
       }
       return lastAnswer;
     }
@@ -1261,7 +1453,7 @@ module Core {
    * Returns the humanized markup of the given value
    */
   export function humanizeValueHtml(value:any):string {
-    var formattedValue = "";
+    var formattedValue:string = "";
     if (value === true) {
       formattedValue = '<i class="icon-check"></i>';
     } else if (value === false) {
@@ -1313,7 +1505,7 @@ module Core {
       xhr: null
     };
     // disable reload notifications
-    var jmxTreeLazyLoadRegistry = Jmx.lazyLoaders;
+    var jmxTreeLazyLoadRegistry = Core.lazyLoaders;
     var profileWorkspace = new Workspace(remoteJolokia, jolokiaStatus, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope, userDetails);
 
     log.info("Loading the profile using jolokia: " + remoteJolokia);
@@ -1359,7 +1551,7 @@ module Core {
 
   export function storeConnectionRegex(regexs, name, json) {
     if (!regexs.any((r) => { r['name'] === name })) {
-      var regex = '';
+      var regex:string = '';
 
       if (json['useProxy']) {
         regex = '/hawtio/proxy/';
@@ -1398,6 +1590,62 @@ module Core {
 
   export function writeRegexs(regexs) {
     localStorage['regexs'] = angular.toJson(regexs);
+  }
+
+  export function maskPassword(value:any) {
+    if (value) {
+      var text = '' + value;
+      // we use the same patterns as in Apache Camel in its
+      // org.apache.camel.util.URISupport.sanitizeUri
+      var userInfoPattern = "(.*://.*:)(.*)(@)";
+      value = value.replace(new RegExp(userInfoPattern, 'i'), "$1xxxxxx$3");
+    }
+
+    return value;
+  }
+
+  /**
+   * Match the given filter against the text, ignoring any case.
+   * <p/>
+   * This operation will regard as a match if either filter or text is null/undefined.
+   * As its used for filtering out, unmatched.
+   * <p/>
+   *
+   * @param text   the text
+   * @param filter the filter
+   * @return true if matched, false if not.
+   */
+  export function matchFilterIgnoreCase(text, filter):any {
+    if (angular.isUndefined(text) || angular.isUndefined(filter)) {
+      return true;
+    }
+    if (text == null || filter == null) {
+      return true;
+    }
+
+    text = text.toString().trim().toLowerCase();
+    filter = filter.toString().trim().toLowerCase();
+
+    if (text.length === 0 || filter.length === 0) {
+      return true;
+    }
+
+    // there can be more tokens separated by comma
+    var tokens = filter.split(",");
+
+    // filter out empty tokens, and make sure its trimmed
+    tokens = tokens.filter(t => {
+      return t.length > 0;
+    }).map(t => {
+      return t.trim();
+    });
+    // match if any of the tokens matches the text
+    var answer = tokens.some(t => {
+      var bool = text.indexOf(t) > -1;
+      return bool;
+    });
+
+    return answer;
   }
 
 }

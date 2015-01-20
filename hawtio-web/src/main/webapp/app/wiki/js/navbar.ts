@@ -1,10 +1,54 @@
 /**
  * @module Wiki
  */
+/// <reference path="wikiPlugin.ts"/>
 module Wiki {
-  export function NavBarController($scope, $location, $routeParams, workspace:Workspace, wikiRepository:GitWikiRepository) {
+  _module.controller("Wiki.NavBarController", ["$scope", "$location", "$routeParams", "workspace", "jolokia", "wikiRepository", "wikiBranchMenu", ($scope, $location, $routeParams, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, wikiBranchMenu:BranchMenu) => {
+
+    var isFmc = Fabric.isFMCContainer(workspace);
 
     Wiki.initScope($scope, $routeParams, $location);
+    $scope.branchMenuConfig = <UI.MenuItem>{
+      title: $scope.branch,
+      items: []
+    };
+
+    $scope.ViewMode = Wiki.ViewMode;
+    $scope.setViewMode = (mode:Wiki.ViewMode) => {
+      $scope.$emit('Wiki.SetViewMode', mode);
+    };
+
+    wikiBranchMenu.applyMenuExtensions($scope.branchMenuConfig.items);
+
+    $scope.$watch('branches', (newValue, oldValue) => {
+      if (newValue === oldValue || !newValue) {
+        return;
+      }
+      $scope.branchMenuConfig.items = [];
+      if (newValue.length > 0) {
+        $scope.branchMenuConfig.items.push({
+          heading: isFmc ? "Versions" : "Branches"
+        });
+      }
+      newValue.sort().forEach((item) => {
+        var menuItem = {
+          title: item,
+          icon: '',
+          action: () => {}
+        };
+        if (item === $scope.branch) {
+          menuItem.icon = "icon-ok";
+        } else {
+          menuItem.action = () => {
+            var targetUrl = branchLink(item, <string>$scope.pageId, $location);
+            $location.path(Core.toPath(targetUrl));
+            Core.$apply($scope);
+          }
+        }
+        $scope.branchMenuConfig.items.push(menuItem);
+      });
+      wikiBranchMenu.applyMenuExtensions($scope.branchMenuConfig.items);
+    }, true);
 
     $scope.createLink = () => {
       var pageId = Wiki.pageId($routeParams, $location);
@@ -15,10 +59,10 @@ module Wiki {
 
     $scope.sourceLink = () => {
       var path = $location.path();
-      var answer = null;
+      var answer = <string>null;
       angular.forEach(Wiki.customViewLinks($scope), (link) => {
         if (path.startsWith(link)) {
-          answer = Core.createHref($location, Wiki.startLink($scope.branch) + "/view" + path.substring(link.length))
+          answer = <string>Core.createHref($location, Wiki.startLink($scope.branch) + "/view" + path.substring(link.length))
         }
       });
       // remove the form parameter on view/edit links
@@ -40,7 +84,6 @@ module Wiki {
     });
 
     loadBreadcrumbs();
-
 
     function switchFromViewToCustomLink(breadcrumb, link) {
       var href = breadcrumb.href;
@@ -71,7 +114,7 @@ module Wiki {
       if ($scope.breadcrumbs.length) {
         var last = $scope.breadcrumbs[$scope.breadcrumbs.length - 1];
         // possibly trim any required file extensions
-        last.name = Wiki.hideFineNameExtensions(last.name);
+        last.name = Wiki.hideFileNameExtensions(last.name);
 
         var swizzled = false;
         angular.forEach(Wiki.customViewLinks($scope), (link) => {
@@ -125,5 +168,5 @@ module Wiki {
       }
       Core.$apply($scope);
     }
-  }
+  }]);
 }

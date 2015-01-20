@@ -14,7 +14,8 @@
   },
 
   "permissions": [
-    "http://*/"
+    "http://*/",
+    "https://*/"
   ],
 
   "app": {

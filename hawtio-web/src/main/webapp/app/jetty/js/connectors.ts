@@ -1,9 +1,10 @@
 /**
  * @module Jetty
  */
+/// <reference path="./jettyPlugin.ts"/>
 module Jetty {
 
-  export function ConnectorsController($scope, $location, workspace:Workspace, jolokia) {
+  _module.controller("Jetty.ConnectorsController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
     var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jettyIconClass}}"></i></div>';
 
@@ -190,5 +191,5 @@ module Jetty {
       jolokia.search("org.eclipse.jetty.server:type=serverconnector,*", onSuccess(render9));
     }
 
-  }
+  }]);
 }

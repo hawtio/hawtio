@@ -1,9 +1,10 @@
 /**
  * @module Jclouds
  */
+/// <reference path="../jcloudsPlugin.ts"/>
 module Jclouds {
 
-    export function ComputeNavigationController($scope, $routeParams, workspace:Workspace) {
+    _module.controller("Jclouds.ComputeNavigationController", ["$scope", "$routeParams", "workspace", ($scope, $routeParams, workspace:Workspace) => {
         $scope.computeId = $routeParams.computeId;
 
         $scope.isActive = (nav) => {
@@ -16,5 +17,5 @@ module Jclouds {
             return workspace.isLinkActive(nav.href());
         };
 
-    }
+    }]);
 }

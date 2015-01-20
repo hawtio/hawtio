@@ -3,14 +3,9 @@ package io.hawt.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
+
+import static io.hawt.util.Closeables.closeQuietly;
 
 /**
  * A collection of IO helpers
@@ -80,6 +75,10 @@ public class IOHelper {
         write(file, text, false);
     }
 
+    public static void write(File file, byte[] data) throws IOException {
+        write(file, data, false);
+    }
+
     /**
      * Writes the given text to the file; either in append mode or replace mode depending
      * the append flag
@@ -90,6 +89,19 @@ public class IOHelper {
             writer.write(text);
         } finally {
             writer.close();
+        }
+    }
+
+    /**
+     * Writes the given data to the file; either in append mode or replace mode depending
+     * the append flag
+     */
+    public static void write(File file, byte[] data, boolean append) throws IOException {
+        FileOutputStream stream = new FileOutputStream(file, append);
+        try {
+            stream.write(data);
+        } finally {
+            stream.close();
         }
     }
 
@@ -109,5 +121,19 @@ public class IOHelper {
         output.flush();
         return total;
     }
+
+    public static void copy(InputStream is, OutputStream os) throws IOException {
+        try {
+            byte[] b = new byte[64 * 1024];
+            int l = is.read(b);
+            while (l >= 0) {
+                os.write(b, 0, l);
+                l = is.read(b);
+            }
+        } finally {
+            closeQuietly(os);
+        }
+    }
+
 
 }

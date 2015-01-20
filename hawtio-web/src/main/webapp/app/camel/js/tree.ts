@@ -1,6 +1,30 @@
+/// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  export function TreeController($scope, $location:ng.ILocationService, $timeout, workspace:Workspace) {
+  _module.controller("Camel.TreeHeaderController", ["$scope", "$location", ($scope, $location) => {
+
+    $scope.contextFilterText = '';
+
+    $scope.$watch('contextFilterText', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        $scope.$emit("camel-contextFilterText", newValue);
+      }
+    });
+
+    $scope.expandAll = () => {
+      Tree.expandAll("#cameltree");
+    };
+
+    $scope.contractAll = () => {
+      Tree.contractAll("#cameltree");
+    };
+  }]);
+
+  _module.controller("Camel.TreeController", ["$scope", "$location", "$timeout", "workspace", "$rootScope", ($scope,
+                                 $location:ng.ILocationService,
+                                 $timeout,
+                                 workspace:Workspace,
+                                 $rootScope) => {
     $scope.contextFilterText = $location.search()["cq"];
     $scope.fullScreenViewLink = Camel.linkToFullScreenView(workspace);
 
@@ -25,6 +49,10 @@ module Camel {
       if ($scope.contextFilterText != $scope.lastContextFilterText) {
         $timeout(reloadOnContextFilterThrottled, 250);
       }
+    });
+
+    $rootScope.$on('camel-contextFilterText', (event, value) => {
+      $scope.contextFilterText = value;
     });
 
     $scope.$on('jmxTreeUpdated', function () {
@@ -62,7 +90,8 @@ module Camel {
                 var contextNode = contextsFolder.children[0];
                 if (contextNode) {
                   var title = contextNode.title;
-                  if (!contextFilterText || (title && title.indexOf(contextFilterText) >= 0)) {
+                  var match = Core.matchFilterIgnoreCase(title, contextFilterText);
+                  if (match) {
                     var folder = new Folder(title);
                     folder.addClass = "org-apache-camel-context";
                     folder.domain = domainName;
@@ -70,6 +99,7 @@ module Camel {
                     folder.entries = contextNode.entries;
                     folder.typeName = contextNode.typeName;
                     folder.key = contextNode.key;
+                    folder.version = contextNode.version
                     if (routesNode) {
                       var routesFolder = new Folder("Routes");
                       routesFolder.addClass = "org-apache-camel-routes-folder";
@@ -122,23 +152,6 @@ module Camel {
 
         var treeElement = $("#cameltree");
         Jmx.enableTree($scope, $location, workspace, treeElement, [rootFolder], true);
-        /*
-
-         // lets select the first node if we have no selection
-         var key = $location.search()['nid'];
-         var node = children[0];
-         if (!key && node) {
-         key = node['key'];
-         if (key) {
-         var q = $location.search();
-         q['nid'] = key;
-         $location.search(q);
-         }
-         }
-         if (!key) {
-         updateSelectionFromURL();
-         }
-         */
         // lets do this asynchronously to avoid Error: $digest already in progress
         setTimeout(() => {
           updateSelectionFromURL()
@@ -169,6 +182,6 @@ module Camel {
       }, true);
       $scope.fullScreenViewLink = Camel.linkToFullScreenView(workspace);
     }
-  }
+  }]);
 
 }

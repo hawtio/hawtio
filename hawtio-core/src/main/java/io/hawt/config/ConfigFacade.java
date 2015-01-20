@@ -7,6 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A facade for the hawtio configuration features.
@@ -15,12 +20,13 @@ public class ConfigFacade extends MBeanSupport implements ConfigFacadeMBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(ConfigFacade.class);
     private static ConfigFacade singleton;
 
+    private static Map<String, URLHandler> urlStreamHandlerMap = new ConcurrentHashMap<String, URLHandler>();
     private String configDir;
     private String version;
 
     public static ConfigFacade getSingleton() {
         if (singleton == null) {
-            LOG.warn("No ConfigFacade constructed yet so using default configuration for now");
+            LOG.debug("No ConfigFacade constructed yet so using default configuration for now");
             singleton = new ConfigFacade();
         }
         return singleton;
@@ -40,7 +46,7 @@ public class ConfigFacade extends MBeanSupport implements ConfigFacadeMBean {
     @Override
     public String getVersion() {
         if (version == null) {
-            version = Objects.getVersion(getClass(),"io.hawt",  "hawtio-core");
+            version = Objects.getVersion(getClass(), "io.hawt", "hawtio-core");
         }
         return version;
     }
@@ -65,7 +71,7 @@ public class ConfigFacade extends MBeanSupport implements ConfigFacadeMBean {
         if (Strings.isBlank(configDir)) {
             // lets default to the users home directory
             String home = System.getProperty("user.home", "~");
-            configDir = home + "/.hawtio";
+            configDir = home + System.getProperty("hawtio.dirname", "/.hawtio");
         }
         return configDir;
     }
@@ -76,6 +82,31 @@ public class ConfigFacade extends MBeanSupport implements ConfigFacadeMBean {
 
     public boolean isOffline() {
         return "true".equals(System.getProperty("hawtio.offline", "false"));
+    }
+
+    public InputStream openURL(String url) throws IOException {
+        int idx = url.indexOf(':');
+        if (idx > 1) {
+            String protocol = url.substring(0, idx);
+            String path = url.substring(idx + 1);
+            URLHandler urlHandler = getUrlHandler(protocol);
+            if (urlHandler != null) {
+                return urlHandler.openStream(path);
+            }
+        }
+        return new URL(url).openStream();
+    }
+
+    public URLHandler getUrlHandler(String protocol) {
+        return urlStreamHandlerMap.get(protocol);
+    }
+
+    public void addUrlHandler(String protocol, URLHandler handler) {
+        urlStreamHandlerMap.put(protocol, handler);
+    }
+
+    public void removeUrlHandler(String protocol) {
+        urlStreamHandlerMap.remove(protocol);
     }
 
 }

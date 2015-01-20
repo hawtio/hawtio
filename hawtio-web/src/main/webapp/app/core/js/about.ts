@@ -1,9 +1,10 @@
 /**
  * @module Core
  */
+/// <reference path="corePlugin.ts"/>
 module Core {
 
-  export function AboutController($scope, $location, jolokia, branding, localStorage) {
+  _module.controller("Core.AboutController", ["$scope", "$location", "jolokia", "branding", "localStorage", ($scope, $location, jolokia, branding, localStorage) => {
 
     var log:Logging.Logger = Logger.get("About");
 
@@ -17,7 +18,7 @@ module Core {
         if (angular.isDefined(data)) {
           $scope.html = marked(data);
           $scope.branding = branding;
-          $scope.customBranding = Branding.enabled;
+          $scope.customBranding = branding.enabled;
           try {
             $scope.hawtioVersion = jolokia.request({
               type: "read",
@@ -40,6 +41,6 @@ module Core {
         Core.$apply($scope);
       }
     })
-  }
+  }]);
 
 }

@@ -1,6 +1,8 @@
 /**
  * @module Core
  */
+/// <reference path="corePlugin.ts"/>
+/// <reference path="../../perspective/js/perspectiveHelpers.ts"/>
 module Core {
 
   /**
@@ -14,7 +16,7 @@ module Core {
    * @param {*} $element
    * @param {*} $templateCache
    */
-  export function ConsoleController($scope, $element, $templateCache) {
+  export var ConsoleController = _module.controller("Core.ConsoleController", ["$scope", "$element", "$templateCache", ($scope, $element, $templateCache) => {
 
     $scope.setHandler = (clip) => {
 
@@ -39,9 +41,11 @@ module Core {
 
       function copyToClipboard() {
         var text = $templateCache.get("logClipboardTemplate").lines();
+        // remove start/end comment tags
         text.removeAt(0);
         text.removeAt(text.length - 1);
-        $element.find('#log-panel-statements').children().each(function(index, child) {
+        text.push('<ul>');
+        $element.find('#log-panel-statements').children().each(function(index, child:HTMLElement) {
           text.push('  <li>' + child.innerHTML + '</li>');
         });
         text.push('</ul>');
@@ -52,8 +56,7 @@ module Core {
         $element.find('#log-panel-statements').children().remove();
       }
     };
-
-  }
+  }]);
 
   /**
    * Outermost controller attached to almost the root of the document, handles
@@ -75,13 +78,7 @@ module Core {
    * @param {*} jolokiaUrl
    * @param {*} branding
    */
-  export function AppController($scope, $location, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding) {
-    if (!userDetails) {
-      userDetails = {};
-    }
-    if (userDetails.username === null) {
-      $location.url(defaultPage());
-    }
+  export var AppController = _module.controller("Core.AppController", ["$scope", "$location", "workspace", "jolokia", "jolokiaStatus", "$document", "pageTitle", "localStorage", "userDetails", "lastLocation", "jolokiaUrl", "branding", "ConnectOptions", "$timeout", "locationChangeStartTasks", "$route", ($scope, $location:ng.ILocationService, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation:{ url:string }, jolokiaUrl, branding, ConnectOptions:Core.ConnectOptions, $timeout:ng.ITimeoutService, locationChangeStartTasks:Core.ParameterizedTasks, $route:ng.route.IRouteService) => {
 
     $scope.collapse = '';
     $scope.match = null;
@@ -92,7 +89,29 @@ module Core {
     $scope.connectionFailed = false;
     $scope.connectFailure = {};
 
+    $scope.showPrefs = false;
+
+    $scope.logoClass = () => {
+      if (branding.logoOnly) {
+        return "without-text";
+      } else {
+        return "with-text";
+      }
+    };
+
+    //$timeout(() => {
+    //  if ('showPrefs' in localStorage) {
+    //    $scope.showPrefs = Core.parseBooleanValue(localStorage['showPrefs']);
+    //  }
+    //}, 500);
+
     $scope.branding = branding;
+
+    //$scope.$watch('showPrefs', (newValue, oldValue) => {
+    //  if (newValue !== oldValue) {
+    //    localStorage['showPrefs'] = newValue;
+    //  }
+    //});
 
     $scope.hasMBeans = () => workspace.hasMBeans();
 
@@ -114,7 +133,7 @@ module Core {
             }
             // lets tone down the size of the headers
             html.each((idx, e) => {
-              var name = e.localName;
+              var name:string = e.localName;
               if (name && name.startsWith("h")) {
                 $(e).addClass("ajaxError");
               }
@@ -133,6 +152,14 @@ module Core {
       }
     });
 
+    $scope.showPreferences = () => {
+      $scope.showPrefs = true;
+    };
+
+    $scope.closePreferences = () => {
+      $scope.showPrefs = false;
+    };
+
     $scope.confirmConnectionFailed = () => {
       // I guess we should close the window now?
       window.close();
@@ -140,7 +167,7 @@ module Core {
 
     $scope.setPageTitle = () => {
       $scope.pageTitle = pageTitle.getTitleArrayExcluding([branding.appName]);
-      var tab = workspace.getActiveTab();
+      var tab:any = workspace.getActiveTab();
       if (tab && tab.content) {
         setPageTitleWithTab($document, pageTitle, tab.content);
       } else {
@@ -173,7 +200,7 @@ module Core {
 
     $scope.showLogout = () => {
       return $scope.loggedIn() && angular.isDefined(userDetails.loginDetails);
-    }
+    };
 
     $scope.logout = () => {
       $scope.confirmLogout = true;
@@ -188,12 +215,13 @@ module Core {
     };
 
     $scope.doLogout = () => {
-
       $scope.confirmLogout = false;
-      logout(jolokiaUrl, userDetails, localStorage, $scope);
+      Core.logout(jolokiaUrl, userDetails, localStorage, $scope);
     };
 
     $scope.$watch(() => { return localStorage['regexs'] }, $scope.setRegexIndicator);
+
+    $scope.reloaded = false;
 
     $scope.maybeRedirect = () => {
       if (userDetails.username === null) {
@@ -201,10 +229,16 @@ module Core {
         if (!currentUrl.startsWith('/login')) {
           lastLocation.url = currentUrl;
           $location.url('/login');
+        } else {
+          // ensures that the login page loads correctly if the user happens to click refresh
+          if (!$scope.reloaded) {
+            $route.reload();
+            $scope.reloaded = true;
+          }
         }
       } else {
         if ($location.url().startsWith('/login')) {
-          var url:Object = defaultPage();
+          var url:string = defaultPage();
           if (angular.isDefined(lastLocation.url)) {
             url = lastLocation.url;
           }
@@ -217,17 +251,28 @@ module Core {
       $scope.maybeRedirect();
     }, true);
 
-    $scope.$on('$routeChangeStart', function() {
+    $scope.$on('hawtioOpenPrefs', () => {
+      $scope.showPrefs = true;
+    });
+
+    $scope.$on('hawtioClosePrefs', () => {
+      $scope.showPrefs = false;
+    });
+
+    $scope.$on('$routeChangeStart', (event, args) => {
+      if ( (!args.params || !args.params.pref) && $scope.showPrefs) {
+        $scope.showPrefs = false;
+      }
       $scope.maybeRedirect();
     });
 
-    $scope.$on('$routeChangeSuccess', function() {
-      $scope.setPageTitle();
-      $scope.setRegexIndicator();
+    $scope.$on('$routeChangeSuccess', () => {
+      $scope.setPageTitle($document, PageTitle);
+      $scope.maybeRedirect();
     });
 
     $scope.fullScreen = () => {
-      if ($location.url().startsWith("/login")) {
+      if ($location.path().startsWith("/login")) {
         return branding.fullscreenLogin;
       }
       var tab = $location.search()['tab'];
@@ -235,15 +280,15 @@ module Core {
         return tab === "fullscreen";
       }
       return false;
-    }
+    };
 
     $scope.login = () => {
-      return $location.url().startsWith("/login");
-    }
+      return $location.path().startsWith("/login");
+    };
 
     function defaultPage() {
       return Perspective.defaultPage($location, workspace, jolokia, localStorage);
     }
-  }
+  }]);
 
 }
