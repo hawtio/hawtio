@@ -7,6 +7,11 @@
     <bundle>mvn:io.hawt/hawtio-json-schema-mbean/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-web/${project.version}/war</bundle>
+
+    <config name="jmx.acl.hawtio.plugin">
+      * = *
+    </config>
+
   </feature>
 
   <feature name="hawtio" version="${project.version}" resolver="(obr)">
@@ -14,11 +19,6 @@
     <feature>hawtio-core</feature>
     <feature>hawtio-karaf-terminal</feature>
     <feature>hawtio-maven-indexer</feature>
-
-    <config name="jmx.acl.hawtio.plugin">
-      * = *
-    </config>
-
   </feature>
 
   <feature name="hawtio-offline" version="${project.version}" resolver="(obr)">
