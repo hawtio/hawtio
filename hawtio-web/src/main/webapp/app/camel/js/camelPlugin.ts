@@ -260,6 +260,7 @@ module Camel {
       content: '<i class="icon-list"></i> Rest Services',
       title: "List all the REST services registered in the context",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
+        && !getSelectedRouteNode(workspace)
         && !workspace.isEndpointsFolder()
         && !workspace.isRoute()
         && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia)
@@ -270,6 +271,7 @@ module Camel {
       content: '<i class="icon-list"></i> Type Converters',
       title: "List all the type converters registered in the context",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
+        && !getSelectedRouteNode(workspace)
         && !workspace.isEndpointsFolder()
         && (workspace.isRoute() || workspace.isRoutesFolder() || workspace.isCamelContext())
         && Camel.isCamelVersionEQGT(2, 13, workspace, jolokia)
