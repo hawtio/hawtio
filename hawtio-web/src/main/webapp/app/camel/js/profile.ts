@@ -4,7 +4,6 @@ module Camel {
     _module.controller("Camel.ProfileRouteController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
         $scope.data = [];
-        $scope.calcManually = true;
         $scope.icons = {};
         $scope.selectedRouteId = "";
 
@@ -141,15 +140,7 @@ module Camel {
             messageData.min = message.getAttribute("minProcessingTime");
             messageData.max = message.getAttribute("maxProcessingTime");
             messageData.total = message.getAttribute("totalProcessingTime");
-            // self is pre calculated from Camel 2.11 onwards
-            var self = message.getAttribute("selfProcessingTime");
-            if (self) {
-              messageData.self = self;
-            } else {
-              // we need to calculate this manually
-              $scope.calcManually = true
-              messageData.self = "0";
-            }
+            messageData.self = message.getAttribute("selfProcessingTime");
 
             updatedData.push(messageData);
           });
@@ -199,42 +190,6 @@ module Camel {
           });
         }
 
-        // for Camel 2.10 or older we need to run through the data and calculate the self/total times manually
-        if ($scope.calcManually) {
-
-          // sort the data accordingly to order in the icons map
-          updatedData.sort((e1, e2) => {
-            var entry1 = $scope.icons[e1.id];
-            var entry2 = $scope.icons[e2.id];
-            if (entry1 && entry2) {
-              return entry1.index - entry2.index;
-            } else {
-              return 0;
-            }
-          });
-
-          var accTotal = 0;
-          updatedData.reverse().forEach((data:any, idx) => {
-              // update accTotal with self time
-              if (idx < updatedData.length - 1) {
-                // each processor should have the total updated with the accumulated total
-                accTotal += +data.self;
-                data.total = accTotal;
-              } else {
-                // the last row is the route, which should have self calculated as follows
-                data.self = +(data.total - accTotal);
-                // just to be safe we dont want negative values self value for the route
-                if (data.self < 0) {
-                  data.self = 0;
-                }
-              }
-            });
-
-          // reverse back again
-          updatedData.reverse();
-        }
-
-        // TODO: need a way to update data without flickering
         // if we do as below with the forEach then the data does not update
         // replace data with updated data
         $scope.data = updatedData;
@@ -297,22 +252,10 @@ module Camel {
           var routeMBean = getSelectionRouteMBean(workspace, $scope.selectedRouteId);
           console.log("Selected route is " + $scope.selectedRouteId)
 
-          if (Camel.isCamelVersionEQGT(2, 11, workspace, jolokia)) {
-            // this is Camel 2.11 or better so we dont need to calculate data manually
-            console.log("Camel 2.11 or better detected")
-            $scope.calcManually = false
-          } else {
-            console.log("Camel 2.10 or older detected")
-            $scope.calcManually = true
-          }
-
           initIdToIcon();
           console.log("Initialized icons, with " + $scope.icons.length + " icons")
 
           // schedule update the profile data, based on the configured interval
-          // TOOD: the icons is not initialized the first time, for some reason, the routeXmlNode is empty/undefined
-          // TODO: have cellFilter with bar grey-scale for highlighting the scales between the numbers
-          // TODO: have the icons indent, there is some CSS ninja crack to do this
 
           var query = {type: 'exec', mbean: routeMBean, operation: 'dumpRouteStatsAsXml(boolean,boolean)', arguments: [false, true]};
           scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(populateProfileMessages, query));
