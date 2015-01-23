@@ -32,6 +32,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-system</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.aries.blueprint</groupId>
       <artifactId>org.apache.aries.blueprint.web</artifactId>
       <version>${blueprint-web-version}</version>
