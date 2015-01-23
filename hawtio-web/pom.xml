@@ -1248,7 +1248,7 @@
       <id>kube</id>
 
       <properties>
-        <fabric8.release.version>2.0.17</fabric8.release.version>
+        <fabric8.release.version>2.0.22</fabric8.release.version>
         <fabric8.v2.version>${fabric8.release.version}</fabric8.v2.version>
 <!--
         <fabric8.v2.version>2.1-SNAPSHOT</fabric8.v2.version>
@@ -1286,19 +1286,15 @@
         </dependency>
         <dependency>
           <groupId>io.fabric8</groupId>
+          <artifactId>kubernetes-mbeans</artifactId>
+          <version>${fabric8.v2.version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>io.fabric8</groupId>
           <artifactId>kubernetes-template</artifactId>
           <version>${fabric8.v2.version}</version>
           <scope>test</scope>
-          <exclusions>
-            <exclusion>
-              <groupId>org.apache.karaf.features</groupId>
-              <artifactId>org.apache.karaf.features.core</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.osgi</groupId>
-              <artifactId>org.osgi.core</artifactId>
-            </exclusion>
-          </exclusions>
         </dependency>
       </dependencies>
 

@@ -16,11 +16,8 @@
 package io.hawt.kubernetes;
 
 import io.hawt.git.GitFacade;
-import io.hawt.util.Files;
-import io.hawt.util.Function;
-import io.hawt.util.IOHelper;
-import io.hawt.util.MBeanSupport;
-import io.hawt.util.Strings;
+import io.hawt.util.*;
+import io.hawt.web.ServiceResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +43,7 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
     private GitFacade git;
 
     public void init() throws Exception {
-        String url = getKubernetesAddress();
-        if (Strings.isNotBlank(url)) {
+        if (System.getenv("KUBERNETES_SERVICE_HOST") != null || System.getenv("KUBERNETES_MASTER") != null) {
             super.init();
         }
     }
@@ -81,11 +77,8 @@ public class KubernetesService extends MBeanSupport implements KubernetesService
     public String getKubernetesAddress() {
 
         // First let's check if it's available as a kubernetes service like it should be...
-        String address = System.getenv("KUBERNETES_SERVICE_HOST");
-        if (Strings.isNotBlank(address)) {
-            address = "http://" + address + ":" + System.getenv("KUBERNETES_SERVICE_PORT");
-        } else {
-            // If not then fall back to KUBERNETES_MASTER env var
+        String address = ServiceResolver.getSingleton().getServiceURL("kubernetes");
+        if (Strings.isBlank(address)) {
             address = System.getenv("KUBERNETES_MASTER");
         }
 
