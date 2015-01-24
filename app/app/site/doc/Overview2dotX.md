@@ -154,6 +154,18 @@ gulp.task('connect', ['watch'], function() {
 });
 ```
 
+*I get weird compile errors but I didn't change anything!*
+
+It could be a dependency got compiled with an updated typescript version.  Run `npm update` in your package to update your node modules and try again.
+
+*Something under libs/ got messed up!*
+
+You can just blow away `libs` and run `bower update` to re-install dependencies anytime you like.
+
+*A bower dependency I want to install doesn't have `main` configured at all, what do I do?*
+
+Typically for these cases it's best to run `bower install` (don't add `--save`) on the package to get the files, then copy the .js or .css files into your packages `dist` directory, then configure those js and css files in your package's `bower.json` file in the `main` attribute.  That way any package that depends on your code will get the dependent javascript automatically wired into their index.html.
+
 
 ### Releasing
 
