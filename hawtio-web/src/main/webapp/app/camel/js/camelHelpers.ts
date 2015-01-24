@@ -165,7 +165,7 @@ module Camel {
           }
           // TODO deal with nested objects...
           var nested = $(routeXmlNode).children(key);
-          var element = null;
+          var element:Element = null;
           if (append || !nested || !nested.length) {
             var doc = routeXmlNode.ownerDocument || document;
             routeXmlNode.appendChild(doc.createTextNode("\n" + childIndent));
@@ -1117,7 +1117,7 @@ module Camel {
         parentId = id;
       }
       var nodeSettings = getCamelSchema(nodeId);
-      var node = null;
+      var node:{} = null;
       if (nodeSettings) {
         var label = nodeSettings["title"] || nodeId;
         var uri = getRouteNodeUri(route);
