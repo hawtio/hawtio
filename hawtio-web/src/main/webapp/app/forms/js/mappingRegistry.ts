@@ -63,10 +63,15 @@ module Forms {
       } catch (e) {
         // ignore missing read only function
       }
-      var title = property.tooltip || property.label;
+      var title = property.title ||  property.tooltip || property.label;
       if (title) {
         input.attr('title', title);
       }
+      var tooltip = property.tooltip || property.description;
+      if (tooltip) {
+        input.attr('tooltip', tooltip);
+      }
+
       var disableHumanizeLabelValue = disableHumanizeLabel || property.disableHumanizeLabel;
 
       // allow the prefix to be trimmed from the label if enabled

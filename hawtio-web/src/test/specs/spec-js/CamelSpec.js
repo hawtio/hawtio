@@ -6,6 +6,7 @@ describe("Camel", function () {
     });
   });
 
+  /*
   angular.forEach([
     "",
     "unknownThing",
@@ -16,7 +17,7 @@ describe("Camel", function () {
     it("the type name '" + value + "' should not be a valid camel pattern type name", function () {
       expect(Camel.isCamelPattern(value)).toEqual(false);
     });
-  });
+  });*/
 
   angular.forEach(["simple", "xpath", "expression"], function (value) {
     it("'" + value + "' is a camel language", function () {

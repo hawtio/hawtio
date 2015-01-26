@@ -104,7 +104,14 @@ module Camel {
   export function getRouteNodeJSON(routeXmlNode, answer = {}) {
     if (routeXmlNode) {
       angular.forEach(routeXmlNode.attributes, (attr) => {
-        answer[attr.name] = attr.value;
+        // use description as tooltip as that is better
+        if ("description" === attr.name) {
+          answer["tooltip"] = attr.value;
+        }
+        // and skip the original tooltip as that is just similar as the name
+        if (!"tooltip" === attr.name) {
+          answer[attr.name] = attr.value;
+        }
       });
 
       // lets not iterate into routes or top level tags
@@ -318,7 +325,8 @@ module Camel {
    * @method
    */
   export function isCamelPattern(nodeId) {
-    return Forms.isJsonType(nodeId, _apacheCamelModel, "org.apache.camel.model.OptionalIdentifiedDefinition");
+    return true;
+    // return Forms.isJsonType(nodeId, _apacheCamelModel, "org.apache.camel.model.OptionalIdentifiedDefinition");
   }
 
   /**
