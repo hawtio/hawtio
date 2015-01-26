@@ -2,6 +2,8 @@
 module Camel {
 
   _module.controller("Camel.PropertiesController", ["$scope", "workspace", ($scope, workspace:Workspace) => {
+    var log:Logging.Logger = Logger.get("Camel");
+
     $scope.viewTemplate = null;
     $scope.schema = _apacheCamelModel;
 
@@ -17,6 +19,9 @@ module Camel {
 
     function updateData() {
       var routeXmlNode = getSelectedRouteNode(workspace);
+      if (routeXmlNode != null) {
+        log.debug("Properties - Selected node " + routeXmlNode.nodeName);
+      }
       $scope.nodeData = getRouteNodeJSON(routeXmlNode);
 
       if (routeXmlNode) {
@@ -24,8 +29,10 @@ module Camel {
         $scope.model = getCamelSchema(nodeName);
 
         if ($scope.model) {
-          console.log("data is: " + JSON.stringify($scope.nodeData, null, "  "));
-          console.log("model schema is: " + JSON.stringify($scope.model, null, "  "));
+          if (log.enabledFor(Logger.DEBUG)) {
+            log.debug("Properties - data: " + JSON.stringify($scope.nodeData, null, "  "));
+            log.debug("Properties - schema: " + JSON.stringify($scope.model, null, "  "));
+          }
 
           $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
         }

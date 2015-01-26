@@ -104,19 +104,12 @@ module Camel {
   export function getRouteNodeJSON(routeXmlNode, answer = {}) {
     if (routeXmlNode) {
       angular.forEach(routeXmlNode.attributes, (attr) => {
-        // use description as tooltip as that is better
-        if ("description" === attr.name) {
-          answer["tooltip"] = attr.value;
-        }
-        // and skip the original tooltip as that is just similar as the name
-        if (!"tooltip" === attr.name) {
-          answer[attr.name] = attr.value;
-        }
+        answer[attr.name] = attr.value;
       });
 
-      // lets not iterate into routes or top level tags
+      // lets not iterate into routes/rests or top level tags
       var localName = routeXmlNode.localName;
-      if (localName !== "route" && localName !== "routes" && localName !== "camelContext") {
+      if (localName !== "route" && localName !== "routes" && localName !== "camelContext" && localName !== "rests") {
         // lets look for nested elements and convert those
         // explicitly looking for expressions
         $(routeXmlNode).children("*").each((idx, element) => {
