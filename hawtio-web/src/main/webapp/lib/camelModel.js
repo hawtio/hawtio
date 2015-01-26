@@ -8,26 +8,37 @@ var _apacheCamelModel = {
       "group": "language",
       "description": "A useful base class for an expression",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "optional": "true"
-        },
         "expression": {
           "kind": "value",
-          "type": "string",
-          "description": "The expression value in your chosen language syntax",
-          "title": "Expression",
-          "optional": "false"
+          "type": "string"
         },
-        "trim": {
-          "kind": "attribute",
-          "type": "bool",
-          "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
-          "title": "Trim",
-          "optional": "true"
+        "language": {
+          "type": "string",
+          "enum": [
+            "constant",
+            "el",
+            "header",
+            "javaScript",
+            "jxpath",
+            "method",
+            "mvel",
+            "ognl",
+            "groovy",
+            "property",
+            "python",
+            "php",
+            "ref",
+            "ruby",
+            "simple",
+            "spel",
+            "sql",
+            "tokenize",
+            "xpath",
+            "xquery"
+          ],
+          "description": "The camel expression language ot use",
+          "tooltip": "Pick the expression language you want to use",
+          "title": "Language"
         }
       }
     },

@@ -1,23 +1,22 @@
 describe("Camel", function () {
 
-  angular.forEach(["endpoint", "from", "to", "bean", "filter", "when", "otherwise"], function (value) {
+  angular.forEach(["from", "to", "bean", "filter", "when", "otherwise"], function (value) {
     it("the type '" + value + "' should be a valid camel pattern type name", function () {
       expect(Camel.isCamelPattern(value)).toEqual(true);
     });
   });
 
-  /*
   angular.forEach([
     "",
     "unknownThing",
-    "org.apache.camel.model.language.ExpressionDefinition",
-    "org.apache.camel.model.dataformat.SyslogDataFormat",
+    "get",
+    "syslog",
     "org.apache.camel.model.language.Expression"
   ], function (value) {
     it("the type name '" + value + "' should not be a valid camel pattern type name", function () {
       expect(Camel.isCamelPattern(value)).toEqual(false);
     });
-  });*/
+  });
 
   angular.forEach(["simple", "xpath", "expression"], function (value) {
     it("'" + value + "' is a camel language", function () {
