@@ -6,6 +6,8 @@ module Camel {
 
     $scope.viewTemplate = null;
     $scope.schema = _apacheCamelModel;
+    $scope.model = null;
+    $scope.icon = null;
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -20,24 +22,15 @@ module Camel {
     function updateData() {
       var routeXmlNode = getSelectedRouteNode(workspace);
       if (routeXmlNode != null) {
-        log.debug("Properties - Selected node " + routeXmlNode.nodeName);
-      }
-      $scope.nodeData = getRouteNodeJSON(routeXmlNode);
-
-      if (routeXmlNode) {
-        var nodeName = routeXmlNode.nodeName;
-        $scope.model = getCamelSchema(nodeName);
+        $scope.model = getCamelSchema(routeXmlNode.nodeName);
 
         if ($scope.model) {
           if (log.enabledFor(Logger.DEBUG)) {
             log.debug("Properties - data: " + JSON.stringify($scope.nodeData, null, "  "));
             log.debug("Properties - schema: " + JSON.stringify($scope.model, null, "  "));
           }
-          // TODO: remove us
-          log.info("Properties - data:\n" + JSON.stringify($scope.nodeData, null, "  "));
-          log.info("\n");
-          log.info("Properties - schema:\n" + JSON.stringify($scope.model, null, "  "));
-
+          $scope.nodeData = getRouteNodeJSON(routeXmlNode);
+          $scope.icon = getRouteNodeIcon(routeXmlNode);
           $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
         }
       }

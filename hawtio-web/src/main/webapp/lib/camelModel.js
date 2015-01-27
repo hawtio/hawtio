@@ -47,6 +47,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Aggregate",
       "group": "eip,routing",
+      "icon": "aggregate24.png",
       "description": "Aggregates many messages into a single message",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -228,6 +229,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Aop",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "Does processing before and/or after the route is completed",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -274,6 +276,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Batch-config",
       "group": "configuration,resequence",
+      "icon": "generic24.png",
       "description": "Configures batch-processing resequence eip.",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -325,6 +328,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Bean",
       "group": "eip,endpoint",
+      "icon": "bean24.png",
       "description": "Calls a java bean",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -387,6 +391,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Choice",
       "group": "eip,routing",
+      "icon": "choice24.png",
       "description": "Routes messages based on a series of predicates",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -419,6 +424,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Circuit Breaker",
       "group": "configuration,loadbalance",
+      "icon": "generic24.png",
       "description": "Circuit break load balancer",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -458,6 +464,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Context Scan",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "Scans for Java org.apache.camel.builder.RouteBuilder instances in the context org.apache.camel.spi.Registry.",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -483,6 +490,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Convert Body To",
       "group": "eip,transformation",
+      "icon": "convertBodyTo24.png",
       "description": "Converts the message body to another type",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -522,6 +530,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Custom Load Balancer",
       "group": "configuration,loadbalance",
+      "icon": "generic24.png",
       "description": "Custom load balancer",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -547,6 +556,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Delay",
       "group": "eip,routing",
+      "icon": "generic24.png",
       "description": "Delays processing for a specified length of time",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -602,6 +612,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Description",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "To provide comments about the node.",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -655,6 +666,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Do Catch",
       "group": "error",
+      "icon": "generic24.png",
       "description": "Catches exceptions as part of a try catch finally block",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -701,6 +713,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Do Finally",
       "group": "error",
+      "icon": "generic24.png",
       "description": "Path traversed when a try catch finally block exits",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -726,6 +739,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Do Try",
       "group": "error",
+      "icon": "generic24.png",
       "description": "Marks the beginning of a try catch finally block",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -751,6 +765,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Dynamic Router",
       "group": "eip,endpoint,routing",
+      "icon": "dynamicRouter25.png",
       "description": "Routes messages based on dynamic rules",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -799,6 +814,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Enrich",
       "group": "eip,transformation",
+      "icon": "enrich24.png",
       "description": "Enriches a message with data from a secondary resource",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -868,6 +884,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Failover",
       "group": "configuration,loadbalance",
+      "icon": "generic24.png",
       "description": "Failover load balancer",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -909,6 +926,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Filter",
       "group": "eip,routing",
+      "icon": "filter24.png",
       "description": "Filter out messages based using a predicate",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -941,6 +959,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "From",
       "group": "eip,endpoint,routing",
+      "icon": "endpoint24.png",
       "description": "Act as a message source as input to a route",
       "acceptInput": "false",
       "acceptOutput": "true",
@@ -980,6 +999,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Idempotent Consumer",
       "group": "eip,routing",
+      "icon": "generic24.png",
       "description": "Filters out duplicate messages",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -1043,6 +1063,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "In Only",
       "group": "eip,endpoint,routing",
+      "icon": "eventMessage24.png",
       "description": "Marks the exchange pattern for the route to one way",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -1082,6 +1103,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "In Out",
       "group": "eip,endpoint,routing",
+      "icon": "requestReply24.png",
       "description": "Marks the exchange pattern for the route to request/reply",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -1121,6 +1143,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Intercept",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "Intercepts a message at each step in the route",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -1146,6 +1169,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Intercept From",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "Intercepts incoming messages",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -1178,6 +1202,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Intercept Send To Endpoint",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "Intercepts messages being sent to an endpoint",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -1218,6 +1243,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Load Balance",
       "group": "eip,routing",
+      "icon": "loadBalance24.png",
       "description": "Balances message processing among a number of nodes",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -1265,6 +1291,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Log",
       "group": "configuration",
+      "icon": "log24.png",
       "description": "Logs the defined message to the logger",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -1327,6 +1354,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Loop",
       "group": "eip,routing",
+      "icon": "generic24.png",
       "description": "Processes a message multiple times",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -1367,6 +1395,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Marshal",
       "group": "eip,transformation",
+      "icon": "marshal24.png",
       "description": "Marshals data into a specified format for transmission over a transport or component",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -1406,6 +1435,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Multicast",
       "group": "eip,routing",
+      "icon": "multicast24.png",
       "description": "Routes the same message to multiple paths either sequentially or in parallel.",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -1515,6 +1545,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "On Completion",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "Route to be executed when normal route processing completes",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -1595,6 +1626,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "On Exception",
       "group": "error",
+      "icon": "generic24.png",
       "description": "Route to be executed when an exception is thrown",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -1684,6 +1716,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Optimistic Lock Retry Policy",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "To configure optimistic locking",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -1734,6 +1767,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Otherwise",
       "group": "eip,routing",
+      "icon": "generic24.png",
       "description": "Route to be executed when all other choices evaluate to false",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -1759,6 +1793,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Package Scan",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "Scans for Java org.apache.camel.builder.RouteBuilder classes in java packages",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -1791,6 +1826,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Pipeline",
       "group": "eip,routing",
+      "icon": "pipeline24.png",
       "description": "Routes the message to a sequence of processors.",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -1816,6 +1852,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Policy",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "Defines a policy the route will use",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -1848,6 +1885,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Poll Enrich",
       "group": "eip,transformation",
+      "icon": "pollEnrich24.png",
       "description": "Enriches messages with data polled from a secondary resource",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -1925,6 +1963,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Process",
       "group": "eip,endpoint",
+      "icon": "process24.png",
       "description": "Calls a Camel processor.",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -1957,6 +1996,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Properties",
       "group": "configuration,resequence",
+      "icon": "generic24.png",
       "description": "A series of key value pair",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -1975,6 +2015,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Property",
       "group": "configuration,resequence",
+      "icon": "generic24.png",
       "description": "A key value pair",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -2000,6 +2041,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Random",
       "group": "configuration,loadbalance",
+      "icon": "generic24.png",
       "description": "Random load balancer",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -2018,6 +2060,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Recipient List",
       "group": "eip,endpoint,routing",
+      "icon": "recipientList24.png",
       "description": "Routes messages to a number of dynamically specified recipients (dynamic to)",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -2156,6 +2199,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Redelivery Policy",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "To configure re-delivery for error handling",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -2323,6 +2367,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Remove Header",
       "group": "eip,transformation",
+      "icon": "generic24.png",
       "description": "Removes a named header from the message",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -2355,6 +2400,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Remove Headers",
       "group": "eip,transformation",
+      "icon": "generic24.png",
       "description": "Removes message headers whose name matches a specified pattern",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -2394,6 +2440,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Remove Properties",
       "group": "eip,transformation",
+      "icon": "generic24.png",
       "description": "Removes message exchange properties whose name matches a specified pattern",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -2433,6 +2480,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Remove Property",
       "group": "eip,transformation",
+      "icon": "generic24.png",
       "description": "Removes a named property from the message exchange",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -2465,6 +2513,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Resequence",
       "group": "eip,routing",
+      "icon": "resequence24.png",
       "description": "Resequences (re-order) messages based on an expression",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -2504,6 +2553,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Rest Context Ref",
       "group": "configuration,rest",
+      "icon": "generic24.png",
       "description": "To refer to an XML file with rest services defined using the rest-dsl",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -2522,6 +2572,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Rollback",
       "group": "eip,routing",
+      "icon": "generic24.png",
       "description": "Forces a rollback by stopping routing the message",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -2570,6 +2621,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Round Robin",
       "group": "configuration,loadbalance",
+      "icon": "generic24.png",
       "description": "Round robin load balancer",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -2588,6 +2640,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Route",
       "group": "configuration",
+      "icon": "route24.png",
       "description": "A Camel route",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -2701,6 +2754,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Route Builder",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "To refer to a Java org.apache.camel.builder.RouteBuilder instance to use.",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -2726,6 +2780,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Route Context Ref",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "To refer to an XML file with routes defined using the xml-dsl",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -2744,6 +2799,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Routes",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "A series of Camel routes",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -2769,6 +2825,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Routing Slip",
       "group": "eip,endpoint,routing",
+      "icon": "routingSlip24.png",
       "description": "Routes a message through a series of steps that are pre-determined (the slip)",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -2824,6 +2881,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Sample",
       "group": "eip,routing",
+      "icon": "generic24.png",
       "description": "Extract a sample of the messages passing through a route",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -2873,6 +2931,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Set Body",
       "group": "eip,transformation",
+      "icon": "setBody24.png",
       "description": "Sets the contents of the message body",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -2905,6 +2964,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Set Exchange Pattern",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "Sets the exchange pattern on the message exchange",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -2938,6 +2998,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Set Fault Body",
       "group": "eip,transformation",
+      "icon": "generic24.png",
       "description": "Sets the contents of a fault message's body",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -2970,6 +3031,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Set Header",
       "group": "eip,transformation",
+      "icon": "generic24.png",
       "description": "Sets the value of a message header",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -3009,6 +3071,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Set Out Header",
       "group": "eip,transformation",
+      "icon": "generic24.png",
       "description": "Sets the value of a header on the outbound message",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -3048,6 +3111,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Set Property",
       "group": "eip,transformation",
+      "icon": "generic24.png",
       "description": "Sets a named property on the message exchange",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -3087,6 +3151,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Sort",
       "group": "eip,routing",
+      "icon": "generic24.png",
       "description": "Sorts the contents of the message",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -3126,6 +3191,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Split",
       "group": "eip,routing",
+      "icon": "split24.png",
       "description": "Splits a single message into many sub-messages.",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -3242,6 +3308,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Sticky",
       "group": "configuration,loadbalance",
+      "icon": "generic24.png",
       "description": "Sticky load balancer",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -3267,6 +3334,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Stop",
       "group": "eip,routing",
+      "icon": "generic24.png",
       "description": "Stops the processing of the current message",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -3292,6 +3360,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Stream-config",
       "group": "configuration,resequence",
+      "icon": "generic24.png",
       "description": "Configures stream-processing resequence eip.",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -3342,6 +3411,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Thread Pool Profile",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "To configure thread pools",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -3418,6 +3488,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Threads",
       "group": "eip,routing",
+      "icon": "generic24.png",
       "description": "Specifies that all steps after this node are processed asynchronously",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -3518,6 +3589,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Throttle",
       "group": "eip,routing",
+      "icon": "generic24.png",
       "description": "Controls the rate at which messages are passed to the next node in the route",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -3589,6 +3661,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Throw Exception",
       "group": "error",
+      "icon": "generic24.png",
       "description": "Throws an exception",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -3621,6 +3694,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "To",
       "group": "eip,endpoint,routing",
+      "icon": "endpoint24.png",
       "description": "Sends the message to an endpoint",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -3668,6 +3742,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Topic",
       "group": "configuration,loadbalance",
+      "icon": "generic24.png",
       "description": "Topic load balancer",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -3686,6 +3761,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Transacted",
       "group": "configuration",
+      "icon": "transactionalClient24.png",
       "description": "Enables transaction on the route",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -3718,6 +3794,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Transform",
       "group": "eip,transformation",
+      "icon": "transform24.png",
       "description": "Transforms the message body based on an expression",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -3750,6 +3827,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Unmarshal",
       "group": "eip,transformation",
+      "icon": "unmarshal24.png",
       "description": "Converts the message data received from the wire into a format that Apache Camel processors can consume",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -3789,6 +3867,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Validate",
       "group": "eip,transformation",
+      "icon": "generic24.png",
       "description": "Validates a message based on an expression",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -3821,6 +3900,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Weighted",
       "group": "configuration,loadbalance",
+      "icon": "generic24.png",
       "description": "Weighted load balancer",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -3862,6 +3942,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "When",
       "group": "eip,routing",
+      "icon": "generic24.png",
       "description": "Triggers a route when an expression evaluates to true",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -3894,6 +3975,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "When Skip Send To Endpoint",
       "group": "configuration",
+      "icon": "generic24.png",
       "description": "Predicate to determine if the message should be sent or not to the endpoint when using interceptSentToEndpoint.",
       "acceptInput": "true",
       "acceptOutput": "true",
@@ -3926,6 +4008,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Wire Tap",
       "group": "eip,endpoint,routing",
+      "icon": "wireTap24.png",
       "description": "Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -4003,6 +4086,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Delete",
       "group": "rest",
+      "icon": "generic24.png",
       "description": "Rest DELETE command",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -4102,6 +4186,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Get",
       "group": "rest",
+      "icon": "generic24.png",
       "description": "Rest GET command",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -4201,6 +4286,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Head",
       "group": "rest",
+      "icon": "generic24.png",
       "description": "Rest HEAD command",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -4300,6 +4386,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Post",
       "group": "rest",
+      "icon": "generic24.png",
       "description": "Rest POST command",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -4399,6 +4486,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Put",
       "group": "rest",
+      "icon": "generic24.png",
       "description": "Rest PUT command",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -4498,6 +4586,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Rest",
       "group": "rest",
+      "icon": "generic24.png",
       "description": "Defines a rest service using the rest-dsl",
       "acceptInput": "false",
       "acceptOutput": "true",
@@ -4569,6 +4658,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Rest Binding",
       "group": "rest",
+      "icon": "generic24.png",
       "description": "To configure rest binding",
       "acceptInput": "true",
       "acceptOutput": "false",
@@ -4647,6 +4737,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Rest Configuration",
       "group": "rest",
+      "icon": "generic24.png",
       "description": "To configure rest",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -4775,6 +4866,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Rest Property",
       "group": "rest",
+      "icon": "generic24.png",
       "description": "A key value pair",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -4800,6 +4892,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Rests",
       "group": "rest",
+      "icon": "generic24.png",
       "description": "A series of rest services defined using the rest-dsl",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -4825,6 +4918,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Verb",
       "group": "rest",
+      "icon": "generic24.png",
       "description": "Rest command",
       "acceptInput": "false",
       "acceptOutput": "false",
@@ -4926,6 +5020,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Avro",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "Avro data format",
       "properties": {
         "instanceClassName": {
@@ -4948,6 +5043,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Barcode",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "Barcode data format",
       "properties": {
         "width": {
@@ -4991,6 +5087,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Base64",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "Base64 data format",
       "properties": {
         "lineLength": {
@@ -5030,6 +5127,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Beanio",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "BeanIO data format",
       "properties": {
         "mapping": {
@@ -5090,6 +5188,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Bindy",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "Bindy data format",
       "properties": {
         "type": {
@@ -5134,6 +5233,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Castor",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "Castor data format",
       "properties": {
         "mappingFile": {
@@ -5186,6 +5286,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Crypto",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "Crypto data format",
       "properties": {
         "algorithm": {
@@ -5268,6 +5369,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Csv",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "CSV data format",
       "properties": {
         "formatRef": {
@@ -5448,6 +5550,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Custom Data Format",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "Custom data format",
       "properties": {
         "ref": {
@@ -5470,6 +5573,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Data Formats",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "To configure data formats",
       "properties": {
         "dataFormats": {
@@ -5485,6 +5589,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Flatpack",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "Flatpack data format",
       "properties": {
         "parserFactoryRef": {
@@ -5562,6 +5667,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Gzip",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "GZip data format",
       "properties": {
         "id": {
@@ -5577,6 +5683,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Hl7",
       "group": "dataformat,transformation,hl7",
+      "icon": "generic24.png",
       "description": "HL7 data format",
       "properties": {
         "validate": {
@@ -5600,6 +5707,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Ical",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "iCal data format",
       "properties": {
         "validating": {
@@ -5623,6 +5731,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Jaxb",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "JAXB data format",
       "properties": {
         "contextPath": {
@@ -5734,6 +5843,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Jibx",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "JiBX data format",
       "properties": {
         "unmarshallClass": {
@@ -5763,6 +5873,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Json",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "Json data format",
       "properties": {
         "prettyPrint": {
@@ -5847,6 +5958,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Pgp",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "PGP data format",
       "properties": {
         "keyUserid": {
@@ -5962,6 +6074,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Protobuf",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "Google protobuf data format",
       "properties": {
         "instanceClass": {
@@ -5984,6 +6097,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Rss",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "RSS data format",
       "properties": {
         "id": {
@@ -5999,6 +6113,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Secure X M L",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "xml-security data format",
       "properties": {
         "xmlCipherAlgorithm": {
@@ -6097,6 +6212,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Serialization",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "Java Object Serialization data format",
       "properties": {
         "id": {
@@ -6112,6 +6228,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Soapjaxb",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "SOAP data format",
       "properties": {
         "contextPath": {
@@ -6170,6 +6287,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "String",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "Represents the String (text based) DataFormat",
       "properties": {
         "charset": {
@@ -6192,6 +6310,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Syslog",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "Syslog data format",
       "properties": {
         "id": {
@@ -6207,6 +6326,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Tidy Markup",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "Tidymark (wellformed HTML) data format",
       "properties": {
         "dataObjectType": {
@@ -6229,6 +6349,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Univocity-csv",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "UniVocity CSV data format",
       "properties": {
         "quoteAllFields": {
@@ -6376,6 +6497,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Univocity-fixed",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "UniVocity fixed-width data format",
       "properties": {
         "skipTrailingCharsUntilNewline": {
@@ -6515,6 +6637,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Univocity-header",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "To configure headers for UniVocity data formats.",
       "properties": {
         "name": {
@@ -6537,6 +6660,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Univocity-tsv",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "UniVocity TSV data format",
       "properties": {
         "escapeChar": {
@@ -6660,6 +6784,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Xml Beans",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "XMLBeans data format",
       "properties": {
         "prettyPrint": {
@@ -6683,6 +6808,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Xmljson",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "xml-json data format",
       "properties": {
         "encoding": {
@@ -6788,6 +6914,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Xmlrpc",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "xml-rpc data format",
       "properties": {
         "request": {
@@ -6811,6 +6938,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Xstream",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "xstream data format",
       "properties": {
         "encoding": {
@@ -6882,6 +7010,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Zip",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "zip data format (not for zip files)",
       "properties": {
         "compressionLevel": {
@@ -6905,6 +7034,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Zip File",
       "group": "dataformat,transformation",
+      "icon": "generic24.png",
       "description": "zip-file data format",
       "properties": {
         "usingIterator": {
@@ -6930,6 +7060,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Constant",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For expressions and predicates using a constant",
       "properties": {
         "id": {
@@ -6960,6 +7091,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "El",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For EL expressions and predicates",
       "properties": {
         "id": {
@@ -6990,6 +7122,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Expression",
       "group": "language",
+      "icon": "generic24.png",
       "description": "A useful base class for an expression",
       "properties": {
         "id": {
@@ -7020,6 +7153,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Groovy",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For Groovy expressions and predicates",
       "properties": {
         "id": {
@@ -7050,6 +7184,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Header",
       "group": "language",
+      "icon": "generic24.png",
       "description": "An expression which extracts the named header",
       "properties": {
         "id": {
@@ -7080,6 +7215,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Java Script",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For JavaScript expressions and predicates",
       "properties": {
         "id": {
@@ -7110,6 +7246,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Jsonpath",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For JSonPath expressions and predicates",
       "properties": {
         "resultType": {
@@ -7147,6 +7284,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Jxpath",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For JXPath expressions and predicates",
       "properties": {
         "lenient": {
@@ -7185,6 +7323,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Language",
       "group": "language",
+      "icon": "generic24.png",
       "description": "Represents a parameterised language expression which can support any language at runtime using the language attribute.",
       "properties": {
         "language": {
@@ -7222,6 +7361,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Method",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For expressions and predicates using a java bean (aka method call)",
       "properties": {
         "bean": {
@@ -7280,6 +7420,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Mvel",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For MVEL expressions and predicates",
       "properties": {
         "id": {
@@ -7310,6 +7451,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Ognl",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For OGNL expressions and predicates",
       "properties": {
         "id": {
@@ -7340,6 +7482,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Php",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For PHP expressions and predicates",
       "properties": {
         "id": {
@@ -7370,6 +7513,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Property",
       "group": "language",
+      "icon": "generic24.png",
       "description": "An expression which extracts the named exchange property",
       "properties": {
         "id": {
@@ -7400,6 +7544,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Python",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For Python expressions and predicates",
       "properties": {
         "id": {
@@ -7430,6 +7575,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Ref",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For using a custom expression",
       "properties": {
         "id": {
@@ -7460,6 +7606,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Ruby",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For Ruby expressions and predicates",
       "properties": {
         "id": {
@@ -7490,6 +7637,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Simple",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For expressions and predicates using the simple language",
       "properties": {
         "resultType": {
@@ -7527,6 +7675,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Spel",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For Spring Expression Language (SpEL) expressions and predicates",
       "properties": {
         "id": {
@@ -7557,6 +7706,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Sql",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For SQL expressions and predicates",
       "properties": {
         "id": {
@@ -7587,6 +7737,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Terser",
       "group": "language,hl7",
+      "icon": "generic24.png",
       "description": "For HL7 terser expressions and predicates",
       "properties": {
         "id": {
@@ -7617,6 +7768,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Tokenize",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For expressions and predicates using a body or header tokenizer.",
       "properties": {
         "token": {
@@ -7706,6 +7858,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Vtdxml",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For VTD-XML (fast and efficient XPath) expressions and predicates",
       "properties": {
         "id": {
@@ -7736,6 +7889,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Xpath",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For XPath expressions and predicates",
       "properties": {
         "documentType": {
@@ -7817,6 +7971,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Xquery",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For XQuery expressions and predicates",
       "properties": {
         "type": {
@@ -7861,6 +8016,7 @@ var _apacheCamelModel = {
       "type": "object",
       "title": "Xtokenize",
       "group": "language",
+      "icon": "generic24.png",
       "description": "For expressions and predicates using a body or header tokenizer.",
       "properties": {
         "headerName": {

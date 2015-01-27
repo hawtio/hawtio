@@ -40,7 +40,7 @@ module Forms {
     var safeId = Forms.safeIdentifier(id);
 
     // mark as required
-    var required:boolean = (property.required || "false") === "true";
+    var required:boolean = property.required || false;
 
     var inputMarkup = createStandardWidgetMarkup(propTypeName, property, schema, config, options, safeId);
 

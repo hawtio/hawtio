@@ -8,5 +8,10 @@
       width: 600px;
     }
   </style>
+
+  <h3>
+    <img src="{{icon}}" width="48" height="48" ng-show="icon"/> {{model.title}}
+  </h3>
+
   <div simple-form name="formViewer" mode='view' entity='nodeData' data='model' schema="schema"></div>
 </div>
