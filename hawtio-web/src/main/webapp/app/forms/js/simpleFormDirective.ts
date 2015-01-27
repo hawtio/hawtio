@@ -36,6 +36,7 @@ module Forms {
     public labelclass = 'control-label';
 
     public showtypes = 'false';
+    public showhelp = 'true';
 
     public onsubmit = 'onSubmit';
 

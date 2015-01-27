@@ -236,8 +236,15 @@ module Forms {
 
   export function getHelpSpan(config, arg, id) {
     var help = Core.pathGet(config.data, ['properties', id, 'help']);
+    if (Core.isBlank(help)) {
+      // fallback and use description
+      help = Core.pathGet(config.data, ['properties', id, 'description']);
+    }
+
+    var show = config.showhelp || "true";
+
     if (!Core.isBlank(help)) {
-      return angular.element('<span class="help-block">' + help + '</span>');
+      return angular.element('<span class="help-block" ng-show="' + show + '">' + help + '</span>');
     } else {
       return angular.element('<span class="help-block"></span>');
     }

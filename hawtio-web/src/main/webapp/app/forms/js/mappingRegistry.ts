@@ -9,7 +9,8 @@ module Forms {
    *
    * This will include either the standard AngularJS widgets or custom widgets
    */
-  export function createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName, wrapInGroup = true, disableHumanizeLabel = false) {
+  export function createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName,
+                               wrapInGroup = true, disableHumanizeLabel = false) {
     var input:JQuery = null;
     var group:JQuery = null;
 

@@ -8,6 +8,20 @@ module Camel {
     $scope.schema = _apacheCamelModel;
     $scope.model = null;
     $scope.icon = null;
+    $scope.showHelp = false;
+    $scope.showUsedOnly = false;
+
+    $scope.$watch('showHelp', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        updateData();
+      }
+    });
+
+    $scope.$watch('showUsedOnly', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        updateData();
+      }
+    });
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress

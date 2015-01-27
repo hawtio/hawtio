@@ -1,3 +1,17 @@
 <div ng-controller="Camel.PropertiesController">
+
+  <div class="control-group inline-block">
+    <form class="form-inline no-bottom-margin">
+      <label>Show Used Only:
+        <input type="checkbox" ng-model="showUsedOnly"
+               title="Show only the properties which has been explicit configured"/>
+      </label>
+      <label>Show Help:
+        <input type="checkbox" ng-model="showHelp"
+               title="Show the help for the properties"/>
+      </label>
+    </form>
+  </div>
+
   <div ng-include="viewTemplate"></div>
 </div>
