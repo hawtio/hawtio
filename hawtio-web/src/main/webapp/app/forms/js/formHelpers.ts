@@ -171,6 +171,17 @@ module Forms {
   }
 
   /**
+   * Returns true if the given schema definition property kind matches the given kind
+   * @method isKind
+   * @param {any} definition
+   * @param {string} kind
+   */
+  export function isKind(definition, kind:string) {
+    var kindName = Core.pathGet(definition, "kind");
+    return kindName && kind === kindName;
+  }
+
+  /**
    * Returns true if the given property represents a nested object or array of objects
    * @method isArrayOrNestedObject
    * @param {any} property

@@ -105,6 +105,15 @@
           <to id="messagesOthers" uri="file:target/messages/others"/>
         </otherwise>
       </choice>
+      <aggregate strategyRef="myAgg">
+        <correlationExpression>
+          <constant>true</constant>
+        </correlationExpression>
+        <completionPredicate>
+          <simple>${header.done}</simple>
+        </completionPredicate>
+        <to uri="mock:done"/>
+      </aggregate>
     </route>
     <!-- route for having something trigger all the time -->
     <route id="timerToAMQ">
@@ -230,6 +239,8 @@
   </camelContext>
 
   <!-- dummy bean for camel routes -->
+  <bean id="myAgg" class="io.hawt.camel.sample.MyAggregationStrategy"/>
+
   <bean id="userService" class="io.hawt.camel.rest.UserService"/>
 
   <bean id="myBean" class="io.hawt.camel.sample.CheeseBean"/>

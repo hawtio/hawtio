@@ -39,6 +39,9 @@ module Forms {
     };
     var safeId = Forms.safeIdentifier(id);
 
+    // mark as required
+    var required:boolean = (property.required || "false") === "true";
+
     var inputMarkup = createStandardWidgetMarkup(propTypeName, property, schema, config, options, safeId);
 
     if (inputMarkup) {
@@ -63,6 +66,7 @@ module Forms {
       } catch (e) {
         // ignore missing read only function
       }
+
       var title = property.title ||  property.tooltip || property.label;
       if (title) {
         input.attr('title', title);
@@ -87,8 +91,15 @@ module Forms {
         group = this.getControlGroup(config, config, id);
         var labelText = property.title || property.label ||
           (disableHumanizeLabelValue ? defaultLabel : Core.humanizeValue(defaultLabel));
+        // TODO: better to use CSS to style required using a different color?
+        if (required) {
+          labelText = labelText + " (*)";
+        }
         var labelElement = Forms.getLabel(config, config, labelText);
-        if (title) {
+        if (tooltip) {
+          // favor using the tooltip as the title so we get the long description when people hover the mouse over the label
+          labelElement.attr('title', tooltip);
+        } else if (title) {
           labelElement.attr('title', title);
         }
         group.append(labelElement);
@@ -168,7 +179,7 @@ module Forms {
       }
     }
 */
-    if (property.required) {
+    if (required) {
       // don't mark checkboxes as required
       if (input[0].localName === "input" && input.attr("type") === "checkbox") {
         // lets not set required on a checkbox, it doesn't make any sense ;)
@@ -248,13 +259,13 @@ module Forms {
       return null;
     }
     var defaultValueConverter:(scope:any, modelName:string) => void = null;
-    var defaultValue = property.default;
+    var defaultValue = property.default || property.defaultValue;
     if (defaultValue) {
         // lets add a default value
         defaultValueConverter = (scope, modelName):void => {
           var value = Core.pathGet(scope, modelName);
           if (!value)  {
-            Core.pathSet(scope, modelName, property.default);
+            Core.pathSet(scope, modelName, defaultValue);
           }
         };
         options.valueConverter = defaultValueConverter;
@@ -263,7 +274,7 @@ module Forms {
     function getModelValueOrDefault(scope, modelName) {
       var value = Core.pathGet(scope, modelName);
       if (!value) {
-        var defaultValue = property.default;
+        var defaultValue = property.default || property.defaultValue;
         if (defaultValue) {
           value = defaultValue;
           Core.pathSet(scope, modelName, value);

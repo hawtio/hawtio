@@ -116,7 +116,6 @@ module Camel {
           var nodeName = element.localName;
           var langSettings = Camel.camelLanguageSettings(nodeName);
           if (langSettings) {
-            // TODO the expression key could be anything really; how should we know?
             answer["expression"] = {
               language: nodeName,
               expression: element.textContent

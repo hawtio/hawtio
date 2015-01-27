@@ -33,6 +33,10 @@ module Camel {
             log.debug("Properties - data: " + JSON.stringify($scope.nodeData, null, "  "));
             log.debug("Properties - schema: " + JSON.stringify($scope.model, null, "  "));
           }
+          // TODO: remove us
+          log.info("Properties - data:\n" + JSON.stringify($scope.nodeData, null, "  "));
+          log.info("\n");
+          log.info("Properties - schema:\n" + JSON.stringify($scope.model, null, "  "));
 
           $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
         }
