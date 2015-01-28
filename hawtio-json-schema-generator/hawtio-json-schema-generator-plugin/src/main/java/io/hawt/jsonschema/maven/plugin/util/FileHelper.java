@@ -90,7 +90,7 @@ public class FileHelper {
         }
     }
 
-    public static class CamelComponentsModelFilter implements FileFilter {
+    public static class JsonFileFilter implements FileFilter {
 
         @Override
         public boolean accept(File pathname) {

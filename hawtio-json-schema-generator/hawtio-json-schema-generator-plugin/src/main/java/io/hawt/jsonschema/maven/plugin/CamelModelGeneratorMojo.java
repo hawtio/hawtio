@@ -35,11 +35,8 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.directory}")
     protected File buildDir;
 
-    /**
-     * The output directory for generated models file
-     */
-    @Parameter(defaultValue = "${project.build.directory}/generated/camel/models")
-    protected File outDir;
+    @Parameter(defaultValue = "${schema-outdir}/camelModel.js")
+    protected File schemaFile;
 
     /**
      * Known icons for the models
@@ -52,6 +49,9 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("Assembling Camel model schema");
 
+        // TODO: should find inside the camel-catalog JAR
+        // TODO: should output to the camelModel.js
+
         initIcons();
 
         File camelMetaDir = new File(buildDir, "classes/org/apache/camel/model");
@@ -61,7 +61,7 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
         // find all json files in camel-core
         if (buildDir != null && buildDir.isDirectory()) {
             File target = new File(buildDir, "classes/org/apache/camel/model");
-            FileHelper.findJsonFiles(target, jsonFiles, new FileHelper.CamelComponentsModelFilter());
+            FileHelper.findJsonFiles(target, jsonFiles, new FileHelper.JsonFileFilter());
         }
 
         Map<String, String> eips = new TreeMap<String, String>();
@@ -73,12 +73,6 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
             for (File file : jsonFiles) {
                 String name = file.getName();
                 if (name.endsWith(".json")) {
-                    // special as the maven plugin may be run twice
-                    boolean skip = file.getName().equals("camelModel.json");
-                    if (skip) {
-                        continue;
-                    }
-
                     // strip out .json from the name
                     String modelName = name.substring(0, name.length() - 5);
                     // load the schema
@@ -103,11 +97,11 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
             throw new MojoFailureException("Error loading model schemas due " + e.getMessage());
         }
 
-        File outFile = new File(camelMetaDir, "camelModel.json");
         try {
             camelMetaDir.mkdirs();
 
-            FileOutputStream fos = new FileOutputStream(outFile, false);
+            FileOutputStream fos = new FileOutputStream(schemaFile, false);
+            fos.write("var _apacheCamelModel =".getBytes());
             fos.write("{\n".getBytes());
 
             // TODO: definitions should be renamed as eips
@@ -135,10 +129,10 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
             fos.close();
 
         } catch (Exception e) {
-            throw new MojoFailureException("Error writing to file " + outFile);
+            throw new MojoFailureException("Error writing to file " + schemaFile);
         }
 
-        getLog().info("Assembled Camel models into combined schema: " + outFile);
+        getLog().info("Assembled Camel models into combined schema: " + schemaFile);
     }
 
     private void initIcons() throws MojoExecutionException {
