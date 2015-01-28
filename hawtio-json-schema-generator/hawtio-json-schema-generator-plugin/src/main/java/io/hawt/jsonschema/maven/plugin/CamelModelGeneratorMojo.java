@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeMap;
 
 import io.hawt.jsonschema.maven.plugin.util.CollectionStringBuffer;
@@ -54,7 +55,7 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("Assembling Camel model schema");
 
-        // TODO: copy expression to definitions as we need that for languages to work until we fix hawtio etc
+        // TODO: defaultValue as " cannot parse the description
 
         Artifact camelCatalog = findCamelCatalogArtifact(project);
         if (camelCatalog == null) {
@@ -65,6 +66,7 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
 
         initIcons();
 
+        // we want expression to be first
         Map<String, String> eips = new TreeMap<String, String>();
         Map<String, String> rests = new TreeMap<String, String>();
         Map<String, String> dataformats = new TreeMap<String, String>();
@@ -83,6 +85,7 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
                     is = loader.getResourceAsStream("org/apache/camel/catalog/models/" + name + ".json");
                     String text = loadText(is);
                     if (text != null) {
+                        // use the model files to split into the groups we use in camelModel.js
                         List<Map<String, String>> model = parseJsonSchema("model", text, false);
                         if (hasLabel(model, "rest")) {
                             rests.put(name, text);
@@ -95,28 +98,6 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
                         }
                     }
                 }
-
-                // data formats
-/*                is = loader.getResourceAsStream("org/apache/camel/catalog/dataformats.properties");
-                lines = loadText(is);
-                for (String name : lines.split("\n")) {
-                    is = loader.getResourceAsStream("org/apache/camel/catalog/dataformats/" + name + ".json");
-                    String text = loadText(is);
-                    if (text != null) {
-                        dataformats.put(name, text);
-                    }
-                }
-
-                // languages
-                is = loader.getResourceAsStream("org/apache/camel/catalog/languages.properties");
-                lines = loadText(is);
-                for (String name : lines.split("\n")) {
-                    is = loader.getResourceAsStream("org/apache/camel/catalog/languages/" + name + ".json");
-                    String text = loadText(is);
-                    if (text != null) {
-                        languages.put(name, text);
-                    }
-                }*/
             }
         } catch (Exception e) {
             throw new MojoFailureException("Error loading models from camel-catalog due " + e.getMessage());
@@ -134,8 +115,11 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
             fos.write("var _apacheCamelModel =".getBytes());
             fos.write("{\n".getBytes());
 
-            // TODO: definitions should be renamed as eips
             fos.write("  \"definitions\": {\n".getBytes());
+
+            // generate expression first as its special and needed for eips
+            generateExpression(languages.keySet(), fos);
+            // then followed by the regular eips
             Iterator<String> it = eips.keySet().iterator();
             generateSchema("eips", "model", eips, fos, it);
             fos.write("  },\n".getBytes());
@@ -171,7 +155,56 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot load list of icons", e);
         }
+    }
 
+    private void generateExpression(Set<String> languages, FileOutputStream fos) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        // enums as a string
+        CollectionStringBuffer enums = new CollectionStringBuffer(", ");
+        for (String name : languages) {
+            // skip abstract expression as a enum choice
+            if (!"expression".equals(name)) {
+                enums.append(doubleQuote(name));
+            }
+        }
+        String enumValues = enums.toString();
+
+        CollectionStringBuffer cst = new CollectionStringBuffer(",\n");
+        sb.append("    ").append(doubleQuote("expression")).append(": {\n");
+        cst.append("      \"type\": \"object\"");
+        cst.append("      \"title\": " + doubleQuote("expression"));
+        cst.append("      \"group\": " + doubleQuote("language"));
+        cst.append("      \"icon\": " + doubleQuote("generic24.png"));
+        cst.append("      \"description\": " + doubleQuote("Expression in the choose language"));
+        sb.append(cst.toString()).append(",\n");
+
+        cst = new CollectionStringBuffer(",\n");
+        sb.append("      \"properties\": {\n");
+        sb.append("        ").append(doubleQuote("expression")).append(": {\n");
+        cst.append("          \"kind\": " + doubleQuote("element"));
+        cst.append("          \"type\": " + doubleQuote("string"));
+        cst.append("          \"title\": " + doubleQuote("Expression"));
+        cst.append("          \"description\": " + doubleQuote("The expression"));
+        cst.append("          \"required\": true\n");
+        sb.append(cst.toString());
+        sb.append("        },\n"); // a property
+
+        cst = new CollectionStringBuffer(",\n");
+        sb.append("        ").append(doubleQuote("language")).append(": {\n");
+        cst.append("          \"kind\": " + doubleQuote("element"));
+        cst.append("          \"type\": " + doubleQuote("string"));
+        cst.append("          \"title\": " + doubleQuote("Expression"));
+        cst.append("          \"description\": " + doubleQuote("The chosen language"));
+        cst.append("          \"required\": true");
+        cst.append("          \"enum\": [ " + enumValues + " ]");
+        sb.append(cst.toString()).append("\n");
+        sb.append("        }\n");  // a property
+
+        sb.append("      }\n"); // properties
+        sb.append("    },\n"); // expression
+
+        fos.write(sb.toString().getBytes());
     }
 
     private void generateSchema(String schema, String parent, Map<String, String> models, FileOutputStream fos, Iterator<String> it) throws IOException {
@@ -224,7 +257,7 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
                 String optionName = option.get("name");
                 title = asTitle(optionName);
                 String kind = option.get("kind");
-                String type = asType(option.get("type"), option.get("javaType"));
+                String type = option.get("type");
                 String required = option.get("required");
                 description = option.get("description");
                 String defaultValue = option.get("defaultValue");
@@ -274,21 +307,6 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
             answer = "generic24.png";
         }
         return answer;
-    }
-
-    private String asType(String type, String javaType) {
-        if ("array".equals(type)) {
-            return "array";
-        } else if ("string".equals(type)) {
-            return "string";
-        } else if ("boolean".equals(type)) {
-            return "bool";
-        } else if ("java.lang.Integer".equals(javaType)) {
-            return "number";
-        } else if ("org.apache.camel.model.language.ExpressionDefinition".equals(javaType)) {
-            return "expression";
-        }
-        return type;
     }
 
     private String asTitle(String name) {
