@@ -1,23 +1,18 @@
 package io.hawt.jsonschema.maven.plugin;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import io.hawt.jsonschema.maven.plugin.util.CollectionStringBuffer;
-import io.hawt.jsonschema.maven.plugin.util.FileHelper;
 import io.hawt.jsonschema.maven.plugin.util.JSonSchemaHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -59,7 +54,6 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("Assembling Camel model schema");
 
-        // TODO: should find inside the camel-core JAR?
         // TODO: copy expression to definitions as we need that for languages to work until we fix hawtio etc
 
         Artifact camelCatalog = findCamelCatalogArtifact(project);
@@ -73,8 +67,8 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
 
         Map<String, String> eips = new TreeMap<String, String>();
         Map<String, String> rests = new TreeMap<String, String>();
-        Map<String, String> languages = new TreeMap<String, String>();
         Map<String, String> dataformats = new TreeMap<String, String>();
+        Map<String, String> languages = new TreeMap<String, String>();
 
         // find all json files in camel-core
         try {
@@ -83,14 +77,19 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
                 URL url = new URL("file", null, core.getAbsolutePath());
                 URLClassLoader loader = new URLClassLoader(new URL[]{url});
 
-                // eips
+                // TODO: models include everything
+                // eips and rests
                 InputStream is = loader.getResourceAsStream("org/apache/camel/catalog/models.properties");
                 String lines = loadText(is);
                 for (String name : lines.split("\n")) {
                     is = loader.getResourceAsStream("org/apache/camel/catalog/models/" + name + ".json");
                     String text = loadText(is);
                     if (text != null) {
-                        eips.put(name, text);
+                        if (text.contains("\"label\": \"rest")) {
+                            rests.put(name, text);
+                        } else {
+                            eips.put(name, text);
+                        }
                     }
                 }
 
@@ -112,12 +111,9 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
                     is = loader.getResourceAsStream("org/apache/camel/catalog/languages/" + name + ".json");
                     String text = loadText(is);
                     if (text != null) {
-                        dataformats.put(name, text);
+                        languages.put(name, text);
                     }
                 }
-
-                // TODO: rests
-
             }
         } catch (Exception e) {
             throw new MojoFailureException("Error loading models from camel-catalog due " + e.getMessage());
@@ -130,28 +126,30 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
 
         try {
             FileOutputStream fos = new FileOutputStream(schemaFile, false);
+            String version = "var _apacheCamelModelVersion = '" + camelCatalog.getVersion() + "';\n\n";
+            fos.write(version.getBytes());
             fos.write("var _apacheCamelModel =".getBytes());
             fos.write("{\n".getBytes());
 
             // TODO: definitions should be renamed as eips
             fos.write("  \"definitions\": {\n".getBytes());
             Iterator<String> it = eips.keySet().iterator();
-            generateSchema("eips", eips, fos, it);
+            generateSchema("eips", "model", eips, fos, it);
             fos.write("  },\n".getBytes());
 
             fos.write("  \"rests\": {\n".getBytes());
             it = rests.keySet().iterator();
-            generateSchema("rests", rests, fos, it);
+            generateSchema("rests", "model", rests, fos, it);
             fos.write("  },\n".getBytes());
 
             fos.write("  \"dataformats\": {\n".getBytes());
             it = dataformats.keySet().iterator();
-            generateSchema("dataformats", dataformats, fos, it);
+            generateSchema("dataformats", "dataformat", dataformats, fos, it);
             fos.write("  },\n".getBytes());
 
             fos.write("  \"languages\": {\n".getBytes());
             it = languages.keySet().iterator();
-            generateSchema("languages", languages, fos, it);
+            generateSchema("languages", "language", languages, fos, it);
             fos.write("  }\n".getBytes());
 
             fos.write("}\n".getBytes());
@@ -173,21 +171,24 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
 
     }
 
-    private void generateSchema(String schema, Map<String, String> models, FileOutputStream fos, Iterator<String> it) throws IOException {
+    private void generateSchema(String schema, String parent, Map<String, String> models, FileOutputStream fos, Iterator<String> it) throws IOException {
         while (it.hasNext()) {
             String name = it.next();
             String json = models.get(name);
 
             StringBuilder sb = new StringBuilder();
 
-            List<Map<String, String>> model = parseJsonSchema("model", json, false);
+            List<Map<String, String>> model = parseJsonSchema(parent, json, false);
             List<Map<String, String>> properties = parseJsonSchema("properties", json, true);
 
             String group = getValue("label", model);
             String title = getValue("title", model);
             String input = getValue("input", model);
             String output = getValue("output", model);
-            String nextSiblingAddedAsChild = getValue("nextSiblingAddedAsChild", model);
+            String nextSiblingAddedAsChild = "false";
+            if ("true".equals(input) && "false".equals(output)) {
+                nextSiblingAddedAsChild = "true";
+            }
             String description = getValue("description", model);
             String icon = findIcon(name);
 
@@ -234,7 +235,7 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
                 cst.append("          \"kind\": " + doubleQuote(kind));
                 cst.append("          \"type\": " + doubleQuote(type));
                 if (defaultValue != null) {
-                    cst.append("          \"defaultValue\": " + doubleQuote(safeJson(defaultValue)));
+                    cst.append("          \"defaultValue\": " + doubleQuote(safeDefaultValue(defaultValue)));
                 }
                 if (enumValues != null) {
                     cst.append("          \"enum\": [ " + safeEnumJson(enumValues) + " ]");
@@ -292,16 +293,6 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
         return JSonSchemaHelper.asTitle(name);
     }
 
-    private String safeJson(String value) {
-        if ("\"".equals(value)) {
-            return "\\\"";
-        } else if ("\\".equals(value)) {
-            return "\\\\";
-        } else {
-            return value;
-        }
-    }
-
     private String safeEnumJson(String values) {
         CollectionStringBuffer cst = new CollectionStringBuffer();
         cst.setSeparator(", ");
@@ -311,11 +302,23 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
         return cst.toString();
     }
 
-    private Artifact findCamelCatalogArtifact(MavenProject project) {
+    /**
+     * The default value may need to be escaped to be safe for json
+     */
+    private static String safeDefaultValue(String value) {
+        if ("\"".equals(value)) {
+            return "\\\"";
+        } else if ("\\".equals(value)) {
+            return "\\\\";
+        } else {
+            return value;
+        }
+    }
+
+    private static Artifact findCamelCatalogArtifact(MavenProject project) {
         Iterator it = project.getDependencyArtifacts().iterator();
         while (it.hasNext()) {
             Artifact artifact = (Artifact) it.next();
-            getLog().info(artifact.getArtifactId());
             if (artifact.getGroupId().equals("org.apache.camel") && artifact.getArtifactId().equals("camel-catalog")) {
                 return artifact;
             }
