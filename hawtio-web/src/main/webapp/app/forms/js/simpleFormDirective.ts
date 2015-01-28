@@ -326,6 +326,27 @@ module Forms {
         // special for expression
         if (property.kind === "expression") {
           propSchema = Forms.lookupDefinition("expression", fullSchema);
+
+          // create 2 inputs, the 1st is the drop down with the languages
+          // and then merge the 2 inputs together, which is a little hack
+          // but easier to do than change the complicated Forms.createWidget to do a widget with a selectbox + input
+          var childId = id + ".language";
+          var childId2 = id + ".expression";
+          var input:JQuery = Forms.createWidget(propTypeName, propSchema.properties.language, schema, config, childId, ignorePrefixInLabel, configScopeName, true, disableHumanizeLabel);
+          var input2:JQuery = Forms.createWidget(propTypeName, propSchema.properties.expression, schema, config, childId2, ignorePrefixInLabel, configScopeName, true, disableHumanizeLabel);
+
+          // move the selectbox from input to input2 as we want it to be on the same line
+          var selectWidget = input.find("select");
+          var inputWidget = input2.find("input");
+          if (selectWidget && inputWidget) {
+            // adjust the widght so the two inputs can be on the same line and have similar length as the others
+            selectWidget.attr("style", "width: 120px");
+            inputWidget.attr("style", "width: 480px");
+            inputWidget.before(selectWidget);
+          }
+
+          fieldset.append(input2);
+          return;
         }
 
         var nestedProperties = null;
