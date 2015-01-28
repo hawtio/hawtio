@@ -1,9 +1,9 @@
-package io.hawt.maven;
+package io.hawt.jsonschema.maven.plugin.util;
 
 /**
  * A little helper class for converting a collection of values to a (usually comma separated) string.
  */
-class CollectionStringBuffer {
+public class CollectionStringBuffer {
 
     private final StringBuilder buffer = new StringBuilder();
     private String separator;

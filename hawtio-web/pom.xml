@@ -682,6 +682,8 @@
             <phase>generate-sources</phase>
             <goals>
               <goal>generate-json-schema</goal>
+
+              <goal>generate-camel-model</goal>
             </goals>
           </execution>
         </executions>

@@ -1,4 +1,4 @@
-package io.hawt.maven;
+package io.hawt.jsonschema.maven.plugin.util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,9 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public final class GenerateHelper {
+public class FileHelper {
 
-    private GenerateHelper() {
+    private FileHelper() {
     }
 
     /**
@@ -97,4 +97,5 @@ public final class GenerateHelper {
             return pathname.isDirectory() || pathname.getName().endsWith(".json");
         }
     }
+
 }

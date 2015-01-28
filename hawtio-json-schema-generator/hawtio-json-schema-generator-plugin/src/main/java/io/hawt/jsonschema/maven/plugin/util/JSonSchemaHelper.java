@@ -1,4 +1,4 @@
-package io.hawt.maven;
+package io.hawt.jsonschema.maven.plugin.util;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

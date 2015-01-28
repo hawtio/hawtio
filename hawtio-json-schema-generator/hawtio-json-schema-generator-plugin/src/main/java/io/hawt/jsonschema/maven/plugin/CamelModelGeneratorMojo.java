@@ -1,4 +1,4 @@
-package io.hawt.maven;
+package io.hawt.jsonschema.maven.plugin;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,67 +12,42 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import io.hawt.jsonschema.maven.plugin.util.CollectionStringBuffer;
+import io.hawt.jsonschema.maven.plugin.util.FileHelper;
+import io.hawt.jsonschema.maven.plugin.util.JSonSchemaHelper;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
-import static io.hawt.maven.JSonSchemaHelper.doubleQuote;
-import static io.hawt.maven.JSonSchemaHelper.getValue;
-import static io.hawt.maven.JSonSchemaHelper.parseJsonSchema;
-
+import static io.hawt.jsonschema.maven.plugin.util.JSonSchemaHelper.doubleQuote;
+import static io.hawt.jsonschema.maven.plugin.util.JSonSchemaHelper.getValue;
+import static io.hawt.jsonschema.maven.plugin.util.JSonSchemaHelper.parseJsonSchema;
 
 /**
- * Assembles all the models into one schema that can be used by tooling with enriched information.
- * <p/>
- * This has to be done as a separate goal after all the individual model schema files has been generated,
- * where these models can be linked together in a simpler way that is easier to navigate from tooling.
- *
- * @goal generate-camel-model
- * @execute phase="process-classes"
+ * To generate camelModel.js from the Apache Camel release
  */
-public class GenerateCamelModelMojo extends AbstractMojo {
+@Mojo(name = "generate-camel-model", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+public class CamelModelGeneratorMojo extends AbstractMojo {
 
-    /**
-     * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
-     */
-    protected MavenProject project;
-
-    /**
-     * The camel-core directory
-     *
-     * @parameter default-value="${project.build.directory}"
-     */
+    @Parameter(defaultValue = "${project.build.directory}")
     protected File buildDir;
 
     /**
      * The output directory for generated models file
-     *
-     * @parameter default-value="${project.build.directory}/generated/camel/models"
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated/camel/models")
     protected File outDir;
 
     /**
-     * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
+     * Known icons for the models
      */
-    private MavenProjectHelper projectHelper;
-
     private final Properties icons = new Properties();
 
     /**
      * Execute goal.
-     *
-     * @throws org.apache.maven.plugin.MojoExecutionException execution of the main class or one of the
-     *                                                        threads it generated failed.
-     * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("Assembling Camel model schema");
@@ -86,7 +61,7 @@ public class GenerateCamelModelMojo extends AbstractMojo {
         // find all json files in camel-core
         if (buildDir != null && buildDir.isDirectory()) {
             File target = new File(buildDir, "classes/org/apache/camel/model");
-            GenerateHelper.findJsonFiles(target, jsonFiles, new GenerateHelper.CamelComponentsModelFilter());
+            FileHelper.findJsonFiles(target, jsonFiles, new FileHelper.CamelComponentsModelFilter());
         }
 
         Map<String, String> eips = new TreeMap<String, String>();
@@ -107,7 +82,7 @@ public class GenerateCamelModelMojo extends AbstractMojo {
                     // strip out .json from the name
                     String modelName = name.substring(0, name.length() - 5);
                     // load the schema
-                    String text = GenerateHelper.loadText(new FileInputStream(file));
+                    String text = FileHelper.loadText(new FileInputStream(file));
 
                     // is it a language?
                     boolean language = file.getParent().endsWith("language");
@@ -168,7 +143,7 @@ public class GenerateCamelModelMojo extends AbstractMojo {
 
     private void initIcons() throws MojoExecutionException {
         try {
-            icons.load(GenerateCamelModelMojo.class.getClassLoader().getResourceAsStream("icons.properties"));
+            icons.load(CamelModelGeneratorMojo.class.getClassLoader().getResourceAsStream("icons.properties"));
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot load list of icons", e);
         }

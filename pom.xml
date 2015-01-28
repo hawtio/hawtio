@@ -158,7 +158,6 @@
     <module>hawtio-ide</module>
     <module>hawtio-junit</module>
     <module>hawtio-kubernetes</module>
-    <module>hawtio-camel-maven-plugin</module>
     <module>hawtio-maven-indexer</module>
     <module>hawtio-maven-plugin</module>
     <module>hawtio-json-schema-mbean</module>
