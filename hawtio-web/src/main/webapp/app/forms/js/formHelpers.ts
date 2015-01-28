@@ -226,8 +226,12 @@ module Forms {
     return rc;
   }
 
-  export function getLabel(config, arg, label) {
-    return angular.element('<label class="' + config.labelclass + '">' + label + ': </label>');
+  export function getLabel(config, arg, label, required = false) {
+    if (required) {
+      return angular.element('<label class="strong ' + config.labelclass + '">' + label + ': </label>');
+    } else {
+      return angular.element('<label class="' + config.labelclass + '">' + label + ': </label>');
+    }
   }
 
   export function getControlDiv(config) {

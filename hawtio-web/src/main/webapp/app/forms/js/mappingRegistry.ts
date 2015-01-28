@@ -92,11 +92,7 @@ module Forms {
         group = this.getControlGroup(config, config, id);
         var labelText = property.title || property.label ||
           (disableHumanizeLabelValue ? defaultLabel : Core.humanizeValue(defaultLabel));
-        // TODO: better to use CSS to style required using a different color?
-        if (required) {
-          labelText = labelText + " (*)";
-        }
-        var labelElement = Forms.getLabel(config, config, labelText);
+        var labelElement = Forms.getLabel(config, config, labelText, required);
         if (tooltip) {
           // favor using the tooltip as the title so we get the long description when people hover the mouse over the label
           labelElement.attr('title', tooltip);

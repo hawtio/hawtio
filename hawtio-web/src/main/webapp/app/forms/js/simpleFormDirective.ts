@@ -334,7 +334,6 @@ module Forms {
           nestedProperties = property.properties;
         } else if (propSchema && Forms.isObjectType(propSchema)) {
           // otherwise use the nested properties from the related schema type
-          //console.log("type name " + propTypeName + " has nested object type " + JSON.stringify(propSchema, null, "  "));
           nestedProperties = propSchema.properties;
         }
         if (nestedProperties) {
