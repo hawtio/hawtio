@@ -1,48 +1,31 @@
-var _apacheCamelModel = {
+var _apacheCamelModelVersion = '2.15-SNAPSHOT';
 
+var _apacheCamelModel ={
   "definitions": {
-
     "expression": {
       "type": "object",
-      "title": "Expression",
+      "title": "expression",
       "group": "language",
-      "description": "A useful base class for an expression",
+      "icon": "generic24.png",
+      "description": "Expression in the choose language",
       "properties": {
         "expression": {
-          "kind": "value",
-          "type": "string"
+          "kind": "element",
+          "type": "string",
+          "title": "Expression",
+          "description": "The expression",
+          "required": true
         },
         "language": {
+          "kind": "element",
           "type": "string",
-          "enum": [
-            "constant",
-            "el",
-            "header",
-            "javaScript",
-            "jxpath",
-            "method",
-            "mvel",
-            "ognl",
-            "groovy",
-            "property",
-            "python",
-            "php",
-            "ref",
-            "ruby",
-            "simple",
-            "spel",
-            "sql",
-            "tokenize",
-            "xpath",
-            "xquery"
-          ],
-          "description": "The camel expression language ot use",
-          "tooltip": "Pick the expression language you want to use",
-          "title": "Language"
+          "title": "Expression",
+          "description": "The chosen language",
+          "required": true,
+          "enum": [ "constant", "el", "groovy", "header", "javaScript", "jsonpath", "jxpath", "language", "method", "mvel", "ognl", "php", "property", "python", "ref", "ruby", "simple", "spel", "sql", "terser", "tokenize", "vtdxml", "xpath", "xquery", "xtokenize" ]
         }
       }
     },
-
     "aggregate": {
       "type": "object",
       "title": "Aggregate",
@@ -55,28 +38,28 @@ var _apacheCamelModel = {
       "properties": {
         "correlationExpression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "The expression used to calculate the correlation key to use for aggregation. The Exchange which has the same correlation key is aggregated together. If the correlation key could not be evaluated an Exception is thrown. You can disable this by using the ignoreBadCorrelationKeys option.",
           "title": "Correlation Expression",
           "required": true
         },
         "completionPredicate": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Sets the predicate used to determine if the aggregation is completed",
           "title": "Completion Predicate",
           "required": false
         },
         "completionTimeout": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Sets the completion timeout which would cause the aggregate to consider the group as complete and send out the aggregated exchange.",
           "title": "Completion Timeout",
           "required": false
         },
         "completionSize": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Sets the completion size which is the number of aggregated exchanges which would cause the aggregate to consider the group as complete and send out the aggregated exchange.",
           "title": "Completion Size",
           "required": false
@@ -90,7 +73,7 @@ var _apacheCamelModel = {
         },
         "parallelProcessing": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "When aggregated are completed they are being send out of the aggregator. This option indicates whether or not Camel should use a thread pool with multiple threads for concurrency. If no custom thread pool has been specified then Camel creates a default pool with 10 concurrent threads.",
           "title": "Parallel Processing",
@@ -98,7 +81,7 @@ var _apacheCamelModel = {
         },
         "optimisticLocking": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Turns on using optimistic locking which requires the aggregationRepository being used is supporting this by implementing org.apache.camel.spi.OptimisticLockingAggregationRepository.",
           "title": "Optimistic Locking",
@@ -141,7 +124,7 @@ var _apacheCamelModel = {
         },
         "strategyMethodAllowNull": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If this option is false then the aggregate method is not used for the very first aggregation. If this option is true then null values is used as the oldExchange (at the very first aggregation) when using POJOs as the AggregationStrategy.",
           "title": "Strategy Method Allow Null",
@@ -156,7 +139,7 @@ var _apacheCamelModel = {
         },
         "completionFromBatchConsumer": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Enables the batch completion mode where we aggregate from a org.apache.camel.BatchConsumer and aggregate the total number of exchanges the org.apache.camel.BatchConsumer has reported as total by checking the exchange property link org.apache.camel.ExchangeBATCH_COMPLETE when its complete.",
           "title": "Completion From Batch Consumer",
@@ -164,7 +147,7 @@ var _apacheCamelModel = {
         },
         "groupExchanges": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Enables grouped exchanges so the aggregator will group all aggregated exchanges into a single combined Exchange holding all the aggregated exchanges in a java.util.List.",
           "title": "Group Exchanges",
@@ -172,7 +155,7 @@ var _apacheCamelModel = {
         },
         "eagerCheckCompletion": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Use eager completion checking which means that the completionPredicate will use the incoming Exchange. At opposed to without eager completion checking the completionPredicate will use the aggregated Exchange.",
           "title": "Eager Check Completion",
@@ -180,7 +163,7 @@ var _apacheCamelModel = {
         },
         "ignoreInvalidCorrelationKeys": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If a correlation key cannot be successfully evaluated it will be ignored by logging a DEBUG and then just ignore the incoming Exchange.",
           "title": "Ignore Invalid Correlation Keys",
@@ -188,14 +171,14 @@ var _apacheCamelModel = {
         },
         "closeCorrelationKeyOnCompletion": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "Closes a correlation key when its complete. Any late received exchanges which has a correlation key that has been closed it will be defined and a org.apache.camel.processor.aggregate.ClosedCorrelationKeyException is thrown.",
           "title": "Close Correlation Key On Completion",
           "required": false
         },
         "discardOnCompletionTimeout": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Discards the aggregated message on completion timeout. This means on timeout the aggregated message is dropped and not sent out of the aggregator.",
           "title": "Discard On Completion Timeout",
@@ -203,7 +186,7 @@ var _apacheCamelModel = {
         },
         "forceCompletionOnStop": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Indicates to complete all current aggregated exchanges when the context is stopped",
           "title": "Force Completion On Stop",
@@ -284,7 +267,7 @@ var _apacheCamelModel = {
       "properties": {
         "batchSize": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "defaultValue": "100",
           "description": "Sets the size of the batch to be re-ordered. The default size is 100.",
           "title": "Batch Size",
@@ -300,7 +283,7 @@ var _apacheCamelModel = {
         },
         "allowDuplicates": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to allow duplicates.",
           "title": "Allow Duplicates",
@@ -308,7 +291,7 @@ var _apacheCamelModel = {
         },
         "reverse": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to reverse the ordering.",
           "title": "Reverse",
@@ -316,7 +299,7 @@ var _apacheCamelModel = {
         },
         "ignoreInvalidExchanges": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to ignore invalid exchanges",
           "title": "Ignore Invalid Exchanges",
@@ -357,7 +340,7 @@ var _apacheCamelModel = {
         },
         "cache": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Caches the bean lookup to avoid lookup up bean on every usage.",
           "title": "Cache",
@@ -365,7 +348,7 @@ var _apacheCamelModel = {
         },
         "multiParameterArray": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether the message body is an array type.",
           "title": "Multi Parameter Array",
@@ -446,7 +429,7 @@ var _apacheCamelModel = {
         },
         "threshold": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "Number of previous failed messages to use as threshold to move state from closed to half-open or open state",
           "title": "Threshold",
           "required": false
@@ -571,7 +554,7 @@ var _apacheCamelModel = {
         },
         "asyncDelayed": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Enables asynchronous delay which means the thread will noy block while delaying.",
           "title": "Async Delayed",
@@ -579,7 +562,7 @@ var _apacheCamelModel = {
         },
         "callerRunsWhenRejected": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true",
           "title": "Caller Runs When Rejected",
@@ -587,7 +570,7 @@ var _apacheCamelModel = {
         },
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression to define how long time to wait (in millis)",
           "title": "Expression",
           "required": true
@@ -688,7 +671,7 @@ var _apacheCamelModel = {
         },
         "handled": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Sets whether the exchange should be marked as handled or not.",
           "title": "Handled",
           "required": false
@@ -781,7 +764,7 @@ var _apacheCamelModel = {
         },
         "ignoreInvalidEndpoints": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint",
           "title": "Ignore Invalid Endpoints",
@@ -789,7 +772,7 @@ var _apacheCamelModel = {
         },
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression to call that returns the endpoint(s) to route to in the dynamic routing. Important: The expression will be called in a while loop fashion until the expression returns null which means the dynamic router is finished.",
           "title": "Expression",
           "required": true
@@ -850,7 +833,7 @@ var _apacheCamelModel = {
         },
         "strategyMethodAllowNull": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich) when using POJOs as the AggregationStrategy.",
           "title": "Strategy Method Allow Null",
@@ -858,7 +841,7 @@ var _apacheCamelModel = {
         },
         "aggregateOnException": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If this option is false then the aggregate method is not used if there was an exception thrown while trying to retrieve the data to enrich from the resource. Setting this option to true allows end users to control what to do if there was an exception in the aggregate method. For example to suppress the exception or set a custom message body etc.",
           "title": "Aggregate On Exception",
@@ -899,7 +882,7 @@ var _apacheCamelModel = {
         },
         "roundRobin": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether or not the failover load balancer should operate in round robin mode or not. If not then it will always start from the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If round robin is enabled then it keeps state and will continue with the next endpoint in a round robin fashion. When using round robin it will not stick to last known good endpoint it will always pick the next endpoint to use.",
           "title": "Round Robin",
@@ -907,7 +890,7 @@ var _apacheCamelModel = {
         },
         "maximumFailoverAttempts": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "defaultValue": "-1",
           "description": "A value to indicate after X failover attempts we should exhaust (give up). Use -1 to indicate never give up and continuously try to failover. Use 0 to never failover. And use e.g. 3 to failover at most 3 times before giving up. his option can be used whether or not roundRobin is enabled or not.",
           "title": "Maximum Failover Attempts",
@@ -934,7 +917,7 @@ var _apacheCamelModel = {
       "properties": {
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression to determine if the message should be filtered or not. If the expression returns an empty value or false then the message is filtered (dropped) otherwise the message is continued being routed.",
           "title": "Expression",
           "required": true
@@ -1014,7 +997,7 @@ var _apacheCamelModel = {
         },
         "eager": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Sets whether to eagerly add the key to the idempotent repository or wait until the exchange is complete. Eager is default enabled.",
           "title": "Eager",
@@ -1022,7 +1005,7 @@ var _apacheCamelModel = {
         },
         "skipDuplicate": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Sets whether to skip duplicates or not. The default behavior is to skip duplicates. A duplicate message would have the Exchange property link org.apache.camel.ExchangeDUPLICATE_MESSAGE set to a link BooleanTRUE value. A none duplicate message will not have this property set.",
           "title": "Skip Duplicate",
@@ -1030,7 +1013,7 @@ var _apacheCamelModel = {
         },
         "removeOnFailure": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Sets whether to remove or keep the key on failure. The default behavior is to remove the key on failure.",
           "title": "Remove On Failure",
@@ -1038,7 +1021,7 @@ var _apacheCamelModel = {
         },
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression used to calculate the correlation key to use for duplicate check. The Exchange which has the same correlation key is regarded as a duplicate and will be rejected.",
           "title": "Expression",
           "required": true
@@ -1217,7 +1200,7 @@ var _apacheCamelModel = {
         },
         "skipSendToOriginalEndpoint": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If set to true then the message is not sent to the original endpoint. By default (false) the message is both intercepted and then sent to the original endpoint.",
           "title": "Skip Send To Original Endpoint",
@@ -1265,7 +1248,7 @@ var _apacheCamelModel = {
         },
         "inheritErrorHandler": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Sets whether or not to inherit the configured error handler. The default value is true. You can use this to disable using the inherited error handler for a given DSL such as a load balancer where you want to use a custom error handler strategy.",
           "title": "Inherit Error Handler",
@@ -1330,7 +1313,7 @@ var _apacheCamelModel = {
         "loggerRef": {
           "kind": "attribute",
           "type": "string",
-          "description": "To refer to a custom logger instance to lookup from ther registry.",
+          "description": "To refer to a custom logger instance to lookup from the registry.",
           "title": "Logger Ref",
           "required": false
         },
@@ -1362,7 +1345,7 @@ var _apacheCamelModel = {
       "properties": {
         "copy": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If the copy attribute is true a copy of the input Exchange is used for each iteration. That means each iteration will start from a copy of the same message. By default loop will loop the same exchange all over so each iteration may have different message content.",
           "title": "Copy",
@@ -1370,7 +1353,7 @@ var _apacheCamelModel = {
         },
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression to define how many times we should loop. Notice the expression is only evaluated once and should return a number as how many times to loop. A value of zero or negative means no looping. The loop is like a for-loop fashion if you want a while loop then the dynamic router may be a better choice.",
           "title": "Expression",
           "required": true
@@ -1443,7 +1426,7 @@ var _apacheCamelModel = {
       "properties": {
         "parallelProcessing": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If enabled then sending messages to the multicasts occurs concurrently. Note the caller thread will still wait until all messages has been fully processed before it continues. Its only the sending and processing the replies from the multicasts which happens concurrently.",
           "title": "Parallel Processing",
@@ -1465,7 +1448,7 @@ var _apacheCamelModel = {
         },
         "strategyMethodAllowNull": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich) when using POJOs as the AggregationStrategy",
           "title": "Strategy Method Allow Null",
@@ -1480,7 +1463,7 @@ var _apacheCamelModel = {
         },
         "streaming": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If enabled then Camel will process replies out-of-order eg in the order they come back. If disabled Camel will process replies in the same order as defined by the multicast.",
           "title": "Streaming",
@@ -1488,7 +1471,7 @@ var _apacheCamelModel = {
         },
         "stopOnException": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Will now stop further processing if an exception or failure occurred during processing of an org.apache.camel.Exchange and the caused exception will be thrown. Will also stop if processing the exchange failed (has a fault message) or an exception was thrown and handled by the error handler (such as using onException). In all situations the multicast will stop further processing. This is the same behavior as in pipeline which is used by the routing engine. The default behavior is to not stop but continue processing till the end",
           "title": "Stop On Exception",
@@ -1511,7 +1494,7 @@ var _apacheCamelModel = {
         },
         "shareUnitOfWork": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Shares the org.apache.camel.spi.UnitOfWork with the parent and each of the sub messages. Multicast will by default not share unit of work between the parent exchange and each multicasted exchange. This means each sub exchange has its own individual unit of work.",
           "title": "Share Unit Of Work",
@@ -1519,7 +1502,7 @@ var _apacheCamelModel = {
         },
         "parallelAggregate": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.",
           "title": "Parallel Aggregate",
@@ -1562,7 +1545,7 @@ var _apacheCamelModel = {
         },
         "onCompleteOnly": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Will only synchronize when the org.apache.camel.Exchange completed successfully (no errors).",
           "title": "On Complete Only",
@@ -1570,7 +1553,7 @@ var _apacheCamelModel = {
         },
         "onFailureOnly": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Will only synchronize when the org.apache.camel.Exchange ended with failure (exception or FAULT message).",
           "title": "On Failure Only",
@@ -1585,7 +1568,7 @@ var _apacheCamelModel = {
         },
         "parallelProcessing": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If enabled then the on completion process will run asynchronously by a separate thread from a thread pool. By default this is false meaning the on completion process will run synchronously using the same caller thread as from the route.",
           "title": "Parallel Processing",
@@ -1600,7 +1583,7 @@ var _apacheCamelModel = {
         },
         "useOriginalMessage": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Will use the original input body when an org.apache.camel.Exchange for this on completion. By default this feature is off.",
           "title": "Use Original Message",
@@ -1648,7 +1631,7 @@ var _apacheCamelModel = {
         },
         "retryWhile": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Sets the retry while predicate. Will continue retrying until predicate returns false.",
           "title": "Retry While",
           "required": false
@@ -1669,14 +1652,14 @@ var _apacheCamelModel = {
         },
         "handled": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Sets whether the exchange should be marked as handled or not.",
           "title": "Handled",
           "required": false
         },
         "continued": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Sets whether the exchange should handle and continue routing from the point of failure. If this option is enabled then its considered handled as well.",
           "title": "Continued",
           "required": false
@@ -1690,7 +1673,7 @@ var _apacheCamelModel = {
         },
         "useOriginalMessage": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Will use the original input message when an org.apache.camel.Exchange is moved to the dead letter queue. Notice: this only applies when all redeliveries attempt have failed and the org.apache.camel.Exchange is doomed for failure. Instead of using the current inprogress org.apache.camel.Exchange IN body we use the original IN body instead. This allows you to store the original input in the dead letter queue instead of the inprogress snapshot of the IN body. For instance if you route transform the IN body during routing and then failed. With the original exchange store in the dead letter queue it might be easier to manually re submit the org.apache.camel.Exchange again as the IN body is the same as when Camel received it. So you should be able to send the org.apache.camel.Exchange to the same input. By default this feature is off.",
           "title": "Use Original Message",
@@ -1724,7 +1707,7 @@ var _apacheCamelModel = {
       "properties": {
         "maximumRetries": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "Sets the maximum number of retries",
           "title": "Maximum Retries",
           "required": false
@@ -1747,7 +1730,7 @@ var _apacheCamelModel = {
         },
         "exponentialBackOff": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Enable exponential backoff",
           "title": "Exponential Back Off",
@@ -1755,7 +1738,7 @@ var _apacheCamelModel = {
         },
         "randomBackOff": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Enables random backoff",
           "title": "Random Back Off",
@@ -1929,7 +1912,7 @@ var _apacheCamelModel = {
         },
         "strategyMethodAllowNull": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich) when using POJOs as the AggregationStrategy.",
           "title": "Strategy Method Allow Null",
@@ -1937,7 +1920,7 @@ var _apacheCamelModel = {
         },
         "aggregateOnException": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If this option is false then the aggregate method is not used if there was an exception thrown while trying to retrieve the data to enrich from the resource. Setting this option to true allows end users to control what to do if there was an exception in the aggregate method. For example to suppress the exception or set a custom message body etc.",
           "title": "Aggregate On Exception",
@@ -2011,32 +1994,6 @@ var _apacheCamelModel = {
         }
       }
     },
-    "property": {
-      "type": "object",
-      "title": "Property",
-      "group": "configuration,resequence",
-      "icon": "generic24.png",
-      "description": "A key value pair",
-      "acceptInput": "false",
-      "acceptOutput": "false",
-      "nextSiblingAddedAsChild": "false",
-      "properties": {
-        "key": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Property key",
-          "title": "Key",
-          "required": true
-        },
-        "value": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Property value",
-          "title": "Value",
-          "required": true
-        }
-      }
-    },
     "random": {
       "type": "object",
       "title": "Random",
@@ -2075,7 +2032,7 @@ var _apacheCamelModel = {
         },
         "parallelProcessing": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If enabled then sending messages to the recipients occurs concurrently. Note the caller thread will still wait until all messages has been fully processed before it continues. Its only the sending and processing the replies from the recipients which happens concurrently.",
           "title": "Parallel Processing",
@@ -2097,7 +2054,7 @@ var _apacheCamelModel = {
         },
         "strategyMethodAllowNull": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich) when using POJOs as the AggregationStrategy",
           "title": "Strategy Method Allow Null",
@@ -2112,7 +2069,7 @@ var _apacheCamelModel = {
         },
         "stopOnException": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Will now stop further processing if an exception or failure occurred during processing of an org.apache.camel.Exchange and the caused exception will be thrown. Will also stop if processing the exchange failed (has a fault message) or an exception was thrown and handled by the error handler (such as using onException). In all situations the recipient list will stop further processing. This is the same behavior as in pipeline which is used by the routing engine. The default behavior is to not stop but continue processing till the end",
           "title": "Stop On Exception",
@@ -2120,7 +2077,7 @@ var _apacheCamelModel = {
         },
         "ignoreInvalidEndpoints": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint",
           "title": "Ignore Invalid Endpoints",
@@ -2128,7 +2085,7 @@ var _apacheCamelModel = {
         },
         "streaming": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If enabled then Camel will process replies out-of-order eg in the order they come back. If disabled Camel will process replies in the same order as defined by the recipient list.",
           "title": "Streaming",
@@ -2151,7 +2108,7 @@ var _apacheCamelModel = {
         },
         "shareUnitOfWork": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Shares the org.apache.camel.spi.UnitOfWork with the parent and each of the sub messages. Recipient List will by default not share unit of work between the parent exchange and each recipient exchange. This means each sub exchange has its own individual unit of work.",
           "title": "Share Unit Of Work",
@@ -2159,14 +2116,14 @@ var _apacheCamelModel = {
         },
         "cacheSize": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this recipient list when uris are reused.",
           "title": "Cache Size",
           "required": false
         },
         "parallelAggregate": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.",
           "title": "Parallel Aggregate",
@@ -2174,7 +2131,7 @@ var _apacheCamelModel = {
         },
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression that returns which endpoints (url) to send the message to (the recipients). If the expression return an empty value then the message is not sent to any recipients.",
           "title": "Expression",
           "required": true
@@ -2528,7 +2485,7 @@ var _apacheCamelModel = {
         },
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression to use for re-ordering the messages such as a header with a sequence number",
           "title": "Expression",
           "required": true
@@ -2549,25 +2506,6 @@ var _apacheCamelModel = {
         }
       }
     },
-    "restContextRef": {
-      "type": "object",
-      "title": "Rest Context Ref",
-      "group": "configuration,rest",
-      "icon": "generic24.png",
-      "description": "To refer to an XML file with rest services defined using the rest-dsl",
-      "acceptInput": "false",
-      "acceptOutput": "false",
-      "nextSiblingAddedAsChild": "false",
-      "properties": {
-        "ref": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Reference to the rest-dsl",
-          "title": "Ref",
-          "required": true
-        }
-      }
-    },
     "rollback": {
       "type": "object",
       "title": "Rollback",
@@ -2580,7 +2518,7 @@ var _apacheCamelModel = {
       "properties": {
         "markRollbackOnly": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Mark the transaction for rollback only (cannot be overruled to commit)",
           "title": "Mark Rollback Only",
@@ -2588,7 +2526,7 @@ var _apacheCamelModel = {
         },
         "markRollbackOnlyLast": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Mark only last sub transaction for rollback only. When using sub transactions (if the transaction manager support this)",
           "title": "Mark Rollback Only Last",
@@ -2699,7 +2637,7 @@ var _apacheCamelModel = {
         },
         "startupOrder": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "To configure the ordering of the routes being started",
           "title": "Startup Order",
           "required": false
@@ -2841,7 +2779,7 @@ var _apacheCamelModel = {
         },
         "ignoreInvalidEndpoints": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint",
           "title": "Ignore Invalid Endpoints",
@@ -2849,14 +2787,14 @@ var _apacheCamelModel = {
         },
         "cacheSize": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this recipient list when uris are reused.",
           "title": "Cache Size",
           "required": false
         },
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression to define the routing slip which defines which endpoints to route the message in a pipeline style. Notice the expression is evaluated once if you want a more dynamic style then the dynamic router eip is a better choice.",
           "title": "Expression",
           "required": true
@@ -2939,7 +2877,7 @@ var _apacheCamelModel = {
       "properties": {
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression that returns the new body to use",
           "title": "Expression",
           "required": true
@@ -3006,7 +2944,7 @@ var _apacheCamelModel = {
       "properties": {
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression that returns the new fault body to use",
           "title": "Expression",
           "required": true
@@ -3046,7 +2984,7 @@ var _apacheCamelModel = {
         },
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression to return the value of the header",
           "title": "Expression",
           "required": true
@@ -3086,7 +3024,7 @@ var _apacheCamelModel = {
         },
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression to return the value of the header",
           "title": "Expression",
           "required": true
@@ -3126,7 +3064,7 @@ var _apacheCamelModel = {
         },
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression to return the value of the message exchange property",
           "title": "Expression",
           "required": true
@@ -3166,7 +3104,7 @@ var _apacheCamelModel = {
         },
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Optional expression to sort by something else than the message body",
           "title": "Expression",
           "required": true
@@ -3199,7 +3137,7 @@ var _apacheCamelModel = {
       "properties": {
         "parallelProcessing": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If enabled then processing each splitted messages occurs concurrently. Note the caller thread will still wait until all messages has been fully processed before it continues. Its only processing the sub messages from the splitter which happens concurrently.",
           "title": "Parallel Processing",
@@ -3221,7 +3159,7 @@ var _apacheCamelModel = {
         },
         "strategyMethodAllowNull": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich) when using POJOs as the AggregationStrategy",
           "title": "Strategy Method Allow Null",
@@ -3236,7 +3174,7 @@ var _apacheCamelModel = {
         },
         "streaming": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "When in streaming mode then the splitter splits the original message on-demand and each splitted message is processed one by one. This reduces memory usage as the splitter do not split all the messages first but then we do not know the total size and therefore the link org.apache.camel.ExchangeSPLIT_SIZE is empty. In non-streaming mode (default) the splitter will split each message first to know the total size and then process each message one by one. This requires to keep all the splitted messages in memory and therefore requires more memory. The total size is provided in the link org.apache.camel.ExchangeSPLIT_SIZE header. The streaming mode also affects the aggregation behavior. If enabled then Camel will process replies out-of-order eg in the order they come back. If disabled Camel will process replies in the same order as the messages was splitted.",
           "title": "Streaming",
@@ -3244,7 +3182,7 @@ var _apacheCamelModel = {
         },
         "stopOnException": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Will now stop further processing if an exception or failure occurred during processing of an org.apache.camel.Exchange and the caused exception will be thrown. Will also stop if processing the exchange failed (has a fault message) or an exception was thrown and handled by the error handler (such as using onException). In all situations the splitter will stop further processing. This is the same behavior as in pipeline which is used by the routing engine. The default behavior is to not stop but continue processing till the end",
           "title": "Stop On Exception",
@@ -3267,7 +3205,7 @@ var _apacheCamelModel = {
         },
         "shareUnitOfWork": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Shares the org.apache.camel.spi.UnitOfWork with the parent and each of the sub messages. Splitter will by default not share unit of work between the parent exchange and each splitted exchange. This means each splitted exchange has its own individual unit of work.",
           "title": "Share Unit Of Work",
@@ -3275,7 +3213,7 @@ var _apacheCamelModel = {
         },
         "parallelAggregate": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.",
           "title": "Parallel Aggregate",
@@ -3283,7 +3221,7 @@ var _apacheCamelModel = {
         },
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression of how to split the message body such as as-is using a tokenizer or using an xpath.",
           "title": "Expression",
           "required": true
@@ -3316,7 +3254,7 @@ var _apacheCamelModel = {
       "properties": {
         "correlationExpression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "The correlation expression to use to calculate the correlation key",
           "title": "Correlation Expression",
           "required": true
@@ -3368,7 +3306,7 @@ var _apacheCamelModel = {
       "properties": {
         "capacity": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "defaultValue": "100",
           "description": "Sets the capacity of the resequencer's inbound queue.",
           "title": "Capacity",
@@ -3384,7 +3322,7 @@ var _apacheCamelModel = {
         },
         "ignoreInvalidExchanges": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to ignore invalid exchanges",
           "title": "Ignore Invalid Exchanges",
@@ -3399,7 +3337,7 @@ var _apacheCamelModel = {
         },
         "rejectOld": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If true throws an exception when messages older than the last delivered message are processed",
           "title": "Reject Old",
@@ -3419,7 +3357,7 @@ var _apacheCamelModel = {
       "properties": {
         "defaultProfile": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether this profile is the default thread pool profile",
           "title": "Default Profile",
@@ -3503,14 +3441,14 @@ var _apacheCamelModel = {
         },
         "poolSize": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "Sets the core pool size",
           "title": "Pool Size",
           "required": false
         },
         "maxPoolSize": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "Sets the maximum pool size",
           "title": "Max Pool Size",
           "required": false
@@ -3532,14 +3470,14 @@ var _apacheCamelModel = {
         },
         "maxQueueSize": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "Sets the maximum number of tasks in the work queue. Use -1 or Integer.MAX_VALUE for an unbounded queue",
           "title": "Max Queue Size",
           "required": false
         },
         "allowCoreThreadTimeOut": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether idle core threads is allowed to timeout and therefore can shrink the pool size below the core pool size Is by default false",
           "title": "Allow Core Thread Time Out",
@@ -3563,7 +3501,7 @@ var _apacheCamelModel = {
         },
         "callerRunsWhenRejected": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true",
           "title": "Caller Runs When Rejected",
@@ -3612,7 +3550,7 @@ var _apacheCamelModel = {
         },
         "asyncDelayed": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Enables asynchronous delay which means the thread will no block while delaying.",
           "title": "Async Delayed",
@@ -3620,7 +3558,7 @@ var _apacheCamelModel = {
         },
         "callerRunsWhenRejected": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true",
           "title": "Caller Runs When Rejected",
@@ -3628,7 +3566,7 @@ var _apacheCamelModel = {
         },
         "rejectExecution": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false",
           "title": "Reject Execution",
@@ -3636,7 +3574,7 @@ var _apacheCamelModel = {
         },
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression to configure the maximum number of messages to throttle per request",
           "title": "Expression",
           "required": true
@@ -3802,7 +3740,7 @@ var _apacheCamelModel = {
       "properties": {
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression to return the transformed message body (the new message body to use)",
           "title": "Expression",
           "required": true
@@ -3875,7 +3813,7 @@ var _apacheCamelModel = {
       "properties": {
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression to use for validation as a predicate. The expression should return either true or false. If returning false the message is invalid and an exception is thrown.",
           "title": "Expression",
           "required": true
@@ -3908,7 +3846,7 @@ var _apacheCamelModel = {
       "properties": {
         "roundRobin": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "To enable round robin mode. By default the weighted distribution mode is used. The default value is false.",
           "title": "Round Robin",
@@ -3950,7 +3888,7 @@ var _apacheCamelModel = {
       "properties": {
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression used as the predicate to evaluate whether this when should trigger and route the message or not.",
           "title": "Expression",
           "required": true
@@ -3983,7 +3921,7 @@ var _apacheCamelModel = {
       "properties": {
         "expression": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression used as the predicate to evaluate whether the message should be sent or not to the endpoint",
           "title": "Expression",
           "required": true
@@ -4037,7 +3975,7 @@ var _apacheCamelModel = {
         },
         "body": {
           "kind": "expression",
-          "type": "expression",
+          "type": "object",
           "description": "Expression used for creating a new body as the message to use for wire tapping",
           "title": "Body",
           "required": false
@@ -4051,7 +3989,7 @@ var _apacheCamelModel = {
         },
         "copy": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Uses a copy of the original exchange",
           "title": "Copy",
@@ -4131,7 +4069,7 @@ var _apacheCamelModel = {
         },
         "skipBindingOnErrorCode": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc as success messages otherwise will do. This option will override what may be configured on a parent level",
           "title": "Skip Binding On Error Code",
@@ -4139,7 +4077,7 @@ var _apacheCamelModel = {
         },
         "enableCORS": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false.",
           "title": "Enable C O R S",
@@ -4231,7 +4169,7 @@ var _apacheCamelModel = {
         },
         "skipBindingOnErrorCode": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc as success messages otherwise will do. This option will override what may be configured on a parent level",
           "title": "Skip Binding On Error Code",
@@ -4239,7 +4177,7 @@ var _apacheCamelModel = {
         },
         "enableCORS": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false.",
           "title": "Enable C O R S",
@@ -4331,7 +4269,7 @@ var _apacheCamelModel = {
         },
         "skipBindingOnErrorCode": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc as success messages otherwise will do. This option will override what may be configured on a parent level",
           "title": "Skip Binding On Error Code",
@@ -4339,7 +4277,7 @@ var _apacheCamelModel = {
         },
         "enableCORS": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false.",
           "title": "Enable C O R S",
@@ -4431,7 +4369,7 @@ var _apacheCamelModel = {
         },
         "skipBindingOnErrorCode": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc as success messages otherwise will do. This option will override what may be configured on a parent level",
           "title": "Skip Binding On Error Code",
@@ -4439,7 +4377,7 @@ var _apacheCamelModel = {
         },
         "enableCORS": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false.",
           "title": "Enable C O R S",
@@ -4531,7 +4469,7 @@ var _apacheCamelModel = {
         },
         "skipBindingOnErrorCode": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc as success messages otherwise will do. This option will override what may be configured on a parent level",
           "title": "Skip Binding On Error Code",
@@ -4539,7 +4477,7 @@ var _apacheCamelModel = {
         },
         "enableCORS": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false.",
           "title": "Enable C O R S",
@@ -4624,7 +4562,7 @@ var _apacheCamelModel = {
         },
         "skipBindingOnErrorCode": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc as success messages otherwise will do. This option will override what may be configured on a parent level",
           "title": "Skip Binding On Error Code",
@@ -4632,7 +4570,7 @@ var _apacheCamelModel = {
         },
         "enableCORS": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false.",
           "title": "Enable C O R S",
@@ -4703,7 +4641,7 @@ var _apacheCamelModel = {
         },
         "skipBindingOnErrorCode": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc as success messages otherwise will do.",
           "title": "Skip Binding On Error Code",
@@ -4711,7 +4649,7 @@ var _apacheCamelModel = {
         },
         "enableCORS": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to enable CORS headers in the HTTP response. The default value is false.",
           "title": "Enable C O R S",
@@ -4797,7 +4735,7 @@ var _apacheCamelModel = {
         },
         "skipBindingOnErrorCode": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc as success messages otherwise will do.",
           "title": "Skip Binding On Error Code",
@@ -4805,7 +4743,7 @@ var _apacheCamelModel = {
         },
         "enableCORS": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to enable CORS headers in the HTTP response. The default value is false.",
           "title": "Enable C O R S",
@@ -4859,6 +4797,25 @@ var _apacheCamelModel = {
           "description": "Allows to configure custom CORS headers.",
           "title": "Cors Headers",
           "required": false
+        }
+      }
+    },
+    "restContextRef": {
+      "type": "object",
+      "title": "Rest Context Ref",
+      "group": "configuration,rest",
+      "icon": "generic24.png",
+      "description": "To refer to an XML file with rest services defined using the rest-dsl",
+      "acceptInput": "false",
+      "acceptOutput": "false",
+      "nextSiblingAddedAsChild": "false",
+      "properties": {
+        "ref": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Reference to the rest-dsl",
+          "title": "Ref",
+          "required": true
         }
       }
     },
@@ -4963,7 +4920,7 @@ var _apacheCamelModel = {
         },
         "skipBindingOnErrorCode": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc as success messages otherwise will do. This option will override what may be configured on a parent level",
           "title": "Skip Binding On Error Code",
@@ -4971,7 +4928,7 @@ var _apacheCamelModel = {
         },
         "enableCORS": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false.",
           "title": "Enable C O R S",
@@ -5048,14 +5005,14 @@ var _apacheCamelModel = {
       "properties": {
         "width": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "Width of the barcode",
           "title": "Width",
           "required": false
         },
         "height": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "Height of the barcode",
           "title": "Height",
           "required": false
@@ -5092,7 +5049,7 @@ var _apacheCamelModel = {
       "properties": {
         "lineLength": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "defaultValue": "76",
           "description": "To specific a maximum line length for the encoded data. By default 76 is used.",
           "title": "Line Length",
@@ -5108,7 +5065,7 @@ var _apacheCamelModel = {
         },
         "urlSafe": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Instead of emitting '' and '/' we emit '-' and '_' respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes. Is by default false.",
           "title": "Url Safe",
@@ -5146,7 +5103,7 @@ var _apacheCamelModel = {
         },
         "ignoreUnidentifiedRecords": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to ignore unidentified records.",
           "title": "Ignore Unidentified Records",
@@ -5154,7 +5111,7 @@ var _apacheCamelModel = {
         },
         "ignoreUnexpectedRecords": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to ignore unexpected records.",
           "title": "Ignore Unexpected Records",
@@ -5162,7 +5119,7 @@ var _apacheCamelModel = {
         },
         "ignoreInvalidRecords": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to ignore invalid records.",
           "title": "Ignore Invalid Records",
@@ -5245,7 +5202,7 @@ var _apacheCamelModel = {
         },
         "validation": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether validation is turned on or off. Is by default true.",
           "title": "Validation",
@@ -5327,7 +5284,7 @@ var _apacheCamelModel = {
         },
         "buffersize": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "The size of the buffer used in the signature process.",
           "title": "Buffersize",
           "required": false
@@ -5342,7 +5299,7 @@ var _apacheCamelModel = {
         },
         "shouldAppendHMAC": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Flag indicating that a Message Authentication Code should be calculated and appended to the encrypted data.",
           "title": "Should Append H M A C",
@@ -5350,7 +5307,7 @@ var _apacheCamelModel = {
         },
         "inline": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Flag indicating that the configured IV should be inlined into the encrypted data stream. Is by default false.",
           "title": "Inline",
@@ -5388,7 +5345,7 @@ var _apacheCamelModel = {
         },
         "commentMarkerDisabled": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Disables the comment marker of the reference format.",
           "title": "Comment Marker Disabled",
@@ -5410,7 +5367,7 @@ var _apacheCamelModel = {
         },
         "escapeDisabled": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Use for disabling using escape character",
           "title": "Escape Disabled",
@@ -5425,7 +5382,7 @@ var _apacheCamelModel = {
         },
         "headerDisabled": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Use for disabling headers",
           "title": "Header Disabled",
@@ -5440,7 +5397,7 @@ var _apacheCamelModel = {
         },
         "allowMissingColumnNames": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to allow missing column names.",
           "title": "Allow Missing Column Names",
@@ -5448,7 +5405,7 @@ var _apacheCamelModel = {
         },
         "ignoreEmptyLines": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to ignore empty lines.",
           "title": "Ignore Empty Lines",
@@ -5456,7 +5413,7 @@ var _apacheCamelModel = {
         },
         "ignoreSurroundingSpaces": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to ignore surrounding spaces",
           "title": "Ignore Surrounding Spaces",
@@ -5464,7 +5421,7 @@ var _apacheCamelModel = {
         },
         "nullStringDisabled": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Used to disable null strings",
           "title": "Null String Disabled",
@@ -5479,7 +5436,7 @@ var _apacheCamelModel = {
         },
         "quoteDisabled": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Used to disable quotes",
           "title": "Quote Disabled",
@@ -5508,7 +5465,7 @@ var _apacheCamelModel = {
         },
         "skipHeaderRecord": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to skip the header record in the output",
           "title": "Skip Header Record",
@@ -5516,7 +5473,7 @@ var _apacheCamelModel = {
         },
         "lazyLoad": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one.",
           "title": "Lazy Load",
@@ -5524,7 +5481,7 @@ var _apacheCamelModel = {
         },
         "useMaps": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected).",
           "title": "Use Maps",
@@ -5608,7 +5565,7 @@ var _apacheCamelModel = {
         },
         "fixed": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Delimited or fixed. Is by default false = delimited",
           "title": "Fixed",
@@ -5616,7 +5573,7 @@ var _apacheCamelModel = {
         },
         "ignoreFirstRecord": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether the first line is ignored for delimited files (for the column headers). Is by default true.",
           "title": "Ignore First Record",
@@ -5625,8 +5582,8 @@ var _apacheCamelModel = {
         "textQualifier": {
           "kind": "attribute",
           "type": "string",
-          "defaultValue": "\"",
-          "description": "If the text is qualified with a char such as The default value is",
+          "defaultValue": "\\",
+          "description": "null",
           "title": "Text Qualifier",
           "required": false
         },
@@ -5634,13 +5591,13 @@ var _apacheCamelModel = {
           "kind": "attribute",
           "type": "string",
           "defaultValue": ",",
-          "description": "The delimiter char (could be ; or similar) The default value is",
+          "description": "The delimiter char (could be ; or similar)",
           "title": "Delimiter",
           "required": false
         },
         "allowShortLines": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Allows for lines to be shorter than expected and ignores the extra characters",
           "title": "Allow Short Lines",
@@ -5648,7 +5605,7 @@ var _apacheCamelModel = {
         },
         "ignoreExtraColumns": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Allows for lines to be longer than expected and ignores the extra characters.",
           "title": "Ignore Extra Columns",
@@ -5688,7 +5645,7 @@ var _apacheCamelModel = {
       "properties": {
         "validate": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to validate the HL7 message Is by default true.",
           "title": "Validate",
@@ -5712,7 +5669,7 @@ var _apacheCamelModel = {
       "properties": {
         "validating": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to validate.",
           "title": "Validating",
@@ -5750,7 +5707,7 @@ var _apacheCamelModel = {
         },
         "prettyPrint": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "To enable pretty printing output nicely formatted. Is by default false.",
           "title": "Pretty Print",
@@ -5758,7 +5715,7 @@ var _apacheCamelModel = {
         },
         "ignoreJAXBElement": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to ignore JAXBElement elements - only needed to be set to false in very special use-cases.",
           "title": "Ignore J A X B Element",
@@ -5766,7 +5723,7 @@ var _apacheCamelModel = {
         },
         "mustBeJAXBElement": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether marhsalling must be java objects with JAXB annotations. And if not then it fails. This option can be set to false to relax that such as when the data is already in XML format.",
           "title": "Must Be J A X B Element",
@@ -5774,7 +5731,7 @@ var _apacheCamelModel = {
         },
         "filterNonXmlChars": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "To ignore non xml characheters and replace them with an empty space.",
           "title": "Filter Non Xml Chars",
@@ -5789,7 +5746,7 @@ var _apacheCamelModel = {
         },
         "fragment": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "To turn on marshalling XML fragment trees. By default JAXB looks for XmlRootElement annotation on given class to operate on whole XML tree. This is useful but not always - sometimes generated code does not have XmlRootElement annotation sometimes you need unmarshall only part of tree. In that case you can use partial unmarshalling. To enable this behaviours you need set property partClass. Camel will pass this class to JAXB's unmarshaler.",
           "title": "Fragment",
@@ -5878,7 +5835,7 @@ var _apacheCamelModel = {
       "properties": {
         "prettyPrint": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "To enable pretty printing output nicely formatted. Is by default false.",
           "title": "Pretty Print",
@@ -5916,7 +5873,7 @@ var _apacheCamelModel = {
         },
         "allowJmsType": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.",
           "title": "Allow Jms Type",
@@ -5931,7 +5888,7 @@ var _apacheCamelModel = {
         },
         "useList": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "To unarmshal to a List of Map or a List of Pojo.",
           "title": "Use List",
@@ -5939,7 +5896,7 @@ var _apacheCamelModel = {
         },
         "enableJaxbAnnotationModule": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be used by Jackson.",
           "title": "Enable Jaxb Annotation Module",
@@ -6012,7 +5969,7 @@ var _apacheCamelModel = {
         },
         "armored": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "This option will cause PGP to base64 encode the encrypted text making it available for copy/paste etc.",
           "title": "Armored",
@@ -6020,7 +5977,7 @@ var _apacheCamelModel = {
         },
         "integrity": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Adds an integrity check/sign into the encryption file. The default value is true.",
           "title": "Integrity",
@@ -6035,21 +5992,21 @@ var _apacheCamelModel = {
         },
         "algorithm": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "Symmetric key encryption algorithm; possible values are defined in org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags; for example 2 (= TRIPLE DES) 3 (= CAST5) 4 (= BLOWFISH) 6 (= DES) 7 (= AES_128). Only relevant for encrypting.",
           "title": "Algorithm",
           "required": false
         },
         "compressionAlgorithm": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "Compression algorithm; possible values are defined in org.bouncycastle.bcpg.CompressionAlgorithmTags; for example 0 (= UNCOMPRESSED) 1 (= ZIP) 2 (= ZLIB) 3 (= BZIP2). Only relevant for encrypting.",
           "title": "Compression Algorithm",
           "required": false
         },
         "hashAlgorithm": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags; for example 2 (= SHA1) 8 (= SHA256) 9 (= SHA384) 10 (= SHA512) 11 (=SHA224). Only relevant for signing.",
           "title": "Hash Algorithm",
           "required": false
@@ -6140,7 +6097,7 @@ var _apacheCamelModel = {
         },
         "secureTagContents": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element false = Element Level true = Element Content Level",
           "title": "Secure Tag Contents",
@@ -6193,7 +6150,7 @@ var _apacheCamelModel = {
         },
         "addKeyValueForEncryptedKey": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or not.",
           "title": "Add Key Value For Encrypted Key",
@@ -6354,25 +6311,25 @@ var _apacheCamelModel = {
       "properties": {
         "quoteAllFields": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
-          "description": "Whether or not all values must be quoted when writing them. The default value is false",
+          "description": "Whether or not all values must be quoted when writing them.",
           "title": "Quote All Fields",
           "required": false
         },
         "quote": {
           "kind": "attribute",
           "type": "string",
-          "defaultValue": "\"",
-          "description": "The quote symbol. The default value is",
+          "defaultValue": "\\",
+          "description": "null",
           "title": "Quote",
           "required": false
         },
         "quoteEscape": {
           "kind": "attribute",
           "type": "string",
-          "defaultValue": "\"",
-          "description": "The quote escape symbol The default value is",
+          "defaultValue": "\\",
+          "description": "null",
           "title": "Quote Escape",
           "required": false
         },
@@ -6380,7 +6337,7 @@ var _apacheCamelModel = {
           "kind": "attribute",
           "type": "string",
           "defaultValue": ",",
-          "description": "The delimiter of values The default value is",
+          "description": "The delimiter of values",
           "title": "Delimiter",
           "required": false
         },
@@ -6393,7 +6350,7 @@ var _apacheCamelModel = {
         },
         "skipEmptyLines": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether or not the empty lines must be ignored. The default value is true",
           "title": "Skip Empty Lines",
@@ -6401,7 +6358,7 @@ var _apacheCamelModel = {
         },
         "ignoreTrailingWhitespaces": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether or not the trailing white spaces must ignored. The default value is true",
           "title": "Ignore Trailing Whitespaces",
@@ -6409,7 +6366,7 @@ var _apacheCamelModel = {
         },
         "ignoreLeadingWhitespaces": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether or not the leading white spaces must be ignored. The default value is true",
           "title": "Ignore Leading Whitespaces",
@@ -6417,7 +6374,7 @@ var _apacheCamelModel = {
         },
         "headersDisabled": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether or not the headers are disabled. When defined this option explicitly sets the headers as null which indicates that there is no header. The default value is false",
           "title": "Headers Disabled",
@@ -6425,7 +6382,7 @@ var _apacheCamelModel = {
         },
         "headerExtractionEnabled": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether or not the header must be read in the first line of the test document The default value is false",
           "title": "Header Extraction Enabled",
@@ -6433,7 +6390,7 @@ var _apacheCamelModel = {
         },
         "numberOfRecordsToRead": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "The maximum number of record to read.",
           "title": "Number Of Records To Read",
           "required": false
@@ -6470,7 +6427,7 @@ var _apacheCamelModel = {
         },
         "lazyLoad": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one. The default value is false",
           "title": "Lazy Load",
@@ -6478,7 +6435,7 @@ var _apacheCamelModel = {
         },
         "asMap": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected). The default value is false",
           "title": "As Map",
@@ -6502,7 +6459,7 @@ var _apacheCamelModel = {
       "properties": {
         "skipTrailingCharsUntilNewline": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether or not the trailing characters until new line must be ignored. The default value is false",
           "title": "Skip Trailing Chars Until Newline",
@@ -6510,7 +6467,7 @@ var _apacheCamelModel = {
         },
         "recordEndsOnNewline": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether or not the record ends on new line. The default value is false",
           "title": "Record Ends On Newline",
@@ -6533,7 +6490,7 @@ var _apacheCamelModel = {
         },
         "skipEmptyLines": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether or not the empty lines must be ignored. The default value is true",
           "title": "Skip Empty Lines",
@@ -6541,7 +6498,7 @@ var _apacheCamelModel = {
         },
         "ignoreTrailingWhitespaces": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether or not the trailing white spaces must ignored. The default value is true",
           "title": "Ignore Trailing Whitespaces",
@@ -6549,7 +6506,7 @@ var _apacheCamelModel = {
         },
         "ignoreLeadingWhitespaces": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether or not the leading white spaces must be ignored. The default value is true",
           "title": "Ignore Leading Whitespaces",
@@ -6557,7 +6514,7 @@ var _apacheCamelModel = {
         },
         "headersDisabled": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether or not the headers are disabled. When defined this option explicitly sets the headers as null which indicates that there is no header. The default value is false",
           "title": "Headers Disabled",
@@ -6565,7 +6522,7 @@ var _apacheCamelModel = {
         },
         "headerExtractionEnabled": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether or not the header must be read in the first line of the test document The default value is false",
           "title": "Header Extraction Enabled",
@@ -6573,7 +6530,7 @@ var _apacheCamelModel = {
         },
         "numberOfRecordsToRead": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "The maximum number of record to read.",
           "title": "Number Of Records To Read",
           "required": false
@@ -6610,7 +6567,7 @@ var _apacheCamelModel = {
         },
         "lazyLoad": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one. The default value is false",
           "title": "Lazy Load",
@@ -6618,7 +6575,7 @@ var _apacheCamelModel = {
         },
         "asMap": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected). The default value is false",
           "title": "As Map",
@@ -6649,7 +6606,7 @@ var _apacheCamelModel = {
         },
         "length": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "Header length",
           "title": "Length",
           "required": false
@@ -6680,7 +6637,7 @@ var _apacheCamelModel = {
         },
         "skipEmptyLines": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether or not the empty lines must be ignored. The default value is true",
           "title": "Skip Empty Lines",
@@ -6688,7 +6645,7 @@ var _apacheCamelModel = {
         },
         "ignoreTrailingWhitespaces": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether or not the trailing white spaces must ignored. The default value is true",
           "title": "Ignore Trailing Whitespaces",
@@ -6696,7 +6653,7 @@ var _apacheCamelModel = {
         },
         "ignoreLeadingWhitespaces": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether or not the leading white spaces must be ignored. The default value is true",
           "title": "Ignore Leading Whitespaces",
@@ -6704,7 +6661,7 @@ var _apacheCamelModel = {
         },
         "headersDisabled": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether or not the headers are disabled. When defined this option explicitly sets the headers as null which indicates that there is no header. The default value is false",
           "title": "Headers Disabled",
@@ -6712,7 +6669,7 @@ var _apacheCamelModel = {
         },
         "headerExtractionEnabled": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether or not the header must be read in the first line of the test document The default value is false",
           "title": "Header Extraction Enabled",
@@ -6720,7 +6677,7 @@ var _apacheCamelModel = {
         },
         "numberOfRecordsToRead": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "The maximum number of record to read.",
           "title": "Number Of Records To Read",
           "required": false
@@ -6757,7 +6714,7 @@ var _apacheCamelModel = {
         },
         "lazyLoad": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one. The default value is false",
           "title": "Lazy Load",
@@ -6765,7 +6722,7 @@ var _apacheCamelModel = {
         },
         "asMap": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected). The default value is false",
           "title": "As Map",
@@ -6789,7 +6746,7 @@ var _apacheCamelModel = {
       "properties": {
         "prettyPrint": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "To enable pretty printing output nicely formatted. Is by default false.",
           "title": "Pretty Print",
@@ -6834,7 +6791,7 @@ var _apacheCamelModel = {
         },
         "forceTopLevelObject": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Determines whether the resulting JSON will start off with a top-most element whose name matches the XML root element. Used for marshalling (XML to JSon conversion). If disabled XML string 12 turns into 'x: '1' 'y': '2' . Otherwise it turns into 'a': 'x: '1' 'y': '2' .",
           "title": "Force Top Level Object",
@@ -6842,7 +6799,7 @@ var _apacheCamelModel = {
         },
         "namespaceLenient": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Flag to be tolerant to incomplete namespace prefixes. Used for unmarshalling (JSON to XML conversion). In most cases json-lib automatically changes this flag at runtime to match the processing.",
           "title": "Namespace Lenient",
@@ -6857,7 +6814,7 @@ var _apacheCamelModel = {
         },
         "skipWhitespace": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Determines whether white spaces between XML elements will be regarded as text values or disregarded. Used for marshalling (XML to JSon conversion).",
           "title": "Skip Whitespace",
@@ -6865,7 +6822,7 @@ var _apacheCamelModel = {
         },
         "trimSpaces": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Determines whether leading and trailing white spaces will be omitted from String values. Used for marshalling (XML to JSon conversion).",
           "title": "Trim Spaces",
@@ -6873,7 +6830,7 @@ var _apacheCamelModel = {
         },
         "skipNamespaces": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Signals whether namespaces should be ignored. By default they will be added to the JSON output using xmlns elements. Used for marshalling (XML to JSon conversion).",
           "title": "Skip Namespaces",
@@ -6881,7 +6838,7 @@ var _apacheCamelModel = {
         },
         "removeNamespacePrefixes": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Removes the namespace prefixes from XML qualified elements so that the resulting JSON string does not contain them. Used for marshalling (XML to JSon conversion).",
           "title": "Remove Namespace Prefixes",
@@ -6919,7 +6876,7 @@ var _apacheCamelModel = {
       "properties": {
         "request": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to unmarshal request or response Is by default false",
           "title": "Request",
@@ -7015,7 +6972,7 @@ var _apacheCamelModel = {
       "properties": {
         "compressionLevel": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "defaultValue": "-1",
           "description": "To specify a specific compression between 0-9. -1 is default compression 0 is no compression and 9 is best compression.",
           "title": "Compression Level",
@@ -7039,7 +6996,7 @@ var _apacheCamelModel = {
       "properties": {
         "usingIterator": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If the zip file has more then one entry the setting this option to true allows to work with the splitter EIP to split the data using an iterator in a streaming mode.",
           "title": "Using Iterator",
@@ -7079,7 +7036,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7110,7 +7067,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7141,7 +7098,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7172,7 +7129,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7203,7 +7160,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7234,7 +7191,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7272,7 +7229,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7289,7 +7246,7 @@ var _apacheCamelModel = {
       "properties": {
         "lenient": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Allows to turn lenient on the JXPathContext. When turned on this allows the JXPath expression to evaluate against expressions and message bodies which may be invalid / missing data. This option is by default false",
           "title": "Lenient",
@@ -7311,7 +7268,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7349,7 +7306,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7408,7 +7365,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7439,7 +7396,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7470,7 +7427,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7501,7 +7458,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7532,7 +7489,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7563,7 +7520,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7594,7 +7551,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7625,7 +7582,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7663,7 +7620,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7694,7 +7651,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7725,7 +7682,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7756,7 +7713,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7801,7 +7758,7 @@ var _apacheCamelModel = {
         },
         "regex": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "If the token is a regular expression pattern. The default value is false",
           "title": "Regex",
@@ -7809,7 +7766,7 @@ var _apacheCamelModel = {
         },
         "xml": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether the input is XML messages. This option must be set to true if working with XML payloads.",
           "title": "Xml",
@@ -7817,7 +7774,7 @@ var _apacheCamelModel = {
         },
         "includeTokens": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to include the tokens in the parts The default value is false",
           "title": "Include Tokens",
@@ -7825,7 +7782,7 @@ var _apacheCamelModel = {
         },
         "group": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "To group N parts together for example to split big files into chunks of 1000 lines.",
           "title": "Group",
           "required": false
@@ -7846,7 +7803,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7877,7 +7834,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -7908,7 +7865,7 @@ var _apacheCamelModel = {
         },
         "saxon": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to use Saxon.",
           "title": "Saxon",
@@ -7930,7 +7887,7 @@ var _apacheCamelModel = {
         },
         "logNamespaces": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "false",
           "description": "Whether to log namespaces which can assist during trouble shooting",
           "title": "Log Namespaces",
@@ -7959,7 +7916,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -8004,7 +7961,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -8035,7 +7992,7 @@ var _apacheCamelModel = {
         },
         "group": {
           "kind": "attribute",
-          "type": "number",
+          "type": "integer",
           "description": "To group N parts together",
           "title": "Group",
           "required": false
@@ -8056,7 +8013,7 @@ var _apacheCamelModel = {
         },
         "trim": {
           "kind": "attribute",
-          "type": "bool",
+          "type": "boolean",
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
@@ -8065,7 +8022,4 @@ var _apacheCamelModel = {
       }
     }
   }
-
-
-
-};
+}

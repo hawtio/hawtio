@@ -241,6 +241,11 @@ module Forms {
             }
           });
           var values = Core.pathGet(property, ["enum"]);
+          // if the bit ugly properites hunt didnt work, then use the enumValues as-is
+          // as they are already the values we want
+          if (angular.isUndefined(values)) {
+            values = enumValues;
+          }
           valuesScopeName = "$values_" + id.replace(/\./g, "_");
           scope[valuesScopeName] = values;
         }

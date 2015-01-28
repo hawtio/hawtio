@@ -322,17 +322,16 @@ module Forms {
         if (property.hidden) {
           return;
         }
+
+        // special for expression
+        if (property.kind === "expression") {
+          propSchema = Forms.lookupDefinition("expression", fullSchema);
+        }
+
         var nestedProperties = null;
         if (!propSchema && "object" === propTypeName && property.properties) {
           // if we've no type name but have nested properties on an object type use those
           nestedProperties = property.properties;
-/*        } else if (propSchema && Forms.isObjectType(propSchema) && Forms.isKind(propSchema, "expression")) {
-          // special for expression
-          // add the property with language and expression value in a single line
-          log.info("Expression detected for " + property);
-          // we only want the nested expression, so redefine the id so the ng-model can match that
-          id = id + ".expression.expression";
-          property = propSchema.properties.expression;*/
         } else if (propSchema && Forms.isObjectType(propSchema)) {
           // otherwise use the nested properties from the related schema type
           //console.log("type name " + propTypeName + " has nested object type " + JSON.stringify(propSchema, null, "  "));

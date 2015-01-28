@@ -122,7 +122,7 @@
         <constant>Hello World</constant>
       </transform>
       <delay><constant>1500</constant></delay>
-      <setBody><constant>A Delayed Hello World</constant></setBody>
+      <setBody><simple>A Delayed ${body}</simple></setBody>
       <setHeader headerName="myHeader">
         <constant>This is a new header value</constant>
       </setHeader>
@@ -136,7 +136,7 @@
         <constant>Hello World</constant>
       </transform>
       <delay asyncDelayed="true"><constant>1000</constant></delay>
-      <setBody><constant>A Delayed Hello World</constant></setBody>
+      <setBody><simple>A Delayed ${body}</simple></setBody>
       <setHeader headerName="myHeader">
         <constant>This is a new header value</constant>
       </setHeader>
