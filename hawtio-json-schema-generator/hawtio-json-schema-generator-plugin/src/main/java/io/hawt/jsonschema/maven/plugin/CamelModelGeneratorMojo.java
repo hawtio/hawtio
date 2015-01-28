@@ -49,8 +49,7 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("Assembling Camel model schema");
 
-        // TODO: should find inside the camel-catalog JAR
-        // TODO: should output to the camelModel.js
+        // TODO: should find inside the camel-core JAR?
 
         initIcons();
 
@@ -95,6 +94,11 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
             }
         } catch (IOException e) {
             throw new MojoFailureException("Error loading model schemas due " + e.getMessage());
+        }
+
+        if (eips.isEmpty()) {
+            getLog().info("Cannot update " + schemaFile + " as no Camel models found in the Apache Camel version");
+            return;
         }
 
         try {
