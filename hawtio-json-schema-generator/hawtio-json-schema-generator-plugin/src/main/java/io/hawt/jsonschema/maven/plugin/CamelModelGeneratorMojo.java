@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,13 +19,16 @@ import java.util.TreeSet;
 import io.hawt.jsonschema.maven.plugin.util.CollectionStringBuffer;
 import io.hawt.jsonschema.maven.plugin.util.FileHelper;
 import io.hawt.jsonschema.maven.plugin.util.JSonSchemaHelper;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
+import static io.hawt.jsonschema.maven.plugin.util.FileHelper.loadText;
 import static io.hawt.jsonschema.maven.plugin.util.JSonSchemaHelper.doubleQuote;
 import static io.hawt.jsonschema.maven.plugin.util.JSonSchemaHelper.getValue;
 import static io.hawt.jsonschema.maven.plugin.util.JSonSchemaHelper.parseJsonSchema;
@@ -31,6 +38,9 @@ import static io.hawt.jsonschema.maven.plugin.util.JSonSchemaHelper.parseJsonSch
  */
 @Mojo(name = "generate-camel-model", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class CamelModelGeneratorMojo extends AbstractMojo {
+
+    @Parameter(property = "project", required = true)
+    protected MavenProject project;
 
     @Parameter(defaultValue = "${project.build.directory}")
     protected File buildDir;
@@ -50,50 +60,67 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
         getLog().info("Assembling Camel model schema");
 
         // TODO: should find inside the camel-core JAR?
+        // TODO: copy expression to definitions as we need that for languages to work until we fix hawtio etc
+
+        Artifact camelCatalog = findCamelCatalogArtifact(project);
+        if (camelCatalog == null) {
+            getLog().warn("Cannot find Apache Camel on the classpath");
+            return;
+        }
+        getLog().info("Using Apache Camel " + camelCatalog.getVersion());
 
         initIcons();
-
-        File camelMetaDir = new File(buildDir, "classes/org/apache/camel/model");
-
-        Set<File> jsonFiles = new TreeSet<File>();
-
-        // find all json files in camel-core
-        if (buildDir != null && buildDir.isDirectory()) {
-            File target = new File(buildDir, "classes/org/apache/camel/model");
-            FileHelper.findJsonFiles(target, jsonFiles, new FileHelper.JsonFileFilter());
-        }
 
         Map<String, String> eips = new TreeMap<String, String>();
         Map<String, String> rests = new TreeMap<String, String>();
         Map<String, String> languages = new TreeMap<String, String>();
         Map<String, String> dataformats = new TreeMap<String, String>();
 
+        // find all json files in camel-core
         try {
-            for (File file : jsonFiles) {
-                String name = file.getName();
-                if (name.endsWith(".json")) {
-                    // strip out .json from the name
-                    String modelName = name.substring(0, name.length() - 5);
-                    // load the schema
-                    String text = FileHelper.loadText(new FileInputStream(file));
+            File core = camelCatalog.getFile();
+            if (core != null) {
+                URL url = new URL("file", null, core.getAbsolutePath());
+                URLClassLoader loader = new URLClassLoader(new URL[]{url});
 
-                    // is it a language?
-                    boolean language = file.getParent().endsWith("language");
-                    boolean dataformat = file.getParent().endsWith("dataformat");
-                    boolean rest = file.getParent().endsWith("rest");
-                    if (language) {
-                        languages.put(modelName, text);
-                    } else if (dataformat) {
-                        dataformats.put(modelName, text);
-                    } else if (rest) {
-                        rests.put(modelName, text);
-                    } else {
-                        eips.put(modelName, text);
+                // eips
+                InputStream is = loader.getResourceAsStream("org/apache/camel/catalog/models.properties");
+                String lines = loadText(is);
+                for (String name : lines.split("\n")) {
+                    is = loader.getResourceAsStream("org/apache/camel/catalog/models/" + name + ".json");
+                    String text = loadText(is);
+                    if (text != null) {
+                        eips.put(name, text);
                     }
                 }
+
+                // data formats
+                is = loader.getResourceAsStream("org/apache/camel/catalog/dataformats.properties");
+                lines = loadText(is);
+                for (String name : lines.split("\n")) {
+                    is = loader.getResourceAsStream("org/apache/camel/catalog/dataformats/" + name + ".json");
+                    String text = loadText(is);
+                    if (text != null) {
+                        dataformats.put(name, text);
+                    }
+                }
+
+                // languages
+                is = loader.getResourceAsStream("org/apache/camel/catalog/languages.properties");
+                lines = loadText(is);
+                for (String name : lines.split("\n")) {
+                    is = loader.getResourceAsStream("org/apache/camel/catalog/languages/" + name + ".json");
+                    String text = loadText(is);
+                    if (text != null) {
+                        dataformats.put(name, text);
+                    }
+                }
+
+                // TODO: rests
+
             }
-        } catch (IOException e) {
-            throw new MojoFailureException("Error loading model schemas due " + e.getMessage());
+        } catch (Exception e) {
+            throw new MojoFailureException("Error loading models from camel-catalog due " + e.getMessage());
         }
 
         if (eips.isEmpty()) {
@@ -102,8 +129,6 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
         }
 
         try {
-            camelMetaDir.mkdirs();
-
             FileOutputStream fos = new FileOutputStream(schemaFile, false);
             fos.write("var _apacheCamelModel =".getBytes());
             fos.write("{\n".getBytes());
@@ -285,4 +310,17 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
         }
         return cst.toString();
     }
+
+    private Artifact findCamelCatalogArtifact(MavenProject project) {
+        Iterator it = project.getDependencyArtifacts().iterator();
+        while (it.hasNext()) {
+            Artifact artifact = (Artifact) it.next();
+            getLog().info(artifact.getArtifactId());
+            if (artifact.getGroupId().equals("org.apache.camel") && artifact.getArtifactId().equals("camel-catalog")) {
+                return artifact;
+            }
+        }
+        return null;
+    }
+
 }
