@@ -70,23 +70,26 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
         Map<String, String> dataformats = new TreeMap<String, String>();
         Map<String, String> languages = new TreeMap<String, String>();
 
-        // find all json files in camel-core
+        // find the model json files and split into groups
         try {
             File core = camelCatalog.getFile();
             if (core != null) {
                 URL url = new URL("file", null, core.getAbsolutePath());
                 URLClassLoader loader = new URLClassLoader(new URL[]{url});
 
-                // TODO: models include everything
-                // eips and rests
                 InputStream is = loader.getResourceAsStream("org/apache/camel/catalog/models.properties");
                 String lines = loadText(is);
                 for (String name : lines.split("\n")) {
                     is = loader.getResourceAsStream("org/apache/camel/catalog/models/" + name + ".json");
                     String text = loadText(is);
                     if (text != null) {
-                        if (text.contains("\"label\": \"rest")) {
+                        List<Map<String, String>> model = parseJsonSchema("model", text, false);
+                        if (hasLabel(model, "rest")) {
                             rests.put(name, text);
+                        } else if (hasLabel(model, "dataformat")) {
+                            dataformats.put(name, text);
+                        } else if (hasLabel(model, "language")) {
+                            languages.put(name, text);
                         } else {
                             eips.put(name, text);
                         }
@@ -94,7 +97,7 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
                 }
 
                 // data formats
-                is = loader.getResourceAsStream("org/apache/camel/catalog/dataformats.properties");
+/*                is = loader.getResourceAsStream("org/apache/camel/catalog/dataformats.properties");
                 lines = loadText(is);
                 for (String name : lines.split("\n")) {
                     is = loader.getResourceAsStream("org/apache/camel/catalog/dataformats/" + name + ".json");
@@ -113,7 +116,7 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
                     if (text != null) {
                         languages.put(name, text);
                     }
-                }
+                }*/
             }
         } catch (Exception e) {
             throw new MojoFailureException("Error loading models from camel-catalog due " + e.getMessage());
@@ -144,12 +147,12 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
 
             fos.write("  \"dataformats\": {\n".getBytes());
             it = dataformats.keySet().iterator();
-            generateSchema("dataformats", "dataformat", dataformats, fos, it);
+            generateSchema("dataformats", "model", dataformats, fos, it);
             fos.write("  },\n".getBytes());
 
             fos.write("  \"languages\": {\n".getBytes());
             it = languages.keySet().iterator();
-            generateSchema("languages", "language", languages, fos, it);
+            generateSchema("languages", "model", languages, fos, it);
             fos.write("  }\n".getBytes());
 
             fos.write("}\n".getBytes());
@@ -324,6 +327,16 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
             }
         }
         return null;
+    }
+
+    private static boolean hasLabel(List<Map<String, String>> model, String label) {
+        for (Map<String, String> row : model) {
+            String entry = row.get("label");
+            if (entry != null) {
+                return entry.contains(label);
+            }
+        }
+        return false;
     }
 
 }
