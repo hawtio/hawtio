@@ -42,7 +42,17 @@ module Camel {
         if (angular.isUndefined(value) || Core.isBlank(value)) {
           return false;
         }
+        if (angular.isString(value)) {
+          var aBool = "true" === value || "false" == value;
+          if (aBool) {
+            // hide false booleans
+            return Core.parseBooleanValue(value);
+          }
+          // to show then must not be blank
+          return !Core.isBlank(value);
+        }
       }
+
       return true;
     };
 

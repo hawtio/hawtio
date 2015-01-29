@@ -102,8 +102,13 @@ module Forms {
 
         // add logic to be able to hide empty values
         var showEmpty = config.showempty;
-        if (angular.isDefined(showEmpty) && angular.isString(id)) {
-          var attValue:string = showEmpty + '(\'' + id + '\')'
+        if (angular.isDefined(showEmpty)) {
+          var attValue:string = "true";
+          if (showEmpty === "true" || showEmpty === "false") {
+            attValue = showEmpty;
+          } else if (angular.isString(id)) {
+            attValue = showEmpty + '(\'' + id + '\')'
+          }
           group.attr("ng-show", attValue);
         }
 
