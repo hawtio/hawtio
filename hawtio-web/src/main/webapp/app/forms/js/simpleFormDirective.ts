@@ -332,8 +332,15 @@ module Forms {
           // but easier to do than change the complicated Forms.createWidget to do a widget with a selectbox + input
           var childId = id + ".language";
           var childId2 = id + ".expression";
+
+          // for the 2nd input we need to use the information from the original property for title, description, required etc.
+          var adjustedProperty = jQuery.extend(true, {}, propSchema.properties.expression);
+          adjustedProperty.description = property.description;
+          adjustedProperty.title = property.title;
+          adjustedProperty.required = property.required;
+
           var input:JQuery = Forms.createWidget(propTypeName, propSchema.properties.language, schema, config, childId, ignorePrefixInLabel, configScopeName, true, disableHumanizeLabel);
-          var input2:JQuery = Forms.createWidget(propTypeName, propSchema.properties.expression, schema, config, childId2, ignorePrefixInLabel, configScopeName, true, disableHumanizeLabel);
+          var input2:JQuery = Forms.createWidget(propTypeName, adjustedProperty, schema, config, childId2, ignorePrefixInLabel, configScopeName, true, disableHumanizeLabel);
 
           // move the selectbox from input to input2 as we want it to be on the same line
           var selectWidget = input.find("select");

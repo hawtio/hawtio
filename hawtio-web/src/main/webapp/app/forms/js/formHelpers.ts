@@ -238,11 +238,18 @@ module Forms {
     return angular.element('<div class="' + config.controlclass + '"></div>');
   }
 
-  export function getHelpSpan(config, arg, id) {
+  export function getHelpSpan(config, arg, id, property = null) {
     var help = Core.pathGet(config.data, ['properties', id, 'help']);
     if (Core.isBlank(help)) {
       // fallback and use description
       help = Core.pathGet(config.data, ['properties', id, 'description']);
+    }
+    if (Core.isBlank(help) && angular.isDefined(property)) {
+      // fallback and get from property
+      help = Core.pathGet(property, ['help']);
+      if (Core.isBlank(help)) {
+        help = Core.pathGet(property, ['description']);
+      }
     }
 
     var show = config.showhelp || "true";

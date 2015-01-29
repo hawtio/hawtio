@@ -104,7 +104,7 @@ module Forms {
 
         var controlDiv = Forms.getControlDiv(config);
         controlDiv.append(input);
-        controlDiv.append(Forms.getHelpSpan(config, config, id));
+        controlDiv.append(Forms.getHelpSpan(config, config, id, property));
 
         group.append(controlDiv);
 
