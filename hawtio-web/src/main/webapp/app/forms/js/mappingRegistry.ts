@@ -154,16 +154,17 @@ module Forms {
       input.attr('title', label);
     }
 
-    try {
-      if (config.isReadOnly()) {
+    // if in read-only mode, then configure the input accordingly
+    if (config.isReadOnly()) {
+      try {
         input.attr('readonly', 'true');
+      } catch (e) {
+        // ignore missing read only function
       }
       // for checkbox in read-only mode, need to be disabled otherwise ppl can change the values in the selectbox
       if (input[0].localName === "select" || (input[0].localName === "input" && input.attr("type") === "checkbox")) {
         input.attr('disabled', 'true');
       }
-    } catch (e) {
-      // ignore missing read only function
     }
     if (required) {
       // don't mark checkboxes as required
