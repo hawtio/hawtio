@@ -124,6 +124,10 @@ module Camel {
             if (!isCamelPattern(nodeName)) {
               var nested = getRouteNodeJSON(element);
               if (nested) {
+                // unwrap the nested expression which we do not want to double wrap
+                if (nested["expression"]) {
+                  nested = nested["expression"];
+                }
                 answer[nodeName] = nested;
               }
             }
