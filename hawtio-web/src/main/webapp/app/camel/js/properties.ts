@@ -8,7 +8,7 @@ module Camel {
     $scope.schema = _apacheCamelModel;
     $scope.model = null;
     $scope.icon = null;
-    $scope.showHelp = false;
+    $scope.showHelp = true;
     $scope.showUsedOnly = false;
 
     $scope.$watch('showHelp', (newValue, oldValue) => {

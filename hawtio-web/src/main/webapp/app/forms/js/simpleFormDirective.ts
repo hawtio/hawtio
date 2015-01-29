@@ -323,12 +323,12 @@ module Forms {
           return;
         }
 
-        // special for expression
+        // special for expression (Apache Camel)
         if (property.kind === "expression") {
           propSchema = Forms.lookupDefinition("expression", fullSchema);
 
           // create 2 inputs, the 1st is the drop down with the languages
-          // and then merge the 2 inputs together, which is a little hack
+          // and then merge the 2 inputs together, which is a hack
           // but easier to do than change the complicated Forms.createWidget to do a widget with a selectbox + input
           var childId = id + ".language";
           var childId2 = id + ".expression";
@@ -339,9 +339,9 @@ module Forms {
           var selectWidget = input.find("select");
           var inputWidget = input2.find("input");
           if (selectWidget && inputWidget) {
-            // adjust the widght so the two inputs can be on the same line and have similar length as the others
-            selectWidget.attr("style", "width: 120px");
-            inputWidget.attr("style", "width: 480px");
+            // adjust the widght so the two inputs can be on the same line and have same combined length as the others (600px)
+            selectWidget.attr("style", "width: 120px; margin-right: 10px");
+            inputWidget.attr("style", "width: 470px");
             inputWidget.before(selectWidget);
           }
 
