@@ -403,6 +403,16 @@
         <spring-version>4.1.4.RELEASE</spring-version>
         <jetty-version>8.1.15.v20140411</jetty-version>
       </properties>
+
+     <dependencies>
+       <dependency>
+         <groupId>org.apache.camel</groupId>
+         <artifactId>camel-catalog</artifactId>
+         <version>${camel-version}</version>
+         <scope>test</scope>
+       </dependency>
+     </dependencies>
+
     </profile>
 
     <profile>
