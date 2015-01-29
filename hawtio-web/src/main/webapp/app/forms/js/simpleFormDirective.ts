@@ -37,6 +37,7 @@ module Forms {
 
     public showtypes = 'false';
     public showhelp = 'true';
+    public showempty = 'true';
 
     public onsubmit = 'onSubmit';
 

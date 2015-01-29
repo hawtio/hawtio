@@ -7,6 +7,7 @@ module Camel {
     $scope.viewTemplate = null;
     $scope.schema = _apacheCamelModel;
     $scope.model = null;
+    $scope.nodeData = null;
     $scope.icon = null;
     $scope.showHelp = true;
     $scope.showUsedOnly = false;
@@ -32,6 +33,18 @@ module Camel {
       if (workspace.moveIfViewInvalid()) return;
       updateData();
     });
+
+    $scope.showEntity = function(id) {
+      log.info("Show entity: " + id);
+      if ($scope.showUsedOnly) {
+        // figure out if there is any data for the id
+        var value = Core.pathGet($scope.nodeData, id);
+        if (angular.isUndefined(value) || Core.isBlank(value)) {
+          return false;
+        }
+      }
+      return true;
+    };
 
     function updateData() {
       var routeXmlNode = getSelectedRouteNode(workspace);

@@ -100,6 +100,13 @@ module Forms {
 
         group.append(controlDiv);
 
+        // add logic to be able to hide empty values
+        var showEmpty = config.showempty;
+        if (angular.isDefined(showEmpty) && angular.isString(id)) {
+          var attValue:string = showEmpty + '(\'' + id + '\')'
+          group.attr("ng-show", attValue);
+        }
+
         // allow control level directives, such as ng-show / ng-hide
         copyElementAttributes(controlDiv, "control-attributes");
         copyElementAttributes(group, "control-group-attributes");
