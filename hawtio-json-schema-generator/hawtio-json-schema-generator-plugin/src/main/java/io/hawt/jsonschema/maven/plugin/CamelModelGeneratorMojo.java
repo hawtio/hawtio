@@ -55,8 +55,6 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("Assembling Camel model schema");
 
-        // TODO: defaultValue as " cannot parse the description
-
         Artifact camelCatalog = findCamelCatalogArtifact(project);
         if (camelCatalog == null) {
             getLog().warn("Cannot find Apache Camel on the classpath");
@@ -239,7 +237,7 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
             cst.append("      \"title\": " + doubleQuote(title));
             cst.append("      \"group\": " + doubleQuote(group));
             cst.append("      \"icon\": " + doubleQuote(icon));
-            cst.append("      \"description\": " + doubleQuote(description));
+            cst.append("      \"description\": " + doubleQuote(safeDescription(description)));
             // eips and rests allow to be defined as a graph with inputs and outputs
             if ("eips".equals(schema) || "rests".equals(schema)) {
                 cst.append("      \"acceptInput\": " + doubleQuote(input));
@@ -283,7 +281,7 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
                 if (enumValues != null) {
                     cst.append("          \"enum\": [ " + safeEnumJson(enumValues) + " ]");
                 }
-                cst.append("          \"description\": " + doubleQuote(description));
+                cst.append("          \"description\": " + doubleQuote(safeDescription(description)));
                 cst.append("          \"title\": " + doubleQuote(title));
                 if ("true".equals(required)) {
                     cst.append("          \"required\": true\n");
@@ -341,6 +339,15 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
         } else {
             return value;
         }
+    }
+
+    private static String safeDescription(String description) {
+        if (description == null) {
+            return "";
+        }
+        // need to escape " as \"
+        description = description.replaceAll("\"", "\\\\\"");
+        return description;
     }
 
     private static Artifact findCamelCatalogArtifact(MavenProject project) {

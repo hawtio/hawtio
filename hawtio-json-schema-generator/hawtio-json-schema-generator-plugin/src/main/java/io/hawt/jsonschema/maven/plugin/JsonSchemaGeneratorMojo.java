@@ -14,11 +14,9 @@ import java.util.Map;
 
 /**
  * Uses hawtio-json-schema-mbean to generate Json Schema for Java classes
- *
  */
 @Mojo( name="generate-json-schema", defaultPhase = LifecyclePhase.GENERATE_SOURCES )
-public class JsonSchemaGeneratorMojo extends AbstractMojo
-{
+public class JsonSchemaGeneratorMojo extends AbstractMojo {
 
     /**
      * Java classes to be converted into schema

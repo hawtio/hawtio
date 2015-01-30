@@ -5596,8 +5596,8 @@ var _apacheCamelModel ={
         "textQualifier": {
           "kind": "attribute",
           "type": "string",
-          "defaultValue": "\\",
-          "description": "null",
+          "defaultValue": "\"",
+          "description": "If the text is qualified with a char such as \"",
           "title": "Text Qualifier",
           "required": false
         },
@@ -6334,16 +6334,16 @@ var _apacheCamelModel ={
         "quote": {
           "kind": "attribute",
           "type": "string",
-          "defaultValue": "\\",
-          "description": "null",
+          "defaultValue": "\"",
+          "description": "The quote symbol.",
           "title": "Quote",
           "required": false
         },
         "quoteEscape": {
           "kind": "attribute",
           "type": "string",
-          "defaultValue": "\\",
-          "description": "null",
+          "defaultValue": "\"",
+          "description": "The quote escape symbol",
           "title": "Quote Escape",
           "required": false
         },

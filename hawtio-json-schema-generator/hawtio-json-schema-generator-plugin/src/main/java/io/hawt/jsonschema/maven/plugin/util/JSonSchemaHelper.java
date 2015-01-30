@@ -46,7 +46,7 @@ public final class JSonSchemaHelper {
             }
 
             // need to safe encode \" so we can parse the line
-            line = line.replaceAll("\\\\\"", QUOT);
+            line = line.replaceAll("\"\\\\\"\"", '"' + QUOT + '"');
 
             Map<String, String> row = new LinkedHashMap<String, String>();
             Matcher matcher = PATTERN.matcher(line);
@@ -71,8 +71,9 @@ public final class JSonSchemaHelper {
                     }
                     if (value != null) {
                         value = value.trim();
-                        // encode back
+                        // decode
                         value = value.replaceAll(QUOT, "\"");
+                        value = decodeJson(value);
                     }
                     row.put(key, value);
                     // reset
@@ -85,6 +86,14 @@ public final class JSonSchemaHelper {
         }
 
         return answer;
+    }
+
+    private static String decodeJson(String value) {
+        // json encodes a \ as \\ so we need to decode from \\ back to \
+        if ("\\\\".equals(value)) {
+            value = "\\";
+        }
+        return value;
     }
 
     public static String getValue(String key, List<Map<String, String>> rows) {
