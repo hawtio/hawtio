@@ -10,6 +10,7 @@ module Camel {
     $scope.viewTemplate = null;
     $scope.schema = _apacheCamelModel;
     $scope.model = null;
+    $scope.labels = [];
     $scope.nodeData = null;
     $scope.icon = null;
 
@@ -67,6 +68,12 @@ module Camel {
             log.debug("Properties - data: " + JSON.stringify($scope.nodeData, null, "  "));
             log.debug("Properties - schema: " + JSON.stringify($scope.model, null, "  "));
           }
+          // labels is named group in camelModel.js
+          var labels = [];
+          if ($scope.model.group) {
+            labels = $scope.model.group.split(",");
+          }
+          $scope.labels = labels;
           $scope.nodeData = getRouteNodeJSON(routeXmlNode);
           $scope.icon = getRouteNodeIcon(routeXmlNode);
           $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
