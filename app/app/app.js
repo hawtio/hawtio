@@ -9473,7 +9473,7 @@ var Camel;
                 answer[attr.name] = attr.value;
             });
             var localName = routeXmlNode.localName;
-            if (localName !== "route" && localName !== "routes" && localName !== "camelContext") {
+            if (localName !== "route" && localName !== "routes" && localName !== "camelContext" && localName !== "rests") {
                 $(routeXmlNode).children("*").each(function (idx, element) {
                     var nodeName = element.localName;
                     var langSettings = Camel.camelLanguageSettings(nodeName);
@@ -9487,6 +9487,9 @@ var Camel;
                         if (!isCamelPattern(nodeName)) {
                             var nested = getRouteNodeJSON(element);
                             if (nested) {
+                                if (nested["expression"]) {
+                                    nested = nested["expression"];
+                                }
                                 answer[nodeName] = nested;
                             }
                         }
@@ -9647,7 +9650,7 @@ var Camel;
     }
     Camel.getCamelSchema = getCamelSchema;
     function isCamelPattern(nodeId) {
-        return Forms.isJsonType(nodeId, _apacheCamelModel, "org.apache.camel.model.OptionalIdentifiedDefinition");
+        return Forms.lookupDefinition(nodeId, _apacheCamelModel) != null;
     }
     Camel.isCamelPattern = isCamelPattern;
     function isNextSiblingAddedAsChild(nodeIdOrDefinition) {
@@ -13210,8 +13213,24 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.PropertiesController", ["$scope", "workspace", function ($scope, workspace) {
+        var log = Logger.get("Camel");
         $scope.viewTemplate = null;
         $scope.schema = _apacheCamelModel;
+        $scope.model = null;
+        $scope.nodeData = null;
+        $scope.icon = null;
+        $scope.showHelp = true;
+        $scope.showUsedOnly = false;
+        $scope.$watch('showHelp', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                updateData();
+            }
+        });
+        $scope.$watch('showUsedOnly', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                updateData();
+            }
+        });
         $scope.$on("$routeChangeSuccess", function (event, current, previous) {
             setTimeout(updateData, 50);
         });
@@ -13220,15 +13239,34 @@ var Camel;
                 return;
             updateData();
         });
+        $scope.showEntity = function (id) {
+            log.info("Show entity: " + id);
+            if ($scope.showUsedOnly) {
+                var value = Core.pathGet($scope.nodeData, id);
+                if (angular.isUndefined(value) || Core.isBlank(value)) {
+                    return false;
+                }
+                if (angular.isString(value)) {
+                    var aBool = "true" === value || "false" == value;
+                    if (aBool) {
+                        return Core.parseBooleanValue(value);
+                    }
+                    return !Core.isBlank(value);
+                }
+            }
+            return true;
+        };
         function updateData() {
             var routeXmlNode = Camel.getSelectedRouteNode(workspace);
-            $scope.nodeData = Camel.getRouteNodeJSON(routeXmlNode);
-            if (routeXmlNode) {
-                var nodeName = routeXmlNode.nodeName;
-                $scope.model = Camel.getCamelSchema(nodeName);
+            if (routeXmlNode != null) {
+                $scope.model = Camel.getCamelSchema(routeXmlNode.nodeName);
                 if ($scope.model) {
-                    console.log("data is: " + JSON.stringify($scope.nodeData, null, "  "));
-                    console.log("model schema is: " + JSON.stringify($scope.model, null, "  "));
+                    if (log.enabledFor(Logger.DEBUG)) {
+                        log.debug("Properties - data: " + JSON.stringify($scope.nodeData, null, "  "));
+                        log.debug("Properties - schema: " + JSON.stringify($scope.model, null, "  "));
+                    }
+                    $scope.nodeData = Camel.getRouteNodeJSON(routeXmlNode);
+                    $scope.icon = Camel.getRouteNodeIcon(routeXmlNode);
                     $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
                 }
             }
@@ -21984,6 +22022,11 @@ var Forms;
         return typeName && "object" === typeName;
     }
     Forms.isObjectType = isObjectType;
+    function isKind(definition, kind) {
+        var kindName = Core.pathGet(definition, "kind");
+        return kindName && kind === kindName;
+    }
+    Forms.isKind = isKind;
     function isArrayOrNestedObject(property, schema) {
         if (property) {
             var propType = resolveTypeNameAlias(property["type"], schema);
@@ -22019,18 +22062,35 @@ var Forms;
         return rc;
     }
     Forms.getControlGroup = getControlGroup;
-    function getLabel(config, arg, label) {
-        return angular.element('<label class="' + config.labelclass + '">' + label + ': </label>');
+    function getLabel(config, arg, label, required) {
+        if (required === void 0) { required = false; }
+        if (required) {
+            return angular.element('<label class="strong ' + config.labelclass + '">' + label + ': </label>');
+        }
+        else {
+            return angular.element('<label class="' + config.labelclass + '">' + label + ': </label>');
+        }
     }
     Forms.getLabel = getLabel;
     function getControlDiv(config) {
         return angular.element('<div class="' + config.controlclass + '"></div>');
     }
     Forms.getControlDiv = getControlDiv;
-    function getHelpSpan(config, arg, id) {
+    function getHelpSpan(config, arg, id, property) {
+        if (property === void 0) { property = null; }
         var help = Core.pathGet(config.data, ['properties', id, 'help']);
+        if (Core.isBlank(help)) {
+            help = Core.pathGet(config.data, ['properties', id, 'description']);
+        }
+        if (Core.isBlank(help) && angular.isDefined(property)) {
+            help = Core.pathGet(property, ['help']);
+            if (Core.isBlank(help)) {
+                help = Core.pathGet(property, ['description']);
+            }
+        }
+        var show = config.showhelp || "true";
         if (!Core.isBlank(help)) {
-            return angular.element('<span class="help-block">' + help + '</span>');
+            return angular.element('<span class="help-block" ng-show="' + show + '">' + help + '</span>');
         }
         else {
             return angular.element('<span class="help-block"></span>');
@@ -22068,6 +22128,7 @@ var Forms;
             valueConverter: null
         };
         var safeId = Forms.safeIdentifier(id);
+        var required = property.required || false;
         var inputMarkup = createStandardWidgetMarkup(propTypeName, property, schema, config, options, safeId);
         if (inputMarkup) {
             input = angular.element(inputMarkup);
@@ -22079,16 +22140,13 @@ var Forms;
             }
             input.attr("ng-model", modelName);
             input.attr('name', id);
-            try {
-                if (config.isReadOnly()) {
-                    input.attr('readonly', 'true');
-                }
-            }
-            catch (e) {
-            }
-            var title = property.tooltip || property.label;
+            var title = property.title || property.tooltip || property.label;
             if (title) {
                 input.attr('title', title);
+            }
+            var tooltip = property.tooltip || property.description;
+            if (tooltip) {
+                input.attr('tooltip', tooltip);
             }
             var disableHumanizeLabelValue = disableHumanizeLabel || property.disableHumanizeLabel;
             var defaultLabel = id;
@@ -22101,16 +22159,30 @@ var Forms;
             if (input.attr("type") !== "hidden" && wrapInGroup) {
                 group = this.getControlGroup(config, config, id);
                 var labelText = property.title || property.label || (disableHumanizeLabelValue ? defaultLabel : Core.humanizeValue(defaultLabel));
-                var labelElement = Forms.getLabel(config, config, labelText);
-                if (title) {
+                var labelElement = Forms.getLabel(config, config, labelText, required);
+                if (tooltip) {
+                    labelElement.attr('title', tooltip);
+                }
+                else if (title) {
                     labelElement.attr('title', title);
                 }
                 group.append(labelElement);
                 copyElementAttributes(labelElement, "label-attributes");
                 var controlDiv = Forms.getControlDiv(config);
                 controlDiv.append(input);
-                controlDiv.append(Forms.getHelpSpan(config, config, id));
+                controlDiv.append(Forms.getHelpSpan(config, config, id, property));
                 group.append(controlDiv);
+                var showEmpty = config.showempty;
+                if (angular.isDefined(showEmpty)) {
+                    var attValue = "true";
+                    if (showEmpty === "true" || showEmpty === "false") {
+                        attValue = showEmpty;
+                    }
+                    else if (angular.isString(id)) {
+                        attValue = showEmpty + '(\'' + id + '\')';
+                    }
+                    group.attr("ng-show", attValue);
+                }
                 copyElementAttributes(controlDiv, "control-attributes");
                 copyElementAttributes(group, "control-group-attributes");
                 var scope = config.scope;
@@ -22156,8 +22228,19 @@ var Forms;
         if (label) {
             input.attr('title', label);
         }
-        if (property.required) {
-            if (input[0].localName === "input" && input.attr("type") === "checkbox") {
+        if (config.isReadOnly()) {
+            try {
+                input.attr('readonly', 'true');
+            }
+            catch (e) {
+            }
+            if (input[0].localName === "select" || (input[0].localName === "input" && input.attr("type") === "checkbox")) {
+                input.attr('disabled', 'true');
+            }
+        }
+        if (required) {
+            if (input[0].localName === "select" || (input[0].localName === "input" && input.attr("type") === "checkbox")) {
+                input.removeAttr('required');
             }
             else {
                 input.attr('required', 'true');
@@ -22201,6 +22284,9 @@ var Forms;
                         }
                     });
                     var values = Core.pathGet(property, ["enum"]);
+                    if (angular.isUndefined(values)) {
+                        values = enumValues;
+                    }
                     valuesScopeName = "$values_" + id.replace(/\./g, "_");
                     scope[valuesScopeName] = values;
                 }
@@ -22218,12 +22304,12 @@ var Forms;
             return null;
         }
         var defaultValueConverter = null;
-        var defaultValue = property.default;
+        var defaultValue = property.default || property.defaultValue;
         if (defaultValue) {
             defaultValueConverter = function (scope, modelName) {
                 var value = Core.pathGet(scope, modelName);
                 if (!value) {
-                    Core.pathSet(scope, modelName, property.default);
+                    Core.pathSet(scope, modelName, defaultValue);
                 }
             };
             options.valueConverter = defaultValueConverter;
@@ -22231,7 +22317,7 @@ var Forms;
         function getModelValueOrDefault(scope, modelName) {
             var value = Core.pathGet(scope, modelName);
             if (!value) {
-                var defaultValue = property.default;
+                var defaultValue = property.default || property.defaultValue;
                 if (defaultValue) {
                     value = defaultValue;
                     Core.pathSet(scope, modelName, value);
@@ -22416,6 +22502,8 @@ var Forms;
             this.controlclass = 'controls';
             this.labelclass = 'control-label';
             this.showtypes = 'false';
+            this.showhelp = 'true';
+            this.showempty = 'true';
             this.onsubmit = 'onSubmit';
         }
         SimpleFormConfig.prototype.getMode = function () {
@@ -22653,6 +22741,26 @@ var Forms;
                 }
                 var disableHumanizeLabel = schema ? schema.disableHumanizeLabel : false;
                 if (property.hidden) {
+                    return;
+                }
+                if (property.kind === "expression") {
+                    propSchema = Forms.lookupDefinition("expression", fullSchema);
+                    var childId = id + ".language";
+                    var childId2 = id + ".expression";
+                    var adjustedProperty = jQuery.extend(true, {}, propSchema.properties.expression);
+                    adjustedProperty.description = property.description;
+                    adjustedProperty.title = property.title;
+                    adjustedProperty.required = property.required;
+                    var input = Forms.createWidget(propTypeName, propSchema.properties.language, schema, config, childId, ignorePrefixInLabel, configScopeName, true, disableHumanizeLabel);
+                    var input2 = Forms.createWidget(propTypeName, adjustedProperty, schema, config, childId2, ignorePrefixInLabel, configScopeName, true, disableHumanizeLabel);
+                    var selectWidget = input.find("select");
+                    var inputWidget = input2.find("input");
+                    if (selectWidget && inputWidget) {
+                        selectWidget.attr("style", "width: 120px; margin-right: 10px");
+                        inputWidget.attr("style", "width: 470px");
+                        inputWidget.before(selectWidget);
+                    }
+                    fieldset.append(input2);
                     return;
                 }
                 var nestedProperties = null;

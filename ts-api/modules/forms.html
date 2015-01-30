@@ -129,6 +129,7 @@
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="forms.html#getlabel" class="tsd-kind-icon">get<wbr>Label</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="forms.html#isarrayornestedobject" class="tsd-kind-icon">is<wbr>Array<wbr>OrNested<wbr>Object</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="forms.html#isjsontype" class="tsd-kind-icon">is<wbr>Json<wbr>Type</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-container"><a href="forms.html#iskind" class="tsd-kind-icon">is<wbr>Kind</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="forms.html#isobjecttype" class="tsd-kind-icon">is<wbr>Object<wbr>Type</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="forms.html#lookupdefinition" class="tsd-kind-icon">lookup<wbr>Definition</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-container"><a href="forms.html#maptype" class="tsd-kind-icon">map<wbr>Type</a></li>
@@ -162,7 +163,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/forms/js/formHelpers.ts:191</li>
+									<li>Defined in app/forms/js/formHelpers.ts:202</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -266,7 +267,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/forms/js/mappingRegistry.ts:187</li>
+									<li>Defined in app/forms/js/mappingRegistry.ts:203</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -442,7 +443,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/forms/js/formHelpers.ts:222</li>
+									<li>Defined in app/forms/js/formHelpers.ts:237</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -464,7 +465,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/forms/js/formHelpers.ts:198</li>
+									<li>Defined in app/forms/js/formHelpers.ts:209</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -487,12 +488,12 @@
 					<a name="gethelpspan" class="tsd-anchor"></a>
 					<h3>get<wbr>Help<wbr>Span</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Help<wbr>Span<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, arg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ng.IAugmentedJQuery</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Help<wbr>Span<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, arg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, property<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;</span>null<span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ng.IAugmentedJQuery</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/forms/js/formHelpers.ts:226</li>
+									<li>Defined in app/forms/js/formHelpers.ts:241</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -506,6 +507,9 @@
 								<li>
 									<h5>id:         <span class="tsd-signature-type">any</span></h5>
 								</li>
+								<li>
+									<h5>property?:         <span class="tsd-signature-type">any</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">ng.IAugmentedJQuery</span>
 							</h4>
@@ -515,12 +519,12 @@
 					<a name="getlabel" class="tsd-anchor"></a>
 					<h3>get<wbr>Label</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Label<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, arg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, label<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ng.IAugmentedJQuery</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Label<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, arg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, label<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, required<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;</span>false<span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ng.IAugmentedJQuery</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/forms/js/formHelpers.ts:218</li>
+									<li>Defined in app/forms/js/formHelpers.ts:229</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -533,6 +537,9 @@
 								</li>
 								<li>
 									<h5>label:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>required?:         <span class="tsd-signature-type">boolean</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">ng.IAugmentedJQuery</span>
@@ -548,7 +555,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/forms/js/formHelpers.ts:179</li>
+									<li>Defined in app/forms/js/formHelpers.ts:190</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -608,6 +615,44 @@
 								</li>
 								<li>
 									<h5>typeName:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
+							</h4>
+						</li>
+					</ul>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-container">
+					<a name="iskind" class="tsd-anchor"></a>
+					<h3>is<wbr>Kind</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Kind<span class="tsd-signature-symbol">(</span>definition<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, kind<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description"><aside class="tsd-sources">
+								<ul>
+									<li>Defined in app/forms/js/formHelpers.ts:179</li>
+								</ul>
+								</aside>        <div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns true if the given schema definition property kind matches the given kind</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>method</dt>
+									<dd><p>isKind</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>definition:         <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>kind:         <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -696,7 +741,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/forms/js/mappingRegistry.ts:331</li>
+									<li>Defined in app/forms/js/mappingRegistry.ts:352</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -718,7 +763,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/forms/js/mappingRegistry.ts:366</li>
+									<li>Defined in app/forms/js/mappingRegistry.ts:387</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1012,6 +1057,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-container">
 						<a href="forms.html#isjsontype" class="tsd-kind-icon">is<wbr>Json<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-container">
+						<a href="forms.html#iskind" class="tsd-kind-icon">is<wbr>Kind</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-container">
 						<a href="forms.html#isobjecttype" class="tsd-kind-icon">is<wbr>Object<wbr>Type</a>

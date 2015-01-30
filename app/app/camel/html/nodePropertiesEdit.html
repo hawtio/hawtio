@@ -1,1 +1,24 @@
-<div simple-form name="formEditor" entity='nodeData' data='model' schema="schema"></div>
+<div class="row-fluid">
+  <!-- the input fields needs to be wider -->
+  <!-- and the selectbox smaller -->
+  <style>
+    input, textarea, .uneditable-input {
+      width: 600px;
+    }
+
+    input, textarea, .editable-input {
+      width: 600px;
+    }
+
+    select {
+      width: 120px
+    }
+  </style>
+
+  <h3>
+    <img src="{{icon}}" width="48" height="48" ng-show="icon"/> {{model.title}}
+  </h3>
+
+  <div simple-form name="formViewer" mode='edit' entity='nodeData' data='model' schema="schema"
+       showhelp="showHelp"></div>
+</div>
