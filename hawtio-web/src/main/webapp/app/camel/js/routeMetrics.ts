@@ -1,7 +1,7 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.RouteMetricsController", ["$scope", "$location", "workspace", "jolokia", "metricsWatcher", ($scope, $location, workspace:Workspace, jolokia, metricsWatcher) => {
+  _module.controller("Camel.RouteMetricsController", ["$scope", "$location", "workspace", "jolokia", "metricsWatcher", "localStorage", ($scope, $location, workspace:Workspace, jolokia, metricsWatcher, localStorage:WindowLocalStorage) => {
 
     var log:Logging.Logger = Logger.get("Camel");
 

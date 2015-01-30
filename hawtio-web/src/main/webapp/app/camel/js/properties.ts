@@ -1,16 +1,17 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.PropertiesController", ["$scope", "workspace", ($scope, workspace:Workspace) => {
+  _module.controller("Camel.PropertiesController", ["$scope", "workspace", "localStorage", ($scope, workspace:Workspace, localStorage:WindowLocalStorage) => {
     var log:Logging.Logger = Logger.get("Camel");
+
+    $scope.showHelp = Camel.showEIPDocumentation(localStorage);
+    $scope.showUsedOnly = Camel.hideUnusedEIP(localStorage);
 
     $scope.viewTemplate = null;
     $scope.schema = _apacheCamelModel;
     $scope.model = null;
     $scope.nodeData = null;
     $scope.icon = null;
-    $scope.showHelp = true;
-    $scope.showUsedOnly = false;
 
     $scope.$watch('showHelp', (newValue, oldValue) => {
       if (newValue !== oldValue) {

@@ -28,6 +28,14 @@ module Camel {
       'camelRouteMetricMaxSeconds': {
         'value': Camel.defaultCamelRouteMetricMaxSeconds,
         'converter': parseInt
+      },
+      'camelShowEIPDocumentation': {
+        'value': Camel.defaultShowEIPDocumentation,
+        'converter': Core.parseBooleanValue
+      },
+      'camelHideUnusedEIP': {
+        'value': Camel.defaultHideUnusedEIP,
+        'converter': Core.parseBooleanValue
       }
     });
   }]);
