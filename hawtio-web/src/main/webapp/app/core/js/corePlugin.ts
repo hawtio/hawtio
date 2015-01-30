@@ -119,6 +119,10 @@ module Core {
       checkInjectorLoaded();
       preLogoutTasks.reset();
     });
+    postLoginTasks.addTask("ResetPostLogoutTasks", () => {
+      checkInjectorLoaded();
+      postLogoutTasks.reset();
+    });
 
     preLogoutTasks.addTask("ResetPostLoginTasks", () => {
       checkInjectorLoaded();

@@ -23,6 +23,7 @@
 /// <reference path="../../d.ts/google.d.ts" />
 /// <reference path="../../d.ts/hawtio-plugin-loader.d.ts" />
 /// <reference path="../../d.ts/jolokia-1.0.d.ts" />
+/// <reference path="../../d.ts/keycloak.d.ts" />
 /// <reference path="../../d.ts/logger.d.ts" />
 /// <reference path="../../d.ts/marked.d.ts" />
 /// <reference path="../../d.ts/schemas.d.ts" />
