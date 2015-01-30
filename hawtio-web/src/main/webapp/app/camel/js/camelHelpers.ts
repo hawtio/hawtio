@@ -128,6 +128,12 @@ module Camel {
                 if (nested["expression"]) {
                   nested = nested["expression"];
                 }
+                // special for aggregate as it has duplicate option names
+                if (nodeName === "completionSize") {
+                  nodeName = "completionSizeExpression";
+                } else if (nodeName === "completionTimeout") {
+                  nodeName = "completionTimeoutExpression";
+                }
                 answer[nodeName] = nested;
               }
             }

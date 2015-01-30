@@ -263,6 +263,13 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
                 String defaultValue = option.get("defaultValue");
                 String enumValues = option.get("enum");
 
+                // special for aggregate as it has duplicate option names
+                if ("completionSize".equals(optionName) && "expression".equals(kind)) {
+                    optionName = "completionSizeExpression";
+                } else if ("completionTimeout".equals(optionName) && "expression".equals(kind)) {
+                    optionName = "completionTimeoutExpression";
+                }
+
                 // skip inputs/outputs
                 if ("inputs".equals(optionName) || "outputs".equals(optionName)) {
                     continue;

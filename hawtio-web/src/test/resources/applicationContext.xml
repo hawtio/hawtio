@@ -105,13 +105,16 @@
           <to id="messagesOthers" uri="file:target/messages/others"/>
         </otherwise>
       </choice>
-      <aggregate strategyRef="myAgg">
+      <aggregate strategyRef="myAgg" completionTimeout="30000">
         <correlationExpression>
           <constant>true</constant>
         </correlationExpression>
         <completionPredicate>
           <simple>${header.done}</simple>
         </completionPredicate>
+        <completionTimeout>
+          <header>timeoutnow</header>
+        </completionTimeout>
         <to uri="mock:done"/>
       </aggregate>
     </route>
