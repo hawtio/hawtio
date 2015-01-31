@@ -19,6 +19,7 @@ module Camel {
     $routeProvider.
             when('/camel/browseEndpoint', {templateUrl: 'app/camel/html/browseEndpoint.html'}).
             when('/camel/endpoint/browse/:contextId/*endpointPath', {templateUrl: 'app/camel/html/browseEndpoint.html'}).
+            when('/camel/propertiesEndpoint', {templateUrl: 'app/camel/html/propertiesEndpoint.html'}).
             when('/camel/createEndpoint', {templateUrl: 'app/camel/html/createEndpoint.html'}).
             when('/camel/route/diagram/:contextId/:routeId', {templateUrl: 'app/camel/html/routes.html'}).
             when('/camel/routes', {templateUrl: 'app/camel/html/routes.html'}).
@@ -284,6 +285,14 @@ module Camel {
       isValid: (workspace: Workspace) => workspace.isEndpoint()
         && workspace.hasInvokeRights(workspace.selection, "browseAllMessagesAsXml"),
       href: () => "#/camel/browseEndpoint"
+    });
+    workspace.subLevelTabs.push({
+      content: '<i class="icon-list"></i> Properties',
+      title: "Show the endpoint properties",
+      isValid: (workspace: Workspace) => workspace.isEndpoint()
+        && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia)
+        && workspace.hasInvokeRights(workspace.selection, "explainEndpointJson"),
+      href: () => "#/camel/propertiesEndpoint"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-stethoscope"></i> Debug',
