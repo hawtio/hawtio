@@ -28,7 +28,7 @@ module Camel {
       }
     });
 
-    $scope.$watch('hideDefault', (newValue, oldValue) => {
+    $scope.$watch('isDefaultValue', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         updateData();
       }
@@ -47,37 +47,47 @@ module Camel {
     $scope.showEntity = function (id) {
       log.debug("Show entity: " + id);
 
-      if ($scope.showUsedOnly) {
-        // figure out if there is any data for the id
-        var value = Core.pathGet($scope.nodeData, id);
-        if (angular.isUndefined(value) || Core.isBlank(value)) {
+      if ($scope.hideDefault) {
+        if (isDefaultValue(id)) {
           return false;
         }
+      }
 
-        // is it a default value
-        if ($scope.hideDefault) {
-          var defaultValue = Core.pathGet($scope.model, ["properties", id, "defaultValue"]);
-          if (angular.isDefined(defaultValue)) {
-            // default value is always a String type, so try to convert value to a String
-            var str:string = value.toString();
-            // should not be the same as the default value
-            return str.localeCompare(defaultValue) !== 0;
-          }
-        }
-
-        if (angular.isString(value)) {
-          var aBool = "true" === value || "false" == value;
-          if (aBool) {
-            // hide false booleans
-            return Core.parseBooleanValue(value);
-          }
-          // to show then must not be blank
-          return !Core.isBlank(value);
+      if ($scope.showUsedOnly) {
+        if (!hasValue(id)) {
+          return false;
         }
       }
 
       return true;
     };
+
+    function isDefaultValue(id) {
+      var defaultValue = Core.pathGet($scope.model, ["properties", id, "defaultValue"]);
+      if (angular.isDefined(defaultValue)) {
+        // get the value
+        var value = Core.pathGet($scope.nodeData, id);
+        if (angular.isDefined(value)) {
+          // default value is always a String type, so try to convert value to a String
+          var str:string = value.toString();
+          // is it a default value
+          return str.localeCompare(defaultValue) === 0;
+        }
+      }
+      return false;
+    }
+
+    function hasValue(id) {
+      var value = Core.pathGet($scope.nodeData, id);
+      if (angular.isUndefined(value) || Core.isBlank(value)) {
+        return false;
+      }
+      if (angular.isString(value)) {
+        // to show then must not be blank
+        return !Core.isBlank(value);
+      }
+      return true;
+    }
 
     function updateData() {
       var contextMBean = getSelectionCamelContextMBean(workspace);
@@ -122,8 +132,16 @@ module Camel {
         // TODO: look for specific endpoint icon,
         $scope.icon = Core.url("/img/icons/camel/endpoint24.png");
 
-        // node data is empty as we have all the values already overlaid in the schema
+        // grab all values form the model as they are the current data we need to add to node data (not all properties has a value)
         $scope.nodeData = {};
+
+        angular.forEach($scope.model.properties, function (property, key) {
+          // does it have a value or fallback to use a default value
+          var value = property["value"] || property["defaultValue"];
+          if (angular.isDefined(value) && value !== null) {
+            $scope.nodeData[key] = value;
+          }
+        });
 
         var labels = [];
         if ($scope.model.component.label) {
