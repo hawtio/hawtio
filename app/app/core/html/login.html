@@ -1,7 +1,7 @@
 <div ng-controller="Core.LoginController">
 
 
-  <div class="login-wrapper">
+  <div class="login-wrapper" ng-hide="keycloakEnabled">
     <div class="login-form">
       <form name="login" class="form-horizontal no-bottom-margin" ng-submit="doLogin()">
         <fieldset>

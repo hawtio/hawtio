@@ -885,8 +885,43 @@ var Core;
         return ParameterizedTasksImpl;
     })(TasksImpl);
     Core.ParameterizedTasksImpl = ParameterizedTasksImpl;
+    var ConditionalTasksImpl = (function (_super) {
+        __extends(ConditionalTasksImpl, _super);
+        function ConditionalTasksImpl() {
+            _super.apply(this, arguments);
+        }
+        ConditionalTasksImpl.prototype.executeConditionalTask = function (name, task) {
+            if (angular.isFunction(task)) {
+                log.debug("Executing task : ", name);
+                try {
+                    return task();
+                }
+                catch (error) {
+                    log.debug("Failed to execute conditional task: ", name, " error: ", error);
+                    return false;
+                }
+            }
+        };
+        ConditionalTasksImpl.prototype.execute = function () {
+            var _this = this;
+            if (this.tasksExecuted) {
+                return;
+            }
+            var success = true;
+            angular.forEach(this.tasks, function (task, name) {
+                success = success && _this.executeConditionalTask(name, task);
+            });
+            this.tasksExecuted = true;
+            if (angular.isFunction(this._onComplete) && success) {
+                this._onComplete();
+            }
+        };
+        return ConditionalTasksImpl;
+    })(TasksImpl);
+    Core.ConditionalTasksImpl = ConditionalTasksImpl;
     Core.postLoginTasks = new Core.TasksImpl();
     Core.preLogoutTasks = new Core.TasksImpl();
+    Core.postLogoutTasks = new Core.ConditionalTasksImpl();
 })(Core || (Core = {}));
 var Core;
 (function (Core) {
@@ -2291,6 +2326,12 @@ var Core;
         Core.preLogoutTasks.execute();
     }
     Core.executePreLogoutTasks = executePreLogoutTasks;
+    function executePostLogoutTasks(onComplete) {
+        Core.log.debug("Executing post logout tasks");
+        Core.postLogoutTasks.onComplete(onComplete);
+        Core.postLogoutTasks.execute();
+    }
+    Core.executePostLogoutTasks = executePostLogoutTasks;
     function logout(jolokiaUrl, userDetails, localStorage, $scope, successCB, errorCB) {
         if (successCB === void 0) { successCB = null; }
         if (errorCB === void 0) { errorCB = null; }
@@ -2300,55 +2341,64 @@ var Core;
                 $.ajax(url, {
                     type: "POST",
                     success: function () {
-                        userDetails.username = null;
-                        userDetails.password = null;
-                        userDetails.loginDetails = null;
-                        userDetails.rememberMe = false;
-                        delete localStorage['userDetails'];
-                        var jvmConnect = angular.fromJson(localStorage['jvmConnect']);
-                        _.each(jvmConnect, function (value) {
-                            delete value['userName'];
-                            delete value['password'];
-                        });
-                        localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+                        if (localStorage['jvmConnect'] && localStorage['jvmConnect'] != "undefined") {
+                            var jvmConnect = angular.fromJson(localStorage['jvmConnect']);
+                            _.each(jvmConnect, function (value) {
+                                delete value['userName'];
+                                delete value['password'];
+                            });
+                            localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+                        }
                         localStorage.removeItem('activemqUserName');
                         localStorage.removeItem('activemqPassword');
-                        if (successCB && angular.isFunction(successCB)) {
-                            successCB();
-                        }
-                        Core.$apply($scope);
+                        Core.executePostLogoutTasks(function () {
+                            Core.log.debug("Executing logout callback after successfully executed postLogoutTasks");
+                            userDetails.username = null;
+                            userDetails.password = null;
+                            userDetails.loginDetails = null;
+                            userDetails.rememberMe = false;
+                            delete localStorage['userDetails'];
+                            if (successCB && angular.isFunction(successCB)) {
+                                successCB();
+                            }
+                            Core.$apply($scope);
+                        });
                     },
                     error: function (xhr, textStatus, error) {
-                        userDetails.username = null;
-                        userDetails.password = null;
-                        userDetails.loginDetails = null;
-                        userDetails.rememberMe = false;
-                        delete localStorage['userDetails'];
-                        var jvmConnect = angular.fromJson(localStorage['jvmConnect']);
-                        _.each(jvmConnect, function (value) {
-                            delete value['userName'];
-                            delete value['password'];
-                        });
-                        localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+                        if (localStorage['jvmConnect'] && localStorage['jvmConnect'] != "undefined") {
+                            var jvmConnect = angular.fromJson(localStorage['jvmConnect']);
+                            _.each(jvmConnect, function (value) {
+                                delete value['userName'];
+                                delete value['password'];
+                            });
+                            localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+                        }
                         localStorage.removeItem('activemqUserName');
                         localStorage.removeItem('activemqPassword');
-                        switch (xhr.status) {
-                            case 401:
-                                Core.log.debug('Failed to log out, ', error);
-                                break;
-                            case 403:
-                                Core.log.debug('Failed to log out, ', error);
-                                break;
-                            case 0:
-                                break;
-                            default:
-                                Core.log.debug('Failed to log out, ', error);
-                                break;
-                        }
-                        if (errorCB && angular.isFunction(errorCB)) {
-                            errorCB();
-                        }
-                        Core.$apply($scope);
+                        Core.executePostLogoutTasks(function () {
+                            userDetails.username = null;
+                            userDetails.password = null;
+                            userDetails.loginDetails = null;
+                            userDetails.rememberMe = false;
+                            delete localStorage['userDetails'];
+                            switch (xhr.status) {
+                                case 401:
+                                    Core.log.debug('Failed to log out, ', error);
+                                    break;
+                                case 403:
+                                    Core.log.debug('Failed to log out, ', error);
+                                    break;
+                                case 0:
+                                    break;
+                                default:
+                                    Core.log.debug('Failed to log out, ', error);
+                                    break;
+                            }
+                            if (errorCB && angular.isFunction(errorCB)) {
+                                errorCB();
+                            }
+                            Core.$apply($scope);
+                        });
                     }
                 });
             });
@@ -2961,8 +3011,19 @@ var Core;
             password: options.password,
             loginDetails: {}
         };
+        putKeycloakToken(newWindow);
     }
     Core.connectToServer = connectToServer;
+    function putKeycloakToken(newWindow) {
+        var keycloakContext = Core.injector.get('keycloakContext');
+        if (keycloakContext.enabled) {
+            var tokenInfo = {
+                token: keycloakContext.keycloak.token,
+                refreshToken: keycloakContext.keycloak.refreshToken
+            };
+            newWindow['keycloakToken'] = tokenInfo;
+        }
+    }
     function extractTargetUrl($location, scheme, port) {
         if (angular.isUndefined(scheme)) {
             scheme = $location.scheme();
@@ -3400,6 +3461,10 @@ var Core;
         postLoginTasks.addTask("ResetPreLogoutTasks", function () {
             Core.checkInjectorLoaded();
             preLogoutTasks.reset();
+        });
+        postLoginTasks.addTask("ResetPostLogoutTasks", function () {
+            Core.checkInjectorLoaded();
+            Core.postLogoutTasks.reset();
         });
         preLogoutTasks.addTask("ResetPostLoginTasks", function () {
             Core.checkInjectorLoaded();
@@ -6037,8 +6102,169 @@ var Fabric;
 })(Fabric || (Fabric = {}));
 var Core;
 (function (Core) {
-    Core._module.controller("Core.LoginController", ["$scope", "jolokia", "userDetails", "jolokiaUrl", "workspace", "localStorage", "branding", "postLoginTasks", function ($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) {
+    var log = Logger.get('Keycloak');
+    var checkKeycloakEnabled = function (callback) {
+        var keycloakEnabledUrl = "keycloak/enabled";
+        $.ajax(keycloakEnabledUrl, {
+            type: "GET",
+            success: function (response) {
+                log.debug("Got user response for check if keycloak is enabled: ", response);
+                var keycloakEnabled = response;
+                var keycloakContext = createKeycloakContext(keycloakEnabled);
+                callback(keycloakContext);
+            },
+            error: function (xhr, textStatus, error) {
+                log.debug("Failed to retrieve if keycloak is enabled.: ", error);
+                var keycloakContext = createKeycloakContext(false);
+                callback(keycloakContext);
+            }
+        });
+    };
+    var createKeycloakContext = function (keycloakEnabled) {
+        var keycloakAuth = new Keycloak('keycloak/client-config');
+        var keycloakContext = {
+            enabled: keycloakEnabled,
+            keycloak: keycloakAuth
+        };
+        Core._module.factory('keycloakContext', function () {
+            return keycloakContext;
+        });
+        return keycloakContext;
+    };
+    var initKeycloakIfNeeded = function (keycloakContext, nextTask) {
+        if (keycloakContext.enabled) {
+            log.debug('Keycloak authentication required. Initializing Keycloak');
+            var keycloak = keycloakContext.keycloak;
+            var kcInitOptions;
+            if ('keycloakToken' in window) {
+                kcInitOptions = window['keycloakToken'];
+                log.debug('Initialize keycloak with token passed from different window');
+            }
+            else {
+                kcInitOptions = { onLoad: 'login-required' };
+            }
+            keycloak.init(kcInitOptions).success(function () {
+                log.debug("Keycloak authentication finished! Continue next task");
+                nextTask();
+            }).error(function () {
+                log.warn("Keycloak authentication failed!");
+                Core.notification('error', 'Failed to log in to Keycloak');
+            });
+        }
+        else {
+            log.debug('Keycloak authentication not required. Skip Keycloak bootstrap');
+            nextTask();
+        }
+    };
+    hawtioPluginLoader.registerPreBootstrapTask(function (nextTask) {
+        log.debug('Prebootstrap task executed');
+        checkKeycloakEnabled(function (keycloakContext) {
+            initKeycloakIfNeeded(keycloakContext, nextTask);
+        });
+    });
+    var loginControllerProcessed = false;
+    Core.keycloakLoginController = function ($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, keycloakContext, postLogoutTasks) {
+        if (loginControllerProcessed) {
+            log.debug('Skip processing login controller as it was already processed this request!');
+            return;
+        }
+        loginControllerProcessed = true;
+        setTimeout(function () {
+            loginControllerProcessed = false;
+        }, 30000);
+        log.debug("keycloakLoginController triggered");
+        var keycloakAuth = keycloakContext.keycloak;
+        postLogoutTasks.addTask('KeycloakLogout', function () {
+            if (keycloakAuth.authenticated) {
+                log.debug("postLogoutTask: Going to trigger keycloak logout");
+                keycloakAuth.logout();
+                return false;
+            }
+            else {
+                log.debug("postLogoutTask: Keycloak not authenticated. Skip calling keycloak logout");
+                return true;
+            }
+        });
+        keycloakAuth.onAuthLogout = function () {
+            log.debug('keycloakAuth.onAuthLogout triggered!');
+            Core.logout(jolokiaUrl, userDetails, localStorage, $scope);
+        };
+        var setPeriodicTokenRefresh = function () {
+            if (keycloakAuth.authenticated) {
+                setTimeout(function () {
+                    keycloakAuth.updateToken(10).success(function (refreshed) {
+                        if (refreshed) {
+                            log.debug('Keycloak token refreshed. Set new value to userDetails');
+                            userDetails.password = keycloakAuth.token;
+                        }
+                    }).error(function () {
+                        log.warn('Failed to refresh keycloak token!');
+                    });
+                    setPeriodicTokenRefresh();
+                }, 5000);
+            }
+            else {
+                log.debug('Keycloak not authenticated any more. Skip period for token refreshing');
+            }
+        };
+        var doKeycloakJaasLogin = function () {
+            if (jolokiaUrl) {
+                var url = "auth/login/";
+                if (keycloakAuth.token && keycloakAuth.token != '') {
+                    log.debug('Keycloak authentication token found! Going to trigger JAAS');
+                    $.ajax(url, {
+                        type: "POST",
+                        success: function (response) {
+                            log.debug('Callback from JAAS login!');
+                            userDetails.username = keycloakAuth.tokenParsed.preferred_username;
+                            userDetails.password = keycloakAuth.token;
+                            userDetails.loginDetails = response;
+                            setPeriodicTokenRefresh();
+                            jolokia.start();
+                            workspace.loadTree();
+                            Core.executePostLoginTasks();
+                            Core.$apply($scope);
+                        },
+                        error: function (xhr, textStatus, error) {
+                            switch (xhr.status) {
+                                case 401:
+                                    Core.notification('error', 'Failed to log in, ' + error);
+                                    break;
+                                case 403:
+                                    Core.notification('error', 'Failed to log in, ' + error);
+                                    break;
+                                default:
+                                    Core.notification('error', 'Failed to log in, ' + error);
+                                    break;
+                            }
+                            Core.$apply($scope);
+                        },
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(keycloakAuth.tokenParsed.preferred_username, keycloakAuth.token));
+                        }
+                    });
+                }
+                else {
+                    Core.notification('error', 'Keycloak auth token not found.');
+                }
+            }
+        };
+        doKeycloakJaasLogin();
+    };
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
+    Core._module.controller("Core.LoginController", ["$scope", "jolokia", "userDetails", "jolokiaUrl", "workspace", "localStorage", "branding", "keycloakContext", "postLoginTasks", "postLogoutTasks", function ($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding, keycloakContext, postLoginTasks, postLogoutTasks) {
         jolokia.stop();
+        $scope.keycloakEnabled = keycloakContext.enabled;
+        if ($scope.keycloakEnabled) {
+            Core.keycloakLoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, keycloakContext, postLogoutTasks);
+        }
+        else {
+            loginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks);
+        }
+    }]);
+    var loginController = function ($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) {
         $scope.userDetails = userDetails;
         $scope.entity = {
             username: '',
@@ -6108,7 +6334,7 @@ var Core;
                 }
             }
         };
-    }]);
+    };
 })(Core || (Core = {}));
 var Fabric;
 (function (Fabric) {
@@ -9404,6 +9630,8 @@ var Camel;
     Camel.defaultCamelMaximumTraceOrDebugBodyLength = 5000;
     Camel.defaultCamelTraceOrDebugIncludeStreams = true;
     Camel.defaultCamelRouteMetricMaxSeconds = 10;
+    Camel.defaultShowEIPDocumentation = true;
+    Camel.defaultHideUnusedEIP = false;
     function processRouteXml(workspace, jolokia, folder, onRoute) {
         var selectedRouteId = getSelectedRouteId(workspace, folder);
         var mbean = getSelectionCamelContextMBean(workspace);
@@ -9489,6 +9717,12 @@ var Camel;
                             if (nested) {
                                 if (nested["expression"]) {
                                     nested = nested["expression"];
+                                }
+                                if (nodeName === "completionSize") {
+                                    nodeName = "completionSizeExpression";
+                                }
+                                else if (nodeName === "completionTimeout") {
+                                    nodeName = "completionTimeoutExpression";
                                 }
                                 answer[nodeName] = nested;
                             }
@@ -10661,6 +10895,16 @@ var Camel;
         return value;
     }
     Camel.routeMetricMaxSeconds = routeMetricMaxSeconds;
+    function showEIPDocumentation(localStorage) {
+        var value = localStorage["camelShowEIPDocumentation"];
+        return Core.parseBooleanValue(value, Camel.defaultShowEIPDocumentation);
+    }
+    Camel.showEIPDocumentation = showEIPDocumentation;
+    function hideUnusedEIP(localStorage) {
+        var value = localStorage["camelHideUnusedEIP"];
+        return Core.parseBooleanValue(value, Camel.defaultHideUnusedEIP);
+    }
+    Camel.hideUnusedEIP = hideUnusedEIP;
     function highlightSelectedNode(nodes, toNode) {
         nodes.attr("class", "node");
         nodes.filter(function (item) {
@@ -12983,6 +13227,14 @@ var Camel;
             'camelRouteMetricMaxSeconds': {
                 'value': Camel.defaultCamelRouteMetricMaxSeconds,
                 'converter': parseInt
+            },
+            'camelShowEIPDocumentation': {
+                'value': Camel.defaultShowEIPDocumentation,
+                'converter': Core.parseBooleanValue
+            },
+            'camelHideUnusedEIP': {
+                'value': Camel.defaultHideUnusedEIP,
+                'converter': Core.parseBooleanValue
             }
         });
     }]);
@@ -13212,15 +13464,16 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.PropertiesController", ["$scope", "workspace", function ($scope, workspace) {
+    Camel._module.controller("Camel.PropertiesController", ["$scope", "workspace", "localStorage", function ($scope, workspace, localStorage) {
         var log = Logger.get("Camel");
+        $scope.showHelp = Camel.showEIPDocumentation(localStorage);
+        $scope.showUsedOnly = Camel.hideUnusedEIP(localStorage);
         $scope.viewTemplate = null;
         $scope.schema = _apacheCamelModel;
         $scope.model = null;
+        $scope.labels = [];
         $scope.nodeData = null;
         $scope.icon = null;
-        $scope.showHelp = true;
-        $scope.showUsedOnly = false;
         $scope.$watch('showHelp', function (newValue, oldValue) {
             if (newValue !== oldValue) {
                 updateData();
@@ -13265,6 +13518,11 @@ var Camel;
                         log.debug("Properties - data: " + JSON.stringify($scope.nodeData, null, "  "));
                         log.debug("Properties - schema: " + JSON.stringify($scope.model, null, "  "));
                     }
+                    var labels = [];
+                    if ($scope.model.group) {
+                        labels = $scope.model.group.split(",");
+                    }
+                    $scope.labels = labels;
                     $scope.nodeData = Camel.getRouteNodeJSON(routeXmlNode);
                     $scope.icon = Camel.getRouteNodeIcon(routeXmlNode);
                     $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
@@ -13425,7 +13683,7 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.RouteMetricsController", ["$scope", "$location", "workspace", "jolokia", "metricsWatcher", function ($scope, $location, workspace, jolokia, metricsWatcher) {
+    Camel._module.controller("Camel.RouteMetricsController", ["$scope", "$location", "workspace", "jolokia", "metricsWatcher", "localStorage", function ($scope, $location, workspace, jolokia, metricsWatcher, localStorage) {
         var log = Logger.get("Camel");
         $scope.maxSeconds = Camel.routeMetricMaxSeconds(localStorage);
         $scope.filterText = null;
@@ -16864,6 +17122,9 @@ var Core;
     });
     Core._module.factory('preLogoutTasks', function () {
         return Core.preLogoutTasks;
+    });
+    Core._module.factory('postLogoutTasks', function () {
+        return Core.postLogoutTasks;
     });
     Core._module.factory('helpRegistry', ["$rootScope", function ($rootScope) {
         return new Core.HelpRegistry($rootScope);

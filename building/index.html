@@ -144,6 +144,38 @@ sudo chown -R yourusernamehere *</code></pre>
 
 <p>Where <code>yourusernamehere</code> is your username. This will change the file permissions of the node files so you can build the project. After this try building the hawtio source code again.</p>
 
+<h3 id = "Troubleshooting">Troubleshooting</h3>
+
+<p>This section should help you to figure out problems that you could discover when you build/compile the <code>hawtio</code>or <code>hawtio-web</code> module :</p>
+
+<ol>
+<li>ERROR : Can not find the binary /usr/local/bin/phantomjs
+If during the build, you get this error message</li>
+</ol>
+
+<p>````
+[INFO] Running &ldquo;karma:unit&rdquo; (karma) task
+[INFO] ERROR [launcher]: Cannot start PhantomJS
+[INFO]     Can not find the binary /usr/local/bin/phantomjs
+[INFO]     Please set env variable PHANTOMJS_BIN
+[INFO] Warning: Task &ldquo;karma:unit&rdquo; failed. Use &mdash;force to continue.
+[INFO]
+[INFO] Aborted due to warnings.
+[INFO] &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;
+[INFO] BUILD FAILURE
+[INFO] &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;
+[INFO] Total time: 13.511 s
+[INFO] Finished at: 2015-01-30T07:30:49+01:00
+[INFO] Final Memory: 28M/317M
+[INFO] &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;
+[ERROR] Failed to execute goal com.github.eirslett:frontend-maven-plugin:0.0.16:grunt (grunt build) on project hawtio-web: Failed to run task: 'grunt default &mdash;no-color' failed. (error code 3) &rarr; [Help 1]
+````
+the problem could be solved after removing <span class="amp">&amp;</span> installing again phantomjs
+````
+npm uninstall phantomjs
+npm install phantomjs -g
+````</p>
+
 <h3 id = "Trying_Different_Containers">Trying Different Containers</h3>
 
 <p>The above uses Jetty but you can try running hawtio in different containers via any of the following commands. Each of them runs the hawtio-web in a different container (with an empty JVM so no beans or camel by default).</p>

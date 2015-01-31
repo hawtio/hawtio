@@ -50,14 +50,14 @@ var _apacheCamelModel ={
           "title": "Completion Predicate",
           "required": false
         },
-        "completionTimeout": {
+        "completionTimeoutExpression": {
           "kind": "expression",
           "type": "object",
           "description": "Sets the completion timeout which would cause the aggregate to consider the group as complete and send out the aggregated exchange.",
           "title": "Completion Timeout",
           "required": false
         },
-        "completionSize": {
+        "completionSizeExpression": {
           "kind": "expression",
           "type": "object",
           "description": "Sets the completion size which is the number of aggregated exchanges which would cause the aggregate to consider the group as complete and send out the aggregated exchange.",
@@ -130,11 +130,25 @@ var _apacheCamelModel ={
           "title": "Strategy Method Allow Null",
           "required": false
         },
+        "completionSize": {
+          "kind": "attribute",
+          "type": "integer",
+          "description": "Sets the completion size which is the number of aggregated exchanges which would cause the aggregate to consider the group as complete and send out the aggregated exchange.",
+          "title": "Completion Size",
+          "required": false
+        },
         "completionInterval": {
           "kind": "attribute",
           "type": "integer",
           "description": "Sets the completion interval which would cause the aggregate to consider the group as complete and send out the aggregated exchange.",
           "title": "Completion Interval",
+          "required": false
+        },
+        "completionTimeout": {
+          "kind": "attribute",
+          "type": "integer",
+          "description": "Sets the completion timeout which would cause the aggregate to consider the group as complete and send out the aggregated exchange.",
+          "title": "Completion Timeout",
           "required": false
         },
         "completionFromBatchConsumer": {
@@ -3638,14 +3652,6 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
       "properties": {
-        "pattern": {
-          "kind": "attribute",
-          "type": "string",
-          "enum": [ "InOnly", "InOptionalOut", "InOut", "OutIn", "OutOnly", "OutOptionalIn", "RobustInOnly", "RobustOutOnly" ],
-          "description": "Sets the optional ExchangePattern used to invoke this endpoint",
-          "title": "Pattern",
-          "required": false
-        },
         "uri": {
           "kind": "attribute",
           "type": "string",
@@ -3658,6 +3664,14 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Sets the reference of the endpoint to send to.",
           "title": "Ref",
+          "required": false
+        },
+        "pattern": {
+          "kind": "attribute",
+          "type": "string",
+          "enum": [ "InOnly", "InOptionalOut", "InOut", "OutIn", "OutOnly", "OutOptionalIn", "RobustInOnly", "RobustOutOnly" ],
+          "description": "Sets the optional ExchangePattern used to invoke this endpoint",
+          "title": "Pattern",
           "required": false
         },
         "id": {
@@ -5582,8 +5596,8 @@ var _apacheCamelModel ={
         "textQualifier": {
           "kind": "attribute",
           "type": "string",
-          "defaultValue": "\\",
-          "description": "null",
+          "defaultValue": "\"",
+          "description": "If the text is qualified with a char such as \"",
           "title": "Text Qualifier",
           "required": false
         },
@@ -6320,16 +6334,16 @@ var _apacheCamelModel ={
         "quote": {
           "kind": "attribute",
           "type": "string",
-          "defaultValue": "\\",
-          "description": "null",
+          "defaultValue": "\"",
+          "description": "The quote symbol.",
           "title": "Quote",
           "required": false
         },
         "quoteEscape": {
           "kind": "attribute",
           "type": "string",
-          "defaultValue": "\\",
-          "description": "null",
+          "defaultValue": "\"",
+          "description": "The quote escape symbol",
           "title": "Quote Escape",
           "required": false
         },
@@ -7020,13 +7034,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For expressions and predicates using a constant",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7040,6 +7047,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7051,13 +7065,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For EL expressions and predicates",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7071,6 +7078,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7082,13 +7096,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "A useful base class for an expression",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7102,6 +7109,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7113,13 +7127,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For Groovy expressions and predicates",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7133,6 +7140,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7144,13 +7158,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "An expression which extracts the named header",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7164,6 +7171,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7175,13 +7189,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For JavaScript expressions and predicates",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7195,6 +7202,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7213,13 +7227,6 @@ var _apacheCamelModel ={
           "title": "Result Type",
           "required": false
         },
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7233,6 +7240,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7252,13 +7266,6 @@ var _apacheCamelModel ={
           "title": "Lenient",
           "required": false
         },
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7272,6 +7279,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7290,13 +7304,6 @@ var _apacheCamelModel ={
           "title": "Language",
           "required": true
         },
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7310,6 +7317,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7349,13 +7363,6 @@ var _apacheCamelModel ={
           "title": "Bean Type",
           "required": false
         },
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7369,6 +7376,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7380,13 +7394,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For MVEL expressions and predicates",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7400,6 +7407,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7411,13 +7425,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For OGNL expressions and predicates",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7431,6 +7438,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7442,13 +7456,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For PHP expressions and predicates",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7462,6 +7469,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7473,13 +7487,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "An expression which extracts the named exchange property",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7493,6 +7500,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7504,13 +7518,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For Python expressions and predicates",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7524,6 +7531,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7535,13 +7549,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For using a custom expression",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7555,6 +7562,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7566,13 +7580,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For Ruby expressions and predicates",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7586,6 +7593,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7604,13 +7618,6 @@ var _apacheCamelModel ={
           "title": "Result Type",
           "required": false
         },
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7624,6 +7631,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7635,13 +7649,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For Spring Expression Language (SpEL) expressions and predicates",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7655,6 +7662,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7666,13 +7680,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For SQL expressions and predicates",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7686,6 +7693,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7697,13 +7711,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For HL7 terser expressions and predicates",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7717,6 +7724,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7787,13 +7801,6 @@ var _apacheCamelModel ={
           "title": "Group",
           "required": false
         },
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7807,6 +7814,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7818,13 +7832,6 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For VTD-XML (fast and efficient XPath) expressions and predicates",
       "properties": {
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7838,6 +7845,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7900,13 +7914,6 @@ var _apacheCamelModel ={
           "title": "Header Name",
           "required": false
         },
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7920,6 +7927,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7945,13 +7959,6 @@ var _apacheCamelModel ={
           "title": "Header Name",
           "required": false
         },
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -7965,6 +7972,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }
@@ -7997,13 +8011,6 @@ var _apacheCamelModel ={
           "title": "Group",
           "required": false
         },
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -8017,6 +8024,13 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
           "title": "Trim",
+          "required": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
           "required": false
         }
       }

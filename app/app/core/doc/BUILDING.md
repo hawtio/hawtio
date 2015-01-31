@@ -34,6 +34,37 @@ In case you get any building error of `hawtio-web`, then it may be due permissio
 
 Where `yourusernamehere` is your username. This will change the file permissions of the node files so you can build the project. After this try building the hawtio source code again.
 
+### Troubleshooting 
+
+This section should help you to figure out problems that you could discover when you build/compile the `hawtio`or `hawtio-web` module :
+
+1. ERROR : Can not find the binary /usr/local/bin/phantomjs
+If during the build, you get this error message
+
+````
+[INFO] Running "karma:unit" (karma) task
+[INFO] ERROR [launcher]: Cannot start PhantomJS
+[INFO] 	Can not find the binary /usr/local/bin/phantomjs
+[INFO] 	Please set env variable PHANTOMJS_BIN
+[INFO] Warning: Task "karma:unit" failed. Use --force to continue.
+[INFO]
+[INFO] Aborted due to warnings.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 13.511 s
+[INFO] Finished at: 2015-01-30T07:30:49+01:00
+[INFO] Final Memory: 28M/317M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal com.github.eirslett:frontend-maven-plugin:0.0.16:grunt (grunt build) on project hawtio-web: Failed to run task: 'grunt default --no-color' failed. (error code 3) -> [Help 1]
+````
+the problem could be solved after removing & installing again phantomjs
+````
+npm uninstall phantomjs
+npm install phantomjs -g
+````
+
+
 
 ### Trying Different Containers
 

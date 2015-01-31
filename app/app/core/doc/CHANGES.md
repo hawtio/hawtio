@@ -1,6 +1,12 @@
 
 ### Change Log
 
+#### 1.4.46
+
+* Camel plugin now includes up to date model with EIP documentation included
+* Camel plugin reworked properites page to present more information about the EIP
+* The Camel model is auto generated as part of the build using Apache Camel 2.15.0 onwards
+
 #### 1.4.45
 
 * Camel plugin supports new inflight exchanges from Camel 2.15 onwards

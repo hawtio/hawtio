@@ -1,6 +1,22 @@
 <div ng-controller="Camel.PreferencesController">
   <form class="form-horizontal">
 
+    <label class="control-label">Show EIP documentation</label>
+    <div class="control-group">
+      <div class="controls">
+        <input type="checkbox" ng-model="camelShowEIPDocumentation">
+        <span class="help-block">Whether to show EIP documentation in the properties view and Camel route editor</span>
+      </div>
+    </div>
+
+    <label class="control-label">Hide unused EIP options</label>
+    <div class="control-group">
+      <div class="controls">
+        <input type="checkbox" ng-model="camelHideUnusedEIP">
+        <span class="help-block">Whether to hide EIP options which are not in use in the properties view</span>
+      </div>
+    </div>
+
     <label class="control-label">Include Streams</label>
     <div class="control-group">
       <div class="controls">
