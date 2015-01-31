@@ -6,6 +6,7 @@ module Camel {
 
     $scope.showHelp = Camel.showEIPDocumentation(localStorage);
     $scope.showUsedOnly = Camel.hideUnusedEIP(localStorage);
+    $scope.hideDefault = false;
 
     $scope.viewTemplate = null;
     $scope.schema = null;
@@ -27,6 +28,12 @@ module Camel {
       }
     });
 
+    $scope.$watch('hideDefault', (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        updateData();
+      }
+    });
+
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateData, 50);
@@ -39,12 +46,25 @@ module Camel {
 
     $scope.showEntity = function (id) {
       log.debug("Show entity: " + id);
+
       if ($scope.showUsedOnly) {
         // figure out if there is any data for the id
         var value = Core.pathGet($scope.nodeData, id);
         if (angular.isUndefined(value) || Core.isBlank(value)) {
           return false;
         }
+
+        // is it a default value
+        if ($scope.hideDefault) {
+          var defaultValue = Core.pathGet($scope.model, ["properties", id, "defaultValue"]);
+          if (angular.isDefined(defaultValue)) {
+            // default value is always a String type, so try to convert value to a String
+            var str:string = value.toString();
+            // should not be the same as the default value
+            return str.localeCompare(defaultValue) !== 0;
+          }
+        }
+
         if (angular.isString(value)) {
           var aBool = "true" === value || "false" == value;
           if (aBool) {
@@ -89,10 +109,8 @@ module Camel {
       }
     }
 
-    // TODO: option to hide default options
-
     function populateData(response) {
-      log.info("Populate data " + response);
+      log.debug("Populate data " + response);
 
       var data = response.value;
       if (data) {

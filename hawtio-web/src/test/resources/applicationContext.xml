@@ -120,7 +120,7 @@
     </route>
     <!-- route for having something trigger all the time -->
     <route id="timerToAMQ">
-      <from uri="timer:foo?period=1000"/>
+      <from uri="timer:foo?period=2000"/>
       <transform>
         <constant>Hello World</constant>
       </transform>

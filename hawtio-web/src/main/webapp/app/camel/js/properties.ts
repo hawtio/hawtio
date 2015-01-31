@@ -37,6 +37,8 @@ module Camel {
     });
 
     $scope.showEntity = function(id) {
+      log.debug("Show entity: " + id);
+
       if ($scope.showUsedOnly) {
         // figure out if there is any data for the id
         var value = Core.pathGet($scope.nodeData, id);
