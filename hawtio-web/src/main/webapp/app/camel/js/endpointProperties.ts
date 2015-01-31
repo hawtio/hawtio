@@ -38,7 +38,7 @@ module Camel {
     });
 
     $scope.showEntity = function (id) {
-      log.info("Show entity: " + id);
+      log.debug("Show entity: " + id);
       if ($scope.showUsedOnly) {
         // figure out if there is any data for the id
         var value = Core.pathGet($scope.nodeData, id);
@@ -77,7 +77,7 @@ module Camel {
         endpointMBean = workspace.getSelectedMBeanName();
       }
       if (endpointMBean && contextMBean) {
-        // TODO: grab url from tree instead!
+        // TODO: grab url from tree instead? avoids a JMX call
         var reply = jolokia.request({type: "read", mbean: endpointMBean, attribute: ["EndpointUri"]});
         var url:string = reply.value["EndpointUri"];
         if (url) {
@@ -88,6 +88,8 @@ module Camel {
         }
       }
     }
+
+    // TODO: option to hide default options
 
     function populateData(response) {
       log.info("Populate data " + response);
@@ -102,7 +104,7 @@ module Camel {
         // TODO: look for specific endpoint icon,
         $scope.icon = Core.url("/img/icons/camel/endpoint24.png");
 
-        // TODO: grab from model each property that has a value and use as the node data
+        // node data is empty as we have all the values already overlaid in the schema
         $scope.nodeData = {};
 
         var labels = [];
