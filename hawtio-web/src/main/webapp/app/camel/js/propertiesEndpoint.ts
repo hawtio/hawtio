@@ -1,12 +1,12 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.EndpointPropertiesController", ["$scope", "workspace", "localStorage", "jolokia", ($scope, workspace:Workspace, localStorage:WindowLocalStorage, jolokia) => {
+  _module.controller("Camel.PropertiesEndpointController", ["$scope", "workspace", "localStorage", "jolokia", ($scope, workspace:Workspace, localStorage:WindowLocalStorage, jolokia) => {
     var log:Logging.Logger = Logger.get("Camel");
 
-    $scope.showHelp = Camel.showEIPDocumentation(localStorage);
-    $scope.showUsedOnly = Camel.hideUnusedEIP(localStorage);
-    $scope.hideDefault = false;
+    $scope.hideHelp = Camel.hideOptionDocumentation(localStorage);
+    $scope.hideUnused = Camel.hideOptionUnusedValue(localStorage);
+    $scope.hideDefault = Camel.hideOptionDefaultValue(localStorage);
 
     $scope.viewTemplate = null;
     $scope.schema = null;
@@ -16,19 +16,19 @@ module Camel {
     $scope.icon = null;
     $scope.endpointUrl = null;
 
-    $scope.$watch('showHelp', (newValue, oldValue) => {
+    $scope.$watch('hideHelp', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         updateData();
       }
     });
 
-    $scope.$watch('showUsedOnly', (newValue, oldValue) => {
+    $scope.$watch('hideUnused', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         updateData();
       }
     });
 
-    $scope.$watch('isDefaultValue', (newValue, oldValue) => {
+    $scope.$watch('hideDefault', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         updateData();
       }
@@ -53,7 +53,7 @@ module Camel {
         }
       }
 
-      if ($scope.showUsedOnly) {
+      if ($scope.hideUnused) {
         if (!hasValue(id)) {
           return false;
         }

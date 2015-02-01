@@ -14,8 +14,9 @@ module Camel {
   export var defaultCamelMaximumTraceOrDebugBodyLength = 5000;
   export var defaultCamelTraceOrDebugIncludeStreams = true;
   export var defaultCamelRouteMetricMaxSeconds = 10;
-  export var defaultShowEIPDocumentation = true;
-  export var defaultHideUnusedEIP = false;
+  export var defaultHideOptionDocumentation = false;
+  export var defaultHideOptionDefaultValue = false;
+  export var defaultHideOptionUnusedValue = false;
 
   /**
    * Looks up the route XML for the given context and selected route and
@@ -1497,21 +1498,30 @@ module Camel {
   }
 
   /**
-   * Whether to show EIP documentation
+   * Whether to hide the documentation for the options
    * @method
    */
-  export function showEIPDocumentation(localStorage) {
-    var value = localStorage["camelShowEIPDocumentation"];
-    return Core.parseBooleanValue(value, Camel.defaultShowEIPDocumentation);
+  export function hideOptionDocumentation(localStorage) {
+    var value = localStorage["camelHideOptionDocumentation"];
+    return Core.parseBooleanValue(value, Camel.defaultHideOptionDocumentation);
   }
 
   /**
-   * Whether to hide unused EIP options
+   * Whether to hide options which uses default values
    * @method
    */
-  export function hideUnusedEIP(localStorage) {
-    var value = localStorage["camelHideUnusedEIP"];
-    return Core.parseBooleanValue(value, Camel.defaultHideUnusedEIP);
+  export function hideOptionDefaultValue(localStorage) {
+    var value = localStorage["camelHideOptionDefaultValue"];
+    return Core.parseBooleanValue(value, Camel.defaultHideOptionDefaultValue);
+  }
+
+  /**
+   * Whether to hide options which have unused/empty values
+   * @method
+   */
+  export function hideOptionUnusedValue(localStorage) {
+    var value = localStorage["camelHideOptionUnusedValue"];
+    return Core.parseBooleanValue(value, Camel.defaultHideOptionUnusedValue);
   }
 
   /**
