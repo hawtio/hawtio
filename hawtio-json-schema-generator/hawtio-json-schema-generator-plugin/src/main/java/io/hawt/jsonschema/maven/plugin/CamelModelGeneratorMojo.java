@@ -257,6 +257,7 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
                 String kind = option.get("kind");
                 String type = option.get("type");
                 String required = option.get("required");
+                String deprecated = option.get("deprecated");
                 description = option.get("description");
                 String defaultValue = option.get("defaultValue");
                 String enumValues = option.get("enum");
@@ -284,11 +285,17 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
                 cst.append("          \"description\": " + doubleQuote(safeDescription(description)));
                 cst.append("          \"title\": " + doubleQuote(title));
                 if ("true".equals(required)) {
-                    cst.append("          \"required\": true\n");
+                    cst.append("          \"required\": true");
                 } else {
-                    cst.append("          \"required\": false\n");
+                    cst.append("          \"required\": false");
+                }
+                if ("true".equals(deprecated)) {
+                    cst.append("          \"deprecated\": true");
+                } else {
+                    cst.append("          \"deprecated\": false");
                 }
                 sb.append(cst.toString());
+                sb.append("\n");
                 if (it2.hasNext()) {
                     sb.append("        },\n"); // a property
                 } else {
