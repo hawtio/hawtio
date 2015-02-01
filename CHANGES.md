@@ -5,7 +5,9 @@
 
 * Camel plugin now includes up to date model with EIP documentation included
 * Camel plugin reworked properites page to present more information about the EIP
-* The Camel model is auto generated as part of the build using Apache Camel 2.15.0 onwards
+* Camel plugin can now show endpoint properties with documentation included (requires Camel 2.15 onwards)
+* The Camel model is auto generated as part of the build using Apache Camel 2.15.0 onwards (but up to date with current Apache Camel in this release)
+* Hawtio can now be secured using KeyCloak
 
 #### 1.4.45
 
