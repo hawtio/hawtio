@@ -355,7 +355,7 @@ var _apacheCamelModel ={
         "cache": {
           "kind": "attribute",
           "type": "boolean",
-          "defaultValue": "false",
+          "defaultValue": "true",
           "description": "Caches the bean lookup to avoid lookup up bean on every usage.",
           "title": "Cache",
           "required": false
@@ -2040,6 +2040,7 @@ var _apacheCamelModel ={
         "delimiter": {
           "kind": "attribute",
           "type": "string",
+          "defaultValue": ",",
           "description": "Delimiter used if the Expression returned multiple endpoints. Can be turned off using the value false. The default value is",
           "title": "Delimiter",
           "required": false
