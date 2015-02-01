@@ -10955,7 +10955,7 @@ var Camel;
     var contextToolBar = "app/camel/html/attributeToolBarContext.html";
     Camel._module = angular.module(Camel.pluginName, ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ui.bootstrap.typeahead', 'ngResource', 'hawtioCore', 'hawtio-ui']);
     Camel._module.config(["$routeProvider", function ($routeProvider) {
-        $routeProvider.when('/camel/browseEndpoint', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/endpoint/browse/:contextId/*endpointPath', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/createEndpoint', { templateUrl: 'app/camel/html/createEndpoint.html' }).when('/camel/route/diagram/:contextId/:routeId', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/routes', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/fabricDiagram', { templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false }).when('/camel/typeConverter', { templateUrl: 'app/camel/html/typeConverter.html', reloadOnSearch: false }).when('/camel/restRegistry', { templateUrl: 'app/camel/html/restRegistry.html', reloadOnSearch: false }).when('/camel/routeMetrics', { templateUrl: 'app/camel/html/routeMetrics.html', reloadOnSearch: false }).when('/camel/inflight', { templateUrl: 'app/camel/html/inflight.html', reloadOnSearch: false }).when('/camel/sendMessage', { templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false }).when('/camel/source', { templateUrl: 'app/camel/html/source.html' }).when('/camel/traceRoute', { templateUrl: 'app/camel/html/traceRoute.html' }).when('/camel/debugRoute', { templateUrl: 'app/camel/html/debug.html' }).when('/camel/profileRoute', { templateUrl: 'app/camel/html/profileRoute.html' }).when('/camel/properties', { templateUrl: 'app/camel/html/properties.html' });
+        $routeProvider.when('/camel/browseEndpoint', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/endpoint/browse/:contextId/*endpointPath', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/propertiesEndpoint', { templateUrl: 'app/camel/html/propertiesEndpoint.html' }).when('/camel/createEndpoint', { templateUrl: 'app/camel/html/createEndpoint.html' }).when('/camel/route/diagram/:contextId/:routeId', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/routes', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/fabricDiagram', { templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false }).when('/camel/typeConverter', { templateUrl: 'app/camel/html/typeConverter.html', reloadOnSearch: false }).when('/camel/restRegistry', { templateUrl: 'app/camel/html/restRegistry.html', reloadOnSearch: false }).when('/camel/routeMetrics', { templateUrl: 'app/camel/html/routeMetrics.html', reloadOnSearch: false }).when('/camel/inflight', { templateUrl: 'app/camel/html/inflight.html', reloadOnSearch: false }).when('/camel/sendMessage', { templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false }).when('/camel/source', { templateUrl: 'app/camel/html/source.html' }).when('/camel/traceRoute', { templateUrl: 'app/camel/html/traceRoute.html' }).when('/camel/debugRoute', { templateUrl: 'app/camel/html/debug.html' }).when('/camel/profileRoute', { templateUrl: 'app/camel/html/profileRoute.html' }).when('/camel/properties', { templateUrl: 'app/camel/html/properties.html' });
     }]);
     Camel._module.factory('tracerStatus', function () {
         return {
@@ -11159,6 +11159,12 @@ var Camel;
             title: "Browse the messages on the endpoint",
             isValid: function (workspace) { return workspace.isEndpoint() && workspace.hasInvokeRights(workspace.selection, "browseAllMessagesAsXml"); },
             href: function () { return "#/camel/browseEndpoint"; }
+        });
+        workspace.subLevelTabs.push({
+            content: '<i class="icon-list"></i> Properties',
+            title: "Show the endpoint properties",
+            isValid: function (workspace) { return workspace.isEndpoint() && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia) && workspace.hasInvokeRights(workspace.selection, "explainEndpointJson"); },
+            href: function () { return "#/camel/propertiesEndpoint"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-stethoscope"></i> Debug',
@@ -12517,6 +12523,131 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
+    Camel._module.controller("Camel.EndpointPropertiesController", ["$scope", "workspace", "localStorage", "jolokia", function ($scope, workspace, localStorage, jolokia) {
+        var log = Logger.get("Camel");
+        $scope.showHelp = Camel.showEIPDocumentation(localStorage);
+        $scope.showUsedOnly = Camel.hideUnusedEIP(localStorage);
+        $scope.hideDefault = false;
+        $scope.viewTemplate = null;
+        $scope.schema = null;
+        $scope.model = null;
+        $scope.labels = [];
+        $scope.nodeData = null;
+        $scope.icon = null;
+        $scope.endpointUrl = null;
+        $scope.$watch('showHelp', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                updateData();
+            }
+        });
+        $scope.$watch('showUsedOnly', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                updateData();
+            }
+        });
+        $scope.$watch('isDefaultValue', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                updateData();
+            }
+        });
+        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+            setTimeout(updateData, 50);
+        });
+        $scope.$watch('workspace.selection', function () {
+            if (workspace.moveIfViewInvalid())
+                return;
+            updateData();
+        });
+        $scope.showEntity = function (id) {
+            log.debug("Show entity: " + id);
+            if ($scope.hideDefault) {
+                if (isDefaultValue(id)) {
+                    return false;
+                }
+            }
+            if ($scope.showUsedOnly) {
+                if (!hasValue(id)) {
+                    return false;
+                }
+            }
+            return true;
+        };
+        function isDefaultValue(id) {
+            var defaultValue = Core.pathGet($scope.model, ["properties", id, "defaultValue"]);
+            if (angular.isDefined(defaultValue)) {
+                var value = Core.pathGet($scope.nodeData, id);
+                if (angular.isDefined(value)) {
+                    var str = value.toString();
+                    return str.localeCompare(defaultValue) === 0;
+                }
+            }
+            return false;
+        }
+        function hasValue(id) {
+            var value = Core.pathGet($scope.nodeData, id);
+            if (angular.isUndefined(value) || Core.isBlank(value)) {
+                return false;
+            }
+            if (angular.isString(value)) {
+                return !Core.isBlank(value);
+            }
+            return true;
+        }
+        function updateData() {
+            var contextMBean = Camel.getSelectionCamelContextMBean(workspace);
+            var endpointMBean = null;
+            if ($scope.contextId && $scope.endpointPath) {
+                var node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
+                    context: $scope.contextId,
+                    type: "endpoints",
+                    name: $scope.endpointPath
+                });
+                if (node) {
+                    endpointMBean = node.objectName;
+                }
+            }
+            if (!endpointMBean) {
+                endpointMBean = workspace.getSelectedMBeanName();
+            }
+            if (endpointMBean && contextMBean) {
+                var reply = jolokia.request({ type: "read", mbean: endpointMBean, attribute: ["EndpointUri"] });
+                var url = reply.value["EndpointUri"];
+                if (url) {
+                    $scope.endpointUrl = url;
+                    log.info("Calling explainEndpointJson for url: " + url);
+                    var query = { type: 'exec', mbean: contextMBean, operation: 'explainEndpointJson(java.lang.String,boolean)', arguments: [url, true] };
+                    jolokia.request(query, onSuccess(populateData));
+                }
+            }
+        }
+        function populateData(response) {
+            log.debug("Populate data " + response);
+            var data = response.value;
+            if (data) {
+                $scope.model = JSON.parse(data);
+                $scope.model.title = $scope.endpointUrl;
+                $scope.model.description = $scope.model.component.description;
+                $scope.icon = Core.url("/img/icons/camel/endpoint24.png");
+                $scope.nodeData = {};
+                angular.forEach($scope.model.properties, function (property, key) {
+                    var value = property["value"] || property["defaultValue"];
+                    if (angular.isDefined(value) && value !== null) {
+                        $scope.nodeData[key] = value;
+                    }
+                });
+                var labels = [];
+                if ($scope.model.component.label) {
+                    labels = $scope.model.component.label.split(",");
+                }
+                $scope.labels = labels;
+                $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
+                Core.$apply($scope);
+            }
+        }
+    }]);
+})(Camel || (Camel = {}));
+var Camel;
+(function (Camel) {
     Camel._module.controller("Camel.FabricDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", function ($scope, $compile, $location, localStorage, jolokia, workspace) {
         Fabric.initScope($scope, $location, jolokia, workspace);
         var isFmc = Fabric.isFMCContainer(workspace);
@@ -13493,7 +13624,7 @@ var Camel;
             updateData();
         });
         $scope.showEntity = function (id) {
-            log.info("Show entity: " + id);
+            log.debug("Show entity: " + id);
             if ($scope.showUsedOnly) {
                 var value = Core.pathGet($scope.nodeData, id);
                 if (angular.isUndefined(value) || Core.isBlank(value)) {
