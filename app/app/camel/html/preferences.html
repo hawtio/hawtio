@@ -1,19 +1,27 @@
 <div ng-controller="Camel.PreferencesController">
   <form class="form-horizontal">
 
-    <label class="control-label">Show EIP documentation</label>
+    <label class="control-label">Hide documentation for options</label>
     <div class="control-group">
       <div class="controls">
-        <input type="checkbox" ng-model="camelShowEIPDocumentation">
-        <span class="help-block">Whether to show EIP documentation in the properties view and Camel route editor</span>
+        <input type="checkbox" ng-model="camelHideOptionDocumentation">
+        <span class="help-block">Whether to hide documentation in the properties view and Camel route editor</span>
       </div>
     </div>
 
-    <label class="control-label">Hide unused EIP options</label>
+    <label class="control-label">Hide options with default values</label>
     <div class="control-group">
       <div class="controls">
-        <input type="checkbox" ng-model="camelHideUnusedEIP">
-        <span class="help-block">Whether to hide EIP options which are not in use in the properties view</span>
+        <input type="checkbox" ng-model="camelHideOptionDefaultValue">
+        <span class="help-block">Whether to hide options that are using a default value in the properties view</span>
+      </div>
+    </div>
+
+    <label class="control-label">Hide options with unused values</label>
+    <div class="control-group">
+      <div class="controls">
+        <input type="checkbox" ng-model="camelHideOptionUnusedValue">
+        <span class="help-block">Whether to hide unused/empty options in the properties view</span>
       </div>
     </div>
 

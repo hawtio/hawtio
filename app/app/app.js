@@ -9630,8 +9630,9 @@ var Camel;
     Camel.defaultCamelMaximumTraceOrDebugBodyLength = 5000;
     Camel.defaultCamelTraceOrDebugIncludeStreams = true;
     Camel.defaultCamelRouteMetricMaxSeconds = 10;
-    Camel.defaultShowEIPDocumentation = true;
-    Camel.defaultHideUnusedEIP = false;
+    Camel.defaultHideOptionDocumentation = false;
+    Camel.defaultHideOptionDefaultValue = false;
+    Camel.defaultHideOptionUnusedValue = false;
     function processRouteXml(workspace, jolokia, folder, onRoute) {
         var selectedRouteId = getSelectedRouteId(workspace, folder);
         var mbean = getSelectionCamelContextMBean(workspace);
@@ -10895,16 +10896,21 @@ var Camel;
         return value;
     }
     Camel.routeMetricMaxSeconds = routeMetricMaxSeconds;
-    function showEIPDocumentation(localStorage) {
-        var value = localStorage["camelShowEIPDocumentation"];
-        return Core.parseBooleanValue(value, Camel.defaultShowEIPDocumentation);
+    function hideOptionDocumentation(localStorage) {
+        var value = localStorage["camelHideOptionDocumentation"];
+        return Core.parseBooleanValue(value, Camel.defaultHideOptionDocumentation);
     }
-    Camel.showEIPDocumentation = showEIPDocumentation;
-    function hideUnusedEIP(localStorage) {
-        var value = localStorage["camelHideUnusedEIP"];
-        return Core.parseBooleanValue(value, Camel.defaultHideUnusedEIP);
+    Camel.hideOptionDocumentation = hideOptionDocumentation;
+    function hideOptionDefaultValue(localStorage) {
+        var value = localStorage["camelHideOptionDefaultValue"];
+        return Core.parseBooleanValue(value, Camel.defaultHideOptionDefaultValue);
     }
-    Camel.hideUnusedEIP = hideUnusedEIP;
+    Camel.hideOptionDefaultValue = hideOptionDefaultValue;
+    function hideOptionUnusedValue(localStorage) {
+        var value = localStorage["camelHideOptionUnusedValue"];
+        return Core.parseBooleanValue(value, Camel.defaultHideOptionUnusedValue);
+    }
+    Camel.hideOptionUnusedValue = hideOptionUnusedValue;
     function highlightSelectedNode(nodes, toNode) {
         nodes.attr("class", "node");
         nodes.filter(function (item) {
@@ -12523,131 +12529,6 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.EndpointPropertiesController", ["$scope", "workspace", "localStorage", "jolokia", function ($scope, workspace, localStorage, jolokia) {
-        var log = Logger.get("Camel");
-        $scope.showHelp = Camel.showEIPDocumentation(localStorage);
-        $scope.showUsedOnly = Camel.hideUnusedEIP(localStorage);
-        $scope.hideDefault = false;
-        $scope.viewTemplate = null;
-        $scope.schema = null;
-        $scope.model = null;
-        $scope.labels = [];
-        $scope.nodeData = null;
-        $scope.icon = null;
-        $scope.endpointUrl = null;
-        $scope.$watch('showHelp', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                updateData();
-            }
-        });
-        $scope.$watch('showUsedOnly', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                updateData();
-            }
-        });
-        $scope.$watch('isDefaultValue', function (newValue, oldValue) {
-            if (newValue !== oldValue) {
-                updateData();
-            }
-        });
-        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
-            setTimeout(updateData, 50);
-        });
-        $scope.$watch('workspace.selection', function () {
-            if (workspace.moveIfViewInvalid())
-                return;
-            updateData();
-        });
-        $scope.showEntity = function (id) {
-            log.debug("Show entity: " + id);
-            if ($scope.hideDefault) {
-                if (isDefaultValue(id)) {
-                    return false;
-                }
-            }
-            if ($scope.showUsedOnly) {
-                if (!hasValue(id)) {
-                    return false;
-                }
-            }
-            return true;
-        };
-        function isDefaultValue(id) {
-            var defaultValue = Core.pathGet($scope.model, ["properties", id, "defaultValue"]);
-            if (angular.isDefined(defaultValue)) {
-                var value = Core.pathGet($scope.nodeData, id);
-                if (angular.isDefined(value)) {
-                    var str = value.toString();
-                    return str.localeCompare(defaultValue) === 0;
-                }
-            }
-            return false;
-        }
-        function hasValue(id) {
-            var value = Core.pathGet($scope.nodeData, id);
-            if (angular.isUndefined(value) || Core.isBlank(value)) {
-                return false;
-            }
-            if (angular.isString(value)) {
-                return !Core.isBlank(value);
-            }
-            return true;
-        }
-        function updateData() {
-            var contextMBean = Camel.getSelectionCamelContextMBean(workspace);
-            var endpointMBean = null;
-            if ($scope.contextId && $scope.endpointPath) {
-                var node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
-                    context: $scope.contextId,
-                    type: "endpoints",
-                    name: $scope.endpointPath
-                });
-                if (node) {
-                    endpointMBean = node.objectName;
-                }
-            }
-            if (!endpointMBean) {
-                endpointMBean = workspace.getSelectedMBeanName();
-            }
-            if (endpointMBean && contextMBean) {
-                var reply = jolokia.request({ type: "read", mbean: endpointMBean, attribute: ["EndpointUri"] });
-                var url = reply.value["EndpointUri"];
-                if (url) {
-                    $scope.endpointUrl = url;
-                    log.info("Calling explainEndpointJson for url: " + url);
-                    var query = { type: 'exec', mbean: contextMBean, operation: 'explainEndpointJson(java.lang.String,boolean)', arguments: [url, true] };
-                    jolokia.request(query, onSuccess(populateData));
-                }
-            }
-        }
-        function populateData(response) {
-            log.debug("Populate data " + response);
-            var data = response.value;
-            if (data) {
-                $scope.model = JSON.parse(data);
-                $scope.model.title = $scope.endpointUrl;
-                $scope.model.description = $scope.model.component.description;
-                $scope.icon = Core.url("/img/icons/camel/endpoint24.png");
-                $scope.nodeData = {};
-                angular.forEach($scope.model.properties, function (property, key) {
-                    var value = property["value"] || property["defaultValue"];
-                    if (angular.isDefined(value) && value !== null) {
-                        $scope.nodeData[key] = value;
-                    }
-                });
-                var labels = [];
-                if ($scope.model.component.label) {
-                    labels = $scope.model.component.label.split(",");
-                }
-                $scope.labels = labels;
-                $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
-                Core.$apply($scope);
-            }
-        }
-    }]);
-})(Camel || (Camel = {}));
-var Camel;
-(function (Camel) {
     Camel._module.controller("Camel.FabricDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", function ($scope, $compile, $location, localStorage, jolokia, workspace) {
         Fabric.initScope($scope, $location, jolokia, workspace);
         var isFmc = Fabric.isFMCContainer(workspace);
@@ -13359,12 +13240,16 @@ var Camel;
                 'value': Camel.defaultCamelRouteMetricMaxSeconds,
                 'converter': parseInt
             },
-            'camelShowEIPDocumentation': {
-                'value': Camel.defaultShowEIPDocumentation,
+            'camelHideOptionDocumentation': {
+                'value': Camel.defaultHideOptionDocumentation,
                 'converter': Core.parseBooleanValue
             },
-            'camelHideUnusedEIP': {
-                'value': Camel.defaultHideUnusedEIP,
+            'camelHideOptionDefaultValue': {
+                'value': Camel.defaultHideOptionDefaultValue,
+                'converter': Core.parseBooleanValue
+            },
+            'camelHideOptionUnusedValue': {
+                'value': Camel.defaultHideOptionUnusedValue,
                 'converter': Core.parseBooleanValue
             }
         });
@@ -13597,20 +13482,26 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.PropertiesController", ["$scope", "workspace", "localStorage", function ($scope, workspace, localStorage) {
         var log = Logger.get("Camel");
-        $scope.showHelp = Camel.showEIPDocumentation(localStorage);
-        $scope.showUsedOnly = Camel.hideUnusedEIP(localStorage);
+        $scope.hideHelp = Camel.hideOptionDocumentation(localStorage);
+        $scope.hideUnused = Camel.hideOptionUnusedValue(localStorage);
+        $scope.hideDefault = Camel.hideOptionDefaultValue(localStorage);
         $scope.viewTemplate = null;
         $scope.schema = _apacheCamelModel;
         $scope.model = null;
         $scope.labels = [];
         $scope.nodeData = null;
         $scope.icon = null;
-        $scope.$watch('showHelp', function (newValue, oldValue) {
+        $scope.$watch('hideHelp', function (newValue, oldValue) {
             if (newValue !== oldValue) {
                 updateData();
             }
         });
-        $scope.$watch('showUsedOnly', function (newValue, oldValue) {
+        $scope.$watch('hideUnused', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                updateData();
+            }
+        });
+        $scope.$watch('hideDefault', function (newValue, oldValue) {
             if (newValue !== oldValue) {
                 updateData();
             }
@@ -13625,21 +13516,39 @@ var Camel;
         });
         $scope.showEntity = function (id) {
             log.debug("Show entity: " + id);
-            if ($scope.showUsedOnly) {
-                var value = Core.pathGet($scope.nodeData, id);
-                if (angular.isUndefined(value) || Core.isBlank(value)) {
+            if ($scope.hideDefault) {
+                if (isDefaultValue(id)) {
                     return false;
                 }
-                if (angular.isString(value)) {
-                    var aBool = "true" === value || "false" == value;
-                    if (aBool) {
-                        return Core.parseBooleanValue(value);
-                    }
-                    return !Core.isBlank(value);
+            }
+            if ($scope.hideUnused) {
+                if (!hasValue(id)) {
+                    return false;
                 }
             }
             return true;
         };
+        function isDefaultValue(id) {
+            var defaultValue = Core.pathGet($scope.model, ["properties", id, "defaultValue"]);
+            if (angular.isDefined(defaultValue)) {
+                var value = Core.pathGet($scope.nodeData, id);
+                if (angular.isDefined(value)) {
+                    var str = value.toString();
+                    return str.localeCompare(defaultValue) === 0;
+                }
+            }
+            return false;
+        }
+        function hasValue(id) {
+            var value = Core.pathGet($scope.nodeData, id);
+            if (angular.isUndefined(value) || Core.isBlank(value)) {
+                return false;
+            }
+            if (angular.isString(value)) {
+                return !Core.isBlank(value);
+            }
+            return true;
+        }
         function updateData() {
             var routeXmlNode = Camel.getSelectedRouteNode(workspace);
             if (routeXmlNode != null) {
@@ -13658,6 +13567,131 @@ var Camel;
                     $scope.icon = Camel.getRouteNodeIcon(routeXmlNode);
                     $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
                 }
+            }
+        }
+    }]);
+})(Camel || (Camel = {}));
+var Camel;
+(function (Camel) {
+    Camel._module.controller("Camel.PropertiesEndpointController", ["$scope", "workspace", "localStorage", "jolokia", function ($scope, workspace, localStorage, jolokia) {
+        var log = Logger.get("Camel");
+        $scope.hideHelp = Camel.hideOptionDocumentation(localStorage);
+        $scope.hideUnused = Camel.hideOptionUnusedValue(localStorage);
+        $scope.hideDefault = Camel.hideOptionDefaultValue(localStorage);
+        $scope.viewTemplate = null;
+        $scope.schema = null;
+        $scope.model = null;
+        $scope.labels = [];
+        $scope.nodeData = null;
+        $scope.icon = null;
+        $scope.endpointUrl = null;
+        $scope.$watch('hideHelp', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                updateData();
+            }
+        });
+        $scope.$watch('hideUnused', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                updateData();
+            }
+        });
+        $scope.$watch('hideDefault', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                updateData();
+            }
+        });
+        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+            setTimeout(updateData, 50);
+        });
+        $scope.$watch('workspace.selection', function () {
+            if (workspace.moveIfViewInvalid())
+                return;
+            updateData();
+        });
+        $scope.showEntity = function (id) {
+            log.debug("Show entity: " + id);
+            if ($scope.hideDefault) {
+                if (isDefaultValue(id)) {
+                    return false;
+                }
+            }
+            if ($scope.hideUnused) {
+                if (!hasValue(id)) {
+                    return false;
+                }
+            }
+            return true;
+        };
+        function isDefaultValue(id) {
+            var defaultValue = Core.pathGet($scope.model, ["properties", id, "defaultValue"]);
+            if (angular.isDefined(defaultValue)) {
+                var value = Core.pathGet($scope.nodeData, id);
+                if (angular.isDefined(value)) {
+                    var str = value.toString();
+                    return str.localeCompare(defaultValue) === 0;
+                }
+            }
+            return false;
+        }
+        function hasValue(id) {
+            var value = Core.pathGet($scope.nodeData, id);
+            if (angular.isUndefined(value) || Core.isBlank(value)) {
+                return false;
+            }
+            if (angular.isString(value)) {
+                return !Core.isBlank(value);
+            }
+            return true;
+        }
+        function updateData() {
+            var contextMBean = Camel.getSelectionCamelContextMBean(workspace);
+            var endpointMBean = null;
+            if ($scope.contextId && $scope.endpointPath) {
+                var node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
+                    context: $scope.contextId,
+                    type: "endpoints",
+                    name: $scope.endpointPath
+                });
+                if (node) {
+                    endpointMBean = node.objectName;
+                }
+            }
+            if (!endpointMBean) {
+                endpointMBean = workspace.getSelectedMBeanName();
+            }
+            if (endpointMBean && contextMBean) {
+                var reply = jolokia.request({ type: "read", mbean: endpointMBean, attribute: ["EndpointUri"] });
+                var url = reply.value["EndpointUri"];
+                if (url) {
+                    $scope.endpointUrl = url;
+                    log.info("Calling explainEndpointJson for url: " + url);
+                    var query = { type: 'exec', mbean: contextMBean, operation: 'explainEndpointJson(java.lang.String,boolean)', arguments: [url, true] };
+                    jolokia.request(query, onSuccess(populateData));
+                }
+            }
+        }
+        function populateData(response) {
+            log.debug("Populate data " + response);
+            var data = response.value;
+            if (data) {
+                $scope.model = JSON.parse(data);
+                $scope.model.title = $scope.endpointUrl;
+                $scope.model.description = $scope.model.component.description;
+                $scope.icon = Core.url("/img/icons/camel/endpoint24.png");
+                $scope.nodeData = {};
+                angular.forEach($scope.model.properties, function (property, key) {
+                    var value = property["value"] || property["defaultValue"];
+                    if (angular.isDefined(value) && value !== null) {
+                        $scope.nodeData[key] = value;
+                    }
+                });
+                var labels = [];
+                if ($scope.model.component.label) {
+                    labels = $scope.model.component.label.split(",");
+                }
+                $scope.labels = labels;
+                $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
+                Core.$apply($scope);
             }
         }
     }]);
