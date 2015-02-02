@@ -74,7 +74,7 @@ features:uninstall hawtio-core
 features:removeurl mvn:io.hawt/hawtio-karaf/1.2-redhat-379/xml/features
 ```
 
-* Install new hawtio with keycloak integration (Replace with the correct version where is Keycloak integration available. It should be 1.4.47 or 1.5-redhat-048 or newer) 
+* Install new hawtio with keycloak integration (Replace with the correct version where is Keycloak integration available. It should be 1.4.47 or newer) 
 
 ```
 features:chooseurl hawtio 1.4.47

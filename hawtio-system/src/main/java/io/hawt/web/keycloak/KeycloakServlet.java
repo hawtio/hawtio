@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import io.hawt.system.ConfigManager;
 import io.hawt.util.IOHelper;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
  * Servlet, which aims to return:
  * - whether keycloak is enabled (true/false) if path '/enabled' is used
  * - keycloak.json to be used by keycloak JS adapter on frontend if path '/client-config' is used
+ * - validate if current JAAS logged subject is same like SSO user logged through keycloak if path '/validate-subject-matches' is used
  *
  */
 public class KeycloakServlet extends HttpServlet {
@@ -137,6 +139,31 @@ public class KeycloakServlet extends HttpServlet {
             } else {
                 renderJSONResponse(response, keycloakConfig);
             }
+        } else if ("/validate-subject-matches".equals(pathInfo)) {
+            String keycloakUser = request.getParameter("keycloakUser");
+            if (keycloakUser == null || keycloakUser.length() == 0) {
+                LOG.warn("Parameter 'keycloakUser' not found");
+            }
+            boolean valid = validateKeycloakUser(request, keycloakUser);
+            renderJSONResponse(response, String.valueOf(valid));
+        }
+    }
+
+    protected boolean validateKeycloakUser(HttpServletRequest request, String keycloakUser) {
+        HttpSession session = request.getSession(false);
+
+        // No session available. No existing subject logged
+        if (session == null) {
+            return true;
+        }
+
+        String username = (String) session.getAttribute("user");
+        if (username != null && !username.equals(keycloakUser)) {
+            LOG.debug("Non matching username found. JAAS username: " + username + ", keycloakUsername: " + keycloakUser + ". Invalidating session");
+            session.invalidate();
+            return false;
+        } else {
+            return true;
         }
     }
 

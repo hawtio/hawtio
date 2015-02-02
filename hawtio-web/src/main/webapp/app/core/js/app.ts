@@ -78,7 +78,7 @@ module Core {
    * @param {*} jolokiaUrl
    * @param {*} branding
    */
-  export var AppController = _module.controller("Core.AppController", ["$scope", "$location", "workspace", "jolokia", "jolokiaStatus", "$document", "pageTitle", "localStorage", "userDetails", "lastLocation", "jolokiaUrl", "branding", "ConnectOptions", "$timeout", "locationChangeStartTasks", "$route", ($scope, $location:ng.ILocationService, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation:{ url:string }, jolokiaUrl, branding, ConnectOptions:Core.ConnectOptions, $timeout:ng.ITimeoutService, locationChangeStartTasks:Core.ParameterizedTasks, $route:ng.route.IRouteService) => {
+  export var AppController = _module.controller("Core.AppController", ["$scope", "$location", "$window", "workspace", "jolokia", "jolokiaStatus", "$document", "pageTitle", "localStorage", "userDetails", "lastLocation", "jolokiaUrl", "branding", "ConnectOptions", "$timeout", "locationChangeStartTasks", "$route", "keycloakContext", ($scope, $location:ng.ILocationService, $window:ng.IWindowService, workspace, jolokia, jolokiaStatus, $document, pageTitle:Core.PageTitle, localStorage, userDetails, lastLocation:{ url:string }, jolokiaUrl, branding, ConnectOptions:Core.ConnectOptions, $timeout:ng.ITimeoutService, locationChangeStartTasks:Core.ParameterizedTasks, $route:ng.route.IRouteService, keycloakContext:Core.KeycloakContext) => {
 
     $scope.collapse = '';
     $scope.match = null;
@@ -90,6 +90,7 @@ module Core {
     $scope.connectFailure = {};
 
     $scope.showPrefs = false;
+    $scope.keycloakEnabled = keycloakContext.enabled;
 
     $scope.logoClass = () => {
       if (branding.logoOnly) {
@@ -289,6 +290,17 @@ module Core {
     function defaultPage() {
       return Perspective.defaultPage($location, workspace, jolokia, localStorage);
     }
+
+    $scope.redirectToKeycloakAccountMgmt = () => {
+      keycloakContext.keycloak.accountManagement();
+    };
+
+    $scope.redirectToKeycloakAdminConsole = () => {
+      var realm: string = encodeURIComponent(keycloakContext.keycloak.realm);
+      var redirectURI: string = keycloakContext.keycloak.authServerUrl + '/admin/' + realm + '/console/index.html';
+      $window.location.href = redirectURI;
+    };
+
   }]);
 
 }
