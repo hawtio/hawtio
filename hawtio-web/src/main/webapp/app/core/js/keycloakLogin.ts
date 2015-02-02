@@ -6,7 +6,7 @@ module Core {
 
   var log = Logger.get('Keycloak');
 
-  log.setLevel(Logger.DEBUG);
+  // log.setLevel(Logger.DEBUG);
 
   var checkKeycloakEnabled = function(callback: Function) {
     var keycloakEnabledUrl: string = "keycloak/enabled";
