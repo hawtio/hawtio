@@ -31,6 +31,9 @@ public class KeycloakServlet extends HttpServlet {
     public static final String KEYCLOAK_CLIENT_CONFIG = "keycloakClientConfig";
     public static final String KEYCLOAK_ENABLED = "keycloakEnabled";
 
+    public static final String HAWTIO_KEYCLOAK_CLIENT_CONFIG = "hawtio." + KEYCLOAK_CLIENT_CONFIG;
+    public static final String HAWTIO_KEYCLOAK_ENABLED = "hawtio." + KEYCLOAK_ENABLED;
+
     private String keycloakConfig = null;
     private boolean keycloakEnabled;
 
@@ -40,13 +43,22 @@ public class KeycloakServlet extends HttpServlet {
         ConfigManager config = (ConfigManager) getServletContext().getAttribute("ConfigManager");
 
         String keycloakEnabledCfg = config.get(KEYCLOAK_ENABLED, "false");
+        String keycloakConfigFile = config.get(KEYCLOAK_CLIENT_CONFIG, null);
+
+        // JVM system properties can override always
+        if (System.getProperty(HAWTIO_KEYCLOAK_ENABLED) != null) {
+            keycloakEnabledCfg = System.getProperty(HAWTIO_KEYCLOAK_ENABLED);
+        }
+        if (System.getProperty(HAWTIO_KEYCLOAK_CLIENT_CONFIG) != null) {
+            keycloakConfigFile = System.getProperty(HAWTIO_KEYCLOAK_CLIENT_CONFIG);
+        }
+
         keycloakEnabled = Boolean.parseBoolean(keycloakEnabledCfg);
-        LOG.info("Keycloak is " + (this.keycloakEnabled ? "enabled" : "disabled"));
+        LOG.info("Keycloak integration is " + (this.keycloakEnabled ? "enabled" : "disabled"));
         if (!keycloakEnabled) {
             return;
         }
 
-        String keycloakConfigFile = config.get(KEYCLOAK_CLIENT_CONFIG, null);
         if (keycloakConfigFile == null || keycloakConfigFile.length() == 0) {
             keycloakConfigFile = defaultKeycloakConfigLocation();
         }
@@ -89,6 +101,11 @@ public class KeycloakServlet extends HttpServlet {
         String tomcatHome = System.getProperty("catalina.home");
         if (tomcatHome != null) {
             return tomcatHome + "/conf/keycloak.json";
+        }
+
+        String jbossHome = System.getProperty("jboss.server.config.dir");
+        if (jbossHome != null) {
+            return jbossHome + "/keycloak.json";
         }
 
         // Fallback to classpath inside hawtio.war

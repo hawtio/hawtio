@@ -85,8 +85,8 @@
             "name" : "hawtio-client",
             "surrogateAuthRequired" : false,
             "enabled" : true,
-            "redirectUris" : [ "http://localhost:8080/hawtio/*", "http://localhost:8181/hawtio/*" ],
-            "webOrigins" : [ "http://localhost:8080", "http://localhost:8181" ],
+            "redirectUris" : [ "http://localhost:8080/hawtio/*", "http://localhost:8181/hawtio/*", "http://localhost:8081/hawtio/*" ],
+            "webOrigins" : [ "http://localhost:8080", "http://localhost:8181", "http://localhost:8081" ],
             "claims" : {
                 "name" : true,
                 "username" : true,
