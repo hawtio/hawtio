@@ -40,6 +40,9 @@
     "users" : [
         {
             "username" : "john",
+            "firstName" : "John",
+            "lastName" : "Anthony",
+            "email" : "john@hawt.io",
             "enabled" : true,
             "credentials" : [
                 {
@@ -54,6 +57,9 @@
         },
         {
             "username" : "mary",
+            "firstName" : "Mary",
+            "lastName" : "Kelly",
+            "email" : "mary@hawt.io",
             "enabled" : true,
             "credentials" : [
                 {
@@ -67,6 +73,9 @@
         },
         {
             "username" : "root",
+            "firstName" : "Root",
+            "lastName" : "Root",
+            "email" : "root@hawt.io",
             "enabled" : true,
             "credentials" : [
                 {
@@ -76,7 +85,8 @@
             ],
             "realmRoles" : [ "jmxAdmin" ],
             "applicationRoles":  {
-                "account" : [ "view-profile", "manage-account" ]
+                "account" : [ "view-profile", "manage-account" ],
+                "realm-management" : [ "realm-admin" ]
             }
         }
     ],
@@ -84,6 +94,7 @@
         {
             "name" : "hawtio-client",
             "surrogateAuthRequired" : false,
+            "fullScopeAllowed" : false,
             "enabled" : true,
             "redirectUris" : [ "http://localhost:8080/hawtio/*", "http://localhost:8181/hawtio/*", "http://localhost:8081/hawtio/*" ],
             "webOrigins" : [ "http://localhost:8080", "http://localhost:8181", "http://localhost:8081" ],

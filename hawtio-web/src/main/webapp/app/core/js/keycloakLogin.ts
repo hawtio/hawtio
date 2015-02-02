@@ -15,7 +15,7 @@ module Core {
     $.ajax(keycloakEnabledUrl, <JQueryAjaxSettings> {
       type: "GET",
       success: function (response) {
-        log.debug("Got user response for check if keycloak is enabled: ", response);
+        log.debug("Got response for check if keycloak is enabled: ", response);
         var keycloakEnabled: boolean = response;
 
         var keycloakContext: KeycloakContext = createKeycloakContext(keycloakEnabled);
@@ -50,6 +50,7 @@ module Core {
     return keycloakContext;
   };
 
+
   var initKeycloakIfNeeded = function(keycloakContext: KeycloakContext, nextTask: Function) {
     if (keycloakContext.enabled) {
       log.debug('Keycloak authentication required. Initializing Keycloak');
@@ -64,9 +65,14 @@ module Core {
       }
 
       keycloak.init(kcInitOptions).success(function () {
-        log.debug("Keycloak authentication finished! Continue next task");
-        // Continue next registered task and bootstrap Angular
-        nextTask();
+        var keycloakUsername: string = keycloak.tokenParsed.preferred_username;
+        log.debug("Keycloak authenticated with Subject " + keycloakUsername + ". Validating subject matches");
+
+        validateSubjectMatches(keycloakUsername, function() {
+          log.debug("Keycloak authentication finished! Continue next task");
+          // Continue next registered task and bootstrap Angular
+          nextTask();
+        });
       }).error(function () {
         log.warn("Keycloak authentication failed!");
         notification('error', 'Failed to log in to Keycloak');
@@ -77,6 +83,28 @@ module Core {
       nextTask();
     }
   };
+
+
+  /**
+   * Validate if subject authenticated through Keycloak matches with SSO
+   */
+  var validateSubjectMatches = function(keycloakUser: string, callback: Function) {
+    var keycloakValidateUrl: string = "keycloak/validate-subject-matches?keycloakUser=" + encodeURIComponent(keycloakUser);
+
+    // Send ajax request to KeycloakServlet to figure out if keycloak integration is enabled
+    $.ajax(keycloakValidateUrl, <JQueryAjaxSettings> {
+      type: "GET",
+      success: function (response) {
+        log.debug("Got response for validate subject matches: ", response);
+        callback();
+      },
+      error: function (xhr, textStatus, error) {
+        // Just fallback to false if we couldn't figure userDetails
+        log.debug("Failed to validate subject matches: ", error);
+        callback();
+      }
+    });
+  }
 
   /**
    * Prebootstrap task, which handles Keycloak OAuth flow. It will first check if keycloak is enabled and then possibly init keycloak.
