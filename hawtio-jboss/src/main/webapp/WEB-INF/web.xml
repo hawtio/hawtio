@@ -37,6 +37,20 @@
   </env-entry>
 
   <env-entry>
+    <description>Enable/disable Keycloak integration. Value is really a boolean</description>
+    <env-entry-name>hawtio/keycloakEnabled</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>${hawtio.keycloakEnabled:false}</env-entry-value>
+  </env-entry>
+
+  <env-entry>
+    <description>Keycloak config file used for frontend. Will use default location if not provided</description>
+    <env-entry-name>hawtio/keycloakClientConfig</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>${hawtio.keycloakClientConfig:}</env-entry-value>
+  </env-entry>
+
+  <env-entry>
     <description>Path to store file uploads, defaults to ${java.io.tmpdir}/uploads if blank</description>
     <env-entry-name>hawtio/uploadDirectory</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
@@ -178,6 +192,15 @@
   <servlet-mapping>
     <servlet-name>logout</servlet-name>
     <url-pattern>/auth/logout/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>keycloak</servlet-name>
+    <servlet-class>io.hawt.web.keycloak.KeycloakServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>keycloak</servlet-name>
+    <url-pattern>/keycloak/*</url-pattern>
   </servlet-mapping>
 
   <servlet>
