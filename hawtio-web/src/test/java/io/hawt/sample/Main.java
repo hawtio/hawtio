@@ -170,21 +170,27 @@ public class Main {
             println("");
             println("");
 
-            LOG.info("Starting LiveReload server");
-
             LRServer lrServer = null;
-            int lrPort = 35729;
-            Path docroot = FileSystems.getDefault().getPath("src/main/webapp");
-            lrServer = new LRServer(lrPort, docroot);
-            lrServer.setExclusions(new String[]{".*\\.ts$"});
+
+            if (System.getProperty("startLR", "true").toLowerCase().equals("true")) {
+              LOG.info("Starting LiveReload server");
+
+              int lrPort = 35729;
+              Path docroot = FileSystems.getDefault().getPath("src/main/webapp");
+              lrServer = new LRServer(lrPort, docroot);
+              lrServer.setExclusions(new String[]{".*\\.ts$"});
+            }
 
             LOG.info("starting jetty");
             server.start();
 
             LOG.info("Joining the jetty server thread...");
             // this guy does a start() and a join()...
-            lrServer.run();
-            //server.join();
+            if (lrServer != null) {
+              lrServer.run();
+            } else {
+              server.join();
+            }
         } catch (Throwable e) {
             LOG.error(e.getMessage(), e);
         }
