@@ -123,7 +123,7 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "A reference to lookup the AggregationStrategy in the Registry. Configuring an AggregationStrategy is required and is used to merge the incoming Exchange with the existing already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.",
           "title": "Strategy Ref",
-          "required": true,
+          "required": false,
           "deprecated": false
         },
         "strategyMethodName": {
@@ -183,7 +183,7 @@ var _apacheCamelModel ={
           "description": "Enables grouped exchanges so the aggregator will group all aggregated exchanges into a single combined Exchange holding all the aggregated exchanges in a java.util.List.",
           "title": "Group Exchanges",
           "required": false,
-          "deprecated": false
+          "deprecated": true
         },
         "eagerCheckCompletion": {
           "kind": "attribute",

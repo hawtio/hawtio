@@ -187,6 +187,18 @@ div.log-stack-trace p:nth-child(odd) {
                       </a>
                     </li>
 
+                    <li ng-show="keycloakEnabled">
+                      <a href="" title="Manage my account" data-placement="bottom" ng-click="redirectToKeycloakAccountMgmt()">
+                        <i class="fixme"></i> Manage my account
+                      </a>
+                    </li>
+
+                    <li ng-show="keycloakEnabled">
+                      <a href="" title="Keycloak admin console" data-placement="bottom" ng-click="redirectToKeycloakAdminConsole()">
+                        <i class="fixme"></i> Keycloak admin console
+                      </a>
+                    </li>
+
                   </ul>
                 </li>
 

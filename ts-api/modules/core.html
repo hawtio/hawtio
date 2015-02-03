@@ -291,6 +291,7 @@
 								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="core.html#reloadwhenparameterschange" class="tsd-kind-icon">reload<wbr>When<wbr>Parameters<wbr>Change</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-container tsd-is-not-exported"><a href="core.html#responsehistory" class="tsd-kind-icon">response<wbr>History</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="core.html#templatepath" class="tsd-kind-icon">template<wbr>Path</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container tsd-is-not-exported"><a href="core.html#validatesubjectmatches" class="tsd-kind-icon">validate<wbr>Subject<wbr>Matches</a></li>
 							</ul>
 						</section>
 					</div>
@@ -4458,7 +4459,7 @@
 					<div class="tsd-signature tsd-kind-icon">init<wbr>Keycloak<wbr>IfNeeded<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/core/js/keycloakLogin.ts:53</li>
+							<li>Defined in app/core/js/keycloakLogin.ts:54</li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-function-expression tsd-parent-kind-variable tsd-is-not-exported">
@@ -4470,7 +4471,7 @@
 						<ul class="tsd-descriptions">
 							<li class="tsd-description"><aside class="tsd-sources">
 									<ul>
-										<li>Defined in app/core/js/keycloakLogin.ts:53</li>
+										<li>Defined in app/core/js/keycloakLogin.ts:54</li>
 									</ul>
 								</aside>
 								<h4 class="tsd-parameters-title">Parameters</h4>
@@ -4531,7 +4532,7 @@
 					<div class="tsd-signature tsd-kind-icon">keycloak<wbr>Login<wbr>Controller<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/core/js/keycloakLogin.ts:100</li>
+							<li>Defined in app/core/js/keycloakLogin.ts:128</li>
 						</ul>
 						</aside>        <div class="tsd-comment tsd-typography">
 						<div class="lead">
@@ -4548,7 +4549,7 @@
 						<ul class="tsd-descriptions">
 							<li class="tsd-description"><aside class="tsd-sources">
 									<ul>
-										<li>Defined in app/core/js/keycloakLogin.ts:100</li>
+										<li>Defined in app/core/js/keycloakLogin.ts:128</li>
 									</ul>
 								</aside>
 								<h4 class="tsd-parameters-title">Parameters</h4>
@@ -4657,7 +4658,7 @@
 					<div class="tsd-signature tsd-kind-icon">login<wbr>Controller<wbr>Processed<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in app/core/js/keycloakLogin.ts:94</li>
+							<li>Defined in app/core/js/keycloakLogin.ts:122</li>
 						</ul>
 					</aside>
 					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
@@ -4799,7 +4800,43 @@
 							</dd>
 						</dl>
 					</div>
-			</section></section>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container tsd-is-not-exported">
+					<a name="validatesubjectmatches" class="tsd-anchor"></a>
+					<h3>validate<wbr>Subject<wbr>Matches</h3>
+					<div class="tsd-signature tsd-kind-icon">validate<wbr>Subject<wbr>Matches<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Function</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in app/core/js/keycloakLogin.ts:91</li>
+						</ul>
+						</aside>        <div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Validate if subject authenticated through Keycloak matches with SSO</p>
+						</div>
+					</div>
+					<section class="tsd-panel tsd-member tsd-kind-function-expression tsd-parent-kind-variable tsd-is-not-exported">
+						<a name="validatesubjectmatches.validatesubjectmatches_function_signature" class="tsd-anchor"></a>
+						<h3>validate<wbr>Subject<wbr>Matches function signature</h3>
+						<ul class="tsd-signatures tsd-kind-function-expression tsd-parent-kind-variable tsd-is-not-exported">
+							<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>keycloakUser<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">)</span></li>
+						</ul>
+						<ul class="tsd-descriptions">
+							<li class="tsd-description"><aside class="tsd-sources">
+									<ul>
+										<li>Defined in app/core/js/keycloakLogin.ts:91</li>
+									</ul>
+								</aside>
+								<h4 class="tsd-parameters-title">Parameters</h4>
+								<ul class="tsd-parameters">
+									<li>
+										<h5>keycloakUser:         <span class="tsd-signature-type">string</span></h5>
+									</li>
+									<li>
+										<h5>callback:         <span class="tsd-signature-type">Function</span></h5>
+									</li>
+								</ul>
+							</li>
+						</ul>
+			</section></section></section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
@@ -5395,6 +5432,9 @@
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-container">
 						<a href="core.html#templatepath" class="tsd-kind-icon">template<wbr>Path</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-container tsd-is-not-exported">
+						<a href="core.html#validatesubjectmatches" class="tsd-kind-icon">validate<wbr>Subject<wbr>Matches</a>
 					</li>
 				</ul>
 			</nav>

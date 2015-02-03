@@ -6108,7 +6108,7 @@ var Core;
         $.ajax(keycloakEnabledUrl, {
             type: "GET",
             success: function (response) {
-                log.debug("Got user response for check if keycloak is enabled: ", response);
+                log.debug("Got response for check if keycloak is enabled: ", response);
                 var keycloakEnabled = response;
                 var keycloakContext = createKeycloakContext(keycloakEnabled);
                 callback(keycloakContext);
@@ -6144,8 +6144,12 @@ var Core;
                 kcInitOptions = { onLoad: 'login-required' };
             }
             keycloak.init(kcInitOptions).success(function () {
-                log.debug("Keycloak authentication finished! Continue next task");
-                nextTask();
+                var keycloakUsername = keycloak.tokenParsed.preferred_username;
+                log.debug("Keycloak authenticated with Subject " + keycloakUsername + ". Validating subject matches");
+                validateSubjectMatches(keycloakUsername, function () {
+                    log.debug("Keycloak authentication finished! Continue next task");
+                    nextTask();
+                });
             }).error(function () {
                 log.warn("Keycloak authentication failed!");
                 Core.notification('error', 'Failed to log in to Keycloak');
@@ -6155,6 +6159,20 @@ var Core;
             log.debug('Keycloak authentication not required. Skip Keycloak bootstrap');
             nextTask();
         }
+    };
+    var validateSubjectMatches = function (keycloakUser, callback) {
+        var keycloakValidateUrl = "keycloak/validate-subject-matches?keycloakUser=" + encodeURIComponent(keycloakUser);
+        $.ajax(keycloakValidateUrl, {
+            type: "GET",
+            success: function (response) {
+                log.debug("Got response for validate subject matches: ", response);
+                callback();
+            },
+            error: function (xhr, textStatus, error) {
+                log.debug("Failed to validate subject matches: ", error);
+                callback();
+            }
+        });
     };
     hawtioPluginLoader.registerPreBootstrapTask(function (nextTask) {
         log.debug('Prebootstrap task executed');
@@ -16630,7 +16648,7 @@ var Core;
             }
         };
     }]);
-    Core.AppController = Core._module.controller("Core.AppController", ["$scope", "$location", "workspace", "jolokia", "jolokiaStatus", "$document", "pageTitle", "localStorage", "userDetails", "lastLocation", "jolokiaUrl", "branding", "ConnectOptions", "$timeout", "locationChangeStartTasks", "$route", function ($scope, $location, workspace, jolokia, jolokiaStatus, $document, pageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding, ConnectOptions, $timeout, locationChangeStartTasks, $route) {
+    Core.AppController = Core._module.controller("Core.AppController", ["$scope", "$location", "$window", "workspace", "jolokia", "jolokiaStatus", "$document", "pageTitle", "localStorage", "userDetails", "lastLocation", "jolokiaUrl", "branding", "ConnectOptions", "$timeout", "locationChangeStartTasks", "$route", "keycloakContext", function ($scope, $location, $window, workspace, jolokia, jolokiaStatus, $document, pageTitle, localStorage, userDetails, lastLocation, jolokiaUrl, branding, ConnectOptions, $timeout, locationChangeStartTasks, $route, keycloakContext) {
         $scope.collapse = '';
         $scope.match = null;
         $scope.pageTitle = [];
@@ -16639,6 +16657,7 @@ var Core;
         $scope.connectionFailed = false;
         $scope.connectFailure = {};
         $scope.showPrefs = false;
+        $scope.keycloakEnabled = keycloakContext.enabled;
         $scope.logoClass = function () {
             if (branding.logoOnly) {
                 return "without-text";
@@ -16804,6 +16823,14 @@ var Core;
         function defaultPage() {
             return Perspective.defaultPage($location, workspace, jolokia, localStorage);
         }
+        $scope.redirectToKeycloakAccountMgmt = function () {
+            keycloakContext.keycloak.accountManagement();
+        };
+        $scope.redirectToKeycloakAdminConsole = function () {
+            var realm = encodeURIComponent(keycloakContext.keycloak.realm);
+            var redirectURI = keycloakContext.keycloak.authServerUrl + '/admin/' + realm + '/console/index.html';
+            $window.location.href = redirectURI;
+        };
     }]);
 })(Core || (Core = {}));
 $(function () {
