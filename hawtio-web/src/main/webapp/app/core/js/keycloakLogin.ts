@@ -16,7 +16,7 @@ module Core {
       type: "GET",
       success: function (response) {
         log.debug("Got response for check if keycloak is enabled: ", response);
-        var keycloakEnabled: boolean = response;
+        var keycloakEnabled: boolean = (response === true || response === "true");
 
         var keycloakContext: KeycloakContext = createKeycloakContext(keycloakEnabled);
         callback(keycloakContext);
