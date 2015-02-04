@@ -92,6 +92,7 @@ module Core {
                "ConnectOptions",
                "locationChangeStartTasks",
                "$http",
+               "$route",
                ($rootScope,
                $routeParams,
                jolokia,
@@ -111,7 +112,8 @@ module Core {
                $location:ng.ILocationService,
                ConnectOptions:Core.ConnectOptions,
                locationChangeStartTasks:Core.ParameterizedTasks,
-               $http:ng.IHttpService) => {
+               $http:ng.IHttpService,
+               $route) => {
 
     checkInjectorLoaded();
 
@@ -282,6 +284,8 @@ module Core {
         Logger.get("Core").info(branding.appName + " started");
         Core.$apply($rootScope);
         (<JQueryStatic>$)(window).trigger('resize');
+        // let's reload current view - to make sure refreshes work well
+        $route.reload();
       });
     }, 500);
   }]); // end _module.run

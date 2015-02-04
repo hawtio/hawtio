@@ -82,7 +82,12 @@ public class RedirectFilter implements Filter {
         }
         // if we've gotten here, we need to just return index.html
         LOG.debug("Accessing {}, which isn't valid, returning index.html", request.getRequestURI());
-        response.sendRedirect(request.getContextPath() + "/");
+        String path = request.getRequestURI();
+        String context = request.getContextPath();
+        path = path.substring(context.length());
+        String qs = request.getQueryString();
+
+        response.sendRedirect(request.getContextPath() + "/#" + path + (qs != null && !"".equals(qs) ? "?" + qs : ""));
     }
 
     @Override
