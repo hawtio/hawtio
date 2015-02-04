@@ -760,7 +760,11 @@ module Wiki {
    */
   export function initScope($scope, $routeParams, $location) {
     $scope.pageId = Wiki.pageId($routeParams, $location);
-    $scope.branch = $routeParams["branch"] || $location.search()["branch"];
+    var branch = $routeParams["branch"];
+    if (branch ==  'default-version') {
+      branch = $scope.defaultVersion;
+    }
+    $scope.branch = branch || $location.search()["branch"];
     $scope.objectId = $routeParams["objectId"];
     $scope.startLink = Wiki.startLink($scope.branch);
     $scope.historyLink = startLink($scope.branch) + "/history/" + ($scope.pageId || "");

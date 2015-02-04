@@ -170,7 +170,7 @@ module Fabric {
         return answer;
       },
       href: () => {
-        return "#/wiki/branch/" + Fabric.getActiveVersion($location) + "/view/fabric/profiles";
+        return "#/wiki/branch/default-version/view/fabric/profiles";
       },
       isActive: (workspace: Workspace) => workspace.isLinkActive("/wiki") && (workspace.linkContains("fabric", "profiles") || workspace.linkContains("editFeatures"))
     });
