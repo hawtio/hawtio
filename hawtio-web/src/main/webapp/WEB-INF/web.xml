@@ -79,6 +79,15 @@
   </env-entry>
 
   <filter>
+    <filter-name>RedirectFilter</filter-name>
+    <filter-class>io.hawt.web.RedirectFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>RedirectFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
     <filter-name>SessionExpiryFilter</filter-name>
     <filter-class>io.hawt.web.SessionExpiryFilter</filter-class>
   </filter>

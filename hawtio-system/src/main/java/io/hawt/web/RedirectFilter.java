@@ -82,15 +82,7 @@ public class RedirectFilter implements Filter {
         }
         // if we've gotten here, we need to just return index.html
         LOG.debug("Accessing {}, which isn't valid, returning index.html", request.getRequestURI());
-        response.setContentType("text/html;charset=UTF-8");
-        OutputStream out = response.getOutputStream();
-        try {
-            InputStream indexHtml = context.getResourceAsStream("/index.html");
-            IOUtils.copy(indexHtml, out);
-            out.flush();
-        } finally {
-            out.close();
-        }
+        response.sendRedirect(request.getContextPath() + "/");
     }
 
     @Override
