@@ -98,7 +98,10 @@ public class SessionExpiryFilter implements Filter {
                 LOG.debug("Authentication disabled, received refresh response, responding with ok");
                 writeOk(response);
             } else {
-                if (!enabled) {
+                // see: https://issues.jboss.org/browse/ENTESB-2418
+                // it won't allow unauthenticated requests anyway
+                String userAgent = request.getHeader("User-Agent") == null ? "" : request.getHeader("User-Agent").toLowerCase();
+                if (!enabled || userAgent.contains("curl")) {
                     LOG.debug("Authentication disabled, allowing request");
                     chain.doFilter(request, response);
                 } else {
