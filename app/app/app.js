@@ -6109,7 +6109,7 @@ var Core;
             type: "GET",
             success: function (response) {
                 log.debug("Got response for check if keycloak is enabled: ", response);
-                var keycloakEnabled = response;
+                var keycloakEnabled = (response === true || response === "true");
                 var keycloakContext = createKeycloakContext(keycloakEnabled);
                 callback(keycloakContext);
             },
