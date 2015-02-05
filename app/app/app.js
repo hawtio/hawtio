@@ -3456,7 +3456,7 @@ var Core;
     Core._module.filter('humanize', function () { return Core.humanizeValue; });
     Core._module.filter('humanizeMs', function () { return Core.humanizeMilliseconds; });
     Core._module.filter('maskPassword', function () { return Core.maskPassword; });
-    Core._module.run(["$rootScope", "$routeParams", "jolokia", "workspace", "localStorage", "viewRegistry", "layoutFull", "helpRegistry", "pageTitle", "branding", "toastr", "metricsWatcher", "userDetails", "preferencesRegistry", "postLoginTasks", "preLogoutTasks", "$location", "ConnectOptions", "locationChangeStartTasks", "$http", function ($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry, pageTitle, branding, toastr, metricsWatcher, userDetails, preferencesRegistry, postLoginTasks, preLogoutTasks, $location, ConnectOptions, locationChangeStartTasks, $http) {
+    Core._module.run(["$rootScope", "$routeParams", "jolokia", "workspace", "localStorage", "viewRegistry", "layoutFull", "helpRegistry", "pageTitle", "branding", "toastr", "metricsWatcher", "userDetails", "preferencesRegistry", "postLoginTasks", "preLogoutTasks", "$location", "ConnectOptions", "locationChangeStartTasks", "$http", "$route", function ($rootScope, $routeParams, jolokia, workspace, localStorage, viewRegistry, layoutFull, helpRegistry, pageTitle, branding, toastr, metricsWatcher, userDetails, preferencesRegistry, postLoginTasks, preLogoutTasks, $location, ConnectOptions, locationChangeStartTasks, $http, $route) {
         Core.checkInjectorLoaded();
         postLoginTasks.addTask("ResetPreLogoutTasks", function () {
             Core.checkInjectorLoaded();
@@ -3571,6 +3571,7 @@ var Core;
                 Logger.get("Core").info(branding.appName + " started");
                 Core.$apply($rootScope);
                 $(window).trigger('resize');
+                $route.reload();
             });
         }, 500);
     }]);
@@ -5831,7 +5832,11 @@ var Wiki;
     Wiki.iconClass = iconClass;
     function initScope($scope, $routeParams, $location) {
         $scope.pageId = Wiki.pageId($routeParams, $location);
-        $scope.branch = $routeParams["branch"] || $location.search()["branch"];
+        var branch = $routeParams["branch"];
+        if (branch == 'default-version') {
+            branch = $scope.defaultVersion;
+        }
+        $scope.branch = branch || $location.search()["branch"];
         $scope.objectId = $routeParams["objectId"];
         $scope.startLink = Wiki.startLink($scope.branch);
         $scope.historyLink = startLink($scope.branch) + "/history/" + ($scope.pageId || "");
@@ -21700,7 +21705,7 @@ var Fabric;
                 return answer;
             },
             href: function () {
-                return "#/wiki/branch/" + Fabric.getActiveVersion($location) + "/view/fabric/profiles";
+                return "#/wiki/branch/default-version/view/fabric/profiles";
             },
             isActive: function (workspace) { return workspace.isLinkActive("/wiki") && (workspace.linkContains("fabric", "profiles") || workspace.linkContains("editFeatures")); }
         });
@@ -48846,7 +48851,7 @@ var Wiki;
 })(Wiki || (Wiki = {}));
 var Wiki;
 (function (Wiki) {
-    Wiki.TopLevelController = Wiki._module.controller("Wiki.TopLevelController", ['$scope', 'workspace', function ($scope, workspace) {
+    Wiki.TopLevelController = Wiki._module.controller("Wiki.TopLevelController", ['$scope', 'workspace', 'jolokia', function ($scope, workspace, jolokia) {
         $scope.managerMBean = Fabric.managerMBean;
         $scope.clusterBootstrapManagerMBean = Fabric.clusterBootstrapManagerMBean;
         $scope.clusterManagerMBean = Fabric.clusterManagerMBean;
@@ -48856,6 +48861,7 @@ var Wiki;
         $scope.schemaLookupMBean = Fabric.schemaLookupMBean;
         $scope.gitMBean = Git.getGitMBean(workspace);
         $scope.configAdminMBean = Osgi.getHawtioConfigAdminMBean(workspace);
+        $scope.defaultVersion = Fabric.getDefaultVersionId(jolokia);
     }]);
 })(Wiki || (Wiki = {}));
 //# sourceMappingURL=app.js.map
