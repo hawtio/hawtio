@@ -87,7 +87,7 @@
          routing on the messages using XPath.
   -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
+    <route id="fileInputRoute from file:src/test/data?noop=true">
       <from id="inputFiles" uri="file:src/test/data?noop=true"/>
       <to id="firstStep" uri="activemq:personnel.records"/>
       <to id="secondStep" uri="activemq:very.long.queue.name.goes.here.wow.this.really.is.quite.a.long.queue.name.isnt.it.eh"/>
