@@ -5,6 +5,7 @@
 module Jmx {
   _module.controller("Jmx.ChartController", ["$scope", "$element", "$location", "workspace", "localStorage", "jolokiaUrl", "jolokiaParams", ($scope, $element, $location, workspace:Workspace, localStorage, jolokiaUrl, jolokiaParams) => {
 
+    var log:Logging.Logger = Logger.get("JMX");
 
     $scope.metrics = [];
     $scope.updateRate = 1000; //parseInt(localStorage['updateRate']);
@@ -116,12 +117,26 @@ module Jmx {
         // TODO make generic as we can cache them; they rarely ever change
         // lets get the attributes for this mbean
 
-        // we need to escape the mbean path for list
-        var listKey = encodeMBeanPath(mbean);
-        //console.log("Looking up mbeankey: " + listKey);
-        var meta = $scope.jolokia.list(listKey);
+        // use same logic as the JMX attributes page which works better than jolokia.list which has problems with
+        // mbeans with special charachters such as ? and query parameters such as Camel endpoint mbeans
+        var asQuery = (node) => {
+          var path = escapeMBeanPath(node);
+          var query = {
+            type: "list",
+            path: path,
+            ignoreErrors: true
+          };
+          return query;
+        };
+        var infoQuery = asQuery(mbean);
+
+log.info("Query chart data for " + infoQuery.path);
+        var meta = $scope.jolokia.request(infoQuery,{method: "post"});
         if (meta) {
-          var attributes = meta.attr;
+log.info("Chart data received for " + infoQuery.path);
+          Core.defaultJolokiaErrorHandler(meta, {});
+          var attributes = meta.value ? meta.value.attr : null;
+log.info("Chart data attributes " + attributes);
           if (attributes) {
             var foundNames = [];
             for (var key in attributes) {
@@ -147,12 +162,15 @@ module Jmx {
             // sort the names
             foundNames = foundNames.sort();
 
+log.info("Collecting metrics for " + foundNames);
+
             angular.forEach(foundNames, (key) => {
               var metric = $scope.jolokiaContext.metric({
                 type: 'read',
                 mbean: mbean,
                 attribute: key
               }, Core.humanizeValue(key));
+log.info("Metric " + metric);
               if (metric) {
                 $scope.metrics.push(metric);
               }
@@ -209,6 +227,7 @@ module Jmx {
         }
       }
 
+log.info("Metrics data size " + $scope.metrics.length);
       if ($scope.metrics.length > 0) {
 
         var d3Selection = d3.select(charts.get(0));

@@ -85,8 +85,23 @@ module Jmx {
             // we need to escape the mbean path for list
             var listKey = escapeMBeanPath(mbean);
             //var listKey = encodeMBeanPath(mbean);
-            jolokia.list(listKey, onSuccess((meta) => {
-              var attributes = meta.attr;
+
+            // use same logic as the JMX attributes page which works better than jolokia.list which has problems with
+            // mbeans with special charachters such as ? and query parameters such as Camel endpoint mbeans
+            var asQuery = (node) => {
+              var path = escapeMBeanPath(node);
+              var query = {
+                type: "list",
+                path: path,
+                ignoreErrors: true
+              };
+              return query;
+            };
+            var infoQuery = asQuery(mbean);
+
+            // jolokia.list(listKey,
+            jolokia.request(infoQuery, onSuccess((meta) => {
+              var attributes = meta.value.attr;
               if (attributes) {
                 for (var key in attributes) {
                   var value = attributes[key];
@@ -141,7 +156,10 @@ module Jmx {
                   Core.$apply($scope);
                 }
               }
-            }));
+
+              // update the website
+              Core.$apply($scope);
+            }, {method: "post"}));
           }
         });
       }

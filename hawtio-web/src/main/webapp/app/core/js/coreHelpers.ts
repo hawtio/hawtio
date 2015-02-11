@@ -206,7 +206,9 @@ function isNumberTypeName(typeName):boolean {
 }
 
 function encodeMBeanPath(mbean) {
-  return mbean.replace(/\//g, '!/').replace(':', '/').escapeURL();
+  //return mbean.replace(/\//g, '!/').replace(':', '/').escapeURL();
+  return mbean.replace(/\//g, '!/').replace(':', '/').replace('?', '!?').replace('"', '%22');
+  // return mbean.replace(/\//g, '!/').replace('"', '!"').escapeURL();
 }
 
 function escapeMBeanPath(mbean) {

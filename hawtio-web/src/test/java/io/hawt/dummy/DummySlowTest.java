@@ -1,5 +1,8 @@
 package io.hawt.dummy;
 
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +21,28 @@ public class DummySlowTest {
     @After
     public void destroy() throws Exception {
         LOG.info("Destroy test");
+    }
+
+    public static void main(String[] args) throws MalformedObjectNameException {
+//        String name = "org.apache.camel/context=camel-1,type=routes,name=fileInputRoute from file:src/test/data\\noop=true";
+//        String quoted = ObjectName.quote("file from file:src/text/data?noop=true");
+//        String name = "org.apache.camel:context=bar,type=context,name=" + quoted;
+
+//        ObjectName on = ObjectName.getInstance(name);
+//        System.out.println(on);
+
+        String quoted = ObjectName.quote("fileInputRoute from file:src//test/data?noop=true");
+        System.out.println(quoted);
+
+        String other = "org.apache.camel/context=camel-1,type=routes,name=" + quoted;
+        ObjectName on2 = ObjectName.getInstance(other);
+        System.out.println(on2);
+
+        String s = "org.apache.camel:context=camel-1,type=endpoints,name=\"file://src/test/data\\?noop=true\"";
+        ObjectName on3 = ObjectName.getInstance(s);
+        System.out.println(on3);
+
+
     }
 
     @Test
