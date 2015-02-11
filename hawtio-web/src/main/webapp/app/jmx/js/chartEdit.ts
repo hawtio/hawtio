@@ -82,13 +82,11 @@ module Jmx {
           if (name && mbean) {
             mbeanCounter++;
             $scope.mbeans[name] = name;
-            // we need to escape the mbean path for list
-            var listKey = escapeMBeanPath(mbean);
-            //var listKey = encodeMBeanPath(mbean);
 
             // use same logic as the JMX attributes page which works better than jolokia.list which has problems with
-            // mbeans with special charachters such as ? and query parameters such as Camel endpoint mbeans
+            // mbeans with special characters such as ? and query parameters such as Camel endpoint mbeans
             var asQuery = (node) => {
+              // we need to escape the mbean path for list
               var path = escapeMBeanPath(node);
               var query = {
                 type: "list",
@@ -99,7 +97,7 @@ module Jmx {
             };
             var infoQuery = asQuery(mbean);
 
-            // jolokia.list(listKey,
+            // must use post, so see further below where we pass in {method: "post"}
             jolokia.request(infoQuery, onSuccess((meta) => {
               var attributes = meta.value.attr;
               if (attributes) {

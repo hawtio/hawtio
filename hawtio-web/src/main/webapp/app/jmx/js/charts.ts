@@ -118,8 +118,9 @@ module Jmx {
         // lets get the attributes for this mbean
 
         // use same logic as the JMX attributes page which works better than jolokia.list which has problems with
-        // mbeans with special charachters such as ? and query parameters such as Camel endpoint mbeans
+        // mbeans with special characters such as ? and query parameters such as Camel endpoint mbeans
         var asQuery = (node) => {
+          // we need to escape the mbean path for list
           var path = escapeMBeanPath(node);
           var query = {
             type: "list",
@@ -130,13 +131,12 @@ module Jmx {
         };
         var infoQuery = asQuery(mbean);
 
-log.info("Query chart data for " + infoQuery.path);
-        var meta = $scope.jolokia.request(infoQuery,{method: "post"});
+        // must use post, so we pass in {method: "post"}
+        var meta = $scope.jolokia.request(infoQuery, {method: "post"});
         if (meta) {
-log.info("Chart data received for " + infoQuery.path);
+          // in case of error then use the default error handler
           Core.defaultJolokiaErrorHandler(meta, {});
           var attributes = meta.value ? meta.value.attr : null;
-log.info("Chart data attributes " + attributes);
           if (attributes) {
             var foundNames = [];
             for (var key in attributes) {
@@ -162,15 +162,12 @@ log.info("Chart data attributes " + attributes);
             // sort the names
             foundNames = foundNames.sort();
 
-log.info("Collecting metrics for " + foundNames);
-
             angular.forEach(foundNames, (key) => {
               var metric = $scope.jolokiaContext.metric({
                 type: 'read',
                 mbean: mbean,
                 attribute: key
               }, Core.humanizeValue(key));
-log.info("Metric " + metric);
               if (metric) {
                 $scope.metrics.push(metric);
               }
@@ -227,7 +224,6 @@ log.info("Metric " + metric);
         }
       }
 
-log.info("Metrics data size " + $scope.metrics.length);
       if ($scope.metrics.length > 0) {
 
         var d3Selection = d3.select(charts.get(0));

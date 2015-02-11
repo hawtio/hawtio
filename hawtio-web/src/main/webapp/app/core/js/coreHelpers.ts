@@ -205,18 +205,14 @@ function isNumberTypeName(typeName):boolean {
   return false;
 }
 
-function encodeMBeanPath(mbean) {
-  //return mbean.replace(/\//g, '!/').replace(':', '/').escapeURL();
-  return mbean.replace(/\//g, '!/').replace(':', '/').replace('?', '!?').replace('"', '%22');
-  // return mbean.replace(/\//g, '!/').replace('"', '!"').escapeURL();
-}
-
+/**
+ * Escapes the mbean path according to jolokia path rules: http://www.jolokia.org/reference/html/protocol.html#escape-rules
+ *
+ * @param mbean the mbean
+ * @returns {String}
+ */
 function escapeMBeanPath(mbean) {
   return mbean.replace(/\//g, '!/').replace(':', '/');
-}
-
-function encodeMBean(mbean) {
-  return mbean.replace(/\//g, '!/').escapeURL();
 }
 
 function escapeDots(text:string) {
