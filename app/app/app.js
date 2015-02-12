@@ -1452,6 +1452,7 @@ var Core;
                 var domainClass = escapeDots(domainName);
                 var domain = domains[domainName];
                 for (var mbeanName in domain) {
+                    log.debug("JMX tree mbean name: " + mbeanName);
                     var entries = {};
                     var folder = this.folderGetOrElse(tree, domainName);
                     folder.domain = domainName;
@@ -1466,7 +1467,15 @@ var Core;
                     var typeName = null;
                     var serviceName = null;
                     items.forEach(function (item) {
-                        var kv = item.split('=');
+                        var pos = item.indexOf('=');
+                        var kv = [];
+                        if (pos > 0) {
+                            kv[0] = item.substr(0, pos);
+                            kv[1] = item.substr(pos + 1);
+                        }
+                        else {
+                            kv[0] = item;
+                        }
                         var key = kv[0];
                         var value = kv[1] || key;
                         entries[key] = value;
@@ -2240,14 +2249,8 @@ function isNumberTypeName(typeName) {
     }
     return false;
 }
-function encodeMBeanPath(mbean) {
-    return mbean.replace(/\//g, '!/').replace(':', '/').escapeURL();
-}
 function escapeMBeanPath(mbean) {
     return mbean.replace(/\//g, '!/').replace(':', '/');
-}
-function encodeMBean(mbean) {
-    return mbean.replace(/\//g, '!/').escapeURL();
 }
 function escapeDots(text) {
     return text.replace(/\./g, '-');
@@ -33093,9 +33096,18 @@ var Jmx;
                     if (name && mbean) {
                         mbeanCounter++;
                         $scope.mbeans[name] = name;
-                        var listKey = escapeMBeanPath(mbean);
-                        jolokia.list(listKey, onSuccess(function (meta) {
-                            var attributes = meta.attr;
+                        var asQuery = function (node) {
+                            var path = escapeMBeanPath(node);
+                            var query = {
+                                type: "list",
+                                path: path,
+                                ignoreErrors: true
+                            };
+                            return query;
+                        };
+                        var infoQuery = asQuery(mbean);
+                        jolokia.request(infoQuery, onSuccess(function (meta) {
+                            var attributes = meta.value.attr;
                             if (attributes) {
                                 for (var key in attributes) {
                                     var value = attributes[key];
@@ -33143,7 +33155,8 @@ var Jmx;
                                     Core.$apply($scope);
                                 }
                             }
-                        }));
+                            Core.$apply($scope);
+                        }, { method: "post" }));
                     }
                 });
             }
@@ -33153,6 +33166,7 @@ var Jmx;
 var Jmx;
 (function (Jmx) {
     Jmx._module.controller("Jmx.ChartController", ["$scope", "$element", "$location", "workspace", "localStorage", "jolokiaUrl", "jolokiaParams", function ($scope, $element, $location, workspace, localStorage, jolokiaUrl, jolokiaParams) {
+        var log = Logger.get("JMX");
         $scope.metrics = [];
         $scope.updateRate = 1000;
         $scope.context = null;
@@ -33235,10 +33249,20 @@ var Jmx;
             var search = $location.search();
             var attributeNames = toSearchArgumentArray(search["att"]);
             if (mbean) {
-                var listKey = encodeMBeanPath(mbean);
-                var meta = $scope.jolokia.list(listKey);
+                var asQuery = function (node) {
+                    var path = escapeMBeanPath(node);
+                    var query = {
+                        type: "list",
+                        path: path,
+                        ignoreErrors: true
+                    };
+                    return query;
+                };
+                var infoQuery = asQuery(mbean);
+                var meta = $scope.jolokia.request(infoQuery, { method: "post" });
                 if (meta) {
-                    var attributes = meta.attr;
+                    Core.defaultJolokiaErrorHandler(meta, {});
+                    var attributes = meta.value ? meta.value.attr : null;
                     if (attributes) {
                         var foundNames = [];
                         for (var key in attributes) {
@@ -33337,7 +33361,7 @@ var Jmx;
                         d3Selection.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
                     }
                     catch (error) {
-                        Jmx.log.info("error: ", error);
+                        log.info("error: ", error);
                     }
                 });
                 $scope.metrics.forEach(function (metric) {
