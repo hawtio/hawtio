@@ -34414,6 +34414,7 @@ var JVM;
 (function (JVM) {
     JVM._module.controller("JVM.DiscoveryController", ["$scope", "localStorage", "jolokia", function ($scope, localStorage, jolokia) {
         $scope.discovering = true;
+        $scope.agents = undefined;
         $scope.$watch('agents', function (newValue, oldValue) {
             if (newValue !== oldValue) {
                 $scope.selectedAgent = $scope.agents.find(function (a) { return a['selected']; });
@@ -34476,24 +34477,20 @@ var JVM;
             }
             return false;
         };
-        function render(response) {
+        $scope.render = function (response) {
             $scope.discovering = false;
-            if (!response.value) {
-                Core.$apply($scope);
-                return;
+            if (response) {
+                var responseJson = angular.toJson(response, true);
+                if ($scope.responseJson !== responseJson) {
+                    $scope.responseJson = responseJson;
+                    $scope.agents = response;
+                }
             }
-            var responseJson = angular.toJson(response.value.sortBy(function (agent) { return agent['agent_id']; }), true);
-            if ($scope.responseJson !== responseJson) {
-                $scope.responseJson = responseJson;
-                JVM.log.debug("agents: ", $scope.agents);
-                $scope.agents = response.value;
-                Core.$apply($scope);
-            }
-        }
+            Core.$apply($scope);
+        };
         $scope.fetch = function () {
             $scope.discovering = true;
-            Core.$apply($scope);
-            jolokia.execute('jolokia:type=Discovery', 'lookupAgentsWithTimeout(int)', 30 * 1000, onSuccess(render));
+            jolokia.execute('jolokia:type=Discovery', 'lookupAgentsWithTimeout(int)', 10 * 1000, onSuccess($scope.render));
         };
         $scope.fetch();
     }]);
