@@ -99,7 +99,7 @@ module.exports = function(grunt) {
           module: "commonjs",
           target: "ES5",
           declaration: false,
-          sourceMap: true,
+          sourceMap: grunt.option("watch") ? false : true,
           watch: grunt.option("watch") ? {
             path: "src/main/webapp/app",
             atBegin: true

@@ -133,6 +133,7 @@ module Core {
     entity:any = null;
     version:string = null;
     mbean:JMXMBean = null;
+    expand:boolean = false;
 
     get(key:string):NodeSelection {
       return this.map[key];
@@ -245,7 +246,7 @@ module Core {
      * Removes this node from my parent if I have one
      * @method detach
      * @for Folder
-  \   */
+     */
     public detach() {
       var oldParent = this.parent;
       if (oldParent) {

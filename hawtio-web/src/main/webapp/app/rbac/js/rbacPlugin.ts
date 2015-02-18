@@ -153,7 +153,7 @@ module RBAC {
             }
           }));
         });
-      });
+      }, -1);
     });
   }]);
   hawtioPluginLoader.addModule(pluginName);

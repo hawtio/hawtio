@@ -106,9 +106,14 @@ module Core {
      * such as correcting any typeName values or CSS styles by hand
      * @method addTreePostProcessor
      * @param {Function} processor
+     * @param {number} priority - lower number == higher priority. default: 0
      */
-    public addTreePostProcessor(processor:(tree:any) => void) {
-      this.treePostProcessors.push(processor);
+    public addTreePostProcessor(processor:(tree:any) => void, priority:number = 0) {
+      var postProcessor:any = {
+        processor: processor,
+        priority: priority
+      };
+      this.treePostProcessors.push(postProcessor);
 
       var tree = this.tree;
       if (tree) {
@@ -344,21 +349,24 @@ module Core {
           }
         }
 
-        tree.sortChildren(true);
+      }
 
-        // now lets mark the nodes with no children as lazy loading...
-        this.enableLazyLoading(tree);
-        this.tree = tree;
+      tree.sortChildren(true);
 
-        var processors = this.treePostProcessors;
-        angular.forEach(processors, (processor) => processor(tree));
+      // now lets mark the nodes with no children as lazy loading...
+      this.enableLazyLoading(tree);
+      this.tree = tree;
 
-        this.maybeMonitorPlugins();
+      var processors = this.treePostProcessors.clone();
+      processors.sort(function(e1, e2) { return e1.priority-e2.priority });
 
-        var rootScope = this.$rootScope;
-        if (rootScope) {
-          rootScope.$broadcast('jmxTreeUpdated');
-        }
+      angular.forEach(processors, (processor) => processor.processor(tree));
+
+      this.maybeMonitorPlugins();
+
+      var rootScope = this.$rootScope;
+      if (rootScope) {
+        rootScope.$broadcast('jmxTreeUpdated');
       }
     }
 
