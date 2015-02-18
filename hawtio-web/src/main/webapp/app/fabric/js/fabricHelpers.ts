@@ -543,15 +543,18 @@ module Fabric {
     if (!iconURL) {
       return iconURL;
     }
-    // If we're proxying...
     var connectionName = Core.getConnectionNameParameter(location.search);
     if (connectionName) {
+      // If we're proxying...
       var connectionOptions = Core.getConnectOptions(connectionName);
       if (connectionOptions && !/^proxy\/http/.test(iconURL)) {
         // relative URLs are prefixed with /<base>/git/
         connectionOptions.path = /^\//.test(iconURL) ? iconURL : Core.url("/git/") + iconURL;
         iconURL = <string>Core.createServerConnectionUrl(connectionOptions);
       }
+    } else {
+      // no proxy
+      iconURL = /^\//.test(iconURL) ? iconURL : Core.url("/git/") + iconURL;
     }
     return iconURL;
   }
