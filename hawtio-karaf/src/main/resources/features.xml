@@ -79,7 +79,7 @@
     <bundle>mvn:io.hawt/irc-client-plugin/${project.version}/war</bundle>
   </feature>
 
-  <feature name="hawtio-social-example">
+  <feature name="hawtio-social-example" version="${project.version}" resolver="(obr)">
     <details>hawtio social twitter plugin example</details>
     <feature>war</feature>
     <bundle>mvn:io.hawt/social-plugin/${project.version}/war</bundle>
