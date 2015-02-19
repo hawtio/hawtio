@@ -961,6 +961,7 @@ var Core;
             this.entity = null;
             this.version = null;
             this.mbean = null;
+            this.expand = false;
             this.addClass = escapeTreeCssStyles(title);
         }
         Folder.prototype.get = function (key) {
@@ -1270,6 +1271,12 @@ var Jmx;
                         treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
                     }
                 },
+                onExpand: function (flag, node) {
+                    node.data.expand = flag;
+                    if (node.data.isFolder()) {
+                        node.data.children[0].parent.expand = flag;
+                    }
+                },
                 onClick: function (node, event) {
                     if (event["metaKey"]) {
                         event.preventDefault();
@@ -1364,8 +1371,13 @@ var Core;
                 value: data
             });
         };
-        Workspace.prototype.addTreePostProcessor = function (processor) {
-            this.treePostProcessors.push(processor);
+        Workspace.prototype.addTreePostProcessor = function (processor, priority) {
+            if (priority === void 0) { priority = 0; }
+            var postProcessor = {
+                processor: processor,
+                priority: priority
+            };
+            this.treePostProcessors.push(postProcessor);
             var tree = this.tree;
             if (tree) {
                 processor(tree);
@@ -1582,16 +1594,19 @@ var Core;
                         log.info("No folder found for lastPath: " + lastPath);
                     }
                 }
-                tree.sortChildren(true);
-                this.enableLazyLoading(tree);
-                this.tree = tree;
-                var processors = this.treePostProcessors;
-                angular.forEach(processors, function (processor) { return processor(tree); });
-                this.maybeMonitorPlugins();
-                var rootScope = this.$rootScope;
-                if (rootScope) {
-                    rootScope.$broadcast('jmxTreeUpdated');
-                }
+            }
+            tree.sortChildren(true);
+            this.enableLazyLoading(tree);
+            this.tree = tree;
+            var processors = this.treePostProcessors.clone();
+            processors.sort(function (e1, e2) {
+                return e1.priority - e2.priority;
+            });
+            angular.forEach(processors, function (processor) { return processor.processor(tree); });
+            this.maybeMonitorPlugins();
+            var rootScope = this.$rootScope;
+            if (rootScope) {
+                rootScope.$broadcast('jmxTreeUpdated');
             }
         };
         Workspace.prototype.enableLazyLoading = function (folder) {
@@ -6833,6 +6848,9 @@ var Fabric;
                 connectionOptions.path = /^\//.test(iconURL) ? iconURL : Core.url("/git/") + iconURL;
                 iconURL = Core.createServerConnectionUrl(connectionOptions);
             }
+        }
+        else {
+            iconURL = /^\//.test(iconURL) ? iconURL : Core.url("/git/") + iconURL;
         }
         return iconURL;
     }
@@ -41129,7 +41147,7 @@ var RBAC;
                         }
                     }));
                 });
-            });
+            }, -1);
         });
     }]);
     hawtioPluginLoader.addModule(RBAC.pluginName);

@@ -510,14 +510,14 @@
 					<a name="addtreepostprocessor" class="tsd-anchor"></a>
 					<h3>add<wbr>Tree<wbr>Post<wbr>Processor</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Tree<wbr>Post<wbr>Processor<span class="tsd-signature-symbol">(</span>processor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">)</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Tree<wbr>Post<wbr>Processor<span class="tsd-signature-symbol">(</span>processor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Function</span>, priority<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;</span>0<span class="tsd-signature-symbol">)</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#addtreepostprocessor">addTreePostProcessor</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:110</li>
+									<li>Defined in app/core/js/workspace.ts:111</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -534,10 +534,6 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5>processor:         <span class="tsd-signature-type">Function</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<div class="lead">
-										</div>
-									</div>
 									<ul class="tsd-parameters">
 										<li>
 											<h5>processor function signature<span class="tsd-signature-symbol"></span></h5>
@@ -549,7 +545,7 @@
 														<p>Inherited from         <a href="../undefined">processor</a>.<a href="../undefined">processor function signature</a>
 														</p>
 														<ul>
-															<li>Defined in app/core/js/workspace.ts:110</li>
+															<li>Defined in app/core/js/workspace.ts:111</li>
 														</ul>
 													</aside>
 													<h4 class="tsd-parameters-title">Parameters</h4>
@@ -561,6 +557,16 @@
 												</li>
 										</ul>        </li>
 								</ul>            </li>
+								<li>
+									<h5>priority?:         <span class="tsd-signature-type">number</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<ul>
+												<li>lower number == higher priority. default: 0</li>
+											</ul>
+										</div>
+									</div>
+								</li>
 							</ul>
 						</li>
 					</ul>
@@ -608,7 +614,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#expandselection">expandSelection</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:703</li>
+									<li>Defined in app/core/js/workspace.ts:711</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -643,7 +649,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#findchildmbeanwithproperties">findChildMBeanWithProperties</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:850</li>
+									<li>Defined in app/core/js/workspace.ts:858</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -673,7 +679,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#findmbeanwithproperties">findMBeanWithProperties</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:842</li>
+									<li>Defined in app/core/js/workspace.ts:850</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -703,7 +709,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#foldergetorelse">folderGetOrElse</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:180</li>
+									<li>Defined in app/core/js/workspace.ts:185</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -730,7 +736,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#getactivetab">getActiveTab</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:399</li>
+									<li>Defined in app/core/js/workspace.ts:407</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -781,7 +787,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#getselectedmbeanname">getSelectedMBeanName</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:489</li>
+									<li>Defined in app/core/js/workspace.ts:497</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -808,7 +814,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#hasdomainandproperties">hasDomainAndProperties</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:833</li>
+									<li>Defined in app/core/js/workspace.ts:841</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -838,7 +844,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#hasfabricmbean">hasFabricMBean</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:913</li>
+									<li>Defined in app/core/js/workspace.ts:921</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -856,7 +862,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#hasinvokerights">hasInvokeRights</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:743</li>
+									<li>Defined in app/core/js/workspace.ts:751</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -883,7 +889,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#hasinvokerightsforname">hasInvokeRightsForName</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:724</li>
+									<li>Defined in app/core/js/workspace.ts:732</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -910,7 +916,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#hasmbeans">hasMBeans</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:902</li>
+									<li>Defined in app/core/js/workspace.ts:910</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -932,7 +938,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#hash">hash</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:385</li>
+									<li>Defined in app/core/js/workspace.ts:393</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -959,7 +965,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#iscamelcontext">isCamelContext</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:920</li>
+									<li>Defined in app/core/js/workspace.ts:928</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -977,7 +983,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#iscamelfolder">isCamelFolder</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:923</li>
+									<li>Defined in app/core/js/workspace.ts:931</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -995,7 +1001,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#isendpoint">isEndpoint</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:929</li>
+									<li>Defined in app/core/js/workspace.ts:937</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1013,7 +1019,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#isendpointsfolder">isEndpointsFolder</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:926</li>
+									<li>Defined in app/core/js/workspace.ts:934</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1031,7 +1037,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#isfabricfolder">isFabricFolder</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:916</li>
+									<li>Defined in app/core/js/workspace.ts:924</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1049,7 +1055,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#iskaraffolder">isKarafFolder</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:942</li>
+									<li>Defined in app/core/js/workspace.ts:950</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1067,7 +1073,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#islinkactive">isLinkActive</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:430</li>
+									<li>Defined in app/core/js/workspace.ts:438</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1102,7 +1108,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#islinkprefixactive">isLinkPrefixActive</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:455</li>
+									<li>Defined in app/core/js/workspace.ts:463</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1137,7 +1143,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#isosgicompendiumfolder">isOsgiCompendiumFolder</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:945</li>
+									<li>Defined in app/core/js/workspace.ts:953</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1155,7 +1161,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#isosgifolder">isOsgiFolder</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:939</li>
+									<li>Defined in app/core/js/workspace.ts:947</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1173,7 +1179,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#isroute">isRoute</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:935</li>
+									<li>Defined in app/core/js/workspace.ts:943</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1191,7 +1197,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#isroutesfolder">isRoutesFolder</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:932</li>
+									<li>Defined in app/core/js/workspace.ts:940</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1209,7 +1215,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#istoptabactive">isTopTabActive</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:476</li>
+									<li>Defined in app/core/js/workspace.ts:484</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1242,7 +1248,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#linkcontains">linkContains</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:416</li>
+									<li>Defined in app/core/js/workspace.ts:424</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1282,7 +1288,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#maybemonitorplugins">maybeMonitorPlugins</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:120</li>
+									<li>Defined in app/core/js/workspace.ts:125</li>
 								</ul>
 							</aside>
 						</li>
@@ -1298,7 +1304,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#maybereloadtree">maybeReloadTree</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:161</li>
+									<li>Defined in app/core/js/workspace.ts:166</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1320,7 +1326,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#maybeupdateplugins">maybeUpdatePlugins</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:149</li>
+									<li>Defined in app/core/js/workspace.ts:154</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1342,7 +1348,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#moveifviewinvalid">moveIfViewInvalid</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:613</li>
+									<li>Defined in app/core/js/workspace.ts:621</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1360,7 +1366,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#populatetree">populateTree</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:191</li>
+									<li>Defined in app/core/js/workspace.ts:196</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1382,7 +1388,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#redrawtree">redrawTree</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:683</li>
+									<li>Defined in app/core/js/workspace.ts:691</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1407,7 +1413,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#removeandselectparentnode">removeAndSelectParentNode</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:546</li>
+									<li>Defined in app/core/js/workspace.ts:554</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1433,7 +1439,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#selectparentnode">selectParentNode</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:568</li>
+									<li>Defined in app/core/js/workspace.ts:576</li>
 								</ul>
 							</aside>
 						</li>
@@ -1449,7 +1455,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#selectionconfigkey">selectionConfigKey</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:595</li>
+									<li>Defined in app/core/js/workspace.ts:603</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1483,7 +1489,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#selectionhasdomain">selectionHasDomain</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:883</li>
+									<li>Defined in app/core/js/workspace.ts:891</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1507,7 +1513,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#selectionhasdomainandlastfoldername">selectionHasDomainAndLastFolderName</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:865</li>
+									<li>Defined in app/core/js/workspace.ts:873</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1534,7 +1540,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#selectionhasdomainandtype">selectionHasDomainAndType</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:891</li>
+									<li>Defined in app/core/js/workspace.ts:899</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1561,7 +1567,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#selectionviewconfigkey">selectionViewConfigKey</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:584</li>
+									<li>Defined in app/core/js/workspace.ts:592</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1614,7 +1620,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#treecontainsdomainandproperties">treeContainsDomainAndProperties</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:781</li>
+									<li>Defined in app/core/js/workspace.ts:789</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1641,7 +1647,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#updateselectionnode">updateSelectionNode</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:651</li>
+									<li>Defined in app/core/js/workspace.ts:659</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1663,7 +1669,7 @@
 								<p>Inherited from         <a href="core.workspace.html">Workspace</a>.<a href="core.workspace.html#validselection">validSelection</a>
 								</p>
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:503</li>
+									<li>Defined in app/core/js/workspace.ts:511</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
