@@ -236,6 +236,15 @@ module Dashboard {
 
               while (!found) {
                 widget.col = 1;
+                if (widget.col + widget.size_x > gridWidth) {
+                  // let's not look for a place next to existing widget
+                  selectedItem.widgets.forEach(function(w, idx) {
+                    if (widget.row <= w.row) {
+                      widget.row++;
+                    }
+                  });
+                  found = true;
+                }
                 for (; (widget.col + widget.size_x) <= gridWidth; widget.col++) {
                   if (!selectedItem.widgets.any((w) => {
                     var c = collision(w, widget);
