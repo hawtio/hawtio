@@ -19159,6 +19159,14 @@ var Dashboard;
                             }
                             while (!found) {
                                 widget.col = 1;
+                                if (widget.col + widget.size_x > gridWidth) {
+                                    selectedItem.widgets.forEach(function (w, idx) {
+                                        if (widget.row <= w.row) {
+                                            widget.row++;
+                                        }
+                                    });
+                                    found = true;
+                                }
                                 for (; (widget.col + widget.size_x) <= gridWidth; widget.col++) {
                                     if (!selectedItem.widgets.any(function (w) {
                                         var c = collision(w, widget);
