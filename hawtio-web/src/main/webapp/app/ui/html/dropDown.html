@@ -4,8 +4,7 @@
     <span class="hawtio-dropdown dropdown" ng-class="open(config)" ng-click="action(config, $event)">
       <p ng-show="config.heading" ng-bind="config.heading"></p>
       <span ng-show="config.title">
-        <i ng-class="icon(config)"></i>&nbsp;<span ng-bind="config.title"></span>
-        <span ng-show="config.items" ng-hide="config.submenu" class="caret"></span>
+        <i ng-class="icon(config)"></i><span ng-bind="config.title"></span><span ng-show="config.items" ng-hide="config.submenu" class="caret"></span>
         <span ng-show="config.items && config.submenu" class="submenu-caret"></span>
       </span>
 
@@ -20,8 +19,7 @@
     <span class="hawtio-dropdown dropdown" ng-class="open(config)" ng-click="action(config, $event)">
       <p ng-show="config.heading" ng-bind="config.heading"></p>
       <span ng-show="config.title">
-        <i ng-class="icon(config)"></i>&nbsp;<span ng-bind="config.title"></span>
-        <span ng-show="config.items && config.items.length > 0" class="caret"></span>
+        <i ng-class="icon(config)"></i><span ng-bind="config.title"></span><span ng-show="config.items && config.items.length > 0" class="caret"></span>
      </span>
 
       <ul ng-hide="config.action" ng-show="config.items" class="dropdown-menu" ng-class="submenu(config)">
