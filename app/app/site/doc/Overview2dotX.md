@@ -23,6 +23,7 @@ Here's a rundown of the current hawtio 2.x components:
 #### javascript plugins
 * [hawtio-core](https://github.com/hawtio/hawtio-core) - Tiny core module that contains the logging and plugin loader code.  It also contains 1 angular module that initializes some stub services that can be overridden by other plugins.  Responsible for loading plugins and bootstrapping a hawtio app
 * [hawtio-core-navigation](https://github.com/hawtio/hawtio-core-navigation) - Navigation bar, also can handle sub-tabs.  Provides a nice API that allows you to define your routes and tabs in one block, or you can define your routes and tabs separately
+* [hawtio-extension-service](https://github.com/hawtio/hawtio-extension-service) - A service and directive that can be used to attach arbitrary text or HTML to a view
 
 
 #### typescript plugins
@@ -31,7 +32,10 @@ Here's a rundown of the current hawtio 2.x components:
 * [hawtio-utilities](https://github.com/hawtio/hawtio-utilities) - A collection of helper functions used throughout hawtio, most plugins will probably depend on this module.
 * [hawtio-ui](https://github.com/hawtio/hawtio-ui) - The UI widgets from hawtio 1.x, including hawtio-simple-table and the editor plugin
 * [hawtio-forms](https://github.com/hawtio/hawtio-forms) - The forms plugin from hawtio 1.x, used to create forms from a simple schema
+* [hawtio-preferences](https://github.com/hawtio/hawtio-preferences) - A plugin for the preferences panel, implements the preferences registry and can add a 'Preferences' link to the main console
 * [hawtio-jmx](https://github.com/hawtio/hawtio-jmx) - The JMX and JVM plugins from hawtio 1.x as well as the tree plugin.  Now contains all jolokia initialization code as well as the Core.Workspace object service from hawtio 1.x.  Will likely be a dependency for any plugin that talks to jolokia.
+* [hawtio-wiki](https://github.com/hawtio/hawtio-wiki) - The wiki, camel, activemq, maven and osgi plugins
+* [hawtio-kubernetes](https://github.com/hawtio/hawtio-kubernetes) - The kubernetes, service and docker image repository plugins
 
 #### slush generators
 * [slush-hawtio-javascript](https://github.com/hawtio/slush-hawtio-javascript) - Generates a starter jvascript plugin project that depends on hawtio-core and hawtio-core-navigation with some example plugin code.
