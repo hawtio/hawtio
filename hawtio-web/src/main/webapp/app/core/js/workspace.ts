@@ -107,11 +107,13 @@ module Core {
      * @method addTreePostProcessor
      * @param {Function} processor
      * @param {number} priority - lower number == higher priority. default: 0
+     * @param {string} name - name of the processor (to allow for removal)
      */
-    public addTreePostProcessor(processor:(tree:any) => void, priority:number = 0) {
+    public addTreePostProcessor(processor:(tree:any) => void, priority:number = 0, name:string = "unnamed") {
       var postProcessor:any = {
         processor: processor,
-        priority: priority
+        priority: priority,
+        name: name
       };
       this.treePostProcessors.push(postProcessor);
 
@@ -120,6 +122,12 @@ module Core {
         // the tree is loaded already so lets process it now :)
         processor(tree);
       }
+    }
+
+    public removeTreePostProcessors(name:string) {
+      this.treePostProcessors.remove((el) => {
+        return el.name == name;
+      });
     }
 
     public maybeMonitorPlugins() {

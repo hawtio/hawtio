@@ -12,6 +12,8 @@ module RBAC {
   export var pluginName:string = "hawtioRbac";
   export var _module = angular.module(pluginName, ["hawtioCore"]);
 
+  var TREE_POSTPROCESSOR_NAME = "rbacTreePostprocessor";
+
   _module.factory('rbacTasks', ["postLoginTasks", "jolokia", "$q",  (postLoginTasks:Core.Tasks, jolokia, $q:ng.IQService) => {
 
     RBAC.rbacTasks = new RBAC.RBACTasksImpl($q.defer());
@@ -65,6 +67,7 @@ module RBAC {
     preLogoutTasks.addTask("resetRBAC", () => {
       log.debug("Resetting RBAC tasks");
       rbacTasks.reset();
+      workspace.removeTreePostProcessors(TREE_POSTPROCESSOR_NAME);
     });
 
     // add info to the JMX tree if we have access to invoke on mbeans
@@ -153,7 +156,7 @@ module RBAC {
             }
           }));
         });
-      }, -1);
+      }, -1, TREE_POSTPROCESSOR_NAME);
     });
   }]);
   hawtioPluginLoader.addModule(pluginName);
