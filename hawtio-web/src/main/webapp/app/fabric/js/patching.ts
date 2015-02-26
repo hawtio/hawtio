@@ -10,7 +10,7 @@ module Fabric {
     $scope.saveJmxCredentials = false;
 
     $scope.cancel = () => {
-      $location.url('/fabric/view').search({cv: $scope.targetVersion});
+      $location.url('wiki/branch/default-version/view/fabric/profiles');
     }
 
     $scope.valid = () => {
