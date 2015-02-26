@@ -100,12 +100,29 @@ module UI {
           var value = (<JQueryStatic>$)(element.find(inputSelector())[0]).val();
           var obj = ngModel.$viewValue;
 
-          obj[scope.getPropertyName()] = value;
+          if (scope.inputType == 'number' && value != '') {
+            // if one enters a letter for example, value will be empty
+            try {
+              var n = parseInt(value);
+              var min = scope.min != '' ? parseInt(scope.min) : Number.MIN_VALUE;
+              var max = scope.max != '' ? parseInt(scope.max) : Number.MAX_VALUE;
+              if (n < min || n > max) {
+                // invalid
+                // this should work, but it doesn't ...
+                //var ev = $.Event('keypress');
+                //ev.keyCode = 13;
+                //(<JQueryStatic>$)(element.find(inputSelector())[0]).trigger(ev);
+              } else {
+                obj[scope.getPropertyName()] = value;
 
-          ngModel.$setViewValue(obj);
-          ngModel.$render();
-          scope.editing = false;
-          scope.$parent.$eval(attrs['onSave']);
+                ngModel.$setViewValue(obj);
+                ngModel.$render();
+                scope.editing = false;
+                scope.$parent.$eval(attrs['onSave']);
+              }
+            } catch (e) {
+            }
+          }
         };
 
       };
