@@ -170,6 +170,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="core.workspace.html#populatetree" class="tsd-kind-icon">populate<wbr>Tree</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="core.workspace.html#redrawtree" class="tsd-kind-icon">redraw<wbr>Tree</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="core.workspace.html#removeandselectparentnode" class="tsd-kind-icon">remove<wbr>And<wbr>Select<wbr>Parent<wbr>Node</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="core.workspace.html#removetreepostprocessors" class="tsd-kind-icon">remove<wbr>Tree<wbr>Post<wbr>Processors</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="core.workspace.html#selectparentnode" class="tsd-kind-icon">select<wbr>Parent<wbr>Node</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="core.workspace.html#selectionconfigkey" class="tsd-kind-icon">selection<wbr>Config<wbr>Key</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="core.workspace.html#selectionhasdomain" class="tsd-kind-icon">selection<wbr>Has<wbr>Domain</a></li>
@@ -465,12 +466,12 @@
 					<a name="addtreepostprocessor" class="tsd-anchor"></a>
 					<h3>add<wbr>Tree<wbr>Post<wbr>Processor</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Tree<wbr>Post<wbr>Processor<span class="tsd-signature-symbol">(</span>processor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Function</span>, priority<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;</span>0<span class="tsd-signature-symbol">)</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Tree<wbr>Post<wbr>Processor<span class="tsd-signature-symbol">(</span>processor<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Function</span>, priority<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;</span>0, name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;</span>&quot;unnamed&quot;<span class="tsd-signature-symbol">)</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:111</li>
+									<li>Defined in app/core/js/workspace.ts:112</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -496,7 +497,7 @@
 											<ul class="tsd-descriptions">
 												<li class="tsd-description"><aside class="tsd-sources">
 														<ul>
-															<li>Defined in app/core/js/workspace.ts:111</li>
+															<li>Defined in app/core/js/workspace.ts:112</li>
 														</ul>
 													</aside>
 													<h4 class="tsd-parameters-title">Parameters</h4>
@@ -514,6 +515,16 @@
 										<div class="lead">
 											<ul>
 												<li>lower number == higher priority. default: 0</li>
+											</ul>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5>name?:         <span class="tsd-signature-type">string</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<ul>
+												<li>name of the processor (to allow for removal)</li>
 											</ul>
 										</div>
 									</div>
@@ -561,7 +572,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:373</li>
+									<li>Defined in app/core/js/workspace.ts:381</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -581,7 +592,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:711</li>
+									<li>Defined in app/core/js/workspace.ts:719</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -614,7 +625,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:858</li>
+									<li>Defined in app/core/js/workspace.ts:866</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -642,7 +653,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:850</li>
+									<li>Defined in app/core/js/workspace.ts:858</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -670,7 +681,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:185</li>
+									<li>Defined in app/core/js/workspace.ts:193</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -695,7 +706,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:407</li>
+									<li>Defined in app/core/js/workspace.ts:415</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -742,7 +753,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:497</li>
+									<li>Defined in app/core/js/workspace.ts:505</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -767,7 +778,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:418</li>
+									<li>Defined in app/core/js/workspace.ts:426</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">String</span>
@@ -783,7 +794,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:841</li>
+									<li>Defined in app/core/js/workspace.ts:849</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -811,7 +822,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:921</li>
+									<li>Defined in app/core/js/workspace.ts:929</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -827,7 +838,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:751</li>
+									<li>Defined in app/core/js/workspace.ts:759</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -852,7 +863,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:732</li>
+									<li>Defined in app/core/js/workspace.ts:740</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -877,7 +888,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:910</li>
+									<li>Defined in app/core/js/workspace.ts:918</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -897,7 +908,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:393</li>
+									<li>Defined in app/core/js/workspace.ts:401</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -922,7 +933,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:928</li>
+									<li>Defined in app/core/js/workspace.ts:936</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -938,7 +949,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:931</li>
+									<li>Defined in app/core/js/workspace.ts:939</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -954,7 +965,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:937</li>
+									<li>Defined in app/core/js/workspace.ts:945</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -970,7 +981,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:934</li>
+									<li>Defined in app/core/js/workspace.ts:942</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -986,7 +997,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:924</li>
+									<li>Defined in app/core/js/workspace.ts:932</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1002,7 +1013,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:950</li>
+									<li>Defined in app/core/js/workspace.ts:958</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1018,7 +1029,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:438</li>
+									<li>Defined in app/core/js/workspace.ts:446</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1051,7 +1062,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:463</li>
+									<li>Defined in app/core/js/workspace.ts:471</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1084,7 +1095,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:953</li>
+									<li>Defined in app/core/js/workspace.ts:961</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1100,7 +1111,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:947</li>
+									<li>Defined in app/core/js/workspace.ts:955</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1116,7 +1127,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:943</li>
+									<li>Defined in app/core/js/workspace.ts:951</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1132,7 +1143,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:940</li>
+									<li>Defined in app/core/js/workspace.ts:948</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1148,7 +1159,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:484</li>
+									<li>Defined in app/core/js/workspace.ts:492</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1179,7 +1190,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:424</li>
+									<li>Defined in app/core/js/workspace.ts:432</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1215,7 +1226,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:820</li>
+									<li>Defined in app/core/js/workspace.ts:828</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1243,7 +1254,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:721</li>
+									<li>Defined in app/core/js/workspace.ts:729</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1268,7 +1279,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:125</li>
+									<li>Defined in app/core/js/workspace.ts:133</li>
 								</ul>
 							</aside>
 						</li>
@@ -1282,7 +1293,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:166</li>
+									<li>Defined in app/core/js/workspace.ts:174</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1302,7 +1313,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:154</li>
+									<li>Defined in app/core/js/workspace.ts:162</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1322,7 +1333,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:621</li>
+									<li>Defined in app/core/js/workspace.ts:629</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
@@ -1338,7 +1349,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:196</li>
+									<li>Defined in app/core/js/workspace.ts:204</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1358,7 +1369,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:691</li>
+									<li>Defined in app/core/js/workspace.ts:699</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1381,7 +1392,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:554</li>
+									<li>Defined in app/core/js/workspace.ts:562</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1397,6 +1408,26 @@
 						</li>
 					</ul>
 					</section>            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="removetreepostprocessors" class="tsd-anchor"></a>
+					<h3>remove<wbr>Tree<wbr>Post<wbr>Processors</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">remove<wbr>Tree<wbr>Post<wbr>Processors<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description"><aside class="tsd-sources">
+								<ul>
+									<li>Defined in app/core/js/workspace.ts:127</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>name:         <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+						</li>
+					</ul>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="selectparentnode" class="tsd-anchor"></a>
 					<h3>select<wbr>Parent<wbr>Node</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -1405,7 +1436,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:576</li>
+									<li>Defined in app/core/js/workspace.ts:584</li>
 								</ul>
 							</aside>
 						</li>
@@ -1419,7 +1450,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:603</li>
+									<li>Defined in app/core/js/workspace.ts:611</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1451,7 +1482,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:891</li>
+									<li>Defined in app/core/js/workspace.ts:899</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1473,7 +1504,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:873</li>
+									<li>Defined in app/core/js/workspace.ts:881</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1498,7 +1529,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:899</li>
+									<li>Defined in app/core/js/workspace.ts:907</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1523,7 +1554,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:592</li>
+									<li>Defined in app/core/js/workspace.ts:600</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1572,7 +1603,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:789</li>
+									<li>Defined in app/core/js/workspace.ts:797</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1597,7 +1628,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:659</li>
+									<li>Defined in app/core/js/workspace.ts:667</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1617,7 +1648,7 @@
 					<ul class="tsd-descriptions">
 						<li class="tsd-description"><aside class="tsd-sources">
 								<ul>
-									<li>Defined in app/core/js/workspace.ts:511</li>
+									<li>Defined in app/core/js/workspace.ts:519</li>
 								</ul>
 								</aside>        <div class="tsd-comment tsd-typography">
 								<div class="lead">
@@ -1859,6 +1890,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="core.workspace.html#removeandselectparentnode" class="tsd-kind-icon">remove<wbr>And<wbr>Select<wbr>Parent<wbr>Node</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="core.workspace.html#removetreepostprocessors" class="tsd-kind-icon">remove<wbr>Tree<wbr>Post<wbr>Processors</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="core.workspace.html#selectparentnode" class="tsd-kind-icon">select<wbr>Parent<wbr>Node</a>

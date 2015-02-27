@@ -467,6 +467,7 @@ li.attr-column {
   bottom: 0;
   left: 0;
   right: 0;
+  overflow-y: auto;
 }
 
 .height-controls > a {

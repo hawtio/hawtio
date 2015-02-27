@@ -1371,17 +1371,24 @@ var Core;
                 value: data
             });
         };
-        Workspace.prototype.addTreePostProcessor = function (processor, priority) {
+        Workspace.prototype.addTreePostProcessor = function (processor, priority, name) {
             if (priority === void 0) { priority = 0; }
+            if (name === void 0) { name = "unnamed"; }
             var postProcessor = {
                 processor: processor,
-                priority: priority
+                priority: priority,
+                name: name
             };
             this.treePostProcessors.push(postProcessor);
             var tree = this.tree;
             if (tree) {
                 processor(tree);
             }
+        };
+        Workspace.prototype.removeTreePostProcessors = function (name) {
+            this.treePostProcessors.remove(function (el) {
+                return el.name == name;
+            });
         };
         Workspace.prototype.maybeMonitorPlugins = function () {
             if (this.treeContainsDomainAndProperties("hawtio", { type: "Registry" })) {
@@ -27135,7 +27142,7 @@ var Fabric;
         $scope.proxyPassword = localStorage['fabric.password'];
         $scope.saveJmxCredentials = false;
         $scope.cancel = function () {
-            $location.url('/fabric/view').search({ cv: $scope.targetVersion });
+            $location.url('wiki/branch/default-version/view/fabric/profiles');
         };
         $scope.valid = function () {
             return $scope.files && $scope.files.length > 0 && $scope.targetVersion !== null && $scope.proxyUser && $scope.proxyPassword;
@@ -41030,6 +41037,7 @@ var RBAC;
 (function (RBAC) {
     RBAC.pluginName = "hawtioRbac";
     RBAC._module = angular.module(RBAC.pluginName, ["hawtioCore"]);
+    var TREE_POSTPROCESSOR_NAME = "rbacTreePostprocessor";
     RBAC._module.factory('rbacTasks', ["postLoginTasks", "jolokia", "$q", function (postLoginTasks, jolokia, $q) {
         RBAC.rbacTasks = new RBAC.RBACTasksImpl($q.defer());
         postLoginTasks.addTask("FetchJMXSecurityMBeans", function () {
@@ -41074,6 +41082,7 @@ var RBAC;
         preLogoutTasks.addTask("resetRBAC", function () {
             RBAC.log.debug("Resetting RBAC tasks");
             rbacTasks.reset();
+            workspace.removeTreePostProcessors(TREE_POSTPROCESSOR_NAME);
         });
         rbacTasks.addTask("JMXTreePostProcess", function () {
             workspace.addTreePostProcessor(function (tree) {
@@ -41155,7 +41164,7 @@ var RBAC;
                         }
                     }));
                 });
-            }, -1);
+            }, -1, TREE_POSTPROCESSOR_NAME);
         });
     }]);
     hawtioPluginLoader.addModule(RBAC.pluginName);
@@ -43762,11 +43771,24 @@ var UI;
                 scope.saveEdit = function () {
                     var value = $(element.find(inputSelector())[0]).val();
                     var obj = ngModel.$viewValue;
-                    obj[scope.getPropertyName()] = value;
-                    ngModel.$setViewValue(obj);
-                    ngModel.$render();
-                    scope.editing = false;
-                    scope.$parent.$eval(attrs['onSave']);
+                    if (scope.inputType == 'number' && value != '') {
+                        try {
+                            var n = parseInt(value);
+                            var min = scope.min != '' ? parseInt(scope.min) : Number.MIN_VALUE;
+                            var max = scope.max != '' ? parseInt(scope.max) : Number.MAX_VALUE;
+                            if (n < min || n > max) {
+                            }
+                            else {
+                                obj[scope.getPropertyName()] = value;
+                                ngModel.$setViewValue(obj);
+                                ngModel.$render();
+                                scope.editing = false;
+                                scope.$parent.$eval(attrs['onSave']);
+                            }
+                        }
+                        catch (e) {
+                        }
+                    }
                 };
             };
         }
