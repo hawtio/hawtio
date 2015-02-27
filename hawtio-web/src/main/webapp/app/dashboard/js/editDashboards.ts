@@ -43,8 +43,10 @@ module Dashboard {
           field: 'group',
           displayName: 'Group'
         }
-      ]
+      ],
+      afterSelectionChange: afterSelectionChange
     };
+
 
     $scope.onDashRenamed = (dash) => {
       dashboardRepository.putDashboards([dash], "Renamed dashboard", (dashboards) => {
@@ -299,7 +301,7 @@ module Dashboard {
 
       dashboardRepository.putDashboards([newDash], "Created new dashboard: " + title, (dashboards) => {
         // let's just be safe and ensure there's no selections
-        $scope.selectedItems.splice(0);
+        deselectAll();
         dashboardLoaded(null, dashboards);
       });
 
@@ -316,7 +318,7 @@ module Dashboard {
       });
 
       // let's just be safe and ensure there's no selections
-      $scope.selectedItems.splice(0);
+      deselectAll();
 
       commitMessage = commitMessage + newDashboards.map((d) => { return d.title }).join(',');
       dashboardRepository.putDashboards(newDashboards, commitMessage, (dashboards) => {
@@ -324,11 +326,11 @@ module Dashboard {
       });
     };
 
-    $scope.delete = () => {
+    $scope.deleteDashboard = () => {
       if ($scope.hasSelection()) {
         dashboardRepository.deleteDashboards($scope.selectedItems, (dashboards) => {
           // let's just be safe and ensure there's no selections
-          $scope.selectedItems.splice(0);
+          deselectAll();
           dashboardLoaded(null, dashboards);
         });
       }
@@ -377,6 +379,20 @@ module Dashboard {
 
     function dashboards() {
       return $scope._dashboards;
+    }
+
+    function afterSelectionChange(rowItem, checkAll) {
+      if (checkAll === void 0) {
+        // then row was clicked, not select-all checkbox
+        $scope.gridOptions['$gridScope'].allSelected = rowItem.config.selectedItems.length == $scope._dashboards.length;
+      } else {
+        $scope.gridOptions['$gridScope'].allSelected = checkAll;
+      }
+    }
+
+    function deselectAll() {
+      $scope.selectedItems.splice(0);
+      $scope.gridOptions['$gridScope'].allSelected = false;
     }
 
     updateData();
