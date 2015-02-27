@@ -123,6 +123,8 @@ module Dashboard {
       var commitMessage = "Duplicating " + $scope.selectedItems.length + " dashboards to " + $scope.selectedProfilesDialog.length + " profiles";
 
       dashboardRepository.putDashboards(newDashboards, commitMessage, (dashboards) => {
+        // let's just be safe and ensure there's no selections
+        deselectAll();
         dashboardLoaded(null, dashboards);
       });
 
