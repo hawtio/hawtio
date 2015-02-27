@@ -24,8 +24,12 @@ module Fabric {
     doAction('setContainerProperty(java.lang.String, java.lang.String, java.lang.Object)', jolokia, [containerId, property, value], success, error);
   }
 
-  export function deleteConfigFile(jolokia, version, profile, pid, success, error = Core.defaultJolokiaErrorHandler) {
-    doAction('deleteConfigurationFile(java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, pid], success, error);
+  export function deleteConfigFile(jolokia, version, profile, file, success, error = Core.defaultJolokiaErrorHandler) {
+    doAction('deleteConfigurationFile(java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, file], success, error);
+  }
+
+  export function deleteConfigFiles(jolokia, version, profiles, files, success, error = Core.defaultJolokiaErrorHandler) {
+    doAction('deleteConfigurationFiles(java.lang.String, java.util.List, java.util.List)', jolokia, [version, profiles, files], success, error);
   }
 
   export function newConfigFile(jolokia, version, profile, pid, success, error = Core.defaultJolokiaErrorHandler) {

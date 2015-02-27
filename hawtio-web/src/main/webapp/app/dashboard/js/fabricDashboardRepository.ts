@@ -76,28 +76,18 @@ module Dashboard {
       var jolokia = this.jolokia;
       var details = this.details;
 
-      var toDelete = array.length;
-
-      var maybeCallback = () => {
-        toDelete = toDelete - 1;
-        if (toDelete === 0) {
-          this.getDashboards(fn);
-        }
-      };
-
+      var profileIds = [];
+      var fileNames = [];
       array.forEach((dashboard) => {
-        var profileId = dashboard.profileId;
-        var fileName = dashboard.fileName;
-        if (profileId && fileName) {
-          Fabric.deleteConfigFile(jolokia, details.branch, profileId, fileName, () => {
-            maybeCallback();
-          }, (response) => {
-
-            log.error("Failed to delete dashboard: ", dashboard.title, " due to: ", response.error, " stack trace: ", response.stacktrace);
-            maybeCallback();
-          })
-        }
+        profileIds.push(dashboard.profileId);
+        fileNames.push(dashboard.fileName);
       });
+      Fabric.deleteConfigFiles(jolokia, details.branch, profileIds, fileNames, () => {
+        this.getDashboards(fn);
+      }, (response) => {
+        log.error("Failed to delete selected dashboards due to: ", response.error, " stack trace: ", response.stacktrace);
+        this.getDashboards(fn);
+      })
     }
 
     public createDashboard(options:any) {
