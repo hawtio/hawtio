@@ -122,6 +122,13 @@ module UI {
               }
             } catch (e) {
             }
+          } else {
+            obj[scope.getPropertyName()] = value;
+
+            ngModel.$setViewValue(obj);
+            ngModel.$render();
+            scope.editing = false;
+            scope.$parent.$eval(attrs['onSave']);
           }
         };
 
