@@ -30,7 +30,7 @@
         <li>
           <a href=""
              ng-disabled="!hasSelection()"
-             ng-click="delete()"><i
+             ng-click="deleteDashboard()"><i
                   class="icon-remove"></i> Delete
           </a>
         </li>
@@ -39,15 +39,6 @@
              title="Imports a JSON dashboard configuration from github or some other URL"
              data-placement="bottom">
             <i class="icon-cloud-download"></i> Import
-          </a>
-
-        </li>
-        <li class="pull-right">
-          <a ng-disabled="!hasSelection()"
-             ng-click="gist()"
-             title="Creates a JSON gist of the selected dashboards so you can share with others"
-             data-placement="bottom">
-            <i class="icon-cloud-upload"></i> Share
           </a>
 
         </li>
@@ -68,7 +59,7 @@
       <div id="dialog-body" class="modal-body">
         <label>Select one or more profiles to copy the dashboards to: </label>
 
-        <div fabric-profile-selector="selectedProfilesDialog" version-id="container.versionId"></div>
+        <div fabric-profile-selector="selectedProfilesDialog" version-id="container.versionId" no-links="true"></div>
 
       </div>
       <div class="modal-footer">

@@ -3955,11 +3955,16 @@ var Fabric;
         doAction('setContainerProperty(java.lang.String, java.lang.String, java.lang.Object)', jolokia, [containerId, property, value], success, error);
     }
     Fabric.setContainerProperty = setContainerProperty;
-    function deleteConfigFile(jolokia, version, profile, pid, success, error) {
+    function deleteConfigFile(jolokia, version, profile, file, success, error) {
         if (error === void 0) { error = Core.defaultJolokiaErrorHandler; }
-        doAction('deleteConfigurationFile(java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, pid], success, error);
+        doAction('deleteConfigurationFile(java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, file], success, error);
     }
     Fabric.deleteConfigFile = deleteConfigFile;
+    function deleteConfigFiles(jolokia, version, profiles, files, success, error) {
+        if (error === void 0) { error = Core.defaultJolokiaErrorHandler; }
+        doAction('deleteConfigurationFiles(java.lang.String, java.util.List, java.util.List)', jolokia, [version, profiles, files], success, error);
+    }
+    Fabric.deleteConfigFiles = deleteConfigFiles;
     function newConfigFile(jolokia, version, profile, pid, success, error) {
         if (error === void 0) { error = Core.defaultJolokiaErrorHandler; }
         doAction('setConfigurationFile(java.lang.String, java.lang.String, java.lang.String, java.lang.String)', jolokia, [version, profile, pid, ''], success, error);
@@ -19013,7 +19018,8 @@ var Dashboard;
                     field: 'group',
                     displayName: 'Group'
                 }
-            ]
+            ],
+            afterSelectionChange: afterSelectionChange
         };
         $scope.onDashRenamed = function (dash) {
             dashboardRepository.putDashboards([dash], "Renamed dashboard", function (dashboards) {
@@ -19069,6 +19075,7 @@ var Dashboard;
             });
             var commitMessage = "Duplicating " + $scope.selectedItems.length + " dashboards to " + $scope.selectedProfilesDialog.length + " profiles";
             dashboardRepository.putDashboards(newDashboards, commitMessage, function (dashboards) {
+                deselectAll();
                 dashboardLoaded(null, dashboards);
             });
         };
@@ -19217,7 +19224,7 @@ var Dashboard;
             var title = "Untitled" + counter;
             var newDash = dashboardRepository.createDashboard({ title: title });
             dashboardRepository.putDashboards([newDash], "Created new dashboard: " + title, function (dashboards) {
-                $scope.selectedItems.splice(0);
+                deselectAll();
                 dashboardLoaded(null, dashboards);
             });
         };
@@ -19229,7 +19236,7 @@ var Dashboard;
                 var newDash = dashboardRepository.cloneDashboard(item);
                 newDashboards.push(newDash);
             });
-            $scope.selectedItems.splice(0);
+            deselectAll();
             commitMessage = commitMessage + newDashboards.map(function (d) {
                 return d.title;
             }).join(',');
@@ -19237,10 +19244,10 @@ var Dashboard;
                 dashboardLoaded(null, dashboards);
             });
         };
-        $scope.delete = function () {
+        $scope.deleteDashboard = function () {
             if ($scope.hasSelection()) {
                 dashboardRepository.deleteDashboards($scope.selectedItems, function (dashboards) {
-                    $scope.selectedItems.splice(0);
+                    deselectAll();
                     dashboardLoaded(null, dashboards);
                 });
             }
@@ -19283,6 +19290,18 @@ var Dashboard;
         }
         function dashboards() {
             return $scope._dashboards;
+        }
+        function afterSelectionChange(rowItem, checkAll) {
+            if (checkAll === void 0) {
+                $scope.gridOptions['$gridScope'].allSelected = rowItem.config.selectedItems.length == $scope._dashboards.length;
+            }
+            else {
+                $scope.gridOptions['$gridScope'].allSelected = checkAll;
+            }
+        }
+        function deselectAll() {
+            $scope.selectedItems.splice(0);
+            $scope.gridOptions['$gridScope'].allSelected = false;
         }
         updateData();
     }]);
@@ -19349,24 +19368,17 @@ var Dashboard;
             var _this = this;
             var jolokia = this.jolokia;
             var details = this.details;
-            var toDelete = array.length;
-            var maybeCallback = function () {
-                toDelete = toDelete - 1;
-                if (toDelete === 0) {
-                    _this.getDashboards(fn);
-                }
-            };
+            var profileIds = [];
+            var fileNames = [];
             array.forEach(function (dashboard) {
-                var profileId = dashboard.profileId;
-                var fileName = dashboard.fileName;
-                if (profileId && fileName) {
-                    Fabric.deleteConfigFile(jolokia, details.branch, profileId, fileName, function () {
-                        maybeCallback();
-                    }, function (response) {
-                        Dashboard.log.error("Failed to delete dashboard: ", dashboard.title, " due to: ", response.error, " stack trace: ", response.stacktrace);
-                        maybeCallback();
-                    });
-                }
+                profileIds.push(dashboard.profileId);
+                fileNames.push(dashboard.fileName);
+            });
+            Fabric.deleteConfigFiles(jolokia, details.branch, profileIds, fileNames, function () {
+                _this.getDashboards(fn);
+            }, function (response) {
+                Dashboard.log.error("Failed to delete selected dashboards due to: ", response.error, " stack trace: ", response.stacktrace);
+                _this.getDashboards(fn);
             });
         };
         FabricDashboardRepository.prototype.createDashboard = function (options) {
@@ -43788,6 +43800,13 @@ var UI;
                         }
                         catch (e) {
                         }
+                    }
+                    else {
+                        obj[scope.getPropertyName()] = value;
+                        ngModel.$setViewValue(obj);
+                        ngModel.$render();
+                        scope.editing = false;
+                        scope.$parent.$eval(attrs['onSave']);
                     }
                 };
             };

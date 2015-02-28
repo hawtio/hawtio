@@ -417,8 +417,7 @@ li.attr-column {
 }
 
 .gridster ul#widgets .gs_w {
-  padding: 0px;
-  overflow: hidden;
+  padding: 0;
   position: relative;
 }
 
