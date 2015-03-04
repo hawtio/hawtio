@@ -48,7 +48,7 @@ public class ConfigAdmin implements ConfigAdminMXBean {
             if (ca == null) {
                 throw new IllegalStateException("The configuration admin service cannot be found.");
             }
-            Configuration config = ca.getConfiguration(pid);
+            Configuration config = ca.getConfiguration(pid, null);
             config.update(new Hashtable<String, String>(data));
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);

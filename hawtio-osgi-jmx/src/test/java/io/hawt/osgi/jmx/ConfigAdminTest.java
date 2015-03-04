@@ -16,7 +16,7 @@ public class ConfigAdminTest {
         Configuration conf = Mockito.mock(Configuration.class);        
 
         ConfigurationAdmin cas = Mockito.mock(ConfigurationAdmin.class);
-        Mockito.when(cas.getConfiguration("mypid")).thenReturn(conf);
+        Mockito.when(cas.getConfiguration("mypid", null)).thenReturn(conf);
 
         ServiceReference sr = Mockito.mock(ServiceReference.class);
 
@@ -32,7 +32,7 @@ public class ConfigAdminTest {
 
         ca.configAdminUpdate("mypid", props);
 
-        Mockito.verify(cas).getConfiguration("mypid");
+        Mockito.verify(cas).getConfiguration("mypid", null);
         Mockito.verify(conf).update(new Hashtable<String, String>(props));
     }
 }
