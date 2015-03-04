@@ -104,7 +104,7 @@ module Fabric {
       if (!Core.isBlank($scope.locationIdFilter) && container.location !== $scope.locationIdFilter) {
         return false;
       }
-      return FilterHelpers.searchObject(container, $scope.filter);
+      return FilterHelpers.searchObject(container.id, $scope.filter);
     }
 
     $scope.filterContainer = $scope.filterContainers;
