@@ -94,6 +94,10 @@ module Fabric {
       $scope.groupBy = 'none';
     }
 
+    $scope.filterProfiles = (profile) => {
+      return FilterHelpers.searchObject(profile.id, $scope.filter);
+    }
+
     $scope.filterContainers = (container) => {
       if (!Core.isBlank($scope.versionIdFilter) && container.versionId !== $scope.versionIdFilter) {
         return false;
