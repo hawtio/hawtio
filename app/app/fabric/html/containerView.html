@@ -95,6 +95,7 @@
         <div>
           <div class="column-box" 
                ng-repeat="profile in version.profiles"
+               ng-show="filterProfiles(profile)"
                ng-include="'app/fabric/html/profileBox.html'">
           </div>
         </div>

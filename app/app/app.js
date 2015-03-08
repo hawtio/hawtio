@@ -25961,6 +25961,9 @@ var Fabric;
             }
             $scope.groupBy = 'none';
         };
+        $scope.filterProfiles = function (profile) {
+            return FilterHelpers.searchObject(profile.id, $scope.filter);
+        };
         $scope.filterContainers = function (container) {
             if (!Core.isBlank($scope.versionIdFilter) && container.versionId !== $scope.versionIdFilter) {
                 return false;
