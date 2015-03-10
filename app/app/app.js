@@ -22734,15 +22734,15 @@ var Forms;
         if (label) {
             input.attr('title', label);
         }
-        if (config.isReadOnly()) {
-            try {
+        try {
+            if (config.isReadOnly()) {
                 input.attr('readonly', 'true');
+                if (input[0].localName === "select" || (input[0].localName === "input" && input.attr("type") === "checkbox")) {
+                    input.attr('disabled', 'true');
+                }
             }
-            catch (e) {
-            }
-            if (input[0].localName === "select" || (input[0].localName === "input" && input.attr("type") === "checkbox")) {
-                input.attr('disabled', 'true');
-            }
+        }
+        catch (e) {
         }
         if (required) {
             if (input[0].localName === "select" || (input[0].localName === "input" && input.attr("type") === "checkbox")) {
