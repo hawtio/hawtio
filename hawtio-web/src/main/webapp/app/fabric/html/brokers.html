@@ -65,7 +65,7 @@
             <div class="mq-broker-area">
 
               <div class="mq-broker-rectangle" ng-repeat="broker in profile.brokers"
-                   ng-show="brokerMatchesFilter(broker)"
+                   ng-style="brokerMatchesFilter(broker) ? {'visibility': 'visible'} : {'visibility': 'hidden'}"
                    title="Logical broker inside this profile">
 
                 <div class="mq-broker-rectangle-label">
