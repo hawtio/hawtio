@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.15-SNAPSHOT';
+var _apacheCamelModelVersion = '2.15.0';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -22,7 +22,7 @@ var _apacheCamelModel ={
           "title": "Expression",
           "description": "The chosen language",
           "required": true,
-          "enum": [ "constant", "el", "groovy", "header", "javaScript", "jsonpath", "jxpath", "language", "method", "mvel", "ognl", "php", "property", "python", "ref", "ruby", "simple", "spel", "sql", "terser", "tokenize", "vtdxml", "xpath", "xquery", "xtokenize" ]
+          "enum": [ "constant", "el", "exchangeProperty", "groovy", "header", "javaScript", "jsonpath", "jxpath", "language", "method", "mvel", "ognl", "php", "python", "ref", "ruby", "simple", "spel", "sql", "terser", "tokenize", "vtdxml", "xpath", "xquery", "xtokenize" ]
         }
       }
     },
@@ -436,6 +436,14 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
       "properties": {
+        "whenClauses": {
+          "kind": "element",
+          "type": "array",
+          "description": "Sets the when clauses",
+          "title": "When Clauses",
+          "required": false,
+          "deprecated": false
+        },
         "otherwise": {
           "kind": "element",
           "type": "object",
@@ -2198,7 +2206,7 @@ var _apacheCamelModel ={
     "properties": {
       "type": "object",
       "title": "Properties",
-      "group": "configuration,resequence",
+      "group": "configuration",
       "icon": "generic24.png",
       "description": "A series of key value pair",
       "acceptInput": "false",
@@ -2211,6 +2219,34 @@ var _apacheCamelModel ={
           "description": "A series of properties as key value pairs",
           "title": "Property",
           "required": false,
+          "deprecated": false
+        }
+      }
+    },
+    "property": {
+      "type": "object",
+      "title": "Property",
+      "group": "configuration",
+      "icon": "generic24.png",
+      "description": "A key value pair",
+      "acceptInput": "false",
+      "acceptOutput": "false",
+      "nextSiblingAddedAsChild": "false",
+      "properties": {
+        "key": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Property key",
+          "title": "Key",
+          "required": true,
+          "deprecated": false
+        },
+        "value": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Property value",
+          "title": "Value",
+          "required": true,
           "deprecated": false
         }
       }
@@ -6551,6 +6587,38 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "moduleClassNames": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma.",
+          "title": "Module Class Names",
+          "required": false,
+          "deprecated": false
+        },
+        "moduleRefs": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.",
+          "title": "Module Refs",
+          "required": false,
+          "deprecated": false
+        },
+        "enableFeatures": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature com.fasterxml.jackson.databind.DeserializationFeature or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma",
+          "title": "Enable Features",
+          "required": false,
+          "deprecated": false
+        },
+        "disableFeatures": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature com.fasterxml.jackson.databind.DeserializationFeature or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma",
+          "title": "Disable Features",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -7856,6 +7924,40 @@ var _apacheCamelModel ={
         }
       }
     },
+    "exchangeProperty": {
+      "type": "object",
+      "title": "Exchange Property",
+      "group": "language",
+      "icon": "generic24.png",
+      "description": "An expression which extracts the named exchange property",
+      "properties": {
+        "expression": {
+          "kind": "value",
+          "type": "string",
+          "description": "The expression value in your chosen language syntax",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
+        "trim": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "true",
+          "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
+          "title": "Trim",
+          "required": false,
+          "deprecated": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
     "expression": {
       "type": "object",
       "title": "Expression",
@@ -7929,7 +8031,7 @@ var _apacheCamelModel ={
       "title": "Header",
       "group": "language",
       "icon": "generic24.png",
-      "description": "An expression which extracts the named header",
+      "description": "An expression which extracts the named exchange header",
       "properties": {
         "expression": {
           "kind": "value",
@@ -8259,40 +8361,6 @@ var _apacheCamelModel ={
       "group": "language",
       "icon": "generic24.png",
       "description": "For PHP expressions and predicates",
-      "properties": {
-        "expression": {
-          "kind": "value",
-          "type": "string",
-          "description": "The expression value in your chosen language syntax",
-          "title": "Expression",
-          "required": true,
-          "deprecated": false
-        },
-        "trim": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "true",
-          "description": "Whether to trim the value to remove leading and trailing whitespaces and line breaks",
-          "title": "Trim",
-          "required": false,
-          "deprecated": false
-        },
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the id of this node",
-          "title": "Id",
-          "required": false,
-          "deprecated": false
-        }
-      }
-    },
-    "property": {
-      "type": "object",
-      "title": "Property",
-      "group": "language",
-      "icon": "generic24.png",
-      "description": "An expression which extracts the named exchange property",
       "properties": {
         "expression": {
           "kind": "value",
