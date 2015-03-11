@@ -2207,6 +2207,7 @@ dd.file-list {
   overflow: hidden;
   text-overflow: ellipsis;
   right: 95px;
+  cursor: pointer;
 }
 
 .active-profile-icon {
