@@ -71,9 +71,11 @@ module FabricDeploy {
           };
           uploader.onSuccessItem = function(fileItem, response, status, headers) {
             log.debug('onSuccessItem', fileItem, response, status, headers);
+            Core.notification('success', 'Added ' + fileItem.file.name);
           };
           uploader.onErrorItem = function(fileItem, response, status, headers) {
             log.debug('onErrorItem', fileItem, response, status, headers);
+            Core.notification('error', 'Failed to add ' + fileItem.file.name);
           };
           uploader.onCancelItem = function(fileItem, response, status, headers) {
             log.debug('onCancelItem', fileItem, response, status, headers);
