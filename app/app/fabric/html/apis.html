@@ -22,10 +22,9 @@
           Loading...
         </div>
 
-        <div class="hero-unit" ng-show="apis.length === 0">
-          <p>There are currently no endpoints running in this fabric exposing APIs</p>
+        <div class="hero-unit" ng-show="apis.length === 0 || (apis.length === 1  && apis[0].port.has('FabricResource'))">
 
-          <p>To try out the API browser try create one of the example <a href="#/wiki/branch/{{versionId}}/view/fabric/profiles/example/quickstarts">quickstarts</a></p>
+          <p>To try out the API browser try creating one of the example <a href="#/wiki/branch/{{versionId}}/view/fabric/profiles/example/quickstarts">quickstarts</a> or </p>
 
           <p>Try creating a container for:
             <a class="btn btn-primary"
