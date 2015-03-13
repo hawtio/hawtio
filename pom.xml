@@ -172,7 +172,7 @@
     <module>hawtio-default</module>
     <module>hawtio-default-offline</module>
     <module>hawtio-no-slf4j</module>
-    <module>hawtio-jboss</module>
+    <module>hawtio-wildfly</module>
     <module>hawtio-embedded</module>
     <module>hawtio-app</module>
     <module>hawtio-osgi-jmx</module>

@@ -7,10 +7,10 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>hawtio-jboss</artifactId>
+  <artifactId>hawtio-wildfly</artifactId>
   <packaging>war</packaging>
   <name>${project.artifactId}</name>
-  <description>hawtio :: JBoss Web Application</description>
+  <description>hawtio :: Wildfly Web Application</description>
 
   <properties>
     <guava.version>15.0</guava.version>
