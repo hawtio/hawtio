@@ -21841,9 +21841,11 @@ var FabricDeploy;
                     };
                     uploader.onSuccessItem = function (fileItem, response, status, headers) {
                         FabricDeploy.log.debug('onSuccessItem', fileItem, response, status, headers);
+                        Core.notification('success', 'Added ' + fileItem.file.name);
                     };
                     uploader.onErrorItem = function (fileItem, response, status, headers) {
                         FabricDeploy.log.debug('onErrorItem', fileItem, response, status, headers);
+                        Core.notification('error', 'Failed to add ' + fileItem.file.name);
                     };
                     uploader.onCancelItem = function (fileItem, response, status, headers) {
                         FabricDeploy.log.debug('onCancelItem', fileItem, response, status, headers);
