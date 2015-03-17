@@ -1240,7 +1240,7 @@ strong.new,
   color: #53595f;
 }
 
-.hawtio-dropdown > ul > li:hover {
+.hawtio-dropdown > ul > li.item:hover {
   text-decoration: none;
   color: #ffffff;
   background-color: #0081c2;

@@ -9,7 +9,7 @@
       </span>
 
       <ul ng-hide="config.action" ng-show="config.items" class="dropdown-menu" ng-class="submenu(config)">
-        <li ng-repeat="item in config.items track by $index" ng-init="config=item; config['submenu']=true" ng-include="'withsubmenus.html'" hawtio-show object-name="{{item.objectName}}" method-name="{{item.methodName}}" argument-types="{{item.argumentTypes}}" mode="remove">
+        <li ng-repeat="item in config.items track by $index" ng-class="config.heading ? 'heading' : 'item'" ng-init="config=item; config['submenu']=true" ng-include="'withsubmenus.html'" hawtio-show object-name="{{item.objectName}}" method-name="{{item.methodName}}" argument-types="{{item.argumentTypes}}" mode="remove">
         </li>
       </ul>
     </span>
