@@ -16,7 +16,7 @@
         <a>{{objectId}}</a>
       </li>
 
-      <li class="pull-right dropdown">
+      <li class="pull-right dropdown" ng-show="gridOptions.selectedItems.length">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
           Actions <span class="caret"></span>
         </a>
@@ -25,11 +25,6 @@
             <a ng-href="{{sourceLink()}}" title="View source code"
                data-placement="bottom">
               <i class="icon-file-alt"></i> Source</a>
-          </li>
-          <li>
-            <a ng-href="{{historyLink}}{{hash}}" ng-hide="!historyLink" title="View the history of this file"
-               data-placement="bottom">
-              <i class="icon-comments-alt"></i> History</a>
           </li>
           <!--
           <li class="divider">
@@ -66,6 +61,11 @@
               <i class="{{childAction.icon}}"></i> {{childAction.name}}</a>
           </li>
         </ul>
+      </li>
+      <li class="pull-right">
+        <a ng-href="{{historyLink}}{{hash}}" ng-hide="!historyLink" title="View the history of this file"
+            data-placement="bottom">
+          <i class="icon-comments-alt"></i> History</a>
       </li>
       <li class="pull-right" hawtio-show object-name="{{gitMBean}}" method-name="write">
         <a ng-href="{{editLink()}}{{hash}}" ng-hide="!editLink()" title="Edit this page"
