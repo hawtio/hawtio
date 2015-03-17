@@ -285,6 +285,8 @@ module Fabric {
 
       $scope.$watch('selectedProfiles', (newValue, oldValue) => {
         if (newValue !== oldValue) {
+          oldValue.each((profile) => { $scope.profiles.find((p) => p.id == profile.id ).selected = false; })
+          newValue.each((profile) => { $scope.profiles.find((p) => p.id == profile.id ).selected = true; })
           if ($scope.selectedProfiles.length > 0) {
             if ($scope.selectedProfiles.length !== $scope.profiles.length) {
               $scope.indeterminate = true;

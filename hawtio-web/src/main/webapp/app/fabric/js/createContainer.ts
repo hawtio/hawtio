@@ -257,7 +257,8 @@ module Fabric {
     $scope.$watch('selectedProfileIds', (newValue, oldValue) => {
       if (Core.isBlank($scope.selectedProfileIds)) {
         $scope.selectedProfiles.length = 0;
-        return;
+        //return;
+        $location.search('profileIds', null);
       } else {
         var profileIds = $scope.selectedProfileIds.split(',');
         var selected = [];
@@ -268,8 +269,8 @@ module Fabric {
           });
         });
         $scope.selectedProfiles = selected;
+        $location.search('profileIds', $scope.selectedProfileIds);
       }
-      $location.search('profileIds', $scope.selectedProfileIds);
     });
 
     $scope.massage = (str) => {
