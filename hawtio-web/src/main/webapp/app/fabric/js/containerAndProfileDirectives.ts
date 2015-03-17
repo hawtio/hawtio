@@ -104,7 +104,7 @@ module Fabric {
         // how / hide / add a requirement on new profile
         addProfileRequirementOpen: () => {
           $scope.editRequirements.selectedProfiles.splice(0, $scope.editRequirements.selectedProfiles.length);
-          $scope.editRequirements.excludeProfiles = $scope.activeProfiles.map((p) => { return p.id; });
+          $scope.editRequirements.excludeProfiles = $scope.editRequirements.entity.profileRequirements.map((r) => { return r.profile; });
           $scope.editRequirements.addProfileRequirementShow = true;
         },
 
