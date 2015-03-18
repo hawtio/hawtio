@@ -18,7 +18,12 @@
         <div ng-include="propertiesTemplate"></div>
       </div>
     </div>
+
+    <div hawtio-confirm-dialog="switchToCanvasView.show" ok-button-text="Yes" cancel-button-text="No" on-ok="doSwitchToCanvasView()" title="You have unsaved changes">
+      <div class="dialog-body">
+        <p>Do you really want to switch views?</p>
+      </div>
+    </div>
+
   </div>
 </div>
-
-

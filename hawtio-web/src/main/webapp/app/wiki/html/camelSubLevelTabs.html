@@ -1,4 +1,8 @@
 <ul class="nav nav-tabs">
+  <li ng-class="{active : false}">
+    <a href='' ng-click='confirmSwitchToCanvasView()' title="Edit the diagram in a draggy droppy way"
+        data-placement="bottom">
+      <i class="icon-picture"></i> Canvas</a></li>
   <li ng-repeat="nav in camelSubLevelTabs" ng-show="isValid(nav)" ng-class="{active : isActive(nav)}">
     <a ng-href="{{nav.href()}}{{hash}}" title="{{nav.title}}"
        data-placement="bottom" ng-bind-html-unsafe="nav.content"></a></li>

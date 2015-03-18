@@ -3,11 +3,12 @@
  */
 /// <reference path="./wikiPlugin.ts"/>
 module Wiki {
-  _module.controller("Wiki.CamelCanvasController", ["$scope", "$element", "workspace", "jolokia", "wikiRepository", "$templateCache", "$interpolate", ($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache, $interpolate) => {
+  export var CamelCanvasController = _module.controller("Wiki.CamelCanvasController", ["$scope", "$element", "workspace", "jolokia", "wikiRepository", "$templateCache", "$interpolate", "$location", ($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache, $interpolate, $location) => {
     var jsPlumbInstance = jsPlumb.getInstance();
 
     $scope.addDialog = new UI.Dialog();
     $scope.propertiesDialog = new UI.Dialog();
+    $scope.switchToTreeView = new UI.Dialog();
     $scope.modified = false;
     $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
     $scope.camelMaximumLabelWidth = Camel.maximumLabelWidth(localStorage);
@@ -390,7 +391,6 @@ module Wiki {
       jsPlumbInstance.detach(c);
     });
 
-
     function layoutGraph(nodes, links) {
       var transitions = [];
       var states = Core.createGraphStates(nodes, links, transitions);
@@ -653,5 +653,18 @@ module Wiki {
       }
       return answer;
     }
+
+    $scope.doSwitchToTreeView = () => {
+      $location.url(Core.trimLeading(($scope.startLink + "/camel/properties/" + $scope.pageId), '#'));
+    };
+
+    $scope.confirmSwitchToTreeView = () => {
+      if ($scope.modified) {
+        $scope.switchToTreeView.open();
+      } else {
+        $scope.doSwitchToTreeView();
+      }
+    };
+
   }]);
 }

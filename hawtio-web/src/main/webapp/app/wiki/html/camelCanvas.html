@@ -27,7 +27,7 @@
                data-placement="bottom">
               <i class="icon-picture"></i> Canvas</a></li>
           <li ng-class="{active : false}">
-            <a ng-href='{{startLink}}/camel/properties/{{pageId}}' title="Switch to the tree based view"
+            <a href='' ng-click='confirmSwitchToTreeView()' title="Switch to the tree based view"
                data-placement="bottom">
               <i class="icon-sitemap"></i> Tree</a></li>
 
@@ -199,5 +199,12 @@
         </div>
       </div>
     </div>
+
+    <div hawtio-confirm-dialog="switchToTreeView.show" ok-button-text="Yes" cancel-button-text="No" on-ok="doSwitchToTreeView()" title="You have unsaved changes">
+      <div class="dialog-body">
+        <p>Do you really want to switch views?</p>
+      </div>
+    </div>
+
   </div>
 </div>
