@@ -161,7 +161,8 @@ module Fabric {
             });
             var count = Object.values(profile.containers).length;
             var required = profile.requirements.minimumInstances || 0;
-            profile.requireStyle = Fabric.containerCountBadgeStyle(required, count);
+            var max = profile.requirements.maximumInstances || -1;
+            profile.requireStyle = Fabric.containerCountBadgeStyle(required, max, count);
             profile.count = count;
             profile.requiredToolTip = "this profile requires " + Core.maybePlural(required, "container")
                     + " to be running but is currently running " + Core.maybePlural(count, "container");

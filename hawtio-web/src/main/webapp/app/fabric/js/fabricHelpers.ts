@@ -433,16 +433,21 @@ module Fabric {
    * Returns the CSS style for the number of containers badge
    * @method containerCountBadgeStyle
    * @param {Number} min
+   * @param {Number} max
    * @param {number} count
    * @return {string}
    */
-  export function containerCountBadgeStyle(min, count) {
-    if (min) {
-      if (!count) {
-        return "badge-important";
-      } else {
-        return min <= count ? "badge-success" : "badge-warning";
-      }
+  export function containerCountBadgeStyle(min, max, count) {
+    if (!max || max == -1) {
+      max = Number.MAX_VALUE;
+    }
+    if (!min) {
+      min = 0;
+    }
+    if (!count) {
+      return "badge-important";
+    } else {
+      return min <= count && count <= max ? "badge-success" : "badge-warning";
     }
     return "";
   }

@@ -274,6 +274,7 @@ module Fabric {
           angular.forEach($scope.requirements.profileRequirements, (profileRequirement) => {
             var id = profileRequirement.profile;
             var min = profileRequirement.minimumInstances;
+            var max = profileRequirement.maximumInstances;
             if (id) {
               var profile = answer.find((p) => (p.id === id));
 
@@ -282,7 +283,7 @@ module Fabric {
                 if (profile) {
                   count = profile['count'];
                 }
-                return Fabric.containerCountBadgeStyle(min, count);
+                return Fabric.containerCountBadgeStyle(min, max, count);
               }
 
               if (profile) {
