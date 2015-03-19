@@ -3749,6 +3749,10 @@ span.hawtio-dropdown .dropdown-menu {
   padding-left: 5px;
 }
 
+.hawtio-dropdown > ul > li.heading {
+  padding: 0;
+}
+
 .hawtio-dropdown > ul > li > .menu-item {
   position: relative;
   display: block;

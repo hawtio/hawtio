@@ -25568,8 +25568,8 @@ var Fabric;
             },
             addProfileRequirementOpen: function () {
                 $scope.editRequirements.selectedProfiles.splice(0, $scope.editRequirements.selectedProfiles.length);
-                $scope.editRequirements.excludeProfiles = $scope.activeProfiles.map(function (p) {
-                    return p.id;
+                $scope.editRequirements.excludeProfiles = $scope.editRequirements.entity.profileRequirements.map(function (r) {
+                    return r.profile;
                 });
                 $scope.editRequirements.addProfileRequirementShow = true;
             },
@@ -26436,7 +26436,7 @@ var Fabric;
         $scope.$watch('selectedProfileIds', function (newValue, oldValue) {
             if (Core.isBlank($scope.selectedProfileIds)) {
                 $scope.selectedProfiles.length = 0;
-                return;
+                $location.search('profileIds', null);
             }
             else {
                 var profileIds = $scope.selectedProfileIds.split(',');
@@ -26448,8 +26448,8 @@ var Fabric;
                     });
                 });
                 $scope.selectedProfiles = selected;
+                $location.search('profileIds', $scope.selectedProfileIds);
             }
-            $location.search('profileIds', $scope.selectedProfileIds);
         });
         $scope.massage = function (str) {
             if (str === 'name') {
@@ -28543,6 +28543,12 @@ var Fabric;
                 });
                 $scope.$watch('selectedProfiles', function (newValue, oldValue) {
                     if (newValue !== oldValue) {
+                        oldValue.each(function (profile) {
+                            $scope.profiles.find(function (p) { return p.id == profile.id; }).selected = false;
+                        });
+                        newValue.each(function (profile) {
+                            $scope.profiles.find(function (p) { return p.id == profile.id; }).selected = true;
+                        });
                         if ($scope.selectedProfiles.length > 0) {
                             if ($scope.selectedProfiles.length !== $scope.profiles.length) {
                                 $scope.indeterminate = true;
@@ -46056,11 +46062,12 @@ var WikiDrop;
 })(WikiDrop || (WikiDrop = {}));
 var Wiki;
 (function (Wiki) {
-    Wiki._module.controller("Wiki.CamelController", ["$scope", "$location", "$routeParams", "localStorage", "workspace", "wikiRepository", "jolokia", function ($scope, $location, $routeParams, localStorage, workspace, wikiRepository, jolokia) {
+    Wiki.CamelController = Wiki._module.controller("Wiki.CamelController", ["$scope", "$location", "$routeParams", "localStorage", "workspace", "wikiRepository", "jolokia", function ($scope, $location, $routeParams, localStorage, workspace, wikiRepository, jolokia) {
         Wiki.initScope($scope, $routeParams, $location);
         Camel.initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia);
         $scope.schema = Camel.getConfiguredCamelModel();
         $scope.modified = false;
+        $scope.switchToCanvasView = new UI.Dialog();
         $scope.findProfileCamelContext = true;
         $scope.camelSelectionDetails = {
             selectedCamelContextId: null,
@@ -46070,12 +46077,6 @@ var Wiki;
             return nav && nav.isValid(workspace);
         };
         $scope.camelSubLevelTabs = [
-            {
-                content: '<i class="icon-picture"></i> Canvas',
-                title: "Edit the diagram in a draggy droppy way",
-                isValid: function (workspace) { return true; },
-                href: function () { return Wiki.startLink($scope.branch) + "/camel/canvas/" + $scope.pageId; }
-            },
             {
                 content: '<i class=" icon-sitemap"></i> Tree',
                 title: "View the routes as a tree",
@@ -46427,14 +46428,26 @@ var Wiki;
         }
         function goToView() {
         }
+        $scope.doSwitchToCanvasView = function () {
+            $location.url(Core.trimLeading((Wiki.startLink($scope.branch) + "/camel/canvas/" + $scope.pageId), '#'));
+        };
+        $scope.confirmSwitchToCanvasView = function () {
+            if ($scope.modified) {
+                $scope.switchToCanvasView.open();
+            }
+            else {
+                $scope.doSwitchToCanvasView();
+            }
+        };
     }]);
 })(Wiki || (Wiki = {}));
 var Wiki;
 (function (Wiki) {
-    Wiki._module.controller("Wiki.CamelCanvasController", ["$scope", "$element", "workspace", "jolokia", "wikiRepository", "$templateCache", "$interpolate", function ($scope, $element, workspace, jolokia, wikiRepository, $templateCache, $interpolate) {
+    Wiki.CamelCanvasController = Wiki._module.controller("Wiki.CamelCanvasController", ["$scope", "$element", "workspace", "jolokia", "wikiRepository", "$templateCache", "$interpolate", "$location", function ($scope, $element, workspace, jolokia, wikiRepository, $templateCache, $interpolate, $location) {
         var jsPlumbInstance = jsPlumb.getInstance();
         $scope.addDialog = new UI.Dialog();
         $scope.propertiesDialog = new UI.Dialog();
+        $scope.switchToTreeView = new UI.Dialog();
         $scope.modified = false;
         $scope.camelIgnoreIdForLabel = Camel.ignoreIdForLabel(localStorage);
         $scope.camelMaximumLabelWidth = Camel.maximumLabelWidth(localStorage);
@@ -46537,7 +46550,7 @@ var Wiki;
             Core.$apply($scope);
         };
         $scope.save = function () {
-            if ($scope.rootFolder) {
+            if ($scope.modified && $scope.rootFolder) {
                 var xmlNode = Camel.generateXmlFromFolder($scope.rootFolder);
                 if (xmlNode) {
                     var text = Core.xmlNodeToString(xmlNode);
@@ -46947,6 +46960,17 @@ var Wiki;
             }
             return answer;
         }
+        $scope.doSwitchToTreeView = function () {
+            $location.url(Core.trimLeading(($scope.startLink + "/camel/properties/" + $scope.pageId), '#'));
+        };
+        $scope.confirmSwitchToTreeView = function () {
+            if ($scope.modified) {
+                $scope.switchToTreeView.open();
+            }
+            else {
+                $scope.doSwitchToTreeView();
+            }
+        };
     }]);
 })(Wiki || (Wiki = {}));
 var Wiki;
