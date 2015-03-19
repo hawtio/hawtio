@@ -22,7 +22,9 @@ public class UserServlet extends HttpServlet {
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         config = (ConfigManager) servletConfig.getServletContext().getAttribute("ConfigManager");
-        this.authenticationEnabled = Boolean.parseBoolean(config.get("authenticationEnabled", "true"));
+        if (config != null) {
+            this.authenticationEnabled = Boolean.parseBoolean(config.get("authenticationEnabled", "true"));
+        }
 
         // JVM system properties can override always
         if (System.getProperty(AuthenticationFilter.HAWTIO_AUTHENTICATION_ENABLED) != null) {
