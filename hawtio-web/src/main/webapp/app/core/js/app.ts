@@ -200,7 +200,7 @@ module Core {
     };
 
     $scope.showLogout = () => {
-      return $scope.loggedIn() && angular.isDefined(userDetails.loginDetails);
+      return $scope.loggedIn();
     };
 
     $scope.logout = () => {
