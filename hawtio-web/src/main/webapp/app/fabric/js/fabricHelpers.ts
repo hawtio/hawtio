@@ -269,20 +269,41 @@ module Fabric {
       }
     };
 
+    // ids of containers being deleted, to prevent from issuing delete call more than once before we get any response
+    // this "protection" is only $scope based
+    $scope.deletePending = {};
+
+    $scope.deleteContainer = () => {
+      if ($scope.selectedContainers.all((c) => { return !$scope.deletePending[c.id]; })) {
+        $scope.confirmDeleteDialog.open();
+      }
+    };
+
+    // is it possible to delete selected containers? no, if deletion of container didn't complete
+    $scope.mayDelete = () => {
+      return $scope.selectedContainers.length > 0 && $scope.selectedContainers.all((c) => { return !$scope.deletePending[c.id]; });
+    };
+
     $scope.confirmDeleteDialog = {
       dialog: new UI.Dialog(),
       onOk: () => {
         $scope.confirmDeleteDialog.dialog.close();
         if (angular.isDefined($scope.containerId)) {
+          $scope.deletePending[$scope.containerId] = true;
           // avoid any nasty errors that the container doesn't existing anymore
           Core.unregister(jolokia, $scope);
           $location.path('/fabric/containers');
 
-          ContainerHelpers.doDeleteContainer($scope, jolokia, $scope.containerId);
+          ContainerHelpers.doDeleteContainer($scope, jolokia, $scope.containerId, () => {
+            delete $scope.deletePending[$scope.containerId];
+          });
 
         } else if (angular.isDefined($scope.selectedContainers)) {
           $scope.selectedContainers.each((c) => {
-            ContainerHelpers.doDeleteContainer($scope, jolokia, c.id);
+            $scope.deletePending[c.id] = true;
+            ContainerHelpers.doDeleteContainer($scope, jolokia, c.id, () => {
+              delete $scope.deletePending[c.id];
+            });
           });
         } else {
           // bail...

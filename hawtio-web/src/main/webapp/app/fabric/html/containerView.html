@@ -33,10 +33,6 @@
         </span>
       </div>
       <div class="pull-right">
-        <a class="btn" ng-click="createContainer()" title="Create new containers"
-            title="Create container">
-          <i class="icon-plus"></i> Create
-        </a>
         <span class="inline-block"
               ng-show="maybeShowLocation()"
               hawtio-show
@@ -75,13 +71,17 @@
           Stop
         </a>
         <a class="btn"
-           ng-click="confirmDeleteDialog.open()"
-           ng-show="selectedContainers.length != 0"
+           ng-click="deleteContainer()"
+           ng-show="mayDelete()"
            title="Delete container"
            hawtio-show
            object-name="{{managerMBean}}"
            method-name="destroyContainer">
           <i class="icon-remove-sign"></i> Delete
+        </a>
+        <a class="btn" ng-click="createContainer()" title="Create new containers"
+            title="Create container">
+          <i class="icon-plus"></i> Create
         </a>
         <hawtio-filter ng-model="filter"
                        placeholder="Filter Containers..."

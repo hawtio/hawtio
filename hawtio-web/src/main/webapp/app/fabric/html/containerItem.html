@@ -29,7 +29,7 @@
       <div>
         <span class="contained c-wide"
               title="{{container.id}} / {{container.versionId}}">
-          <a ng-click="showContainer(container)">{{container.id}}</a>
+          <a ng-click="showContainer(container)">{{container.id}}</a> <span ng-show="deletePending[container.id]">(delete pending)</span>
         </span>
         <span>
           <a class="clickable"
