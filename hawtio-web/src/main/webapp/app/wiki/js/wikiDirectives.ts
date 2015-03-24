@@ -142,4 +142,18 @@ module Wiki {
     };
   }]);
 
+  _module.directive('wikiFixed', ["$timeout", ($timeout) => {
+    return {
+      restrict: "C",
+      link: ($scope, $element, $attr) => {
+          // trick, to make it run after angular completes $digest cycle
+          $timeout(() => {
+            var wikiLinks = $(".logbar");
+            var top = (wikiLinks.height() + 8) + "px";
+            $element.css({"margin-top": top});
+          }, 0, false);
+      }
+    };
+  }]);
+
 }
