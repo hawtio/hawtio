@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
-	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	      xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
-	      http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-	      version="2.4">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
 
   <description>hawtio</description>
   <display-name>hawtio</display-name>
@@ -12,49 +11,50 @@
     <description>Enable/disable hawtio's authentication filter, value is really a boolean</description>
     <env-entry-name>hawtio/authenticationEnabled</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>${hawtio.authenticationEnabled:false}</env-entry-value>
+    <env-entry-value>true</env-entry-value>
   </env-entry>
 
   <env-entry>
     <description>Authorized user role, empty string disables authorization</description>
     <env-entry-name>hawtio/role</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>${hawtio.role:*}</env-entry-value>
+    <!-- empty == admin,viewer -->
+    <env-entry-value></env-entry-value>
   </env-entry>
 
   <env-entry>
     <description>JAAS classname that would contain the role principal, empty string disables authorization</description>
     <env-entry-name>hawtio/rolePrincipalClasses</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>${hawtio.rolePrincipalClasses:}</env-entry-value>
+    <env-entry-value>org.jboss.security.SimplePrincipal</env-entry-value>
   </env-entry>
 
   <env-entry>
     <description>JAAS realm used to authenticate users</description>
     <env-entry-name>hawtio/realm</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>${hawtio.realm:*}</env-entry-value>
+    <env-entry-value>*</env-entry-value>
   </env-entry>
 
   <env-entry>
     <description>Enable/disable Keycloak integration. Value is really a boolean</description>
     <env-entry-name>hawtio/keycloakEnabled</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>${hawtio.keycloakEnabled:false}</env-entry-value>
+    <env-entry-value>false</env-entry-value>
   </env-entry>
 
   <env-entry>
     <description>Keycloak config file used for frontend. Will use default location if not provided</description>
     <env-entry-name>hawtio/keycloakClientConfig</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>${hawtio.keycloakClientConfig:}</env-entry-value>
+    <env-entry-value></env-entry-value>
   </env-entry>
 
   <env-entry>
     <description>Path to store file uploads, defaults to ${java.io.tmpdir}/uploads if blank</description>
     <env-entry-name>hawtio/uploadDirectory</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>${hawtio.uploadDirectory:}</env-entry-value>
+    <env-entry-value></env-entry-value>
   </env-entry>
 
   <filter>
@@ -67,20 +67,20 @@
   </filter-mapping>
 
   <filter>
-    <filter-name>XFrameOptionsFilter</filter-name>
-    <filter-class>io.hawt.web.XFrameOptionsFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>XFrameOptionsFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <filter>
     <filter-name>CORSFilter</filter-name>
     <filter-class>io.hawt.web.CORSFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>CORSFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>XFrameOptionsFilter</filter-name>
+    <filter-class>io.hawt.web.XFrameOptionsFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>XFrameOptionsFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
@@ -156,7 +156,6 @@
     <url-pattern>/pod/*</url-pattern>
   </servlet-mapping>
 
-
   <servlet>
     <servlet-name>file-upload</servlet-name>
     <servlet-class>io.hawt.web.UploadServlet</servlet-class>
@@ -213,16 +212,6 @@
   </servlet-mapping>
 
   <servlet>
-    <servlet-name>gitServlet</servlet-name>
-    <servlet-class>io.hawt.web.GitServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>gitServlet</servlet-name>
-    <url-pattern>/git/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
     <servlet-name>maven-source</servlet-name>
     <servlet-class>io.hawt.web.JavaDocServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
@@ -236,15 +225,9 @@
     <listener-class>io.hawt.HawtioContextListener</listener-class>
   </listener>
   <listener>
-      <listener-class>io.hawt.git.GitContextListener</listener-class>
-  </listener>
-  <listener>
     <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
   </listener>
-  <context-param>
-    <param-name>hawtio.config.dir</param-name>
-    <param-value>${hawtio.config.dir:}</param-value>
-  </context-param>
+
   <error-page>
     <error-code>404</error-code>
     <location>/index.html</location>
