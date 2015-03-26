@@ -18,14 +18,8 @@
 
         <p>
           If you are using <a href="http://fabric8.io/">Fabric8</a>, <a href="http://www.jboss.org/products/fuse">JBoss Fuse</a>, or <a href="http://activemq.apache.org">Apache ActiveMQ</a>;
-          then a jolokia agent is included by default. Or you can always just deploy hawtio inside the process (which includes the jolokia agent).
-        </p>
-
-        <p>
-          <strong>Use Proxy</strong>:
-          hawtio is running in your browser; usually due to CORS; you cannot open a different host or port from your browser (due to browse security restrictions);
-          so we have to use a proxy servlet inside the hawtio web app to proxy all requests for a different jolokia server - so we can communicate with a different jolokia agent.
-          If you use the hawtio Chrome Extension this isn’t required; since Chrome Extensions are allowed to connect to any host/port.
+          then a jolokia agent is included by default (use context path of jolokia agent, usually <code>jolokia</code>). Or you can always just deploy hawtio inside the process
+          (which includes the jolokia agent, use Jolokia servlet mapping inside hawtio context path, usually <code>hawtio/jolokia</code>).
         </p>
 
         <p ng-show="hasLocalMBean()">

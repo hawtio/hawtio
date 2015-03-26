@@ -1316,7 +1316,7 @@ module Core {
     var url = (options.view || '#/welcome') + '?con=' + options.name;
     url = url.replace(/\?/g, "&");
     url = url.replace(/&/, "?");
-    var newWindow = $window.open(url);
+    var newWindow = $window.open(url, 'wnd');
     newWindow['con'] = options.name;
     $window['passUserDetails'] = {
       username: options.userName,

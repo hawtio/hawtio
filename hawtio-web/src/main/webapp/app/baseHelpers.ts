@@ -223,9 +223,7 @@ module Core {
         answer = UrlHelpers.join(<string>answer, <string>options.path);
       }
     }
-    if (options.useProxy) {
-      answer = UrlHelpers.join('proxy', <string>answer);
-    }
+    answer = UrlHelpers.join('proxy', <string>answer);
     Logger.get("Core").debug("Using URL: ", answer);
     return answer;
   }

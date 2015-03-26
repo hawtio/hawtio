@@ -60,14 +60,16 @@ module Core {
 
         $.ajaxSetup({
           beforeSend: (xhr) => {
-            xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(<string>userDetails.username, <string>userDetails.password));
+            xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(<string>username, <string>password));
           }
         });
 
         var loginUrl = jolokiaUrl.replace("jolokia", "auth/login/");
         $.ajax(loginUrl, {
           type: "POST",
+          async: false, // ugly ugly ugly and soon, deprecated...
           success: (response) => {
+            jolokiaStatus.xhr = null;
             if (response['credentials'] || response['principals']) {
               userDetails.loginDetails = {
                 'credentials': response['credentials'],
@@ -83,6 +85,7 @@ module Core {
             Core.executePostLoginTasks();
           },
           error: (xhr, textStatus, error) => {
+            jolokiaStatus.xhr = xhr;
             // silently ignore, we could be using the proxy
             Core.executePostLoginTasks();
           }

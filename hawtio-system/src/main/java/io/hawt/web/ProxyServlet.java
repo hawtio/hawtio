@@ -3,13 +3,16 @@ package io.hawt.web;
 import io.hawt.util.Strings;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.*;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.AbortableHttpRequest;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
@@ -23,6 +26,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -92,6 +96,7 @@ public class ProxyServlet extends HttpServlet {
     protected boolean doSendUrlFragment = true;
 
     protected CloseableHttpClient proxyClient;
+    private CookieStore cookieStore;
 
     @Override
     public String getServletInfo() {
@@ -112,7 +117,10 @@ public class ProxyServlet extends HttpServlet {
             this.doLog = Boolean.parseBoolean(doLogStr);
         }
 
-        HttpClientBuilder httpClientBuilder = HttpClients.custom().useSystemProperties();
+        cookieStore = new BasicCookieStore();
+        HttpClientBuilder httpClientBuilder = HttpClients.custom()
+                .setDefaultCookieStore(cookieStore)
+                .useSystemProperties();
 
         if (System.getProperty(PROXY_ACCEPT_SELF_SIGNED_CERTS) != null) {
             acceptSelfSignedCerts = Boolean.parseBoolean(System.getProperty(PROXY_ACCEPT_SELF_SIGNED_CERTS));
@@ -198,6 +206,17 @@ public class ProxyServlet extends HttpServlet {
             proxyRequest.setHeader("Authorization", "Basic " + encodedCreds);
         }
 
+        String proxyAuth = proxyRequest.getFirstHeader("Authorization").getValue();
+        // if remote jolokia credentials have changed, we have to clear session cookies in http-client
+        HttpSession session = servletRequest.getSession();
+        if (session != null) {
+            String previousProxyCredentials = (String) session.getAttribute("proxy-credentials");
+            if (previousProxyCredentials != null && !previousProxyCredentials.equals(proxyAuth)) {
+                cookieStore.clear();
+            }
+            session.setAttribute("proxy-credentials", proxyAuth);
+        }
+
         setXForwardedForHeader(servletRequest, proxyRequest);
 
         HttpResponse proxyResponse = null;
@@ -211,6 +230,10 @@ public class ProxyServlet extends HttpServlet {
 
             // Process the response
             int statusCode = proxyResponse.getStatusLine().getStatusCode();
+
+            if (statusCode == 401 || statusCode == 403) {
+                throw new SecurityException("Authentication Failed on remote server " + proxyRequestUri);
+            }
 
             if (doResponseRedirectOrNotModifiedLogic(servletRequest, servletResponse, proxyResponse, statusCode, targetUriObj)) {
                 //the response is already "committed" now without any body to send
@@ -309,7 +332,7 @@ public class ProxyServlet extends HttpServlet {
         hopByHopHeaders = new HeaderGroup();
         String[] headers = new String[]{
                 "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization",
-                "TE", "Trailers", "Transfer-Encoding", "Upgrade"};
+                "TE", "Trailers", "Transfer-Encoding", "Upgrade", "Cookie", "Set-Cookie"};
         for (String header : headers) {
             hopByHopHeaders.addHeader(new BasicHeader(header, null));
         }
