@@ -4197,7 +4197,9 @@ img.nodeIcon:hover {
 }
 
 .service-list i:before,
-.service-list img {
+.service-list img,
+.dashboard-service-list i:before,
+.dashboard-service-list img{
   height: 16px;
   width: auto;
   font-size: 16px;
