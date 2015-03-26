@@ -1,15 +1,15 @@
 package io.hawt.web.tomcat;
 
-import java.lang.management.ManagementFactory;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-
 import io.hawt.web.AuthenticationConfiguration;
 import io.hawt.web.AuthenticationContainerDiscovery;
 import io.hawt.web.AuthenticationHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
 
 /**
  * To use Apache Tomcat using its conf/tomcat-users.xml for authentication.
@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 public class TomcatAuthenticationContainerDiscovery implements AuthenticationContainerDiscovery {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(TomcatAuthenticationContainerDiscovery.class);
+
+    private static final transient String AUTHENTICATION_CONTAINER_TOMCAT_DIGEST_ALGORITHM = "hawtio.authenticationContainerTomcatDigestAlgorithm";
 
     @Override
     public String getContainerName() {
@@ -42,7 +44,7 @@ public class TomcatAuthenticationContainerDiscovery implements AuthenticationCon
             LOG.debug("Checked for {} in JMX for {} -> {}", getContainerName(), isTomcat);
 
             if (isTomcat) {
-                configuration.setConfiguration(new TomcatLoginContextConfiguration());
+                configuration.setConfiguration(new TomcatLoginContextConfiguration(System.getProperty(AUTHENTICATION_CONTAINER_TOMCAT_DIGEST_ALGORITHM, "NONE").toUpperCase()));
                 configuration.setRolePrincipalClasses(TomcatPrincipal.class.getName());
             }
             return isTomcat;
