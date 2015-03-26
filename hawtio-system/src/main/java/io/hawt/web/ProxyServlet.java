@@ -206,15 +206,18 @@ public class ProxyServlet extends HttpServlet {
             proxyRequest.setHeader("Authorization", "Basic " + encodedCreds);
         }
 
-        String proxyAuth = proxyRequest.getFirstHeader("Authorization").getValue();
-        // if remote jolokia credentials have changed, we have to clear session cookies in http-client
-        HttpSession session = servletRequest.getSession();
-        if (session != null) {
-            String previousProxyCredentials = (String) session.getAttribute("proxy-credentials");
-            if (previousProxyCredentials != null && !previousProxyCredentials.equals(proxyAuth)) {
-                cookieStore.clear();
+        Header proxyAuthHeader = proxyRequest.getFirstHeader("Authorization");
+        if (proxyAuthHeader != null) {
+            String proxyAuth = proxyAuthHeader.getValue();
+            // if remote jolokia credentials have changed, we have to clear session cookies in http-client
+            HttpSession session = servletRequest.getSession();
+            if (session != null) {
+                String previousProxyCredentials = (String) session.getAttribute("proxy-credentials");
+                if (previousProxyCredentials != null && !previousProxyCredentials.equals(proxyAuth)) {
+                    cookieStore.clear();
+                }
+                session.setAttribute("proxy-credentials", proxyAuth);
             }
-            session.setAttribute("proxy-credentials", proxyAuth);
         }
 
         setXForwardedForHeader(servletRequest, proxyRequest);
