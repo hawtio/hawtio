@@ -45,6 +45,7 @@ module Themes {
       label: 'Example',
       setFunc: (branding) => {
         branding.appName = 'Example';
+        branding.appLogo = '';
         branding.logoOnly = false;
         branding.welcomePageUrl = 'app/themes/doc/welcome_example.md'; 
         return branding;
