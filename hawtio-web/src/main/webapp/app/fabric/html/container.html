@@ -1,6 +1,6 @@
 <div class="ng-cloak" ng-controller="Fabric.ContainerController">
 
-  <div ng-show="inDashboard">
+  <div ng-show="inDashboard"  style="display: none">
     <div class="controller-section-widget">
       <div class="row-fluid container-dashboard-controls">
         <div class="pull-left">
@@ -47,7 +47,7 @@
       Please wait, loading container details...
     </div>
 
-    <div ng-hide="loading">
+    <div ng-hide="loading" style="display: none">
 
       <div class="fabric-page-header row-fluid">
         <!-- TODO - rework this header in the css -->
@@ -459,9 +459,9 @@
     </div>
   </div>
 
-  <div ng-include="'app/fabric/html/connectToContainerDialog.html'"></div>
+  <div ng-include="'app/fabric/html/connectToContainerDialog.html'" style="display: none"></div>
 
-  <div hawtio-confirm-dialog="deleteContainerDialog.show" ok-button-text="Yes" cancel-button-text="No" on-ok="delete()">
+  <div hawtio-confirm-dialog="deleteContainerDialog.show" ok-button-text="Yes" cancel-button-text="No" on-ok="delete()" style="display: none">
     <div class="dialog-body">
       <p>Delete this container?</p>
       <p>On clicking yes this container will be stopped and it's installation directory will be cleaned up.</p>
@@ -470,7 +470,7 @@
 
   <div hawtio-confirm-dialog="deleteProfileDialog.show"
        ok-button-text="Remove"
-       on-ok="deleteProfiles()">
+       on-ok="deleteProfiles()" style="display: none">
     <div class="dialog-body">
       <p>You are about to remove
         <ng-pluralize count="selectedProfiles.length"
@@ -482,7 +482,7 @@
     </div>
   </div>
 
-  <div modal="addProfileDialog.show">
+  <div modal="addProfileDialog.show" style="display: none">
     <form name="addProfile" class="form-horizontal no-bottom-margin" ng-submit="addProfiles()">
       <div class="modal-header"><h4>Add profiles to container: {{row.id}}</h4></div>
       <div id="dialog-body" class="modal-body">
