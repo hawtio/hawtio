@@ -22,11 +22,15 @@ module Core {
       var username:String = null;
       var password:String = null;
 
+      // found will be true, when we are connecting to remote jolokia
+      // in this case, there are two different credentials - one used to connect to host hawtio (which may not require authentication)
+      // and second - to connect to remote jolokia via /jvm/connect
       var found = false;
 
       // search for passed credentials when connecting to remote server
       try {
         if (window.opener && "passUserDetails" in window.opener) {
+          // these are credentials used to connect to remote jolokia
           username = window.opener["passUserDetails"].username;
           password = window.opener["passUserDetails"].password;
           found = true;
@@ -51,6 +55,12 @@ module Core {
           password = search["_pwd"];
           if (angular.isArray(username)) username = username[0];
           if (angular.isArray(password)) password = password[0];
+        }
+      } else {
+        // we have case when passed (from window.opener) credentials will be used for Jolokia access
+        userDetails.remoteJolokiaUserDetails = {
+          username: username,
+          password: password
         }
       }
 
@@ -98,6 +108,7 @@ module Core {
           userDetails.username = null;
           userDetails.password = null;
           delete userDetails.loginDetails;
+          delete userDetails.remoteJolokiaUserDetails;
           if (found) {
             delete window.opener["passUserDetails"];
           }

@@ -256,8 +256,8 @@ module Fabric {
         return;
       }
       var userDetails = <Core.UserDetails> Core.injector.get('userDetails');
-      $scope.connect.userName = userDetails.username;
-      $scope.connect.password = userDetails.password;
+      $scope.connect.userName = <any>(userDetails.remoteJolokiaUserDetails && userDetails.remoteJolokiaUserDetails.username ? userDetails.remoteJolokiaUserDetails.username : userDetails.username);
+      $scope.connect.password = <any>(userDetails.remoteJolokiaUserDetails && userDetails.remoteJolokiaUserDetails.password ? userDetails.remoteJolokiaUserDetails.password : userDetails.password);
       $scope.connect.container = container;
       $scope.connect.view = view || "#/openlogs";
 

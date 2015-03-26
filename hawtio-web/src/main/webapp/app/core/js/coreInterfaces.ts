@@ -2,13 +2,16 @@
 /// <reference path="../../helpers/js/stringHelpers.ts"/>
 module Core {
 
+  export interface UserCredentials {
+    username: String
+    password: String
+  }
   /**
    * Typescript interface that represents the UserDetails service
    */
-  export interface UserDetails {
-    username: String
-    password: String
+  export interface UserDetails extends UserCredentials {
     loginDetails?: Object
+    remoteJolokiaUserDetails?: UserCredentials
   }
 
   /**
