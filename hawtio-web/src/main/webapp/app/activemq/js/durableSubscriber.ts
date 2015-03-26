@@ -89,7 +89,7 @@ module ActiveMQ {
             $scope.showSubscriberDialog.close();
             Core.notification('success', "Deleted durable subscriber");
             loadTable();
-            $scope.gridOptions.selectedItems = [];
+            $scope.gridOptions.selectedItems.splice(0, $scope.gridOptions.selectedItems.length);
         }));
       };
 
