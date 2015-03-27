@@ -16,3 +16,9 @@ test:
   override:
     - mvn verify
 
+general:
+  artifacts:
+    - '**/target/*.jar'
+    - '**/target/*.war'
+    - '**/target/*features.xml'
+
