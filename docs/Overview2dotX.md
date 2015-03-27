@@ -23,19 +23,20 @@ Here's a rundown of the current hawtio 2.x components:
 #### javascript plugins
 * [hawtio-core](https://github.com/hawtio/hawtio-core) - Tiny core module that contains the logging and plugin loader code.  It also contains 1 angular module that initializes some stub services that can be overridden by other plugins.  Responsible for loading plugins and bootstrapping a hawtio app
 * [hawtio-core-navigation](https://github.com/hawtio/hawtio-core-navigation) - Navigation bar, also can handle sub-tabs.  Provides a nice API that allows you to define your routes and tabs in one block, or you can define your routes and tabs separately
-* [hawtio-extension-service](https://github.com/hawtio/hawtio-extension-service) - A service and directive that can be used to attach arbitrary text or HTML to a view
 
 
 #### typescript plugins
 * [hawtio-core-dts](https://github.com/hawtio/hawtio-core-dts) - A repository of typescript definition files for third-party scripts as well as any javascript plugins such as hawtio-core or hawtio-core-navigation.  Not actually a plugin, but is a dependency for any typescript plugin
 * [hawtio-core-perspective](https://github.com/hawtio/hawtio-core-perspective) - Perspective selector, adds itself to the navigation bar and provides an API to plugins to configure perspectives.
-* [hawtio-utilities](https://github.com/hawtio/hawtio-utilities) - A collection of helper functions used throughout hawtio, most plugins will probably depend on this module.
+* [hawtio-utilities](https://github.com/hawtio/hawtio-utilities) - A collection of helper functions used throughout hawtio, most plugins will probably depend on this module
 * [hawtio-ui](https://github.com/hawtio/hawtio-ui) - The UI widgets from hawtio 1.x, including hawtio-simple-table and the editor plugin
 * [hawtio-forms](https://github.com/hawtio/hawtio-forms) - The forms plugin from hawtio 1.x, used to create forms from a simple schema
-* [hawtio-preferences](https://github.com/hawtio/hawtio-preferences) - A plugin for the preferences panel, implements the preferences registry and can add a 'Preferences' link to the main console
-* [hawtio-jmx](https://github.com/hawtio/hawtio-jmx) - The JMX and JVM plugins from hawtio 1.x as well as the tree plugin.  Now contains all jolokia initialization code as well as the Core.Workspace object service from hawtio 1.x.  Will likely be a dependency for any plugin that talks to jolokia.
-* [hawtio-wiki](https://github.com/hawtio/hawtio-wiki) - The wiki, camel, activemq, maven and osgi plugins
-* [hawtio-kubernetes](https://github.com/hawtio/hawtio-kubernetes) - The kubernetes, service and docker image repository plugins
+* [hawtio-jmx](https://github.com/hawtio/hawtio-jmx) - The JMX and JVM plugins from hawtio 1.x as well as the tree plugin.  Now contains all jolokia initialization code as well as the Core.Workspace object service from hawtio 1.x.  Will likely be a dependency for any plugin that talks to jolokia
+* [hawtio-oauth](https://github.com/hawtio/hawtio-oauth) - Provides authentication for OAuth using [OpenShift](http://openshift.github.io/) and [KeyCloak](http://keycloak.jboss.org/)
+* [hawtio-dashboard](https://github.com/hawtio/hawtio-dashboard) - Provides a dashboard capability; letting any angular pages be composed into a dashboard
+* [hawtio-wiki](https://github.com/hawtio/hawtio-wiki) - Provides a git based wiki
+* [hawtio-kubernetes](https://github.com/hawtio/hawtio-kubernetes) - The plugin for working with [Kubernetes](http://kubernetes.io/)
+* [hawtio-forge](https://github.com/hawtio/hawtio-forge) - The [JBoss Forge](http://forge.jboss.org/) plugin for hawtio so it can view and create projects and execute forge commands
 
 #### slush generators
 * [slush-hawtio-javascript](https://github.com/hawtio/slush-hawtio-javascript) - Generates a starter jvascript plugin project that depends on hawtio-core and hawtio-core-navigation with some example plugin code.
@@ -110,6 +111,14 @@ To get going just start the build:
 
 which will build the typescript (if applicable) and start up a web server listening on localhost:2772.  Open this in your browser and you should see a nav bar with 'Example' in it, which is the example plugin.
 
+### IDE Tips
+
+If you use [Intellij](https://www.jetbrains.com/idea/) or [WebStorm](https://www.jetbrains.com/webstorm/) as your IDE for working on the project then you get nice smart completion, refactoring and navigation between function calls and their source etc.
+
+One thing that really helps when navigating from a function call to its implementation source is to exclude the **d.ts** folder of your project. This folder contains the generated TypeScript API definition files; so there's not much value in there from a navigation/completeness perspective when noodling the code.
+
+So open File -> Project Structure then in the Modules tab select the d.ts folder and click the **Excluded** button. Then if you alt-click on a function call it will take you directly to the TypeScript/JavaScript source code of the implementation (and not prompt you to choose between the .ts and .d.ts files)
+
 ### FAQ
 
 *My typescript code fails to compile with missing definitions for 'ng' etc...*
@@ -126,7 +135,9 @@ Yes!
 
 *My plugin needs to talk to some other thing too, how does that happen?*
 
-Easiest thing to do is use a proxy:
+Use [hawtio-node-backend](https://www.npmjs.com/package/hawtio-node-backend) to proxy requests
+
+Or hand-configure a proxy:
 
 * run `npm install --save-dev proxy-middleware`
 * add this code to your gulpfile at the beginning:
@@ -169,6 +180,20 @@ You can just blow away `libs` and run `bower update` to re-install dependencies 
 *A bower dependency I want to install doesn't have `main` configured at all, what do I do?*
 
 Typically for these cases it's best to run `bower install` (don't add `--save`) on the package to get the files, then copy the .js or .css files into your packages `dist` directory, then configure those js and css files in your package's `bower.json` file in the `main` attribute.  That way any package that depends on your code will get the dependent javascript automatically wired into their index.html.
+
+*How do I work on multiple components at once?*
+
+There's a couple options, you can use `bower link` which sets up a soft-link under libs/ to the dependent component.  However this can mess up typescript compilation.
+
+A better option is to soft-link the `dist/hawtio-*.js` (or whatever the built javascript file is) directly.  Then you can `gulp watch` in the dependency and `gulp` in your main project and live reload will kick in whenever you change code in either.  The same approach is handy for .css files.  Then when you `bower update` after releasing the dependency the soft-link will be replaced with the updated file
+
+*How do I enable debug logging at runtime?*
+
+After the page is loaded, open up the javascript console and paste:
+
+```
+localStorage['logLevel'] = angular.toJson(Logger.DEBUG);
+```
 
 
 ### Releasing
