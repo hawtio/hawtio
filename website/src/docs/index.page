@@ -7,7 +7,25 @@ title: read up on hawtio!
   <div class="row">
     <!-- begin column -->
     <div class="col-md-12">
-      <h1>Documentation</h1>
+      <h1>Documentation (2.x)</h1>
+      <dl>
+        <dt>
+          <a href="/overview/index.html">Overview of 2.x</a>
+        </dt>
+        <dd>
+          Hawtio 2.x has been decoupled into separate bower components and uses the latest bootstrap so its really easy to reuse on any project.
+        </dd>
+      </dl>
+    </div>
+    <!-- end column -->
+  </div>
+  <!-- end row -->
+
+  <!-- begin row -->
+  <div class="row">
+    <!-- begin column -->
+    <div class="col-md-12">
+      <h1>Documentation (1.x)</h1>
       <dl>
         <dt>
           <a href="/getstarted/index.html">Getting Started</a>

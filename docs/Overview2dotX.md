@@ -21,11 +21,13 @@ The first bullet point is the key bit, as we can combine bower with wiredep to a
 Here's a rundown of the current hawtio 2.x components:
 
 #### javascript plugins
+
 * [hawtio-core](https://github.com/hawtio/hawtio-core) - Tiny core module that contains the logging and plugin loader code.  It also contains 1 angular module that initializes some stub services that can be overridden by other plugins.  Responsible for loading plugins and bootstrapping a hawtio app
 * [hawtio-core-navigation](https://github.com/hawtio/hawtio-core-navigation) - Navigation bar, also can handle sub-tabs.  Provides a nice API that allows you to define your routes and tabs in one block, or you can define your routes and tabs separately
 
 
 #### typescript plugins
+
 * [hawtio-core-dts](https://github.com/hawtio/hawtio-core-dts) - A repository of typescript definition files for third-party scripts as well as any javascript plugins such as hawtio-core or hawtio-core-navigation.  Not actually a plugin, but is a dependency for any typescript plugin
 * [hawtio-core-perspective](https://github.com/hawtio/hawtio-core-perspective) - Perspective selector, adds itself to the navigation bar and provides an API to plugins to configure perspectives.
 * [hawtio-utilities](https://github.com/hawtio/hawtio-utilities) - A collection of helper functions used throughout hawtio, most plugins will probably depend on this module
@@ -37,6 +39,7 @@ Here's a rundown of the current hawtio 2.x components:
 * [hawtio-wiki](https://github.com/hawtio/hawtio-wiki) - Provides a git based wiki
 * [hawtio-kubernetes](https://github.com/hawtio/hawtio-kubernetes) - The plugin for working with [Kubernetes](http://kubernetes.io/)
 * [hawtio-forge](https://github.com/hawtio/hawtio-forge) - The [JBoss Forge](http://forge.jboss.org/) plugin for hawtio so it can view and create projects and execute forge commands
+
 
 #### slush generators
 * [slush-hawtio-javascript](https://github.com/hawtio/slush-hawtio-javascript) - Generates a starter jvascript plugin project that depends on hawtio-core and hawtio-core-navigation with some example plugin code.
