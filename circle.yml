@@ -7,3 +7,12 @@ branches:
   only:
     - master
 
+dependencies:
+  pre:
+  override:
+    - mvn install
+
+test:
+  override:
+    - mvn verify
+
