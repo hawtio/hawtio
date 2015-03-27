@@ -1,7 +1,4 @@
 
-## Hawtio 2.x
-
-### Overview
 The main goals for 2.x are to update to a more recent AngularJS version as well as Bootstrap and Patternfly.  We also need to enable folks to re-use parts of the console.  Currently in 1.x there's a few options to customize the existing console:
 
 * Hide and arrange tabs via the preferences panel in the console itself
@@ -16,17 +13,17 @@ Hawtio 2.x introduces the possibility of packaging up hawtio plugins as bower co
 
 The first bullet point is the key bit, as we can combine bower with wiredep to automatically wire in plugin js (and css!) files and dependencies into a console's index.html file.  The 2.x plugin loader also still supports discovering plugins via a JSON file or a URL that produces some JSON, so we also still have the possibility of loading plugins on the fly as well.  A console project that pulls in hawtio plugins can also define it's own plugins for some specific functionality.  The assembly project also has greater control over the layout of the navigation and pages.
 
-### Components
+## Components
 
 Here's a rundown of the current hawtio 2.x components:
 
-#### javascript plugins
+### javascript plugins
 
 * [hawtio-core](https://github.com/hawtio/hawtio-core) - Tiny core module that contains the logging and plugin loader code.  It also contains 1 angular module that initializes some stub services that can be overridden by other plugins.  Responsible for loading plugins and bootstrapping a hawtio app
 * [hawtio-core-navigation](https://github.com/hawtio/hawtio-core-navigation) - Navigation bar, also can handle sub-tabs.  Provides a nice API that allows you to define your routes and tabs in one block, or you can define your routes and tabs separately
 
 
-#### typescript plugins
+### typescript plugins
 
 * [hawtio-core-dts](https://github.com/hawtio/hawtio-core-dts) - A repository of typescript definition files for third-party scripts as well as any javascript plugins such as hawtio-core or hawtio-core-navigation.  Not actually a plugin, but is a dependency for any typescript plugin
 * [hawtio-core-perspective](https://github.com/hawtio/hawtio-core-perspective) - Perspective selector, adds itself to the navigation bar and provides an API to plugins to configure perspectives.
@@ -41,14 +38,15 @@ Here's a rundown of the current hawtio 2.x components:
 * [hawtio-forge](https://github.com/hawtio/hawtio-forge) - The [JBoss Forge](http://forge.jboss.org/) plugin for hawtio so it can view and create projects and execute forge commands
 
 
-#### slush generators
+### slush generators
+
 * [slush-hawtio-javascript](https://github.com/hawtio/slush-hawtio-javascript) - Generates a starter jvascript plugin project that depends on hawtio-core and hawtio-core-navigation with some example plugin code.
 * [slush-hawtio-typescript](https://github.com/hawtio/slush-hawtio-typescript) - Generates a starter typescript plugin project, depends on hawtio-utilities, hawtio-core and hawtio-core-navigation.
 
 
-### Getting started
+## Getting started
 
-#### working with existing projects
+### working with existing projects
 
 Git clone any of the above projects and then cd into the folder. 
 
@@ -63,7 +61,7 @@ you are now ready to run the default build with gulp
 
 and you should be able to open a web browser and work on the code and have things rebuild etc.
 
-#### initial setup
+### initial setup
 
 To get started, first off make sure you're running a relatively recent version node/npm.  [Go download it](http://nodejs.org/) and re-install/upgrade if you're not sure.  Make sure you update your npm packages with a `sudo npm update -g`.  Then install a few tools:
 
@@ -71,7 +69,7 @@ To get started, first off make sure you're running a relatively recent version n
 
 If you only want to develop javascript plugins then you don't really need `slush-hawtio-typescript` and `typescript`.
 
-#### first project
+### first project
 
 To create a project, first create a directory:
 
@@ -114,7 +112,7 @@ To get going just start the build:
 
 which will build the typescript (if applicable) and start up a web server listening on localhost:2772.  Open this in your browser and you should see a nav bar with 'Example' in it, which is the example plugin.
 
-### IDE Tips
+## IDE Tips
 
 If you use [Intellij](https://www.jetbrains.com/idea/) or [WebStorm](https://www.jetbrains.com/webstorm/) as your IDE for working on the project then you get nice smart completion, refactoring and navigation between function calls and their source etc.
 
@@ -122,7 +120,7 @@ One thing that really helps when navigating from a function call to its implemen
 
 So open File -> Project Structure then in the Modules tab select the d.ts folder and click the **Excluded** button. Then if you alt-click on a function call it will take you directly to the TypeScript/JavaScript source code of the implementation (and not prompt you to choose between the .ts and .d.ts files)
 
-### FAQ
+## FAQ
 
 *My typescript code fails to compile with missing definitions for 'ng' etc...*
 
@@ -199,7 +197,7 @@ localStorage['logLevel'] = angular.toJson(Logger.DEBUG);
 ```
 
 
-### Releasing
+## Releasing
 
 It's easy!  First make sure you have a README, and a changelog would be good.  Make sure you have a sane version in your bower.json file.  I'd also recommend updating package.json so it's consistent.  Since this is hawtio 2.x stuff all plugins should start at version 2.0.0.  Make sure you've built your plugin and check in any changes.  Then it's time to start the long winded release process of publishing a bower plugin:
 
