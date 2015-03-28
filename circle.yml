@@ -22,3 +22,14 @@ general:
     - '**/target/*.war'
     - '**/target/*features.xml'
 
+deployment:
+  website:
+    branch: master
+    owner: hawtio
+    commands:
+      - git config --global user.email "circleci@mail.com"
+      - git config --global user.name "circleci"
+      - mvn install
+      - cd website
+      - mvn clean scalate:sitegen scalate:deploy
+
