@@ -21,6 +21,13 @@
 </tr>
 </table>
 
+# Videos (2.x)
+
+The following videos are in the [hawtio video album](https://vimeo.com/album/3324251):
+
+* [create a hawtio pluing in 3 minutes](https://vimeo.com/123423650)
+* [add hawtio forms to your plugin](https://vimeo.com/123441243) using [hawtio-forms](https://github.com/hawtio/hawtio-forms)
+
 # Demos (1.x)
 
 * <a href="https://vimeo.com/album/2635012" title="a library of demo videos using hawtio with JBoss Fuse">various demos of using hawtio, ActiveMQ and Camel inside JBoss Fuse</a> by [James Strachan](http://macstrac.blogspot.co.uk/). JBoss Fuse 6.1 or later uses hawtio for its management console; so all these demos are really hawtio demos (in terms of the console).
