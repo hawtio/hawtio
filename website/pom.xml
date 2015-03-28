@@ -258,7 +258,7 @@
           <targetDirectory>${project.build.directory}/site</targetDirectory>
 -->
           <remoteServerId>github-project-site</remoteServerId>
-          <remoteServerUrl>gitsite:git@github.com/hawtio/hawtio.git</remoteServerUrl>
+          <remoteServerUrl>git@github.com:hawtio/hawtio.git</remoteServerUrl>
         </configuration>
         <executions>
           <execution>
@@ -395,7 +395,7 @@
 
     <site>
       <id>github-project-site</id>
-      <url>gitsite:git@github.com/hawtio/hawtio.git</url>
+      <url>git@github.com:hawtio/hawtio.git</url>
     </site>
   </distributionManagement>
 
