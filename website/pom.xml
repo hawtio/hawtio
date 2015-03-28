@@ -15,6 +15,7 @@
   <description>The hawt.io Website and Documentation</description>
 
   <properties>
+    <site-url>ssh:git@github.com:hawtio/hawtio.git</site-url>
     <jettyPort>8000</jettyPort>
 
     <!-- lets use the latest greatest! :) -->
@@ -258,7 +259,7 @@
           <targetDirectory>${project.build.directory}/site</targetDirectory>
 -->
           <remoteServerId>github-project-site</remoteServerId>
-          <remoteServerUrl>git@github.com:hawtio/hawtio.git</remoteServerUrl>
+          <remoteServerUrl>${site-url}</remoteServerUrl>
         </configuration>
         <executions>
           <execution>
@@ -395,7 +396,7 @@
 
     <site>
       <id>github-project-site</id>
-      <url>git@github.com:hawtio/hawtio.git</url>
+      <url>${site-url}</url>
     </site>
   </distributionManagement>
 
