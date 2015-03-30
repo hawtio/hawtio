@@ -8,7 +8,6 @@ gulp.task('deploy', function() {
   return gulp.src(['target/sitegen/**', 'target/sitegen/**/*.*', 'target/sitegen/*.*'], { base: 'target/sitegen' })
     .pipe(plugins.debug({title: 'deploy'}))
     .pipe(plugins.ghPages({
-      push: false,
       message: "[ci skip] Update site"                     
     }));
 });
