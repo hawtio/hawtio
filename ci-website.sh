@@ -14,5 +14,6 @@ echo ===========================================================================
 
 cd website && \
 mvn clean scalate:sitegen && \
+echo 'hawt.io' > target/sitegen/CNAME \
 npm install && \
 gulp
