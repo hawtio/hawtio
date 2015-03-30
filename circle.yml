@@ -14,13 +14,13 @@ dependencies:
 
 test:
   override:
-    - mvn verify
+    - echo true
 
 general:
   artifacts:
     - '**/target/*.jar'
     - '**/target/*.war'
-    - '**/target/*features.xml'
+    - '**/target/classes/features.xml'
 
 deployment:
   website:
@@ -29,6 +29,5 @@ deployment:
     commands:
       - git config --global user.email "circleci@mail.com"
       - git config --global user.name "CircleCI"
-      - curl https://dl.dropboxusercontent.com/content_link/1IyD9rpPW75QIaJ1b7COrBsIQ1QjskPXDsar2ozXG4TTzIRLjzEZxv8lYYFVL9vU > ~/.m2/settings.xml
-      - cd website && mvn clean scalate:sitegen scalate:deploy
+      - ./ci-website.sh
 
