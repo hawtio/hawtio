@@ -381,9 +381,7 @@ var Core;
                 answer = UrlHelpers.join(answer, options.path);
             }
         }
-        if (options.useProxy) {
-            answer = UrlHelpers.join('proxy', answer);
-        }
+        answer = UrlHelpers.join('proxy', answer);
         Logger.get("Core").debug("Using URL: ", answer);
         return answer;
     }
@@ -6598,8 +6596,8 @@ var Fabric;
                 return;
             }
             var userDetails = Core.injector.get('userDetails');
-            $scope.connect.userName = userDetails.username;
-            $scope.connect.password = userDetails.password;
+            $scope.connect.userName = (userDetails.remoteJolokiaUserDetails && userDetails.remoteJolokiaUserDetails.username ? userDetails.remoteJolokiaUserDetails.username : userDetails.username);
+            $scope.connect.password = (userDetails.remoteJolokiaUserDetails && userDetails.remoteJolokiaUserDetails.password ? userDetails.remoteJolokiaUserDetails.password : userDetails.password);
             $scope.connect.container = container;
             $scope.connect.view = view || "#/openlogs";
             var alwaysPrompt = localStorage['fabricAlwaysPrompt'];
@@ -6610,18 +6608,37 @@ var Fabric;
                 $scope.connect.onOK();
             }
         };
+        $scope.deletePending = {};
+        $scope.deleteContainer = function () {
+            if ($scope.selectedContainers.all(function (c) {
+                return !$scope.deletePending[c.id];
+            })) {
+                $scope.confirmDeleteDialog.open();
+            }
+        };
+        $scope.mayDelete = function () {
+            return $scope.selectedContainers.length > 0 && $scope.selectedContainers.all(function (c) {
+                return !$scope.deletePending[c.id];
+            });
+        };
         $scope.confirmDeleteDialog = {
             dialog: new UI.Dialog(),
             onOk: function () {
                 $scope.confirmDeleteDialog.dialog.close();
                 if (angular.isDefined($scope.containerId)) {
+                    $scope.deletePending[$scope.containerId] = true;
                     Core.unregister(jolokia, $scope);
                     $location.path('/fabric/containers');
-                    ContainerHelpers.doDeleteContainer($scope, jolokia, $scope.containerId);
+                    ContainerHelpers.doDeleteContainer($scope, jolokia, $scope.containerId, function () {
+                        delete $scope.deletePending[$scope.containerId];
+                    });
                 }
                 else if (angular.isDefined($scope.selectedContainers)) {
                     $scope.selectedContainers.each(function (c) {
-                        ContainerHelpers.doDeleteContainer($scope, jolokia, c.id);
+                        $scope.deletePending[c.id] = true;
+                        ContainerHelpers.doDeleteContainer($scope, jolokia, c.id, function () {
+                            delete $scope.deletePending[c.id];
+                        });
                     });
                 }
                 else {
@@ -6757,14 +6774,18 @@ var Fabric;
         return path;
     }
     Fabric.profileLink = profileLink;
-    function containerCountBadgeStyle(min, count) {
-        if (min) {
-            if (!count) {
-                return "badge-important";
-            }
-            else {
-                return min <= count ? "badge-success" : "badge-warning";
-            }
+    function containerCountBadgeStyle(min, max, count) {
+        if (!max || max == -1) {
+            max = Number.MAX_VALUE;
+        }
+        if (!min) {
+            min = 0;
+        }
+        if (!count) {
+            return "badge-important";
+        }
+        else {
+            return min <= count && count <= max ? "badge-success" : "badge-warning";
         }
         return "";
     }
@@ -8480,7 +8501,7 @@ var ActiveMQ;
                 $scope.showSubscriberDialog.close();
                 Core.notification('success', "Deleted durable subscriber");
                 loadTable();
-                $scope.gridOptions.selectedItems = [];
+                $scope.gridOptions.selectedItems.splice(0, $scope.gridOptions.selectedItems.length);
             }));
         };
         $scope.openSubscriberDialog = function (subscriber) {
@@ -16781,7 +16802,7 @@ var Core;
             return userDetails.username !== null && userDetails.username !== 'public';
         };
         $scope.showLogout = function () {
-            return $scope.loggedIn() && angular.isDefined(userDetails.loginDetails);
+            return $scope.loggedIn();
         };
         $scope.logout = function () {
             $scope.confirmLogout = true;
@@ -17229,6 +17250,7 @@ var Themes;
             label: 'Example',
             setFunc: function (branding) {
                 branding.appName = 'Example';
+                branding.appLogo = '';
                 branding.logoOnly = false;
                 branding.welcomePageUrl = 'app/themes/doc/welcome_example.md';
                 return branding;
@@ -18044,18 +18066,26 @@ var Core;
                         password = password[0];
                 }
             }
+            else {
+                userDetails.remoteJolokiaUserDetails = {
+                    username: username,
+                    password: password
+                };
+            }
             if (username && password) {
                 userDetails.username = username;
                 userDetails.password = password;
                 $.ajaxSetup({
                     beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(userDetails.username, userDetails.password));
+                        xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(username, password));
                     }
                 });
                 var loginUrl = jolokiaUrl.replace("jolokia", "auth/login/");
                 $.ajax(loginUrl, {
                     type: "POST",
+                    async: false,
                     success: function (response) {
+                        jolokiaStatus.xhr = null;
                         if (response['credentials'] || response['principals']) {
                             userDetails.loginDetails = {
                                 'credentials': response['credentials'],
@@ -18071,6 +18101,7 @@ var Core;
                         Core.executePostLoginTasks();
                     },
                     error: function (xhr, textStatus, error) {
+                        jolokiaStatus.xhr = xhr;
                         Core.executePostLoginTasks();
                     }
                 });
@@ -18080,6 +18111,7 @@ var Core;
                     userDetails.username = null;
                     userDetails.password = null;
                     delete userDetails.loginDetails;
+                    delete userDetails.remoteJolokiaUserDetails;
                     if (found) {
                         delete window.opener["passUserDetails"];
                     }
@@ -24961,7 +24993,8 @@ var Fabric;
                         });
                         var count = Object.values(profile.containers).length;
                         var required = profile.requirements.minimumInstances || 0;
-                        profile.requireStyle = Fabric.containerCountBadgeStyle(required, count);
+                        var max = profile.requirements.maximumInstances || -1;
+                        profile.requireStyle = Fabric.containerCountBadgeStyle(required, max, count);
                         profile.count = count;
                         profile.requiredToolTip = "this profile requires " + Core.maybePlural(required, "container") + " to be running but is currently running " + Core.maybePlural(count, "container");
                         if (required > count) {
@@ -25733,6 +25766,7 @@ var Fabric;
                 angular.forEach($scope.requirements.profileRequirements, function (profileRequirement) {
                     var id = profileRequirement.profile;
                     var min = profileRequirement.minimumInstances;
+                    var max = profileRequirement.maximumInstances;
                     if (id) {
                         var profile = answer.find(function (p) { return (p.id === id); });
                         function requireStyle() {
@@ -25740,7 +25774,7 @@ var Fabric;
                             if (profile) {
                                 count = profile['count'];
                             }
-                            return Fabric.containerCountBadgeStyle(min, count);
+                            return Fabric.containerCountBadgeStyle(min, max, count);
                         }
                         if (profile) {
                             profile["requirements"] = profileRequirement;
@@ -34341,11 +34375,9 @@ var JVM;
                 path: 'jolokia',
                 port: 8181,
                 userName: '',
-                password: '',
-                useProxy: !$scope.disableProxy
+                password: ''
             });
         }
-        ;
         $scope.forms = {};
         var hasMBeans = workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length;
         $scope.disableProxy = !hasMBeans || Core.isChromeApp();
@@ -34406,13 +34438,6 @@ var JVM;
                 password: {
                     type: "password",
                     tooltip: "The password to be used when connecting to Jolokia"
-                },
-                useProxy: {
-                    type: "java.lang.Boolean",
-                    tooltip: "Whether or not we should use a proxy. See more information in the panel to the left.",
-                    "control-attributes": {
-                        "ng-hide": "disableProxy"
-                    }
                 }
             }
         };
@@ -48962,6 +48987,18 @@ var Wiki;
                     $element.bind('DOMNodeInserted', onEventInserted);
                 }
                 $element.bind('DOMNodeInserted', onEventInserted);
+            }
+        };
+    }]);
+    Wiki._module.directive('wikiFixed', ["$timeout", function ($timeout) {
+        return {
+            restrict: "C",
+            link: function ($scope, $element, $attr) {
+                $timeout(function () {
+                    var wikiLinks = $(".logbar");
+                    var top = (wikiLinks.height() + 8) + "px";
+                    $element.css({ "margin-top": top });
+                }, 0, false);
             }
         };
     }]);

@@ -264,7 +264,7 @@ users to password and roles.
 
 By default this mapping is:
 
-    admin=admin,admin,viewer
+    admin=admin123,admin,viewer
 
 However `hawtio.authenticationEnabled` is disabled (`false`) by default. So in order to run hawtio using Jetty Maven plugin with authentication enabled, you can either
 change this property in `hawtio-web/pom.xml`, or simply run:

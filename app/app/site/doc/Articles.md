@@ -1,4 +1,34 @@
-# Demos
+# Demos (2.x)
+
+<table class="table table-striped">
+<tr>
+<th>Demo</th><th>Source</th><th>Description</th>
+</tr>
+<tr>
+<td><a href="http://dashboard.hawt.io/">dashboard.hawt.io</a></td>
+<td><a href="https://github.com/hawtio/hawtio-dashboard">hawtio-dashboard</a></td>
+<td>Provides a dashboard capability; letting any angular pages be composed into a dashboard</td>
+</tr>
+<tr>
+<td><a href="http://forms.hawt.io/">forms.hawt.io</a></td>
+<td><a href="https://github.com/hawtio/hawtio-forms">hawtio-forms</a></td>
+<td>The forms plugin from hawtio 1.x, used to create forms from a simple schema</td>
+</tr>
+<tr>
+<td><a href="http://ui.hawt.io/">ui.hawt.io</a></td>
+<td><a href="https://github.com/hawtio/hawtio-ui">hawtio-ui</a></td>
+<td>The UI widgets from hawtio 1.x, including hawtio-simple-table and the editor plugin</td>
+</tr>
+</table>
+
+# Videos (2.x)
+
+The following videos are in the [hawtio video album](https://vimeo.com/album/3324251):
+
+* [create a hawtio pluing in 3 minutes](https://vimeo.com/123423650)
+* [add hawtio forms to your plugin](https://vimeo.com/123441243) using [hawtio-forms](https://github.com/hawtio/hawtio-forms)
+
+# Demos (1.x)
 
 * <a href="https://vimeo.com/album/2635012" title="a library of demo videos using hawtio with JBoss Fuse">various demos of using hawtio, ActiveMQ and Camel inside JBoss Fuse</a> by [James Strachan](http://macstrac.blogspot.co.uk/). JBoss Fuse 6.1 or later uses hawtio for its management console; so all these demos are really hawtio demos (in terms of the console).
 * <a href="http://vimeo.com/80625940" title="Demo of Fuse 6.1 with Apache Camel and hawtio on OpenShift">Demo of Fuse 6.1 with Apache Camel and hawtio on OpenShift</a> by [James Strachan](http://macstrac.blogspot.co.uk/) showing how to get started using <a href="http://www.jboss.org/products/fuse">JBoss Fuse</a> 6.1 Early Access release on OpenShift for creating integration solutions based on Apache Camel in the hybrid cloud (via <a href="https://www.openshift.com/products/online">OpenShift Online</a> for the public cloud or <a href="https://www.openshift.com/products/enterprise">OpenShift Enterprise</a> for on premise, or a combination of both).

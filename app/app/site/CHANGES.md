@@ -1,6 +1,17 @@
 
 ### Change Log
 
+#### 1.4.47 ... 1.4.48
+
+* Update ng-grid to version 2.0.14
+* Fabric - show default version in Wiki pages
+* Camel 2.15 - Add endpoint documentation when selecting endpoints
+* Upgrade to Camel 2.15.0
+* Camel plugin - Properties sub tab improvements
+* Use model json from Camel
+* hawtio-jboss is now hawtio-wildfly
+* hawtio-wildfly - add sensible defaults for integration with Wildfly security realms
+
 #### 1.4.46
 
 * Camel plugin now includes up to date model with EIP documentation included
