@@ -4,7 +4,7 @@
 /// <reference path="dashboardPlugin.ts"/>
 module Dashboard {
 
-  _module.controller("Dashboard.EditDashboardsController", ["$scope", "$routeParams", "$route", "$location", "$rootScope", "dashboardRepository", "jolokia", "workspace", ($scope, $routeParams, $route, $location, $rootScope, dashboardRepository:DefaultDashboardRepository, jolokia, workspace:Workspace) => {
+  _module.controller("Dashboard.EditDashboardsController", ["$scope", "$routeParams", "$route", "$location", "$rootScope", "dashboardRepository", "jolokia", "workspace", "$timeout", ($scope, $routeParams, $route, $location, $rootScope, dashboardRepository:DefaultDashboardRepository, jolokia, workspace:Workspace, $timeout) => {
 
     $scope.hash = workspace.hash();
     $scope.selectedItems = [];
@@ -12,12 +12,27 @@ module Dashboard {
     $scope.duplicateDashboards = new UI.Dialog();
     $scope.selectedProfilesDialog = [];
     $scope._dashboards = [];
+    $scope.edit = false;
 
     $rootScope.$on('dashboardsUpdated', dashboardLoaded);
 
     $scope.hasUrl = () => {
       return ($scope.url) ? true : false;
     };
+
+    $scope.navigateTo = (url) => {
+      if (!$scope.edit) {
+        $location.url(url);
+      }
+    };
+
+    $scope.$on('editablePropertyEdit', (ev, edit) => {
+      // to change the value after original click even finishes propagation
+      // if changing here to false, $cope.navigateTo() would be called when closing the editable-property
+      $timeout(() => {
+        $scope.edit = edit;
+      }, 0, false);
+    });
 
     $scope.hasSelection = () => {
       return $scope.selectedItems.length !== 0;
@@ -36,6 +51,11 @@ module Dashboard {
       columnDefs: [
         {
           field: 'title',
+          displayName: 'Dashboard',
+          cellTemplate: '<div class="ngCellText"><span ng-click="navigateTo(\'/dashboard/id/{{row.getProperty(\'id\')}}{{hash}}\')"><editable-property class="inline-block" on-save="onDashRenamed(row.entity)" property="title" ng-model="row.entity"></editable-property></span></div>'
+        },
+        {
+          field: 'title 2',
           displayName: 'Dashboard',
           cellTemplate: '<div class="ngCellText"><a ng-href="#/dashboard/id/{{row.getProperty(' + "'id'" + ')}}{{hash}}"><editable-property class="inline-block" on-save="onDashRenamed(row.entity)" property="title" ng-model="row.entity"></editable-property></a></div>'
         },

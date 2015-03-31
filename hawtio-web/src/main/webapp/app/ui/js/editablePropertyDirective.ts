@@ -83,12 +83,15 @@ module UI {
           if (newValue !== oldValue) {
             if (newValue) {
               (<JQueryStatic>$)(element.find(inputSelector())).focus().select();
+            } else {
+              scope.$emit('editablePropertyEdit', false);
             }
           }
         });
 
         scope.doEdit = function () {
           scope.editing = true;
+          scope.$emit('editablePropertyEdit', true);
         };
 
         scope.stopEdit = function () {
