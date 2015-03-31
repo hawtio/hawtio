@@ -59,6 +59,10 @@ module Osgi {
     });
 
     $scope.addPid = (newPid) => {
+      if ($scope.configurations.any((c) => c['pid'] == newPid)) {
+        Core.notification("error", "pid \"" + newPid + "\" already exists.");
+        return;
+      }
       $scope.addPidDialog.close();
       var mbean = getHawtioConfigAdminMBean($scope.workspace);
       if (mbean && newPid) {
