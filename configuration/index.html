@@ -204,6 +204,17 @@
         List of used AuthenticationContainerDiscovery implementations separated by comma. By default there is just TomcatAuthenticationContainerDiscovery, which is used to authenticate users on Tomcat from tomcat-users.xml file. Feel free to remove it if you want to authenticate users on Tomcat from configured jaas login module or feel free to add more classes of your own.
     </td>
   </tr>    
+  <tr>
+    <td>
+      hawtio.authenticationContainerTomcatDigestAlgorithm
+    </td>
+    <td>
+      NONE
+    </td>
+    <td>
+      When using the tomcat tomcat-users.xml file, passwords can be hashed instead of plain text.  Use this to specify the digest algorithm; valid values are NONE MD5 SHA SHA-256 SHA-384 SHA-512.
+    </td>
+  </tr>    
   </tbody>
 </table>
 
