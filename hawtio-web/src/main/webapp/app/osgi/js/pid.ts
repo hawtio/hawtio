@@ -386,6 +386,10 @@ module Osgi {
               type: attrType
             };
             properties[key] = property;
+            if (rawKey == 'org.osgi.service.http.port') {
+              properties[key]['input-attributes']['disabled'] = 'disabled';
+              properties[key]['input-attributes']['title'] = 'Changing port of OSGi http service is not possible from Hawtio';
+            }
           } else {
             var propertyType = property["type"];
             if ("array" === propertyType) {
