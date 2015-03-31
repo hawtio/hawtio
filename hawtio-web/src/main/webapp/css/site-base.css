@@ -2768,6 +2768,7 @@ li.profile-selector-folder span.folder-title:hover, li.profile div.profile-selec
   bottom: 0;
   left: 0;
   right: 0;
+  top: 0;
 }
 
 .ex-node-container {
