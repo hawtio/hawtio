@@ -37687,7 +37687,7 @@ var Log;
             var routeParams = angular.toJson($routeParams);
             var size = angular.toJson({
                 size_x: 8,
-                size_y: 1
+                size_y: 3
             });
             var title = "Logs";
             if ($scope.filter.logLevelQuery !== "") {
@@ -37793,7 +37793,7 @@ var Log;
             if (logs) {
                 var maxSize = Log.getLogCacheSize(localStorage);
                 if ($scope.inDashboard) {
-                    maxSize = 10;
+                    maxSize = 50;
                 }
                 var counter = 0;
                 logs.forEach(function (log) {
