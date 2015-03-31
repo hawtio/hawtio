@@ -19016,17 +19016,28 @@ var Dashboard;
 })(Dashboard || (Dashboard = {}));
 var Dashboard;
 (function (Dashboard) {
-    Dashboard._module.controller("Dashboard.EditDashboardsController", ["$scope", "$routeParams", "$route", "$location", "$rootScope", "dashboardRepository", "jolokia", "workspace", function ($scope, $routeParams, $route, $location, $rootScope, dashboardRepository, jolokia, workspace) {
+    Dashboard._module.controller("Dashboard.EditDashboardsController", ["$scope", "$routeParams", "$route", "$location", "$rootScope", "dashboardRepository", "jolokia", "workspace", "$timeout", function ($scope, $routeParams, $route, $location, $rootScope, dashboardRepository, jolokia, workspace, $timeout) {
         $scope.hash = workspace.hash();
         $scope.selectedItems = [];
         $scope.repository = dashboardRepository;
         $scope.duplicateDashboards = new UI.Dialog();
         $scope.selectedProfilesDialog = [];
         $scope._dashboards = [];
+        $scope.edit = false;
         $rootScope.$on('dashboardsUpdated', dashboardLoaded);
         $scope.hasUrl = function () {
             return ($scope.url) ? true : false;
         };
+        $scope.navigateTo = function (url) {
+            if (!$scope.edit) {
+                $location.url(url);
+            }
+        };
+        $scope.$on('editablePropertyEdit', function (ev, edit) {
+            $timeout(function () {
+                $scope.edit = edit;
+            }, 0, false);
+        });
         $scope.hasSelection = function () {
             return $scope.selectedItems.length !== 0;
         };
@@ -19043,6 +19054,11 @@ var Dashboard;
             columnDefs: [
                 {
                     field: 'title',
+                    displayName: 'Dashboard',
+                    cellTemplate: '<div class="ngCellText"><span ng-click="navigateTo(\'/dashboard/id/{{row.getProperty(\'id\')}}{{hash}}\')"><editable-property class="inline-block" on-save="onDashRenamed(row.entity)" property="title" ng-model="row.entity"></editable-property></span></div>'
+                },
+                {
+                    field: 'title 2',
                     displayName: 'Dashboard',
                     cellTemplate: '<div class="ngCellText"><a ng-href="#/dashboard/id/{{row.getProperty(' + "'id'" + ')}}{{hash}}"><editable-property class="inline-block" on-save="onDashRenamed(row.entity)" property="title" ng-model="row.entity"></editable-property></a></div>'
                 },
@@ -19805,12 +19821,23 @@ var Dashboard;
 })(Dashboard || (Dashboard = {}));
 var Dashboard;
 (function (Dashboard) {
-    Dashboard._module.controller("Dashboard.NavBarController", ["$scope", "$routeParams", "$rootScope", "workspace", "dashboardRepository", function ($scope, $routeParams, $rootScope, workspace, dashboardRepository) {
+    Dashboard._module.controller("Dashboard.NavBarController", ["$scope", "$routeParams", "$rootScope", "workspace", "dashboardRepository", "$location", "$timeout", function ($scope, $routeParams, $rootScope, workspace, dashboardRepository, $location, $timeout) {
         $scope.hash = workspace.hash();
         $scope._dashboards = [];
+        $scope.edit = false;
         $scope.activeDashboard = $routeParams['dashboardId'];
         $rootScope.$on('loadDashboards', loadDashboards);
         $rootScope.$on('dashboardsUpdated', dashboardLoaded);
+        $scope.navigateTo = function (url) {
+            if (!$scope.edit) {
+                $location.url(url);
+            }
+        };
+        $scope.$on('editablePropertyEdit', function (ev, edit) {
+            $timeout(function () {
+                $scope.edit = edit;
+            }, 0, false);
+        });
         $scope.dashboards = function () {
             return $scope._dashboards;
         };
@@ -43815,10 +43842,14 @@ var UI;
                         if (newValue) {
                             $(element.find(inputSelector())).focus().select();
                         }
+                        else {
+                            scope.$emit('editablePropertyEdit', false);
+                        }
                     }
                 });
                 scope.doEdit = function () {
                     scope.editing = true;
+                    scope.$emit('editablePropertyEdit', true);
                 };
                 scope.stopEdit = function () {
                     $(element.find(inputSelector())[0]).val(ngModel.$viewValue[scope.getPropertyName()]);

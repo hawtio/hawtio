@@ -579,6 +579,15 @@ table .ep.editing {
   background: inherit;
 }
 
+div.ngGrid span[ng-click] {
+  color: #0088cc;
+  cursor: pointer;
+}
+div.ngGrid span[ng-click]:hover {
+  color: #005580;
+  text-decoration: underline;
+}
+
 .ngViewport {
   margin-left: 0px;
   margin-right: 0px;
@@ -758,15 +767,22 @@ ng-include > .nav.nav-tabs {
   margin-right: 0px;
 }
 
+.nav-tabs > li > span {
+  line-height: 24px;
+  padding-right: 12px;
+  padding-left: 12px;
+}
+
 div#main div ul.nav li a,
 div#main div ul.nav li span {
   padding-bottom: 2px;
   padding-top: 2px;
 }
 
-div#main div ul.nav li a:hover {
+div#main div ul.nav li a:hover, div#main div ul.nav li span:hover {
   padding-bottom: 2px;
   padding-top: 2px;
+  cursor: pointer;
 }
 
 #main div div div section .tabbable .nav.nav-tabs {
