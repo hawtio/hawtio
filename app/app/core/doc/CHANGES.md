@@ -1,6 +1,10 @@
 
 ### Change Log
 
+#### 1.4.49
+
+* Running hawtio on Apache Tomcat with users defined in `tomcat-users.xml` now supports specifying the password hashed algorithm to use.
+
 #### 1.4.47 ... 1.4.48
 
 * Update ng-grid to version 2.0.14
