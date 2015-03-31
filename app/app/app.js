@@ -39111,6 +39111,10 @@ var Osgi;
             updateTableContents();
         });
         $scope.addPid = function (newPid) {
+            if ($scope.configurations.any(function (c) { return c['pid'] == newPid; })) {
+                Core.notification("error", "pid \"" + newPid + "\" already exists.");
+                return;
+            }
             $scope.addPidDialog.close();
             var mbean = Osgi.getHawtioConfigAdminMBean($scope.workspace);
             if (mbean && newPid) {
