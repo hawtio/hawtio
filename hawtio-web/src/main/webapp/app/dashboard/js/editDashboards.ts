@@ -52,12 +52,7 @@ module Dashboard {
         {
           field: 'title',
           displayName: 'Dashboard',
-          cellTemplate: '<div class="ngCellText"><span ng-click="navigateTo(\'/dashboard/id/{{row.getProperty(\'id\')}}{{hash}}\')"><editable-property class="inline-block" on-save="onDashRenamed(row.entity)" property="title" ng-model="row.entity"></editable-property></span></div>'
-        },
-        {
-          field: 'title 2',
-          displayName: 'Dashboard',
-          cellTemplate: '<div class="ngCellText"><a ng-href="#/dashboard/id/{{row.getProperty(' + "'id'" + ')}}{{hash}}"><editable-property class="inline-block" on-save="onDashRenamed(row.entity)" property="title" ng-model="row.entity"></editable-property></a></div>'
+          cellTemplate: '<div class="ngCellText"><span class="a" ng-click="navigateTo(\'/dashboard/id/{{row.getProperty(\'id\')}}{{hash}}\')"><editable-property class="inline-block" on-save="onDashRenamed(row.entity)" property="title" ng-model="row.entity"></editable-property></span></div>'
         },
         {
           field: 'group',

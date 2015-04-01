@@ -350,7 +350,7 @@ div#main div ul.nav {
   text-shadow: 0 1px 0 #FFFFFF;
 }
 
-div#main div ul.nav li.active a, div#main div ul.nav li.active span {
+div#main div ul.nav li.active a, div#main div ul.nav li.active span.a {
   border: 1px;
   border-radius: 2px;
   background-color: #E5E5E5;
@@ -358,7 +358,7 @@ div#main div ul.nav li.active a, div#main div ul.nav li.active span {
   text-shadow: 0 1px 0 #FFFFFF;
 }
 
-div#main div ul.nav li.active a:hover, div#main div ul.nav li.active span:hover {
+div#main div ul.nav li.active a:hover, div#main div ul.nav li.active span.a:hover {
   border: 1px;
   border-radius: 2px;
   background-color: #E5E5E5;
@@ -366,7 +366,7 @@ div#main div ul.nav li.active a:hover, div#main div ul.nav li.active span:hover 
   text-shadow: 0 1px 0 #FFFFFF;
 }
 
-div#main div ul.nav li a, div#main div ul.nav li span {
+div#main div ul.nav li a, div#main div ul.nav li span.a {
   border: 1px;
   border-radius: 2px;
   background: inherit;

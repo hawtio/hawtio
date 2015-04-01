@@ -1,7 +1,7 @@
 <ul class="nav nav-tabs" ng-controller="Dashboard.NavBarController">
   <li ng-repeat="dash in _dashboards track by $index"
       ng-class='{active : isActive(dash)}'>
-    <span ng-click="navigateTo('/dashboard/id/{{dash.id}}{{hash}}')">
+    <span class="a" ng-click="navigateTo('/dashboard/id/{{dash.id}}{{hash}}')">
       <editable-property class="inline-block"
                          on-save="onTabRenamed(dash)"
                          property="title"
