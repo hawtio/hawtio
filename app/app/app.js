@@ -43702,7 +43702,7 @@ var UI;
                 el.draggable = true;
                 el.addEventListener('dragstart', function (event) {
                     event.dataTransfer.effectAllowed = 'move';
-                    event.dataTransfer.setData('data', scope.data);
+                    event.dataTransfer.setData('text', scope.data);
                     element.addClass('drag-started');
                     return false;
                 }, false);
@@ -43744,7 +43744,7 @@ var UI;
                         event.stopPropagation();
                     }
                     element.removeClass('drag-over');
-                    var data = event.dataTransfer.getData('data');
+                    var data = event.dataTransfer.getData('text');
                     if (scope.onDrop) {
                         scope.$eval(scope.onDrop, {
                             data: data,
