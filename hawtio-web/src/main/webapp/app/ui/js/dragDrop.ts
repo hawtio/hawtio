@@ -20,7 +20,7 @@ module UI {
         el.draggable = true;
         el.addEventListener('dragstart', (event:DragEvent) => {
           event.dataTransfer.effectAllowed = 'move';
-          event.dataTransfer.setData('data', scope.data);
+          event.dataTransfer.setData('text', scope.data);
           element.addClass('drag-started');
           return false;
         }, false);
@@ -69,7 +69,7 @@ module UI {
             event.stopPropagation();
           }
           element.removeClass('drag-over');
-          var data = event.dataTransfer.getData('data');
+          var data = event.dataTransfer.getData('text');
           if (scope.onDrop) {
             scope.$eval(scope.onDrop, {
               data: data,
