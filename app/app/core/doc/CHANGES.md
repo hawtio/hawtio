@@ -4,6 +4,7 @@
 #### 1.4.49
 
 * Running hawtio on Apache Tomcat with users defined in `tomcat-users.xml` now supports specifying the password hashed algorithm to use.
+* Upgrade to Camel 2.15.1
 
 #### 1.4.47 ... 1.4.48
 
