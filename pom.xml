@@ -139,7 +139,7 @@
     <slf4j-api-version>1.6.6</slf4j-api-version>
     <slf4j-version>1.7.10</slf4j-version>
 
-    <spring-version>3.2.11.RELEASE</spring-version>
+    <spring-version>4.1.5.RELEASE</spring-version>
     <spring-boot-version>1.2.0.RELEASE</spring-boot-version>
     <xbean-version>3.16</xbean-version>
     <wagon-version>2.7</wagon-version>
