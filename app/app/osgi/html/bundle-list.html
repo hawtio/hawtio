@@ -79,8 +79,8 @@
   <table class="table">
     <tbody>
     <tr ng-repeat="(k, v) in bundle track by $index">
-      <td class="property-name">{{k}}</td>
-      <td class="property-value">{{v}}</td>
+      <td class="property-name" ng-bind="k"></td>
+      <td class="property-value" ng-bind="v"></td>
     </tr>
     </tbody>
   </table>

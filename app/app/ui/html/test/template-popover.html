@@ -8,8 +8,8 @@
 <table>
   <tbody>
     <tr ng-repeat="(k, v) in stuff track by $index">
-      <td>{{k}}</td>
-      <td>{{v}}</td>
+      <td ng-bind="k"></td>
+      <td ng-bind="v"></td>
     </tr>
   </tbody>
 </table>
