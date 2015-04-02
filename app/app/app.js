@@ -38433,20 +38433,12 @@ var Osgi;
                 return false;
             }
             if (Core.isBlank($scope.display.bundleFilter)) {
-                var answer = true;
-                if (!$scope.display.showPlatformBundles) {
-                    answer = !Karaf.isPlatformBundle(bundle['SymbolicName']);
+                if (($scope.display.showPlatformBundles && Karaf.isPlatformBundle(bundle['SymbolicName'])) || ($scope.display.showActiveMQBundles && Karaf.isActiveMQBundle(bundle['SymbolicName'])) || ($scope.display.showCxfBundles && Karaf.isCxfBundle(bundle['SymbolicName'])) || ($scope.display.showCamelBundles && Karaf.isCamelBundle(bundle['SymbolicName']))) {
+                    return true;
                 }
-                if (answer && !$scope.display.showActiveMQBundles) {
-                    answer = !Karaf.isActiveMQBundle(bundle['SymbolicName']);
+                else {
+                    return false;
                 }
-                if (answer && !$scope.display.showCxfBundles) {
-                    answer = !Karaf.isCxfBundle(bundle['SymbolicName']);
-                }
-                if (answer && !$scope.display.showCamelBundles) {
-                    answer = !Karaf.isCamelBundle(bundle['SymbolicName']);
-                }
-                return answer;
             }
             return true;
         };
