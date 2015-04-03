@@ -78,12 +78,17 @@ Otherwise if you are using 6.0 or earlier of [Fuse](http://www.jboss.org/product
     features:addurl mvn:io.hawt/hawtio-karaf/1.4.48/xml/features
     features:install hawtio
 
-If you are using [Apache Karaf](http://karaf.apache.org/) 2.3.3 or newer then you can use 'features:chooseurl' which is simpler to do:
+If you are using [Apache Karaf](http://karaf.apache.org/) 2.x then you can use 'features:chooseurl' which is simpler to do:
 
     features:chooseurl hawtio 1.4.48
     features:install hawtio
 
 The hawtio console can then be viewed at [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/). The default login for Karaf is karaf/karaf, and for ServiceMix its smx/smx.
+
+If you are using [Apache Karaf](http://karaf.apache.org/) 3.x or newer then you can use 'features:chooseurl' which is simpler to do:
+
+    feature:repo-add hawtio 1.4.48
+    feature:install hawtio
 
 **NOTE** if you are on ServiceMix 4.5 then you should install hawtio-core instead of hawtio, eg
 
