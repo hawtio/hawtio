@@ -84,6 +84,9 @@ module Camel {
         // okay we have the data then set the selected mbean which allows UI to display data
         $scope.selectedMBean = response.request.mbean;
 
+      } else {
+        // clear data
+        $scope.data = [];
       }
 
       $scope.initDone = "true";
