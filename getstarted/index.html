@@ -186,12 +186,17 @@ If you do not use a servlet container or application server, you can also embed 
 <pre><code>features:addurl mvn:io.hawt/hawtio-karaf/1.4.48/xml/features
 features:install hawtio</code></pre>
 
-<p>If you are using <a href="http://karaf.apache.org/">Apache Karaf</a> 2.3.3 or newer then you can use 'features:chooseurl' which is simpler to do:</p>
+<p>If you are using <a href="http://karaf.apache.org/">Apache Karaf</a> 2.x then you can use 'features:chooseurl' which is simpler to do:</p>
 
 <pre><code>features:chooseurl hawtio 1.4.48
 features:install hawtio</code></pre>
 
 <p>The hawtio console can then be viewed at <a href="http://localhost:8181/hawtio/">http://localhost:8181/hawtio/</a>. The default login for Karaf is karaf/karaf, and for ServiceMix its smx/smx.</p>
+
+<p>If you are using <a href="http://karaf.apache.org/">Apache Karaf</a> 3.x or newer then you can use 'features:chooseurl' which is simpler to do:</p>
+
+<pre><code>feature:repo-add hawtio 1.4.48
+feature:install hawtio</code></pre>
 
 <p><strong>NOTE</strong> if you are on ServiceMix 4.5 then you should install hawtio-core instead of hawtio, eg</p>
 
