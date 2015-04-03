@@ -13213,6 +13213,9 @@ var Camel;
                 $scope.data = arr;
                 $scope.selectedMBean = response.request.mbean;
             }
+            else {
+                $scope.data = [];
+            }
             $scope.initDone = "true";
             Core.$apply($scope);
         }
