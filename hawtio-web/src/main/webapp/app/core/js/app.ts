@@ -261,7 +261,7 @@ module Core {
     });
 
     $scope.$on('$routeChangeStart', (event, args) => {
-      if ( (!args.params || !args.params.pref) && $scope.showPrefs) {
+      if ( (!args || !args.params || !args.params.pref) && $scope.showPrefs) {
         $scope.showPrefs = false;
       }
       $scope.maybeRedirect();
