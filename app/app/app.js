@@ -17725,7 +17725,8 @@ var Core;
         return states;
     }
     Core.createGraphStates = createGraphStates;
-    function dagreLayoutGraph(nodes, links, width, height, svgElement) {
+    function dagreLayoutGraph(nodes, links, width, height, svgElement, allowDrag) {
+        if (allowDrag === void 0) { allowDrag = false; }
         var nodePadding = 10;
         var transitions = [];
         var states = Core.createGraphStates(nodes, links, transitions);
@@ -17823,25 +17824,27 @@ var Core;
                 svg.attr("height", svgBBox.height + 10);
             }
         }
-        var nodeDrag = d3.behavior.drag().origin(function (d) {
-            return d.pos ? { x: d.pos.x, y: d.pos.y } : { x: d.dagre.x, y: d.dagre.y };
-        }).on('drag', function (d, i) {
-            var prevX = d.dagre.x, prevY = d.dagre.y;
-            d.dagre.x = Math.max(d.width / 2, Math.min(svgBBox.width - d.width / 2, d3.event.x));
-            d.dagre.y = Math.max(d.height / 2, Math.min(svgBBox.height - d.height / 2, d3.event.y));
-            d3.select(this).attr('transform', 'translate(' + d.dagre.x + ',' + d.dagre.y + ')');
-            var dx = d.dagre.x - prevX, dy = d.dagre.y - prevY;
-            d.edges.forEach(function (e) {
-                translateEdge(e, dx, dy);
-                d3.select('#' + e.dagre.id).attr('d', spline(e));
+        if (allowDrag) {
+            var nodeDrag = d3.behavior.drag().origin(function (d) {
+                return d.pos ? { x: d.pos.x, y: d.pos.y } : { x: d.dagre.x, y: d.dagre.y };
+            }).on('drag', function (d, i) {
+                var prevX = d.dagre.x, prevY = d.dagre.y;
+                d.dagre.x = Math.max(d.width / 2, Math.min(svgBBox.width - d.width / 2, d3.event.x));
+                d.dagre.y = Math.max(d.height / 2, Math.min(svgBBox.height - d.height / 2, d3.event.y));
+                d3.select(this).attr('transform', 'translate(' + d.dagre.x + ',' + d.dagre.y + ')');
+                var dx = d.dagre.x - prevX, dy = d.dagre.y - prevY;
+                d.edges.forEach(function (e) {
+                    translateEdge(e, dx, dy);
+                    d3.select('#' + e.dagre.id).attr('d', spline(e));
+                });
             });
-        });
-        var edgeDrag = d3.behavior.drag().on('drag', function (d, i) {
-            translateEdge(d, d3.event.dx, d3.event.dy);
-            d3.select(this).attr('d', spline(d));
-        });
-        nodes.call(nodeDrag);
-        edges.call(edgeDrag);
+            var edgeDrag = d3.behavior.drag().on('drag', function (d, i) {
+                translateEdge(d, d3.event.dx, d3.event.dy);
+                d3.select(this).attr('d', spline(d));
+            });
+            nodes.call(nodeDrag);
+            edges.call(edgeDrag);
+        }
         return states;
     }
     Core.dagreLayoutGraph = dagreLayoutGraph;
