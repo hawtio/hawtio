@@ -135,7 +135,8 @@ module Camel {
     var onClickGraphNode = function (node) {
       // stop marking the node as selected which it does by default
       log.debug("Clicked on Camel Route Diagram node: " + node.cid);
-      $location.path('/camel/properties').search({"main-tab": "camel", "sub-tab": "camel-route-properties", "nid": node.cid});
+      $location.path('/camel/properties').search({"tab": "camel", "nid": node.cid});
+      // http://localhost:8282/hawtio/camel/properties?tab=camel&p=container&nid=root-org.apache.camel-camel-1-routes-%22bytesToAMQ%22_setHeader21
     };
 
     function showGraph(nodes, links) {
