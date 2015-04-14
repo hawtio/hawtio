@@ -7233,10 +7233,17 @@ var Fabric;
 })(Fabric || (Fabric = {}));
 var ActiveMQ;
 (function (ActiveMQ) {
-    ActiveMQ._module.controller("ActiveMQ.BrokerDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", function ($scope, $compile, $location, localStorage, jolokia, workspace) {
+    ActiveMQ._module.controller("ActiveMQ.BrokerDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", "$routeParams", function ($scope, $compile, $location, localStorage, jolokia, workspace, $routeParams) {
         Fabric.initScope($scope, $location, jolokia, workspace);
         var isFmc = Fabric.isFMCContainer(workspace);
         $scope.isFmc = isFmc;
+        if (isFmc) {
+            $scope.version = $routeParams['versionId'];
+            if ($scope.version == 'default-version') {
+                $scope.version = Fabric.getDefaultVersionId(jolokia);
+            }
+            $scope.selectedVersion = { id: $scope.version };
+        }
         $scope.selectedNode = null;
         var defaultFlags = {
             panel: true,
@@ -7468,7 +7475,15 @@ var ActiveMQ;
             redrawGraph();
         });
         if (isFmc) {
-            Core.register(jolokia, $scope, { type: 'exec', mbean: Fabric.mqManagerMBean, operation: "loadBrokerStatus()" }, onSuccess(onBrokerData));
+            var unreg = null;
+            $scope.$watch('selectedVersion.id', function (newValue, oldValue) {
+                if (!Core.isBlank(newValue)) {
+                    if (unreg) {
+                        unreg();
+                    }
+                    unreg = Core.register(jolokia, $scope, { type: 'exec', mbean: Fabric.mqManagerMBean, operation: "loadBrokerStatus(java.lang.String)", arguments: [newValue] }, onSuccess(onBrokerData));
+                }
+            });
         }
         else {
             $scope.$watch('workspace.tree', function () {
@@ -21737,7 +21752,7 @@ var Fabric;
     Fabric.activeMQTemplatePath = 'app/activemq/html/';
     Fabric._module = angular.module('fabric', ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ngResource', 'ngGrid', 'hawtio-forms', 'hawtioCore', 'wiki']);
     Fabric._module.config(["$routeProvider", function ($routeProvider) {
-        $routeProvider.when('/fabric/containers/createContainer', { templateUrl: Fabric.templatePath + 'createContainer.html', reloadOnSearch: false }).when('/fabric/map', { templateUrl: Fabric.templatePath + 'map.html' }).when('/fabric/clusters/*page', { templateUrl: Fabric.templatePath + 'clusters.html' }).when('/fabric/containers', { templateUrl: Fabric.templatePath + 'containers.html', reloadOnSearch: false }).when('/fabric/container/:containerId', { templateUrl: Fabric.templatePath + 'container.html', reloadOnSearch: false }).when('/fabric/assignProfile', { templateUrl: Fabric.templatePath + 'assignProfile.html' }).when('/fabric/activeProfiles', { templateUrl: Fabric.templatePath + 'activeProfiles.html' }).when('/wiki/profile/:versionId/:profileId/editFeatures', { templateUrl: Fabric.templatePath + 'editFeatures.html' }).when('/fabric/profile/:versionId/:profileId/:fname', { templateUrl: Fabric.templatePath + 'pid.html' }).when('/fabric/migrate', { templateUrl: Fabric.templatePath + 'migrateVersions.html' }).when('/fabric/patching', { templateUrl: Fabric.templatePath + 'patching.html' }).when('/fabric/configurations/:versionId/:profileId', { templateUrl: 'app/osgi/html/configurations.html' }).when('/fabric/configuration/:versionId/:profileId/:pid', { templateUrl: 'app/osgi/html/pid.html' }).when('/fabric/configuration/:versionId/:profileId/:pid/:factoryPid', { templateUrl: 'app/osgi/html/pid.html' }).when('/fabric/mq/brokers', { templateUrl: Fabric.templatePath + 'brokers.html' }).when('/fabric/mq/brokerDiagram', { templateUrl: Fabric.activeMQTemplatePath + 'brokerDiagram.html', reloadOnSearch: false }).when('/fabric/mq/brokerNetwork', { templateUrl: Fabric.templatePath + 'brokerNetwork.html' }).when('/fabric/mq/createBroker', { templateUrl: Fabric.templatePath + 'createBroker.html' }).when('/fabric/camel/diagram', { templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false }).when('/fabric/api', { templateUrl: Fabric.templatePath + 'apis.html' }).when('/fabric/api/wsdl', { templateUrl: 'app/api/html/wsdl.html' }).when('/fabric/api/wadl', { templateUrl: 'app/api/html/wadl.html' }).when('/fabric/test', { templateUrl: Fabric.templatePath + 'test.html' }).when('/fabric/profileView', { templateUrl: Fabric.templatePath + 'profileView.html', reloadOnSearch: false }).when('/fabric/containerView', { templateUrl: Fabric.templatePath + 'containerView.html', reloadOnSearch: false });
+        $routeProvider.when('/fabric/containers/createContainer', { templateUrl: Fabric.templatePath + 'createContainer.html', reloadOnSearch: false }).when('/fabric/map', { templateUrl: Fabric.templatePath + 'map.html' }).when('/fabric/clusters/*page', { templateUrl: Fabric.templatePath + 'clusters.html' }).when('/fabric/containers', { templateUrl: Fabric.templatePath + 'containers.html', reloadOnSearch: false }).when('/fabric/container/:containerId', { templateUrl: Fabric.templatePath + 'container.html', reloadOnSearch: false }).when('/fabric/assignProfile', { templateUrl: Fabric.templatePath + 'assignProfile.html' }).when('/fabric/activeProfiles', { templateUrl: Fabric.templatePath + 'activeProfiles.html' }).when('/wiki/profile/:versionId/:profileId/editFeatures', { templateUrl: Fabric.templatePath + 'editFeatures.html' }).when('/fabric/profile/:versionId/:profileId/:fname', { templateUrl: Fabric.templatePath + 'pid.html' }).when('/fabric/migrate', { templateUrl: Fabric.templatePath + 'migrateVersions.html' }).when('/fabric/patching', { templateUrl: Fabric.templatePath + 'patching.html' }).when('/fabric/configurations/:versionId/:profileId', { templateUrl: 'app/osgi/html/configurations.html' }).when('/fabric/configuration/:versionId/:profileId/:pid', { templateUrl: 'app/osgi/html/pid.html' }).when('/fabric/configuration/:versionId/:profileId/:pid/:factoryPid', { templateUrl: 'app/osgi/html/pid.html' }).when('/fabric/mq/:versionId/brokers', { templateUrl: Fabric.templatePath + 'brokers.html' }).when('/fabric/mq/:versionId/brokerDiagram', { templateUrl: Fabric.activeMQTemplatePath + 'brokerDiagram.html', reloadOnSearch: false }).when('/fabric/mq/:versionId/brokerNetwork', { templateUrl: Fabric.templatePath + 'brokerNetwork.html' }).when('/fabric/mq/:versionId/createBroker', { templateUrl: Fabric.templatePath + 'createBroker.html' }).when('/fabric/camel/diagram', { templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false }).when('/fabric/api', { templateUrl: Fabric.templatePath + 'apis.html' }).when('/fabric/api/wsdl', { templateUrl: 'app/api/html/wsdl.html' }).when('/fabric/api/wadl', { templateUrl: 'app/api/html/wadl.html' }).when('/fabric/test', { templateUrl: Fabric.templatePath + 'test.html' }).when('/fabric/profileView', { templateUrl: Fabric.templatePath + 'profileView.html', reloadOnSearch: false }).when('/fabric/containerView', { templateUrl: Fabric.templatePath + 'containerView.html', reloadOnSearch: false });
     }]);
     Fabric._module.factory('serviceIconRegistry', function () {
         return Fabric.serviceIconRegistry;
@@ -24908,7 +24923,7 @@ var Fabric;
 })(Fabric || (Fabric = {}));
 var Fabric;
 (function (Fabric) {
-    Fabric._module.controller("Fabric.FabricBrokersController", ["$scope", "localStorage", "$routeParams", "$location", "jolokia", "workspace", "$compile", "$templateCache", function ($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache) {
+    Fabric.FabricBrokersController = Fabric._module.controller("Fabric.FabricBrokersController", ["$scope", "localStorage", "$routeParams", "$location", "jolokia", "workspace", "$compile", "$templateCache", function ($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache) {
         Fabric.initScope($scope, $location, jolokia, workspace);
         $scope.maps = {
             group: {},
@@ -24916,6 +24931,11 @@ var Fabric;
             broker: {},
             container: {}
         };
+        $scope.version = $routeParams['versionId'];
+        if ($scope.version == 'default-version') {
+            $scope.version = Fabric.getDefaultVersionId(jolokia);
+        }
+        $scope.selectedVersion = { id: $scope.version };
         $scope.showBroker = function (broker) {
             var brokerVersion = broker.version;
             var brokerProfile = broker.profile;
@@ -24940,7 +24960,7 @@ var Fabric;
                     args["profile"] = profileId;
                 }
             }
-            $location.url("/fabric/mq/createBroker").search(args);
+            $location.url("/fabric/mq/" + $scope.selectedVersion.id + "/createBroker").search(args);
         };
         function matchesFilter(text) {
             var filter = $scope.searchFilter;
@@ -24959,7 +24979,15 @@ var Fabric;
             return matchesFilter(container.id) || matchesFilter(container.group) || matchesFilter(container.profile) || matchesFilter(container.version) || matchesFilter(container.brokerName) || (container.master && $scope.searchFilter && $scope.searchFilter.has("master"));
         };
         if (Fabric.hasMQManager) {
-            Core.register(jolokia, $scope, { type: 'exec', mbean: Fabric.mqManagerMBean, operation: "loadBrokerStatus()" }, onSuccess(onBrokerData));
+            var unreg = null;
+            $scope.$watch('selectedVersion.id', function (newValue, oldValue) {
+                if (!Core.isBlank(newValue)) {
+                    if (unreg) {
+                        unreg();
+                    }
+                    unreg = Core.register(jolokia, $scope, { type: 'exec', mbean: Fabric.mqManagerMBean, operation: "loadBrokerStatus(java.lang.String)", arguments: [newValue] }, onSuccess(onBrokerData));
+                }
+            });
         }
         function onBrokerData(response) {
             if (response) {
@@ -26191,7 +26219,8 @@ var Fabric;
         $scope.parentProfiles = [];
         $scope.entity = {
             group: $scope.defaultGroup,
-            ssl: true
+            ssl: true,
+            version: $routeParams['versionId']
         };
         $scope.otherEntity = {
             networkConnectAll: false
@@ -26202,7 +26231,7 @@ var Fabric;
             Core.notification("info", "Creating broker " + $scope.message);
             var tmpJson = JSON.stringify($scope.entity, null, '  ');
             jolokia.execute(Fabric.mqManagerMBean, "saveBrokerConfigurationJSON", tmpJson, onSuccess(onSave));
-            $location.path("/fabric/mq/brokers");
+            $location.path("/fabric/mq/" + $routeParams['versionId'] + "/brokers");
             Core.$apply($scope);
         };
         $scope.brokerNameExists = function () {
@@ -26234,7 +26263,7 @@ var Fabric;
         Fabric.getDtoSchema("brokerConfig", "io.fabric8.api.jmx.MQBrokerConfigDTO", jolokia, function (schema) {
             $scope.schema = schema;
             configureSchema(schema);
-            jolokia.execute(Fabric.mqManagerMBean, "loadBrokerStatus()", onSuccess(onBrokerData));
+            jolokia.execute(Fabric.mqManagerMBean, "loadBrokerStatus(java.lang.String)", $routeParams['versionId'], onSuccess(onBrokerData));
             Core.$apply($scope);
         });
         function configureSchema(schema) {
@@ -26283,8 +26312,11 @@ var Fabric;
             Core.pathSet(schema.properties, ['networkConnectAll', 'input-attributes', 'ng-model'], "otherEntity.networkConnectAll");
             Core.pathSet(schema.properties, ['networkConnectAll', 'label'], 'Network to all groups');
             Core.pathSet(schema.properties, ['networkConnectAll', 'tooltip'], 'Should this broker create a store and forward network to all the known groups of brokers');
+            Core.pathSet(schema.properties, ['version', 'input-attributes', 'value'], "{{'" + $routeParams['versionId'] + "'}}");
+            Core.pathSet(schema.properties, ['version', 'input-attributes', 'readonly'], 'true');
+            Core.pathSet(schema.properties, ['version', 'label'], "Fabric version");
             schema['tabs'] = {
-                'Default': ['group', 'brokerName', 'kind', 'profile', 'clientProfile', 'data', 'configUrl', 'replicas', 'minimumInstances', 'networkConnectAll', 'networks'],
+                'Default': ['group', 'brokerName', 'kind', 'profile', 'clientProfile', 'data', 'configUrl', 'replicas', 'minimumInstances', 'version', 'networkConnectAll', 'networks'],
                 'Advanced': ['parentProfile', 'clientParentProfile', 'networksUserName', 'networksPassword', '*']
             };
         }
