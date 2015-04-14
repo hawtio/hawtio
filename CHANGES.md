@@ -5,6 +5,8 @@
 
 * Running hawtio on Apache Tomcat with users defined in `tomcat-users.xml` now supports specifying the password hashed algorithm to use.
 * Upgrade to Camel 2.15.1
+* Camel plugin: Clicking on a EIP/node in the Route Diagram redirects to the selected EIP properties page
+* Camel plugin: Fixed inflight page didnt clear data if no longer any exchanges inflight
 
 #### 1.4.47 ... 1.4.48
 
