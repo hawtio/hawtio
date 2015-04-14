@@ -13595,7 +13595,6 @@ var Camel;
             updateData();
         });
         $scope.showEntity = function (id) {
-            log.debug("Show entity: " + id);
             if ($scope.hideDefault) {
                 if (isDefaultValue(id)) {
                     return false;
@@ -13646,6 +13645,7 @@ var Camel;
                     $scope.nodeData = Camel.getRouteNodeJSON(routeXmlNode);
                     $scope.icon = Camel.getRouteNodeIcon(routeXmlNode);
                     $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
+                    Core.$apply($scope);
                 }
             }
         }
@@ -13689,7 +13689,6 @@ var Camel;
             updateData();
         });
         $scope.showEntity = function (id) {
-            log.debug("Show entity: " + id);
             if ($scope.hideDefault) {
                 if (isDefaultValue(id)) {
                     return false;
@@ -14123,12 +14122,24 @@ var Camel;
             }
             return answer;
         }
+        var onClickGraphNode = function (node) {
+            log.debug("Clicked on Camel Route Diagram node: " + node.cid);
+            $location.path('/camel/properties').search({ "tab": "camel", "nid": node.cid });
+        };
         function showGraph(nodes, links) {
             var canvasDiv = $($element);
             var width = getWidth();
             var height = getHeight();
             var svg = canvasDiv.children("svg")[0];
-            $scope.graphData = Core.dagreLayoutGraph(nodes, links, width, height, svg);
+            var onClick;
+            var path = $location.path();
+            if (path.startsWith("/camel/debugRoute") || path.startsWith("/camel/traceRoute")) {
+                onClick = null;
+            }
+            else {
+                onClick = onClickGraphNode;
+            }
+            $scope.graphData = Core.dagreLayoutGraph(nodes, links, width, height, svg, false, onClick);
             var gNodes = canvasDiv.find("g.node");
             gNodes.click(function () {
                 var selected = isSelected(this);
@@ -17725,8 +17736,9 @@ var Core;
         return states;
     }
     Core.createGraphStates = createGraphStates;
-    function dagreLayoutGraph(nodes, links, width, height, svgElement, allowDrag) {
+    function dagreLayoutGraph(nodes, links, width, height, svgElement, allowDrag, onClick) {
         if (allowDrag === void 0) { allowDrag = false; }
+        if (onClick === void 0) { onClick = null; }
         var nodePadding = 10;
         var transitions = [];
         var states = Core.createGraphStates(nodes, links, transitions);
@@ -17795,6 +17807,9 @@ var Core;
         }).attr("height", function (d) {
             return d.height;
         });
+        if (onClick != null) {
+            rects.on("click", onClick);
+        }
         images.attr("x", function (d) {
             return -(d.bbox.width) / 2;
         });
