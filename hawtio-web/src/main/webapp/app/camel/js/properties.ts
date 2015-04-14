@@ -44,8 +44,6 @@ module Camel {
     });
 
     $scope.showEntity = function (id) {
-      log.debug("Show entity: " + id);
-
       if ($scope.hideDefault) {
         if (isDefaultValue(id)) {
           return false;

@@ -151,7 +151,7 @@ module Core {
   }
 
   // TODO Export as a service
-  export function dagreLayoutGraph(nodes, links, width, height, svgElement, allowDrag = false) {
+  export function dagreLayoutGraph(nodes, links, width, height, svgElement, allowDrag = false, onClick = null) {
     var nodePadding = 10;
     var transitions = [];
     var states = Core.createGraphStates(nodes, links, transitions);
@@ -297,6 +297,10 @@ module Core {
       .attr("height", function (d) {
         return d.height;
       });
+
+    if (onClick != null) {
+      rects.on("click", onClick);
+    }
 
     images
       .attr("x", function (d) {

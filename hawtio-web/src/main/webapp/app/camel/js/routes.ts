@@ -132,12 +132,28 @@ module Camel {
       return answer;
     }
 
+    var onClickGraphNode = function (node) {
+      // stop marking the node as selected which it does by default
+      log.debug("Clicked on Camel Route Diagram node: " + node.cid);
+      $location.path('/camel/properties').search({"main-tab": "camel", "sub-tab": "camel-route-properties", "nid": node.cid});
+    };
+
     function showGraph(nodes, links) {
       var canvasDiv = $($element);
       var width = getWidth();
       var height = getHeight();
       var svg = canvasDiv.children("svg")[0];
-      $scope.graphData = Core.dagreLayoutGraph(nodes, links, width, height, svg);
+
+      // do not allow clicking on node to show properties if debugging or tracing as that is for selecting the node instead
+      var onClick;
+      var path = $location.path();
+      if (path.startsWith("/camel/debugRoute") || path.startsWith("/camel/traceRoute")) {
+        onClick = null;
+      } else {
+        onClick = onClickGraphNode;
+      }
+
+      $scope.graphData = Core.dagreLayoutGraph(nodes, links, width, height, svg, false, onClick);
 
       var gNodes = canvasDiv.find("g.node");
       gNodes.click(function() {
@@ -156,37 +172,6 @@ module Camel {
         $scope.$emit("camel.diagram.selectedNodeId", cid);
         Core.$apply($scope);
       });
-
-      // TODO: https://github.com/hawtio/hawtio/issues/1261
-      // we need some kind of right-click menu on d3
-      // disabled code below as its work in progress
-/*      gNodes.dblclick(function() {
-        //var allStats = $(doc).find("processorStat");
-        var cid = this.getAttribute("data-cid");
-        log.info("You double clicked " + cid);
-
-        // find the node of the cid we clicked, and then find the folder in the Camel tree
-        // to grab the folder key, which is the nid for the location in the JMX plugin to
-        // view the processor mbean
-        var node = $scope.nodes[cid];
-        if (node) {
-          var pid = node.elementId;
-
-          var processors = camelProcessorMBeansById(workspace);
-          var processor = processors[pid];
-          if (processor) {
-            var key = processor.key;
-            // change url to jmx attributes so we can see the jmx stats for the selected processor
-            $location.search("nid", key);
-            var url = "/jmx/attributes";
-            var href = Core.createHref($location, url);
-            // change path to the jmx attributes page so we can see the processor mbean
-            log.info("Changing to path: " + href);
-            $location.url(href);
-            Core.$apply($scope);
-          }
-        }
-      });*/
 
       if ($scope.mbean) {
         Core.register(jolokia, $scope, {
