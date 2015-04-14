@@ -761,7 +761,7 @@ module Wiki {
   export function initScope($scope, $routeParams, $location) {
     $scope.pageId = Wiki.pageId($routeParams, $location);
     var branch = $routeParams["branch"];
-    if (branch ==  'default-version') {
+    if (branch == 'default-version') {
       branch = $scope.defaultVersion;
     }
     $scope.branch = branch || $location.search()["branch"];

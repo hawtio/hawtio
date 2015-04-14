@@ -1,6 +1,6 @@
 /// <reference path="fabricPlugin.ts"/>
 module Fabric {
-  _module.controller("Fabric.FabricBrokersController", ["$scope", "localStorage", "$routeParams", "$location", "jolokia", "workspace", "$compile", "$templateCache", ($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache) => {
+  export var FabricBrokersController = _module.controller("Fabric.FabricBrokersController", ["$scope", "localStorage", "$routeParams", "$location", "jolokia", "workspace", "$compile", "$templateCache", ($scope, localStorage, $routeParams, $location, jolokia, workspace, $compile, $templateCache) => {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
@@ -10,6 +10,13 @@ module Fabric {
       broker: {},
       container: {}
     };
+
+    $scope.version = $routeParams['versionId'];
+    if ($scope.version == 'default-version') {
+      $scope.version = Fabric.getDefaultVersionId(jolokia);
+    }
+
+    $scope.selectedVersion = { id: $scope.version };
 
     $scope.showBroker = (broker) => {
       var brokerVersion = broker.version;
@@ -22,7 +29,6 @@ module Fabric {
     $scope.connectToBroker = (container, broker) => {
       Fabric.connectToBroker($scope, container);
     };
-
 
     $scope.createBroker = (group, profile) => {
       var args = {};
@@ -38,7 +44,7 @@ module Fabric {
           args["profile"] = profileId;
         }
       }
-      $location.url("/fabric/mq/createBroker").search(args);
+      $location.url("/fabric/mq/" + $scope.selectedVersion.id + "/createBroker").search(args);
     };
 
     function matchesFilter(text) {
@@ -70,7 +76,16 @@ module Fabric {
     };
 
     if (Fabric.hasMQManager) {
-      Core.register(jolokia, $scope, {type: 'exec', mbean: Fabric.mqManagerMBean, operation: "loadBrokerStatus()"}, onSuccess(onBrokerData));
+      var unreg:() => void = null;
+
+      $scope.$watch('selectedVersion.id', (newValue, oldValue) => {
+        if (!Core.isBlank(newValue)) {
+          if (unreg) {
+            unreg();
+          }
+          unreg = <() => void>Core.register(jolokia, $scope, {type: 'exec', mbean: Fabric.mqManagerMBean, operation: "loadBrokerStatus(java.lang.String)", arguments: [ newValue ]}, onSuccess(onBrokerData));
+        }
+      });
     }
 
     function onBrokerData(response) {

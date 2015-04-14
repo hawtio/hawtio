@@ -2,12 +2,20 @@
 /// <reference path="../../fabric/js/fabricHelpers.ts"/>
 module ActiveMQ {
 
-  _module.controller("ActiveMQ.BrokerDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", ($scope, $compile, $location, localStorage, jolokia, workspace) => {
+  _module.controller("ActiveMQ.BrokerDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", "$routeParams", ($scope, $compile, $location, localStorage, jolokia, workspace, $routeParams) => {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
 
     var isFmc = Fabric.isFMCContainer(workspace);
     $scope.isFmc = isFmc;
+
+    if (isFmc) {
+      $scope.version = $routeParams['versionId'];
+      if ($scope.version == 'default-version') {
+        $scope.version = Fabric.getDefaultVersionId(jolokia);
+      }
+      $scope.selectedVersion = { id: $scope.version };
+    }
 
     $scope.selectedNode = null;
 
@@ -287,7 +295,16 @@ module ActiveMQ {
     });
 
     if (isFmc) {
-      Core.register(jolokia, $scope, {type: 'exec', mbean: Fabric.mqManagerMBean, operation: "loadBrokerStatus()"}, onSuccess(onBrokerData));
+      var unreg:() => void = null;
+
+      $scope.$watch('selectedVersion.id', (newValue, oldValue) => {
+        if (!Core.isBlank(newValue)) {
+          if (unreg) {
+            unreg();
+          }
+          unreg = <() => void>Core.register(jolokia, $scope, {type: 'exec', mbean: Fabric.mqManagerMBean, operation: "loadBrokerStatus(java.lang.String)", arguments: [ newValue ]}, onSuccess(onBrokerData));
+        }
+      });
     } else {
       // lets just use the current stuff from the workspace
       $scope.$watch('workspace.tree', function () {

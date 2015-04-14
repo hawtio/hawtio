@@ -15,8 +15,8 @@ module Fabric {
     $scope.entity = {
       // default options
       group: $scope.defaultGroup,
-      ssl: true
-
+      ssl: true,
+      version: $routeParams['versionId']
     };
     $scope.otherEntity = {
       networkConnectAll: false
@@ -32,7 +32,7 @@ module Fabric {
       jolokia.execute(Fabric.mqManagerMBean, "saveBrokerConfigurationJSON", tmpJson, onSuccess(onSave));
 
       // now lets switch to the brokers view
-      $location.path("/fabric/mq/brokers");
+      $location.path("/fabric/mq/" + $routeParams['versionId'] + "/brokers");
       Core.$apply($scope);
     };
 
@@ -72,7 +72,7 @@ module Fabric {
     Fabric.getDtoSchema("brokerConfig", "io.fabric8.api.jmx.MQBrokerConfigDTO", jolokia, (schema) => {
       $scope.schema = schema;
       configureSchema(schema);
-      jolokia.execute(Fabric.mqManagerMBean, "loadBrokerStatus()", onSuccess(onBrokerData));
+      jolokia.execute(Fabric.mqManagerMBean, "loadBrokerStatus(java.lang.String)", $routeParams['versionId'], onSuccess(onBrokerData));
       Core.$apply($scope);
     });
 
@@ -138,8 +138,12 @@ module Fabric {
       Core.pathSet(schema.properties, ['networkConnectAll', 'label'], 'Network to all groups');
       Core.pathSet(schema.properties, ['networkConnectAll', 'tooltip'], 'Should this broker create a store and forward network to all the known groups of brokers');
 
+      Core.pathSet(schema.properties, ['version', 'input-attributes', 'value'], "{{'" + $routeParams['versionId'] + "'}}");
+      Core.pathSet(schema.properties, ['version', 'input-attributes', 'readonly'], 'true');
+      Core.pathSet(schema.properties, ['version', 'label'], "Fabric version");
+
       schema['tabs'] = {
-        'Default': ['group', 'brokerName', 'kind', 'profile', 'clientProfile', 'data', 'configUrl', 'replicas', 'minimumInstances', 'networkConnectAll', 'networks'],
+        'Default': ['group', 'brokerName', 'kind', 'profile', 'clientProfile', 'data', 'configUrl', 'replicas', 'minimumInstances', 'version', 'networkConnectAll', 'networks'],
         'Advanced': ['parentProfile', 'clientParentProfile', 'networksUserName', 'networksPassword', '*']
       };
     }

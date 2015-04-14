@@ -15,9 +15,13 @@
         <a href="" title="Create a new container" ng-click="createContainer()">
           <i class="icon-plus"></i> Container
         </a>
-        <a ng-href="#/fabric/mq/brokerDiagram{{hash}}" title="View the network diagram of the brokers and their clients" ng-show="groups.length">
+        <a ng-href="#/fabric/mq/{{selectedVersion.id}}/brokerDiagram{{hash}}" title="View the network diagram of the brokers and their clients" ng-show="groups.length">
           <i class="icon-picture"></i> Diagram
         </a>
+      </div>
+
+      <div class="profile-selection-controls">
+        <div fabric-version-selector='selectedVersion'></div>
       </div>
 
     </div>

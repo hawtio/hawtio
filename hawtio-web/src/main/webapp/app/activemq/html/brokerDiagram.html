@@ -201,6 +201,10 @@ text.shadow {
         <i class="icon-remove clickable" title="Clear filter" ng-click="searchFilter = ''"></i>
       </div>
 
+      <div ng-show="isFmc" class="profile-selection-controls">
+        <div fabric-version-selector='selectedVersion'></div>
+      </div>
+
       <div class="section-controls">
         <a href="#"
            class="dropdown-toggle"
@@ -278,7 +282,7 @@ text.shadow {
           </li>
         </ul>
 
-        <a ng-show="isFmc" ng-href="#/fabric/mq/brokers{{hash}}" title="View the broker and container diagram">
+        <a ng-show="isFmc" ng-href="#/fabric/mq/{{selectedVersion.id}}/brokers{{hash}}" title="View the broker and container diagram">
           <i class="icon-edit"></i> Configuration
         </a>
       </div>

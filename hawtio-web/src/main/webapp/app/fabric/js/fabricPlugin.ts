@@ -34,10 +34,10 @@ module Fabric {
             when('/fabric/configurations/:versionId/:profileId', { templateUrl: 'app/osgi/html/configurations.html' }).
             when('/fabric/configuration/:versionId/:profileId/:pid', { templateUrl: 'app/osgi/html/pid.html' }).
             when('/fabric/configuration/:versionId/:profileId/:pid/:factoryPid', { templateUrl: 'app/osgi/html/pid.html' }).
-            when('/fabric/mq/brokers', { templateUrl: templatePath + 'brokers.html' }).
-            when('/fabric/mq/brokerDiagram', { templateUrl: activeMQTemplatePath + 'brokerDiagram.html', reloadOnSearch: false }).
-            when('/fabric/mq/brokerNetwork', { templateUrl: templatePath + 'brokerNetwork.html' }).
-            when('/fabric/mq/createBroker', { templateUrl: templatePath + 'createBroker.html' }).
+            when('/fabric/mq/:versionId/brokers', { templateUrl: templatePath + 'brokers.html' }).
+            when('/fabric/mq/:versionId/brokerDiagram', { templateUrl: activeMQTemplatePath + 'brokerDiagram.html', reloadOnSearch: false }).
+            when('/fabric/mq/:versionId/brokerNetwork', { templateUrl: templatePath + 'brokerNetwork.html' }).
+            when('/fabric/mq/:versionId/createBroker', { templateUrl: templatePath + 'createBroker.html' }).
             when('/fabric/camel/diagram', { templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false }).
             when('/fabric/api', { templateUrl: templatePath + 'apis.html' }).
 

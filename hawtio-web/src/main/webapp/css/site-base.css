@@ -1535,7 +1535,7 @@ h4 > .contained {
   padding: 5px 7px;
 }
 
-.selection-controls {
+.selection-controls, .profile-selection-controls {
   display: inline-block;
 }
 
@@ -1564,6 +1564,11 @@ h4 > .contained {
 .page-padded .section-header .selection-controls {
   position: relative;
   top: 1px;
+}
+
+.page-padded .section-header .profile-selection-controls {
+  position: relative;
+  top: 5px;
 }
 
 .section-controls > a,
