@@ -4,7 +4,7 @@
 /// <reference path="./karafPlugin.ts"/>
 module Karaf {
 
-    _module.controller("Karaf.ScrComponentsController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace, jolokia) => {
+    export var ScrComponentsController = _module.controller("Karaf.ScrComponentsController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace, jolokia) => {
 
         $scope.component = empty();
 
@@ -35,7 +35,7 @@ module Karaf {
                     field: 'Name',
                     displayName: 'Name',
                     cellTemplate: '<div class="ngCellText"><a href="#/osgi/scr-component/{{row.entity.Name}}?p=container">{{row.getProperty(col.field)}}</a></div>',
-                    width: 400
+                    width: 600
                 },
                 {
                     field: 'State',
@@ -46,9 +46,21 @@ module Karaf {
             ]
         };
 
-        var scrMBean = Karaf.getSelectionScrMBean(workspace);
+        var scrMBean = Karaf.getSelectionFabricScrMBean(workspace);
         if (scrMBean) {
-            render(getAllComponents(workspace, jolokia))
+            Core.register(jolokia, $scope, {
+                type: 'exec', mbean: scrMBean,
+                operation: 'listComponents()'
+            }, onSuccess((response) => {
+                var components = response.value || [];
+                render(createFabricScrComponentsView(response.value))
+            }));
+        } else {
+            scrMBean = Karaf.getSelectionScrMBean(workspace);
+            if (scrMBean) {
+                render(getAllComponents(workspace, jolokia))
+                // no auto-refreshing in Karaf version of SCR MBean
+            }
         }
 
         $scope.activate = () => {
@@ -59,6 +71,7 @@ module Karaf {
                     console.log("Failed to activate!")
                 });
             });
+            $scope.selectedComponents.splice(0, $scope.selectedComponents.length);
         };
 
         $scope.deactivate = () => {
@@ -69,6 +82,7 @@ module Karaf {
                     console.log("Failed to deactivate!")
                 });
             });
+            $scope.selectedComponents.splice(0, $scope.selectedComponents.length);
         };
 
 

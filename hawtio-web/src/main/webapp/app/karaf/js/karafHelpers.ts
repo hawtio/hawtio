@@ -211,6 +211,29 @@ module Karaf {
     });
   }
 
+    /**
+     * Fabric8 provides faster way to read all SCR components - transform the response here
+     * @param components
+     * @returns {Array}
+     */
+    export function createFabricScrComponentsView(components) {
+      var result = [];
+      angular.forEach(components, (component) => {
+        result.push({
+          Name: component.name,
+          State: component.statusName
+        });
+      });
+      return result;
+    }
+
+    /**
+     * Karaf requires 1+N requests to populate SCR components list
+     * @param workspace
+     * @param jolokia
+     * @param components
+     * @returns {Array}
+     */
     export function createScrComponentsView(workspace, jolokia, components) {
         var result = [];
         angular.forEach(components, (component) => {
@@ -364,6 +387,18 @@ module Karaf {
     }
     return null;
   }
+
+    export function getSelectionFabricScrMBean(workspace:Workspace):string {
+      if (workspace) {
+        var scrStuff = workspace.mbeanServicesToDomain["Scr"] || {};
+        var karaf = scrStuff["io.fabric8"] || {};
+        var mbean = karaf.objectName;
+        if (mbean) {
+          return mbean;
+        }
+      }
+      return null;
+    }
 
     export function getSelectionScrMBean(workspace:Workspace):string {
         if (workspace) {
