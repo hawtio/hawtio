@@ -4419,6 +4419,7 @@ ul.dynatree-container {
 .attributes-wrapper {
   width: 100%;
   overflow: auto;
+  clear: both
 }
 
 .separator {
