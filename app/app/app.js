@@ -34929,6 +34929,17 @@ var Karaf;
         });
     }
     Karaf.populateFeaturesAndRepos = populateFeaturesAndRepos;
+    function createFabricScrComponentsView(components) {
+        var result = [];
+        angular.forEach(components, function (component) {
+            result.push({
+                Name: component.name,
+                State: component.statusName
+            });
+        });
+        return result;
+    }
+    Karaf.createFabricScrComponentsView = createFabricScrComponentsView;
     function createScrComponentsView(workspace, jolokia, components) {
         var result = [];
         angular.forEach(components, function (component) {
@@ -35075,6 +35086,18 @@ var Karaf;
         return null;
     }
     Karaf.getSelectionFeaturesMBean = getSelectionFeaturesMBean;
+    function getSelectionFabricScrMBean(workspace) {
+        if (workspace) {
+            var scrStuff = workspace.mbeanServicesToDomain["Scr"] || {};
+            var karaf = scrStuff["io.fabric8"] || {};
+            var mbean = karaf.objectName;
+            if (mbean) {
+                return mbean;
+            }
+        }
+        return null;
+    }
+    Karaf.getSelectionFabricScrMBean = getSelectionFabricScrMBean;
     function getSelectionScrMBean(workspace) {
         if (workspace) {
             var scrStuff = workspace.mbeanTypesToDomain["scr"] || {};
@@ -35509,7 +35532,7 @@ var Karaf;
 })(Karaf || (Karaf = {}));
 var Karaf;
 (function (Karaf) {
-    Karaf._module.controller("Karaf.ScrComponentsController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+    Karaf.ScrComponentsController = Karaf._module.controller("Karaf.ScrComponentsController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
         $scope.component = empty();
         $scope.result = [];
         $scope.components = [];
@@ -35530,7 +35553,7 @@ var Karaf;
                     field: 'Name',
                     displayName: 'Name',
                     cellTemplate: '<div class="ngCellText"><a href="#/osgi/scr-component/{{row.entity.Name}}?p=container">{{row.getProperty(col.field)}}</a></div>',
-                    width: 400
+                    width: 600
                 },
                 {
                     field: 'State',
@@ -35540,9 +35563,22 @@ var Karaf;
                 }
             ]
         };
-        var scrMBean = Karaf.getSelectionScrMBean(workspace);
+        var scrMBean = Karaf.getSelectionFabricScrMBean(workspace);
         if (scrMBean) {
-            render(Karaf.getAllComponents(workspace, jolokia));
+            Core.register(jolokia, $scope, {
+                type: 'exec',
+                mbean: scrMBean,
+                operation: 'listComponents()'
+            }, onSuccess(function (response) {
+                var components = response.value || [];
+                render(Karaf.createFabricScrComponentsView(response.value));
+            }));
+        }
+        else {
+            scrMBean = Karaf.getSelectionScrMBean(workspace);
+            if (scrMBean) {
+                render(Karaf.getAllComponents(workspace, jolokia));
+            }
         }
         $scope.activate = function () {
             $scope.selectedComponents.forEach(function (component) {
@@ -35552,6 +35588,7 @@ var Karaf;
                     console.log("Failed to activate!");
                 });
             });
+            $scope.selectedComponents.splice(0, $scope.selectedComponents.length);
         };
         $scope.deactivate = function () {
             $scope.selectedComponents.forEach(function (component) {
@@ -35561,6 +35598,7 @@ var Karaf;
                     console.log("Failed to deactivate!");
                 });
             });
+            $scope.selectedComponents.splice(0, $scope.selectedComponents.length);
         };
         function empty() {
             return [
