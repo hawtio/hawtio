@@ -93,9 +93,14 @@ var Gogo = (function(Gogo) {
                 log.debug("Previous terminal created, let's clean it up");
                 document.onkeypress = null;
                 document.onkeydown = null;
+                scope.term.clean();
                 delete scope.term;
               }
-              scope.term = gogo.Terminal(element.get(0), width, height, cssWidth, cssHeight, scrollWidth, charHeight, response['token']);
+              if (!scope.destroyed) {
+                // it may happen that the scope is already destroyed
+                // I don't know (yet) why Angular 1.1.5 calls link() function twice
+                scope.term = gogo.Terminal(element.get(0), width, height, cssWidth, cssHeight, scrollWidth, charHeight, response['token'], scope);
+              }
               Core.$apply(scope);
             },
             error: function (xhr, textStatus, error) {

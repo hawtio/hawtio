@@ -203,6 +203,8 @@ gogo.Terminal_ctor = function(div, width, height, cssWidth, cssHeight, scrollWid
            if (o[ev.keyCode] || ev.ctrlKey || ev.altKey) {
                keypress(ev, true);
            }
+           if (ev.keyCode == 13) // sometimes ENTER doesn't fire keypress
+               keypress(ev, false);
    }
 
    function init() {
@@ -238,6 +240,15 @@ gogo.Terminal_ctor = function(div, width, height, cssWidth, cssHeight, scrollWid
    }
 
    init();
+
+  this.clean = function () {
+    if (timeout) {
+      window.clearTimeout(timeout);
+    }
+    if (error_timeout) {
+      window.clearTimeout(error_timeout);
+    }
+  };
 
 };
 
