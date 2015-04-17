@@ -383,6 +383,12 @@ module Fabric {
         });
       };
 
+      $scope.containersForProfileAndVersion = (profileId, versionId) => {
+        return $scope.containers.filter((container) => {
+          return container.profileIds.some(profileId) && container.versionId == versionId;
+        });
+      };
+
       $scope.profileMatchesFilter = (profile) => {
         var filterText = $scope.searchFilter;
 

@@ -58,7 +58,7 @@
 
       </div>
       <div class="expandable-body">
-        <div ng-repeat="container in containersForProfile(profile.id)"
+        <div ng-repeat="container in containersForProfileAndVersion(profile.id, profile.versionId)"
               ng-show="containerMatchesFilter(container)"
               ng-include="'app/fabric/html/containerItem.html'"> 
         </div>
