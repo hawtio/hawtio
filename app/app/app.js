@@ -25929,6 +25929,11 @@ var Fabric;
                 return container.profileIds.some(id);
             });
         };
+        $scope.containersForProfileAndVersion = function (profileId, versionId) {
+            return $scope.containers.filter(function (container) {
+                return container.profileIds.some(profileId) && container.versionId == versionId;
+            });
+        };
         $scope.profileMatchesFilter = function (profile) {
             var filterText = $scope.searchFilter;
             return Core.matchFilterIgnoreCase(profile.id, filterText) || !profile.containers.filter(function (id) { return Core.matchFilterIgnoreCase(id, filterText); }).isEmpty();
