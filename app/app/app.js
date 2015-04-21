@@ -13778,6 +13778,7 @@ var Camel;
                     if (angular.isDefined(value) && value !== null) {
                         $scope.nodeData[key] = value;
                     }
+                    delete property["label"];
                 });
                 var labels = [];
                 if ($scope.model.component.label) {
