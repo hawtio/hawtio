@@ -139,6 +139,9 @@ module Camel {
           if (angular.isDefined(value) && value !== null) {
             $scope.nodeData[key] = value;
           }
+          // remove label as that causes the UI to render the label instead of the key as title
+          // we should later group the table into labels (eg consumer vs producer)
+          delete property["label"];
         });
 
         var labels = [];
