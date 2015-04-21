@@ -148,6 +148,14 @@
       <to uri="activemq:timer.bytes?jmsMessageType=Bytes"/>
     </route>
 
+    <route id="directRoute">
+      <from uri="direct:start"/>
+      <setBody>
+        <simple>hello!</simple>
+      </setBody>
+      <to uri="log:entesb.EVENT?level=INFO"/>
+    </route>
+
   </camelContext>
 
   <camelContext id="onExceptionContext" xmlns="http://camel.apache.org/schema/spring">
