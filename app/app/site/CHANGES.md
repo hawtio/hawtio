@@ -7,6 +7,10 @@
 * Upgrade to Camel 2.15.1
 * Camel plugin: Clicking on a EIP/node in the Route Diagram redirects to the selected EIP properties page
 * Camel plugin: Fixed inflight page didnt clear data if no longer any exchanges inflight
+* Camel plugin: Fixed endpoint properties to show option names correctly when the option has a label associated
+* Various fixes and improvements for Fabric 1.x plugin
+* Fixed Karaf terminal to avoid potentially sending duplicat keys
+* Other bug fixes as part of hardening hawtio for JBoss Fuse 6.2 product
 
 #### 1.4.47 ... 1.4.48
 
