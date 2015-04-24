@@ -24461,6 +24461,7 @@ var FabricRequirements;
                 ['maximumContainerCount', 'port'].forEach(function (s) {
                     Core.pathSet(dockerHostConfigurationSchema, ['properties', s, 'type'], 'integer');
                     Core.pathSet(dockerHostConfigurationSchema, ['properties', s, 'input-attributes', 'min'], '1');
+                    Core.pathSet(dockerHostConfigurationSchema, ['properties', s, 'input-attributes', 'max'], '65535');
                 });
                 $scope.gridConfig.rowSchema = dockerHostConfigurationSchema;
                 $scope.gridConfig.rowName = "docker host";
@@ -24670,6 +24671,7 @@ var FabricRequirements;
                 ['maximumContainerCount', 'port'].forEach(function (s) {
                     Core.pathSet(hostConfigurationSchema, ['properties', s, 'type'], 'integer');
                     Core.pathSet(hostConfigurationSchema, ['properties', s, 'input-attributes', 'min'], '1');
+                    Core.pathSet(hostConfigurationSchema, ['properties', s, 'input-attributes', 'max'], '65535');
                 });
                 sshConfigurationSchema['tabs'] = {
                     'Defaults': ['defaultUsername', 'defaultPassword', 'defaultPort', 'defaultPrivateKeyFile', 'defaultPassPhrase', 'defaultPath', '*']
