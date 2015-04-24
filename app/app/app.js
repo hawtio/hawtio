@@ -49121,7 +49121,7 @@ var Wiki;
                     var wikiLinks = $(".logbar");
                     var top = (wikiLinks.height() + 8) + "px";
                     $element.css({ "margin-top": top });
-                }, 0, false);
+                }, 1000, false);
             }
         };
     }]);
