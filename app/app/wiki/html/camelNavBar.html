@@ -13,8 +13,8 @@
               <li class="pull-right" ng-show="sourceLink()">
       -->
       <li class="pull-right">
-        <a href="" id="saveButton" ng-disabled="!modified" ng-click="save()"
-           ng-class="{'nav-primary' : modified}"
+        <a ng-href="" id="saveButton" ng-disabled="!modified" ng-click="save(); $event.stopPropagation();"
+           ng-class="{'nav-primary' : modified, 'nav-primary-disabled' : !modified}"
            title="Saves the Camel document">
           <i class="icon-save"></i> Save</a>
       </li>

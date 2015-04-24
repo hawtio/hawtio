@@ -1895,6 +1895,9 @@ div#main div ul.nav li a.nav-primary:active,
 div#main div ul.nav li a.nav-primary.active {
   background-color: #003399 \9;
 }
+div#main div ul.nav li a.nav-primary-disabled {
+  cursor: default;
+}
 
 .nav.nav-tabs li a[disabled] {
   cursor: not-allowed;
