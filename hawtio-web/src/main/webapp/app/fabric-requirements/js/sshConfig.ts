@@ -50,6 +50,7 @@ module FabricRequirements {
         ['maximumContainerCount', 'port'].forEach((s) => {
           Core.pathSet(hostConfigurationSchema, ['properties', s, 'type'], 'integer');
           Core.pathSet(hostConfigurationSchema, ['properties', s, 'input-attributes', 'min'], '1');
+          Core.pathSet(hostConfigurationSchema, ['properties', s, 'input-attributes', 'max'], '65535');
         });
 
         // Order the form elements nicely

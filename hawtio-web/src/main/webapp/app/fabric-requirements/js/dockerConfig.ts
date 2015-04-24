@@ -33,6 +33,7 @@ module FabricRequirements {
         ['maximumContainerCount', 'port'].forEach((s) => {
           Core.pathSet(dockerHostConfigurationSchema, ['properties', s, 'type'], 'integer');
           Core.pathSet(dockerHostConfigurationSchema, ['properties', s, 'input-attributes', 'min'], '1');
+          Core.pathSet(dockerHostConfigurationSchema, ['properties', s, 'input-attributes', 'max'], '65535');
         });
 
         $scope.gridConfig.rowSchema = dockerHostConfigurationSchema;
