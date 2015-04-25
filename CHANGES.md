@@ -1,6 +1,10 @@
 
 ### Change Log
 
+#### 1.4.50
+
+* Connect plugin no longer shows welcome screen when connecting to other JVMs
+
 #### 1.4.49
 
 * Running hawtio on Apache Tomcat with users defined in `tomcat-users.xml` now supports specifying the password hashed algorithm to use.
