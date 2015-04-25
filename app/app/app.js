@@ -2939,6 +2939,7 @@ var Core;
         else {
             parts = url.split(host);
         }
+        var portNum = Core.parseIntValue(port);
         var path = parts[1];
         if (path && path.startsWith('/')) {
             path = path.slice(1, path.length);
@@ -2946,7 +2947,7 @@ var Core;
         return {
             scheme: scheme,
             host: host,
-            port: port,
+            port: portNum,
             path: path
         };
     }
@@ -34593,6 +34594,7 @@ var JVM;
                 return;
             }
             var options = Core.createConnectOptions();
+            options.name = agent.agent_description;
             var urlObject = Core.parseUrl(agent.url);
             angular.extend(options, urlObject);
             options.userName = agent.username;
