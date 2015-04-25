@@ -34568,6 +34568,9 @@ var JVM;
                 Core.$apply($scope);
                 return;
             }
+            if (!('view' in connectOptions) || angular.isUndefined(connectOptions.view)) {
+                connectOptions.view = "#/";
+            }
             Core.connectToServer(localStorage, connectOptions);
             $scope.connectionConfigs = Core.loadConnectionMap();
             angular.extend($scope.currentConfig, $scope.connectionConfigs[$scope.lastConnection]);
@@ -34722,6 +34725,7 @@ var JVM;
             options["path"] = path;
             options["userName"] = "";
             options["password"] = "";
+            options["view"] = "#/";
             var con = Core.createConnectToServerOptions(options);
             con.name = "local";
             JVM.log.debug("Connecting to local JVM agent: " + url);
