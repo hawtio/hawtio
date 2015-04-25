@@ -67,6 +67,8 @@ module JVM {
       // add empty username as we dont need login
       options["userName"] = "";
       options["password"] = "";
+      // connect to root by default as we do not want to show welcome page
+      options["view"] = "#/";
 
       var con = Core.createConnectToServerOptions(options);
       con.name = "local";
