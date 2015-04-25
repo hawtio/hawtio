@@ -18,8 +18,9 @@
 
         <p>
           If you are using <a href="http://fabric8.io/">Fabric8</a>, <a href="http://www.jboss.org/products/fuse">JBoss Fuse</a>, or <a href="http://activemq.apache.org">Apache ActiveMQ</a>;
-          then a jolokia agent is included by default (use context path of jolokia agent, usually <code>jolokia</code>). Or you can always just deploy hawtio inside the process
-          (which includes the jolokia agent, use Jolokia servlet mapping inside hawtio context path, usually <code>hawtio/jolokia</code>).
+          then a jolokia agent is included by default (use context path of jolokia agent, usually <code>jolokia</code>, for Apache ActiveMQ the context path is <code>api/jolokia</code>).
+          Or you can always just deploy hawtio inside the process (which includes the jolokia agent, use Jolokia servlet mapping inside hawtio context path, usually <code>hawtio/jolokia</code>).
+          The port number is usually 8181 for <a href="http://fabric8.io/">Fabric8</a>, <a href="http://www.jboss.org/products/fuse">JBoss Fuse</a>, and 8161 when using <a href="http://activemq.apache.org">Apache ActiveMQ</a>.
         </p>
 
         <p ng-show="hasLocalMBean()">
