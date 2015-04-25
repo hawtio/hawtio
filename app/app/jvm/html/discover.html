@@ -82,7 +82,7 @@
               <i class="icon-lock" title="A valid username and password will be required to connect"></i>
             </div>
 
-            <div class="inline-block">
+            <div class="inline-block" ng-hide="!agent.url">
               <div class="connect-button"
                    ng-click="gotoServer($event, agent)"
                    hawtio-template-popover
