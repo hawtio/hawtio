@@ -34568,9 +34568,8 @@ var JVM;
                 Core.$apply($scope);
                 return;
             }
-            if (!('view' in connectOptions) || angular.isUndefined(connectOptions.view)) {
-                connectOptions.view = "#/";
-            }
+            var view = (connectOptions.view || '#/');
+            connectOptions.view = view;
             Core.connectToServer(localStorage, connectOptions);
             $scope.connectionConfigs = Core.loadConnectionMap();
             angular.extend($scope.currentConfig, $scope.connectionConfigs[$scope.lastConnection]);
