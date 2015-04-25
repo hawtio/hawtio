@@ -1209,6 +1209,9 @@ module Core {
       parts = url.split(host);
     }
 
+    // make sure we use port as a number
+    var portNum = Core.parseIntValue(port);
+
     var path = parts[1];
     if (path && path.startsWith('/')) {
       path = path.slice(1, path.length);
@@ -1219,7 +1222,7 @@ module Core {
     return {
       scheme: scheme,
       host: host,
-      port: port,
+      port: portNum,
       path: path
     }
   }
