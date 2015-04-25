@@ -4,6 +4,7 @@
 #### 1.4.50
 
 * Connect plugin no longer shows welcome screen when connecting to other JVMs
+* Fixed issue with missing dangle module from 1.4.49 release.
 
 #### 1.4.49
 
