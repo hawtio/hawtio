@@ -47,6 +47,7 @@ module Infinispan {
               var cacheFolder = new Folder(name);
               cacheFolder.addClass = "org-infinispn-cache";
               cacheFolder.typeName = "Cache";
+              cacheFolder.parent = folder;
               cacheFolder.key = answer.key + "-" + cacheName;
               cacheFolder.objectName = value.objectName;
               cacheFolder.domain = value.domain;
