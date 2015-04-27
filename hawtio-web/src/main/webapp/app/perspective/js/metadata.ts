@@ -15,6 +15,46 @@ module Perspective {
    * @type {any}
    */
   export var metadata = {
+    kubernetes: {
+      icon: {
+        title: "Fabric8",
+        type: "img",
+        src: "img/icons/fabric8_icon.svg"
+      },
+      label: "Fabric8",
+      isValid: (workspace) => !Fabric.isFMCContainer(workspace) && Kubernetes.isKubernetes(workspace),
+      lastPage: "#/kubernetes/apps",
+      topLevelTabs: {
+        includes: [
+          {
+            content: "Runtime",
+            id: "kubernetes"
+          },
+          {
+            content: "Library",
+            href: "#/wiki"
+          },
+          {
+            href: "#/docker"
+          },
+          {
+            id: "apis.index"
+          },
+          {
+            id: "kibana"
+          },
+          {
+            id: "grafana"
+          },
+          {
+            href: "#/dashboard"
+          },
+          {
+            href: "#/health"
+          }
+        ]
+      }
+    },
     fabric: {
       icon: {
         title: "Fabric8",
@@ -117,6 +157,21 @@ module Perspective {
             // we only want to include wiki if we are running in fabric (as they are in another perspective)
             // (must use "id" attribute for the plugin, an not href, when using onCondition)
             onCondition: (workspace) => Fabric.isFMCContainer(workspace)
+          },
+          {
+            id: "apis.index",
+            // we only want to include APIs if we are running in kubernetes (as they are in another perspective)
+            onCondition: (workspace) => Kubernetes.isKubernetes(workspace)
+          },
+          {
+            id: "grafana",
+            // we only want to include Grafana if we are running in kubernetes (as they are in another perspective)
+            onCondition: (workspace) => Kubernetes.isKubernetes(workspace)
+          },
+          {
+            id: "kibana",
+            // we only want to include Kibana if we are running in kubernetes (as they are in another perspective)
+            onCondition: (workspace) => Kubernetes.isKubernetes(workspace)
           }
         ]
       }

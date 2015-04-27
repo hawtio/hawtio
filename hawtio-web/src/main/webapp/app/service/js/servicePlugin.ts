@@ -2,11 +2,9 @@
 /// <reference path="serviceHelpers.ts"/>
 /// <reference path="../../helpers/js/pollHelpers.ts"/>
 /// <reference path="../../helpers/js/arrayHelpers.ts"/>
+/// <reference path="../../kubernetes/js/kubernetesHelpers.ts"/>
 
 module Service {
-
-  var isKubernetes = false;
-
   export interface SelectorMap {
     [name:string]: string
   }
@@ -27,7 +25,7 @@ module Service {
       name: 'ServiceRegistry',
       services: [],
       fetch: (next: () => void) => {
-        if (isKubernetes) {
+        if (Kubernetes.isKubernetesTemplateManager(workspace) || Service.pollServices) {
           $http({
             method: 'GET',
             url: 'service'

@@ -1,0 +1,108 @@
+<div ng-controller="Kubernetes.OverviewController">
+  <link rel="stylesheet" href="app/kubernetes/html/overview.css">
+  <script type="text/ng-template" id="serviceBoxTemplate.html">
+    <div class="row-fluid">
+      <div class="span3 align-left node-body">{{entity.port}}</div>
+      <div class="span9 align-right node-header" title="{{entity.id}}">{{entity.id}}</div>
+    </div>
+  </script>
+  <script type="text/ng-template" id="serviceTemplate.html">
+    <div class="kubernetes-overview-row">
+      <div class="kubernetes-overview-cell">
+        <div id="{{service._key}}"
+             namespace="{{service.namespace}}"
+             connect-to="{{service.connectTo}}"
+             data-type="service"
+             class="jsplumb-node kubernetes-node kubernetes-service-node"
+             ng-controller="Kubernetes.OverviewBoxController"
+             ng-init="entity=getEntity('service', '{{service._key}}')"
+             ng-mouseenter="mouseEnter($event)"
+             ng-mouseleave="mouseLeave($event)"
+             ng-click="viewDetails('services')">
+          <div ng-init="entity=entity" ng-include="'serviceBoxTemplate.html'"></div>
+        </div>
+      </div>
+    </div>
+  </script>
+  <script type="text/ng-template" id="hostTemplate.html">
+    <div class="kubernetes-overview-row">
+      <div class="kubernetes-overview-cell">
+        <div id="{{host.id}}"
+             data-type="host"
+             class="kubernetes-host-container">
+          <h5>{{host.id}}</h5>
+          <div class="pod-container"></div>
+        </div>
+      </div>
+    </div>
+  </script>
+  <script type="text/ng-template" id="podTemplate.html">
+    <div id="{{pod._key}}"
+         data-type="pod"
+         title="Pod ID: {{pod.id}}"
+         class="jsplumb-node kubernetes-node kubernetes-pod-node" 
+         ng-mouseenter="mouseEnter($event)"
+         ng-mouseleave="mouseLeave($event)"
+         ng-controller="Kubernetes.OverviewBoxController"
+         ng-init="entity=getEntity('pod', '{{pod._key}}')"
+         ng-click="viewDetails('pods')">
+    <div class="css-table">
+      <div class="css-table-row">
+        <div class="pod-status-cell css-table-cell">
+          <span ng-init="row={ entity: entity }" ng-include="'statusTemplate.html'"></span>
+        </div>
+        <div class="pod-label-cell css-table-cell">
+          <span ng-init="row={ entity: entity }" ng-include="'labelTemplate.html'"></span>
+        </div>
+    </div>
+  </div>
+  </script>
+  <script type="text/ng-template" id="replicationControllerTemplate.html">
+    <div class="kubernetes-overview-row">
+      <div class="kubernetes-overview-cell">
+        <div
+            id="{{replicationController._key}}"
+            title="{{replicationController.id}}"
+            data-type="replicationController"
+            data-placement="top"
+            connect-to="{{replicationController.connectTo}}"
+            ng-mouseenter="mouseEnter($event)"
+            ng-mouseleave="mouseLeave($event)"
+            class="jsplumb-node kubernetes-replicationController-node kubernetes-node"
+            ng-controller="Kubernetes.OverviewBoxController"
+            ng-init="entity=getEntity('replicationController', '{{replicationController._key}}')"
+            ng-click="viewDetails('replicationControllers')">
+          <div ng-init="entity = entity" ng-include="'replicationControllerIconTemplate.html'">
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+  <script type="text/ng-template" id="overviewTemplate.html">
+    <div class="kubernetes-overview"
+         hawtio-jsplumb
+         draggable="false"
+         layout="false"
+         node-sep="50"
+         rank-sep="300">
+      <div class="kubernetes-overview-row">
+        <div class="kubernetes-overview-cell">
+          <div class="kubernetes-overview services">
+            <h6>Services</h6>
+          </div>
+        </div>
+        <div class="kubernetes-overview-cell">
+          <div class="kubernetes-overview hosts">
+            <h6>Hosts and Pods</h6>
+          </div>
+        </div>
+        <div class="kubernetes-overview-cell">
+          <div class="kubernetes-overview replicationControllers">
+            <h6>Replication controllers</h6>
+          </div>
+        </div>
+      </div>
+   </div>
+  </script>
+  <kubernetes-overview ui-if="kubernetes.selectedNamespace"></kubernetes-overview>
+</div>
