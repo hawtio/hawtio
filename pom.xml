@@ -107,13 +107,9 @@
     <jcraft-version>0.1.49</jcraft-version>
     <jcraft-jzlib-version>1.1.3</jcraft-jzlib-version>
 
-    <!-- TODO lets use Jetty 7.x to avoid servlet 2.5 and 3.0 classpath clashes -->
-<!--
-    <jetty-version>8.1.3.v20120416</jetty-version>
--->
-    <jetty-version>7.6.16.v20140903</jetty-version>
+    <jetty-version>8.1.16.v20140903</jetty-version>
     <jetty-plugin-groupId>org.mortbay.jetty</jetty-plugin-groupId>
-    <jetty-plugin-version>7.6.16.v20140903</jetty-plugin-version>
+    <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-webapp-artifactId>jetty-webapp</jetty-webapp-artifactId>
 
     <jgit-version>3.0.0.201306101825-r</jgit-version>
@@ -400,8 +396,6 @@
       <id>camelSnapshot</id>
       <properties>
         <camel-version>2.16-SNAPSHOT</camel-version>
-        <spring-version>4.1.6.RELEASE</spring-version>
-        <jetty-version>8.1.15.v20140411</jetty-version>
       </properties>
 
     </profile>
