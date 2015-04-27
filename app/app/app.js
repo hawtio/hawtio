@@ -1272,7 +1272,10 @@ var Jmx;
                 onExpand: function (flag, node) {
                     node.data.expand = flag;
                     if (node.data.isFolder()) {
-                        node.data.children[0].parent.expand = flag;
+                        var parent = node.data.children[0].parent;
+                        if (parent) {
+                            parent.expand = flag;
+                        }
                     }
                 },
                 onClick: function (node, event) {
@@ -29856,6 +29859,7 @@ var Infinispan;
                             var cacheFolder = new Folder(name);
                             cacheFolder.addClass = "org-infinispn-cache";
                             cacheFolder.typeName = "Cache";
+                            cacheFolder.parent = folder;
                             cacheFolder.key = answer.key + "-" + cacheName;
                             cacheFolder.objectName = value.objectName;
                             cacheFolder.domain = value.domain;
