@@ -1,18 +1,18 @@
 <div class="row-fluid">
 
-  <div id="tree-container" class="span3">
-    <ul id="tree-ctrl" class="nav">
-      <li>
-        <a data-target="#cameltree">
-          <span>Infinispan Tree</span>
-        </a>
-      </li>
-    </ul>
-    <div id="infinispantree" ng-controller="Infinispan.TreeController"></div>
-  </div>
+  <hawtio-pane position="left" width="300" header="header">
+    <div id="tree-container"
+         ng-controller="Jmx.MBeansController">
+      <div class="infinispan-tree"
+           ng-controller="Infinispan.TreeController">
+        <div id="infinispantree"></div>
+      </div>
+    </div>
+  </hawtio-pane>
 
-  <div class="span9">
+  <div class="row-fluid">
     <ng-include src="'app/jmx/html/subLevelTabs.html'"></ng-include>
     <div id="properties" ng-view></div>
   </div>
+
 </div>
