@@ -32064,7 +32064,11 @@ var Jmx;
             data: 'gridData',
             columnDefs: Jmx.propertiesColumnDefs
         };
-        $scope.$watch("gridOptions.selectedItems", function (newValue, oldValue) {
+        $scope.$watch(function ($scope) {
+            return $scope.gridOptions.selectedItems.map(function (item) {
+                return item.key || item;
+            });
+        }, function (newValue, oldValue) {
             if (newValue !== oldValue) {
                 Jmx.log.debug("Selected items: ", newValue);
                 $scope.selectedItems = newValue;
