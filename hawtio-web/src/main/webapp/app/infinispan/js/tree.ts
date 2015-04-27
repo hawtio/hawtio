@@ -1,6 +1,16 @@
 /// <reference path="infinispanPlugin.ts"/>
 module Infinispan {
 
+  _module.controller("Infinispan.TreeHeaderController", ["$scope", ($scope) => {
+    $scope.expandAll = () => {
+      Tree.expandAll("#infinispantree");
+    };
+
+    $scope.contractAll = () => {
+      Tree.contractAll("#infinispantree");
+    };
+  }]);
+
   _module.controller("Infinispan.TreeController", ["$scope", "$location", "workspace", ($scope, $location:ng.ILocationService, workspace:Workspace) => {
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
