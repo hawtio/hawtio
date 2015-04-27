@@ -29823,6 +29823,14 @@ var Infinispan;
 })(Infinispan || (Infinispan = {}));
 var Infinispan;
 (function (Infinispan) {
+    Infinispan._module.controller("Infinispan.TreeHeaderController", ["$scope", function ($scope) {
+        $scope.expandAll = function () {
+            Tree.expandAll("#infinispantree");
+        };
+        $scope.contractAll = function () {
+            Tree.contractAll("#infinispantree");
+        };
+    }]);
     Infinispan._module.controller("Infinispan.TreeController", ["$scope", "$location", "workspace", function ($scope, $location, workspace) {
         $scope.$on("$routeChangeSuccess", function (event, current, previous) {
             setTimeout(updateSelectionFromURL, 50);

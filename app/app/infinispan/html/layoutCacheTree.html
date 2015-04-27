@@ -1,3 +1,18 @@
+<script type="text/ng-template" id="header">
+  <div class="tree-header" ng-controller="Infinispan.TreeHeaderController">
+    <div class="left">
+    </div>
+    <div class="right">
+      <i class="icon-chevron-down clickable"
+         title="Expand all nodes"
+         ng-click="expandAll()"></i>
+      <i class="icon-chevron-up clickable"
+         title="Unexpand all nodes"
+         ng-click="contractAll()"></i>
+    </div>
+  </div>
+</script>
+
 <div class="row-fluid">
 
   <hawtio-pane position="left" width="300" header="header">
