@@ -5,6 +5,8 @@
 
 * Connect plugin no longer shows welcome screen when connecting to other JVMs
 * Fixed issue with missing dangle module from 1.4.49 release.
+* Fixed so the dashboard plugin is visible again
+* The wiki plugin is disabled for non fabric JVMs
 
 #### 1.4.49
 

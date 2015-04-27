@@ -16397,28 +16397,29 @@ var Perspective;
                         id: "insight-logs"
                     },
                     {
+                        id: "wiki"
+                    },
+                    {
                         id: "dashboard",
-                        onCondition: function (workspace) { return !Fabric.isFMCContainer(workspace); }
+                        onCondition: function (workspace) {
+                            if (Fabric.isFMCContainer(workspace)) {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
+                        }
                     },
                     {
                         id: "health",
-                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
-                    },
-                    {
-                        id: "wiki",
-                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
-                    },
-                    {
-                        id: "apis.index",
-                        onCondition: function (workspace) { return Kubernetes.isKubernetes(workspace); }
-                    },
-                    {
-                        id: "grafana",
-                        onCondition: function (workspace) { return Kubernetes.isKubernetes(workspace); }
-                    },
-                    {
-                        id: "kibana",
-                        onCondition: function (workspace) { return Kubernetes.isKubernetes(workspace); }
+                        onCondition: function (workspace) {
+                            if (Fabric.isFMCContainer(workspace)) {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
+                        }
                     }
                 ]
             }
