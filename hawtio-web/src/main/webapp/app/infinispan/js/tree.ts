@@ -52,6 +52,7 @@ module Infinispan {
               cacheFolder.objectName = value.objectName;
               cacheFolder.domain = value.domain;
               cacheFolder.entries = value.entries;
+              cacheFolder.tooltip = "Cache name: " + cacheName;
               answer.children.push(cacheFolder);
             } else {
               addAllCacheStatistics(value, answer);

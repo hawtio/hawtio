@@ -8,6 +8,7 @@ import org.infinispan.Cache;
 public class InfinispanDemo {
     private Cache<Object, Object> food;
     private Cache<Object, Object> drink;
+    private Cache<Object, Object> longName;
 
     public void init() {
         // kinda dodgy example data, hadn't had much coffee...
@@ -19,5 +20,9 @@ public class InfinispanDemo {
         drink.put("beer", "Great with curry, or any other time really");
         drink.put("wine", "Nice with cheese");
 
+        longName = SampleCacheContainer.getCache("a-very-long-cache-name-that-is-not-so-easy-to-read");
+        longName.put("whiskey", "Yes please");
+        longName.put("brandy", "Oh yeah that too");
+        longName.put("vodka", "Nah rather fancy something else");
     }
 }
