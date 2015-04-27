@@ -16397,6 +16397,9 @@ var Perspective;
                         id: "insight-logs"
                     },
                     {
+                        id: "docker-registry"
+                    },
+                    {
                         id: "wiki"
                     },
                     {
