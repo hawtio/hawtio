@@ -1,0 +1,76 @@
+<div ng-controller="Kubernetes.ReplicationControllers">
+  <script type="text/ng-template" id="currentReplicasTemplate.html">
+    <div class="ngCellText" title="Number of running pods for this controller">
+      <a ng-show="row.entity.podsLink" href="{{row.entity.podsLink}}">
+        <span class="badge {{row.entity.currentState.replicas > 0 ? 'badge-success' : 'badge-warning'}}">{{row.entity.currentState.replicas}}</span>
+      </a>
+      <span ng-hide="row.entity.podsLink" class="badge">{{row.entity.currentState.replicas}}</span>
+    </div>
+  </script>
+  <script type="text/ng-template" id="desiredReplicas.html">
+    <div class="ngCellText"
+         ng-controller="Kubernetes.DesiredReplicas">
+      <input type="number"
+             class="no-bottom-margin"
+             min="0"
+             ng-model="row.entity.desiredState.replicas">
+    </div>
+  </script>
+  <div class="row-fluid">
+    <div class="span12" ng-show="replicationControllers.length">
+      <span ng-show="!id">
+        <hawtio-filter ng-model="tableConfig.filterOptions.filterText"
+                       css-class="input-xxlarge"
+                       placeholder="Filter replication controllers..."
+                       save-as="kubernetes-replication-controllers-text-filter"></hawtio-filter>
+      </span>
+      <button ng-show="fetched"
+              class="btn btn-danger pull-right"
+              ng-disabled="!id && tableConfig.selectedItems.length == 0"
+              ng-click="deletePrompt(id || tableConfig.selectedItems)">
+        <i class="icon-remove"></i> Delete
+      </button>
+      <span class="pull-right">&nbsp;</span>
+      <button ng-show="fetched && !id"
+              class="btn pull-right"
+              ng-disabled="!anyDirty()"
+              ng-click="undo()">
+        <i class="icon-undo"></i> Undo</span>
+      </button>
+      <span class="pull-right">&nbsp;</span>
+      <button ng-show="fetched && !id"
+              class="btn btn-primary pull-right"
+              ng-disabled="!anyDirty()"
+              ng-click="save()">
+        <i class="icon-save"></i> Save</span>
+      </button>
+      <span class="pull-right">&nbsp;</span>
+      <button ng-show="id"
+              class="btn btn-primary pull-right"
+              ng-click="id = undefined"><i class="icon-list"></i></button>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <div ng-hide="fetched">
+        <div class="align-center">
+          <i class="icon-spinner icon-spin"></i>
+        </div>
+      </div>
+      <div ng-show="fetched && !id">
+        <div ng-hide="replicationControllers.length" class="align-center">
+          <p class="alert alert-info">There are no replication controllers currently available.</p>
+        </div>
+        <div ng-show="replicationControllers.length">
+          <table class="table table-condensed table-striped" ui-if="kubernetes.selectedNamespace"
+                 hawtio-simple-table="tableConfig"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row-fluid" ng-show="fetched && id">
+    <div class="span12">
+      <div hawtio-object="item" config="detailConfig"></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,486 @@
+<style type="text/css">
+  .filter-header {
+    padding-bottom: 10px;
+  }
+
+  .app-name {
+    padding-left: 10px;
+  }
+
+  .profile-selector-name .app-name {
+    padding-left: 4px;
+  }
+
+  .ngCellText .icon-replication-controller {
+    vertical-align: middle;
+  }
+
+  img.icon-small-app {
+    width: 24px;
+    height: 24px;
+    vertical-align: text-bottom;
+  }
+
+  .profile-selector-name {
+    line-height: 24px;
+  }
+
+  img.icon-selected-app {
+    width: 64px;
+    height: 64px;
+    vertical-align: middle;
+  }
+
+  .selected-app-name {
+    line-height: 36px;
+    padding-left: 5px;
+  }
+
+  .service-view-rectangle {
+    position: relative;
+    margin-left: 0;
+    margin-right: 0px;
+    margin-bottom: 15px;
+    margin-top: 0;
+    background-color: #fafafa;
+
+    border-width:  1px;
+    border-style: solid;
+    border-color: #eeeeee;
+  }
+
+  .service-view-header {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 8px;
+    padding-bottom: 5px;
+  }
+
+  .service-view-icon img {
+    width: 24px;
+    height: 24px;
+    padding-right: 6px;
+  }
+
+  .service-view-name {
+    font-size: larger;
+    font-weight: bold;
+  }
+
+  .service-view-address {
+    padding-left: 30px;
+  }
+
+  .service-view-detail-header {
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 5px;
+    padding-bottom: 0px;
+    height: 20px;
+    min-height: 20px;
+    max-height: 20px;
+  }
+
+  .service-view-detail-header .span4,
+  .service-view-detail-header .value {
+    height: 20px;
+    min-height: 20px;
+    max-height: 20px;
+  }
+
+  .service-view-detail-header a {
+    color: black;
+  }
+
+  .service-view-detail-rectangle {
+    background-color: #eeeeee;
+
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .service-view-detail-rectangle .value {
+    font-weight: 600;
+  }
+
+  .service-view-detail-pod-box {
+    background-color: #eeeeee;
+    display: inline-block;
+    font-size: smaller;
+  }
+
+  .service-view-detail-pod-summary,
+  .service-view-detail-pod-summary-expand {
+    display: inline-block;
+
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    margin-right: 8px;
+    margin-bottom: 8px;
+
+    background-color: #ffffff;
+  }
+
+  .service-view-detail-pod-template {
+  }
+
+  .service-view-detail-pod-counts {
+  }
+
+  .service-view-detail-pod-status {
+    line-height: 36px;
+    padding-right: 20px;
+  }
+
+  .service-view-detail-pod-status i {
+    font-size: 36px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .service-view-detail-pod-expand {
+    color: #a0a0a0;
+    font-size: 18px;
+    padding-right: 0px;
+  }
+
+  .service-view-detail-pod-id {
+  }
+
+</style>
+<div ng-controller="Kubernetes.Apps">
+  <script type="text/ng-template" id="appIconTemplate.html">
+    <div class="ngCellText" title="{{row.entity.$info.description}}">
+      <a ng-href="row.entity.$appUrl">
+        <img ng-show="row.entity.$iconUrl" class="icon-replication-controller" ng-src="{{row.entity.$iconUrl}}">
+      </a>
+      <span class="app-name">
+        <a ng-click="row.entity.$select()">
+          {{row.entity.$info.name}}
+        </a>
+      </span>
+    </div>
+  </script>
+  <script type="text/ng-template" id="appServicesTemplate.html">
+    <div class="ngCellText">
+      <span ng-repeat="service in row.entity.services">
+        <a href="#/kubernetes/services?_id={{service.id}}">
+          <span>{{service.name || service.id}}</span>
+        </a>
+      </span>
+    </div>
+  </script>
+  <script type="text/ng-template" id="appDeployedTemplate.html">
+    <div class="ngCellText" title="deployed at: {{row.entity.$creationDate | date:'yyyy-MMM-dd HH:mm:ss Z'}}">
+      {{row.entity.$creationDate.relative()}}
+    </div>
+  </script>
+  <script type="text/ng-template" id="appReplicationControllerTemplate.html">
+    <div class="ngCellText">
+      <span ng-repeat="controller in row.entity.replicationControllers">
+        <a href="#/kubernetes/replicationControllers?_id={{controller.id}}">
+          <span>{{controller.id}}</span>
+        </a>
+        &nbsp;
+        <span class="btn btn-small" ng-click="row.entity.$openResizeControllerDialog(controller)" title="Edit the number of replicas of this controller">{{controller.replicas}}</span>
+      </span>
+    </div>
+  </script>
+  <script type="text/ng-template" id="appPodCountsAndLinkTemplate.html">
+    <div class="ngCellText" title="Number of running pods for this controller">
+      <div ng-repeat="podCounters in row.entity.$podCounters track by $index">
+        <a ng-show="podCounters.podsLink" href="{{podCounters.podsLink}}" title="{{podCounters.labelText}}">
+          <span ng-show="podCounters.valid" class="badge badge-success">{{podCounters.valid}}</span>
+          <span ng-show="podCounters.waiting" class="badge">{{podCounters.waiting}}</span>
+          <span ng-show="podCounters.error" class="badge badge-warning">{{podCounters.error}}</span>
+        </a>
+      </div>
+    </div>
+  </script>
+  <script type="text/ng-template" id="appDetailTemplate.html">
+    <div class="service-view-rectangle" ng-repeat="view in item.$serviceViews">
+      <div class="service-view-header">
+        <span class="service-view-icon">
+          <img ng-show="item.$iconUrl" ng-src="{{item.$iconUrl}}">
+        </span>
+        <span class="service-view-name" title="{{view.name}}">{{view.appName}}</span>
+        <span class="service-view-address">{{view.address}}</span>
+      </div>
+
+      <div class="service-view-detail-rectangle">
+        <div class="service-view-detail-header">
+          <div class="span4">
+            <div class="service-view-detail-deployed" ng-show="view.createdDate"
+                 title="deployed at: {{view.createdDate | date:'yyyy-MMM-dd HH:mm:ss Z'}}">
+              deployed:
+              <span class="value">{{view.createdDate.relative()}}</span>
+            </div>
+          </div>
+          <div class="span4">
+            <div class="service-view-detail-pod-template" ng-show="view.controllerId">
+              pod template:
+              <span class="value">{{view.controllerId}}</span>
+            </div>
+          </div>
+          <div class="span4 service-view-detail-pod-counts">
+            <a ng-show="view.replicationController" class="value pull-right"
+               ng-click="item.$openResizeControllerDialog(view.replicationController)"
+               title="Edit the number of pods">
+              {{view.podCountText}}
+            </a>
+            <span ng-hide="view.replicationController" class="value pull-right">
+              {{view.podCountText}}
+            </span>
+          </div>
+        </div>
+
+        <div class="service-view-detail-pod-box" ng-repeat="pod in item.pods">
+          <div ng-show="podExpanded(pod)" class="service-view-detail-pod-summary-expand">
+            <table>
+              <tr>
+                <td class="service-view-detail-pod-status">
+                  <i ng-class="pod.statusClass"></i>
+                </td>
+                <td>
+                  <div class="service-view-detail-pod-id" title="{{pod.id}}">
+                    <span class="value">Pod {{pod.idAbbrev}}</span>
+                  </div>
+                  <div class="service-view-detail-pod-ip">
+                    IP:
+                    <span class="value">{{pod.podIP}}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="service-view-detail-pod-ports">
+                    ports: <span class="value">{{pod.containerPorts.join(", ")}}</span>
+                  </div>
+                  <div class="service-view-detail-pod-minion">
+                    minion:
+                    <span class="value">{{pod.host}}</span>
+                  </div>
+                </td>
+                <td class="service-view-detail-pod-expand" ng-click="collapsePod(pod)">
+                  <i class="icon-chevron-left"></i>
+                </td>
+              </tr>
+            </table>
+            <!--
+                                      <div class="service-view-detail-pod-status">
+                                        status:
+                                        <span class="value">{{pod.status}}</span>
+                                      </div>
+            -->
+          </div>
+
+          <div ng-hide="podExpanded(pod)" class="service-view-detail-pod-summary">
+            <table>
+              <tr>
+                <td class="service-view-detail-pod-status">
+                  <i ng-class="pod.statusClass"></i>
+                </td>
+                <td>
+                  <div class="service-view-detail-pod-id" title="{{pod.id}}">
+                    <span class="value">Pod {{pod.idAbbrev}}</span>
+                  </div>
+                  <div class="service-view-detail-pod-ip">
+                    IP:
+                    <span class="value">{{pod.podIP}}</span>
+                  </div>
+                </td>
+                <td class="service-view-detail-pod-expand" ng-click="expandPod(pod)">
+                  <i class="icon-chevron-right"></i>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+
+  <div ng-hide="appSelectorShow">
+    <div class="row-fluid filter-header">
+      <div class="span12">
+        <span ng-show="apps.length && !id">
+          <hawtio-filter ng-model="tableConfig.filterOptions.filterText"
+                         css-class="input-xxlarge"
+                         placeholder="Filter apps..."></hawtio-filter>
+        </span>
+        <button ng-show="apps.length"
+                class="btn btn-danger pull-right"
+                ng-disabled="!id && tableConfig.selectedItems.length == 0"
+                ng-click="deletePrompt(id || tableConfig.selectedItems)">
+          <i class="icon-remove"></i> Delete
+        </button>
+        <span class="pull-right">&nbsp;</span>
+        <button ng-show="appSelector.folders.length"
+                class="btn btn-success pull-right"
+                ng-click="appSelectorShow = true"
+                title="Run an application">
+          <i class="icon-play-circle"></i> Run ...
+        </button>
+        <span class="pull-right">&nbsp;</span>
+        <button ng-show="id"
+                class="btn btn-primary pull-right"
+                ng-click="id = undefined"><i class="icon-list"></i></button>
+
+        <span class="pull-right">&nbsp;</span>
+        <span ng-hide="id" class="pull-right">
+          <div class="btn-group">
+            <a class="btn btn-small" ng-disabled="mode == 'list'" href="" ng-click="mode = 'list'">
+              <i class="icon-list"></i></a>
+            <a class="btn btn-small" ng-disabled="mode == 'detail'" href="" ng-click="mode = 'detail'">
+              <i class="icon-table"></i></a>
+          </div>
+        </span>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span12">
+        <div ng-hide="fetched">
+          <div class="align-center">
+            <i class="icon-spinner icon-spin"></i>
+          </div>
+        </div>
+        <div ng-show="fetched && !id">
+          <div ng-hide="apps.length" class="align-center">
+            <p class="alert alert-info">There are no apps currently available.</p>
+          </div>
+          <div ng-show="apps.length">
+            <div ng-show="mode == 'list'">
+              <table class="table table-condensed table-striped" hawtio-simple-table="tableConfig"></table>
+            </div>
+            <div ng-show="mode == 'detail'">
+              <div class="app-detail" ng-repeat="item in apps | filter:tableConfig.filterOptions.filterText">
+                <ng-include src="'appDetailTemplate.html'"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div ng-show="fetched && id">
+          <div class="app-detail">
+            <ng-include src="'appDetailTemplate.html'"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div ng-show="appSelectorShow">
+    <div class="span7">
+      <div class="row-fluid">
+        <hawtio-filter ng-model="appSelector.filterText"
+                       css-class="input-xxlarge"
+                       placeholder="Filter apps..."></hawtio-filter>
+      </div>
+      <div class="row-fluid">
+        <ul>
+          <li class="no-list profile-selector-folder" ng-repeat="folder in appSelector.folders"
+              ng-show="appSelector.showFolder(folder)">
+            <div class="expandable" ng-class="appSelector.isOpen(folder)">
+              <div title="{{folder.path}}" class="title">
+                <i class="expandable-indicator folder"></i> <span class="folder-title" ng-show="folder.path">{{folder.path.capitalize(true)}}</span><span
+                      class="folder-title" ng-hide="folder.path">Uncategorized</span>
+              </div>
+              <div class="expandable-body">
+                <ul>
+                  <li class="no-list profile" ng-repeat="profile in folder.apps" ng-show="appSelector.showApp(profile)">
+                    <div class="profile-selector-item">
+                      <div class="inline-block profile-selector-checkbox">
+                        <input type="checkbox" ng-model="profile.selected"
+                               ng-change="appSelector.updateSelected()">
+                      </div>
+                      <div class="inline-block profile-selector-name" ng-class="appSelector.getSelectedClass(profile)">
+                        <span class="contained c-max">
+                          <a href="" ng-click="appSelector.select(profile, !profile.selected)"
+                             title="Details for {{profile.id}}">
+                              <img ng-show="profile.$iconUrl" class="icon-small-app" ng-src="{{profile.$iconUrl}}">
+                              <span class="app-name">{{profile.name}}</span>
+                          </a>
+                        </span>
+                      </div>
+                    </div>
+
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="span5">
+      <div class="row-fluid">
+        <button class="btn btn-primary pull-right"
+                ng-click="appSelectorShow = undefined"><i class="icon-circle-arrow-left"></i> Back
+        </button>
+        <span class="pull-right">&nbsp;</span>
+        <button class="btn pull-right"
+                ng-disabled="!appSelector.selectedApps.length"
+                title="Clears the selected Apps"
+                ng-click="appSelector.clearSelected()"><i class="icon-check-empty"></i> Clear
+        </button>
+        <span class="pull-right">&nbsp;</span>
+        <button class="btn btn-success pull-right"
+                ng-disabled="!appSelector.selectedApps.length"
+                ng-click="appSelector.runSelectedApps()"
+                title="Run the selected apps">
+          <i class="icon-play-circle"></i>
+          <ng-pluralize count="appSelector.selectedApps.length"
+                        when="{'0': 'No App Selected',
+                                       '1': 'Run App',
+                                       'other': 'Run {} Apps'}"></ng-pluralize>
+
+        </button>
+      </div>
+      <div class="row-fluid">
+<!--
+        <div ng-hide="appSelector.selectedApps.length">
+          <p class="alert pull-right">
+            Please select an App
+          </p>
+        </div>
+-->
+
+        <div ng-show="appSelector.selectedApps.length">
+
+          <ul class="zebra-list pull-right">
+            <li ng-repeat="app in appSelector.selectedApps">
+              <img ng-show="app.$iconUrl" class="icon-selected-app" ng-src="{{app.$iconUrl}}">
+              <strong class="green selected-app-name">{{app.name}}</strong>
+              &nbsp;
+              <i class="red clickable icon-remove"
+                 title="Remove appp"
+                 ng-click="appSelector.select(app, false)"></i>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div modal="resizeDialog.dialog.show">
+    <form class="form-horizontal" ng-submit="resizeDialog.onOk()">
+        <div class="modal-header"><h4>Resize {{resize.controller.id}}</h4></div>
+        <div class="modal-body">
+          <div class="control-group">
+            <label class="control-label" for="replicas">Replica count</label>
+
+            <div class="controls">
+              <input type="number" min="0" id="replicas" ng-model="resize.newReplicas">
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <input class="btn btn-primary" type="submit"
+                 ng-disabled="resize.newReplicas === resize.controller.replicas"
+                 value="Resize">
+          <button class="btn btn-warning cancel" type="button" ng-click="resizeDialog.close()">Cancel</button>
+        </div>
+      </form>
+  </div>
+</div>

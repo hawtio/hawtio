@@ -5,7 +5,6 @@
 
 * Connect plugin no longer shows welcome screen when connecting to other JVMs
 * Fixed issue with missing dangle module from 1.4.49 release.
-* Removed kubernetes and docker-registry plugins as they are only maintained in hawtio v2 onwards.
 
 #### 1.4.49
 
