@@ -7,6 +7,7 @@
 * Fixed issue with missing dangle module from 1.4.49 release.
 * Fixed so the dashboard plugin is visible again
 * The wiki plugin is disabled for non fabric JVMs
+* Jetty 7 is no longer used for testing and is considered deprecated. Jetty 8 is used as default for testing.
 
 #### 1.4.49
 
