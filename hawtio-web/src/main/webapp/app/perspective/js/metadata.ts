@@ -141,37 +141,17 @@ module Perspective {
             id: "insight-logs"
           },
           {
+            id: "wiki"
+          },
+          {
             id: "dashboard",
-            // we only want to include dashboard if we are running in fabric (as they are in another perspective)
-            // (must use "id" attribute for the plugin, an not href, when using onCondition)
-            onCondition: (workspace) => !Fabric.isFMCContainer(workspace)
+            // do not show dashboard if running fabric
+            onCondition: (workspace) => { if (Fabric.isFMCContainer(workspace)) { return true } else { return false }}
           },
           {
             id: "health",
-            // we only want to include health if we are running in fabric (as they are in another perspective)
-            // (must use "id" attribute for the plugin, an not href, when using onCondition)
-            onCondition: (workspace) => Fabric.isFMCContainer(workspace)
-          },
-          {
-            id: "wiki",
-            // we only want to include wiki if we are running in fabric (as they are in another perspective)
-            // (must use "id" attribute for the plugin, an not href, when using onCondition)
-            onCondition: (workspace) => Fabric.isFMCContainer(workspace)
-          },
-          {
-            id: "apis.index",
-            // we only want to include APIs if we are running in kubernetes (as they are in another perspective)
-            onCondition: (workspace) => Kubernetes.isKubernetes(workspace)
-          },
-          {
-            id: "grafana",
-            // we only want to include Grafana if we are running in kubernetes (as they are in another perspective)
-            onCondition: (workspace) => Kubernetes.isKubernetes(workspace)
-          },
-          {
-            id: "kibana",
-            // we only want to include Kibana if we are running in kubernetes (as they are in another perspective)
-            onCondition: (workspace) => Kubernetes.isKubernetes(workspace)
+            // do not show dashboard if running fabric
+            onCondition: (workspace) => { if (Fabric.isFMCContainer(workspace)) { return true } else { return false }}
           }
         ]
       }
