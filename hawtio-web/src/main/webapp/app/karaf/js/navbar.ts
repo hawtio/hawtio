@@ -8,7 +8,7 @@ module Karaf {
 
     $scope.hash = workspace.hash();
 
-    $scope.isKarafEnabled = workspace.treeContainsDomainAndProperties("org.apache.karaf")
+    $scope.isKarafEnabled = workspace.treeContainsDomainAndProperties("org.apache.karaf");
     $scope.isFeaturesEnabled = Karaf.getSelectionFeaturesMBean(workspace);
     $scope.isScrEnabled = Karaf.getSelectionScrMBean(workspace);
 

@@ -352,15 +352,22 @@ module Karaf {
   }
 
   export function getSelectionFeaturesMBean(workspace:Workspace):string {
+    // karaf 2.x - org.apache.karaf:type=features,name=root
+    // karaf 3.x - org.apache.karaf:type=feature,name=root
+    var featureName = "features";
     if (workspace) {
-      var featuresStuff = workspace.mbeanTypesToDomain["features"] || {};
+      var featuresStuff = workspace.mbeanTypesToDomain[featureName];
+      if (!featuresStuff) {
+        featureName = "feature";
+        featuresStuff = workspace.mbeanTypesToDomain[featureName] || {};
+      }
       var karaf = featuresStuff["org.apache.karaf"] || {};
       var mbean = karaf.objectName;
       if (mbean) {
         return mbean;
       }
       // lets navigate to the tree item based on paths
-      var folder = workspace.tree.navigate("org.apache.karaf", "features");
+      var folder = workspace.tree.navigate("org.apache.karaf", featureName);
       if (!folder) {
         // sometimes the features mbean is inside the 'root' folder
         folder = workspace.tree.navigate("org.apache.karaf");
@@ -369,7 +376,7 @@ module Karaf {
           folder = null;
           angular.forEach(children, (child) => {
             if (!folder) {
-              folder = child.navigate("features");
+              folder = child.navigate(featureName);
             }
           });        
         }
