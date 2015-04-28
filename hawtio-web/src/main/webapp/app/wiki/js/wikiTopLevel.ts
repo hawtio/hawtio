@@ -15,7 +15,7 @@ module Wiki {
     $scope.schemaLookupMBean = Fabric.schemaLookupMBean;
     $scope.gitMBean = Git.getGitMBean(workspace);
     $scope.configAdminMBean = Osgi.getHawtioConfigAdminMBean(workspace);
-    $scope.defaultVersion = Fabric.getDefaultVersionId(jolokia);
+    $scope.defaultVersion = Fabric.isFMCContainer(workspace) ? Fabric.getDefaultVersionId(jolokia) : "1.0";
   }]);
 
 }
