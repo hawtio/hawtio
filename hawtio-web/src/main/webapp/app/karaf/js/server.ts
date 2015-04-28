@@ -6,6 +6,11 @@ module Karaf {
 
   _module.controller("Karaf.ServerController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
+    var log:Logging.Logger = Logger.get("Karaf");
+
+    var karaf2x = true;
+    var karaf3x = true;
+
     $scope.data = {
       name: "",
       version: "",
@@ -30,19 +35,44 @@ module Karaf {
     }
 
     function loadData() {
-      console.log("Loading Karaf data...");
-      jolokia.search("org.apache.karaf:type=admin,*", onSuccess(render));
+      log.info("Loading Karaf data...");
+      // karaf 2.x
+      if (karaf2x) {
+        jolokia.search("org.apache.karaf:type=admin,*", onSuccess(render2x));
+      }
+      // karaf 3.0 onwards
+      if (karaf3x) {
+        jolokia.search("org.apache.karaf:type=instance,*", onSuccess(render3x));
+      }
     }
 
-    function render(response) {
+    function render2x(response) {
       // grab the first mbean as there should ideally only be one karaf in the JVM
       if (angular.isArray(response)) {
         var mbean = response[0];
         if (mbean) {
+          log.debug("Karaf 2.x detected");
           jolokia.getAttribute(mbean, "Instances", onSuccess((response) => {
             onInstances(response, mbean);
           }));
         }
+      } else {
+        karaf2x = false;
+      }
+    }
+
+    function render3x(response) {
+      // grab the first mbean as there should ideally only be one karaf in the JVM
+      if (angular.isArray(response)) {
+        var mbean = response[0];
+        if (mbean) {
+          log.debug("Karaf 3.x detected");
+          jolokia.getAttribute(mbean, "Instances", onSuccess((response) => {
+            onInstances(response, mbean);
+          }));
+        }
+      } else {
+        karaf3x = false;
       }
     }
 
@@ -57,8 +87,10 @@ module Karaf {
           }
         }
 
-        //log.debug("mbean: ", Core.parseMBean(mbean));
-        //log.debug("Instances: ", instances);
+        if (log.enabledFor(Logger.DEBUG)) {
+          log.debug("mbean: ", Core.parseMBean(mbean));
+          log.debug("Instances: ", instances);
+        }
 
         // the name is the first child
         var rootInstance = instances[instanceName];
