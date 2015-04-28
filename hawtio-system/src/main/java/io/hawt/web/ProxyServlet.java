@@ -168,7 +168,7 @@ public class ProxyServlet extends HttpServlet {
         // Make the Request
         //note: we won't transfer the protocol version because I'm not sure it would truly be compatible
         ProxyAddress proxyAddress = parseProxyAddress(servletRequest);
-        if (proxyAddress == null) {
+        if (proxyAddress == null || proxyAddress.getFullProxyUrl() == null) {
             servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
@@ -176,8 +176,7 @@ public class ProxyServlet extends HttpServlet {
         String method = servletRequest.getMethod();
         String proxyRequestUri = proxyAddress.getFullProxyUrl();
 
-        URI targetUriObj = null;
-
+        URI targetUriObj;
         try {
             targetUriObj = new URI(proxyRequestUri);
         } catch (URISyntaxException e) {
@@ -193,8 +192,9 @@ public class ProxyServlet extends HttpServlet {
             //  note: we don't bother ensuring we close the servletInputStream since the container handles it
             eProxyRequest.setEntity(new InputStreamEntity(servletRequest.getInputStream(), servletRequest.getContentLength()));
             proxyRequest = eProxyRequest;
-        } else
+        } else {
             proxyRequest = new BasicHttpRequest(method, proxyRequestUri);
+        }
 
         copyRequestHeaders(servletRequest, proxyRequest, targetUriObj);
 

@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 public class ProxyDetails implements ProxyAddress {
     private static final transient Logger LOG = LoggerFactory.getLogger(ProxyDetails.class);
 
+    private boolean invalid;
     private String scheme = DEFAULT_SCHEME;
     private String path = "";
     private String userName;
@@ -52,6 +53,12 @@ public class ProxyDetails implements ProxyAddress {
     }
 
     private void parsePathInfo(String pathInfo) {
+        // skip empty path
+        if (Strings.isBlank(pathInfo)) {
+            invalid = true;
+            return;
+        }
+
         Matcher matcher = pathInfoPattern.matcher(pathInfo);
 
         if (matcher.matches()) {
@@ -82,6 +89,8 @@ public class ProxyDetails implements ProxyAddress {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Proxying to " + getFullProxyUrl() + " as user: " + userName);
             }
+        } else {
+            invalid = true;
         }
     }
 
@@ -94,7 +103,11 @@ public class ProxyDetails implements ProxyAddress {
 
     @Override
     public String getFullProxyUrl() {
-        return scheme + "://" + getHostAndPort() + path + (Strings.isBlank(queryString) ? "" : "?" + queryString) ;
+        if (invalid) {
+            return null;
+        } else {
+            return scheme + "://" + getHostAndPort() + path + (Strings.isBlank(queryString) ? "" : "?" + queryString);
+        }
     }
 
     public String getProxyPath() {
