@@ -10,12 +10,12 @@
       <div class="row-fluid">
         <span ng-show="noCredentials" class="alert">
           No credentials set for endpoint!  Please set your username and password in the <a
-                href="" ng-click="openPrefs()">Preferences</a> page
+            href="" ng-click="openPrefs()">Preferences</a> page
         </span>
 
         <form class="form-inline pull-right">
           <button class="btn" ng-click="addHeader()" title="Add a new message header"><i
-                  class="icon-plus"></i> Header
+              class="icon-plus"></i> Header
           </button>
           <button type="submit" class="btn btn-primary" ng-click="sendMessage()">Send message</button>
         </form>
@@ -74,34 +74,40 @@
     </div>
     </tab>
 
-    <div value="choose" class="tab-pane" title="Choose" ng-hide="!showChoose">
-<!--
-         title="Choose messages to send from the available files in the Profile configuration for this container">
--->
-      <div class="row-fluid bottom-margin">
+    <div ng-switch="showChoose">
+      <div ng-switch-when="true">
+        <div value="choose" class="tab-pane" title="Choose">
+          <!--
+                   title="Choose messages to send from the available files in the Profile configuration for this container">
+          -->
+          <div class="row-fluid bottom-margin">
         <span ng-show="noCredentials" class="alert">
           No credentials set for endpoint!  Please set your username and password in the <a
-                href="#/preferences">Preferences</a> page
+            href="#/preferences">Preferences</a> page
         </span>
-        <button type="submit" ng-disabled="!fileSelection().length" class="btn btn-primary pull-right"
-                ng-click="sendSelectedFiles()">
-          <ng-pluralize count="fileSelection().length"
-                        when="{'0': 'No files selected', '1': 'Send the file','other': 'Send {} files'}">
-          </ng-pluralize>
-        </button>
+            <button type="submit" ng-disabled="!fileSelection().length" class="btn btn-primary pull-right"
+                    ng-click="sendSelectedFiles()">
+              <ng-pluralize count="fileSelection().length"
+                            when="{'0': 'No files selected', '1': 'Send the file','other': 'Send {} files'}">
+              </ng-pluralize>
+            </button>
+          </div>
+
+          <p>Choose which files to send from the profile configuration:</p>
+
+          <div class="control-group inline-block">
+            <input class="search-query" type="text" ng-model="searchText" placeholder="Filter..." autofocus>
+          </div>
+
+          <ul>
+            <li ng-repeat="fileName in profileFileNames | filter:searchText">
+              <input type="checkbox" ng-model="selectedFiles[fileName]"> {{fileName}}
+            </li>
+          </ul>
+        </div>
       </div>
 
-      <p>Choose which files to send from the profile configuration:</p>
-
-      <div class="control-group inline-block">
-          <input class="search-query" type="text" ng-model="searchText" placeholder="Filter..." autofocus>
-      </div>
-
-      <ul>
-        <li ng-repeat="fileName in profileFileNames | filter:searchText">
-         <input type="checkbox" ng-model="selectedFiles[fileName]"> {{fileName}}
-        </li>
-      </ul>
     </div>
+
   </div>
 </div>

@@ -6,8 +6,6 @@ module Camel {
   _module.controller("Camel.SendMessageController", ["$route", "$scope", "$element", "$timeout", "workspace", "jolokia", "localStorage", "$location", "activeMQMessage", ($route, $scope, $element, $timeout, workspace:Workspace, jolokia, localStorage, $location, activeMQMessage) => {
     var log:Logging.Logger = Logger.get("Camel");
 
-    log.info("Loaded page!");
-
     $scope.noCredentials = false;
     $scope.showChoose = false;
     $scope.profileFileNames = [];
@@ -268,7 +266,7 @@ module Camel {
       $scope.profileFileNames = Object.keys(response).filter(key => {
         return key.toLowerCase().startsWith('data/');
       }).sort();
-       $scope.showChoose = $scope.profileFileNames.length ? true : false;
+      $scope.showChoose = $scope.profileFileNames.length ? true : false;
       $scope.selectedFiles = {};
       Core.$apply($scope);
     }
