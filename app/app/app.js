@@ -35086,14 +35086,19 @@ var Karaf;
     }
     Karaf.populateDependencies = populateDependencies;
     function getSelectionFeaturesMBean(workspace) {
+        var featureName = "features";
         if (workspace) {
-            var featuresStuff = workspace.mbeanTypesToDomain["features"] || {};
+            var featuresStuff = workspace.mbeanTypesToDomain[featureName];
+            if (!featuresStuff) {
+                featureName = "feature";
+                featuresStuff = workspace.mbeanTypesToDomain[featureName] || {};
+            }
             var karaf = featuresStuff["org.apache.karaf"] || {};
             var mbean = karaf.objectName;
             if (mbean) {
                 return mbean;
             }
-            var folder = workspace.tree.navigate("org.apache.karaf", "features");
+            var folder = workspace.tree.navigate("org.apache.karaf", featureName);
             if (!folder) {
                 folder = workspace.tree.navigate("org.apache.karaf");
                 if (folder) {
@@ -35101,7 +35106,7 @@ var Karaf;
                     folder = null;
                     angular.forEach(children, function (child) {
                         if (!folder) {
-                            folder = child.navigate("features");
+                            folder = child.navigate(featureName);
                         }
                     });
                 }
