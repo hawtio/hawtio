@@ -10,6 +10,7 @@
 * Jetty 7 is no longer used for testing and is considered deprecated. Jetty 8 is used as default for testing.
 * ActiveMQ and Camel plugin now hides the choose sub tab in the send message dialog; as that is only in use when using fabric8 v1
 * OSGi plugin now shows feature and server details for Karaf 3.x onwards
+* Other [minor isseues fixed](https://github.com/hawtio/hawtio/issues?q=milestone%3A1.4.50+is%3Aclosed)
 
 #### 1.4.49
 
