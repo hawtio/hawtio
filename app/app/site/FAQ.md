@@ -136,6 +136,9 @@ set path=%path%;%JAVA_HOME%\jre\bin
 The terminal plugin may have trouble the first time in use, not being able to connect and show the terminal. Try selecting another plugin, and go back to the terminal plugin a bit later, and it then may be able to login. Also if the screen is all black, then pressing ENTER may help show the terminal.
 
 
+#### Why does the Camel Route Diagram not show counters
+
+If you use Apache ServixeMix / Karaf and you deploy a Camel XML file by copying a xml file to the deploy directory, then the deployer does not run this with proper security. So the Karaf RBAC will deny the Apache Camel plugin to query the Camel routes to gather performance counters. As deploying by using plain XML files is not recommended, then it works by using a deployment unit as a proper OSGi bundle such as a JAR or KAR file.
 
 
 ### Plugin Questions

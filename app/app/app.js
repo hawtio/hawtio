@@ -14255,7 +14255,6 @@ var Camel;
     var DELIVERY_PERSISTENT = "2";
     Camel._module.controller("Camel.SendMessageController", ["$route", "$scope", "$element", "$timeout", "workspace", "jolokia", "localStorage", "$location", "activeMQMessage", function ($route, $scope, $element, $timeout, workspace, jolokia, localStorage, $location, activeMQMessage) {
         var log = Logger.get("Camel");
-        log.info("Loaded page!");
         $scope.noCredentials = false;
         $scope.showChoose = false;
         $scope.profileFileNames = [];
