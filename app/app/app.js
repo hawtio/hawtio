@@ -35651,6 +35651,9 @@ var Karaf;
 var Karaf;
 (function (Karaf) {
     Karaf._module.controller("Karaf.ServerController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+        var log = Logger.get("Karaf");
+        var karaf2x = true;
+        var karaf3x = true;
         $scope.data = {
             name: "",
             version: "",
@@ -35671,17 +35674,40 @@ var Karaf;
             setTimeout(loadData, 50);
         }
         function loadData() {
-            console.log("Loading Karaf data...");
-            jolokia.search("org.apache.karaf:type=admin,*", onSuccess(render));
+            log.info("Loading Karaf data...");
+            if (karaf2x) {
+                jolokia.search("org.apache.karaf:type=admin,*", onSuccess(render2x));
+            }
+            if (karaf3x) {
+                jolokia.search("org.apache.karaf:type=instance,*", onSuccess(render3x));
+            }
         }
-        function render(response) {
+        function render2x(response) {
             if (angular.isArray(response)) {
                 var mbean = response[0];
                 if (mbean) {
+                    log.debug("Karaf 2.x detected");
                     jolokia.getAttribute(mbean, "Instances", onSuccess(function (response) {
                         onInstances(response, mbean);
                     }));
                 }
+            }
+            else {
+                karaf2x = false;
+            }
+        }
+        function render3x(response) {
+            if (angular.isArray(response)) {
+                var mbean = response[0];
+                if (mbean) {
+                    log.debug("Karaf 3.x detected");
+                    jolokia.getAttribute(mbean, "Instances", onSuccess(function (response) {
+                        onInstances(response, mbean);
+                    }));
+                }
+            }
+            else {
+                karaf3x = false;
             }
         }
         function onInstances(instances, mbean) {
@@ -35692,6 +35718,10 @@ var Karaf;
                     if ('name' in parsedMBean['attributes']) {
                         instanceName = parsedMBean['attributes']['name'];
                     }
+                }
+                if (log.enabledFor(Logger.DEBUG)) {
+                    log.debug("mbean: ", Core.parseMBean(mbean));
+                    log.debug("Instances: ", instances);
                 }
                 var rootInstance = instances[instanceName];
                 $scope.data.name = rootInstance.Name;
