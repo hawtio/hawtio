@@ -19,7 +19,7 @@
     <env-entry-name>hawtio/role</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
     <!-- empty == admin,viewer -->
-    <env-entry-value></env-entry-value>
+    <env-entry-value>*</env-entry-value>
   </env-entry>
 
   <env-entry>
