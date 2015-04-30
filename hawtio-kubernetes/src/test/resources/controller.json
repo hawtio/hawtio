@@ -1,7 +1,7 @@
 {
   "id": "quickstartJavaCamelSpring",
   "kind": "ReplicationController",
-  "apiVersion": "v1beta1",
+  "apiVersion": "v1beta2",
   "desiredState": {
     "replicas": 1,
     "replicaSelector": {
@@ -12,7 +12,7 @@
     "podTemplate": {
       "desiredState": {
         "manifest": {
-          "version": "v1beta1",
+          "version": "v1beta2",
           "id": "quickstartJavaCamelSpringPod",
           "containers": [
             {

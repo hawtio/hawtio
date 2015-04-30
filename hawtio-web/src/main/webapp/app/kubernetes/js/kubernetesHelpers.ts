@@ -267,7 +267,7 @@ module Kubernetes {
 
   export function resizeController($http, KubernetesApiURL, id, newReplicas, onCompleteFn = null) {
     KubernetesApiURL.then((KubernetesApiURL) => {
-      var url = UrlHelpers.join(KubernetesApiURL, "/api/v1beta1/replicationControllers/" + id);
+      var url = UrlHelpers.join(KubernetesApiURL, "/api/v1beta2/replicationControllers/" + id);
       $http.get(url).
         success(function (data, status, headers, config) {
           if (data) {
