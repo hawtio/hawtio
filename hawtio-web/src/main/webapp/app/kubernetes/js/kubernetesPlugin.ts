@@ -69,19 +69,19 @@ module Kubernetes {
 
   _module.factory('KubernetesPods', ['$q', ($q:ng.IQService) => {
     var answer = <ng.IDeferred<ng.resource.IResourceClass>>$q.defer();
-    createResource(answer, 'pods', '/api/v1beta2/pods/:id');
+    createResource(answer, 'pods', '/kubernetes/api/v1beta2/pods/:id');
     return answer.promise;
   }]);
 
   _module.factory('KubernetesReplicationControllers', ['$q', ($q:ng.IQService) => {
     var answer = <ng.IDeferred<ng.resource.IResourceClass>>$q.defer();
-    createResource(answer, 'replication controllers', '/api/v1beta2/replicationControllers/:id');
+    createResource(answer, 'replication controllers', '/kubernetes/api/v1beta2/replicationControllers/:id');
     return answer.promise;
   }]);
 
   _module.factory('KubernetesServices', ['$q', ($q:ng.IQService) => {
     var answer = <ng.IDeferred<ng.resource.IResourceClass>>$q.defer();
-    createResource(answer, 'services', '/api/v1beta2/services/:id');
+    createResource(answer, 'services', '/kubernetes/api/v1beta2/services/:id');
     return answer.promise;
   }]);
 

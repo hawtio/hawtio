@@ -66,7 +66,7 @@ public class PodServlet extends ProxyServlet {
             if (url == null) {
                 return null;
             }
-            url += "/api/v1beta2/pods" + queryPostfix;
+            url += "/kubernetes/api/v1beta2/pods" + queryPostfix;
             return new DefaultProxyAddress(url, userName, password);
         }
         String url = ServiceResolver.getSingleton().getPodUrl(podName, podPort);

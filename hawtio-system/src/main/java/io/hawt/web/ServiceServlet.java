@@ -55,7 +55,7 @@ public class ServiceServlet extends ProxyServlet {
         if (serviceName.length() == 0) {
             // lets list the services for /service
             serviceName = "kubernetes";
-            servicePath = "/api/v1beta2/services";
+            servicePath = "/kubernetes/api/v1beta2/services";
         }
 
         String url = ServiceResolver.getSingleton().getServiceURL(serviceName);
