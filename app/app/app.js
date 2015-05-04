@@ -15887,7 +15887,7 @@ var Kubernetes;
     function resizeController($http, KubernetesApiURL, id, newReplicas, onCompleteFn) {
         if (onCompleteFn === void 0) { onCompleteFn = null; }
         KubernetesApiURL.then(function (KubernetesApiURL) {
-            var url = UrlHelpers.join(KubernetesApiURL, "/api/v1beta2/replicationControllers/" + id);
+            var url = UrlHelpers.join(KubernetesApiURL, "/kubernetes/api/v1beta2/replicationControllers/" + id);
             $http.get(url).success(function (data, status, headers, config) {
                 if (data) {
                     var desiredState = data.desiredState;
@@ -35814,17 +35814,17 @@ var Kubernetes;
     }]);
     Kubernetes._module.factory('KubernetesPods', ['$q', function ($q) {
         var answer = $q.defer();
-        createResource(answer, 'pods', '/api/v1beta2/pods/:id');
+        createResource(answer, 'pods', '/kubernetes/api/v1beta2/pods/:id');
         return answer.promise;
     }]);
     Kubernetes._module.factory('KubernetesReplicationControllers', ['$q', function ($q) {
         var answer = $q.defer();
-        createResource(answer, 'replication controllers', '/api/v1beta2/replicationControllers/:id');
+        createResource(answer, 'replication controllers', '/kubernetes/api/v1beta2/replicationControllers/:id');
         return answer.promise;
     }]);
     Kubernetes._module.factory('KubernetesServices', ['$q', function ($q) {
         var answer = $q.defer();
-        createResource(answer, 'services', '/api/v1beta2/services/:id');
+        createResource(answer, 'services', '/kubernetes/api/v1beta2/services/:id');
         return answer.promise;
     }]);
     Kubernetes._module.factory('KubernetesState', [function () {
