@@ -1,6 +1,11 @@
 
 ### Change Log
 
+#### 1.4.51
+
+* Upgrade to Camel 2.15.2
+* Kubernetes plugin supports v1beta2 kubernetes api
+
 #### 1.4.50
 
 * Connect plugin no longer shows welcome screen when connecting to other JVMs

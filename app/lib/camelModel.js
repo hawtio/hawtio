@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.15.1';
+var _apacheCamelModelVersion = '2.15.2';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -1388,14 +1388,6 @@ var _apacheCamelModel ={
       "acceptOutput": "true",
       "nextSiblingAddedAsChild": "false",
       "properties": {
-        "ref": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "To use a custom load balancer. This option is deprecated use the custom load balancer type instead.",
-          "title": "Ref",
-          "required": false,
-          "deprecated": true
-        },
         "loadBalancerType": {
           "kind": "element",
           "type": "object",
