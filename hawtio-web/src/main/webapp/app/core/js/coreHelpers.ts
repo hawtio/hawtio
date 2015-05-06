@@ -453,10 +453,12 @@ module Core {
   export function hashToString(hash) {
     var keyValuePairs:string[] = [];
     angular.forEach(hash, function (value, key) {
-      keyValuePairs.push(key + "=" + value);
+      // some values (like camel ObjectNames for endpoints) may contain '?' and '='
+      // let's encode it here as URI component, not at the end as URI
+      keyValuePairs.push(key + "=" + encodeURIComponent(value));
     });
     var params = keyValuePairs.join("&");
-    return encodeURI(params);
+    return params;
   }
 
   /**
