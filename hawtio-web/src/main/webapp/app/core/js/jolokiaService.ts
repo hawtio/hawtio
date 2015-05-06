@@ -105,13 +105,28 @@ module Core {
 
       jolokiaParams['ajaxError'] = (xhr, textStatus, error) => {
         if (xhr.status === 401 || xhr.status === 403) {
-          userDetails.username = null;
-          userDetails.password = null;
-          delete userDetails.loginDetails;
-          delete userDetails.remoteJolokiaUserDetails;
-          if (found) {
-            delete window.opener["passUserDetails"];
-          }
+          // logged out
+          Core.executePreLogoutTasks(() => {
+            if (localStorage['jvmConnect'] && localStorage['jvmConnect'] != "undefined") {
+              var jvmConnect = angular.fromJson(localStorage['jvmConnect'])
+              _.each(jvmConnect, function(value) {
+                delete value['userName'];
+                delete value['password'];
+              });
+              localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+            }
+            localStorage.removeItem('activemqUserName');
+            localStorage.removeItem('activemqPassword');
+
+            Core.executePostLogoutTasks(() => {
+              log.debug("Executing logout callback after successfully executed postLogoutTasks");
+              userDetails.username = null;
+              userDetails.password = null;
+              userDetails.loginDetails = null;
+              userDetails.remoteJolokiaUserDetails = null;
+              delete localStorage['userDetails'];
+            });
+          });
         } else {
           jolokiaStatus.xhr = xhr;
           if (!xhr.responseText && error) {

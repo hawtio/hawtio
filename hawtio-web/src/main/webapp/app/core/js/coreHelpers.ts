@@ -363,6 +363,7 @@ module Core {
               userDetails.password = null;
               userDetails.loginDetails = null;
               userDetails.rememberMe = false;
+              userDetails.remoteJolokiaUserDetails = null;
               delete localStorage['userDetails'];
               if (successCB && angular.isFunction(successCB)) {
                 successCB();
@@ -387,6 +388,7 @@ module Core {
               userDetails.password = null;
               userDetails.loginDetails = null;
               userDetails.rememberMe = false;
+              userDetails.remoteJolokiaUserDetails = null;
               delete localStorage['userDetails'];
               // TODO, more feedback
               switch (xhr.status) {
