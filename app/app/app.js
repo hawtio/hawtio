@@ -2450,10 +2450,10 @@ var Core;
     function hashToString(hash) {
         var keyValuePairs = [];
         angular.forEach(hash, function (value, key) {
-            keyValuePairs.push(key + "=" + value);
+            keyValuePairs.push(key + "=" + encodeURIComponent(value));
         });
         var params = keyValuePairs.join("&");
-        return encodeURI(params);
+        return params;
     }
     Core.hashToString = hashToString;
     function stringToHash(hashAsString) {
