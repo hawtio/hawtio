@@ -2383,6 +2383,7 @@ var Core;
                             userDetails.password = null;
                             userDetails.loginDetails = null;
                             userDetails.rememberMe = false;
+                            userDetails.remoteJolokiaUserDetails = null;
                             delete localStorage['userDetails'];
                             if (successCB && angular.isFunction(successCB)) {
                                 successCB();
@@ -2406,6 +2407,7 @@ var Core;
                             userDetails.password = null;
                             userDetails.loginDetails = null;
                             userDetails.rememberMe = false;
+                            userDetails.remoteJolokiaUserDetails = null;
                             delete localStorage['userDetails'];
                             switch (xhr.status) {
                                 case 401:
@@ -18152,13 +18154,26 @@ var Core;
             }
             jolokiaParams['ajaxError'] = function (xhr, textStatus, error) {
                 if (xhr.status === 401 || xhr.status === 403) {
-                    userDetails.username = null;
-                    userDetails.password = null;
-                    delete userDetails.loginDetails;
-                    delete userDetails.remoteJolokiaUserDetails;
-                    if (found) {
-                        delete window.opener["passUserDetails"];
-                    }
+                    Core.executePreLogoutTasks(function () {
+                        if (localStorage['jvmConnect'] && localStorage['jvmConnect'] != "undefined") {
+                            var jvmConnect = angular.fromJson(localStorage['jvmConnect']);
+                            _.each(jvmConnect, function (value) {
+                                delete value['userName'];
+                                delete value['password'];
+                            });
+                            localStorage.setItem('jvmConnect', angular.toJson(jvmConnect));
+                        }
+                        localStorage.removeItem('activemqUserName');
+                        localStorage.removeItem('activemqPassword');
+                        Core.executePostLogoutTasks(function () {
+                            Core.log.debug("Executing logout callback after successfully executed postLogoutTasks");
+                            userDetails.username = null;
+                            userDetails.password = null;
+                            userDetails.loginDetails = null;
+                            userDetails.remoteJolokiaUserDetails = null;
+                            delete localStorage['userDetails'];
+                        });
+                    });
                 }
                 else {
                     jolokiaStatus.xhr = xhr;
