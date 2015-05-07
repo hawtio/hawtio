@@ -3,6 +3,7 @@
 
 #### 1.4.51
 
+* Upgrade to Jolokia 1.3.0
 * Upgrade to Camel 2.15.2
 * Kubernetes plugin supports v1beta2 kubernetes api
 
