@@ -33,8 +33,8 @@ module UI {
           }
         }, true);
 
-        $scope.cellTemplate = $templateCache.get('cellTemplate.html');
-        $scope.rowTemplate = $templateCache.get('rowTemplate.html');
+        $scope.cellTemplate = $templateCache.get('cellTemplateForList.html');
+        $scope.rowTemplate = $templateCache.get('rowTemplateForList.html');
 
         var columnDefs = $scope.config['columnDefs'];
         var fieldName = 'name';
