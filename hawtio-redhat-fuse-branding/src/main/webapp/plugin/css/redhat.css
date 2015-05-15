@@ -1785,7 +1785,7 @@ div[ng-controller='Core.LoginController']:after {
   /* with no app title */
   /* left: 183px; */
   left: 45px;
-  width: 650px; /* IE... */
+  width: 700px;
 }
 
 .login-logo span {
