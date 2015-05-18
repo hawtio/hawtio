@@ -38668,7 +38668,8 @@ var Osgi;
                             Osgi.log.debug("Updating page...");
                             Core.$apply($scope);
                         }
-                    }));
+                    }, { error: function (response) {
+                    } }));
                 }, 500);
             }
         }
