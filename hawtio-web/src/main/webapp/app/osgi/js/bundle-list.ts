@@ -189,7 +189,9 @@ module Osgi {
               log.debug("Updating page...");
               Core.$apply($scope);
             }
-          }));
+          }, { error: (response) => {
+            // let's ignore the error - maybe the bundle is no longer available?
+          } }));
 
         }, 500);
       }
