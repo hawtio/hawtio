@@ -18,10 +18,10 @@ module API {
 
     loadXml($scope.url, onWsdl);
 
-    $scope.tryInvoke = (resource, method) => {
+    $scope.tryInvoke = (base, resource, method) => {
       var useProxy = true;
       if (resource) {
-        var path = resource.fullPath || resource.path;
+        var path = resource.fullPath || base + "/" + resource.path;
         if (path) {
           if ($scope.podId) {
             var idx = path.indexOf("://");
