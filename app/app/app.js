@@ -9270,10 +9270,10 @@ var API;
         $scope.$watch("apidocs", enrichApiDocsWithSchema);
         $scope.$watch("jsonSchema", enrichApiDocsWithSchema);
         API.loadXml($scope.url, onWsdl);
-        $scope.tryInvoke = function (resource, method) {
+        $scope.tryInvoke = function (base, resource, method) {
             var useProxy = true;
             if (resource) {
-                var path = resource.fullPath || resource.path;
+                var path = resource.fullPath || base + "/" + resource.path;
                 if (path) {
                     if ($scope.podId) {
                         var idx = path.indexOf("://");
