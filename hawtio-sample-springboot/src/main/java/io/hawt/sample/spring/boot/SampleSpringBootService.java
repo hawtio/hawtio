@@ -3,18 +3,15 @@ package io.hawt.sample.spring.boot;
 import io.hawt.config.ConfigFacade;
 import io.hawt.springboot.HawtPlugin;
 import io.hawt.springboot.PluginService;
-
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@EnableAutoConfiguration
-@Configuration
+@SpringBootApplication
 public class SampleSpringBootService {
 
     public static void main(String[] args) {
-        new SpringApplication(SampleSpringBootService.class).run();
+		SpringApplication.run(SampleSpringBootService.class, args);
     }
 
 	/**
