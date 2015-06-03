@@ -2,12 +2,15 @@ package io.hawt.sample.spring.boot;
 
 import io.hawt.config.ConfigFacade;
 import io.hawt.springboot.HawtPlugin;
+import io.hawt.springboot.HawtioConfiguration;
 import io.hawt.springboot.PluginService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
+@Import(HawtioConfiguration.class)
 public class SampleSpringBootService {
 
     public static void main(String[] args) {

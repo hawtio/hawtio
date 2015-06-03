@@ -1,4 +1,4 @@
-package io.hawt.sample.spring.boot;
+package io.hawt.springboot;
 
 import io.hawt.HawtioContextListener;
 import io.hawt.system.ConfigManager;
@@ -178,7 +178,7 @@ public class HawtioConfiguration extends WebMvcConfigurerAdapter {
     public FilterRegistrationBean AuthenticationFilter() {
         final FilterRegistrationBean filter = new FilterRegistrationBean();
         filter.setFilter(new AuthenticationFilter());
-        filter.setUrlPatterns(Arrays.asList("/auth/*", "/jolokia/*", "/upload/*", "/javadoc/*"));
+        filter.setUrlPatterns(Arrays.asList("/hawtio/auth/*", "/jolokia/*", "/hawtio/upload/*", "/hawtio/javadoc/*"));
         return filter;
     }
 
