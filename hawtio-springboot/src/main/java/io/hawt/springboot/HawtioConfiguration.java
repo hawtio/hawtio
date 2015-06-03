@@ -1,7 +1,6 @@
 package io.hawt.springboot;
 
 import io.hawt.HawtioContextListener;
-import io.hawt.system.ConfigManager;
 import io.hawt.web.AuthenticationFilter;
 import io.hawt.web.CORSFilter;
 import io.hawt.web.CacheHeadersFilter;
@@ -21,7 +20,6 @@ import io.hawt.web.UserServlet;
 import io.hawt.web.XFrameOptionsFilter;
 import io.hawt.web.keycloak.KeycloakServlet;
 import org.apache.commons.fileupload.servlet.FileCleanerCleanup;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
@@ -31,16 +29,11 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
 import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
 public class HawtioConfiguration extends WebMvcConfigurerAdapter {
-
-    @Autowired
-    private ServletContext servletContext;
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
@@ -54,14 +47,6 @@ public class HawtioConfiguration extends WebMvcConfigurerAdapter {
         registry.addViewController("/").setViewName("redirect:/hawtio/index.html");
         registry.addViewController("/hawtio/plugin").setViewName("forward:/plugin");
         registry.addViewController("/hawtio/").setViewName("redirect:/hawtio/index.html");
-    }
-
-    @PostConstruct
-    public void init() {
-        System.setProperty(AuthenticationFilter.HAWTIO_AUTHENTICATION_ENABLED, "false");
-        final ConfigManager configManager = new ConfigManager();
-        configManager.init();
-        servletContext.setAttribute("ConfigManager", configManager);
     }
 
     @Bean
