@@ -24,16 +24,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<artifactId>hawtio-core</artifactId>
-			<groupId>io.hawt</groupId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.hawt</groupId>
-			<artifactId>hawtio-plugin-mbean</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>io.hawt</groupId>
 			<artifactId>hawtio-system</artifactId>
 			<version>${project.version}</version>
