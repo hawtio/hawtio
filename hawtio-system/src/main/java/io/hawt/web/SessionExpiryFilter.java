@@ -1,11 +1,9 @@
 package io.hawt.web;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.regex.Pattern;
-import java.util.Date;
 import java.util.List;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -18,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.IOUtils;
+import io.hawt.system.Authenticator;
 import io.hawt.system.Helpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,11 +96,12 @@ public class SessionExpiryFilter implements Filter {
                 LOG.debug("Authentication disabled, received refresh response, responding with ok");
                 writeOk(response);
             } else {
-                // see: https://issues.jboss.org/browse/ENTESB-2418
-                // it won't allow unauthenticated requests anyway
-                String userAgent = request.getHeader("User-Agent") == null ? "" : request.getHeader("User-Agent").toLowerCase();
-                if (!enabled || userAgent.contains("curl")) {
+                if (!enabled) {
                     LOG.debug("Authentication disabled, allowing request");
+                    chain.doFilter(request, response);
+                } else if (request.getHeader(Authenticator.HEADER_AUTHORIZATION) != null) {
+                    // there's no session, but we have request with authentication attempt
+                    // let's pass it further the filter chain - if authentication will fail, user will get 403 anyway
                     chain.doFilter(request, response);
                 } else {
                     if (subContext.equals("jolokia") ||
