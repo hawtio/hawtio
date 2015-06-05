@@ -97,11 +97,12 @@ public class SessionExpiryFilter implements Filter {
             } else {
                 chain.doFilter(request, response);
                 /*
-                // see: https://issues.jboss.org/browse/ENTESB-2418
-                // it won't allow unauthenticated requests anyway
-                String userAgent = request.getHeader("User-Agent") == null ? "" : request.getHeader("User-Agent").toLowerCase();
-                if (!enabled || userAgent.contains("curl")) {
+                if (!enabled) {
                     LOG.debug("Authentication disabled, allowing request");
+                    chain.doFilter(request, response);
+                } else if (request.getHeader(Authenticator.HEADER_AUTHORIZATION) != null) {
+                    // there's no session, but we have request with authentication attempt
+                    // let's pass it further the filter chain - if authentication will fail, user will get 403 anyway
                     chain.doFilter(request, response);
                 } else {
                     if (subContext.equals("jolokia") ||
