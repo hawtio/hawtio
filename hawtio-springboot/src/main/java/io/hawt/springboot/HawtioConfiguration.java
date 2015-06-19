@@ -44,7 +44,6 @@ public class HawtioConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addViewControllers(final ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("redirect:/hawtio/index.html");
         registry.addViewController("/hawtio/plugin").setViewName("forward:/plugin");
         registry.addViewController("/hawtio/").setViewName("redirect:/hawtio/index.html");
     }
