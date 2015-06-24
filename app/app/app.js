@@ -9733,7 +9733,7 @@ var Camel;
     Camel.defaultHideOptionUnusedValue = false;
     function processRouteXml(workspace, jolokia, folder, onRoute) {
         var selectedRouteId = getSelectedRouteId(workspace, folder);
-        var mbean = getSelectionCamelContextMBean(workspace);
+        var mbean = getExpandingFolderCamelContextMBean(workspace, folder) || getSelectionCamelContextMBean(workspace);
         function onRouteXml(response) {
             var route = null;
             var data = response ? response.value : null;
@@ -10302,6 +10302,19 @@ var Camel;
         return null;
     }
     Camel.getSelectionCamelContextMBean = getSelectionCamelContextMBean;
+    function getExpandingFolderCamelContextMBean(workspace, folder) {
+        if (folder.entries && folder.entries["type"] === "routes") {
+            var result = workspace.tree.navigate("org.apache.camel", folder.entries["context"], "context");
+            if (result && result.children) {
+                var contextBean = result.children.first();
+                if (contextBean.objectName) {
+                    return contextBean.objectName;
+                }
+            }
+        }
+        return null;
+    }
+    Camel.getExpandingFolderCamelContextMBean = getExpandingFolderCamelContextMBean;
     function getSelectionCamelContextEndpoints(workspace) {
         if (workspace) {
             var contextId = getContextId(workspace);
