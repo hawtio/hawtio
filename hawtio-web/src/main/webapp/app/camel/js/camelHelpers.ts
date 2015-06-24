@@ -29,7 +29,7 @@ module Camel {
    */
   export function processRouteXml(workspace:Workspace, jolokia, folder, onRoute) {
     var selectedRouteId = getSelectedRouteId(workspace, folder);
-    var mbean = getSelectionCamelContextMBean(workspace);
+    var mbean = getExpandingFolderCamelContextMBean(workspace, folder) || getSelectionCamelContextMBean(workspace);
 
     function onRouteXml(response) {
       var route = null;
@@ -714,6 +714,25 @@ module Camel {
               return "" + domain + ":context=" + contextId + ',type=context,name="' + contextName + '"';
             }
           }
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * When lazy loading route info (using dumpRoutesAsXml() operation) we need MBean name from the folder
+   * and *not* from the selection
+   * @param workspace
+   * @param folder
+   */
+  export function getExpandingFolderCamelContextMBean(workspace:Core.Workspace, folder:Core.Folder) : string {
+    if (folder.entries && folder.entries["type"] === "routes") {
+      var result = workspace.tree.navigate("org.apache.camel", folder.entries["context"], "context");
+      if (result && result.children) {
+        var contextBean:any = result.children.first();
+        if (contextBean.objectName) {
+          return contextBean.objectName;
         }
       }
     }
