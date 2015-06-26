@@ -3,6 +3,7 @@ package io.hawt.jsonschema.test;
 import io.hawt.jsonschema.SchemaLookup;
 import io.hawt.jsonschema.test.objects.ObjectWithTransientModifiers;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -52,6 +53,7 @@ public class SchemaLookupTest {
     }
 
     @Test
+    @Ignore
     public void testCreateOpenshiftContainerOptions() throws Exception {
         SchemaLookup lookup = createSchemaLookup();
         String result = lookup.getSchemaForClass("io.fabric8.openshift.CreateOpenshiftContainerOptions");
