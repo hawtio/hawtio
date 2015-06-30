@@ -10,7 +10,7 @@ Create at least one MBean and register it with a JMX ObjectName including `servi
 
 For example an ObjectName could be
 
-    org.apache.activemq:Type=Broker,BrokerName=localhost,service=Health
+    org.apache.activemq:type=Broker,brokerName=localhost,service=Health
 
 The MBean should then have these methods
 
