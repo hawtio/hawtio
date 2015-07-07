@@ -89,7 +89,11 @@ module Fabric {
   }
 
   export function getContainerIdsForProfile(jolokia, version, profileId) {
-    return jolokia.execute(Fabric.managerMBean, "containerIdsForProfile", version, profileId, { method: 'POST' });
+      return jolokia.execute(Fabric.managerMBean, "containerIdsForProfile", version, profileId, { method: 'POST' });
+  }
+
+  export function getContainerIdsForProfiles(jolokia, version:string, profileIds:string[], checkParents:boolean) {
+      return jolokia.execute(Fabric.managerMBean, "containerIdsForProfiles(java.lang.String, java.util.List, boolean)", version, profileIds, checkParents, { method: 'POST' });
   }
 
   export function getContainerIds(jolokia) {

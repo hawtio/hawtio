@@ -83,8 +83,19 @@ module Wiki {
     });
   }
 
+  export function getCantDeleteDialog($dialog, $scope:DeleteDialogOptions):Wiki.WikiDialog {
+    return $dialog.dialog({
+      resolve: $scope,
+      templateUrl: 'app/wiki/html/modal/cantDeleteDialog.html',
+      controller: ["$scope", "dialog", "warning", ($scope, dialog, warning) => {
 
+        $scope.close = (result) => {
+          dialog.close();
+        };
 
-
+        $scope.warning = warning;
+      }]
+    });
+  }
 
 }

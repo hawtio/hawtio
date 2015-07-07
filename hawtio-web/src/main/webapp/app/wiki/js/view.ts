@@ -310,18 +310,65 @@ module Wiki {
     $scope.openDeleteDialog = () => {
       if ($scope.gridOptions.selectedItems.length) {
         $scope.selectedFileHtml = "<ul>" + $scope.gridOptions.selectedItems.map(file => "<li>" + file.name + "</li>").sort().join("") + "</ul>";
-
-        if ($scope.gridOptions.selectedItems.find((file) => { return file.name.endsWith(".profile")})) {
-          $scope.deleteWarning = "You are about to delete document(s) which represent Fabric8 profile(s). This really can't be undone! Wiki operations are low level and may lead to non-functional state of Fabric.";
+        var cantDelete = false;
+        if (Fabric.isFMCContainer(workspace)) {
+          // check if there are containers using one of selected profiles
+          var profileIds:Array<string> = [];
+          var profileFolderNames:Array<string> = [];
+          $scope.gridOptions.selectedItems.map((file) => {
+            if (file.mimeType !== "inode/directory")
+              return null;
+            var name = file.path;
+            if (name.match(/\.profile$/))
+              name = name.substring(0, name.length - 8);
+            if (name.match(/^\/fabric\/profiles\//))
+              name = name.substring(17);
+            profileIds.push(name.replace(/\//g, "-"));
+            profileFolderNames.push(file.name);
+            return null;
+          });
+          if (profileFolderNames.length > 0) {
+            // at least one folder selected
+            var containerIds:Array<string> = Fabric.getContainerIdsForProfiles(jolokia, $scope.versionId, profileIds, true);
+            if (containerIds.find(containersOfProfile => containersOfProfile.length > 0)) {
+              cantDelete = true;
+              $scope.deleteWarning = "You can't delete document(s) which represent Fabric8 profile(s).";
+              $scope.deleteWarning += "<br/>These folders are profiles that are used by existing containers:<ul>";
+              for (var pn=0; pn<profileFolderNames.length; pn++) {
+                if (containerIds[pn].length > 0) {
+                  $scope.deleteWarning += "<li>" + profileFolderNames[pn] + " (";
+                  for (var cn=0; cn<containerIds[pn].length; cn++) {
+                    if (cn > 0) {
+                      $scope.deleteWarning += ", ";
+                    }
+                    $scope.deleteWarning += containerIds[pn][cn];
+                  }
+                  $scope.deleteWarning += ")</li>";
+                }
+              }
+              $scope.deleteWarning += "</ul>";
+            } else {
+              // no folder is found to be a profile, but it still may *contain* profiles.
+              // like trying to delete jboss/fuse/full dir is a profile, but attempt to delete
+              // jboss/fuse can't be prevented (at least now)
+              $scope.deleteWarning = "You are about to delete document(s) which may be part of Fabric8 profile(s). This really can't be undone! Wiki operations are low level and may lead to non-functional state of Fabric.";
+            }
+          }
         } else {
           $scope.deleteWarning = null;
         }
 
-        $scope.deleteDialog = Wiki.getDeleteDialog($dialog, <Wiki.DeleteDialogOptions>{
-          callbacks: () => { return $scope.deleteAndCloseDialog; },
-          selectedFileHtml: () =>  { return $scope.selectedFileHtml; },
-          warning: () => { return $scope.deleteWarning; }
-        });
+        if (cantDelete) {
+          $scope.deleteDialog = Wiki.getCantDeleteDialog($dialog, <Wiki.DeleteDialogOptions>{
+            warning: () => { return $scope.deleteWarning; }
+          });
+        } else {
+          $scope.deleteDialog = Wiki.getDeleteDialog($dialog, <Wiki.DeleteDialogOptions>{
+            callbacks: () => { return $scope.deleteAndCloseDialog; },
+            selectedFileHtml: () =>  { return $scope.selectedFileHtml; },
+            warning: () => { return $scope.deleteWarning; }
+          });
+        }
 
         $scope.deleteDialog.open();
 
