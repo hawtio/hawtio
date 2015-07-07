@@ -4,6 +4,7 @@
 #### 1.4.52
 
 * Upgrade to Jolokia 1.3.1
+* Authentication with JBoss EAP 6.x now matches user roles correctly
 
 #### 1.4.51
 
