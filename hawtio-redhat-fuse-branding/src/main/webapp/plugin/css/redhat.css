@@ -2088,7 +2088,7 @@ li.dropdown.open > a.dropdown-toggle {
 }
 
 .dropdown-menu > li:hover > a {
-  color: #ffffff !important;
+  color: #777777 !important;
   text-shadow: 0px 0px 1px white;
 }
 
