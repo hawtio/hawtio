@@ -4042,6 +4042,10 @@ var Fabric;
         return jolokia.execute(Fabric.managerMBean, "containerIdsForProfile", version, profileId, { method: 'POST' });
     }
     Fabric.getContainerIdsForProfile = getContainerIdsForProfile;
+    function getContainerIdsForProfiles(jolokia, version, profileIds, checkParents) {
+        return jolokia.execute(Fabric.managerMBean, "containerIdsForProfiles(java.lang.String, java.util.List, boolean)", version, profileIds, checkParents, { method: 'POST' });
+    }
+    Fabric.getContainerIdsForProfiles = getContainerIdsForProfiles;
     function getContainerIds(jolokia) {
         return jolokia.execute(Fabric.managerMBean, "containerIds", { method: 'POST' });
     }
@@ -48461,6 +48465,19 @@ var Wiki;
         });
     }
     Wiki.getDeleteDialog = getDeleteDialog;
+    function getCantDeleteDialog($dialog, $scope) {
+        return $dialog.dialog({
+            resolve: $scope,
+            templateUrl: 'app/wiki/html/modal/cantDeleteDialog.html',
+            controller: ["$scope", "dialog", "warning", function ($scope, dialog, warning) {
+                $scope.close = function (result) {
+                    dialog.close();
+                };
+                $scope.warning = warning;
+            }]
+        });
+    }
+    Wiki.getCantDeleteDialog = getCantDeleteDialog;
 })(Wiki || (Wiki = {}));
 var Wiki;
 (function (Wiki) {
@@ -48714,25 +48731,70 @@ var Wiki;
         $scope.openDeleteDialog = function () {
             if ($scope.gridOptions.selectedItems.length) {
                 $scope.selectedFileHtml = "<ul>" + $scope.gridOptions.selectedItems.map(function (file) { return "<li>" + file.name + "</li>"; }).sort().join("") + "</ul>";
-                if ($scope.gridOptions.selectedItems.find(function (file) {
-                    return file.name.endsWith(".profile");
-                })) {
-                    $scope.deleteWarning = "You are about to delete document(s) which represent Fabric8 profile(s). This really can't be undone! Wiki operations are low level and may lead to non-functional state of Fabric.";
+                var cantDelete = false;
+                if (Fabric.isFMCContainer(workspace)) {
+                    var profileIds = [];
+                    var profileFolderNames = [];
+                    $scope.gridOptions.selectedItems.map(function (file) {
+                        if (file.mimeType !== "inode/directory")
+                            return null;
+                        var name = file.path;
+                        if (name.match(/\.profile$/))
+                            name = name.substring(0, name.length - 8);
+                        if (name.match(/^\/fabric\/profiles\//))
+                            name = name.substring(17);
+                        profileIds.push(name.replace(/\//g, "-"));
+                        profileFolderNames.push(file.name);
+                        return null;
+                    });
+                    if (profileFolderNames.length > 0) {
+                        var containerIds = Fabric.getContainerIdsForProfiles(jolokia, $scope.versionId, profileIds, true);
+                        if (containerIds.find(function (containersOfProfile) { return containersOfProfile.length > 0; })) {
+                            cantDelete = true;
+                            $scope.deleteWarning = "You can't delete document(s) which represent Fabric8 profile(s).";
+                            $scope.deleteWarning += "<br/>These folders are profiles that are used by existing containers:<ul>";
+                            for (var pn = 0; pn < profileFolderNames.length; pn++) {
+                                if (containerIds[pn].length > 0) {
+                                    $scope.deleteWarning += "<li>" + profileFolderNames[pn] + " (";
+                                    for (var cn = 0; cn < containerIds[pn].length; cn++) {
+                                        if (cn > 0) {
+                                            $scope.deleteWarning += ", ";
+                                        }
+                                        $scope.deleteWarning += containerIds[pn][cn];
+                                    }
+                                    $scope.deleteWarning += ")</li>";
+                                }
+                            }
+                            $scope.deleteWarning += "</ul>";
+                        }
+                        else {
+                            $scope.deleteWarning = "You are about to delete document(s) which may be part of Fabric8 profile(s). This really can't be undone! Wiki operations are low level and may lead to non-functional state of Fabric.";
+                        }
+                    }
                 }
                 else {
                     $scope.deleteWarning = null;
                 }
-                $scope.deleteDialog = Wiki.getDeleteDialog($dialog, {
-                    callbacks: function () {
-                        return $scope.deleteAndCloseDialog;
-                    },
-                    selectedFileHtml: function () {
-                        return $scope.selectedFileHtml;
-                    },
-                    warning: function () {
-                        return $scope.deleteWarning;
-                    }
-                });
+                if (cantDelete) {
+                    $scope.deleteDialog = Wiki.getCantDeleteDialog($dialog, {
+                        warning: function () {
+                            return $scope.deleteWarning;
+                        }
+                    });
+                }
+                else {
+                    $scope.deleteDialog = Wiki.getDeleteDialog($dialog, {
+                        callbacks: function () {
+                            return $scope.deleteAndCloseDialog;
+                        },
+                        selectedFileHtml: function () {
+                            return $scope.selectedFileHtml;
+                        },
+                        warning: function () {
+                            return $scope.deleteWarning;
+                        }
+                    });
+                }
                 $scope.deleteDialog.open();
             }
             else {
@@ -49211,8 +49273,8 @@ var Wiki;
                 $timeout(function () {
                     var wikiLinks = $(".logbar");
                     var top = (wikiLinks.height() + 8) + "px";
-                    $element.css({ "margin-top": top });
-                }, 1000, false);
+                    $element.css({ "margin-top": top, "visibility": "visible" });
+                }, 100, false);
             }
         };
     }]);
