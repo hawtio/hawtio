@@ -150,8 +150,8 @@ module Wiki {
           $timeout(() => {
             var wikiLinks = $(".logbar");
             var top = (wikiLinks.height() + 8) + "px";
-            $element.css({"margin-top": top});
-          }, 1000, false);
+            $element.css({"margin-top": top, "visibility": "visible"});
+          }, 100, false);
       }
     };
   }]);

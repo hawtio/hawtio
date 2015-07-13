@@ -892,6 +892,7 @@ table.dataTable tbody tr td {
 }
 
 .wiki-fixed {
+  visibility: hidden; /* it'll be made visible by wikiFixed directive */
   margin-top: 45px;
 }
 
