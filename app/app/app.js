@@ -38620,11 +38620,26 @@ var Osgi;
                 return false;
             }
             var labelText = $scope.getLabel(bundle);
-            if ($scope.display.bundleFilter && !labelText.toLowerCase().has($scope.display.bundleFilter.toLowerCase())) {
-                return false;
+            if ($scope.display.bundleFilter) {
+                if (!labelText.toLowerCase().has($scope.display.bundleFilter.toLowerCase())) {
+                    return false;
+                }
+                else {
+                    if ($scope.display.showActiveMQBundles || $scope.display.showPlatformBundles || $scope.display.showCxfBundles || $scope.display.showCamelBundles) {
+                        if ((matchesCheckedBundle(bundle))) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                    else {
+                        return true;
+                    }
+                }
             }
-            if (Core.isBlank($scope.display.bundleFilter)) {
-                if (($scope.display.showPlatformBundles && Karaf.isPlatformBundle(bundle['SymbolicName'])) || ($scope.display.showActiveMQBundles && Karaf.isActiveMQBundle(bundle['SymbolicName'])) || ($scope.display.showCxfBundles && Karaf.isCxfBundle(bundle['SymbolicName'])) || ($scope.display.showCamelBundles && Karaf.isCamelBundle(bundle['SymbolicName']))) {
+            else {
+                if (matchesCheckedBundle(bundle)) {
                     return true;
                 }
                 else {
@@ -38633,6 +38648,15 @@ var Osgi;
             }
             return true;
         };
+        function matchesCheckedBundle(bundle) {
+            if (($scope.display.showPlatformBundles && Karaf.isPlatformBundle(bundle['SymbolicName'])) || ($scope.display.showActiveMQBundles && Karaf.isActiveMQBundle(bundle['SymbolicName'])) || ($scope.display.showCxfBundles && Karaf.isCxfBundle(bundle['SymbolicName'])) || ($scope.display.showCamelBundles && Karaf.isCamelBundle(bundle['SymbolicName']))) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        ;
         function processResponse(response) {
             var value = response['value'];
             var responseJson = angular.toJson(value);
