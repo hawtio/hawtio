@@ -5345,8 +5345,8 @@ var Wiki;
             profile: true,
             addClass: "icon-book green",
             exemplar: "user-profile",
-            regex: defaultLowerCaseFileNamePattern,
-            invalid: defaultLowerCaseFileNamePatternInvalid,
+            regex: defaultFileNamePattern,
+            invalid: defaultFileNamePatternInvalid,
             fabricOnly: true
         },
         {

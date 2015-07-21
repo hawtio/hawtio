@@ -1,0 +1,389 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>UrlHelpers | hawtio</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+	<script src="../assets/js/modernizr.js"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.js" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">hawtio</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-private" checked />
+							<label class="tsd-widget" for="tsd-filter-private">Private</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="urlhelpers.html">UrlHelpers</a>
+				</li>
+			</ul>
+			<h1>Module UrlHelpers</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-container"><a href="urlhelpers.html#contextactive" class="tsd-kind-icon">context<wbr>Active</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-container"><a href="urlhelpers.html#escapecolons" class="tsd-kind-icon">escape<wbr>Colons</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-container"><a href="urlhelpers.html#extractpath" class="tsd-kind-icon">extract<wbr>Path</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-container"><a href="urlhelpers.html#join" class="tsd-kind-icon">join</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-container"><a href="urlhelpers.html#maybeproxy" class="tsd-kind-icon">maybe<wbr>Proxy</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-container"><a href="urlhelpers.html#nohash" class="tsd-kind-icon">no<wbr>Hash</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Variables</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-container tsd-is-not-exported"><a href="urlhelpers.html#log" class="tsd-kind-icon">log</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-container"><a href="urlhelpers.html#parsequerystring" class="tsd-kind-icon">parse<wbr>Query<wbr>String</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+				</section>            <section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-container">
+					<a name="contextactive" class="tsd-anchor"></a>
+					<h3>context<wbr>Active</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
+						<li class="tsd-signature tsd-kind-icon">context<wbr>Active<span class="tsd-signature-symbol">(</span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, thingICareAbout<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description"><aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/helpers/js/urlHelpers.ts#L34">app/helpers/js/urlHelpers.ts:34</a></li>
+								</ul>
+								</aside>        <div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns whether or not the context is in the supplied URL.  If the search string starts/ends with &#39;/&#39; then the entire URL is checked.  If the search string doesn&#39;t start with &#39;/&#39; then the search string is compared against the end of the URL.  If the search string starts with &#39;/&#39; but doesn&#39;t end with &#39;/&#39; then the start of the URL is checked, excluding any &#39;#&#39;</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>url:         <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>thingICareAbout:         <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">boolean</span>
+							</h4>
+						</li>
+					</ul>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-container">
+					<a name="escapecolons" class="tsd-anchor"></a>
+					<h3>escape<wbr>Colons</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
+						<li class="tsd-signature tsd-kind-icon">escape<wbr>Colons<span class="tsd-signature-symbol">(</span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description"><aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/helpers/js/urlHelpers.ts#L98">app/helpers/js/urlHelpers.ts:98</a></li>
+								</ul>
+								</aside>        <div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Escape any colons in the URL for ng-resource, mostly useful for handling proxified URLs</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>url:         <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">string</span>
+							</h4>
+						</li>
+					</ul>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-container">
+					<a name="extractpath" class="tsd-anchor"></a>
+					<h3>extract<wbr>Path</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
+						<li class="tsd-signature tsd-kind-icon">extract<wbr>Path<span class="tsd-signature-symbol">(</span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description"><aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/helpers/js/urlHelpers.ts#L20">app/helpers/js/urlHelpers.ts:20</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>url:         <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">string</span>
+							</h4>
+						</li>
+					</ul>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-container">
+					<a name="join" class="tsd-anchor"></a>
+					<h3>join</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
+						<li class="tsd-signature tsd-kind-icon">join<span class="tsd-signature-symbol">(</span>paths<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Array&lt;string&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description"><aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/helpers/js/urlHelpers.ts#L50">app/helpers/js/urlHelpers.ts:50</a></li>
+								</ul>
+								</aside>        <div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Joins the supplied strings together using &#39;/&#39;, stripping any leading/ending &#39;/&#39;
+									from the supplied strings if needed, except the first and last string</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>paths?:         <span class="tsd-signature-type">Array&lt;string&gt;</span> <span class="tsd-flag ts-flagoptional">optional</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">string</span>
+							</h4>
+						</li>
+					</ul>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-container">
+					<a name="maybeproxy" class="tsd-anchor"></a>
+					<h3>maybe<wbr>Proxy</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
+						<li class="tsd-signature tsd-kind-icon">maybe<wbr>Proxy<span class="tsd-signature-symbol">(</span>jolokiaUrl<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description"><aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/helpers/js/urlHelpers.ts#L79">app/helpers/js/urlHelpers.ts:79</a></li>
+								</ul>
+								</aside>        <div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Apply a proxy to the supplied URL if the jolokiaUrl is using the proxy, or if the URL is for a a different host/port</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>jolokiaUrl:         <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>url:         <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">string</span>
+							</h4>
+						</li>
+					</ul>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-container">
+					<a name="nohash" class="tsd-anchor"></a>
+					<h3>no<wbr>Hash</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-container">
+						<li class="tsd-signature tsd-kind-icon">no<wbr>Hash<span class="tsd-signature-symbol">(</span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description"><aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/helpers/js/urlHelpers.ts#L12">app/helpers/js/urlHelpers.ts:12</a></li>
+								</ul>
+								</aside>        <div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns the URL without the starting &#39;#&#39; if it&#39;s there</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>url:         <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">string</span>
+							</h4>
+						</li>
+					</ul>
+				</section></section>        <section class="tsd-panel-group tsd-member-group ">
+				<h2>Variables</h2>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container tsd-is-not-exported">
+					<a name="log" class="tsd-anchor"></a>
+					<h3>log</h3>
+					<div class="tsd-signature tsd-kind-icon">log<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Logging.Logger</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/helpers/js/urlHelpers.ts#L5">app/helpers/js/urlHelpers.ts:5</a></li>
+						</ul>
+					</aside>
+					</section>            <section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-container">
+					<a name="parsequerystring" class="tsd-anchor"></a>
+					<h3>parse<wbr>Query<wbr>String</h3>
+					<div class="tsd-signature tsd-kind-icon">parse<wbr>Query<wbr>String<span class="tsd-signature-symbol">:</span>         <span class="tsd-signature-type">Function</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/helpers/js/urlHelpers.ts#L71">app/helpers/js/urlHelpers.ts:71</a></li>
+						</ul>
+					</aside>
+					<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-variable">
+						<a name="parsequerystring.parsequerystring_function_signature" class="tsd-anchor"></a>
+						<h3>parse<wbr>Query<wbr>String function signature</h3>
+						<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-variable">
+							<li class="tsd-signature tsd-kind-icon">parse<wbr>Query<wbr>String<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						</ul>
+						<ul class="tsd-descriptions">
+							<li class="tsd-description"><aside class="tsd-sources">
+									<ul>
+										<li>Defined in /home/ubuntu/hawtio/hawtio-web/src/main/d.ts/hawtio-plugin-loader.d.ts:5</li>
+									</ul>
+								</aside>
+								<h4 class="tsd-returns-title">Returns         <span class="tsd-signature-type">any</span>
+								</h4>
+							</li>
+						</ul>
+			</section></section></section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="current tsd-kind-container">
+						<a href="urlhelpers.html">Url<wbr>Helpers</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-function tsd-parent-kind-container">
+						<a href="urlhelpers.html#contextactive" class="tsd-kind-icon">context<wbr>Active</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-container">
+						<a href="urlhelpers.html#escapecolons" class="tsd-kind-icon">escape<wbr>Colons</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-container">
+						<a href="urlhelpers.html#extractpath" class="tsd-kind-icon">extract<wbr>Path</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-container">
+						<a href="urlhelpers.html#join" class="tsd-kind-icon">join</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-container">
+						<a href="urlhelpers.html#maybeproxy" class="tsd-kind-icon">maybe<wbr>Proxy</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-container">
+						<a href="urlhelpers.html#nohash" class="tsd-kind-icon">no<wbr>Hash</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-container tsd-is-not-exported">
+						<a href="urlhelpers.html#log" class="tsd-kind-icon">log</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-container">
+						<a href="urlhelpers.html#parsequerystring" class="tsd-kind-icon">parse<wbr>Query<wbr>String</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-container"><span class="tsd-kind-icon">Container, dynamic module</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-construct-signature"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-call-signature"><span class="tsd-kind-icon">Function, call signature, accessor</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-construct-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Member, accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-construct-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Member, accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li>&nbsp;</li>
+				<li class="tsd-kind-construct-signature tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited member</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li>&nbsp;</li>
+				<li class="tsd-kind-construct-signature tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private member</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li>&nbsp;</li>
+				<li>&nbsp;</li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static member</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.io" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
