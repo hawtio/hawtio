@@ -6628,7 +6628,7 @@ var Fabric;
         };
         $scope.mayDelete = function () {
             return $scope.selectedContainers.length > 0 && $scope.selectedContainers.all(function (c) {
-                return !$scope.deletePending[c.id];
+                return !$scope.deletePending[c.id] && !c.root;
             });
         };
         $scope.confirmDeleteDialog = {
