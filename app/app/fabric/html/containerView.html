@@ -114,7 +114,7 @@
         <strong class="mouse-pointer" ng-click="showContainersFor(locationId)">{{locationId}}</strong>
         <div>
           <div class="column-box-square mouse-pointer" 
-            ng-repeat="container in location.containers | orderBy:['!alive', 'provisionResult', 'id']"
+            ng-repeat="container in location.containers | orderBy:['id', '!alive', 'provisionResult']"
             ng-show="filterContainer(container)"
             ng-class="getSelectedClass(container)"
             ng-click="select(containers, container, $event)">
