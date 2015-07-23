@@ -13,6 +13,8 @@ module ActiveMQ {
 
   _module.controller("ActiveMQ.TreeController", ["$scope", "$location", "workspace", "localStorage", ($scope, $location:ng.ILocationService, workspace:Workspace, localStorage) => {
 
+    var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
+
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateSelectionFromURL, 50);
@@ -33,7 +35,7 @@ module ActiveMQ {
       var children = [];
       var tree = workspace.tree;
       if (tree) {
-        var domainName = jmxDomain;
+        var domainName = amqJmxDomain;
         var folder = tree.get(domainName);
         if (folder) {
           children = folder.children;

@@ -1,6 +1,8 @@
 /// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
-  _module.controller("ActiveMQ.DurableSubscriberController", ["$scope", "workspace", "jolokia", ($scope, workspace:Workspace, jolokia) => {
+  _module.controller("ActiveMQ.DurableSubscriberController", ["$scope", "workspace", "jolokia", "localStorage", ($scope, workspace:Workspace, jolokia, localStorage) => {
+
+      var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
 
       $scope.refresh = loadTable;
 
@@ -154,7 +156,7 @@ module ActiveMQ {
       function getBrokerMBean(jolokia) {
         var mbean = null;
         var selection = workspace.selection;
-        if (selection && isBroker(workspace) && selection.objectName) {
+        if (selection && isBroker(workspace, amqJmxDomain) && selection.objectName) {
           return selection.objectName;
         }
         var folderNames = selection.folderNames;

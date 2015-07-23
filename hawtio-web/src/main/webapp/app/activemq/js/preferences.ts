@@ -6,6 +6,9 @@ module ActiveMQ {
   _module.controller("ActiveMQ.PreferencesController", ["$scope", "localStorage", "userDetails", "$rootScope", ($scope, localStorage, userDetails, $rootScope) => {
 
     Core.initPreferenceScope($scope, localStorage, {
+        'activemqJmxDomain': {
+          'value': "org.apache.activemq"
+        },
         'activemqUserName': {
           'value': userDetails.username,
         },

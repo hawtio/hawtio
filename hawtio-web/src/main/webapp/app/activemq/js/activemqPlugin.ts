@@ -24,15 +24,17 @@ module ActiveMQ {
             when('/activemq/jobs', {templateUrl: 'app/activemq/html/jobs.html'})
   }]);
 
-  _module.run(["$location", "workspace", "viewRegistry", "helpRegistry", "preferencesRegistry", ($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry, preferencesRegistry) => {
+  _module.run(["$location", "workspace", "viewRegistry", "helpRegistry", "preferencesRegistry", "localStorage", ($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry, preferencesRegistry, localStorage) => {
+
+    var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
 
     viewRegistry['activemq'] = 'app/activemq/html/layoutActiveMQTree.html';
     helpRegistry.addUserDoc('activemq', 'app/activemq/doc/help.md', () => {
-      return workspace.treeContainsDomainAndProperties(jmxDomain);
+      return workspace.treeContainsDomainAndProperties(amqJmxDomain);
     });
 
     preferencesRegistry.addTab("ActiveMQ", "app/activemq/html/preferences.html", () => {
-      return workspace.treeContainsDomainAndProperties(jmxDomain);
+      return workspace.treeContainsDomainAndProperties(amqJmxDomain);
     });
 
     workspace.addTreePostProcessor(postProcessTree);
@@ -94,7 +96,7 @@ module ActiveMQ {
       id: "activemq",
       content: "ActiveMQ",
       title: "Manage your ActiveMQ message brokers",
-      isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties(jmxDomain),
+      isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties(amqJmxDomain),
       href: () => "#/jmx/attributes?tab=activemq",
       isActive: () => workspace.isTopTabActive("activemq")
     });
@@ -103,67 +105,67 @@ module ActiveMQ {
     workspace.subLevelTabs.push({
       content: '<i class="icon-envelope"></i> Browse',
       title: "Browse the messages on the queue",
-      isValid: (workspace:Workspace) => isQueue(workspace) && workspace.hasInvokeRights(workspace.selection, "browse()"),
+      isValid: (workspace:Workspace) => isQueue(workspace, amqJmxDomain) && workspace.hasInvokeRights(workspace.selection, "browse()"),
       href: () => "#/activemq/browseQueue"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-pencil"></i> Send',
       title: "Send a message to this destination",
-      isValid: (workspace:Workspace) => (isQueue(workspace) || isTopic(workspace)) && workspace.hasInvokeRights(workspace.selection, "sendTextMessage(java.util.Map,java.lang.String,java.lang.String,java.lang.String)"),
+      isValid: (workspace:Workspace) => (isQueue(workspace, amqJmxDomain) || isTopic(workspace, amqJmxDomain)) && workspace.hasInvokeRights(workspace.selection, "sendTextMessage(java.util.Map,java.lang.String,java.lang.String,java.lang.String)"),
       href: () => "#/activemq/sendMessage"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-picture"></i> Diagram',
       title: "View a diagram of the producers, destinations and consumers",
-      isValid: (workspace:Workspace) =>  workspace.isTopTabActive("activemq") || workspace.selectionHasDomain(jmxDomain),
+      isValid: (workspace:Workspace) =>  workspace.isTopTabActive("activemq") || workspace.selectionHasDomain(amqJmxDomain),
       href: () => "#/activemq/diagram"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-plus"></i> Create',
       title: "Create a new destination",
-      isValid: (workspace:Workspace) => isBroker(workspace) && workspace.hasInvokeRights(getBroker(workspace), "addQueue", "addTopic"),
+      isValid: (workspace:Workspace) => isBroker(workspace, amqJmxDomain) && workspace.hasInvokeRights(getBroker(workspace), "addQueue", "addTopic"),
       href: () => "#/activemq/createDestination"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-plus"></i> Create',
       title: "Create a new queue",
-      isValid: (workspace:Workspace) => isQueuesFolder(workspace) && workspace.hasInvokeRights(getBroker(workspace), "addQueue"),
+      isValid: (workspace:Workspace) => isQueuesFolder(workspace, amqJmxDomain) && workspace.hasInvokeRights(getBroker(workspace), "addQueue"),
       href: () => "#/activemq/createQueue"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-plus"></i> Create',
       title: "Create a new topic",
-      isValid: (workspace:Workspace) => isTopicsFolder(workspace) && workspace.hasInvokeRights(getBroker(workspace), "addQueue"),
+      isValid: (workspace:Workspace) => isTopicsFolder(workspace, amqJmxDomain) && workspace.hasInvokeRights(getBroker(workspace), "addQueue"),
       href: () => "#/activemq/createTopic"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-remove"></i> Delete Topic',
       title: "Delete this topic",
-      isValid: (workspace:Workspace) => isTopic(workspace) && workspace.hasInvokeRights(getBroker(workspace), "removeTopic"),
+      isValid: (workspace:Workspace) => isTopic(workspace, amqJmxDomain) && workspace.hasInvokeRights(getBroker(workspace), "removeTopic"),
       href: () => "#/activemq/deleteTopic"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-remove"></i> Delete',
       title: "Delete or purge this queue",
-      isValid: (workspace:Workspace) => isQueue(workspace) && workspace.hasInvokeRights(getBroker(workspace), "removeQueue"),
+      isValid: (workspace:Workspace) => isQueue(workspace, amqJmxDomain) && workspace.hasInvokeRights(getBroker(workspace), "removeQueue"),
       href: () => "#/activemq/deleteQueue"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-list"></i> Durable Subscribers',
       title: "Manage durable subscribers",
-      isValid: (workspace:Workspace) => isBroker(workspace),
+      isValid: (workspace:Workspace) => isBroker(workspace, amqJmxDomain),
       href: () => "#/activemq/durableSubscribers"
     });
 
     workspace.subLevelTabs.push({
         content: '<i class="icon-list"></i> Jobs',
         title: "Manage jobs",
-        isValid: (workspace:Workspace) => isJobScheduler(workspace),
+        isValid: (workspace:Workspace) => isJobScheduler(workspace, amqJmxDomain),
         href: () => "#/activemq/jobs"
     });
 
     function postProcessTree(tree) {
-      var activemq = tree.get(jmxDomain);
+      var activemq = tree.get(amqJmxDomain);
       setConsumerType(activemq);
 
       // lets move queue and topic as first children within brokers
@@ -229,30 +231,30 @@ module ActiveMQ {
     return answer;
   }
 
-  export function isQueue(workspace:Workspace) {
+  export function isQueue(workspace:Workspace, domain) {
     //return workspace.selectionHasDomainAndType(jmxDomain, 'Queue');
-    return workspace.hasDomainAndProperties(jmxDomain, {'destinationType': 'Queue'}, 4) || workspace.selectionHasDomainAndType(jmxDomain, 'Queue');
+    return workspace.hasDomainAndProperties(domain, {'destinationType': 'Queue'}, 4) || workspace.selectionHasDomainAndType(domain, 'Queue');
   }
 
-  export function isTopic(workspace:Workspace) {
+  export function isTopic(workspace:Workspace, domain) {
     //return workspace.selectionHasDomainAndType(jmxDomain, 'Topic');
-    return workspace.hasDomainAndProperties(jmxDomain, {'destinationType': 'Topic'}, 4) || workspace.selectionHasDomainAndType(jmxDomain, 'Topic');
+    return workspace.hasDomainAndProperties(domain, {'destinationType': 'Topic'}, 4) || workspace.selectionHasDomainAndType(domain, 'Topic');
   }
 
-  export function isQueuesFolder(workspace:Workspace) {
-    return workspace.selectionHasDomainAndLastFolderName(jmxDomain, 'Queue');
+  export function isQueuesFolder(workspace:Workspace, domain) {
+    return workspace.selectionHasDomainAndLastFolderName(domain, 'Queue');
   }
 
-  export function isTopicsFolder(workspace:Workspace) {
-    return workspace.selectionHasDomainAndLastFolderName(jmxDomain, 'Topic');
+  export function isTopicsFolder(workspace:Workspace, domain) {
+    return workspace.selectionHasDomainAndLastFolderName(domain, 'Topic');
   }
 
-  export function isJobScheduler(workspace:Workspace) {
-      return workspace.hasDomainAndProperties(jmxDomain, {'service': 'JobScheduler'}, 4);
+  export function isJobScheduler(workspace:Workspace, domain) {
+      return workspace.hasDomainAndProperties(domain, {'service': 'JobScheduler'}, 4);
   }
 
-  export function isBroker(workspace:Workspace) {
-    if (workspace.selectionHasDomainAndType(jmxDomain, 'Broker')) {
+  export function isBroker(workspace:Workspace, domain) {
+    if (workspace.selectionHasDomainAndType(domain, 'Broker')) {
       var self = Core.pathGet(workspace, ["selection"]);
       var parent = Core.pathGet(workspace, ["selection", "parent"]);
       return !(parent && (parent.ancestorHasType('Broker') || self.ancestorHasType('Broker')));
