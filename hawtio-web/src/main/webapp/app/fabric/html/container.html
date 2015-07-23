@@ -74,7 +74,7 @@
 
           <button class="btn" ng-show="row.alive" ng-click="stop()" hawtio-show object-name="{{managerMBean}}" method-name="stopContainer"><i class="icon-off"></i> Stop</button>
           <button class="btn" ng-hide="row.alive" ng-click="start()" hawtio-show object-name="{{managerMBean}}" method-name="startContainer"><i class="icon-play-circle"></i> Start</button>
-          <button class="btn" ng-click="confirmDeleteDialog.open()" hawtio-show object-name="{{managerMBean}}" method-name="destroyContainer"><i class="icon-remove"></i> Delete</button>
+          <button class="btn" ng-hide="row.root" ng-click="confirmDeleteDialog.open()" hawtio-show object-name="{{managerMBean}}" method-name="destroyContainer"><i class="icon-remove"></i> Delete</button>
           <a class="btn" ng-href="{{addToDashboardLink()}}" title="Add this view to a dashboard" data-placement="bottom">
             <i class="icon-share"></i></a>
         </div>
