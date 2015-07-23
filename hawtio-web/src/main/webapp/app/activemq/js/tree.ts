@@ -33,7 +33,7 @@ module ActiveMQ {
       var children = [];
       var tree = workspace.tree;
       if (tree) {
-        var domainName = "org.apache.activemq";
+        var domainName = jmxDomain;
         var folder = tree.get(domainName);
         if (folder) {
           children = folder.children;

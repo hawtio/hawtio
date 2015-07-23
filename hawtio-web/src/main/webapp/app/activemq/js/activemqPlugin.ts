@@ -28,11 +28,11 @@ module ActiveMQ {
 
     viewRegistry['activemq'] = 'app/activemq/html/layoutActiveMQTree.html';
     helpRegistry.addUserDoc('activemq', 'app/activemq/doc/help.md', () => {
-      return workspace.treeContainsDomainAndProperties("org.apache.activemq");
+      return workspace.treeContainsDomainAndProperties(jmxDomain);
     });
 
     preferencesRegistry.addTab("ActiveMQ", "app/activemq/html/preferences.html", () => {
-      return workspace.treeContainsDomainAndProperties("org.apache.activemq");              
+      return workspace.treeContainsDomainAndProperties(jmxDomain);
     });
 
     workspace.addTreePostProcessor(postProcessTree);
@@ -94,7 +94,7 @@ module ActiveMQ {
       id: "activemq",
       content: "ActiveMQ",
       title: "Manage your ActiveMQ message brokers",
-      isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties("org.apache.activemq"),
+      isValid: (workspace:Workspace) => workspace.treeContainsDomainAndProperties(jmxDomain),
       href: () => "#/jmx/attributes?tab=activemq",
       isActive: () => workspace.isTopTabActive("activemq")
     });
@@ -163,7 +163,7 @@ module ActiveMQ {
     });
 
     function postProcessTree(tree) {
-      var activemq = tree.get("org.apache.activemq");
+      var activemq = tree.get(jmxDomain);
       setConsumerType(activemq);
 
       // lets move queue and topic as first children within brokers
