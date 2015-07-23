@@ -246,6 +246,7 @@ module Core {
     preferencesRegistry.addTab("Console Logging",
       "app/core/html/loggingPreferences.html");
     preferencesRegistry.addTab("Editor", "app/ui/html/editorPreferences.html");
+    preferencesRegistry.addTab("JMX Domains", "app/core/html/jmxPreferences.html");
     preferencesRegistry.addTab("Jolokia", "app/core/html/jolokiaPreferences.html");
     preferencesRegistry.addTab("Reset", "app/core/html/resetPreferences.html");
 
