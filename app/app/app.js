@@ -38038,7 +38038,7 @@ var Log;
                 updateValues(value);
             }
             else {
-                Core.notification("error", "Failed to get a response! " + JSON.stringify(response, null, 4));
+                Core.notification("error", "Failed to get a response! " + JSON.stringify(response.error, null, 4));
             }
         };
         var callbackOptions = onSuccess(asyncUpdateValues, {
