@@ -3570,6 +3570,7 @@ var Core;
         preferencesRegistry.addTab("Plugins", "app/core/html/pluginPreferences.html");
         preferencesRegistry.addTab("Console Logging", "app/core/html/loggingPreferences.html");
         preferencesRegistry.addTab("Editor", "app/ui/html/editorPreferences.html");
+        preferencesRegistry.addTab("JMX Domains", "app/core/html/jmxPreferences.html");
         preferencesRegistry.addTab("Jolokia", "app/core/html/jolokiaPreferences.html");
         preferencesRegistry.addTab("Reset", "app/core/html/resetPreferences.html");
         toastr.options = {
@@ -3642,13 +3643,14 @@ var ActiveMQ;
     ActiveMQ._module.config(["$routeProvider", function ($routeProvider) {
         $routeProvider.when('/activemq/browseQueue', { templateUrl: 'app/activemq/html/browseQueue.html' }).when('/activemq/diagram', { templateUrl: 'app/activemq/html/brokerDiagram.html', reloadOnSearch: false }).when('/activemq/createDestination', { templateUrl: 'app/activemq/html/createDestination.html' }).when('/activemq/createQueue', { templateUrl: 'app/activemq/html/createQueue.html' }).when('/activemq/createTopic', { templateUrl: 'app/activemq/html/createTopic.html' }).when('/activemq/deleteQueue', { templateUrl: 'app/activemq/html/deleteQueue.html' }).when('/activemq/deleteTopic', { templateUrl: 'app/activemq/html/deleteTopic.html' }).when('/activemq/sendMessage', { templateUrl: 'app/camel/html/sendMessage.html' }).when('/activemq/durableSubscribers', { templateUrl: 'app/activemq/html/durableSubscribers.html' }).when('/activemq/jobs', { templateUrl: 'app/activemq/html/jobs.html' });
     }]);
-    ActiveMQ._module.run(["$location", "workspace", "viewRegistry", "helpRegistry", "preferencesRegistry", function ($location, workspace, viewRegistry, helpRegistry, preferencesRegistry) {
+    ActiveMQ._module.run(["$location", "workspace", "viewRegistry", "helpRegistry", "preferencesRegistry", "localStorage", function ($location, workspace, viewRegistry, helpRegistry, preferencesRegistry, localStorage) {
+        var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
         viewRegistry['activemq'] = 'app/activemq/html/layoutActiveMQTree.html';
         helpRegistry.addUserDoc('activemq', 'app/activemq/doc/help.md', function () {
-            return workspace.treeContainsDomainAndProperties("org.apache.activemq");
+            return workspace.treeContainsDomainAndProperties(amqJmxDomain);
         });
         preferencesRegistry.addTab("ActiveMQ", "app/activemq/html/preferences.html", function () {
-            return workspace.treeContainsDomainAndProperties("org.apache.activemq");
+            return workspace.treeContainsDomainAndProperties(amqJmxDomain);
         });
         workspace.addTreePostProcessor(postProcessTree);
         var attributes = workspace.attributeColumnDefs;
@@ -3706,72 +3708,72 @@ var ActiveMQ;
             id: "activemq",
             content: "ActiveMQ",
             title: "Manage your ActiveMQ message brokers",
-            isValid: function (workspace) { return workspace.treeContainsDomainAndProperties("org.apache.activemq"); },
+            isValid: function (workspace) { return workspace.treeContainsDomainAndProperties(amqJmxDomain); },
             href: function () { return "#/jmx/attributes?tab=activemq"; },
             isActive: function () { return workspace.isTopTabActive("activemq"); }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-envelope"></i> Browse',
             title: "Browse the messages on the queue",
-            isValid: function (workspace) { return isQueue(workspace) && workspace.hasInvokeRights(workspace.selection, "browse()"); },
+            isValid: function (workspace) { return isQueue(workspace, amqJmxDomain) && workspace.hasInvokeRights(workspace.selection, "browse()"); },
             href: function () { return "#/activemq/browseQueue"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-pencil"></i> Send',
             title: "Send a message to this destination",
-            isValid: function (workspace) { return (isQueue(workspace) || isTopic(workspace)) && workspace.hasInvokeRights(workspace.selection, "sendTextMessage(java.util.Map,java.lang.String,java.lang.String,java.lang.String)"); },
+            isValid: function (workspace) { return (isQueue(workspace, amqJmxDomain) || isTopic(workspace, amqJmxDomain)) && workspace.hasInvokeRights(workspace.selection, "sendTextMessage(java.util.Map,java.lang.String,java.lang.String,java.lang.String)"); },
             href: function () { return "#/activemq/sendMessage"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-picture"></i> Diagram',
             title: "View a diagram of the producers, destinations and consumers",
-            isValid: function (workspace) { return workspace.isTopTabActive("activemq") || workspace.selectionHasDomain(ActiveMQ.jmxDomain); },
+            isValid: function (workspace) { return workspace.isTopTabActive("activemq") || workspace.selectionHasDomain(amqJmxDomain); },
             href: function () { return "#/activemq/diagram"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-plus"></i> Create',
             title: "Create a new destination",
-            isValid: function (workspace) { return isBroker(workspace) && workspace.hasInvokeRights(getBroker(workspace), "addQueue", "addTopic"); },
+            isValid: function (workspace) { return isBroker(workspace, amqJmxDomain) && workspace.hasInvokeRights(getBroker(workspace), "addQueue", "addTopic"); },
             href: function () { return "#/activemq/createDestination"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-plus"></i> Create',
             title: "Create a new queue",
-            isValid: function (workspace) { return isQueuesFolder(workspace) && workspace.hasInvokeRights(getBroker(workspace), "addQueue"); },
+            isValid: function (workspace) { return isQueuesFolder(workspace, amqJmxDomain) && workspace.hasInvokeRights(getBroker(workspace), "addQueue"); },
             href: function () { return "#/activemq/createQueue"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-plus"></i> Create',
             title: "Create a new topic",
-            isValid: function (workspace) { return isTopicsFolder(workspace) && workspace.hasInvokeRights(getBroker(workspace), "addQueue"); },
+            isValid: function (workspace) { return isTopicsFolder(workspace, amqJmxDomain) && workspace.hasInvokeRights(getBroker(workspace), "addQueue"); },
             href: function () { return "#/activemq/createTopic"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-remove"></i> Delete Topic',
             title: "Delete this topic",
-            isValid: function (workspace) { return isTopic(workspace) && workspace.hasInvokeRights(getBroker(workspace), "removeTopic"); },
+            isValid: function (workspace) { return isTopic(workspace, amqJmxDomain) && workspace.hasInvokeRights(getBroker(workspace), "removeTopic"); },
             href: function () { return "#/activemq/deleteTopic"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-remove"></i> Delete',
             title: "Delete or purge this queue",
-            isValid: function (workspace) { return isQueue(workspace) && workspace.hasInvokeRights(getBroker(workspace), "removeQueue"); },
+            isValid: function (workspace) { return isQueue(workspace, amqJmxDomain) && workspace.hasInvokeRights(getBroker(workspace), "removeQueue"); },
             href: function () { return "#/activemq/deleteQueue"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Durable Subscribers',
             title: "Manage durable subscribers",
-            isValid: function (workspace) { return isBroker(workspace); },
+            isValid: function (workspace) { return isBroker(workspace, amqJmxDomain); },
             href: function () { return "#/activemq/durableSubscribers"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Jobs',
             title: "Manage jobs",
-            isValid: function (workspace) { return isJobScheduler(workspace); },
+            isValid: function (workspace) { return isJobScheduler(workspace, amqJmxDomain); },
             href: function () { return "#/activemq/jobs"; }
         });
         function postProcessTree(tree) {
-            var activemq = tree.get("org.apache.activemq");
+            var activemq = tree.get(amqJmxDomain);
             setConsumerType(activemq);
             if (activemq) {
                 angular.forEach(activemq.children, function (broker) {
@@ -3828,28 +3830,28 @@ var ActiveMQ;
         return answer;
     }
     ActiveMQ.getBroker = getBroker;
-    function isQueue(workspace) {
-        return workspace.hasDomainAndProperties(ActiveMQ.jmxDomain, { 'destinationType': 'Queue' }, 4) || workspace.selectionHasDomainAndType(ActiveMQ.jmxDomain, 'Queue');
+    function isQueue(workspace, domain) {
+        return workspace.hasDomainAndProperties(domain, { 'destinationType': 'Queue' }, 4) || workspace.selectionHasDomainAndType(domain, 'Queue');
     }
     ActiveMQ.isQueue = isQueue;
-    function isTopic(workspace) {
-        return workspace.hasDomainAndProperties(ActiveMQ.jmxDomain, { 'destinationType': 'Topic' }, 4) || workspace.selectionHasDomainAndType(ActiveMQ.jmxDomain, 'Topic');
+    function isTopic(workspace, domain) {
+        return workspace.hasDomainAndProperties(domain, { 'destinationType': 'Topic' }, 4) || workspace.selectionHasDomainAndType(domain, 'Topic');
     }
     ActiveMQ.isTopic = isTopic;
-    function isQueuesFolder(workspace) {
-        return workspace.selectionHasDomainAndLastFolderName(ActiveMQ.jmxDomain, 'Queue');
+    function isQueuesFolder(workspace, domain) {
+        return workspace.selectionHasDomainAndLastFolderName(domain, 'Queue');
     }
     ActiveMQ.isQueuesFolder = isQueuesFolder;
-    function isTopicsFolder(workspace) {
-        return workspace.selectionHasDomainAndLastFolderName(ActiveMQ.jmxDomain, 'Topic');
+    function isTopicsFolder(workspace, domain) {
+        return workspace.selectionHasDomainAndLastFolderName(domain, 'Topic');
     }
     ActiveMQ.isTopicsFolder = isTopicsFolder;
-    function isJobScheduler(workspace) {
-        return workspace.hasDomainAndProperties(ActiveMQ.jmxDomain, { 'service': 'JobScheduler' }, 4);
+    function isJobScheduler(workspace, domain) {
+        return workspace.hasDomainAndProperties(domain, { 'service': 'JobScheduler' }, 4);
     }
     ActiveMQ.isJobScheduler = isJobScheduler;
-    function isBroker(workspace) {
-        if (workspace.selectionHasDomainAndType(ActiveMQ.jmxDomain, 'Broker')) {
+    function isBroker(workspace, domain) {
+        if (workspace.selectionHasDomainAndType(domain, 'Broker')) {
             var self = Core.pathGet(workspace, ["selection"]);
             var parent = Core.pathGet(workspace, ["selection", "parent"]);
             return !(parent && (parent.ancestorHasType('Broker') || self.ancestorHasType('Broker')));
@@ -7245,6 +7247,7 @@ var ActiveMQ;
 (function (ActiveMQ) {
     ActiveMQ._module.controller("ActiveMQ.BrokerDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", "$routeParams", function ($scope, $compile, $location, localStorage, jolokia, workspace, $routeParams) {
         Fabric.initScope($scope, $location, jolokia, workspace);
+        var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
         var isFmc = Fabric.isFMCContainer(workspace);
         $scope.isFmc = isFmc;
         if (isFmc) {
@@ -7322,7 +7325,7 @@ var ActiveMQ;
                 var view = "/jmx/attributes?tab=activemq";
                 if (!postfix) {
                     if (brokerName) {
-                        postfix = "nid=root-org.apache.activemq-Broker-" + brokerName;
+                        postfix = "nid=root-" + amqJmxDomain + "-Broker-" + brokerName;
                     }
                 }
                 if (postfix) {
@@ -7343,7 +7346,7 @@ var ActiveMQ;
                 var destinationName = selectedNode["destinationName"];
                 var postfix = null;
                 if (brokerName && destinationType && destinationName) {
-                    postfix = "nid=root-org.apache.activemq-Broker-" + brokerName + "-" + destinationType + "-" + destinationName;
+                    postfix = "nid=root-" + amqJmxDomain + "-Broker-" + brokerName + "-" + destinationType + "-" + destinationName;
                 }
                 connectToBroker(container, brokerName, postfix);
             }
@@ -7598,7 +7601,7 @@ var ActiveMQ;
                 containerId: container
             };
             if ($scope.viewSettings.broker) {
-                jolokia.search("org.apache.activemq:type=Broker,brokerName=*", onSuccess(function (response) {
+                jolokia.search(amqJmxDomain + ":type=Broker,brokerName=*", onSuccess(function (response) {
                     angular.forEach(response, function (objectName) {
                         var details = Core.parseMBean(objectName);
                         if (details) {
@@ -7647,7 +7650,7 @@ var ActiveMQ;
         function matchesDestinationName(destinationName, typeName) {
             if (destinationName) {
                 var selection = workspace.selection;
-                if (selection && selection.domain === ActiveMQ.jmxDomain) {
+                if (selection && selection.domain === amqJmxDomain) {
                     var type = selection.entries["destinationType"];
                     if (type) {
                         if ((type === "Queue" && typeName === "topic") || (type === "Topic" && typeName === "queue")) {
@@ -7684,7 +7687,7 @@ var ActiveMQ;
                         var objectName = "";
                         if (brokerName) {
                             if (!destinationName.startsWith("ActiveMQ.Advisory.TempQueue_ActiveMQ.Advisory.TempTopic")) {
-                                objectName = "org.apache.activemq:type=Broker,brokerName=" + brokerName + ",destinationType=" + destinationTypeName + ",destinationName=" + destinationName;
+                                objectName = amqJmxDomain + ":type=Broker,brokerName=" + brokerName + ",destinationType=" + destinationTypeName + ",destinationName=" + destinationName;
                             }
                         }
                         var answer = {
@@ -7698,7 +7701,7 @@ var ActiveMQ;
                             }
                         };
                         if (!brokerName) {
-                            containerJolokia.search("org.apache.activemq:destinationType=" + destinationTypeName + ",destinationName=" + destinationName + ",*", onSuccess(function (response) {
+                            containerJolokia.search(amqJmxDomain + ":destinationType=" + destinationTypeName + ",destinationName=" + destinationName + ",*", onSuccess(function (response) {
                                 ActiveMQ.log.info("Found destination mbean: " + response);
                                 if (response && response.length) {
                                     answer.objectName = response[0];
@@ -7714,7 +7717,7 @@ var ActiveMQ;
                 }
                 var brokerId = container.brokerName;
                 if (brokerId && $scope.viewSettings.network && $scope.viewSettings.broker) {
-                    containerJolokia.request({ type: "read", mbean: "org.apache.activemq:connector=networkConnectors,*" }, onSuccess(function (response) {
+                    containerJolokia.request({ type: "read", mbean: amqJmxDomain + ":connector=networkConnectors,*" }, onSuccess(function (response) {
                         angular.forEach(response.value, function (properties, objectName) {
                             var details = Core.parseMBean(objectName);
                             var attributes = details['attributes'];
@@ -7730,7 +7733,7 @@ var ActiveMQ;
                     }));
                 }
                 if ($scope.viewSettings.consumer) {
-                    containerJolokia.search("org.apache.activemq:endpoint=Consumer,*", onSuccess(function (response) {
+                    containerJolokia.search(amqJmxDomain + ":endpoint=Consumer,*", onSuccess(function (response) {
                         angular.forEach(response, function (objectName) {
                             var details = Core.parseMBean(objectName);
                             if (details) {
@@ -7764,7 +7767,7 @@ var ActiveMQ;
                     }));
                 }
                 if ($scope.viewSettings.producer) {
-                    containerJolokia.search("org.apache.activemq:endpoint=Producer,*", onSuccess(function (response) {
+                    containerJolokia.search(amqJmxDomain + ":endpoint=Producer,*", onSuccess(function (response) {
                         angular.forEach(response, function (objectName) {
                             var details = Core.parseMBean(objectName);
                             if (details) {
@@ -7799,7 +7802,7 @@ var ActiveMQ;
                     }));
                 }
                 if ($scope.viewSettings.producer) {
-                    containerJolokia.request({ type: "read", mbean: "org.apache.activemq:endpoint=dynamicProducer,*" }, onSuccess(function (response) {
+                    containerJolokia.request({ type: "read", mbean: amqJmxDomain + ":endpoint=dynamicProducer,*" }, onSuccess(function (response) {
                         angular.forEach(response.value, function (mbeanValues, objectName) {
                             var details = Core.parseMBean(objectName);
                             var attributes = details['attributes'];
@@ -7859,7 +7862,7 @@ var ActiveMQ;
                 });
                 if (master) {
                     if (!broker['objectName']) {
-                        broker['objectName'] = "org.apache.activemq:type=Broker,brokerName=" + brokerId;
+                        broker['objectName'] = amqJmxDomain + ":type=Broker,brokerName=" + brokerId;
                         ActiveMQ.log.info("Guessed broker mbean: " + broker['objectName']);
                     }
                     if (!broker['brokerContainer'] && container) {
@@ -8331,7 +8334,8 @@ var ActiveMQ;
 })(ActiveMQ || (ActiveMQ = {}));
 var ActiveMQ;
 (function (ActiveMQ) {
-    ActiveMQ._module.controller("ActiveMQ.DestinationController", ["$scope", "workspace", "jolokia", function ($scope, workspace, jolokia) {
+    ActiveMQ._module.controller("ActiveMQ.DestinationController", ["$scope", "workspace", "jolokia", "localStorage", function ($scope, workspace, jolokia, localStorage) {
+        var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
         $scope.workspace = workspace;
         $scope.message = "";
         $scope.queueType = 'true';
@@ -8364,7 +8368,7 @@ var ActiveMQ;
         function getBrokerMBean(jolokia) {
             var mbean = null;
             var selection = workspace.selection;
-            if (selection && ActiveMQ.isBroker(workspace) && selection.objectName) {
+            if (selection && ActiveMQ.isBroker(workspace, amqJmxDomain) && selection.objectName) {
                 return selection.objectName;
             }
             var folderNames = selection.folderNames;
@@ -8444,7 +8448,8 @@ var ActiveMQ;
 })(ActiveMQ || (ActiveMQ = {}));
 var ActiveMQ;
 (function (ActiveMQ) {
-    ActiveMQ._module.controller("ActiveMQ.DurableSubscriberController", ["$scope", "workspace", "jolokia", function ($scope, workspace, jolokia) {
+    ActiveMQ._module.controller("ActiveMQ.DurableSubscriberController", ["$scope", "workspace", "jolokia", "localStorage", function ($scope, workspace, jolokia, localStorage) {
+        var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
         $scope.refresh = loadTable;
         $scope.durableSubscribers = [];
         $scope.tempData = [];
@@ -8579,7 +8584,7 @@ var ActiveMQ;
         function getBrokerMBean(jolokia) {
             var mbean = null;
             var selection = workspace.selection;
-            if (selection && ActiveMQ.isBroker(workspace) && selection.objectName) {
+            if (selection && ActiveMQ.isBroker(workspace, amqJmxDomain) && selection.objectName) {
                 return selection.objectName;
             }
             var folderNames = selection.folderNames;
@@ -8746,6 +8751,7 @@ var ActiveMQ;
         };
     }]);
     ActiveMQ._module.controller("ActiveMQ.TreeController", ["$scope", "$location", "workspace", "localStorage", function ($scope, $location, workspace, localStorage) {
+        var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
         $scope.$on("$routeChangeSuccess", function (event, current, previous) {
             setTimeout(updateSelectionFromURL, 50);
         });
@@ -8760,7 +8766,7 @@ var ActiveMQ;
             var children = [];
             var tree = workspace.tree;
             if (tree) {
-                var domainName = "org.apache.activemq";
+                var domainName = amqJmxDomain;
                 var folder = tree.get(domainName);
                 if (folder) {
                     children = folder.children;
@@ -18061,6 +18067,16 @@ var Core;
                 }
             });
         }
+    }]);
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
+    Core._module.controller("Core.JmxPreferences", ["$scope", "localStorage", function ($scope, localStorage) {
+        Core.initPreferenceScope($scope, localStorage, {
+            'activemqJmxDomain': {
+                'value': "org.apache.activemq"
+            }
+        });
     }]);
 })(Core || (Core = {}));
 var Core;
