@@ -136,7 +136,7 @@
     <slf4j-version>1.7.12</slf4j-version>
 
     <spring-version>4.1.6.RELEASE</spring-version>
-    <spring-boot-version>1.2.3.RELEASE</spring-boot-version>
+    <spring-boot-version>1.2.5.RELEASE</spring-boot-version>
     <xbean-version>3.16</xbean-version>
     <wagon-version>2.7</wagon-version>
     <war-plugin-version>2.1.1</war-plugin-version>
