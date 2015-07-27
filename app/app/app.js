@@ -32710,7 +32710,6 @@ var Jmx;
         var attributeSchemaBasic = {
             properties: {
                 'key': {
-                    description: 'Key',
                     tooltip: 'Attribute key',
                     type: 'string',
                     readOnly: 'true'
@@ -32722,13 +32721,11 @@ var Jmx;
                     formTemplate: "<textarea class='input-xlarge' rows='2' readonly='true'></textarea>"
                 },
                 'type': {
-                    description: 'Type',
                     tooltip: 'Attribute type',
                     type: 'string',
                     readOnly: 'true'
                 },
                 'jolokia': {
-                    description: 'Jolokia URL',
                     tooltip: 'Jolokia REST URL',
                     type: 'string',
                     readOnly: 'true'
