@@ -118,7 +118,7 @@ module Core {
   });
 
   export var DEFAULT_MAX_DEPTH = 7;
-  export var DEFAULT_MAX_COLLECTION_SIZE = 500;
+  export var DEFAULT_MAX_COLLECTION_SIZE = 5000;
 
   _module.factory('jolokiaParams', ["jolokiaUrl", "localStorage", (jolokiaUrl, localStorage) => {
     var answer = {
