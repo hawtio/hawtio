@@ -253,6 +253,17 @@ module Camel {
       href: () => "#/camel/inflight"
     });
     workspace.subLevelTabs.push({
+      content: '<i class="icon-list"></i> Endpoints (in/out)',
+      title: "List all the incoming and outgoing endpoints in the context",
+      isValid: (workspace: Workspace) =>
+        !workspace.isEndpointsFolder() && !workspace.isEndpoint()
+        && (workspace.isCamelContext() || workspace.isRoutesFolder())
+        && Camel.isCamelVersionEQGT(2, 16, workspace, jolokia)
+        && getSelectionCamelEndpointRuntimeRegistry(workspace)
+        && workspace.hasInvokeRightsForName(getSelectionCamelEndpointRuntimeRegistry(workspace), "endpointStatistics"),
+      href: () => "#/camel/endpointRuntimeRegistry"
+    });
+    workspace.subLevelTabs.push({
       content: '<i class=" icon-edit"></i> Properties',
       title: "View the pattern properties",
       isValid: (workspace: Workspace) => getSelectedRouteNode(workspace),
@@ -268,17 +279,6 @@ module Camel {
         && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia)
         && workspace.hasInvokeRightsForName(getSelectionCamelRestRegistry(workspace), "listRestServices"),
       href: () => "#/camel/restRegistry"
-    });
-    workspace.subLevelTabs.push({
-      content: '<i class="fa fa-list"></i> Endpoints (in/out)',
-      title: "List all the incoming and outgoing endpoints in the context",
-      isValid: (workspace: Workspace) =>
-        !workspace.isEndpointsFolder() && !workspace.isEndpoint()
-        && (workspace.isCamelContext() || workspace.isRoutesFolder())
-        && Camel.isCamelVersionEQGT(2, 16, workspace, jolokia)
-        && getSelectionCamelEndpointRuntimeRegistry(workspace)
-        && workspace.hasInvokeRightsForName(getSelectionCamelEndpointRuntimeRegistry(workspace), "endpointStatistics"),
-      href: () => "/camel/endpointRuntimeRegistry"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-list"></i> Type Converters',

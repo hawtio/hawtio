@@ -14,7 +14,7 @@ module Camel {
         field: 'url',
         displayName: 'Url',
         cellFilter: null,
-        width: "*",
+        width: "500",
         resizable: true
       },
       {
