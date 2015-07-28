@@ -17598,7 +17598,7 @@ var Core;
         };
     });
     Core.DEFAULT_MAX_DEPTH = 7;
-    Core.DEFAULT_MAX_COLLECTION_SIZE = 500;
+    Core.DEFAULT_MAX_COLLECTION_SIZE = 5000;
     Core._module.factory('jolokiaParams', ["jolokiaUrl", "localStorage", function (jolokiaUrl, localStorage) {
         var answer = {
             canonicalNaming: false,
