@@ -26,7 +26,7 @@ module Camel {
             when('/camel/fabricDiagram', {templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false}).
             when('/camel/typeConverter', {templateUrl: 'app/camel/html/typeConverter.html', reloadOnSearch: false}).
             when('/camel/restRegistry', {templateUrl: 'app/camel/html/restRegistry.html', reloadOnSearch: false}).
-            when('/camel/endpointRuntimeRegistry', {templateUrl: 'plugins/camel/html/endpointRuntimeRegistry.html', reloadOnSearch: false}).
+            when('/camel/endpointRuntimeRegistry', {templateUrl: 'app/camel/html/endpointRuntimeRegistry.html', reloadOnSearch: false}).
             when('/camel/routeMetrics', {templateUrl: 'app/camel/html/routeMetrics.html', reloadOnSearch: false}).
             when('/camel/inflight', {templateUrl: 'app/camel/html/inflight.html', reloadOnSearch: false}).
             when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false}).
