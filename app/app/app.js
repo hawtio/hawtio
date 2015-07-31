@@ -22197,7 +22197,8 @@ var SelectionHelpers;
     SelectionHelpers.sync = sync;
     function select(group, item, $event) {
         var ctrlKey = $event.ctrlKey;
-        if (!ctrlKey) {
+        var metaKey = $event.metaKey;
+        if (!ctrlKey && !metaKey) {
             if (item['selected']) {
                 toggleSelection(item);
             }
