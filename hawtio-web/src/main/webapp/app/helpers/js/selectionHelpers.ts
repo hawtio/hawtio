@@ -40,7 +40,8 @@ module SelectionHelpers {
 
   export function select(group:any[], item:any, $event:any):void {
     var ctrlKey = $event.ctrlKey;
-    if (!ctrlKey) {
+    var metaKey = $event.metaKey;
+    if (!ctrlKey && !metaKey) {
       if (item['selected']) {
         toggleSelection(item);
       } else {
