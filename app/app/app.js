@@ -16222,6 +16222,22 @@ var Kubernetes;
     }
     Kubernetes.statusTextToCssClass = statusTextToCssClass;
 })(Kubernetes || (Kubernetes = {}));
+var JUnit;
+(function (JUnit) {
+    JUnit.log = Logger.get("JUnit");
+    function isJUnitPluginEnabled(workspace) {
+        return getIntrospectorMBean(workspace) && getJUnitMBean(workspace);
+    }
+    JUnit.isJUnitPluginEnabled = isJUnitPluginEnabled;
+    function getJUnitMBean(workspace) {
+        return Core.getMBeanTypeObjectName(workspace, "hawtio", "JUnitFacade");
+    }
+    JUnit.getJUnitMBean = getJUnitMBean;
+    function getIntrospectorMBean(workspace) {
+        return Core.getMBeanTypeObjectName(workspace, "hawtio", "Introspector");
+    }
+    JUnit.getIntrospectorMBean = getIntrospectorMBean;
+})(JUnit || (JUnit = {}));
 var Core;
 (function (Core) {
     function parsePreferencesJson(value, key) {
@@ -16960,10 +16976,15 @@ var Perspective;
     }
     Perspective.choosePerspective = choosePerspective;
     function defaultPage($location, workspace, jolokia, localStorage) {
+        var isJUnit = JUnit.isJUnitPluginEnabled(workspace);
+        if (isJUnit) {
+            Perspective.log.info("JUnit detected");
+            return "/junit/tests";
+        }
         var isProxy = Core.isProxyUrl($location);
         var isChomeApp = Core.isChromeApp();
         if (!isProxy && !isChomeApp && shouldShowWelcomePage(localStorage)) {
-            return "/welcome/";
+            return "/welcome";
         }
         var answer = Perspective.defaultPageLocation;
         if (!answer && $location && workspace) {
@@ -34456,22 +34477,6 @@ var Jmx;
         }
     }]);
 })(Jmx || (Jmx = {}));
-var JUnit;
-(function (JUnit) {
-    JUnit.log = Logger.get("JUnit");
-    function isJUnitPluginEnabled(workspace) {
-        return getIntrospectorMBean(workspace) && getJUnitMBean(workspace);
-    }
-    JUnit.isJUnitPluginEnabled = isJUnitPluginEnabled;
-    function getJUnitMBean(workspace) {
-        return Core.getMBeanTypeObjectName(workspace, "hawtio", "JUnitFacade");
-    }
-    JUnit.getJUnitMBean = getJUnitMBean;
-    function getIntrospectorMBean(workspace) {
-        return Core.getMBeanTypeObjectName(workspace, "hawtio", "Introspector");
-    }
-    JUnit.getIntrospectorMBean = getIntrospectorMBean;
-})(JUnit || (JUnit = {}));
 var JUnit;
 (function (JUnit) {
     var pluginName = 'junit';
