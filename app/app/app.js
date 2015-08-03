@@ -10492,6 +10492,27 @@ var Camel;
         return null;
     }
     Camel.getSelectionCamelInflightRepository = getSelectionCamelInflightRepository;
+    function getSelectionCamelBlockedExchanges(workspace) {
+        if (workspace) {
+            var contextId = getContextId(workspace);
+            var selection = workspace.selection;
+            var tree = workspace.tree;
+            if (tree && selection) {
+                var domain = selection.domain;
+                if (domain && contextId) {
+                    var result = tree.navigate(domain, contextId, "services");
+                    if (result && result.children) {
+                        var mbean = result.children.find(function (m) { return m.title.startsWith("DefaultAsyncProcessorAwaitManager"); });
+                        if (mbean) {
+                            return mbean.objectName;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    Camel.getSelectionCamelBlockedExchanges = getSelectionCamelBlockedExchanges;
     function getContextId(workspace) {
         var selection = workspace.selection;
         if (selection) {
@@ -11103,7 +11124,7 @@ var Camel;
     var contextToolBar = "app/camel/html/attributeToolBarContext.html";
     Camel._module = angular.module(Camel.pluginName, ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ui.bootstrap.typeahead', 'ngResource', 'hawtioCore', 'hawtio-ui']);
     Camel._module.config(["$routeProvider", function ($routeProvider) {
-        $routeProvider.when('/camel/browseEndpoint', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/endpoint/browse/:contextId/*endpointPath', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/propertiesEndpoint', { templateUrl: 'app/camel/html/propertiesEndpoint.html' }).when('/camel/createEndpoint', { templateUrl: 'app/camel/html/createEndpoint.html' }).when('/camel/route/diagram/:contextId/:routeId', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/routes', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/fabricDiagram', { templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false }).when('/camel/typeConverter', { templateUrl: 'app/camel/html/typeConverter.html', reloadOnSearch: false }).when('/camel/restRegistry', { templateUrl: 'app/camel/html/restRegistry.html', reloadOnSearch: false }).when('/camel/endpointRuntimeRegistry', { templateUrl: 'app/camel/html/endpointRuntimeRegistry.html', reloadOnSearch: false }).when('/camel/routeMetrics', { templateUrl: 'app/camel/html/routeMetrics.html', reloadOnSearch: false }).when('/camel/inflight', { templateUrl: 'app/camel/html/inflight.html', reloadOnSearch: false }).when('/camel/sendMessage', { templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false }).when('/camel/source', { templateUrl: 'app/camel/html/source.html' }).when('/camel/traceRoute', { templateUrl: 'app/camel/html/traceRoute.html' }).when('/camel/debugRoute', { templateUrl: 'app/camel/html/debug.html' }).when('/camel/profileRoute', { templateUrl: 'app/camel/html/profileRoute.html' }).when('/camel/properties', { templateUrl: 'app/camel/html/properties.html' });
+        $routeProvider.when('/camel/browseEndpoint', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/endpoint/browse/:contextId/*endpointPath', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/propertiesEndpoint', { templateUrl: 'app/camel/html/propertiesEndpoint.html' }).when('/camel/createEndpoint', { templateUrl: 'app/camel/html/createEndpoint.html' }).when('/camel/route/diagram/:contextId/:routeId', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/routes', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/fabricDiagram', { templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false }).when('/camel/typeConverter', { templateUrl: 'app/camel/html/typeConverter.html', reloadOnSearch: false }).when('/camel/restRegistry', { templateUrl: 'app/camel/html/restRegistry.html', reloadOnSearch: false }).when('/camel/endpointRuntimeRegistry', { templateUrl: 'app/camel/html/endpointRuntimeRegistry.html', reloadOnSearch: false }).when('/camel/routeMetrics', { templateUrl: 'app/camel/html/routeMetrics.html', reloadOnSearch: false }).when('/camel/inflight', { templateUrl: 'app/camel/html/inflight.html', reloadOnSearch: false }).when('/camel/blocked', { templateUrl: 'app/camel/html/blocked.html', reloadOnSearch: false }).when('/camel/sendMessage', { templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false }).when('/camel/source', { templateUrl: 'app/camel/html/source.html' }).when('/camel/traceRoute', { templateUrl: 'app/camel/html/traceRoute.html' }).when('/camel/debugRoute', { templateUrl: 'app/camel/html/debug.html' }).when('/camel/profileRoute', { templateUrl: 'app/camel/html/profileRoute.html' }).when('/camel/properties', { templateUrl: 'app/camel/html/properties.html' });
     }]);
     Camel._module.factory('tracerStatus', function () {
         return {
@@ -11279,10 +11300,16 @@ var Camel;
             href: function () { return "#/camel/routeMetrics"; }
         });
         workspace.subLevelTabs.push({
-            content: '<i class="icon-list"></i> Inflight Exchanges',
+            content: '<i class="icon-list"></i> Inflight',
             title: "View the entire JVMs Camel inflight exchanges",
             isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isEndpointsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelInflightRepository(workspace), "browse"); },
             href: function () { return "#/camel/inflight"; }
+        });
+        workspace.subLevelTabs.push({
+            content: '<i class="icon-list"></i> Blocked',
+            title: "View the entire JVMs Camel blocked exchanges",
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isEndpointsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelBlockedExchanges(workspace), "browse"); },
+            href: function () { return "#/camel/blocked"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Endpoints (in/out)',
@@ -11297,7 +11324,7 @@ var Camel;
             href: function () { return "#/camel/properties"; }
         });
         workspace.subLevelTabs.push({
-            content: '<i class="icon-list"></i> Rest Services',
+            content: '<i class="icon-list"></i> Rest',
             title: "List all the REST services registered in the context",
             isValid: function (workspace) { return workspace.isTopTabActive("camel") && !Camel.getSelectedRouteNode(workspace) && !workspace.isEndpointsFolder() && !workspace.isRoute() && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelRestRegistry(workspace), "listRestServices"); },
             href: function () { return "#/camel/restRegistry"; }
@@ -11405,6 +11432,125 @@ var Camel;
             var selected = $scope.selectedItems || [];
             return selected.length && selected.every(function (s) { return Camel.isState(s, state); });
         };
+    }]);
+})(Camel || (Camel = {}));
+var Camel;
+(function (Camel) {
+    Camel._module.controller("Camel.BlockedExchangesController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+        var log = Logger.get("Camel");
+        $scope.data = [];
+        $scope.initDone = false;
+        $scope.mbeanAttributes = {};
+        var columnDefs = [
+            {
+                field: 'exchangeId',
+                displayName: 'Exchange Id',
+                cellFilter: null,
+                width: "*",
+                resizable: true
+            },
+            {
+                field: 'routeId',
+                displayName: 'Route Id',
+                cellFilter: null,
+                width: "*",
+                resizable: true
+            },
+            {
+                field: 'nodeId',
+                displayName: 'Node Id',
+                cellFilter: null,
+                width: "*",
+                resizable: true
+            },
+            {
+                field: 'duration',
+                displayName: 'Duration (ms)',
+                cellFilter: null,
+                width: "*",
+                resizable: true
+            },
+            {
+                field: 'threadId',
+                displayName: 'Thread id',
+                cellFilter: null,
+                width: "*",
+                resizable: true
+            },
+            {
+                field: 'threadName',
+                displayName: 'Thread name',
+                cellFilter: null,
+                width: "*",
+                resizable: true
+            }
+        ];
+        $scope.gridOptions = {
+            data: 'data',
+            displayFooter: true,
+            displaySelectionCheckbox: true,
+            multiSelect: false,
+            canSelectRows: true,
+            enableSorting: true,
+            columnDefs: columnDefs,
+            selectedItems: [],
+            filterOptions: {
+                filterText: ''
+            }
+        };
+        $scope.doUnblock = function () {
+            var mbean = Camel.getSelectionCamelBlockedExchanges(workspace);
+            var selectedItems = $scope.gridOptions.selectedItems;
+            if (mbean && selectedItems && selectedItems.length === 1) {
+                var exchangeId = selectedItems[0].exchangeId;
+                var threadId = selectedItems[0].threadId;
+                var threadName = selectedItems[0].threadName;
+                log.info("Unblocking thread (" + threadId + "/" + threadName + ") for exchangeId: " + exchangeId);
+                jolokia.execute(mbean, "interrupt(java.lang.String)", exchangeId, onSuccess(onUnblocked));
+            }
+        };
+        function onUnblocked() {
+            Core.notification("success", "Thread unblocked");
+        }
+        function onBlocked(response) {
+            var obj = response.value;
+            if (obj) {
+                var arr = [];
+                for (var key in obj) {
+                    var entry = obj[key];
+                    arr.push({
+                        exchangeId: entry.exchangeId,
+                        routeId: entry.routeId,
+                        nodeId: entry.nodeId,
+                        duration: entry.duration,
+                        threadId: entry.id,
+                        threadName: entry.name
+                    });
+                }
+                arr = arr.sortBy("exchangeId");
+                $scope.data = arr;
+                $scope.selectedMBean = response.request.mbean;
+            }
+            else {
+                $scope.data = [];
+            }
+            $scope.initDone = "true";
+            Core.$apply($scope);
+        }
+        function loadBlockedData() {
+            log.info("Loading blocked exchanges data...");
+            var routeId = Camel.getSelectedRouteId(workspace);
+            if (routeId != null) {
+                $scope.gridOptions.filterOptions.filterText = routeId;
+            }
+            var mbean = Camel.getSelectionCamelBlockedExchanges(workspace);
+            if (mbean) {
+                var query = { type: "exec", mbean: mbean, operation: 'browse()' };
+                jolokia.request(query, onSuccess(onBlocked));
+                scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(onSuccess(onBlocked), query));
+            }
+        }
+        loadBlockedData();
     }]);
 })(Camel || (Camel = {}));
 var Camel;
@@ -13310,6 +13456,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.InflightController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+        var log = Logger.get("Camel");
         $scope.data = [];
         $scope.initDone = false;
         $scope.mbeanAttributes = {};
@@ -13386,11 +13533,8 @@ var Camel;
             $scope.initDone = "true";
             Core.$apply($scope);
         }
-        $scope.renderIcon = function (state) {
-            return Camel.iconClass(state);
-        };
-        function loadRestRegistry() {
-            console.log("Loading inflight data...");
+        function loadInflightData() {
+            log.info("Loading inflight data...");
             var routeId = Camel.getSelectedRouteId(workspace);
             if (routeId != null) {
                 $scope.gridOptions.filterOptions.filterText = routeId;
@@ -13402,7 +13546,7 @@ var Camel;
                 scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(onSuccess(onInflight), query));
             }
         }
-        loadRestRegistry();
+        loadInflightData();
     }]);
 })(Camel || (Camel = {}));
 var Camel;

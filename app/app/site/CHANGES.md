@@ -4,6 +4,7 @@
 #### 1.4.53
 
 * Camel plugin can now show in/out endpoints when using Camel 2.16 onwards
+* Camel plugin can now show blocked exchanges when using Camel 2.15 onwards
 * Various fabric8 v1 bugs and cosmetic issues fixed
 
 #### 1.4.52
