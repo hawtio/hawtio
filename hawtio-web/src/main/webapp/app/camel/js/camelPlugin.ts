@@ -29,6 +29,7 @@ module Camel {
             when('/camel/endpointRuntimeRegistry', {templateUrl: 'app/camel/html/endpointRuntimeRegistry.html', reloadOnSearch: false}).
             when('/camel/routeMetrics', {templateUrl: 'app/camel/html/routeMetrics.html', reloadOnSearch: false}).
             when('/camel/inflight', {templateUrl: 'app/camel/html/inflight.html', reloadOnSearch: false}).
+            when('/camel/blocked', {templateUrl: 'app/camel/html/blocked.html', reloadOnSearch: false}).
             when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false}).
             when('/camel/source', {templateUrl: 'app/camel/html/source.html'}).
             when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html'}).
@@ -251,6 +252,16 @@ module Camel {
         && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia)
         && workspace.hasInvokeRightsForName(getSelectionCamelInflightRepository(workspace), "browse"),
       href: () => "#/camel/inflight"
+    });
+    workspace.subLevelTabs.push({
+      content: '<i class="icon-list"></i> Blocked Exchanges',
+      title: "View the entire JVMs Camel blocked exchanges",
+      isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
+        && !workspace.isEndpointsFolder()
+        && (workspace.isRoute() || workspace.isRoutesFolder())
+        && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia)
+        && workspace.hasInvokeRightsForName(getSelectionCamelBlockedExchanges(workspace), "browse"),
+      href: () => "#/camel/blocked"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-list"></i> Endpoints (in/out)',
