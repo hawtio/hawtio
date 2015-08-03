@@ -3,6 +3,8 @@ module Camel {
 
   _module.controller("Camel.InflightController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
+    var log:Logging.Logger = Logger.get("Camel");
+
     $scope.data = [];
     $scope.initDone = false;
 
@@ -95,12 +97,8 @@ module Camel {
       Core.$apply($scope);
     }
 
-    $scope.renderIcon = (state) => {
-      return Camel.iconClass(state);
-    }
-
-    function loadRestRegistry() {
-      console.log("Loading inflight data...");
+    function loadInflightData() {
+      log.info("Loading inflight data...");
 
       // pre-select filter if we have selected a route
       var routeId = getSelectedRouteId(workspace);
@@ -120,7 +118,7 @@ module Camel {
     }
 
     // load data
-    loadRestRegistry();
+    loadInflightData();
   }]);
 
 }

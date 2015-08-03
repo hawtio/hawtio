@@ -3,6 +3,8 @@ module Camel {
 
   _module.controller("Camel.BlockedExchangesController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
+    var log:Logging.Logger = Logger.get("Camel");
+
     $scope.data = [];
     $scope.initDone = false;
 
@@ -38,14 +40,14 @@ module Camel {
         resizable: true
       },
       {
-        field: 'id',
+        field: 'threadId',
         displayName: 'Thread id',
         cellFilter: null,
         width: "*",
         resizable: true
       },
       {
-        field: 'name',
+        field: 'threadName',
         displayName: 'Thread name',
         cellFilter: null,
         width: "*",
@@ -56,7 +58,7 @@ module Camel {
     $scope.gridOptions = {
       data: 'data',
       displayFooter: true,
-      displaySelectionCheckbox: false,
+      displaySelectionCheckbox: true,
       multiSelect: false,
       canSelectRows: true,
       enableSorting: true,
@@ -66,6 +68,25 @@ module Camel {
         filterText: ''
       }
     };
+
+    $scope.doUnblock = () => {
+      var mbean = getSelectionCamelBlockedExchanges(workspace);
+      var selectedItems = $scope.gridOptions.selectedItems;
+
+      if (mbean && selectedItems && selectedItems.length === 1) {
+        var exchangeId = selectedItems[0].exchangeId;
+        var threadId = selectedItems[0].threadId;
+        var threadName = selectedItems[0].threadName;
+
+        log.info("Unblocking thread (" + threadId + "/" + threadName + ") for exchangeId: " + exchangeId);
+
+        jolokia.execute(mbean, "interrupt(java.lang.String)", exchangeId, onSuccess(onUnblocked));
+      }
+    };
+
+    function onUnblocked() {
+      Core.notification("success", "Thread unblocked");
+    }
 
     function onBlocked(response) {
       var obj = response.value;
@@ -81,8 +102,8 @@ module Camel {
               routeId: entry.routeId,
               nodeId: entry.nodeId,
               duration: entry.duration,
-              id: entry.id,
-              name: entry.name
+              threadId: entry.id,
+              threadName: entry.name
             }
           );
         }
@@ -105,7 +126,7 @@ module Camel {
     }
 
     function loadBlockedData() {
-      console.log("Loading blocked exchanges data...");
+      log.info("Loading blocked exchanges data...");
 
       // pre-select filter if we have selected a route
       var routeId = getSelectedRouteId(workspace);
