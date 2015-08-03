@@ -244,7 +244,7 @@ module Camel {
       href: () => "#/camel/routeMetrics"
     });
     workspace.subLevelTabs.push({
-      content: '<i class="icon-list"></i> Inflight Exchanges',
+      content: '<i class="icon-list"></i> Inflight',
       title: "View the entire JVMs Camel inflight exchanges",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
         && !workspace.isEndpointsFolder()
@@ -254,7 +254,7 @@ module Camel {
       href: () => "#/camel/inflight"
     });
     workspace.subLevelTabs.push({
-      content: '<i class="icon-list"></i> Blocked Exchanges',
+      content: '<i class="icon-list"></i> Blocked',
       title: "View the entire JVMs Camel blocked exchanges",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
         && !workspace.isEndpointsFolder()
@@ -281,7 +281,7 @@ module Camel {
       href: () => "#/camel/properties"
     });
     workspace.subLevelTabs.push({
-      content: '<i class="icon-list"></i> Rest Services',
+      content: '<i class="icon-list"></i> Rest',
       title: "List all the REST services registered in the context",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
         && !getSelectedRouteNode(workspace)
