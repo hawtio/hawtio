@@ -38,8 +38,15 @@ module Camel {
         resizable: true
       },
       {
-        field: 'elapsed',
-        displayName: 'Elapsed (ms)',
+        field: 'id',
+        displayName: 'Thread id',
+        cellFilter: null,
+        width: "*",
+        resizable: true
+      },
+      {
+        field: 'name',
+        displayName: 'Thread name',
         cellFilter: null,
         width: "*",
         resizable: true
@@ -73,7 +80,8 @@ module Camel {
               routeId: entry.routeId,
               nodeId: entry.nodeId,
               duration: entry.duration,
-              elapsed: entry.elapsed
+              id: entry.id,
+              name: entry.name
             }
           );
         }
@@ -93,10 +101,6 @@ module Camel {
 
       // ensure web page is updated
       Core.$apply($scope);
-    }
-
-    $scope.renderIcon = (state) => {
-      return Camel.iconClass(state);
     }
 
     function loadBlockedData() {
