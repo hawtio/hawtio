@@ -1,5 +1,6 @@
 /// <reference path="../../core/js/coreHelpers.ts"/>
 /// <reference path="../../kubernetes/js/kubernetesHelpers.ts"/>
+/// <reference path="../../junit/js/junitHelpers.ts"/>
 /// <reference path="../../core/js/preferenceHelpers.ts"/>
 /// <reference path="metadata.ts"/>
 /**
@@ -295,12 +296,20 @@ module Perspective {
    * @return {String}
    */
   export function defaultPage($location, workspace: Workspace, jolokia, localStorage) {
+    // we should not show welcome screen from junit
+    var isJUnit = JUnit.isJUnitPluginEnabled(workspace);
+    if (isJUnit) {
+      log.info("JUnit detected")
+      // for junit we want to force junit as the default page
+      return "/junit/tests";
+    }
+
     // we should not show welcome screen from proxy or form chrome app
     var isProxy = Core.isProxyUrl($location);
     var isChomeApp = Core.isChromeApp();
 
     if (!isProxy && !isChomeApp && shouldShowWelcomePage(localStorage)) {
-      return "/welcome/";
+      return "/welcome";
     }
 
     // now find the configured default plugin, and then find the top level tab that matches the default plugin
