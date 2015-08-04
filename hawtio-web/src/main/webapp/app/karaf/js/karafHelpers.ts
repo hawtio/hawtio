@@ -163,7 +163,7 @@ module Karaf {
   var cxfBundlePatterns = ["^org.apache.cxf"];
   var cxfBundleRegex = new RegExp(cxfBundlePatterns.join('|'));
 
-  var activemqBundlePatterns = ["^org.apache.activemq", "activemq-camel$"];
+  var activemqBundlePatterns = ["^org.apache.activemq", "activemq-karaf$", "activemq-camel$"];
   var activemqBundleRegex = new RegExp(activemqBundlePatterns.join('|'));
 
   export function isPlatformBundle(symbolicName:string):boolean {
