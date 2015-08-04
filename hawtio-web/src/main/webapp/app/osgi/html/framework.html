@@ -27,14 +27,14 @@
     </div>
 
     <div modal="editDialog.show" close="editDialog.close()" options="editDialog.options">
-        <form id="myForm" class="form-horizontal no-bottom-margin" ng-submit="editDialog.close()">
+        <form id="myForm" class="form-horizontal no-bottom-margin" ng-submit="edited(editAttr, editDisplayName, editResult)">
             <div class="modal-header"><h4>Change {{editDisplayName}}</h4></div>
             <div class="modal-body">
                 <p>New Start Level (0-100): <input ng-model="editResult" type="number" min="0" max="100" required/></p>
             </div>
             <div class="modal-footer">
-                <input class="btn" ng-click="editDialog.close()" type="submit" value="Cancel">
-                <input class="btn btn-primary" ng-click="edited(editAttr, editDisplayName, editResult)" type="submit" value="OK">
+                <input class="btn" ng-click="editDialog.close()" type="button" value="Cancel">
+                <input class="btn btn-primary" type="submit" value="OK">
             </div>
         </form>
     </div>
