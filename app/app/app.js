@@ -35238,7 +35238,7 @@ var Karaf;
     var camelBundleRegex = new RegExp(camelBundlePatterns.join('|'));
     var cxfBundlePatterns = ["^org.apache.cxf"];
     var cxfBundleRegex = new RegExp(cxfBundlePatterns.join('|'));
-    var activemqBundlePatterns = ["^org.apache.activemq", "activemq-camel$"];
+    var activemqBundlePatterns = ["^org.apache.activemq", "activemq-karaf$", "activemq-camel$"];
     var activemqBundleRegex = new RegExp(activemqBundlePatterns.join('|'));
     function isPlatformBundle(symbolicName) {
         return platformBundleRegex.test(symbolicName);
