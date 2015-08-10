@@ -83,7 +83,7 @@
     <dozer-version>5.5.1</dozer-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
     <felix.gogo.version>0.10.0</felix.gogo.version>
-    <frontend-maven-plugin-version>0.0.16</frontend-maven-plugin-version>
+    <frontend-maven-plugin-version>0.0.24</frontend-maven-plugin-version>
     <gitective-version>0.9.9</gitective-version>
 
     <!-- We are using an old guava to avoid breaking ActiveMQ in the test cases of hawtio-web -->
