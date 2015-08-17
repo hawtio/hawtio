@@ -23,7 +23,7 @@ module Fabric {
 
     $scope.createLocationDialog = ContainerHelpers.getCreateLocationDialog($scope, $dialog);
 
-    var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location', 'alive', 'type', 'ensembleServer', 'provisionResult', 'root', 'jolokiaUrl', 'jmxDomains', 'metadata'];
+    var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location', 'alive', 'type', 'ensembleServer', 'provisionResult', 'root', 'jolokiaUrl', 'jmxDomains', 'metadata', 'parentId'];
     var profileFields = ['id', 'hidden', 'version', 'summaryMarkdown', 'iconURL', 'tags'];
 
     Fabric.initScope($scope, $location, jolokia, workspace);
@@ -190,7 +190,22 @@ module Fabric {
         $scope.locations = locations;
         // grouped by version/profile
         $scope.versions = versions;
-        // list view
+
+        // Sort by id with child containers grouped under parents
+        var sortedContainers = containers.sortBy('id');
+        var rootContainers = sortedContainers.exclude((c) => { return !c.root; });
+        var childContainers = sortedContainers.exclude((c) => { return c.root; });
+
+        if (childContainers.length > 0) {
+          var tmp = [];
+          rootContainers.each((c) => {
+            tmp.add(c);
+            var children = childContainers.exclude((child) => { return child.parentId !== c.id });
+            tmp.add(children);
+          });
+          containers = tmp;
+        }
+
         $scope.containers = containers;
         Core.$apply($scope);
       });
