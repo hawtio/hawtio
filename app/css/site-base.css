@@ -1679,6 +1679,11 @@ td.adding {
   width: 160px;
 }
 
+.child-container {
+  margin-left: 2em;
+  transition: none;
+}
+
 .login-wrapper {
   position: absolute;
   left: 0;
@@ -2179,7 +2184,7 @@ dd.file-list {
   background: inherit;
 }
 
-.active-profile-list .expandable .expandable-body ul li .child-container {
+.active-profile-list .expandable .expandable-body ul li {
   margin-left: 0;
 }
 

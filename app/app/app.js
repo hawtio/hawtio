@@ -26358,7 +26358,7 @@ var Fabric;
         $scope.hasCounts = true;
         $scope.toString = Core.toString;
         $scope.createLocationDialog = ContainerHelpers.getCreateLocationDialog($scope, $dialog);
-        var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location', 'alive', 'type', 'ensembleServer', 'provisionResult', 'root', 'jolokiaUrl', 'jmxDomains', 'metadata'];
+        var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location', 'alive', 'type', 'ensembleServer', 'provisionResult', 'root', 'jolokiaUrl', 'jmxDomains', 'metadata', 'parentId'];
         var profileFields = ['id', 'hidden', 'version', 'summaryMarkdown', 'iconURL', 'tags'];
         Fabric.initScope($scope, $location, jolokia, workspace);
         SelectionHelpers.decorate($scope);
@@ -26517,6 +26517,24 @@ var Fabric;
                 $scope.locationMenu = ContainerHelpers.buildLocationMenu($scope, jolokia, locationIds);
                 $scope.locations = locations;
                 $scope.versions = versions;
+                var sortedContainers = containers.sortBy('id');
+                var rootContainers = sortedContainers.exclude(function (c) {
+                    return !c.root;
+                });
+                var childContainers = sortedContainers.exclude(function (c) {
+                    return c.root;
+                });
+                if (childContainers.length > 0) {
+                    var tmp = [];
+                    rootContainers.each(function (c) {
+                        tmp.add(c);
+                        var children = childContainers.exclude(function (child) {
+                            return child.parentId !== c.id;
+                        });
+                        tmp.add(children);
+                    });
+                    containers = tmp;
+                }
                 $scope.containers = containers;
                 Core.$apply($scope);
             });
