@@ -653,7 +653,7 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
 }
 
 .color-picker div table tr td div {
-  border: 1px solid rgba(0, 0, 0, 0);
+  border: 3px solid rgba(0, 0, 0, 0);
   border-radius: 4px;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 }
@@ -687,7 +687,6 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
 .selected, 
 .box.selected {
   color: normal;
-  background-color: #f0f0ff !important;
   text-shadow: none;
 }
 
