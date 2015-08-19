@@ -9,7 +9,7 @@ module UI {
     return new UI.ColorPicker()
   });
 
-  export var selected:string = "selected";
+  export var selected:string = "color-picker-selected";
   export var unselected:string = "unselected";
 
   /**

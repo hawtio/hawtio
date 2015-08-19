@@ -633,6 +633,11 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
   border-radius: 4px;
 }
 
+.color-picker-selected {
+  color: normal;
+  text-shadow: none;
+}
+
 .selected-color {
   width: 1em;
   height: 1em;
@@ -653,12 +658,12 @@ div.hawtio-form-tabs ul.nav-tabs li.active a {
 }
 
 .color-picker div table tr td div {
-  border: 1px solid rgba(0, 0, 0, 0);
+  border: 3px solid rgba(0, 0, 0, 0);
   border-radius: 4px;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 }
 
-.color-picker div table tr td div.selected {
+.color-picker div table tr td div.color-picker-selected {
   border-color: #474747;
 }
 
