@@ -44056,7 +44056,7 @@ var UI;
     UI._module.directive('hawtioColorPicker', function () {
         return new UI.ColorPicker();
     });
-    UI.selected = "selected";
+    UI.selected = "color-picker-selected";
     UI.unselected = "unselected";
     var ColorPicker = (function () {
         function ColorPicker() {
