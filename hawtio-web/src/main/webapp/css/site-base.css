@@ -3274,7 +3274,7 @@ fs-donut svg g text.units {
   width: 300px;
   height: 300px;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto;
 }
 
 .health-details-wrap a {
