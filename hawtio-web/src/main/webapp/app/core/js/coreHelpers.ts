@@ -69,6 +69,8 @@ function safeNullAsString(value:any, type:string):string {
     return "" + value;
   } else if (typeof value === 'string') {
     // its a string
+    if (value.indexOf('java.lang.IllegalStateException: Broker is not yet started') >= 0)
+      value = "<em>Broker is not yet started</em>";
     return "" + value;
   } else if (type === 'javax.management.openmbean.CompositeData' || type === '[Ljavax.management.openmbean.CompositeData;' || type === 'java.util.Map') {
     // composite data or composite data array, we just display as json
