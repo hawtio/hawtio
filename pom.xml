@@ -177,6 +177,7 @@
     <module>sample</module>
     <module>hawtio-springboot</module>
     <module>hawtio-sample-springboot</module>
+    <module>hawtio-sample-springboot-authentication</module>
     <module>hawtio-karaf-terminal</module>
     <module>hawtio-karaf-git</module>
     <!-- TODO - a bit broken at the moment
