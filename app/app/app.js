@@ -2164,6 +2164,8 @@ function safeNullAsString(value, type) {
         return "" + value;
     }
     else if (typeof value === 'string') {
+        if (value.indexOf('java.lang.IllegalStateException: Broker is not yet started') >= 0)
+            value = "<em>Broker is not yet started</em>";
         return "" + value;
     }
     else if (type === 'javax.management.openmbean.CompositeData' || type === '[Ljavax.management.openmbean.CompositeData;' || type === 'java.util.Map') {
