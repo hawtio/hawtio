@@ -20881,12 +20881,6 @@ var DataTable;
                         ascending: true
                     };
                 }
-                else {
-                    config['sortInfo'] = {
-                        sortBy: '',
-                        ascending: true
-                    };
-                }
                 var sortInfo = $scope.config.sortInfo;
                 var idx = -1;
                 $scope.rows = (value || []).sortBy(sortInfo.sortBy, !sortInfo.ascending).map(function (entity) {
