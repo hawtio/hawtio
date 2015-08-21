@@ -40,6 +40,7 @@ public class HawtioConfiguration extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/hawtio/plugins/**").addResourceLocations("/app/", "classpath:/static/hawtio/app/");
         registry.addResourceHandler("/hawtio/**").addResourceLocations("/", "/app/", "classpath:/static/hawtio/",
                 "classpath:/static/hawtio/app/");
+        registry.addResourceHandler("/img/**").addResourceLocations("classpath:/static/hawtio/img/");
     }
 
     @Override
