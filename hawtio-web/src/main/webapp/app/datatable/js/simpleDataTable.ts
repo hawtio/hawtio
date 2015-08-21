@@ -62,11 +62,6 @@ module DataTable {
             sortBy: sortField,
             ascending: true
           }
-        } else {
-          config['sortInfo'] = {
-            sortBy: '',
-            ascending: true
-          }
         }
 
         var sortInfo = $scope.config.sortInfo;
