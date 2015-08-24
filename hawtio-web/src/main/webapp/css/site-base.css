@@ -2152,6 +2152,7 @@ dd.file-list {
 
 .active-profile-list .expandable {
   padding: 0;
+  cursor: pointer;
 }
 
 .active-profile-titles.section-header {
@@ -2237,7 +2238,6 @@ dd.file-list {
   overflow: hidden;
   text-overflow: ellipsis;
   right: 95px;
-  cursor: pointer;
 }
 
 .active-profile-icon {
