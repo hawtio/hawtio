@@ -120,7 +120,7 @@ public class Options {
             }
         });
 
-        addOption(new ParameterOption("p", "plugins", "Directory to search for .war files to install as 3rd party plugins") {
+        addOption(new ParameterOption("pd", "pluginsDir", "Directory to search for .war files to install as 3rd party plugins") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 plugins = parameter;
             }
