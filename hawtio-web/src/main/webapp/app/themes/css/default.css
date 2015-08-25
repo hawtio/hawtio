@@ -389,6 +389,14 @@ div#main div ul.nav li a:hover:not(.btn) {
   text-shadow: 0 1px 0 #FFFFFF;
 }
 
+div#main div ul.nav li a:hover:not(.btn)[disabled] {
+  border: 1px;
+  border-radius: 2px;
+  background: inherit;
+  color: #777777;
+  cursor: default;
+}
+
 #main div div div section .tabbable .nav.nav-tabs {
   border-radius: 0 0 4px 4px;
   border: 1px solid #d4d4d4;

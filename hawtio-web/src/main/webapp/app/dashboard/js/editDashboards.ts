@@ -147,6 +147,10 @@ module Dashboard {
 
     $scope.addViewToDashboard = () => {
       var nextHref = null;
+      if (!$scope.selectedItems || $scope.selectedItems.length == 0) {
+        return;
+      }
+
       angular.forEach($scope.selectedItems, (selectedItem) => {
         // TODO this could be a helper function
         var text = $scope.url;
