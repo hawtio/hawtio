@@ -8004,7 +8004,8 @@ var ActiveMQ;
                     displayName: 'Correlation ID',
                     width: '10%'
                 }
-            ]
+            ],
+            afterSelectionChange: afterSelectionChange
         };
         $scope.showMessageDetails = false;
         var ignoreColumns = ["PropertiesText", "BodyPreview", "Text"];
@@ -8239,7 +8240,7 @@ var ActiveMQ;
         }
         function operationSuccess() {
             $scope.messageDialog = false;
-            $scope.gridOptions.selectedItems.splice(0);
+            deselectAll();
             Core.notification("success", $scope.message);
             setTimeout(loadTable, 50);
         }
@@ -8331,6 +8332,18 @@ var ActiveMQ;
                 }
             }
             return searchConditions;
+        }
+        function afterSelectionChange(rowItem, checkAll) {
+            if (checkAll === void 0) {
+                $scope.gridOptions['$gridScope'].allSelected = rowItem.config.selectedItems.length == $scope.messages.length;
+            }
+            else {
+                $scope.gridOptions['$gridScope'].allSelected = checkAll;
+            }
+        }
+        function deselectAll() {
+            $scope.selectedItems.splice(0);
+            $scope.gridOptions['$gridScope'].allSelected = false;
         }
     }]);
 })(ActiveMQ || (ActiveMQ = {}));
