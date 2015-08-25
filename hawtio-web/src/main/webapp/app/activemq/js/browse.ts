@@ -167,9 +167,14 @@ module ActiveMQ {
 
     $scope.queueNames = (completionText) => {
       var queuesFolder = getSelectionQueuesFolder(workspace);
-      return (queuesFolder) ? queuesFolder.children.map(n => n.title) : [];
+      if (queuesFolder) {
+        var selectedQueue = workspace.selection.key;
+        var otherQueues = queuesFolder.children.exclude((child) => {return child.key == selectedQueue});
+        return (otherQueues)? otherQueues.map(n => n.title) : [];
+      } else {
+        return [];
+      }
     };
-
 
     function populateTable(response) {
       var data = response.value;
@@ -478,7 +483,6 @@ module ActiveMQ {
     }
 
     function deselectAll() {
-      $scope.selectedItems.splice(0);
       $scope.gridOptions['$gridScope'].allSelected = false;
     }
 
