@@ -68,7 +68,8 @@ module ActiveMQ {
           displayName: 'Correlation ID',
           width: '10%'
         }
-      ]
+      ],
+      afterSelectionChange: afterSelectionChange
     };
 
     $scope.showMessageDetails = false;
@@ -362,7 +363,7 @@ module ActiveMQ {
 
     function operationSuccess() {
       $scope.messageDialog = false;
-      $scope.gridOptions.selectedItems.splice(0);
+      deselectAll();
       Core.notification("success", $scope.message);
       setTimeout(loadTable, 50);
     }
@@ -465,6 +466,20 @@ module ActiveMQ {
         }
       }
       return searchConditions;
+    }
+
+    function afterSelectionChange(rowItem, checkAll) {
+      if (checkAll === void 0) {
+        // then row was clicked, not select-all checkbox
+        $scope.gridOptions['$gridScope'].allSelected = rowItem.config.selectedItems.length == $scope.messages.length;
+      } else {
+        $scope.gridOptions['$gridScope'].allSelected = checkAll;
+      }
+    }
+
+    function deselectAll() {
+      $scope.selectedItems.splice(0);
+      $scope.gridOptions['$gridScope'].allSelected = false;
     }
 
   }]);
