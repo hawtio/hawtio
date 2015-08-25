@@ -19519,6 +19519,9 @@ var Dashboard;
         };
         $scope.addViewToDashboard = function () {
             var nextHref = null;
+            if (!$scope.selectedItems || $scope.selectedItems.length == 0) {
+                return;
+            }
             angular.forEach($scope.selectedItems, function (selectedItem) {
                 var text = $scope.url;
                 var query = null;
