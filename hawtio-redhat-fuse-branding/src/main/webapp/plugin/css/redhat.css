@@ -1708,6 +1708,14 @@ a:hover {
   padding-bottom: 5px;
 }
 
+div#main div ul.nav li a:hover[disabled] {
+  border: 1px;
+  border-radius: 2px;
+  background: inherit;
+  color: #4d5258;
+  cursor: default;
+}
+
 #main.container-fluid div .nav li.active a {
   border-radius: 0;
   background-color: inherit;
