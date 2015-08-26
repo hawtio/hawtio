@@ -8087,7 +8087,16 @@ var ActiveMQ;
         };
         $scope.queueNames = function (completionText) {
             var queuesFolder = ActiveMQ.getSelectionQueuesFolder(workspace);
-            return (queuesFolder) ? queuesFolder.children.map(function (n) { return n.title; }) : [];
+            if (queuesFolder) {
+                var selectedQueue = workspace.selection.key;
+                var otherQueues = queuesFolder.children.exclude(function (child) {
+                    return child.key == selectedQueue;
+                });
+                return (otherQueues) ? otherQueues.map(function (n) { return n.title; }) : [];
+            }
+            else {
+                return [];
+            }
         };
         function populateTable(response) {
             var data = response.value;
@@ -8342,7 +8351,6 @@ var ActiveMQ;
             }
         }
         function deselectAll() {
-            $scope.selectedItems.splice(0);
             $scope.gridOptions['$gridScope'].allSelected = false;
         }
     }]);
@@ -39948,22 +39956,27 @@ var Osgi;
         $scope.edited = function (name, displayName, res) {
             $scope.editDialog.close();
             if (angular.isNumber(res)) {
-                var mbean = Osgi.getSelectionFrameworkMBean(workspace);
-                if (mbean) {
-                    var jolokia = workspace.jolokia;
-                    jolokia.request({
-                        type: 'write',
-                        mbean: mbean,
-                        attribute: name,
-                        value: res
-                    }, {
-                        error: function (response) {
-                            editWritten("error", response.error);
-                        },
-                        success: function (response) {
-                            editWritten("success", displayName + " changed to " + res);
-                        }
-                    });
+                if (name == "FrameworkStartLevel" && (res < $scope.initialBundleStartLevel)) {
+                    editWritten("error", "Can't set Framework Start Level below Initial Bundle Start Level");
+                }
+                else {
+                    var mbean = Osgi.getSelectionFrameworkMBean(workspace);
+                    if (mbean) {
+                        var jolokia = workspace.jolokia;
+                        jolokia.request({
+                            type: 'write',
+                            mbean: mbean,
+                            attribute: name,
+                            value: res
+                        }, {
+                            error: function (response) {
+                                editWritten("error", response.error);
+                            },
+                            success: function (response) {
+                                editWritten("success", displayName + " changed to " + res);
+                            }
+                        });
+                    }
                 }
             }
         };
