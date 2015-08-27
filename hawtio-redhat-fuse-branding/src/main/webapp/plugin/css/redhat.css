@@ -1655,6 +1655,7 @@ a:hover {
 
 #main-nav .main-nav-upper .nav li.dropdown .dropdown-menu li:hover a {
   border: none;
+  color: white;
 }
 
 #main-nav .navbar-inner.main-nav-upper .nav li.active a {
@@ -2096,7 +2097,7 @@ li.dropdown.open > a.dropdown-toggle {
 }
 
 .dropdown-menu > li:hover > a {
-  color: #777777 !important;
+  color: white !important;
   text-shadow: 0px 0px 1px white;
 }
 
