@@ -47,6 +47,9 @@ module Core {
       var hash = $location.search();
       var tab = hash['tab'];
       if (angular.isString(tab)) {
+        if (tab.match(/:notree$/)) {
+          tab = "notree";
+        }
         answer = searchRegistry(tab);
       }
       if (!answer) {
