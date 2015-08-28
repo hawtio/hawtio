@@ -18699,7 +18699,14 @@ var Core;
             return Core.createHref($location, href, removeParams);
         };
         $scope.fullScreenLink = function () {
-            var href = "#" + $location.path() + "?tab=notree";
+            var tab = $location.search()["tab"];
+            if (!tab) {
+                tab = "notree";
+            }
+            if (!tab.match(/notree$/)) {
+                tab = tab + ":notree";
+            }
+            var href = "#" + $location.path() + "?tab=" + tab;
             return Core.createHref($location, href, ['tab']);
         };
         $scope.addToDashboardLink = function () {
@@ -18948,6 +18955,9 @@ var Core;
             var hash = $location.search();
             var tab = hash['tab'];
             if (angular.isString(tab)) {
+                if (tab.match(/:notree$/)) {
+                    tab = "notree";
+                }
                 answer = searchRegistry(tab);
             }
             if (!answer) {
@@ -34237,10 +34247,15 @@ var Jmx;
             Tree.contractAll("#jmxtree");
         };
     }]);
-    Jmx._module.controller("Jmx.MBeansController", ["$scope", "$location", "workspace", function ($scope, $location, workspace) {
+    Jmx._module.controller("Jmx.MBeansController", ["$scope", "$location", "workspace", "$route", function ($scope, $location, workspace, $route) {
         $scope.num = 1;
         $scope.$on("$routeChangeSuccess", function (event, current, previous) {
             setTimeout(updateSelectionFromURL, 50);
+        });
+        $scope.$on("$routeUpdate", function (ev, params) {
+            if (params && params.params && params.params.tab && params.params.tab.match(/notree$/)) {
+                $route.reload();
+            }
         });
         $scope.select = function (node) {
             $scope.workspace.updateSelectionNode(node);
