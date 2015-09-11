@@ -235,10 +235,8 @@ public class ProxyServlet extends HttpServlet {
             int statusCode = proxyResponse.getStatusLine().getStatusCode();
 
             if (statusCode == 401 || statusCode == 403) {
-                throw new SecurityException("Authentication Failed on remote server " + proxyRequestUri);
-            }
-
-            if (doResponseRedirectOrNotModifiedLogic(servletRequest, servletResponse, proxyResponse, statusCode, targetUriObj)) {
+                log("Authentication Failed on remote server " + proxyRequestUri);
+            } else if (doResponseRedirectOrNotModifiedLogic(servletRequest, servletResponse, proxyResponse, statusCode, targetUriObj)) {
                 //the response is already "committed" now without any body to send
                 //TODO copy response headers?
                 return;
