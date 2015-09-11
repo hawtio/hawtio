@@ -1,5 +1,5 @@
 <ul class="nav nav-tabs" ng-controller="Dashboard.NavBarController">
-  <li ng-repeat="dash in _dashboards track by $index"
+  <li ng-repeat="dash in _dashboards"
       ng-class='{active : isActive(dash)}'>
     <span class="a" ng-click="navigateTo('/dashboard/id/{{dash.id}}{{hash}}')">
       <editable-property class="inline-block"
