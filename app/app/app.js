@@ -34905,14 +34905,6 @@ var JVM;
                 path: {
                     type: "java.lang.String",
                     tooltip: "The URL path used to connect to Jolokia on the remote server"
-                },
-                userName: {
-                    type: "java.lang.String",
-                    tooltip: "The user name to be used when connecting to Jolokia"
-                },
-                password: {
-                    type: "password",
-                    tooltip: "The password to be used when connecting to Jolokia"
                 }
             }
         };
