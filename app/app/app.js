@@ -33702,14 +33702,14 @@ var Jmx;
                                     var elementNames = toSearchArgumentArray(search["el"]);
                                     if (attributeNames && attributeNames.length) {
                                         attributeNames.forEach(function (name) {
-                                            if ($scope.metrics[name]) {
+                                            if ($scope.metrics[name] && $scope.selectedAttributes.none(function (el) { return el === name; })) {
                                                 $scope.selectedAttributes.push(name);
                                             }
                                         });
                                     }
                                     if (elementNames && elementNames.length) {
                                         elementNames.forEach(function (name) {
-                                            if ($scope.mbeans[name]) {
+                                            if ($scope.mbeans[name] && $scope.selectedMBeans.none(function (el) { return el === name; })) {
                                                 $scope.selectedMBeans.push(name);
                                             }
                                         });
