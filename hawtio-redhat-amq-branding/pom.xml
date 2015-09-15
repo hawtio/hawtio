@@ -122,7 +122,7 @@
               <groupId>io.hawt</groupId>
               <artifactId>hawtio-redhat-fuse-branding</artifactId>
               <excludes>
-                <exclude>META-INF</exclude>
+                <exclude>META-INF/*</exclude>
                 <exclude>WEB-INF/classes</exclude>
                 <exclude>plugin/img/logo.svg</exclude>
               </excludes>
