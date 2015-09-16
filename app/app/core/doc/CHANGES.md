@@ -6,7 +6,13 @@
 * Camel plugin can now show in/out endpoints when using Camel 2.16 onwards
 * Camel plugin can now show blocked exchanges when using Camel 2.15 onwards
 * Various fabric8 v1 bugs and cosmetic issues fixed
-* The remote JVM connect plugin now uses the browser dialog for username/password which allows to use the browser for stroing these secured (using browser plugins such as safepass or others)
+* The remote JVM connect plugin now uses the browser dialog for username/password which allows to use the browser for storing these secured (using browser plugins such as safepass or others)
+* Fabric - when deleting profiles from wiki pages, a warning is shown when some containers use the profiles
+* OSGi - better filtering of bundles
+* Upgrade to frontend-maven-plugin 0.0.24 - will work with Maven 3.3.3
+* Sorting of simple tables works again
+* Camel - fixes to "full screen" (notree) mode
+* Dashboard - fixed navigation on "manage" view
 
 #### 1.4.52
 
