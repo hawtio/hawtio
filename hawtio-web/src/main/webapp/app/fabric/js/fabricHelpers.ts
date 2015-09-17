@@ -569,6 +569,18 @@ module Fabric {
     if (!iconURL) {
       return iconURL;
     }
+    var components = iconURL.split('/');
+    var normalized = "";
+    components.each((c) => {
+      normalized += '/';
+      if (/\.profile$/.test(c)) {
+        var profileName = c.substr(0, c.length - 8);
+        normalized += profileName.replace('-', '/') + ".profile";
+      } else {
+        normalized += c;
+      }
+    });
+    iconURL = normalized.substr(1);
     var connectionName = Core.getConnectionNameParameter(location.search);
     if (connectionName) {
       // If we're proxying...
@@ -582,6 +594,7 @@ module Fabric {
       // no proxy
       iconURL = /^\//.test(iconURL) ? iconURL : Core.url("/git/") + iconURL;
     }
+
     return iconURL;
   }
 
