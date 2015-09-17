@@ -6888,6 +6888,19 @@ var Fabric;
         if (!iconURL) {
             return iconURL;
         }
+        var components = iconURL.split('/');
+        var normalized = "";
+        components.each(function (c) {
+            normalized += '/';
+            if (/\.profile$/.test(c)) {
+                var profileName = c.substr(0, c.length - 8);
+                normalized += profileName.replace('-', '/') + ".profile";
+            }
+            else {
+                normalized += c;
+            }
+        });
+        iconURL = normalized.substr(1);
         var connectionName = Core.getConnectionNameParameter(location.search);
         if (connectionName) {
             var connectionOptions = Core.getConnectOptions(connectionName);
