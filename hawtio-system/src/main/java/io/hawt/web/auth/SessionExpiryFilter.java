@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import io.hawt.system.ConfigManager;
 import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +31,22 @@ public class SessionExpiryFilter implements Filter {
     private static final String ignoredPaths[] = { "jolokia", "proxy" };
     private List<String> ignoredPathList;
     private ServletContext context;
+    private boolean noCredentials401;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         ignoredPathList = Arrays.asList(ignoredPaths);
         context = filterConfig.getServletContext();
+
+        ConfigManager config = (ConfigManager) context.getAttribute("ConfigManager");
+        if (config != null) {
+            this.noCredentials401 = Boolean.parseBoolean(config.get("noCredentials401", "false"));
+        }
+
+        // Override if defined as JVM system property
+        if (System.getProperty(AuthenticationFilter.HAWTIO_NO_CREDENTIALS_401) != null) {
+            this.noCredentials401 = Boolean.getBoolean(AuthenticationFilter.HAWTIO_NO_CREDENTIALS_401);
+        }
     }
 
     @Override
@@ -60,7 +72,7 @@ public class SessionExpiryFilter implements Filter {
 
     private void updateLastAccess(HttpSession session, long now) {
         session.setAttribute("LastAccess", now);
-        LOG.debug("Reset LastAccess to: ", session.getAttribute("LastAccess"));
+        LOG.debug("Reset LastAccess to: {}", session.getAttribute("LastAccess"));
     }
 
     private void process(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -105,12 +117,16 @@ public class SessionExpiryFilter implements Filter {
                     // let's pass it further the filter chain - if authentication will fail, user will get 403 anyway
                     chain.doFilter(request, response);
                 } else {
-                    if (subContext.equals("jolokia") ||
-                            subContext.equals("proxy") ||
-                            subContext.equals("user") ||
-                            subContext.equals("exportContext") ||
-                            subContext.equals("contextFormatter") ||
-                            subContext.equals("upload")) {
+                    if (noCredentials401 && subContext.equals("jolokia")) {
+                        LOG.debug("Authentication enabled, noCredentials401 is true, allowing request for {}",
+                                subContext);
+                        chain.doFilter(request, response);
+                    } else if (subContext.equals("jolokia") ||
+                        subContext.equals("proxy") ||
+                        subContext.equals("user") ||
+                        subContext.equals("exportContext") ||
+                        subContext.equals("contextFormatter") ||
+                        subContext.equals("upload")) {
                         LOG.debug("Authentication enabled, denying request for {}", subContext);
                         ServletHelper.doForbidden(response);
                     } else {
