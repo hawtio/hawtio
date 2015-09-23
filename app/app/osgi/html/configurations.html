@@ -46,7 +46,9 @@
   <ul class="configurations">
     <li ng-repeat='config in configurations | filter:filterText' class='{{config.class}} bundle-item'>
       <a ng-href="{{config.pidLink}}" title="{{config.description}}">
-        <span class="{{config.kind.class}}">{{config.name}}</span>
+        <span class="{{config.kind.class}}">{{config.name}}
+            <button class="btn btn-small" ng-if="config.isFactory" ng-click="createConfigInstance($event, config)"><i class="icon-plus"></i></button>
+        </span>
       </a>
       <ul ng-show="config.isFactory">
         <li ng-repeat="child in config.children" class='{{child.class}} bundle-item'>

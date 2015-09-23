@@ -39699,6 +39699,21 @@ var Osgi;
                 }));
             }
         };
+        $scope.createConfigInstance = function ($event, config) {
+            $event.preventDefault();
+            var mbean = Osgi.getHawtioConfigAdminMBean(workspace);
+            if (mbean) {
+                var pidMBean = Osgi.getSelectionConfigAdminMBean($scope.workspace);
+                $scope.jolokia.execute(pidMBean, "createFactoryConfiguration", config.pid, onSuccess(function (response) {
+                    var pid = response;
+                    var json = JSON.stringify({});
+                    $scope.jolokia.execute(mbean, "configAdminUpdate", pid, json, onSuccess(function (resp) {
+                        Core.notification("success", "Successfully created pid: " + pid);
+                        updateTableContents();
+                    }, errorHandler("Failed to create new PID: ")));
+                }, errorHandler("Failed to create new PID: ")));
+            }
+        };
         $scope.$on("$routeChangeSuccess", function (event, current, previous) {
             setTimeout(updateTableContents, 50);
         });
