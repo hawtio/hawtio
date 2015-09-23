@@ -74,6 +74,24 @@ module Osgi {
       }
     };
 
+    $scope.createConfigInstance = ($event, config) => {
+        $event.preventDefault();
+        var mbean = getHawtioConfigAdminMBean(workspace);
+        if (mbean) {
+            var pidMBean = getSelectionConfigAdminMBean($scope.workspace);
+            $scope.jolokia.execute(pidMBean, "createFactoryConfiguration", config.pid, onSuccess((response) => {
+                var pid = response;
+                var json = JSON.stringify({});
+                $scope.jolokia.execute(mbean, "configAdminUpdate", pid, json, onSuccess((resp) => {
+                    Core.notification("success", "Successfully created pid: " + pid);
+                    updateTableContents();
+                }, errorHandler("Failed to create new PID: ")));
+
+            }, errorHandler("Failed to create new PID: ")));
+        }
+
+    };
+
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateTableContents, 50);
