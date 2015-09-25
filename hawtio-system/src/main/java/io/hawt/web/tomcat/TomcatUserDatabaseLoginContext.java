@@ -5,6 +5,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -138,10 +139,12 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
                     LOG.trace("Login denied due password did not match");
                     return false;
                 }
-                String[] roles = user[2].split(",");
-                for (String role : roles) {
-                    LOG.trace("User {} has role {}", username, role);
-                    subject.getPrincipals().add(new TomcatPrincipal(role));
+                if (user[2] != null) {
+                    String[] roles = user[2].split(",");
+                    for (String role : roles) {
+                        LOG.trace("User {} has role {}", username, role);
+                        subject.getPrincipals().add(new TomcatPrincipal(role));
+                    }
                 }
             } else {
                 LOG.trace("Login denied due user not found");
@@ -193,7 +196,9 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
             Node node = users.item(i);
             String nUsername = node.getAttributes().getNamedItem("username").getNodeValue();
             String nPassword = node.getAttributes().getNamedItem("password").getNodeValue();
-            String nRoles = node.getAttributes().getNamedItem("roles").getNodeValue();
+            NamedNodeMap attributes = node.getAttributes();
+            Node roleNode = attributes != null ? attributes.getNamedItem("roles") : null;
+            String nRoles = roleNode != null ? roleNode.getNodeValue() : null;
             if (username.equals(nUsername)) {
                 return new String[]{username, nPassword, nRoles};
             }
