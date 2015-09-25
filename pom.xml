@@ -162,8 +162,7 @@
     <module>hawtio-keystore-mbean</module>
     <module>hawtio-plugin-mbean</module>
     <module>example-services</module>
-    <module>hawtio-web</module>
-    <module>hawtio-api-docs</module>
+    <module>hawtio-web</module>   
     <module>hawtio-base</module>
     <module>hawtio-default</module>
     <module>hawtio-default-offline</module>
@@ -188,6 +187,9 @@
     <module>hawtio-fabric8-branding</module>
     <module>hawtio-karaf</module>
     <module>hawtio-custom-app</module>
+    <!-- TODO - a bit broken at the moment
+    <module>hawtio-api-docs</module>
+     -->
   </modules>
 
   <build>
