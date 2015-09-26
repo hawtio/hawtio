@@ -218,7 +218,8 @@ module Camel {
       content: '<i class="icon-picture"></i> Route Diagram',
       title: "View a diagram of the Camel routes",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
-        && workspace.isRoute()
+        && !workspace.isEndpointsFolder()
+        && (workspace.isRoute() || workspace.isRoutesFolder())
         && workspace.hasInvokeRightsForName(getSelectionCamelContextMBean(workspace), "dumpRoutesAsXml"),
       href: () => "#/camel/routes",
       // make sure we have route diagram shown first
@@ -235,7 +236,7 @@ module Camel {
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-bar-chart"></i> Route Metrics',
-      title: "View the entire JVMs Camel route metrics",
+      title: "View the Camel route metrics",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
         && !workspace.isEndpointsFolder()
         && (workspace.isRoute() || workspace.isRoutesFolder())
@@ -245,7 +246,7 @@ module Camel {
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-list"></i> Inflight',
-      title: "View the entire JVMs Camel inflight exchanges",
+      title: "View the Camel inflight exchanges",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
         && !workspace.isEndpointsFolder()
         && (workspace.isRoute() || workspace.isRoutesFolder())
@@ -255,7 +256,7 @@ module Camel {
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-list"></i> Blocked',
-      title: "View the entire JVMs Camel blocked exchanges",
+      title: "View the Camel blocked exchanges",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
         && !workspace.isEndpointsFolder()
         && (workspace.isRoute() || workspace.isRoutesFolder())

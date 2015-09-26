@@ -1,6 +1,10 @@
 
 ### Change Log
 
+#### 1.4.54
+
+* Camel plugin - Route diagram can now show all routes
+
 #### 1.4.53
 
 * Camel plugin can now show in/out endpoints when using Camel 2.16 onwards
