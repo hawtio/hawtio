@@ -187,9 +187,8 @@
     <module>hawtio-fabric8-branding</module>
     <module>hawtio-karaf</module>
     <module>hawtio-custom-app</module>
-    <!-- TODO - a bit broken at the moment
+    <!-- TODO - a bit broken at the moment, well on on some computers -->
     <module>hawtio-api-docs</module>
-     -->
   </modules>
 
   <build>
