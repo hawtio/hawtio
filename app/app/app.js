@@ -11319,7 +11319,7 @@ var Camel;
         workspace.subLevelTabs.push({
             content: '<i class="icon-picture"></i> Route Diagram',
             title: "View a diagram of the Camel routes",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && workspace.isRoute() && workspace.hasInvokeRightsForName(Camel.getSelectionCamelContextMBean(workspace), "dumpRoutesAsXml"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isEndpointsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelContextMBean(workspace), "dumpRoutesAsXml"); },
             href: function () { return "#/camel/routes"; },
             index: -2
         });
@@ -11331,19 +11331,19 @@ var Camel;
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-bar-chart"></i> Route Metrics',
-            title: "View the entire JVMs Camel route metrics",
+            title: "View the Camel route metrics",
             isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isEndpointsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelRouteMetrics(workspace), "dumpStatisticsAsJson"); },
             href: function () { return "#/camel/routeMetrics"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Inflight',
-            title: "View the entire JVMs Camel inflight exchanges",
+            title: "View the Camel inflight exchanges",
             isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isEndpointsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelInflightRepository(workspace), "browse"); },
             href: function () { return "#/camel/inflight"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Blocked',
-            title: "View the entire JVMs Camel blocked exchanges",
+            title: "View the Camel blocked exchanges",
             isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isEndpointsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelBlockedExchanges(workspace), "browse"); },
             href: function () { return "#/camel/blocked"; }
         });
