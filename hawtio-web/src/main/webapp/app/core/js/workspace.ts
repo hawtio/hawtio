@@ -939,6 +939,12 @@ module Core {
     isCamelFolder() {
       return this.hasDomainAndProperties('org.apache.camel');
     }
+    isComponentsFolder() {
+      return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'components');
+    }
+    isComponent() {
+      return this.hasDomainAndProperties('org.apache.camel', {type: 'components'});
+    }
     isEndpointsFolder() {
       return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'endpoints');
     }

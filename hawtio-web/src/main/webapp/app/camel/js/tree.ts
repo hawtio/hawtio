@@ -86,6 +86,7 @@ module Camel {
               var contextsFolder = entries["context"];
               var routesNode = entries["routes"];
               var endpointsNode = entries["endpoints"];
+              var componentsNode = entries["components"];
               var dataFormatsNode = entries["dataformats"];
               if (contextsFolder) {
                 var contextNode = contextsFolder.children[0];
@@ -129,6 +130,23 @@ module Camel {
                       endpointsFolder.key = endpointsNode.key;
                       endpointsFolder.domain = endpointsNode.domain;
                     }
+                    if (componentsNode) {
+                      var componentsFolder = new Folder("Components");
+                      componentsFolder.addClass = "org-apache-camel-components-folder";
+                      componentsFolder.parent = contextsFolder;
+                      componentsFolder.children = componentsNode.children;
+                      angular.forEach(componentsFolder.children, (n) => {
+                        n.addClass = "org-apache-camel-components";
+                        if (!getContextId(n)) {
+                          n.entries["context"] = contextNode.entries["context"];
+                        }
+                      });
+                      folder.children.push(componentsFolder);
+                      componentsFolder.entries = contextNode.entries;
+                      componentsFolder.typeName = "components";
+                      componentsFolder.key = componentsNode.key;
+                      componentsFolder.domain = componentsNode.domain;
+                    }
                     if (dataFormatsNode) {
                       var dataFormatsFolder = new Folder("Dataformats");
                       dataFormatsFolder.addClass = "org-apache-camel-dataformats-folder";
@@ -148,9 +166,9 @@ module Camel {
                     }
                     var jmxNode = new Folder("MBeans");
 
-                    // lets add all the entries which are not one context/routes/endpoints/dataformats as MBeans
+                    // lets add all the entries which are not one context/routes/components/endpoints/dataformats as MBeans
                     angular.forEach(entries, (jmxChild, name) => {
-                      if (name !== "context" && name !== "routes" && name !== "endpoints" && name !== "dataformats") {
+                      if (name !== "context" && name !== "routes" && name !== "endpoints" && name !== "components" && name !== "dataformats") {
                         jmxNode.children.push(jmxChild);
                       }
                     });

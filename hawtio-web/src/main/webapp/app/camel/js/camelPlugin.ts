@@ -19,8 +19,6 @@ module Camel {
     $routeProvider.
             when('/camel/browseEndpoint', {templateUrl: 'app/camel/html/browseEndpoint.html'}).
             when('/camel/endpoint/browse/:contextId/*endpointPath', {templateUrl: 'app/camel/html/browseEndpoint.html'}).
-            when('/camel/propertiesEndpoint', {templateUrl: 'app/camel/html/propertiesEndpoint.html'}).
-            when('/camel/propertiesDataFormat', {templateUrl: 'app/camel/html/propertiesDataFormat.html'}).
             when('/camel/createEndpoint', {templateUrl: 'app/camel/html/createEndpoint.html'}).
             when('/camel/route/diagram/:contextId/:routeId', {templateUrl: 'app/camel/html/routes.html'}).
             when('/camel/routes', {templateUrl: 'app/camel/html/routes.html'}).
@@ -36,7 +34,10 @@ module Camel {
             when('/camel/traceRoute', {templateUrl: 'app/camel/html/traceRoute.html'}).
             when('/camel/debugRoute', {templateUrl: 'app/camel/html/debug.html'}).
             when('/camel/profileRoute', {templateUrl: 'app/camel/html/profileRoute.html'}).
-            when('/camel/properties', {templateUrl: 'app/camel/html/properties.html'});
+            when('/camel/properties', {templateUrl: 'app/camel/html/properties.html'}).
+            when('/camel/propertiesComponent', {templateUrl: 'app/camel/html/propertiesComponent.html'}).
+            when('/camel/propertiesDataFormat', {templateUrl: 'app/camel/html/propertiesDataFormat.html'}).
+            when('/camel/propertiesEndpoint', {templateUrl: 'app/camel/html/propertiesEndpoint.html'});
   }]);
 
   _module.factory('tracerStatus',function () {
@@ -123,6 +124,7 @@ module Camel {
       stateColumn,
       {field: 'CamelId', displayName: 'Context'},
       {field: 'RouteId', displayName: 'Route'},
+      {field: 'Uptime', displayName: 'Uptime', visible: false},
       {field: 'ExchangesCompleted', displayName: 'Completed #'},
       {field: 'ExchangesFailed', displayName: 'Failed #'},
       {field: 'FailuresHandled', displayName: 'Failed Handled #'},
@@ -219,6 +221,7 @@ module Camel {
       content: '<i class="icon-picture"></i> Route Diagram',
       title: "View a diagram of the Camel routes",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
+        && !workspace.isComponentsFolder()
         && !workspace.isEndpointsFolder()
         && !workspace.isDataFormatsFolder()
         && (workspace.isRoute() || workspace.isRoutesFolder())
@@ -231,6 +234,7 @@ module Camel {
       content: '<i class=" icon-file-alt"></i> Source',
       title: "View the source of the Camel routes",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
+        && !workspace.isComponentsFolder()
         && !workspace.isEndpointsFolder()
         && !workspace.isDataFormatsFolder()
         && (workspace.isRoute() || workspace.isRoutesFolder())
@@ -241,6 +245,7 @@ module Camel {
       content: '<i class="icon-bar-chart"></i> Route Metrics',
       title: "View the Camel route metrics",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
+        && !workspace.isComponentsFolder()
         && !workspace.isEndpointsFolder()
         && !workspace.isDataFormatsFolder()
         && (workspace.isRoute() || workspace.isRoutesFolder())
@@ -252,6 +257,7 @@ module Camel {
       content: '<i class="icon-list"></i> Inflight',
       title: "View the Camel inflight exchanges",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
+        && !workspace.isComponentsFolder()
         && !workspace.isEndpointsFolder()
         && !workspace.isDataFormatsFolder()
         && (workspace.isRoute() || workspace.isRoutesFolder())
@@ -263,6 +269,7 @@ module Camel {
       content: '<i class="icon-list"></i> Blocked',
       title: "View the Camel blocked exchanges",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
+        && !workspace.isComponentsFolder()
         && !workspace.isEndpointsFolder()
         && !workspace.isDataFormatsFolder()
         && (workspace.isRoute() || workspace.isRoutesFolder())
@@ -274,8 +281,9 @@ module Camel {
       content: '<i class="icon-list"></i> Endpoints (in/out)',
       title: "List all the incoming and outgoing endpoints in the context",
       isValid: (workspace: Workspace) =>
-        !workspace.isEndpointsFolder() && !workspace.isEndpoint()
-        && !workspace.isDataFormatsFolder()
+        !workspace.isComponentsFolder() && !workspace.isComponent()
+        && !workspace.isEndpointsFolder() && !workspace.isEndpoint()
+        && !workspace.isDataFormatsFolder() && !workspace.isDataFormat()
         && (workspace.isCamelContext() || workspace.isRoutesFolder())
         && Camel.isCamelVersionEQGT(2, 16, workspace, jolokia)
         && getSelectionCamelEndpointRuntimeRegistry(workspace)
@@ -293,10 +301,9 @@ module Camel {
       title: "List all the REST services registered in the context",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
         && !getSelectedRouteNode(workspace)
-        && !workspace.isEndpointsFolder()
-        && !workspace.isEndpoint()
-        && !workspace.isDataFormatsFolder()
-        && !workspace.isDataFormat()
+        && !workspace.isComponentsFolder() && !workspace.isComponent()
+        && !workspace.isEndpointsFolder() && !workspace.isEndpoint()
+        && !workspace.isDataFormatsFolder() && !workspace.isDataFormat()
         && !workspace.isRoute()
         && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia)
         && workspace.hasInvokeRightsForName(getSelectionCamelRestRegistry(workspace), "listRestServices"),
@@ -307,6 +314,7 @@ module Camel {
       title: "List all the type converters registered in the context",
       isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
         && !getSelectedRouteNode(workspace)
+        && !workspace.isComponentsFolder()
         && !workspace.isEndpointsFolder()
         && !workspace.isDataFormatsFolder()
         && (workspace.isRoute() || workspace.isRoutesFolder() || workspace.isCamelContext())
@@ -320,6 +328,14 @@ module Camel {
       isValid: (workspace: Workspace) => workspace.isEndpoint()
         && workspace.hasInvokeRights(workspace.selection, "browseAllMessagesAsXml"),
       href: () => "#/camel/browseEndpoint"
+    });
+    workspace.subLevelTabs.push({
+      content: '<i class="icon-list"></i> Properties',
+      title: "Show the component properties",
+      isValid: (workspace: Workspace) => workspace.isComponent()
+        && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia)
+        && workspace.hasInvokeRights(workspace.selection, "explainComponentJson"),
+      href: () => "#/camel/propertiesComponent"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-list"></i> Properties',
