@@ -1,6 +1,11 @@
 
 ### Change Log
 
+#### 1.4.55
+
+* Upgrade to Camel 2.16.0
+* Upgrade to Jolokia 1.3.2
+
 #### 1.4.54
 
 * Camel plugin - Route diagram can now show all routes
