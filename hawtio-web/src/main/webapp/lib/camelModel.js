@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.15.3';
+var _apacheCamelModelVersion = '2.16.0';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -226,6 +226,23 @@ var _apacheCamelModel ={
           "defaultValue": "false",
           "description": "Indicates to complete all current aggregated exchanges when the context is stopped",
           "title": "Force Completion On Stop",
+          "required": false,
+          "deprecated": false
+        },
+        "completeAllOnStop": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Indicates to wait to complete all current and partial (pending) aggregated exchanges when the context is stopped. This also means that we will wait for all pending exchanges which are stored in the aggregation repository to complete so the repository is empty before we can stop. You may want to enable this when using the memory based aggregation repository that is memory based only and do not store data on disk. When this option is enabled then the aggregator is waiting to complete all those exchanges before its stopped when stopping CamelContext or the route using it.",
+          "title": "Complete All On Stop",
+          "required": false,
+          "deprecated": false
+        },
+        "aggregateControllerRef": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "To use a org.apache.camel.processor.aggregate.AggregateController to allow external sources to control this aggregator.",
+          "title": "Aggregate Controller Ref",
           "required": false,
           "deprecated": false
         },
@@ -524,6 +541,15 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
+        "includeNonSingletons": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to include non-singleton beans (prototypes) By default only singleton beans is included in the context scan",
+          "title": "Include Non Singletons",
+          "required": false,
+          "deprecated": false
+        },
         "excludes": {
           "kind": "element",
           "type": "array",
@@ -916,22 +942,6 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
       "properties": {
-        "uri": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "The endpoint uri for the external service to enrich from. You must use either uri or ref.",
-          "title": "Uri",
-          "required": false,
-          "deprecated": false
-        },
-        "ref": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Refers to the endpoint for the external service to enrich from. You must use either uri or ref.",
-          "title": "Ref",
-          "required": false,
-          "deprecated": true
-        },
         "strategyRef": {
           "kind": "attribute",
           "type": "string",
@@ -964,6 +974,40 @@ var _apacheCamelModel ={
           "description": "If this option is false then the aggregate method is not used if there was an exception thrown while trying to retrieve the data to enrich from the resource. Setting this option to true allows end users to control what to do if there was an exception in the aggregate method. For example to suppress the exception or set a custom message body etc.",
           "title": "Aggregate On Exception",
           "required": false,
+          "deprecated": false
+        },
+        "shareUnitOfWork": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Shares the org.apache.camel.spi.UnitOfWork with the parent and the resource exchange. Enrich will by default not share unit of work between the parent exchange and the resource exchange. This means the resource exchange has its own individual unit of work.",
+          "title": "Share Unit Of Work",
+          "required": false,
+          "deprecated": false
+        },
+        "cacheSize": {
+          "kind": "attribute",
+          "type": "integer",
+          "description": "Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producer when uris are reused.",
+          "title": "Cache Size",
+          "required": false,
+          "deprecated": false
+        },
+        "ignoreInvalidEndpoint": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint",
+          "title": "Ignore Invalid Endpoint",
+          "required": false,
+          "deprecated": false
+        },
+        "expression": {
+          "kind": "expression",
+          "type": "object",
+          "description": "Expression that computes the endpoint uri to use as the resource endpoint to enrich from",
+          "title": "Expression",
+          "required": true,
           "deprecated": false
         },
         "id": {
@@ -1006,8 +1050,17 @@ var _apacheCamelModel ={
           "kind": "attribute",
           "type": "boolean",
           "defaultValue": "false",
-          "description": "Whether or not the failover load balancer should operate in round robin mode or not. If not then it will always start from the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If round robin is enabled then it keeps state and will continue with the next endpoint in a round robin fashion. When using round robin it will not stick to last known good endpoint it will always pick the next endpoint to use.",
+          "description": "Whether or not the failover load balancer should operate in round robin mode or not. If not then it will always start from the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If round robin is enabled then it keeps state and will continue with the next endpoint in a round robin fashion. You can also enable sticky mode together with round robin if so then it will pick the last known good endpoint to use when starting the load balancing (instead of using the next when starting).",
           "title": "Round Robin",
+          "required": false,
+          "deprecated": false
+        },
+        "sticky": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether or not the failover load balancer should operate in sticky mode or not. If not then it will always start from the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If sticky is enabled then it keeps state and will continue with the last known good endpoint. You can also enable sticky mode together with round robin if so then it will pick the last known good endpoint to use when starting the load balancing (instead of using the next when starting).",
+          "title": "Sticky",
           "required": false,
           "deprecated": false
         },
@@ -1081,7 +1134,7 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Sets the URI of the endpoint to use",
           "title": "Uri",
-          "required": false,
+          "required": true,
           "deprecated": false
         },
         "ref": {
@@ -1134,6 +1187,15 @@ var _apacheCamelModel ={
           "defaultValue": "true",
           "description": "Sets whether to eagerly add the key to the idempotent repository or wait until the exchange is complete. Eager is default enabled.",
           "title": "Eager",
+          "required": false,
+          "deprecated": false
+        },
+        "completionEager": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Sets whether to complete the idempotent consumer eager or when the exchange is done. If this option is true to complete eager then the idempotent consumer will trigger its completion when the exchange reached the end of the block of the idempotent consumer pattern. So if the exchange is continued routed after the block ends then whatever happens there does not affect the state. If this option is false (default) to not complete eager then the idempotent consumer will complete when the exchange is done being routed. So if the exchange is continued routed after the block ends then whatever happens there also affect the state. For example if the exchange failed due to an exception then the state of the idempotent consumer will be a rollback.",
+          "title": "Completion Eager",
           "required": false,
           "deprecated": false
         },
@@ -1196,7 +1258,7 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Sets the uri of the endpoint to send to.",
           "title": "Uri",
-          "required": false,
+          "required": true,
           "deprecated": false
         },
         "ref": {
@@ -1240,7 +1302,7 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Sets the uri of the endpoint to send to.",
           "title": "Uri",
-          "required": false,
+          "required": true,
           "deprecated": false
         },
         "ref": {
@@ -2090,22 +2152,6 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
       "properties": {
-        "uri": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "The endpoint uri for the external service to poll enrich from. You must use either uri or ref.",
-          "title": "Uri",
-          "required": false,
-          "deprecated": false
-        },
-        "ref": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Refers to the endpoint for the external service to poll enrich from. You must use either uri or ref.",
-          "title": "Ref",
-          "required": false,
-          "deprecated": true
-        },
         "timeout": {
           "kind": "attribute",
           "type": "integer",
@@ -2147,6 +2193,31 @@ var _apacheCamelModel ={
           "description": "If this option is false then the aggregate method is not used if there was an exception thrown while trying to retrieve the data to enrich from the resource. Setting this option to true allows end users to control what to do if there was an exception in the aggregate method. For example to suppress the exception or set a custom message body etc.",
           "title": "Aggregate On Exception",
           "required": false,
+          "deprecated": false
+        },
+        "cacheSize": {
+          "kind": "attribute",
+          "type": "integer",
+          "description": "Sets the maximum size used by the org.apache.camel.impl.ConsumerCache which is used to cache and reuse consumers when uris are reused.",
+          "title": "Cache Size",
+          "required": false,
+          "deprecated": false
+        },
+        "ignoreInvalidEndpoint": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint",
+          "title": "Ignore Invalid Endpoint",
+          "required": false,
+          "deprecated": false
+        },
+        "expression": {
+          "kind": "expression",
+          "type": "object",
+          "description": "Expression that computes the endpoint uri to use as the resource endpoint to enrich from",
+          "title": "Expression",
+          "required": true,
           "deprecated": false
         },
         "id": {
@@ -3082,6 +3153,14 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
+        "routes": {
+          "kind": "element",
+          "type": "array",
+          "description": "Contains the Camel routes",
+          "title": "Routes",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -3197,6 +3276,42 @@ var _apacheCamelModel ={
           "description": "Sets the time units for the sample period defaulting to seconds.",
           "title": "Units",
           "required": false,
+          "deprecated": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
+          "required": false,
+          "deprecated": false
+        },
+        "description": {
+          "kind": "element",
+          "type": "object",
+          "description": "Sets the description of this node",
+          "title": "Description",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
+    "script": {
+      "type": "object",
+      "title": "Script",
+      "group": "eip,transformation",
+      "icon": "generic24.png",
+      "description": "Executes a script from a language which does not change the message body.",
+      "acceptInput": "true",
+      "acceptOutput": "false",
+      "nextSiblingAddedAsChild": "true",
+      "properties": {
+        "expression": {
+          "kind": "expression",
+          "type": "object",
+          "description": "Expression to return the transformed message body (the new message body to use)",
+          "title": "Expression",
+          "required": true,
           "deprecated": false
         },
         "id": {
@@ -3386,7 +3501,7 @@ var _apacheCamelModel ={
           "description": "Name of message header to set a new value",
           "title": "Header Name",
           "required": true,
-          "deprecated": true
+          "deprecated": false
         },
         "expression": {
           "kind": "expression",
@@ -3788,6 +3903,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "timeUnit": {
+          "kind": "attribute",
+          "type": "string",
+          "enum": [ "DAYS", "HOURS", "MICROSECONDS", "MILLISECONDS", "MINUTES", "NANOSECONDS", "SECONDS" ],
+          "description": "Sets the time unit to use for keep alive time By default SECONDS is used.",
+          "title": "Time Unit",
+          "required": false,
+          "deprecated": false
+        },
         "maxQueueSize": {
           "kind": "attribute",
           "type": "string",
@@ -3975,7 +4099,7 @@ var _apacheCamelModel ={
           "kind": "attribute",
           "type": "boolean",
           "defaultValue": "false",
-          "description": "Enables asynchronous delay which means the thread will no block while delaying.",
+          "description": "Enables asynchronous delay which means the thread will not block while delaying.",
           "title": "Async Delayed",
           "required": false,
           "deprecated": false
@@ -4039,7 +4163,23 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Reference to the exception instance to lookup from the registry to throw",
           "title": "Ref",
-          "required": true,
+          "required": false,
+          "deprecated": false
+        },
+        "message": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "To create a new exception instance and use the given message as caused message (supports simple language)",
+          "title": "Message",
+          "required": false,
+          "deprecated": false
+        },
+        "exceptionType": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The class of the exception to create using the message.",
+          "title": "Exception Type",
+          "required": false,
           "deprecated": false
         },
         "id": {
@@ -4065,7 +4205,7 @@ var _apacheCamelModel ={
       "title": "To",
       "group": "eip,endpoint,routing",
       "icon": "endpoint24.png",
-      "description": "Sends the message to an endpoint",
+      "description": "Sends the message to a static endpoint",
       "acceptInput": "true",
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
@@ -4075,7 +4215,7 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Sets the uri of the endpoint to send to.",
           "title": "Uri",
-          "required": false,
+          "required": true,
           "deprecated": false
         },
         "ref": {
@@ -4092,6 +4232,68 @@ var _apacheCamelModel ={
           "enum": [ "InOnly", "InOptionalOut", "InOut", "OutIn", "OutOnly", "OutOptionalIn", "RobustInOnly", "RobustOutOnly" ],
           "description": "Sets the optional ExchangePattern used to invoke this endpoint",
           "title": "Pattern",
+          "required": false,
+          "deprecated": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
+          "required": false,
+          "deprecated": false
+        },
+        "description": {
+          "kind": "element",
+          "type": "object",
+          "description": "Sets the description of this node",
+          "title": "Description",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
+    "toD": {
+      "type": "object",
+      "title": "To D",
+      "group": "eip,endpoint,routing",
+      "icon": "generic24.png",
+      "description": "Sends the message to a dynamic endpoint",
+      "acceptInput": "true",
+      "acceptOutput": "false",
+      "nextSiblingAddedAsChild": "true",
+      "properties": {
+        "uri": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression.",
+          "title": "Uri",
+          "required": true,
+          "deprecated": false
+        },
+        "pattern": {
+          "kind": "attribute",
+          "type": "string",
+          "enum": [ "InOnly", "InOptionalOut", "InOut", "OutIn", "OutOnly", "OutOptionalIn", "RobustInOnly", "RobustOutOnly" ],
+          "description": "Sets the optional ExchangePattern used to invoke this endpoint",
+          "title": "Pattern",
+          "required": false,
+          "deprecated": false
+        },
+        "cacheSize": {
+          "kind": "attribute",
+          "type": "integer",
+          "description": "Sets the maximum size used by the org.apache.camel.impl.ConsumerCache which is used to cache and reuse producers.",
+          "title": "Cache Size",
+          "required": false,
+          "deprecated": false
+        },
+        "ignoreInvalidEndpoint": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint",
+          "title": "Ignore Invalid Endpoint",
           "required": false,
           "deprecated": false
         },
@@ -4413,22 +4615,6 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
       "properties": {
-        "uri": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Uri of the endpoint to use as wire tap",
-          "title": "Uri",
-          "required": false,
-          "deprecated": false
-        },
-        "ref": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Reference of the endpoint to use as wire tap",
-          "title": "Ref",
-          "required": false,
-          "deprecated": true
-        },
         "processorRef": {
           "kind": "attribute",
           "type": "string",
@@ -4440,7 +4626,7 @@ var _apacheCamelModel ={
         "body": {
           "kind": "expression",
           "type": "object",
-          "description": "Expression used for creating a new body as the message to use for wire tapping",
+          "description": "Uses the expression for creating a new body as the message to use for wire tapping",
           "title": "Body",
           "required": false,
           "deprecated": false
@@ -4467,6 +4653,40 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Uses the Processor when preparing the org.apache.camel.Exchange to be send. This can be used to deep-clone messages that should be send or any custom logic needed before the exchange is send.",
           "title": "On Prepare Ref",
+          "required": false,
+          "deprecated": false
+        },
+        "uri": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression.",
+          "title": "Uri",
+          "required": true,
+          "deprecated": false
+        },
+        "pattern": {
+          "kind": "attribute",
+          "type": "string",
+          "enum": [ "InOnly", "InOptionalOut", "InOut", "OutIn", "OutOnly", "OutOptionalIn", "RobustInOnly", "RobustOutOnly" ],
+          "description": "Sets the optional ExchangePattern used to invoke this endpoint",
+          "title": "Pattern",
+          "required": false,
+          "deprecated": false
+        },
+        "cacheSize": {
+          "kind": "attribute",
+          "type": "integer",
+          "description": "Sets the maximum size used by the org.apache.camel.impl.ConsumerCache which is used to cache and reuse producers.",
+          "title": "Cache Size",
+          "required": false,
+          "deprecated": false
+        },
+        "ignoreInvalidEndpoint": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint",
+          "title": "Ignore Invalid Endpoint",
           "required": false,
           "deprecated": false
         },
@@ -4584,6 +4804,14 @@ var _apacheCamelModel ={
           "required": true,
           "deprecated": false
         },
+        "routeId": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The route id this rest-dsl is using (read-only)",
+          "title": "Route Id",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -4694,6 +4922,14 @@ var _apacheCamelModel ={
           "description": "To route from this REST service to a Camel endpoint or an inlined route",
           "title": "To Or Route",
           "required": true,
+          "deprecated": false
+        },
+        "routeId": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The route id this rest-dsl is using (read-only)",
+          "title": "Route Id",
+          "required": false,
           "deprecated": false
         },
         "id": {
@@ -4808,6 +5044,14 @@ var _apacheCamelModel ={
           "required": true,
           "deprecated": false
         },
+        "routeId": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The route id this rest-dsl is using (read-only)",
+          "title": "Route Id",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -4820,6 +5064,215 @@ var _apacheCamelModel ={
           "kind": "element",
           "type": "object",
           "description": "Sets the description of this node",
+          "title": "Description",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
+    "options": {
+      "type": "object",
+      "title": "Options",
+      "group": "rest",
+      "icon": "generic24.png",
+      "description": "Rest OPTIONS command",
+      "acceptInput": "false",
+      "acceptOutput": "false",
+      "nextSiblingAddedAsChild": "false",
+      "properties": {
+        "method": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The HTTP verb such as GET or POST",
+          "title": "Method",
+          "required": false,
+          "deprecated": false
+        },
+        "uri": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Uri template of this REST service such as /id.",
+          "title": "Uri",
+          "required": false,
+          "deprecated": false
+        },
+        "consumes": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "To define the content type what the REST service consumes (accept as input) such as application/xml or application/json. This option will override what may be configured on a parent level",
+          "title": "Consumes",
+          "required": false,
+          "deprecated": false
+        },
+        "produces": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "To define the content type what the REST service produces (uses for output) such as application/xml or application/json This option will override what may be configured on a parent level",
+          "title": "Produces",
+          "required": false,
+          "deprecated": false
+        },
+        "bindingMode": {
+          "kind": "attribute",
+          "type": "string",
+          "defaultValue": "auto",
+          "enum": [ "auto", "json", "json_xml", "off", "xml" ],
+          "description": "Sets the binding mode to use. This option will override what may be configured on a parent level The default value is auto",
+          "title": "Binding Mode",
+          "required": false,
+          "deprecated": false
+        },
+        "skipBindingOnErrorCode": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc as success messages otherwise will do. This option will override what may be configured on a parent level",
+          "title": "Skip Binding On Error Code",
+          "required": false,
+          "deprecated": false
+        },
+        "enableCORS": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false.",
+          "title": "Enable C O R S",
+          "required": false,
+          "deprecated": false
+        },
+        "type": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the class name to use for binding from input to POJO for the incoming data This option will override what may be configured on a parent level",
+          "title": "Type",
+          "required": false,
+          "deprecated": false
+        },
+        "outType": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the class name to use for binding from POJO to output for the outgoing data This option will override what may be configured on a parent level",
+          "title": "Out Type",
+          "required": false,
+          "deprecated": false
+        },
+        "toOrRoute": {
+          "kind": "element",
+          "type": "object",
+          "description": "To route from this REST service to a Camel endpoint or an inlined route",
+          "title": "To Or Route",
+          "required": true,
+          "deprecated": false
+        },
+        "routeId": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The route id this rest-dsl is using (read-only)",
+          "title": "Route Id",
+          "required": false,
+          "deprecated": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
+          "required": false,
+          "deprecated": false
+        },
+        "description": {
+          "kind": "element",
+          "type": "object",
+          "description": "Sets the description of this node",
+          "title": "Description",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
+    "param": {
+      "type": "object",
+      "title": "Param",
+      "group": "rest",
+      "icon": "generic24.png",
+      "description": "To specify the rest operation parameters using Swagger.",
+      "acceptInput": "false",
+      "acceptOutput": "false",
+      "nextSiblingAddedAsChild": "false",
+      "properties": {
+        "name": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the Swagger Parameter name.",
+          "title": "Name",
+          "required": true,
+          "deprecated": false
+        },
+        "type": {
+          "kind": "attribute",
+          "type": "string",
+          "defaultValue": "path",
+          "enum": [ "body", "form", "header", "path", "query" ],
+          "description": "Sets the Swagger Parameter type.",
+          "title": "Type",
+          "required": true,
+          "deprecated": false
+        },
+        "defaultValue": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the Swagger Parameter default value.",
+          "title": "Default Value",
+          "required": false,
+          "deprecated": false
+        },
+        "required": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "true",
+          "description": "Sets the Swagger Parameter required flag.",
+          "title": "Required",
+          "required": false,
+          "deprecated": false
+        },
+        "allowMultiple": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Sets the Swagger Parameter allowMultiple flag.",
+          "title": "Allow Multiple",
+          "required": false,
+          "deprecated": false
+        },
+        "dataType": {
+          "kind": "attribute",
+          "type": "string",
+          "defaultValue": "string",
+          "description": "Sets the Swagger Parameter data type.",
+          "title": "Data Type",
+          "required": false,
+          "deprecated": false
+        },
+        "value": {
+          "kind": "element",
+          "type": "array",
+          "description": "Sets the Swagger Parameter list of allowable values.",
+          "title": "Value",
+          "required": false,
+          "deprecated": false
+        },
+        "access": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the Swagger Parameter paramAccess flag.",
+          "title": "Access",
+          "required": false,
+          "deprecated": false
+        },
+        "description": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the Swagger Parameter description.",
           "title": "Description",
           "required": false,
           "deprecated": false
@@ -4918,6 +5371,14 @@ var _apacheCamelModel ={
           "description": "To route from this REST service to a Camel endpoint or an inlined route",
           "title": "To Or Route",
           "required": true,
+          "deprecated": false
+        },
+        "routeId": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The route id this rest-dsl is using (read-only)",
+          "title": "Route Id",
+          "required": false,
           "deprecated": false
         },
         "id": {
@@ -5032,6 +5493,14 @@ var _apacheCamelModel ={
           "required": true,
           "deprecated": false
         },
+        "routeId": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The route id this rest-dsl is using (read-only)",
+          "title": "Route Id",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -5045,6 +5514,43 @@ var _apacheCamelModel ={
           "type": "object",
           "description": "Sets the description of this node",
           "title": "Description",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
+    "responseMessage": {
+      "type": "object",
+      "title": "Response Message",
+      "group": "rest",
+      "icon": "generic24.png",
+      "description": "To specify the rest operation response messages using Swagger.",
+      "acceptInput": "false",
+      "acceptOutput": "false",
+      "nextSiblingAddedAsChild": "false",
+      "properties": {
+        "code": {
+          "kind": "attribute",
+          "type": "string",
+          "defaultValue": "200",
+          "description": "The response code such as a HTTP status code.",
+          "title": "Code",
+          "required": false,
+          "deprecated": false
+        },
+        "message": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The response message (description)",
+          "title": "Message",
+          "required": true,
+          "deprecated": false
+        },
+        "responseModel": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The response model",
+          "title": "Response Model",
           "required": false,
           "deprecated": false
         }
@@ -5065,6 +5571,14 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Path of the rest service such as /foo",
           "title": "Path",
+          "required": false,
+          "deprecated": false
+        },
+        "tag": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "To configure a special tag for the operations within this rest definition.",
+          "title": "Tag",
           "required": false,
           "deprecated": false
         },
@@ -5200,6 +5714,14 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "component": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the component name that this definition will apply to",
+          "title": "Component",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -5236,6 +5758,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "apiComponent": {
+          "kind": "attribute",
+          "type": "string",
+          "defaultValue": "swagger",
+          "description": "The name of the Camel component to use as the REST API (such as swagger)",
+          "title": "Api Component",
+          "required": false,
+          "deprecated": false
+        },
         "scheme": {
           "kind": "attribute",
           "type": "string",
@@ -5263,8 +5794,33 @@ var _apacheCamelModel ={
         "contextPath": {
           "kind": "attribute",
           "type": "string",
-          "description": "Sets a leading context-path the REST services will be using. This can be used when using components such as SERVLET where the deployed web application is deployed using a context-path.",
+          "description": "Sets a leading context-path the REST services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path. Or for components such as camel-jetty or camel-netty4-http that includes a HTTP server.",
           "title": "Context Path",
+          "required": false,
+          "deprecated": false
+        },
+        "apiContextPath": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets a leading API context-path the REST API services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path.",
+          "title": "Api Context Path",
+          "required": false,
+          "deprecated": false
+        },
+        "apiContextIdPattern": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets an CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern. The pattern name refers to the CamelContext name to match on the current CamelContext only. For any other value the pattern uses the rules from link org.apache.camel.util.EndpointHelpermatchPattern(String String)",
+          "title": "Api Context Id Pattern",
+          "required": false,
+          "deprecated": false
+        },
+        "apiContextListing": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it allows to discover these contexts if false then only the current CamelContext is in use.",
+          "title": "Api Context Listing",
           "required": false,
           "deprecated": false
         },
@@ -5353,6 +5909,14 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "apiProperty": {
+          "kind": "element",
+          "type": "array",
+          "description": "Allows to configure as many additional properties for the api documentation (swagger). For example set property api.title to my cool stuff",
+          "title": "Api Property",
+          "required": false,
+          "deprecated": false
+        },
         "corsHeaders": {
           "kind": "element",
           "type": "array",
@@ -5421,6 +5985,14 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
+        "rests": {
+          "kind": "element",
+          "type": "array",
+          "description": "Contains the rest services defined using the rest-dsl",
+          "title": "Rests",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -5531,6 +6103,14 @@ var _apacheCamelModel ={
           "description": "To route from this REST service to a Camel endpoint or an inlined route",
           "title": "To Or Route",
           "required": true,
+          "deprecated": false
+        },
+        "routeId": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The route id this rest-dsl is using (read-only)",
+          "title": "Route Id",
+          "required": false,
           "deprecated": false
         },
         "id": {
@@ -5755,14 +6335,6 @@ var _apacheCamelModel ={
           "required": true,
           "deprecated": false
         },
-        "packages": {
-          "kind": "attribute",
-          "type": "array",
-          "description": "The java package names to scan for model classes.",
-          "title": "Packages",
-          "required": false,
-          "deprecated": false
-        },
         "classType": {
           "kind": "attribute",
           "type": "string",
@@ -5777,6 +6349,31 @@ var _apacheCamelModel ={
           "description": "To configure a default locale to use such as us for united states. To use the JVM platform default locale then use the name default",
           "title": "Locale",
           "required": false,
+          "deprecated": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the value of the id property.",
+          "title": "Id",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
+    "boon": {
+      "type": "object",
+      "title": "Boon",
+      "group": "dataformat,transformation",
+      "icon": "generic24.png",
+      "description": "Boon data format",
+      "properties": {
+        "unmarshalTypeName": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Class name of the java type to use when unarmshalling",
+          "title": "Unmarshal Type Name",
+          "required": true,
           "deprecated": false
         },
         "id": {
@@ -7038,6 +7635,32 @@ var _apacheCamelModel ={
         }
       }
     },
+    "tarfile": {
+      "type": "object",
+      "title": "Tar File",
+      "group": "dataformat,transformation",
+      "icon": "generic24.png",
+      "description": "Represents the TAR file XML org.apache.camel.spi.DataFormat.",
+      "properties": {
+        "usingIterator": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "If the tar file has more then one entry the setting this option to true allows to work with the splitter EIP to split the data using an iterator in a streaming mode.",
+          "title": "Using Iterator",
+          "required": false,
+          "deprecated": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the value of the id property.",
+          "title": "Id",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
     "tidyMarkup": {
       "type": "object",
       "title": "TidyMarkup",
@@ -8109,6 +8732,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "suppressExceptions": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to suppress exceptions such as PathNotFoundException.",
+          "title": "Suppress Exceptions",
+          "required": false,
+          "deprecated": false
+        },
         "expression": {
           "kind": "value",
           "type": "string",
@@ -8661,7 +9293,7 @@ var _apacheCamelModel ={
         "inheritNamespaceTagName": {
           "kind": "attribute",
           "type": "string",
-          "description": "To inherit namepaces from a root/parent tag name",
+          "description": "To inherit namepaces from a root/parent tag name when using XML",
           "title": "Inherit Namespace Tag Name",
           "required": false,
           "deprecated": false
@@ -8696,7 +9328,7 @@ var _apacheCamelModel ={
           "kind": "attribute",
           "type": "boolean",
           "defaultValue": "false",
-          "description": "Whether to include the tokens in the parts The default value is false",
+          "description": "Whether to include the tokens in the parts when using pairs The default value is false",
           "title": "Include Tokens",
           "required": false,
           "deprecated": false

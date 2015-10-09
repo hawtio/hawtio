@@ -73,7 +73,7 @@
     <atmosphere-version>1.0.18</atmosphere-version>
     <blueprint-web-version>1.0.0</blueprint-web-version>
     <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
-    <camel-version>2.15.3</camel-version>
+    <camel-version>2.16.0</camel-version>
     <commons-codec-version>1.10</commons-codec-version>
     <commons-fileupload-version>1.3.1</commons-fileupload-version>
     <commons-httpclient-version>3.1</commons-httpclient-version>
@@ -389,7 +389,7 @@
     <profile>
       <id>amqSnapshot</id>
       <properties>
-        <activemq-version>5.12-SNAPSHOT</activemq-version>
+        <activemq-version>5.13-SNAPSHOT</activemq-version>
         <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
       </properties>
     </profile>
@@ -397,7 +397,7 @@
     <profile>
       <id>camelSnapshot</id>
       <properties>
-        <camel-version>2.16-SNAPSHOT</camel-version>
+        <camel-version>2.17-SNAPSHOT</camel-version>
       </properties>
 
     </profile>
