@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.hawt</groupId>
         <artifactId>project</artifactId>
-        <version>1.5-SNAPSHOT</version>
+        <version>1.4.55</version>
     </parent>
 
     <artifactId>hawtio-sample-springboot-authentication</artifactId>
