@@ -120,6 +120,12 @@ span.org-apache-camel-context-folder span.dynatree-icon:before {
 span.org-apache-camel-context span.dynatree-icon:before {
     content: url("../img/icons/camel/camel_context_icon.png");
 }
+span.org-apache-camel-dataformats span.dynatree-icon:before {
+    content: url("../img/icons/camel/endpoint_node.png");
+}
+span.org-apache-camel-dataformats-folder span.dynatree-icon:before {
+    content: url("../img/icons/camel/endpoint_folder.png");
+}
 span.org-apache-camel-endpoints span.dynatree-icon:before {
     content: url("../img/icons/camel/endpoint_node.png");
 }

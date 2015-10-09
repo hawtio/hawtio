@@ -86,6 +86,7 @@ module Camel {
               var contextsFolder = entries["context"];
               var routesNode = entries["routes"];
               var endpointsNode = entries["endpoints"];
+              var dataFormatsNode = entries["dataformats"];
               if (contextsFolder) {
                 var contextNode = contextsFolder.children[0];
                 if (contextNode) {
@@ -99,7 +100,7 @@ module Camel {
                     folder.entries = contextNode.entries;
                     folder.typeName = contextNode.typeName;
                     folder.key = contextNode.key;
-                    folder.version = contextNode.version
+                    folder.version = contextNode.version;
                     if (routesNode) {
                       var routesFolder = new Folder("Routes");
                       routesFolder.addClass = "org-apache-camel-routes-folder";
@@ -128,11 +129,28 @@ module Camel {
                       endpointsFolder.key = endpointsNode.key;
                       endpointsFolder.domain = endpointsNode.domain;
                     }
+                    if (dataFormatsNode) {
+                      var dataFormatsFolder = new Folder("Dataformats");
+                      dataFormatsFolder.addClass = "org-apache-camel-dataformats-folder";
+                      dataFormatsFolder.parent = contextsFolder;
+                      dataFormatsFolder.children = dataFormatsNode.children;
+                      angular.forEach(dataFormatsFolder.children, (n) => {
+                        n.addClass = "org-apache-camel-dataformats";
+                        if (!getContextId(n)) {
+                          n.entries["context"] = contextNode.entries["context"];
+                        }
+                      });
+                      folder.children.push(dataFormatsFolder);
+                      dataFormatsFolder.entries = contextNode.entries;
+                      dataFormatsFolder.typeName = "dataformats";
+                      dataFormatsFolder.key = dataFormatsNode.key;
+                      dataFormatsFolder.domain = dataFormatsNode.domain;
+                    }
                     var jmxNode = new Folder("MBeans");
 
-                    // lets add all the entries which are not one context/routes/endpoints
+                    // lets add all the entries which are not one context/routes/endpoints/dataformats as MBeans
                     angular.forEach(entries, (jmxChild, name) => {
-                      if (name !== "context" && name !== "routes" && name !== "endpoints") {
+                      if (name !== "context" && name !== "routes" && name !== "endpoints" && name !== "dataformats") {
                         jmxNode.children.push(jmxChild);
                       }
                     });

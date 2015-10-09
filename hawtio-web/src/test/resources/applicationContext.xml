@@ -127,6 +127,9 @@
       </transform>
       <delay><constant>1500</constant></delay>
       <setBody><simple>A Delayed ${body}</simple></setBody>
+      <marshal>
+        <string charset="iso-8859-1"/>
+      </marshal>
       <setHeader headerName="myHeader">
         <constant>This is a new header value</constant>
       </setHeader>

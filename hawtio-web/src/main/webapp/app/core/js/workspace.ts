@@ -945,6 +945,12 @@ module Core {
     isEndpoint() {
       return this.hasDomainAndProperties('org.apache.camel', {type: 'endpoints'});
     }
+    isDataFormatsFolder() {
+      return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'dataformats');
+    }
+    isDataFormat() {
+      return this.hasDomainAndProperties('org.apache.camel', {type: 'dataformats'});
+    }
     isRoutesFolder() {
       return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'routes')
     }
