@@ -2078,6 +2078,12 @@ var Core;
         Workspace.prototype.isCamelFolder = function () {
             return this.hasDomainAndProperties('org.apache.camel');
         };
+        Workspace.prototype.isComponentsFolder = function () {
+            return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'components');
+        };
+        Workspace.prototype.isComponent = function () {
+            return this.hasDomainAndProperties('org.apache.camel', { type: 'components' });
+        };
         Workspace.prototype.isEndpointsFolder = function () {
             return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'endpoints');
         };
@@ -11166,7 +11172,7 @@ var Camel;
     var contextToolBar = "app/camel/html/attributeToolBarContext.html";
     Camel._module = angular.module(Camel.pluginName, ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ui.bootstrap.typeahead', 'ngResource', 'hawtioCore', 'hawtio-ui']);
     Camel._module.config(["$routeProvider", function ($routeProvider) {
-        $routeProvider.when('/camel/browseEndpoint', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/endpoint/browse/:contextId/*endpointPath', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/propertiesEndpoint', { templateUrl: 'app/camel/html/propertiesEndpoint.html' }).when('/camel/propertiesDataFormat', { templateUrl: 'app/camel/html/propertiesDataFormat.html' }).when('/camel/createEndpoint', { templateUrl: 'app/camel/html/createEndpoint.html' }).when('/camel/route/diagram/:contextId/:routeId', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/routes', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/fabricDiagram', { templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false }).when('/camel/typeConverter', { templateUrl: 'app/camel/html/typeConverter.html', reloadOnSearch: false }).when('/camel/restRegistry', { templateUrl: 'app/camel/html/restRegistry.html', reloadOnSearch: false }).when('/camel/endpointRuntimeRegistry', { templateUrl: 'app/camel/html/endpointRuntimeRegistry.html', reloadOnSearch: false }).when('/camel/routeMetrics', { templateUrl: 'app/camel/html/routeMetrics.html', reloadOnSearch: false }).when('/camel/inflight', { templateUrl: 'app/camel/html/inflight.html', reloadOnSearch: false }).when('/camel/blocked', { templateUrl: 'app/camel/html/blocked.html', reloadOnSearch: false }).when('/camel/sendMessage', { templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false }).when('/camel/source', { templateUrl: 'app/camel/html/source.html' }).when('/camel/traceRoute', { templateUrl: 'app/camel/html/traceRoute.html' }).when('/camel/debugRoute', { templateUrl: 'app/camel/html/debug.html' }).when('/camel/profileRoute', { templateUrl: 'app/camel/html/profileRoute.html' }).when('/camel/properties', { templateUrl: 'app/camel/html/properties.html' });
+        $routeProvider.when('/camel/browseEndpoint', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/endpoint/browse/:contextId/*endpointPath', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/createEndpoint', { templateUrl: 'app/camel/html/createEndpoint.html' }).when('/camel/route/diagram/:contextId/:routeId', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/routes', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/fabricDiagram', { templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false }).when('/camel/typeConverter', { templateUrl: 'app/camel/html/typeConverter.html', reloadOnSearch: false }).when('/camel/restRegistry', { templateUrl: 'app/camel/html/restRegistry.html', reloadOnSearch: false }).when('/camel/endpointRuntimeRegistry', { templateUrl: 'app/camel/html/endpointRuntimeRegistry.html', reloadOnSearch: false }).when('/camel/routeMetrics', { templateUrl: 'app/camel/html/routeMetrics.html', reloadOnSearch: false }).when('/camel/inflight', { templateUrl: 'app/camel/html/inflight.html', reloadOnSearch: false }).when('/camel/blocked', { templateUrl: 'app/camel/html/blocked.html', reloadOnSearch: false }).when('/camel/sendMessage', { templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false }).when('/camel/source', { templateUrl: 'app/camel/html/source.html' }).when('/camel/traceRoute', { templateUrl: 'app/camel/html/traceRoute.html' }).when('/camel/debugRoute', { templateUrl: 'app/camel/html/debug.html' }).when('/camel/profileRoute', { templateUrl: 'app/camel/html/profileRoute.html' }).when('/camel/properties', { templateUrl: 'app/camel/html/properties.html' }).when('/camel/propertiesComponent', { templateUrl: 'app/camel/html/propertiesComponent.html' }).when('/camel/propertiesDataFormat', { templateUrl: 'app/camel/html/propertiesDataFormat.html' }).when('/camel/propertiesEndpoint', { templateUrl: 'app/camel/html/propertiesEndpoint.html' });
     }]);
     Camel._module.factory('tracerStatus', function () {
         return {
@@ -11235,6 +11241,7 @@ var Camel;
             stateColumn,
             { field: 'CamelId', displayName: 'Context' },
             { field: 'RouteId', displayName: 'Route' },
+            { field: 'Uptime', displayName: 'Uptime', visible: false },
             { field: 'ExchangesCompleted', displayName: 'Completed #' },
             { field: 'ExchangesFailed', displayName: 'Failed #' },
             { field: 'FailuresHandled', displayName: 'Failed Handled #' },
@@ -11325,38 +11332,38 @@ var Camel;
         workspace.subLevelTabs.push({
             content: '<i class="icon-picture"></i> Route Diagram',
             title: "View a diagram of the Camel routes",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelContextMBean(workspace), "dumpRoutesAsXml"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelContextMBean(workspace), "dumpRoutesAsXml"); },
             href: function () { return "#/camel/routes"; },
             index: -2
         });
         workspace.subLevelTabs.push({
             content: '<i class=" icon-file-alt"></i> Source',
             title: "View the source of the Camel routes",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelContextMBean(workspace), "dumpRoutesAsXml"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelContextMBean(workspace), "dumpRoutesAsXml"); },
             href: function () { return "#/camel/source"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-bar-chart"></i> Route Metrics',
             title: "View the Camel route metrics",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelRouteMetrics(workspace), "dumpStatisticsAsJson"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelRouteMetrics(workspace), "dumpStatisticsAsJson"); },
             href: function () { return "#/camel/routeMetrics"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Inflight',
             title: "View the Camel inflight exchanges",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelInflightRepository(workspace), "browse"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelInflightRepository(workspace), "browse"); },
             href: function () { return "#/camel/inflight"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Blocked',
             title: "View the Camel blocked exchanges",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelBlockedExchanges(workspace), "browse"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelBlockedExchanges(workspace), "browse"); },
             href: function () { return "#/camel/blocked"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Endpoints (in/out)',
             title: "List all the incoming and outgoing endpoints in the context",
-            isValid: function (workspace) { return !workspace.isEndpointsFolder() && !workspace.isEndpoint() && !workspace.isDataFormatsFolder() && (workspace.isCamelContext() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 16, workspace, jolokia) && Camel.getSelectionCamelEndpointRuntimeRegistry(workspace) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelEndpointRuntimeRegistry(workspace), "endpointStatistics"); },
+            isValid: function (workspace) { return !workspace.isComponentsFolder() && !workspace.isComponent() && !workspace.isEndpointsFolder() && !workspace.isEndpoint() && !workspace.isDataFormatsFolder() && !workspace.isDataFormat() && (workspace.isCamelContext() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 16, workspace, jolokia) && Camel.getSelectionCamelEndpointRuntimeRegistry(workspace) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelEndpointRuntimeRegistry(workspace), "endpointStatistics"); },
             href: function () { return "#/camel/endpointRuntimeRegistry"; }
         });
         workspace.subLevelTabs.push({
@@ -11368,13 +11375,13 @@ var Camel;
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Rest',
             title: "List all the REST services registered in the context",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !Camel.getSelectedRouteNode(workspace) && !workspace.isEndpointsFolder() && !workspace.isEndpoint() && !workspace.isDataFormatsFolder() && !workspace.isDataFormat() && !workspace.isRoute() && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelRestRegistry(workspace), "listRestServices"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !Camel.getSelectedRouteNode(workspace) && !workspace.isComponentsFolder() && !workspace.isComponent() && !workspace.isEndpointsFolder() && !workspace.isEndpoint() && !workspace.isDataFormatsFolder() && !workspace.isDataFormat() && !workspace.isRoute() && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelRestRegistry(workspace), "listRestServices"); },
             href: function () { return "#/camel/restRegistry"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Type Converters',
             title: "List all the type converters registered in the context",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !Camel.getSelectedRouteNode(workspace) && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder() || workspace.isCamelContext()) && Camel.isCamelVersionEQGT(2, 13, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelTypeConverter(workspace), "listTypeConverters"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !Camel.getSelectedRouteNode(workspace) && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder() || workspace.isCamelContext()) && Camel.isCamelVersionEQGT(2, 13, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelTypeConverter(workspace), "listTypeConverters"); },
             href: function () { return "#/camel/typeConverter"; }
         });
         workspace.subLevelTabs.push({
@@ -11382,6 +11389,12 @@ var Camel;
             title: "Browse the messages on the endpoint",
             isValid: function (workspace) { return workspace.isEndpoint() && workspace.hasInvokeRights(workspace.selection, "browseAllMessagesAsXml"); },
             href: function () { return "#/camel/browseEndpoint"; }
+        });
+        workspace.subLevelTabs.push({
+            content: '<i class="icon-list"></i> Properties',
+            title: "Show the component properties",
+            isValid: function (workspace) { return workspace.isComponent() && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia) && workspace.hasInvokeRights(workspace.selection, "explainComponentJson"); },
+            href: function () { return "#/camel/propertiesComponent"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Properties',
@@ -14012,6 +14025,127 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
+    Camel._module.controller("Camel.PropertiesComponentController", ["$scope", "workspace", "localStorage", "jolokia", function ($scope, workspace, localStorage, jolokia) {
+        var log = Logger.get("Camel");
+        $scope.hideHelp = Camel.hideOptionDocumentation(localStorage);
+        $scope.hideUnused = Camel.hideOptionUnusedValue(localStorage);
+        $scope.hideDefault = Camel.hideOptionDefaultValue(localStorage);
+        $scope.viewTemplate = null;
+        $scope.schema = null;
+        $scope.model = null;
+        $scope.labels = [];
+        $scope.nodeData = null;
+        $scope.icon = null;
+        $scope.componentName = null;
+        $scope.$watch('hideHelp', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                updateData();
+            }
+        });
+        $scope.$watch('hideUnused', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                updateData();
+            }
+        });
+        $scope.$watch('hideDefault', function (newValue, oldValue) {
+            if (newValue !== oldValue) {
+                updateData();
+            }
+        });
+        $scope.$on("$routeChangeSuccess", function (event, current, previous) {
+            setTimeout(updateData, 50);
+        });
+        $scope.$watch('workspace.selection', function () {
+            if (workspace.moveIfViewInvalid())
+                return;
+            updateData();
+        });
+        $scope.showEntity = function (id) {
+            if ($scope.hideDefault) {
+                if (isDefaultValue(id)) {
+                    return false;
+                }
+            }
+            if ($scope.hideUnused) {
+                if (!hasValue(id)) {
+                    return false;
+                }
+            }
+            return true;
+        };
+        function isDefaultValue(id) {
+            var defaultValue = Core.pathGet($scope.model, ["properties", id, "defaultValue"]);
+            if (angular.isDefined(defaultValue)) {
+                var value = Core.pathGet($scope.nodeData, id);
+                if (angular.isDefined(value)) {
+                    var str = value.toString();
+                    return str.localeCompare(defaultValue) === 0;
+                }
+            }
+            return false;
+        }
+        function hasValue(id) {
+            var value = Core.pathGet($scope.nodeData, id);
+            if (angular.isUndefined(value) || Core.isBlank(value)) {
+                return false;
+            }
+            if (angular.isString(value)) {
+                return !Core.isBlank(value);
+            }
+            return true;
+        }
+        function updateData() {
+            var contextMBean = Camel.getSelectionCamelContextMBean(workspace);
+            var componentMBeanName = null;
+            if (!componentMBeanName) {
+                componentMBeanName = workspace.getSelectedMBeanName();
+            }
+            if (componentMBeanName && contextMBean) {
+                var reply = jolokia.request({ type: "read", mbean: componentMBeanName, attribute: ["ComponentName"] });
+                var name = reply.value["ComponentName"];
+                if (name) {
+                    $scope.componentName = name;
+                    log.info("Calling explainComponentJson for name: " + name);
+                    var query = {
+                        type: 'exec',
+                        mbean: contextMBean,
+                        operation: 'explainComponentJson(java.lang.String,boolean)',
+                        arguments: [name, true]
+                    };
+                    jolokia.request(query, onSuccess(populateData));
+                }
+            }
+        }
+        function populateData(response) {
+            log.debug("Populate data " + response);
+            var data = response.value;
+            if (data) {
+                $scope.model = JSON.parse(data);
+                $scope.model.title = $scope.componentName;
+                $scope.model.description = $scope.model.component.description;
+                $scope.icon = Core.url("/img/icons/camel/endpoint24.png");
+                $scope.nodeData = {};
+                $scope.model.properties = $scope.model.componentProperties;
+                angular.forEach($scope.model.componentProperties, function (property, key) {
+                    var value = property["value"] || property["defaultValue"];
+                    if (angular.isDefined(value) && value !== null) {
+                        $scope.nodeData[key] = value;
+                    }
+                    delete property["label"];
+                });
+                var labels = [];
+                if ($scope.model.component.label) {
+                    labels = $scope.model.component.label.split(",");
+                }
+                $scope.labels = labels;
+                $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
+                Core.$apply($scope);
+            }
+        }
+    }]);
+})(Camel || (Camel = {}));
+var Camel;
+(function (Camel) {
     Camel._module.controller("Camel.PropertiesDataFormatController", ["$scope", "workspace", "localStorage", "jolokia", function ($scope, workspace, localStorage, jolokia) {
         var log = Logger.get("Camel");
         $scope.hideHelp = Camel.hideOptionDocumentation(localStorage);
@@ -15238,6 +15372,7 @@ var Camel;
                             var contextsFolder = entries["context"];
                             var routesNode = entries["routes"];
                             var endpointsNode = entries["endpoints"];
+                            var componentsNode = entries["components"];
                             var dataFormatsNode = entries["dataformats"];
                             if (contextsFolder) {
                                 var contextNode = contextsFolder.children[0];
@@ -15281,6 +15416,23 @@ var Camel;
                                             endpointsFolder.key = endpointsNode.key;
                                             endpointsFolder.domain = endpointsNode.domain;
                                         }
+                                        if (componentsNode) {
+                                            var componentsFolder = new Folder("Components");
+                                            componentsFolder.addClass = "org-apache-camel-components-folder";
+                                            componentsFolder.parent = contextsFolder;
+                                            componentsFolder.children = componentsNode.children;
+                                            angular.forEach(componentsFolder.children, function (n) {
+                                                n.addClass = "org-apache-camel-components";
+                                                if (!Camel.getContextId(n)) {
+                                                    n.entries["context"] = contextNode.entries["context"];
+                                                }
+                                            });
+                                            folder.children.push(componentsFolder);
+                                            componentsFolder.entries = contextNode.entries;
+                                            componentsFolder.typeName = "components";
+                                            componentsFolder.key = componentsNode.key;
+                                            componentsFolder.domain = componentsNode.domain;
+                                        }
                                         if (dataFormatsNode) {
                                             var dataFormatsFolder = new Folder("Dataformats");
                                             dataFormatsFolder.addClass = "org-apache-camel-dataformats-folder";
@@ -15300,7 +15452,7 @@ var Camel;
                                         }
                                         var jmxNode = new Folder("MBeans");
                                         angular.forEach(entries, function (jmxChild, name) {
-                                            if (name !== "context" && name !== "routes" && name !== "endpoints" && name !== "dataformats") {
+                                            if (name !== "context" && name !== "routes" && name !== "endpoints" && name !== "components" && name !== "dataformats") {
                                                 jmxNode.children.push(jmxChild);
                                             }
                                         });
