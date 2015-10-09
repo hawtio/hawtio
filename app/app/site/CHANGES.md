@@ -5,7 +5,8 @@
 
 * Upgrade to Camel 2.16.0
 * Upgrade to Jolokia 1.3.2
-* Camel plugin - Can list and show details about dataformats that are enlisted in Camel 2.16 onwards 
+* Camel plugin - Can list and show detailed information about how each data format has been configured (requires Camel 2.16 onwards)
+* Camel plugin - Can list and show detailed information about how each component has been configured
 
 #### 1.4.54
 
