@@ -248,9 +248,10 @@
       <version>${camel-version}</version>
       <scope>test</scope>
     </dependency>
+    <!-- use jetty 8 as hawtio project is setup for that version -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty</artifactId>
+      <artifactId>camel-jetty8</artifactId>
       <version>${camel-version}</version>
       <scope>test</scope>
     </dependency>
