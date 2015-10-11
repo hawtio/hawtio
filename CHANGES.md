@@ -1,6 +1,10 @@
 
 ### Change Log
 
+#### 1.4.56
+
+* Camel plugin - Now groups the properties into tabs so viewing endpoint properties with many options is using multi-tabs to group the options.
+
 #### 1.4.55
 
 * Upgrade to Camel 2.16.0

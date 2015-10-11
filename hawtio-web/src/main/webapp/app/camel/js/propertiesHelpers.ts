@@ -16,8 +16,14 @@ module Camel {
       // if there is no label then use common as fallback
       var label:string = "common";
 
-      var value = property["label"];
+      var value:string = property["label"];
       if (angular.isDefined(value) && value !== null) {
+
+        // we want to put advanced into own tab, so look for a label that has advanced as prefix
+        // x,advanced => x (advanced)
+        var pattern = /(\w),(advanced)/;
+        value = value.replace(pattern, '$1 (advanced)');
+
         var array:string[] = value.split(",");
         // grab last label which is the most specific label we want to use for the tab
         label = array[array.length - 1];
@@ -49,7 +55,7 @@ module Camel {
     // sort the tabs in the order we like:
     // common, consumer, producer, a..z
     sorted = sorted.sort((n1:{}, n2:{}) => {
-      // default first
+      // common first
       if (n1['key'] === 'common') {
         return -1;
       } else if (n2['key'] === 'common') {
@@ -61,10 +67,22 @@ module Camel {
       } else if (n2['key'] === 'consumer') {
         return 1;
       }
+      // then consumer (advanced)
+      if (n1['key'] === 'consumer (advanced)') {
+        return -1;
+      } else if (n2['key'] === 'consumer (advanced)') {
+        return 1;
+      }
       // then producer
       if (n1['key'] === 'producer') {
         return -1;
       } else if (n2['key'] === 'producer') {
+        return 1;
+      }
+      // then producer (advanced)
+      if (n1['key'] === 'producer (advanced)') {
+        return -1;
+      } else if (n2['key'] === 'producer (advanced)') {
         return 1;
       }
       // then a..z
