@@ -8,25 +8,27 @@ module Camel {
 
   export var log:Logging.Logger = Logger.get("Camel");
 
-  export function buildTabsFromProperties(tabs:{}, properties:{}) : {} {
+  export function buildTabsFromProperties(tabs:{}, properties:{}):{} {
     var answer = tabs;
 
     // label in model is for tabs
     angular.forEach(properties, function (property, key) {
       // if there is no label then use common as fallback
-      var labels:string[] = ["common"];
+      var label:string = "common";
 
       var value = property["label"];
       if (angular.isDefined(value) && value !== null) {
-        labels = value.split(",");
+        var array:string[] = value.split(",");
+        // grab last label which is the most specific label we want to use for the tab
+        label = array[array.length - 1];
       }
-      angular.forEach(labels, (label) => {
-        var keys:string[] = tabs[label] || [];
+
+      var keys:string[] = tabs[label] || [];
+      // an option may be listed in more labels so only define it once so we do not repeat it
+      if (keys.indexOf(key) === -1) {
         keys.push(key);
-        answer[label] = keys;
-      });
-      // remove label as that causes the UI to render the label instead of the key as title (the label are used for tabs)
-      delete property["label"];
+      }
+      answer[label] = keys;
     });
 
     return answer;
@@ -35,7 +37,7 @@ module Camel {
   /**
    * Sort the properties tabs in the order we want to display them
    */
-  export function sortPropertiesTabs(tabs:{}) : {} {
+  export function sortPropertiesTabs(tabs:{}):{} {
     // now we need to sort the tabs which is tricky as we need to create an array
     // first which we sort, and then re-create the map from the sorted array
 

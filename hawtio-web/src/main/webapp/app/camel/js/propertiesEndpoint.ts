@@ -137,6 +137,9 @@ module Camel {
         tabs = Camel.sortPropertiesTabs(tabs);
         $scope.model.tabs = tabs;
 
+        // remove componentProperties which is a mistake to be in
+        delete $scope.model['componentProperties'];
+
         angular.forEach($scope.model.properties, function (property, key) {
           // does it have a value or fallback to use a default value
           var value = property["value"] || property["defaultValue"];
