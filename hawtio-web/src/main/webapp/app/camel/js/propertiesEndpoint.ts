@@ -132,71 +132,10 @@ module Camel {
 
         // grab all values form the model as they are the current data we need to add to node data (not all properties has a value)
         $scope.nodeData = {};
-        $scope.tabs = {};
-
-        // label in model is for tabs
-        angular.forEach($scope.model.properties, function (property, key) {
-          // if there is no label then use default as fallback
-          var labels:string[] = ["default"];
-
-          var value = property["label"];
-          if (angular.isDefined(value) && value !== null) {
-            labels = value.split(",");
-          }
-          angular.forEach(labels, (label) => {
-            var keys:string[] = $scope.tabs[label] || [];
-            keys.push(key);
-            $scope.tabs[label] = keys;
-          });
-          // remove label as that causes the UI to render the label instead of the key as title (the label are used for tabs)
-          delete property["label"];
-        });
-
-        // now we need to sort the tabs which is tricky as we need to create an array
-        // first which we sort, and then re-create the map from the sorted array
-
-        var sorted = [];
-        angular.forEach($scope.tabs, function (value, key) {
-          sorted.push({'key': key, 'labels': value});
-        });
-
-        // sort the tabs in the order we like:
-        // default, consumer, producer, a..z
-        sorted = sorted.sort((n1:{}, n2:{}) => {
-          // default first
-          if (n1['key'] === 'default') {
-            return -1;
-          } else if (n2['key'] === 'default') {
-            return 1;
-          }
-          // then consumer
-          if (n1['key'] === 'consumer') {
-            return -1;
-          } else if (n2['key'] === 'consumer') {
-            return 1;
-          }
-          // then producer
-          if (n1['key'] === 'producer') {
-            return -1;
-          } else if (n2['key'] === 'producer') {
-            return 1;
-          }
-          // then a..z
-          return n1['key'].localeCompare(n2['key']);
-        });
-
-        // then re-create the map from the sorted array
-        $scope.tabs = {};
-        angular.forEach(sorted, function (value, key) {
-          var name = value['key'];
-          var labels = value['labels'];
-          $scope.tabs[name] = labels;
-          log.info("Tab(" + name + ") = " + labels);
-        });
-
-        if ($scope.tabs) {
-          $scope.model.tabs = $scope.tabs;
-        }
+        var tabs = {};
+        tabs = Camel.buildTabsFromProperties(tabs, $scope.model.properties);
+        tabs = Camel.sortPropertiesTabs(tabs);
+        $scope.model.tabs = tabs;
 
         angular.forEach($scope.model.properties, function (property, key) {
           // does it have a value or fallback to use a default value
@@ -204,6 +143,10 @@ module Camel {
           if (angular.isDefined(value) && value !== null) {
             $scope.nodeData[key] = value;
           }
+
+          // remove label as that causes the UI to render the label instead of the key as title
+          // we should later group the table into labels (eg consumer vs producer)
+          delete property["label"];
         });
 
         var labels = [];
