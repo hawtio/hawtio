@@ -3,6 +3,8 @@
 /// <reference path="mappingRegistry.ts"/>
 module Forms {
 
+  var log:Logging.Logger = Logger.get("Core");
+
   export class SimpleFormConfig {
 
     public name = 'form';
@@ -210,7 +212,7 @@ module Forms {
 
         if (onSubmit === null) {
           onSubmit = function (json, form) {
-            log.info("No submit handler defined for form:", form.get(0).name)
+            log.debug("No submit handler defined for form:", form.get(0).name)
           }
         }
 
@@ -233,7 +235,7 @@ module Forms {
         var autoFocus = form.find("*[autofocus]");
         if (!autoFocus || !autoFocus.length) {
           if (firstControl) {
-            console.log("No autofocus element, so lets add one!");
+            log.debug("No autofocus element, so lets add one!");
             var input = firstControl.find("input").first() || firstControl.find("select").first();
             if (input) {
               input.attr("autofocus", "true");
