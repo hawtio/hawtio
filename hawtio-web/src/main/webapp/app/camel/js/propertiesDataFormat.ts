@@ -119,7 +119,7 @@ module Camel {
         // grab all values form the model as they are the current data we need to add to node data (not all properties has a value)
         $scope.nodeData = {};
         var tabs = {};
-        tabs = Camel.buildTabsFromProperties(tabs, $scope.model.properties);
+        tabs = Camel.buildTabsFromProperties(tabs, $scope.model.properties, false, false);
         tabs = Camel.sortPropertiesTabs(tabs);
         $scope.model.tabs = tabs;
 

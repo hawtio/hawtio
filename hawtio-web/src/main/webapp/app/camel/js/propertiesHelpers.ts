@@ -8,13 +8,18 @@ module Camel {
 
   export var log:Logging.Logger = Logger.get("Camel");
 
-  export function buildTabsFromProperties(tabs:{}, properties:{}):{} {
+  export function buildTabsFromProperties(tabs:{}, properties:{}, consumerOnly:boolean, producerOnly:boolean):{} {
     var answer = tabs;
 
     // label in model is for tabs
     angular.forEach(properties, function (property, key) {
       // if there is no label then use common as fallback
       var label:string = "common";
+      if (consumerOnly) {
+        label = "consumer";
+      } if (producerOnly) {
+        label = "producer";
+      }
 
       var value:string = property["label"];
       if (angular.isDefined(value) && value !== null) {
@@ -27,6 +32,12 @@ module Camel {
         var array:string[] = value.split(",");
         // grab last label which is the most specific label we want to use for the tab
         label = array[array.length - 1];
+        // if we are in consumer/producer only mode, then enrich the advanced label to indicate its advanced of those
+        if (label === 'advanced' && consumerOnly) {
+          label = "consumer (advanced)";
+        } else if (label === 'advanced' && producerOnly) {
+          label = "producer (advanced)";
+        }
       }
 
       var keys:string[] = tabs[label] || [];

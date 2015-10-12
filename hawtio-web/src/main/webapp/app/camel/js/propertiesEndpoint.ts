@@ -133,7 +133,9 @@ module Camel {
         // grab all values form the model as they are the current data we need to add to node data (not all properties has a value)
         $scope.nodeData = {};
         var tabs = {};
-        tabs = Camel.buildTabsFromProperties(tabs, $scope.model.properties);
+        var consumerOnly:boolean = "true" === $scope.model.component.consumerOnly || false;
+        var producerOnly:boolean = "true" === $scope.model.component.producerOnly || false;
+        tabs = Camel.buildTabsFromProperties(tabs, $scope.model.properties, consumerOnly, producerOnly);
         tabs = Camel.sortPropertiesTabs(tabs);
         $scope.model.tabs = tabs;
 
