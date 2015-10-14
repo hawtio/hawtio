@@ -5,6 +5,7 @@
 
 * Camel plugin - Now groups the properties into tabs so viewing endpoint properties with many options is using multi-tabs to group the options.
 * Added camel-cdi as goal to the [maven](http://hawt.io/maven/) plugin to allow starting a Camel CDI application with hawtio embedded.
+* Fixed so JUnit plugin is not shown by default when there is no unit tests in the JVM to run.
 
 #### 1.4.55
 
