@@ -15,6 +15,14 @@ public interface IntrospectorMXBean {
      */
     SortedSet<String> findClassNames(String search, Integer limit);
 
+    /**
+     * Whether any junit test classes exists or not.
+     */
+    boolean hasJUnitTests();
+
+    /**
+     * Searches for the available unit test class names
+     */
     SortedSet<String> findJUnitTestClassNames();
 
     /**

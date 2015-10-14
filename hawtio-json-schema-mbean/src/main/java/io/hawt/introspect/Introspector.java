@@ -69,6 +69,11 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
     }
 
     @Override
+    public boolean hasJUnitTests() {
+        return !findJUnitTestClassNames().isEmpty();
+    }
+
+    @Override
     public SortedSet<String> findJUnitTestClassNames() {
         String annotationClassName = "org.junit.Test";
 
@@ -76,8 +81,6 @@ public class Introspector extends MBeanSupport implements IntrospectorMXBean {
         File targetDir = new File(file, "target");
         File testClasses = new File(targetDir, "test-classes");
         return getClassScanner().findClassNamesInDirectoryWithMethodAnnotatedWith(testClasses, annotationClassName);
-
-        //return findClassNamesMethodsAnnotatedWith(annotationClassName);
     }
 
     public File getBaseDir() {

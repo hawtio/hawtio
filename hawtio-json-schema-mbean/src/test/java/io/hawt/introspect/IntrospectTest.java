@@ -68,12 +68,13 @@ public class IntrospectTest {
         assertFindProperties(invoiceClass, "customer.address.", "customer.address", "customer.address.streetName", "customer.address.zipCode");
         assertFindProperties(invoiceClass, "customer.address.str", "customer.address", "customer.address.streetName", "customer.address.zipCode");
         assertFindProperties(invoiceClass, "customer.address.doesNotExist", "customer.address", "customer.address.streetName", "customer.address.zipCode");
-
     }
-
 
     @Test
     public void testFindTestCases() throws Exception {
+        boolean tests = introspector.hasJUnitTests();
+        assertTrue("Should find unit tests", tests);
+
         SortedSet<String> testClassNames = introspector.findJUnitTestClassNames();
         System.out.println("Test class names: " + testClassNames);
         assertTrue("Should have found a test class name", !testClassNames.isEmpty());
