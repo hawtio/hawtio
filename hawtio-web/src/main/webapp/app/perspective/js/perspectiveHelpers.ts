@@ -297,9 +297,9 @@ module Perspective {
    */
   export function defaultPage($location, workspace: Workspace, jolokia, localStorage) {
     // we should not show welcome screen from junit
-    var isJUnit = JUnit.isJUnitPluginEnabled(workspace);
+    var isJUnit = JUnit.isJUnitPluginEnabled(workspace, jolokia);
     if (isJUnit) {
-      log.info("JUnit detected")
+      log.info("JUnit detected");
       // for junit we want to force junit as the default page
       return "/junit/tests";
     }

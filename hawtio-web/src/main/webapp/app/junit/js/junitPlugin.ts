@@ -22,19 +22,19 @@ module JUnit {
     };
   });
 
-  _module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", ($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry) => {
+  _module.run(["$location", "workspace", "jolokia", "viewRegistry", "layoutFull", "helpRegistry", ($location:ng.ILocationService, workspace:Workspace, jolokia, viewRegistry, layoutFull, helpRegistry) => {
 
     viewRegistry['junit'] = 'app/junit/html/layoutJUnitTree.html';
 
     helpRegistry.addUserDoc('junit', 'app/junit/doc/help.md', () => {
-      return isJUnitPluginEnabled(workspace);
+      return isJUnitPluginEnabled(workspace, jolokia);
     });
 
     workspace.topLevelTabs.push({
       id: "junit",
       content: "JUnit",
       title: "View and run test cases in this process",
-      isValid: (workspace:Workspace) => isJUnitPluginEnabled(workspace),
+      isValid: (workspace:Workspace) => isJUnitPluginEnabled(workspace, jolokia),
       href: () => "#/junit/tests"
     });
 
