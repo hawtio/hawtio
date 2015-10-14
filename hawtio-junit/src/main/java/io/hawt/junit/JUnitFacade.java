@@ -1,5 +1,6 @@
 package io.hawt.junit;
 
+import java.io.File;
 import java.util.List;
 
 import io.hawt.util.MBeanSupport;
@@ -31,7 +32,11 @@ public class JUnitFacade extends MBeanSupport implements JUnitFacadeMBean {
     @Override
     public void init() throws Exception {
         JUnitFacade.singleton = this;
-        super.init();
+
+        // only register if we have junit tests
+        if (hasJUnitTests()) {
+            super.init();
+        }
     }
 
     @Override
@@ -64,4 +69,20 @@ public class JUnitFacade extends MBeanSupport implements JUnitFacadeMBean {
         Result result = core.run(request);
         return new ResultDTO(result);
     }
+
+    private boolean hasJUnitTests() {
+        String annotationClassName = "org.junit.Test";
+
+        File file = getBaseDir();
+        File targetDir = new File(file, "target");
+        File testClasses = new File(targetDir, "test-classes");
+        return !classScanner.findClassNamesInDirectoryWithMethodAnnotatedWith(testClasses, annotationClassName).isEmpty();
+    }
+
+    private File getBaseDir() {
+        String basedir = System.getProperty("basedir", ".");
+        return new File(basedir);
+    }
+
+
 }

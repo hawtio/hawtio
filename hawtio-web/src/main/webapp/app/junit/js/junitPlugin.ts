@@ -27,14 +27,14 @@ module JUnit {
     viewRegistry['junit'] = 'app/junit/html/layoutJUnitTree.html';
 
     helpRegistry.addUserDoc('junit', 'app/junit/doc/help.md', () => {
-      return isJUnitPluginEnabled(workspace, jolokia);
+      return isJUnitPluginEnabled(workspace);
     });
 
     workspace.topLevelTabs.push({
       id: "junit",
       content: "JUnit",
       title: "View and run test cases in this process",
-      isValid: (workspace:Workspace) => isJUnitPluginEnabled(workspace, jolokia),
+      isValid: (workspace:Workspace) => isJUnitPluginEnabled(workspace),
       href: () => "#/junit/tests"
     });
 

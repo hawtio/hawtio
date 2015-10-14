@@ -141,7 +141,7 @@ module Camel {
       if (selection) {
         var mbean = selection.objectName;
         if (mbean) {
-          var headers = null;
+          var headers:{} = null;
           if ($scope.headers.length) {
             headers = {};
             angular.forEach($scope.headers, (object) => {
