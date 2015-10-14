@@ -4,6 +4,7 @@
 #### 1.4.56
 
 * Camel plugin - Now groups the properties into tabs so viewing endpoint properties with many options is using multi-tabs to group the options.
+* Added camel-cdi as goal to the [maven](http://hawt.io/maven/) plugin to allow starting a Camel CDI application with hawtio embedded.
 
 #### 1.4.55
 
