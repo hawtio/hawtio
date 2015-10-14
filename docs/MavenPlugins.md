@@ -28,6 +28,10 @@
     <td>The same as the camel goal but needed when using OSGi Blueprint Camel applications.</td>
   </tr>         
   <tr>
+    <td>camel-cdi</td>
+    <td>The same as the camel goal but needed when using CDI Camel applications.</td>
+  </tr>         
+  <tr>
     <td>test</td>
     <td>This goal run the unit tests of the Maven project. Can be used together with the <a href"http://hawt.io/plugins/junit.html">JUnit</a> plugin to run unit tests from within hawtio console as well.</td>
   </tr>         
@@ -179,6 +183,11 @@ The camel goal extends the run goal and provides the following additional option
     <td>Location of the configuration admin configuration file</td>
   </tr>     
 </table>
+
+### camel-cdi Maven Goal configuration
+
+The camel-cdi goal has no additional options.
+
 
 ### test Maven Goal configuration
 
