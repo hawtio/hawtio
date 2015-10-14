@@ -6,7 +6,6 @@
 /// <reference path="wikiDialogs.ts"/>
 /// <reference path="../../fabric/js/fabricGlobals.ts"/>
 /// <reference path="../../fabric/js/fabricHelpers.ts"/>
-/// <reference path="../../kubernetes/js/kubernetesHelpers.ts"/>
 /// <reference path="../../helpers/js/storageHelpers.ts"/>
 /// <reference path="../../helpers/js/selectionHelpers.ts"/>
 module Wiki {

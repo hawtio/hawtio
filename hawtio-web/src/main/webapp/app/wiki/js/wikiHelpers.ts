@@ -4,7 +4,6 @@
 /// <reference path="../../git/js/git.ts"/>
 /// <reference path="../../fabric/js/fabricHelpers.ts"/>
 /// <reference path="../../helpers/js/urlHelpers.ts"/>
-/// <reference path="../../docker-registry/js/dockerRegistryHelpers.ts"/>
 /**
  * @module Wiki
  */
@@ -68,86 +67,6 @@ module Wiki {
       exemplar: "myfolder",
       regex: defaultLowerCaseFileNamePattern,
       invalid: defaultLowerCaseFileNamePatternInvalid
-    },
-    {
-      label: "App",
-      tooltip: "Creates a new App folder used to configure and run containers",
-      addClass: "icon-cog green",
-      exemplar: 'myapp',
-      regex: defaultFileNamePattern,
-      invalid: defaultFileNamePatternInvalid,
-      extension: '',
-      generated: {
-        mbean: ['io.fabric8', { type: 'KubernetesTemplateManager' }],
-        init: (workspace, $scope) => {
-
-        },
-        generate: (options:GenerateOptions) => {
-          log.debug("Got options: ", options);
-          options.form.name = options.name;
-          options.form.path = options.parentId;
-          options.form.branch = options.branch;
-          var json = angular.toJson(options.form);
-          var jolokia = <Jolokia.IJolokia> Core.injector.get("jolokia");
-          jolokia.request({
-            type: 'exec',
-            mbean: 'io.fabric8:type=KubernetesTemplateManager',
-            operation: 'createAppByJson',
-            arguments: [json]
-          }, onSuccess((response) => { 
-            log.debug("Generated app, response: ", response);
-            options.success(undefined); 
-          }, {
-            error: (response) => { options.error(response.error); }
-          }));
-        },
-        form: (workspace, $scope) => {
-          if (!$scope.doDockerRegistryCompletion) {
-            $scope.fetchDockerRepositories = () => {
-              return DockerRegistry.completeDockerRegistry();
-            }
-          }
-          return {
-            summaryMarkdown: 'Add app summary here',
-            replicaCount: 1
-          };
-        },
-        schema: {
-          description: 'App settings',
-          type: 'java.lang.String',
-          properties: {
-            'dockerImage': {
-              'description': 'Docker Image',
-              'type': 'java.lang.String',
-              'input-attributes': { 
-                'required': '', 
-                'class': 'input-xlarge',
-                'typeahead': 'repo for repo in fetchDockerRepositories() | filter:$viewValue',
-                'typeahead-wait-ms': '200'
-              }
-            },
-            'summaryMarkdown': {
-              'description': 'Short Description',
-              'type': 'java.lang.String',
-              'input-attributes': { 'class': 'input-xlarge' }
-            },
-            'replicaCount': {
-              'description': 'Replica Count',
-              'type': 'java.lang.Integer',
-              'input-attributes': {
-                min: '0'
-              }
-            },
-            'labels': {
-              'description': 'Labels',
-              'type': 'map',
-              'items': {
-                'type': 'string'
-              }
-            }
-          }
-        }
-      }
     },
     {
       label: "Fabric8 Profile",

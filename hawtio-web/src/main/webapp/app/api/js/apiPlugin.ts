@@ -35,7 +35,7 @@ module API {
       id: 'apis.index',
       content: 'APIs',
       title: 'View the available APIs inside this fabric',
-      isValid: (workspace) => Service.hasService(ServiceRegistry, "api-registry") && Kubernetes.isKubernetes(workspace),
+      isValid: (workspace) => Service.hasService(ServiceRegistry, "api-registry"),
       href: () => '#/api/services',
       isActive: (workspace) => workspace.isLinkActive('api/')
     });

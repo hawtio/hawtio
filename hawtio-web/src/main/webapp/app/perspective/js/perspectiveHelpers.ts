@@ -1,6 +1,4 @@
 /// <reference path="../../core/js/coreHelpers.ts"/>
-/// <reference path="../../kubernetes/js/kubernetesHelpers.ts"/>
-/// <reference path="../../junit/js/junitHelpers.ts"/>
 /// <reference path="../../core/js/preferenceHelpers.ts"/>
 /// <reference path="metadata.ts"/>
 /**
@@ -267,7 +265,6 @@ module Perspective {
       if (url.startsWith("/perspective/defaultPage") || url.startsWith("/login") || url.startsWith("/welcome") || url.startsWith("/index") ||
           // see metadata.ts for the fabric configuration for which plugins we want to be in the fabric perspective
           url.startsWith("/fabric") ||
-          url.startsWith("/kubernetes") ||
           url.startsWith("/profiles") ||
           url.startsWith("/dashboard") ||
           url.startsWith("/health") ||
@@ -275,8 +272,6 @@ module Perspective {
           (url.startsWith("/wiki") && url.has("/editFeatures"))) {
         answer = "fabric";
       }
-    } else if (Kubernetes.isKubernetes(workspace)) {
-      answer = "kubernetes";
     }
     answer = answer || Perspective.defaultPerspective || "container";
 
