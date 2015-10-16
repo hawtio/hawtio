@@ -65,7 +65,7 @@
     <fabric-test-version>${fabric-version}</fabric-test-version>
     <fabric-version>1.2.0.Beta4</fabric-version>
 
-    <activemq-version>5.11.1</activemq-version>
+    <activemq-version>5.12.1</activemq-version>
     <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
     <aether-version>1.13.1</aether-version>
     <scala-version>2.10.0</scala-version>
