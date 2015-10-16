@@ -68,7 +68,6 @@
     <activemq-version>5.11.1</activemq-version>
     <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
     <aether-version>1.13.1</aether-version>
-    <apollo-version>99-trunk-SNAPSHOT</apollo-version>
     <scala-version>2.10.0</scala-version>
     <atmosphere-version>1.0.18</atmosphere-version>
     <blueprint-web-version>1.0.0</blueprint-web-version>

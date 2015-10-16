@@ -7,6 +7,7 @@
 * Added camel-cdi as goal to the [maven](http://hawt.io/maven/) plugin to allow starting a Camel CDI application with hawtio embedded.
 * Fixed so JUnit plugin is not shown by default when there is no unit tests in the JVM to run.
 * Removed the kubernetes plugin which are only part of hawtio 2.x
+* Remove the apollo plugin as it was never complete and ActiveMQ Apollo is a dead project.
 
 #### 1.4.55
 

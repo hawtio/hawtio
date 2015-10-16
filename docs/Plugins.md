@@ -24,11 +24,6 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/activemq">activemq</a></td>
   </tr>
   <tr>
-    <td><a href="http://hawt.io/plugins/apollo/">apollo</a></td>
-    <td>Adds support for <a href="http://activemq.apache.org/apollo/">Apache ActiveMQ Apollo</a>. Lets you browse broker statistics, create queues/topcs, browse queues, send messages and visualise subscription and network information</td>
-    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/apollo">apollo</a></td>
-  </tr>
-  <tr>
     <td><a href="http://hawt.io/plugins/camel/">camel</a></td>
     <td>Adds support for <a href="http://camel.apache.org/">Apache Camel</a>. Lets you browse CamelContexts, routes, endpoints. Visualise running routes and their metrics. Create endpoints. Send messages. Trace message flows, as well profile routes to identifiy which parts runs fast or slow.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/camel">camel</a></td>
