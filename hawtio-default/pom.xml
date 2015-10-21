@@ -101,7 +101,7 @@
     </dependency>
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>insight-log4j</artifactId>
+      <artifactId>hawtio-insight-log</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

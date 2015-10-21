@@ -89,7 +89,7 @@
     </dependency>
 
     <dependency>
-      <groupId>in.hawt</groupId>
+      <groupId>io.hawt</groupId>
       <artifactId>hawtio-insight-log</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
@@ -628,7 +628,6 @@
               !org.apache.avalon*,
               !org.apache.log*,
               !javax.persistence,
-
               !com.jcraft.jzlib,
               !keypairgen,
               !signature,
