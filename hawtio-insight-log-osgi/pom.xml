@@ -73,6 +73,10 @@
             <Bundle-Name>${project.description}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
             <Bundle-Activator>io.hawt.log.osgi.Activator</Bundle-Activator>
+            <Import-Package>
+              org.apache.karaf.log.core;version="[3,5)",
+              *
+            </Import-Package>
             <Export-Package />
           </instructions>
         </configuration>
