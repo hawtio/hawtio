@@ -1,5 +1,13 @@
 package io.hawt.log.log4j;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import io.hawt.log.LogEvent;
 import io.hawt.log.LogFilter;
 import io.hawt.log.LogResults;
@@ -15,26 +23,9 @@ import org.apache.log4j.spi.AppenderAttachable;
 import org.apache.log4j.spi.LocationInfo;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
-//import org.ops4j.util.property.PropertiesPropertyResolver;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import org.apache.felix.scr.annotations.Activate;
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.ConfigurationPolicy;
-import org.apache.felix.scr.annotations.Deactivate;
 
 import static io.hawt.log.support.Objects.contains;
 
@@ -43,19 +34,16 @@ import static io.hawt.log.support.Objects.contains;
 /**
  * A log4j adapter for LogQueryMBean
  */
-@Component(name = "io.hawt.log4j.Log4jLogQuery", immediate = true, metatype = false, policy = ConfigurationPolicy.IGNORE,
-        label = "Hawtio Log4j LogQuery",
-        description = "Provides a JMX API to query logging events")
 public class Log4jLogQuery extends LogQuerySupport implements Log4jLogQueryMBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(Log4jLogQuery.class);
 
-    private int size = 1000;
+    private int size = 2000;
     private LruList<LoggingEvent> events;
-    private boolean addMavenCoordinates = true;
+    private boolean addMavenCoordinates = false;
 //    private AetherBasedResolver resolver;
-    private Properties properties = new Properties();
 //    private MavenConfigurationImpl config;
-    private Appender appender = new AppenderSkeleton() {
+    private Properties properties = new Properties();
+    private final Appender appender = new AppenderSkeleton() {
         protected void append(LoggingEvent loggingEvent) {
             logMessage(loggingEvent);
         }
@@ -69,36 +57,38 @@ public class Log4jLogQuery extends LogQuerySupport implements Log4jLogQueryMBean
     };
 
 
-    @PostConstruct
-    @Activate
     public void start() {
         super.start();
 
         reconnectAppender();
-
-        LOG.info("Connected to Log4j appender to trap logs with hawtio log plugin");
     }
 
     @Override
     public void reconnectAppender() {
         ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
-        AppenderAttachable appenderAttachable = null;
+
+        boolean added = false;
         if (loggerFactory instanceof AppenderAttachable) {
-            appenderAttachable = (AppenderAttachable) loggerFactory;
-        }
-        if (appenderAttachable == null) {
-            appenderAttachable = LogManager.getRootLogger();
-        }
-        if (appenderAttachable != null) {
+            AppenderAttachable appenderAttachable = (AppenderAttachable) loggerFactory;
             appender.setName("LogQuery");
             appenderAttachable.addAppender(appender);
-        } else {
-            LOG.error("No ILoggerFactory found so cannot attach appender!");
+            LOG.info("Connected to Log4j appender to trap logs with hawtio log plugin");
+            added = true;
+        }
+
+        org.apache.log4j.Logger root = LogManager.getRootLogger();
+        if (root != null) {
+            appender.setName("LogQuery");
+            root.addAppender(appender);
+            LOG.info("Connected to Log4j appender to trap logs with hawtio log plugin");
+            added = true;
+        }
+
+        if (!added) {
+            LOG.warn("No ILoggerFactory or RootLogger found so cannot attach hatwio log appender!");
         }
     }
 
-    @PreDestroy
-    @Deactivate
     public void stop() {
         super.stop();
     }

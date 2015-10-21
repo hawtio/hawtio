@@ -1,4 +1,4 @@
-package io.hawt.log.service;
+package io.hawt.log.osgi;
 
 import java.io.IOException;
 import javax.management.MBeanServer;
@@ -6,7 +6,6 @@ import javax.management.MBeanServer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.hawt.log.LogFilter;
 import io.hawt.log.LogResults;
-import io.hawt.log.service.support.MavenCoordinates;
 import io.hawt.log.support.LogQuerySupport;
 import io.hawt.log.support.Predicate;
 import org.apache.felix.scr.annotations.Activate;

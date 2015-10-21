@@ -1,4 +1,4 @@
-package io.hawt.log.service;
+package io.hawt.log.osgi;
 
 public interface LogQueryCallback<T> {
 

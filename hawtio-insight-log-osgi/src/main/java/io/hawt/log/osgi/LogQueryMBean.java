@@ -1,4 +1,4 @@
-package io.hawt.log.service;
+package io.hawt.log.osgi;
 
 import io.hawt.log.support.LogQuerySupportMBean;
 

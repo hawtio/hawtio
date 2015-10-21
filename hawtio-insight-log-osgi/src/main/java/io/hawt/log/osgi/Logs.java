@@ -1,4 +1,4 @@
-package io.hawt.log.service;
+package io.hawt.log.osgi;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,7 +15,7 @@ import org.ops4j.pax.logging.spi.PaxLevel;
 import org.ops4j.pax.logging.spi.PaxLocationInfo;
 import org.ops4j.pax.logging.spi.PaxLoggingEvent;
 
-import static io.hawt.log.service.support.MavenCoordinates.addMavenCoord;
+import static io.hawt.log.osgi.MavenCoordinates.addMavenCoord;
 
 public class Logs {
 

@@ -151,6 +151,7 @@
     <module>hawtio-git</module>
     <module>hawtio-ide</module>
     <module>hawtio-insight-log</module>
+    <module>hawtio-insight-log-osgi</module>
     <module>hawtio-junit</module>
     <module>hawtio-maven-indexer</module>
     <module>hawtio-maven-plugin</module>

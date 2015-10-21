@@ -1,11 +1,10 @@
-package io.hawt.log.service.support;
+package io.hawt.log.osgi;
 
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.hawt.log.service.Logs;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
