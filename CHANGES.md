@@ -8,6 +8,8 @@
 * Fixed so JUnit plugin is not shown by default when there is no unit tests in the JVM to run.
 * Removed the kubernetes plugin which are only part of hawtio 2.x
 * Remove the apollo plugin as it was never complete and ActiveMQ Apollo is a dead project.
+* Ported the fabric8-insight-log to hawtio-insight-log so we have the source code and maintain out of the box in the hawtio project
+* The Log plugin works again in Karaf containers (requires Karaf 3.0 or higher)
 
 #### 1.4.55
 

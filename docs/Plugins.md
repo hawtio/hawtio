@@ -146,6 +146,11 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/source">source</a></td>
   </tr>
   <tr>
+    <td><a href="http://hawt.io/plugins/springBoot/">springBoot</a></td>
+    <td>Spring Boot plugin to show information about the Spring Boot application.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/springBoot">source</a></td>
+  </tr>
+  <tr>
     <td><a href="http://hawt.io/plugins/threads/">threads</a></td>
     <td>Provides support for viewing the threads running in the JVM.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/threads">threads</a></td>
