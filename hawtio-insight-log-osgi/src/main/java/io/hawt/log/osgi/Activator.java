@@ -15,9 +15,9 @@ public class Activator implements BundleActivator {
 
     @Override
     public void start(BundleContext context) throws Exception {
-        ServiceReference<LogService> ref = context.getServiceReference(LogService.class);
+        ServiceReference ref = context.getServiceReference(LogService.class.getName());
         if (ref != null) {
-            LogService logService = context.getService(ref);
+            LogService logService = (LogService) context.getService(ref);
             logQuery = new LogQuery(logService);
             logQuery.start();
         } else {

@@ -1,7 +1,7 @@
 package io.hawt.log.log4j;
 
 import io.hawt.log.support.MavenCoordinates;
-import io.hawt.util.Strings;
+import io.hawt.log.support.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,7 @@ public class MavenCoordHelper {
 
     public static String getMavenCoordinates(String className) {
         String coordinates = null;
-        if (!Strings.isBlank(className)) {
+        if (!Objects.isBlank(className)) {
             coordinates = classToMavenCoordMap.get(className);
             if (coordinates == null) {
                 try {
@@ -54,7 +54,7 @@ public class MavenCoordHelper {
                             File file = new File(path);
                             if (file.exists() && !file.isDirectory()) {
                                 String coordinates = MavenCoordinates.mavenCoordinatesFromJarFile(file);
-                                if (!Strings.isBlank(coordinates)) {
+                                if (!Objects.isBlank(coordinates)) {
                                     return coordinates;
                                 }
                             }

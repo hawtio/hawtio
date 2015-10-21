@@ -21,7 +21,6 @@ import javax.management.ObjectName;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.hawt.log.LogFilter;
 import io.hawt.log.LogResults;
-import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -198,10 +197,10 @@ public abstract class LogQuerySupport implements LogQuerySupportMBean {
     public String getSource(String mavenCoords, String className, String filePath) throws IOException {
         // the fileName could be just a name and extension so we may have to use the className to make a fully qualified package
         String classNamePath = null;
-        if (!Strings.isBlank(className)) {
+        if (!Objects.isBlank(className)) {
             classNamePath = className.replace('.', '/') + ".java";
         }
-        if (Strings.isBlank(filePath)) {
+        if (Objects.isBlank(filePath)) {
             filePath = classNamePath;
         } else {
             // we may have package in the className but not in the file name

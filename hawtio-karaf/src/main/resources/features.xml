@@ -5,7 +5,6 @@
     <details>Installs the core hawtio war file with minimal extensions</details>
     <feature>war</feature>
     <bundle>mvn:io.hawt/hawtio-json-schema-mbean/${project.version}</bundle>
-    <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-web/${project.version}/war</bundle>
 
     <config name="jmx.acl.hawtio.plugin">
@@ -14,9 +13,19 @@
 
   </feature>
 
+  <feature name="hawtio-log" version="${project.version}" resolver="(obr)">
+    <details>Installs the hawtio logging</details>
+    <bundle>mvn:io.hawt/hawtio-insight-log/${project.version}</bundle>
+    <bundle>mvn:io.hawt/hawtio-insight-log-osgi/${project.version}</bundle>
+    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-core/2.6.3</bundle>
+    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-annotations/2.6.3</bundle>
+    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-databind/2.6.3</bundle>
+  </feature>
+
   <feature name="hawtio" version="${project.version}" resolver="(obr)">
     <details>Installs the main hawtio war file, an MBean helper for OSGi and an MBean helper to get JSON Schema out of Java objects</details>
     <feature>hawtio-core</feature>
+    <feature>hawtio-logging</feature>
     <feature>hawtio-karaf-terminal</feature>
     <feature>hawtio-maven-indexer</feature>
   </feature>
@@ -24,6 +33,7 @@
   <feature name="hawtio-offline" version="${project.version}" resolver="(obr)">
     <details>Installs hawtio in offline mode (without Maven service which requires internet connection)</details>
     <feature>hawtio-core</feature>
+    <feature>hawtio-logging</feature>
     <feature>hawtio-karaf-terminal</feature>
   </feature>
 

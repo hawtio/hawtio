@@ -7,7 +7,7 @@ import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.hawt.util.Strings;
+import io.hawt.log.support.Objects;
 
 /**
  * Code modified from log4j to format exceptions
@@ -77,7 +77,7 @@ public class ThrowableFormatter {
                 int detailStart = buf.length();
                 buf.append('[');
                 String mavenCoordinates = MavenCoordHelper.getMavenCoordinates(cls);
-                if (!Strings.isBlank(mavenCoordinates)) {
+                if (!Objects.isBlank(mavenCoordinates)) {
                     buf.append(mavenCoordinates);
                 } else {
                     try {

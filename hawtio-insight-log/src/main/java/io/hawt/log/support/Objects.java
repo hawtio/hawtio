@@ -2,6 +2,10 @@ package io.hawt.log.support;
 
 public final class Objects {
 
+    public static boolean isBlank(String text) {
+        return text == null || text.trim().length() == 0;
+    }
+
     /**
      * A helper method for comparing objects for equality while handling nulls
      */
