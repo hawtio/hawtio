@@ -21,11 +21,6 @@ module API {
   _module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "ServiceRegistry", ($location:ng.ILocationService, workspace:Workspace, viewRegistry, layoutFull, helpRegistry, ServiceRegistry) => {
 
     viewRegistry['api'] = layoutFull;
-    /*
-    helpRegistry.addUserDoc('log', 'app/wsdl/doc/help.md', () => {
-      return workspace.treeContainsDomainAndProperties('io.hawt.log', {type: 'LogQuery'});
-    });
-    */
 
     workspace.topLevelTabs.push({
       id: 'apis.index',

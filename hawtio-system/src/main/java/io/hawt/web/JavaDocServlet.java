@@ -29,7 +29,7 @@ public class JavaDocServlet extends HttpServlet {
                 mbeanServer = ManagementFactory.getPlatformMBeanServer();
             }
             if (objectName == null) {
-                objectName = new ObjectName("io.hawt.log:type=LogQuery");
+                objectName = new ObjectName("hawt:type=LogQuery");
             }
         } catch (MalformedObjectNameException e) {
             throw new ServletException("Failed to initialise LogQuery MBean: " + e, e);
