@@ -114,15 +114,15 @@
 
 <h5 id = "How_to_enable_hawtio_logs">How to enable hawtio logs</h5>
 
-<p>Hawtio uses an MBean usually called LogQuery which implements the <a href="https://github.com/fusesource/fuse/blob/master/insight/insight-log-core/src/main/java/org/fusesource/insight/log/support/LogQuerySupportMBean.java#L26">LogQuerySupportMBean interface</a> from either the <a href="https://github.com/fusesource/fuse/tree/master/insight/insight-log">insight-log</a> or <a href="https://github.com/fusesource/fuse/tree/master/insight/insight-log4j">insight-log4j</a> bundles depending on if you are working inside or outside of OSGi respectively.</p>
+<p>Hawtio uses an MBean usually called LogQuery which implements the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-insight-log">LogQuerySupportMBean interface] from either the [hawtio-insight-log</a> bundles.</p>
 
-<p>If you are using OSGi and use <a href="http://fuse.fusesource.org/fabric/">Fuse Fabric</a> or <a href="http://fusesource.com/products/fuse-esb-enterprise/">Fuse ESB</a> you already have <a href="https://github.com/fusesource/fuse/tree/master/insight/insight-log">insight-log</a> included. If not, or you are just using Apache Karaf just add the <strong>insight-log</strong> bundle.</p>
+<p>If you are using OSGi and install hawtio on Apache Karaf based containers then logging is included.</p>
 
-<p>If you are not using OSGi then you just need to ensure you have <a href="https://github.com/fusesource/fuse/tree/master/insight/insight-log4j">insight-log4j</a> in your WAR when you deploy hawtio; which is already included in the <a href="https://github.com/hawtio/hawtio/tree/master/sample">hawtio sample war</a>.</p>
+<p>If you are not using OSGi then you just need to ensure you have <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-insight-log">hawtio-insight-log</a> in your WAR when you deploy hawtio; which is already included in the <a href="https://github.com/hawtio/hawtio/tree/master/sample">hawtio sample war</a>.</p>
 
-<p>Then you need to ensure that the LogQuery bean is instantiated in whatever dependency injection framework you choose. For example this is <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/test/resources/applicationContext.xml#L18">how we initialise LogQuery</a> in the <a href="https://github.com/hawtio/hawtio/tree/master/sample">sample war</a> using spring XML:</p>
+<p>Then you need to ensure that the LogQuery bean is instantiated in whatever dependency injection framework you choose. For example this is <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/test/resources/applicationContext.xml#L18">how we initialise LogQuery</a> using spring XML:</p>
 
-<pre><code>&lt;bean id="logQuery" class="io.fabric8.insight.log.log4j.Log4jLogQuery"
+<pre><code>&lt;bean id="logQuery" class="io.hawt.log.log4j.Log4jLogQuery"
       lazy-init="false" scope="singleton"
       init-method="start" destroy-method="stop"/&gt;</code></pre>
 
@@ -131,8 +131,8 @@
 <ul>
 <li>If you have no Logs tab in hawtio, then
 <ul>
-<li>if you are in OSGi it means you are not running either the <a href="https://github.com/fusesource/fuse/tree/master/insight/insight-log">insight-log bundle</a></li>
-<li>if you are outside of OSGi it means you have not added the <a href="https://github.com/fusesource/fuse/tree/master/insight/insight-log4j">insight-log4j jar</a> to your hawtio web app or you have not properly initialised the insight-log4j jar to then initialise the LogQuery mbean</li>
+<li>if you are in OSGi then you need to use Karaf 3.0 or better. This does not work on Karaf 2.x. versions.</li>
+<li>if you are outside of OSGi it means you have not added the hawtio-insight-log jar to your hawtio web app or you have not properly initialised the LogQuery mbean</li>
 </ul></li>
 <li>If links don't appear in the Logger column on the logs tab of your hawtio then the maven coordinates cannot be resolved for some reason</li>
 <li>If links are there but clicking on them cannot find any source code it generally means the maven repository resolver is not working. You maybe need to configure a local maven repository proxy so hawtio can access the source jars? Or maybe you need to start publishing the source jars?</li>

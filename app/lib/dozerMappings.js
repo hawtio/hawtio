@@ -104,7 +104,8 @@ var io_hawt_dozer_schema_Mappings = {
                     "required" : true
                   },
                   "type" : {
-                    "type" : "string"
+                    "type" : "string",
+                    "required" : true
                   }
                 }
               },
@@ -148,7 +149,8 @@ var io_hawt_dozer_schema_Mappings = {
                     "type" : "string"
                   },
                   "name" : {
-                    "type" : "string"
+                    "type" : "string",
+                    "required" : true
                   }
                 }
               },
