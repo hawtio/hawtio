@@ -19,7 +19,7 @@ Once you have downloaded it, just run this from the command line:
 
     java -jar hawtio-app-1.4.56.jar
 
-And the console should show you which URL to open to view hawtio; which by default is [http://localhost:8282/hawtio/](http://localhost:8282/hawtio/)
+And the console should show you which URL to open to view hawtio; which by default is [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/)
 
 You can specify the port number to use, for example to use port 8090 run from the command line:
 
@@ -57,9 +57,9 @@ If you are running Tomcat 5/6/7, Jetty 7/8 or you could just deploy a WAR:
 
 Copy the WAR file to your deploy directory in your container.
 
-If you rename the downloaded file to _hawtio.war_ then drop it into your deploy directory then open [http://localhost:8282/hawtio/](http://localhost:8282/hawtio/) and you should have your hawtio console to play with.
+If you rename the downloaded file to _hawtio.war_ then drop it into your deploy directory then open [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) and you should have your hawtio console to play with.
 
-Otherwise you will need to use either [http://localhost:8282/hawtio-default-1.4.56/](http://localhost:8282/hawtio-default-1.4.56/) or [http://localhost:8282/sample-1.4.56/](http://localhost:8282/sample-1.4.56/)  depending on the file name you downloaded.
+Otherwise you will need to use either [http://localhost:8080/hawtio-default-1.4.56/](http://localhost:8080/hawtio-default-1.4.56/) or [http://localhost:8080/sample-1.4.56/](http://localhost:8080/sample-1.4.56/)  depending on the file name you downloaded.
 
 Please check [the configuration guide](http://hawt.io/configuration/index.html) to see how to configure things; in particular security.
 
