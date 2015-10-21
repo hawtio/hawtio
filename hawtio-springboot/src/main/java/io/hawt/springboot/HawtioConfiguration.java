@@ -10,10 +10,8 @@ import io.hawt.web.GitServlet;
 import io.hawt.web.JavaDocServlet;
 import io.hawt.web.LoginServlet;
 import io.hawt.web.LogoutServlet;
-import io.hawt.web.PodServlet;
 import io.hawt.web.ProxyServlet;
 import io.hawt.web.RedirectFilter;
-import io.hawt.web.ServiceServlet;
 import io.hawt.web.SessionExpiryFilter;
 import io.hawt.web.UploadServlet;
 import io.hawt.web.UserServlet;
@@ -57,16 +55,6 @@ public class HawtioConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public ServletRegistrationBean jolokiaproxy() {
         return new ServletRegistrationBean(new ProxyServlet(), "/hawtio/proxy/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean kubeservice() {
-        return new ServletRegistrationBean(new ServiceServlet(), "/hawtio/service/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean kubepod() {
-        return new ServletRegistrationBean(new PodServlet(), "/hawtio/pod/*");
     }
 
     @Bean
