@@ -13,9 +13,6 @@
   <description>hawtio :: hawtio-insight-log</description>
   <packaging>bundle</packaging>
 
-  <properties>
-  </properties>
-
   <dependencies>
 
     <dependency>
@@ -71,6 +68,11 @@
           <instructions>
             <Bundle-Name>${project.description}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Import-Package>
+              com.fasterxml.jackson.annotation;version="${jackson-version-range}",
+              com.fasterxml.jackson.databind;version="${jackson-version-range}",
+              *
+            </Import-Package>
           </instructions>
         </configuration>
       </plugin>
