@@ -18,15 +18,15 @@ module Log {
   }
 
   export function treeContainsLogQueryMBean(workspace) {
-    return workspace.treeContainsDomainAndProperties('hawt', {type: 'LogQuery'}) || workspace.treeContainsDomainAndProperties('io.fabric8.insight', {type: 'LogQuery'});
+    return workspace.treeContainsDomainAndProperties('hawtio', {type: 'LogQuery'}) || workspace.treeContainsDomainAndProperties('io.fabric8.insight', {type: 'LogQuery'});
   }
 
   export function isSelectionLogQueryMBean(workspace) {
-    return workspace.hasDomainAndProperties('hawt', {type: 'LogQuery'}) || workspace.hasDomainAndProperties('io.fabric8.insight', {type: 'LogQuery'});
+    return workspace.hasDomainAndProperties('hawtio', {type: 'LogQuery'}) || workspace.hasDomainAndProperties('io.fabric8.insight', {type: 'LogQuery'});
   }
 
   export function findLogQueryMBean(workspace) {
-    var node = workspace.findMBeanWithProperties('hawt', {type: 'LogQuery'});
+    var node = workspace.findMBeanWithProperties('hawtio', {type: 'LogQuery'});
     if (!node) {
       node = workspace.findMBeanWithProperties('io.fabric8.insight', {type: 'LogQuery'});
     }

@@ -75,6 +75,8 @@ public class Log4jLogQuery extends LogQuerySupport implements Log4jLogQueryMBean
         super.start();
 
         reconnectAppender();
+
+        LOG.info("Connected to Log4j appender to trap logs with hawtio log plugin");
     }
 
     @Override
