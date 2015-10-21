@@ -117,7 +117,7 @@ public abstract class LogQuerySupport implements LogQuerySupportMBean {
 
     public ObjectName getMbeanName() throws MalformedObjectNameException {
         if (mbeanName == null) {
-            mbeanName = new ObjectName("hawt:type=LogQuery");
+            mbeanName = new ObjectName("hawtio:type=LogQuery");
         }
         return mbeanName;
     }
