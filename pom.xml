@@ -97,7 +97,6 @@
     <infinispan-version>6.0.0.Final</infinispan-version>
 -->
 
-    <insight-log4j-version>${fabric-test-version}</insight-log4j-version>
     <!-- make sure to align jackson with fabric8 -->
     <jackson-version>2.5.4</jackson-version>
     <javaewah-version>1.0.2</javaewah-version>
@@ -151,6 +150,7 @@
     <module>hawtio-dozer</module>
     <module>hawtio-git</module>
     <module>hawtio-ide</module>
+    <module>hawtio-insight-log</module>
     <module>hawtio-junit</module>
     <module>hawtio-kubernetes</module>
     <module>hawtio-maven-indexer</module>

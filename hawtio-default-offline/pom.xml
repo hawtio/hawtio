@@ -86,10 +86,14 @@
 
     <dependency>
       <groupId>io.hawt</groupId>
+      <artifactId>insight-log4j</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
       <artifactId>hawtio-json-schema-mbean</artifactId>
       <version>${project.version}</version>
     </dependency>
-
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-local-jvm-mbean</artifactId>

@@ -66,6 +66,11 @@
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>in.hawt</groupId>
+      <artifactId>hawtio-insight-log</artifactId>
+    </dependency>
+
     <!-- Git module -->
     <dependency>
       <groupId>io.hawt</groupId>
@@ -319,12 +324,6 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
       <version>${spring-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.fabric8.insight</groupId>
-      <artifactId>insight-log4j</artifactId>
-      <version>${insight-log4j-version}</version>
       <scope>test</scope>
     </dependency>
 
