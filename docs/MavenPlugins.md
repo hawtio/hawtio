@@ -225,7 +225,7 @@ In the Maven pom.xml file, the **hawtio** plugin is configured by adding the fol
     <plugin>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-maven-plugin</artifactId>
-      <version>1.4.55</version>
+      <version>1.4.56</version>
       <configuration>
         <!-- configuration options goes here -->
       </configuration>
@@ -272,9 +272,9 @@ To run the same example with **hawtio** embedded as a web console, you simply do
     cd examples
     cd camel-example-console
     mvn compile
-    mvn io.hawt:hawtio-maven-plugin:1.4.55:camel
+    mvn io.hawt:hawtio-maven-plugin:1.4.56:camel
 
-Where 1.4.55 is the **hawtio** version to use.
+Where 1.4.56 is the **hawtio** version to use.
 
 ### Adding hawtio plugin to the Apache Camel examples
 
@@ -285,7 +285,7 @@ In the &lt;build&gt;&lt;plugin&gt;section add the following xml code:
     <plugin>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-maven-plugin</artifactId>
-      <version>1.4.55</version>
+      <version>1.4.56</version>
     </plugin>
 
 And you can run the console example simply by typing
