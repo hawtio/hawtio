@@ -17,9 +17,9 @@
     <details>Installs the hawtio logging</details>
     <bundle>mvn:io.hawt/hawtio-insight-log/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-insight-log-osgi/${project.version}</bundle>
-    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-core/2.6.3</bundle>
-    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-annotations/2.6.3</bundle>
-    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-databind/2.6.3</bundle>
+    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-core/${jackson-version}</bundle>
+    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson-version}</bundle>
+    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-databind/${jackson-version}</bundle>
   </feature>
 
   <feature name="hawtio" version="${project.version}" resolver="(obr)">
