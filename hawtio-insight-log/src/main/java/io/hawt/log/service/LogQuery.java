@@ -1,18 +1,3 @@
-/**
- *  Copyright 2005-2015 Red Hat, Inc.
- *
- *  Red Hat licenses this file to you under the Apache License, version
- *  2.0 (the "License"); you may not use this file except in compliance
- *  with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- *  implied.  See the License for the specific language governing
- *  permissions and limitations under the License.
- */
 package io.hawt.log.service;
 
 import java.io.IOException;
@@ -30,9 +15,8 @@ import org.apache.felix.scr.annotations.Deactivate;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.apache.felix.scr.annotations.ReferencePolicy;
-import org.apache.karaf.log.core.LogService;
-import org.ops4j.pax.logging.spi.PaxAppender;
 import org.ops4j.pax.logging.spi.PaxLoggingEvent;
+import org.osgi.service.log.LogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +33,8 @@ public class LogQuery extends LogQuerySupport implements LogQueryMBean {
     @Reference(referenceInterface = LogService.class, policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.OPTIONAL_MULTIPLE, bind = "bindLogService", unbind = "unbindLogService")
     private LogService logService;
 
+    private volatile org.apache.karaf.log.core.LogService karafLogService;
+
     public LogQuery() {
         mapper.getSerializationConfig().withSerializationInclusion(JsonInclude.Include.NON_EMPTY);
     }
@@ -63,13 +49,17 @@ public class LogQuery extends LogQuerySupport implements LogQueryMBean {
         unregisterMBeanServer(mbeanServer);
     }
 
-    public void bindLogService(LogService paxAppender) {
-        this.logService = paxAppender;
+    public void bindLogService(LogService service) {
+        this.logService = service;
+        if (service instanceof org.apache.karaf.log.core.LogService) {
+            karafLogService = (org.apache.karaf.log.core.LogService) service;
+        }
     }
 
-    public void unbindLogService(PaxAppender paxAppender) {
-        if (paxAppender.equals(logService)) {
+    public void unbindLogService(LogService service) {
+        if (logService != null && logService.equals(service)) {
             logService = null;
+            karafLogService = null;
         }
     }
 
@@ -100,8 +90,8 @@ public class LogQuery extends LogQuerySupport implements LogQueryMBean {
 
         long from = Long.MAX_VALUE;
         long to = Long.MIN_VALUE;
-        if (logService != null) {
-            Iterable<PaxLoggingEvent> iterable = logService.getEvents();
+        if (karafLogService != null) {
+            Iterable<PaxLoggingEvent> iterable = karafLogService.getEvents();
             if (iterable != null) {
                 int matched = 0;
                 for (PaxLoggingEvent event : iterable) {
