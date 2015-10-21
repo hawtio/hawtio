@@ -16,7 +16,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('filterts', 'Find plugins to compile', function() {
     typescriptFiles.length = 0;
-    var plugins = (grunt.option("plugins") || "core,kubernetes,service,ui").split(',');
+    var plugins = (grunt.option("plugins") || "core,service,ui").split(',');
     grunt.log.writeln("Desired plugins: ", plugins);
     grunt.file.recurse(sourceAppDir, function (abspath, rootDir, subDir, fileName) {
       if (subDir && fileName.endsWith('.ts')) {
