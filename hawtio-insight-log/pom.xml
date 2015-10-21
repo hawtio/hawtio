@@ -67,6 +67,12 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <version>${maven-bundle-plugin-version}</version>
         <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-Name>${project.description}</Bundle-Name>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+          </instructions>
+        </configuration>
       </plugin>
     </plugins>
   </build>
