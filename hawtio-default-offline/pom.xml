@@ -86,7 +86,7 @@
 
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>insight-log4j</artifactId>
+      <artifactId>hawtio-insight-log</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -105,11 +105,6 @@
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>${commons-codec-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.fabric8.insight</groupId>
-      <artifactId>insight-log4j</artifactId>
-      <version>${insight-log4j-version}</version>
     </dependency>
   </dependencies>
 
