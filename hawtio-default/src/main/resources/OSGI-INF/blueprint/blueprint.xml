@@ -8,7 +8,7 @@
     </ext:default-properties>
   </ext:property-placeholder>
 
-  <bean id="logFacade" class="io.fabric8.insight.log.log4j.Log4jLogQuery" init-method="start" destroy-method="stop" scope="singleton">
+  <bean id="logFacade" class="io.hawt.log.log4j.Log4jLogQuery" init-method="start" destroy-method="stop" scope="singleton">
     <property name="size" value="${hawtio.log.buffer.size}"/>
   </bean>
 </blueprint>

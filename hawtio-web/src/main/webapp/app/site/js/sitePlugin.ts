@@ -28,12 +28,6 @@ module Site {
       href: () => "#/site"
     });
 
-    /*
-      helpRegistry.addUserDoc('log', 'app/log/doc/help.md', () => {
-      return workspace.treeContainsDomainAndProperties('io.fabric8.insight', {type: 'LogQuery'});
-      });
-
-      */
   }]);
 
   hawtioPluginLoader.addModule(pluginName);

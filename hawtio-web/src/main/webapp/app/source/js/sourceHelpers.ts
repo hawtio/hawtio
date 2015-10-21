@@ -13,7 +13,7 @@ module Source {
    */
   export function getInsightMBean(workspace) {
     var mavenStuff = workspace.mbeanTypesToDomain["LogQuery"] || {};
-    var insight = mavenStuff["org.fusesource.insight"] || mavenStuff["io.fabric8.insight"] || {};
+    var insight = mavenStuff["io.hawt.log"] || mavenStuff["io.fabric8.insight"] || {};
     var mbean = insight.objectName;
     return mbean;
   }

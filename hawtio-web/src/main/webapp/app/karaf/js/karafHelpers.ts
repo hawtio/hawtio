@@ -116,6 +116,7 @@ module Karaf {
     "^org.apache.servicemix.bundles",
     "^org.objectweb.asm",
     "^io.hawt",
+    "^io.hawt.log",
     "^javax.mail",
     "^javax",
     "^org.jvnet",

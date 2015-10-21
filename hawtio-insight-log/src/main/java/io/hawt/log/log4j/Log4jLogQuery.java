@@ -53,13 +53,13 @@ import org.apache.felix.scr.annotations.Deactivate;
 
 import static io.hawt.log.support.Objects.contains;
 
-// TODO: disable mvn resolver
+// TODO: re-enable mvn resolver (requires code to be ported from fabric8 v1)
 
 /**
  * A log4j adapter for LogQueryMBean
  */
-@Component(name = "io.fabric8.insight.log4j.Log4jLogQuery", immediate = true, metatype = false, policy = ConfigurationPolicy.IGNORE,
-        label = "Fabric8 Insight Log4j LogQuery",
+@Component(name = "io.hawt.log4j.Log4jLogQuery", immediate = true, metatype = false, policy = ConfigurationPolicy.IGNORE,
+        label = "Hawtio Log4j LogQuery",
         description = "Provides a JMX API to query logging events")
 public class Log4jLogQuery extends LogQuerySupport implements Log4jLogQueryMBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(Log4jLogQuery.class);
