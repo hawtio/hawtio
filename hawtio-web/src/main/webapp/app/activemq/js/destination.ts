@@ -71,10 +71,10 @@ module ActiveMQ {
         var operation;
         if (isQueue) {
           operation = "addQueue(java.lang.String)"
-          $scope.message = "Created queue " + name;
+          $scope.message = "Created queue " + Core.escapeHtml(name);
         } else {
           operation = "addTopic(java.lang.String)";
-          $scope.message = "Created topic " + name;
+          $scope.message = "Created topic " + Core.escapeHtml(name);
         }
         if (mbean) {
           jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
