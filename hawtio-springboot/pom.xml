@@ -105,8 +105,16 @@
 								<include>app/app.js</include>
 							</includes>
 							<encoding>ISO-8859-1</encoding>
-							<token>$locationProvider.html5Mode(true);</token>
-							<value>$locationProvider.html5Mode(false);</value>
+							<replacements>
+								<replacement>
+									<token>$locationProvider.html5Mode(true);</token>
+									<value>$locationProvider.html5Mode(false);</value>
+								</replacement>
+								<replacement>
+									<token>.html5Mode(!0)</token>
+									<value>.html5Mode(!!0)</value>
+								</replacement>
+							</replacements>
 							<regex>false</regex>
 							<quiet>false</quiet>
 						</configuration>
