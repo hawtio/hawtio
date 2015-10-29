@@ -656,7 +656,7 @@ module Jmx {
     }
 
     function generateSummaryAndDetail(key, data) {
-      var value = data.value;
+      var value = Core.escapeHtml(data.value);
       if (!angular.isArray(value) && angular.isObject(value)) {
         var detailHtml = "<table class='table table-striped'>";
         var summary = "";
