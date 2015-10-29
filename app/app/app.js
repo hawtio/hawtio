@@ -8288,15 +8288,16 @@ var ActiveMQ;
         }
         $scope.createDestination = function (name, isQueue) {
             var mbean = getBrokerMBean(jolokia);
+            name = Core.escapeHtml(name);
             if (mbean) {
                 var operation;
                 if (isQueue) {
                     operation = "addQueue(java.lang.String)";
-                    $scope.message = "Created queue " + Core.escapeHtml(name);
+                    $scope.message = "Created queue " + name;
                 }
                 else {
                     operation = "addTopic(java.lang.String)";
-                    $scope.message = "Created topic " + Core.escapeHtml(name);
+                    $scope.message = "Created topic " + name;
                 }
                 if (mbean) {
                     jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
@@ -33035,7 +33036,7 @@ var Jmx;
             return value;
         }
         function generateSummaryAndDetail(key, data) {
-            var value = data.value;
+            var value = Core.escapeHtml(data.value);
             if (!angular.isArray(value) && angular.isObject(value)) {
                 var detailHtml = "<table class='table table-striped'>";
                 var summary = "";
