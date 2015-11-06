@@ -36,6 +36,8 @@ Here's a rundown of the current hawtio 2.x components:
 * [hawtio-wiki](https://github.com/hawtio/hawtio-wiki) - Provides a git based wiki
 * [hawtio-kubernetes](https://github.com/hawtio/hawtio-kubernetes) - The plugin for working with [Kubernetes](http://kubernetes.io/)
 * [hawtio-forge](https://github.com/hawtio/hawtio-forge) - The [JBoss Forge](http://forge.jboss.org/) plugin for hawtio so it can view and create projects and execute forge commands
+* [hawtio-integration](https://github.com/hawtio/hawtio-integration) - The plugin for working with Apache Camel and ActiveMQ.
+* [hawtio-java](https://github.com/hawtio/hawtio-java) - hawtio 2.x web console for Java distributed as a WAR and standalone Java JAR artefacts. 
 
 
 ### slush generators
