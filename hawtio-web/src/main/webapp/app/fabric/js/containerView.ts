@@ -20,6 +20,10 @@ module Fabric {
     $scope.locationIdFilter = '';
     $scope.hasCounts = true;
     $scope.toString = Core.toString;
+    $scope.filterContainersText = 'Filter Containers...';
+    $scope.filterProfilesText = 'Filter Profiles...';
+    $scope.filterLocationsText = 'Filter Locations...';
+    $scope.filterBoxText = $scope.filterContainersText;
 
     $scope.createLocationDialog = ContainerHelpers.getCreateLocationDialog($scope, $dialog);
 
