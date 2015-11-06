@@ -8,15 +8,15 @@
         <div class="btn-group" style="padding-left: 10px">
           <button class="btn"
                   ng-class="groupByClass('profileIds', groupBy)"
-                  ng-click="groupBy='profileIds'">Profiles
+                  ng-click="groupBy='profileIds';filterBoxText=filterProfilesText">Profiles
           </button>
           <button class="btn"
                   ng-class="groupByClass('location', groupBy)"
-                  ng-click="groupBy='location'">Location
+                  ng-click="groupBy='location';filterBoxText=filterLocationsText">Location
           </button>
           <button class="btn"
                   ng-class="groupByClass('none', groupBy)"
-                  ng-click="groupBy='none'">Containers
+                  ng-click="groupBy='none';filterBoxText=filterContainersText">Containers
           </button>
         </div>
         <span class="badge badge-success mouse-pointer"
@@ -84,7 +84,7 @@
           <i class="icon-plus"></i> Create
         </a>
         <hawtio-filter ng-model="filter"
-                       placeholder="Filter Containers..."
+                       placeholder="{{filterBoxText}}"
                        save-as="fabric-container-view-text-filter"></hawtio-filter>
       </div>
     </div>
