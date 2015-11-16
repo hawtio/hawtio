@@ -41,7 +41,6 @@ public class CamelMojo extends RunMojo {
                 Plugin plugin = (Plugin) obj;
                 if ("org.apache.camel".equals(plugin.getGroupId()) && "camel-maven-plugin".equals(plugin.getArtifactId())) {
                     Object config = plugin.getConfiguration();
-                    System.out.println(config);
                     if (config instanceof Xpp3Dom) {
                         Xpp3Dom dom = (Xpp3Dom) config;
                         Xpp3Dom child = dom.getChild("mainClass");
