@@ -1,6 +1,11 @@
 
 ### Change Log
 
+#### 1.4.57
+
+* hawtio-maven-plugin camel goal - Now supports using mainClass configured from the camel-maven-plugin, so it uses that out of the box
+* Fixed an issue with the spring-boot plugin with base urls
+
 #### 1.4.56
 
 * Camel plugin - Now groups the properties into tabs so viewing endpoint properties with many options is using multi-tabs to group the options.
