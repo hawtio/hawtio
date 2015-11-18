@@ -1,6 +1,11 @@
 
 ### Change Log
 
+#### 1.4.58
+
+* The hawtio-maven-plugin now waits 3 seconds before opening the web-console which allows the JVM to startip Camel and other services to be ready prior to the web console. The delay can be configured.
+
+
 #### 1.4.57
 
 * hawtio-maven-plugin camel goal - Now supports using mainClass configured from the camel-maven-plugin, so it uses that out of the box
