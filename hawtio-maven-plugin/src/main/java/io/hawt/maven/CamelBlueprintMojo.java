@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 @Mojo(name = "camel-blueprint", defaultPhase = LifecyclePhase.PROCESS_TEST_CLASSES, requiresDependencyResolution = ResolutionScope.RUNTIME)
 @Execute(phase = LifecyclePhase.PROCESS_TEST_CLASSES)
@@ -51,6 +53,23 @@ public class CamelBlueprintMojo extends RunMojo {
         if (configAdminFileName != null) {
             args.add("-pf");
             args.add(configAdminFileName);
+        }
+
+        // if no mainClass configured then try to find it from camel-maven-plugin
+        if (mainClass == null && project.getBuildPlugins() != null) {
+            for (Object obj : project.getBuildPlugins()) {
+                Plugin plugin = (Plugin) obj;
+                if ("org.apache.camel".equals(plugin.getGroupId()) && "camel-maven-plugin".equals(plugin.getArtifactId())) {
+                    Object config = plugin.getConfiguration();
+                    if (config instanceof Xpp3Dom) {
+                        Xpp3Dom dom = (Xpp3Dom) config;
+                        Xpp3Dom child = dom.getChild("mainClass");
+                        if (child != null) {
+                            mainClass = child.getValue();
+                        }
+                    }
+                }
+            }
         }
 
         if (mainClass != null) {
