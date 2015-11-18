@@ -93,6 +93,16 @@ Currently all of the **hawtio** Maven Plugins provides the following common opti
     <td>The fully qualified name of the main class to executed to bootstrap the Maven project. This option is required, and must be a public static void main Java class.</td>
   </tr>  
   <tr>
+    <td>openWebConsole</td>
+    <td>true</td>
+    <td>Wheter to automatic open the hawtio web console after 3 number of seconds</td>
+  </tr>  
+  <tr>
+    <td>openWebConsoleDelay</td>
+    <td>3</td>
+    <td>Number of seconds to wait before opening the web console</td>
+  </tr>  
+  <tr>
     <td>arguments</td>
     <td></td>
     <td>Optional arguments to pass to the main class.</td>

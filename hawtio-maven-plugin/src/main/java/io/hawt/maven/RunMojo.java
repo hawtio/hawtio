@@ -1,6 +1,8 @@
 package io.hawt.maven;
 
+import java.awt.*;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +28,12 @@ public class RunMojo extends BaseMojo {
 
     @Parameter(property = "hawtio.context", defaultValue = "hawtio")
     String context;
+
+    @Parameter(property = "hawtio.openWebConsole", defaultValue = "true")
+    boolean openWebConsole;
+
+    @Parameter(property = "hawtio.openWebConsoleDelay", defaultValue = "3")
+    int openWebConsoleDelay;
 
     @Parameter(property = "hawtio.mainClass")
     String mainClass;
@@ -119,11 +127,40 @@ public class RunMojo extends BaseMojo {
                     Method hawtioMain = Thread.currentThread().getContextClassLoader().loadClass("io.hawt.app.App")
                             .getMethod("main", String[].class);
                     String[] args = new String[]{"--context", context, "--port", "" + port};
+
+                    // do not open the url right now as we need to start Camel a bit first
+                    System.setProperty("hawtio.openUrl", "false");
                     hawtioMain.invoke(null, new Object[]{args});
 
                     afterBootstrapHawtio();
 
                     beforeBootstrapMain();
+
+                    // setup a background task that opens the url in 5 seconds
+                    if (openWebConsole) {
+                        Thread thread = new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    getLog().info("Waiting " + openWebConsoleDelay + " seconds to open the hawtio web console ...");
+                                    Thread.sleep(openWebConsoleDelay * 1000);
+
+                                    String url = System.getProperty("hawtio.url");
+                                    if (url != null && Desktop.isDesktopSupported()) {
+                                        try {
+                                            getLog().info("Opening hawtio web console: " + url);
+                                            Desktop.getDesktop().browse(new URI(url));
+                                        } catch (Exception e) {
+                                            System.out.println("Failed to open browser session, to access hawtio visit \"" + url + "\"");
+                                        }
+                                    }
+                                } catch (Throwable e) {
+                                    // ignore
+                                }
+                            }
+                        });
+                        thread.start();
+                    }
 
                     if (bootstrapMain) {
                         getLog().info("Starting " + mainClass + "...");

@@ -99,9 +99,15 @@ public class App {
         } else {
             try {
                 main.run();
-                if (Desktop.isDesktopSupported()) {
-                    int port = main.getPort();
-                    String url = "http://localhost:" +  port + main.getContextPath();
+
+                // should we open the url
+                int port = main.getPort();
+                String url = "http://localhost:" +  port + main.getContextPath();
+                // set what is the url
+                System.setProperty("hawtio.url", url);
+
+                boolean openUrl = "true".equals(System.getProperty("hawtio.openUrl", "true"));
+                if (openUrl && Desktop.isDesktopSupported()) {
                     try {
                         Desktop.getDesktop().browse(new URI(url));
                     } catch (Exception e) {
