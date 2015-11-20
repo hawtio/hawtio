@@ -3632,10 +3632,38 @@ var Core;
                     Logger.get("jquery-cache-prune").debug("Cache item with handle that isn't in the document, key: ", key, "value: ", value, " element: ", handle.elem);
                     $(handle.elem).remove();
                 }
+                function checkParentDestroyed($scope) {
+                    if ($scope.$parent) {
+                        return checkParentDestroyed($scope.$parent);
+                    }
+                    return {
+                        destroyed: $scope.$$destroyed,
+                        '$scope': $scope
+                    };
+                }
+                function destroyTree($scope) {
+                    if ($scope.$parent) {
+                        destroyTree($scope.$parent);
+                        $scope.$parent = null;
+                    }
+                    if ($scope) {
+                        try {
+                            $scope.$destroy();
+                        }
+                        catch (err) {
+                        }
+                        $scope.$$destroyed = true;
+                    }
+                }
+                if ($scope) {
+                    var info = checkParentDestroyed($scope);
+                    if (info.destroyed) {
+                        Logger.get("jquery-cache-prune").debug("Parent of $scope in cache item destroyed: ", info.$scope);
+                        destroyTree($scope);
+                    }
+                }
                 if ($scope && $scope.$$destroyed) {
                     Logger.get("jquery-cache-prune").debug("Pruning cache item with destroyed scope: ", key, "value: ", value, " data: ", data, " $scope: ", $scope);
-                    delete $scope.$$destroyed;
-                    $scope.$broadcast('$destroy');
                     toPrune.push(key);
                     return;
                 }
@@ -3643,7 +3671,8 @@ var Core;
             angular.forEach(toPrune, function (key) {
                 delete cache[key];
             });
-        }, 5000);
+            Logger.get("jquery-cache-prune").debug("Number of cache items after pruning: ", _.keys(cache).length, " number of items removed: ", toPrune.length);
+        }, 10000);
     }]);
 })(Core || (Core = {}));
 hawtioPluginLoader.addUrl("plugin");
