@@ -289,6 +289,33 @@ module Core {
         $route.reload();
       });
     }, 500);
+
+    setInterval(() => {
+      var cache = Core.pathGet($, ['cache']);
+      if (!cache) {
+        return;
+      }
+      var toPrune = [];
+      angular.forEach(cache, (value, key) => {
+        var data = Core.pathGet(value, ['data']);
+        var $scope = Core.pathGet(value, ['data', '$scope']);
+        var handle = Core.pathGet(value, ['handle']);
+        if (!$scope && handle && handle.elem && handle.elem !== document && !$.contains(document.documentElement, handle.elem)) {
+          Logger.get("jquery-cache-prune").debug("Cache item with handle that isn't in the document, key: ", key, "value: ", value, " element: ", handle.elem);
+          $(handle.elem).remove();
+        }
+        if ($scope && $scope.$$destroyed) {
+          Logger.get("jquery-cache-prune").debug("Pruning cache item with destroyed scope: ", key, "value: ", value, " data: ", data, " $scope: ", $scope);
+          delete $scope.$$destroyed;
+          $scope.$broadcast('$destroy');
+          toPrune.push(key);
+          return;
+        }
+      });
+      angular.forEach(toPrune, (key) => {
+        delete cache[key];
+      }); 
+    }, 5000);
   }]); // end _module.run
 } // end module Core
 
