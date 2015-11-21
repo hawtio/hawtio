@@ -19,14 +19,14 @@ package io.hawt.web.plugin.karaf.terminal;
 import java.io.PipedInputStream;
 import java.io.PrintStream;
 
-import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
-import org.apache.felix.service.threadio.ThreadIO;
 import org.osgi.framework.BundleContext;
 
 /**
- * Karaf is incompatible between 2.2 and 2.x and also between 2.x and 3.x versions.
- * So we need a factory to support both of them.
+ * Karaf is incompatible between any of its versions,
+ * So we need a factory to support more of them.
+ * <p/>
+ * However it keeps being annoying so we only support Karaf 4.0 onwards.
  */
 public interface KarafConsoleFactory {
 
@@ -34,10 +34,8 @@ public interface KarafConsoleFactory {
 
     void close(Object console, boolean param);
 
-    Object createConsole(CommandProcessor commandProcessor,
-                         PipedInputStream in,
+    Object createConsole(PipedInputStream in,
                          PrintStream pipedOut,
-                         ThreadIO threadIO,
                          BundleContext bundleContext) throws Exception;
 
 }

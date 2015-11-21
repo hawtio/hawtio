@@ -57,11 +57,11 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- karaf 3 support -->
+    <!-- karaf 4 support -->
     <dependency>
       <groupId>org.apache.karaf.shell</groupId>
       <artifactId>org.apache.karaf.shell.console</artifactId>
-      <version>3.0.1</version>
+      <version>${karaf-version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -138,8 +138,8 @@
               org.ops4j.pax.web.service,
               org.osgi.service.blueprint.container,
               org.osgi.service.http,
-              jline;version="[2.11,3.0)";-split-package:=merge-first,
-              org.apache.karaf.shell.console.jline;resolution:=optional;version="[2.2,4)",
+              jline;version="[2.13,3.0)";-split-package:=merge-first,
+              org.apache.karaf.shell.console;version="[4.0,5.0)",
               org.osgi.framework,
               javax.management,
               *;resolution:=optional
