@@ -141,6 +141,11 @@ The terminal plugin may have trouble the first time in use, not being able to co
 If you use Apache ServixeMix / Karaf and you deploy a Camel XML file by copying a xml file to the deploy directory, then the deployer does not run this with proper security. So the Karaf RBAC will deny the Apache Camel plugin to query the Camel routes to gather performance counters. As deploying by using plain XML files is not recommended, then it works by using a deployment unit as a proper OSGi bundle such as a JAR or KAR file.
 
 
+#### The tree keeps refreshing making the UI sluggish
+
+The reason is that there is something running in the JVM that keeps modifying the JMX tree, such as repeativily adding/removing same set of MBeans. For example Apache ActiveMQ does that when a JMS Client has been mis configured or configured without a connection pool. Because of no connection pool, then ActiveMQ JMS client creates a new connection, uses and closes the connection, and repeat that. As a net result of that, the MBean tree keeps being modified, which causes Hawtio to trigger a tree refresh. To resolve this use connection pooling with ActiveMQ - which you should always do. For an example see [issue 1903](https://github.com/hawtio/hawtio/issues/1903) for more details and how to resolve that.
+
+
 ### Plugin Questions
 
 Questions on using the available plugins:
