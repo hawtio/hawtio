@@ -4,7 +4,7 @@
 #### 1.4.58
 
 * The hawtio-maven-plugin now waits 3 seconds before opening the web-console which allows the JVM to startip Camel and other services to be ready prior to the web console. The delay can be configured.
-
+* The karaf terminal plugin requires Karaf 4.x (2.x/3.x no longer supported)
 
 #### 1.4.57
 
