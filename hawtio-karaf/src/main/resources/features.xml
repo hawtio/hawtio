@@ -99,6 +99,10 @@
     <details>A terminal plugin for hawtio when installed in Karaf</details>
     <bundle dependency="true">mvn:jline/jline/${jline.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-karaf-terminal/${project.version}/war</bundle>
+
+    <config name="jmx.acl.hawtio.plugin">
+      * = *
+    </config>
   </feature>
 
   <feature name="hawtio-redhat-fuse-branding" version="${project.version}" resolver="(obr)">
