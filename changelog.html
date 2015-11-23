@@ -107,8 +107,10 @@
 <h4 id = "1_4_58">1.4.58</h4>
 
 <ul>
+<li>When using ActiveMQ the hawtio web console no longer causing the tree to continuesly being updated, which otherwise will cause the web UI to be sluggish. Notice the reason for the update is becuse of ActiveMQ and end user may not use pooled connections or is using XA with no consumer cache. In either case hawtio now filter out those events to avoid triggering the web console UI to be updated constantly.</li>
 <li>The hawtio-maven-plugin now waits 3 seconds before opening the web-console which allows the JVM to startip Camel and other services to be ready prior to the web console. The delay can be configured.</li>
 <li>The karaf terminal plugin requires Karaf 4.x (2.x/3.x no longer supported)</li>
+<li>Upgraded to Camel 2.16.1</li>
 </ul>
 
 <h4 id = "1_4_57">1.4.57</h4>

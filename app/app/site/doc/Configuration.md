@@ -387,6 +387,10 @@ The following table contains the various configuration settings for the various 
       <td>hawtio.sessionTimeout</td>
       <td><strong>hawtio 1.2.2</strong> The maximum time interval, in seconds, that the servlet container will keep this session open between client accesses. If this option is not configured, then hawtio uses the default session timeout of the servlet container.</td>
     </tr>
+    <tr>
+      <td>hawtio.activemq.verbose.tree</td>
+      <td><strong>hawtio 1.4.58</strong> Is default <tt>false</tt> to filter out verbose ActiveMQ details from the tree in hawtio. This ensures situations when ActiveMQ will constantly add/remove same set of mbeans for a client connection because the client is not using pooled connections or using XA transactions without caching the consumer. In situations like these ActiveMQ keeps changing the mbeans which would cause the hawtio web console to trigger an update in the tree, which makes using the web console more sluggish. Therefore this is filtered out by default. This option can be set to <tt>true</tt> to restore old behavior.</td>
+    </tr>
   </tbody>
 </table>
 

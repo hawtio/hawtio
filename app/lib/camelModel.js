@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.16.0';
+var _apacheCamelModelVersion = '2.16.1';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -319,7 +319,7 @@ var _apacheCamelModel ={
     "batch-config": {
       "type": "object",
       "title": "Batch-config",
-      "group": "configuration,resequence",
+      "group": "eip,routing,resequence",
       "icon": "generic24.png",
       "description": "Configures batch-processing resequence eip.",
       "acceptInput": "false",
@@ -490,7 +490,7 @@ var _apacheCamelModel ={
     "circuitBreaker": {
       "type": "object",
       "title": "Circuit Breaker",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Circuit break load balancer",
       "acceptInput": "false",
@@ -615,7 +615,7 @@ var _apacheCamelModel ={
     "customLoadBalancer": {
       "type": "object",
       "title": "Custom Load Balancer",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Custom load balancer",
       "acceptInput": "false",
@@ -1031,7 +1031,7 @@ var _apacheCamelModel ={
     "failover": {
       "type": "object",
       "title": "Failover",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Failover load balancer",
       "acceptInput": "false",
@@ -1126,7 +1126,7 @@ var _apacheCamelModel ={
       "icon": "endpoint24.png",
       "description": "Act as a message source as input to a route",
       "acceptInput": "false",
-      "acceptOutput": "true",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "uri": {
@@ -2325,7 +2325,7 @@ var _apacheCamelModel ={
     "random": {
       "type": "object",
       "title": "Random",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Random load balancer",
       "acceptInput": "false",
@@ -2950,7 +2950,7 @@ var _apacheCamelModel ={
     "roundRobin": {
       "type": "object",
       "title": "Round Robin",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Round robin load balancer",
       "acceptInput": "false",
@@ -3751,7 +3751,7 @@ var _apacheCamelModel ={
     "sticky": {
       "type": "object",
       "title": "Sticky",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Sticky load balancer",
       "acceptInput": "false",
@@ -3807,7 +3807,7 @@ var _apacheCamelModel ={
     "stream-config": {
       "type": "object",
       "title": "Stream-config",
-      "group": "configuration,resequence",
+      "group": "eip,routing,resequence",
       "icon": "generic24.png",
       "description": "Configures stream-processing resequence eip.",
       "acceptInput": "false",
@@ -4318,7 +4318,7 @@ var _apacheCamelModel ={
     "topic": {
       "type": "object",
       "title": "Topic",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Topic load balancer",
       "acceptInput": "false",
@@ -4490,7 +4490,7 @@ var _apacheCamelModel ={
     "weighted": {
       "type": "object",
       "title": "Weighted",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Weighted load balancer",
       "acceptInput": "false",
@@ -5626,6 +5626,14 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "verbs": {
+          "kind": "element",
+          "type": "array",
+          "description": "The HTTP verbs this REST service accepts and uses",
+          "title": "Verbs",
+          "required": true,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -5804,6 +5812,14 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Sets a leading API context-path the REST API services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path.",
           "title": "Api Context Path",
+          "required": false,
+          "deprecated": false
+        },
+        "apiContextRouteId": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the route id to use for the route that services the REST API. The route will by default use an auto assigned route id.",
+          "title": "Api Context Route Id",
           "required": false,
           "deprecated": false
         },
@@ -7333,6 +7349,14 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "permissions": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from xml/json to Java beans. A permission must be configured either here or globally using a JVM system property. The permission can be specified in a syntax where a plus sign is allow and minus sign is deny. Wildcards is supported by using . as prefix. For example to allow com.foo and all subpackages then specfy com.foo.. Multiple permissions can be configured separated by comma such as com.foo.-com.foo.bar.MySecretBean. The following default permission is always included: -java.lang.java.util. unless its overridden by specifying a JVM system property with they key org.apache.camel.xstream.permissions.",
+          "title": "Permissions",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -8468,6 +8492,14 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "xstream data format",
       "properties": {
+        "permissions": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from xml/json to Java beans. A permission must be configured either here or globally using a JVM system property. The permission can be specified in a syntax where a plus sign is allow and minus sign is deny. Wildcards is supported by using . as prefix. For example to allow com.foo and all subpackages then specfy com.foo.. Multiple permissions can be configured separated by comma such as com.foo.-com.foo.bar.MySecretBean. The following default permission is always included: -java.lang.java.util. unless its overridden by specifying a JVM system property with they key org.apache.camel.xstream.permissions.",
+          "title": "Permissions",
+          "required": false,
+          "deprecated": false
+        },
         "encoding": {
           "kind": "attribute",
           "type": "string",
