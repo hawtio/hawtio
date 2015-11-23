@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.16.0';
+var _apacheCamelModelVersion = '2.16.1';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -319,7 +319,7 @@ var _apacheCamelModel ={
     "batch-config": {
       "type": "object",
       "title": "Batch-config",
-      "group": "configuration,resequence",
+      "group": "eip,routing,resequence",
       "icon": "generic24.png",
       "description": "Configures batch-processing resequence eip.",
       "acceptInput": "false",
@@ -490,7 +490,7 @@ var _apacheCamelModel ={
     "circuitBreaker": {
       "type": "object",
       "title": "Circuit Breaker",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Circuit break load balancer",
       "acceptInput": "false",
@@ -615,7 +615,7 @@ var _apacheCamelModel ={
     "customLoadBalancer": {
       "type": "object",
       "title": "Custom Load Balancer",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Custom load balancer",
       "acceptInput": "false",
@@ -1031,7 +1031,7 @@ var _apacheCamelModel ={
     "failover": {
       "type": "object",
       "title": "Failover",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Failover load balancer",
       "acceptInput": "false",
@@ -1126,7 +1126,7 @@ var _apacheCamelModel ={
       "icon": "endpoint24.png",
       "description": "Act as a message source as input to a route",
       "acceptInput": "false",
-      "acceptOutput": "true",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "uri": {
@@ -2325,7 +2325,7 @@ var _apacheCamelModel ={
     "random": {
       "type": "object",
       "title": "Random",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Random load balancer",
       "acceptInput": "false",
@@ -2950,7 +2950,7 @@ var _apacheCamelModel ={
     "roundRobin": {
       "type": "object",
       "title": "Round Robin",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Round robin load balancer",
       "acceptInput": "false",
@@ -3751,7 +3751,7 @@ var _apacheCamelModel ={
     "sticky": {
       "type": "object",
       "title": "Sticky",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Sticky load balancer",
       "acceptInput": "false",
@@ -3807,7 +3807,7 @@ var _apacheCamelModel ={
     "stream-config": {
       "type": "object",
       "title": "Stream-config",
-      "group": "configuration,resequence",
+      "group": "eip,routing,resequence",
       "icon": "generic24.png",
       "description": "Configures stream-processing resequence eip.",
       "acceptInput": "false",
@@ -4318,7 +4318,7 @@ var _apacheCamelModel ={
     "topic": {
       "type": "object",
       "title": "Topic",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Topic load balancer",
       "acceptInput": "false",
@@ -4490,7 +4490,7 @@ var _apacheCamelModel ={
     "weighted": {
       "type": "object",
       "title": "Weighted",
-      "group": "configuration,loadbalance",
+      "group": "eip,routing,loadbalance",
       "icon": "generic24.png",
       "description": "Weighted load balancer",
       "acceptInput": "false",
@@ -5626,6 +5626,14 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "verbs": {
+          "kind": "element",
+          "type": "array",
+          "description": "The HTTP verbs this REST service accepts and uses",
+          "title": "Verbs",
+          "required": true,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -5804,6 +5812,14 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Sets a leading API context-path the REST API services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path.",
           "title": "Api Context Path",
+          "required": false,
+          "deprecated": false
+        },
+        "apiContextRouteId": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the route id to use for the route that services the REST API. The route will by default use an auto assigned route id.",
+          "title": "Api Context Route Id",
           "required": false,
           "deprecated": false
         },
@@ -6254,7 +6270,7 @@ var _apacheCamelModel ={
     "beanio": {
       "type": "object",
       "title": "BeanIO",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
       "description": "BeanIO data format",
       "properties": {
@@ -6322,7 +6338,7 @@ var _apacheCamelModel ={
     "bindy": {
       "type": "object",
       "title": "Bindy",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
       "description": "Bindy data format",
       "properties": {
@@ -6364,7 +6380,7 @@ var _apacheCamelModel ={
     "boon": {
       "type": "object",
       "title": "Boon",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,json",
       "icon": "generic24.png",
       "description": "Boon data format",
       "properties": {
@@ -6389,7 +6405,7 @@ var _apacheCamelModel ={
     "castor": {
       "type": "object",
       "title": "Castor",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,xml",
       "icon": "generic24.png",
       "description": "Castor data format",
       "properties": {
@@ -6448,7 +6464,7 @@ var _apacheCamelModel ={
     "crypto": {
       "type": "object",
       "title": "Crypto (Java Cryptographic Extension)",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,security",
       "icon": "generic24.png",
       "description": "Crypto data format",
       "properties": {
@@ -6541,7 +6557,7 @@ var _apacheCamelModel ={
     "csv": {
       "type": "object",
       "title": "CSV",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
       "description": "CSV data format",
       "properties": {
@@ -6787,7 +6803,7 @@ var _apacheCamelModel ={
     "flatpack": {
       "type": "object",
       "title": "Flatpack",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
       "description": "Flatpack data format",
       "properties": {
@@ -6940,10 +6956,127 @@ var _apacheCamelModel ={
         }
       }
     },
+    "jacksonxml": {
+      "type": "object",
+      "title": "JacksonXML",
+      "group": "dataformat,transformation,xml",
+      "icon": "generic24.png",
+      "description": "Jackson XML data format",
+      "properties": {
+        "prettyPrint": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "To enable pretty printing output nicely formatted. Is by default false.",
+          "title": "Pretty Print",
+          "required": false,
+          "deprecated": false
+        },
+        "unmarshalTypeName": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Class name of the java type to use when unarmshalling",
+          "title": "Unmarshal Type Name",
+          "required": false,
+          "deprecated": false
+        },
+        "jsonView": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations",
+          "title": "Json View",
+          "required": false,
+          "deprecated": false
+        },
+        "include": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "If you want to marshal a pojo to JSON and the pojo has some fields with null values. And you want to skip these null values you can set this option to NOT_NULL",
+          "title": "Include",
+          "required": false,
+          "deprecated": false
+        },
+        "allowJmsType": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.",
+          "title": "Allow Jms Type",
+          "required": false,
+          "deprecated": false
+        },
+        "collectionTypeName": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Refers to a custom collection type to lookup in the registry to use. This option should rarely be used but allows to use different collection types than java.util.Collection based as default.",
+          "title": "Collection Type Name",
+          "required": false,
+          "deprecated": false
+        },
+        "useList": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "To unarmshal to a List of Map or a List of Pojo.",
+          "title": "Use List",
+          "required": false,
+          "deprecated": false
+        },
+        "enableJaxbAnnotationModule": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to enable the JAXB annotations module when using jackson. When enabled then JAXB annotations can be used by Jackson.",
+          "title": "Enable Jaxb Annotation Module",
+          "required": false,
+          "deprecated": false
+        },
+        "moduleClassNames": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma.",
+          "title": "Module Class Names",
+          "required": false,
+          "deprecated": false
+        },
+        "moduleRefs": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.",
+          "title": "Module Refs",
+          "required": false,
+          "deprecated": false
+        },
+        "enableFeatures": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature com.fasterxml.jackson.databind.DeserializationFeature or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma",
+          "title": "Enable Features",
+          "required": false,
+          "deprecated": false
+        },
+        "disableFeatures": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature com.fasterxml.jackson.databind.DeserializationFeature or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma",
+          "title": "Disable Features",
+          "required": false,
+          "deprecated": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the value of the id property.",
+          "title": "Id",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
     "jaxb": {
       "type": "object",
       "title": "JAXB",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,xml",
       "icon": "generic24.png",
       "description": "JAXB data format",
       "properties": {
@@ -7069,7 +7202,7 @@ var _apacheCamelModel ={
     "jibx": {
       "type": "object",
       "title": "JiBX",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,xml",
       "icon": "generic24.png",
       "description": "JiBX data format",
       "properties": {
@@ -7102,7 +7235,7 @@ var _apacheCamelModel ={
     "json": {
       "type": "object",
       "title": "JSon",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,json",
       "icon": "generic24.png",
       "description": "Json data format",
       "properties": {
@@ -7216,6 +7349,14 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "permissions": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from xml/json to Java beans. A permission must be configured either here or globally using a JVM system property. The permission can be specified in a syntax where a plus sign is allow and minus sign is deny. Wildcards is supported by using . as prefix. For example to allow com.foo and all subpackages then specfy com.foo.. Multiple permissions can be configured separated by comma such as com.foo.-com.foo.bar.MySecretBean. The following default permission is always included: -java.lang.java.util. unless its overridden by specifying a JVM system property with they key org.apache.camel.xstream.permissions.",
+          "title": "Permissions",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -7229,7 +7370,7 @@ var _apacheCamelModel ={
     "pgp": {
       "type": "object",
       "title": "PGP",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,security",
       "icon": "generic24.png",
       "description": "PGP data format",
       "properties": {
@@ -7402,7 +7543,7 @@ var _apacheCamelModel ={
     "secureXML": {
       "type": "object",
       "title": "XML Security",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,xml,security",
       "icon": "generic24.png",
       "description": "xml-security data format",
       "properties": {
@@ -7513,7 +7654,7 @@ var _apacheCamelModel ={
     "serialization": {
       "type": "object",
       "title": "Java Object Serialization",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,core",
       "icon": "generic24.png",
       "description": "Java Object Serialization data format",
       "properties": {
@@ -7530,7 +7671,7 @@ var _apacheCamelModel ={
     "soapjaxb": {
       "type": "object",
       "title": "SOAP",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,xml",
       "icon": "generic24.png",
       "description": "SOAP data format",
       "properties": {
@@ -7596,7 +7737,7 @@ var _apacheCamelModel ={
     "string": {
       "type": "object",
       "title": "String Encoding",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,core",
       "icon": "generic24.png",
       "description": "Represents the String (text based) DataFormat",
       "properties": {
@@ -7638,7 +7779,7 @@ var _apacheCamelModel ={
     "tarfile": {
       "type": "object",
       "title": "Tar File",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,file",
       "icon": "generic24.png",
       "description": "Represents the TAR file XML org.apache.camel.spi.DataFormat.",
       "properties": {
@@ -7689,7 +7830,7 @@ var _apacheCamelModel ={
     "univocity-csv": {
       "type": "object",
       "title": "uniVocity CSV",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
       "description": "UniVocity CSV data format",
       "properties": {
@@ -7855,7 +7996,7 @@ var _apacheCamelModel ={
     "univocity-fixed": {
       "type": "object",
       "title": "uniVocity Fixed Length",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
       "description": "UniVocity fixed-width data format",
       "properties": {
@@ -8012,7 +8153,7 @@ var _apacheCamelModel ={
     "univocity-header": {
       "type": "object",
       "title": "uniVocity Header",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
       "description": "To configure headers for UniVocity data formats.",
       "properties": {
@@ -8037,7 +8178,7 @@ var _apacheCamelModel ={
     "univocity-tsv": {
       "type": "object",
       "title": "uniVocity TSV",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
       "description": "UniVocity TSV data format",
       "properties": {
@@ -8176,7 +8317,7 @@ var _apacheCamelModel ={
     "xmlBeans": {
       "type": "object",
       "title": "XML Beans",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,xml",
       "icon": "generic24.png",
       "description": "XMLBeans data format",
       "properties": {
@@ -8202,7 +8343,7 @@ var _apacheCamelModel ={
     "xmljson": {
       "type": "object",
       "title": "XML JSon",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,xml,json",
       "icon": "generic24.png",
       "description": "xml-json data format",
       "properties": {
@@ -8321,7 +8462,7 @@ var _apacheCamelModel ={
     "xmlrpc": {
       "type": "object",
       "title": "XML RPC",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,xml",
       "icon": "generic24.png",
       "description": "xml-rpc data format",
       "properties": {
@@ -8347,10 +8488,18 @@ var _apacheCamelModel ={
     "xstream": {
       "type": "object",
       "title": "XStream",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,xml,json",
       "icon": "generic24.png",
       "description": "xstream data format",
       "properties": {
+        "permissions": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from xml/json to Java beans. A permission must be configured either here or globally using a JVM system property. The permission can be specified in a syntax where a plus sign is allow and minus sign is deny. Wildcards is supported by using . as prefix. For example to allow com.foo and all subpackages then specfy com.foo.. Multiple permissions can be configured separated by comma such as com.foo.-com.foo.bar.MySecretBean. The following default permission is always included: -java.lang.java.util. unless its overridden by specifying a JVM system property with they key org.apache.camel.xstream.permissions.",
+          "title": "Permissions",
+          "required": false,
+          "deprecated": false
+        },
         "encoding": {
           "kind": "attribute",
           "type": "string",
@@ -8454,7 +8603,7 @@ var _apacheCamelModel ={
     "zipFile": {
       "type": "object",
       "title": "Zip File",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,file",
       "icon": "generic24.png",
       "description": "zip-file data format",
       "properties": {
@@ -8482,7 +8631,7 @@ var _apacheCamelModel ={
     "constant": {
       "type": "object",
       "title": "Constant",
-      "group": "language",
+      "group": "language,core",
       "icon": "generic24.png",
       "description": "For expressions and predicates using a constant",
       "properties": {
@@ -8516,7 +8665,7 @@ var _apacheCamelModel ={
     "el": {
       "type": "object",
       "title": "EL",
-      "group": "language",
+      "group": "language,script",
       "icon": "generic24.png",
       "description": "For EL expressions and predicates",
       "properties": {
@@ -8550,7 +8699,7 @@ var _apacheCamelModel ={
     "exchangeProperty": {
       "type": "object",
       "title": "ExchangeProperty",
-      "group": "language",
+      "group": "language,core",
       "icon": "generic24.png",
       "description": "An expression which extracts the named exchange property",
       "properties": {
@@ -8618,7 +8767,7 @@ var _apacheCamelModel ={
     "groovy": {
       "type": "object",
       "title": "Groovy",
-      "group": "language",
+      "group": "language,script",
       "icon": "generic24.png",
       "description": "For Groovy expressions and predicates",
       "properties": {
@@ -8652,7 +8801,7 @@ var _apacheCamelModel ={
     "header": {
       "type": "object",
       "title": "Header",
-      "group": "language",
+      "group": "language,core",
       "icon": "generic24.png",
       "description": "An expression which extracts the named exchange header",
       "properties": {
@@ -8686,7 +8835,7 @@ var _apacheCamelModel ={
     "javaScript": {
       "type": "object",
       "title": "JavaScript",
-      "group": "language",
+      "group": "language,script",
       "icon": "generic24.png",
       "description": "For JavaScript expressions and predicates",
       "properties": {
@@ -8720,7 +8869,7 @@ var _apacheCamelModel ={
     "jsonpath": {
       "type": "object",
       "title": "JSonPath",
-      "group": "language",
+      "group": "language,json",
       "icon": "generic24.png",
       "description": "For JSonPath expressions and predicates",
       "properties": {
@@ -8771,7 +8920,7 @@ var _apacheCamelModel ={
     "jxpath": {
       "type": "object",
       "title": "JXPath",
-      "group": "language",
+      "group": "language,java",
       "icon": "generic24.png",
       "description": "For JXPath expressions and predicates",
       "properties": {
@@ -8814,7 +8963,7 @@ var _apacheCamelModel ={
     "language": {
       "type": "object",
       "title": "Language",
-      "group": "language",
+      "group": "language,core",
       "icon": "generic24.png",
       "description": "Represents a parameterised language expression which can support any language at runtime using the language attribute.",
       "properties": {
@@ -8856,7 +9005,7 @@ var _apacheCamelModel ={
     "method": {
       "type": "object",
       "title": "Bean method",
-      "group": "language",
+      "group": "language,core,java",
       "icon": "generic24.png",
       "description": "For expressions and predicates using a java bean (aka method call)",
       "properties": {
@@ -8922,7 +9071,7 @@ var _apacheCamelModel ={
     "mvel": {
       "type": "object",
       "title": "MVEL",
-      "group": "language",
+      "group": "language,java",
       "icon": "generic24.png",
       "description": "For MVEL expressions and predicates",
       "properties": {
@@ -8956,7 +9105,7 @@ var _apacheCamelModel ={
     "ognl": {
       "type": "object",
       "title": "OGNL",
-      "group": "language",
+      "group": "language,java",
       "icon": "generic24.png",
       "description": "For OGNL expressions and predicates",
       "properties": {
@@ -8990,7 +9139,7 @@ var _apacheCamelModel ={
     "php": {
       "type": "object",
       "title": "PHP",
-      "group": "language",
+      "group": "language,script",
       "icon": "generic24.png",
       "description": "For PHP expressions and predicates",
       "properties": {
@@ -9024,7 +9173,7 @@ var _apacheCamelModel ={
     "python": {
       "type": "object",
       "title": "Python",
-      "group": "language",
+      "group": "language,script",
       "icon": "generic24.png",
       "description": "For Python expressions and predicates",
       "properties": {
@@ -9058,7 +9207,7 @@ var _apacheCamelModel ={
     "ref": {
       "type": "object",
       "title": "Ref",
-      "group": "language",
+      "group": "language,core",
       "icon": "generic24.png",
       "description": "For using a custom expression",
       "properties": {
@@ -9092,7 +9241,7 @@ var _apacheCamelModel ={
     "ruby": {
       "type": "object",
       "title": "Ruby",
-      "group": "language",
+      "group": "language,script",
       "icon": "generic24.png",
       "description": "For Ruby expressions and predicates",
       "properties": {
@@ -9126,7 +9275,7 @@ var _apacheCamelModel ={
     "simple": {
       "type": "object",
       "title": "Simple",
-      "group": "language",
+      "group": "language,core,java",
       "icon": "generic24.png",
       "description": "For expressions and predicates using the simple language",
       "properties": {
@@ -9168,7 +9317,7 @@ var _apacheCamelModel ={
     "spel": {
       "type": "object",
       "title": "SpEL",
-      "group": "language",
+      "group": "language,spring",
       "icon": "generic24.png",
       "description": "For Spring Expression Language (SpEL) expressions and predicates",
       "properties": {
@@ -9270,7 +9419,7 @@ var _apacheCamelModel ={
     "tokenize": {
       "type": "object",
       "title": "Tokenize",
-      "group": "language",
+      "group": "language,core",
       "icon": "generic24.png",
       "description": "For expressions and predicates using a body or header tokenizer.",
       "properties": {
@@ -9371,7 +9520,7 @@ var _apacheCamelModel ={
     "vtdxml": {
       "type": "object",
       "title": "VtdXML",
-      "group": "language",
+      "group": "language,xml",
       "icon": "generic24.png",
       "description": "For VTD-XML (fast and efficient XPath) expressions and predicates",
       "properties": {
@@ -9405,7 +9554,7 @@ var _apacheCamelModel ={
     "xpath": {
       "type": "object",
       "title": "XPath",
-      "group": "language",
+      "group": "language,core,xml",
       "icon": "generic24.png",
       "description": "For XPath expressions and predicates",
       "properties": {
@@ -9497,7 +9646,7 @@ var _apacheCamelModel ={
     "xquery": {
       "type": "object",
       "title": "XQuery",
-      "group": "language",
+      "group": "language,xml",
       "icon": "generic24.png",
       "description": "For XQuery expressions and predicates",
       "properties": {
@@ -9547,7 +9696,7 @@ var _apacheCamelModel ={
     "xtokenize": {
       "type": "object",
       "title": "XML Tokenize",
-      "group": "language",
+      "group": "language,core,xml",
       "icon": "generic24.png",
       "description": "For expressions and predicates using a body or header tokenizer.",
       "properties": {
