@@ -742,7 +742,6 @@ public class GitFacade extends GitFacadeSupport {
                 LOG.warn("Failed to write git " + gitAttributes + ". " + e, e);
             }
         }
-        System.out.println("Importing initial URLs: " + initialImportURLs);
         if (Strings.isNotBlank(initialImportURLs)) {
             String[] split = initialImportURLs.split(",");
             if (split != null) {
