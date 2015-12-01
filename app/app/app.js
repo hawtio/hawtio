@@ -14576,7 +14576,7 @@ var Camel;
                         var mean = stat.getAttribute("meanProcessingTime");
                         var min = stat.getAttribute("minProcessingTime");
                         var max = stat.getAttribute("maxProcessingTime");
-                        tooltip = "totoal: " + total + "\ninflight:" + inflight + "\nlast: " + last + " (ms)\nmean: " + mean + " (ms)\nmin: " + min + " (ms)\nmax: " + max + " (ms)";
+                        tooltip = "total: " + total + "\ninflight:" + inflight + "\nlast: " + last + " (ms)\nmean: " + mean + " (ms)\nmin: " + min + " (ms)\nmax: " + max + " (ms)";
                         node["counter"] = total;
                         if ($scope.camelShowInflightCounter) {
                             node["inflight"] = inflight;
