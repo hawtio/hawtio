@@ -10176,6 +10176,27 @@ var Camel;
         return null;
     }
     Camel.getSelectionCamelRouteMetrics = getSelectionCamelRouteMetrics;
+    function getSelectionCamelMessageHistoryMetrics(workspace) {
+        if (workspace) {
+            var contextId = getContextId(workspace);
+            var selection = workspace.selection;
+            var tree = workspace.tree;
+            if (tree && selection) {
+                var domain = selection.domain;
+                if (domain && contextId) {
+                    var result = tree.navigate(domain, contextId, "services");
+                    if (result && result.children) {
+                        var mbean = result.children.find(function (m) { return m.title.startsWith("MetricsMessageHistoryService"); });
+                        if (mbean) {
+                            return mbean.objectName;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    Camel.getSelectionCamelMessageHistoryMetrics = getSelectionCamelMessageHistoryMetrics;
     function getSelectionCamelInflightRepository(workspace) {
         if (workspace) {
             var contextId = getContextId(workspace);
@@ -10829,7 +10850,7 @@ var Camel;
     var contextToolBar = "app/camel/html/attributeToolBarContext.html";
     Camel._module = angular.module(Camel.pluginName, ['bootstrap', 'ui.bootstrap', 'ui.bootstrap.dialog', 'ui.bootstrap.tabs', 'ui.bootstrap.typeahead', 'ngResource', 'hawtioCore', 'hawtio-ui']);
     Camel._module.config(["$routeProvider", function ($routeProvider) {
-        $routeProvider.when('/camel/browseEndpoint', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/endpoint/browse/:contextId/*endpointPath', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/createEndpoint', { templateUrl: 'app/camel/html/createEndpoint.html' }).when('/camel/route/diagram/:contextId/:routeId', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/routes', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/fabricDiagram', { templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false }).when('/camel/typeConverter', { templateUrl: 'app/camel/html/typeConverter.html', reloadOnSearch: false }).when('/camel/restRegistry', { templateUrl: 'app/camel/html/restRegistry.html', reloadOnSearch: false }).when('/camel/endpointRuntimeRegistry', { templateUrl: 'app/camel/html/endpointRuntimeRegistry.html', reloadOnSearch: false }).when('/camel/routeMetrics', { templateUrl: 'app/camel/html/routeMetrics.html', reloadOnSearch: false }).when('/camel/inflight', { templateUrl: 'app/camel/html/inflight.html', reloadOnSearch: false }).when('/camel/blocked', { templateUrl: 'app/camel/html/blocked.html', reloadOnSearch: false }).when('/camel/sendMessage', { templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false }).when('/camel/source', { templateUrl: 'app/camel/html/source.html' }).when('/camel/traceRoute', { templateUrl: 'app/camel/html/traceRoute.html' }).when('/camel/debugRoute', { templateUrl: 'app/camel/html/debug.html' }).when('/camel/profileRoute', { templateUrl: 'app/camel/html/profileRoute.html' }).when('/camel/properties', { templateUrl: 'app/camel/html/properties.html' }).when('/camel/propertiesComponent', { templateUrl: 'app/camel/html/propertiesComponent.html' }).when('/camel/propertiesDataFormat', { templateUrl: 'app/camel/html/propertiesDataFormat.html' }).when('/camel/propertiesEndpoint', { templateUrl: 'app/camel/html/propertiesEndpoint.html' });
+        $routeProvider.when('/camel/browseEndpoint', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/endpoint/browse/:contextId/*endpointPath', { templateUrl: 'app/camel/html/browseEndpoint.html' }).when('/camel/createEndpoint', { templateUrl: 'app/camel/html/createEndpoint.html' }).when('/camel/route/diagram/:contextId/:routeId', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/routes', { templateUrl: 'app/camel/html/routes.html' }).when('/camel/fabricDiagram', { templateUrl: 'app/camel/html/fabricDiagram.html', reloadOnSearch: false }).when('/camel/typeConverter', { templateUrl: 'app/camel/html/typeConverter.html', reloadOnSearch: false }).when('/camel/restRegistry', { templateUrl: 'app/camel/html/restRegistry.html', reloadOnSearch: false }).when('/camel/endpointRuntimeRegistry', { templateUrl: 'app/camel/html/endpointRuntimeRegistry.html', reloadOnSearch: false }).when('/camel/routeMetrics', { templateUrl: 'app/camel/html/routeMetrics.html', reloadOnSearch: false }).when('/camel/historyMetrics', { templateUrl: 'app/camel/html/messageHistoryMetrics.html', reloadOnSearch: false }).when('/camel/inflight', { templateUrl: 'app/camel/html/inflight.html', reloadOnSearch: false }).when('/camel/blocked', { templateUrl: 'app/camel/html/blocked.html', reloadOnSearch: false }).when('/camel/sendMessage', { templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false }).when('/camel/source', { templateUrl: 'app/camel/html/source.html' }).when('/camel/traceRoute', { templateUrl: 'app/camel/html/traceRoute.html' }).when('/camel/debugRoute', { templateUrl: 'app/camel/html/debug.html' }).when('/camel/profileRoute', { templateUrl: 'app/camel/html/profileRoute.html' }).when('/camel/properties', { templateUrl: 'app/camel/html/properties.html' }).when('/camel/propertiesComponent', { templateUrl: 'app/camel/html/propertiesComponent.html' }).when('/camel/propertiesDataFormat', { templateUrl: 'app/camel/html/propertiesDataFormat.html' }).when('/camel/propertiesEndpoint', { templateUrl: 'app/camel/html/propertiesEndpoint.html' });
     }]);
     Camel._module.factory('tracerStatus', function () {
         return {
@@ -11004,6 +11025,12 @@ var Camel;
             title: "View the Camel route metrics",
             isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelRouteMetrics(workspace), "dumpStatisticsAsJson"); },
             href: function () { return "#/camel/routeMetrics"; }
+        });
+        workspace.subLevelTabs.push({
+            content: '<i class="icon-bar-chart"></i> Message Metrics',
+            title: "View the Camel message history metrics",
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 17, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelMessageHistoryMetrics(workspace), "dumpStatisticsAsJson"); },
+            href: function () { return "#/camel/historyMetrics"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Inflight',
@@ -13168,6 +13195,91 @@ var Camel;
             var typeName = destinationType.toLowerCase();
             properties.isQueue = !typeName.startsWith("t");
             properties['destType'] = typeName;
+        }
+    }]);
+})(Camel || (Camel = {}));
+var Camel;
+(function (Camel) {
+    Camel._module.controller("Camel.MessageHistoryMetricsController", ["$scope", "$location", "workspace", "jolokia", "metricsWatcher", "localStorage", function ($scope, $location, workspace, jolokia, metricsWatcher, localStorage) {
+        var log = Logger.get("Camel");
+        $scope.maxSeconds = Camel.routeMetricMaxSeconds(localStorage);
+        $scope.filterText = null;
+        $scope.initDone = false;
+        $scope.metricDivs = [];
+        $scope.filterByRoute = function (div) {
+            log.debug("Filter by route/node " + div);
+            var match = Core.matchFilterIgnoreCase(div.routeId, $scope.filterText);
+            if (!match) {
+                match = Core.matchFilterIgnoreCase(div.nodeId, $scope.filterText);
+            }
+            if (!match) {
+                return "display: none;";
+            }
+            else {
+                return "";
+            }
+        };
+        function populateMessageHistoryStatistics(response) {
+            var obj = response.value;
+            if (obj) {
+                var json = JSON.parse(obj);
+                if (!$scope.initDone) {
+                    var meters = json['timers'];
+                    var counter = 0;
+                    if (meters != null) {
+                        for (var v in meters) {
+                            var key = v;
+                            var lastDot = key.lastIndexOf(".");
+                            var className = key.substr(0, lastDot);
+                            var metricsName = key.substr(lastDot + 1);
+                            var routeId = className.substr(className.indexOf(".") + 1);
+                            routeId = routeId.substr(0, routeId.indexOf("."));
+                            var nodeId = className.substr(className.lastIndexOf(".") + 1);
+                            var entry = meters[v];
+                            var div = "timer-" + counter;
+                            $scope.metricDivs.push({
+                                id: div,
+                                routeId: routeId,
+                                nodeId: nodeId
+                            });
+                            counter++;
+                            log.info("Added timer: " + div + " (" + className + "." + metricsName + ") for route: " + routeId + " node: " + nodeId + " with max seconds: " + $scope.maxSeconds);
+                            metricsWatcher.addTimer(div, className, metricsName, $scope.maxSeconds, nodeId, "Histogram", $scope.maxSeconds * 1000);
+                        }
+                        log.info("Pre-init graphs");
+                        Core.$apply($scope);
+                    }
+                    log.info("Init graphs");
+                    metricsWatcher.initGraphs();
+                }
+                $scope.initDone = true;
+                log.debug("Updating graphs: " + json);
+                metricsWatcher.updateGraphs(json);
+            }
+            $scope.initDone = true;
+            Core.$apply($scope);
+        }
+        $scope.onResponse = function (response) {
+            loadData();
+        };
+        $scope.$watch('workspace.tree', function () {
+            setTimeout(loadData, 50);
+        });
+        function loadData() {
+            log.info("Loading RouteMetrics data...");
+            var routeId = Camel.getSelectedRouteId(workspace);
+            if (routeId != null) {
+                $scope.filterText = routeId;
+            }
+            var mbean = Camel.getSelectionCamelMessageHistoryMetrics(workspace);
+            if (mbean) {
+                var query = { type: 'exec', mbean: mbean, operation: 'dumpStatisticsAsJson' };
+                scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(populateMessageHistoryStatistics, query));
+            }
+            else {
+                $scope.initDone = true;
+                Core.$apply($scope);
+            }
         }
     }]);
 })(Camel || (Camel = {}));

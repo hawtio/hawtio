@@ -1,6 +1,10 @@
 
 ### Change Log
 
+#### 1.4.59
+
+* Camel plugin able to show message history metrics if using Camel 2.17 onwards
+
 #### 1.4.58
 
 * When using ActiveMQ the hawtio web console no longer causing the tree to continuesly being updated, which otherwise will cause the web UI to be sluggish. Notice the reason for the update is becuse of ActiveMQ and end user may not use pooled connections or is using XA with no consumer cache. In either case hawtio now filter out those events to avoid triggering the web console UI to be updated constantly.
