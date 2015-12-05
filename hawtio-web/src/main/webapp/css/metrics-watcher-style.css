@@ -1,11 +1,11 @@
 .metricsWatcher .heading1 {
-	font-size: 24px;
-	line-height: 30px;
+	font-size: 18px;
+	line-height: 24px;
     margin: 0;
 }
 .metricsWatcher .heading3 {
-	font-size: 18px;
-	line-height: 27px;
+	font-size: 16px;
+	line-height: 21px;
 	margin: 0;
 }
 .metricsWatcher .heading4 {
@@ -14,8 +14,8 @@
 	margin: 0;
 }
 .metricsWatcher .heading5 {
-	font-size: 18px;
-	line-height: 18px;
+	font-size: 12px;
+	line-height: 16px;
 	margin: 0;
 }
 .metricsWatcher p {
@@ -38,7 +38,7 @@
 	margin: 0 10px 10px 0;
 }
 .metricsWatcher .nested h1 {
-	font-size: 24px;
+	font-size: 18px;
 }
 
 .metricsWatcher .progressLabel {
@@ -59,7 +59,7 @@
 	color: #666;
 }
 .metricsWatcher .progress {
-	height: 18px;
+	height: 16px;
 	margin-bottom: 17px;
 }
 
