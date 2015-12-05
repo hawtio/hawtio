@@ -12,9 +12,13 @@ module Camel {
     $scope.metricDivs = [];
 
     $scope.filterByRoute = (div) => {
-      log.debug("Filter by route " + div);
+      log.debug("Filter by route/node " + div);
 
+      // match by route first, and then node id
       var match = Core.matchFilterIgnoreCase(div.routeId, $scope.filterText);
+      if (!match) {
+        match = Core.matchFilterIgnoreCase(div.nodeId, $scope.filterText);
+      }
 
       if (!match) {
         // hide using CSS style
