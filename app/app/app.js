@@ -14320,7 +14320,7 @@ var Camel;
                             var lastDot = key.lastIndexOf(".");
                             var className = key.substr(0, lastDot);
                             var metricsName = key.substr(lastDot + 1);
-                            var firstColon = key.indexOf(":");
+                            var firstColon = key.indexOf(":") || key.indexOf(".");
                             var routeId = key.substr(firstColon + 1);
                             lastDot = routeId.lastIndexOf(".");
                             if (lastDot > 0) {
