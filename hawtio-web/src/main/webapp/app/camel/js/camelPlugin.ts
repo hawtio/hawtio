@@ -27,6 +27,7 @@ module Camel {
             when('/camel/restRegistry', {templateUrl: 'app/camel/html/restRegistry.html', reloadOnSearch: false}).
             when('/camel/endpointRuntimeRegistry', {templateUrl: 'app/camel/html/endpointRuntimeRegistry.html', reloadOnSearch: false}).
             when('/camel/routeMetrics', {templateUrl: 'app/camel/html/routeMetrics.html', reloadOnSearch: false}).
+            when('/camel/historyMetrics', {templateUrl: 'app/camel/html/messageHistoryMetrics.html', reloadOnSearch: false}).
             when('/camel/inflight', {templateUrl: 'app/camel/html/inflight.html', reloadOnSearch: false}).
             when('/camel/blocked', {templateUrl: 'app/camel/html/blocked.html', reloadOnSearch: false}).
             when('/camel/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html', reloadOnSearch: false}).
@@ -252,6 +253,18 @@ module Camel {
         && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia)
         && workspace.hasInvokeRightsForName(getSelectionCamelRouteMetrics(workspace), "dumpStatisticsAsJson"),
       href: () => "#/camel/routeMetrics"
+    });
+    workspace.subLevelTabs.push({
+      content: '<i class="icon-bar-chart"></i> Message Metrics',
+      title: "View the Camel message history metrics",
+      isValid: (workspace: Workspace) => workspace.isTopTabActive("camel")
+        && !workspace.isComponentsFolder()
+        && !workspace.isEndpointsFolder()
+        && !workspace.isDataFormatsFolder()
+        && (workspace.isRoute() || workspace.isRoutesFolder())
+        && Camel.isCamelVersionEQGT(2, 17, workspace, jolokia)
+        && workspace.hasInvokeRightsForName(getSelectionCamelMessageHistoryMetrics(workspace), "dumpStatisticsAsJson"),
+      href: () => "#/camel/historyMetrics"
     });
     workspace.subLevelTabs.push({
       content: '<i class="icon-list"></i> Inflight',

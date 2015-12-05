@@ -892,6 +892,27 @@ module Camel {
     return null;
   }
 
+  export function getSelectionCamelMessageHistoryMetrics(workspace) : string {
+    if (workspace) {
+      var contextId = getContextId(workspace);
+      var selection = workspace.selection;
+      var tree = workspace.tree;
+      if (tree && selection) {
+        var domain = selection.domain;
+        if (domain && contextId) {
+          var result = tree.navigate(domain, contextId, "services");
+          if (result && result.children) {
+            var mbean = result.children.find(m => m.title.startsWith("MetricsMessageHistoryService"));
+            if (mbean) {
+              return mbean.objectName;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   export function getSelectionCamelInflightRepository(workspace) : string {
     if (workspace) {
       var contextId = getContextId(workspace);
