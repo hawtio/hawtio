@@ -80,6 +80,10 @@
   <!-- use camel-metrics route policy to gather metrics for all routes -->
   <bean id="metricsRoutePolicyFactory" class="org.apache.camel.component.metrics.routepolicy.MetricsRoutePolicyFactory"/>
 
+  <!-- TODO: require Camel 2.17 onwards -->
+  <!-- use camel-metrics message history to gather message history statistics for all routes -->
+  <!--<bean id="metricsMessageHistoryFactory" class="org.apache.camel.component.metrics.messagehistory.MetricsMessageHistoryFactory"/>-->
+
   <!-- Here is a sample which processes the input files
          (leaving them in place - see the 'noop' flag), and
          sends them on a JMS queue. This queue is watched by

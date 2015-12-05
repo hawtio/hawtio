@@ -22,7 +22,7 @@ module Camel {
       } else {
         return "";
       }
-    }
+    };
 
     function populateRouteStatistics(response) {
       var obj = response.value;
@@ -42,7 +42,8 @@ module Camel {
               var lastDot = key.lastIndexOf(".");
               var className = key.substr(0, lastDot);
               var metricsName = key.substr(lastDot + 1);
-              var firstColon = key.indexOf(":");
+              // Camel 2.16.1 onwards uses dot instead of colon as separator
+              var firstColon = key.indexOf(":") || key.indexOf(".");
 
               // compute route id from the key, which is text after the 1st colon, and the last dot
               var routeId = key.substr(firstColon + 1);
@@ -65,18 +66,18 @@ module Camel {
             }
 
             // ensure web page is updated at this point, as we need the metricDivs in the HTML before we call init graphs later
-            log.info("Pre-init graphs")
+            log.info("Pre-init graphs");
             Core.$apply($scope);
           }
 
-          log.info("Init graphs")
+          log.info("Init graphs");
           metricsWatcher.initGraphs();
         }
 
         $scope.initDone = true;
 
         // update graphs
-        log.debug("Updating graphs: " + json)
+        log.debug("Updating graphs: " + json);
         metricsWatcher.updateGraphs(json)
       }
 
