@@ -82,7 +82,7 @@
 
   <!-- TODO: require Camel 2.17 onwards -->
   <!-- use camel-metrics message history to gather message history statistics for all routes -->
-  <bean id="metricsMessageHistoryFactory" class="org.apache.camel.component.metrics.messagehistory.MetricsMessageHistoryFactory"/>
+  <!--<bean id="metricsMessageHistoryFactory" class="org.apache.camel.component.metrics.messagehistory.MetricsMessageHistoryFactory"/>-->
 
   <!-- Here is a sample which processes the input files
          (leaving them in place - see the 'noop' flag), and
