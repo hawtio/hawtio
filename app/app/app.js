@@ -16589,7 +16589,7 @@ var Perspective;
                     },
                     {
                         id: "dashboard",
-                        onCondition: function (workspace) { return !Fabric.isFMCContainer(workspace); }
+                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
                     },
                     {
                         id: "health",
