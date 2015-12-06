@@ -4,6 +4,7 @@
 #### 1.4.59
 
 * Camel plugin able to show message history metrics if using Camel 2.17 onwards
+* Dashboard plugin is now enabled again
 
 #### 1.4.58
 
