@@ -13908,8 +13908,7 @@ var Camel;
                 $scope.icon = Core.url("/img/icons/camel/endpoint24.png");
                 $scope.nodeData = {};
                 var tabs = {};
-                tabs = Camel.buildTabsFromProperties(tabs, $scope.model.componentProperties, false, false);
-                tabs = Camel.sortPropertiesTabs(tabs);
+                tabs = Camel.buildTabsFromProperties(tabs, $scope.model.componentProperties);
                 $scope.model.tabs = tabs;
                 $scope.model.properties = $scope.model.componentProperties;
                 angular.forEach($scope.model.componentProperties, function (property, key) {
@@ -14027,8 +14026,7 @@ var Camel;
                 $scope.icon = Core.url("/img/icons/camel/marshal24.png");
                 $scope.nodeData = {};
                 var tabs = {};
-                tabs = Camel.buildTabsFromProperties(tabs, $scope.model.properties, false, false);
-                tabs = Camel.sortPropertiesTabs(tabs);
+                tabs = Camel.buildTabsFromProperties(tabs, $scope.model.properties);
                 $scope.model.tabs = tabs;
                 angular.forEach($scope.model.properties, function (property, key) {
                     var value = property["value"] || property["defaultValue"];
@@ -14158,10 +14156,7 @@ var Camel;
                 $scope.icon = Core.url("/img/icons/camel/endpoint24.png");
                 $scope.nodeData = {};
                 var tabs = {};
-                var consumerOnly = "true" === $scope.model.component.consumerOnly || false;
-                var producerOnly = "true" === $scope.model.component.producerOnly || false;
-                tabs = Camel.buildTabsFromProperties(tabs, $scope.model.properties, consumerOnly, producerOnly);
-                tabs = Camel.sortPropertiesTabs(tabs);
+                tabs = Camel.buildTabsFromProperties(tabs, $scope.model.properties);
                 $scope.model.tabs = tabs;
                 delete $scope.model['componentProperties'];
                 angular.forEach($scope.model.properties, function (property, key) {
@@ -14185,86 +14180,21 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel.log = Logger.get("Camel");
-    function buildTabsFromProperties(tabs, properties, consumerOnly, producerOnly) {
+    function buildTabsFromProperties(tabs, properties) {
         var answer = tabs;
         angular.forEach(properties, function (property, key) {
-            var label = "common";
-            if (consumerOnly) {
-                label = "consumer";
-            }
-            if (producerOnly) {
-                label = "producer";
-            }
-            var value = property["label"];
-            if (angular.isDefined(value) && value !== null) {
-                var pattern = /(\w),(advanced)/;
-                value = value.replace(pattern, '$1 (advanced)');
-                var array = value.split(",");
-                label = array[array.length - 1];
-                if (label === 'advanced' && consumerOnly) {
-                    label = "consumer (advanced)";
+            var group = property["group"] || "options";
+            if (angular.isDefined(group) && group !== null) {
+                var keys = tabs[group] || [];
+                if (keys.indexOf(key) === -1) {
+                    keys.push(key);
                 }
-                else if (label === 'advanced' && producerOnly) {
-                    label = "producer (advanced)";
-                }
+                answer[group] = keys;
             }
-            var keys = tabs[label] || [];
-            if (keys.indexOf(key) === -1) {
-                keys.push(key);
-            }
-            answer[label] = keys;
         });
         return answer;
     }
     Camel.buildTabsFromProperties = buildTabsFromProperties;
-    function sortPropertiesTabs(tabs) {
-        var sorted = [];
-        angular.forEach(tabs, function (value, key) {
-            sorted.push({ 'key': key, 'labels': value });
-        });
-        sorted = sorted.sort(function (n1, n2) {
-            if (n1['key'] === 'common') {
-                return -1;
-            }
-            else if (n2['key'] === 'common') {
-                return 1;
-            }
-            if (n1['key'] === 'consumer') {
-                return -1;
-            }
-            else if (n2['key'] === 'consumer') {
-                return 1;
-            }
-            if (n1['key'] === 'consumer (advanced)') {
-                return -1;
-            }
-            else if (n2['key'] === 'consumer (advanced)') {
-                return 1;
-            }
-            if (n1['key'] === 'producer') {
-                return -1;
-            }
-            else if (n2['key'] === 'producer') {
-                return 1;
-            }
-            if (n1['key'] === 'producer (advanced)') {
-                return -1;
-            }
-            else if (n2['key'] === 'producer (advanced)') {
-                return 1;
-            }
-            return n1['key'].localeCompare(n2['key']);
-        });
-        var answer = {};
-        angular.forEach(sorted, function (value, key) {
-            var name = value['key'];
-            var labels = value['labels'];
-            answer[name] = labels;
-            Camel.log.info("Tab(" + name + ") = " + labels);
-        });
-        return answer;
-    }
-    Camel.sortPropertiesTabs = sortPropertiesTabs;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
