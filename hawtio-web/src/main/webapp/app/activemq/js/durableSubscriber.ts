@@ -4,6 +4,7 @@ module ActiveMQ {
 
       var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
 
+      $scope.workspace = workspace;
       $scope.refresh = loadTable;
 
       $scope.durableSubscribers = [];

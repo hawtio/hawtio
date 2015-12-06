@@ -3,6 +3,7 @@ module ActiveMQ {
   export var BrowseQueueController = _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", ($scope, workspace:Workspace, jolokia, localStorage, location, activeMQMessage, $timeout) => {
 
     $scope.searchText = '';
+    $scope.workspace = workspace;
 
     $scope.allMessages = [];
     $scope.messages = [];

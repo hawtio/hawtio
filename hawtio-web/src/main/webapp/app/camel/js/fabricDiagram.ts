@@ -3,6 +3,7 @@ module Camel {
 
   _module.controller("Camel.FabricDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", ($scope, $compile, $location, localStorage, jolokia, workspace) => {
 
+    $scope.workspace = workspace;
     Fabric.initScope($scope, $location, jolokia, workspace);
 
     var isFmc = Fabric.isFMCContainer(workspace);

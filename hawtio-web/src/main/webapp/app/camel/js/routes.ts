@@ -4,6 +4,8 @@ module Camel {
   _module.controller("Camel.RouteController", ["$scope", "$routeParams", "$element", "$timeout", "workspace", "$location", "jolokia", "localStorage", ($scope, $routeParams, $element, $timeout, workspace:Workspace, $location, jolokia, localStorage) => {
     var log:Logging.Logger = Logger.get("Camel");
 
+    $scope.workspace = workspace;
+
     $scope.routes = [];
     $scope.routeNodes = {};
 

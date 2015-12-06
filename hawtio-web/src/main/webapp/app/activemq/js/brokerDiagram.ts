@@ -5,6 +5,7 @@ module ActiveMQ {
   _module.controller("ActiveMQ.BrokerDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", "$routeParams", ($scope, $compile, $location, localStorage, jolokia, workspace, $routeParams) => {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
+    $scope.workspace = workspace;
 
     var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
 

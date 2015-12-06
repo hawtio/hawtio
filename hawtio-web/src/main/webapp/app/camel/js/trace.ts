@@ -4,6 +4,8 @@ module Camel {
 
     var log:Logging.Logger = Logger.get("CamelTracer");
 
+    $scope.workspace = workspace;
+
     $scope.tracing = false;
     $scope.messages = [];
     $scope.graphView = null;

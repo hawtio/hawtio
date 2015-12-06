@@ -3,6 +3,7 @@ module Camel {
 
     _module.controller("Camel.ProfileRouteController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
+        $scope.workspace = workspace;
         $scope.data = [];
         $scope.icons = {};
         $scope.selectedRouteId = "";

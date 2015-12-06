@@ -4,6 +4,8 @@ module Camel {
   _module.controller("Camel.PropertiesController", ["$scope", "workspace", "localStorage", ($scope, workspace:Workspace, localStorage:WindowLocalStorage) => {
     var log:Logging.Logger = Logger.get("Camel");
 
+    $scope.workspace = workspace;
+
     $scope.hideHelp = Camel.hideOptionDocumentation(localStorage);
     $scope.hideUnused = Camel.hideOptionUnusedValue(localStorage);
     $scope.hideDefault = Camel.hideOptionDefaultValue(localStorage);

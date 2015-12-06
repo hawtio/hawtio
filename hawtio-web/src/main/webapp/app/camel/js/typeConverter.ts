@@ -3,6 +3,8 @@ module Camel {
 
   _module.controller("Camel.TypeConverterController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
 
+    $scope.workspace = workspace;
+
     $scope.data = [];
     $scope.selectedMBean = null;
 

@@ -1,6 +1,9 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
   _module.controller("Camel.DebugRouteController", ["$scope", "$element", "workspace", "jolokia", "localStorage", ($scope, $element, workspace:Workspace, jolokia, localStorage) => {
+
+    $scope.workspace = workspace;
+
     // ignore the cached stuff in camel.ts as it seems to bork the node ids for some reason...
     $scope.ignoreRouteXmlNode = true;
 

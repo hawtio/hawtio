@@ -6,6 +6,8 @@ module Camel {
   _module.controller("Camel.SendMessageController", ["$route", "$scope", "$element", "$timeout", "workspace", "jolokia", "localStorage", "$location", "activeMQMessage", ($route, $scope, $element, $timeout, workspace:Workspace, jolokia, localStorage, $location, activeMQMessage) => {
     var log:Logging.Logger = Logger.get("Camel");
 
+    $scope.workspace = workspace;
+
     $scope.noCredentials = false;
     $scope.showChoose = false;
     $scope.profileFileNames = [];

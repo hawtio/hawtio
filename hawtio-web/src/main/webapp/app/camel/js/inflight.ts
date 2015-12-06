@@ -5,6 +5,8 @@ module Camel {
 
     var log:Logging.Logger = Logger.get("Camel");
 
+    $scope.workspace = workspace;
+
     $scope.data = [];
     $scope.initDone = false;
 

@@ -2,6 +2,7 @@
 module ActiveMQ {
   _module.controller("ActiveMQ.JobSchedulerController", ["$scope", "workspace", "jolokia", ($scope, workspace:Workspace, jolokia) => {
 
+    $scope.workspace = workspace;
     $scope.refresh = loadTable;
 
     $scope.jobs = [];
