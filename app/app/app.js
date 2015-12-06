@@ -7183,6 +7183,7 @@ var ActiveMQ;
 (function (ActiveMQ) {
     ActiveMQ._module.controller("ActiveMQ.BrokerDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", "$routeParams", function ($scope, $compile, $location, localStorage, jolokia, workspace, $routeParams) {
         Fabric.initScope($scope, $location, jolokia, workspace);
+        $scope.workspace = workspace;
         var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
         var isFmc = Fabric.isFMCContainer(workspace);
         $scope.isFmc = isFmc;
@@ -7879,6 +7880,7 @@ var ActiveMQ;
 (function (ActiveMQ) {
     ActiveMQ.BrowseQueueController = ActiveMQ._module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", function ($scope, workspace, jolokia, localStorage, location, activeMQMessage, $timeout) {
         $scope.searchText = '';
+        $scope.workspace = workspace;
         $scope.allMessages = [];
         $scope.messages = [];
         $scope.headers = {};
@@ -8408,6 +8410,7 @@ var ActiveMQ;
 (function (ActiveMQ) {
     ActiveMQ._module.controller("ActiveMQ.DurableSubscriberController", ["$scope", "workspace", "jolokia", "localStorage", function ($scope, workspace, jolokia, localStorage) {
         var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
+        $scope.workspace = workspace;
         $scope.refresh = loadTable;
         $scope.durableSubscribers = [];
         $scope.tempData = [];
@@ -8563,6 +8566,7 @@ var ActiveMQ;
 var ActiveMQ;
 (function (ActiveMQ) {
     ActiveMQ._module.controller("ActiveMQ.JobSchedulerController", ["$scope", "workspace", "jolokia", function ($scope, workspace, jolokia) {
+        $scope.workspace = workspace;
         $scope.refresh = loadTable;
         $scope.jobs = [];
         $scope.deleteJobsDialog = new UI.Dialog();
@@ -11183,6 +11187,7 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.BlockedExchangesController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
         var log = Logger.get("Camel");
+        $scope.workspace = workspace;
         $scope.data = [];
         $scope.initDone = false;
         $scope.mbeanAttributes = {};
@@ -11900,6 +11905,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.DebugRouteController", ["$scope", "$element", "workspace", "jolokia", "localStorage", function ($scope, $element, workspace, jolokia, localStorage) {
+        $scope.workspace = workspace;
         $scope.ignoreRouteXmlNode = true;
         $scope.startDebugging = function () {
             setDebugging(true);
@@ -12569,6 +12575,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.EndpointRuntimeRegistryController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+        $scope.workspace = workspace;
         $scope.data = [];
         $scope.selectedMBean = null;
         $scope.mbeanAttributes = {};
@@ -12665,6 +12672,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.FabricDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", function ($scope, $compile, $location, localStorage, jolokia, workspace) {
+        $scope.workspace = workspace;
         Fabric.initScope($scope, $location, jolokia, workspace);
         var isFmc = Fabric.isFMCContainer(workspace);
         $scope.isFmc = isFmc;
@@ -13202,6 +13210,7 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.MessageHistoryMetricsController", ["$scope", "$location", "workspace", "jolokia", "metricsWatcher", "localStorage", function ($scope, $location, workspace, jolokia, metricsWatcher, localStorage) {
         var log = Logger.get("Camel");
+        $scope.workspace = workspace;
         $scope.maxSeconds = Camel.routeMetricMaxSeconds(localStorage);
         $scope.filterText = null;
         $scope.initDone = false;
@@ -13287,6 +13296,7 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.InflightController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
         var log = Logger.get("Camel");
+        $scope.workspace = workspace;
         $scope.data = [];
         $scope.initDone = false;
         $scope.mbeanAttributes = {};
@@ -13479,6 +13489,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.ProfileRouteController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+        $scope.workspace = workspace;
         $scope.data = [];
         $scope.icons = {};
         $scope.selectedRouteId = "";
@@ -13703,6 +13714,7 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.PropertiesController", ["$scope", "workspace", "localStorage", function ($scope, workspace, localStorage) {
         var log = Logger.get("Camel");
+        $scope.workspace = workspace;
         $scope.hideHelp = Camel.hideOptionDocumentation(localStorage);
         $scope.hideUnused = Camel.hideOptionUnusedValue(localStorage);
         $scope.hideDefault = Camel.hideOptionDefaultValue(localStorage);
@@ -13796,6 +13808,7 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.PropertiesComponentController", ["$scope", "workspace", "localStorage", "jolokia", function ($scope, workspace, localStorage, jolokia) {
         var log = Logger.get("Camel");
+        $scope.workspace = workspace;
         $scope.hideHelp = Camel.hideOptionDocumentation(localStorage);
         $scope.hideUnused = Camel.hideOptionUnusedValue(localStorage);
         $scope.hideDefault = Camel.hideOptionDefaultValue(localStorage);
@@ -13921,6 +13934,7 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.PropertiesDataFormatController", ["$scope", "workspace", "localStorage", "jolokia", function ($scope, workspace, localStorage, jolokia) {
         var log = Logger.get("Camel");
+        $scope.workspace = workspace;
         $scope.hideHelp = Camel.hideOptionDocumentation(localStorage);
         $scope.hideUnused = Camel.hideOptionUnusedValue(localStorage);
         $scope.hideDefault = Camel.hideOptionDefaultValue(localStorage);
@@ -14039,6 +14053,7 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.PropertiesEndpointController", ["$scope", "workspace", "localStorage", "jolokia", function ($scope, workspace, localStorage, jolokia) {
         var log = Logger.get("Camel");
+        $scope.workspace = workspace;
         $scope.hideHelp = Camel.hideOptionDocumentation(localStorage);
         $scope.hideUnused = Camel.hideOptionUnusedValue(localStorage);
         $scope.hideDefault = Camel.hideOptionDefaultValue(localStorage);
@@ -14254,6 +14269,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.RestServiceController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+        $scope.workspace = workspace;
         $scope.data = [];
         $scope.selectedMBean = null;
         $scope.mbeanAttributes = {};
@@ -14405,6 +14421,7 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.RouteMetricsController", ["$scope", "$location", "workspace", "jolokia", "metricsWatcher", "localStorage", function ($scope, $location, workspace, jolokia, metricsWatcher, localStorage) {
         var log = Logger.get("Camel");
+        $scope.workspace = workspace;
         $scope.maxSeconds = Camel.routeMetricMaxSeconds(localStorage);
         $scope.filterText = null;
         $scope.initDone = false;
@@ -14489,6 +14506,7 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.RouteController", ["$scope", "$routeParams", "$element", "$timeout", "workspace", "$location", "jolokia", "localStorage", function ($scope, $routeParams, $element, $timeout, workspace, $location, jolokia, localStorage) {
         var log = Logger.get("Camel");
+        $scope.workspace = workspace;
         $scope.routes = [];
         $scope.routeNodes = {};
         if ($routeParams != null) {
@@ -14711,6 +14729,7 @@ var Camel;
     var DELIVERY_PERSISTENT = "2";
     Camel._module.controller("Camel.SendMessageController", ["$route", "$scope", "$element", "$timeout", "workspace", "jolokia", "localStorage", "$location", "activeMQMessage", function ($route, $scope, $element, $timeout, workspace, jolokia, localStorage, $location, activeMQMessage) {
         var log = Logger.get("Camel");
+        $scope.workspace = workspace;
         $scope.noCredentials = false;
         $scope.showChoose = false;
         $scope.profileFileNames = [];
@@ -14930,6 +14949,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.SourceController", ["$scope", "workspace", function ($scope, workspace) {
+        $scope.workspace = workspace;
         $scope.$on("$routeChangeSuccess", function (event, current, previous) {
             setTimeout(updateRoutes, 50);
         });
@@ -15021,6 +15041,7 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.TraceRouteController", ["$scope", "workspace", "jolokia", "localStorage", "tracerStatus", function ($scope, workspace, jolokia, localStorage, tracerStatus) {
         var log = Logger.get("CamelTracer");
+        $scope.workspace = workspace;
         $scope.tracing = false;
         $scope.messages = [];
         $scope.graphView = null;
@@ -15370,6 +15391,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.TypeConverterController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+        $scope.workspace = workspace;
         $scope.data = [];
         $scope.selectedMBean = null;
         $scope.mbeanAttributes = {};
