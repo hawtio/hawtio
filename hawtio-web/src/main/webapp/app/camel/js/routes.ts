@@ -76,6 +76,15 @@ module Camel {
         var nodes = [];
         var links = [];
         $scope.processorTree = camelProcessorMBeansById(workspace);
+        var routeId = routeXmlNode.getAttribute("id");
+        // init the view settings the first time
+        if ($scope.viewSettings.routes.length === 0) {
+          var entry = {
+            name: routeId,
+            selected: true
+          };
+          $scope.viewSettings.routes.push(entry);
+        }
         Camel.addRouteXmlChildren($scope, routeXmlNode, nodes, links, null, 0, 0);
         showGraph(nodes, links);
       } else if ($scope.mbean) {
@@ -268,7 +277,7 @@ module Camel {
             });
           }
           if (node) {
-            var total = 0 + parseInt(completed);
+            var total = parseInt(completed);
             var failed = stat.getAttribute("exchangesFailed");
             if (failed) {
               total += parseInt(failed);
