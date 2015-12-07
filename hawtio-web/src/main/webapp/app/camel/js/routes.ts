@@ -31,10 +31,6 @@ module Camel {
     var delayUpdatingRoutes = 300;
 
     $scope.updateSelectedRoute = function() {
-      for (var idx in $scope.viewSettings.routes) {
-        var route = $scope.viewSettings.routes[idx];
-        log.info("route " + route.name + " is selected " + route.selected);
-      }
       $timeout(updateRoutes, delayUpdatingRoutes);
     };
 
