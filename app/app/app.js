@@ -10460,6 +10460,21 @@ var Camel;
         });
     }
     Camel.loadRouteXmlNodes = loadRouteXmlNodes;
+    function loadSelectedRouteXmlNodes($scope, doc, nodes, links, width, isSelectedRoute) {
+        var allRoutes = $(doc).find("route");
+        var routeDelta = width / allRoutes.length;
+        var rowX = 0;
+        allRoutes.each(function (idx, route) {
+            var routeId = route.getAttribute("id");
+            var selected = isSelectedRoute(routeId);
+            Camel.log.debug("Is route " + routeId + " selected " + selected + " to show in route diagram");
+            if (selected) {
+                Camel.addRouteXmlChildren($scope, route, nodes, links, null, rowX, 0);
+                rowX += routeDelta;
+            }
+        });
+    }
+    Camel.loadSelectedRouteXmlNodes = loadSelectedRouteXmlNodes;
     function addRouteXmlChildren($scope, parent, nodes, links, parentId, parentX, parentY, parentNode) {
         if (parentNode === void 0) { parentNode = null; }
         var delta = 150;
@@ -14437,6 +14452,9 @@ var Camel;
     Camel._module.controller("Camel.RouteController", ["$scope", "$routeParams", "$element", "$timeout", "workspace", "$location", "jolokia", "localStorage", function ($scope, $routeParams, $element, $timeout, workspace, $location, jolokia, localStorage) {
         var log = Logger.get("Camel");
         $scope.workspace = workspace;
+        $scope.viewSettings = {
+            routes: []
+        };
         $scope.routes = [];
         $scope.routeNodes = {};
         if ($routeParams != null) {
@@ -14449,6 +14467,9 @@ var Camel;
         $scope.camelShowInflightCounter = Camel.showInflightCounter(localStorage);
         var updateRoutes = Core.throttled(doUpdateRoutes, 1000);
         var delayUpdatingRoutes = 300;
+        $scope.updateSelectedRoute = function () {
+            $timeout(updateRoutes, delayUpdatingRoutes);
+        };
         $scope.$on("$routeChangeSuccess", function (event, current, previous) {
             $timeout(updateRoutes, delayUpdatingRoutes);
         });
@@ -14487,6 +14508,14 @@ var Camel;
                 var nodes = [];
                 var links = [];
                 $scope.processorTree = Camel.camelProcessorMBeansById(workspace);
+                var routeId = routeXmlNode.getAttribute("id");
+                if ($scope.viewSettings.routes.length === 0) {
+                    var entry = {
+                        name: routeId,
+                        selected: true
+                    };
+                    $scope.viewSettings.routes.push(entry);
+                }
                 Camel.addRouteXmlChildren($scope, routeXmlNode, nodes, links, null, 0, 0);
                 showGraph(nodes, links);
             }
@@ -14510,8 +14539,29 @@ var Camel;
             }
             if (data) {
                 var doc = $.parseXML(data);
+                if ($scope.viewSettings.routes.length === 0) {
+                    var allRoutes = $(doc).find("route");
+                    allRoutes.each(function (idx, route) {
+                        var routeId = route.getAttribute("id");
+                        var entry = {
+                            name: routeId,
+                            selected: true
+                        };
+                        $scope.viewSettings.routes.push(entry);
+                    });
+                }
                 $scope.processorTree = Camel.camelProcessorMBeansById(workspace);
-                Camel.loadRouteXmlNodes($scope, doc, selectedRouteId, nodes, links, getWidth());
+                Camel.loadSelectedRouteXmlNodes($scope, doc, nodes, links, getWidth(), function (routeId) {
+                    if ($scope.viewSettings.routes.length > 0) {
+                        for (var idx in $scope.viewSettings.routes) {
+                            var route = $scope.viewSettings.routes[idx];
+                            if (route.name === routeId) {
+                                return route.selected;
+                            }
+                        }
+                    }
+                    return selectedRouteId == null || selectedRouteId === routeId;
+                });
                 showGraph(nodes, links);
             }
             else {
@@ -14627,7 +14677,7 @@ var Camel;
                         });
                     }
                     if (node) {
-                        var total = 0 + parseInt(completed);
+                        var total = parseInt(completed);
                         var failed = stat.getAttribute("exchangesFailed");
                         if (failed) {
                             total += parseInt(failed);
@@ -17896,6 +17946,7 @@ var Core;
             $(svgElement).children("g").remove();
         }
         $(svg).children("g").remove();
+        $("svg").children("g").remove();
         var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
         var nodes = svgGroup.selectAll("g .node").data(states).enter().append("g").attr("class", "node").attr("data-cid", function (d) {
             return d.cid;

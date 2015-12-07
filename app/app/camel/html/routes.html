@@ -31,11 +31,41 @@
     stroke: #08f;
   }
 </style>
+
+<div ng-class="row-fluid" ng-controller="Camel.RouteController">
+
+  <div ng-hide="inDashboard" class="span12 page-padded">
+    <div class="section-header">
+
+      <!-- add empty filter to make the CSS look good -->
+      <div class="section-filter">
+      </div>
+
+      <div class="section-controls">
+        <a href="#"
+           class="dropdown-toggle"
+           data-toggle="dropdown">
+          Routes &nbsp;<i class="icon-caret-down"></i>
+        </a>
+
+        <ul class="dropdown-menu viewMenu">
+          <li ng-repeat="route in viewSettings.routes">
+            <label class="checkbox">
+              <input type="checkbox" ng-model="route.selected" ng-disabled="viewSettings.routes.length <= 1" ng-change="updateSelectedRoute()"> {{route.name}}
+            </label>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <div ng-class="{'wiki-fixed' : !isJmxTab}" id="canvas" ng-controller="Camel.RouteController">
   <div ng-hide="isJmxTab">
     <ng-include src="'app/camel/html/breadcrumbBar.html'"></ng-include>
   </div>
-  <svg class="camel-diagram" width=0 height=0>
+  <svg class="camel-diagram" width="0" height="0">
     <defs>
       <marker id="arrowhead"
               viewBox="0 0 10 10"
