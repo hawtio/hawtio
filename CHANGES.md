@@ -4,6 +4,7 @@
 #### 1.4.59
 
 * Camel plugin able to show message history metrics if using Camel 2.17 onwards
+* Camel route diagram now allows to select which routes to display
 * Dashboard plugin is now enabled again
 
 #### 1.4.58
