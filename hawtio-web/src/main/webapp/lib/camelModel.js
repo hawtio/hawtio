@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.17-SNAPSHOT';
+var _apacheCamelModelVersion = '2.16.1';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -7354,59 +7354,6 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from xml/json to Java beans. A permission must be configured either here or globally using a JVM system property. The permission can be specified in a syntax where a plus sign is allow and minus sign is deny. Wildcards is supported by using . as prefix. For example to allow com.foo and all subpackages then specfy com.foo.. Multiple permissions can be configured separated by comma such as com.foo.-com.foo.bar.MySecretBean. The following default permission is always included: -java.lang.java.util. unless its overridden by specifying a JVM system property with they key org.apache.camel.xstream.permissions.",
           "title": "Permissions",
-          "required": false,
-          "deprecated": false
-        },
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the value of the id property.",
-          "title": "Id",
-          "required": false,
-          "deprecated": false
-        }
-      }
-    },
-    "mime-multipart": {
-      "type": "object",
-      "title": "MIME Multipart",
-      "group": "dataformat,transformation",
-      "icon": "generic24.png",
-      "description": "MIME Multipart data format",
-      "properties": {
-        "multipartSubType": {
-          "kind": "attribute",
-          "type": "string",
-          "defaultValue": "mixed",
-          "description": "Specify the subtype of the MIME Multipart. Default is mixed.",
-          "title": "Multipart Sub Type",
-          "required": false,
-          "deprecated": false
-        },
-        "multipartWithoutAttachment": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body part). Default is false.",
-          "title": "Multipart Without Attachment",
-          "required": false,
-          "deprecated": false
-        },
-        "headersInline": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers (false). Default is false.",
-          "title": "Headers Inline",
-          "required": false,
-          "deprecated": false
-        },
-        "binaryContent": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false) Default is false.",
-          "title": "Binary Content",
           "required": false,
           "deprecated": false
         },

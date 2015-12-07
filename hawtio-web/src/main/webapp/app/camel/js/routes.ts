@@ -6,6 +6,10 @@ module Camel {
 
     $scope.workspace = workspace;
 
+    $scope.viewSettings = {
+      routes: []
+    };
+
     $scope.routes = [];
     $scope.routeNodes = {};
 
@@ -25,6 +29,14 @@ module Camel {
     // lets delay a little updating the routes to avoid timing issues where we've not yet
     // fully loaded the workspace and/or the XML model
     var delayUpdatingRoutes = 300;
+
+    $scope.updateSelectedRoute = function() {
+      for (var idx in $scope.viewSettings.routes) {
+        var route = $scope.viewSettings.routes[idx];
+        log.info("route " + route.name + " is selected " + route.selected);
+      }
+      $timeout(updateRoutes, delayUpdatingRoutes);
+    };
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -94,8 +106,34 @@ module Camel {
       }
       if (data) {
         var doc = $.parseXML(data);
+
+        // init the view settings the first time
+        if ($scope.viewSettings.routes.length === 0) {
+          var allRoutes = $(doc).find("route");
+          allRoutes.each((idx, route) => {
+            var routeId = route.getAttribute("id");
+            var entry = {
+              name: routeId,
+              selected: true
+            };
+            $scope.viewSettings.routes.push(entry);
+          });
+        }
+
         $scope.processorTree = camelProcessorMBeansById(workspace);
-        Camel.loadRouteXmlNodes($scope, doc, selectedRouteId, nodes, links, getWidth());
+        Camel.loadSelectedRouteXmlNodes($scope, doc, nodes, links, getWidth(), (routeId) => {
+          if ($scope.viewSettings.routes.length > 0) {
+            for (var idx in $scope.viewSettings.routes) {
+              var route = $scope.viewSettings.routes[idx];
+              if (route.name === routeId) {
+                return route.selected;
+              }
+            }
+          }
+          // default to true for all routes
+          return selectedRouteId == null || selectedRouteId === routeId;
+        });
+
         showGraph(nodes, links);
       } else {
         console.log("No data from route XML!")
@@ -155,6 +193,7 @@ module Camel {
         onClick = onClickGraphNode;
       }
 
+      // re-layout the graph
       $scope.graphData = Core.dagreLayoutGraph(nodes, links, width, height, svg, false, onClick);
 
       var gNodes = canvasDiv.find("g.node");

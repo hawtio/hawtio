@@ -1196,6 +1196,21 @@ module Camel {
     });
   }
 
+  export function loadSelectedRouteXmlNodes($scope, doc, nodes, links, width, isSelectedRoute) {
+    var allRoutes = $(doc).find("route");
+    var routeDelta = width / allRoutes.length;
+    var rowX = 0;
+    allRoutes.each((idx, route) => {
+      var routeId = route.getAttribute("id");
+      var selected = isSelectedRoute(routeId);
+      log.debug("Is route " + routeId + " selected " + selected + " to show in route diagram");
+      if (selected) {
+        Camel.addRouteXmlChildren($scope, route, nodes, links, null, rowX, 0);
+        rowX += routeDelta;
+      }
+    });
+  }
+
   export function addRouteXmlChildren($scope, parent, nodes, links, parentId, parentX, parentY, parentNode = null) {
     var delta = 150;
     var x = parentX;

@@ -189,6 +189,8 @@ module Core {
       $(svgElement).children("g").remove();
     }
     $(svg).children("g").remove();
+    // the code above do not really work, but this one does
+    $("svg").children("g").remove();
 
     var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
 
