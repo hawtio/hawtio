@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.hawt.example.services</groupId>
     <artifactId>example-services</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.4.59</version>
     <relativePath>..</relativePath>
   </parent>
 
