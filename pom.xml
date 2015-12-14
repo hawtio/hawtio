@@ -126,7 +126,7 @@
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
     <maven-surefire-plugin-version>2.13</maven-surefire-plugin-version>
     <ops4j-pax-web-version>3.0.1</ops4j-pax-web-version>
-    <ops4j-pax-url-version>2.4.1</ops4j-pax-url-version>
+    <ops4j-pax-url-version>2.4.4</ops4j-pax-url-version>
     <osgi-version>4.2.0</osgi-version>
     <org-json-version>20150729</org-json-version>
     <servlet-api-version>2.5</servlet-api-version>
