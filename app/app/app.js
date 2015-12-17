@@ -26233,6 +26233,11 @@ var Fabric;
         $scope.createLocationDialog = ContainerHelpers.getCreateLocationDialog($scope, $dialog);
         Core.bindModelToSearchParam($scope, $location, "containerIdFilter", "q", "");
         Core.reloadWhenParametersChange($route, $scope, $location);
+        $scope.showDeleteButton = function () {
+            return $scope.selectedContainers.length > 0 && $scope.selectedContainers.all(function (c) {
+                return !$scope.deletePending[c.id] && !c.root;
+            });
+        };
         $scope.addToDashboardLink = function () {
             var href = "#/fabric/containers";
             var title = "Containers";
