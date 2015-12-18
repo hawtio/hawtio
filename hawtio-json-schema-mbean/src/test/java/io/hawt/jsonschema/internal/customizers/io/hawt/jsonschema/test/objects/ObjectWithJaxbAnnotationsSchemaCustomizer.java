@@ -15,9 +15,8 @@
  */
 package io.hawt.jsonschema.internal.customizers.io.hawt.jsonschema.test.objects;
 
-import com.fasterxml.jackson.databind.jsonschema.JsonSchema;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+
 import io.hawt.jsonschema.internal.customizers.JsonSchemaCustomizer;
 
 public class ObjectWithJaxbAnnotationsSchemaCustomizer extends JsonSchemaCustomizer {
@@ -26,7 +25,7 @@ public class ObjectWithJaxbAnnotationsSchemaCustomizer extends JsonSchemaCustomi
     public JsonSchema customize(JsonSchema originalSchema) {
         JsonSchema schema = super.customize(originalSchema);
 //        schema.asObjectSchema().getProperties().get("SomeOtherProp").asStringSchema().setDefault("default-value");
-        ((ObjectNode)schema.getSchemaNode().get("properties").get("SomeOtherProp")).set("default", new TextNode("default-value"));
+        schema.asObjectSchema().getProperties().get("SomeOtherProp").asStringSchema().setDefault("default-value");
         return schema;
     }
 

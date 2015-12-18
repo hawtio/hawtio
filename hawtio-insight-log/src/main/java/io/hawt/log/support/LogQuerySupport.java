@@ -191,7 +191,7 @@ public abstract class LogQuerySupport implements LogQuerySupportMBean {
         if (json.length() == 0 || json.equals("{}")) {
             return null;
         }
-        return mapper.reader(LogFilter.class).readValue(json);
+        return mapper.readerFor(LogFilter.class).readValue(json);
     }
 
     public String getSource(String mavenCoords, String className, String filePath) throws IOException {

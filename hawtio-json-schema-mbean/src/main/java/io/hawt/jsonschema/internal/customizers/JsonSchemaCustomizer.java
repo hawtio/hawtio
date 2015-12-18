@@ -15,7 +15,7 @@
  */
 package io.hawt.jsonschema.internal.customizers;
 
-import com.fasterxml.jackson.databind.jsonschema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 
 /**
  * Interface for classes which are used to alter Json Schema generated from any class.
