@@ -15,9 +15,8 @@
  */
 package io.hawt.jsonschema.internal.customizers.io.fabric8.openshift;
 
-import com.fasterxml.jackson.databind.jsonschema.JsonSchema;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+
 import io.hawt.jsonschema.internal.customizers.JsonSchemaCustomizer;
 
 /**
@@ -35,8 +34,7 @@ public class CreateOpenshiftContainerOptionsSchemaCustomizer extends JsonSchemaC
         if (defaultServerUrl == null || defaultServerUrl.trim().equals("")) {
             defaultServerUrl = "openshift.redhat.com";
         }
-//        jsonSchema.asObjectSchema().getProperties().get("serverUrl").asStringSchema().setDefault(defaultServerUrl);
-        ((ObjectNode)jsonSchema.getSchemaNode().get("properties").get("serverUrl")).set("default", new TextNode(defaultServerUrl));
+        jsonSchema.asObjectSchema().getProperties().get("serverUrl").asStringSchema().setDefault(defaultServerUrl);
         return jsonSchema;
     }
 

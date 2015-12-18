@@ -2,12 +2,15 @@ package io.hawt.jsonschema;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.jsonschema.JsonSchema;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
+
 import io.hawt.jsonschema.internal.customizers.JsonSchemaCustomizer;
 import io.hawt.util.MBeanSupport;
 import io.hawt.jsonschema.internal.BeanValidationAnnotationModule;
 import io.hawt.jsonschema.internal.IgnorePropertiesBackedByTransientFields;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -38,7 +41,7 @@ public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
             if (mapper == null) {
                 mapper = new ObjectMapper();
 
-                mapper.setVisibilityChecker(new IgnorePropertiesBackedByTransientFields(mapper.getVisibilityChecker()));
+                mapper.setVisibility(new IgnorePropertiesBackedByTransientFields(mapper.getVisibilityChecker()));
 
                 JaxbAnnotationModule module1 = new JaxbAnnotationModule();
                 mapper.registerModule(module1);
@@ -107,7 +110,9 @@ public class SchemaLookup extends MBeanSupport implements SchemaLookupMXBean {
         String name = clazz.getName();
         try {
             ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
-            JsonSchema jsonSchema = mapper.generateJsonSchema(clazz);
+            SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
+            mapper.acceptJsonFormatVisitor(mapper.constructType(clazz), visitor);
+            JsonSchema jsonSchema = visitor.finalSchema();
             customizeSchema(clazz, jsonSchema);
             return writer.writeValueAsString(jsonSchema);
 //            SchemaFactoryWrapper schemaFactoryWrapper = new SchemaFactoryWrapper();
