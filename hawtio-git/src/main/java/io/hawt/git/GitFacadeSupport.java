@@ -189,7 +189,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
                         list.add(new CommitTreeInfo(pathString, pathString, 0, rawMode, objectId.getName(), commit.getId().getName(),
                                 ChangeType.ADD));
                     }
-                    treeWalk.release();
+                    treeWalk.close();
                 } else {
                     RevCommit parent = rw.parseCommit(commit.getParent(0).getId());
                     DiffFormatter df = new DiffFormatter(DisabledOutputStream.INSTANCE);

@@ -53,8 +53,8 @@
     <context>/hawtio</context>
     <hawtio-config-dir>${basedir}/hawtio-config</hawtio-config-dir>
     <hawtio-config-repo>https://github.com/hawtio/hawtio-config.git</hawtio-config-repo>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
 
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
@@ -83,7 +83,7 @@
     <exec-maven-plugin-version>1.4.0</exec-maven-plugin-version>
     <felix.gogo.version>0.16.2</felix.gogo.version>
     <frontend-maven-plugin-version>0.0.24</frontend-maven-plugin-version>
-    <gitective-version>0.9.9</gitective-version>
+    <gitective-version>0.9.10</gitective-version>
 
     <!-- We are using an old guava to avoid breaking ActiveMQ in the test cases of hawtio-web -->
     <!--
@@ -112,7 +112,7 @@
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-webapp-artifactId>jetty-webapp</jetty-webapp-artifactId>
 
-    <jgit-version>3.0.0.201306101825-r</jgit-version>
+    <jgit-version>4.1.1.201511131810-r</jgit-version>
     <jline.version>2.13</jline.version>
     <jolokia-version>1.3.2</jolokia-version>
     <junit-version>4.11</junit-version>

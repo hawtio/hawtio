@@ -39,7 +39,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.gitective</groupId>
+      <groupId>io.fabric8</groupId>
       <artifactId>gitective-core</artifactId>
       <version>${gitective-version}</version>
       <exclusions>

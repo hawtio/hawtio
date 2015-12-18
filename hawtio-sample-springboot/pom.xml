@@ -14,10 +14,6 @@
     <description>hawtio :: Sample Spring Boot process</description>
     <packaging>war</packaging>
 
-    <properties>
-        <start-class>io.hawt.sample.spring.boot.SampleSpringBootService</start-class>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -47,6 +43,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot-version}</version>
+                <configuration>
+                    <mainClass>io.hawt.sample.spring.boot.SampleSpringBootService</mainClass>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

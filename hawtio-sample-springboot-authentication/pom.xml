@@ -15,7 +15,6 @@
     <packaging>war</packaging>
 
     <properties>
-        <start-class>io.hawt.sample.spring.boot.SampleAuthenticationSpringBootService</start-class>
         <!-- Jetty version referred from the spring-boot-dependencies project -->
         <jetty.version>9.2.11.v20150529</jetty.version>
     </properties>
@@ -70,6 +69,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot-version}</version>
+                <configuration> 
+                    <mainClass>io.hawt.sample.spring.boot.SampleAuthenticationSpringBootService</mainClass>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
