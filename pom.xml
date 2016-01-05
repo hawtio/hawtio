@@ -68,7 +68,6 @@
     <activemq-version>5.12.1</activemq-version>
     <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
     <aether-version>1.13.1</aether-version>
-    <scala-version>2.10.0</scala-version>
     <atmosphere-version>1.0.18</atmosphere-version>
     <blueprint-web-version>1.0.0</blueprint-web-version>
     <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
@@ -90,6 +89,7 @@
         <guava-version>13.0.1</guava-version>
     -->
     <guava-version>10.0</guava-version>
+    <guava.version>14.0.1</guava.version>
     <hawtio-release-version>1.4.19</hawtio-release-version>
     <infinispan-version>5.3.0.Final</infinispan-version>
 <!--
@@ -129,6 +129,7 @@
     <ops4j-pax-url-version>2.4.4</ops4j-pax-url-version>
     <osgi-version>4.2.0</osgi-version>
     <org-json-version>20150729</org-json-version>
+    <scala-version>2.10.0</scala-version>
     <servlet-api-version>2.5</servlet-api-version>
 
     <!-- use slf4j-api 1.6.x to be easy compatible with older Karaf/Camel releases -->
@@ -137,10 +138,10 @@
 
     <spring-version>4.1.8.RELEASE</spring-version>
     <spring-boot-version>1.3.0.RELEASE</spring-boot-version>
-    <xbean-version>3.16</xbean-version>
+    <unsigner-maven-plugin-version>0.2</unsigner-maven-plugin-version>
     <wagon-version>2.7</wagon-version>
     <war-plugin-version>2.1.1</war-plugin-version>
-    <guava.version>14.0.1</guava.version>
+    <xbean-version>3.16</xbean-version>
   </properties>
 
   <modules>

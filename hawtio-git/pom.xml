@@ -163,6 +163,20 @@
           </instructions>
         </configuration>
       </plugin>
+      <!-- Remove any signatures that made their way into the generated bundle -->
+      <plugin>
+        <groupId>org.commonjava.maven.plugins</groupId>
+        <artifactId>unsigner-maven-plugin</artifactId>
+        <version>${unsigner-maven-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>unsign-jar</id>
+            <goals>
+              <goal>unsign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
