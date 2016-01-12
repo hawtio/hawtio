@@ -98,7 +98,7 @@
 -->
 
     <!-- make sure to align jackson with fabric8 -->
-    <jackson-version>2.6.3</jackson-version>
+    <jackson-version>2.7.0</jackson-version>
     <jackson-version-range>[2.5,3)</jackson-version-range>
 
     <javaewah-version>1.0.2</javaewah-version>
