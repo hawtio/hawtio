@@ -1,6 +1,11 @@
 
 ### Change Log
 
+#### 1.4.60
+
+* Fixed hawtio-app to scan for 3rd party plugins in `--pluginsDir` to work on Windows
+* Added a copy to clipboard button on the Camel and ActiveMQ message browser
+
 #### 1.4.59
 
 * Camel plugin able to show message history metrics if using Camel 2.17 onwards
