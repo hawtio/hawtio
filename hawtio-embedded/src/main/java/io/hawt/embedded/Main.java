@@ -164,7 +164,7 @@ public class Main {
                     WebAppContext plugin = new WebAppContext();
                     plugin.setServer(handlers.getServer());
                     plugin.setContextPath(contextPath);
-                    plugin.setWar("file://" + war.getAbsolutePath());
+                    plugin.setWar(war.getAbsolutePath());
                     // plugin.setParentLoaderPriority(true);
                     plugin.setLogUrlOnStart(true);
 
