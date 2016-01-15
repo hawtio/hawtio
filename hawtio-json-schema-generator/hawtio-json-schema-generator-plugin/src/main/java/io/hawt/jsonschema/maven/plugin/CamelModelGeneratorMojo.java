@@ -76,7 +76,6 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
             if (core != null) {
                 URL url = new URL("file", null, core.getAbsolutePath());
                 URLClassLoader loader = new URLClassLoader(new URL[]{url});
-
                 InputStream is = loader.getResourceAsStream("org/apache/camel/catalog/models.properties");
                 String lines = loadText(is);
                 for (String name : lines.split("\n")) {
@@ -98,7 +97,7 @@ public class CamelModelGeneratorMojo extends AbstractMojo {
                 }
             }
         } catch (Exception e) {
-            throw new MojoFailureException("Error loading models from camel-catalog due " + e.getMessage());
+            throw new MojoFailureException("Error loading models from camel-catalog due " + e.getMessage(), e);
         }
 
         if (eips.isEmpty()) {
