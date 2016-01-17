@@ -116,7 +116,7 @@
     <jline.version>2.13</jline.version>
     <jolokia-version>1.3.2</jolokia-version>
     <junit-version>4.11</junit-version>
-    <karaf-version>4.0.3</karaf-version>
+    <karaf-version>4.0.4</karaf-version>
     <log4j-version>1.2.17</log4j-version>
     <maven-version>3.0.4</maven-version>
     <maven-antrun-plugin-version>1.7</maven-antrun-plugin-version>
