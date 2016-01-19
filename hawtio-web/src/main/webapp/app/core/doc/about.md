@@ -2,7 +2,7 @@
 
 <div ng-show="!customBranding">
   <p/>
-  <b>{{branding.appName}}</b> is a lightweight and <a href="http://hawt.io/plugins/index.html">modular</a> HTML5 web console with <a href="http://hawt.io/plugins/index.html">lots of plugins</a> for managing your Java stuff
+  <b>{{branding.appName}}</b> is a lightweight and modular HTML5 web console with <a href="http://hawt.io/plugins/index.html">lots of plugins</a> for managing your Java stuff
   <p/>
 </div>
 
