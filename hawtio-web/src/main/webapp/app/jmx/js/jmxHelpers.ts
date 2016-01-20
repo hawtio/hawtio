@@ -176,7 +176,7 @@ module Jmx {
           }
           if (plugin) {
             console.log("Lazy loading folder " + folder.title);
-            var oldChildren = folder.childen;
+            var oldChildren = folder.children;
             plugin(workspace, folder, () => {
               treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
               var newChildren = folder.children;

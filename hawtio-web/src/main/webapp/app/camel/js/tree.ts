@@ -39,15 +39,11 @@ module Camel {
       reloadThrottled();
     });
 
-    var reloadOnContextFilterThrottled = Core.throttled(() => {
-      reloadFunction(() => {
-        $("#camelContextIdFilter").focus();
-      });
-    }, 500);
-
     $scope.$watch('contextFilterText', function () {
       if ($scope.contextFilterText != $scope.lastContextFilterText) {
-        $timeout(reloadOnContextFilterThrottled, 250);
+        reloadFunction(() => {
+          $("#camelContextIdFilter").focus();
+        });
       }
     });
 
@@ -92,90 +88,143 @@ module Camel {
                 var contextNode = contextsFolder.children[0];
                 if (contextNode) {
                   var title = contextNode.title;
-                  var match = Core.matchFilterIgnoreCase(title, contextFilterText);
-                  if (match) {
-                    var folder = new Folder(title);
-                    folder.addClass = "org-apache-camel-context";
-                    folder.domain = domainName;
-                    folder.objectName = contextNode.objectName;
-                    folder.entries = contextNode.entries;
-                    folder.typeName = contextNode.typeName;
-                    folder.key = contextNode.key;
-                    folder.version = contextNode.version;
-                    if (routesNode) {
-                      var routesFolder = new Folder("Routes");
-                      routesFolder.addClass = "org-apache-camel-routes-folder";
-                      routesFolder.parent = contextsFolder;
-                      routesFolder.children = routesNode.children;
-                      angular.forEach(routesFolder.children, (n) => n.addClass = "org-apache-camel-routes");
-                      folder.children.push(routesFolder);
-                      routesFolder.typeName = "routes";
-                      routesFolder.key = routesNode.key;
-                      routesFolder.domain = routesNode.domain;
-                    }
-                    if (endpointsNode) {
-                      var endpointsFolder = new Folder("Endpoints");
-                      endpointsFolder.addClass = "org-apache-camel-endpoints-folder";
-                      endpointsFolder.parent = contextsFolder;
-                      endpointsFolder.children = endpointsNode.children;
-                      angular.forEach(endpointsFolder.children, (n) => {
-                        n.addClass = "org-apache-camel-endpoints";
-                        if (!getContextId(n)) {
-                          n.entries["context"] = contextNode.entries["context"];
-                        }
-                      });
-                      folder.children.push(endpointsFolder);
-                      endpointsFolder.entries = contextNode.entries;
-                      endpointsFolder.typeName = "endpoints";
-                      endpointsFolder.key = endpointsNode.key;
-                      endpointsFolder.domain = endpointsNode.domain;
-                    }
-                    if (componentsNode) {
-                      var componentsFolder = new Folder("Components");
-                      componentsFolder.addClass = "org-apache-camel-components-folder";
-                      componentsFolder.parent = contextsFolder;
-                      componentsFolder.children = componentsNode.children;
-                      angular.forEach(componentsFolder.children, (n) => {
-                        n.addClass = "org-apache-camel-components";
-                        if (!getContextId(n)) {
-                          n.entries["context"] = contextNode.entries["context"];
-                        }
-                      });
-                      folder.children.push(componentsFolder);
-                      componentsFolder.entries = contextNode.entries;
-                      componentsFolder.typeName = "components";
-                      componentsFolder.key = componentsNode.key;
-                      componentsFolder.domain = componentsNode.domain;
-                    }
-                    if (dataFormatsNode) {
-                      var dataFormatsFolder = new Folder("Dataformats");
-                      dataFormatsFolder.addClass = "org-apache-camel-dataformats-folder";
-                      dataFormatsFolder.parent = contextsFolder;
-                      dataFormatsFolder.children = dataFormatsNode.children;
-                      angular.forEach(dataFormatsFolder.children, (n) => {
-                        n.addClass = "org-apache-camel-dataformats";
-                        if (!getContextId(n)) {
-                          n.entries["context"] = contextNode.entries["context"];
-                        }
-                      });
-                      folder.children.push(dataFormatsFolder);
-                      dataFormatsFolder.entries = contextNode.entries;
-                      dataFormatsFolder.typeName = "dataformats";
-                      dataFormatsFolder.key = dataFormatsNode.key;
-                      dataFormatsFolder.domain = dataFormatsNode.domain;
-                    }
-                    var jmxNode = new Folder("MBeans");
+                  var folder = new Folder(title);
+                  folder.addClass = "org-apache-camel-context";
+                  folder.domain = domainName;
+                  folder.objectName = contextNode.objectName;
+                  folder.entries = contextNode.entries;
+                  folder.typeName = contextNode.typeName;
+                  folder.key = contextNode.key;
+                  folder.version = contextNode.version;
+                  if (routesNode) {
+                    var routesFolder = new Folder("Routes");
+                    routesFolder.addClass = "org-apache-camel-routes-folder";
+                    routesFolder.parent = contextsFolder;
 
-                    // lets add all the entries which are not one context/routes/components/endpoints/dataformats as MBeans
-                    angular.forEach(entries, (jmxChild, name) => {
-                      if (name !== "context" && name !== "routes" && name !== "endpoints" && name !== "components" && name !== "dataformats") {
-                        jmxNode.children.push(jmxChild);
+                    angular.forEach(routesNode.children, (n) => {
+                      // Filter on route names. Child items belonging to the route are lazy loaded
+                      // when the context tree is expanded, so these are not filtered
+                      if (Core.matchFilterIgnoreCase(n.title, contextFilterText)) {
+                        routesFolder.children.push(n);
+                        n.addClass = "org-apache-camel-routes";
+                        expandFolder(routesFolder, contextFilterText);
                       }
                     });
 
-                    if (jmxNode.children.length > 0) {
-                      jmxNode.sortChildren(false);
-                      folder.children.push(jmxNode);
+                    if (!routesFolder.children.isEmpty()) {
+                      folder.children.push(routesFolder);
+                    }
+
+                    routesFolder.typeName = "routes";
+                    routesFolder.key = routesNode.key;
+                    routesFolder.domain = routesNode.domain;
+                  }
+                  if (endpointsNode) {
+                    var endpointsFolder = new Folder("Endpoints");
+                    endpointsFolder.addClass = "org-apache-camel-endpoints-folder";
+                    endpointsFolder.parent = contextsFolder;
+
+                    angular.forEach(endpointsNode.children, (n) => {
+                      if (Core.matchFilterIgnoreCase(n.title, contextFilterText)) {
+                        n.addClass = "org-apache-camel-endpoints";
+                        if (!getContextId(n)) {
+                          endpointsFolder.children.push(n);
+                          n.entries["context"] = contextNode.entries["context"];
+                        }
+                        expandFolder(endpointsFolder, contextFilterText);
+                      }
+                    });
+
+                    if (!endpointsFolder.children.isEmpty()) {
+                      folder.children.push(endpointsFolder);
+                    }
+
+                    endpointsFolder.entries = contextNode.entries;
+                    endpointsFolder.typeName = "endpoints";
+                    endpointsFolder.key = endpointsNode.key;
+                    endpointsFolder.domain = endpointsNode.domain;
+                  }
+                  if (componentsNode) {
+                    var componentsFolder = new Folder("Components");
+                    componentsFolder.addClass = "org-apache-camel-components-folder";
+                    componentsFolder.parent = contextsFolder;
+
+                    angular.forEach(componentsNode.children, (n) => {
+                      if (Core.matchFilterIgnoreCase(n.title, contextFilterText)) {
+                        n.addClass = "org-apache-camel-components";
+                        if (!getContextId(n)) {
+                          componentsFolder.children.push(n);
+                          n.entries["context"] = contextNode.entries["context"];
+                        }
+                        expandFolder(componentsFolder, contextFilterText);
+                      }
+                    });
+
+                    if (!componentsFolder.children.isEmpty()) {
+                      folder.children.push(componentsFolder);
+                    }
+
+                    componentsFolder.entries = contextNode.entries;
+                    componentsFolder.typeName = "components";
+                    componentsFolder.key = componentsNode.key;
+                    componentsFolder.domain = componentsNode.domain;
+                  }
+                  if (dataFormatsNode) {
+                    var dataFormatsFolder = new Folder("Dataformats");
+                    dataFormatsFolder.addClass = "org-apache-camel-dataformats-folder";
+                    dataFormatsFolder.parent = contextsFolder;
+
+                    angular.forEach(dataFormatsNode.children, (n) => {
+                      if (Core.matchFilterIgnoreCase(n.title, contextFilterText)) {
+                        n.addClass = "org-apache-camel-dataformats";
+                        if (!getContextId(n)) {
+                          dataFormatsFolder.children.push(n);
+                          n.entries["context"] = contextNode.entries["context"];
+                        }
+                        expandFolder(dataFormatsFolder, contextFilterText);
+                      }
+                    });
+
+                    if (!dataFormatsFolder.children.isEmpty()) {
+                      folder.children.push(dataFormatsFolder);
+                    }
+
+                    dataFormatsFolder.entries = contextNode.entries;
+                    dataFormatsFolder.typeName = "dataformats";
+                    dataFormatsFolder.key = dataFormatsNode.key;
+                    dataFormatsFolder.domain = dataFormatsNode.domain;
+                  }
+                  var jmxNode = new Folder("MBeans");
+
+                  // lets add all the entries which are not one context/routes/components/endpoints/dataformats as MBeans
+                  angular.forEach(entries, (jmxChild, name) => {
+                    if (name !== "context" && name !== "routes" && name !== "endpoints" && name !== "components" && name !== "dataformats") {
+                      if (Core.matchFilterIgnoreCase(jmxChild.title, contextFilterText)) {
+                        jmxNode.children.push(jmxChild);
+                        expandFolder(jmxNode, contextFilterText);
+                      }
+                    }
+                  });
+
+                  if (jmxNode.children.length) {
+                    jmxNode.sortChildren(false);
+                    folder.children.push(jmxNode);
+                  }
+
+                  // Only add the context node if it, or any children matched filter text
+                  if (Core.matchFilterIgnoreCase(contextNode.title, contextFilterText) && !(folder.children.find(c => c.expand == true))) {
+                    // The filter text only matched the top-level context node, so add all required items for its child folders
+                    addContextFolderChildren(folder, routesFolder, routesNode);
+                    addContextFolderChildren(folder, endpointsFolder, endpointsNode);
+                    addContextFolderChildren(folder, componentsFolder, componentsNode);
+                    addContextFolderChildren(folder, dataFormatsFolder, dataFormatsNode);
+                    folder.parent = rootFolder;
+                    children.push(folder);
+                  } else if (folder.children.length) {
+                    // Filter text matched one or more context children
+                    // Let's expand the context node if any child folders are expanded
+                    if (folder.children.find(c => c.expand == true)) {
+                      folder.expand = true;
                     }
                     folder.parent = rootFolder;
                     children.push(folder);
@@ -220,4 +269,17 @@ module Camel {
     }
   }]);
 
+  function addContextFolderChildren(contextFolder, childFolder, childNode) {
+    if (childFolder && childFolder.children.isEmpty()) {
+      childFolder.children = childNode.children;
+      contextFolder.children.push(childFolder);
+    }
+  }
+
+  function expandFolder(folder, contextFilterText) {
+    // Expands a folder if some filter text is present
+    if (contextFilterText && contextFilterText.trim().length) {
+      folder.expand = true;
+    }
+  }
 }
