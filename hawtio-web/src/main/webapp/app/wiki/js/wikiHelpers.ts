@@ -547,6 +547,15 @@ module Wiki {
     return UrlHelpers.join("git/" + branch, path);
   }
 
+  /**
+   * Return a relative URL without "git" prepended
+   */
+  export function relativeURL(branch: string, path: string) {
+    branch = branch || "master";
+    path = path || "/";
+    return UrlHelpers.join(branch, path);
+  }
+
 
   /**
    * Takes a row containing the entity object; or can take the entity directly.
@@ -592,16 +601,13 @@ module Wiki {
         log.debug("file " + name + " has namespaces " + xmlNamespaces);
       }
     }
-    if (iconUrl) {
+    if (iconUrl || (extension && (['png', 'svg', 'jpg', 'gif'].indexOf(extension) >= 0))) {
       css = null;
-      icon = UrlHelpers.join("git", iconUrl);
-      var connectionName = Core.getConnectionNameParameter(location.search);
-      if (connectionName) {
-        var connectionOptions = Core.getConnectOptions(connectionName);
-        if (connectionOptions) {
-          connectionOptions.path = Core.url('/' + icon);
-          icon = <string>Core.createServerConnectionUrl(connectionOptions);
-        }
+      if (iconUrl) {
+          icon = Fabric.toIconURL(null, iconUrl);;
+      } else {
+          icon = Wiki.relativeURL(branch, path);
+          icon = Fabric.toIconURL(null, icon);
       }
     }
     if (!icon) {
@@ -616,21 +622,6 @@ module Wiki {
         }
       } else {
         switch (extension) {
-          case 'png':
-          case 'svg':
-          case 'jpg':
-          case 'gif':
-            css = null;
-            icon = Wiki.gitRelativeURL(branch, path);
-            var connectionName = Core.getConnectionNameParameter(location.search);
-            if (connectionName) {
-              var connectionOptions = Core.getConnectOptions(connectionName);
-              if (connectionOptions) {
-                connectionOptions.path = Core.url('/' + icon);
-                icon = <string>Core.createServerConnectionUrl(connectionOptions);
-              }
-            }
-            break;
           case 'json':
           case 'xml':
             css = "icon-file-text";

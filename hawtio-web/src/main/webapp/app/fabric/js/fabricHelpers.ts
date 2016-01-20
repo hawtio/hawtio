@@ -589,6 +589,10 @@ module Fabric {
         // relative URLs are prefixed with /<base>/git/
         connectionOptions.path = /^\//.test(iconURL) ? iconURL : Core.url("/git/") + iconURL;
         iconURL = <string>Core.createServerConnectionUrl(connectionOptions);
+        // Fix iconURL in cases where jolokia URL was already set.
+        if (iconURL.endsWith('jolokia')) {
+            iconURL = iconURL.replace('jolokia', connectionOptions.path);
+        }
       }
     } else {
       // no proxy
