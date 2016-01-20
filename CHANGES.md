@@ -5,6 +5,7 @@
 
 * Fixed hawtio-app to scan for 3rd party plugins in `--pluginsDir` to work on Windows
 * Added a copy to clipboard button on the Camel and ActiveMQ message browser
+* The Camel filter box now works better to filter all kinds of nodes in the tree
 
 #### 1.4.59
 
