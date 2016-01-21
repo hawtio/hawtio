@@ -39,6 +39,9 @@ module Camel {
       log.debug("Clear messages")
       tracerStatus.messages = [];
       $scope.messages = [];
+      if ($scope.row) {
+        $scope.messageDialog.close();
+      }
       Core.$apply($scope);
     };
 
