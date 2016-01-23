@@ -216,4 +216,22 @@ public class ProxyDetailsTest {
         assertEquals("getScheme()", "https", details.getScheme());
         assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/?search=1234&page=4", details.getFullProxyUrl());
     }
+
+    @Test
+    public void testInvalidQuery() throws Exception {
+        HttpServletRequest mockReq = mock(HttpServletRequest.class);
+        when(mockReq.getPathInfo()).thenReturn("http://127.0.0.1:54155/jolokia//exec/org.apache.camel:context=camel-1,type=context,name=\"camel-1\"/canSendToEndpoint(java.lang.String)/activemq:!/!/queue:newOrder");
+        when(mockReq.getQueryString()).thenReturn("maxDepth=7&maxCollectionSize=5000&ignoreErrors=true&canonicalNaming=false");
+
+        ProxyDetails details = new ProxyDetails(mockReq);
+
+        assertEquals("getUserName()", null, details.getUserName());
+        assertEquals("getPassword()", null, details.getPassword());
+        assertEquals("getHost()", "127.0.0.1:54155", details.getHost());
+        assertEquals("getHostAndPort()", "127.0.0.1:54155", details.getHostAndPort());
+        assertEquals("getPort()", 80, details.getPort());
+        assertEquals("getProxyPath()", "/jolokia//exec/org.apache.camel:context=camel-1,type=context,name=%22camel-1%22/canSendToEndpoint(java.lang.String)/activemq:!/!/queue:newOrder", details.getProxyPath());
+        assertEquals("getScheme()", "http", details.getScheme());
+        assertEquals("getStringProxyURL()", "http://127.0.0.1:54155/jolokia//exec/org.apache.camel:context=camel-1,type=context,name=%22camel-1%22/canSendToEndpoint(java.lang.String)/activemq:!/!/queue:newOrder?maxDepth=7&maxCollectionSize=5000&ignoreErrors=true&canonicalNaming=false", details.getFullProxyUrl());
+    }
 }
