@@ -82,6 +82,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- for boot up spring-boot with spring-boot goal -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-loader-tools</artifactId>
+      <version>${spring-boot-version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
 </project>

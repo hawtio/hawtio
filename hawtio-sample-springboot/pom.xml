@@ -1,67 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
+  <parent>
+    <groupId>io.hawt</groupId>
+    <artifactId>project</artifactId>
+    <version>1.5-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>hawtio-sample-springboot</artifactId>
+  <name>${project.artifactId}</name>
+  <description>hawtio :: Sample Spring Boot process</description>
+  <packaging>war</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <version>${spring-boot-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-actuator</artifactId>
+      <version>${spring-boot-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-springboot</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot-version}</version>
+        <configuration>
+          <mainClass>io.hawt.sample.spring.boot.SampleSpringBootService</mainClass>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+
+      <!-- to run with mvn hawtio:spring-boot -->
+      <plugin>
         <groupId>io.hawt</groupId>
-        <artifactId>project</artifactId>
-        <version>1.5-SNAPSHOT</version>
-    </parent>
+        <artifactId>hawtio-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <mainClass>io.hawt.sample.spring.boot.SampleSpringBootService</mainClass>
+        </configuration>
+      </plugin>
 
-    <artifactId>hawtio-sample-springboot</artifactId>
-    <name>${project.artifactId}</name>
-    <description>hawtio :: Sample Spring Boot process</description>
-    <packaging>war</packaging>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring-boot-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-actuator</artifactId>
-            <version>${spring-boot-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.hawt</groupId>
-            <artifactId>hawtio-springboot</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.hawt</groupId>
-            <artifactId>hawtio-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot-version}</version>
-                <configuration>
-                    <mainClass>io.hawt.sample.spring.boot.SampleSpringBootService</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    </plugins>
+  </build>
 
 </project>
