@@ -7,6 +7,7 @@
 * Added a copy to clipboard button on the Camel and ActiveMQ message browser
 * The Camel filter box now works better to filter all kinds of nodes in the tree
 * Fixed issue with remote Jolokia cannot send message to ActiveMQ queue/Camel endpoint
+* Add spring-boot as goal to the hawtio-maven-plugins.
 
 #### 1.4.59
 
