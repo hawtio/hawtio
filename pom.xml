@@ -82,7 +82,7 @@
     <exec-maven-plugin-version>1.4.0</exec-maven-plugin-version>
     <felix.gogo.version>0.16.2</felix.gogo.version>
     <frontend-maven-plugin-version>0.0.24</frontend-maven-plugin-version>
-    <gitective-version>0.9.11</gitective-version>
+    <gitective-version>0.9.12</gitective-version>
 
     <!-- We are using an old guava to avoid breaking ActiveMQ in the test cases of hawtio-web -->
     <!--
