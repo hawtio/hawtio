@@ -1,5 +1,6 @@
 /// <reference path="fabricPlugin.ts"/>
 /// <reference path="containerHelpers.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
 /// <reference path="../../log/js/logHelpers.ts"/>
 /// <reference path="../../ui/js/dialog.ts"/>
 module Fabric {
@@ -191,7 +192,7 @@ module Fabric {
     $scope.getClass = (item) => {
       if (!$scope.provisionListFilter) {
         return 'no-filter';
-      } else if (item.has($scope.provisionListFilter)) {
+      } else if (Core.matchFilterIgnoreCase(item,$scope.provisionListFilter)) {
         return 'match-filter';
       } else {
         return 'no-match-filter';
