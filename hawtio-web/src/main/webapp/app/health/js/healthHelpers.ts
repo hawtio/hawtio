@@ -3,6 +3,7 @@
  */
 /// <reference path="../../baseIncludes.ts"/>
 /// <reference path="../../core/js/workspace.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
 module Health {
 
   export var log:Logging.Logger = Logger.get("Health");

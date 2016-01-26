@@ -1,6 +1,7 @@
 /**
  * @module Log
  */
+ /// <reference path="../../core/js/coreHelpers.ts"/>
 module Log {
 
   export var log:Logging.Logger = Logger.get("Logs");

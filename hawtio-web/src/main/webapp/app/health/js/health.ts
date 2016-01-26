@@ -207,7 +207,7 @@ module Health {
 
       $scope.filterValues = (value) => {
         var json = angular.toJson(value);
-        return json.has($scope.pageFilter);
+        return Core.matchFilterIgnoreCase(json, $scope.pageFilter);
       };
 
 

@@ -280,15 +280,15 @@ module Log {
       }
 
       if ($scope.searchText.startsWith("l=")) {
-        return log.logger.has($scope.searchText.last($scope.searchText.length - 2));
+        return Core.matchFilterIgnoreCase(log.logger, $scope.searchText.last($scope.searchText.length - 2));
       }
       if ($scope.searchText.startsWith("m=")) {
-        return log.message.has($scope.searchText.last($scope.searchText.length - 2));
+        return Core.matchFilterIgnoreCase(log.message, $scope.searchText.last($scope.searchText.length - 2));
       }
       if (messageOnly) {
-        return log.message.has($scope.searchText);
+        return Core.matchFilterIgnoreCase(log.message, $scope.searchText);
       }
-      return log.logger.has($scope.searchText) || log.message.has($scope.searchText);
+      return Core.matchFilterIgnoreCase(log.logger, $scope.searchText) || Core.matchFilterIgnoreCase(log.message, $scope.searchText);
     };
 
 
