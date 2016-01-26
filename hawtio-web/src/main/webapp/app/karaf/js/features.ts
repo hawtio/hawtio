@@ -229,7 +229,7 @@ module Karaf {
       if (Core.isBlank($scope.filter)) {
         return true;
       }
-      if (feature.Id.has($scope.filter)) {
+      if (Core.matchFilterIgnoreCase(feature.Id, $scope.filter)) {
         return true;
       }
       return false;

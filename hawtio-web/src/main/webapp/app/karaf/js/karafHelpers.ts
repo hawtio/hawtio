@@ -1,3 +1,4 @@
+/// <reference path="../../core/js/coreHelpers.ts"/>
 /**
  * @module Karaf
  */
