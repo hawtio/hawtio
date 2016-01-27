@@ -8,6 +8,7 @@
 * The Camel filter box now works better to filter all kinds of nodes in the tree
 * Fixed issue with remote Jolokia cannot send message to ActiveMQ queue/Camel endpoint
 * Add spring-boot as goal to the hawtio-maven-plugins.
+* Upgraded to Camel 2.16.2
 
 #### 1.4.59
 
