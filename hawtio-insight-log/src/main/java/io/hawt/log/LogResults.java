@@ -1,12 +1,14 @@
 package io.hawt.log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Results of a query which also records the first and last timestamp searched
  */
-public class LogResults {
+public class LogResults implements Serializable {
+    private static final long serialVersionUID = 1L;
     private List<LogEvent> events;
     private Long fromTimestamp;
     private Long toTimestamp;

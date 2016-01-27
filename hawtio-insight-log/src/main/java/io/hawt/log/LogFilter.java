@@ -1,11 +1,13 @@
 package io.hawt.log;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class LogFilter {
+public class LogFilter implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int count;
     private String[] levels;
     private String matchesText;
