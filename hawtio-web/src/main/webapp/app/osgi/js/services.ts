@@ -15,7 +15,7 @@ module Osgi {
         "sDefaultContent": '<i class="icon-plus"></i>'
       },
       <DataTable.TableColumnConfig> { "mDataProp": "Identifier" },
-      <DataTable.TableColumnConfig> { "mDataProp": "BundleIdentifier" },
+      <DataTable.TableColumnConfig> { "mDataProp": "BundleIdentifier", "sType": "num-html" },
       <DataTable.TableColumnConfig> { "mDataProp": "objectClass" }
     ], {
       rowDetailTemplateId: 'osgiServiceTemplate',
