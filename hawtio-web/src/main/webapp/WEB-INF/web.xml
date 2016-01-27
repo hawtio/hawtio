@@ -166,6 +166,10 @@
       <param-name>mbeanQualifier</param-name>
       <param-value>qualifier=hawtio</param-value>
     </init-param>
+    <init-param>
+      <param-name>includeStackTrace</param-name>
+      <param-value>false</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
