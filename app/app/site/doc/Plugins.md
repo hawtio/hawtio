@@ -102,7 +102,7 @@ The following plugins are all included by default in the [hawtio-web.war](https:
   </tr>
   <tr>
     <td><a href="http://hawt.io/plugins/junit/">junit</a></td>
-    <td>Adds support for running JUnit tests from wihtin hawtio.</td>
+    <td>Adds support for running JUnit tests from within hawtio.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/junit">junit</a></td>
   </tr>
   <tr>
@@ -122,7 +122,7 @@ The following plugins are all included by default in the [hawtio-web.war](https:
   </tr>
   <tr>
     <td><a href="http://hawt.io/plugins/maven/">maven</a></td>
-    <td>Lets you query maven repositories for artefacts; then see the available versions, javadoc and source.</td>
+    <td>Lets you query maven repositories for artifacts; then see the available versions, javadoc and source.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/maven">maven</a></td>
   </tr>
   <tr>

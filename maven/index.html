@@ -129,6 +129,10 @@
     <td>This goal runs the Maven project as a Spring application, by loading Spring XML configurations files from the classpath or file system.</td>
   </tr>    
   <tr>
+    <td>spring-boot</td>
+    <td>This goal runs the Maven project as a Spring Boot application, by executing the configured Spring Boot mainClass.</td>
+  </tr>    
+  <tr>
     <td>camel</td>
     <td>This goal is an extension to the <a href="http://camel.apache.org/camel-maven-plugin.html">Apache Camel Maven Plugins</a>, allowing to run the Camel Maven project and have hawtio embedded. This allows users to gain visibility into the running JVM, and see what happens, such as live visualization of the Camel routes, and being able to debug and profile routes, and much more, offered by the <a href="http://hawt.io/plugins/camel/">Camel plugin</a>.</td>
   </tr>
@@ -190,8 +194,8 @@
   </tr>  
   <tr>
     <td>port</td>
-    <td>8282</td>
-    <td>The port number to use for the embedded hawtio web console.</td>
+    <td>8080</td>
+    <td>The port number to use for the embedded hawtio web console. Notice the spring-boot goal uses port 9191 as default.</td>
   </tr>  
   <tr>
     <td>mainClass</td>
@@ -241,6 +245,10 @@
     <td>Location on file system to look for Spring XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContextUri or fileApplicationContextUri can be in use.</td>
   </tr>     
 </table>
+
+<h3 id = "spring-boot_Maven_Goal_configuration">spring-boot Maven Goal configuration</h3>
+
+<p>The spring-boot goal has no additional options.</p>
 
 <h3 id = "camel_Maven_Goal_configuration">camel Maven Goal configuration</h3>
 
@@ -337,7 +345,7 @@
 <pre><code>&lt;plugin&gt;
   &lt;groupId&gt;io.hawt&lt;/groupId&gt;
   &lt;artifactId&gt;hawtio-maven-plugin&lt;/artifactId&gt;
-  &lt;version&gt;1.4.59&lt;/version&gt;
+  &lt;version&gt;1.4.60&lt;/version&gt;
   &lt;configuration&gt;
     &lt;!-- configuration options goes here --&gt;
   &lt;/configuration&gt;
@@ -383,9 +391,9 @@ mvn camel:run</code></pre>
 <pre><code>cd examples
 cd camel-example-console
 mvn compile
-mvn io.hawt:hawtio-maven-plugin:1.4.59:camel</code></pre>
+mvn io.hawt:hawtio-maven-plugin:1.4.60:camel</code></pre>
 
-<p>Where 1.4.59 is the <strong>hawtio</strong> version to use.</p>
+<p>Where 1.4.60 is the <strong>hawtio</strong> version to use.</p>
 
 <h3 id = "Adding_hawtio_plugin_to_the_Apache_Camel_examples">Adding hawtio plugin to the Apache Camel examples</h3>
 
@@ -396,7 +404,7 @@ mvn io.hawt:hawtio-maven-plugin:1.4.59:camel</code></pre>
 <pre><code>&lt;plugin&gt;
   &lt;groupId&gt;io.hawt&lt;/groupId&gt;
   &lt;artifactId&gt;hawtio-maven-plugin&lt;/artifactId&gt;
-  &lt;version&gt;1.4.59&lt;/version&gt;
+  &lt;version&gt;1.4.60&lt;/version&gt;
 &lt;/plugin&gt;</code></pre>
 
 <p>And you can run the console example simply by typing</p>

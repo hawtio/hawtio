@@ -1,6 +1,15 @@
 
 ### Change Log
 
+#### 1.4.60
+
+* Fixed hawtio-app to scan for 3rd party plugins in `--pluginsDir` to work on Windows
+* Added a copy to clipboard button on the Camel and ActiveMQ message browser
+* The Camel filter box now works better to filter all kinds of nodes in the tree
+* Fixed issue with remote Jolokia cannot send message to ActiveMQ queue/Camel endpoint
+* Add spring-boot as goal to the hawtio-maven-plugins.
+* Upgraded to Camel 2.16.2
+
 #### 1.4.59
 
 * Camel plugin able to show message history metrics if using Camel 2.17 onwards

@@ -20,6 +20,10 @@
     <td>This goal runs the Maven project as a Spring application, by loading Spring XML configurations files from the classpath or file system.</td>
   </tr>    
   <tr>
+    <td>spring-boot</td>
+    <td>This goal runs the Maven project as a Spring Boot application, by executing the configured Spring Boot mainClass.</td>
+  </tr>    
+  <tr>
     <td>camel</td>
     <td>This goal is an extension to the <a href="http://camel.apache.org/camel-maven-plugin.html">Apache Camel Maven Plugins</a>, allowing to run the Camel Maven project and have hawtio embedded. This allows users to gain visibility into the running JVM, and see what happens, such as live visualization of the Camel routes, and being able to debug and profile routes, and much more, offered by the <a href="http://hawt.io/plugins/camel/">Camel plugin</a>.</td>
   </tr>
@@ -84,8 +88,8 @@ Currently all of the **hawtio** Maven Plugins provides the following common opti
   </tr>  
   <tr>
     <td>port</td>
-    <td>8282</td>
-    <td>The port number to use for the embedded hawtio web console.</td>
+    <td>8080</td>
+    <td>The port number to use for the embedded hawtio web console. Notice the spring-boot goal uses port 9191 as default.</td>
   </tr>  
   <tr>
     <td>mainClass</td>
@@ -137,6 +141,10 @@ The spring goal extends the run goal and provides the following additional optio
   </tr>     
 </table>
 
+
+### spring-boot Maven Goal configuration
+
+The spring-boot goal has no additional options.
 
 ### camel Maven Goal configuration
 

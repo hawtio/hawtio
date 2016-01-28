@@ -19,11 +19,14 @@
 
     </div>
 
-        <div class="pull-right">
+        <div class="section-filter pull-right">
             <form class="form-inline no-bottom-margin">
                 <fieldset>
                     <div class="control-group inline-block">
                         <input type="text" class="search-query" placeholder="Filter..." ng-model="gridOptions.filterOptions.filterText">
+                        <i class="icon-remove clickable"
+                           title="Clear filter"
+                           ng-click="gridOptions.filterOptions.filterText = ''"></i>
                     </div>
                 </fieldset>
             </form>

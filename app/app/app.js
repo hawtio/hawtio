@@ -1253,7 +1253,7 @@ var Jmx;
                     }
                     if (plugin) {
                         console.log("Lazy loading folder " + folder.title);
-                        var oldChildren = folder.childen;
+                        var oldChildren = folder.children;
                         plugin(workspace, folder, function () {
                             treeNode.setLazyNodeStatus(DTNodeStatus_Ok);
                             var newChildren = folder.children;
@@ -5684,6 +5684,12 @@ var Wiki;
         return UrlHelpers.join("git/" + branch, path);
     }
     Wiki.gitRelativeURL = gitRelativeURL;
+    function relativeURL(branch, path) {
+        branch = branch || "master";
+        path = path || "/";
+        return UrlHelpers.join(branch, path);
+    }
+    Wiki.relativeURL = relativeURL;
     function fileIconHtml(row) {
         var name = row.name;
         var path = row.path;
@@ -5718,16 +5724,15 @@ var Wiki;
                 Wiki.log.debug("file " + name + " has namespaces " + xmlNamespaces);
             }
         }
-        if (iconUrl) {
+        if (iconUrl || (extension && (['png', 'svg', 'jpg', 'gif'].indexOf(extension) >= 0))) {
             css = null;
-            icon = UrlHelpers.join("git", iconUrl);
-            var connectionName = Core.getConnectionNameParameter(location.search);
-            if (connectionName) {
-                var connectionOptions = Core.getConnectOptions(connectionName);
-                if (connectionOptions) {
-                    connectionOptions.path = Core.url('/' + icon);
-                    icon = Core.createServerConnectionUrl(connectionOptions);
-                }
+            if (iconUrl) {
+                icon = Fabric.toIconURL(null, iconUrl);
+                ;
+            }
+            else {
+                icon = Wiki.relativeURL(branch, path);
+                icon = Fabric.toIconURL(null, icon);
             }
         }
         if (!icon) {
@@ -5742,21 +5747,6 @@ var Wiki;
             }
             else {
                 switch (extension) {
-                    case 'png':
-                    case 'svg':
-                    case 'jpg':
-                    case 'gif':
-                        css = null;
-                        icon = Wiki.gitRelativeURL(branch, path);
-                        var connectionName = Core.getConnectionNameParameter(location.search);
-                        if (connectionName) {
-                            var connectionOptions = Core.getConnectOptions(connectionName);
-                            if (connectionOptions) {
-                                connectionOptions.path = Core.url('/' + icon);
-                                icon = Core.createServerConnectionUrl(connectionOptions);
-                            }
-                        }
-                        break;
                     case 'json':
                     case 'xml':
                         css = "icon-file-text";
@@ -6828,6 +6818,9 @@ var Fabric;
             if (connectionOptions && !/^proxy\/http/.test(iconURL)) {
                 connectionOptions.path = /^\//.test(iconURL) ? iconURL : Core.url("/git/") + iconURL;
                 iconURL = Core.createServerConnectionUrl(connectionOptions);
+                if (iconURL.endsWith('jolokia')) {
+                    iconURL = iconURL.replace('jolokia', connectionOptions.path);
+                }
             }
         }
         else {
@@ -15049,6 +15042,9 @@ var Camel;
             log.debug("Clear messages");
             tracerStatus.messages = [];
             $scope.messages = [];
+            if ($scope.row) {
+                $scope.messageDialog.close();
+            }
             Core.$apply($scope);
         };
         $scope.$watch('workspace.selection', function () {
@@ -15201,14 +15197,11 @@ var Camel;
         $scope.$watch('workspace.tree', function () {
             reloadThrottled();
         });
-        var reloadOnContextFilterThrottled = Core.throttled(function () {
-            reloadFunction(function () {
-                $("#camelContextIdFilter").focus();
-            });
-        }, 500);
         $scope.$watch('contextFilterText', function () {
             if ($scope.contextFilterText != $scope.lastContextFilterText) {
-                $timeout(reloadOnContextFilterThrottled, 250);
+                reloadFunction(function () {
+                    $("#camelContextIdFilter").focus();
+                });
             }
         });
         $rootScope.$on('camel-contextFilterText', function (event, value) {
@@ -15247,87 +15240,112 @@ var Camel;
                                 var contextNode = contextsFolder.children[0];
                                 if (contextNode) {
                                     var title = contextNode.title;
-                                    var match = Core.matchFilterIgnoreCase(title, contextFilterText);
-                                    if (match) {
-                                        var folder = new Folder(title);
-                                        folder.addClass = "org-apache-camel-context";
-                                        folder.domain = domainName;
-                                        folder.objectName = contextNode.objectName;
-                                        folder.entries = contextNode.entries;
-                                        folder.typeName = contextNode.typeName;
-                                        folder.key = contextNode.key;
-                                        folder.version = contextNode.version;
-                                        if (routesNode) {
-                                            var routesFolder = new Folder("Routes");
-                                            routesFolder.addClass = "org-apache-camel-routes-folder";
-                                            routesFolder.parent = contextsFolder;
-                                            routesFolder.children = routesNode.children;
-                                            angular.forEach(routesFolder.children, function (n) { return n.addClass = "org-apache-camel-routes"; });
-                                            folder.children.push(routesFolder);
-                                            routesFolder.typeName = "routes";
-                                            routesFolder.key = routesNode.key;
-                                            routesFolder.domain = routesNode.domain;
-                                        }
-                                        if (endpointsNode) {
-                                            var endpointsFolder = new Folder("Endpoints");
-                                            endpointsFolder.addClass = "org-apache-camel-endpoints-folder";
-                                            endpointsFolder.parent = contextsFolder;
-                                            endpointsFolder.children = endpointsNode.children;
-                                            angular.forEach(endpointsFolder.children, function (n) {
-                                                n.addClass = "org-apache-camel-endpoints";
-                                                if (!Camel.getContextId(n)) {
-                                                    n.entries["context"] = contextNode.entries["context"];
-                                                }
-                                            });
-                                            folder.children.push(endpointsFolder);
-                                            endpointsFolder.entries = contextNode.entries;
-                                            endpointsFolder.typeName = "endpoints";
-                                            endpointsFolder.key = endpointsNode.key;
-                                            endpointsFolder.domain = endpointsNode.domain;
-                                        }
-                                        if (componentsNode) {
-                                            var componentsFolder = new Folder("Components");
-                                            componentsFolder.addClass = "org-apache-camel-components-folder";
-                                            componentsFolder.parent = contextsFolder;
-                                            componentsFolder.children = componentsNode.children;
-                                            angular.forEach(componentsFolder.children, function (n) {
-                                                n.addClass = "org-apache-camel-components";
-                                                if (!Camel.getContextId(n)) {
-                                                    n.entries["context"] = contextNode.entries["context"];
-                                                }
-                                            });
-                                            folder.children.push(componentsFolder);
-                                            componentsFolder.entries = contextNode.entries;
-                                            componentsFolder.typeName = "components";
-                                            componentsFolder.key = componentsNode.key;
-                                            componentsFolder.domain = componentsNode.domain;
-                                        }
-                                        if (dataFormatsNode) {
-                                            var dataFormatsFolder = new Folder("Dataformats");
-                                            dataFormatsFolder.addClass = "org-apache-camel-dataformats-folder";
-                                            dataFormatsFolder.parent = contextsFolder;
-                                            dataFormatsFolder.children = dataFormatsNode.children;
-                                            angular.forEach(dataFormatsFolder.children, function (n) {
-                                                n.addClass = "org-apache-camel-dataformats";
-                                                if (!Camel.getContextId(n)) {
-                                                    n.entries["context"] = contextNode.entries["context"];
-                                                }
-                                            });
-                                            folder.children.push(dataFormatsFolder);
-                                            dataFormatsFolder.entries = contextNode.entries;
-                                            dataFormatsFolder.typeName = "dataformats";
-                                            dataFormatsFolder.key = dataFormatsNode.key;
-                                            dataFormatsFolder.domain = dataFormatsNode.domain;
-                                        }
-                                        var jmxNode = new Folder("MBeans");
-                                        angular.forEach(entries, function (jmxChild, name) {
-                                            if (name !== "context" && name !== "routes" && name !== "endpoints" && name !== "components" && name !== "dataformats") {
-                                                jmxNode.children.push(jmxChild);
+                                    var folder = new Folder(title);
+                                    folder.addClass = "org-apache-camel-context";
+                                    folder.domain = domainName;
+                                    folder.objectName = contextNode.objectName;
+                                    folder.entries = contextNode.entries;
+                                    folder.typeName = contextNode.typeName;
+                                    folder.key = contextNode.key;
+                                    folder.version = contextNode.version;
+                                    if (routesNode) {
+                                        var routesFolder = new Folder("Routes");
+                                        routesFolder.addClass = "org-apache-camel-routes-folder";
+                                        routesFolder.parent = contextsFolder;
+                                        angular.forEach(routesNode.children, function (n) {
+                                            if (Core.matchFilterIgnoreCase(n.title, contextFilterText)) {
+                                                routesFolder.children.push(n);
+                                                n.addClass = "org-apache-camel-routes";
+                                                expandFolder(routesFolder, contextFilterText);
                                             }
                                         });
-                                        if (jmxNode.children.length > 0) {
-                                            jmxNode.sortChildren(false);
-                                            folder.children.push(jmxNode);
+                                        if (!routesFolder.children.isEmpty()) {
+                                            folder.children.push(routesFolder);
+                                        }
+                                        routesFolder.typeName = "routes";
+                                        routesFolder.key = routesNode.key;
+                                        routesFolder.domain = routesNode.domain;
+                                    }
+                                    if (endpointsNode) {
+                                        var endpointsFolder = new Folder("Endpoints");
+                                        endpointsFolder.addClass = "org-apache-camel-endpoints-folder";
+                                        endpointsFolder.parent = contextsFolder;
+                                        angular.forEach(endpointsNode.children, function (n) {
+                                            if (Core.matchFilterIgnoreCase(n.title, contextFilterText)) {
+                                                n.addClass = "org-apache-camel-endpoints";
+                                                if (!Camel.getContextId(n)) {
+                                                    endpointsFolder.children.push(n);
+                                                    n.entries["context"] = contextNode.entries["context"];
+                                                }
+                                                expandFolder(endpointsFolder, contextFilterText);
+                                            }
+                                        });
+                                        if (!endpointsFolder.children.isEmpty()) {
+                                            folder.children.push(endpointsFolder);
+                                        }
+                                        endpointsFolder.entries = contextNode.entries;
+                                        endpointsFolder.typeName = "endpoints";
+                                        endpointsFolder.key = endpointsNode.key;
+                                        endpointsFolder.domain = endpointsNode.domain;
+                                    }
+                                    if (componentsNode) {
+                                        var componentsFolder = new Folder("Components");
+                                        componentsFolder.addClass = "org-apache-camel-components-folder";
+                                        componentsFolder.parent = contextsFolder;
+                                        angular.forEach(componentsNode.children, function (n) {
+                                            if (Core.matchFilterIgnoreCase(n.title, contextFilterText)) {
+                                                n.addClass = "org-apache-camel-components";
+                                                if (!Camel.getContextId(n)) {
+                                                    componentsFolder.children.push(n);
+                                                    n.entries["context"] = contextNode.entries["context"];
+                                                }
+                                                expandFolder(componentsFolder, contextFilterText);
+                                            }
+                                        });
+                                        if (!componentsFolder.children.isEmpty()) {
+                                            folder.children.push(componentsFolder);
+                                        }
+                                        componentsFolder.entries = contextNode.entries;
+                                        componentsFolder.typeName = "components";
+                                        componentsFolder.key = componentsNode.key;
+                                        componentsFolder.domain = componentsNode.domain;
+                                    }
+                                    if (dataFormatsNode) {
+                                        var dataFormatsFolder = new Folder("Dataformats");
+                                        dataFormatsFolder.addClass = "org-apache-camel-dataformats-folder";
+                                        dataFormatsFolder.parent = contextsFolder;
+                                        angular.forEach(dataFormatsNode.children, function (n) {
+                                            if (Core.matchFilterIgnoreCase(n.title, contextFilterText)) {
+                                                n.addClass = "org-apache-camel-dataformats";
+                                                if (!Camel.getContextId(n)) {
+                                                    dataFormatsFolder.children.push(n);
+                                                    n.entries["context"] = contextNode.entries["context"];
+                                                }
+                                                expandFolder(dataFormatsFolder, contextFilterText);
+                                            }
+                                        });
+                                        if (!dataFormatsFolder.children.isEmpty()) {
+                                            folder.children.push(dataFormatsFolder);
+                                        }
+                                        dataFormatsFolder.entries = contextNode.entries;
+                                        dataFormatsFolder.typeName = "dataformats";
+                                        dataFormatsFolder.key = dataFormatsNode.key;
+                                        dataFormatsFolder.domain = dataFormatsNode.domain;
+                                    }
+                                    var jmxNode = new Folder("MBeans");
+                                    addMBeanFolder(entries, jmxNode, folder, contextFilterText);
+                                    if (Core.matchFilterIgnoreCase(contextNode.title, contextFilterText) && !(folder.children.find(function (c) { return c.expand == true; }))) {
+                                        addContextFolderChildren(folder, routesFolder, routesNode);
+                                        addContextFolderChildren(folder, endpointsFolder, endpointsNode);
+                                        addContextFolderChildren(folder, componentsFolder, componentsNode);
+                                        addContextFolderChildren(folder, dataFormatsFolder, dataFormatsNode);
+                                        addMBeanFolder(entries, jmxNode, folder);
+                                        folder.parent = rootFolder;
+                                        children.push(folder);
+                                    }
+                                    else if (folder.children.length) {
+                                        if (folder.children.find(function (c) { return c.expand == true; })) {
+                                            folder.expand = true;
                                         }
                                         folder.parent = rootFolder;
                                         children.push(folder);
@@ -15367,6 +15385,34 @@ var Camel;
             $scope.fullScreenViewLink = Camel.linkToFullScreenView(workspace);
         }
     }]);
+    function addContextFolderChildren(contextFolder, childFolder, childNode) {
+        if (childFolder && childFolder.children.isEmpty()) {
+            childFolder.children = childNode.children;
+            contextFolder.children.push(childFolder);
+        }
+    }
+    function expandFolder(folder, contextFilterText) {
+        if (contextFilterText && contextFilterText.trim().length) {
+            folder.expand = true;
+        }
+    }
+    function addMBeanFolder(entries, jmxFolder, contextFolder, contextFilterText) {
+        if (contextFilterText === void 0) { contextFilterText = null; }
+        if (jmxFolder.children && jmxFolder.children.length == 0) {
+            angular.forEach(entries, function (jmxChild, name) {
+                if (name !== "context" && name !== "routes" && name !== "endpoints" && name !== "components" && name !== "dataformats") {
+                    if (Core.matchFilterIgnoreCase(jmxChild.title, contextFilterText)) {
+                        jmxFolder.children.push(jmxChild);
+                        expandFolder(jmxFolder, contextFilterText);
+                    }
+                }
+            });
+            if (jmxFolder.children.length) {
+                jmxFolder.sortChildren(false);
+                contextFolder.children.push(jmxFolder);
+            }
+        }
+    }
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
@@ -25472,7 +25518,7 @@ var Fabric;
             if (!$scope.provisionListFilter) {
                 return 'no-filter';
             }
-            else if (item.has($scope.provisionListFilter)) {
+            else if (Core.matchFilterIgnoreCase(item, $scope.provisionListFilter)) {
                 return 'match-filter';
             }
             else {
@@ -29534,7 +29580,7 @@ var Health;
         };
         $scope.filterValues = function (value) {
             var json = angular.toJson(value);
-            return json.has($scope.pageFilter);
+            return Core.matchFilterIgnoreCase(json, $scope.pageFilter);
         };
         $scope.isPercentage = function (key) {
             if (key !== undefined && key.toUpperCase().indexOf("PERCENT") > 0) {
@@ -35534,7 +35580,7 @@ var Karaf;
             if (Core.isBlank($scope.filter)) {
                 return true;
             }
-            if (feature.Id.has($scope.filter)) {
+            if (Core.matchFilterIgnoreCase(feature.Id, $scope.filter)) {
                 return true;
             }
             return false;
@@ -36115,15 +36161,15 @@ var Log;
                 }
             }
             if ($scope.searchText.startsWith("l=")) {
-                return log.logger.has($scope.searchText.last($scope.searchText.length - 2));
+                return Core.matchFilterIgnoreCase(log.logger, $scope.searchText.last($scope.searchText.length - 2));
             }
             if ($scope.searchText.startsWith("m=")) {
-                return log.message.has($scope.searchText.last($scope.searchText.length - 2));
+                return Core.matchFilterIgnoreCase(log.message, $scope.searchText.last($scope.searchText.length - 2));
             }
             if (messageOnly) {
-                return log.message.has($scope.searchText);
+                return Core.matchFilterIgnoreCase(log.message, $scope.searchText);
             }
-            return log.logger.has($scope.searchText) || log.message.has($scope.searchText);
+            return Core.matchFilterIgnoreCase(log.logger, $scope.searchText) || Core.matchFilterIgnoreCase(log.message, $scope.searchText);
         };
         $scope.formatStackTrace = function (exception) {
             if (!exception) {
@@ -38693,7 +38739,7 @@ var Osgi;
                 "sDefaultContent": '<i class="icon-plus"></i>'
             },
             { "mDataProp": "Identifier" },
-            { "mDataProp": "BundleIdentifier" },
+            { "mDataProp": "BundleIdentifier", "sType": "num-html" },
             { "mDataProp": "objectClass" }
         ], {
             rowDetailTemplateId: 'osgiServiceTemplate',
