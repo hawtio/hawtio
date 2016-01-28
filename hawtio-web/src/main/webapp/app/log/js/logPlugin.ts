@@ -8,7 +8,7 @@ module Log {
 
   var hasMBean = false;
 
-  export var _module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']);
+  export var _module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'ngSanitize', 'datatable', 'hawtioCore']);
 
   _module.config(["$routeProvider", ($routeProvider) => {
     $routeProvider.
