@@ -2,7 +2,7 @@ machine:
   node:
     version: 0.10.33
   java:
-    version: oraclejdk8
+    version: oraclejdk7
   services:
 
 branches:
