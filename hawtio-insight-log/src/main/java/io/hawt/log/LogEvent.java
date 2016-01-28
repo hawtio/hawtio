@@ -3,11 +3,13 @@ package io.hawt.log;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.hawt.log.support.Objects;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class LogEvent implements Comparable<LogEvent> {
+public class LogEvent implements Comparable<LogEvent>, Serializable {
+    private static final long serialVersionUID = 1L;
     private static String defaultContainerName;
 
 	private String host;
