@@ -658,6 +658,11 @@ module Core {
    * @param {Function} callback
    */
   export function register(jolokia:Jolokia.IJolokia, scope, arguments: any, callback) {
+    if (scope.$$destroyed) {
+      // fail fast
+      return;
+    }
+
     /*
     if (scope && !Core.isBlank(scope.name)) {
       Core.log.debug("Calling register from scope: ", scope.name);
