@@ -85,15 +85,17 @@ If you are using [Apache Karaf](http://karaf.apache.org/) 2.x then you can use '
 
 The hawtio console can then be viewed at [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/). The default login for Karaf is karaf/karaf, and for ServiceMix its smx/smx.
 
-If you are using [Apache Karaf](http://karaf.apache.org/) 3.x or newer then you can use 'feature:repo-add' which is simpler to do:
+If you are using [Apache Karaf](http://karaf.apache.org/) 3.x or newer then you can use 'feature:repo-add' which is simpler to do, and install hawtio-core:
 
     feature:repo-add hawtio 1.4.60
-    feature:install hawtio
+    feature:install hawtio-core
 
-**NOTE** if you are on ServiceMix 4.5 then you should install hawtio-core instead of hawtio, eg
+**NOTE** if you are on ServiceMix 4.5 or newer then you should install hawtio-core instead of hawtio, eg
 
     features:addurl mvn:io.hawt/hawtio-karaf/1.4.60/xml/features
     features:install hawtio-core
+
+**NOTE** Karaf 3.x/4.x has an issue with the hawtio-terminal which does not yet work. And therefore you need to install hawtio-core instead of hawtio. 
 
 ### If you use a HTTP proxy
 
