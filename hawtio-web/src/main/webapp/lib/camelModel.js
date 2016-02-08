@@ -206,7 +206,7 @@ var _apacheCamelModel ={
         "closeCorrelationKeyOnCompletion": {
           "kind": "attribute",
           "type": "integer",
-          "description": "Closes a correlation key when its complete. Any late received exchanges which has a correlation key that has been closed it will be defined and a org.apache.camel.processor.aggregate.ClosedCorrelationKeyException is thrown.",
+          "description": "Closes a correlation key when its complete. Any late received exchanges which has a correlation key that has been closed it will be defined and a ClosedCorrelationKeyException is thrown.",
           "title": "Close Correlation Key On Completion",
           "required": false,
           "deprecated": false

@@ -69,7 +69,7 @@ function safeNullAsString(value:any, type:string):string {
     return "" + value;
   } else if (typeof value === 'string') {
     // its a string
-    if (value.indexOf('java.lang.IllegalStateException: Broker is not yet started') >= 0)
+    if (value.indexOf('IllegalStateException: Broker is not yet started') >= 0)
       value = "<em>Broker is not yet started</em>";
     return "" + value;
   } else if (type === 'javax.management.openmbean.CompositeData' || type === '[Ljavax.management.openmbean.CompositeData;' || type === 'java.util.Map') {
@@ -781,9 +781,9 @@ module Core {
       var silent = options['silent'];
       if (!silent) {
         var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
-        if (stacktrace.indexOf("javax.management.InstanceNotFoundException") >= 0 ||
-          stacktrace.indexOf("javax.management.AttributeNotFoundException") >= 0 ||
-          stacktrace.indexOf("java.lang.IllegalArgumentException: No operation") >= 0) {
+        if (stacktrace.indexOf("InstanceNotFoundException") >= 0 ||
+          stacktrace.indexOf("AttributeNotFoundException") >= 0 ||
+          stacktrace.indexOf("IllegalArgumentException: No operation") >= 0) {
           // ignore these errors as they can happen on timing issues
           // such as its been removed
           // or if we run against older containers
