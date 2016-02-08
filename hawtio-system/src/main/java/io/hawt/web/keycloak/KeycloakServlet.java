@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +23,6 @@ import org.slf4j.LoggerFactory;
  * - whether keycloak is enabled (true/false) if path '/enabled' is used
  * - keycloak.json to be used by keycloak JS adapter on frontend if path '/client-config' is used
  * - validate if current JAAS logged subject is same like SSO user logged through keycloak if path '/validate-subject-matches' is used
- *
  */
 public class KeycloakServlet extends HttpServlet {
 
@@ -87,6 +85,7 @@ public class KeycloakServlet extends HttpServlet {
 
     /**
      * Will try to guess the config location based on the server where hawtio is running. Used just if keycloakClientConfig is not provided
+     *
      * @return config to be used by default
      */
     protected String defaultKeycloakConfigLocation() {

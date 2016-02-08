@@ -1,10 +1,10 @@
 package io.hawt.git;
 
-import io.hawt.util.Function;
-import org.eclipse.jgit.api.errors.GitAPIException;
-
 import java.io.File;
 import java.io.IOException;
+
+import io.hawt.util.Function;
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 public interface GitFileManager {
 

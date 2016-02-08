@@ -17,17 +17,14 @@
  */
 package io.hawt.web;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
+import java.lang.management.ManagementFactory;
+import java.util.Arrays;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import javax.management.ReflectionException;
-import java.lang.management.ManagementFactory;
-import java.util.Arrays;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Resolves the service / container names to a URL to invoke HTTP / HTTPS requests
@@ -45,6 +42,7 @@ public class ServiceResolver {
             // ignore
         }
     }
+
     public static ServiceResolver getSingleton() {
         return singleton;
     }
@@ -52,8 +50,8 @@ public class ServiceResolver {
     public String getServiceURL(String serviceName) {
         ObjectName objectName = OBJECT_NAME;
         String operationName = "getServiceUrl";
-        Object[] params = { serviceName };
-        String[] types = { String.class.getName() };
+        Object[] params = {serviceName};
+        String[] types = {String.class.getName()};
         Object answer = invokeMBeanOperation(objectName, operationName, params, types);
         return answer != null ? answer.toString() : null;
     }
@@ -61,8 +59,8 @@ public class ServiceResolver {
     public String getPodUrl(String podName, String port) {
         ObjectName objectName = OBJECT_NAME;
         String operationName = "getPodUrl";
-        Object[] params = { podName, port };
-        String[] types = { String.class.getName(), String.class.getName() };
+        Object[] params = {podName, port};
+        String[] types = {String.class.getName(), String.class.getName()};
         Object answer = invokeMBeanOperation(objectName, operationName, params, types);
         return answer != null ? answer.toString() : null;
     }

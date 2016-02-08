@@ -17,13 +17,6 @@
  */
 package io.hawt.util.introspect.support;
 
-import io.hawt.util.introspect.ClassLoaderProvider;
-import io.hawt.util.Predicate;
-import io.hawt.util.ReflectionHelper;
-import io.hawt.util.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -46,6 +39,13 @@ import java.util.WeakHashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import io.hawt.util.Predicate;
+import io.hawt.util.ReflectionHelper;
+import io.hawt.util.Strings;
+import io.hawt.util.introspect.ClassLoaderProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A helper class to scan classes on the classpath
  */
@@ -59,7 +59,7 @@ public class ClassScanner {
 
     private WeakHashMap<String, CacheValue> cache = new WeakHashMap<String, CacheValue>();
     private WeakHashMap<Package, CacheValue> packageCache = new WeakHashMap<Package, CacheValue>();
-    private Map<String,ClassLoaderProvider> classLoaderProviderMap = new HashMap<String, ClassLoaderProvider>();
+    private Map<String, ClassLoaderProvider> classLoaderProviderMap = new HashMap<String, ClassLoaderProvider>();
     private Set<String> ignorePackages = new HashSet<String>(Arrays.asList("sun.reflect.misc"));
 
     public static ClassScanner newInstance() {
@@ -269,7 +269,7 @@ public class ClassScanner {
     /**
      * Returns the given class or null if it cannot be loaded
      */
-    public Class<?> optionallyFindClass(String className)  {
+    public Class<?> optionallyFindClass(String className) {
         try {
             return findClass(className);
         } catch (Throwable e) {
@@ -462,7 +462,7 @@ public class ClassScanner {
                 classes.add(aClass);
             }
         }
-        
+
         // let's not leak resources
         try {
             jarFile.close();

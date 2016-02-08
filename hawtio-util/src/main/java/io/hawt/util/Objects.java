@@ -17,9 +17,6 @@
  */
 package io.hawt.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -27,6 +24,9 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Some helper methods - though could be replaced by JDK 1.7 code now in java.util.Objects

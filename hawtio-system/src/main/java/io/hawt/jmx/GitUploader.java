@@ -17,17 +17,6 @@
  */
 package io.hawt.jmx;
 
-import io.hawt.git.WriteCallback;
-import io.hawt.git.WriteContext;
-import org.eclipse.jgit.api.errors.GitAPIException;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static io.hawt.git.GitHelper.doUploadFiles;
-
 /**
  */
 public class GitUploader {

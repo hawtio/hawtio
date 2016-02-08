@@ -3,9 +3,6 @@ package io.hawt.git;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -319,7 +316,7 @@ public class GitFacade extends GitFacadeSupport {
         });
     }
 
-    public <T> T readFile(final String branch, final String pathOrEmpty, final Function<File,T> callback) throws IOException, GitAPIException {
+    public <T> T readFile(final String branch, final String pathOrEmpty, final Function<File, T> callback) throws IOException, GitAPIException {
         return gitOperation(getStashPersonIdent(), new Callable<T>() {
             @Override
             public String toString() {
@@ -401,7 +398,7 @@ public class GitFacade extends GitFacadeSupport {
     }
 
     public CommitInfo write(final String branch, final String path, final String commitMessage,
-                      final String authorName, final String authorEmail, final String contents) {
+                            final String authorName, final String authorEmail, final String contents) {
         return write(branch, path, commitMessage, authorName, authorEmail, contents.getBytes());
     }
 
@@ -423,7 +420,7 @@ public class GitFacade extends GitFacadeSupport {
 
     @Override
     public CommitInfo createDirectory(final String branch, final String path, final String commitMessage,
-                                     final String authorName, final String authorEmail) {
+                                      final String authorName, final String authorEmail) {
         final PersonIdent personIdent = new PersonIdent(authorName, authorEmail);
         return gitOperation(personIdent, new Callable<CommitInfo>() {
             @Override
@@ -720,6 +717,7 @@ public class GitFacade extends GitFacadeSupport {
     /**
      * When creating an empty initial git repository lets see if there are a list of URLs for zips
      * of content to include
+     *
      * @param git
      * @param branch
      */
@@ -742,6 +740,7 @@ public class GitFacade extends GitFacadeSupport {
                 LOG.warn("Failed to write git " + gitAttributes + ". " + e, e);
             }
         }
+        System.out.println("Importing initial URLs: " + initialImportURLs);
         if (Strings.isNotBlank(initialImportURLs)) {
             String[] split = initialImportURLs.split(",");
             if (split != null) {
@@ -923,11 +922,11 @@ public class GitFacade extends GitFacadeSupport {
         }
         // lets check if the branch exists
         CheckoutCommand command = git.checkout().setName(branch);
-            boolean exists = localBranchExists(branch);
-            if (!exists) {
-                command = command.setCreateBranch(true).setForce(true).
-                        setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).
-                        setStartPoint(getRemote() + "/" + branch);
+        boolean exists = localBranchExists(branch);
+        if (!exists) {
+            command = command.setCreateBranch(true).setForce(true).
+                    setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).
+                    setStartPoint(getRemote() + "/" + branch);
         }
         Ref ref = command.call();
         if (LOG.isDebugEnabled()) {

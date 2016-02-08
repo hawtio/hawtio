@@ -1,9 +1,19 @@
 package io.hawt.util;
 
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
 
 import static io.hawt.util.Closeables.closeQuietly;
 

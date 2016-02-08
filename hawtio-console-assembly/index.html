@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>hawtio</title>
+    <base href='/hawtio/'></base>
+    <meta charset="UTF8"/>
+
+
+    <!-- build:css style.css -->
+
+    <!-- bower:css -->
+    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="libs/patternfly/dist/css/patternfly.css" />
+    <link rel="stylesheet" href="libs/patternfly/dist/css/patternfly-additions.css" />
+    <link rel="stylesheet" href="libs/codemirror/lib/codemirror.css" />
+    <link rel="stylesheet" href="libs/toastr/toastr.css" />
+    <link rel="stylesheet" href="libs/angular-patternfly/dist/styles/angular-patternfly.css" />
+    <link rel="stylesheet" href="libs/hawtio-ui/dist/font-awesome.css" />
+    <link rel="stylesheet" href="libs/hawtio-ui/dist/OpenSans.css" />
+    <link rel="stylesheet" href="libs/hawtio-ui/dist/DroidSansMono.css" />
+    <link rel="stylesheet" href="libs/hawtio-ui/dist/hawtio-ui.css" />
+    <link rel="stylesheet" href="libs/hawtio-forms/dist/hawtio-forms.css" />
+    <link rel="stylesheet" href="libs/hawtio-dashboard/dist/hawtio-dashboard.css" />
+    <link rel="stylesheet" href="libs/hawtio-jmx/dist/hawtio-jmx.css" />
+    <link rel="stylesheet" href="libs/hawtio-jmx/dist/ui.dynatree.css" />
+    <link rel="stylesheet" href="libs/hawtio-jmx/dist/dynatree-icons.css" />
+    <link rel="stylesheet" href="libs/hawtio-integration/dist/hawtio-integration.css" />
+    <!-- endbower -->
+
+    <link rel="stylesheet" href="dist/hawtio-console-assembly.css" />
+    <!-- endbuild -->
+
+    <!-- ES6/ES6 shim -->
+    <!-- build:js libs.js -->
+
+    <!-- bower:js -->
+    <script src="libs/jquery/dist/jquery.js"></script>
+    <script src="libs/angular/angular.js"></script>
+    <script src="libs/angular-sanitize/angular-sanitize.js"></script>
+    <script src="libs/js-logger/src/logger.js"></script>
+    <script src="libs/hawtio-core/dist/hawtio-core.js"></script>
+    <script src="libs/lodash/lodash.js"></script>
+    <script src="libs/angular-route/angular-route.js"></script>
+    <script src="libs/urijs/src/URI.js"></script>
+    <script src="libs/hawtio-core-navigation/dist/hawtio-core-navigation.js"></script>
+    <script src="libs/hawtio-utilities/dist/sugar.js"></script>
+    <script src="libs/hawtio-utilities/dist/angular-file-upload.js"></script>
+    <script src="libs/hawtio-utilities/dist/hawtio-utilities.js"></script>
+    <script src="libs/codemirror/lib/codemirror.js"></script>
+    <script src="libs/graphlib/dist/graphlib.core.js"></script>
+    <script src="libs/dagre/dist/dagre.core.js"></script>
+    <script src="libs/dagre/dist/dagre.core.min.js"></script>
+    <script src="libs/zeroclipboard/dist/ZeroClipboard.js"></script>
+    <script src="libs/toastr/toastr.js"></script>
+    <script src="libs/angular-patternfly/dist/angular-patternfly.js"></script>
+    <script src="libs/hawtio-ui/dist/jquery-ui.custom.js"></script>
+    <script src="libs/hawtio-ui/dist/ui-bootstrap.js"></script>
+    <script src="libs/hawtio-ui/dist/ui-bootstrap-tpls.js"></script>
+    <script src="libs/hawtio-ui/dist/transition.js"></script>
+    <script src="libs/hawtio-ui/dist/dialog.js"></script>
+    <script src="libs/hawtio-ui/dist/modal.js"></script>
+    <script src="libs/hawtio-ui/dist/jquery.jsPlumb-custom.js"></script>
+    <script src="libs/hawtio-ui/dist/marked.js"></script>
+    <script src="libs/hawtio-ui/dist/d3.js"></script>
+    <script src="libs/hawtio-ui/dist/tabbable.js"></script>
+    <script src="libs/hawtio-ui/dist/hawtio-ui.js"></script>
+    <script src="libs/hawtio-forms/dist/hawtio-forms.js"></script>
+    <script src="libs/hawtio-forms/dist/bootstrap-combobox.js"></script>
+    <script src="libs/hawtio-dashboard/dist/jquery.gridster.js"></script>
+    <script src="libs/hawtio-dashboard/dist/hawtio-dashboard.js"></script>
+    <script src="libs/hawtio-template-cache/dist/hawtio-template-cache.js"></script>
+    <script src="libs/hawtio-jmx/dist/dangle.js"></script>
+    <script src="libs/hawtio-jmx/dist/jquery.dynatree.js"></script>
+    <script src="libs/hawtio-jmx/dist/dagre.js"></script>
+    <script src="libs/hawtio-jmx/dist/jolokia.js"></script>
+    <script src="libs/hawtio-jmx/dist/cubism.v1.js"></script>
+    <script src="libs/hawtio-jmx/dist/jolokia-simple.js"></script>
+    <script src="libs/hawtio-jmx/dist/jolokia-cubism.js"></script>
+    <script src="libs/hawtio-jmx/dist/hawtio-jmx.js"></script>
+    <script src="libs/angular-resource/angular-resource.js"></script>
+    <script src="libs/hawtio-integration/dist/metrics-watcher.js"></script>
+    <script src="libs/hawtio-integration/dist/camelModel.js"></script>
+    <script src="libs/hawtio-integration/dist/hawtio-integration.js"></script>
+    <script src="libs/hawtio-extension-service/dist/hawtio-extension-service.js"></script>
+    <script src="libs/hawtio-preferences/dist/hawtio-preferences.js"></script>
+    <!-- endbower -->
+
+    <script type="text/javascript" src="libs/codemirror/addon/edit/closetag.js"></script>
+    <script type="text/javascript" src="libs/codemirror/addon/edit/continuelist.js"></script>
+    <script type="text/javascript" src="libs/codemirror/addon/edit/matchbrackets.js"></script>
+    <script type="text/javascript" src="libs/codemirror/addon/fold/foldcode.js"></script>
+    <script type="text/javascript" src="libs/codemirror/addon/fold/brace-fold.js"></script>
+    <script type="text/javascript" src="libs/codemirror/addon/fold/xml-fold.js"></script>
+    <script type="text/javascript" src="libs/codemirror/mode/javascript/javascript.js"></script>
+    <script type="text/javascript" src="libs/codemirror/mode/xml/xml.js"></script>
+    <script type="text/javascript" src="libs/codemirror/mode/css/css.js"></script>
+    <script type="text/javascript" src="libs/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+    <script type="text/javascript" src="libs/codemirror/mode/markdown/markdown.js"></script>
+    <script type="text/javascript" src="libs/codemirror/mode/diff/diff.js"></script>
+    <script type="text/javascript" src="libs/codemirror/mode/properties/properties.js"></script>
+    <script type="text/javascript" src="libs/codemirror/mode/clike/clike.js"></script>
+    <script type="text/javascript" src="libs/codemirror/mode/yaml/yaml.js"></script>
+
+    <script src="libs/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="libs/patternfly/dist/js/patternfly.js"></script>
+    <!-- endbuild -->
+
+    <style>
+      body {
+        padding-top: 110px;
+      }
+      .pane {
+        top: 110px;
+      }
+      .navbar-brand > img {
+        height: 20px;
+        margin-top: -5px;
+        margin-bottom: -5px;
+      }
+
+      .navbar-fixed-top [hawtio-sub-tabs] {
+        float: none;
+        display: block;
+        /* border-top: 1px solid #d4d4d4; */
+      }
+
+      .navbar-persistent {
+        background: #f6f6f6;
+        border-bottom: 1px solid #cecdcd;
+        padding: 0;
+        width: 100%;
+      }
+      .navbar-persistent > li.active:before,
+      .navbar-persistent > li.active:hover:before {
+        background: #0099d3;
+        bottom: -1px;
+        content: '';
+        display: block;
+        height: 2px;
+        left: 20px;
+        position: absolute;
+        right: 20px;
+      }
+      .navbar-persistent > li.active > a,
+      .navbar-persistent > li.active > a:hover,
+      .navbar-persistent > li.active:hover > a {
+        background: transparent !important;
+        color: #0099d3 !important;
+      }
+      .navbar-persistent > li.active .active > a {
+        color: #f1f1f1;
+      }
+      .navbar-persistent > li.dropdown-submenu:hover > .dropdown-menu {
+        display: none;
+      }
+      .navbar-persistent > li.dropdown-submenu.open > .dropdown-menu {
+        display: block;
+        left: 20px;
+        margin-top: 1px;
+        top: 100%;
+      }
+      .navbar-persistent > li.dropdown-submenu.open > .dropdown-toggle {
+        color: #222222;
+      }
+      .navbar-persistent > li.dropdown-submenu.open > .dropdown-toggle:after {
+        border-top-color: #222222;
+      }
+      .navbar-persistent > li.dropdown-submenu > .dropdown-toggle {
+        padding-right: 35px !important;
+      }
+      .navbar-persistent > li.dropdown-submenu > .dropdown-toggle:after {
+        position: absolute;
+        right: 20px;
+        top: 10px;
+      }
+      .navbar-persistent > li:hover:before,
+      .navbar-persistent > li.open:before {
+        background: #aaaaaa;
+        bottom: -1px;
+        content: '';
+        display: block;
+        height: 2px;
+        left: 20px;
+        position: absolute;
+        right: 20px;
+      }
+      .navbar-persistent > li:hover > a,
+      .navbar-persistent > li.open > a {
+        color: #222222;
+      }
+      .navbar-persistent > li:hover > a:after,
+      .navbar-persistent > li.open > a:after {
+        border-top-color: #222222;
+      }
+      .navbar-persistent > li > a {
+        background-color: transparent;
+        display: block;
+        line-height: 1;
+        padding: 9px 20px !important;
+      }
+      .navbar-persistent > li > a.dropdown-toggle {
+        padding-right: 35px;
+      }
+      .navbar-persistent > li > a.dropdown-toggle:after {
+        font-size: 15px;
+        position: absolute;
+        right: 20px;
+        top: 9px;
+      }
+      .navbar-persistent > li > a:hover {
+        color: #222222 !important;
+      }
+      .navbar-persistent > li a {
+        color: #4d5258 !important;
+      }
+      .navbar-pf .navbar-primary > li > a {
+        border-bottom: 1px solid transparent;
+        border-top: 1px solid transparent;
+        position: relative;
+        margin: -1px 0 0;
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-pf" role="navigation">
+      <div class="navbar-header" hawtio-extension name="hawtio-header">
+        <a class="navbar-brand"><img src="img/hawtio_logo.svg"></a>
+      </div>
+      <ul class="nav navbar-nav navbar-utility">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <span class="pficon pficon-user"></span>
+            User <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu" hawtio-extension name="hawtio-user">
+            <!--
+            <li>
+              <a href="#">Link</a>
+            </li>
+            -->
+          </ul>
+        </li>
+
+      </ul>
+      <ul class="nav navbar-nav navbar-primary" hawtio-main-nav></ul>
+      <ul class="nav navbar-nav navbar-persistent" hawtio-sub-tabs></ul>
+    </nav>
+
+    <div id="main" class="container-fluid ng-cloak" ng-controller="HawtioNav.ViewController">
+      <div ng-include src="viewPartial"></div>
+    </div>
+    <!-- add any scripts under dist/ here -->
+    <!-- build:js1 app.js -->
+    <script src="dist/hawtio-console-assembly.js"></script>
+    <script src="dist/hawtio-console-assembly-test.js"></script>
+    <!-- endbuild -->
+
+  </body>
+</html>

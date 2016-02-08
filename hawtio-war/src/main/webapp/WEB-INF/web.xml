@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+         version="2.4">
+
+  <description>hawtio</description>
+  <display-name>hawtio</display-name>
+
+  <env-entry>
+    <description>Enable/disable hawtio's authentication filter, value is really a boolean</description>
+    <env-entry-name>hawtio/authenticationEnabled</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>false</env-entry-value>
+  </env-entry>
+
+  <env-entry>
+    <description>Authorized user role, empty string disables authorization</description>
+    <env-entry-name>hawtio/role</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value></env-entry-value>
+  </env-entry>
+
+  <env-entry>
+    <description>JAAS classname that would contain the role principal, empty string disables authorization</description>
+    <env-entry-name>hawtio/rolePrincipalClasses</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value></env-entry-value>
+  </env-entry>
+
+  <env-entry>
+    <description>JAAS realm used to authenticate users</description>
+    <env-entry-name>hawtio/realm</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>*</env-entry-value>
+  </env-entry>
+
+  <env-entry>
+    <description>Enable/disable Keycloak integration. Value is really a boolean</description>
+    <env-entry-name>hawtio/keycloakEnabled</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>false</env-entry-value>
+  </env-entry>
+
+  <env-entry>
+    <description>Keycloak config file used for frontend. Will use default location if not provided</description>
+    <env-entry-name>hawtio/keycloakClientConfig</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value></env-entry-value>
+  </env-entry>
+
+  <env-entry>
+    <description>Path to store file uploads, defaults to ${java.io.tmpdir}/uploads if blank</description>
+    <env-entry-name>hawtio/uploadDirectory</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value></env-entry-value>
+  </env-entry>
+
+  <filter>
+    <filter-name>SessionExpiryFilter</filter-name>
+    <filter-class>io.hawt.web.SessionExpiryFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>SessionExpiryFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>XFrameOptionsFilter</filter-name>
+    <filter-class>io.hawt.web.XFrameOptionsFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>XFrameOptionsFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>CORSFilter</filter-name>
+    <filter-class>io.hawt.web.CORSFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CORSFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
+    <filter-name>AuthenticationFilter</filter-name>
+    <filter-class>io.hawt.web.AuthenticationFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/jolokia/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/auth/*</url-pattern>
+  </filter-mapping>
+
+  <!-- don't want to try and interpret the authentication header intended for the proxy
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/proxy/*</url-pattern>
+  </filter-mapping>
+  -->
+
+  <!--
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/upload/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/javadoc/*</url-pattern>
+  </filter-mapping>
+  -->
+
+  <!-- jolokia -->
+  <servlet>
+    <servlet-name>jolokia-agent</servlet-name>
+    <servlet-class>org.jolokia.http.AgentServlet</servlet-class>
+    <init-param>
+      <param-name>mbeanQualifier</param-name>
+      <param-value>qualifier=hawtio</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>jolokia-agent</servlet-name>
+    <url-pattern>/jolokia/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>jolokia-proxy</servlet-name>
+    <servlet-class>io.hawt.web.ProxyServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>jolokia-proxy</servlet-name>
+    <url-pattern>/proxy/*</url-pattern>
+  </servlet-mapping>
+
+  <!-- to discover 3rd party plugins deployed in same JVM -->
+  <servlet>
+    <servlet-name>plugin</servlet-name>
+    <servlet-class>io.hawt.web.PluginServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>plugin</servlet-name>
+    <url-pattern>/plugin/*</url-pattern>
+  </servlet-mapping>
+
+  <!--
+  <servlet>
+    <servlet-name>kube-service</servlet-name>
+    <servlet-class>io.hawt.web.ServiceServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>kube-service</servlet-name>
+    <url-pattern>/service/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>kube-pod</servlet-name>
+    <servlet-class>io.hawt.web.PodServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>kube-pod</servlet-name>
+    <url-pattern>/pod/*</url-pattern>
+  </servlet-mapping>
+  -->
+
+  <!-- login/logout and security related servlets -->
+  <servlet>
+    <servlet-name>user</servlet-name>
+    <servlet-class>io.hawt.web.UserServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>user</servlet-name>
+    <url-pattern>/user/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>login</servlet-name>
+    <servlet-class>io.hawt.web.LoginServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>login</servlet-name>
+    <url-pattern>/auth/login/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>logout</servlet-name>
+    <servlet-class>io.hawt.web.LogoutServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>logout</servlet-name>
+    <url-pattern>/auth/logout/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>keycloak</servlet-name>
+    <servlet-class>io.hawt.web.keycloak.KeycloakServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>keycloak</servlet-name>
+    <url-pattern>/keycloak/*</url-pattern>
+  </servlet-mapping>
+
+  <!-- various other servlets -->
+  <servlet>
+    <servlet-name>file-upload</servlet-name>
+    <servlet-class>io.hawt.web.UploadServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>file-upload</servlet-name>
+    <url-pattern>/upload/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>gitServlet</servlet-name>
+    <servlet-class>io.hawt.web.GitServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>gitServlet</servlet-name>
+    <url-pattern>/git/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>maven-source</servlet-name>
+    <servlet-class>io.hawt.web.JavaDocServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>maven-source</servlet-name>
+    <url-pattern>/javadoc/*</url-pattern>
+  </servlet-mapping>
+
+  <listener>
+    <listener-class>io.hawt.HawtioContextListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
+  </listener>
+  <listener>
+    <listener-class>io.hawt.blueprint.HawtioBlueprintContextListener</listener-class>
+  </listener>
+
+  <context-param>
+    <param-name>blueprintProperties</param-name>
+    <param-value>blueprint.properties</param-value>
+  </context-param>
+  <context-param>
+    <param-name>blueprintLocation</param-name>
+    <param-value>OSGI-INF/blueprint/blueprint.xml</param-value>
+  </context-param>
+
+  <error-page>
+    <error-code>404</error-code>
+    <location>/index.html</location>
+  </error-page>
+
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+
+</web-app>

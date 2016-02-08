@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>14</version>
+  </parent>
+
+  <groupId>io.hawt</groupId>
+  <artifactId>project</artifactId>
+  <packaging>pom</packaging>
+  <version>1.5-SNAPSHOT</version>
+  <name>project</name>
+  <description>hawtio :: project</description>
+  <url>http://hawt.io/</url>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git@github.com:hawtio/hawtio.git</connection>
+    <developerConnection>scm:git:git@github.com:hawtio/hawtio.git</developerConnection>
+    <url>git@github.com:hawtio/hawtio.git</url>
+    <tag>hawtio-1.4.3</tag>
+  </scm>
+
+  <distributionManagement>
+    <repository>
+      <id>oss-sonatype-staging</id>
+      <name>Sonatype Staging Repository</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+    </repository>
+    <snapshotRepository>
+      <id>oss-sonatype-snapshots</id>
+      <name>OSS Sonatype Nexus Snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <prerequisites>
+    <maven>3.1.1</maven>
+  </prerequisites>
+
+  <properties>
+    <jettyPort>8282</jettyPort>
+    <context>/hawtio</context>
+    <hawtio-config-dir>${basedir}/hawtio-config</hawtio-config-dir>
+    <hawtio-config-repo>https://github.com/hawtio/hawtio-config.git</hawtio-config-repo>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+
+    <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
+    <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
+    <schema-outdir>${basedir}/src/main/webapp/lib</schema-outdir>
+    <appjs-outfile>${webapp-outdir}/app/app.js</appjs-outfile>
+
+    <!-- fabric8 1.x -->
+    <fabric-test-version>${fabric-version}</fabric-test-version>
+    <fabric-version>1.2.0.Beta4</fabric-version>
+
+    <activemq-version>5.12.1</activemq-version>
+    <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
+    <aether-version>1.13.1</aether-version>
+    <atmosphere-version>1.0.18</atmosphere-version>
+    <blueprint-web-version>1.0.0</blueprint-web-version>
+    <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
+    <camel-version>2.16.2</camel-version>
+    <commons-codec-version>1.10</commons-codec-version>
+    <commons-fileupload-version>1.3.1</commons-fileupload-version>
+    <commons-httpclient-version>3.1</commons-httpclient-version>
+    <commons-io-version>2.2</commons-io-version>
+    <commons-logging-version>1.1.3</commons-logging-version>
+    <cxf-version>3.1.4</cxf-version>
+    <dozer-version>5.5.1</dozer-version>
+    <exec-maven-plugin-version>1.4.0</exec-maven-plugin-version>
+    <felix.gogo.version>0.16.2</felix.gogo.version>
+    <frontend-maven-plugin-version>0.0.24</frontend-maven-plugin-version>
+    <gitective-version>0.9.12</gitective-version>
+
+    <!-- We are using an old guava to avoid breaking ActiveMQ in the test cases of hawtio-web -->
+    <!--
+        <guava-version>13.0.1</guava-version>
+    -->
+    <guava-version>10.0</guava-version>
+    <guava.version>14.0.1</guava.version>
+    <hawtio-release-version>1.4.19</hawtio-release-version>
+    <infinispan-version>5.3.0.Final</infinispan-version>
+<!--
+    TODO doesn't yet work - I think the config changed?
+    <infinispan-version>6.0.0.Final</infinispan-version>
+-->
+
+    <!-- make sure to align jackson with fabric8 -->
+    <jackson-version>2.7.0</jackson-version>
+    <jackson-version-range>[2.5,3)</jackson-version-range>
+
+    <javaewah-version>1.0.2</javaewah-version>
+    <!-- make sure to align jaxb with fabric8 -->
+    <jaxb-version>2.2.7</jaxb-version>
+    <jcraft-version>0.1.49</jcraft-version>
+    <jcraft-jzlib-version>1.1.3</jcraft-jzlib-version>
+
+    <jetty-version>8.1.16.v20140903</jetty-version>
+    <jetty-plugin-groupId>org.mortbay.jetty</jetty-plugin-groupId>
+    <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
+    <jetty-webapp-artifactId>jetty-webapp</jetty-webapp-artifactId>
+
+    <jgit-version>4.2.0.201601211800-r</jgit-version>
+    <jline.version>2.13</jline.version>
+    <jolokia-version>1.3.2</jolokia-version>
+    <junit-version>4.11</junit-version>
+    <karaf-version>4.0.4</karaf-version>
+    <log4j-version>1.2.17</log4j-version>
+    <maven-version>3.0.4</maven-version>
+    <maven-antrun-plugin-version>1.7</maven-antrun-plugin-version>
+    <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
+    <maven-plugin-version>3.2</maven-plugin-version>
+    <maven-source-plugin-version>2.1.2</maven-source-plugin-version>
+    <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
+    <maven-surefire-plugin-version>2.19.1</maven-surefire-plugin-version>
+    <ops4j-pax-web-version>3.0.1</ops4j-pax-web-version>
+    <ops4j-pax-url-version>2.4.5</ops4j-pax-url-version>
+    <osgi-version>4.2.0</osgi-version>
+    <org-json-version>20150729</org-json-version>
+    <scala-version>2.10.0</scala-version>
+    <servlet-api-version>2.5</servlet-api-version>
+
+    <!-- use slf4j-api 1.6.x to be easy compatible with older Karaf/Camel releases -->
+    <slf4j-api-version>1.6.6</slf4j-api-version>
+    <slf4j-version>1.7.13</slf4j-version>
+
+    <spring-version>4.1.9.RELEASE</spring-version>
+    <spring-boot-version>1.3.2.RELEASE</spring-boot-version>
+    <unsigner-maven-plugin-version>0.2</unsigner-maven-plugin-version>
+    <wagon-version>2.7</wagon-version>
+    <war-plugin-version>2.1.1</war-plugin-version>
+    <xbean-version>3.16</xbean-version>
+  </properties>
+
+  <modules>
+    <module>hawtio-util</module>
+    <module>hawtio-core</module>
+    <module>hawtio-system</module>
+    <module>hawtio-aether</module>
+    <module>hawtio-dozer-schema</module>
+    <module>hawtio-dozer</module>
+    <module>hawtio-git</module>
+    <module>hawtio-ide</module>
+    <module>hawtio-insight-log</module>
+    <module>hawtio-insight-log-osgi</module>
+    <module>hawtio-junit</module>
+    <module>hawtio-maven-indexer</module>
+    <module>hawtio-maven-plugin</module>
+    <module>hawtio-json-schema-mbean</module>
+    <module>hawtio-json-schema-generator</module>
+    <module>hawtio-local-jvm-mbean</module>
+    <module>hawtio-keystore-mbean</module>
+    <module>hawtio-plugin-mbean</module>
+    <module>example-services</module>
+    <module>hawtio-web</module>   
+    <module>hawtio-base</module>
+    <module>hawtio-default</module>
+    <module>hawtio-default-offline</module>
+    <module>hawtio-no-slf4j</module>
+    <module>hawtio-wildfly</module>
+    <module>hawtio-embedded</module>
+    <module>hawtio-app</module>
+    <module>hawtio-osgi-jmx</module>
+    <module>hawtio-osgi-devmode</module>
+    <module>hawtio-plugin-examples</module>
+    <module>sample</module>
+    <module>hawtio-springboot</module>
+    <module>hawtio-sample-springboot</module>
+    <module>hawtio-sample-springboot-authentication</module>
+    <module>hawtio-karaf-terminal</module>
+    <module>hawtio-karaf-git</module>
+    <!-- TODO - a bit broken at the moment
+    <module>hawtio-directives</module>
+    -->
+    <module>hawtio-redhat-fuse-branding</module>
+    <module>hawtio-redhat-amq-branding</module>
+    <module>hawtio-fabric8-branding</module>
+    <module>hawtio-karaf</module>
+    <!-- Broken at the moment on some computers.
+	<module>hawtio-custom-app</module>
+    -->
+    <!-- TODO - a bit broken at the moment, well on on some computers -->
+    <module>hawtio-api-docs</module>
+  </modules>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${maven-source-plugin-version}</version>
+          <inherited>true</inherited>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>${war-plugin-version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>${maven-plugin-version}</version>
+          <configuration>
+            <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
+            <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+           </configuration>
+           <executions>
+             <execution>
+               <id>mojo-descriptor</id>
+               <goals>
+                 <goal>descriptor</goal>
+               </goals>
+             </execution>
+           </executions>
+        </plugin>
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build
+          itself. -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <versionRange>[${maven-bundle-plugin-version},)</versionRange>
+                    <goals>
+                      <goal>cleanVersions</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore />
+                  </action>
+                </pluginExecution>
+
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <versionRange>[${maven-bundle-plugin-version},)</versionRange>
+                    <goals>
+                      <goal>manifest</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <execute>
+                      <runOnIncremental>true</runOnIncremental>
+                      <runOnConfiguration>true</runOnConfiguration>
+                    </execute>
+                  </action>
+                </pluginExecution>
+
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.servicemix.tooling</groupId>
+                    <artifactId>depends-maven-plugin</artifactId>
+                    <versionRange>[1.0,)</versionRange>
+                    <goals>
+                      <goal>generate-depends-file</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <execute>
+                      <runOnIncremental>false</runOnIncremental>
+                      <runOnConfiguration>true</runOnConfiguration>
+                    </execute>
+                  </action>
+                </pluginExecution>
+
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.4.1</version>
+        <configuration>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <!--
+          <tag>hawtio-${project.version}</tag>
+          -->
+        </configuration>
+      </plugin>
+
+      <!-- plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.8</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin -->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire-plugin-version}</version>
+        <configuration>
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
+          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+          <childDelegation>false</childDelegation>
+          <useFile>true</useFile>
+          <failIfNoTests>false</failIfNoTests>
+          <runOrder>alphabetical</runOrder>
+          <systemPropertyVariables>
+            <basedir>${basedir}</basedir>
+            <java.awt.headless>true</java.awt.headless>
+          </systemPropertyVariables>
+          <includes>
+            <include>**/*Test.*</include>
+          </includes>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <profiles>
+
+    <profile>
+      <id>doclint-java8-disable</id>
+      <activation>
+        <jdk>[1.8, 2)</jdk>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <additionalparam>-Xdoclint:none</additionalparam>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- watcher profile is needed to break build cycle with fabric -->
+    <profile>
+      <id>watcher</id>
+      <modules>
+        <module>hawtio-watcher-dynamic-jaxb</module>
+        <module>hawtio-watcher-blueprint-web</module>
+        <module>hawtio-watcher-spring-context</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>fabricSnapshot</id>
+      <properties>
+        <fabric-version>99-master-SNAPSHOT</fabric-version>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>amqSnapshot</id>
+      <properties>
+        <activemq-version>5.13-SNAPSHOT</activemq-version>
+        <activemq-leveldb-artifactid>activemq-leveldb-store</activemq-leveldb-artifactid>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>camelSnapshot</id>
+      <properties>
+        <camel-version>2.17-SNAPSHOT</camel-version>
+      </properties>
+
+    </profile>
+
+    <profile>
+      <id>jetty9</id>
+      <properties>
+        <jetty-version>9.0.2.v20130417</jetty-version>
+        <jetty-plugin-groupId>org.eclipse.jetty</jetty-plugin-groupId>
+        <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
+        <jetty-webapp-artifactId>jetty-all</jetty-webapp-artifactId>
+      </properties>
+      <repositories>
+      </repositories>
+    </profile>
+
+    <profile>
+      <id>committer</id>
+      <properties>
+        <hawtio-config-repo>git@github.com:hawtio/hawtio-config.git</hawtio-config-repo>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>docs</id>
+      <modules>
+        <module>hawtio-api-docs</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>itests</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>hawtio-karaf-itest</module>
+      </modules>
+    </profile>
+
+
+    <profile>
+      <id>release</id>
+      <properties>
+        <schema-outdir>${basedir}/target/${webapp-dir}/lib</schema-outdir>
+      </properties>
+      <!--
+      TODO when using the release profile you should add your ~/.m2/settings.xml something like this:
+
+      <settings>
+        <profiles>
+          <profile>
+            <id>release</id>
+            <properties>
+              <gpg.passphrase>MyPassPhrase</gpg.passphrase>
+            </properties>
+          </profile>
+          ...
+      -->
+
+      <!--
+            Run the release /w the -P release flag to enable the release profile.
+          -->
+      <build>
+        <plugins>
+          <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <configuration>
+              <passphrase>${gpg.passphrase}</passphrase>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <encoding>${project.build.sourceEncoding}</encoding>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+
+    <!-- dealing with tools.jar for hawtio-local-jvm-mbean -->
+    <profile>
+      <id>default-profile</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+        <file>
+          <exists>${java.home}/../lib/tools.jar</exists>
+        </file>
+      </activation>
+      <properties>
+        <toolsjar>${java.home}/../lib/tools.jar</toolsjar>
+      </properties>
+    </profile>
+    <profile>
+      <id>mac-jdk6-profile</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <file>
+          <exists>${java.home}/../Classes/classes.jar</exists>
+        </file>
+      </activation>
+      <properties>
+        <toolsjar>${java.home}/../Classes/classes.jar</toolsjar>
+      </properties>
+    </profile>
+
+    <!-- only build the CRX if you've setup the CRX key -->
+    <profile>
+      <id>crx</id>
+      <activation>
+        <file>
+          <exists>${user.home}/.m2/hawtio-crx.pem</exists>
+        </file>
+      </activation>
+      <modules>
+        <module>hawtio-crx</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>deploy</id>
+      <build>
+        <defaultGoal>deploy</defaultGoal>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+      <profile>
+          <id>apidocs</id>
+          <modules>
+              <module>hawtio-api-docs</module>
+          </modules>
+      </profile>
+
+  </profiles>
+</project>

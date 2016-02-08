@@ -30,7 +30,7 @@ public class CommitTreeInfo {
     private String id;
     private long size;
     private String commitId;
-   	private boolean isParentPath;
+    private boolean isParentPath;
     public DiffEntry.ChangeType changeType;
 
     public CommitTreeInfo() {
@@ -61,16 +61,16 @@ public class CommitTreeInfo {
     }
 
     public boolean isSymlink() {
-   		return FileMode.SYMLINK.equals(mode);
-   	}
+        return FileMode.SYMLINK.equals(mode);
+    }
 
-   	public boolean isSubmodule() {
-   		return FileMode.GITLINK.equals(mode);
-   	}
+    public boolean isSubmodule() {
+        return FileMode.GITLINK.equals(mode);
+    }
 
-   	public boolean isTree() {
-   		return FileMode.TREE.equals(mode);
-   	}
+    public boolean isTree() {
+        return FileMode.TREE.equals(mode);
+    }
 
     public String getPath() {
         return path;

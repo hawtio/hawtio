@@ -32,7 +32,7 @@ public class Strings {
         if (isBlank(name)) {
             return name;
         }
-        return name.replaceAll("[^0-9a-zA-Z\\+\\.\\(\\)_\\-]","");
+        return name.replaceAll("[^0-9a-zA-Z\\+\\.\\(\\)_\\-]", "");
     }
 
     /**

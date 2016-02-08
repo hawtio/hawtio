@@ -1,14 +1,14 @@
 package io.hawt.util;
 
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Set;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * A helper method to get the namespaces on an XML file

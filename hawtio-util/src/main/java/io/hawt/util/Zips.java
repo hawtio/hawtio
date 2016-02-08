@@ -17,8 +17,6 @@
  */
 package io.hawt.util;
 
-import org.slf4j.Logger;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -30,6 +28,8 @@ import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import org.slf4j.Logger;
 
 import static io.hawt.util.Closeables.closeQuietly;
 import static io.hawt.util.IOHelper.copy;

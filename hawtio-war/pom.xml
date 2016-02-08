@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>io.hawt</groupId>
+    <artifactId>project</artifactId>
+    <version>2.1-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>hawtio-war</artifactId>
+  <packaging>war</packaging>
+  <name>${project.artifactId}</name>
+  <description>hawtio :: Web Console</description>
+
+  <properties>
+    <finalName>hawtio</finalName>
+    <hawtio-console-url>https://github.com/fabric8io/fabric8-console/archive/</hawtio-console-url>
+    <destDir>target/hawtio-console</destDir>
+  </properties>
+
+  <dependencies>
+
+    <!-- servlet api is provided -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>${servlet-api-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- mandatory core hawito modules -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-system</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-console-assembly</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- optional hawtio modules we want to use in this WAR -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-git</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-local-jvm-mbean</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- jolokia is mandatory -->
+    <dependency>
+      <groupId>org.jolokia</groupId>
+      <artifactId>jolokia-core</artifactId>
+      <version>${jolokia-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jolokia</groupId>
+      <artifactId>jolokia-jvm</artifactId>
+      <version>${jolokia-version}</version>
+      <classifier>agent</classifier>
+    </dependency>
+
+    <!-- blueprint is mandatory as its for dependency injection and bootstrapping services -->
+    <dependency>
+      <groupId>org.apache.aries.blueprint</groupId>
+      <artifactId>org.apache.aries.blueprint.web</artifactId>
+      <version>${blueprint-web-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-servlet_2.5_spec</artifactId>
+        </exclusion>
+        <!-- ignore old versions -->
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <!-- we do not want version in the WAR name -->
+    <finalName>${finalName}</finalName>
+
+    <plugins>
+
+      <!-- Step 4. Add hawtio-console Resources to the WAR -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <webResources>
+            <resource>
+              <directory>../hawtio-console-assembly/target/site/</directory>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${jetty-version}</version>
+        <configuration>
+          <webAppSourceDirectory>../hawtio-console-assembly/</webAppSourceDirectory>
+          <scanIntervalSeconds>1</scanIntervalSeconds>
+          <webAppConfig>
+            <contextPath>/hawtio/</contextPath>
+            <!--<contextPath>${context}</contextPath>-->
+          </webAppConfig>
+          <classesDirectory>${project.build.directory}/${project.name}/WEB-INF/classes</classesDirectory>
+          <systemProperties>
+            <systemProperty>
+              <key>hawtio.config.dir</key>
+              <value>${hawtio-config-dir}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>hawtio.config.repo</key>
+              <value>${hawtio-config-repo}</value>
+            </systemProperty>
+          </systemProperties>
+          <stopKey>stop</stopKey>
+          <stopPort>9999</stopPort>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>${basedir}/overlays</directory>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
+    </plugins>
+
+  </build>
+
+</project>

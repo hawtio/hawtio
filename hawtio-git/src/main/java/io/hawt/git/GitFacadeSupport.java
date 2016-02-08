@@ -17,8 +17,25 @@
  */
 package io.hawt.git;
 
-import io.hawt.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import io.hawt.util.FileFilters;
+import io.hawt.util.Files;
+import io.hawt.util.Function;
+import io.hawt.util.IOHelper;
+import io.hawt.util.MBeanSupport;
 import io.hawt.util.Objects;
+import io.hawt.util.Strings;
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
@@ -47,12 +64,6 @@ import org.gitective.core.filter.commit.CommitLimitFilter;
 import org.gitective.core.filter.commit.CommitListFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.util.*;
 
 import static io.hawt.git.GitFacade.trimLeadingSlash;
 
@@ -189,7 +200,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
                         list.add(new CommitTreeInfo(pathString, pathString, 0, rawMode, objectId.getName(), commit.getId().getName(),
                                 ChangeType.ADD));
                     }
-                    treeWalk.close();
+                    treeWalk.release();
                 } else {
                     RevCommit parent = rw.parseCommit(commit.getParent(0).getId());
                     DiffFormatter df = new DiffFormatter(DisabledOutputStream.INSTANCE);
@@ -222,12 +233,12 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         }
         return list;
     }
-    
+
 
     protected CommitInfo doGetCommitInfo(Git git, String commitId) {
         Repository repository = git.getRepository();
         RevCommit commit = CommitUtils.getCommit(repository, commitId);
-        if (commit == null){
+        if (commit == null) {
             return null;
         } else {
             return createCommitInfo(commit);
@@ -478,6 +489,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
         // need to list the files, so we can grab the actual file name
         File[] files = parent.listFiles(new FileFilter() {
             String match = new File(caseSensitive ? path : path.toLowerCase(Locale.US)).getName();
+
             @Override
             public boolean accept(File pathname) {
                 String name = caseSensitive ? pathname.getName() : pathname.getName().toLowerCase(Locale.US);
@@ -597,7 +609,7 @@ public abstract class GitFacadeSupport extends MBeanSupport implements GitFacade
             Iterable<PushResult> results = doPush(git);
             for (PushResult result : results) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Pushed " + result.getMessages() + " " + result.getURI() + " branch: " + branch  +  " updates: " + toString(result.getRemoteUpdates()));
+                    LOG.debug("Pushed " + result.getMessages() + " " + result.getURI() + " branch: " + branch + " updates: " + toString(result.getRemoteUpdates()));
                 }
             }
         }

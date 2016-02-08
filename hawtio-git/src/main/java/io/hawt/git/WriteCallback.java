@@ -17,9 +17,9 @@
  */
 package io.hawt.git;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
-
 import java.io.IOException;
+
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 /**
  * A callback to perform write operations on a git repository.

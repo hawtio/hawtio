@@ -1,32 +1,5 @@
 package io.hawt.web;
 
-import io.hawt.util.Strings;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.http.*;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.methods.AbortableHttpRequest;
-import org.apache.http.client.utils.URIUtils;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContextBuilder;
-import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicHttpEntityEnclosingRequest;
-import org.apache.http.message.BasicHttpRequest;
-import org.apache.http.message.HeaderGroup;
-import org.apache.http.util.EntityUtils;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -40,6 +13,38 @@ import java.security.cert.X509Certificate;
 import java.util.BitSet;
 import java.util.Enumeration;
 import java.util.Formatter;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import io.hawt.util.Strings;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.methods.AbortableHttpRequest;
+import org.apache.http.client.utils.URIUtils;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicHttpEntityEnclosingRequest;
+import org.apache.http.message.BasicHttpRequest;
+import org.apache.http.message.HeaderGroup;
+import org.apache.http.util.EntityUtils;
 
 /**
  * Original implementation at https://github.com/mitre/HTTP-Proxy-Servlet, released under ASL 2.0.
@@ -235,10 +240,10 @@ public class ProxyServlet extends HttpServlet {
             int statusCode = proxyResponse.getStatusLine().getStatusCode();
 
             if (statusCode == 401 || statusCode == 403) {
-                if (doLog) {
-                    log("Authentication Failed on remote server " + proxyRequestUri);
-                }
-            } else if (doResponseRedirectOrNotModifiedLogic(servletRequest, servletResponse, proxyResponse, statusCode, targetUriObj)) {
+                throw new SecurityException("Authentication Failed on remote server " + proxyRequestUri);
+            }
+
+            if (doResponseRedirectOrNotModifiedLogic(servletRequest, servletResponse, proxyResponse, statusCode, targetUriObj)) {
                 //the response is already "committed" now without any body to send
                 //TODO copy response headers?
                 return;

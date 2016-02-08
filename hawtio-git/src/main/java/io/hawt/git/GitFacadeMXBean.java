@@ -1,16 +1,16 @@
 package io.hawt.git;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
-
 import java.io.IOException;
 import java.util.List;
+
+import org.eclipse.jgit.api.errors.GitAPIException;
 
 /**
  * The JMX MBean interface for working with git configuration files
  */
 public interface GitFacadeMXBean {
 
-   String getRepositoryLabel();
+    String getRepositoryLabel();
 
     /**
      * Checks if the file exists and if so what its file metadata is.
@@ -31,14 +31,15 @@ public interface GitFacadeMXBean {
                      String authorName, String authorEmail, String contents);
 
     CommitInfo writeBase64(String branch, String path, String commitMessage,
-                     String authorName, String authorEmail, String contentsBase64);
+                           String authorName, String authorEmail, String contentsBase64);
+
     /**
      * Creates a new file if it doesn't already exist
      *
      * @return the commit metadata for the newly created file or null if it already exists
      */
     CommitInfo createDirectory(String branch, String path, String commitMessage,
-                              String authorName, String authorEmail);
+                               String authorName, String authorEmail);
 
     /**
      * Creates a new branch from the given branch

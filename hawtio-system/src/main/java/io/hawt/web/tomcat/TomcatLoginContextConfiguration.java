@@ -1,10 +1,10 @@
 package io.hawt.web.tomcat;
 
-import javax.security.auth.login.AppConfigurationEntry;
-import javax.security.auth.login.Configuration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import javax.security.auth.login.AppConfigurationEntry;
+import javax.security.auth.login.Configuration;
 
 /**
  * Configuration class to avoid having to deal with jaas.config files in the classpath
@@ -14,7 +14,7 @@ public class TomcatLoginContextConfiguration extends Configuration {
     private final AppConfigurationEntry entry;
 
     public TomcatLoginContextConfiguration(
-        final String digestAlgorithm
+            final String digestAlgorithm
     ) {
         Map<String, Object> options = new HashMap<>(1);
         options.put(TomcatUserDatabaseLoginContext.OPTION_DIGEST_ALGORITHM, digestAlgorithm);

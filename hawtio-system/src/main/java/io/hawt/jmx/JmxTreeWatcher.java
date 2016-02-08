@@ -3,7 +3,6 @@ package io.hawt.jmx;
 import java.lang.management.ManagementFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.regex.Pattern;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerDelegate;
@@ -24,23 +23,14 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(JmxTreeWatcher.class);
     private static AtomicBoolean logged = new AtomicBoolean();
 
-    public static final String ACTIVEMQ_VERBOSE_TREE = "hawtio.activemq.verbose.tree";
-
-    private static final Pattern AMQ_CONSUMER_PATTERN = Pattern.compile(".*\\[mbeanName=org.apache.activemq:type=Broker.*endpoint=Consumer.*\\]");
-
-    // TODO: system property to turn this on|off
-
     private ObjectName objectName;
     private MBeanServer mBeanServer;
     private AtomicLong counter = new AtomicLong(0);
     private NotificationListener listener;
     private NotificationFilter filter;
     private String version;
-    private boolean activeMQVerbose;
 
     public void init() throws Exception {
-        activeMQVerbose = "true".equals(System.getProperty(ACTIVEMQ_VERBOSE_TREE, "false"));
-
         if (objectName == null) {
             objectName = getObjectName();
         }
@@ -83,7 +73,6 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
                 mBeanServer.unregisterMBean(objectName);
             }
         }
-        logged.set(false);
     }
 
     public String getVersion() {
@@ -108,23 +97,6 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
         return new NotificationListener() {
             @Override
             public void handleNotification(Notification notification, Object handback) {
-
-                // ActiveMQ can be verbose causing hawtio tree to be constantly updated
-                // and therefore cause the UI to keep updating the tree, making using hawtio sluggish
-
-                if (!activeMQVerbose) {
-                    if (notification != null) {
-                        String toString = notification.toString();
-                        if (AMQ_CONSUMER_PATTERN.matcher(toString).matches()) {
-                            return;
-                        }
-                    }
-                }
-
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Notification: {}", notification);
-                }
-
                 // TODO should we filter only types "JMX.mbean.registered" and "JMX.mbean.unregistered"?
                 counter.incrementAndGet();
             }

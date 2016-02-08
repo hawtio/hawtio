@@ -14,7 +14,7 @@ public class CommitInfo {
     private final String trimmedMessage;
     private final String shortMessage;
 
-    public CommitInfo(String commitHashText, String name,String author, Date date, boolean merge, String trimmedMessage, String shortMessage) {
+    public CommitInfo(String commitHashText, String name, String author, Date date, boolean merge, String trimmedMessage, String shortMessage) {
         this.commitHashText = commitHashText;
         this.name = name;
         this.author = author;

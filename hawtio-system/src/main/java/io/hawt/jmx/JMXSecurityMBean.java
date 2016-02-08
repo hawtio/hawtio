@@ -84,15 +84,15 @@ public interface JMXSecurityMBean {
      *                  current user can invoke <em>any</em> operation on the MBean.<p/>
      *                  Example:
      *                  <pre>{@code
-     *                  Map<String, List<String>> query = new HashMap<>();
-     *                  String objectName = "org.acme:type=SomeMBean";
-     *                  query.put(objectName, Arrays.asList(
-     *                      "testMethod(long,java.lang.String)", // check this testMethod
-     *                      "otherMethod"));                     // check any overload of otherMethod
-     *                  query.put("org.acme:type=SomeOtherMBean",
-     *                      Collections.<String>emptyList());    // check any method of SomeOtherMBean
-     *                  TabularData result = mb.canInvoke(query);
-     *                  }</pre>
+     *                                   Map<String, List<String>> query = new HashMap<>();
+     *                                   String objectName = "org.acme:type=SomeMBean";
+     *                                   query.put(objectName, Arrays.asList(
+     *                                       "testMethod(long,java.lang.String)", // check this testMethod
+     *                                       "otherMethod"));                     // check any overload of otherMethod
+     *                                   query.put("org.acme:type=SomeOtherMBean",
+     *                                       Collections.<String>emptyList());    // check any method of SomeOtherMBean
+     *                                   TabularData result = mb.canInvoke(query);
+     *                                   }</pre>
      * @return A Tabular Data object with the result. This object conforms the structure as defined
      * in {@link #CAN_INVOKE_TABULAR_TYPE}.
      */

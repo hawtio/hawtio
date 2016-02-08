@@ -5,7 +5,6 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.security.auth.Subject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -21,7 +20,6 @@ import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
 import io.hawt.system.Helpers;
 import io.hawt.system.PrivilegedCallback;
-import io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

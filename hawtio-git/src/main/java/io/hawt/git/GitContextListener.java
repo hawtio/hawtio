@@ -1,14 +1,14 @@
 package io.hawt.git;
 
+import java.io.File;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.io.File;
 
 /**
  * A {@link ServletContextListener} which initialises the {@link GitFacade} in the web app
  */
-public class GitContextListener  implements ServletContextListener {
+public class GitContextListener implements ServletContextListener {
     private GitFacade helper = new GitFacade();
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
