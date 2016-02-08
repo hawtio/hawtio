@@ -2,6 +2,8 @@
 module ActiveMQ {
   export var BrowseQueueController = _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", ($scope, workspace:Workspace, jolokia, localStorage, location, activeMQMessage, $timeout) => {
 
+    var log:Logging.Logger = Logger.get("ActiveMQ");
+
     $scope.searchText = '';
     $scope.workspace = workspace;
 
@@ -178,6 +180,8 @@ module ActiveMQ {
     };
 
     function populateTable(response) {
+      log.debug("populateTable");
+
       var data = response.value;
       if (!angular.isArray(data)) {
         $scope.allMessages = [];
@@ -191,8 +195,8 @@ module ActiveMQ {
         message.headerHtml = createHeaderHtml(message);
         message.bodyText = createBodyText(message);
       });
-      Core.$apply($scope);
       filterMessages($scope.gridOptions.filterOptions.filterText);
+      Core.$apply($scope);
     }
 
     /*
