@@ -65,7 +65,7 @@
             <a ng-href="{{logSourceHref(log)}}" ng-switch-when="true">{{log.logger}}</a>
             <span ng-switch-default>{{log.logger}}</span>
           </div>
-          <div class="title" ng-bind-html-unsafe="log.message | highlight:searchText:caseSensitive"></div>
+          <div class="title" ng-bind-html="log.message | highlight:searchText:caseSensitive"></div>
           <!--
           <div class="expandable-body well">
             {{log.message}}

@@ -2613,6 +2613,9 @@ var Core;
         }
     }
     function register(jolokia, scope, arguments, callback) {
+        if (scope.$$destroyed) {
+            return;
+        }
         if (!angular.isDefined(scope.$jhandle) || !angular.isArray(scope.$jhandle)) {
             scope.$jhandle = [];
         }
@@ -35886,7 +35889,7 @@ var Log;
 (function (Log) {
     var pluginName = 'log';
     var hasMBean = false;
-    Log._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']);
+    Log._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'ngSanitize', 'datatable', 'hawtioCore']);
     Log._module.config(["$routeProvider", function ($routeProvider) {
         $routeProvider.when('/logs', { templateUrl: 'app/log/html/logs.html', reloadOnSearch: false }).when('/openlogs', { redirectTo: function () {
             if (hasMBean) {

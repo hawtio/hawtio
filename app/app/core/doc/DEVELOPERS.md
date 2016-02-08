@@ -182,3 +182,14 @@ hawtio uses local storage to store preferences and preferred views for different
 You can view the current Local Storage in the Chrome developer tools console in the Resources / Local Storage tab.
 
 If you ever want to clear it out in Chrome on OS X you'll find this located at `~/Library/Application Support/Google/Chrome/Default/Local Storage`.
+
+
+### Updating the hawtio website
+
+The website is automatic build and updated on each commit. There is a CI job on circleci that runs
+
+    https://circleci.com/gh/hawtio/hawtio
+
+The task runs the script `ci-website.sh` that builds the website. If anything goes wrong, the errors are usully shown in the CI job output (link above).
+
+
