@@ -2176,7 +2176,7 @@ function safeNullAsString(value, type) {
         return "" + value;
     }
     else if (typeof value === 'string') {
-        if (value.indexOf('java.lang.IllegalStateException: Broker is not yet started') >= 0)
+        if (value.indexOf('IllegalStateException: Broker is not yet started') >= 0)
             value = "<em>Broker is not yet started</em>";
         return "" + value;
     }
@@ -2674,7 +2674,7 @@ var Core;
             var silent = options['silent'];
             if (!silent) {
                 var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
-                if (stacktrace.indexOf("javax.management.InstanceNotFoundException") >= 0 || stacktrace.indexOf("javax.management.AttributeNotFoundException") >= 0 || stacktrace.indexOf("java.lang.IllegalArgumentException: No operation") >= 0) {
+                if (stacktrace.indexOf("InstanceNotFoundException") >= 0 || stacktrace.indexOf("AttributeNotFoundException") >= 0 || stacktrace.indexOf("IllegalArgumentException: No operation") >= 0) {
                     Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
                 }
                 else {
