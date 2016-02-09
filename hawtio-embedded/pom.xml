@@ -15,7 +15,7 @@
     <dependency>
       <groupId>org.eclipse.jetty.aggregate</groupId>
       <artifactId>${jetty-webapp-artifactId}</artifactId>
-      <version>${jetty-version}</version>
+      <version>${jetty-webapp-version}</version>
     </dependency>
 
     <dependency>

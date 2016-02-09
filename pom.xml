@@ -64,7 +64,9 @@
 
     <jetty-version>9.2.10.v20150310</jetty-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
-    <jetty-webapp-artifactId>jetty-all</jetty-webapp-artifactId>
+    <jetty-webapp-version>8.1.18.v20150929</jetty-webapp-version>
+    <jetty-webapp-artifactId>jetty-webapp</jetty-webapp-artifactId>
+
     <frontend-maven-plugin-version>0.0.24</frontend-maven-plugin-version>
 
     <aether-version>1.13.1</aether-version>
