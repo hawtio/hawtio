@@ -95,6 +95,8 @@ public class SessionExpiryFilter implements Filter {
                 LOG.debug("Authentication disabled, received refresh response, responding with ok");
                 writeOk(response);
             } else {
+              chain.doFilter(request, response);
+              /*
                 // see: https://issues.jboss.org/browse/ENTESB-2418
                 // it won't allow unauthenticated requests anyway
                 String userAgent = request.getHeader("User-Agent") == null ? "" : request.getHeader("User-Agent").toLowerCase();
@@ -115,6 +117,7 @@ public class SessionExpiryFilter implements Filter {
                         chain.doFilter(request, response);
                     }
                 }
+                */
             }
             return;
         }
