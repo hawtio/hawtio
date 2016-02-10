@@ -6,6 +6,7 @@ import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -34,14 +35,17 @@ public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final transient Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
     private static final int DEFAULT_SESSION_TIMEOUT = 1800;
+    private static final String KNOWN_PRINCIPALS[] = {"UserPrincipal", "KeycloakPrincipal", "JAASPrincipal", "SimplePrincipal"};
 
     protected Converters converters = new Converters();
     protected JsonConvertOptions options = JsonConvertOptions.DEFAULT;
     protected ConfigManager config;
     private Integer timeout = DEFAULT_SESSION_TIMEOUT;
+    private List<String> knownPrincipalList;
 
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
+        knownPrincipalList = Arrays.asList(KNOWN_PRINCIPALS);
         config = (ConfigManager) servletConfig.getServletContext().getAttribute("ConfigManager");
         if (config != null) {
             String s = config.get("sessionTimeout", "" + DEFAULT_SESSION_TIMEOUT);
@@ -95,9 +99,8 @@ public class LoginServlet extends HttpServlet {
 
         if (principals != null) {
             for (Principal principal : principals) {
-                // Should be name of class configurable like for Role principal?
                 String principalClass = principal.getClass().getSimpleName();
-                if (principalClass.equals("UserPrincipal") || principalClass.equals("KeycloakPrincipal") || principalClass.equals("JAASPrincipal")) {
+                if (knownPrincipalList.contains(principalClass)) {
                     username = principal.getName();
                     LOG.debug("Authorizing user {}", username);
                 }
