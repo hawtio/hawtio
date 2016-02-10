@@ -37,8 +37,9 @@
   <div class="row-fluid">
     <div class="gridStyle" ng-grid="gridOptions"></div>
   </div>
-  
-  <div ng-class="hide">
+
+  <!-- include the message body hidden so we can use it for the copy button -->
+  <div ng-show="false">
     <p id="message_body">{{row.bodyText}}</p>
   </div>
 

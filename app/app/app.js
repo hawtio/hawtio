@@ -7875,6 +7875,7 @@ var ActiveMQ;
 var ActiveMQ;
 (function (ActiveMQ) {
     ActiveMQ.BrowseQueueController = ActiveMQ._module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", function ($scope, workspace, jolokia, localStorage, location, activeMQMessage, $timeout) {
+        var log = Logger.get("ActiveMQ");
         $scope.searchText = '';
         $scope.workspace = workspace;
         $scope.allMessages = [];
@@ -8031,6 +8032,7 @@ var ActiveMQ;
             }
         };
         function populateTable(response) {
+            log.debug("populateTable");
             var data = response.value;
             if (!angular.isArray(data)) {
                 $scope.allMessages = [];
@@ -8045,8 +8047,8 @@ var ActiveMQ;
                 message.headerHtml = createHeaderHtml(message);
                 message.bodyText = createBodyText(message);
             });
-            Core.$apply($scope);
             filterMessages($scope.gridOptions.filterOptions.filterText);
+            Core.$apply($scope);
         }
         function createBodyText(message) {
             if (message.Text) {
@@ -8136,7 +8138,7 @@ var ActiveMQ;
             return buffer.join("\n");
         }
         function createHeaders(row) {
-            ActiveMQ.log.debug("headers: ", row);
+            log.debug("headers: ", row);
             var answer = {};
             angular.forEach(row, function (value, key) {
                 if (!ignoreColumns.any(key) && !flattenColumns.any(key)) {
@@ -8146,7 +8148,7 @@ var ActiveMQ;
             return answer;
         }
         function createProperties(row) {
-            ActiveMQ.log.debug("properties: ", row);
+            log.debug("properties: ", row);
             var answer = {};
             angular.forEach(row, function (value, key) {
                 if (!ignoreColumns.any(key) && flattenColumns.any(key)) {
@@ -8198,9 +8200,9 @@ var ActiveMQ;
                 $scope.messages = $scope.allMessages;
             }
             else {
-                ActiveMQ.log.debug("Filtering conditions:", searchConditions);
+                log.debug("Filtering conditions:", searchConditions);
                 $scope.messages = $scope.allMessages.filter(function (message) {
-                    ActiveMQ.log.debug("Message:", message);
+                    log.debug("Message:", message);
                     var matched = true;
                     $.each(searchConditions, function (index, condition) {
                         if (!condition.column) {

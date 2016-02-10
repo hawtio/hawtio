@@ -1,6 +1,11 @@
 
 ### Change Log
 
+#### 1.4.61
+
+* Upgrade bootstrap 2.2.1 to 2.2.2
+* ActiveMQ browse messages now show the table quicker when data retrieved
+
 #### 1.4.60
 
 * Fixed hawtio-app to scan for 3rd party plugins in `--pluginsDir` to work on Windows
