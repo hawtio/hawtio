@@ -36774,7 +36774,8 @@ var Osgi;
             showActiveMQBundles: false,
             showCamelBundles: false,
             showCxfBundles: false,
-            showPlatformBundles: false
+            showPlatformBundles: false,
+            showAllBundles: false
         };
         if ('bundleList' in localStorage) {
             $scope.display = angular.fromJson(localStorage['bundleList']);
@@ -36892,7 +36893,7 @@ var Osgi;
             return true;
         };
         function matchesCheckedBundle(bundle) {
-            if (($scope.display.showPlatformBundles && Karaf.isPlatformBundle(bundle['SymbolicName'])) || ($scope.display.showActiveMQBundles && Karaf.isActiveMQBundle(bundle['SymbolicName'])) || ($scope.display.showCxfBundles && Karaf.isCxfBundle(bundle['SymbolicName'])) || ($scope.display.showCamelBundles && Karaf.isCamelBundle(bundle['SymbolicName']))) {
+            if (($scope.display.showPlatformBundles && Karaf.isPlatformBundle(bundle['SymbolicName'])) || ($scope.display.showActiveMQBundles && Karaf.isActiveMQBundle(bundle['SymbolicName'])) || ($scope.display.showCxfBundles && Karaf.isCxfBundle(bundle['SymbolicName'])) || ($scope.display.showCamelBundles && Karaf.isCamelBundle(bundle['SymbolicName'])) || $scope.display.showAllBundles) {
                 return true;
             }
             else {
