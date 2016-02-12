@@ -4806,8 +4806,8 @@ var ContainerHelpers;
         c.forEach(function (c) { return doStartContainer($scope, jolokia, c.id); });
     }
     ContainerHelpers.startContainers = startContainers;
-    function anyStartable(containers) {
-        return containers.length > 0 && containers.any(function (container) {
+    function allStartable(containers) {
+        return containers.length > 0 && containers.all(function (container) {
             var answer = false;
             if (!container.alive) {
                 answer = true;
@@ -4823,7 +4823,7 @@ var ContainerHelpers;
             return answer;
         });
     }
-    ContainerHelpers.anyStartable = anyStartable;
+    ContainerHelpers.allStartable = allStartable;
     function anyStoppable(containers) {
         return containers.length > 0 && containers.any(function (c) { return c.alive === true; });
     }
@@ -4848,8 +4848,8 @@ var ContainerHelpers;
         $scope.everySelectionAlive = function (state) {
             return allAlive($scope.selectedContainers, state);
         };
-        $scope.anySelectionStartable = function () {
-            return anyStartable($scope.selectedContainers);
+        $scope.allSelectionsStartable = function () {
+            return allStartable($scope.selectedContainers);
         };
         $scope.anySelectionStoppable = function () {
             return anyStoppable($scope.selectedContainers);
