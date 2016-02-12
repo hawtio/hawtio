@@ -203,8 +203,8 @@ module ContainerHelpers {
     c.forEach((c) => doStartContainer($scope, jolokia, c.id));
   }
 
-  export function anyStartable(containers:Array<Fabric.Container>):boolean {
-    return containers.length > 0 && containers.any((container:Fabric.Container) => {
+  export function allStartable(containers:Array<Fabric.Container>):boolean {
+    return containers.length > 0 && containers.all((container:Fabric.Container) => {
       var answer = false;
       if (!container.alive) {
         answer = true;
@@ -244,8 +244,8 @@ module ContainerHelpers {
     $scope.everySelectionAlive = (state) => {
       return allAlive($scope.selectedContainers, state);
     }
-    $scope.anySelectionStartable = () => {
-      return anyStartable($scope.selectedContainers);
+    $scope.allSelectionsStartable = () => {
+      return allStartable($scope.selectedContainers);
     }
     $scope.anySelectionStoppable = () => {
       return anyStoppable($scope.selectedContainers);

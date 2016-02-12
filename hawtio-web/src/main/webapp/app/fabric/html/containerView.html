@@ -54,7 +54,7 @@
                desc
                exclude='{{getVersionsToExclude()}}'></span>
         </span>
-        <a class="btn" ng-click="startSelectedContainers()" ng-show="anySelectionStartable()"
+        <a class="btn" ng-click="startSelectedContainers()" ng-show="allSelectionsStartable()"
            title="Start containers"
            hawtio-show
            object-name="{{managerMBean}}"
