@@ -7876,6 +7876,8 @@ var ActiveMQ;
 (function (ActiveMQ) {
     ActiveMQ.BrowseQueueController = ActiveMQ._module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", function ($scope, workspace, jolokia, localStorage, location, activeMQMessage, $timeout) {
         var log = Logger.get("ActiveMQ");
+        $scope.queueNames = [];
+        $scope.queueName = null;
         $scope.searchText = '';
         $scope.workspace = workspace;
         $scope.allMessages = [];
@@ -8018,7 +8020,7 @@ var ActiveMQ;
                 });
             }
         };
-        $scope.queueNames = function (completionText) {
+        function retrieveQueueNames() {
             var queuesFolder = ActiveMQ.getSelectionQueuesFolder(workspace);
             if (queuesFolder) {
                 var selectedQueue = workspace.selection.key;
@@ -8030,9 +8032,12 @@ var ActiveMQ;
             else {
                 return [];
             }
-        };
+        }
         function populateTable(response) {
             log.debug("populateTable");
+            if ($scope.queueNames.length === 0) {
+                $scope.queueNames = retrieveQueueNames();
+            }
             var data = response.value;
             if (!angular.isArray(data)) {
                 $scope.allMessages = [];
