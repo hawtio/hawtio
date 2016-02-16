@@ -2,12 +2,6 @@ $(function () {
 
     module("bootstrap-tooltip")
 
-      test("should provide no conflict", function () {
-        var tooltip = $.fn.tooltip.noConflict()
-        ok(!$.fn.tooltip, 'tooltip was set back to undefined (org value)')
-        $.fn.tooltip = tooltip
-      })
-
       test("should be defined on jquery object", function () {
         var div = $("<div></div>")
         ok(div.tooltip, 'popover method is defined')

@@ -1,5 +1,5 @@
 /* ==========================================================
- * bootstrap-carousel.js v2.2.2
+ * bootstrap-carousel.js v2.2.1
  * http://twitter.github.com/bootstrap/javascript.html#carousel
  * ==========================================================
  * Copyright 2012 Twitter, Inc.
@@ -29,6 +29,7 @@
   var Carousel = function (element, options) {
     this.$element = $(element)
     this.options = options
+    this.options.slide && this.slide(this.options.slide)
     this.options.pause == 'hover' && this.$element
       .on('mouseenter', $.proxy(this.pause, this))
       .on('mouseleave', $.proxy(this.cycle, this))
@@ -140,8 +141,6 @@
  /* CAROUSEL PLUGIN DEFINITION
   * ========================== */
 
-  var old = $.fn.carousel
-
   $.fn.carousel = function (option) {
     return this.each(function () {
       var $this = $(this)
@@ -162,14 +161,6 @@
 
   $.fn.carousel.Constructor = Carousel
 
-
- /* CAROUSEL NO CONFLICT
-  * ==================== */
-
-  $.fn.carousel.noConflict = function () {
-    $.fn.carousel = old
-    return this
-  }
 
  /* CAROUSEL DATA-API
   * ================= */

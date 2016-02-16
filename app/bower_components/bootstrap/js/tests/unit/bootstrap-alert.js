@@ -2,12 +2,6 @@ $(function () {
 
     module("bootstrap-alerts")
 
-      test("should provide no conflict", function () {
-        var alert = $.fn.alert.noConflict()
-        ok(!$.fn.alert, 'alert was set back to undefined (org value)')
-        $.fn.alert = alert
-      })
-
       test("should be defined on jquery object", function () {
         ok($(document.body).alert, 'alert method is defined')
       })

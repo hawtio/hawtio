@@ -1,5 +1,5 @@
 /* =============================================================
- * bootstrap-collapse.js v2.2.2
+ * bootstrap-collapse.js v2.2.1
  * http://twitter.github.com/bootstrap/javascript.html#collapse
  * =============================================================
  * Copyright 2012 Twitter, Inc.
@@ -120,10 +120,8 @@
   }
 
 
- /* COLLAPSE PLUGIN DEFINITION
-  * ========================== */
-
-  var old = $.fn.collapse
+ /* COLLAPSIBLE PLUGIN DEFINITION
+  * ============================== */
 
   $.fn.collapse = function (option) {
     return this.each(function () {
@@ -142,17 +140,8 @@
   $.fn.collapse.Constructor = Collapse
 
 
- /* COLLAPSE NO CONFLICT
+ /* COLLAPSIBLE DATA-API
   * ==================== */
-
-  $.fn.collapse.noConflict = function () {
-    $.fn.collapse = old
-    return this
-  }
-
-
- /* COLLAPSE DATA-API
-  * ================= */
 
   $(document).on('click.collapse.data-api', '[data-toggle=collapse]', function (e) {
     var $this = $(this), href

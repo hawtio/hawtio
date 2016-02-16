@@ -7966,7 +7966,7 @@ var ActiveMQ;
         $scope.moveMessages = function () {
             var selection = workspace.selection;
             var mbean = selection.objectName;
-            if (mbean && selection) {
+            if (mbean && selection && $scope.queueName) {
                 var selectedItems = $scope.gridOptions.selectedItems;
                 $scope.message = "Moved " + Core.maybePlural(selectedItems.length, "message" + " to " + $scope.queueName);
                 var operation = "moveMessageTo(java.lang.String, java.lang.String)";
