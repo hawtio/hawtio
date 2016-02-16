@@ -5,6 +5,7 @@
 
 * Upgrade bootstrap 2.2.1 to 2.2.2
 * ActiveMQ browse messages now show the table quicker when data retrieved
+* ActiveMQ move dialog uses a selectbox instead of type ahead which could be buggy in some browsers
 
 #### 1.4.60
 
