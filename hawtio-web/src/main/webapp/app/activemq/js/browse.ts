@@ -4,6 +4,11 @@ module ActiveMQ {
 
     var log:Logging.Logger = Logger.get("ActiveMQ");
 
+    // all the queue names from the tree
+    $scope.queueNames = [];
+    // selected queue name in move dialog
+    $scope.queueName = null;
+
     $scope.searchText = '';
     $scope.workspace = workspace;
 
@@ -168,7 +173,7 @@ module ActiveMQ {
       }
     };
 
-    $scope.queueNames = (completionText) => {
+    function retrieveQueueNames() {
       var queuesFolder = getSelectionQueuesFolder(workspace);
       if (queuesFolder) {
         var selectedQueue = workspace.selection.key;
@@ -177,10 +182,15 @@ module ActiveMQ {
       } else {
         return [];
       }
-    };
+    }
 
     function populateTable(response) {
       log.debug("populateTable");
+
+      // setup queue names
+      if ($scope.queueNames.length === 0) {
+        $scope.queueNames = retrieveQueueNames();
+      }
 
       var data = response.value;
       if (!angular.isArray(data)) {
