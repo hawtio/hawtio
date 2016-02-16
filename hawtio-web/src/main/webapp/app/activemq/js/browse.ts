@@ -386,6 +386,7 @@ module ActiveMQ {
       deselectAll();
       Core.notification("success", $scope.message);
       setTimeout(loadTable, 50);
+      Core.$apply($scope);
     }
 
     function filterMessages(filter) {
@@ -492,6 +493,7 @@ module ActiveMQ {
     }
 
     function deselectAll() {
+      $scope.gridOptions.selectedItems = [];
       $scope.gridOptions['$gridScope'].allSelected = false;
     }
 
