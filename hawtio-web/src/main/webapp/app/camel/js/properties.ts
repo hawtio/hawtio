@@ -41,7 +41,7 @@ module Camel {
     });
 
     $scope.$watch('workspace.selection', function () {
-      if (workspace.moveIfViewInvalid()) return;
+      if (!workspace.isRoutesFolder() && workspace.moveIfViewInvalid()) return;
       updateData();
     });
 

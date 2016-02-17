@@ -1273,7 +1273,7 @@ module Camel {
         //console.log("Image URL is " + imageUrl);
         var cid = route.getAttribute("_cid") || route.getAttribute("id");
         node = { "name": name, "label": label, "labelSummary": labelSummary, "group": 1, "id": id, "elementId": elementID,
-          "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid, "tooltip": tooltip, "type": nodeId};
+          "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid, "tooltip": tooltip, "type": nodeId, "uri": uri};
         if (rid) {
           node["rid"] = rid;
           if (!$scope.routeNodes) $scope.routeNodes = {};
