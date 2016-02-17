@@ -33369,6 +33369,16 @@ var Jmx;
         $scope.canViewChart = function () {
             return $scope.selectedAttributes.length && $scope.selectedMBeans.length && $scope.size($scope.mbeans) > 0 && $scope.size($scope.metrics) > 0;
         };
+        $scope.canEditChart = function () {
+            var result;
+            if (workspace.selection.isFolder()) {
+                result = $scope.selectedAttributes.length && $scope.selectedMBeans.length && ($scope.size($scope.mbeans) + $scope.size($scope.metrics) > 2);
+            }
+            else {
+                result = $scope.selectedAttributes.length && $scope.selectedMBeans.length && $scope.size($scope.mbeans) > 0 && $scope.size($scope.metrics) > 0;
+            }
+            return result;
+        };
         $scope.showAttributes = function () {
             return $scope.canViewChart() && $scope.size($scope.metrics) > 1;
         };
@@ -33383,7 +33393,7 @@ var Jmx;
             else {
                 search["att"] = $scope.selectedAttributes;
             }
-            if ($scope.selectedMBeans.length === $scope.size($scope.mbeans) && $scope.size($scope.mbeans) === 1) {
+            if (!workspace.selection.isFolder() && $scope.selectedMBeans.length === $scope.size($scope.mbeans) && $scope.size($scope.mbeans) === 1) {
                 delete search["el"];
             }
             else {
