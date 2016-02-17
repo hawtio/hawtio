@@ -6,6 +6,7 @@
 * ActiveMQ browse messages now show the table quicker when data retrieved
 * ActiveMQ move dialog uses a selectbox instead of type ahead which could be buggy in some browsers
 * Upgrade to Jolokia 1.3.3
+* Jolokia is set to not return error details to avoid exposing stacktraces from the JVMs
 
 #### 1.4.60
 
