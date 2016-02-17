@@ -33377,6 +33377,7 @@ var Jmx;
             else {
                 result = $scope.selectedAttributes.length && $scope.selectedMBeans.length && $scope.size($scope.mbeans) > 0 && $scope.size($scope.metrics) > 0;
             }
+            console.info("canEditChart Returning " + result);
             return result;
         };
         $scope.showAttributes = function () {
