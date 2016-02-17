@@ -1,7 +1,7 @@
 <div ng-controller="Jmx.ChartEditController">
   <form>
     <fieldset>
-      <div class="control-group" ng-show="canViewChart()">
+      <div class="control-group" ng-show="canEditChart()">
         <input type="submit" class="btn" value="View Chart" ng-click="viewChart()"
                ng-disabled="!selectedAttributes.length && !selectedMBeans.length"/>
       </div>
@@ -27,7 +27,7 @@
           </tbody>
         </table>
 
-        <div class="alert" ng-show="!canViewChart()">
+        <div class="alert" ng-show="!canEditChart()">
           <button type="button" class="close" data-dismiss="alert">×</button>
           <strong>No numeric metrics available!</strong> Try select another item to chart on.
         </div>
