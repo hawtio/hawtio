@@ -46,7 +46,7 @@ module Jmx {
     $scope.entity = {};
     $scope.attributeSchema = {};
     $scope.gridData = [];
-    $scope.attributes = ""
+    $scope.attributes = "";
 
     $scope.$watch('gridData.length', (newValue, oldValue) => {
       if (newValue !== oldValue) {
@@ -133,6 +133,18 @@ module Jmx {
       setTimeout(updateTableContents, 50);
     });
 
+    var pendingUpdate = null;
+
+    $scope.$watch('gridOptions.filterOptions.filterText', (newValue, oldValue) => {
+      Core.unregister(jolokia, $scope);
+      if (pendingUpdate) {
+        clearTimeout(pendingUpdate);
+      }
+      pendingUpdate = setTimeout(() => {
+        updateTableContents();
+      }, 500);
+    });
+
     $scope.$watch('workspace.selection', function () {
       if (workspace.moveIfViewInvalid()) {
         Core.unregister(jolokia, $scope);
@@ -154,7 +166,7 @@ module Jmx {
     $scope.onCancelAttribute = () => {
       // clear entity
       $scope.entity = {};
-    }
+    };
 
     $scope.onUpdateAttribute = () => {
       var value = $scope.entity["attrValueEdit"];
@@ -223,7 +235,7 @@ module Jmx {
           tooltip: 'Attribute value',
           type: 'string',
           formTemplate: "<textarea class='input-xlarge' rows='" + rows + "' readonly='true'></textarea>"
-        }
+        };
         // just to be safe, then delete not needed part of the schema
         if ($scope.attributeSchemaView) {
           delete $scope.attributeSchemaView.properties.attrValueEdit;
@@ -250,7 +262,7 @@ module Jmx {
           tooltip: 'Attribute value',
           type: 'string',
           formTemplate: "<textarea class='input-xlarge' rows='" + rows + "'></textarea>"
-        }
+        };
         // just to be safe, then delete not needed part of the schema
         if ($scope.attributeSchemaEdit) {
           delete $scope.attributeSchemaEdit.properties.attrValueView;
@@ -258,7 +270,7 @@ module Jmx {
       }
 
       $scope.showAttributeDialog = true;
-    }
+    };
 
     $scope.getDashboardWidgets = (row) => {
       var mbean = workspace.getSelectedMBeanName();
@@ -283,7 +295,7 @@ module Jmx {
 
       row.addChartToDashboard = (type) => {
         $scope.addChartToDashboard(row, type);
-      }
+      };
 
       var rc = [];
       potentialCandidates.forEach((widget) => {
@@ -449,7 +461,7 @@ module Jmx {
         var children = node.children;
         if (children) {
           var childNodes = children.map((child) => child.objectName);
-          var mbeans = childNodes.filter((mbean) => mbean);
+          var mbeans = childNodes.filter((mbean) => FilterHelpers.search(mbean, $scope.gridOptions.filterOptions.filterText));
           if (mbeans) {
             var typeNames = Jmx.getUniqueTypeNames(children);
             if (typeNames.length <= 1) {
@@ -552,7 +564,7 @@ module Jmx {
               });
               extraDefs.forEach(e => {
                 defaultDefs.push(e);
-              })
+              });
 
               $scope.gridOptions.columnDefs = defaultDefs;
               $scope.gridOptions.enableRowClickSelection = true;
