@@ -139,6 +139,20 @@ module Core {
       var jolokia = new Jolokia(jolokiaParams);
       localStorage['url'] = jolokiaUrl;
       jolokia.stop();
+
+      // let's check if we can call faster jolokia.list()
+      var response = jolokia.request({
+        type: 'list',
+        path:  escapeMBeanPath(jolokiaStatus.listMBean)
+      }, {});
+      if (response) {
+        if (response.status == 200 && response.value && angular.isObject(response.value['op'])) {
+          jolokiaStatus.listMethod = LIST_WITH_RBAC;
+        } else {
+          jolokiaStatus.listMethod = LIST_GENERAL;
+        }
+      }
+
       return jolokia;
     } else {
 

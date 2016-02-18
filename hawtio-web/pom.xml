@@ -634,6 +634,7 @@
               !userauth,
               !com.ibm.uvm.tools*,!com.sun.jdmk.comm*,!javax.jmdns*,!javax.jms*,!javax.portlet*,
               !org.apache.commons.io*,
+              org.apache.karaf.jaas.boot.principal;resolution:=optional,
               *
             </Import-Package>
             <Private-Package>

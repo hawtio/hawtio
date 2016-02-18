@@ -27,6 +27,19 @@
         <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.karaf.management</groupId>
+      <artifactId>org.apache.karaf.management.server</artifactId>
+      <version>${karaf-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>${commons-codec-version}</version>
+    </dependency>
+
     <!-- testing -->
     <dependency>
       <groupId>junit</groupId>
@@ -38,6 +51,12 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
       <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.7</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -65,6 +84,7 @@
             <Bundle-Activator>io.hawt.osgi.jmx.Activator</Bundle-Activator>
             <Bundle-Description>Additional JMX APIs into the OSGi Framework, used by hawt.io browser-based client.</Bundle-Description>
             <Export-Package />
+            <Private-Package>org.apache.commons.codec*,io.hawt.osgi.jmx</Private-Package>
           </instructions>
         </configuration>
       </plugin>

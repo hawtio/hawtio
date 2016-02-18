@@ -110,12 +110,19 @@ module Core {
     return jolokiaUrl;
   });
 
-  // holds the status returned from the last jolokia call (?)
+  // holds the status returned from the last jolokia call and hints for jolokia.list optimization
   _module.factory('jolokiaStatus', () => {
     return {
-      xhr: null
+      xhr: null,
+      listMethod: LIST_GENERAL,
+      listMBean: "hawtio:type=security,name=RBACRegistry"
     };
   });
+
+  // constant meaning that general LIST+EXEC Jolokia operations should be used
+  export var LIST_GENERAL = "list";
+  // constant meaning that optimized hawtio:type=security,name=RBACRegistry may be used
+  export var LIST_WITH_RBAC = "list_rbac";
 
   export var DEFAULT_MAX_DEPTH = 7;
   export var DEFAULT_MAX_COLLECTION_SIZE = 5000;
