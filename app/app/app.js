@@ -7961,7 +7961,10 @@ var ActiveMQ;
                 $scope.showMessageDetails = true;
             }
         };
-        $scope.refresh = loadTable;
+        $scope.refresh = function () {
+            $scope.gridOptions.selectedItems.length = 0;
+            setTimeout(loadTable, 50);
+        };
         ActiveMQ.decorate($scope);
         $scope.moveMessages = function () {
             var selection = workspace.selection;
