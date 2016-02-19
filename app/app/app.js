@@ -33377,7 +33377,6 @@ var Jmx;
             else {
                 result = $scope.selectedAttributes.length && $scope.selectedMBeans.length && $scope.size($scope.mbeans) > 0 && $scope.size($scope.metrics) > 0;
             }
-            console.info("canEditChart Returning " + result);
             return result;
         };
         $scope.showAttributes = function () {
@@ -38750,8 +38749,12 @@ var Osgi;
 })(Osgi || (Osgi = {}));
 var Osgi;
 (function (Osgi) {
-    Osgi.ServiceController = Osgi._module.controller("Osgi.ServiceController", ["$scope", "$filter", "workspace", "$templateCache", "$compile", function ($scope, $filter, workspace, $templateCache, $compile) {
+    Osgi.ServiceController = Osgi._module.controller("Osgi.ServiceController", ["$scope", "$filter", "$element", "workspace", "$templateCache", "$compile", function ($scope, $filter, $element, workspace, $templateCache, $compile) {
         var dateFilter = $filter('date');
+        var destroyed = false;
+        $element.on('$destroy', function () {
+            destroyed = true;
+        });
         $scope.widget = new DataTable.TableWidget($scope, $templateCache, $compile, [
             {
                 "mDataProp": null,
@@ -38803,8 +38806,10 @@ var Osgi;
                         s["UsingBundles"][key] = bundleMap[b];
                     });
                 });
-                $scope.widget.populateTable(services);
-                Core.$apply($scope);
+                if (!destroyed) {
+                    $scope.widget.populateTable(services);
+                    Core.$apply($scope);
+                }
             };
             workspace.jolokia.request({
                 type: 'exec',
