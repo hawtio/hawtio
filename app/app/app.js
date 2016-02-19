@@ -10533,7 +10533,7 @@ var Camel;
                     }
                 }
                 var cid = route.getAttribute("_cid") || route.getAttribute("id");
-                node = { "name": name, "label": label, "labelSummary": labelSummary, "group": 1, "id": id, "elementId": elementID, "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid, "tooltip": tooltip, "type": nodeId };
+                node = { "name": name, "label": label, "labelSummary": labelSummary, "group": 1, "id": id, "elementId": elementID, "x": x, "y:": y, "imageUrl": imageUrl, "cid": cid, "tooltip": tooltip, "type": nodeId, "uri": uri };
                 if (rid) {
                     node["rid"] = rid;
                     if (!$scope.routeNodes)
@@ -13759,7 +13759,7 @@ var Camel;
             setTimeout(updateData, 50);
         });
         $scope.$watch('workspace.selection', function () {
-            if (workspace.moveIfViewInvalid())
+            if (!workspace.isRoutesFolder() && workspace.moveIfViewInvalid())
                 return;
             updateData();
         });
@@ -14599,8 +14599,77 @@ var Camel;
         }
         var onClickGraphNode = function (node) {
             log.debug("Clicked on Camel Route Diagram node: " + node.cid);
-            $location.path('/camel/properties').search({ "tab": "camel", "nid": node.cid });
+            if (workspace.isRoutesFolder()) {
+                handleGraphNode(node);
+            }
+            else {
+                navigateToNodeProperties(node.cid);
+            }
         };
+        function navigateToNodeProperties(cid) {
+            $location.path('/camel/properties').search({ "tab": "camel", "nid": cid });
+            Core.$apply($scope);
+        }
+        function handleGraphNode(node) {
+            var cid = node.cid;
+            var routes = $scope.routes;
+            if (routes) {
+                var route = null;
+                var doc = $.parseXML(routes);
+                route = $(doc).find("#" + cid).parents("route") || $(doc).find("[uri='" + cid + "']").parents("route");
+                if ((!route || !route.length) && node.rid) {
+                    route = $(doc).find("[id='" + node.rid + "']");
+                }
+                if (route && route.length) {
+                    var routeFolder = null;
+                    angular.forEach(workspace.selection.children, function (c) {
+                        if (c.title === route[0].id) {
+                            routeFolder = c;
+                        }
+                    });
+                    if (routeFolder) {
+                        if (!routeFolder.children.length) {
+                            Camel.processRouteXml(workspace, workspace.jolokia, routeFolder, function (route) {
+                                Camel.addRouteChildren(routeFolder, route);
+                                updateRouteProperties(node, route, routeFolder);
+                            });
+                        }
+                        else {
+                            updateRouteProperties(node, route, routeFolder);
+                        }
+                    }
+                }
+                else {
+                    log.debug("No route found for " + cid);
+                }
+            }
+        }
+        function updateRouteProperties(node, route, routeFolder) {
+            var cid = node.cid;
+            $("#cameltree").dynatree("getTree").getNodeByKey(routeFolder.key).expand("true");
+            var routeChild = routeFolder.findDescendant(function (d) {
+                var uri = node.uri;
+                if (uri && uri.indexOf('?') > 0) {
+                    uri = uri.substring(0, uri.indexOf('?'));
+                }
+                return d.title === node.cid || (d.routeXmlNode.nodeName === node.type && d.title === uri);
+            });
+            if (routeChild) {
+                cid = routeChild.key;
+            }
+            $scope.model = Camel.getCamelSchema("route");
+            if ($scope.model) {
+                var labels = [];
+                if ($scope.model.group) {
+                    labels = $scope.model.group.split(",");
+                }
+                $scope.labels = labels;
+                $scope.nodeData = Camel.getRouteNodeJSON(route[0]);
+                $scope.icon = Camel.getRouteNodeIcon(routeFolder);
+                $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
+            }
+            navigateToNodeProperties(cid);
+        }
         function showGraph(nodes, links) {
             var canvasDiv = $($element);
             var width = getWidth();
@@ -14615,20 +14684,22 @@ var Camel;
                 onClick = onClickGraphNode;
             }
             $scope.graphData = Core.dagreLayoutGraph(nodes, links, width, height, svg, false, onClick);
-            var gNodes = canvasDiv.find("g.node");
-            gNodes.click(function () {
-                var selected = isSelected(this);
-                gNodes.each(function (idx, element) {
-                    setSelected(element, false);
+            if (path.startsWith("/camel/debugRoute") || path.startsWith("/camel/traceRoute")) {
+                var gNodes = canvasDiv.find("g.node");
+                gNodes.click(function () {
+                    var selected = isSelected(this);
+                    gNodes.each(function (idx, element) {
+                        setSelected(element, false);
+                    });
+                    var cid = null;
+                    if (!selected) {
+                        cid = this.getAttribute("data-cid");
+                        setSelected(this, true);
+                    }
+                    $scope.$emit("camel.diagram.selectedNodeId", cid);
+                    Core.$apply($scope);
                 });
-                var cid = null;
-                if (!selected) {
-                    cid = this.getAttribute("data-cid");
-                    setSelected(this, true);
-                }
-                $scope.$emit("camel.diagram.selectedNodeId", cid);
-                Core.$apply($scope);
-            });
+            }
             if ($scope.mbean) {
                 Core.register(jolokia, $scope, {
                     type: 'exec',
