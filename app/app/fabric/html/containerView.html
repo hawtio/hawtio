@@ -54,7 +54,7 @@
                desc
                exclude='{{getVersionsToExclude()}}'></span>
         </span>
-        <a class="btn" ng-click="startSelectedContainers()" ng-show="allSelectionsStartable()"
+        <a class="btn" ng-click="startSelectedContainers()" ng-show="groupBy!='profileIds' && allSelectionsStartable()"
            title="Start containers"
            hawtio-show
            object-name="{{managerMBean}}"
@@ -62,7 +62,7 @@
           <i class="icon-play-circle clickable"></i>
           Start
         </a>
-        <a class="btn" ng-click="stopSelectedContainers()" ng-show="anySelectionStoppable()"
+        <a class="btn" ng-click="stopSelectedContainers()" ng-show="groupBy!='profileIds' && anySelectionStoppable()"
            title="Stop containers"
            hawtio-show
            object-name="{{managerMBean}}"
@@ -72,7 +72,7 @@
         </a>
         <a class="btn"
            ng-click="deleteContainer()"
-           ng-show="mayDelete()"
+           ng-show="groupBy!='profileIds' && mayDelete()"
            title="Delete container"
            hawtio-show
            object-name="{{managerMBean}}"
