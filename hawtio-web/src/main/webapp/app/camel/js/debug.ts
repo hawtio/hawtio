@@ -304,8 +304,8 @@ module Camel {
       return svg.selectAll("g .node");
     }
 
-    var breakpointImage = Core.url("/app/camel/doc/img/debug/breakpoint.gif");
-    var suspendedBreakpointImage = Core.url("/app/camel/doc/img/debug/breakpoint-suspended.gif");
+    var breakpointImage = Core.url("/app/camel/img/breakpoint.gif");
+    var suspendedBreakpointImage = Core.url("/app/camel/img/breakpoint-suspended.gif");
 
     function updateBreakpointIcons(nodes = getDiagramNodes()) {
       nodes.each(function (object) {
