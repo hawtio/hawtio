@@ -107,7 +107,10 @@ module ActiveMQ {
       }
     };
 
-    $scope.refresh = loadTable;
+    $scope.refresh = () => {
+      $scope.gridOptions.selectedItems.length = 0;
+      setTimeout(loadTable, 50);
+    }
 
     ActiveMQ.decorate($scope);
 
