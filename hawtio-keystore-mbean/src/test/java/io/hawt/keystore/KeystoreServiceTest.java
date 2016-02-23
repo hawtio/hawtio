@@ -4,8 +4,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  *
