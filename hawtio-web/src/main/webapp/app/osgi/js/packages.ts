@@ -4,8 +4,13 @@
 /// <reference path="./osgiPlugin.ts"/>
 module Osgi {
 
-  export var PackagesController = _module.controller("Osgi.PackagesController", ["$scope", "$filter", "workspace", "$templateCache", "$compile", ($scope, $filter:ng.IFilterService, workspace:Workspace, $templateCache:ng.ITemplateCacheService, $compile:ng.IAttributes) => {
+  export var PackagesController = _module.controller("Osgi.PackagesController", ["$scope", "$filter", "$element", "workspace", "$templateCache", "$compile", ($scope, $filter:ng.IFilterService, $element, workspace:Workspace, $templateCache:ng.ITemplateCacheService, $compile:ng.IAttributes) => {
     var dateFilter = $filter('date');
+    var destroyed = false;
+
+    $element.on('$destroy', () => {
+      destroyed = true;
+    });
 
     $scope.widget = new DataTable.TableWidget($scope, $templateCache, $compile, [
       <DataTable.TableColumnConfig> {
@@ -57,8 +62,10 @@ module Osgi {
             p["ImportingBundles"][key] = bundleMap[b];
           });
         });
-        $scope.widget.populateTable(packages);
-        Core.$apply($scope);
+        if (!destroyed) {
+          $scope.widget.populateTable(packages);
+          Core.$apply($scope);
+        }
        };
       workspace.jolokia.request({
             type: 'exec',
