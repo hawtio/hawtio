@@ -38309,8 +38309,12 @@ var Osgi;
 })(Osgi || (Osgi = {}));
 var Osgi;
 (function (Osgi) {
-    Osgi.PackagesController = Osgi._module.controller("Osgi.PackagesController", ["$scope", "$filter", "workspace", "$templateCache", "$compile", function ($scope, $filter, workspace, $templateCache, $compile) {
+    Osgi.PackagesController = Osgi._module.controller("Osgi.PackagesController", ["$scope", "$filter", "$element", "workspace", "$templateCache", "$compile", function ($scope, $filter, $element, workspace, $templateCache, $compile) {
         var dateFilter = $filter('date');
+        var destroyed = false;
+        $element.on('$destroy', function () {
+            destroyed = true;
+        });
         $scope.widget = new DataTable.TableWidget($scope, $templateCache, $compile, [
             {
                 "mDataProp": null,
@@ -38357,8 +38361,10 @@ var Osgi;
                         p["ImportingBundles"][key] = bundleMap[b];
                     });
                 });
-                $scope.widget.populateTable(packages);
-                Core.$apply($scope);
+                if (!destroyed) {
+                    $scope.widget.populateTable(packages);
+                    Core.$apply($scope);
+                }
             };
             workspace.jolokia.request({
                 type: 'exec',
