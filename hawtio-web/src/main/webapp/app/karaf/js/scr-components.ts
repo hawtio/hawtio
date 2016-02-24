@@ -63,6 +63,22 @@ module Karaf {
             }
         }
 
+        $scope.canActivateAllSelected = () => {
+            var result = $scope.selectedComponents.length > 0 && $scope.selectedComponents.all((c) => {
+                    return c.State !== "Active"
+                });
+
+            return result;
+        }
+
+        $scope.canDeactivateAllSelected = () => {
+            var result = $scope.selectedComponents.length > 0 && $scope.selectedComponents.all((c) => {
+                    return c.State === "Active"
+                });
+
+            return result;
+        }
+
         $scope.activate = () => {
             $scope.selectedComponents.forEach(function (component) {
                 activateComponent(workspace, jolokia, component.Name, function () {

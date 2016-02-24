@@ -5,15 +5,15 @@
         <fieldset>
           <div class="control-group inline-block">
             <div class="btn-group">
-              <button ng-disabled="selectedComponents.length == 0" 
-                      class="btn" 
+              <button ng-show="canActivateAllSelected()"
+                      class="btn"
                       ng-click="activate()"
                       hawtio-show
                       object-name="{{scrMBean}}"
                       method-name="activateComponent"><i
                       class="icon-play-circle"></i> Activate
               </button>
-              <button ng-disabled="selectedComponents.length == 0" 
+              <button ng-show="canDeactivateAllSelected()"
                       class="btn" 
                       ng-click="deactivate()"
                       hawtio-show
