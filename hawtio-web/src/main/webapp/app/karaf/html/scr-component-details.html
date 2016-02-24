@@ -6,6 +6,7 @@
                 <div class="btn-group">
                   <button class="btn" 
                           ng-click="activate()"
+                          ng-show="canActivate()"
                           hawtio-show
                           object-name="{{scrMBean}}"
                           method-name="activateComponent">
@@ -13,6 +14,7 @@
                   </button>
                   <button class="btn" 
                           ng-click="deactivate()"
+                          ng-show="!canActivate()"
                           hawtio-show
                           object-name="{{scrMBean}}"
                           method-name="deactiveateComponent">
