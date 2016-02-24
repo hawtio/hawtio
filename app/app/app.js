@@ -37422,7 +37422,8 @@ var Osgi;
             {
                 field: 'Version',
                 displayName: 'Version',
-                width: "**"
+                width: "**",
+                sortable: false
             },
             {
                 field: 'Location',
