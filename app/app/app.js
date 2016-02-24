@@ -35828,6 +35828,18 @@ var Karaf;
                 render(Karaf.getAllComponents(workspace, jolokia));
             }
         }
+        $scope.canActivateAllSelected = function () {
+            var result = $scope.selectedComponents.length > 0 && $scope.selectedComponents.all(function (c) {
+                return c.State !== "Active";
+            });
+            return result;
+        };
+        $scope.canDeactivateAllSelected = function () {
+            var result = $scope.selectedComponents.length > 0 && $scope.selectedComponents.all(function (c) {
+                return c.State === "Active";
+            });
+            return result;
+        };
         $scope.activate = function () {
             $scope.selectedComponents.forEach(function (component) {
                 Karaf.activateComponent(workspace, jolokia, component.Name, function () {
