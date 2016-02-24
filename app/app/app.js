@@ -35762,6 +35762,10 @@ var Karaf;
             $scope.row = Karaf.getComponentByName(workspace, jolokia, $scope.name);
             Core.$apply($scope);
         }
+        $scope.canActivate = function () {
+            var result = $scope.row.State !== "Active";
+            return result;
+        };
         $scope.activate = function () {
             Karaf.activateComponent(workspace, jolokia, $scope.row['Name'], function () {
                 console.log("Activated!");
