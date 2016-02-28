@@ -1,6 +1,10 @@
 
 ### Change Log
 
+#### 1.4.62
+
+* Add option to control whether hawtio should automatic open the web console in the browser or not, when running hawtio-app.
+
 #### 1.4.61
 
 * ActiveMQ browse messages now show the table quicker when data retrieved
