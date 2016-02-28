@@ -159,6 +159,21 @@ module JVM {
       angular.extend($scope.currentConfig, $scope.connectionConfigs[$scope.lastConnection]);
       Core.$apply($scope);
     };
+    
+	var autoconnect = $location.search();
+	if (typeof autoconnect != 'undefined' && typeof autoconnect.name != 'undefined') {	
+		var conOpts = Core.createConnectOptions({
+		        scheme: 'http',
+		        host: autoconnect.host,
+		        path: autoconnect.path,
+		        port: autoconnect.port,
+		        userName: autoconnect.userName,
+		        password: autoconnect.password,
+		        name: autoconnect.name
+		});			
+	    $scope.gotoServer(conOpts,null,false);	
+		window.close();
+	}
 
   }]);
 }
