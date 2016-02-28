@@ -5,6 +5,8 @@
 
 * Add option to control whether hawtio should automatic open the web console in the browser or not, when running hawtio-app.
 * Hawtio now supports url links to auto connect remote JVMs where the options is provided as url parameters in the link.
+      such as: /hawtio/index.html#/jvm/connect?name=xxx&host=xxx&port=xxx&path=xxx&userName=xxx&password=xxx
+      (where you replace xxx with the desired values)
 
 #### 1.4.61
 
