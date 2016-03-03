@@ -104,6 +104,17 @@
 
 <h3 id = "Change_Log">Change Log</h3>
 
+<h4 id = "1_4_63">1.4.63</h4>
+
+<ul>
+<li>Add <code>hawtio:type=security,name=RBACRegistry</code> JMX bean that provides optimized version of Jolokia <code>list</code> operation.
+Normally, Jolokia fetches and marshalls each MBeanInfo it can find. When there are thousands of same MBeanInfos
+(like ActiveMQ queues or Camel processors/endpoints/routes/&hellip;) it was very inefficient. Now the MBeanInfo
+is shared in special cases which greatly improves performance.</li>
+<li>When displaying a table of JMX attributes for a list of MBeans, data is fetched only for visible (non-filtered)
+objects. After clearing/changing filter, old Jolokia requests are unregistered and new ones are created.</li>
+</ul>
+
 <h4 id = "1_4_62">1.4.62</h4>
 
 <ul>

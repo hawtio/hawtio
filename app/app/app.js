@@ -1362,9 +1362,30 @@ var Core;
         Workspace.prototype.setLocalStorage = function (key, value) {
             this.localStorage[key] = value;
         };
+        Workspace.prototype.jolokiaList = function (cb, flags) {
+            if (this.jolokiaStatus.listMethod == Core.LIST_GENERAL) {
+                return this.jolokia.list(null, onSuccess(cb, flags));
+            }
+            else {
+                flags.maxDepth = 9;
+                var res = this.jolokia.execute(this.jolokiaStatus.listMBean, "list()", onSuccess(cb, flags));
+                if (res['domains'] && res['cache']) {
+                    for (var domainName in res['domains']) {
+                        var domainClass = escapeDots(domainName);
+                        var domain = res['domains'][domainName];
+                        for (var mbeanName in domain) {
+                            if (angular.isString(domain[mbeanName])) {
+                                domain[mbeanName] = res['cache']["" + domain[mbeanName]];
+                            }
+                        }
+                    }
+                    return res['domains'];
+                }
+            }
+        };
         Workspace.prototype.loadTree = function () {
-            var flags = { ignoreErrors: true, maxDepth: 7 };
-            var data = this.jolokia.list(null, onSuccess(null, flags));
+            var flags = { ignoreErrors: true };
+            var data = this.jolokiaList(null, flags);
             if (data) {
                 this.jolokiaStatus.xhr = null;
             }
@@ -1444,7 +1465,7 @@ var Core;
                     };
                     workspace.populateTree(wrapper);
                 }
-                this.jolokia.list(null, onSuccess(wrapInValue, { ignoreErrors: true, maxDepth: 2 }));
+                this.jolokiaList(wrapInValue, { ignoreErrors: true, maxDepth: 8 });
             }
         };
         Workspace.prototype.folderGetOrElse = function (folder, value) {
@@ -17732,9 +17753,13 @@ var Core;
     });
     Core._module.factory('jolokiaStatus', function () {
         return {
-            xhr: null
+            xhr: null,
+            listMethod: Core.LIST_GENERAL,
+            listMBean: "hawtio:type=security,name=RBACRegistry"
         };
     });
+    Core.LIST_GENERAL = "list";
+    Core.LIST_WITH_RBAC = "list_rbac";
     Core.DEFAULT_MAX_DEPTH = 7;
     Core.DEFAULT_MAX_COLLECTION_SIZE = 5000;
     Core._module.factory('jolokiaParams', ["jolokiaUrl", "localStorage", function (jolokiaUrl, localStorage) {
@@ -18481,6 +18506,18 @@ var Core;
             var jolokia = new Jolokia(jolokiaParams);
             localStorage['url'] = jolokiaUrl;
             jolokia.stop();
+            var response = jolokia.request({
+                type: 'list',
+                path: escapeMBeanPath(jolokiaStatus.listMBean)
+            }, {});
+            if (response) {
+                if (response.status == 200 && response.value && angular.isObject(response.value['op'])) {
+                    jolokiaStatus.listMethod = Core.LIST_WITH_RBAC;
+                }
+                else {
+                    jolokiaStatus.listMethod = Core.LIST_GENERAL;
+                }
+            }
             return jolokia;
         }
         else {
@@ -32934,6 +32971,16 @@ var Jmx;
             Jmx.log.debug("nid: ", $scope.nid);
             setTimeout(updateTableContents, 50);
         });
+        var pendingUpdate = null;
+        $scope.$watch('gridOptions.filterOptions.filterText', function (newValue, oldValue) {
+            Core.unregister(jolokia, $scope);
+            if (pendingUpdate) {
+                clearTimeout(pendingUpdate);
+            }
+            pendingUpdate = setTimeout(function () {
+                updateTableContents();
+            }, 500);
+        });
         $scope.$watch('workspace.selection', function () {
             if (workspace.moveIfViewInvalid()) {
                 Core.unregister(jolokia, $scope);
@@ -33169,7 +33216,7 @@ var Jmx;
                 var children = node.children;
                 if (children) {
                     var childNodes = children.map(function (child) { return child.objectName; });
-                    var mbeans = childNodes.filter(function (mbean) { return mbean; });
+                    var mbeans = childNodes.filter(function (mbean) { return FilterHelpers.search(mbean, $scope.gridOptions.filterOptions.filterText); });
                     if (mbeans) {
                         var typeNames = Jmx.getUniqueTypeNames(children);
                         if (typeNames.length <= 1) {
@@ -39765,7 +39812,7 @@ var RBAC;
     RBAC._module.factory('rbacACLMBean', ["rbacTasks", function (rbacTasks) {
         return rbacTasks.getACLMBean();
     }]);
-    RBAC._module.run(["jolokia", "rbacTasks", "preLogoutTasks", "workspace", "$rootScope", function (jolokia, rbacTasks, preLogoutTasks, workspace, $rootScope) {
+    RBAC._module.run(["jolokia", "jolokiaStatus", "rbacTasks", "preLogoutTasks", "workspace", "$rootScope", function (jolokia, jolokiaStatus, rbacTasks, preLogoutTasks, workspace, $rootScope) {
         preLogoutTasks.addTask("resetRBAC", function () {
             RBAC.log.debug("Resetting RBAC tasks");
             rbacTasks.reset();
@@ -39778,78 +39825,90 @@ var RBAC;
                     RBAC.flattenMBeanTree(mbeans, tree);
                     var requests = [];
                     var bulkRequest = {};
-                    angular.forEach(mbeans, function (value, key) {
-                        if (!('canInvoke' in value)) {
-                            requests.push({
-                                type: 'exec',
-                                mbean: mbean,
-                                operation: 'canInvoke(java.lang.String)',
-                                arguments: [key]
-                            });
-                            if (value.mbean && value.mbean.op) {
-                                var ops = value.mbean.op;
-                                value.mbean.opByString = {};
-                                var opList = [];
-                                angular.forEach(ops, function (op, opName) {
-                                    function addOp(opName, op) {
-                                        var operationString = Core.operationToString(opName, op.args);
-                                        value.mbean.opByString[operationString] = op;
-                                        opList.push(operationString);
-                                    }
-                                    if (angular.isArray(op)) {
-                                        op.forEach(function (op) {
-                                            addOp(opName, op);
-                                        });
-                                    }
-                                    else {
-                                        addOp(opName, op);
-                                    }
+                    if (jolokiaStatus.listMethod == Core.LIST_GENERAL) {
+                        angular.forEach(mbeans, function (value, key) {
+                            if (!('canInvoke' in value)) {
+                                requests.push({
+                                    type: 'exec',
+                                    mbean: mbean,
+                                    operation: 'canInvoke(java.lang.String)',
+                                    arguments: [key]
                                 });
-                                bulkRequest[key] = opList;
+                                if (value.mbean && value.mbean.op) {
+                                    var ops = value.mbean.op;
+                                    value.mbean.opByString = {};
+                                    var opList = [];
+                                    angular.forEach(ops, function (op, opName) {
+                                        function addOp(opName, op) {
+                                            var operationString = Core.operationToString(opName, op.args);
+                                            value.mbean.opByString[operationString] = op;
+                                            opList.push(operationString);
+                                        }
+                                        if (angular.isArray(op)) {
+                                            op.forEach(function (op) {
+                                                addOp(opName, op);
+                                            });
+                                        }
+                                        else {
+                                            addOp(opName, op);
+                                        }
+                                    });
+                                    bulkRequest[key] = opList;
+                                }
                             }
-                        }
-                    });
-                    requests.push({
-                        type: 'exec',
-                        mbean: mbean,
-                        operation: 'canInvoke(java.util.Map)',
-                        arguments: [bulkRequest]
-                    });
-                    var numResponses = 0;
-                    var maybeRedraw = function () {
-                        numResponses = numResponses + 1;
-                        if (numResponses >= requests.length) {
-                            workspace.redrawTree();
-                            RBAC.log.debug("Enriched workspace tree: ", tree);
-                            Core.$apply($rootScope);
-                        }
-                    };
-                    jolokia.request(requests, onSuccess(function (response) {
-                        var mbean = response.request.arguments[0];
-                        if (mbean && angular.isString(mbean)) {
-                            mbeans[mbean]['canInvoke'] = response.value;
+                        });
+                        requests.push({
+                            type: 'exec',
+                            mbean: mbean,
+                            operation: 'canInvoke(java.util.Map)',
+                            arguments: [bulkRequest]
+                        });
+                        var numResponses = 0;
+                        var maybeRedraw = function () {
+                            numResponses = numResponses + 1;
+                            if (numResponses >= requests.length) {
+                                workspace.redrawTree();
+                                RBAC.log.debug("Enriched workspace tree: ", tree);
+                                Core.$apply($rootScope);
+                            }
+                        };
+                        jolokia.request(requests, onSuccess(function (response) {
+                            var mbean = response.request.arguments[0];
+                            if (mbean && angular.isString(mbean)) {
+                                mbeans[mbean]['canInvoke'] = response.value;
+                                var toAdd = "cant-invoke";
+                                if (response.value) {
+                                    toAdd = "can-invoke";
+                                }
+                                mbeans[mbean]['addClass'] = RBAC.stripClasses(mbeans[mbean]['addClass']);
+                                mbeans[mbean]['addClass'] = RBAC.addClass(mbeans[mbean]['addClass'], toAdd);
+                                maybeRedraw();
+                            }
+                            else {
+                                var responseMap = response.value;
+                                angular.forEach(responseMap, function (operations, mbeanName) {
+                                    angular.forEach(operations, function (data, operationName) {
+                                        mbeans[mbeanName].mbean.opByString[operationName]['canInvoke'] = data['CanInvoke'];
+                                    });
+                                });
+                                maybeRedraw();
+                            }
+                        }, {
+                            error: function (response) {
+                                maybeRedraw();
+                            }
+                        }));
+                    }
+                    else {
+                        angular.forEach(mbeans, function (mbean, mbeanName) {
                             var toAdd = "cant-invoke";
-                            if (response.value) {
+                            if (mbean.mbean && mbean.mbean.canInvoke) {
                                 toAdd = "can-invoke";
                             }
-                            mbeans[mbean]['addClass'] = RBAC.stripClasses(mbeans[mbean]['addClass']);
-                            mbeans[mbean]['addClass'] = RBAC.addClass(mbeans[mbean]['addClass'], toAdd);
-                            maybeRedraw();
-                        }
-                        else {
-                            var responseMap = response.value;
-                            angular.forEach(responseMap, function (operations, mbeanName) {
-                                angular.forEach(operations, function (data, operationName) {
-                                    mbeans[mbeanName].mbean.opByString[operationName]['canInvoke'] = data['CanInvoke'];
-                                });
-                            });
-                            maybeRedraw();
-                        }
-                    }, {
-                        error: function (response) {
-                            maybeRedraw();
-                        }
-                    }));
+                            mbeans[mbeanName]['addClass'] = RBAC.stripClasses(mbeans[mbeanName]['addClass']);
+                            mbeans[mbeanName]['addClass'] = RBAC.addClass(mbeans[mbeanName]['addClass'], toAdd);
+                        });
+                    }
                 });
             }, -1, TREE_POSTPROCESSOR_NAME);
         });

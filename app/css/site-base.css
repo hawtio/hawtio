@@ -4258,6 +4258,9 @@ img.nodeIcon:hover {
   cursor: pointer;
 }
 
+ul.dynatree-container span.cant-invoke a {
+  color: red;
+}
 .operation-row.cant-invoke {
   cursor: not-allowed;
 }

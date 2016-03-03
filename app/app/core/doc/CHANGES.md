@@ -1,6 +1,15 @@
 
 ### Change Log
 
+#### 1.4.63
+
+* Add `hawtio:type=security,name=RBACRegistry` JMX bean that provides optimized version of Jolokia `list` operation.
+  Normally, Jolokia fetches and marshalls each MBeanInfo it can find. When there are thousands of same MBeanInfos
+  (like ActiveMQ queues or Camel processors/endpoints/routes/...) it was very inefficient. Now the MBeanInfo
+  is shared in special cases which greatly improves performance.
+* When displaying a table of JMX attributes for a list of MBeans, data is fetched only for visible (non-filtered)
+  objects. After clearing/changing filter, old Jolokia requests are unregistered and new ones are created.
+
 #### 1.4.62
 
 * Add option to control whether hawtio should automatic open the web console in the browser or not, when running hawtio-app.
