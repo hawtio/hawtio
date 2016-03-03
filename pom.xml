@@ -127,8 +127,8 @@
     <maven-surefire-plugin-version>2.19.1</maven-surefire-plugin-version>
     <ops4j-pax-web-version>3.0.1</ops4j-pax-web-version>
     <ops4j-pax-url-version>2.4.6</ops4j-pax-url-version>
-    <osgi-version>4.2.0</osgi-version>
-    <org-json-version>20150729</org-json-version>
+    <osgi-version>5.0.0</osgi-version>
+    <org-json-version>20070829</org-json-version>
     <scala-version>2.10.0</scala-version>
     <servlet-api-version>2.5</servlet-api-version>
 

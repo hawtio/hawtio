@@ -86,11 +86,33 @@ module Core {
       this.localStorage[key] = value;
     }
 
+    public jolokiaList(cb, flags):any {
+      if (this.jolokiaStatus.listMethod == LIST_GENERAL) {
+        return this.jolokia.list(null, onSuccess(cb, flags));
+      } else {
+        flags.maxDepth = 9;
+        var res = this.jolokia.execute(this.jolokiaStatus.listMBean, "list()", onSuccess(cb, flags));
+        if (res['domains'] && res['cache']) {
+          // post process cached RBAC info
+          for (var domainName in res['domains']) {
+            var domainClass = escapeDots(domainName);
+            var domain = <Core.JMXDomain> res['domains'][domainName];
+            for (var mbeanName in domain) {
+              if (angular.isString(domain[mbeanName])) {
+                domain[mbeanName] = <Core.JMXMBean>res['cache']["" + domain[mbeanName]];
+              }
+            }
+          }
+          return res['domains'];
+        }
+      }
+    }
+
     public loadTree() {
       // Make an initial blocking call to ensure the JMX tree is populated while the
       // app is initializing...
-      var flags = {ignoreErrors: true, maxDepth: 7};
-      var data = this.jolokia.list(null, onSuccess(null, flags));
+      var flags = {ignoreErrors: true};
+      var data = this.jolokiaList(null, flags);
 
       if (data) {
         this.jolokiaStatus.xhr = null;
@@ -99,7 +121,6 @@ module Core {
         value: data
       });
     }
-
 
     /**
      * Adds a post processor of the tree to swizzle the tree metadata after loading
@@ -186,7 +207,7 @@ module Core {
           };
           workspace.populateTree(wrapper);
         }
-        this.jolokia.list(null, onSuccess(wrapInValue, {ignoreErrors: true, maxDepth: 2}));
+        this.jolokiaList(wrapInValue, {ignoreErrors: true, maxDepth: 8});
       }
     }
 
