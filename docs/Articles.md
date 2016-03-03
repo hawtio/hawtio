@@ -25,7 +25,7 @@
 
 The following videos are in the [hawtio video album](https://vimeo.com/album/3324251):
 
-* [create a hawtio pluing in 3 minutes](https://vimeo.com/123423650)
+* [create a hawtio plugin in 3 minutes](https://vimeo.com/123423650)
 * [add hawtio forms to your plugin](https://vimeo.com/123441243) using [hawtio-forms](https://github.com/hawtio/hawtio-forms)
 
 # Demos (1.x)
