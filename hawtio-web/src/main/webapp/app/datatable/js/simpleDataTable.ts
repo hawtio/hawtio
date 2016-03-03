@@ -5,6 +5,7 @@
  */
 module DataTable {
 
+  import isBlank = Core.isBlank;
   export class SimpleDataTable {
     public restrict = 'A';
 
@@ -272,8 +273,13 @@ module DataTable {
       angular.forEach(config.columnDefs, (colDef) => {
         var field = colDef.field;
         var cellTemplate = colDef.cellTemplate || '<div class="ngCellText" title="{{row.entity.' + field + '}}">{{row.entity.' + field + '}}</div>';
+        var sortable = colDef.sortable;
 
-        headHtml += "\n<th class='clickable no-fade table-header' ng-click=\"sortBy('" + field + "')\" ng-class=\"getClass('" + field + "')\">{{config.columnDefs[" + idx + "].displayName}}<span class='indicator'></span></th>"
+        headHtml += "\n<th class='clickable no-fade table-header'";
+        if (isBlank(sortable) || sortable) {
+          headHtml += "ng-click=\"sortBy('" + field + "')\"";
+        }
+        headHtml += "ng-class=\"getClass('" + field + "')\">{{config.columnDefs[" + idx + "].displayName}}<span class='indicator'></span></th>";
 
         bodyHtml += "\n<td>" + cellTemplate + "</td>"
         idx += 1;
