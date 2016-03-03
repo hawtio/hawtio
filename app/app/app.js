@@ -20823,6 +20823,7 @@ var FilterHelpers;
 })(FilterHelpers || (FilterHelpers = {}));
 var DataTable;
 (function (DataTable) {
+    var isBlank = Core.isBlank;
     var SimpleDataTable = (function () {
         function SimpleDataTable($compile) {
             var _this = this;
@@ -21039,7 +21040,12 @@ var DataTable;
             angular.forEach(config.columnDefs, function (colDef) {
                 var field = colDef.field;
                 var cellTemplate = colDef.cellTemplate || '<div class="ngCellText" title="{{row.entity.' + field + '}}">{{row.entity.' + field + '}}</div>';
-                headHtml += "\n<th class='clickable no-fade table-header' ng-click=\"sortBy('" + field + "')\" ng-class=\"getClass('" + field + "')\">{{config.columnDefs[" + idx + "].displayName}}<span class='indicator'></span></th>";
+                var sortable = colDef.sortable;
+                headHtml += "\n<th class='clickable no-fade table-header'";
+                if (isBlank(sortable) || sortable) {
+                    headHtml += "ng-click=\"sortBy('" + field + "')\"";
+                }
+                headHtml += "ng-class=\"getClass('" + field + "')\">{{config.columnDefs[" + idx + "].displayName}}<span class='indicator'></span></th>";
                 bodyHtml += "\n<td>" + cellTemplate + "</td>";
                 idx += 1;
             });
