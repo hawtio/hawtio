@@ -3654,7 +3654,6 @@ var Core;
                 var handle = Core.pathGet(value, ['handle']);
                 if (!$scope && handle && handle.elem && handle.elem !== document && !$.contains(document.documentElement, handle.elem)) {
                     Logger.get("jquery-cache-prune").debug("Cache item with handle that isn't in the document, key: ", key, "value: ", value, " element: ", handle.elem);
-                    $(handle.elem).remove();
                 }
                 function checkParentDestroyed($scope) {
                     if ($scope.$parent) {
@@ -8167,7 +8166,6 @@ var ActiveMQ;
             return buffer.join("\n");
         }
         function createHeaders(row) {
-            log.debug("headers: ", row);
             var answer = {};
             angular.forEach(row, function (value, key) {
                 if (!ignoreColumns.any(key) && !flattenColumns.any(key)) {
@@ -8177,7 +8175,6 @@ var ActiveMQ;
             return answer;
         }
         function createProperties(row) {
-            log.debug("properties: ", row);
             var answer = {};
             angular.forEach(row, function (value, key) {
                 if (!ignoreColumns.any(key) && flattenColumns.any(key)) {
