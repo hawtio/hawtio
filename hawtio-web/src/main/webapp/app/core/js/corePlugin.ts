@@ -301,8 +301,11 @@ module Core {
         var $scope = Core.pathGet(value, ['data', '$scope']);
         var handle = Core.pathGet(value, ['handle']);
         if (!$scope && handle && handle.elem && handle.elem !== document && !$.contains(document.documentElement, handle.elem)) {
+          // Let's log these just in case a view could be leaking an element
           Logger.get("jquery-cache-prune").debug("Cache item with handle that isn't in the document, key: ", key, "value: ", value, " element: ", handle.elem);
-          $(handle.elem).remove();
+
+          // Let's not do this, as it could be referring to a dialog or other widget that just isn't visible
+          // $(handle.elem).remove();
         }
 
         function checkParentDestroyed($scope) {

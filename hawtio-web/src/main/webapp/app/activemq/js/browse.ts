@@ -331,7 +331,7 @@ module ActiveMQ {
     }
 
     function createHeaders(row) {
-      log.debug("headers: ", row);
+      // log.debug("headers: ", row);
       var answer = {};
       angular.forEach(row, (value, key) => {
         if (!ignoreColumns.any(key) && !flattenColumns.any(key)) {
@@ -342,7 +342,7 @@ module ActiveMQ {
     }
     
     function createProperties(row) {
-      log.debug("properties: ", row);
+      // log.debug("properties: ", row);
       var answer = {};
       angular.forEach(row, (value, key) => {
         if (!ignoreColumns.any(key) && flattenColumns.any(key)) {
