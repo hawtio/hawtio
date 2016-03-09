@@ -1,7 +1,7 @@
 
 ### Change Log
 
-#### 1.4.63
+#### 1.4.62
 
 * Add `hawtio:type=security,name=RBACRegistry` JMX bean that provides optimized version of Jolokia `list` operation.
   Normally, Jolokia fetches and marshalls each MBeanInfo it can find. When there are thousands of same MBeanInfos
@@ -13,9 +13,6 @@
 * Increased the default jolokia max collection limit from 5000 to 50000 to ensure JVMs with many mbeans are all populated in hawtio
 * Removed a bunch of outdated help pages in the plugins to trim down the distribution size.
 * Added back the missing icons for the Camel debugger which was missing in the previous release.
-
-#### 1.4.62
-
 * Add option to control whether hawtio should automatic open the web console in the browser or not, when running hawtio-app.
 * Hawtio now supports url links to auto connect remote JVMs where the options is provided as url parameters in the link.
       such as: /hawtio/index.html#/jvm/connect?name=xxx&host=xxx&port=xxx&path=xxx&userName=xxx&password=xxx
