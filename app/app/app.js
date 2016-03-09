@@ -17758,7 +17758,7 @@ var Core;
     Core.LIST_GENERAL = "list";
     Core.LIST_WITH_RBAC = "list_rbac";
     Core.DEFAULT_MAX_DEPTH = 7;
-    Core.DEFAULT_MAX_COLLECTION_SIZE = 5000;
+    Core.DEFAULT_MAX_COLLECTION_SIZE = 50000;
     Core._module.factory('jolokiaParams', ["jolokiaUrl", "localStorage", function (jolokiaUrl, localStorage) {
         var answer = {
             canonicalNaming: false,

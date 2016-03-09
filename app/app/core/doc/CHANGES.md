@@ -9,6 +9,10 @@
   is shared in special cases which greatly improves performance.
 * When displaying a table of JMX attributes for a list of MBeans, data is fetched only for visible (non-filtered)
   objects. After clearing/changing filter, old Jolokia requests are unregistered and new ones are created.
+* Fixed the AcitveMQ plugin to show the browse message dialog again, after it has been closed previously.
+* Increased the default jolokia max collection limit from 5000 to 50000 to ensure JVMs with many mbeans are all populated in hawtio
+* Removed a bunch of outdated help pages in the plugins to trim down the distribution size.
+* Added back the missing icons for the Camel debugger which was missing in the previous release.
 
 #### 1.4.62
 
