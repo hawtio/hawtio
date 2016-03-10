@@ -12949,7 +12949,7 @@ var Camel;
         }
         function matchesContextId(contextId) {
             if (contextId) {
-                return !$scope.searchFilter || contextId.indexOf($scope.searchFilter) >= 0;
+                return !$scope.searchFilter || contextId.toLowerCase().indexOf($scope.searchFilter.toLowerCase()) >= 0;
             }
             return false;
         }
