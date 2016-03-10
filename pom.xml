@@ -101,7 +101,7 @@
     <jackson-version>2.7.0</jackson-version>
     <jackson-version-range>[2.5,3)</jackson-version-range>
 
-    <javaewah-version>1.0.2</javaewah-version>
+    <javaewah-version>1.1.5</javaewah-version>
     <!-- make sure to align jaxb with fabric8 -->
     <jaxb-version>2.2.7</jaxb-version>
     <jcraft-version>0.1.49</jcraft-version>
