@@ -1,6 +1,6 @@
 {
   "name": "keycloak",
-  "version": "1.1.0",
+  "version": "1.9.0",
   "main": "dist/keycloak.js",
   "ignore": [
     "**/.*"
@@ -12,5 +12,6 @@
     "oauth",
     "oauth2",
     "authentication"
-  ]
+  ],
+  "license": "Apache-2.0"
 }
