@@ -20,6 +20,7 @@ module Camel {
         // lets navigate to the parent folder!
         // as this will be going way
         workspace.removeAndSelectParentNode();
+        Core.$apply($scope);
       });
     };
 
