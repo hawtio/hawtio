@@ -28,6 +28,8 @@
       com.jcraft.jzlib;version=${jcraft-jzlib-version},
       com.jcraft.jsch;version=${jcraft-version},
 -->
+      org.osgi.framework;version="[1.5,2)",
+      org.osgi.framework.wiring;version="[1.0,2)",
       org.gitective*;version=${gitective-version},
       javaewah*;version=${javaewah-version},
       !javax.servlet,

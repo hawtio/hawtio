@@ -140,7 +140,8 @@
               org.osgi.service.http,
               jline;version="[2.13,3.0)";-split-package:=merge-first,
               org.apache.karaf.shell.console;version="[4.0,5.0)",
-              org.osgi.framework,
+              org.osgi.framework;version="[1.5,2)",
+              org.osgi.framework.wiring;version="[1.0,2)",
               javax.management,
               *;resolution:=optional
             </Import-Package>

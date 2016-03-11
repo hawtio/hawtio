@@ -17,6 +17,8 @@
       io.hawt.jvm.local
     </fuse.osgi.export>
     <fuse.osgi.import>
+      org.osgi.framework;version="[1.5,2)",
+      org.osgi.framework.wiring;version="[1.0,2)",
       io.hawt.jvm.local,
       *;resolution:=optional
     </fuse.osgi.import>
