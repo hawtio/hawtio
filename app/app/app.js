@@ -11202,6 +11202,7 @@ var Camel;
         $scope.stop = function () {
             $scope.invokeSelectedMBeans("stop()", function () {
                 workspace.removeAndSelectParentNode();
+                Core.$apply($scope);
             });
         };
         $scope.delete = function () {
