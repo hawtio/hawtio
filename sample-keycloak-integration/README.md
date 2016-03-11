@@ -10,13 +10,13 @@ Prepare Keycloak server
 
 **1)** Download file [demorealm.json](demorealm.json) with Keycloak sample metadata about `hawtio-demo` realm. It's assumed you downloaded it to directory `/downloads` on your laptop. 
 
-**2)**  Download keycloak appliance with wildfly from [http://sourceforge.net/projects/keycloak/files/1.1.0.Final/keycloak-appliance-dist-all-1.1.0.Final.zip/download](http://sourceforge.net/projects/keycloak/files/1.1.0.Final/keycloak-appliance-dist-all-1.1.0.Final.zip/download) . 
+**2)**  Download keycloak appliance with wildfly from [http://downloads.jboss.org/keycloak/1.9.1.Final/keycloak-1.9.1.Final.zip](http://downloads.jboss.org/keycloak/1.9.1.Final/keycloak-1.9.1.Final.zip) . 
 Then unpack and run keycloak server on localhost:8081 . You also need to import downloaded `demorealm.json` file into your Keycloak. Import can be done either via Keycloak admin console or by 
 using `keycloak.import` system property:
 
 ```
-unzip -q /downloads/keycloak-appliance-dist-all-1.1.0.Final.zip
-cd keycloak-appliance-dist-all-1.1.0.Final/keycloak/bin/
+unzip -q /downloads/keycloak-1.9.1.Final.zip
+cd keycloak-1.9.1.Final/bin/
 ./standalone.sh -Djboss.http.port=8081 -Dkeycloak.import=/downloads/demorealm.json
 ```
 
@@ -84,7 +84,7 @@ features:install hawtio
 * Install keycloak OSGI bundling into Fuse/Karaf . It contains few jars with Keycloak adapter and also configuration of `keycloak` JAAS realm
 
 ```
-features:addurl mvn:org.keycloak/keycloak-osgi-features/1.1.0.Final/xml/features
+features:addurl mvn:org.keycloak/keycloak-osgi-features/1.9.0.Final/xml/features
 features:install keycloak-jaas
 ```
 
@@ -133,7 +133,7 @@ cp /downloads/keycloak-hawtio.json $JETTY_HOME/etc/
 cp /downloads/keycloak-hawtio-client.json $JETTY_HOME/etc/
 ```
 
-* Install Keycloak jetty adapter into your Jetty server as described on [http://docs.jboss.org/keycloak/docs/1.1.0.Final/userguide/html/ch08.html#jetty8-adapter](http://docs.jboss.org/keycloak/docs/1.1.0.Final/userguide/html/ch08.html#jetty8-adapter).
+* Install Keycloak jetty adapter into your Jetty server as described on [http://keycloak.github.io/docs/userguide/keycloak-server/html/ch08.html#jetty8-adapter](http://keycloak.github.io/docs/userguide/keycloak-server/html/ch08.html#jetty8-adapter).
  
 * Export JETTY_HOME in your terminal. For example: 
 
