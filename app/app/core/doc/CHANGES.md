@@ -1,6 +1,11 @@
 
 ### Change Log
 
+#### 1.4.63
+
+* hawtio can be installed in Apache Karaf 2.4.x again if you install the `hawtio-core` feature. Log and Terminal plugin is not supported on Karaf 2.x.
+* upgraded to KeyCloack 1.9.1
+
 #### 1.4.62
 
 * Add `hawtio:type=security,name=RBACRegistry` JMX bean that provides optimized version of Jolokia `list` operation.
