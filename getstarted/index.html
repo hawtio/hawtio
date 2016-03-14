@@ -139,8 +139,10 @@ If you do not use a servlet container or application server, you can also embed 
 
 <h2 id = "Using_a_Servlet_Engine_or_Application_Server">Using a Servlet Engine or Application Server</h2>
 
-<p>If you are running Tomcat 5/6/7, Jetty 7/8 or you could just deploy a WAR:
+<p>If you are running Tomcat, Jetty you could just deploy a WAR:
 (JBoss AS or Wildfly users see other containers section further below)</p>
+
+<p><b>TIP:</b> You may want to use the offline deployment which do not connects to the internet for plugins such as Maven and Git.</p>
 
 <div class="row">
   <div class="col-md-6 span6 text-center">
@@ -148,7 +150,15 @@ If you do not use a servlet container or application server, you can also embed 
       <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.4.63/hawtio-default-1.4.63.war">Download hawtio-default.war</a>
     </p>
     <p>
-      a bare hawtio web application with minimal dependencies
+      a bare hawtio web application with minimal dependencies (online mode connecting to the internet for the Maven and Git plugin)
+    </p>
+  </div>
+  <div class="col-md-6 span6 text-center">
+    <p>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.4.63/hawtio-default-1.4.63.war">Download hawtio-default-offline.war</a>
+    </p>
+    <p>
+      a bare <b>offline</b> hawtio web application with minimal dependencies in offline mode, where Maven and Git plugins are not enabled.
     </p>
   </div>
   <div class="col-md-6 span6 text-center">
@@ -169,9 +179,6 @@ If you do not use a servlet container or application server, you can also embed 
 <p>Otherwise you will need to use either <a href="http://localhost:8080/hawtio-default-1.4.63/">http://localhost:8080/hawtio-default-1.4.63/</a> or <a href="http://localhost:8080/sample-1.4.63/">http://localhost:8080/sample-1.4.63/</a>  depending on the file name you downloaded.</p>
 
 <p>Please check <a href="http://hawt.io/configuration/index.html">the configuration guide</a> to see how to configure things; in particular security.</p>
-
-<p>If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to
- <a class="btn btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.4.63/hawtio-default-offline-1.4.63.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).</p>
 
 <p>If you don't see a Tomcat / Jetty tab for your container you may need to enable JMX.</p>
 
