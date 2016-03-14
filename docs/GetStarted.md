@@ -32,8 +32,10 @@ hawtio supports other options which you can get listed by running from command l
 <a name="web-container"></a>
 ## Using a Servlet Engine or Application Server
 
-If you are running Tomcat 5/6/7, Jetty 7/8 or you could just deploy a WAR:
+If you are running Tomcat, Jetty you could just deploy a WAR:
 (JBoss AS or Wildfly users see other containers section further below)
+
+<b>TIP:</b> You may want to use the offline deployment which do not connects to the internet for plugins such as Maven and Git.
 
 <div class="row">
   <div class="col-md-6 span6 text-center">
@@ -41,7 +43,15 @@ If you are running Tomcat 5/6/7, Jetty 7/8 or you could just deploy a WAR:
       <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.4.63/hawtio-default-1.4.63.war">Download hawtio-default.war</a>
     </p>
     <p>
-      a bare hawtio web application with minimal dependencies
+      a bare hawtio web application with minimal dependencies (online mode connecting to the internet for the Maven and Git plugin)
+    </p>
+  </div>
+  <div class="col-md-6 span6 text-center">
+    <p>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.4.63/hawtio-default-1.4.63.war">Download hawtio-default-offline.war</a>
+    </p>
+    <p>
+      a bare <b>offline</b> hawtio web application with minimal dependencies in offline mode, where Maven and Git plugins are not enabled.
     </p>
   </div>
   <div class="col-md-6 span6 text-center">
@@ -63,8 +73,6 @@ Otherwise you will need to use either [http://localhost:8080/hawtio-default-1.4.
 
 Please check [the configuration guide](http://hawt.io/configuration/index.html) to see how to configure things; in particular security.
 
-If you are working offline and have no access to the internet on the machines you want to use with hawtio then you may wish to
- <a class="btn btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.4.63/hawtio-default-offline-1.4.63.war">Download hawtio-default-offline.war</a> which avoids some pesky errors appearing in your log on startup (as the default behaviour is to clone a git repo on startup for some default wiki and dashboard content).
 
 If you don't see a Tomcat / Jetty tab for your container you may need to enable JMX.
 
