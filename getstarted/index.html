@@ -190,6 +190,8 @@ If you do not use a servlet container or application server, you can also embed 
 
 <h2 id = "Using_Apache_Karaf_or_Apache_ServiceMix">Using Apache Karaf or Apache ServiceMix</h2>
 
+<p>By default installing <code>hawtio</code> installs the Maven and Git plugin which uses online connection over the internet to work. You may want to install <code>hawtio-offline</code> instead which disables those plugins, and runs hawtio without any internet connectivity. When installing <code>hawtio-core</code> then those plugins are not installed and its also in offline mode.</p>
+
 <p>If you are using <a href="http://karaf.apache.org/">Apache Karaf</a> 2.x:</p>
 
 <pre><code>features:chooseurl hawtio 1.4.63
