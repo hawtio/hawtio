@@ -83,6 +83,8 @@ If you are using 6.1 or later of [JBoss Fuse](http://www.jboss.org/products/fuse
 
 ## Using Apache Karaf or Apache ServiceMix
 
+By default installing `hawtio` installs the Maven and Git plugin which uses online connection over the internet to work. You may want to install `hawtio-offline` instead which disables those plugins, and runs hawtio without any internet connectivity. When installing `hawtio-core` then those plugins are not installed and its also in offline mode.
+
 If you are using [Apache Karaf](http://karaf.apache.org/) 2.x:
 
     features:chooseurl hawtio 1.4.63
@@ -107,6 +109,8 @@ If you are using [Apache ServiceMix](http://servicemix.apache.org/) 7.x:
 
     feature:repo-add hawtio 1.4.63
     feature:install hawtio
+
+
 
 **NOTE** Karaf 2.x/3.x has an issue with the `hawtio-log` and `hawtio-terminal` which does not work. And therefore you need to install `hawtio-core` instead of `hawtio`. 
 
