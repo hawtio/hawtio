@@ -3215,13 +3215,15 @@ var Core;
         return null;
     }
     Core.getQueryParameterValue = getQueryParameterValue;
-    function createRemoteWorkspace(remoteJolokia, $location, localStorage, $rootScope, $compile, $templateCache, userDetails) {
+    function createRemoteWorkspace(remoteJolokia, remoteJolokiaStatus, $location, localStorage, $rootScope, $compile, $templateCache, userDetails) {
         if ($rootScope === void 0) { $rootScope = null; }
         if ($compile === void 0) { $compile = null; }
         if ($templateCache === void 0) { $templateCache = null; }
         if (userDetails === void 0) { userDetails = null; }
         var jolokiaStatus = {
-            xhr: null
+            xhr: null,
+            listMethod: remoteJolokiaStatus.listMethod,
+            listMBean: remoteJolokiaStatus.listMBean
         };
         var jmxTreeLazyLoadRegistry = Core.lazyLoaders;
         var profileWorkspace = new Core.Workspace(remoteJolokia, jolokiaStatus, jmxTreeLazyLoadRegistry, $location, $compile, $templateCache, localStorage, $rootScope, userDetails);
@@ -12237,7 +12239,7 @@ var Camel;
             if (jolokia) {
                 var mbean = Camel.getSelectionCamelContextMBean(workspace);
                 if (mbean) {
-                    $scope.message = "Creating endpoint " + name;
+                    $scope.message = name;
                     var operation = "createEndpoint(java.lang.String)";
                     jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
                 }
@@ -12278,11 +12280,16 @@ var Camel;
                 }
             }
         };
-        function operationSuccess() {
+        function operationSuccess(endpointCreated) {
             $scope.endpointName = "";
             $scope.workspace.operationCounter += 1;
             Core.$apply($scope);
-            Core.notification("success", $scope.message);
+            if (endpointCreated && endpointCreated === true) {
+                Core.notification('success', "Creating endpoint " + $scope.message);
+            }
+            else {
+                Core.notification('error', "Failed to create endpoint " + $scope.message);
+            }
         }
         function deleteSuccess() {
             if (workspace.selection) {
@@ -12560,9 +12567,9 @@ var Camel;
         function findCamelContextMBean() {
             var profileWorkspace = $scope.profileWorkspace;
             if (!profileWorkspace) {
-                var removeJolokia = $scope.jolokia;
-                if (removeJolokia) {
-                    profileWorkspace = Core.createRemoteWorkspace(removeJolokia, $location, localStorage);
+                var remoteJolokia = $scope.jolokia;
+                if (remoteJolokia) {
+                    profileWorkspace = Core.createRemoteWorkspace(remoteJolokia, workspace.jolokiaStatus, $location, localStorage);
                     $scope.profileWorkspace = profileWorkspace;
                 }
             }
@@ -27977,7 +27984,7 @@ var Osgi;
                 Fabric.profileJolokia(jolokia, profileId, versionId, function (profileJolokia) {
                     if (profileJolokia) {
                         $scope.jolokia = profileJolokia;
-                        $scope.workspace = Core.createRemoteWorkspace(profileJolokia, $location, localStorage);
+                        $scope.workspace = Core.createRemoteWorkspace(profileJolokia, workspace.jolokiaStatus, $location, localStorage);
                     }
                     else {
                         $scope.jolokia = jolokia;
