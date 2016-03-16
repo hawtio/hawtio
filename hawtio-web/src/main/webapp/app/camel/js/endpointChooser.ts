@@ -258,13 +258,7 @@ module Camel {
       $scope.componentNames = null;
       var mbean = findCamelContextMBean();
       if (mbean) {
-        //$scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, silentOptions));
         $scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, {silent: true}));
-/*
-        $scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, {error: function (response) {
-          console.log("FAILED: " + response);
-        }}));
-*/
       } else {
         console.log("WARNING: No camel context mbean so cannot load component names");
       }
@@ -316,9 +310,9 @@ module Camel {
     function findCamelContextMBean() {
       var profileWorkspace = $scope.profileWorkspace;
       if (!profileWorkspace) {
-        var removeJolokia = $scope.jolokia;
-        if (removeJolokia) {
-          profileWorkspace = Core.createRemoteWorkspace(removeJolokia, $location, localStorage);
+        var remoteJolokia = $scope.jolokia;
+        if (remoteJolokia) {
+          profileWorkspace = Core.createRemoteWorkspace(remoteJolokia, workspace.jolokiaStatus, $location, localStorage);
           $scope.profileWorkspace = profileWorkspace;
         }
       }

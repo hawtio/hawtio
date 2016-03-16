@@ -1542,10 +1542,12 @@ module Core {
    * @param localStorage
    * @return {Core.Workspace|Workspace}
    */
-  export function createRemoteWorkspace(remoteJolokia, $location, localStorage, $rootScope = null, $compile = null, $templateCache = null, userDetails = null) {
+  export function createRemoteWorkspace(remoteJolokia, remoteJolokiaStatus, $location, localStorage, $rootScope = null, $compile = null, $templateCache = null, userDetails = null) {
     // lets create a child workspace object for the remote container
     var jolokiaStatus = {
-      xhr: null
+      xhr: null,
+      listMethod: remoteJolokiaStatus.listMethod,
+      listMBean: remoteJolokiaStatus.listMBean
     };
     // disable reload notifications
     var jmxTreeLazyLoadRegistry = Core.lazyLoaders;
