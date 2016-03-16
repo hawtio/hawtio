@@ -419,7 +419,7 @@ module Osgi {
         Fabric.profileJolokia(jolokia, profileId, versionId, (profileJolokia) => {
           if (profileJolokia) {
             $scope.jolokia = profileJolokia;
-            $scope.workspace = Core.createRemoteWorkspace(profileJolokia, $location, localStorage);
+            $scope.workspace = Core.createRemoteWorkspace(profileJolokia, workspace.jolokiaStatus, $location, localStorage);
           } else {
             // lets deal with the case we have no profile running right now so we have to have a plan B
             // for fetching the profile configuration metadata
