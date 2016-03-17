@@ -278,7 +278,7 @@ module Forms {
 
     function getModelValueOrDefault(scope, modelName) {
       var value = Core.pathGet(scope, modelName);
-      if (!value) {
+      if (!value && typeof value != "boolean") {
         var defaultValue = property.default || property.defaultValue;
         if (defaultValue) {
           value = defaultValue;
@@ -327,9 +327,9 @@ module Forms {
         // lets add a value conversion watcher...
         options.valueConverter = function (scope, modelName) {
           var value = getModelValueOrDefault(scope, modelName);
-          if (value && "true" === value)  {
-            //console.log("coercing String to boolean for " + modelName);
-            Core.pathSet(scope, modelName, true);
+          if (value && ("true" === value || "false" === value))  {
+            var newValue = "true" === value ? true : false;
+            Core.pathSet(scope, modelName, newValue);
           }
         };
         return '<input type="checkbox"/>';
