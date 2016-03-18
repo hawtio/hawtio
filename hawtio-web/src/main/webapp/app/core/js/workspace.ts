@@ -92,18 +92,8 @@ module Core {
       } else {
         flags.maxDepth = 9;
         var res = this.jolokia.execute(this.jolokiaStatus.listMBean, "list()", onSuccess(cb, flags));
-        if (res['domains'] && res['cache']) {
-          // post process cached RBAC info
-          for (var domainName in res['domains']) {
-            var domainClass = escapeDots(domainName);
-            var domain = <Core.JMXDomain> res['domains'][domainName];
-            for (var mbeanName in domain) {
-              if (angular.isString(domain[mbeanName])) {
-                domain[mbeanName] = <Core.JMXMBean>res['cache']["" + domain[mbeanName]];
-              }
-            }
-          }
-          return res['domains'];
+        if (res) {
+          return this.unwindResponseWithRBACCache(res);
         }
       }
     }
@@ -203,11 +193,31 @@ module Core {
         var workspace = this;
         function wrapInValue(response) {
           var wrapper = {
-            value: response
+            value: workspace.unwindResponseWithRBACCache(response)
           };
           workspace.populateTree(wrapper);
         }
         this.jolokiaList(wrapInValue, {ignoreErrors: true, maxDepth: 8});
+      }
+    }
+
+    /**
+     * Processes response from jolokia list - if it contains "domains" and "cache" properties
+     * @param res
+     */
+    public unwindResponseWithRBACCache(res) {
+      if (res['domains'] && res['cache']) {
+        // post process cached RBAC info
+        for (var domainName in res['domains']) {
+          var domainClass = escapeDots(domainName);
+          var domain = <Core.JMXDomain> res['domains'][domainName];
+          for (var mbeanName in domain) {
+            if (angular.isString(domain[mbeanName])) {
+              domain[mbeanName] = <Core.JMXMBean>res['cache']["" + domain[mbeanName]];
+            }
+          }
+        }
+        return res['domains'];
       }
     }
 
