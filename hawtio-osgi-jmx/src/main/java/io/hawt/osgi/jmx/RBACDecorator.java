@@ -198,6 +198,9 @@ public class RBACDecorator implements RBACDecoratorMBean {
                             mBeanInfo = rbacCache.get(mBeanInfoOrKey.toString());
                         }
                         if (mBeanInfo != null) {
+                            // both "op" and "opByString" may be used in HawtIO
+                            String methodName = method.split("[(]")[0];
+                            ((Map<String, Object>)((Map<String, Object>) mBeanInfo.get("op")).get(methodName)).put("canInvoke", canInvoke);
                             ((Map<String, Object>)((Map<String, Object>) mBeanInfo.get("opByString")).get(method)).put("canInvoke", canInvoke);
                         }
                     }
