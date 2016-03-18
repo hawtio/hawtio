@@ -219,6 +219,7 @@ module Core {
         }
         return res['domains'];
       }
+      return res;
     }
 
     public folderGetOrElse(folder, value) {
