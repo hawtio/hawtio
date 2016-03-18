@@ -52,9 +52,9 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class RBACRegistryTest {
+public class RBACDecoratorTest {
 
-    private static Logger LOG = LoggerFactory.getLogger(RBACRegistryTest.class);
+    private static Logger LOG = LoggerFactory.getLogger(RBACDecoratorTest.class);
 
     @Test
     public void objectNameSplitting() throws MalformedObjectNameException {
