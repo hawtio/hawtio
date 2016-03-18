@@ -1369,17 +1369,8 @@ var Core;
             else {
                 flags.maxDepth = 9;
                 var res = this.jolokia.execute(this.jolokiaStatus.listMBean, "list()", onSuccess(cb, flags));
-                if (res['domains'] && res['cache']) {
-                    for (var domainName in res['domains']) {
-                        var domainClass = escapeDots(domainName);
-                        var domain = res['domains'][domainName];
-                        for (var mbeanName in domain) {
-                            if (angular.isString(domain[mbeanName])) {
-                                domain[mbeanName] = res['cache']["" + domain[mbeanName]];
-                            }
-                        }
-                    }
-                    return res['domains'];
+                if (res) {
+                    return this.unwindResponseWithRBACCache(res);
                 }
             }
         };
@@ -1461,11 +1452,25 @@ var Core;
                 var workspace = this;
                 function wrapInValue(response) {
                     var wrapper = {
-                        value: response
+                        value: workspace.unwindResponseWithRBACCache(response)
                     };
                     workspace.populateTree(wrapper);
                 }
                 this.jolokiaList(wrapInValue, { ignoreErrors: true, maxDepth: 8 });
+            }
+        };
+        Workspace.prototype.unwindResponseWithRBACCache = function (res) {
+            if (res['domains'] && res['cache']) {
+                for (var domainName in res['domains']) {
+                    var domainClass = escapeDots(domainName);
+                    var domain = res['domains'][domainName];
+                    for (var mbeanName in domain) {
+                        if (angular.isString(domain[mbeanName])) {
+                            domain[mbeanName] = res['cache']["" + domain[mbeanName]];
+                        }
+                    }
+                }
+                return res['domains'];
             }
         };
         Workspace.prototype.folderGetOrElse = function (folder, value) {
