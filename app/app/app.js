@@ -1472,6 +1472,7 @@ var Core;
                 }
                 return res['domains'];
             }
+            return res;
         };
         Workspace.prototype.folderGetOrElse = function (folder, value) {
             if (folder) {
