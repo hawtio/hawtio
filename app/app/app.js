@@ -20916,6 +20916,15 @@ var DataTable;
                     };
                 }
                 var sortInfo = $scope.config.sortInfo;
+                for (var rowKey in value) {
+                    var row = value[rowKey];
+                    for (var fieldKey in row) {
+                        var field = row[fieldKey];
+                        if (field === null) {
+                            value[rowKey][fieldKey] = "";
+                        }
+                    }
+                }
                 var idx = -1;
                 $scope.rows = (value || []).sortBy(sortInfo.sortBy, !sortInfo.ascending).map(function (entity) {
                     idx++;
