@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+
 import javax.management.MBeanInfo;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -198,10 +199,7 @@ public class RBACDecorator implements RBACDecoratorMBean {
                             mBeanInfo = rbacCache.get(mBeanInfoOrKey.toString());
                         }
                         if (mBeanInfo != null) {
-                            // both "op" and "opByString" may be used in HawtIO
-                            String methodName = method.split("[(]")[0];
-                            ((Map<String, Object>)((Map<String, Object>) mBeanInfo.get("op")).get(methodName)).put("canInvoke", canInvoke);
-                            ((Map<String, Object>)((Map<String, Object>) mBeanInfo.get("opByString")).get(method)).put("canInvoke", canInvoke);
+                            decorateCanInvoke(mBeanInfo, method, canInvoke);
                         }
                     }
 
@@ -277,24 +275,26 @@ public class RBACDecorator implements RBACDecoratorMBean {
             }
             for (Map<String, Object> op : toStringify) {
                 List<Map<String, String>> args = (List<Map<String, String>>) op.get("args");
-                if (args == null || args.size() == 0) {
-                    result.add(operation + "()");
-                } else {
-                    StringWriter sw = null;
-                    for (Map<String, String> arg : args) {
-                        if (sw == null) {
-                            sw = new StringWriter();
-                        } else {
-                            sw.append(',');
-                        }
-                        sw.append(arg.get("type"));
-                    }
-                    result.add(operation + "(" + sw.toString() + ")");
-                }
+                result.add(operation + "(" + argsToString(args) + ")");
             }
         }
 
         return result;
+    }
+
+    private static String argsToString(List<Map<String, String>> args) {
+        if (args == null || args.size() == 0) return "";
+
+        StringWriter sw = null;
+        for (Map<String, String> arg : args) {
+            if (sw == null) {
+                sw = new StringWriter();
+            } else {
+                sw.append(',');
+            }
+            sw.append(arg.get("type"));
+        }
+        return sw.toString();
     }
 
     /**
@@ -427,6 +427,36 @@ public class RBACDecorator implements RBACDecoratorMBean {
         }
 
         return pids1.size() == 0;
+    }
+
+    /**
+     * Decorates {@link MBeanInfo} operations with "canInvoke" entries.
+     * Note both "op" and "opByString" may be used in HawtIO.
+     * @param mBeanInfo
+     * @param method
+     * @param canInvoke
+     */
+    @SuppressWarnings("unchecked")
+    private void decorateCanInvoke(Map<String, Object> mBeanInfo, String method, boolean canInvoke) {
+        // op
+        String[] methodNameAndArgs = method.split("[()]");
+        Object op = ((Map<String, Object>) mBeanInfo.get("op")).get(methodNameAndArgs[0]);
+        if (op instanceof List) { // for method overloading
+            List<Map<String, Object>> overloaded = (List<Map<String, Object>>) op;
+            for (Map<String, Object> m : overloaded) {
+                String args = argsToString((List<Map<String, String>>) m.get("args"));
+                if ((methodNameAndArgs.length == 1 && args.equals(""))
+                        || (methodNameAndArgs.length > 1 && args.equals(methodNameAndArgs[1]))) {
+                    m.put("canInvoke", canInvoke);
+                    break;
+                }
+            }
+        } else {
+            ((Map<String, Object>) op).put("canInvoke", canInvoke);
+        }
+
+        // opByString
+        ((Map<String, Object>) ((Map<String, Object>) mBeanInfo.get("opByString")).get(method)).put("canInvoke", canInvoke);
     }
 
     /**

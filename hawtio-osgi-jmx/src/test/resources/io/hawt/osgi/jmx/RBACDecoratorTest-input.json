@@ -36,7 +36,41 @@
             "args": [],
             "desc": "Operation exposed for management",
             "ret": "void"
-          }
+          },
+          "overloadedMethod": [
+            {
+              "args": [
+                {
+                  "type": "java.lang.String",
+                  "name": "arg1",
+                  "desc": ""
+                }
+              ],
+              "desc": "Dummy method 1 for testing method overloading",
+              "ret": "java.lang.String"
+            },
+            {
+              "args": [
+                {
+                  "type": "java.lang.String",
+                  "name": "arg1",
+                  "desc": ""
+                },
+                {
+                  "type": "java.lang.Object",
+                  "name": "arg2",
+                  "desc": ""
+                }
+              ],
+              "desc": "Dummy method 2 for testing method overloading",
+              "ret": "java.lang.String"
+            },
+            {
+              "args": [],
+              "desc": "Dummy method 3 for testing method overloading",
+              "ret": "java.lang.String"
+            }
+          ]
         },
         "desc": "Information on the management interface of the MBean",
         "not": {}
