@@ -67,6 +67,17 @@ module DataTable {
 
         var sortInfo = $scope.config.sortInfo;
 
+        // Set null fields to empty string as sugar sortBy doesn't handle them correctly
+        for (var rowKey in value) {
+          var row = value[rowKey];
+          for (var fieldKey in row) {
+            var field = row[fieldKey];
+            if (field === null) {
+              value[rowKey][fieldKey] = "";
+            }
+          }
+        }
+
         // enrich the rows with information about their index
         var idx = -1;
         $scope.rows = (value || []).sortBy(sortInfo.sortBy, !sortInfo.ascending).map(entity => {
