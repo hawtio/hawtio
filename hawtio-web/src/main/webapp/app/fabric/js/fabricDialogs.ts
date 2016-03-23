@@ -57,7 +57,7 @@ module Fabric {
           $scope.excludes = [];
           $scope.$watch('selectedVersion.id', (newValue, oldValue) => {
             if (newValue) {
-              if ($scope.excludes.find((v) => {
+              if ($scope.selectedVersion.defaultVersion === true || $scope.excludes.find((v) => {
                 return v === newValue;
               })) {
                 $scope.warning = "This version is in use and cannot be deleted."
