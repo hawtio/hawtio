@@ -182,12 +182,15 @@ public class RBACDecoratorTest {
         assertThat(mbean.get("canInvoke"), equalTo((Object) false));
 
         // op
-        Map<String, Map<String, Object>> op = (Map<String, Map<String, Object>>) mbean.get("op");
+        Map<String, Object> op = (Map<String, Object>) mbean.get("op");
         LOG.info("op = {}", op);
-        assertThat(op.get("removeQueue").get("canInvoke"), equalTo((Object) false));
-        assertThat(op.get("addQueue").get("canInvoke"), equalTo((Object) false));
-        assertThat(op.get("stop").get("canInvoke"), equalTo((Object) true));
-        assertThat(op.get("start").get("canInvoke"), equalTo((Object) true));
+        assertThat(((Map<String, Object>) op.get("removeQueue")).get("canInvoke"), equalTo((Object) false));
+        assertThat(((Map<String, Object>) op.get("addQueue")).get("canInvoke"), equalTo((Object) false));
+        assertThat(((Map<String, Object>) op.get("stop")).get("canInvoke"), equalTo((Object) true));
+        assertThat(((Map<String, Object>) op.get("start")).get("canInvoke"), equalTo((Object) true));
+        assertThat(((List<Map<String, Object>>) op.get("overloadedMethod")).get(0).get("canInvoke"), equalTo((Object) true));
+        assertThat(((List<Map<String, Object>>) op.get("overloadedMethod")).get(1).get("canInvoke"), equalTo((Object) false));
+        assertThat(((List<Map<String, Object>>) op.get("overloadedMethod")).get(2).get("canInvoke"), equalTo((Object) true));
 
         // opByString
         Map<String, Map<String, Boolean>> opByString = (Map<String, Map<String, Boolean>>) mbean.get("opByString");
@@ -197,11 +200,17 @@ public class RBACDecoratorTest {
                 "removeQueue(java.lang.String)",
                 "addQueue(java.lang.String)",
                 "stop()",
-                "start()"));
+                "start()",
+                "overloadedMethod(java.lang.String)",
+                "overloadedMethod(java.lang.String,java.lang.Object)",
+                "overloadedMethod()"));
         assertThat(opByString.get("removeQueue(java.lang.String)").get("canInvoke"), equalTo(false));
         assertThat(opByString.get("addQueue(java.lang.String)").get("canInvoke"), equalTo(false));
         assertThat(opByString.get("stop()").get("canInvoke"), equalTo(true));
         assertThat(opByString.get("start()").get("canInvoke"), equalTo(true));
+        assertThat(opByString.get("overloadedMethod(java.lang.String)").get("canInvoke"), equalTo(true));
+        assertThat(opByString.get("overloadedMethod(java.lang.String,java.lang.Object)").get("canInvoke"), equalTo(false));
+        assertThat(opByString.get("overloadedMethod()").get("canInvoke"), equalTo(true));
     }
 
     @SuppressWarnings("unchecked")
@@ -229,7 +238,9 @@ public class RBACDecoratorTest {
         CompositeData cdForMBeanOps = mock(CompositeData.class);
         when((Collection<CompositeData>) td.values()).thenReturn(
                 Arrays.asList(cdForMBeans),
-                Arrays.asList(cdForMBeanOps, cdForMBeanOps, cdForMBeanOps, cdForMBeanOps));
+                Arrays.asList(
+                        cdForMBeanOps, cdForMBeanOps, cdForMBeanOps, cdForMBeanOps,
+                        cdForMBeanOps, cdForMBeanOps, cdForMBeanOps));
         when(cdForMBeans.get("ObjectName")).thenReturn("org.apache.activemq:type=Broker,brokerName=amq");
         when(cdForMBeans.get("CanInvoke")).thenReturn(false);
         when(cdForMBeanOps.get("ObjectName")).thenReturn("org.apache.activemq:type=Broker,brokerName=amq");
@@ -237,15 +248,20 @@ public class RBACDecoratorTest {
                 "removeQueue(java.lang.String)",
                 "addQueue(java.lang.String)",
                 "stop()",
-                "start()");
+                "start()",
+                "overloadedMethod(java.lang.String)",
+                "overloadedMethod(java.lang.String,java.lang.Object)",
+                "overloadedMethod()");
         // invoked two times for each cd
         when(cdForMBeanOps.get("CanInvoke")).thenReturn(
                 false, false,
                 false, false,
                 true, true,
+                true, true,
+                true, true,
+                false, false,
                 true, true);
 
         return bc;
     }
-
 }
