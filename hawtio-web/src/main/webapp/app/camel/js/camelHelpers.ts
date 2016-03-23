@@ -960,18 +960,21 @@ module Camel {
     var selection = workspace.selection;
     if (selection) {
       // find the camel context and find ancestors in the tree until we find the camel context selection
-      // this is either if the title is 'context' or if the parent title is 'org.apache.camel' (the Camel tree is a bit special)
-      selection = selection.findAncestor(s => s.title === 'context' || s.parent != null && s.parent.title === 'org.apache.camel');
+      // this is either if the title is 'context' or 'Camel Contexts', or if the parent title is 'org.apache.camel'
+      // (the Camel tree is a bit special)
+      selection = selection.findAncestor(s =>
+        s.title === 'context' || s.title === 'Camel Contexts'
+        || s.parent != null && s.parent.title === 'org.apache.camel');
       if (selection) {
         var tree = workspace.tree;
         var folderNames = selection.folderNames;
-        var entries = selection.entries;
+        var children = selection.children;
         var contextId;
         if (tree) {
           if (folderNames && folderNames.length > 1) {
             contextId = folderNames[1];
-          } else if (entries) {
-            contextId = entries["context"];
+          } else if (children && children.length > 0 && children[0].entries) {
+            contextId = children[0].entries["context"];
           }
         }
       }

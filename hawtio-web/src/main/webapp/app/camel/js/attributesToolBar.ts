@@ -3,6 +3,9 @@ module Camel {
 
   _module.controller("Camel.AttributesToolBarController", ["$scope", "workspace", "jolokia", ($scope, workspace:Workspace, jolokia) => {
 
+    $scope.camelContextMBean = getSelectionCamelContextMBean(workspace);
+    $scope.routeMBean = searchRouteMBean();
+
     $scope.deleteDialog = false
 
     $scope.start = () => {
@@ -44,5 +47,22 @@ module Camel {
       var selected = $scope.selectedItems || [];
       return selected.length && selected.every((s) => isState(s, state));
     };
+
+    function searchRouteMBean() {
+      var routeId = getSelectedRouteId(workspace);
+      if (!routeId) {
+        // parent may have the route
+        routeId = getSelectedRouteId(workspace, workspace.selection.parent);
+      }
+      if (!routeId) {
+        // forces selecting one route so that RBAC can be determined
+        var children = workspace.selection.children;
+        if (children && children.length > 0) {
+          routeId = getSelectedRouteId(workspace, children[0])
+        }
+      }
+      return getSelectionRouteMBean(workspace, routeId);
+    }
   }]);
+
 }
