@@ -21058,7 +21058,7 @@ var DataTable;
                 return match;
             };
             $scope.isSelected = function (row) {
-                return config.selectedItems.some(row.entity);
+                return (row) && config.selectedItems.some(row.entity);
             };
             $scope.onRowSelected = function (row) {
                 var idx = config.selectedItems.indexOf(row.entity);
@@ -32991,6 +32991,15 @@ var Jmx;
             $scope.nid = $location.search()['nid'];
             Jmx.log.debug("nid: ", $scope.nid);
             setTimeout(updateTableContents, 50);
+        });
+        $scope.$on('jmxTreeUpdated', function () {
+            Core.unregister(jolokia, $scope);
+            if (pendingUpdate) {
+                clearTimeout(pendingUpdate);
+            }
+            pendingUpdate = setTimeout(function () {
+                updateTableContents();
+            }, 500);
         });
         var pendingUpdate = null;
         $scope.$watch('gridOptions.filterOptions.filterText', function (newValue, oldValue) {
