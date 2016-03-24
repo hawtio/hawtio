@@ -133,6 +133,16 @@ module Jmx {
       setTimeout(updateTableContents, 50);
     });
 
+    $scope.$on('jmxTreeUpdated', function () {
+      Core.unregister(jolokia, $scope);
+      if (pendingUpdate) {
+        clearTimeout(pendingUpdate);
+      }
+      pendingUpdate = setTimeout(() => {
+        updateTableContents();
+      }, 500);
+    });
+
     var pendingUpdate = null;
 
     $scope.$watch('gridOptions.filterOptions.filterText', (newValue, oldValue) => {
