@@ -815,15 +815,31 @@ module Core {
                   log.debug("Could not find method:", method, " to check permissions, skipping");
                   return;
                 }
-                if (angular.isDefined(op.canInvoke)) {
-                  canInvoke = op.canInvoke;
-                }
+                canInvoke = this.resolveCanInvoke(op);
               });
             }
           }
         }
       } 
       return canInvoke;
+    }
+
+    private resolveCanInvoke(op) {
+      // for single method
+      if (!angular.isArray(op)) {
+        if (angular.isDefined(op.canInvoke)) {
+          return op.canInvoke;
+        } else {
+          return true;
+        }
+      }
+
+      // for overloaded methods
+      // returns true only if all overloaded methods can be invoked (i.e. canInvoke=true)
+      var cantInvoke = (<Array<any>> op).find((o) =>
+        angular.isDefined(o.canInvoke) && !o.canInvoke
+      );
+      return !angular.isDefined(cantInvoke);
     }
 
     public treeContainsDomainAndProperties(domainName, properties = null) {
