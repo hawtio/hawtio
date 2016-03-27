@@ -1,14 +1,17 @@
 <div class="row-fluid">
   <div class="span6" ng-controller="Camel.AttributesToolBarController">
     <div class="control-group">
-      <button class="btn" ng-disabled="!anySelectionHasState(['stop', 'suspend'])" ng-click="start()"><i
-              class="icon-play-circle"></i> Start
+      <button class="btn" ng-disabled="!anySelectionHasState(['stop', 'suspend'])" ng-click="start()"
+              hawtio-show object-name="{{camelContextMBean}}" method-name="start"
+              ><i class="icon-play-circle"></i> Start
       </button>
-      <button class="btn" ng-disabled="!anySelectionHasState('start')" ng-click="pause()"><i class="icon-pause"></i>
-        Pause
+      <button class="btn" ng-disabled="!anySelectionHasState('start')" ng-click="pause()"
+              hawtio-show object-name="{{camelContextMBean}}" method-name="suspend"
+              ><i class="icon-pause"></i> Pause
       </button>
-      <button class="btn" ng-disabled="!anySelectionHasState(['start', 'suspend'])" ng-click="deleteDialog = true"><i
-              class="icon-remove"></i> Destroy
+      <button class="btn" ng-disabled="!anySelectionHasState(['start', 'suspend'])" ng-click="deleteDialog = true"
+              hawtio-show object-name="{{camelContextMBean}}" method-name="stop"
+              ><i class="icon-remove"></i> Destroy
       </button>
     </div>
 
