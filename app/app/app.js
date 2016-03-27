@@ -1921,6 +1921,7 @@ var Core;
             return canInvoke;
         };
         Workspace.prototype.hasInvokeRights = function (selection) {
+            var _this = this;
             var methods = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 methods[_i - 1] = arguments[_i];
@@ -1952,15 +1953,25 @@ var Core;
                                     log.debug("Could not find method:", method, " to check permissions, skipping");
                                     return;
                                 }
-                                if (angular.isDefined(op.canInvoke)) {
-                                    canInvoke = op.canInvoke;
-                                }
+                                canInvoke = _this.resolveCanInvoke(op);
                             });
                         }
                     }
                 }
             }
             return canInvoke;
+        };
+        Workspace.prototype.resolveCanInvoke = function (op) {
+            if (!angular.isArray(op)) {
+                if (angular.isDefined(op.canInvoke)) {
+                    return op.canInvoke;
+                }
+                else {
+                    return true;
+                }
+            }
+            var cantInvoke = op.find(function (o) { return angular.isDefined(o.canInvoke) && !o.canInvoke; });
+            return !angular.isDefined(cantInvoke);
         };
         Workspace.prototype.treeContainsDomainAndProperties = function (domainName, properties) {
             var _this = this;
@@ -10276,18 +10287,18 @@ var Camel;
     function getContextId(workspace) {
         var selection = workspace.selection;
         if (selection) {
-            selection = selection.findAncestor(function (s) { return s.title === 'context' || s.parent != null && s.parent.title === 'org.apache.camel'; });
+            selection = selection.findAncestor(function (s) { return s.title === 'context' || s.title === 'Camel Contexts' || s.parent != null && s.parent.title === 'org.apache.camel'; });
             if (selection) {
                 var tree = workspace.tree;
                 var folderNames = selection.folderNames;
-                var entries = selection.entries;
+                var children = selection.children;
                 var contextId;
                 if (tree) {
                     if (folderNames && folderNames.length > 1) {
                         contextId = folderNames[1];
                     }
-                    else if (entries) {
-                        contextId = entries["context"];
+                    else if (children && children.length > 0 && children[0].entries) {
+                        contextId = children[0].entries["context"];
                     }
                 }
             }
@@ -11198,6 +11209,8 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.AttributesToolBarController", ["$scope", "workspace", "jolokia", function ($scope, workspace, jolokia) {
+        $scope.camelContextMBean = Camel.getSelectionCamelContextMBean(workspace);
+        $scope.routeMBean = searchRouteMBean();
         $scope.deleteDialog = false;
         $scope.start = function () {
             $scope.invokeSelectedMBeans(function (item) {
@@ -11227,6 +11240,19 @@ var Camel;
             var selected = $scope.selectedItems || [];
             return selected.length && selected.every(function (s) { return Camel.isState(s, state); });
         };
+        function searchRouteMBean() {
+            var routeId = Camel.getSelectedRouteId(workspace);
+            if (!routeId) {
+                routeId = Camel.getSelectedRouteId(workspace, workspace.selection.parent);
+            }
+            if (!routeId) {
+                var children = workspace.selection.children;
+                if (children && children.length > 0) {
+                    routeId = Camel.getSelectedRouteId(workspace, children[0]);
+                }
+            }
+            return Camel.getSelectionRouteMBean(workspace, routeId);
+        }
     }]);
 })(Camel || (Camel = {}));
 var Camel;
@@ -15037,6 +15063,7 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.SourceController", ["$scope", "workspace", function ($scope, workspace) {
         $scope.workspace = workspace;
+        $scope.camelContextMBean = Camel.getSelectionCamelContextMBean(workspace);
         $scope.$on("$routeChangeSuccess", function (event, current, previous) {
             setTimeout(updateRoutes, 50);
         });
