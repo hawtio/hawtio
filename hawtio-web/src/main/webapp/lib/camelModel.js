@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.16.2';
+var _apacheCamelModelVersion = '2.17.0';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -206,7 +206,7 @@ var _apacheCamelModel ={
         "closeCorrelationKeyOnCompletion": {
           "kind": "attribute",
           "type": "integer",
-          "description": "Closes a correlation key when its complete. Any late received exchanges which has a correlation key that has been closed it will be defined and a org.apache.camel.processor.aggregate.ClosedCorrelationKeyException is thrown.",
+          "description": "Closes a correlation key when its complete. Any late received exchanges which has a correlation key that has been closed it will be defined and a ClosedCorrelationKeyException is thrown.",
           "title": "Close Correlation Key On Completion",
           "required": false,
           "deprecated": false
@@ -650,6 +650,14 @@ var _apacheCamelModel ={
       "acceptOutput": "true",
       "nextSiblingAddedAsChild": "false",
       "properties": {
+        "expression": {
+          "kind": "expression",
+          "type": "object",
+          "description": "Expression to define how long time to wait (in millis)",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
         "executorServiceRef": {
           "kind": "attribute",
           "type": "string",
@@ -674,14 +682,6 @@ var _apacheCamelModel ={
           "description": "Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true",
           "title": "Caller Runs When Rejected",
           "required": false,
-          "deprecated": false
-        },
-        "expression": {
-          "kind": "expression",
-          "type": "object",
-          "description": "Expression to define how long time to wait (in millis)",
-          "title": "Expression",
-          "required": true,
           "deprecated": false
         },
         "id": {
@@ -880,6 +880,14 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
       "properties": {
+        "expression": {
+          "kind": "expression",
+          "type": "object",
+          "description": "Expression to call that returns the endpoint(s) to route to in the dynamic routing. Important: The expression will be called in a while loop fashion until the expression returns null which means the dynamic router is finished.",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
         "uriDelimiter": {
           "kind": "attribute",
           "type": "string",
@@ -904,14 +912,6 @@ var _apacheCamelModel ={
           "description": "Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this recipient list when uris are reused.",
           "title": "Cache Size",
           "required": false,
-          "deprecated": false
-        },
-        "expression": {
-          "kind": "expression",
-          "type": "object",
-          "description": "Expression to call that returns the endpoint(s) to route to in the dynamic routing. Important: The expression will be called in a while loop fashion until the expression returns null which means the dynamic router is finished.",
-          "title": "Expression",
-          "required": true,
           "deprecated": false
         },
         "id": {
@@ -942,6 +942,14 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
       "properties": {
+        "expression": {
+          "kind": "expression",
+          "type": "object",
+          "description": "Expression that computes the endpoint uri to use as the resource endpoint to enrich from",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
         "strategyRef": {
           "kind": "attribute",
           "type": "string",
@@ -1000,14 +1008,6 @@ var _apacheCamelModel ={
           "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint",
           "title": "Ignore Invalid Endpoint",
           "required": false,
-          "deprecated": false
-        },
-        "expression": {
-          "kind": "expression",
-          "type": "object",
-          "description": "Expression that computes the endpoint uri to use as the resource endpoint to enrich from",
-          "title": "Expression",
-          "required": true,
           "deprecated": false
         },
         "id": {
@@ -1173,6 +1173,14 @@ var _apacheCamelModel ={
       "acceptOutput": "true",
       "nextSiblingAddedAsChild": "false",
       "properties": {
+        "expression": {
+          "kind": "expression",
+          "type": "object",
+          "description": "Expression used to calculate the correlation key to use for duplicate check. The Exchange which has the same correlation key is regarded as a duplicate and will be rejected.",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
         "messageIdRepositoryRef": {
           "kind": "attribute",
           "type": "string",
@@ -1215,14 +1223,6 @@ var _apacheCamelModel ={
           "description": "Sets whether to remove or keep the key on failure. The default behavior is to remove the key on failure.",
           "title": "Remove On Failure",
           "required": false,
-          "deprecated": false
-        },
-        "expression": {
-          "kind": "expression",
-          "type": "object",
-          "description": "Expression used to calculate the correlation key to use for duplicate check. The Exchange which has the same correlation key is regarded as a duplicate and will be rejected.",
-          "title": "Expression",
-          "required": true,
           "deprecated": false
         },
         "id": {
@@ -1565,6 +1565,14 @@ var _apacheCamelModel ={
       "acceptOutput": "true",
       "nextSiblingAddedAsChild": "false",
       "properties": {
+        "expression": {
+          "kind": "expression",
+          "type": "object",
+          "description": "Expression to define how many times we should loop. Notice the expression is only evaluated once and should return a number as how many times to loop. A value of zero or negative means no looping. The loop is like a for-loop fashion if you want a while loop then the dynamic router may be a better choice.",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
         "copy": {
           "kind": "attribute",
           "type": "boolean",
@@ -1574,12 +1582,13 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
-        "expression": {
-          "kind": "expression",
-          "type": "object",
-          "description": "Expression to define how many times we should loop. Notice the expression is only evaluated once and should return a number as how many times to loop. A value of zero or negative means no looping. The loop is like a for-loop fashion if you want a while loop then the dynamic router may be a better choice.",
-          "title": "Expression",
-          "required": true,
+        "doWhile": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Enables the while loop that loops until the predicate evaluates to false or null.",
+          "title": "Do While",
+          "required": false,
           "deprecated": false
         },
         "id": {
@@ -1931,6 +1940,14 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "onExceptionOccurredRef": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets a reference to a processor that should be processed just after an exception occurred. Can be used to perform custom logging about the occurred exception at the exact time it happened. Important: Any exception thrown from this processor will be ignored.",
+          "title": "On Exception Occurred Ref",
+          "required": false,
+          "deprecated": false
+        },
         "useOriginalMessage": {
           "kind": "attribute",
           "type": "boolean",
@@ -2152,6 +2169,14 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
       "properties": {
+        "expression": {
+          "kind": "expression",
+          "type": "object",
+          "description": "Expression that computes the endpoint uri to use as the resource endpoint to enrich from",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
         "timeout": {
           "kind": "attribute",
           "type": "integer",
@@ -2210,14 +2235,6 @@ var _apacheCamelModel ={
           "description": "Ignore the invalidate endpoint exception when try to create a producer with that endpoint",
           "title": "Ignore Invalid Endpoint",
           "required": false,
-          "deprecated": false
-        },
-        "expression": {
-          "kind": "expression",
-          "type": "object",
-          "description": "Expression that computes the endpoint uri to use as the resource endpoint to enrich from",
-          "title": "Expression",
-          "required": true,
           "deprecated": false
         },
         "id": {
@@ -2352,6 +2369,14 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
       "properties": {
+        "expression": {
+          "kind": "expression",
+          "type": "object",
+          "description": "Expression that returns which endpoints (url) to send the message to (the recipients). If the expression return an empty value then the message is not sent to any recipients.",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
         "delimiter": {
           "kind": "attribute",
           "type": "string",
@@ -2471,14 +2496,6 @@ var _apacheCamelModel ={
           "description": "If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.",
           "title": "Parallel Aggregate",
           "required": false,
-          "deprecated": false
-        },
-        "expression": {
-          "kind": "expression",
-          "type": "object",
-          "description": "Expression that returns which endpoints (url) to send the message to (the recipients). If the expression return an empty value then the message is not sent to any recipients.",
-          "title": "Expression",
-          "required": true,
           "deprecated": false
         },
         "id": {
@@ -2652,6 +2669,14 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Sets whether exhausted exceptions should be logged including message history or not (supports property placeholders). Can be used to include or reduce verbose.",
           "title": "Log Exhausted Message History",
+          "required": false,
+          "deprecated": false
+        },
+        "logExhaustedMessageBody": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets whether exhausted message body should be logged including message history or not (supports property placeholders). Can be used to include or reduce verbose. Requires logExhaustedMessageHistory to be enabled.",
+          "title": "Log Exhausted Message Body",
           "required": false,
           "deprecated": false
         },
@@ -2859,20 +2884,20 @@ var _apacheCamelModel ={
       "acceptOutput": "true",
       "nextSiblingAddedAsChild": "false",
       "properties": {
-        "resequencerConfig": {
-          "kind": "element",
-          "type": "object",
-          "description": "To configure the resequencer in using either batch or stream configuration. Will by default use batch configuration.",
-          "title": "Resequencer Config",
-          "required": false,
-          "deprecated": false
-        },
         "expression": {
           "kind": "expression",
           "type": "object",
           "description": "Expression to use for re-ordering the messages such as a header with a sequence number",
           "title": "Expression",
           "required": true,
+          "deprecated": false
+        },
+        "resequencerConfig": {
+          "kind": "element",
+          "type": "object",
+          "description": "To configure the resequencer in using either batch or stream configuration. Will by default use batch configuration.",
+          "title": "Resequencer Config",
+          "required": false,
           "deprecated": false
         },
         "id": {
@@ -3189,6 +3214,14 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
       "properties": {
+        "expression": {
+          "kind": "expression",
+          "type": "object",
+          "description": "Expression to define the routing slip which defines which endpoints to route the message in a pipeline style. Notice the expression is evaluated once if you want a more dynamic style then the dynamic router eip is a better choice.",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
         "uriDelimiter": {
           "kind": "attribute",
           "type": "string",
@@ -3213,14 +3246,6 @@ var _apacheCamelModel ={
           "description": "Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this recipient list when uris are reused.",
           "title": "Cache Size",
           "required": false,
-          "deprecated": false
-        },
-        "expression": {
-          "kind": "expression",
-          "type": "object",
-          "description": "Expression to define the routing slip which defines which endpoints to route the message in a pipeline style. Notice the expression is evaluated once if you want a more dynamic style then the dynamic router eip is a better choice.",
-          "title": "Expression",
-          "required": true,
           "deprecated": false
         },
         "id": {
@@ -3451,19 +3476,19 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
       "properties": {
-        "headerName": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Name of message header to set a new value",
-          "title": "Header Name",
-          "required": true,
-          "deprecated": false
-        },
         "expression": {
           "kind": "expression",
           "type": "object",
           "description": "Expression to return the value of the header",
           "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
+        "headerName": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Name of message header to set a new value The simple language can be used to define a dynamic evaluated header name to be used. Otherwise a constant name will be used.",
+          "title": "Header Name",
           "required": true,
           "deprecated": false
         },
@@ -3495,19 +3520,19 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
       "properties": {
-        "headerName": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Name of message header to set a new value",
-          "title": "Header Name",
-          "required": true,
-          "deprecated": false
-        },
         "expression": {
           "kind": "expression",
           "type": "object",
           "description": "Expression to return the value of the header",
           "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
+        "headerName": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Name of message header to set a new value",
+          "title": "Header Name",
           "required": true,
           "deprecated": false
         },
@@ -3539,19 +3564,19 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
       "properties": {
-        "propertyName": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Name of exchange property to set a new value",
-          "title": "Property Name",
-          "required": true,
-          "deprecated": false
-        },
         "expression": {
           "kind": "expression",
           "type": "object",
           "description": "Expression to return the value of the message exchange property",
           "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
+        "propertyName": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Name of exchange property to set a new value. The simple language can be used to define a dynamic evaluated exchange property name to be used. Otherwise a constant name will be used.",
+          "title": "Property Name",
           "required": true,
           "deprecated": false
         },
@@ -3583,20 +3608,20 @@ var _apacheCamelModel ={
       "acceptOutput": "false",
       "nextSiblingAddedAsChild": "true",
       "properties": {
-        "comparatorRef": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets a reference to lookup for the comparator to use for sorting",
-          "title": "Comparator Ref",
-          "required": false,
-          "deprecated": false
-        },
         "expression": {
           "kind": "expression",
           "type": "object",
           "description": "Optional expression to sort by something else than the message body",
           "title": "Expression",
           "required": true,
+          "deprecated": false
+        },
+        "comparatorRef": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets a reference to lookup for the comparator to use for sorting",
+          "title": "Comparator Ref",
+          "required": false,
           "deprecated": false
         },
         "id": {
@@ -3627,6 +3652,14 @@ var _apacheCamelModel ={
       "acceptOutput": "true",
       "nextSiblingAddedAsChild": "false",
       "properties": {
+        "expression": {
+          "kind": "expression",
+          "type": "object",
+          "description": "Expression of how to split the message body such as as-is using a tokenizer or using an xpath.",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
         "parallelProcessing": {
           "kind": "attribute",
           "type": "boolean",
@@ -3720,14 +3753,6 @@ var _apacheCamelModel ={
           "description": "If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.",
           "title": "Parallel Aggregate",
           "required": false,
-          "deprecated": false
-        },
-        "expression": {
-          "kind": "expression",
-          "type": "object",
-          "description": "Expression of how to split the message body such as as-is using a tokenizer or using an xpath.",
-          "title": "Expression",
-          "required": true,
           "deprecated": false
         },
         "id": {
@@ -4078,6 +4103,14 @@ var _apacheCamelModel ={
       "acceptOutput": "true",
       "nextSiblingAddedAsChild": "false",
       "properties": {
+        "expression": {
+          "kind": "expression",
+          "type": "object",
+          "description": "Expression to configure the maximum number of messages to throttle per request",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
         "executorServiceRef": {
           "kind": "attribute",
           "type": "string",
@@ -4120,14 +4153,6 @@ var _apacheCamelModel ={
           "description": "Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false",
           "title": "Reject Execution",
           "required": false,
-          "deprecated": false
-        },
-        "expression": {
-          "kind": "expression",
-          "type": "object",
-          "description": "Expression to configure the maximum number of messages to throttle per request",
-          "title": "Expression",
-          "required": true,
           "deprecated": false
         },
         "id": {
@@ -4812,6 +4837,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "apiDocs": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to include or exclude the VerbDefinition in API documentation. The default value is true.",
+          "title": "Api Docs",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -4929,6 +4963,15 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "The route id this rest-dsl is using (read-only)",
           "title": "Route Id",
+          "required": false,
+          "deprecated": false
+        },
+        "apiDocs": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to include or exclude the VerbDefinition in API documentation. The default value is true.",
+          "title": "Api Docs",
           "required": false,
           "deprecated": false
         },
@@ -5052,6 +5095,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "apiDocs": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to include or exclude the VerbDefinition in API documentation. The default value is true.",
+          "title": "Api Docs",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -5172,6 +5224,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "apiDocs": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to include or exclude the VerbDefinition in API documentation. The default value is true.",
+          "title": "Api Docs",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -5212,7 +5273,7 @@ var _apacheCamelModel ={
           "kind": "attribute",
           "type": "string",
           "defaultValue": "path",
-          "enum": [ "body", "form", "header", "path", "query" ],
+          "enum": [ "body", "formData", "header", "path", "query" ],
           "description": "Sets the Swagger Parameter type.",
           "title": "Type",
           "required": true,
@@ -5235,12 +5296,22 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
-        "allowMultiple": {
+        "collectionFormat": {
           "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Sets the Swagger Parameter allowMultiple flag.",
-          "title": "Allow Multiple",
+          "type": "string",
+          "defaultValue": "csv",
+          "enum": [ "csv", "multi", "pipes", "ssv", "tsv" ],
+          "description": "Sets the Swagger Parameter collection format.",
+          "title": "Collection Format",
+          "required": false,
+          "deprecated": false
+        },
+        "arrayType": {
+          "kind": "attribute",
+          "type": "string",
+          "defaultValue": "string",
+          "description": "Sets the Swagger Parameter array type. Required if data type is array. Describes the type of items in the array.",
+          "title": "Array Type",
           "required": false,
           "deprecated": false
         },
@@ -5256,7 +5327,7 @@ var _apacheCamelModel ={
         "value": {
           "kind": "element",
           "type": "array",
-          "description": "Sets the Swagger Parameter list of allowable values.",
+          "description": "Sets the Swagger Parameter list of allowable values (enum).",
           "title": "Value",
           "required": false,
           "deprecated": false
@@ -5381,6 +5452,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "apiDocs": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to include or exclude the VerbDefinition in API documentation. The default value is true.",
+          "title": "Api Docs",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -5501,6 +5581,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "apiDocs": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to include or exclude the VerbDefinition in API documentation. The default value is true.",
+          "title": "Api Docs",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -5513,6 +5602,70 @@ var _apacheCamelModel ={
           "kind": "element",
           "type": "object",
           "description": "Sets the description of this node",
+          "title": "Description",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
+    "responseHeader": {
+      "type": "object",
+      "title": "Response Header",
+      "group": "rest",
+      "icon": "generic24.png",
+      "description": "To specify the rest operation response headers using Swagger.",
+      "acceptInput": "false",
+      "acceptOutput": "false",
+      "nextSiblingAddedAsChild": "false",
+      "properties": {
+        "name": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Name of the parameter. This option is mandatory.",
+          "title": "Name",
+          "required": true,
+          "deprecated": false
+        },
+        "collectionFormat": {
+          "kind": "attribute",
+          "type": "string",
+          "defaultValue": "csv",
+          "enum": [ "csv", "multi", "pipes", "ssv", "tsv" ],
+          "description": "Sets the Swagger Parameter collection format.",
+          "title": "Collection Format",
+          "required": false,
+          "deprecated": false
+        },
+        "arrayType": {
+          "kind": "attribute",
+          "type": "string",
+          "defaultValue": "string",
+          "description": "Sets the Swagger Parameter array type. Required if data type is array. Describes the type of items in the array.",
+          "title": "Array Type",
+          "required": false,
+          "deprecated": false
+        },
+        "dataType": {
+          "kind": "attribute",
+          "type": "string",
+          "defaultValue": "string",
+          "description": "Sets the Swagger header data type.",
+          "title": "Data Type",
+          "required": false,
+          "deprecated": false
+        },
+        "value": {
+          "kind": "element",
+          "type": "array",
+          "description": "Sets the Swagger Parameter list of allowable values.",
+          "title": "Value",
+          "required": false,
+          "deprecated": false
+        },
+        "description": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Description of the parameter.",
           "title": "Description",
           "required": false,
           "deprecated": false
@@ -5551,6 +5704,14 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "The response model",
           "title": "Response Model",
+          "required": false,
+          "deprecated": false
+        },
+        "header": {
+          "kind": "element",
+          "type": "array",
+          "description": "Adds a response header",
+          "title": "Header",
           "required": false,
           "deprecated": false
         }
@@ -5623,6 +5784,15 @@ var _apacheCamelModel ={
           "defaultValue": "false",
           "description": "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false.",
           "title": "Enable C O R S",
+          "required": false,
+          "deprecated": false
+        },
+        "apiDocs": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to include or exclude the VerbDefinition in API documentation. This option will override what may be configured on a parent level The default value is true.",
+          "title": "Api Docs",
           "required": false,
           "deprecated": false
         },
@@ -5843,7 +6013,7 @@ var _apacheCamelModel ={
         "hostNameResolver": {
           "kind": "attribute",
           "type": "string",
-          "enum": [ "localHostName", "localIp" ],
+          "enum": [ "allLocalIp", "localHostName", "localIp" ],
           "description": "If no hostname has been explicit configured then this resolver is used to compute the hostname the REST service will be using.",
           "title": "Host Name Resolver",
           "required": false,
@@ -6129,6 +6299,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "apiDocs": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to include or exclude the VerbDefinition in API documentation. The default value is true.",
+          "title": "Api Docs",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -6390,6 +6569,15 @@ var _apacheCamelModel ={
           "description": "Class name of the java type to use when unarmshalling",
           "title": "Unmarshal Type Name",
           "required": true,
+          "deprecated": false
+        },
+        "useList": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "To unarmshal to a List of Map or a List of Pojo.",
+          "title": "Use List",
+          "required": false,
           "deprecated": false
         },
         "id": {
@@ -6904,6 +7092,23 @@ var _apacheCamelModel ={
         }
       }
     },
+    "hessian": {
+      "type": "object",
+      "title": "Hessian",
+      "group": "dataformat,transformation",
+      "icon": "generic24.png",
+      "description": "Hessian data format",
+      "properties": {
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the value of the id property.",
+          "title": "Id",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
     "hl7": {
       "type": "object",
       "title": "HL7",
@@ -6963,6 +7168,14 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "Jackson XML data format",
       "properties": {
+        "xmlMapper": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Lookup and use the existing XmlMapper with the given id.",
+          "title": "Xml Mapper",
+          "required": false,
+          "deprecated": false
+        },
         "prettyPrint": {
           "kind": "attribute",
           "type": "boolean",
@@ -7105,6 +7318,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "objectFactory": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to allow using ObjectFactory classes to create the POJO classes during marshalling. This only applies to POJO classes that has not been annotated with JAXB and providing jaxb.index descriptor files.",
+          "title": "Object Factory",
+          "required": false,
+          "deprecated": false
+        },
         "ignoreJAXBElement": {
           "kind": "attribute",
           "type": "boolean",
@@ -7189,6 +7411,14 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "noNamespaceSchemaLocation": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "To define the location of the namespaceless schema",
+          "title": "No Namespace Schema Location",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -7239,6 +7469,14 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "Json data format",
       "properties": {
+        "objectMapper": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Lookup and use the existing ObjectMapper with the given id when using Jackson.",
+          "title": "Object Mapper",
+          "required": false,
+          "deprecated": false
+        },
         "prettyPrint": {
           "kind": "attribute",
           "type": "boolean",
@@ -7354,6 +7592,93 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from xml/json to Java beans. A permission must be configured either here or globally using a JVM system property. The permission can be specified in a syntax where a plus sign is allow and minus sign is deny. Wildcards is supported by using . as prefix. For example to allow com.foo and all subpackages then specfy com.foo.. Multiple permissions can be configured separated by comma such as com.foo.-com.foo.bar.MySecretBean. The following default permission is always included: -java.lang.java.util. unless its overridden by specifying a JVM system property with they key org.apache.camel.xstream.permissions.",
           "title": "Permissions",
+          "required": false,
+          "deprecated": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the value of the id property.",
+          "title": "Id",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
+    "lzf": {
+      "type": "object",
+      "title": "LZF Deflate Compression",
+      "group": "dataformat,transformation",
+      "icon": "generic24.png",
+      "description": "lzf data format",
+      "properties": {
+        "usingParallelCompression": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Enable encoding (compress) using multiple processing cores.",
+          "title": "Using Parallel Compression",
+          "required": false,
+          "deprecated": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the value of the id property.",
+          "title": "Id",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
+    "mime-multipart": {
+      "type": "object",
+      "title": "MIME Multipart",
+      "group": "dataformat,transformation",
+      "icon": "generic24.png",
+      "description": "MIME Multipart data format",
+      "properties": {
+        "multipartSubType": {
+          "kind": "attribute",
+          "type": "string",
+          "defaultValue": "mixed",
+          "description": "Specify the subtype of the MIME Multipart. Default is mixed.",
+          "title": "Multipart Sub Type",
+          "required": false,
+          "deprecated": false
+        },
+        "multipartWithoutAttachment": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Defines whether a message without attachment is also marshaled into a MIME Multipart (with only one body part). Default is false.",
+          "title": "Multipart Without Attachment",
+          "required": false,
+          "deprecated": false
+        },
+        "headersInline": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Defines whether the MIME-Multipart headers are part of the message body (true) or are set as Camel headers (false). Default is false.",
+          "title": "Headers Inline",
+          "required": false,
+          "deprecated": false
+        },
+        "includeHeaders": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "A regex that defines which Camel headers are also included as MIME headers into the MIME multipart. This will only work if headersInline is set to true. Default is to include no headers",
+          "title": "Include Headers",
+          "required": false,
+          "deprecated": false
+        },
+        "binaryContent": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Defines whether the content of binary parts in the MIME multipart is binary (true) or Base-64 encoded (false) Default is false.",
+          "title": "Binary Content",
           "required": false,
           "deprecated": false
         },
@@ -8574,6 +8899,91 @@ var _apacheCamelModel ={
         }
       }
     },
+    "yaml": {
+      "type": "object",
+      "title": "YAML",
+      "group": "dataformat,transformation,yaml",
+      "icon": "generic24.png",
+      "description": "YAML data format",
+      "properties": {
+        "library": {
+          "kind": "attribute",
+          "type": "string",
+          "defaultValue": "SnakeYAML",
+          "enum": [ "SnakeYAML" ],
+          "description": "Which yaml library to use such. Is by default SnakeYAML",
+          "title": "Library",
+          "required": false,
+          "deprecated": false
+        },
+        "unmarshalTypeName": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Class name of the java type to use when unarmshalling",
+          "title": "Unmarshal Type Name",
+          "required": false,
+          "deprecated": false
+        },
+        "constructor": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "BaseConstructor to construct incoming documents.",
+          "title": "Constructor",
+          "required": false,
+          "deprecated": false
+        },
+        "representer": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Representer to emit outgoing objects.",
+          "title": "Representer",
+          "required": false,
+          "deprecated": false
+        },
+        "dumperOptions": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "DumperOptions to configure outgoing objects.",
+          "title": "Dumper Options",
+          "required": false,
+          "deprecated": false
+        },
+        "resolver": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Resolver to detect implicit type",
+          "title": "Resolver",
+          "required": false,
+          "deprecated": false
+        },
+        "useApplicationContextClassLoader": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "true",
+          "description": "Use ApplicationContextClassLoader as custom ClassLoader",
+          "title": "Use Application Context Class Loader",
+          "required": false,
+          "deprecated": false
+        },
+        "prettyFlow": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Force the emitter to produce a pretty YAML document when using the flow style.",
+          "title": "Pretty Flow",
+          "required": false,
+          "deprecated": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the value of the id property.",
+          "title": "Id",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
     "zip": {
       "type": "object",
       "title": "Zip Deflate Compression",
@@ -8873,6 +9283,14 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For JSonPath expressions and predicates",
       "properties": {
+        "expression": {
+          "kind": "value",
+          "type": "string",
+          "description": "The expression value in your chosen language syntax",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
         "resultType": {
           "kind": "attribute",
           "type": "string",
@@ -8888,14 +9306,6 @@ var _apacheCamelModel ={
           "description": "Whether to suppress exceptions such as PathNotFoundException.",
           "title": "Suppress Exceptions",
           "required": false,
-          "deprecated": false
-        },
-        "expression": {
-          "kind": "value",
-          "type": "string",
-          "description": "The expression value in your chosen language syntax",
-          "title": "Expression",
-          "required": true,
           "deprecated": false
         },
         "trim": {
@@ -8924,6 +9334,14 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For JXPath expressions and predicates",
       "properties": {
+        "expression": {
+          "kind": "value",
+          "type": "string",
+          "description": "The expression value in your chosen language syntax",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
         "lenient": {
           "kind": "attribute",
           "type": "boolean",
@@ -8931,14 +9349,6 @@ var _apacheCamelModel ={
           "description": "Allows to turn lenient on the JXPathContext. When turned on this allows the JXPath expression to evaluate against expressions and message bodies which may be invalid / missing data. This option is by default false",
           "title": "Lenient",
           "required": false,
-          "deprecated": false
-        },
-        "expression": {
-          "kind": "value",
-          "type": "string",
-          "description": "The expression value in your chosen language syntax",
-          "title": "Expression",
-          "required": true,
           "deprecated": false
         },
         "trim": {
@@ -8967,19 +9377,19 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "Represents a parameterised language expression which can support any language at runtime using the language attribute.",
       "properties": {
-        "language": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "The name of the language to use",
-          "title": "Language",
-          "required": true,
-          "deprecated": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
           "description": "The expression value in your chosen language syntax",
           "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
+        "language": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The name of the language to use",
+          "title": "Language",
           "required": true,
           "deprecated": false
         },
@@ -9039,14 +9449,6 @@ var _apacheCamelModel ={
           "description": "Class name of the bean to use",
           "title": "Bean Type",
           "required": false,
-          "deprecated": false
-        },
-        "expression": {
-          "kind": "value",
-          "type": "string",
-          "description": "The expression value in your chosen language syntax",
-          "title": "Expression",
-          "required": true,
           "deprecated": false
         },
         "trim": {
@@ -9279,20 +9681,20 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For expressions and predicates using the simple language",
       "properties": {
-        "resultType": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the class name of the result type (type from output)",
-          "title": "Result Type",
-          "required": false,
-          "deprecated": false
-        },
         "expression": {
           "kind": "value",
           "type": "string",
           "description": "The expression value in your chosen language syntax",
           "title": "Expression",
           "required": true,
+          "deprecated": false
+        },
+        "resultType": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the class name of the result type (type from output)",
+          "title": "Result Type",
+          "required": false,
           "deprecated": false
         },
         "trim": {
@@ -9490,12 +9892,13 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
-        "expression": {
-          "kind": "value",
-          "type": "string",
-          "description": "The expression value in your chosen language syntax",
-          "title": "Expression",
-          "required": true,
+        "skipFirst": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "To skip the very first element",
+          "title": "Skip First",
+          "required": false,
           "deprecated": false
         },
         "trim": {
@@ -9522,7 +9925,7 @@ var _apacheCamelModel ={
       "title": "VtdXML",
       "group": "language,xml",
       "icon": "generic24.png",
-      "description": "For VTD-XML (fast and efficient XPath) expressions and predicates",
+      "description": "For VTD-XML (fast and efficient XPath) expressions and predicates (requires using camel-vtdxml from Camel-Extra)",
       "properties": {
         "expression": {
           "kind": "value",
@@ -9558,6 +9961,14 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For XPath expressions and predicates",
       "properties": {
+        "expression": {
+          "kind": "value",
+          "type": "string",
+          "description": "The expression value in your chosen language syntax",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
         "documentType": {
           "kind": "attribute",
           "type": "string",
@@ -9616,14 +10027,6 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
-        "expression": {
-          "kind": "value",
-          "type": "string",
-          "description": "The expression value in your chosen language syntax",
-          "title": "Expression",
-          "required": true,
-          "deprecated": false
-        },
         "trim": {
           "kind": "attribute",
           "type": "boolean",
@@ -9650,6 +10053,14 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "For XQuery expressions and predicates",
       "properties": {
+        "expression": {
+          "kind": "value",
+          "type": "string",
+          "description": "The expression value in your chosen language syntax",
+          "title": "Expression",
+          "required": true,
+          "deprecated": false
+        },
         "type": {
           "kind": "attribute",
           "type": "string",
@@ -9664,14 +10075,6 @@ var _apacheCamelModel ={
           "description": "Name of header to use as input instead of the message body",
           "title": "Header Name",
           "required": false,
-          "deprecated": false
-        },
-        "expression": {
-          "kind": "value",
-          "type": "string",
-          "description": "The expression value in your chosen language syntax",
-          "title": "Expression",
-          "required": true,
           "deprecated": false
         },
         "trim": {
@@ -9722,14 +10125,6 @@ var _apacheCamelModel ={
           "description": "To group N parts together",
           "title": "Group",
           "required": false,
-          "deprecated": false
-        },
-        "expression": {
-          "kind": "value",
-          "type": "string",
-          "description": "The expression value in your chosen language syntax",
-          "title": "Expression",
-          "required": true,
           "deprecated": false
         },
         "trim": {

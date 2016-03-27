@@ -1,6 +1,10 @@
 
 ### Change Log
 
+#### 1.4.64
+
+* Upgraded to Camel 2.17.0
+
 #### 1.4.63
 
 * hawtio can be installed in Apache Karaf 2.4.x again if you install the `hawtio-core` feature. Log and Terminal plugin is not supported on Karaf 2.x.
