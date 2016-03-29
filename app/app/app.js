@@ -8339,6 +8339,7 @@ var ActiveMQ;
         $scope.workspace = workspace;
         $scope.message = "";
         $scope.queueType = 'true';
+        $scope.createDialog = false;
         $scope.deleteDialog = false;
         $scope.purgeDialog = false;
         updateQueueType();
@@ -8384,6 +8385,16 @@ var ActiveMQ;
             }
             return mbean;
         }
+        function validateDestinationName(name) {
+            return name.indexOf(":") == -1;
+        }
+        $scope.validateAndCreateDestination = function (name, isQueue) {
+            if (!validateDestinationName(name)) {
+                $scope.createDialog = true;
+                return;
+            }
+            $scope.createDestination(name, isQueue);
+        };
         $scope.createDestination = function (name, isQueue) {
             var mbean = getBrokerMBean(jolokia);
             name = Core.escapeHtml(name);
@@ -8413,6 +8424,9 @@ var ActiveMQ;
                 var domain = selection.domain;
                 var name = entries["Destination"] || entries["destinationName"] || selection.title;
                 name = name.unescapeHTML();
+                if (name.indexOf("_") != -1) {
+                    name = jolokia.getAttribute(workspace.getSelectedMBeanName(), "Name", onSuccess(null));
+                }
                 var isQueue = "Topic" !== (entries["Type"] || entries["destinationType"]);
                 var operation;
                 if (isQueue) {
