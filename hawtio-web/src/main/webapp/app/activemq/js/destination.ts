@@ -93,6 +93,11 @@ module ActiveMQ {
         var domain = selection.domain;
         var name = entries["Destination"] || entries["destinationName"] || selection.title;
         name = name.unescapeHTML();
+        if (name.indexOf("_") != -1) {
+          // when destination name contains "_" like "aaa_bbb", the actual name might be either
+          // "aaa_bbb" or "aaa:bbb", so the actual name needs to be checked before removal.
+          name = jolokia.getAttribute(workspace.getSelectedMBeanName(), "Name", onSuccess(null));
+        }
         var isQueue = "Topic" !== (entries["Type"] || entries["destinationType"]);
         var operation;
         if (isQueue) {
