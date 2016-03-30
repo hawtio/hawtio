@@ -11242,7 +11242,9 @@ var Camel;
         };
         $scope.delete = function () {
             $scope.invokeSelectedMBeans("remove()", function () {
-                $scope.workspace.operationCounter += 1;
+                if ($scope.workspace) {
+                    $scope.workspace.operationCounter += 1;
+                }
                 Core.$apply($scope);
             });
         };
