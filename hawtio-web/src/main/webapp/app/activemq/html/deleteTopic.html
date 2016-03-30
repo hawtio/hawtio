@@ -2,12 +2,21 @@
     <div class="control-group">
         <div class="alert">
           <button type="button" class="close" data-dismiss="alert">×</button>
-          <strong>Warning!</strong> You are about to delete topic '{{name()}}'.
+          <strong>Warning!</strong> You are about to delete topic '{{name().unescapeHTML()}}'.
           <br/>
           This operation cannot be undone!
         </div>
     </div>
     <div class="control-group">
-        <button type="submit" class="btn btn-warning" ng-click="deleteDestination()">Delete topic '{{name()}}'</button>
+        <button type="submit" class="btn btn-warning" ng-click="deleteDialog = true">Delete topic '{{name().unescapeHTML()}}'</button>
+    </div>
+
+    <div hawtio-confirm-dialog="deleteDialog"
+         ok-button-text="Delete"
+         on-ok="deleteDestination()">
+        <div class="dialog-body">
+          <p>You are about to delete the <b>{{name().unescapeHTML()}}</b> topic</p>
+          <p>This operation cannot be undone so please be careful.</p>
+        </div>
     </div>
 </form>
