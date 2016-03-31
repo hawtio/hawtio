@@ -24,6 +24,7 @@ module Fabric {
     $scope.filterProfilesText = 'Filter Profiles...';
     $scope.filterLocationsText = 'Filter Locations...';
     $scope.filterBoxText = $scope.filterContainersText;
+    $scope.selectedTags = [];
 
     $scope.createLocationDialog = ContainerHelpers.getCreateLocationDialog($scope, $dialog);
 
