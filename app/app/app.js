@@ -26350,6 +26350,7 @@ var Fabric;
         $scope.filterProfilesText = 'Filter Profiles...';
         $scope.filterLocationsText = 'Filter Locations...';
         $scope.filterBoxText = $scope.filterContainersText;
+        $scope.selectedTags = [];
         $scope.createLocationDialog = ContainerHelpers.getCreateLocationDialog($scope, $dialog);
         var containerFields = ['id', 'profileIds', 'profiles', 'versionId', 'location', 'alive', 'type', 'ensembleServer', 'provisionResult', 'root', 'jolokiaUrl', 'jmxDomains', 'metadata', 'parentId'];
         var profileFields = ['id', 'hidden', 'version', 'summaryMarkdown', 'iconURL', 'tags'];
