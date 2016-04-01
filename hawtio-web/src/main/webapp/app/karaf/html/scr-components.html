@@ -5,7 +5,7 @@
         <fieldset>
           <div class="control-group inline-block">
             <div class="btn-group">
-              <button ng-show="canActivateAllSelected()"
+              <button ng-disabled="!canActivateAllSelected()"
                       class="btn"
                       ng-click="activate()"
                       hawtio-show
@@ -13,7 +13,7 @@
                       method-name="activateComponent"><i
                       class="icon-play-circle"></i> Activate
               </button>
-              <button ng-show="canDeactivateAllSelected()"
+              <button ng-disabled="!canDeactivateAllSelected()"
                       class="btn" 
                       ng-click="deactivate()"
                       hawtio-show
