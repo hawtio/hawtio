@@ -4258,15 +4258,21 @@ var Fabric;
                     $scope.excludes = [];
                     $scope.$watch('selectedVersion.id', function (newValue, oldValue) {
                         if (newValue) {
-                            if ($scope.selectedVersion.defaultVersion === true || $scope.excludes.find(function (v) {
+                            if ($scope.excludes.find(function (v) {
                                 return v === newValue;
                             })) {
                                 $scope.warning = "This version is in use and cannot be deleted.";
                                 $scope.invalid = true;
                             }
                             else {
-                                $scope.warning = "This operation cannot be undone!";
-                                $scope.invalid = false;
+                                if ($scope.selectedVersion.defaultVersion === true) {
+                                    $scope.warning = "This version is set default and cannot be deleted.";
+                                    $scope.invalid = true;
+                                }
+                                else {
+                                    $scope.warning = "This operation cannot be undone!";
+                                    $scope.invalid = false;
+                                }
                             }
                         }
                     });
