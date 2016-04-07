@@ -19,7 +19,7 @@ module Core {
    * @param localStorage
    * @param branding
    */
-  _module.controller("Core.LoginController", ["$scope", "jolokia", "userDetails", "jolokiaUrl", "workspace", "localStorage", "branding", "keycloakContext", "postLoginTasks", "postLogoutTasks", ($scope, jolokia, userDetails:Core.UserDetails, jolokiaUrl, workspace, localStorage, branding, keycloakContext, postLoginTasks, postLogoutTasks) => {
+  _module.controller("Core.LoginController", ["$scope", "jolokia", "jolokiaStatus", "userDetails", "jolokiaUrl", "workspace", "localStorage", "branding", "keycloakContext", "postLoginTasks", "postLogoutTasks", ($scope, jolokia, jolokiaStatus, userDetails:Core.UserDetails, jolokiaUrl, workspace, localStorage, branding, keycloakContext, postLoginTasks, postLogoutTasks) => {
     jolokia.stop();
 
     $scope.keycloakEnabled = keycloakContext.enabled;
@@ -79,6 +79,9 @@ module Core {
               } else {
                 delete localStorage['userDetails'];
               }
+
+              // let's check if we can call faster jolokia.list()
+              Core.checkJolokiaOptimization(jolokia, jolokiaStatus);
 
               jolokia.start();
               workspace.loadTree();

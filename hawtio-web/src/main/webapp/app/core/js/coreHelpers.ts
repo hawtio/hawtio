@@ -321,6 +321,24 @@ module Core {
   }
 
   /**
+   * Queries available server-side MBean to check if can call optimized jolokia.list() operation
+   * @param jolokia
+   * @param jolokiaStatus
+   */
+  export function checkJolokiaOptimization(jolokia, jolokiaStatus) {
+    var response = jolokia.request({
+      type: 'list',
+      path:  escapeMBeanPath(jolokiaStatus.listMBean)
+    }, {});
+    if (response && response.status == 200 && response.value && angular.isObject(response.value['op'])) {
+      jolokiaStatus.listMethod = LIST_WITH_RBAC;
+    } else {
+      // we could get 403 error, mark the method as special case, equal in practice with LIST_GENERAL
+      jolokiaStatus.listMethod = LIST_CANT_DETERMINE;
+    }
+  }
+
+  /**
    * log out the current user
    * @for Core
    * @static

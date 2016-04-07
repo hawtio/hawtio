@@ -87,7 +87,7 @@ module Core {
     }
 
     public jolokiaList(cb, flags):any {
-      if (this.jolokiaStatus.listMethod == LIST_GENERAL) {
+      if (this.jolokiaStatus.listMethod != LIST_WITH_RBAC) {
         return this.jolokia.list(null, onSuccess(cb, flags));
       } else {
         flags.maxDepth = 9;

@@ -82,7 +82,7 @@ module RBAC {
           // log.debug("Flattened MBeans: ", mbeans);
           var requests = [];
           var bulkRequest = {};
-          if (jolokiaStatus.listMethod == Core.LIST_GENERAL) {
+          if (jolokiaStatus.listMethod != Core.LIST_WITH_RBAC) {
             angular.forEach(mbeans, (value, key) => {
               if (!('canInvoke' in value)) {
                 requests.push({

@@ -123,6 +123,8 @@ module Core {
   export var LIST_GENERAL = "list";
   // constant meaning that optimized hawtio:type=security,name=RBACRegistry may be used
   export var LIST_WITH_RBAC = "list_rbac";
+  // when we get this status, we have to try checking again after logging in
+  export var LIST_CANT_DETERMINE = "cant_determine";
 
   export var DEFAULT_MAX_DEPTH = 7;
   export var DEFAULT_MAX_COLLECTION_SIZE = 50000;
