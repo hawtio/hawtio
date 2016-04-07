@@ -68,8 +68,11 @@ module Core {
       reloadPerspective();
     });
 
-    $scope.$watch('workspace.topLevelTabs', function () {
-      reloadPerspective();
+    $scope.$watch('workspace.topLevelTabs', function (newValue, oldValue) {
+      if (newValue) {
+        // newValue === undefined on initial call - we don't want to reload perspective in this case
+        reloadPerspective();
+      }
     });
 
     $scope.validSelection = (uri) => workspace.validSelection(uri);
