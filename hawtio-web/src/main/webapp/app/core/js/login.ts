@@ -27,11 +27,11 @@ module Core {
     if ($scope.keycloakEnabled) {
       keycloakLoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, keycloakContext, postLogoutTasks);
     } else {
-      loginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks);
+      loginController($scope, jolokia, jolokiaStatus, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks);
     }
   }]);
 
-  var loginController = ($scope, jolokia, userDetails:Core.UserDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) => {
+  var loginController = ($scope, jolokia, jolokiaStatus, userDetails:Core.UserDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) => {
     $scope.userDetails = userDetails;
     $scope.entity = <Core.UserDetails> {
       username: '',
