@@ -1363,7 +1363,7 @@ var Core;
             this.localStorage[key] = value;
         };
         Workspace.prototype.jolokiaList = function (cb, flags) {
-            if (this.jolokiaStatus.listMethod == Core.LIST_GENERAL) {
+            if (this.jolokiaStatus.listMethod != Core.LIST_WITH_RBAC) {
                 return this.jolokia.list(null, onSuccess(cb, flags));
             }
             else {
@@ -2410,6 +2410,19 @@ var Core;
         Core.postLogoutTasks.execute();
     }
     Core.executePostLogoutTasks = executePostLogoutTasks;
+    function checkJolokiaOptimization(jolokia, jolokiaStatus) {
+        var response = jolokia.request({
+            type: 'list',
+            path: escapeMBeanPath(jolokiaStatus.listMBean)
+        }, {});
+        if (response && response.status == 200 && response.value && angular.isObject(response.value['op'])) {
+            jolokiaStatus.listMethod = Core.LIST_WITH_RBAC;
+        }
+        else {
+            jolokiaStatus.listMethod = Core.LIST_CANT_DETERMINE;
+        }
+    }
+    Core.checkJolokiaOptimization = checkJolokiaOptimization;
     function logout(jolokiaUrl, userDetails, localStorage, $scope, successCB, errorCB) {
         if (successCB === void 0) { successCB = null; }
         if (errorCB === void 0) { errorCB = null; }
@@ -6278,17 +6291,17 @@ var Core;
 })(Core || (Core = {}));
 var Core;
 (function (Core) {
-    Core._module.controller("Core.LoginController", ["$scope", "jolokia", "userDetails", "jolokiaUrl", "workspace", "localStorage", "branding", "keycloakContext", "postLoginTasks", "postLogoutTasks", function ($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding, keycloakContext, postLoginTasks, postLogoutTasks) {
+    Core._module.controller("Core.LoginController", ["$scope", "jolokia", "jolokiaStatus", "userDetails", "jolokiaUrl", "workspace", "localStorage", "branding", "keycloakContext", "postLoginTasks", "postLogoutTasks", function ($scope, jolokia, jolokiaStatus, userDetails, jolokiaUrl, workspace, localStorage, branding, keycloakContext, postLoginTasks, postLogoutTasks) {
         jolokia.stop();
         $scope.keycloakEnabled = keycloakContext.enabled;
         if ($scope.keycloakEnabled) {
             Core.keycloakLoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, keycloakContext, postLogoutTasks);
         }
         else {
-            loginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks);
+            loginController($scope, jolokia, jolokiaStatus, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks);
         }
     }]);
-    var loginController = function ($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) {
+    var loginController = function ($scope, jolokia, jolokiaStatus, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) {
         $scope.userDetails = userDetails;
         $scope.entity = {
             username: '',
@@ -6332,6 +6345,7 @@ var Core;
                             else {
                                 delete localStorage['userDetails'];
                             }
+                            Core.checkJolokiaOptimization(jolokia, jolokiaStatus);
                             jolokia.start();
                             workspace.loadTree();
                             Core.executePostLoginTasks();
@@ -17901,6 +17915,7 @@ var Core;
     });
     Core.LIST_GENERAL = "list";
     Core.LIST_WITH_RBAC = "list_rbac";
+    Core.LIST_CANT_DETERMINE = "cant_determine";
     Core.DEFAULT_MAX_DEPTH = 7;
     Core.DEFAULT_MAX_COLLECTION_SIZE = 50000;
     Core._module.factory('jolokiaParams', ["jolokiaUrl", "localStorage", function (jolokiaUrl, localStorage) {
@@ -18647,18 +18662,7 @@ var Core;
             var jolokia = new Jolokia(jolokiaParams);
             localStorage['url'] = jolokiaUrl;
             jolokia.stop();
-            var response = jolokia.request({
-                type: 'list',
-                path: escapeMBeanPath(jolokiaStatus.listMBean)
-            }, {});
-            if (response) {
-                if (response.status == 200 && response.value && angular.isObject(response.value['op'])) {
-                    jolokiaStatus.listMethod = Core.LIST_WITH_RBAC;
-                }
-                else {
-                    jolokiaStatus.listMethod = Core.LIST_GENERAL;
-                }
-            }
+            Core.checkJolokiaOptimization(jolokia, jolokiaStatus);
             return jolokia;
         }
         else {
@@ -18742,15 +18746,18 @@ var Core;
         $scope.perspectiveDetails = {
             perspective: null
         };
-        $scope.topLevelTabs = function () {
+        Core.postLoginTasks.addTask('navbarReloadPerspectives', reloadPerspective);
+        $scope.getCurrentTopLevelTabs = function () {
             reloadPerspective();
             return workspace.topLevelTabs;
         };
         $scope.$on('jmxTreeUpdated', function () {
             reloadPerspective();
         });
-        $scope.$watch('workspace.topLevelTabs', function () {
-            reloadPerspective();
+        $scope.$watch('workspace.topLevelTabs', function (newValue, oldValue) {
+            if (newValue) {
+                reloadPerspective();
+            }
         });
         $scope.validSelection = function (uri) { return workspace.validSelection(uri); };
         $scope.isValid = function (nav) { return nav && nav.isValid(workspace); };
@@ -18869,7 +18876,7 @@ var Core;
             return workspace.isTopTabActive(nav.href());
         };
         $scope.activeLink = function () {
-            var tabs = $scope.topLevelTabs();
+            var tabs = $scope.getCurrentTopLevelTabs();
             if (!tabs) {
                 return "Loading...";
             }
@@ -39986,7 +39993,7 @@ var RBAC;
                     RBAC.flattenMBeanTree(mbeans, tree);
                     var requests = [];
                     var bulkRequest = {};
-                    if (jolokiaStatus.listMethod == Core.LIST_GENERAL) {
+                    if (jolokiaStatus.listMethod != Core.LIST_WITH_RBAC) {
                         angular.forEach(mbeans, function (value, key) {
                             if (!('canInvoke' in value)) {
                                 requests.push({
