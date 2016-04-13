@@ -15674,11 +15674,14 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.TypeConverterController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+    Camel._module.controller("Camel.TypeConverterController", ["$scope", "$location", "$timeout", "workspace", "jolokia", function ($scope, $location, $timeout, workspace, jolokia) {
         $scope.workspace = workspace;
         $scope.data = [];
         $scope.selectedMBean = null;
         $scope.mbeanAttributes = {};
+        $scope.enableTypeConvertersStats = false;
+        $scope.disableTypeConvertersStats = false;
+        $scope.defaultTimeout = 3000;
         var columnDefs = [
             {
                 field: 'from',
@@ -15734,14 +15737,22 @@ var Camel;
             return Camel.iconClass(state);
         };
         $scope.disableStatistics = function () {
+            $scope.disableTypeConvertersStats = true;
             if ($scope.selectedMBean) {
                 jolokia.setAttribute($scope.selectedMBean, "StatisticsEnabled", false);
             }
+            $timeout(function () {
+                $scope.disableTypeConvertersStats = false;
+            }, $scope.defaultTimeout);
         };
         $scope.enableStatistics = function () {
+            $scope.enableTypeConvertersStats = true;
             if ($scope.selectedMBean) {
                 jolokia.setAttribute($scope.selectedMBean, "StatisticsEnabled", true);
             }
+            $timeout(function () {
+                $scope.enableTypeConvertersStats = false;
+            }, $scope.defaultTimeout);
         };
         $scope.resetStatistics = function () {
             if ($scope.selectedMBean) {
