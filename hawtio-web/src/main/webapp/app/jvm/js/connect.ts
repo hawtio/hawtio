@@ -163,7 +163,7 @@ module JVM {
 	var autoconnect = $location.search();
 	if (typeof autoconnect != 'undefined' && typeof autoconnect.name != 'undefined') {	
 		var conOpts = Core.createConnectOptions({
-		        scheme: 'http',
+		        scheme: autoconnect.scheme,
 		        host: autoconnect.host,
 		        path: autoconnect.path,
 		        port: autoconnect.port,
