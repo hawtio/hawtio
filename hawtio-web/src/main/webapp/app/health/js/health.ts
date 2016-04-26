@@ -164,6 +164,19 @@ module Health {
         var mbean = response.request['mbean'];
         var values = response.value;
 
+        // some services will only return responses for negative events.  In that case
+        // create an ok status, otherwise we get no diagram.
+        if (values !== null && values.length == 0) {
+          var name = $scope.getHumanName(mbean);
+          var domain = name;
+          if (mbean.startsWith("org.apache.activemq")) {
+            domain = Health.healthDomains["org.apache.activemq"];
+          }
+
+          var okStatus = createOKStatus({domain:domain, title:name});
+          values = [okStatus];
+        }
+
         var responseJson = angular.toJson(values);
 
         if (mbean in $scope.responses) {
@@ -249,9 +262,11 @@ module Health {
 
       function createOKStatus(object) {
         return {
-          healthId: object.domain + ".status",
+          healthId: object.domain,
           level: "INFO",
-          message: object.title + " is OK"
+          message: object.title + " is OK",
+          instances: 1,
+          healthPercent: 1
         };
       }
     }]);
