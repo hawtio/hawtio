@@ -32752,23 +32752,6 @@ var Jetty;
             columnDefs: columnDefs,
             title: "Thread Pools"
         };
-        function render78(response) {
-            $scope.threadpools = [];
-            function onAttributes(response) {
-                var obj = response.value;
-                if (obj) {
-                    obj.running = obj['running'] !== undefined ? obj['running'] : obj['state'] == "STARTED";
-                    obj.idleTimeout = obj['idleTimeout'] !== undefined ? obj['idleTimeout'] : obj['maxIdleTimeMs'];
-                    $scope.threadpools.push(obj);
-                }
-            }
-            angular.forEach(response, function (value, key) {
-                var mbean = value;
-                jolokia.request({ type: "read", mbean: mbean, attribute: [] }, onSuccess(onAttributes));
-            });
-            Core.$apply($scope);
-        }
-        ;
         $scope.$on('jmxTreeUpdated', reloadFunction);
         $scope.$watch('workspace.tree', reloadFunction);
         function reloadFunction() {
@@ -32777,7 +32760,18 @@ var Jetty;
         function loadData() {
             console.log("Loading Jetty thread pool data...");
             var tree = workspace.tree;
-            jolokia.search("org.eclipse.jetty.util.thread:type=queuedthreadpool,*", onSuccess(render78));
+            jolokia.request({ type: "read", mbean: "org.eclipse.jetty.util.thread:type=queuedthreadpool,*" }, onSuccess(function (response) {
+                $scope.threadpools.length = 0;
+                $scope.threadpools = [];
+                angular.forEach(response.value, function (entry, key) {
+                    if (entry) {
+                        entry.running = entry['running'] !== undefined ? entry['running'] : entry['state'] == "STARTED";
+                        entry.idleTimeout = entry['idleTimeout'] !== undefined ? entry['idleTimeout'] : entry['maxIdleTimeMs'];
+                        $scope.threadpools.push(entry);
+                    }
+                });
+                Core.$apply($scope);
+            }));
         }
     }]);
 })(Jetty || (Jetty = {}));
