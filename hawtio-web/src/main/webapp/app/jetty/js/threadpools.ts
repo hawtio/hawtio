@@ -72,27 +72,6 @@ module Jetty {
       title: "Thread Pools"
     };
 
-    function render78(response) {
-      $scope.threadpools = [];
-
-      function onAttributes(response) {
-        var obj = response.value;
-        if (obj) {
-          // jetty78 vs jetty9 is a bit different
-          obj.running = obj['running'] !== undefined ? obj['running'] : obj['state'] == "STARTED";
-          obj.idleTimeout = obj['idleTimeout'] !== undefined ? obj['idleTimeout'] : obj['maxIdleTimeMs'];
-          $scope.threadpools.push(obj);
-        }
-      }
-
-      // create structure for each response
-      angular.forEach(response, function (value, key) {
-        var mbean = value;
-        jolokia.request({type: "read", mbean: mbean, attribute: []}, onSuccess(onAttributes));
-      });
-      Core.$apply($scope);
-    };
-
     $scope.$on('jmxTreeUpdated', reloadFunction);
     $scope.$watch('workspace.tree', reloadFunction);
 
@@ -106,7 +85,19 @@ module Jetty {
       console.log("Loading Jetty thread pool data...");
       var tree = workspace.tree;
 
-      jolokia.search("org.eclipse.jetty.util.thread:type=queuedthreadpool,*", onSuccess(render78));
+      jolokia.request({type: "read", mbean: "org.eclipse.jetty.util.thread:type=queuedthreadpool,*"}, onSuccess((response) => {
+        $scope.threadpools.length = 0;
+        $scope.threadpools = [];
+        angular.forEach(response.value, function(entry, key) {
+          if (entry) {
+            // jetty78 vs jetty9 is a bit different
+            entry.running = entry['running'] !== undefined ? entry['running'] : entry['state'] == "STARTED";
+            entry.idleTimeout = entry['idleTimeout'] !== undefined ? entry['idleTimeout'] : entry['maxIdleTimeMs'];
+            $scope.threadpools.push(entry);
+          }
+        } );
+        Core.$apply($scope);
+      }));
     }
 
   }]);
