@@ -27061,6 +27061,30 @@ var Fabric;
                         });
                         if (!error) {
                             SelectionHelpers.clearGroup(ProfileCart);
+                            var parentLocation = Fabric.getContainerFields(jolokia, json.parent, ['location']).location;
+                            if (!Core.isBlank(parentLocation) && parentLocation !== ContainerHelpers.NO_LOCATION) {
+                                var newContainerIds = [];
+                                if (json.number) {
+                                    for (var i = 1; i <= json.number; i++) {
+                                        newContainerIds.push(json.name + i);
+                                    }
+                                }
+                                else {
+                                    newContainerIds = [json.name];
+                                }
+                                var updatedContainers = Fabric.getContainerIds(jolokia);
+                                angular.forEach(updatedContainers, function (containerId) {
+                                    var idx = newContainerIds.indexOf(containerId);
+                                    if (idx >= 0) {
+                                        Fabric.setContainerProperty(jolokia, containerId, 'location', parentLocation, function () {
+                                            Core.$apply($scope);
+                                        }, function (response) {
+                                            Core.notification('error', 'Failed to set container loction due to : ' + response.error);
+                                            Core.$apply($scope);
+                                        });
+                                    }
+                                });
+                            }
                             Core.notification('success', "Successfully created containers");
                         }
                         Core.$apply($scope);
