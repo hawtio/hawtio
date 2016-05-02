@@ -252,7 +252,7 @@ var Core;
                         _urlPrefix = _urlPrefix.substring(0, _urlPrefix.length - 1);
                     }
                 }
-                if (_urlPrefix) {
+                if (_urlPrefix && !path.startsWith(_urlPrefix)) {
                     return _urlPrefix + path;
                 }
             }
