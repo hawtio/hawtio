@@ -47,6 +47,7 @@ module Fabric {
             container.location = ContainerHelpers.NO_LOCATION;
           }
         });
+      }
     }, true);
   }]);
 }
