@@ -42,14 +42,11 @@ module Fabric {
           $scope.activeContainerId = '';
         }
 
-        //var containers = $scope.containers;
         $scope.containers.forEach((container) => {
           if (Core.isBlank(container.location)) {
             container.location = ContainerHelpers.NO_LOCATION;
           }
         });
-        //$scope.containers = containers;
-      }
     }, true);
   }]);
 }
