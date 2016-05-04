@@ -22747,6 +22747,7 @@ var FabricRequirements;
                 $timeout(function () {
                     Object.merge($scope.requirements, $scope.requirementsFromServer, true);
                 }, 20);
+                $scope.requirements.$dirty = false;
             }
         };
         $scope.onDrop = function (data, model, property) {
