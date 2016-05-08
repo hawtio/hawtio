@@ -2,6 +2,7 @@
 module Camel {
 
   _module.controller("Camel.RouteMetricsController", ["$scope", "$location", "workspace", "jolokia", "metricsWatcher", "localStorage", ($scope, $location, workspace:Workspace, jolokia, metricsWatcher, localStorage:WindowLocalStorage) => {
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     var log:Logging.Logger = Logger.get("Camel");
 
@@ -109,7 +110,7 @@ module Camel {
         $scope.filterText = routeId;
       }
 
-      var mbean = getSelectionCamelRouteMetrics(workspace);
+      var mbean = getSelectionCamelRouteMetrics(workspace, camelJmxDomain);
       if (mbean) {
         var query = {type: 'exec', mbean: mbean, operation: 'dumpStatisticsAsJson'};
         scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(populateRouteStatistics, query));

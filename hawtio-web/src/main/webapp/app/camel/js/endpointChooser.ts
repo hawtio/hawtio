@@ -398,6 +398,8 @@ module Camel {
           $scope.profileWorkspace = profileWorkspace;
         }
       }
+
+      var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
       if (!profileWorkspace) {
         log.info("No profileWorkspace found so defaulting it to workspace for now");
         profileWorkspace = workspace;
@@ -416,7 +418,7 @@ module Camel {
               " selectedCamelContextId: " + selectedCamelContextId +
               " selectedRouteId: " + selectedRouteId);
 
-      var contextsById = Camel.camelContextMBeansById(profileWorkspace);
+      var contextsById = Camel.camelContextMBeansById(profileWorkspace, camelJmxDomain);
       if (selectedCamelContextId) {
         var mbean = Core.pathGet(contextsById, [selectedCamelContextId, "mbean"]);
         if (mbean) {
@@ -424,14 +426,14 @@ module Camel {
         }
       }
       if (selectedRouteId) {
-        var map = Camel.camelContextMBeansByRouteId(profileWorkspace);
+        var map = Camel.camelContextMBeansByRouteId(profileWorkspace, camelJmxDomain);
         var mbean = Core.pathGet(map, [selectedRouteId, "mbean"]);
         if (mbean) {
           return mbean;
         }
       }
       if (componentName) {
-        var map = Camel.camelContextMBeansByComponentName(profileWorkspace);
+        var map = Camel.camelContextMBeansByComponentName(profileWorkspace, camelJmxDomain);
         var mbean = Core.pathGet(map, [componentName, "mbean"]);
         if (mbean) {
           return mbean;

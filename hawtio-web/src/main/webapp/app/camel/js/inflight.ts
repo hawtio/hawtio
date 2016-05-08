@@ -2,6 +2,7 @@
 module Camel {
 
   _module.controller("Camel.InflightController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     var log:Logging.Logger = Logger.get("Camel");
 
@@ -108,7 +109,7 @@ module Camel {
         $scope.gridOptions.filterOptions.filterText = routeId;
       }
 
-      var mbean = getSelectionCamelInflightRepository(workspace);
+      var mbean = getSelectionCamelInflightRepository(workspace, camelJmxDomain);
       if (mbean) {
 
         // grab inflight in real time

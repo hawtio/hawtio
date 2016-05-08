@@ -3,6 +3,7 @@ module Camel {
 
   _module.controller("Camel.PropertiesController", ["$scope", "$rootScope", "workspace", "localStorage", ($scope, $rootScope, workspace:Workspace, localStorage:WindowLocalStorage) => {
     var log:Logging.Logger = Logger.get("Camel");
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     $scope.workspace = workspace;
 
@@ -54,7 +55,7 @@ module Camel {
     });
 
     $scope.$watch('workspace.selection', function () {
-      if (!workspace.isRoutesFolder() && workspace.moveIfViewInvalid()) return;
+      if (!workspace.isRoutesFolder(camelJmxDomain) && workspace.moveIfViewInvalid()) return;
       updateData();
     });
 
@@ -102,7 +103,7 @@ module Camel {
     }
 
     function updateData() {
-      var routeXmlNode = getSelectedRouteNode(workspace);
+      var routeXmlNode = getSelectedRouteNode(workspace, camelJmxDomain);
       if (routeXmlNode != null) {
         $scope.model = getCamelSchema(routeXmlNode.nodeName);
 
