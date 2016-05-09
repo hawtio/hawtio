@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.17.0';
+var _apacheCamelModelVersion = '2.17.1';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -4070,7 +4070,7 @@ var _apacheCamelModel ={
           "kind": "attribute",
           "type": "boolean",
           "defaultValue": "true",
-          "description": "Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true",
+          "description": "Whether or not to use as caller runs as fallback when a task is rejected being added to the thread pool (when its full). This is only used as fallback if no rejectedPolicy has been configured or the thread pool has no configured rejection handler. Is by default true",
           "title": "Caller Runs When Rejected",
           "required": false,
           "deprecated": false
@@ -5350,6 +5350,135 @@ var _apacheCamelModel ={
         }
       }
     },
+    "patch": {
+      "type": "object",
+      "title": "Patch",
+      "group": "rest",
+      "icon": "generic24.png",
+      "description": "Rest PATCH command",
+      "acceptInput": "false",
+      "acceptOutput": "false",
+      "nextSiblingAddedAsChild": "false",
+      "properties": {
+        "method": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The HTTP verb such as GET or POST",
+          "title": "Method",
+          "required": false,
+          "deprecated": false
+        },
+        "uri": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Uri template of this REST service such as /id.",
+          "title": "Uri",
+          "required": false,
+          "deprecated": false
+        },
+        "consumes": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "To define the content type what the REST service consumes (accept as input) such as application/xml or application/json. This option will override what may be configured on a parent level",
+          "title": "Consumes",
+          "required": false,
+          "deprecated": false
+        },
+        "produces": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "To define the content type what the REST service produces (uses for output) such as application/xml or application/json This option will override what may be configured on a parent level",
+          "title": "Produces",
+          "required": false,
+          "deprecated": false
+        },
+        "bindingMode": {
+          "kind": "attribute",
+          "type": "string",
+          "defaultValue": "auto",
+          "enum": [ "auto", "json", "json_xml", "off", "xml" ],
+          "description": "Sets the binding mode to use. This option will override what may be configured on a parent level The default value is auto",
+          "title": "Binding Mode",
+          "required": false,
+          "deprecated": false
+        },
+        "skipBindingOnErrorCode": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc as success messages otherwise will do. This option will override what may be configured on a parent level",
+          "title": "Skip Binding On Error Code",
+          "required": false,
+          "deprecated": false
+        },
+        "enableCORS": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to enable CORS headers in the HTTP response. This option will override what may be configured on a parent level The default value is false.",
+          "title": "Enable C O R S",
+          "required": false,
+          "deprecated": false
+        },
+        "type": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the class name to use for binding from input to POJO for the incoming data This option will override what may be configured on a parent level",
+          "title": "Type",
+          "required": false,
+          "deprecated": false
+        },
+        "outType": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the class name to use for binding from POJO to output for the outgoing data This option will override what may be configured on a parent level",
+          "title": "Out Type",
+          "required": false,
+          "deprecated": false
+        },
+        "toOrRoute": {
+          "kind": "element",
+          "type": "object",
+          "description": "To route from this REST service to a Camel endpoint or an inlined route",
+          "title": "To Or Route",
+          "required": true,
+          "deprecated": false
+        },
+        "routeId": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "The route id this rest-dsl is using (read-only)",
+          "title": "Route Id",
+          "required": false,
+          "deprecated": false
+        },
+        "apiDocs": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to include or exclude the VerbDefinition in API documentation. The default value is true.",
+          "title": "Api Docs",
+          "required": false,
+          "deprecated": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the id of this node",
+          "title": "Id",
+          "required": false,
+          "deprecated": false
+        },
+        "description": {
+          "kind": "element",
+          "type": "object",
+          "description": "Sets the description of this node",
+          "title": "Description",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
     "post": {
       "type": "object",
       "title": "Post",
@@ -5851,9 +5980,9 @@ var _apacheCamelModel ={
         "bindingMode": {
           "kind": "attribute",
           "type": "string",
-          "defaultValue": "auto",
+          "defaultValue": "off",
           "enum": [ "auto", "json", "json_xml", "off", "xml" ],
-          "description": "Sets the binding mode to use. The default value is auto",
+          "description": "Sets the binding mode to use. The default value is off",
           "title": "Binding Mode",
           "required": false,
           "deprecated": false
@@ -6022,9 +6151,9 @@ var _apacheCamelModel ={
         "bindingMode": {
           "kind": "attribute",
           "type": "string",
-          "defaultValue": "auto",
+          "defaultValue": "off",
           "enum": [ "auto", "json", "json_xml", "off", "xml" ],
-          "description": "Sets the binding mode to use. The default value is auto",
+          "description": "Sets the binding mode to use. The default value is off",
           "title": "Binding Mode",
           "required": false,
           "deprecated": false
@@ -6907,6 +7036,14 @@ var _apacheCamelModel ={
           "defaultValue": "false",
           "description": "Whether to skip the header record in the output",
           "title": "Skip Header Record",
+          "required": false,
+          "deprecated": false
+        },
+        "quoteMode": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the quote mode",
+          "title": "Quote Mode",
           "required": false,
           "deprecated": false
         },

@@ -1,6 +1,11 @@
 
 ### Change Log
 
+#### 1.4.65
+
+* Upgraded to Camel 2.17.1
+* Various other small bug fixes
+
 #### 1.4.64
 
 * Added more icons for various Camel endpoints and a few more EIPs
