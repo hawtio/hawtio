@@ -31,15 +31,24 @@ module Camel {
       },
       'camelHideOptionDocumentation': {
         'value': Camel.defaultHideOptionDocumentation,
-        'converter': Core.parseBooleanValue
+        'converter': Core.parseBooleanValue,
+        'post': (newValue) => {
+          $scope.$emit('hideOptionDocumentation', newValue);
+        }
       },
       'camelHideOptionDefaultValue': {
         'value': Camel.defaultHideOptionDefaultValue,
-        'converter': Core.parseBooleanValue
+        'converter': Core.parseBooleanValue,
+        'post': (newValue) => {
+          $scope.$emit('hideOptionDefaultValue', newValue);
+        }
       },
       'camelHideOptionUnusedValue': {
         'value': Camel.defaultHideOptionUnusedValue,
-        'converter': Core.parseBooleanValue
+        'converter': Core.parseBooleanValue,
+        'post': (newValue) => {
+          $scope.$emit('hideOptionUnusedValue', newValue);
+        }
       }
     });
   }]);
