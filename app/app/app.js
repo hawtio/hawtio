@@ -13667,15 +13667,24 @@ var Camel;
             },
             'camelHideOptionDocumentation': {
                 'value': Camel.defaultHideOptionDocumentation,
-                'converter': Core.parseBooleanValue
+                'converter': Core.parseBooleanValue,
+                'post': function (newValue) {
+                    $scope.$emit('hideOptionDocumentation', newValue);
+                }
             },
             'camelHideOptionDefaultValue': {
                 'value': Camel.defaultHideOptionDefaultValue,
-                'converter': Core.parseBooleanValue
+                'converter': Core.parseBooleanValue,
+                'post': function (newValue) {
+                    $scope.$emit('hideOptionDefaultValue', newValue);
+                }
             },
             'camelHideOptionUnusedValue': {
                 'value': Camel.defaultHideOptionUnusedValue,
-                'converter': Core.parseBooleanValue
+                'converter': Core.parseBooleanValue,
+                'post': function (newValue) {
+                    $scope.$emit('hideOptionUnusedValue', newValue);
+                }
             }
         });
     }]);
@@ -13906,7 +13915,7 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.PropertiesController", ["$scope", "workspace", "localStorage", function ($scope, workspace, localStorage) {
+    Camel._module.controller("Camel.PropertiesController", ["$scope", "$rootScope", "workspace", "localStorage", function ($scope, $rootScope, workspace, localStorage) {
         var log = Logger.get("Camel");
         $scope.workspace = workspace;
         $scope.hideHelp = Camel.hideOptionDocumentation(localStorage);
@@ -13923,15 +13932,24 @@ var Camel;
                 updateData();
             }
         });
+        $rootScope.$on('hideOptionDocumentation', function (event, value) {
+            $scope.hideHelp = value;
+        });
         $scope.$watch('hideUnused', function (newValue, oldValue) {
             if (newValue !== oldValue) {
                 updateData();
             }
         });
+        $rootScope.$on('hideOptionUnusedValue', function (event, value) {
+            $scope.hideUnused = value;
+        });
         $scope.$watch('hideDefault', function (newValue, oldValue) {
             if (newValue !== oldValue) {
                 updateData();
             }
+        });
+        $rootScope.$on('hideOptionDefaultValue', function (event, value) {
+            $scope.hideDefault = value;
         });
         $scope.$on("$routeChangeSuccess", function (event, current, previous) {
             setTimeout(updateData, 50);
