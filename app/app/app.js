@@ -36329,7 +36329,7 @@ var Log;
 var Log;
 (function (Log) {
     var log = Logger.get("Log");
-    Log._module.controller("Log.LogController", ["$scope", "$routeParams", "$location", "localStorage", "workspace", "jolokia", "$window", "$document", "$templateCache", function ($scope, $routeParams, $location, localStorage, workspace, jolokia, $window, $document, $templateCache) {
+    Log._module.controller("Log.LogController", ["$scope", "$rootScope", "$routeParams", "$location", "localStorage", "workspace", "jolokia", "$window", "$document", "$templateCache", function ($scope, $rootScope, $routeParams, $location, localStorage, workspace, jolokia, $window, $document, $templateCache) {
         $scope.sortAsc = true;
         var value = localStorage["logSortAsc"];
         if (angular.isString(value)) {
@@ -36342,6 +36342,12 @@ var Log;
         }
         value = localStorage["logBatchSize"];
         $scope.logBatchSize = angular.isNumber(value) ? value : 20;
+        $rootScope.$on('logBatchSize', function (event, value) {
+            if (angular.isNumber(value)) {
+                $scope.logBatchSize = value;
+                $scope.logFilter.count = value;
+            }
+        });
         $scope.logs = [];
         $scope.showRowDetails = false;
         $scope.showRaw = {
@@ -36702,7 +36708,10 @@ var Log;
             },
             'logBatchSize': {
                 'value': 20,
-                'converter': parseInt
+                'converter': parseInt,
+                'post': function (newValue) {
+                    $scope.$emit('logBatchSize', newValue);
+                }
             }
         });
     }]);
