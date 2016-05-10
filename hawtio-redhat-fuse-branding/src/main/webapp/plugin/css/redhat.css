@@ -2049,7 +2049,7 @@ li.dropdown.open > a.dropdown-toggle {
 }
 
 .dropdown-menu > li > a {
-  background: inherit !important;
+  background: inherit;
   text-shadow: none;
   line-height: 22px;
   font-size: 11px;
