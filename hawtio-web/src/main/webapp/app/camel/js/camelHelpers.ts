@@ -1244,7 +1244,7 @@ module Camel {
         var labelSummary = label;
         if (elementID) {
           var customId = route.getAttribute("customId");
-          if ($scope.camelIgnoreIdForLabel || (!customId || customId === "false")) {
+          if ($scope.camelIgnoreIdForLabel) {
             labelSummary = "id: " + elementID;
           } else {
             label = elementID;

@@ -7,7 +7,10 @@ module Camel {
     Core.initPreferenceScope($scope, localStorage, {
       'camelIgnoreIdForLabel': {
         'value': false,
-        'converter': Core.parseBooleanValue
+        'converter': Core.parseBooleanValue,
+        'post': (newValue) => {
+          $scope.$emit('ignoreIdForLabel', newValue);
+        }
       },
       'camelShowInflightCounter': {
         'value': true,
