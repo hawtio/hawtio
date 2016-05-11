@@ -18319,10 +18319,13 @@ var Core;
         labels.each(function (d) {
             var bbox = this.getBBox();
             d.bbox = bbox;
-            if (bbox.width < minLabelwidth) {
-                bbox.width = minLabelwidth;
+            console.log("bbox.width: " + bbox.width + " minLabelWidth " + minLabelwidth);
+            console.info("bbox.width: " + bbox.width + " minLabelWidth " + minLabelwidth);
+            var width = bbox.width;
+            if (width < minLabelwidth) {
+                width = minLabelwidth;
             }
-            d.width = bbox.width + 2 * nodePadding;
+            d.width = width + 2 * nodePadding;
             d.height = bbox.height + 2 * nodePadding + labelPadding;
         });
         rects.attr("x", function (d) {
