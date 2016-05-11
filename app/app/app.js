@@ -18319,8 +18319,6 @@ var Core;
         labels.each(function (d) {
             var bbox = this.getBBox();
             d.bbox = bbox;
-            console.log("bbox.width: " + bbox.width + " minLabelWidth " + minLabelwidth);
-            console.info("bbox.width: " + bbox.width + " minLabelWidth " + minLabelwidth);
             var width = bbox.width;
             if (width < minLabelwidth) {
                 width = minLabelwidth;
