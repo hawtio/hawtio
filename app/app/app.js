@@ -10580,7 +10580,7 @@ var Camel;
                 var labelSummary = label;
                 if (elementID) {
                     var customId = route.getAttribute("customId");
-                    if ($scope.camelIgnoreIdForLabel || (!customId || customId === "false")) {
+                    if ($scope.camelIgnoreIdForLabel) {
                         labelSummary = "id: " + elementID;
                     }
                     else {
@@ -13643,7 +13643,10 @@ var Camel;
         Core.initPreferenceScope($scope, localStorage, {
             'camelIgnoreIdForLabel': {
                 'value': false,
-                'converter': Core.parseBooleanValue
+                'converter': Core.parseBooleanValue,
+                'post': function (newValue) {
+                    $scope.$emit('ignoreIdForLabel', newValue);
+                }
             },
             'camelShowInflightCounter': {
                 'value': true,
@@ -14646,7 +14649,7 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.RouteController", ["$scope", "$routeParams", "$element", "$timeout", "workspace", "$location", "jolokia", "localStorage", function ($scope, $routeParams, $element, $timeout, workspace, $location, jolokia, localStorage) {
+    Camel._module.controller("Camel.RouteController", ["$scope", "$rootScope", "$routeParams", "$element", "$timeout", "workspace", "$location", "jolokia", "localStorage", function ($scope, $rootScope, $routeParams, $element, $timeout, workspace, $location, jolokia, localStorage) {
         var log = Logger.get("Camel");
         $scope.workspace = workspace;
         $scope.viewSettings = {
@@ -14664,6 +14667,10 @@ var Camel;
         $scope.camelShowInflightCounter = Camel.showInflightCounter(localStorage);
         var updateRoutes = Core.throttled(doUpdateRoutes, 1000);
         var delayUpdatingRoutes = 300;
+        $rootScope.$on('ignoreIdForLabel', function (event, value) {
+            $scope.camelIgnoreIdForLabel = value;
+            $timeout(updateRoutes, delayUpdatingRoutes);
+        });
         $scope.updateSelectedRoute = function () {
             $timeout(updateRoutes, delayUpdatingRoutes);
         };
