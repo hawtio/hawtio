@@ -36644,6 +36644,7 @@ var Log;
                 var counter = 0;
                 logs.forEach(function (log) {
                     if (log) {
+                        log.message = Core.escapeHtml(log.message);
                         if (!$scope.logs.any(function (key, item) { return item.message === log.message && item.seq === log.message && item.timestamp === log.timestamp; })) {
                             counter += 1;
                             if (log.seq != null) {
