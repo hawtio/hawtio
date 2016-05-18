@@ -32579,6 +32579,10 @@ var Jetty;
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}">' + '<i class="{{row.getProperty(col.field) | jettyIconClass}}"></i>' + '</div>';
         var urlTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">' + '<a ng-href="{{row.getProperty(col.field)}}" target="_blank">{{row.getProperty(col.field)}}</a>' + '</div>';
         $scope.uninstallDialog = new UI.Dialog();
+        $scope.uninstall = function () {
+            $scope.controlWebApps('destroy');
+            $scope.uninstallDialog.close();
+        };
         $scope.httpPort;
         $scope.httpScheme = "http";
         $scope.webapps = [];
@@ -32649,10 +32653,6 @@ var Jetty;
         };
         $scope.start = function () {
             $scope.controlWebApps('start');
-        };
-        $scope.uninstall = function () {
-            $scope.controlWebApps('destroy');
-            $scope.uninstallDialog.close();
         };
         $scope.anySelectionHasState = function (state) {
             var selected = $scope.selected || [];
