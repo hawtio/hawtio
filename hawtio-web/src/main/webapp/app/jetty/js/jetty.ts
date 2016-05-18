@@ -13,7 +13,12 @@ module Jetty {
         '<a ng-href="{{row.getProperty(col.field)}}" target="_blank">{{row.getProperty(col.field)}}</a>' +
       '</div>';
 
-    $scope.uninstallDialog = new UI.Dialog()
+    $scope.uninstallDialog = new UI.Dialog();
+
+    $scope.uninstall = function () {
+      $scope.controlWebApps('destroy');
+      $scope.uninstallDialog.close();
+    };
 
     $scope.httpPort;
     $scope.httpScheme = "http";
@@ -96,11 +101,6 @@ module Jetty {
 
     $scope.start = function () {
       $scope.controlWebApps('start');
-    };
-
-    $scope.uninstall = function () {
-      $scope.controlWebApps('destroy');
-      $scope.uninstallDialog.close();
     };
 
     $scope.anySelectionHasState = (state) => {

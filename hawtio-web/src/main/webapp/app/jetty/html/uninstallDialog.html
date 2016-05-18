@@ -1,0 +1,13 @@
+<div modal="uninstallDialog.show" close="uninstallDialog.close()" options="uninstallDialog.options">
+    <form class="form-horizontal no-bottom-margin" ng-submit="uninstallDialog.close()">
+        <div class="modal-header"><h4>Are you sure?</h4></div>
+        <div class="modal-body">
+            <p>You are about to uninstall the application(s).</p>
+            <p>This operation cannot be undone so please be careful.</p>
+        </div>
+        <div class="modal-footer">
+            <input class="btn btn-danger" type="submit" ng-click="uninstall()" value="Uninstall">
+            <input class="btn btn-primary" type="button" ng-click="uninstallDialog.close()" value="Cancel">
+        </div>
+    </form>
+</div>
