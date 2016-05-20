@@ -4,6 +4,7 @@
 #### 1.4.65
 
 * Upgraded to Camel 2.17.1
+* The Camel JMX domain name can be configured in the preference
 * Various other small bug fixes
 
 #### 1.4.64
