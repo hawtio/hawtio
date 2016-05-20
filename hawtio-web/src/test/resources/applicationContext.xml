@@ -238,7 +238,6 @@
 
   <!-- lets have a Camel with the Rest DSL too -->
   <camelContext id="restCamel" xmlns="http://camel.apache.org/schema/spring">
-
     <restConfiguration component="jetty" bindingMode="json">
       <dataFormatProperty key="prettyPrint" value="true"/>
     </restConfiguration>

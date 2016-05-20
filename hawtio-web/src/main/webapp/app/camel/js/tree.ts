@@ -1,8 +1,7 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.TreeHeaderController", ["$scope", "$location", ($scope, $location) => {
-
+  _module.controller("Camel.TreeHeaderController", ["$scope", "$location", ($scope, $location, localStorage) => {
     $scope.contextFilterText = '';
 
     $scope.$watch('contextFilterText', (newValue, oldValue) => {
@@ -20,13 +19,15 @@ module Camel {
     };
   }]);
 
-  _module.controller("Camel.TreeController", ["$scope", "$location", "$timeout", "workspace", "$rootScope", ($scope,
+  _module.controller("Camel.TreeController", ["$scope", "$location", "$timeout", "workspace", "$rootScope", "localStorage", ($scope,
                                  $location:ng.ILocationService,
                                  $timeout,
                                  workspace:Workspace,
-                                 $rootScope) => {
+                                 $rootScope, localStorage) => {
     $scope.contextFilterText = $location.search()["cq"];
     $scope.fullScreenViewLink = Camel.linkToFullScreenView(workspace);
+
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -59,7 +60,7 @@ module Camel {
       $scope.fullScreenViewLink = Camel.linkToFullScreenView(workspace);
 
       var children = [];
-      var domainName = Camel.jmxDomain;
+      var domainName = camelJmxDomain;
 
       // lets pull out each context
       var tree = workspace.tree;
@@ -127,7 +128,7 @@ module Camel {
                     angular.forEach(endpointsNode.children, (n) => {
                       if (Core.matchFilterIgnoreCase(n.title, contextFilterText)) {
                         n.addClass = "org-apache-camel-endpoints";
-                        if (!getContextId(n)) {
+                        if (!getContextId(n, camelJmxDomain)) {
                           endpointsFolder.children.push(n);
                           n.entries["context"] = contextNode.entries["context"];
                         }
@@ -152,7 +153,7 @@ module Camel {
                     angular.forEach(componentsNode.children, (n) => {
                       if (Core.matchFilterIgnoreCase(n.title, contextFilterText)) {
                         n.addClass = "org-apache-camel-components";
-                        if (!getContextId(n)) {
+                        if (!getContextId(n, camelJmxDomain)) {
                           componentsFolder.children.push(n);
                           n.entries["context"] = contextNode.entries["context"];
                         }
@@ -177,7 +178,7 @@ module Camel {
                     angular.forEach(dataFormatsNode.children, (n) => {
                       if (Core.matchFilterIgnoreCase(n.title, contextFilterText)) {
                         n.addClass = "org-apache-camel-dataformats";
-                        if (!getContextId(n)) {
+                        if (!getContextId(n, camelJmxDomain)) {
                           dataFormatsFolder.children.push(n);
                           n.entries["context"] = contextNode.entries["context"];
                         }

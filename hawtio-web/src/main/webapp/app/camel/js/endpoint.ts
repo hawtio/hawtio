@@ -2,6 +2,7 @@
 module Camel {
   _module.controller("Camel.EndpointController", ["$scope", "$location", "localStorage", "workspace", "jolokia", ($scope, $location, localStorage:WindowLocalStorage, workspace:Workspace, jolokia) => {
     Camel.initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia);
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     $scope.workspace = workspace;
     $scope.message = "";
@@ -9,7 +10,7 @@ module Camel {
     $scope.createEndpoint = (name) => {
       var jolokia = workspace.jolokia;
       if (jolokia) {
-        var mbean = getSelectionCamelContextMBean(workspace);
+        var mbean = getSelectionCamelContextMBean(workspace, camelJmxDomain);
         if (mbean) {
           $scope.message = name;
           var operation = "createEndpoint(java.lang.String)";

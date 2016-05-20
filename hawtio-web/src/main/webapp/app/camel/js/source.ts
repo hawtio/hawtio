@@ -1,9 +1,10 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
-  _module.controller("Camel.SourceController", ["$scope", "workspace", ($scope, workspace:Workspace) => {
+  _module.controller("Camel.SourceController", ["$scope", "workspace", "localStorage", ($scope, workspace:Workspace, localStorage) => {
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     $scope.workspace = workspace;
-    $scope.camelContextMBean = getSelectionCamelContextMBean(workspace);
+    $scope.camelContextMBean = getSelectionCamelContextMBean(workspace, camelJmxDomain);
 
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
@@ -41,13 +42,13 @@ module Camel {
 
     function updateRoutes() {
       // did we select a single route
-      var routeXmlNode = getSelectedRouteNode(workspace);
+      var routeXmlNode = getSelectedRouteNode(workspace, camelJmxDomain);
       if (routeXmlNode) {
         $scope.source = getSource(routeXmlNode);
         Core.$apply($scope);
       } else {
         // no then try to find the camel context and get all the routes code
-        $scope.mbean = getSelectionCamelContextMBean(workspace);
+        $scope.mbean = getSelectionCamelContextMBean(workspace, camelJmxDomain);
         if (!$scope.mbean) {
           // maybe the parent is the camel context folder (when we have selected the routes folder),
           // then grab the object name from parent
@@ -87,7 +88,7 @@ module Camel {
     var saveWorked = () => {
       Core.notification("success", "Route updated!");
       // lets clear the cached route XML so we reload the new value
-      clearSelectedRouteNode(workspace);
+      clearSelectedRouteNode(workspace, camelJmxDomain);
       updateRoutes();
     };
 
@@ -97,7 +98,7 @@ module Camel {
         var decoded = decodeURIComponent(routeXml);
         log.debug("addOrUpdateRoutesFromXml xml decoded: " + decoded);
         var jolokia = workspace.jolokia;
-        var mbean = getSelectionCamelContextMBean(workspace);
+        var mbean = getSelectionCamelContextMBean(workspace, camelJmxDomain);
         if (mbean) {
           jolokia.execute(mbean, "addOrUpdateRoutesFromXml(java.lang.String)", decoded, onSuccess(saveWorked));
         } else {

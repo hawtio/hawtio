@@ -4,6 +4,8 @@ module Camel {
    var DELIVERY_PERSISTENT = "2";
 
   _module.controller("Camel.SendMessageController", ["$route", "$scope", "$element", "$timeout", "workspace", "jolokia", "localStorage", "$location", "activeMQMessage", ($route, $scope, $element, $timeout, workspace:Workspace, jolokia, localStorage, $location, activeMQMessage) => {
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
+
     var log:Logging.Logger = Logger.get("Camel");
 
     $scope.workspace = workspace;
@@ -156,15 +158,15 @@ module Camel {
           }
 
           var callback = onSuccess(onSendCompleteFn);
-          if (selection.domain === "org.apache.camel") {
-            var target = Camel.getContextAndTargetEndpoint(workspace);
+          if (selection.domain === camelJmxDomain) {
+            var target = Camel.getContextAndTargetEndpoint(workspace, camelJmxDomain);
             var uri = target['uri'];
             mbean = target['mbean'];
             if (mbean && uri) {
 
               // if we are running Camel 2.14 we can check if its posible to send to the endppoint
               var ok = true;
-              if (Camel.isCamelVersionEQGT(2, 14, workspace, jolokia)) {
+              if (Camel.isCamelVersionEQGT(2, 14, workspace, jolokia, camelJmxDomain)) {
                 var reply = jolokia.execute(mbean, "canSendToEndpoint(java.lang.String)", uri);
                 if (!reply) {
                   Core.notification("warning", "Camel does not support sending to this endpoint.");

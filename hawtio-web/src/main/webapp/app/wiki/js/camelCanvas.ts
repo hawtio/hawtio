@@ -3,8 +3,9 @@
  */
 /// <reference path="./wikiPlugin.ts"/>
 module Wiki {
-  export var CamelCanvasController = _module.controller("Wiki.CamelCanvasController", ["$scope", "$element", "workspace", "jolokia", "wikiRepository", "$templateCache", "$interpolate", "$location", ($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache, $interpolate, $location) => {
+  export var CamelCanvasController = _module.controller("Wiki.CamelCanvasController", ["$scope", "$element", "workspace", "jolokia", "wikiRepository", "$templateCache", "$interpolate", "$location", "localStorage", ($scope, $element, workspace:Workspace, jolokia, wikiRepository:GitWikiRepository, $templateCache, $interpolate, $location, localStorage) => {
     var jsPlumbInstance = jsPlumb.getInstance();
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     $scope.addDialog = new UI.Dialog();
     $scope.propertiesDialog = new UI.Dialog();
@@ -226,7 +227,7 @@ module Wiki {
         if (treeNode) {
           var node = doc.createElement(key);
           parentFolder = treeNode;
-          var addedNode = Camel.addRouteChild(parentFolder, node);
+          var addedNode = Camel.addRouteChild(parentFolder, node, camelJmxDomain);
           // TODO add the schema here for an element??
           // or default the data or something
 
@@ -262,7 +263,7 @@ module Wiki {
     function treeModified(reposition = true) {
       // lets recreate the XML model from the update Folder tree
       var newDoc = Camel.generateXmlFromFolder($scope.rootFolder);
-      var tree = Camel.loadCamelTree(newDoc, $scope.pageId);
+      var tree = Camel.loadCamelTree(newDoc, $scope.pageId, camelJmxDomain);
       if (tree) {
         $scope.rootFolder = tree;
         $scope.doc = Core.pathGet(tree, ["xmlDocument"]);

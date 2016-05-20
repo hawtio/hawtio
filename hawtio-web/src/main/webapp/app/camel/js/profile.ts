@@ -1,7 +1,8 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-    _module.controller("Camel.ProfileRouteController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
+    _module.controller("Camel.ProfileRouteController", ["$scope", "$location", "workspace", "jolokia","localStorage", ($scope, $location, workspace:Workspace, jolokia, localStorage) => {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
         $scope.workspace = workspace;
         $scope.data = [];
@@ -250,7 +251,7 @@ module Camel {
         function loadData() {
           console.log("Loading Camel route profile data...");
           $scope.selectedRouteId = getSelectedRouteId(workspace);
-          var routeMBean = getSelectionRouteMBean(workspace, $scope.selectedRouteId);
+          var routeMBean = getSelectionRouteMBean(workspace, $scope.selectedRouteId, camelJmxDomain);
           console.log("Selected route is " + $scope.selectedRouteId)
 
           initIdToIcon();

@@ -3,6 +3,7 @@ module Camel {
   _module.controller("Camel.DebugRouteController", ["$scope", "$element", "workspace", "jolokia", "localStorage", ($scope, $element, workspace:Workspace, jolokia, localStorage) => {
 
     $scope.workspace = workspace;
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     // ignore the cached stuff in camel.ts as it seems to bork the node ids for some reason...
     $scope.ignoreRouteXmlNode = true;
@@ -40,7 +41,7 @@ module Camel {
     });
 
     $scope.toggleBreakpoint = (id) => {
-      var mbean = getSelectionCamelDebugMBean(workspace);
+      var mbean = getSelectionCamelDebugMBean(workspace, camelJmxDomain);
       if (mbean && id) {
         var method = isBreakpointSet(id) ? "removeBreakpoint" : "addBreakpoint";
         jolokia.execute(mbean, method, id, onSuccess(breakpointsChanged));
@@ -48,35 +49,35 @@ module Camel {
     };
 
     $scope.addBreakpoint = () => {
-      var mbean = getSelectionCamelDebugMBean(workspace);
+      var mbean = getSelectionCamelDebugMBean(workspace, camelJmxDomain);
       if (mbean && $scope.selectedDiagramNodeId) {
         jolokia.execute(mbean, "addBreakpoint", $scope.selectedDiagramNodeId, onSuccess(breakpointsChanged));
       }
     };
 
     $scope.removeBreakpoint = () => {
-      var mbean = getSelectionCamelDebugMBean(workspace);
+      var mbean = getSelectionCamelDebugMBean(workspace, camelJmxDomain);
       if (mbean && $scope.selectedDiagramNodeId) {
         jolokia.execute(mbean, "removeBreakpoint", $scope.selectedDiagramNodeId, onSuccess(breakpointsChanged));
       }
     };
 
     $scope.resume = () => {
-      var mbean = getSelectionCamelDebugMBean(workspace);
+      var mbean = getSelectionCamelDebugMBean(workspace, camelJmxDomain);
       if (mbean) {
         jolokia.execute(mbean, "resumeAll", onSuccess(clearStoppedAndResume));
       }
     };
 
     $scope.suspend = () => {
-      var mbean = getSelectionCamelDebugMBean(workspace);
+      var mbean = getSelectionCamelDebugMBean(workspace, camelJmxDomain);
       if (mbean) {
         jolokia.execute(mbean, "suspendAll", onSuccess(clearStoppedAndResume));
       }
     };
 
     $scope.step = () => {
-      var mbean = getSelectionCamelDebugMBean(workspace);
+      var mbean = getSelectionCamelDebugMBean(workspace, camelJmxDomain);
       var stepNode = getStoppedBreakpointId();
       if (mbean && stepNode) {
         jolokia.execute(mbean, "stepBreakpoint(java.lang.String)", stepNode, onSuccess(clearStoppedAndResume));
@@ -138,7 +139,7 @@ module Camel {
 
     function reloadData() {
       $scope.debugging = false;
-      var mbean = getSelectionCamelDebugMBean(workspace);
+      var mbean = getSelectionCamelDebugMBean(workspace, camelJmxDomain);
       if (mbean) {
         $scope.debugging = jolokia.getAttribute(mbean, "Enabled", onSuccess(null));
         if ($scope.debugging) {
@@ -170,7 +171,7 @@ module Camel {
      * and what is the current message content
      */
     function loadCurrentStack() {
-      var mbean = getSelectionCamelDebugMBean(workspace);
+      var mbean = getSelectionCamelDebugMBean(workspace, camelJmxDomain);
       if (mbean) {
         console.log("getting suspended breakpoints!");
         jolokia.execute(mbean, "getSuspendedBreakpointNodeIds", onSuccess(onSuspendedBreakpointNodeIds));
@@ -178,7 +179,7 @@ module Camel {
     }
 
     function onSuspendedBreakpointNodeIds(response) {
-      var mbean = getSelectionCamelDebugMBean(workspace);
+      var mbean = getSelectionCamelDebugMBean(workspace, camelJmxDomain);
       $scope.suspendedBreakpoints = response;
       $scope.stopped = response && response.length;
       var stopNodeId = getStoppedBreakpointId();
@@ -346,7 +347,7 @@ module Camel {
     }
 
     function setDebugging(flag:Boolean) {
-      var mbean = getSelectionCamelDebugMBean(workspace);
+      var mbean = getSelectionCamelDebugMBean(workspace, camelJmxDomain);
       if (mbean) {
         var method = flag ? "enableDebugger" : "disableDebugger";
         var max = Camel.maximumTraceOrDebugBodyLength(localStorage);

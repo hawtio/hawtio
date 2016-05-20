@@ -1,6 +1,7 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
   _module.controller("Camel.TraceRouteController", ["$scope", "workspace", "jolokia", "localStorage", "tracerStatus", ($scope, workspace:Workspace, jolokia, localStorage, tracerStatus) => {
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     var log:Logging.Logger = Logger.get("CamelTracer");
 
@@ -88,7 +89,7 @@ module Camel {
         tracerStatus.jhandle = null;
       }
 
-      var mbean = getSelectionCamelTraceMBean(workspace);
+      var mbean = getSelectionCamelTraceMBean(workspace, camelJmxDomain);
       if (mbean) {
         $scope.tracing = jolokia.getAttribute(mbean, "Enabled", onSuccess(null));
 
@@ -171,7 +172,7 @@ module Camel {
     }
 
     function setTracing(flag:Boolean) {
-      var mbean = getSelectionCamelTraceMBean(workspace);
+      var mbean = getSelectionCamelTraceMBean(workspace, camelJmxDomain);
       if (mbean) {
         // set max only supported on BacklogTracer
         // (the old fabric tracer does not support max length)

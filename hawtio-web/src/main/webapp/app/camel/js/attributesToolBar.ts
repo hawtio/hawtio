@@ -1,9 +1,10 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.AttributesToolBarController", ["$scope", "workspace", "jolokia", ($scope, workspace:Workspace, jolokia) => {
+  _module.controller("Camel.AttributesToolBarController", ["$scope", "workspace", "jolokia", "localStorage", ($scope, workspace:Workspace, jolokia, localStorage) => {
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
-    $scope.camelContextMBean = getSelectionCamelContextMBean(workspace);
+    $scope.camelContextMBean = getSelectionCamelContextMBean(workspace, camelJmxDomain);
     $scope.routeMBean = searchRouteMBean();
 
     $scope.deleteDialog = false
@@ -63,7 +64,7 @@ module Camel {
           routeId = getSelectedRouteId(workspace, children[0])
         }
       }
-      return getSelectionRouteMBean(workspace, routeId);
+      return getSelectionRouteMBean(workspace, routeId, camelJmxDomain);
     }
   }]);
 

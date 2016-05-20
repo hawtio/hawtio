@@ -1,7 +1,8 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.RestServiceController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
+  _module.controller("Camel.RestServiceController", ["$scope", "$location", "workspace", "jolokia", "localStorage", ($scope, $location, workspace:Workspace, jolokia, localStorage) => {
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     $scope.workspace = workspace;
 
@@ -161,7 +162,7 @@ module Camel {
 
     function loadRestRegistry() {
       console.log("Loading RestRegistry data...");
-      var mbean = getSelectionCamelRestRegistry(workspace);
+      var mbean = getSelectionCamelRestRegistry(workspace, camelJmxDomain);
       if (mbean) {
         jolokia.request({type: 'exec', mbean: mbean, operation: 'listRestServices'}, onSuccess(onRestRegistry));
       }

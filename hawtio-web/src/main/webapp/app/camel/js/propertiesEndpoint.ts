@@ -2,6 +2,7 @@
 module Camel {
 
   _module.controller("Camel.PropertiesEndpointController", ["$scope", "workspace", "localStorage", "jolokia", ($scope, workspace:Workspace, localStorage:WindowLocalStorage, jolokia) => {
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
     var log:Logging.Logger = Logger.get("Camel");
 
     $scope.workspace = workspace;
@@ -90,11 +91,11 @@ module Camel {
     }
 
     function updateData() {
-      var contextMBean = getSelectionCamelContextMBean(workspace);
+      var contextMBean = getSelectionCamelContextMBean(workspace, camelJmxDomain);
 
       var endpointMBean:string = null;
       if ($scope.contextId && $scope.endpointPath) {
-        var node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
+        var node = workspace.findMBeanWithProperties(camelJmxDomain, {
           context: $scope.contextId,
           type: "endpoints",
           name: $scope.endpointPath
