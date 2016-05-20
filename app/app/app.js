@@ -2110,35 +2110,35 @@ var Core;
         Workspace.prototype.isFabricFolder = function () {
             return this.hasDomainAndProperties('io.fabric8');
         };
-        Workspace.prototype.isCamelContext = function () {
-            return this.hasDomainAndProperties('org.apache.camel', { type: 'context' });
+        Workspace.prototype.isCamelContext = function (camelJmxDomain) {
+            return this.hasDomainAndProperties(camelJmxDomain, { type: 'context' });
         };
-        Workspace.prototype.isCamelFolder = function () {
-            return this.hasDomainAndProperties('org.apache.camel');
+        Workspace.prototype.isCamelFolder = function (camelJmxDomain) {
+            return this.hasDomainAndProperties(camelJmxDomain);
         };
-        Workspace.prototype.isComponentsFolder = function () {
-            return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'components');
+        Workspace.prototype.isComponentsFolder = function (camelJmxDomain) {
+            return this.selectionHasDomainAndLastFolderName(camelJmxDomain, 'components');
         };
-        Workspace.prototype.isComponent = function () {
-            return this.hasDomainAndProperties('org.apache.camel', { type: 'components' });
+        Workspace.prototype.isComponent = function (camelJmxDomain) {
+            return this.hasDomainAndProperties(camelJmxDomain, { type: 'components' });
         };
-        Workspace.prototype.isEndpointsFolder = function () {
-            return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'endpoints');
+        Workspace.prototype.isEndpointsFolder = function (camelJmxDomain) {
+            return this.selectionHasDomainAndLastFolderName(camelJmxDomain, 'endpoints');
         };
-        Workspace.prototype.isEndpoint = function () {
-            return this.hasDomainAndProperties('org.apache.camel', { type: 'endpoints' });
+        Workspace.prototype.isEndpoint = function (camelJmxDomain) {
+            return this.hasDomainAndProperties(camelJmxDomain, { type: 'endpoints' });
         };
-        Workspace.prototype.isDataFormatsFolder = function () {
-            return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'dataformats');
+        Workspace.prototype.isDataFormatsFolder = function (camelJmxDomain) {
+            return this.selectionHasDomainAndLastFolderName(camelJmxDomain, 'dataformats');
         };
-        Workspace.prototype.isDataFormat = function () {
-            return this.hasDomainAndProperties('org.apache.camel', { type: 'dataformats' });
+        Workspace.prototype.isDataFormat = function (camelJmxDomain) {
+            return this.hasDomainAndProperties(camelJmxDomain, { type: 'dataformats' });
         };
-        Workspace.prototype.isRoutesFolder = function () {
-            return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'routes');
+        Workspace.prototype.isRoutesFolder = function (camelJmxDomain) {
+            return this.selectionHasDomainAndLastFolderName(camelJmxDomain, 'routes');
         };
-        Workspace.prototype.isRoute = function () {
-            return this.hasDomainAndProperties('org.apache.camel', { type: 'routes' });
+        Workspace.prototype.isRoute = function (camelJmxDomain) {
+            return this.hasDomainAndProperties(camelJmxDomain, { type: 'routes' });
         };
         Workspace.prototype.isOsgiFolder = function () {
             return this.hasDomainAndProperties('osgi.core');
@@ -9517,7 +9517,6 @@ var Apm;
 var Camel;
 (function (Camel) {
     Camel.log = Logger.get("Camel");
-    Camel.jmxDomain = 'org.apache.camel';
     Camel.defaultMaximumLabelWidth = 34;
     Camel.defaultCamelMaximumTraceOrDebugBodyLength = 5000;
     Camel.defaultCamelTraceOrDebugIncludeStreams = true;
@@ -9525,9 +9524,9 @@ var Camel;
     Camel.defaultHideOptionDocumentation = false;
     Camel.defaultHideOptionDefaultValue = false;
     Camel.defaultHideOptionUnusedValue = false;
-    function processRouteXml(workspace, jolokia, folder, onRoute) {
+    function processRouteXml(workspace, jolokia, folder, onRoute, camelJmxDomain) {
         var selectedRouteId = getSelectedRouteId(workspace, folder);
-        var mbean = getExpandingFolderCamelContextMBean(workspace, folder) || getSelectionCamelContextMBean(workspace);
+        var mbean = getExpandingFolderCamelContextMBean(workspace, folder, camelJmxDomain) || getSelectionCamelContextMBean(workspace, camelJmxDomain);
         function onRouteXml(response) {
             var route = null;
             var data = response ? response.value : null;
@@ -9753,21 +9752,21 @@ var Camel;
         }
     }
     Camel.escapeEndpointUriNameForJmx = escapeEndpointUriNameForJmx;
-    function getContextAndTargetEndpoint(workspace) {
+    function getContextAndTargetEndpoint(workspace, camelJmxDomain) {
         return {
             uri: Camel.getSelectedEndpointName(workspace),
-            mbean: Camel.getSelectionCamelContextMBean(workspace)
+            mbean: Camel.getSelectionCamelContextMBean(workspace, camelJmxDomain)
         };
     }
     Camel.getContextAndTargetEndpoint = getContextAndTargetEndpoint;
-    function getSelectedRouteNode(workspace) {
+    function getSelectedRouteNode(workspace, camelJmxDomain) {
         var selection = workspace.selection;
-        return (selection && Camel.jmxDomain === selection.domain) ? selection["routeXmlNode"] : null;
+        return (selection && camelJmxDomain === selection.domain) ? selection["routeXmlNode"] : null;
     }
     Camel.getSelectedRouteNode = getSelectedRouteNode;
-    function clearSelectedRouteNode(workspace) {
+    function clearSelectedRouteNode(workspace, camelJmxDomain) {
         var selection = workspace.selection;
-        if (selection && Camel.jmxDomain === selection.domain) {
+        if (selection && camelJmxDomain === selection.domain) {
             delete selection["routeXmlNode"];
         }
     }
@@ -9812,7 +9811,7 @@ var Camel;
         return (camelLanguageSettings(nodeName) || nodeName === "expression") ? true : false;
     }
     Camel.isCamelLanguage = isCamelLanguage;
-    function loadCamelTree(xml, key) {
+    function loadCamelTree(xml, key, camelJmxDomain) {
         var doc = xml;
         if (angular.isString(xml)) {
             doc = $.parseXML(xml);
@@ -9820,7 +9819,7 @@ var Camel;
         var id = "camelContext";
         var folder = new Folder(id);
         folder.addClass = "org-apache-camel-context";
-        folder.domain = Camel.jmxDomain;
+        folder.domain = camelJmxDomain;
         folder.typeName = "context";
         folder.key = Core.toSafeDomID(key);
         var context = $(doc).find("camelContext");
@@ -9839,7 +9838,7 @@ var Camel;
                 var routeFolder = new Folder(id);
                 routeFolder.addClass = "org-apache-camel-route";
                 routeFolder.typeName = "routes";
-                routeFolder.domain = Camel.jmxDomain;
+                routeFolder.domain = camelJmxDomain;
                 routeFolder.key = folder.key + "_" + Core.toSafeDomID(id);
                 routeFolder.parent = folder;
                 var nodeSettings = getCamelSchema("route");
@@ -9849,29 +9848,29 @@ var Camel;
                     routeFolder.icon = imageUrl;
                 }
                 folder.children.push(routeFolder);
-                addRouteChildren(routeFolder, route);
+                addRouteChildren(routeFolder, route, camelJmxDomain);
             });
         }
         return folder;
     }
     Camel.loadCamelTree = loadCamelTree;
-    function addRouteChildren(folder, route) {
+    function addRouteChildren(folder, route, camelJmxDomain) {
         folder.children = [];
         folder["routeXmlNode"] = route;
         route.setAttribute("_cid", folder.key);
         $(route).children("*").each(function (idx, n) {
-            addRouteChild(folder, n);
+            addRouteChild(folder, n, camelJmxDomain);
         });
     }
     Camel.addRouteChildren = addRouteChildren;
-    function addRouteChild(folder, n) {
+    function addRouteChild(folder, n, camelJmxDomain) {
         var nodeName = n.localName;
         if (nodeName) {
             var nodeSettings = getCamelSchema(nodeName);
             if (nodeSettings) {
                 var imageUrl = getRouteNodeIcon(nodeSettings);
                 var child = new Folder(nodeName);
-                child.domain = Camel.jmxDomain;
+                child.domain = camelJmxDomain;
                 child.typeName = "routeNode";
                 updateRouteNodeLabelAndTooltip(child, n, nodeSettings);
                 child.parent = folder;
@@ -9897,24 +9896,24 @@ var Camel;
                     folder.children = [];
                 }
                 folder.children.push(child);
-                addRouteChildren(child, n);
+                addRouteChildren(child, n, camelJmxDomain);
                 return child;
             }
         }
         return null;
     }
     Camel.addRouteChild = addRouteChild;
-    function getRootCamelFolder(workspace) {
+    function getRootCamelFolder(workspace, camelJmxDomain) {
         var tree = workspace ? workspace.tree : null;
         if (tree) {
-            return tree.get(Camel.jmxDomain);
+            return tree.get(camelJmxDomain);
         }
         return null;
     }
     Camel.getRootCamelFolder = getRootCamelFolder;
-    function getCamelContextFolder(workspace, camelContextId) {
+    function getCamelContextFolder(workspace, camelContextId, camelJmxDomain) {
         var answer = null;
-        var root = getRootCamelFolder(workspace);
+        var root = getRootCamelFolder(workspace, camelJmxDomain);
         if (root && camelContextId) {
             angular.forEach(root.children, function (contextFolder) {
                 if (!answer && camelContextId === contextFolder.title) {
@@ -9925,8 +9924,8 @@ var Camel;
         return answer;
     }
     Camel.getCamelContextFolder = getCamelContextFolder;
-    function getCamelContextMBean(workspace, camelContextId) {
-        var contextsFolder = getCamelContextFolder(workspace, camelContextId);
+    function getCamelContextMBean(workspace, camelContextId, camelJmxDomain) {
+        var contextsFolder = getCamelContextFolder(workspace, camelContextId, camelJmxDomain);
         if (contextsFolder) {
             var contextFolder = contextsFolder.navigate("context");
             if (contextFolder && contextFolder.children && contextFolder.children.length) {
@@ -10074,9 +10073,9 @@ var Camel;
         return label;
     }
     Camel.updateRouteNodeLabelAndTooltip = updateRouteNodeLabelAndTooltip;
-    function getSelectionCamelContextMBean(workspace) {
+    function getSelectionCamelContextMBean(workspace, camelJmxDomain) {
         if (workspace) {
-            var contextId = getContextId(workspace);
+            var contextId = getContextId(workspace, camelJmxDomain);
             var selection = workspace.selection;
             var tree = workspace.tree;
             if (tree && selection) {
@@ -10096,9 +10095,9 @@ var Camel;
         return null;
     }
     Camel.getSelectionCamelContextMBean = getSelectionCamelContextMBean;
-    function getExpandingFolderCamelContextMBean(workspace, folder) {
+    function getExpandingFolderCamelContextMBean(workspace, folder, camelJmxDomain) {
         if (folder.entries && folder.entries["type"] === "routes") {
-            var result = workspace.tree.navigate("org.apache.camel", folder.entries["context"], "context");
+            var result = workspace.tree.navigate(camelJmxDomain, folder.entries["context"], "context");
             if (result && result.children) {
                 var contextBean = result.children.first();
                 if (contextBean.objectName) {
@@ -10109,9 +10108,9 @@ var Camel;
         return null;
     }
     Camel.getExpandingFolderCamelContextMBean = getExpandingFolderCamelContextMBean;
-    function getSelectionCamelContextEndpoints(workspace) {
+    function getSelectionCamelContextEndpoints(workspace, camelJmxDomain) {
         if (workspace) {
-            var contextId = getContextId(workspace);
+            var contextId = getContextId(workspace, camelJmxDomain);
             var selection = workspace.selection;
             var tree = workspace.tree;
             if (tree && selection) {
@@ -10124,9 +10123,9 @@ var Camel;
         return null;
     }
     Camel.getSelectionCamelContextEndpoints = getSelectionCamelContextEndpoints;
-    function getSelectionCamelTraceMBean(workspace) {
+    function getSelectionCamelTraceMBean(workspace, camelJmxDomain) {
         if (workspace) {
-            var contextId = getContextId(workspace);
+            var contextId = getContextId(workspace, camelJmxDomain);
             var selection = workspace.selection;
             var tree = workspace.tree;
             if (tree && selection) {
@@ -10150,9 +10149,9 @@ var Camel;
         return null;
     }
     Camel.getSelectionCamelTraceMBean = getSelectionCamelTraceMBean;
-    function getSelectionCamelDebugMBean(workspace) {
+    function getSelectionCamelDebugMBean(workspace, camelJmxDomain) {
         if (workspace) {
-            var contextId = getContextId(workspace);
+            var contextId = getContextId(workspace, camelJmxDomain);
             var selection = workspace.selection;
             var tree = workspace.tree;
             if (tree && selection) {
@@ -10171,9 +10170,9 @@ var Camel;
         return null;
     }
     Camel.getSelectionCamelDebugMBean = getSelectionCamelDebugMBean;
-    function getSelectionCamelTypeConverter(workspace) {
+    function getSelectionCamelTypeConverter(workspace, camelJmxDomain) {
         if (workspace) {
-            var contextId = getContextId(workspace);
+            var contextId = getContextId(workspace, camelJmxDomain);
             var selection = workspace.selection;
             var tree = workspace.tree;
             if (tree && selection) {
@@ -10192,9 +10191,9 @@ var Camel;
         return null;
     }
     Camel.getSelectionCamelTypeConverter = getSelectionCamelTypeConverter;
-    function getSelectionCamelRestRegistry(workspace) {
+    function getSelectionCamelRestRegistry(workspace, camelJmxDomain) {
         if (workspace) {
-            var contextId = getContextId(workspace);
+            var contextId = getContextId(workspace, camelJmxDomain);
             var selection = workspace.selection;
             var tree = workspace.tree;
             if (tree && selection) {
@@ -10213,9 +10212,9 @@ var Camel;
         return null;
     }
     Camel.getSelectionCamelRestRegistry = getSelectionCamelRestRegistry;
-    function getSelectionCamelEndpointRuntimeRegistry(workspace) {
+    function getSelectionCamelEndpointRuntimeRegistry(workspace, camelJmxDomain) {
         if (workspace) {
-            var contextId = getContextId(workspace);
+            var contextId = getContextId(workspace, camelJmxDomain);
             var selection = workspace.selection;
             var tree = workspace.tree;
             if (tree && selection) {
@@ -10234,9 +10233,9 @@ var Camel;
         return null;
     }
     Camel.getSelectionCamelEndpointRuntimeRegistry = getSelectionCamelEndpointRuntimeRegistry;
-    function getSelectionCamelRouteMetrics(workspace) {
+    function getSelectionCamelRouteMetrics(workspace, camelJmxDomain) {
         if (workspace) {
-            var contextId = getContextId(workspace);
+            var contextId = getContextId(workspace, camelJmxDomain);
             var selection = workspace.selection;
             var tree = workspace.tree;
             if (tree && selection) {
@@ -10255,9 +10254,9 @@ var Camel;
         return null;
     }
     Camel.getSelectionCamelRouteMetrics = getSelectionCamelRouteMetrics;
-    function getSelectionCamelMessageHistoryMetrics(workspace) {
+    function getSelectionCamelMessageHistoryMetrics(workspace, camelJmxDomain) {
         if (workspace) {
-            var contextId = getContextId(workspace);
+            var contextId = getContextId(workspace, camelJmxDomain);
             var selection = workspace.selection;
             var tree = workspace.tree;
             if (tree && selection) {
@@ -10276,9 +10275,9 @@ var Camel;
         return null;
     }
     Camel.getSelectionCamelMessageHistoryMetrics = getSelectionCamelMessageHistoryMetrics;
-    function getSelectionCamelInflightRepository(workspace) {
+    function getSelectionCamelInflightRepository(workspace, camelJmxDomain) {
         if (workspace) {
-            var contextId = getContextId(workspace);
+            var contextId = getContextId(workspace, camelJmxDomain);
             var selection = workspace.selection;
             var tree = workspace.tree;
             if (tree && selection) {
@@ -10297,9 +10296,9 @@ var Camel;
         return null;
     }
     Camel.getSelectionCamelInflightRepository = getSelectionCamelInflightRepository;
-    function getSelectionCamelBlockedExchanges(workspace) {
+    function getSelectionCamelBlockedExchanges(workspace, camelJmxDomain) {
         if (workspace) {
-            var contextId = getContextId(workspace);
+            var contextId = getContextId(workspace, camelJmxDomain);
             var selection = workspace.selection;
             var tree = workspace.tree;
             if (tree && selection) {
@@ -10318,10 +10317,10 @@ var Camel;
         return null;
     }
     Camel.getSelectionCamelBlockedExchanges = getSelectionCamelBlockedExchanges;
-    function getContextId(workspace) {
+    function getContextId(workspace, camelJmxDomain) {
         var selection = workspace.selection;
         if (selection) {
-            selection = selection.findAncestor(function (s) { return s.title === 'context' || s.title === 'Camel Contexts' || s.parent != null && s.parent.title === 'org.apache.camel'; });
+            selection = selection.findAncestor(function (s) { return s.title === 'context' || s.title === 'Camel Contexts' || s.parent != null && s.parent.title === camelJmxDomain; });
             if (selection) {
                 var tree = workspace.tree;
                 var folderNames = selection.folderNames;
@@ -10378,9 +10377,9 @@ var Camel;
         return selectedRouteId;
     }
     Camel.getSelectedRouteId = getSelectedRouteId;
-    function getSelectionRouteMBean(workspace, routeId) {
+    function getSelectionRouteMBean(workspace, routeId, camelJmxDomain) {
         if (workspace) {
-            var contextId = getContextId(workspace);
+            var contextId = getContextId(workspace, camelJmxDomain);
             var selection = workspace.selection;
             var tree = workspace.tree;
             if (tree && selection) {
@@ -10399,9 +10398,9 @@ var Camel;
         return null;
     }
     Camel.getSelectionRouteMBean = getSelectionRouteMBean;
-    function getCamelVersion(workspace, jolokia) {
+    function getCamelVersion(workspace, jolokia, camelJmxDomain) {
         if (workspace) {
-            var contextId = getContextId(workspace);
+            var contextId = getContextId(workspace, camelJmxDomain);
             var selection = workspace.selection;
             var tree = workspace.tree;
             if (tree && selection) {
@@ -10743,11 +10742,11 @@ var Camel;
         return doc;
     }
     Camel.generateXmlFromFolder = generateXmlFromFolder;
-    function camelContextMBeansById(workspace) {
+    function camelContextMBeansById(workspace, camelJmxDomain) {
         var answer = {};
         var tree = workspace.tree;
         if (tree) {
-            var camelTree = tree.navigate(Camel.jmxDomain);
+            var camelTree = tree.navigate(camelJmxDomain);
             if (camelTree) {
                 angular.forEach(camelTree.children, function (contextsFolder) {
                     var contextFolder = contextsFolder.navigate("context");
@@ -10767,19 +10766,19 @@ var Camel;
         return answer;
     }
     Camel.camelContextMBeansById = camelContextMBeansById;
-    function camelContextMBeansByComponentName(workspace) {
-        return camelContextMBeansByRouteOrComponentId(workspace, "components");
+    function camelContextMBeansByComponentName(workspace, camelJmxDomain) {
+        return camelContextMBeansByRouteOrComponentId(workspace, "components", camelJmxDomain);
     }
     Camel.camelContextMBeansByComponentName = camelContextMBeansByComponentName;
-    function camelContextMBeansByRouteId(workspace) {
-        return camelContextMBeansByRouteOrComponentId(workspace, "routes");
+    function camelContextMBeansByRouteId(workspace, camelJmxDomain) {
+        return camelContextMBeansByRouteOrComponentId(workspace, "routes", camelJmxDomain);
     }
     Camel.camelContextMBeansByRouteId = camelContextMBeansByRouteId;
-    function camelContextMBeansByRouteOrComponentId(workspace, componentsOrRoutes) {
+    function camelContextMBeansByRouteOrComponentId(workspace, componentsOrRoutes, camelJmxDomain) {
         var answer = {};
         var tree = workspace.tree;
         if (tree) {
-            var camelTree = tree.navigate(Camel.jmxDomain);
+            var camelTree = tree.navigate(camelJmxDomain);
             if (camelTree) {
                 angular.forEach(camelTree.children, function (contextsFolder) {
                     var contextFolder = contextsFolder.navigate("context");
@@ -10805,11 +10804,11 @@ var Camel;
         }
         return answer;
     }
-    function camelProcessorMBeansById(workspace) {
+    function camelProcessorMBeansById(workspace, camelJmxDomain) {
         var answer = {};
         var tree = workspace.tree;
         if (tree) {
-            var camelTree = tree.navigate(Camel.jmxDomain);
+            var camelTree = tree.navigate(camelJmxDomain);
             if (camelTree) {
                 angular.forEach(camelTree.children, function (contextsFolder) {
                     var processorsFolder = contextsFolder.navigate("processors");
@@ -10919,8 +10918,8 @@ var Camel;
         }).attr("class", "node selected");
     }
     Camel.highlightSelectedNode = highlightSelectedNode;
-    function isCamelVersionEQGT(major, minor, workspace, jolokia) {
-        var camelVersion = getCamelVersion(workspace, jolokia);
+    function isCamelVersionEQGT(major, minor, workspace, jolokia, camelJmxDomain) {
+        var camelVersion = getCamelVersion(workspace, jolokia, camelJmxDomain);
         if (camelVersion) {
             console.log("Camel version " + camelVersion);
             camelVersion += "camel-";
@@ -10956,18 +10955,19 @@ var Camel;
     Camel._module.factory('activeMQMessage', function () {
         return { 'message': null };
     });
-    Camel._module.run(["workspace", "jolokia", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry", function (workspace, jolokia, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) {
+    Camel._module.run(["workspace", "jolokia", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry", "localStorage", function (workspace, jolokia, viewRegistry, layoutFull, helpRegistry, preferencesRegistry, localStorage) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         viewRegistry['camel/endpoint/'] = layoutFull;
         viewRegistry['camel/route/'] = layoutFull;
         viewRegistry['camel/fabricDiagram'] = layoutFull;
         viewRegistry['camel'] = 'app/camel/html/layoutCamelTree.html';
         helpRegistry.addUserDoc('camel', 'app/camel/doc/help.md', function () {
-            return workspace.treeContainsDomainAndProperties(Camel.jmxDomain);
+            return workspace.treeContainsDomainAndProperties(camelJmxDomain);
         });
         preferencesRegistry.addTab('Camel', 'app/camel/html/preferences.html', function () {
-            return workspace.treeContainsDomainAndProperties(Camel.jmxDomain);
+            return workspace.treeContainsDomainAndProperties(camelJmxDomain);
         });
-        Jmx.addAttributeToolBar(Camel.pluginName, Camel.jmxDomain, function (selection) {
+        Jmx.addAttributeToolBar(Camel.pluginName, camelJmxDomain, function (selection) {
             var typeName = selection.typeName;
             if (typeName) {
                 if (typeName.startsWith("context"))
@@ -10976,7 +10976,7 @@ var Camel;
                     return routeToolBar;
             }
             var folderNames = selection.folderNames;
-            if (folderNames && selection.domain === Camel.jmxDomain) {
+            if (folderNames && selection.domain === camelJmxDomain) {
                 var last = folderNames.last();
                 if ("routes" === last)
                     return routeToolBar;
@@ -10989,7 +10989,7 @@ var Camel;
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(\'' + stateField + '\') | camelIconClass}}"></i></div>';
         var stateColumn = { field: stateField, displayName: stateField, cellTemplate: stateTemplate, width: 56, minWidth: 56, maxWidth: 56, resizable: false, defaultSort: false };
         var attributes = workspace.attributeColumnDefs;
-        attributes[Camel.jmxDomain + "/context/folder"] = [
+        attributes[camelJmxDomain + "/context/folder"] = [
             stateColumn,
             { field: 'CamelId', displayName: 'Context' },
             { field: 'Uptime', displayName: 'Uptime', visible: false },
@@ -11009,7 +11009,7 @@ var Camel;
             { field: 'Redeliveries', displayName: 'Redelivery #', visible: false },
             { field: 'ExternalRedeliveries', displayName: 'External Redelivery #', visible: false }
         ];
-        attributes[Camel.jmxDomain + "/routes/folder"] = [
+        attributes[camelJmxDomain + "/routes/folder"] = [
             stateColumn,
             { field: 'CamelId', displayName: 'Context' },
             { field: 'RouteId', displayName: 'Route' },
@@ -11030,7 +11030,7 @@ var Camel;
             { field: 'Redeliveries', displayName: 'Redelivery #', visible: false },
             { field: 'ExternalRedeliveries', displayName: 'External Redelivery #', visible: false }
         ];
-        attributes[Camel.jmxDomain + "/processors/folder"] = [
+        attributes[camelJmxDomain + "/processors/folder"] = [
             stateColumn,
             { field: 'CamelId', displayName: 'Context' },
             { field: 'RouteId', displayName: 'Route' },
@@ -11050,12 +11050,12 @@ var Camel;
             { field: 'Redeliveries', displayName: 'Redelivery #', visible: false },
             { field: 'ExternalRedeliveries', displayName: 'External Redelivery #', visible: false }
         ];
-        attributes[Camel.jmxDomain + "/components/folder"] = [
+        attributes[camelJmxDomain + "/components/folder"] = [
             stateColumn,
             { field: 'CamelId', displayName: 'Context' },
             { field: 'ComponentName', displayName: 'Name' }
         ];
-        attributes[Camel.jmxDomain + "/consumers/folder"] = [
+        attributes[camelJmxDomain + "/consumers/folder"] = [
             stateColumn,
             { field: 'CamelId', displayName: 'Context' },
             { field: 'RouteId', displayName: 'Route' },
@@ -11063,20 +11063,20 @@ var Camel;
             { field: 'Suspended', displayName: 'Suspended', resizable: false },
             { field: 'InflightExchanges', displayName: 'Inflight #' }
         ];
-        attributes[Camel.jmxDomain + "/services/folder"] = [
+        attributes[camelJmxDomain + "/services/folder"] = [
             stateColumn,
             { field: 'CamelId', displayName: 'Context' },
             { field: 'RouteId', displayName: 'Route' },
             { field: 'Suspended', displayName: 'Suspended', resizable: false },
             { field: 'SupportsSuspended', displayName: 'Can Suspend', resizable: false }
         ];
-        attributes[Camel.jmxDomain + "/endpoints/folder"] = [
+        attributes[camelJmxDomain + "/endpoints/folder"] = [
             stateColumn,
             { field: 'CamelId', displayName: 'Context' },
             { field: 'EndpointUri', displayName: 'Endpoint URI', width: "***" },
             { field: 'Singleton', displayName: 'Singleton', resizable: false }
         ];
-        attributes[Camel.jmxDomain + "/threadpools/folder"] = [
+        attributes[camelJmxDomain + "/threadpools/folder"] = [
             { field: 'Id', displayName: 'Id', width: "**" },
             { field: 'ActiveCount', displayName: 'Active #' },
             { field: 'PoolSize', displayName: 'Pool Size' },
@@ -11085,7 +11085,7 @@ var Camel;
             { field: 'TaskCount', displayName: 'Task #' },
             { field: 'CompletedTaskCount', displayName: 'Completed Task #' }
         ];
-        attributes[Camel.jmxDomain + "/errorhandlers/folder"] = [
+        attributes[camelJmxDomain + "/errorhandlers/folder"] = [
             { field: 'CamelId', displayName: 'Context' },
             { field: 'DeadLetterChannel', displayName: 'Dead Letter' },
             { field: 'DeadLetterChannelEndpointUri', displayName: 'Endpoint URI', width: "**", resizable: true },
@@ -11097,138 +11097,138 @@ var Camel;
             id: "camel",
             content: "Camel",
             title: "Manage your Apache Camel applications",
-            isValid: function (workspace) { return workspace.treeContainsDomainAndProperties(Camel.jmxDomain); },
+            isValid: function (workspace) { return workspace.treeContainsDomainAndProperties(camelJmxDomain); },
             href: function () { return "#/jmx/attributes?tab=camel"; },
             isActive: function (workspace) { return workspace.isTopTabActive("camel"); }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-picture"></i> Route Diagram',
             title: "View a diagram of the Camel routes",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelContextMBean(workspace), "dumpRoutesAsXml"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder(camelJmxDomain) && !workspace.isEndpointsFolder(camelJmxDomain) && !workspace.isDataFormatsFolder(camelJmxDomain) && (workspace.isRoute(camelJmxDomain) || workspace.isRoutesFolder(camelJmxDomain)) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelContextMBean(workspace, camelJmxDomain), "dumpRoutesAsXml"); },
             href: function () { return "#/camel/routes"; },
             index: -2
         });
         workspace.subLevelTabs.push({
             content: '<i class=" icon-file-alt"></i> Source',
             title: "View the source of the Camel routes",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelContextMBean(workspace), "dumpRoutesAsXml"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder(camelJmxDomain) && !workspace.isEndpointsFolder(camelJmxDomain) && !workspace.isDataFormatsFolder(camelJmxDomain) && (workspace.isRoute(camelJmxDomain) || workspace.isRoutesFolder(camelJmxDomain)) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelContextMBean(workspace, camelJmxDomain), "dumpRoutesAsXml"); },
             href: function () { return "#/camel/source"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-bar-chart"></i> Route Metrics',
             title: "View the Camel route metrics",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelRouteMetrics(workspace), "dumpStatisticsAsJson"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder(camelJmxDomain) && !workspace.isEndpointsFolder(camelJmxDomain) && !workspace.isDataFormatsFolder(camelJmxDomain) && (workspace.isRoute(camelJmxDomain) || workspace.isRoutesFolder(camelJmxDomain)) && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia, camelJmxDomain) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelRouteMetrics(workspace, camelJmxDomain), "dumpStatisticsAsJson"); },
             href: function () { return "#/camel/routeMetrics"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-bar-chart"></i> Message Metrics',
             title: "View the Camel message history metrics",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 17, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelMessageHistoryMetrics(workspace), "dumpStatisticsAsJson"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder(camelJmxDomain) && !workspace.isEndpointsFolder(camelJmxDomain) && !workspace.isDataFormatsFolder(camelJmxDomain) && (workspace.isRoute(camelJmxDomain) || workspace.isRoutesFolder(camelJmxDomain)) && Camel.isCamelVersionEQGT(2, 17, workspace, jolokia, camelJmxDomain) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelMessageHistoryMetrics(workspace, camelJmxDomain), "dumpStatisticsAsJson"); },
             href: function () { return "#/camel/historyMetrics"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Inflight',
             title: "View the Camel inflight exchanges",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelInflightRepository(workspace), "browse"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder(camelJmxDomain) && !workspace.isEndpointsFolder(camelJmxDomain) && !workspace.isDataFormatsFolder(camelJmxDomain) && (workspace.isRoute(camelJmxDomain) || workspace.isRoutesFolder(camelJmxDomain)) && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia, camelJmxDomain) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelInflightRepository(workspace, camelJmxDomain), "browse"); },
             href: function () { return "#/camel/inflight"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Blocked',
             title: "View the Camel blocked exchanges",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelBlockedExchanges(workspace), "browse"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !workspace.isComponentsFolder(camelJmxDomain) && !workspace.isEndpointsFolder(camelJmxDomain) && !workspace.isDataFormatsFolder(camelJmxDomain) && (workspace.isRoute(camelJmxDomain) || workspace.isRoutesFolder(camelJmxDomain)) && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia, camelJmxDomain) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelBlockedExchanges(workspace, camelJmxDomain), "browse"); },
             href: function () { return "#/camel/blocked"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Endpoints (in/out)',
             title: "List all the incoming and outgoing endpoints in the context",
-            isValid: function (workspace) { return !workspace.isComponentsFolder() && !workspace.isComponent() && !workspace.isEndpointsFolder() && !workspace.isEndpoint() && !workspace.isDataFormatsFolder() && !workspace.isDataFormat() && (workspace.isCamelContext() || workspace.isRoutesFolder()) && Camel.isCamelVersionEQGT(2, 16, workspace, jolokia) && Camel.getSelectionCamelEndpointRuntimeRegistry(workspace) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelEndpointRuntimeRegistry(workspace), "endpointStatistics"); },
+            isValid: function (workspace) { return !workspace.isComponentsFolder(camelJmxDomain) && !workspace.isComponent(camelJmxDomain) && !workspace.isEndpointsFolder(camelJmxDomain) && !workspace.isEndpoint(camelJmxDomain) && !workspace.isDataFormatsFolder(camelJmxDomain) && !workspace.isDataFormat(camelJmxDomain) && (workspace.isCamelContext(camelJmxDomain) || workspace.isRoutesFolder(camelJmxDomain)) && Camel.isCamelVersionEQGT(2, 16, workspace, jolokia, camelJmxDomain) && Camel.getSelectionCamelEndpointRuntimeRegistry(workspace, camelJmxDomain) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelEndpointRuntimeRegistry(workspace, camelJmxDomain), "endpointStatistics"); },
             href: function () { return "#/camel/endpointRuntimeRegistry"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class=" icon-edit"></i> Properties',
             title: "View the pattern properties",
-            isValid: function (workspace) { return Camel.getSelectedRouteNode(workspace); },
+            isValid: function (workspace) { return Camel.getSelectedRouteNode(workspace, camelJmxDomain); },
             href: function () { return "#/camel/properties"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Rest',
             title: "List all the REST services registered in the context",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !Camel.getSelectedRouteNode(workspace) && !workspace.isComponentsFolder() && !workspace.isComponent() && !workspace.isEndpointsFolder() && !workspace.isEndpoint() && !workspace.isDataFormatsFolder() && !workspace.isDataFormat() && !workspace.isRoute() && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelRestRegistry(workspace), "listRestServices"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !Camel.getSelectedRouteNode(workspace, camelJmxDomain) && !workspace.isComponentsFolder(camelJmxDomain) && !workspace.isComponent(camelJmxDomain) && !workspace.isEndpointsFolder(camelJmxDomain) && !workspace.isEndpoint(camelJmxDomain) && !workspace.isDataFormatsFolder(camelJmxDomain) && !workspace.isDataFormat(camelJmxDomain) && !workspace.isRoute(camelJmxDomain) && Camel.isCamelVersionEQGT(2, 14, workspace, jolokia, camelJmxDomain) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelRestRegistry(workspace, camelJmxDomain), "listRestServices"); },
             href: function () { return "#/camel/restRegistry"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Type Converters',
             title: "List all the type converters registered in the context",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !Camel.getSelectedRouteNode(workspace) && !workspace.isComponentsFolder() && !workspace.isEndpointsFolder() && !workspace.isDataFormatsFolder() && (workspace.isRoute() || workspace.isRoutesFolder() || workspace.isCamelContext()) && Camel.isCamelVersionEQGT(2, 13, workspace, jolokia) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelTypeConverter(workspace), "listTypeConverters"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && !Camel.getSelectedRouteNode(workspace, camelJmxDomain) && !workspace.isComponentsFolder(camelJmxDomain) && !workspace.isEndpointsFolder(camelJmxDomain) && !workspace.isDataFormatsFolder(camelJmxDomain) && (workspace.isRoute(camelJmxDomain) || workspace.isRoutesFolder(camelJmxDomain) || workspace.isCamelContext(camelJmxDomain)) && Camel.isCamelVersionEQGT(2, 13, workspace, jolokia, camelJmxDomain) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelTypeConverter(workspace, camelJmxDomain), "listTypeConverters"); },
             href: function () { return "#/camel/typeConverter"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-envelope"></i> Browse',
             title: "Browse the messages on the endpoint",
-            isValid: function (workspace) { return workspace.isEndpoint() && workspace.hasInvokeRights(workspace.selection, "browseAllMessagesAsXml"); },
+            isValid: function (workspace) { return workspace.isEndpoint(camelJmxDomain) && workspace.hasInvokeRights(workspace.selection, "browseAllMessagesAsXml"); },
             href: function () { return "#/camel/browseEndpoint"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Properties',
             title: "Show the component properties",
-            isValid: function (workspace) { return workspace.isComponent() && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia) && workspace.hasInvokeRights(workspace.selection, "explainComponentJson"); },
+            isValid: function (workspace) { return workspace.isComponent(camelJmxDomain) && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia, camelJmxDomain) && workspace.hasInvokeRights(workspace.selection, "explainComponentJson"); },
             href: function () { return "#/camel/propertiesComponent"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Properties',
             title: "Show the endpoint properties",
-            isValid: function (workspace) { return workspace.isEndpoint() && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia) && workspace.hasInvokeRights(workspace.selection, "explainEndpointJson"); },
+            isValid: function (workspace) { return workspace.isEndpoint(camelJmxDomain) && Camel.isCamelVersionEQGT(2, 15, workspace, jolokia, camelJmxDomain) && workspace.hasInvokeRights(workspace.selection, "explainEndpointJson"); },
             href: function () { return "#/camel/propertiesEndpoint"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-list"></i> Properties',
             title: "Show the dataformat properties",
-            isValid: function (workspace) { return workspace.isDataFormat() && Camel.isCamelVersionEQGT(2, 16, workspace, jolokia) && workspace.hasInvokeRights(workspace.selection, "explainDataFormatJson"); },
+            isValid: function (workspace) { return workspace.isDataFormat(camelJmxDomain) && Camel.isCamelVersionEQGT(2, 16, workspace, jolokia, camelJmxDomain) && workspace.hasInvokeRights(workspace.selection, "explainDataFormatJson"); },
             href: function () { return "#/camel/propertiesDataFormat"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-stethoscope"></i> Debug',
             title: "Debug the Camel route",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && workspace.isRoute() && Camel.getSelectionCamelDebugMBean(workspace) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelDebugMBean(workspace), "getBreakpoints"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && workspace.isRoute(camelJmxDomain) && Camel.getSelectionCamelDebugMBean(workspace, camelJmxDomain) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelDebugMBean(workspace, camelJmxDomain), "getBreakpoints"); },
             href: function () { return "#/camel/debugRoute"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-envelope"></i> Trace',
             title: "Trace the messages flowing through the Camel route",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && workspace.isRoute() && Camel.getSelectionCamelTraceMBean(workspace) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelTraceMBean(workspace), "dumpAllTracedMessagesAsXml"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && workspace.isRoute(camelJmxDomain) && Camel.getSelectionCamelTraceMBean(workspace, camelJmxDomain) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelTraceMBean(workspace, camelJmxDomain), "dumpAllTracedMessagesAsXml"); },
             href: function () { return "#/camel/traceRoute"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-bar-chart"></i> Profile',
             title: "Profile the messages flowing through the Camel route",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && workspace.isRoute() && Camel.getSelectionCamelTraceMBean(workspace) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelTraceMBean(workspace), "dumpAllTracedMessagesAsXml"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && workspace.isRoute(camelJmxDomain) && Camel.getSelectionCamelTraceMBean(workspace, camelJmxDomain) && workspace.hasInvokeRightsForName(Camel.getSelectionCamelTraceMBean(workspace, camelJmxDomain), "dumpAllTracedMessagesAsXml"); },
             href: function () { return "#/camel/profileRoute"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-pencil"></i> Send',
             title: "Send a message to this endpoint",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && workspace.isEndpoint() && workspace.hasInvokeRights(workspace.selection, workspace.selection.domain === "org.apache.camel" ? "sendBodyAndHeaders" : "sendTextMessage"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && workspace.isEndpoint(camelJmxDomain) && workspace.hasInvokeRights(workspace.selection, workspace.selection.domain === camelJmxDomain ? "sendBodyAndHeaders" : "sendTextMessage"); },
             href: function () { return "#/camel/sendMessage"; }
         });
         workspace.subLevelTabs.push({
             content: '<i class="icon-plus"></i> Endpoint',
             title: "Create a new endpoint",
-            isValid: function (workspace) { return workspace.isTopTabActive("camel") && workspace.isEndpointsFolder() && workspace.hasInvokeRights(workspace.selection, "createEndpoint"); },
+            isValid: function (workspace) { return workspace.isTopTabActive("camel") && workspace.isEndpointsFolder(camelJmxDomain) && workspace.hasInvokeRights(workspace.selection, "createEndpoint"); },
             href: function () { return "#/camel/createEndpoint"; }
         });
     }]);
     hawtioPluginLoader.addModule(Camel.pluginName);
     hawtioPluginLoader.registerPreBootstrapTask(function (task) {
-        jmxModule.registerLazyLoadHandler(Camel.jmxDomain, function (folder) {
-            if (Camel.jmxDomain === folder.domain && "routes" === folder.typeName) {
+        jmxModule.registerLazyLoadHandler(self.localStorage["camelJmxDomain"], function (folder) {
+            if (self.localStorage["camelJmxDomain"] === folder.domain && "routes" === folder.typeName) {
                 return function (workspace, folder, onComplete) {
                     if ("routes" === folder.typeName) {
                         Camel.processRouteXml(workspace, workspace.jolokia, folder, function (route) {
                             if (route) {
-                                Camel.addRouteChildren(folder, route);
+                                Camel.addRouteChildren(folder, route, workspace.localStorage["camelJmxDomain"]);
                             }
                             onComplete();
-                        });
+                        }, workspace.localStorage["camelJmxDomain"]);
                     }
                     else {
                         onComplete();
@@ -11242,8 +11242,9 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.AttributesToolBarController", ["$scope", "workspace", "jolokia", function ($scope, workspace, jolokia) {
-        $scope.camelContextMBean = Camel.getSelectionCamelContextMBean(workspace);
+    Camel._module.controller("Camel.AttributesToolBarController", ["$scope", "workspace", "jolokia", "localStorage", function ($scope, workspace, jolokia, localStorage) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
+        $scope.camelContextMBean = Camel.getSelectionCamelContextMBean(workspace, camelJmxDomain);
         $scope.routeMBean = searchRouteMBean();
         $scope.deleteDialog = false;
         $scope.start = function () {
@@ -11287,13 +11288,14 @@ var Camel;
                     routeId = Camel.getSelectedRouteId(workspace, children[0]);
                 }
             }
-            return Camel.getSelectionRouteMBean(workspace, routeId);
+            return Camel.getSelectionRouteMBean(workspace, routeId, camelJmxDomain);
         }
     }]);
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.BlockedExchangesController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+    Camel._module.controller("Camel.BlockedExchangesController", ["$scope", "$location", "workspace", "jolokia", "localStorage", function ($scope, $location, workspace, jolokia, localStorage) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         var log = Logger.get("Camel");
         $scope.workspace = workspace;
         $scope.data = [];
@@ -11357,7 +11359,7 @@ var Camel;
             }
         };
         $scope.doUnblock = function () {
-            var mbean = Camel.getSelectionCamelBlockedExchanges(workspace);
+            var mbean = Camel.getSelectionCamelBlockedExchanges(workspace, camelJmxDomain);
             var selectedItems = $scope.gridOptions.selectedItems;
             if (mbean && selectedItems && selectedItems.length === 1) {
                 var exchangeId = selectedItems[0].exchangeId;
@@ -11401,7 +11403,7 @@ var Camel;
             if (routeId != null) {
                 $scope.gridOptions.filterOptions.filterText = routeId;
             }
-            var mbean = Camel.getSelectionCamelBlockedExchanges(workspace);
+            var mbean = Camel.getSelectionCamelBlockedExchanges(workspace, camelJmxDomain);
             if (mbean) {
                 var query = { type: "exec", mbean: mbean, operation: 'browse()' };
                 jolokia.request(query, onSuccess(onBlocked));
@@ -11413,15 +11415,16 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.BreadcrumbBarController", ["$scope", "$routeParams", "workspace", "jolokia", function ($scope, $routeParams, workspace, jolokia) {
+    Camel._module.controller("Camel.BreadcrumbBarController", ["$scope", "$routeParams", "workspace", "jolokia", "localStorage", function ($scope, $routeParams, workspace, jolokia, localStorage) {
         $scope.workspace = workspace;
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         if ($routeParams != null) {
             $scope.contextId = $routeParams["contextId"];
             $scope.endpointPath = $routeParams["endpointPath"];
             $scope.endpointName = tidyJmxName($scope.endpointPath);
             $scope.routeId = $routeParams["routeId"];
         }
-        $scope.treeViewLink = linkToTreeView();
+        $scope.treeViewLink = linkToTreeView(camelJmxDomain);
         var defaultChildEntity = $scope.endpointPath ? "endpoints" : "routes";
         var childEntityToolTips = {
             "endpoints": "Camel Endpoint",
@@ -11430,29 +11433,29 @@ var Camel;
         $scope.breadcrumbs = [
             {
                 name: $scope.contextId,
-                items: findContexts(),
+                items: findContexts(camelJmxDomain),
                 tooltip: "Camel Context"
             },
             {
                 name: defaultChildEntity,
-                items: findChildEntityTypes($scope.contextId),
+                items: findChildEntityTypes($scope.contextId, camelJmxDomain),
                 tooltip: "Entity inside a Camel Context"
             },
             {
                 name: $scope.endpointName || tidyJmxName($scope.routeId),
-                items: findChildEntityLinks($scope.contextId, currentChildEntity()),
+                items: findChildEntityLinks($scope.contextId, currentChildEntity(), camelJmxDomain),
                 tooltip: childEntityToolTips[defaultChildEntity]
             }
         ];
-        function findContexts() {
+        function findContexts(camelJmxDomain) {
             var answer = [];
-            var rootFolder = Camel.getRootCamelFolder(workspace);
+            var rootFolder = Camel.getRootCamelFolder(workspace, camelJmxDomain);
             if (rootFolder) {
                 angular.forEach(rootFolder.children, function (contextFolder) {
                     var id = contextFolder.title;
                     if (id && id !== $scope.contextId) {
                         var name = id;
-                        var link = createLinkToFirstChildEntity(id, currentChildEntity());
+                        var link = createLinkToFirstChildEntity(id, currentChildEntity(), camelJmxDomain);
                         answer.push({
                             name: name,
                             tooltip: "Camel Context",
@@ -11463,11 +11466,11 @@ var Camel;
             }
             return answer;
         }
-        function findChildEntityTypes(contextId) {
+        function findChildEntityTypes(contextId, camelJmxDomain) {
             var answer = [];
             angular.forEach(["endpoints", "routes"], function (childEntityName) {
                 if (childEntityName && childEntityName !== currentChildEntity()) {
-                    var link = createLinkToFirstChildEntity(contextId, childEntityName);
+                    var link = createLinkToFirstChildEntity(contextId, childEntityName, camelJmxDomain);
                     answer.push({
                         name: childEntityName,
                         tooltip: "Entity inside a Camel Context",
@@ -11481,22 +11484,22 @@ var Camel;
             var answer = Core.pathGet($scope, ["breadcrumbs", "childEntity"]);
             return answer || defaultChildEntity;
         }
-        function createLinkToFirstChildEntity(id, childEntityValue) {
-            var links = findChildEntityLinks(id, childEntityValue);
+        function createLinkToFirstChildEntity(id, childEntityValue, camelJmxDomain) {
+            var links = findChildEntityLinks(id, childEntityValue, camelJmxDomain);
             var link = links.length > 0 ? links[0].link : Camel.linkToBrowseEndpointFullScreen(id, "noEndpoints");
             return link;
         }
-        function findChildEntityLinks(contextId, childEntityValue) {
+        function findChildEntityLinks(contextId, childEntityValue, camelJmxDomain) {
             if ("endpoints" === childEntityValue) {
-                return findEndpoints(contextId);
+                return findEndpoints(contextId, camelJmxDomain);
             }
             else {
-                return findRoutes(contextId);
+                return findRoutes(contextId, camelJmxDomain);
             }
         }
-        function findEndpoints(contextId) {
+        function findEndpoints(contextId, camelJmxDomain) {
             var answer = [];
-            var contextFolder = Camel.getCamelContextFolder(workspace, contextId);
+            var contextFolder = Camel.getCamelContextFolder(workspace, contextId, camelJmxDomain);
             if (contextFolder) {
                 var endpoints = (contextFolder["children"] || []).find(function (n) { return "endpoints" === n.title; });
                 if (endpoints) {
@@ -11521,9 +11524,9 @@ var Camel;
             }
             return answer;
         }
-        function findRoutes(contextId) {
+        function findRoutes(contextId, camelJmxDomain) {
             var answer = [];
-            var contextFolder = Camel.getCamelContextFolder(workspace, contextId);
+            var contextFolder = Camel.getCamelContextFolder(workspace, contextId, camelJmxDomain);
             if (contextFolder) {
                 var folders = (contextFolder["children"] || []).find(function (n) { return "routes" === n.title; });
                 if (folders) {
@@ -11548,14 +11551,14 @@ var Camel;
             }
             return answer;
         }
-        function linkToTreeView() {
+        function linkToTreeView(camelJmxDomain) {
             var answer = null;
             if ($scope.contextId) {
                 var node = null;
                 var tab = null;
                 if ($scope.endpointPath) {
                     tab = "browseEndpoint";
-                    node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
+                    node = workspace.findMBeanWithProperties(camelJmxDomain, {
                         context: $scope.contextId,
                         type: "endpoints",
                         name: $scope.endpointPath
@@ -11563,7 +11566,7 @@ var Camel;
                 }
                 else if ($scope.routeId) {
                     tab = "routes";
-                    node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
+                    node = workspace.findMBeanWithProperties(camelJmxDomain, {
                         context: $scope.contextId,
                         type: "routes",
                         name: $scope.routeId
@@ -11583,7 +11586,8 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel.BrowseEndpointController = Camel._module.controller("Camel.BrowseEndpointController", ["$scope", "$routeParams", "workspace", "jolokia", function ($scope, $routeParams, workspace, jolokia) {
+    Camel.BrowseEndpointController = Camel._module.controller("Camel.BrowseEndpointController", ["$scope", "$routeParams", "workspace", "jolokia", "localStorage", function ($scope, $routeParams, workspace, jolokia, localStorage) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.workspace = workspace;
         $scope.forwardDialog = new UI.Dialog();
         $scope.showMessageDetails = false;
@@ -11595,7 +11599,7 @@ var Camel;
         $scope.$watch('workspace.selection', function () {
             if ($scope.isJmxTab && workspace.moveIfViewInvalid())
                 return;
-            loadData();
+            loadData(camelJmxDomain);
         });
         $scope.openMessageDialog = function (message) {
             ActiveMQ.selectCurrentMessage(message, "id", $scope);
@@ -11606,7 +11610,7 @@ var Camel;
         };
         ActiveMQ.decorate($scope);
         $scope.forwardMessagesAndCloseForwardDialog = function () {
-            var mbean = Camel.getSelectionCamelContextMBean(workspace);
+            var mbean = Camel.getSelectionCamelContextMBean(workspace, camelJmxDomain);
             var selectedItems = $scope.gridOptions.selectedItems;
             var uri = $scope.endpointUri;
             if (mbean && uri && selectedItems && selectedItems.length) {
@@ -11622,7 +11626,7 @@ var Camel;
             $scope.forwardDialog.close();
         };
         $scope.endpointUris = function () {
-            var endpointFolder = Camel.getSelectionCamelContextEndpoints(workspace);
+            var endpointFolder = Camel.getSelectionCamelContextEndpoints(workspace, camelJmxDomain);
             return (endpointFolder) ? endpointFolder.children.map(function (n) { return n.title; }) : [];
         };
         $scope.refresh = loadData;
@@ -11636,10 +11640,10 @@ var Camel;
             Core.notification("success", $scope.message);
             setTimeout(loadData, 50);
         }
-        function loadData() {
+        function loadData(camelJmxDomain) {
             var mbean = null;
             if ($scope.contextId && $scope.endpointPath) {
-                var node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
+                var node = workspace.findMBeanWithProperties(camelJmxDomain, {
                     context: $scope.contextId,
                     type: "endpoints",
                     name: $scope.endpointPath
@@ -12014,6 +12018,7 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.DebugRouteController", ["$scope", "$element", "workspace", "jolokia", "localStorage", function ($scope, $element, workspace, jolokia, localStorage) {
         $scope.workspace = workspace;
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.ignoreRouteXmlNode = true;
         $scope.startDebugging = function () {
             setDebugging(true);
@@ -12041,38 +12046,38 @@ var Camel;
             reloadData();
         });
         $scope.toggleBreakpoint = function (id) {
-            var mbean = Camel.getSelectionCamelDebugMBean(workspace);
+            var mbean = Camel.getSelectionCamelDebugMBean(workspace, camelJmxDomain);
             if (mbean && id) {
                 var method = isBreakpointSet(id) ? "removeBreakpoint" : "addBreakpoint";
                 jolokia.execute(mbean, method, id, onSuccess(breakpointsChanged));
             }
         };
         $scope.addBreakpoint = function () {
-            var mbean = Camel.getSelectionCamelDebugMBean(workspace);
+            var mbean = Camel.getSelectionCamelDebugMBean(workspace, camelJmxDomain);
             if (mbean && $scope.selectedDiagramNodeId) {
                 jolokia.execute(mbean, "addBreakpoint", $scope.selectedDiagramNodeId, onSuccess(breakpointsChanged));
             }
         };
         $scope.removeBreakpoint = function () {
-            var mbean = Camel.getSelectionCamelDebugMBean(workspace);
+            var mbean = Camel.getSelectionCamelDebugMBean(workspace, camelJmxDomain);
             if (mbean && $scope.selectedDiagramNodeId) {
                 jolokia.execute(mbean, "removeBreakpoint", $scope.selectedDiagramNodeId, onSuccess(breakpointsChanged));
             }
         };
         $scope.resume = function () {
-            var mbean = Camel.getSelectionCamelDebugMBean(workspace);
+            var mbean = Camel.getSelectionCamelDebugMBean(workspace, camelJmxDomain);
             if (mbean) {
                 jolokia.execute(mbean, "resumeAll", onSuccess(clearStoppedAndResume));
             }
         };
         $scope.suspend = function () {
-            var mbean = Camel.getSelectionCamelDebugMBean(workspace);
+            var mbean = Camel.getSelectionCamelDebugMBean(workspace, camelJmxDomain);
             if (mbean) {
                 jolokia.execute(mbean, "suspendAll", onSuccess(clearStoppedAndResume));
             }
         };
         $scope.step = function () {
-            var mbean = Camel.getSelectionCamelDebugMBean(workspace);
+            var mbean = Camel.getSelectionCamelDebugMBean(workspace, camelJmxDomain);
             var stepNode = getStoppedBreakpointId();
             if (mbean && stepNode) {
                 jolokia.execute(mbean, "stepBreakpoint(java.lang.String)", stepNode, onSuccess(clearStoppedAndResume));
@@ -12123,7 +12128,7 @@ var Camel;
         }
         function reloadData() {
             $scope.debugging = false;
-            var mbean = Camel.getSelectionCamelDebugMBean(workspace);
+            var mbean = Camel.getSelectionCamelDebugMBean(workspace, camelJmxDomain);
             if (mbean) {
                 $scope.debugging = jolokia.getAttribute(mbean, "Enabled", onSuccess(null));
                 if ($scope.debugging) {
@@ -12150,14 +12155,14 @@ var Camel;
             }
         }
         function loadCurrentStack() {
-            var mbean = Camel.getSelectionCamelDebugMBean(workspace);
+            var mbean = Camel.getSelectionCamelDebugMBean(workspace, camelJmxDomain);
             if (mbean) {
                 console.log("getting suspended breakpoints!");
                 jolokia.execute(mbean, "getSuspendedBreakpointNodeIds", onSuccess(onSuspendedBreakpointNodeIds));
             }
         }
         function onSuspendedBreakpointNodeIds(response) {
-            var mbean = Camel.getSelectionCamelDebugMBean(workspace);
+            var mbean = Camel.getSelectionCamelDebugMBean(workspace, camelJmxDomain);
             $scope.suspendedBreakpoints = response;
             $scope.stopped = response && response.length;
             var stopNodeId = getStoppedBreakpointId();
@@ -12283,7 +12288,7 @@ var Camel;
             Core.$apply($scope);
         }
         function setDebugging(flag) {
-            var mbean = Camel.getSelectionCamelDebugMBean(workspace);
+            var mbean = Camel.getSelectionCamelDebugMBean(workspace, camelJmxDomain);
             if (mbean) {
                 var method = flag ? "enableDebugger" : "disableDebugger";
                 var max = Camel.maximumTraceOrDebugBodyLength(localStorage);
@@ -12300,12 +12305,13 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.EndpointController", ["$scope", "$location", "localStorage", "workspace", "jolokia", function ($scope, $location, localStorage, workspace, jolokia) {
         Camel.initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia);
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.workspace = workspace;
         $scope.message = "";
         $scope.createEndpoint = function (name) {
             var jolokia = workspace.jolokia;
             if (jolokia) {
-                var mbean = Camel.getSelectionCamelContextMBean(workspace);
+                var mbean = Camel.getSelectionCamelContextMBean(workspace, camelJmxDomain);
                 if (mbean) {
                     $scope.message = name;
                     var operation = "createEndpoint(java.lang.String)";
@@ -12722,6 +12728,7 @@ var Camel;
                     $scope.profileWorkspace = profileWorkspace;
                 }
             }
+            var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
             if (!profileWorkspace) {
                 Camel.log.info("No profileWorkspace found so defaulting it to workspace for now");
                 profileWorkspace = workspace;
@@ -12734,7 +12741,7 @@ var Camel;
                 selectedRouteId = $scope.camelSelectionDetails.selectedRouteId;
             }
             console.log("==== componentName " + componentName + " selectedCamelContextId: " + selectedCamelContextId + " selectedRouteId: " + selectedRouteId);
-            var contextsById = Camel.camelContextMBeansById(profileWorkspace);
+            var contextsById = Camel.camelContextMBeansById(profileWorkspace, camelJmxDomain);
             if (selectedCamelContextId) {
                 var mbean = Core.pathGet(contextsById, [selectedCamelContextId, "mbean"]);
                 if (mbean) {
@@ -12742,14 +12749,14 @@ var Camel;
                 }
             }
             if (selectedRouteId) {
-                var map = Camel.camelContextMBeansByRouteId(profileWorkspace);
+                var map = Camel.camelContextMBeansByRouteId(profileWorkspace, camelJmxDomain);
                 var mbean = Core.pathGet(map, [selectedRouteId, "mbean"]);
                 if (mbean) {
                     return mbean;
                 }
             }
             if (componentName) {
-                var map = Camel.camelContextMBeansByComponentName(profileWorkspace);
+                var map = Camel.camelContextMBeansByComponentName(profileWorkspace, camelJmxDomain);
                 var mbean = Core.pathGet(map, [componentName, "mbean"]);
                 if (mbean) {
                     return mbean;
@@ -12768,7 +12775,8 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.EndpointRuntimeRegistryController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+    Camel._module.controller("Camel.EndpointRuntimeRegistryController", ["$scope", "$location", "workspace", "jolokia", "localStorage", function ($scope, $location, workspace, jolokia, localStorage) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.workspace = workspace;
         $scope.data = [];
         $scope.selectedMBean = null;
@@ -12855,7 +12863,7 @@ var Camel;
         }
         function loadEndpointRegistry() {
             console.log("Loading EndpointRuntimeRegistry data...");
-            var mbean = Camel.getSelectionCamelEndpointRuntimeRegistry(workspace);
+            var mbean = Camel.getSelectionCamelEndpointRuntimeRegistry(workspace, camelJmxDomain);
             if (mbean) {
                 jolokia.request({ type: 'exec', mbean: mbean, operation: 'endpointStatistics' }, onSuccess(onEndpointRegistry));
             }
@@ -12866,6 +12874,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.FabricDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", function ($scope, $compile, $location, localStorage, jolokia, workspace) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.workspace = workspace;
         Fabric.initScope($scope, $location, jolokia, workspace);
         var isFmc = Fabric.isFMCContainer(workspace);
@@ -13076,7 +13085,7 @@ var Camel;
                 }
                 $scope.responseJson = responseJson;
                 var containersToDelete = $scope.activeContainers || {};
-                $scope.activeContainers = (response || {}).filter(function (c) { return c.jmxDomains.any(Camel.jmxDomain); });
+                $scope.activeContainers = (response || {}).filter(function (c) { return c.jmxDomains.any(camelJmxDomain); });
                 $scope.containerCount = $scope.activeContainers.length;
                 redrawGraph();
             }
@@ -13122,7 +13131,7 @@ var Camel;
                     if (contextId === void 0) { contextId = null; }
                     if (camelContext === void 0) { camelContext = null; }
                     if (!objectName) {
-                        objectName = Camel.jmxDomain + ':context=' + contextId + ',type=routes,name="' + routeId + '"';
+                        objectName = camelJmxDomain + ':context=' + contextId + ',type=routes,name="' + routeId + '"';
                     }
                     var details = Core.parseMBean(objectName);
                     var attributes = details['attributes'];
@@ -13187,7 +13196,7 @@ var Camel;
                     if (uri === void 0) { uri = null; }
                     if (contextId === void 0) { contextId = null; }
                     if (!objectName) {
-                        objectName = Camel.jmxDomain + ':context=' + contextId + ',type=endpoints,name="' + Camel.escapeEndpointUriNameForJmx(uri) + '"';
+                        objectName = camelJmxDomain + ':context=' + contextId + ',type=endpoints,name="' + Camel.escapeEndpointUriNameForJmx(uri) + '"';
                     }
                     var details = Core.parseMBean(objectName);
                     var attributes = details['attributes'];
@@ -13222,7 +13231,7 @@ var Camel;
                 }
                 function loadMetaDataFromEndpointMBeans() {
                     if ($scope.viewSettings.route) {
-                        containerJolokia.request({ type: "read", mbean: "org.apache.camel:type=routes,*", attribute: ["EndpointUri"] }, onSuccess(function (response) {
+                        containerJolokia.request({ type: "read", mbean: camelJmxDomain + ":type=routes,*", attribute: ["EndpointUri"] }, onSuccess(function (response) {
                             angular.forEach(response.value, function (properties, objectName) {
                                 getOrCreateRoute(objectName, properties, true);
                             });
@@ -13230,7 +13239,7 @@ var Camel;
                         }));
                     }
                     if ($scope.viewSettings.endpoint) {
-                        containerJolokia.search("org.apache.camel:type=endpoints,*", onSuccess(function (response) {
+                        containerJolokia.search(camelJmxDomain + ":type=endpoints,*", onSuccess(function (response) {
                             angular.forEach(response, function (objectName) {
                                 var endpoint = getOrCreateEndpoint(objectName);
                                 var camelContext = getOrCreateCamelContext(null, objectName);
@@ -13245,7 +13254,7 @@ var Camel;
                     var answer = null;
                     if (matchesContextId(contextId)) {
                         if (!contextMBean) {
-                            contextMBean = Camel.jmxDomain + ':context=' + contextId + ',type=context,name="' + contextId + '"';
+                            contextMBean = camelJmxDomain + ':context=' + contextId + ',type=context,name="' + contextId + '"';
                         }
                         if (!contextId && contextMBean) {
                             var details = Core.parseMBean(contextMBean);
@@ -13321,7 +13330,7 @@ var Camel;
                     }
                     return answer;
                 }
-                containerJolokia.search("org.apache.camel:type=context,*", onSuccess(function (response) {
+                containerJolokia.search(camelJmxDomain + ":type=context,*", onSuccess(function (response) {
                     angular.forEach(response, function (objectName) {
                         var details = Core.parseMBean(objectName);
                         var attributes = details['attributes'];
@@ -13403,6 +13412,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.MessageHistoryMetricsController", ["$scope", "$location", "workspace", "jolokia", "metricsWatcher", "localStorage", function ($scope, $location, workspace, jolokia, metricsWatcher, localStorage) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         var log = Logger.get("Camel");
         $scope.workspace = workspace;
         $scope.maxSeconds = Camel.routeMetricMaxSeconds(localStorage);
@@ -13474,7 +13484,7 @@ var Camel;
             if (routeId != null) {
                 $scope.filterText = routeId;
             }
-            var mbean = Camel.getSelectionCamelMessageHistoryMetrics(workspace);
+            var mbean = Camel.getSelectionCamelMessageHistoryMetrics(workspace, camelJmxDomain);
             if (mbean) {
                 var query = { type: 'exec', mbean: mbean, operation: 'dumpStatisticsAsJson' };
                 scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(populateMessageHistoryStatistics, query));
@@ -13489,6 +13499,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.InflightController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         var log = Logger.get("Camel");
         $scope.workspace = workspace;
         $scope.data = [];
@@ -13573,7 +13584,7 @@ var Camel;
             if (routeId != null) {
                 $scope.gridOptions.filterOptions.filterText = routeId;
             }
-            var mbean = Camel.getSelectionCamelInflightRepository(workspace);
+            var mbean = Camel.getSelectionCamelInflightRepository(workspace, camelJmxDomain);
             if (mbean) {
                 var query = { type: "exec", mbean: mbean, operation: 'browse()' };
                 jolokia.request(query, onSuccess(onInflight));
@@ -13694,7 +13705,8 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.ProfileRouteController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+    Camel._module.controller("Camel.ProfileRouteController", ["$scope", "$location", "workspace", "jolokia", "localStorage", function ($scope, $location, workspace, jolokia, localStorage) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.workspace = workspace;
         $scope.data = [];
         $scope.icons = {};
@@ -13907,7 +13919,7 @@ var Camel;
         function loadData() {
             console.log("Loading Camel route profile data...");
             $scope.selectedRouteId = Camel.getSelectedRouteId(workspace);
-            var routeMBean = Camel.getSelectionRouteMBean(workspace, $scope.selectedRouteId);
+            var routeMBean = Camel.getSelectionRouteMBean(workspace, $scope.selectedRouteId, camelJmxDomain);
             console.log("Selected route is " + $scope.selectedRouteId);
             initIdToIcon();
             console.log("Initialized icons, with " + $scope.icons.length + " icons");
@@ -13920,6 +13932,7 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.PropertiesController", ["$scope", "$rootScope", "workspace", "localStorage", function ($scope, $rootScope, workspace, localStorage) {
         var log = Logger.get("Camel");
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.workspace = workspace;
         $scope.hideHelp = Camel.hideOptionDocumentation(localStorage);
         $scope.hideUnused = Camel.hideOptionUnusedValue(localStorage);
@@ -13958,7 +13971,7 @@ var Camel;
             setTimeout(updateData, 50);
         });
         $scope.$watch('workspace.selection', function () {
-            if (!workspace.isRoutesFolder() && workspace.moveIfViewInvalid())
+            if (!workspace.isRoutesFolder(camelJmxDomain) && workspace.moveIfViewInvalid())
                 return;
             updateData();
         });
@@ -13997,7 +14010,7 @@ var Camel;
             return true;
         }
         function updateData() {
-            var routeXmlNode = Camel.getSelectedRouteNode(workspace);
+            var routeXmlNode = Camel.getSelectedRouteNode(workspace, camelJmxDomain);
             if (routeXmlNode != null) {
                 $scope.model = Camel.getCamelSchema(routeXmlNode.nodeName);
                 if ($scope.model) {
@@ -14023,6 +14036,7 @@ var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.PropertiesComponentController", ["$scope", "workspace", "localStorage", "jolokia", function ($scope, workspace, localStorage, jolokia) {
         var log = Logger.get("Camel");
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.workspace = workspace;
         $scope.hideHelp = Camel.hideOptionDocumentation(localStorage);
         $scope.hideUnused = Camel.hideOptionUnusedValue(localStorage);
@@ -14092,7 +14106,7 @@ var Camel;
             return true;
         }
         function updateData() {
-            var contextMBean = Camel.getSelectionCamelContextMBean(workspace);
+            var contextMBean = Camel.getSelectionCamelContextMBean(workspace, camelJmxDomain);
             var componentMBeanName = null;
             if (!componentMBeanName) {
                 componentMBeanName = workspace.getSelectedMBeanName();
@@ -14265,6 +14279,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.PropertiesEndpointController", ["$scope", "workspace", "localStorage", "jolokia", function ($scope, workspace, localStorage, jolokia) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         var log = Logger.get("Camel");
         $scope.workspace = workspace;
         $scope.hideHelp = Camel.hideOptionDocumentation(localStorage);
@@ -14335,10 +14350,10 @@ var Camel;
             return true;
         }
         function updateData() {
-            var contextMBean = Camel.getSelectionCamelContextMBean(workspace);
+            var contextMBean = Camel.getSelectionCamelContextMBean(workspace, camelJmxDomain);
             var endpointMBean = null;
             if ($scope.contextId && $scope.endpointPath) {
-                var node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
+                var node = workspace.findMBeanWithProperties(camelJmxDomain, {
                     context: $scope.contextId,
                     type: "endpoints",
                     name: $scope.endpointPath
@@ -14413,7 +14428,8 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.RestServiceController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+    Camel._module.controller("Camel.RestServiceController", ["$scope", "$location", "workspace", "jolokia", "localStorage", function ($scope, $location, workspace, jolokia, localStorage) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.workspace = workspace;
         $scope.data = [];
         $scope.selectedMBean = null;
@@ -14554,7 +14570,7 @@ var Camel;
         };
         function loadRestRegistry() {
             console.log("Loading RestRegistry data...");
-            var mbean = Camel.getSelectionCamelRestRegistry(workspace);
+            var mbean = Camel.getSelectionCamelRestRegistry(workspace, camelJmxDomain);
             if (mbean) {
                 jolokia.request({ type: 'exec', mbean: mbean, operation: 'listRestServices' }, onSuccess(onRestRegistry));
             }
@@ -14565,6 +14581,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.RouteMetricsController", ["$scope", "$location", "workspace", "jolokia", "metricsWatcher", "localStorage", function ($scope, $location, workspace, jolokia, metricsWatcher, localStorage) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         var log = Logger.get("Camel");
         $scope.workspace = workspace;
         $scope.maxSeconds = Camel.routeMetricMaxSeconds(localStorage);
@@ -14635,7 +14652,7 @@ var Camel;
             if (routeId != null) {
                 $scope.filterText = routeId;
             }
-            var mbean = Camel.getSelectionCamelRouteMetrics(workspace);
+            var mbean = Camel.getSelectionCamelRouteMetrics(workspace, camelJmxDomain);
             if (mbean) {
                 var query = { type: 'exec', mbean: mbean, operation: 'dumpStatisticsAsJson' };
                 scopeStoreJolokiaHandle($scope, jolokia, jolokia.register(populateRouteStatistics, query));
@@ -14650,6 +14667,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.RouteController", ["$scope", "$rootScope", "$routeParams", "$element", "$timeout", "workspace", "$location", "jolokia", "localStorage", function ($scope, $rootScope, $routeParams, $element, $timeout, workspace, $location, jolokia, localStorage) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         var log = Logger.get("Camel");
         $scope.workspace = workspace;
         $scope.viewSettings = {
@@ -14693,7 +14711,7 @@ var Camel;
         function doUpdateRoutes() {
             var routeXmlNode = null;
             if (!$scope.ignoreRouteXmlNode) {
-                routeXmlNode = Camel.getSelectedRouteNode(workspace);
+                routeXmlNode = Camel.getSelectedRouteNode(workspace, camelJmxDomain);
                 if (!routeXmlNode) {
                     routeXmlNode = $scope.nodeXmlNode;
                 }
@@ -14703,15 +14721,15 @@ var Camel;
                     routeXmlNode = wrapper;
                 }
             }
-            $scope.mbean = Camel.getSelectionCamelContextMBean(workspace);
+            $scope.mbean = Camel.getSelectionCamelContextMBean(workspace, camelJmxDomain);
             if (!$scope.mbean && $scope.contextId) {
-                $scope.mbean = Camel.getCamelContextMBean(workspace, $scope.contextId);
+                $scope.mbean = Camel.getCamelContextMBean(workspace, $scope.contextId, camelJmxDomain);
             }
             if (routeXmlNode) {
                 $scope.nodes = {};
                 var nodes = [];
                 var links = [];
-                $scope.processorTree = Camel.camelProcessorMBeansById(workspace);
+                $scope.processorTree = Camel.camelProcessorMBeansById(workspace, camelJmxDomain);
                 var routeId = routeXmlNode.getAttribute("id");
                 if ($scope.viewSettings.routes.length === 0) {
                     var entry = {
@@ -14754,7 +14772,7 @@ var Camel;
                         $scope.viewSettings.routes.push(entry);
                     });
                 }
-                $scope.processorTree = Camel.camelProcessorMBeansById(workspace);
+                $scope.processorTree = Camel.camelProcessorMBeansById(workspace, camelJmxDomain);
                 Camel.loadSelectedRouteXmlNodes($scope, doc, nodes, links, getWidth(), function (routeId) {
                     if ($scope.viewSettings.routes.length > 0) {
                         for (var idx in $scope.viewSettings.routes) {
@@ -14802,7 +14820,7 @@ var Camel;
         }
         var onClickGraphNode = function (node) {
             log.debug("Clicked on Camel Route Diagram node: " + node.cid);
-            if (workspace.isRoutesFolder()) {
+            if (workspace.isRoutesFolder(camelJmxDomain)) {
                 handleGraphNode(node);
             }
             else {
@@ -14832,8 +14850,8 @@ var Camel;
                     });
                     if (routeFolder) {
                         if (!routeFolder.children.length) {
-                            Camel.processRouteXml(workspace, workspace.jolokia, routeFolder, function (route) {
-                                Camel.addRouteChildren(routeFolder, route);
+                            Camel.processRouteXml(workspace, workspace.jolokia, routeFolder, (route), function (camelJmxDomain) {
+                                Camel.addRouteChildren(routeFolder, route, camelJmxDomain);
                                 updateRouteProperties(node, route, routeFolder);
                             });
                         }
@@ -14983,6 +15001,7 @@ var Camel;
 (function (Camel) {
     var DELIVERY_PERSISTENT = "2";
     Camel._module.controller("Camel.SendMessageController", ["$route", "$scope", "$element", "$timeout", "workspace", "jolokia", "localStorage", "$location", "activeMQMessage", function ($route, $scope, $element, $timeout, workspace, jolokia, localStorage, $location, activeMQMessage) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         var log = Logger.get("Camel");
         $scope.workspace = workspace;
         $scope.noCredentials = false;
@@ -15097,13 +15116,13 @@ var Camel;
                         log.info("About to send headers: " + JSON.stringify(headers));
                     }
                     var callback = onSuccess(onSendCompleteFn);
-                    if (selection.domain === "org.apache.camel") {
-                        var target = Camel.getContextAndTargetEndpoint(workspace);
+                    if (selection.domain === camelJmxDomain) {
+                        var target = Camel.getContextAndTargetEndpoint(workspace, camelJmxDomain);
                         var uri = target['uri'];
                         mbean = target['mbean'];
                         if (mbean && uri) {
                             var ok = true;
-                            if (Camel.isCamelVersionEQGT(2, 14, workspace, jolokia)) {
+                            if (Camel.isCamelVersionEQGT(2, 14, workspace, jolokia, camelJmxDomain)) {
                                 var reply = jolokia.execute(mbean, "canSendToEndpoint(java.lang.String)", uri);
                                 if (!reply) {
                                     Core.notification("warning", "Camel does not support sending to this endpoint.");
@@ -15203,9 +15222,10 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.SourceController", ["$scope", "workspace", function ($scope, workspace) {
+    Camel._module.controller("Camel.SourceController", ["$scope", "workspace", "localStorage", function ($scope, workspace, localStorage) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.workspace = workspace;
-        $scope.camelContextMBean = Camel.getSelectionCamelContextMBean(workspace);
+        $scope.camelContextMBean = Camel.getSelectionCamelContextMBean(workspace, camelJmxDomain);
         $scope.$on("$routeChangeSuccess", function (event, current, previous) {
             setTimeout(updateRoutes, 50);
         });
@@ -15235,13 +15255,13 @@ var Camel;
             return Core.xmlNodeToString(newNode);
         }
         function updateRoutes() {
-            var routeXmlNode = Camel.getSelectedRouteNode(workspace);
+            var routeXmlNode = Camel.getSelectedRouteNode(workspace, camelJmxDomain);
             if (routeXmlNode) {
                 $scope.source = getSource(routeXmlNode);
                 Core.$apply($scope);
             }
             else {
-                $scope.mbean = Camel.getSelectionCamelContextMBean(workspace);
+                $scope.mbean = Camel.getSelectionCamelContextMBean(workspace, camelJmxDomain);
                 if (!$scope.mbean) {
                     var parent = Core.pathGet(workspace, ["selection", "parent"]);
                     if (parent && parent.title === "context") {
@@ -15273,7 +15293,7 @@ var Camel;
         };
         var saveWorked = function () {
             Core.notification("success", "Route updated!");
-            Camel.clearSelectedRouteNode(workspace);
+            Camel.clearSelectedRouteNode(workspace, camelJmxDomain);
             updateRoutes();
         };
         $scope.saveRouteXml = function () {
@@ -15282,7 +15302,7 @@ var Camel;
                 var decoded = decodeURIComponent(routeXml);
                 Camel.log.debug("addOrUpdateRoutesFromXml xml decoded: " + decoded);
                 var jolokia = workspace.jolokia;
-                var mbean = Camel.getSelectionCamelContextMBean(workspace);
+                var mbean = Camel.getSelectionCamelContextMBean(workspace, camelJmxDomain);
                 if (mbean) {
                     jolokia.execute(mbean, "addOrUpdateRoutesFromXml(java.lang.String)", decoded, onSuccess(saveWorked));
                 }
@@ -15296,6 +15316,7 @@ var Camel;
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.TraceRouteController", ["$scope", "workspace", "jolokia", "localStorage", "tracerStatus", function ($scope, workspace, jolokia, localStorage, tracerStatus) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         var log = Logger.get("CamelTracer");
         $scope.workspace = workspace;
         $scope.tracing = false;
@@ -15367,7 +15388,7 @@ var Camel;
                 jolokia.unregister(tracerStatus.jhandle);
                 tracerStatus.jhandle = null;
             }
-            var mbean = Camel.getSelectionCamelTraceMBean(workspace);
+            var mbean = Camel.getSelectionCamelTraceMBean(workspace, camelJmxDomain);
             if (mbean) {
                 $scope.tracing = jolokia.getAttribute(mbean, "Enabled", onSuccess(null));
                 if ($scope.tracing) {
@@ -15437,7 +15458,7 @@ var Camel;
             Core.$apply($scope);
         }
         function setTracing(flag) {
-            var mbean = Camel.getSelectionCamelTraceMBean(workspace);
+            var mbean = Camel.getSelectionCamelTraceMBean(workspace, camelJmxDomain);
             if (mbean) {
                 if (mbean.toString().endsWith("BacklogTracer")) {
                     var max = Camel.maximumTraceOrDebugBodyLength(localStorage);
@@ -15456,7 +15477,7 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.TreeHeaderController", ["$scope", "$location", function ($scope, $location) {
+    Camel._module.controller("Camel.TreeHeaderController", ["$scope", "$location", function ($scope, $location, localStorage) {
         $scope.contextFilterText = '';
         $scope.$watch('contextFilterText', function (newValue, oldValue) {
             if (newValue !== oldValue) {
@@ -15470,9 +15491,10 @@ var Camel;
             Tree.contractAll("#cameltree");
         };
     }]);
-    Camel._module.controller("Camel.TreeController", ["$scope", "$location", "$timeout", "workspace", "$rootScope", function ($scope, $location, $timeout, workspace, $rootScope) {
+    Camel._module.controller("Camel.TreeController", ["$scope", "$location", "$timeout", "workspace", "$rootScope", "localStorage", function ($scope, $location, $timeout, workspace, $rootScope, localStorage) {
         $scope.contextFilterText = $location.search()["cq"];
         $scope.fullScreenViewLink = Camel.linkToFullScreenView(workspace);
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.$on("$routeChangeSuccess", function (event, current, previous) {
             setTimeout(updateSelectionFromURL, 50);
         });
@@ -15497,7 +15519,7 @@ var Camel;
             if (afterSelectionFn === void 0) { afterSelectionFn = null; }
             $scope.fullScreenViewLink = Camel.linkToFullScreenView(workspace);
             var children = [];
-            var domainName = Camel.jmxDomain;
+            var domainName = camelJmxDomain;
             var tree = workspace.tree;
             if (tree) {
                 var rootFolder = new Folder("Camel Contexts");
@@ -15556,7 +15578,7 @@ var Camel;
                                         angular.forEach(endpointsNode.children, function (n) {
                                             if (Core.matchFilterIgnoreCase(n.title, contextFilterText)) {
                                                 n.addClass = "org-apache-camel-endpoints";
-                                                if (!Camel.getContextId(n)) {
+                                                if (!Camel.getContextId(n, camelJmxDomain)) {
                                                     endpointsFolder.children.push(n);
                                                     n.entries["context"] = contextNode.entries["context"];
                                                 }
@@ -15578,7 +15600,7 @@ var Camel;
                                         angular.forEach(componentsNode.children, function (n) {
                                             if (Core.matchFilterIgnoreCase(n.title, contextFilterText)) {
                                                 n.addClass = "org-apache-camel-components";
-                                                if (!Camel.getContextId(n)) {
+                                                if (!Camel.getContextId(n, camelJmxDomain)) {
                                                     componentsFolder.children.push(n);
                                                     n.entries["context"] = contextNode.entries["context"];
                                                 }
@@ -15600,7 +15622,7 @@ var Camel;
                                         angular.forEach(dataFormatsNode.children, function (n) {
                                             if (Core.matchFilterIgnoreCase(n.title, contextFilterText)) {
                                                 n.addClass = "org-apache-camel-dataformats";
-                                                if (!Camel.getContextId(n)) {
+                                                if (!Camel.getContextId(n, camelJmxDomain)) {
                                                     dataFormatsFolder.children.push(n);
                                                     n.entries["context"] = contextNode.entries["context"];
                                                 }
@@ -15699,7 +15721,8 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel._module.controller("Camel.TypeConverterController", ["$scope", "$location", "$timeout", "workspace", "jolokia", function ($scope, $location, $timeout, workspace, jolokia) {
+    Camel._module.controller("Camel.TypeConverterController", ["$scope", "$location", "$timeout", "workspace", "jolokia", "localStorage", function ($scope, $location, $timeout, workspace, jolokia, localStorage) {
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.workspace = workspace;
         $scope.data = [];
         $scope.selectedMBean = null;
@@ -15786,7 +15809,7 @@ var Camel;
         };
         function loadConverters() {
             console.log("Loading TypeConverter data...");
-            var mbean = Camel.getSelectionCamelTypeConverter(workspace);
+            var mbean = Camel.getSelectionCamelTypeConverter(workspace, camelJmxDomain);
             if (mbean) {
                 var query = { type: "read", mbean: mbean, attribute: ["AttemptCounter", "FailedCounter", "HitCounter", "MissCounter", "NumberOfTypeConverters", "StatisticsEnabled"] };
                 jolokia.request(query, onSuccess(onAttributes));
@@ -18555,6 +18578,9 @@ var Core;
         Core.initPreferenceScope($scope, localStorage, {
             'activemqJmxDomain': {
                 'value': "org.apache.activemq"
+            },
+            'camelJmxDomain': {
+                'value': "org.apache.camel"
             }
         });
     }]);
@@ -45092,6 +45118,7 @@ var Wiki;
     Wiki.CamelController = Wiki._module.controller("Wiki.CamelController", ["$scope", "$location", "$routeParams", "localStorage", "workspace", "wikiRepository", "jolokia", function ($scope, $location, $routeParams, localStorage, workspace, wikiRepository, jolokia) {
         Wiki.initScope($scope, $routeParams, $location);
         Camel.initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia);
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.schema = Camel.getConfiguredCamelModel();
         $scope.modified = false;
         $scope.switchToCanvasView = new UI.Dialog();
@@ -45390,7 +45417,7 @@ var Wiki;
                 if (treeNode) {
                     var node = doc.createElement(key);
                     parentFolder = treeNode.data;
-                    var addedNode = Camel.addRouteChild(parentFolder, node);
+                    var addedNode = Camel.addRouteChild(parentFolder, node, camelJmxDomain);
                     if (addedNode) {
                         var added = treeNode.addChild(addedNode, beforeNode);
                         if (added) {
@@ -45435,7 +45462,7 @@ var Wiki;
         function onResults(response) {
             var text = response.text;
             if (text) {
-                var tree = Camel.loadCamelTree(text, $scope.pageId);
+                var tree = Camel.loadCamelTree(text, $scope.pageId, camelJmxDomain);
                 if (tree) {
                     $scope.camelContextTree = tree;
                 }
@@ -45470,8 +45497,9 @@ var Wiki;
 })(Wiki || (Wiki = {}));
 var Wiki;
 (function (Wiki) {
-    Wiki.CamelCanvasController = Wiki._module.controller("Wiki.CamelCanvasController", ["$scope", "$element", "workspace", "jolokia", "wikiRepository", "$templateCache", "$interpolate", "$location", function ($scope, $element, workspace, jolokia, wikiRepository, $templateCache, $interpolate, $location) {
+    Wiki.CamelCanvasController = Wiki._module.controller("Wiki.CamelCanvasController", ["$scope", "$element", "workspace", "jolokia", "wikiRepository", "$templateCache", "$interpolate", "$location", "localStorage", function ($scope, $element, workspace, jolokia, wikiRepository, $templateCache, $interpolate, $location, localStorage) {
         var jsPlumbInstance = jsPlumb.getInstance();
+        var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.addDialog = new UI.Dialog();
         $scope.propertiesDialog = new UI.Dialog();
         $scope.switchToTreeView = new UI.Dialog();
@@ -45638,7 +45666,7 @@ var Wiki;
                 if (treeNode) {
                     var node = doc.createElement(key);
                     parentFolder = treeNode;
-                    var addedNode = Camel.addRouteChild(parentFolder, node);
+                    var addedNode = Camel.addRouteChild(parentFolder, node, camelJmxDomain);
                     var nodeData = {};
                     if (key === "endpoint" && $scope.endpointConfig) {
                         var key = $scope.endpointConfig.key;
@@ -45667,7 +45695,7 @@ var Wiki;
         function treeModified(reposition) {
             if (reposition === void 0) { reposition = true; }
             var newDoc = Camel.generateXmlFromFolder($scope.rootFolder);
-            var tree = Camel.loadCamelTree(newDoc, $scope.pageId);
+            var tree = Camel.loadCamelTree(newDoc, $scope.pageId, camelJmxDomain);
             if (tree) {
                 $scope.rootFolder = tree;
                 $scope.doc = Core.pathGet(tree, ["xmlDocument"]);
