@@ -140,7 +140,7 @@
                                 <configuration>
                                     <tasks>
                                         <exec dir="${project.basedir}"  executable="cmd" failonerror="true">
-                                            <arg line="/c start run_typedoc.cmd --out ${webapp-outdir} ${nodeScriptArguments} ${webapp-srcdir}"/>
+                                            <arg line="/c run_typedoc.cmd --out ${webapp-outdir} ${nodeScriptArguments} ${webapp-srcdir}"/>
                                         </exec>
                                     </tasks>
                                 </configuration>
