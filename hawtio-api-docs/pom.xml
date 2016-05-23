@@ -126,7 +126,7 @@
             </activation>
             <properties>
                 <webapp-outdir>${basedir}\target\${webapp-dir}</webapp-outdir>
-                <webapp-srcdir>${basedir}\..\hawtio-web</webapp-srcdir>
+                <webapp-srcdir>${basedir}\..\hawtio-web\src\main</webapp-srcdir>
             </properties>
             <build>
                 <plugins>
