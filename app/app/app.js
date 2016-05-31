@@ -26491,6 +26491,9 @@ var Fabric;
             }
             $scope.groupBy = 'none';
         };
+        $scope.filterLocation = function (locationId) {
+            return FilterHelpers.searchObject(locationId, $scope.filter);
+        };
         $scope.filterProfiles = function (profile) {
             return FilterHelpers.searchObject(profile.id, $scope.filter);
         };
