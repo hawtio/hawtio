@@ -99,6 +99,10 @@ module Fabric {
       $scope.groupBy = 'none';
     }
 
+    $scope.filterLocation = (locationId) => {
+      return FilterHelpers.searchObject(locationId, $scope.filter);
+    }
+    
     $scope.filterProfiles = (profile) => {
       return FilterHelpers.searchObject(profile.id, $scope.filter);
     }
