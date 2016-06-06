@@ -13,24 +13,29 @@
       <div class="pull-right">
         <form class="form-inline">
           <button class="btn" ng-disabled="!gridOptions.selectedItems.length" ng-show="dlq" ng-click="retryMessages()"
+                  hawtio-show object-name="{{workspace.selection.objectName}}" method-name="retryMessage" mode="remove"
                   title="Moves the dead letter queue message back to its original destination so it can be retried" data-placement="bottom">
             <i class="icon-reply"></i> Retry
           </button>
           <button class="btn" ng-disabled="gridOptions.selectedItems.length !== 1" ng-click="resendMessage()"
-                    title="Edit the message to resend it" data-placement="bottom">
+                  hawtio-show object-name="{{workspace.selection.objectName}}" method-name="sendTextMessage" mode="remove"
+                  title="Edit the message to resend it" data-placement="bottom">
            <i class="icon-share-alt"></i> Resend
           </button>
 
           <button class="btn" ng-disabled="!gridOptions.selectedItems.length || queueNames.length === 0" ng-click="moveDialog = true"
+                  hawtio-show object-name="{{workspace.selection.objectName}}" method-name="moveMessageTo" mode="remove"
                   title="Move the selected messages to another destination" data-placement="bottom">
             <i class="icon-share-alt"></i> Move
           </button>
           <button class="btn" ng-disabled="!gridOptions.selectedItems.length"
                   ng-click="deleteDialog = true"
+                  hawtio-show object-name="{{workspace.selection.objectName}}" method-name="removeMessage" mode="remove"
                   title="Delete the selected messages">
             <i class="icon-remove"></i> Delete
           </button>
           <button class="btn" ng-click="refresh()"
+                  hawtio-show object-name="{{workspace.selection.objectName}}" method-name="browse" mode="remove"
                   title="Refreshes the list of messages">
             <i class="icon-refresh"></i>
           </button>
@@ -61,6 +66,7 @@
                  row-index="rowIndex"></div>
 
             <button class="btn" ng-disabled="!gridOptions.selectedItems.length" ng-click="moveDialog = true"
+                    hawtio-show object-name="{{workspace.selection.objectName}}" method-name="moveMessageTo" mode="remove"
                     title="Move the selected messages to another destination" data-placement="bottom">
               <i class="icon-share-alt"></i> Move
             </button>
@@ -74,6 +80,7 @@
 
             <button class="btn btn-danger" ng-disabled="!gridOptions.selectedItems.length"
                     ng-click="deleteDialog = true"
+                    hawtio-show object-name="{{workspace.selection.objectName}}" method-name="removeMessage" mode="remove"
                     title="Delete the selected messages">
               <i class="icon-remove"></i> Delete
             </button>
