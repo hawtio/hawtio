@@ -48,7 +48,7 @@ If you are running Tomcat, Jetty you could just deploy a WAR:
   </div>
   <div class="col-md-6 span6 text-center">
     <p>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.4.65/hawtio-default-1.4.65.war">Download hawtio-default-offline.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.4.65/hawtio-default-offline-1.4.65.war">Download hawtio-default-offline.war</a>
     </p>
     <p>
       a bare <b>offline</b> hawtio web application with minimal dependencies in offline mode, where Maven and Git plugins are not enabled.
