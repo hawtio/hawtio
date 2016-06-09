@@ -507,6 +507,19 @@ admin=CRYPT:adpexzg3FUZAk,admin,user</code></pre>
 
 <p>Just update the blueprint configuration values in OSGi config admim as you would any OSGi blueprint bundles. On OSGi all the hawtio Java modules use OSGi blueprint.</p>
 
+<h4 id = "Jolokia_configuration">Jolokia configuration</h4>
+
+<p>Jolokia agent is deployed automatically with <code>io.hawt.web.JolokiaConfiguredAgentServlet</code> that extends Jolokia native <code>org.jolokia.http.AgentServlet</code> class, defined in <code>hawtio-web/WEB-INF/web.xml</code>. <br/>
+To customize Jolokia Servlet configuration, according to the parameters that it supports and that are defined here: <br/>
+https://jolokia.org/reference/html/agents.html#agent-war-init-params</p>
+
+<p>You have to pass them as java system properties, prefixed with <code>jolokia.</code>.</p>
+
+<p>EX.
+```
+-Djolokia.policyLocation=file:///home/fuse/my-access.xml'
+```</p>
+
 <h4 id = "More_information">More information</h4>
 
 <p>In the <a href="http://hawt.io/articles/index.html">articles</a> colleciton you may find links to blog posts how to setup authentication with hawtio in various other containers. </p>

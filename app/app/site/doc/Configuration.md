@@ -405,6 +405,18 @@ If you are using a web container, the easiest way to change the web app configur
 
 Just update the blueprint configuration values in OSGi config admim as you would any OSGi blueprint bundles. On OSGi all the hawtio Java modules use OSGi blueprint.
 
+#### Jolokia configuration
+
+Jolokia agent is deployed automatically with `io.hawt.web.JolokiaConfiguredAgentServlet` that extends Jolokia native `org.jolokia.http.AgentServlet` class, defined in `hawtio-web/WEB-INF/web.xml`.  
+To customize Jolokia Servlet configuration, according to the parameters that it supports and that are defined here:  
+https://jolokia.org/reference/html/agents.html#agent-war-init-params
+
+You have to pass them as java system properties, prefixed with `jolokia.`.
+
+EX.
+```
+-Djolokia.policyLocation=file:///home/fuse/my-access.xml'
+```
 
 #### More information
 
