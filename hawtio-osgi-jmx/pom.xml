@@ -100,6 +100,10 @@
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
             <Bundle-Activator>io.hawt.osgi.jmx.Activator</Bundle-Activator>
             <Bundle-Description>Additional JMX APIs into the OSGi Framework, used by hawt.io browser-based client.</Bundle-Description>
+            <Import-Package>
+              org.apache.karaf.management;version="${karaf-version-range}",
+              *
+            </Import-Package>
             <Export-Package />
             <Private-Package>org.apache.commons.codec*,io.hawt.osgi.jmx</Private-Package>
           </instructions>
