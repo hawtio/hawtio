@@ -329,7 +329,7 @@
                          style="width: 300px">
                   <button class="btn"
                           zero-clipboard
-                          data-clipboard-text="{{getGitURL(row.jolokiaUrl)}}"
+                          data-clipboard-text="{{getGitURL(row.jolokiaUrl) | maskPassword}}"
                           title="Click to copy this command to the clipboard">
                     <i class="icon-copy"></i>
                   </button>
