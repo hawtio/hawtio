@@ -12,6 +12,8 @@ module Jetty {
     $scope.connectors = [];
     $scope.selected = [];
 
+    $scope.sampleConnector = pickSampleConnector();
+
     var columnDefs:any[] = [
       {
         field: 'running',
@@ -189,6 +191,19 @@ module Jetty {
 
       jolokia.search("org.eclipse.jetty.server.nio:type=selectchannelconnector,*", onSuccess(render78));
       jolokia.search("org.eclipse.jetty.server:type=serverconnector,*", onSuccess(render9));
+    }
+
+    // function to pick up a sample connector for RBAC
+    function pickSampleConnector() {
+      var connectors = jolokia.search("org.eclipse.jetty.server.nio:type=selectchannelconnector,*");
+      if (connectors && connectors.length >= 1) {
+        return connectors[0];
+      }
+      connectors = jolokia.search("org.eclipse.jetty.server:type=serverconnector,*");
+      if (connectors && connectors.length >= 1) {
+        return connectors[0];
+      }
+      return null;
     }
 
   }]);
