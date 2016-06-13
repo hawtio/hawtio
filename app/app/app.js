@@ -32455,6 +32455,7 @@ var Jetty;
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(col.field) | jettyIconClass}}"></i></div>';
         $scope.connectors = [];
         $scope.selected = [];
+        $scope.sampleConnector = pickSampleConnector();
         var columnDefs = [
             {
                 field: 'running',
@@ -32599,6 +32600,17 @@ var Jetty;
             var tree = workspace.tree;
             jolokia.search("org.eclipse.jetty.server.nio:type=selectchannelconnector,*", onSuccess(render78));
             jolokia.search("org.eclipse.jetty.server:type=serverconnector,*", onSuccess(render9));
+        }
+        function pickSampleConnector() {
+            var connectors = jolokia.search("org.eclipse.jetty.server.nio:type=selectchannelconnector,*");
+            if (connectors && connectors.length >= 1) {
+                return connectors[0];
+            }
+            connectors = jolokia.search("org.eclipse.jetty.server:type=serverconnector,*");
+            if (connectors && connectors.length >= 1) {
+                return connectors[0];
+            }
+            return null;
         }
     }]);
 })(Jetty || (Jetty = {}));
