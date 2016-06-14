@@ -27,6 +27,8 @@ import org.jolokia.util.RequestType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanInfo;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -161,8 +163,17 @@ public class RBACRestrictor implements Restrictor {
     @Override
     public boolean isAttributeReadAllowed(ObjectName objectName, String attribute) {
         boolean allowed = delegate.isAttributeReadAllowed(objectName, attribute);
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("isAttributeReadAllowed(objectName = {}, attribute = {}) = {}",
+        if (allowed) {
+            try {
+                String accessor = resolveAccessor(objectName, attribute, false);
+                allowed = canInvoke(objectName, accessor);
+            } catch (Exception e) {
+                LOG.error("Error while invoking JMXSecurity MBean: " + e.getMessage(), e);
+                allowed = false;
+            }
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("isAttributeReadAllowed(objectName = {}, attribute = {}) = {}",
                     objectName, attribute, allowed);
         }
         return allowed;
@@ -171,11 +182,39 @@ public class RBACRestrictor implements Restrictor {
     @Override
     public boolean isAttributeWriteAllowed(ObjectName objectName, String attribute) {
         boolean allowed = delegate.isAttributeWriteAllowed(objectName, attribute);
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("isAttributeWriteAllowed(objectName = {}, attribute = {}) = {}",
+        if (allowed) {
+            try {
+                String accessor = resolveAccessor(objectName, attribute, true);
+                allowed = canInvoke(objectName, accessor);
+            } catch (Exception e) {
+                LOG.error("Error while invoking JMXSecurity MBean: " + e.getMessage(), e);
+                allowed = false;
+            }
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("isAttributeWriteAllowed(objectName = {}, attribute = {}) = {}",
                     objectName, attribute, allowed);
         }
         return allowed;
+    }
+
+    private String resolveAccessor(ObjectName objectName, String attribute, boolean write) throws Exception {
+        MBeanInfo mBeanInfo = mBeanServer.getMBeanInfo(objectName);
+        MBeanAttributeInfo attributeInfo = null;
+        for (MBeanAttributeInfo info : mBeanInfo.getAttributes()) {
+            if (info.getName().equals(attribute)) {
+                attributeInfo = info;
+                break;
+            }
+        }
+        if (attributeInfo == null) {
+            throw new IllegalArgumentException("Attribute '" + attribute + "' not found for MBean '" + objectName + "'");
+        }
+        if (write) {
+            return String.format("set%s(%s)", attribute, attributeInfo.getType());
+        } else {
+            return String.format("%s%s()", attributeInfo.isIs() ? "is" : "get", attribute);
+        }
     }
 
     @Override
