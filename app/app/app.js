@@ -1333,6 +1333,7 @@ var Core;
             this.mbeanTypesToDomain = {};
             this.mbeanServicesToDomain = {};
             this.attributeColumnDefs = {};
+            this.onClickRowHandlers = {};
             this.treePostProcessors = [];
             this.topLevelTabs = [];
             this.subLevelTabs = [];
@@ -3777,6 +3778,27 @@ var ActiveMQ;
             return workspace.treeContainsDomainAndProperties(amqJmxDomain);
         });
         workspace.addTreePostProcessor(postProcessTree);
+        var onClickRowHandlers = workspace.onClickRowHandlers;
+        var onClickFunction = function (row) {
+            var entityName = row.entity.Name;
+            var treeElement = $("#activemqtree");
+            if (treeElement.length === 0) {
+                treeElement = $("#jmxtree");
+            }
+            if (treeElement.length != 0) {
+                var root = treeElement.dynatree("getActiveNode");
+                var children = root.getChildren();
+                for (var idx in children) {
+                    if (children[idx] && children[idx].data.title === entityName) {
+                        children[idx].expand(true);
+                        children[idx].activate();
+                        break;
+                    }
+                }
+            }
+        };
+        onClickRowHandlers[ActiveMQ.jmxDomain + "/Queue/folder"] = onClickFunction;
+        onClickRowHandlers[ActiveMQ.jmxDomain + "/Topic/folder"] = onClickFunction;
         var attributes = workspace.attributeColumnDefs;
         attributes[ActiveMQ.jmxDomain + "/Broker/folder"] = [
             { field: 'BrokerName', displayName: 'Name', width: "**" },
@@ -10988,6 +11010,41 @@ var Camel;
         var stateField = 'State';
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}"><i class="{{row.getProperty(\'' + stateField + '\') | camelIconClass}}"></i></div>';
         var stateColumn = { field: stateField, displayName: stateField, cellTemplate: stateTemplate, width: 56, minWidth: 56, maxWidth: 56, resizable: false, defaultSort: false };
+        var onClickHandlers = workspace.onClickRowHandlers;
+        function goToEntityInTree(entityName) {
+            var treeElement = $("#cameltree");
+            if (treeElement.length === 0) {
+                treeElement = $("#jmxtree");
+            }
+            if (treeElement.length != 0) {
+                var root = treeElement.dynatree("getActiveNode");
+                var children = root.getChildren();
+                for (var idx in children) {
+                    if (children[idx] && children[idx].data.title === entityName) {
+                        children[idx].expand(true);
+                        children[idx].activate();
+                        break;
+                    }
+                }
+            }
+        }
+        onClickHandlers[camelJmxDomain + "/context/folder"] = function (row) {
+            var entityName = row.entity.CamelId;
+            goToEntityInTree(entityName);
+        };
+        onClickHandlers[camelJmxDomain + "/routes/folder"] = function (row) {
+            var entityName = row.entity.RouteId;
+            goToEntityInTree(entityName);
+        };
+        onClickHandlers[camelJmxDomain + "/endpoints/folder"] = function (row) {
+            var entityName = row.entity.EndpointUri;
+            entityName = entityName.replace('?', '\\?');
+            goToEntityInTree(entityName);
+        };
+        onClickHandlers[camelJmxDomain + "/components/folder"] = function (row) {
+            var entityName = row.entity.ComponentName;
+            goToEntityInTree(entityName);
+        };
         var attributes = workspace.attributeColumnDefs;
         attributes[camelJmxDomain + "/context/folder"] = [
             stateColumn,
@@ -21260,6 +21317,15 @@ var DataTable;
             $scope.isSelected = function (row) {
                 return (row) && config.selectedItems.some(row.entity);
             };
+            $scope.onRowClicked = function (row) {
+                var id = $scope.config.gridKey;
+                if (id) {
+                    var func = $scope.config.onClickRowHandlers[id];
+                    if (func) {
+                        func(row);
+                    }
+                }
+            };
             $scope.onRowSelected = function (row) {
                 var idx = config.selectedItems.indexOf(row.entity);
                 if (idx >= 0) {
@@ -21287,7 +21353,7 @@ var DataTable;
                 onMouseDown = "";
             }
             var headHtml = "<thead><tr>";
-            var bodyHtml = "<tbody><tr ng-repeat='row in rows track by $index' ng-show='showRow(row)' " + onMouseDown + "ng-class=\"{'selected': isSelected(row)}\" >";
+            var bodyHtml = "<tbody><tr ng-repeat='row in rows track by $index' ng-show='showRow(row)' ng-click='onRowClicked(row)'" + onMouseDown + "ng-class=\"{'selected': isSelected(row)}\" >";
             var idx = 0;
             if (showCheckBox) {
                 var toggleAllHtml = isMultiSelect() ? "<input type='checkbox' ng-show='rows.length' ng-model='config.allRowsSelected' ng-change='toggleAllSelections()'>" : "";
@@ -33554,6 +33620,8 @@ var Jmx;
                         $scope.gridData = [];
                         if (!$scope.gridOptions.columnDefs.length) {
                             var key = workspace.selectionConfigKey();
+                            $scope.gridOptions.gridKey = key;
+                            $scope.gridOptions.onClickRowHandlers = workspace.onClickRowHandlers;
                             var defaultDefs = workspace.attributeColumnDefs[key] || [];
                             var defaultSize = defaultDefs.length;
                             var map = {};
