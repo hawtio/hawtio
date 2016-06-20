@@ -32,6 +32,7 @@ module Core {
     public mbeanTypesToDomain = {};
     public mbeanServicesToDomain = {};
     public attributeColumnDefs = {};
+    public onClickRowHandlers = {};
     public treePostProcessors = [];
     public topLevelTabs = <Array<NavMenuItem>>[];
     public subLevelTabs = [];
