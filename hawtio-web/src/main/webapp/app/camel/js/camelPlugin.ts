@@ -102,6 +102,53 @@ module Camel {
       // we do not want to default sort the state column
     };
 
+    var onClickHandlers = workspace.onClickRowHandlers;
+
+    function goToEntityInTree(entityName) {
+      var treeElement = $("#cameltree");
+      if (treeElement.length === 0) { // We are on the JMX Plugin Tree view
+        treeElement = $("#jmxtree")
+      }
+      if (treeElement.length != 0) {
+        var root = <any>treeElement.dynatree("getActiveNode");
+        var children = root.getChildren();
+        for (var idx in children) {
+          if (children[idx] && children[idx].data.title === entityName) {
+            children[idx].expand(true);
+            children[idx].activate();
+            break;
+          }
+        }
+      }
+    }
+
+    onClickHandlers[camelJmxDomain + "/context/folder"] =
+        (row) => {
+          var entityName = row.entity.CamelId;
+          goToEntityInTree(entityName);
+        };
+
+    onClickHandlers[camelJmxDomain + "/routes/folder"] =
+        (row) => {
+          var entityName = row.entity.RouteId;
+          goToEntityInTree(entityName);
+        };
+
+    onClickHandlers[camelJmxDomain + "/endpoints/folder"] =
+        (row) => {
+          var entityName = row.entity.EndpointUri;
+          //TODO there might be a better way to match the URL with the title in the tree
+          entityName = entityName.replace('?', '\\?');
+          goToEntityInTree(entityName);
+        };
+
+    onClickHandlers[camelJmxDomain + "/components/folder"] = (row) => {
+      var entityName = row.entity.ComponentName;
+      goToEntityInTree(entityName);
+    };
+
+
+
     var attributes = workspace.attributeColumnDefs;
     attributes[camelJmxDomain + "/context/folder"] = [
       stateColumn,

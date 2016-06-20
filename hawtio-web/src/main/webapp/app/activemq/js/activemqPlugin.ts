@@ -39,6 +39,31 @@ module ActiveMQ {
 
     workspace.addTreePostProcessor(postProcessTree);
 
+    var onClickRowHandlers = workspace.onClickRowHandlers;
+
+    var onClickFunction = (row)  => {
+      var entityName = row.entity.Name;
+      var treeElement = $("#activemqtree");
+      if(treeElement.length === 0)
+      { // We are on the JMX Plugin Tree view
+        treeElement = $("#jmxtree")
+      }
+      if(treeElement.length != 0) {
+        var root = <any>treeElement.dynatree("getActiveNode");
+        var children = root.getChildren();
+        for (var idx in children){
+          if(children[idx] && children[idx].data.title === entityName ){
+            children[idx].expand(true);
+            children[idx].activate();
+            break;
+          }
+        }
+      }
+    };
+
+    onClickRowHandlers[jmxDomain + "/Queue/folder"] = onClickFunction;
+    onClickRowHandlers[jmxDomain + "/Topic/folder"] = onClickFunction;
+
     // register default attribute views
     var attributes = workspace.attributeColumnDefs;
     attributes[jmxDomain + "/Broker/folder"] = [
