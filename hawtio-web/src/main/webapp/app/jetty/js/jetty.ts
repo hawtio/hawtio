@@ -13,6 +13,15 @@ module Jetty {
         '<a ng-href="{{row.getProperty(col.field)}}" target="_blank">{{row.getProperty(col.field)}}</a>' +
       '</div>';
 
+    var webappMBeans:string[] = [
+      // support embedded jetty which may use mortbay mbean names
+      "org.mortbay.jetty.plugin:type=jettywebappcontext,*",
+      "org.eclipse.jetty.webapp:type=webappcontext,*",
+      "org.eclipse.jetty.servlet:type=servletcontexthandler,*",
+      // for OSGi container
+      "org.ops4j.pax.web.service.jetty.internal:type=httpservicecontext,*"
+    ];
+
     $scope.uninstallDialog = new UI.Dialog();
 
     $scope.uninstall = function () {
@@ -25,6 +34,8 @@ module Jetty {
 
     $scope.webapps = [];
     $scope.selected = [];
+
+    $scope.sampleWebApp = pickSampleWebApp();
 
     var columnDefs:any[] = [
       {
@@ -177,12 +188,20 @@ module Jetty {
           }
         });
       }
-      // support embedded jetty which may use morbay mbean names
-      jolokia.search("org.mortbay.jetty.plugin:type=jettywebappcontext,*", onSuccess(render));
-      jolokia.search("org.eclipse.jetty.webapp:type=webappcontext,*", onSuccess(render));
-      jolokia.search("org.eclipse.jetty.servlet:type=servletcontexthandler,*", onSuccess(render));
-      // for OSGi container
-      jolokia.search("org.ops4j.pax.web.service.jetty.internal:type=httpservicecontext,*", onSuccess(render));
+      angular.forEach(webappMBeans, (mbean) => {
+        jolokia.search(mbean, onSuccess(render));
+      });
+    }
+
+    // function to pick up a sample application for RBAC
+    function pickSampleWebApp() {
+      for (var i = 0; i < webappMBeans.length; i++) {
+        var webapps = jolokia.search(webappMBeans[i]);
+        if (webapps && webapps.length >= 1) {
+          return webapps[0];
+        }
+      }
+      return null;
     }
 
     function render(response) {
