@@ -181,6 +181,8 @@ module Jetty {
       jolokia.search("org.mortbay.jetty.plugin:type=jettywebappcontext,*", onSuccess(render));
       jolokia.search("org.eclipse.jetty.webapp:type=webappcontext,*", onSuccess(render));
       jolokia.search("org.eclipse.jetty.servlet:type=servletcontexthandler,*", onSuccess(render));
+      // for OSGi container
+      jolokia.search("org.ops4j.pax.web.service.jetty.internal:type=httpservicecontext,*", onSuccess(render));
     }
 
     function render(response) {
