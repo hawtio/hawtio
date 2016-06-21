@@ -32785,7 +32785,14 @@ var Jetty;
             $scope.jettyServerStartupTime = jolokia.getAttribute(servers[0], "startupTime");
         }
         else {
-            console.log("Cannot find jetty server or there was more than one server. response is: " + servers);
+            servers = jolokia.search("org.ops4j.pax.web.service.jetty.internal:type=jettyserverwrapper,*");
+            if (servers && servers.length === 1) {
+                $scope.jettyServerVersion = jolokia.getAttribute(servers[0], "version");
+                $scope.jettyServerStartupTime = jolokia.getAttribute(servers[0], "startupTime");
+            }
+            else {
+                console.log("Cannot find jetty server or there was more than one server. response is: " + servers);
+            }
         }
         function reloadFunction() {
             setTimeout(loadData, 50);
