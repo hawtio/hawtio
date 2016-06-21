@@ -136,7 +136,14 @@ module Jetty {
       $scope.jettyServerVersion = jolokia.getAttribute(servers[0], "version")
       $scope.jettyServerStartupTime = jolokia.getAttribute(servers[0], "startupTime")
     } else {
-      console.log("Cannot find jetty server or there was more than one server. response is: " + servers)
+      // check Pax-Web Jetty instances in case of being on an OSGi container
+      servers = jolokia.search("org.ops4j.pax.web.service.jetty.internal:type=jettyserverwrapper,*")
+      if (servers && servers.length === 1) {
+        $scope.jettyServerVersion = jolokia.getAttribute(servers[0], "version")
+        $scope.jettyServerStartupTime = jolokia.getAttribute(servers[0], "startupTime")
+      } else {
+        console.log("Cannot find jetty server or there was more than one server. response is: " + servers)
+      }
     }
 
 
