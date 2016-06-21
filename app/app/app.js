@@ -32685,6 +32685,12 @@ var Jetty;
     Jetty._module.controller("Jetty.JettyController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
         var stateTemplate = '<div class="ngCellText pagination-centered" title="{{row.getProperty(col.field)}}">' + '<i class="{{row.getProperty(col.field) | jettyIconClass}}"></i>' + '</div>';
         var urlTemplate = '<div class="ngCellText" title="{{row.getProperty(col.field)}}">' + '<a ng-href="{{row.getProperty(col.field)}}" target="_blank">{{row.getProperty(col.field)}}</a>' + '</div>';
+        var webappMBeans = [
+            "org.mortbay.jetty.plugin:type=jettywebappcontext,*",
+            "org.eclipse.jetty.webapp:type=webappcontext,*",
+            "org.eclipse.jetty.servlet:type=servletcontexthandler,*",
+            "org.ops4j.pax.web.service.jetty.internal:type=httpservicecontext,*"
+        ];
         $scope.uninstallDialog = new UI.Dialog();
         $scope.uninstall = function () {
             $scope.controlWebApps('destroy');
@@ -32694,6 +32700,7 @@ var Jetty;
         $scope.httpScheme = "http";
         $scope.webapps = [];
         $scope.selected = [];
+        $scope.sampleWebApp = pickSampleWebApp();
         var columnDefs = [
             {
                 field: 'state',
@@ -32817,10 +32824,18 @@ var Jetty;
                     }
                 });
             }
-            jolokia.search("org.mortbay.jetty.plugin:type=jettywebappcontext,*", onSuccess(render));
-            jolokia.search("org.eclipse.jetty.webapp:type=webappcontext,*", onSuccess(render));
-            jolokia.search("org.eclipse.jetty.servlet:type=servletcontexthandler,*", onSuccess(render));
-            jolokia.search("org.ops4j.pax.web.service.jetty.internal:type=httpservicecontext,*", onSuccess(render));
+            angular.forEach(webappMBeans, function (mbean) {
+                jolokia.search(mbean, onSuccess(render));
+            });
+        }
+        function pickSampleWebApp() {
+            for (var i = 0; i < webappMBeans.length; i++) {
+                var webapps = jolokia.search(webappMBeans[i]);
+                if (webapps && webapps.length >= 1) {
+                    return webapps[0];
+                }
+            }
+            return null;
         }
         function render(response) {
             $scope.webapps = [];
