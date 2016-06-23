@@ -27,7 +27,9 @@ import org.jolokia.util.RequestType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.InstanceNotFoundException;
 import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanException;
 import javax.management.MBeanInfo;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -140,7 +142,18 @@ public class RBACRestrictor implements Restrictor {
             params = new Object[] { objectName.getCanonicalName(), opName, argTypes.toArray(new String[0]) };
             signature = new String[] { String.class.getName(), String.class.getName(), String[].class.getName() };
         }
-        return (boolean) mBeanServer.invoke(securityMBean, "canInvoke", params, signature);
+        try {
+            return (boolean) mBeanServer.invoke(securityMBean, "canInvoke", params, signature);
+        } catch (InstanceNotFoundException e) {
+            LOG.info("Instance not found: {}", e.getMessage());
+            return false;
+        } catch (MBeanException e) {
+            if (e.getCause() instanceof InstanceNotFoundException) {
+                LOG.info("Instance not found: {}", e.getCause().getMessage());
+                return false;
+            }
+            throw e;
+        }
     }
 
     private String parseOperation(String operation, List<String> argTypes) {

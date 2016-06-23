@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.InstanceNotFoundException;
 import javax.management.ObjectName;
 import java.util.Arrays;
 
@@ -64,6 +65,7 @@ public class RBACRestrictorTest {
         assertThat(restrictor.isOperationAllowed(new ObjectName("hawtio:type=Test"), "allowed()"), is(true));
         assertThat(restrictor.isOperationAllowed(new ObjectName("hawtio:type=Test"), "notAllowed()"), is(false));
         assertThat(restrictor.isOperationAllowed(new ObjectName("hawtio:type=Test"), "error()"), is(false));
+        assertThat(restrictor.isOperationAllowed(new ObjectName("hawtio:type=NoSuchType"), "noInstance()"), is(false));
 
         assertThat(restrictor.isOperationAllowed(new ObjectName("hawtio:type=Test"), "allowed(boolean,long,java.lang.String)"), is(true));
         assertThat(restrictor.isOperationAllowed(new ObjectName("hawtio:type=Test"), "notAllowed(boolean,long,java.lang.String)"), is(false));
@@ -95,6 +97,9 @@ public class RBACRestrictorTest {
             }
             if ("hawtio:type=Test".equals(objectName) && "error".equals(methodName)) {
                 throw new Exception();
+            }
+            if ("hawtio:type=NoSuchType".equals(objectName) && "noInstance".equals(methodName)) {
+                throw new InstanceNotFoundException(objectName);
             }
             if ("java.lang:type=Runtime".equals(objectName) && "getVmName".equals(methodName)) {
                 return true;
