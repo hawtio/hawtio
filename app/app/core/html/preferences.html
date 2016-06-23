@@ -5,7 +5,7 @@
       <div ng-repeat="(name, panel) in panels" 
            value="{{name}}" 
            class="tab-pane" 
-           title="{{name}}"
+           data-title="{{name}}"
            ng-include="panel.template"></div>
      </div>
   </div>
