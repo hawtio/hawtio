@@ -98,11 +98,12 @@
     <servlet-name>plugin</servlet-name>
     <url-pattern>/plugin/*</url-pattern>
   </servlet-mapping>
+  <!--
   <servlet-mapping>
     <servlet-name>plugin</servlet-name>
     <url-pattern>/plugin</url-pattern>
   </servlet-mapping>
-
+  -->
   <!-- The special plugin's configurations -->
   <description>Sample hawtio hello-world statically linked plugin</description>
   <display-name>hawt.io sample plugin</display-name>

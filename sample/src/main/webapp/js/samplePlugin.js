@@ -130,8 +130,7 @@ var Sample = (function(Sample) {
    * service from hawtioCore
    *
    */
-  Sample.
-  Controller = function($scope, jolokia) {
+  Sample.SampleController = function($scope, jolokia) {
     $scope.hello = "Hello world!";
     $scope.cpuLoad = "0";
 
