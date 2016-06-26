@@ -318,6 +318,12 @@
           <webAppConfig>
             <descriptor>${webappDirectory}/WEB-INF/web.xml</descriptor>
             <contextPath>${context}</contextPath>
+            <!--<resourceBases>-->
+              <!--<resourceBase>${project.basedir}/src/main/webapp</resourceBase>-->
+              <!--<resourceBase>${project.basedir}/src/main/webapp/js</resourceBase>-->
+              <!--<resourceBase>${project.basedir}/src/main/webapp/html</resourceBase>-->
+              <!--<resourceBase>${project.basedir}/src/main/webapp/css</resourceBase>-->
+            <!--</resourceBases>-->
           </webAppConfig>
           <connectors>
             <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
@@ -335,6 +341,11 @@
               <value>${hawtio-config-repo}</value>
             </systemProperty>
           </systemProperties>
+          <!--
+           Causes jetty to reload js & friends while avoiding locking
+           which would break things on Windows.
+          -->
+          <contextXml>${project.basedir}/jetty/jetty-config.xml</contextXml>
         </configuration>
       </plugin>
       <plugin>

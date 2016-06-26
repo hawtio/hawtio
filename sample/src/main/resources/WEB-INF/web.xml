@@ -48,6 +48,16 @@
     <url-pattern>/javadoc/*</url-pattern>
   </servlet-mapping>
 
+  <!-- Disable file locking on windows
+  -->
+  <!--<servlet>-->
+    <!--<servlet-name>default</servlet-name>-->
+    <!--<init-param>-->
+      <!--<param-name>useFileMappedBuffer</param-name>-->
+      <!--<param-value>false</param-value>-->
+    <!--</init-param>-->
+  <!--</servlet>-->
+
   <servlet>
     <servlet-name>user</servlet-name>
     <servlet-class>io.hawt.web.UserServlet</servlet-class>

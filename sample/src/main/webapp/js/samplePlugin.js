@@ -4,7 +4,7 @@
  *
  * The main entry point for the Httpd module
  *
- */
+ */ 
 var Sample = (function(Sample) {
 
   /**
@@ -154,4 +154,4 @@ var Sample = (function(Sample) {
 
 // tell the hawtio plugin loader about our plugin so it can be
 // bootstrapped with the rest of angular
-hawtioPluginLoader.addModule(Sample.pluginName);
+hawtioPluginLoader.addModule(Sample.
