@@ -10,6 +10,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Properties;
 
 /**
  * Decorator class around Jolokia native AgentServlet.
@@ -31,16 +32,29 @@ public class JolokiaConfiguredAgentServlet extends AgentServlet {
 
     @Override
     public void init(ServletConfig pServletConfig) throws ServletException {
+        ServletConfigWrapper pServletConfigWrapper = null;
 
-        String policyLocation = System.getProperty("jolokia." + ConfigKey.POLICY_LOCATION.toString());
-        if (policyLocation != null) {
-            LOG.info("Jolokia will load jolokia-access.xml from [" + policyLocation + "]");
-            ServletConfigWrapper pServletConfigWrapper = new ServletConfigWrapper(pServletConfig);
-            pServletConfigWrapper.addProperty(ConfigKey.POLICY_LOCATION.toString(), policyLocation);
+        Properties properties = System.getProperties();
+        for (String key : properties.stringPropertyNames()) {
+            if (key.startsWith("jolokia.")) {
+                String effectiveKey = key.substring(key.indexOf(".") + 1);
+                if (containsEnum(effectiveKey)) {
+                    String value = properties.getProperty(key);
+                    if (value != null) {
+                        if (pServletConfigWrapper == null) {
+                            pServletConfigWrapper = new ServletConfigWrapper(pServletConfig);
+                        }
+                        LOG.info("Jolokia overridden property: [key={}, value={}]", effectiveKey, value);
+                        pServletConfigWrapper.addProperty(effectiveKey, value);
+                    }
+
+                }
+            }
+        }
+        if (pServletConfigWrapper != null) {
             super.init(pServletConfigWrapper);
-
         } else {
-            LOG.info("Using Jolokia default configuration values.");
+            LOG.info("Jolokia has not found any overriden configuration property passed at launch time; Default configuration values will be used.");
             super.init(pServletConfig);
         }
 
@@ -105,6 +119,15 @@ public class JolokiaConfiguredAgentServlet extends AgentServlet {
                 return b.nextElement();
             }
         }
+    }
+
+    public static boolean containsEnum(String test) {
+        for (ConfigKey c : ConfigKey.values()) {
+            if (c.getKeyValue().equals(test)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
