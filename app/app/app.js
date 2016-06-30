@@ -28723,6 +28723,22 @@ var Fabric;
                 $scope.goto = function (location) {
                     $location.url(location);
                 };
+                $scope.addNewDeployment = function (title, type, current) {
+                    if (Core.isBlank($scope.newDeploymentThingName)) {
+                        return;
+                    }
+                    $scope.newThingName = $scope.newDeploymentThingName;
+                    $scope.addNewThing(title, type, current);
+                    $scope.newDeploymentThingName = '';
+                };
+                $scope.addNewFeatureRepository = function (title, type, current) {
+                    if (Core.isBlank($scope.newFeatureRepositoryName)) {
+                        return;
+                    }
+                    $scope.newThingName = $scope.newFeatureRepositoryName;
+                    $scope.addNewThing(title, type, current);
+                    $scope.newFeatureRepositoryName = '';
+                };
                 $scope.addNewThing = function (title, type, current) {
                     if (Core.isBlank($scope.newThingName)) {
                         return;
