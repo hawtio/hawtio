@@ -133,15 +133,8 @@ public class RBACRestrictor implements Restrictor {
         }
         List<String> argTypes = new ArrayList<>();
         String opName = parseOperation(operation, argTypes);
-        Object[] params;
-        String[] signature;
-        if (argTypes.isEmpty()) {
-            params = new Object[] { objectName.getCanonicalName(), opName };
-            signature = new String[] { String.class.getName(), String.class.getName() };
-        } else {
-            params = new Object[] { objectName.getCanonicalName(), opName, argTypes.toArray(new String[0]) };
-            signature = new String[] { String.class.getName(), String.class.getName(), String[].class.getName() };
-        }
+        Object[] params = new Object[] { objectName.getCanonicalName(), opName, argTypes.toArray(new String[0]) };
+        String[] signature = new String[] { String.class.getName(), String.class.getName(), String[].class.getName() };
         try {
             return (boolean) mBeanServer.invoke(securityMBean, "canInvoke", params, signature);
         } catch (InstanceNotFoundException e) {
