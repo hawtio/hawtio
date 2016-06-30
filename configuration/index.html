@@ -515,10 +515,11 @@ https://jolokia.org/reference/html/agents.html#agent-war-init-params</p>
 
 <p>You have to pass them as java system properties, prefixed with <code>jolokia.</code>.</p>
 
-<p>EX.
-```
--Djolokia.policyLocation=file:///home/fuse/my-access.xml'
-```</p>
+<p>EX.</p>
+
+<pre><code>-Djolokia.policyLocation=file:///home/fuse/my-access.xml</code></pre>
+
+<p><strong>NOTE</strong> The parameter <code>restrictorClass</code> is already used in <code>hawtio-web/WEB-INF/web.xml</code> to implement role-based access control (RBAC) for Jolokia invocations. If you want to use your own Jolokia restrictor, make sure to extend <code>io.hawt.web.RBACRestrictor</code> to implement your own restrictor class. Otherwise, part of Hawtio's RBAC functions will be lost.</p>
 
 <h4 id = "More_information">More information</h4>
 
