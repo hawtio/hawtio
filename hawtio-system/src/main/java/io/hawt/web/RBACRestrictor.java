@@ -97,7 +97,7 @@ public class RBACRestrictor implements Restrictor {
             chosen = mbeans.iterator().next();
         } else if (mbeans.size() > 1) {
             for (ObjectName mbean : mbeans) {
-                String name = mbean.getCanonicalName();
+                String name = mbean.toString();
                 if (!name.contains("HawtioDummy") && !name.contains("rank=")) {
                     chosen = mbean;
                     break;
@@ -133,7 +133,10 @@ public class RBACRestrictor implements Restrictor {
         }
         List<String> argTypes = new ArrayList<>();
         String opName = parseOperation(operation, argTypes);
-        Object[] params = new Object[] { objectName.getCanonicalName(), opName, argTypes.toArray(new String[0]) };
+        // The order of properties in an object name is critical for Karaf, so we cannot use
+        // ObjectName.getCanonicalName() to get the object name string here
+        // See: https://issues.apache.org/jira/browse/KARAF-4600
+        Object[] params = new Object[] { objectName.toString(), opName, argTypes.toArray(new String[0]) };
         String[] signature = new String[] { String.class.getName(), String.class.getName(), String[].class.getName() };
         try {
             return (boolean) mBeanServer.invoke(securityMBean, "canInvoke", params, signature);
