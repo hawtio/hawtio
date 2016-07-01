@@ -1,6 +1,16 @@
 
 ### Change Log
 
+#### 1.4.66
+
+* Now every Jolokia call within Hawtio is checked based on RBAC. This means Hawtio is made more secure, but
+  you may also encounter a bunch of access exceptions. Most of those exceptions are not a Hawtio bug, but
+  just indicate lack of some necessary RBAC configurations on the container, e.g. Karaf ACL files.
+  You can resolve those exceptions by fulfilling the required configurations on the running container.
+* Added support for customization of Jolokia through Java system properties, i.e.:
+  `-Djolokia.policyLocation=file:///home/fuse/my-access.xml`
+* Various fixes and improvements for RBAC on Hawtio web UI
+
 #### 1.4.65
 
 * Upgraded to Camel 2.17.1

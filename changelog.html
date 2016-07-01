@@ -104,6 +104,18 @@
 
 <h3 id = "Change_Log">Change Log</h3>
 
+<h4 id = "1_4_66">1.4.66</h4>
+
+<ul>
+<li>Now every Jolokia call within Hawtio is checked based on RBAC. This means Hawtio is made more secure, but
+you may also encounter a bunch of access exceptions. Most of those exceptions are not a Hawtio bug, but
+just indicate lack of some necessary RBAC configurations on the container, e.g. Karaf ACL files.
+You can resolve those exceptions by fulfilling the required configurations on the running container.</li>
+<li>Added support for customization of Jolokia through Java system properties, i.e.:
+<code>-Djolokia.policyLocation=file:///home/fuse/my-access.xml</code></li>
+<li>Various fixes and improvements for RBAC on Hawtio web UI</li>
+</ul>
+
 <h4 id = "1_4_65">1.4.65</h4>
 
 <ul>
