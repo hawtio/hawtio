@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.17.1';
+var _apacheCamelModelVersion = '2.17.2';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -7628,7 +7628,7 @@ var _apacheCamelModel ={
           "type": "string",
           "defaultValue": "XStream",
           "enum": [ "Gson", "Jackson", "XStream" ],
-          "description": "Which json library to use such. Is by default xstream",
+          "description": "Which json library to use.",
           "title": "Library",
           "required": false,
           "deprecated": false
