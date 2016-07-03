@@ -10,6 +10,7 @@
 * Added support for customization of Jolokia through Java system properties, i.e.:
   `-Djolokia.policyLocation=file:///home/fuse/my-access.xml`
 * Various fixes and improvements for RBAC on Hawtio web UI
+* Upgraded to Camel 2.17.2
 
 #### 1.4.65
 
