@@ -288,7 +288,8 @@
       <p>To try out the EIP browser try create one of the example <a
               href="#/wiki/branch/{{versionId}}/view/fabric/profiles/example/quickstarts">quickstarts</a></p>
 
-      <p>e.g. Try creating a container for:
+      <p hawtio-show object-name="{{managerMBean}}" method-name="createContainers">
+        e.g. try creating a container for:
         <a class="btn btn-primary"
            href="#/fabric/containers/createContainer?profileIds=example-quickstarts-cbr&versionId={{versionId}}">
           Content Based Router Quickstart
