@@ -4,14 +4,14 @@
     <div class="span12">
       <ul class="nav nav-tabs">
         <li>
-          <a href=""
+          <a ng-href=""
              ng-click="create()"
              title="Create a new empty dashboard"
              data-placement="bottom">
             <i class="icon-plus"></i> Create</a>
         </li>
         <li>
-          <a href=""
+          <a ng-href=""
              ng-disabled="!hasSelection()"
              ng-click="duplicate()"
                   title="Create a copy of the selected dashboard(s)" data-placement="bottom">
@@ -19,7 +19,7 @@
           </a>
         </li>
         <li>
-          <a href=""
+          <a ng-href=""
              ng-show="usingFabric()"
              ng-disabled="!hasSelection()"
              ng-click="duplicateToProfiles()"
@@ -28,14 +28,14 @@
           </a>
         </li>
         <li>
-          <a href=""
+          <a ng-href=""
              ng-disabled="!hasSelection()"
              ng-click="deleteDashboard()"><i
                   class="icon-remove"></i> Delete
           </a>
         </li>
         <li class="pull-right">
-          <a href="#/dashboard/import"
+          <a ng-href="#/dashboard/import"
              title="Imports a JSON dashboard configuration from github or some other URL"
              data-placement="bottom">
             <i class="icon-cloud-download"></i> Import
