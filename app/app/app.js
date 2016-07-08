@@ -27034,7 +27034,7 @@ var Fabric;
                 }
             }
         });
-        $scope.$watch('selectedVersion', function (newValue, oldValue) {
+        $scope.$watch('selectedVersionId', function (newValue, oldValue) {
             if (oldValue !== newValue) {
                 if (newValue && 'id' in newValue) {
                     $scope.selectedVersionId = newValue['id'];
