@@ -225,7 +225,7 @@ module Fabric {
     });
 
 
-    $scope.$watch('selectedVersion', (newValue, oldValue) => {
+    $scope.$watch('selectedVersionId', (newValue, oldValue) => {
       if (oldValue !== newValue) {
         if (newValue && 'id' in newValue) {
           $scope.selectedVersionId = newValue['id'];
