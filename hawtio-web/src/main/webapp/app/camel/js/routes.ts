@@ -225,10 +225,10 @@ module Camel {
           if (routeFolder) {
             // Populate route folder child nodes for the context tree
             if (!routeFolder.children.length) {
-              processRouteXml(workspace, workspace.jolokia, routeFolder, (route), camelJmxDomain => {
+              processRouteXml(workspace, workspace.jolokia, routeFolder, (route) => {
                 addRouteChildren(routeFolder, route, camelJmxDomain);
                 updateRouteProperties(node, route, routeFolder)
-              });
+              }, camelJmxDomain);
             } else {
               updateRouteProperties(node, route, routeFolder);
             }
