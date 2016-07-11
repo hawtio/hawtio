@@ -1,17 +1,19 @@
 package io.hawt.web;
 
 import java.io.IOException;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import org.apache.commons.httpclient.protocol.DefaultProtocolSocketFactory;
+import org.apache.http.HttpHost;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A custom implementation which works on PaaS environments like OpenShift
  */
-public class OpenShiftProtocolSocketFactory extends DefaultProtocolSocketFactory {
+public class OpenShiftProtocolSocketFactory extends PlainConnectionSocketFactory {
     private static final transient Logger LOG = LoggerFactory.getLogger(OpenShiftProtocolSocketFactory.class);
 
     /**
@@ -29,11 +31,7 @@ public class OpenShiftProtocolSocketFactory extends DefaultProtocolSocketFactory
     }
 
     @Override
-    public Socket createSocket(String host, int port, InetAddress localAddress, int localPort) throws IOException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating OpenShift socket on " + host + ":" + port);
-        }
-        return new Socket(host, port);
+    public Socket connectSocket(int i, Socket socket, HttpHost httpHost, InetSocketAddress inetSocketAddress, InetSocketAddress inetSocketAddress1, HttpContext httpContext) throws IOException {
+        return super.connectSocket(i, socket, httpHost, inetSocketAddress, null /* local address */, httpContext);
     }
-
 }

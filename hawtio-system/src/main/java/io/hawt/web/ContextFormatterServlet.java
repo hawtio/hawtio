@@ -12,11 +12,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+
+import static io.hawt.web.ExportContextServlet.executeHttpGetRequest;
 
 public class ContextFormatterServlet extends HttpServlet {
 
@@ -42,10 +42,7 @@ public class ContextFormatterServlet extends HttpServlet {
             url = server + "jobs/executions/" + jobExecutionId + "/steps/" + stepExecutionId + "/execution-context.json";
             paramString = "stepExecutionContext";
         }
-        HttpClient client = new HttpClient();
-        GetMethod get = new GetMethod(url);
-        int responseCode = client.executeMethod(get);
-        jsonStringResponse = get.getResponseBodyAsString();
+        jsonStringResponse = executeHttpGetRequest(url);
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = null;
         try {

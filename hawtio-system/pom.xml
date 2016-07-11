@@ -67,14 +67,8 @@
     <!-- for proxy support -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
-        <artifactId>httpclient</artifactId>
-        <version>4.3.4</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <version>${commons-httpclient-version}</version>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient-version}</version>
     </dependency>
 
     <dependency>

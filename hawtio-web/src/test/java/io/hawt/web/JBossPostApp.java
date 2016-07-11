@@ -17,12 +17,17 @@
  */
 package io.hawt.web;
 
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.apache.commons.codec.binary.Base64;
 
@@ -44,45 +49,46 @@ public class JBossPostApp {
     public void testPostWithCredentials() throws Exception {
         System.out.println("Using URL: " + url + " user: " + userName + " password: " + password);
 
-        HttpClient client = new HttpClient();
-        PostMethod method = new PostMethod(url);
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        credsProvider.setCredentials(
+                new AuthScope(host, port, AuthScope.ANY_REALM),
+                new UsernamePasswordCredentials("user", "passwd"));
+        CloseableHttpClient client = HttpClients.custom()
+                .setDefaultCredentialsProvider(credsProvider)
+                .build();
 
-        //client.getParams().setAuthenticationPreemptive(true);
-        method.setDoAuthentication(true);
+        HttpPost method = new HttpPost(url);
 
-        Credentials defaultcreds = new UsernamePasswordCredentials(userName, password);
-        client.getState().setCredentials(new AuthScope(host, port, AuthScope.ANY_REALM), defaultcreds);
-        //client.getState().setProxyCredentials(new AuthScope(host, port, AuthScope.ANY_REALM), defaultcreds);
+        method.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
-        method.setRequestEntity(new StringRequestEntity(data, "application/json", "UTF-8"));
+        CloseableHttpResponse result = client.execute(method);
 
-        int result = client.executeMethod(method);
+        System.out.println("Status: " + result.getStatusLine().getStatusCode());
 
-        System.out.println("Status: " + result);
-
-        String response = method.getResponseBodyAsString();
+        String response = EntityUtils.toString(result.getEntity());
         System.out.println(response);
+        client.close();
     }
 
     @Test
     public void testPostWithAuthorizationHeader() throws Exception {
         System.out.println("Using URL: " + url + " user: " + userName + " password: " + password);
 
-        HttpClient client = new HttpClient();
-        PostMethod method = new PostMethod(url);
+        CloseableHttpClient client = HttpClients.createDefault();
+        HttpPost method = new HttpPost(url);
 
         String userPwd = userName + ":" + password;
         String hash = new Base64().encodeAsString(userPwd.getBytes());
-        method.setRequestHeader("Authorization", "Basic " + hash);
-        System.out.println("headers " + Arrays.asList(method.getRequestHeaders()));
-        method.setRequestEntity(new StringRequestEntity(data, "application/json", "UTF-8"));
+        method.setHeader("Authorization", "Basic " + hash);
+        System.out.println("headers " + Arrays.asList(method.getAllHeaders()));
+        method.setEntity(new StringEntity(data, ContentType.APPLICATION_JSON));
 
-        int result = client.executeMethod(method);
-
+        CloseableHttpResponse result = client.execute(method);
         System.out.println("Status: " + result);
 
-        String response = method.getResponseBodyAsString();
+        String response = EntityUtils.toString(result.getEntity());
         System.out.println(response);
+        client.close();
     }
 
 }
