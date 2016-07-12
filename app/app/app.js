@@ -14907,10 +14907,10 @@ var Camel;
                     });
                     if (routeFolder) {
                         if (!routeFolder.children.length) {
-                            Camel.processRouteXml(workspace, workspace.jolokia, routeFolder, (route), function (camelJmxDomain) {
+                            Camel.processRouteXml(workspace, workspace.jolokia, routeFolder, function (route) {
                                 Camel.addRouteChildren(routeFolder, route, camelJmxDomain);
                                 updateRouteProperties(node, route, routeFolder);
-                            });
+                            }, camelJmxDomain);
                         }
                         else {
                             updateRouteProperties(node, route, routeFolder);
