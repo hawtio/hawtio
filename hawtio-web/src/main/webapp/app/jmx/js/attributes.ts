@@ -583,6 +583,12 @@ module Jmx {
               $scope.gridOptions.enableRowClickSelection = true;
             }
           }
+          // mask attribute read error
+          angular.forEach(data, (value, key) => {
+            if (includePropertyValue(key, value)) {
+              data[key] = maskReadError(value);
+            }
+          });
           // assume 1 row of data per mbean
           $scope.gridData[idx] = data;
           addHandlerFunctions($scope.gridData);
@@ -623,7 +629,11 @@ module Jmx {
                 }
                 // the value must be string as the sorting/filtering of the table relies on that
                 var type = lookupAttributeType(key);
-                var data = {key: key, name: Core.humanizeValue(key), value: safeNullAsString(value, type)};
+                var data = {
+                  key: key,
+                  name: Core.humanizeValue(key),
+                  value: maskReadError(safeNullAsString(value, type))
+                };
 
                 generateSummaryAndDetail(key, data);
                 properties.push(data);
@@ -651,6 +661,21 @@ module Jmx {
       }
     }
 
+    function maskReadError(value) {
+      if (typeof value !== 'string') {
+        return value;
+      }
+      var forbidden = /^ERROR: Reading attribute .+ \(class java\.lang\.SecurityException\)$/;
+      var unsupported = /^ERROR: java\.lang\.UnsupportedOperationException: .+ \(class javax\.management\.RuntimeMBeanException\)$/;
+      if (value.match(forbidden)) {
+        return "**********";
+      } else if (value.match(unsupported)) {
+        return "(Not supported)";
+      } else {
+        return value;
+      }
+    }
+
     function addHandlerFunctions(data) {
       data.forEach((item) => {
         item['inDashboard'] = $scope.inDashboard;
@@ -661,7 +686,7 @@ module Jmx {
           $scope.onViewAttribute(item);
         };
         item['folderIconClass'] = (row) => {
-          return $scope.folderIconClass(row);            
+          return $scope.folderIconClass(row);
         };
         item['folderHref'] = (row) => {
           return $scope.folderHref(row);
