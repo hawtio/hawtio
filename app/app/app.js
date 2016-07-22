@@ -33698,6 +33698,11 @@ var Jmx;
                             $scope.gridOptions.enableRowClickSelection = true;
                         }
                     }
+                    angular.forEach(data, function (value, key) {
+                        if (includePropertyValue(key, value)) {
+                            data[key] = maskReadError(value);
+                        }
+                    });
                     $scope.gridData[idx] = data;
                     addHandlerFunctions($scope.gridData);
                     var count = $scope.mbeanCount;
@@ -33730,7 +33735,11 @@ var Jmx;
                                     });
                                 }
                                 var type = lookupAttributeType(key);
-                                var data = { key: key, name: Core.humanizeValue(key), value: safeNullAsString(value, type) };
+                                var data = {
+                                    key: key,
+                                    name: Core.humanizeValue(key),
+                                    value: maskReadError(safeNullAsString(value, type))
+                                };
                                 generateSummaryAndDetail(key, data);
                                 properties.push(data);
                             }
@@ -33754,6 +33763,22 @@ var Jmx;
                 $scope.gridData = data;
                 addHandlerFunctions($scope.gridData);
                 Core.$apply($scope);
+            }
+        }
+        function maskReadError(value) {
+            if (typeof value !== 'string') {
+                return value;
+            }
+            var forbidden = /^ERROR: Reading attribute .+ \(class java\.lang\.SecurityException\)$/;
+            var unsupported = /^ERROR: java\.lang\.UnsupportedOperationException: .+ \(class javax\.management\.RuntimeMBeanException\)$/;
+            if (value.match(forbidden)) {
+                return "**********";
+            }
+            else if (value.match(unsupported)) {
+                return "(Not supported)";
+            }
+            else {
+                return value;
             }
         }
         function addHandlerFunctions(data) {
