@@ -11,6 +11,7 @@
   `-Djolokia.policyLocation=file:///home/fuse/my-access.xml`
 * Various fixes and improvements for RBAC on Hawtio web UI
 * Upgraded to Camel 2.17.2
+* Upgraded to Jolokia 1.3.4
 
 #### 1.4.65
 
