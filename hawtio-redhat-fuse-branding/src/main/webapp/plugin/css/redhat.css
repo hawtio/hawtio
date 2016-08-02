@@ -1709,6 +1709,12 @@ a:hover {
   padding-bottom: 5px;
 }
 
+#main.container-fluid div .nav li.overflow a:hover  {
+  background-image: none;
+  background-color: #0081c2;
+  color: #4d5258
+}
+
 div#main div ul.nav li a:hover[disabled] {
   border: 1px;
   border-radius: 2px;
