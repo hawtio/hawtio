@@ -17,11 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import io.hawt.system.AuthInfo;
 import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
+import io.hawt.system.ExtractAuthInfoCallback;
 import io.hawt.system.Helpers;
 import io.hawt.system.PrivilegedCallback;
-import io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,8 +153,9 @@ public class AuthenticationFilter implements Filter {
         HttpSession session = httpRequest.getSession(false);
         if (session != null) {
             Subject subject = (Subject) session.getAttribute("subject");
-            if (subject != null) {
-                LOG.debug("Session subject {}", subject);
+            // Connecting from another Hawtio may have a different user authentication, so
+            // let's check if the session user is the same as in the authorization header here
+            if (subject != null && validateSession(httpRequest, session, subject)) {
                 executeAs(request, response, chain, subject);
                 return;
             }
@@ -182,6 +184,28 @@ public class AuthenticationFilter implements Filter {
                     Helpers.doForbidden((HttpServletResponse) response);
                 }
                 break;
+        }
+    }
+
+    private boolean validateSession(HttpServletRequest request, HttpSession session, Subject subject) {
+        String authHeader = request.getHeader(Authenticator.HEADER_AUTHORIZATION);
+        final AuthInfo info = new AuthInfo();
+        if (authHeader != null && !authHeader.equals("")) {
+            Authenticator.extractAuthInfo(authHeader, new ExtractAuthInfoCallback() {
+                @Override
+                public void getAuthInfo(String userName, String password) {
+                    info.username = userName;
+                }
+            });
+        }
+        String sessionUser = (String) session.getAttribute("user");
+        if (info.username == null || info.username.equals(sessionUser)) {
+            LOG.debug("Session subject - {}", subject);
+            return true;
+        } else {
+            LOG.debug("User differs, re-authenticating: {} (request) != {} (session)", info.username, sessionUser);
+            session.invalidate();
+            return false;
         }
     }
 
