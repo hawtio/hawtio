@@ -17,7 +17,8 @@ module Fabric {
 
     // is it possible to delete selected containers? no, if deletion of container didn't complete
     $scope.showDeleteButton = () => {
-      return $scope.selectedContainers.length > 0 && $scope.selectedContainers.all((c) => { return !$scope.deletePending[c.id] && !c.root});
+      return $scope.selectedContainers.length > 0 && $scope.selectedContainers.all((c) =>
+          { return !$scope.deletePending[c.id] && !(c.root && $scope.ensembleContainerIds.includes(c.id))});
     };
 
     $scope.addToDashboardLink = () => {
