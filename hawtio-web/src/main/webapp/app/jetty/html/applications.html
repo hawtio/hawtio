@@ -7,10 +7,13 @@
           <div class="controls control-group inline-block controls-row">
             <div class="btn-group">
               <button ng-disabled="selected.length == 0 || !anySelectionHasState('stop')"
+                      hawtio-show object-name="{{sampleWebApp}}" method-name="start" mode="remove"
                       class="btn" ng-click="start()" title="Start"> <i class="icon-play-circle"></i> </button>
               <button ng-disabled="selected.length == 0 || !anySelectionHasState('start')"
+                      hawtio-show object-name="{{sampleWebApp}}" method-name="stop" mode="remove"
                       class="btn" ng-click="stop()" title="Stop"> <i class="icon-off"></i></button>
               <button ng-disabled="selected.length == 0 || !everySelectionHasState('stop')"
+                      hawtio-show object-name="{{sampleWebApp}}" method-name="destroy" mode="remove"
                       class="btn" ng-click="uninstallDialog.open()" title="Uninstall"><i class="icon-eject"></i></button>
             </div>
           </div>
@@ -33,19 +36,7 @@
     </div>
   </div>
 
-    <div modal="uninstallDialog.show" close="uninstallDialog.close()" options="uninstallDialog.options">
-        <form class="form-horizontal no-bottom-margin" ng-submit="uninstallDialog.close()">
-            <div class="modal-header"><h4>Are you sure?</h4></div>
-            <div class="modal-body">
-                <p>You are about to uninstall the application(s).</p>
-                <p>This operation cannot be undone so please be careful.</p>
-            </div>
-            <div class="modal-footer">
-                <input class="btn btn-danger" type="submit" ng-click="uninstall()" value="Uninstall">
-                <input class="btn btn-primary" type="button" ng-click="uninstallDialog.close()" value="Cancel">
-            </div>
-        </form>
-    </div>
+    <ng-include src="'app/jetty/html/uninstallDialog.html'"></ng-include>
 
   <div class="row-fluid">
     <div class="gridStyle" ng-grid="gridOptions"></div>

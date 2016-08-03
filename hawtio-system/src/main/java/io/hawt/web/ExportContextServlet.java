@@ -8,8 +8,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -101,14 +107,29 @@ public class ExportContextServlet extends HttpServlet {
         } else return "Content not available";
     }
 
-    private String executeHttpGetRequest(String url) throws IOException {
-        String jsonStringResponse;
-        HttpClient client = new HttpClient();
-        GetMethod get = new GetMethod(url);
-        int reponseCode = client.executeMethod(get);
-        jsonStringResponse = get.getResponseBodyAsString();
-        get.releaseConnection();
-        return jsonStringResponse;
+    static public String executeHttpGetRequest(String url) throws IOException {
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {
+            HttpGet httpget = new HttpGet(url);
+
+            ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
+
+                @Override
+                public String handleResponse(
+                        final HttpResponse response) throws IOException {
+                    int status = response.getStatusLine().getStatusCode();
+                    if (status >= 200 && status < 300) {
+                        HttpEntity entity = response.getEntity();
+                        return entity != null ? EntityUtils.toString(entity) : null;
+                    } else {
+                        throw new ClientProtocolException("Unexpected response status: " + status);
+                    }
+                }
+            };
+            return httpclient.execute(httpget, responseHandler);
+        } finally {
+            httpclient.close();
+        }
     }
 
     private JSONObject parseStringToJSON(String source) {

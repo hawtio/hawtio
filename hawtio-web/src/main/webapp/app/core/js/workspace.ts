@@ -32,6 +32,7 @@ module Core {
     public mbeanTypesToDomain = {};
     public mbeanServicesToDomain = {};
     public attributeColumnDefs = {};
+    public onClickRowHandlers = {};
     public treePostProcessors = [];
     public topLevelTabs = <Array<NavMenuItem>>[];
     public subLevelTabs = [];
@@ -981,35 +982,35 @@ module Core {
       return this.hasDomainAndProperties('io.fabric8');
     }
 
-    isCamelContext() {
-      return this.hasDomainAndProperties('org.apache.camel', {type: 'context'});
+    isCamelContext(camelJmxDomain) {
+      return this.hasDomainAndProperties(camelJmxDomain, {type: 'context'});
     }
-    isCamelFolder() {
-      return this.hasDomainAndProperties('org.apache.camel');
+    isCamelFolder(camelJmxDomain) {
+      return this.hasDomainAndProperties(camelJmxDomain);
     }
-    isComponentsFolder() {
-      return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'components');
+    isComponentsFolder(camelJmxDomain) {
+      return this.selectionHasDomainAndLastFolderName(camelJmxDomain, 'components');
     }
-    isComponent() {
-      return this.hasDomainAndProperties('org.apache.camel', {type: 'components'});
+    isComponent(camelJmxDomain) {
+      return this.hasDomainAndProperties(camelJmxDomain, {type: 'components'});
     }
-    isEndpointsFolder() {
-      return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'endpoints');
+    isEndpointsFolder(camelJmxDomain) {
+      return this.selectionHasDomainAndLastFolderName(camelJmxDomain, 'endpoints');
     }
-    isEndpoint() {
-      return this.hasDomainAndProperties('org.apache.camel', {type: 'endpoints'});
+    isEndpoint(camelJmxDomain) {
+      return this.hasDomainAndProperties(camelJmxDomain, {type: 'endpoints'});
     }
-    isDataFormatsFolder() {
-      return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'dataformats');
+    isDataFormatsFolder(camelJmxDomain) {
+      return this.selectionHasDomainAndLastFolderName(camelJmxDomain, 'dataformats');
     }
-    isDataFormat() {
-      return this.hasDomainAndProperties('org.apache.camel', {type: 'dataformats'});
+    isDataFormat(camelJmxDomain) {
+      return this.hasDomainAndProperties(camelJmxDomain, {type: 'dataformats'});
     }
-    isRoutesFolder() {
-      return this.selectionHasDomainAndLastFolderName('org.apache.camel', 'routes')
+    isRoutesFolder(camelJmxDomain) {
+      return this.selectionHasDomainAndLastFolderName(camelJmxDomain, 'routes')
     }
-    isRoute() {
-      return this.hasDomainAndProperties('org.apache.camel', {type: 'routes'});
+    isRoute(camelJmxDomain) {
+      return this.hasDomainAndProperties(camelJmxDomain, {type: 'routes'});
     }
 
     isOsgiFolder() {

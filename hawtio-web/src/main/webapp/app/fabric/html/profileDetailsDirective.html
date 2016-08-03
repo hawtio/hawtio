@@ -121,12 +121,12 @@
           <ul class="unstyled">
             <li class="add">
               <div>
-                <form ng-submit="addNewThing('Bundle', 'Bundles', row.bundles)">
+                <form ng-submit="addNewDeployment('Bundle', 'Bundles', row.bundles)">
                   <span><strong>Add: </strong></span>
-                  <input class="input-xxlarge" type="text" ng-model="newThingName"
+                  <input class="input-xxlarge" type="text" ng-model="newDeploymentThingName"
                          typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue"
                          typeahead-wait-ms="200">
-                  <i class="clickable icon-plus green" ng-click="addNewThing('Bundle', 'Bundles', row.bundles)"
+                  <i class="clickable icon-plus green" ng-click="addNewDeployment('Bundle', 'Bundles', row.bundles)"
                      title="Add Bundle"></i>
                                 <span class="help-block">
                                   example: "mvn:group.id/artifact.id/version"
@@ -200,13 +200,13 @@
                                  on-save="updateThing('Feature Repository', 'Repositories',  row.repositories)"></editable-property>
             </li>
             <li class="add">
-              <form ng-submit="addNewThing('Feature Repository', 'Repositories', row.repositories)">
+              <form ng-submit="addNewFeatureRepository('Feature Repository', 'Repositories', row.repositories)">
                 <span><strong>Add: </strong></span>
-                <input class="input-xxlarge" type="text" ng-model="newThingName"
+                <input class="input-xxlarge" type="text" ng-model="newFeatureRepositoryName"
                        typeahead="name for name in doCompletionFabric($viewValue) | filter:$viewValue"
                        typeahead-wait-ms="200">
                 <i class="clickable icon-plus green"
-                   ng-click="addNewThing('Feature Repository', 'Repositories', row.repositories)"
+                   ng-click="addNewFeatureRepository('Feature Repository', 'Repositories', row.repositories)"
                    title="Add Feature Repository"></i>
                   <span class="help-block">
                     example: "mvn:group.id/artifact.id/version/xml/features"

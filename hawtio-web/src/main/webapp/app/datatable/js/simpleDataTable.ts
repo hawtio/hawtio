@@ -239,6 +239,16 @@ module DataTable {
         return (row) && config.selectedItems.some(row.entity);
       };
 
+      $scope.onRowClicked = (row) => {
+        var id = $scope.config.gridKey;
+        if(id){
+            var func = $scope.config.onClickRowHandlers[id];
+            if(func) {
+                func(row);
+            }
+        }
+      };
+
       $scope.onRowSelected = (row) => {
         var idx = config.selectedItems.indexOf(row.entity);
         if (idx >= 0) {
@@ -270,7 +280,7 @@ module DataTable {
       }
       var headHtml = "<thead><tr>";
       // use a function to check if a row is selected so the UI can be kept up to date asap
-      var bodyHtml = "<tbody><tr ng-repeat='row in rows track by $index' ng-show='showRow(row)' " + onMouseDown + "ng-class=\"{'selected': isSelected(row)}\" >";
+      var bodyHtml = "<tbody><tr ng-repeat='row in rows track by $index' ng-show='showRow(row)' ng-click='onRowClicked(row)'" + onMouseDown + "ng-class=\"{'selected': isSelected(row)}\" >";
       var idx = 0;
       if (showCheckBox) {
         var toggleAllHtml = isMultiSelect() ?

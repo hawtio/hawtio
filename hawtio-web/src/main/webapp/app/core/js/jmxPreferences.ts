@@ -7,6 +7,9 @@ module Core {
     Core.initPreferenceScope($scope, localStorage, {
       'activemqJmxDomain': {
         'value': "org.apache.activemq"
+      },
+      'camelJmxDomain': {
+        'value': "org.apache.camel"
       }
     });
 

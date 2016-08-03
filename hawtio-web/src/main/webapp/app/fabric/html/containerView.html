@@ -80,7 +80,10 @@
           <i class="icon-remove-sign"></i> Delete
         </a>
         <a class="btn" ng-click="createContainer()" title="Create new containers"
-            title="Create container">
+           title="Create container"
+           hawtio-show
+           object-name="{{managerMBean}}"
+           method-name="createContainers">
           <i class="icon-plus"></i> Create
         </a>
         <hawtio-filter ng-model="filter"
@@ -110,12 +113,11 @@
        ng-show="groupBy=='location'">
     <div class="span12 page-padded">
       <div class="column-box-variable location-box"
-           ng-repeat="(locationId, location) in locations">
+           ng-repeat="(locationId, location) in locations" ng-show="filterLocation(locationId)">
         <strong class="mouse-pointer" ng-click="showContainersFor(locationId)">{{locationId}}</strong>
         <div>
           <div class="column-box-square mouse-pointer" 
             ng-repeat="container in location.containers | orderBy:['id', '!alive', 'provisionResult']"
-            ng-show="filterContainer(container)"
             ng-class="getSelectedClass(container)"
             ng-click="select(containers, container, $event)">
             <i title="{{container.id}} / {{container.versionId}}" ng-class='statusIcon(container)'></i>

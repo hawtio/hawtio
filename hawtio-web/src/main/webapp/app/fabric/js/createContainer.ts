@@ -225,7 +225,7 @@ module Fabric {
     });
 
 
-    $scope.$watch('selectedVersion', (newValue, oldValue) => {
+    $scope.$watch('selectedVersionId', (newValue, oldValue) => {
       if (oldValue !== newValue) {
         if (newValue && 'id' in newValue) {
           $scope.selectedVersionId = newValue['id'];
@@ -406,6 +406,31 @@ module Fabric {
             });
             if (!error) {
               SelectionHelpers.clearGroup(ProfileCart);
+              // If the parent container had a location, set the location on the new container(s)
+              var parentLocation = Fabric.getContainerFields(jolokia, json.parent, ['location']).location;
+              if (!Core.isBlank(parentLocation) && parentLocation !== ContainerHelpers.NO_LOCATION) {
+                var newContainerIds = [];
+                if (json.number) {  // json.number is the number of containers requested
+                  for (var i = 1; i <= json.number; i++) {
+                    newContainerIds.push(json.name + i)
+                  }
+                } else {
+                  newContainerIds = [json.name];
+                }
+                var updatedContainers = Fabric.getContainerIds(jolokia);
+                angular.forEach(updatedContainers, (containerId) => {
+                  var idx = newContainerIds.indexOf(containerId);
+                  if (idx >= 0) {
+                      setContainerProperty(jolokia, containerId, 'location', parentLocation, () => {
+                      Core.$apply($scope);
+                    }, (response) => {
+                      Core.notification('error', 'Failed to set container loction due to : ' + response.error);
+                      Core.$apply($scope);
+                    });
+
+                  }
+                });
+              }
               Core.notification('success', "Successfully created containers");
             }
             Core.$apply($scope);

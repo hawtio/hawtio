@@ -1,8 +1,9 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.PropertiesController", ["$scope", "workspace", "localStorage", ($scope, workspace:Workspace, localStorage:WindowLocalStorage) => {
+  _module.controller("Camel.PropertiesController", ["$scope", "$rootScope", "workspace", "localStorage", ($scope, $rootScope, workspace:Workspace, localStorage:WindowLocalStorage) => {
     var log:Logging.Logger = Logger.get("Camel");
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     $scope.workspace = workspace;
 
@@ -23,11 +24,20 @@ module Camel {
       }
     });
 
+    // Update local value if corresponding value is changed on the preferences tab.
+    $rootScope.$on('hideOptionDocumentation', (event, value) => {
+      $scope.hideHelp = value;
+    });
+
     $scope.$watch('hideUnused', (newValue, oldValue) => {
       if (newValue !== oldValue) {
         updateData();
       }
     });
+
+    $rootScope.$on('hideOptionUnusedValue', (event, value) => {
+      $scope.hideUnused = value;
+    })
 
     $scope.$watch('hideDefault', (newValue, oldValue) => {
       if (newValue !== oldValue) {
@@ -35,13 +45,17 @@ module Camel {
       }
     });
 
+    $rootScope.$on('hideOptionDefaultValue', (event, value) => {
+      $scope.hideDefault = value;
+    })
+
     $scope.$on("$routeChangeSuccess", function (event, current, previous) {
       // lets do this asynchronously to avoid Error: $digest already in progress
       setTimeout(updateData, 50);
     });
 
     $scope.$watch('workspace.selection', function () {
-      if (!workspace.isRoutesFolder() && workspace.moveIfViewInvalid()) return;
+      if (!workspace.isRoutesFolder(camelJmxDomain) && workspace.moveIfViewInvalid()) return;
       updateData();
     });
 
@@ -89,7 +103,7 @@ module Camel {
     }
 
     function updateData() {
-      var routeXmlNode = getSelectedRouteNode(workspace);
+      var routeXmlNode = getSelectedRouteNode(workspace, camelJmxDomain);
       if (routeXmlNode != null) {
         $scope.model = getCamelSchema(routeXmlNode.nodeName);
 

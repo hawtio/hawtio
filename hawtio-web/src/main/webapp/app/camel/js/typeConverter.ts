@@ -1,7 +1,8 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.TypeConverterController", ["$scope", "$location", "$timeout", "workspace", "jolokia", ($scope, $location, $timeout, workspace:Workspace, jolokia) => {
+  _module.controller("Camel.TypeConverterController", ["$scope", "$location", "$timeout", "workspace", "jolokia", "localStorage", ($scope, $location, $timeout, workspace:Workspace, jolokia, localStorage) => {
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     $scope.workspace = workspace;
 
@@ -104,7 +105,7 @@ module Camel {
 
     function loadConverters() {
       console.log("Loading TypeConverter data...");
-      var mbean = getSelectionCamelTypeConverter(workspace);
+      var mbean = getSelectionCamelTypeConverter(workspace, camelJmxDomain);
       if (mbean) {
         // grab attributes in real time
         var query = {type: "read", mbean: mbean,

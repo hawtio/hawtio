@@ -20,7 +20,8 @@
           <a ng-hide="inDashboard" ng-href="{{addToDashboardLink()}}" title="Add this view to a dashboard" data-placement="bottom">
             <i class="icon-share"></i>
           </a>
-          <a ng-click="createContainer()" title="Create new containers">
+          <a ng-click="createContainer()" title="Create new containers"
+             hawtio-show object-name="{{managerMBean}}" method-name="createContainers" mode="remove">
             <i class="icon-plus"></i> Create
           </a>
           <span ng-show="selectedContainers.length != 0"
@@ -35,19 +36,22 @@
                  exclude='{{getVersionsToExclude()}}'></span>
           </span>
           <a ng-click="startSelectedContainers()" ng-show="allSelectionsStartable()"
-             title="Start containers">
+             title="Start containers"
+             hawtio-show object-name="{{managerMBean}}" method-name="startContainer" mode="remove">
             <i class="icon-play-circle"></i>
             Start
           </a>
           <a ng-click="stopSelectedContainers()" ng-show="anySelectionStoppable()"
-             title="Stop containers">
+             title="Stop containers"
+             hawtio-show object-name="{{managerMBean}}" method-name="stopContainer" mode="remove">
             <i class="icon-off"></i>
             Stop
           </a>
           <a class="nav-danger"
              ng-click="deleteContainer()"
              ng-show="showDeleteButton()"
-             title="Delete container">
+             title="Delete container"
+             hawtio-show object-name="{{managerMBean}}" method-name="destroyContainer" mode="remove">
             <i class="icon-remove-sign"></i> Delete
           </a>
         </div>

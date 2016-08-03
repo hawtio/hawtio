@@ -41,6 +41,12 @@ module Fabric {
         if ($scope.selectedContainers.length > 0) {
           $scope.activeContainerId = '';
         }
+
+        $scope.containers.forEach((container) => {
+          if (Core.isBlank(container.location)) {
+            container.location = ContainerHelpers.NO_LOCATION;
+          }
+        });
       }
     }, true);
   }]);

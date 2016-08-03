@@ -161,7 +161,7 @@
 
   <servlet>
     <servlet-name>jolokia-agent</servlet-name>
-    <servlet-class>org.jolokia.http.AgentServlet</servlet-class>
+    <servlet-class>io.hawt.web.JolokiaConfiguredAgentServlet</servlet-class>
     <init-param>
       <param-name>mbeanQualifier</param-name>
       <param-value>qualifier=hawtio</param-value>
@@ -169,6 +169,10 @@
     <init-param>
       <param-name>includeStackTrace</param-name>
       <param-value>false</param-value>
+    </init-param>
+    <init-param>
+      <param-name>restrictorClass</param-name>
+      <param-value>io.hawt.web.RBACRestrictor</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>

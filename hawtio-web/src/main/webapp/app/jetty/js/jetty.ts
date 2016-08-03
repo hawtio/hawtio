@@ -13,13 +13,29 @@ module Jetty {
         '<a ng-href="{{row.getProperty(col.field)}}" target="_blank">{{row.getProperty(col.field)}}</a>' +
       '</div>';
 
-    $scope.uninstallDialog = new UI.Dialog()
+    var webappMBeans:string[] = [
+      // support embedded jetty which may use mortbay mbean names
+      "org.mortbay.jetty.plugin:type=jettywebappcontext,*",
+      "org.eclipse.jetty.webapp:type=webappcontext,*",
+      "org.eclipse.jetty.servlet:type=servletcontexthandler,*",
+      // for OSGi container
+      "org.ops4j.pax.web.service.jetty.internal:type=httpservicecontext,*"
+    ];
+
+    $scope.uninstallDialog = new UI.Dialog();
+
+    $scope.uninstall = function () {
+      $scope.controlWebApps('destroy');
+      $scope.uninstallDialog.close();
+    };
 
     $scope.httpPort;
     $scope.httpScheme = "http";
 
     $scope.webapps = [];
     $scope.selected = [];
+
+    $scope.sampleWebApp = pickSampleWebApp();
 
     var columnDefs:any[] = [
       {
@@ -98,11 +114,6 @@ module Jetty {
       $scope.controlWebApps('start');
     };
 
-    $scope.uninstall = function () {
-      $scope.controlWebApps('destroy');
-      $scope.uninstallDialog.close();
-    };
-
     $scope.anySelectionHasState = (state) => {
       var selected = $scope.selected || [];
       return selected.length && selected.any((s) => isState(s, state));
@@ -136,7 +147,15 @@ module Jetty {
       $scope.jettyServerVersion = jolokia.getAttribute(servers[0], "version")
       $scope.jettyServerStartupTime = jolokia.getAttribute(servers[0], "startupTime")
     } else {
-      console.log("Cannot find jetty server or there was more than one server. response is: " + servers)
+      // check Pax-Web Jetty instances in case of being on an OSGi container
+      var paxServers = jolokia.search("org.ops4j.pax.web.service.jetty.internal:type=jettyserverwrapper,*")
+      if (paxServers && paxServers.length === 1) {
+        $scope.jettyServerVersion = jolokia.getAttribute(paxServers[0], "version")
+        $scope.jettyServerStartupTime = jolokia.getAttribute(paxServers[0], "startupTime")
+      } else {
+        console.log("Cannot find jetty server or there was more than one server. response is: "
+                    + servers.concat(paxServers))
+      }
     }
 
 
@@ -169,10 +188,20 @@ module Jetty {
           }
         });
       }
-      // support embedded jetty which may use morbay mbean names
-      jolokia.search("org.mortbay.jetty.plugin:type=jettywebappcontext,*", onSuccess(render));
-      jolokia.search("org.eclipse.jetty.webapp:type=webappcontext,*", onSuccess(render));
-      jolokia.search("org.eclipse.jetty.servlet:type=servletcontexthandler,*", onSuccess(render));
+      angular.forEach(webappMBeans, (mbean) => {
+        jolokia.search(mbean, onSuccess(render));
+      });
+    }
+
+    // function to pick up a sample application for RBAC
+    function pickSampleWebApp() {
+      for (var i = 0; i < webappMBeans.length; i++) {
+        var webapps = jolokia.search(webappMBeans[i]);
+        if (webapps && webapps.length >= 1) {
+          return webapps[0];
+        }
+      }
+      return null;
     }
 
     function render(response) {

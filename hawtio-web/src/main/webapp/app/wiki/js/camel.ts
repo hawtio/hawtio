@@ -7,6 +7,9 @@ module Wiki {
   export var CamelController = _module.controller("Wiki.CamelController", ["$scope", "$location", "$routeParams", "localStorage", "workspace", "wikiRepository", "jolokia", ($scope, $location, $routeParams, localStorage:WindowLocalStorage, workspace:Workspace, wikiRepository:GitWikiRepository, jolokia) => {
     Wiki.initScope($scope, $routeParams, $location);
     Camel.initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia);
+
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
+
     $scope.schema = Camel.getConfiguredCamelModel();
     $scope.modified = false;
 
@@ -376,7 +379,7 @@ module Wiki {
         if (treeNode) {
           var node = doc.createElement(key);
           parentFolder = treeNode.data;
-          var addedNode = Camel.addRouteChild(parentFolder, node);
+          var addedNode = Camel.addRouteChild(parentFolder, node, camelJmxDomain);
           if (addedNode) {
             var added = treeNode.addChild(addedNode, beforeNode);
             if (added) {
@@ -430,7 +433,7 @@ module Wiki {
       var text = response.text;
       if (text) {
         // lets remove any dodgy characters so we can use it as a DOM id
-        var tree = Camel.loadCamelTree(text, $scope.pageId);
+        var tree = Camel.loadCamelTree(text, $scope.pageId, camelJmxDomain);
         if (tree) {
           $scope.camelContextTree = tree;
         }

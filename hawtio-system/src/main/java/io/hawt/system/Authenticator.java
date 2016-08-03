@@ -249,10 +249,14 @@ public class Authenticator {
                         for (Object group : groups) {
                             LOG.debug("Matching IBM Websphere group name {} to required role {}", group, role);
 
-                            if (role.equals(group.toString())) {
-                                LOG.debug("Required role {} found in IBM specific credentials", role);
-                                found = true;
-                                break;
+                            String[] roleArray = role.split(",");
+                            for (String r : roleArray) {
+                                if (r.equals(group.toString())) {
+                                    LOG.debug("Required role {} found in IBM WebSphere specific credentials", r);
+                                    return true;
+                                } else {
+                                    LOG.debug("role {} doesn't match {}, continuing", r, group.toString());
+                                }
                             }
                         }
                     } else {
@@ -286,15 +290,17 @@ public class Authenticator {
                     final Enumeration<Principal> groups = (Enumeration<Principal>) groupsMethod.invoke(prin);
 
                     if (groups != null) {
-
                         while (groups.hasMoreElements()) {
                             Principal group = groups.nextElement();
-                        	LOG.debug("Matching Jboss EAP group name {} to required role {}", group, role);
-
-                            if (role.equals(group.toString())) {
-                                LOG.debug("Required role {} found in Jboss EAP specific credentials", role);
-                                found = true;
-                                break;
+                        	LOG.debug("Matching Jboss EAP group name {} to required role(s) {}", group, role);
+                            String[] roleArray = role.split(",");
+                            for (String r : roleArray) {
+                                if (r.equals(group.toString())) {
+                                    LOG.debug("Required role {} found in Jboss EAP specific credentials", r);
+                                    return true;
+                                } else {
+                                    LOG.debug("role {} doesn't match {}, continuing", r, group.toString());
+                                }
                             }
                         }
                     } else {

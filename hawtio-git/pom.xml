@@ -1,204 +1,229 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <groupId>io.hawt</groupId>
-    <artifactId>project</artifactId>
-    <version>1.5-SNAPSHOT</version>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>io.hawt</groupId>
+        <artifactId>project</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>hawtio-git</artifactId>
-  <packaging>bundle</packaging>
-  <name>${project.artifactId}</name>
-  <description>hawtio :: hawtio-git</description>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>hawtio-git</artifactId>
+    <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
+    <description>hawtio :: hawtio-git</description>
 
-  <properties>
-    <fuse.osgi.export>
-      io.hawt.git,
-      io.hawt.util,
-      io.hawt.util.introspect,
-      io.hawt.util.introspect.support,
-      com.jcraft.jzlib;version=${jcraft-jzlib-version},
-      com.jcraft.jsch;version=${jcraft-version},
-      org.gitective*;version=${gitective-version},
-      javaewah*;version=${javaewah-version},
-    </fuse.osgi.export>
-    <fuse.osgi.import>
-<!--
-      com.jcraft.jzlib;version=${jcraft-jzlib-version},
-      com.jcraft.jsch;version=${jcraft-version},
--->
-      org.osgi.framework;version="[1.5,2)",
-      org.osgi.framework.wiring;version="[1.0,2)",
-      org.gitective*;version=${gitective-version},
-      javaewah*;version=${javaewah-version},
-      !javax.servlet,
-      !keypairgen,
-      !signature,
-      !userauth,
-      *
-    </fuse.osgi.import>
-  </properties>
+    <properties>
+        <fuse.osgi.export>
+            io.hawt.git,
+            io.hawt.util,
+            io.hawt.util.introspect,
+            io.hawt.util.introspect.support,
+            com.jcraft.jzlib;version=${jcraft-jzlib-version},
+            com.jcraft.jsch;version=${jcraft-version},
+            org.gitective*;version=${gitective-version},
+            javaewah*;version=${javaewah-version},
+        </fuse.osgi.export>
+        <fuse.osgi.import>
+            <!--
+                  com.jcraft.jzlib;version=${jcraft-jzlib-version},
+                  com.jcraft.jsch;version=${jcraft-version},
+            -->
+            org.osgi.framework;version="[1.5,2)",
+            org.osgi.framework.wiring;version="[1.0,2)",
+            org.gitective*;version=${gitective-version},
+            javaewah*;version=${javaewah-version},
+            !javax.servlet,
+            !keypairgen,
+            !signature,
+            !userauth,
+            *
+        </fuse.osgi.import>
+    </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>${servlet-api-version}</version>
-      <scope>provided</scope>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>${servlet-api-version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <!-- logging -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-util</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+        <!-- logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.hawt</groupId>
+            <artifactId>hawtio-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.hawt</groupId>
+            <artifactId>hawtio-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-    <!-- Git Library -->
-    <dependency>
-      <groupId>org.eclipse.jgit</groupId>
-      <artifactId>org.eclipse.jgit</artifactId>
-      <version>${jgit-version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.fabric8</groupId>
-      <artifactId>gitective-core</artifactId>
-      <version>${gitective-version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.jgit</groupId>
-          <artifactId>org.eclipse.jgit</artifactId>
-        </exclusion>
-      </exclusions>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.jcraft</groupId>
-      <artifactId>jzlib</artifactId>
-      <version>${jcraft-jzlib-version}</version>
-      <scope>provided</scope>
-    </dependency>
+        <!-- Git Library -->
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>${jgit-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>gitective-core</artifactId>
+            <version>${gitective-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jgit</groupId>
+                    <artifactId>org.eclipse.jgit</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jzlib</artifactId>
+            <version>${jcraft-jzlib-version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <!-- Git HTTP Servlet -->
-<!--
-    <dependency>
-      <groupId>org.eclipse.jgit</groupId>
-      <artifactId>org.eclipse.jgit.http.server</artifactId>
-      <version>${jgit-version}</version>
-    </dependency>
--->
+        <!-- Git HTTP Servlet -->
+        <!--
+            <dependency>
+              <groupId>org.eclipse.jgit</groupId>
+              <artifactId>org.eclipse.jgit.http.server</artifactId>
+              <version>${jgit-version}</version>
+            </dependency>
+        -->
 
-    <!-- testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${guava-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>${log4j-version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <!-- testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j-version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>${maven-bundle-plugin-version}</version>
-        <extensions>true</extensions>
-        <executions>
-          <execution>
-            <id>bundle-manifest</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>manifest</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <supportedProjectTypes>
-            <supportedProjectType>jar</supportedProjectType>
-            <supportedProjectType>bundle</supportedProjectType>
-            <supportedProjectType>war</supportedProjectType>
-          </supportedProjectTypes>
-          <instructions>
-            <Export-Package>${fuse.osgi.export}</Export-Package>
-            <Import-Package>${fuse.osgi.import}</Import-Package>
-
-            <!-- TODO note we're embedding hawtio-core in here as its not yet a bundle and is often included in the war -->
-            <Embed-Dependency>*;inline=true;artifactId=hawtio-core|hawtio-util|gitective-core|jsch|jzlib|JavaEWAH|org.eclipse.jgit*</Embed-Dependency>
-            <Embed-Transitive>true</Embed-Transitive>
-
-            <Bundle-Name>${project.description}</Bundle-Name>
-            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-
-            <Implementation-Title>HawtIO</Implementation-Title>
-            <Implementation-Version>${project.version}</Implementation-Version>
-          </instructions>
-        </configuration>
-      </plugin>
-      <!-- Remove any signatures that made their way into the generated bundle -->
-      <plugin>
-        <groupId>org.commonjava.maven.plugins</groupId>
-        <artifactId>unsigner-maven-plugin</artifactId>
-        <version>${unsigner-maven-plugin-version}</version>
-        <executions>
-          <execution>
-            <id>unsign-jar</id>
-            <goals>
-              <goal>unsign</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
-  <profiles>
-    <profile>
-      <id>release</id>
-      <build>
+    <build>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>${maven-surefire-plugin-version}</version>
-            <configuration>
-              <excludes>
-                <exclude>**/GitFacadeTest.*</exclude>
-              </excludes>
-            </configuration>
-          </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${maven-bundle-plugin-version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <supportedProjectTypes>
+                        <supportedProjectType>jar</supportedProjectType>
+                        <supportedProjectType>bundle</supportedProjectType>
+                        <supportedProjectType>war</supportedProjectType>
+                    </supportedProjectTypes>
+                    <instructions>
+                        <Export-Package>${fuse.osgi.export}</Export-Package>
+                        <Import-Package>${fuse.osgi.import}</Import-Package>
+
+                        <!-- TODO note we're embedding hawtio-core in here as its not yet a bundle and is often included in the war -->
+                        <Embed-Dependency>
+                            *;inline=true;artifactId=hawtio-core|hawtio-util|gitective-core|jsch|jzlib|JavaEWAH|org.eclipse.jgit*
+                        </Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+
+                        <Bundle-Name>${project.description}</Bundle-Name>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+
+                        <Implementation-Title>HawtIO</Implementation-Title>
+                        <Implementation-Version>${project.version}</Implementation-Version>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <!-- Remove any signatures that made their way into the generated bundle -->
+            <plugin>
+                <groupId>org.commonjava.maven.plugins</groupId>
+                <artifactId>unsigner-maven-plugin</artifactId>
+                <version>${unsigner-maven-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <id>unsign-jar</id>
+                        <goals>
+                            <goal>unsign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
-      </build>
-    </profile>
-  </profiles>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin-version}</version>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/GitFacadeTest.*</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin-version}</version>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/GitFacadeTest.*</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

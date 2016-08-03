@@ -12,6 +12,38 @@
   <name>${project.artifactId}</name>
   <description>hawtio :: Sample Web Application and Console</description>
 
+  <properties>
+    <!-- filtered plugin properties, we don't define plugin-scripts here
+      as we build that dynamically using maven-antrun-plugin below. -->
+    <!-- plugin-context is what context this plugin will handle requests on
+      in the application server -->
+    <plugin-context>/hawtio</plugin-context>
+
+    <!-- plugin-name is the name of our plugin, affects the name used for
+      the plugin's mbean -->
+    <plugin-name>${project.artifactId}</plugin-name>
+
+    <!-- plugin-domain is currently unused, we just define it to an empty
+      string -->
+    <plugin-domain />
+
+    <!-- this lets this plugin deploy nicely into karaf, these get used
+      for the ImportPackage directive for maven-bundle-plugin -->
+    <fuse.osgi.export>
+      io.hawt.web.plugin
+    </fuse.osgi.export>
+    <fuse.osgi.import>
+      javax.servlet,
+      *;resolution:=optional
+    </fuse.osgi.import>
+
+    <hawtio-config-importURLs />
+    <hawtio-config-cloneOnStartup>true</hawtio-config-cloneOnStartup>
+    <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>
+    <webappDirectory>${webapp-outdir}</webappDirectory>
+
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>io.hawt</groupId>
@@ -22,6 +54,34 @@
         inherit all the plugins and content from the hawtio-default WAR
       -->
       <type>war</type>
+    </dependency>
+    <!-- we only need to embed this dependency in the war, this contains
+      a nice helper class that our plugin can use to export it's plugin
+      mbean -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-plugin-mbean</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- servlet API is provided by the container -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>${servlet-api-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-version}</version>
     </dependency>
 
     <!-- lets mark dependencies from the WAR as provided to avoid jetty:run adding duplicates -->
@@ -145,7 +205,109 @@
     </repository>
   </repositories>
   <build>
+    <!-- we want to ensure src/main/resources/WEB-INF/web.xml is being filtered
+      so that it picks up all of our javascript files -->
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
+
     <plugins>
+
+      <!-- We use maven-antrun-plugin to build up a list of
+           javascript files for our plugin mbean, this means
+           it needs to run before the maven-resources-plugin
+           copies and filters the web.xml, since for this
+           example we use contextParam settings to configure
+           our plugin mbean -->
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${maven-antrun-plugin-version}</version>
+        <executions>
+
+          <execution>
+            <!-- we run this early in the build process before
+              maven-resources-plugin is run.  We're exporting the
+              plugin-scripts property from here, so we need to
+              use maven-antrun-plugin 1.6 or up -->
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <echo>Building plugin javascript file list</echo>
+                <!-- javascript-files will contain all of the javascript in
+                  our project -->
+                <fileset id="javascript-files" dir="${basedir}/src/main/webapp">
+                  <include name="**/*.js" />
+                </fileset>
+                <!-- we need to strip out the top level path which is
+                   our source directory and be sure to change the directory
+                   separators to forward slashes -->
+                <pathconvert pathsep="," dirsep="/" property="plugin-scripts" refid="javascript-files">
+                  <map from="${basedir}/src/main/webapp/" to="" />
+                </pathconvert>
+                <!--<echo>Files: ${plugin-scripts}</echo>-->
+
+                <echo>Copying log4j.properties</echo>
+                <copy file="src/main/resources/log4j.properties" todir="target/classes" />
+
+              </target>
+              <!-- this exports plugin-scripts to the maven build, without
+                this line ${plugin-scripts} in the web.xml file won't be
+                replaced -->
+              <exportAntProperties>true</exportAntProperties>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven-resources-plugin-version}</version>
+        <executions>
+          <execution>
+            <!-- defining this maven plugin in the same phase as the
+              maven-antrun-plugin but *after* we've configured the
+              maven-antrun-plugin ensures we filter resources *after*
+              we've discovered the plugin .js files. -->
+            <id>copy-resources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Exclude the hawtio-default overlay web.xml such that
+       our own filtered one would take it's place
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <webXml>target/classes/WEB-INF/web.xml</webXml>
+          <overlays>
+            <overlay>
+              <!--<groupId>io.hawtio</groupId>-->
+              <id>hawtio-default</id>
+              <excludes>
+                <exclude>src/main/webapp/WEB-INF/web.xml</exclude>
+              </excludes>
+            </overlay>
+          </overlays>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>${jetty-plugin-groupId}</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
@@ -154,7 +316,14 @@
           <webAppSourceDirectory>${project.build.directory}/${project.name}</webAppSourceDirectory>
           <scanIntervalSeconds>1</scanIntervalSeconds>
           <webAppConfig>
+            <descriptor>${webappDirectory}/WEB-INF/web.xml</descriptor>
             <contextPath>${context}</contextPath>
+            <!--<resourceBases>-->
+              <!--<resourceBase>${project.basedir}/src/main/webapp</resourceBase>-->
+              <!--<resourceBase>${project.basedir}/src/main/webapp/js</resourceBase>-->
+              <!--<resourceBase>${project.basedir}/src/main/webapp/html</resourceBase>-->
+              <!--<resourceBase>${project.basedir}/src/main/webapp/css</resourceBase>-->
+            <!--</resourceBases>-->
           </webAppConfig>
           <connectors>
             <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
@@ -172,6 +341,11 @@
               <value>${hawtio-config-repo}</value>
             </systemProperty>
           </systemProperties>
+          <!--
+           Causes jetty to reload js & friends while avoiding locking
+           which would break things on Windows.
+          -->
+          <contextXml>${project.basedir}/jetty/jetty-config.xml</contextXml>
         </configuration>
       </plugin>
       <plugin>
