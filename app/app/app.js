@@ -6627,7 +6627,7 @@ var Fabric;
         };
         $scope.mayDelete = function () {
             return $scope.selectedContainers.length > 0 && $scope.selectedContainers.all(function (c) {
-                return !$scope.deletePending[c.id] && !c.root;
+                return !$scope.deletePending[c.id] && !(c.root && c.ensembleServer);
             });
         };
         $scope.confirmDeleteDialog = {
@@ -26699,7 +26699,7 @@ var Fabric;
         Core.reloadWhenParametersChange($route, $scope, $location);
         $scope.showDeleteButton = function () {
             return $scope.selectedContainers.length > 0 && $scope.selectedContainers.all(function (c) {
-                return !$scope.deletePending[c.id] && !c.root;
+                return !$scope.deletePending[c.id] && !(c.root && $scope.ensembleContainerIds.includes(c.id));
             });
         };
         $scope.addToDashboardLink = function () {
