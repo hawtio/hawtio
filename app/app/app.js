@@ -29212,10 +29212,16 @@ var Fabric;
                 $scope.$watch('selectedProfiles', function (newValue, oldValue) {
                     if (newValue !== oldValue) {
                         oldValue.each(function (profile) {
-                            $scope.profiles.find(function (p) { return p.id == profile.id; }).selected = false;
+                            var match = $scope.profiles.find(function (p) { return p.id == profile.id; });
+                            if (match !== undefined) {
+                                match.selected = false;
+                            }
                         });
                         newValue.each(function (profile) {
-                            $scope.profiles.find(function (p) { return p.id == profile.id; }).selected = true;
+                            var match = $scope.profiles.find(function (p) { return p.id == profile.id; });
+                            if (match !== undefined) {
+                                match.selected = true;
+                            }
                         });
                         if ($scope.selectedProfiles.length > 0) {
                             if ($scope.selectedProfiles.length !== $scope.profiles.length) {
