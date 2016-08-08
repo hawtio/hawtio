@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.17.2';
+var _apacheCamelModelVersion = '2.17.3';
 
 var _apacheCamelModel ={
   "definitions": {
