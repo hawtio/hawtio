@@ -6683,6 +6683,7 @@ var Fabric;
                 Core.notification('success', "Initiated container migration to version <strong>" + version + "</strong>, changes make take some time to complete");
                 Core.$apply($scope);
             }, function (response) {
+                Core.notification('error', 'Failed to migrate container ' + response.error);
                 Fabric.log.error("Failed to migrate containers due to ", response.error);
                 Fabric.log.info("Stack trace: ", response.stacktrace);
                 Core.$apply($scope);
