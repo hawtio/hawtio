@@ -18382,7 +18382,10 @@ var Core;
         nodes.append("title").text(function (d) {
             return d.tooltip || "";
         });
-        var edges = svgGroup.selectAll("path .edge").data(transitions).enter().append("path").attr("class", "edge").attr("marker-end", "url(#arrowhead)");
+        var edges = svgGroup.selectAll("path .edge").data(transitions).enter().append("path").attr("class", "edge");
+        if (navigator.userAgent.match(/Trident.*rv[ :]*11\./) == null) {
+            edges.attr("marker-end", "url(#arrowhead)");
+        }
         var rects = nodes.append("rect").attr("rx", "4").attr("ry", "4").attr("class", function (d) {
             return d.type;
         });
