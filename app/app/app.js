@@ -31080,6 +31080,18 @@ var JBoss;
                             obj.url = hostname + obj['contextPath'];
                         }
                         updateUrl();
+                        var undertowMBean = mbean + ",subsystem=web";
+                        jolokia.request({ type: "read", mbean: undertowMBean, attribute: ["contextRoot"] }, onSuccess(function (response) {
+                            var value = response.value;
+                            if (value) {
+                                var contextPath = value["contextRoot"];
+                                if (contextPath) {
+                                    obj.contextPath = contextPath;
+                                    updateUrl();
+                                    Core.$apply($scope);
+                                }
+                            }
+                        }));
                         var undertowMBean = mbean + ",subsystem=undertow";
                         jolokia.request({ type: "read", mbean: undertowMBean, attribute: ["contextRoot"] }, onSuccess(function (response) {
                             var value = response.value;
