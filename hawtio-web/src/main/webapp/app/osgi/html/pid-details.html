@@ -5,7 +5,7 @@
 
   <div ng-hide="editMode">
     <div class="row-fluid">
-      <button class="btn" ng-click="setEditMode(true)" title="Edit this configuration" hawtio-show object-name="{{hawtioConfigAdminMBean}}" method-name="configAdminUpdate"><i class="icon-edit"></i> Edit</button>
+      <button class="btn" ng-click="setEditMode(true)" title="Edit this configuration" hawtio-show object-name="{{configAdminMBean}}" method-name="configAdminUpdate"><i class="icon-edit"></i> Edit</button>
       <button class="btn btn-danger pull-right" ng-click="deletePidDialog.open()" title="Delete this configuration" hawtio-show object-name="{{configAdminMBean}}" method-name="delete"><i class="icon-remove"></i> Delete</button>
     </div>
     <div class="row-fluid config-admin-form view">
