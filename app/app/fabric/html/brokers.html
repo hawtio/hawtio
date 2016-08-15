@@ -9,10 +9,12 @@
       </div>
 
       <div class="section-controls">
-        <a href="" title="Create a new broker configuration" ng-click="createBroker(null)">
+        <a href="" title="Create a new broker configuration" ng-click="createBroker(null)"
+           hawtio-show object-name="{{mqManagerMBean}}" method-name="saveBrokerConfigurationJSON" mode="remove">
           <i class="icon-plus"></i> Broker
         </a>
-        <a href="" title="Create a new container" ng-click="createContainer()">
+        <a href="" title="Create a new container" ng-click="createContainer()"
+           hawtio-show object-name="{{managerMBean}}" method-name="createContainers" mode="remove">
           <i class="icon-plus"></i> Container
         </a>
         <a ng-href="#/fabric/mq/{{selectedVersion.id}}/brokerDiagram{{hash}}" title="View the network diagram of the brokers and their clients" ng-show="groups.length">
@@ -43,7 +45,8 @@
         <span class="mq-group-name" title="Group: {{group.id}}">
           <i class="icon-group"></i> {{group.id}}
         </span>
-        <a ng-click="createBroker(group)" title="Create a new broker configuration in this group">
+        <a ng-click="createBroker(group)" title="Create a new broker configuration in this group"
+           hawtio-show object-name="{{mqManagerMBean}}" method-name="saveBrokerConfigurationJSON" mode="remove">
           <i class="icon-plus"></i>
         </a>
       </div>
@@ -61,7 +64,8 @@
                   <span class="badge {{profile.requireStyle}}">{{profile.count}}</span>
                 </a>
               </span>
-              <a class="mq-profile-create-broker" href="" ng-click="createBroker(group, profile)" title="Create a new broker configuration in this group and profile">
+              <a class="mq-profile-create-broker" href="" ng-click="createBroker(group, profile)" title="Create a new broker configuration in this group and profile"
+                 hawtio-show object-name="{{mqManagerMBean}}" method-name="saveBrokerConfigurationJSON" mode="remove">
                 <i class="icon-plus"></i>
               </a>
             </div>
