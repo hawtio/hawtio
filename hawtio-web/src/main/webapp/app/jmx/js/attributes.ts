@@ -472,6 +472,8 @@ module Jmx {
         if (children) {
           var childNodes = children.map((child) => child.objectName);
           var mbeans = childNodes.filter((mbean) => FilterHelpers.search(mbean, $scope.gridOptions.filterOptions.filterText));
+          var maxFolderSize = localStorage["jmxMaxFolderSize"];
+          mbeans = mbeans.slice(0, maxFolderSize);
           if (mbeans) {
             var typeNames = Jmx.getUniqueTypeNames(children);
             if (typeNames.length <= 1) {
