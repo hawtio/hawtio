@@ -3641,7 +3641,7 @@ var Core;
         preferencesRegistry.addTab("Plugins", "app/core/html/pluginPreferences.html");
         preferencesRegistry.addTab("Console Logging", "app/core/html/loggingPreferences.html");
         preferencesRegistry.addTab("Editor", "app/ui/html/editorPreferences.html");
-        preferencesRegistry.addTab("JMX Domains", "app/core/html/jmxPreferences.html");
+        preferencesRegistry.addTab("JMX", "app/core/html/jmxPreferences.html");
         preferencesRegistry.addTab("Jolokia", "app/core/html/jolokiaPreferences.html");
         preferencesRegistry.addTab("Reset", "app/core/html/resetPreferences.html");
         toastr.options = {
@@ -18642,6 +18642,11 @@ var Core;
             },
             'camelJmxDomain': {
                 'value': "org.apache.camel"
+            },
+            'jmxMaxFolderSize': {
+                'value': 100,
+                'converter': parseInt,
+                'formatter': parseInt
             }
         });
     }]);
@@ -33624,6 +33629,8 @@ var Jmx;
                 if (children) {
                     var childNodes = children.map(function (child) { return child.objectName; });
                     var mbeans = childNodes.filter(function (mbean) { return FilterHelpers.search(mbean, $scope.gridOptions.filterOptions.filterText); });
+                    var maxFolderSize = localStorage["jmxMaxFolderSize"];
+                    mbeans = mbeans.slice(0, maxFolderSize);
                     if (mbeans) {
                         var typeNames = Jmx.getUniqueTypeNames(children);
                         if (typeNames.length <= 1) {
