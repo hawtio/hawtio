@@ -10,8 +10,13 @@ module Core {
       },
       'camelJmxDomain': {
         'value': "org.apache.camel"
+      },
+      'jmxMaxFolderSize': {
+        'value': 100,
+        'converter': parseInt,
+        'formatter': parseInt
       }
-    });
+      });
 
   }]);
 }
