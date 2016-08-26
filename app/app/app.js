@@ -33940,7 +33940,7 @@ var Jmx;
         };
         $scope.canEditChart = function () {
             var result;
-            if (workspace.selection.isFolder()) {
+            if (workspace.selection && workspace.selection.isFolder()) {
                 result = $scope.selectedAttributes.length && $scope.selectedMBeans.length && ($scope.size($scope.mbeans) + $scope.size($scope.metrics) > 2);
             }
             else {
@@ -33977,7 +33977,7 @@ var Jmx;
         });
         function render() {
             var node = workspace.selection;
-            if (!angular.isDefined(node)) {
+            if (!angular.isDefined(node) || node === null) {
                 return;
             }
             $scope.selectedAttributes = [];
