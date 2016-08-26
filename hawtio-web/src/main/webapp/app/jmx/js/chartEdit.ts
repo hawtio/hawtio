@@ -27,7 +27,7 @@ module Jmx {
     $scope.canEditChart = () => {
       // Similar to can view chart, although rules are slightly different for parents
       var result;
-      if (workspace.selection.isFolder()) {
+      if (workspace.selection && workspace.selection.isFolder()) {
         // For ENTESB-4165.  This is a bit hacky but needed to deal with special conditions like
         // where there is only a single queue or topic
         result =  $scope.selectedAttributes.length && $scope.selectedMBeans.length &&
@@ -75,7 +75,7 @@ module Jmx {
 
     function render() {
       var node = workspace.selection;
-      if (!angular.isDefined(node)) {
+      if (!angular.isDefined(node) || node === null) {
         return;
       }
 
