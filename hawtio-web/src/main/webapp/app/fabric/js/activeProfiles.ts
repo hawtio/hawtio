@@ -1,6 +1,7 @@
 /// <reference path="fabricPlugin.ts"/>
 module Fabric {
   _module.controller("Fabric.ActiveProfileController", ["$scope", "jolokia", ($scope, jolokia) => {
+    $scope.managerMBean = Fabric.managerMBean;
     $scope.addToDashboardLink = () => {
       var href = "#/fabric/activeProfiles"
       var title = "Active Profiles"
