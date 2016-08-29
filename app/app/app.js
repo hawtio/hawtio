@@ -25184,6 +25184,7 @@ var FabricRequirements;
 var Fabric;
 (function (Fabric) {
     Fabric._module.controller("Fabric.ActiveProfileController", ["$scope", "jolokia", function ($scope, jolokia) {
+        $scope.managerMBean = Fabric.managerMBean;
         $scope.addToDashboardLink = function () {
             var href = "#/fabric/activeProfiles";
             var title = "Active Profiles";

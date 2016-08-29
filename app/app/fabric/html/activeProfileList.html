@@ -39,20 +39,22 @@
         </div>
         <div class="active-profile-count"
              title="Current number of instances of this profile. Click to create more containers">
-          <a href="" ng-click="createRequiredContainers(profile)">
-            <span class="badge {{profile.requireStyle}}">
-              {{profile.count}}
-            </span>
-            <i class="icon-plus clickable" title="Create more containers of this profile"></i>
+          <span class="badge {{profile.requireStyle}}" >
+            {{profile.count}}
+          </span>
+          <a href="" ng-click="createRequiredContainers(profile)" hawtio-show object-name="{{managerMBean}}" method-name="createContainers" mode="remove">
+            <i class="icon-plus clickable" title="Create more containers of this profile" ></i>
           </a>
         </div>
 
         <div class="active-profile-requirements">
-          <a ng-click="editRequirements.dialogOpen(profile)">
           <span ng-show="profile.requirements.minimumInstances" class="badge"
                 title="The minimum number of required instances of this profile. If you use OpenShift or run an Auto Scaler then this many instances will be created automatically.">
             {{profile.requirements.minimumInstances}}
           </span>
+          <a ng-click="editRequirements.dialogOpen(profile)" ng-show="profile.requirements.minimumInstances"
+             hawtio-show object-name="{{managerMBean}}" method-name="requirementsJson" mode="remove">
+            <i class="icon-plus clickable" title="Edit requirements"></i>
           </a>
         </div>
 
