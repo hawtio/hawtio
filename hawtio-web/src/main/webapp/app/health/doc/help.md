@@ -1,6 +1,6 @@
 ### Health 
 
-It's very handy to add health checks to Java code running in a JVM and exposing those health checks over JMX. e.g. see the [dropwizard notes](http://dropwizard.io/manual/core.html#health-checks) and the [metrics library health checks](https://dropwizard.github.io/metrics/3.1.0/manual/healthchecks/).
+It's very handy to add health checks to Java code running in a JVM and exposing those health checks over JMX. e.g. see the [dropwizard notes](http://dropwizard.io/1.0.0/docs/manual/core.html#health-checks) and the [metrics library health checks](https://dropwizard.github.io/metrics/3.1.0/manual/healthchecks/).
 
 This document outlines a Health check MBean convention that if folks adopt its then easier to discover and will be included in the Console's Health tab.
 
@@ -63,5 +63,5 @@ Each health status object should include the following properties if possible...
 
 To show you how to implement a Health MBean here are a few examples.
 
-* [ActiveMQ Health MBean](https://github.com/apache/activemq/blob/trunk/activemq-broker/src/main/java/org/apache/activemq/broker/jmx/HealthView.java#L52)
-* [Fabric8 Health MBean](https://github.com/jboss-fuse/fuse/blob/master/fabric/fabric-core/src/main/java/io/fabric8/api/jmx/HealthCheck.java#L86)
+* [ActiveMQ Health MBean](https://github.com/apache/activemq/blob/trunk/activemq-broker/src/main/java/org/apache/activemq/broker/jmx/HealthView.java#L35)
+* [Fabric8 Health MBean](https://github.com/jboss-fuse/fabric8/blob/1.2.0.redhat-6-3-x/fabric/fabric-core/src/main/java/io/fabric8/core/jmx/HealthCheck.java#L41)
