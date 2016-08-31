@@ -174,7 +174,8 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin-version}</version>
         <configuration>
-          <forkMode>pertest</forkMode>
+          <forkCount>1</forkCount>
+          <reuseForks>false</reuseForks>
           <redirectTestOutputToFile>false</redirectTestOutputToFile>
           <argLine>-Xmx256m</argLine>
           <excludes>
