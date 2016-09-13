@@ -43,7 +43,7 @@ module Source {
         path = fileName.substring(0, fileName.length - 5);
       }
       if (path) {
-        return "javadoc/" + mavenCoords + "/" + path + ".html";
+        return "javadoc/" + encodeURIComponent(mavenCoords) + "/" + path + ".html";
       }
       return null;
     };
@@ -97,7 +97,7 @@ module Source {
     function updateView() {
       var mbean = Source.getInsightMBean(workspace);
       if (mbean) {
-        jolokia.execute(mbean, "getSource", mavenCoords, className, fileName, {
+        jolokia.execute(mbean, "getSource", encodeURIComponent(mavenCoords), className, fileName, {
           success: viewContents,
           error: (response) => {
             log.error("Failed to download the source code for the Maven artifact: ", mavenCoords);
