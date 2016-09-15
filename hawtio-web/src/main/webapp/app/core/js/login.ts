@@ -24,9 +24,7 @@ module Core {
 
     $scope.keycloakEnabled = keycloakContext.enabled;
 
-    if ($scope.keycloakEnabled) {
-      keycloakLoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, keycloakContext, postLogoutTasks);
-    } else {
+    if (!$scope.keycloakEnabled) {
       loginController($scope, jolokia, jolokiaStatus, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks);
     }
   }]);

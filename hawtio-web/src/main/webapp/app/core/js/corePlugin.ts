@@ -91,6 +91,7 @@ module Core {
                "$location",
                "ConnectOptions",
                "locationChangeStartTasks",
+               "keycloakPostLoginTasks",
                "$http",
                "$route",
                ($rootScope,
@@ -112,6 +113,7 @@ module Core {
                $location:ng.ILocationService,
                ConnectOptions:Core.ConnectOptions,
                locationChangeStartTasks:Core.ParameterizedTasks,
+               keycloakPostLoginTasks: KeycloakPostLoginTasks,
                $http:ng.IHttpService,
                $route) => {
 
@@ -125,6 +127,7 @@ module Core {
       checkInjectorLoaded();
       postLogoutTasks.reset();
     });
+    keycloakPostLoginTasks.bootstrapIfNeeded();
 
     preLogoutTasks.addTask("ResetPostLoginTasks", () => {
       checkInjectorLoaded();

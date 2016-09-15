@@ -22,7 +22,7 @@ public class RedirectFilter implements Filter {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(RedirectFilter.class);
 
-    private static final String knownServlets[] = {"jolokia", "auth", "upload", "javadoc", "proxy", "springBatch", "user", "plugin", "exportContext", "contextFormatter", "refresh"};
+    private static final String knownServlets[] = {"jolokia", "auth", "upload", "javadoc", "proxy", "springBatch", "user", "plugin", "exportContext", "contextFormatter", "refresh", "keycloak" };
 
     private ServletContext context;
 

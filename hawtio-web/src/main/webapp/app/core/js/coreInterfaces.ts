@@ -22,6 +22,10 @@ module Core {
     keycloak: KeycloakModule.IKeycloak;
   }
 
+  export interface KeycloakPostLoginTasks {
+    bootstrapIfNeeded: Function;
+  }
+
   /**
    * Typescript interface that represents the options needed to connect to another JVM
    */
