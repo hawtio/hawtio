@@ -36037,7 +36037,7 @@ var Karaf;
             Core.register(jolokia, $scope, {
                 type: 'read',
                 mbean: featuresMBean
-            }, onSuccess(render));
+            }, onSuccess(render, { silent: true, error: false }));
         }
         $scope.inSelectedRepository = function (feature) {
             if (!$scope.selectedRepository || !('repository' in $scope.selectedRepository)) {
@@ -40824,7 +40824,7 @@ var Source;
                 path = fileName.substring(0, fileName.length - 5);
             }
             if (path) {
-                return "javadoc/" + mavenCoords + "/" + path + ".html";
+                return "javadoc/" + encodeURIComponent(mavenCoords) + "/" + path + ".html";
             }
             return null;
         };
@@ -40868,7 +40868,7 @@ var Source;
         function updateView() {
             var mbean = Source.getInsightMBean(workspace);
             if (mbean) {
-                jolokia.execute(mbean, "getSource", mavenCoords, className, fileName, {
+                jolokia.execute(mbean, "getSource", encodeURIComponent(mavenCoords), className, fileName, {
                     success: viewContents,
                     error: function (response) {
                         Source.log.error("Failed to download the source code for the Maven artifact: ", mavenCoords);
