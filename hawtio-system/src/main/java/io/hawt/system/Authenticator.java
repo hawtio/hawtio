@@ -55,12 +55,12 @@ public class Authenticator {
 
         if (authType.equalsIgnoreCase(AUTHENTICATION_SCHEME_BASIC)) {
             String decoded = new String(Base64.decodeBase64(authInfo));
-            parts = decoded.split(":");
-            if (parts.length != 2) {
+            int delimiter = decoded.indexOf(':');
+            if(delimiter<0){
                 return;
             }
-            String user = parts[0];
-            String password = parts[1];
+            String user = decoded.substring(0,delimiter);
+            String password = decoded.substring(delimiter+1);
             cb.getAuthInfo(user, password);
         }
     }
