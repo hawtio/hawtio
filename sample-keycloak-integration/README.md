@@ -10,13 +10,13 @@ Prepare Keycloak server
 
 **1)** Download file [demorealm.json](demorealm.json) with Keycloak sample metadata about `hawtio-demo` realm. It's assumed you downloaded it to directory `/downloads` on your laptop. 
 
-**2)**  Download keycloak appliance with wildfly from [http://downloads.jboss.org/keycloak/1.9.1.Final/keycloak-1.9.1.Final.zip](http://downloads.jboss.org/keycloak/1.9.1.Final/keycloak-1.9.1.Final.zip) . 
+**2)**  Download keycloak server from [http://www.keycloak.org](http://www.keycloak.org) and download version 2.2.0.Final . 
 Then unpack and run keycloak server on localhost:8081 . You also need to import downloaded `demorealm.json` file into your Keycloak. Import can be done either via Keycloak admin console or by 
 using `keycloak.import` system property:
 
 ```
-unzip -q /downloads/keycloak-1.9.1.Final.zip
-cd keycloak-1.9.1.Final/bin/
+unzip -q /downloads/keycloak-2.2.0.Final.zip
+cd keycloak-2.2.0.Final/bin/
 ./standalone.sh -Djboss.http.port=8081 -Dkeycloak.import=/downloads/demorealm.json
 ```
 
@@ -35,7 +35,7 @@ There are also 3 users:
 Hawtio and Keycloak integration on JBoss Fuse or Karaf
 ------------------------------------------------------
 
-This was tested with JBoss Fuse 6.1.0-redhat379 and Apache Karaf 2.4 . Steps are almost same on both. Assuming `$FUSE_HOME` is the root directory of your fuse/karaf
+This was tested with JBoss Fuse jboss-fuse-6.3.0.redhat-067 and Apache Karaf 2.4 . Steps are almost same on both. Assuming `$FUSE_HOME` is the root directory of your fuse/karaf
 
 * Add this into the end of file `$FUSE_HOME/etc/system.properties` :
 
@@ -63,7 +63,7 @@ cd $FUSE_HOME/bin
 
 Replace with `./karaf` if you are on plain Apache Karaf
 
-* If you are on JBoss Fuse 6.1, you need to first uninstall old hawtio (This step is not needed on plain Apache karaf as it hasn't hawtio installed by default).
+* If you are on JBoss Fuse 6.3, you need to first uninstall old hawtio (This step is not needed on plain Apache karaf as it hasn't hawtio installed by default).
 So in opened karaf terminal do this:
 
 ```
@@ -77,36 +77,19 @@ features:removeurl mvn:io.hawt/hawtio-karaf/1.2-redhat-379/xml/features
 * Install new hawtio with keycloak integration (Replace with the correct version where is Keycloak integration available. It should be 1.4.47 or newer) 
 
 ```
-features:chooseurl hawtio 1.4.47
+features:chooseurl hawtio 1.4.66
 features:install hawtio
 ```
 
 * Install keycloak OSGI bundling into Fuse/Karaf . It contains few jars with Keycloak adapter and also configuration of `keycloak` JAAS realm
 
 ```
-features:addurl mvn:org.keycloak/keycloak-osgi-features/1.9.0.Final/xml/features
+features:addurl mvn:org.keycloak/keycloak-osgi-features/2.2.0.Final/xml/features
 features:install keycloak-jaas
 ```
 
 * Go to [http://localhost:8181/hawtio](http://localhost:8181/hawtio) and login in keycloak as `root` or `john` to see hawtio admin console. 
 If you login as `mary`, you should receive 'forbidden' error in hawtio
-
-#### Additional step on Karaf 2.4
-
-From Karaf 2.4 there is more fine-grained security for JMX. Since Keycloak integration is currently using custom principal class `org.keycloak.adapters.jaas.RolePrincipal`
-there is a need to add prefix with this class to the `etc/jmx.acl.*.cfg` files . Otherwise users root and john, who are logged via Keycloak, will be able to login
-to Hawtio, but they won't have permission to do much here.  
-
-This is likely going to be improved in the future, however currently 
-you may need to edit this in file `$KARAF_HOME/etc/jmx.acl.cfg` (and maybe also other `jmx.acl.*.cfg` files according to permission you want):
-
-```
-list* = org.keycloak.adapters.jaas.RolePrincipal:viewer
-get* = org.keycloak.adapters.jaas.RolePrincipal:viewer
-is* = org.keycloak.adapters.jaas.RolePrincipal:viewer
-set* = org.keycloak.adapters.jaas.RolePrincipal:admin
-* = org.keycloak.adapters.jaas.RolePrincipal:admin
-```  
 
 
 Hawtio and Keycloak integration on Jetty 
