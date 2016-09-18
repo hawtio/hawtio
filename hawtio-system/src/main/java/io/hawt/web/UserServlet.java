@@ -20,8 +20,8 @@ public class UserServlet extends HttpServlet {
     private boolean authenticationEnabled = true;
 
     @Override
-    public void init(ServletConfig servletConfig) throws ServletException {
-        config = (ConfigManager) servletConfig.getServletContext().getAttribute("ConfigManager");
+    public void init() throws ServletException {
+        config = (ConfigManager) getServletConfig().getServletContext().getAttribute("ConfigManager");
         if (config != null) {
             this.authenticationEnabled = Boolean.parseBoolean(config.get("authenticationEnabled", "true"));
         }
@@ -44,15 +44,24 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
-        HttpSession session = req.getSession(false);
+        String username = getUsername(req, resp);
 
-        if (session != null) {
-            String username = (String) session.getAttribute("user");
+        if (username != null) {
             out.write("\"" + username + "\"");
         } else {
             out.write("");
         }
         out.flush();
         out.close();
+    }
+
+    protected String getUsername(HttpServletRequest req, HttpServletResponse resp) {
+        HttpSession session = req.getSession(false);
+
+        if (session != null) {
+            return (String) session.getAttribute("user");
+        } else {
+            return null;
+        }
     }
 }

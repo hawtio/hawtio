@@ -112,7 +112,7 @@ module Core {
         validateSubjectMatches(keycloakUsername, function() {
           log.debug("validateSubjectMatches finished! Continue next task");
           // Continue next registered task and bootstrap Angular
-          keycloakJaasLogin(keycloak, nextTask);
+          keycloakJaasSetup(keycloak, nextTask);
         });
       }).error(function () {
         log.warn("Keycloak authentication failed!");
@@ -147,35 +147,22 @@ module Core {
     });
   }
 
-    // triggers JAAS request with keycloak accessToken as password. This will finish hawtio authentication
-    var keycloakJaasLogin = function(keycloak: KeycloakModule.IKeycloak, callback: Function) {
+    // Attach token to each HTTP request to jolokia and other secured services
+    var keycloakJaasSetup = function(keycloak: KeycloakModule.IKeycloak, callback: Function) {
         var url = "auth/login/";
 
         if (keycloak.token && keycloak.token != '') {
-          log.debug('Keycloak authentication token found! Going to trigger JAAS');
-          $.ajax(url, <JQueryAjaxSettings> {
-            type: "POST",
-            success: (response) => {
-              log.debug("Got response for keycloakJaasLogin: ", response);
-              callback();
-            },
-            error: (xhr, textStatus, error) => {
-              switch (xhr.status) {
-                case 401:
-                  notification('error', 'Failed to log in, ' + error);
-                  break;
-                case 403:
-                  notification('error', 'Failed to log in, ' + error);
-                  break;
-                default:
-                  notification('error', 'Failed to log in, ' + error);
-                  break;
-              }
-            },
+          log.debug('Keycloak authentication token found! Attach it to JQuery requests');
+
+          $.ajaxSetup(<JQueryAjaxSettings> {
             beforeSend: (xhr) => {
-              xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(keycloak.tokenParsed.preferred_username, keycloak.token));
+              if (keycloak.authenticated) {
+                xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(keycloak.tokenParsed.preferred_username, keycloak.token));
+              }
             }
           });
+
+          callback();
         } else {
           notification('error', 'Keycloak auth token not found.');
         }
@@ -248,6 +235,7 @@ module Core {
           }
         }
         setPeriodicTokenRefresh();
+
       }
     };
     var answer = <KeycloakPostLoginTasks> {
