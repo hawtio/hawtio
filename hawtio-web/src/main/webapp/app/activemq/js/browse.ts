@@ -1,13 +1,14 @@
 /// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
-  export var BrowseQueueController = _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", ($scope, workspace:Workspace, jolokia, localStorage, location, activeMQMessage, $timeout) => {
+  export var BrowseQueueController = _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", "$routeParams", ($scope, workspace:Workspace, jolokia, localStorage, location, activeMQMessage, $timeout, $routeParams) => {
 
     var log:Logging.Logger = Logger.get("ActiveMQ");
+    var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
 
     // all the queue names from the tree
     $scope.queueNames = [];
     // selected queue name in move dialog
-    $scope.queueName = null;
+    $scope.queueName = $routeParams["queueName"];
 
     $scope.searchText = '';
     $scope.workspace = workspace;
@@ -16,6 +17,7 @@ module ActiveMQ {
     $scope.messages = [];
     $scope.headers = {};
     $scope.mode = 'text';
+    $scope.showButtons = true;
 
     $scope.deleteDialog = false;
     $scope.moveDialog = false;
@@ -87,10 +89,6 @@ module ActiveMQ {
       "DoubleProperties", "StringProperties"];
 
     $scope.$watch('workspace.selection', function () {
-      if (workspace.moveIfViewInvalid()) {
-        return;
-      }
-
       // lets defer execution as we may not have the selection just yet
       setTimeout(loadTable, 50);
     });
@@ -357,24 +355,33 @@ module ActiveMQ {
     function loadTable() {
       var objName;
 
-      if(workspace.selection){
-        objName = workspace.selection.objectName;
-      } else{
-        // in case of refresh
-        var key = location.search()['nid'];
-        var node = workspace.keyToNodeMap[key];
-        objName = node.objectName;
-      }
-
-      if (objName) {
+      if ($scope.queueName) {
+        $scope.showButtons = false;
         $scope.dlq = false;
-        jolokia.getAttribute(objName, "DLQ", onSuccess(onDlq, {silent: true}));
+        var mbean = getBrokerMBean(workspace, jolokia, amqJmxDomain);
         jolokia.request(
-          {type: 'exec', mbean: objName, operation: 'browse()'},
-          onSuccess(populateTable));
+            {type: 'exec', mbean: mbean, operation: 'browseQueue(java.lang.String)', arguments: [$scope.queueName]},
+            onSuccess(populateTable));
+        $scope.queueName = null;
+      } else {
+        if (workspace.selection) {
+          objName = workspace.selection.objectName;
+        } else {
+          // in case of refresh
+          var key = location.search()['nid'];
+          var node = workspace.keyToNodeMap[key];
+          objName = node.objectName;
+        }
+
+        if (objName) {
+          $scope.dlq = false;
+          jolokia.getAttribute(objName, "DLQ", onSuccess(onDlq, {silent: true}));
+          jolokia.request(
+              {type: 'exec', mbean: objName, operation: 'browse()'},
+              onSuccess(populateTable));
+        }
       }
     }
-
 
     function onDlq(response) {
       $scope.dlq = response;
