@@ -15,8 +15,13 @@ module Core {
         log.debug("Got response for check if keycloak is enabled: ", response);
         var keycloakEnabled: boolean = (response === true || response === "true");
 
-        var keycloakContext: KeycloakContext = createKeycloakContext(keycloakEnabled);
-        callback(keycloakContext);
+        if (!keycloakEnabled) {
+          var keycloakContext: KeycloakContext = createKeycloakContext(false);
+          callback(keycloakContext);
+
+        } else {
+          loadKeycloakAdapter(callback);
+        }
       },
       error: function (xhr, textStatus, error) {
         // Just fallback to false if we couldn't figure userDetails
@@ -27,13 +32,52 @@ module Core {
     });
   };
 
+
+  var loadKeycloakAdapter = function(callback: Function) {
+    var keycloakJsonUrl: string = "keycloak/client-config";
+
+    // Send ajax request to KeycloakServlet to figure out auth-server-url
+    $.ajax(keycloakJsonUrl, <JQueryAjaxSettings> {
+      type: "GET",
+      success: function (response) {
+        log.debug("Got response for check auth-server-url: ", response);
+
+        var authServerUrl = response['auth-server-url'];
+        var keycloakJsUrl = authServerUrl + '/js/keycloak.js';
+
+        log.debug("Will download keycloak.js from URL ", keycloakJsUrl);
+        loadScriptTag(keycloakJsUrl, callback);
+      },
+      error: function (xhr, textStatus, error) {
+        // Just fallback to false if we couldn't figure userDetails
+        log.debug("Failed to retrieve keycloak.js.: ", error);
+        var keycloakContext: KeycloakContext = createKeycloakContext(false);
+        callback(keycloakContext);
+      }
+    });
+
+    var loadScriptTag = function(scriptUrl: string, callback: Function) {
+      var scriptEl = document.createElement('script');
+      scriptEl.type= "text/javascript";
+      scriptEl.src = scriptUrl;
+      scriptEl.onload = function() {
+        var keycloakContext: KeycloakContext = createKeycloakContext(true);
+        callback(keycloakContext);
+      }
+
+      document.getElementsByTagName("body")[0].appendChild(scriptEl);
+    }
+
+  };
+
+
   /**
    * Create keycloak context instance and push it to angular
    */
   var createKeycloakContext = function(keycloakEnabled: boolean): KeycloakContext {
 
     // It's KeycloakServlet, which handles to resolve keycloak.json on provided path
-    var keycloakAuth: KeycloakModule.IKeycloak = new Keycloak('keycloak/client-config');
+    var keycloakAuth: KeycloakModule.IKeycloak = keycloakEnabled ? new Keycloak('keycloak/client-config') : null;
     var keycloakContext: KeycloakContext = {
       enabled: keycloakEnabled,
       keycloak: keycloakAuth
@@ -68,7 +112,7 @@ module Core {
         validateSubjectMatches(keycloakUsername, function() {
           log.debug("validateSubjectMatches finished! Continue next task");
           // Continue next registered task and bootstrap Angular
-          keycloakJaasLogin(keycloak, nextTask);
+          keycloakJaasSetup(keycloak, nextTask);
         });
       }).error(function () {
         log.warn("Keycloak authentication failed!");
@@ -103,35 +147,22 @@ module Core {
     });
   }
 
-    // triggers JAAS request with keycloak accessToken as password. This will finish hawtio authentication
-    var keycloakJaasLogin = function(keycloak: KeycloakModule.IKeycloak, callback: Function) {
+    // Attach token to each HTTP request to jolokia and other secured services
+    var keycloakJaasSetup = function(keycloak: KeycloakModule.IKeycloak, callback: Function) {
         var url = "auth/login/";
 
         if (keycloak.token && keycloak.token != '') {
-          log.debug('Keycloak authentication token found! Going to trigger JAAS');
-          $.ajax(url, <JQueryAjaxSettings> {
-            type: "POST",
-            success: (response) => {
-              log.debug("Got response for keycloakJaasLogin: ", response);
-              callback();
-            },
-            error: (xhr, textStatus, error) => {
-              switch (xhr.status) {
-                case 401:
-                  notification('error', 'Failed to log in, ' + error);
-                  break;
-                case 403:
-                  notification('error', 'Failed to log in, ' + error);
-                  break;
-                default:
-                  notification('error', 'Failed to log in, ' + error);
-                  break;
-              }
-            },
+          log.debug('Keycloak authentication token found! Attach it to JQuery requests');
+
+          $.ajaxSetup(<JQueryAjaxSettings> {
             beforeSend: (xhr) => {
-              xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(keycloak.tokenParsed.preferred_username, keycloak.token));
+              if (keycloak.authenticated) {
+                xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(keycloak.tokenParsed.preferred_username, keycloak.token));
+              }
             }
           });
+
+          callback();
         } else {
           notification('error', 'Keycloak auth token not found.');
         }
@@ -204,6 +235,7 @@ module Core {
           }
         }
         setPeriodicTokenRefresh();
+
       }
     };
     var answer = <KeycloakPostLoginTasks> {

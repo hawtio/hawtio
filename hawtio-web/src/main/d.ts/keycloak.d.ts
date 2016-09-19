@@ -45,6 +45,7 @@ declare module KeycloakModule {
         idToken: string;
         authenticated: boolean;
         subject: string;
+        timeSkew: number;
 
         onAuthSuccess: Function;
         onAuthError: Function;

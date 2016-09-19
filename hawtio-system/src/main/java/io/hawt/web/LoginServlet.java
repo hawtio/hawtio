@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final transient Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
     private static final int DEFAULT_SESSION_TIMEOUT = 1800;
-    private static final String KNOWN_PRINCIPALS[] = {"UserPrincipal", "KeycloakPrincipal", "JAASPrincipal", "SimplePrincipal"};
+    public static final String KNOWN_PRINCIPALS[] = {"UserPrincipal", "KeycloakPrincipal", "JAASPrincipal", "SimplePrincipal"};
 
     protected Converters converters = new Converters();
     protected JsonConvertOptions options = JsonConvertOptions.DEFAULT;
@@ -93,19 +93,8 @@ public class LoginServlet extends HttpServlet {
             Helpers.doForbidden(resp);
             return;
         }
-        Set<Principal> principals = subject.getPrincipals();
 
-        String username = null;
-
-        if (principals != null) {
-            for (Principal principal : principals) {
-                String principalClass = principal.getClass().getSimpleName();
-                if (knownPrincipalList.contains(principalClass)) {
-                    username = principal.getName();
-                    LOG.debug("Authorizing user {}", username);
-                }
-            }
-        }
+        String username = getUsernameFromSubject(subject, knownPrincipalList);
 
         session = req.getSession(true);
         session.setAttribute("subject", subject);
@@ -122,6 +111,26 @@ public class LoginServlet extends HttpServlet {
 
         sendResponse(session, subject, out);
     }
+
+
+    public static String getUsernameFromSubject(Subject subject, List<String> knownPrincipalList) {
+        Set<Principal> principals = subject.getPrincipals();
+
+        String username = null;
+
+        if (principals != null) {
+            for (Principal principal : principals) {
+                String principalClass = principal.getClass().getSimpleName();
+                if (knownPrincipalList.contains(principalClass)) {
+                    username = principal.getName();
+                    LOG.debug("Authorizing user {}", username);
+                }
+            }
+        }
+
+        return username;
+    }
+
 
     protected void sendResponse(HttpSession session, Subject subject, PrintWriter out) {
 
