@@ -21,8 +21,14 @@ module ActiveMQ {
             when('/activemq/deleteTopic', {templateUrl: 'app/activemq/html/deleteTopic.html'}).
             when('/activemq/sendMessage', {templateUrl: 'app/camel/html/sendMessage.html'}).
             when('/activemq/durableSubscribers', {templateUrl: 'app/activemq/html/durableSubscribers.html'}).
-            when('/activemq/jobs', {templateUrl: 'app/activemq/html/jobs.html'})
+            when('/activemq/jobs', {templateUrl: 'app/activemq/html/jobs.html'}).
+            when('/activemq/queues', {templateUrl: 'app/activemq/html/destinations.html'}).
+            when('/activemq/topics', {templateUrl: 'app/activemq/html/destinations.html', controller: 'topicsController'})
   }]);
+
+  _module.controller('topicsController', function($scope) {
+      $scope.destinationType = 'topic';
+  });
 
   _module.run(["$location", "workspace", "viewRegistry", "helpRegistry", "preferencesRegistry", "localStorage", ($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry, preferencesRegistry, localStorage) => {
 
@@ -189,6 +195,20 @@ module ActiveMQ {
         href: () => "#/activemq/jobs"
     });
 
+    workspace.subLevelTabs.push({
+        content: '<i class="icon-list"></i> Queues',
+        title: "View Queues",
+        isValid: (workspace:Workspace) => isBroker(workspace, amqJmxDomain),
+        href: () => "#/activemq/queues"
+    });
+
+    workspace.subLevelTabs.push({
+        content: '<i class="icon-list"></i> Topics',
+        title: "View Topics",
+        isValid: (workspace:Workspace) => isBroker(workspace, amqJmxDomain),
+        href: () => "#/activemq/topics"
+    });
+
     function postProcessTree(tree) {
       var activemq = tree.get(amqJmxDomain);
       setConsumerType(activemq);
@@ -251,7 +271,6 @@ module ActiveMQ {
           return false;
         }
       });
-      // log.debug("Found ancestor: ", answer);
     }
     return answer;
   }
