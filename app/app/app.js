@@ -87,6 +87,27 @@ var ActiveMQ;
         });
     }
     ActiveMQ.decorate = decorate;
+    function getBrokerMBean(workspace, jolokia, jmxDomain) {
+        var mbean = null;
+        var selection = workspace.selection;
+        if (selection && ActiveMQ.isBroker(workspace, jmxDomain) && selection.objectName) {
+            return selection.objectName;
+        }
+        var folderNames = selection.folderNames;
+        var parent = selection ? selection.parent : null;
+        if (selection && parent && jolokia && folderNames && folderNames.length > 1) {
+            mbean = parent.objectName;
+            if (!mbean && parent) {
+                mbean = parent.parent.objectName;
+            }
+            if (!mbean) {
+                mbean = "" + folderNames[0] + ":BrokerName=" + folderNames[1] + ",Type=Broker";
+            }
+        }
+        return mbean;
+    }
+    ActiveMQ.getBrokerMBean = getBrokerMBean;
+    ;
 })(ActiveMQ || (ActiveMQ = {}));
 var StringHelpers;
 (function (StringHelpers) {
@@ -3767,7 +3788,10 @@ var ActiveMQ;
     ActiveMQ.pluginName = 'activemq';
     ActiveMQ._module = angular.module(ActiveMQ.pluginName, ['bootstrap', 'ngResource', 'ui.bootstrap.dialog', 'hawtioCore', 'camel', 'hawtio-ui']);
     ActiveMQ._module.config(["$routeProvider", function ($routeProvider) {
-        $routeProvider.when('/activemq/browseQueue', { templateUrl: 'app/activemq/html/browseQueue.html' }).when('/activemq/diagram', { templateUrl: 'app/activemq/html/brokerDiagram.html', reloadOnSearch: false }).when('/activemq/createDestination', { templateUrl: 'app/activemq/html/createDestination.html' }).when('/activemq/createQueue', { templateUrl: 'app/activemq/html/createQueue.html' }).when('/activemq/createTopic', { templateUrl: 'app/activemq/html/createTopic.html' }).when('/activemq/deleteQueue', { templateUrl: 'app/activemq/html/deleteQueue.html' }).when('/activemq/deleteTopic', { templateUrl: 'app/activemq/html/deleteTopic.html' }).when('/activemq/sendMessage', { templateUrl: 'app/camel/html/sendMessage.html' }).when('/activemq/durableSubscribers', { templateUrl: 'app/activemq/html/durableSubscribers.html' }).when('/activemq/jobs', { templateUrl: 'app/activemq/html/jobs.html' });
+        $routeProvider.when('/activemq/browseQueue', { templateUrl: 'app/activemq/html/browseQueue.html' }).when('/activemq/diagram', { templateUrl: 'app/activemq/html/brokerDiagram.html', reloadOnSearch: false }).when('/activemq/createDestination', { templateUrl: 'app/activemq/html/createDestination.html' }).when('/activemq/createQueue', { templateUrl: 'app/activemq/html/createQueue.html' }).when('/activemq/createTopic', { templateUrl: 'app/activemq/html/createTopic.html' }).when('/activemq/deleteQueue', { templateUrl: 'app/activemq/html/deleteQueue.html' }).when('/activemq/deleteTopic', { templateUrl: 'app/activemq/html/deleteTopic.html' }).when('/activemq/sendMessage', { templateUrl: 'app/camel/html/sendMessage.html' }).when('/activemq/durableSubscribers', { templateUrl: 'app/activemq/html/durableSubscribers.html' }).when('/activemq/jobs', { templateUrl: 'app/activemq/html/jobs.html' }).when('/activemq/queues', { templateUrl: 'app/activemq/html/destinations.html' }).when('/activemq/topics', { templateUrl: 'app/activemq/html/destinations.html', controller: 'topicsController' });
+    }]);
+    ActiveMQ._module.controller('topicsController', ["$scope", function ($scope) {
+        $scope.destinationType = 'topic';
     }]);
     ActiveMQ._module.run(["$location", "workspace", "viewRegistry", "helpRegistry", "preferencesRegistry", "localStorage", function ($location, workspace, viewRegistry, helpRegistry, preferencesRegistry, localStorage) {
         var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
@@ -3918,6 +3942,18 @@ var ActiveMQ;
             title: "Manage jobs",
             isValid: function (workspace) { return isJobScheduler(workspace, amqJmxDomain); },
             href: function () { return "#/activemq/jobs"; }
+        });
+        workspace.subLevelTabs.push({
+            content: '<i class="icon-list"></i> Queues',
+            title: "View Queues",
+            isValid: function (workspace) { return isBroker(workspace, amqJmxDomain); },
+            href: function () { return "#/activemq/queues"; }
+        });
+        workspace.subLevelTabs.push({
+            content: '<i class="icon-list"></i> Topics',
+            title: "View Topics",
+            isValid: function (workspace) { return isBroker(workspace, amqJmxDomain); },
+            href: function () { return "#/activemq/topics"; }
         });
         function postProcessTree(tree) {
             var activemq = tree.get(amqJmxDomain);
@@ -7962,16 +7998,18 @@ var ActiveMQ;
 })(ActiveMQ || (ActiveMQ = {}));
 var ActiveMQ;
 (function (ActiveMQ) {
-    ActiveMQ.BrowseQueueController = ActiveMQ._module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", function ($scope, workspace, jolokia, localStorage, location, activeMQMessage, $timeout) {
+    ActiveMQ.BrowseQueueController = ActiveMQ._module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", "$routeParams", function ($scope, workspace, jolokia, localStorage, location, activeMQMessage, $timeout, $routeParams) {
         var log = Logger.get("ActiveMQ");
+        var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
         $scope.queueNames = [];
-        $scope.queueName = null;
+        $scope.queueName = $routeParams["queueName"];
         $scope.searchText = '';
         $scope.workspace = workspace;
         $scope.allMessages = [];
         $scope.messages = [];
         $scope.headers = {};
         $scope.mode = 'text';
+        $scope.showButtons = true;
         $scope.deleteDialog = false;
         $scope.moveDialog = false;
         $scope.gridOptions = {
@@ -8034,9 +8072,6 @@ var ActiveMQ;
         var ignoreColumns = ["PropertiesText", "BodyPreview", "Text"];
         var flattenColumns = ["BooleanProperties", "ByteProperties", "ShortProperties", "IntProperties", "LongProperties", "FloatProperties", "DoubleProperties", "StringProperties"];
         $scope.$watch('workspace.selection', function () {
-            if (workspace.moveIfViewInvalid()) {
-                return;
-            }
             setTimeout(loadTable, 50);
         });
         $scope.$watch('gridOptions.filterOptions.filterText', function (filterText) {
@@ -8255,18 +8290,27 @@ var ActiveMQ;
         }
         function loadTable() {
             var objName;
-            if (workspace.selection) {
-                objName = workspace.selection.objectName;
+            if ($scope.queueName) {
+                $scope.showButtons = false;
+                $scope.dlq = false;
+                var mbean = ActiveMQ.getBrokerMBean(workspace, jolokia, amqJmxDomain);
+                jolokia.request({ type: 'exec', mbean: mbean, operation: 'browseQueue(java.lang.String)', arguments: [$scope.queueName] }, onSuccess(populateTable));
+                $scope.queueName = null;
             }
             else {
-                var key = location.search()['nid'];
-                var node = workspace.keyToNodeMap[key];
-                objName = node.objectName;
-            }
-            if (objName) {
-                $scope.dlq = false;
-                jolokia.getAttribute(objName, "DLQ", onSuccess(onDlq, { silent: true }));
-                jolokia.request({ type: 'exec', mbean: objName, operation: 'browse()' }, onSuccess(populateTable));
+                if (workspace.selection) {
+                    objName = workspace.selection.objectName;
+                }
+                else {
+                    var key = location.search()['nid'];
+                    var node = workspace.keyToNodeMap[key];
+                    objName = node.objectName;
+                }
+                if (objName) {
+                    $scope.dlq = false;
+                    jolokia.getAttribute(objName, "DLQ", onSuccess(onDlq, { silent: true }));
+                    jolokia.request({ type: 'exec', mbean: objName, operation: 'browse()' }, onSuccess(populateTable));
+                }
             }
         }
         function onDlq(response) {
@@ -8508,6 +8552,188 @@ var ActiveMQ;
             }
             return null;
         };
+    }]);
+})(ActiveMQ || (ActiveMQ = {}));
+var ActiveMQ;
+(function (ActiveMQ) {
+    ActiveMQ._module.controller("ActiveMQ.QueuesController", ["$scope", "workspace", "jolokia", "localStorage", function ($scope, workspace, jolokia, localStorage) {
+        var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
+        $scope.workspace = workspace;
+        $scope.destinationType;
+        $scope.destinations = [];
+        $scope.totalServerItems = 0;
+        $scope.pagingOptions = {
+            pageSizes: [50, 100, 200],
+            pageSize: 100,
+            currentPage: 1
+        };
+        $scope.destinationFilter = {
+            name: '',
+            filter: '',
+            sortColumn: '',
+            sortOrder: ''
+        };
+        $scope.destinationFilterOptions = [
+            { id: "noConsumer", name: "No Consumer" }
+        ];
+        $scope.destinationFilter;
+        $scope.sortOptions = {
+            fields: ["name"],
+            directions: ["asc"]
+        };
+        var attributes = [];
+        if ($scope.destinationType == 'topic') {
+            $scope.destinationFilterOptions.push({ id: "nonAdvisory", name: "No Advisory Topics" });
+            $scope.destinationFilterPlaceholder = "Filter Topic Names...";
+            attributes = [
+                {
+                    field: 'name',
+                    displayName: 'Name',
+                    width: '20%'
+                },
+                {
+                    field: 'producerCount',
+                    displayName: 'Producer Count',
+                    width: '10%'
+                },
+                {
+                    field: 'consumerCount',
+                    displayName: 'Consumer Count',
+                    width: '10%'
+                },
+                {
+                    field: 'enqueueCount',
+                    displayName: 'Enqueue Count',
+                    width: '10%'
+                },
+                {
+                    field: 'dequeueCount',
+                    displayName: 'Dequeue Count',
+                    width: '10%'
+                },
+                {
+                    field: 'dispatchCount',
+                    displayName: 'Dispatch Count',
+                    width: '10%'
+                }
+            ];
+        }
+        else {
+            $scope.destinationFilterOptions.push({ id: "empty", name: "Only Empty" });
+            $scope.destinationFilterOptions.push({ id: "nonEmpty", name: "Only Non-Empty" });
+            $scope.destinationFilterPlaceholder = "Filter Queue Names...";
+            attributes = [
+                {
+                    field: 'name',
+                    displayName: 'Name',
+                    width: '20%',
+                    cellTemplate: '<div class="ngCellText"><a href="#/activemq/browseQueue?tab=activemq&queueName={{row.entity.name}}">{{row.entity.name}}</a></div>'
+                },
+                {
+                    field: 'queueSize',
+                    displayName: 'Queue Size',
+                    width: '10%'
+                },
+                {
+                    field: 'producerCount',
+                    displayName: 'Producer Count',
+                    width: '10%'
+                },
+                {
+                    field: 'consumerCount',
+                    displayName: 'Consumer Count',
+                    width: '10%'
+                },
+                {
+                    field: 'enqueueCount',
+                    displayName: 'Enqueue Count',
+                    width: '10%'
+                },
+                {
+                    field: 'dequeueCount',
+                    displayName: 'Dequeue Count',
+                    width: '10%'
+                },
+                {
+                    field: 'inFlightCount',
+                    displayName: 'In-flight Count',
+                    width: '10%'
+                },
+                {
+                    field: 'dispatchCount',
+                    displayName: 'Dispatch Count',
+                    width: '10%'
+                },
+                {
+                    field: 'memoryPercentUsage',
+                    displayName: 'Memory Percent Usage [%]',
+                    width: '10%'
+                },
+            ];
+        }
+        $scope.gridOptions = {
+            selectedItems: [],
+            data: 'destinations',
+            showFooter: true,
+            showFilter: true,
+            showColumnMenu: true,
+            enableCellSelection: false,
+            enableColumnResize: true,
+            enableColumnReordering: true,
+            selectWithCheckboxOnly: false,
+            showSelectionCheckbox: false,
+            multiSelect: false,
+            displaySelectionCheckbox: false,
+            pagingOptions: $scope.pagingOptions,
+            filterOptions: {
+                filterText: '',
+                useExternalFilter: true
+            },
+            enablePaging: true,
+            totalServerItems: 'totalServerItems',
+            maintainColumnRatios: false,
+            columnDefs: attributes,
+            enableFiltering: true,
+            useExternalFiltering: true,
+            sortInfo: $scope.sortOptions,
+            useExternalSorting: true
+        };
+        $scope.loadTable = function () {
+            $scope.destinationFilter.name = $scope.gridOptions.filterOptions.filterText;
+            $scope.destinationFilter.sortColumn = $scope.sortOptions.fields[0];
+            $scope.destinationFilter.sortOrder = $scope.sortOptions.directions[0];
+            var mbean = ActiveMQ.getBrokerMBean(workspace, jolokia, amqJmxDomain);
+            if (mbean) {
+                var method = 'queryQueues(java.lang.String, int, int)';
+                if ($scope.destinationType == 'topic') {
+                    method = 'queryTopics(java.lang.String, int, int)';
+                }
+                jolokia.request({ type: 'exec', mbean: mbean, operation: method, arguments: [JSON.stringify($scope.destinationFilter), $scope.pagingOptions.currentPage, $scope.pagingOptions.pageSize] }, onSuccess(populateTable, { error: onError }));
+            }
+        };
+        function onError() {
+            Core.notification("error", "The feature is not available in this broker version!");
+            $scope.workspace.selectParentNode();
+        }
+        function populateTable(response) {
+            var data = JSON.parse(response.value);
+            $scope.destinations = [];
+            angular.forEach(data["data"], function (value, idx) {
+                $scope.destinations.push(value);
+            });
+            $scope.totalServerItems = data["count"];
+            Core.$apply($scope);
+        }
+        $scope.$watch('sortOptions', function (newVal, oldVal) {
+            if (newVal !== oldVal) {
+                $scope.loadTable();
+            }
+        }, true);
+        $scope.$watch('pagingOptions', function (newVal, oldVal) {
+            if (newVal !== oldVal && newVal.currentPage !== oldVal.currentPage) {
+                $scope.loadTable();
+            }
+        }, true);
     }]);
 })(ActiveMQ || (ActiveMQ = {}));
 var ActiveMQ;
