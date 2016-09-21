@@ -12,6 +12,7 @@
 * Various fixes and improvements for RBAC on Hawtio web UI
 * Upgraded to Camel 2.17.3
 * Upgraded to Jolokia 1.3.4
+* KeyCloak updated to 2.2.0
 * Added new pages to the ActiveMQ plugin for monitoring brokers with large number of destinations
 
 #### 1.4.65
