@@ -6228,6 +6228,9 @@ var Core;
                 var keycloakContext = createKeycloakContext(true);
                 callback(keycloakContext);
             };
+            scriptEl.onerror = function () {
+                log.error("Not able to load keycloak.js from: " + scriptUrl);
+            };
             document.getElementsByTagName("body")[0].appendChild(scriptEl);
         };
     };
@@ -6290,13 +6293,41 @@ var Core;
         if (keycloak.token && keycloak.token != '') {
             log.debug('Keycloak authentication token found! Attach it to JQuery requests');
             $.ajaxSetup({
-                beforeSend: function (xhr) {
-                    if (keycloak.authenticated) {
+                beforeSend: function (xhr, settings) {
+                    if (keycloak.authenticated && !keycloak.isTokenExpired(10)) {
                         xhr.setRequestHeader('Authorization', Core.getBasicAuthHeader(keycloak.tokenParsed.preferred_username, keycloak.token));
+                    }
+                    else {
+                        log.debug("Skipped request " + settings.url + " for now.");
+                        keycloak.updateToken(10).success(function (refreshed) {
+                            if (refreshed) {
+                                log.debug('Keycloak token refreshed. Set new value to userDetails');
+                            }
+                            log.debug("Re-sending request after successfully update keycloak token: " + settings.url);
+                            $.ajax(settings);
+                        }).error(function () {
+                            log.warn('Failed to refresh keycloak token!');
+                            keycloak.logout();
+                        });
+                        return false;
                     }
                 }
             });
-            callback();
+            $.ajax("user", {
+                type: "GET",
+                success: function (response) {
+                    log.debug("Got response from user's details: ", response);
+                    if (response && response != null) {
+                        callback();
+                    }
+                    else {
+                        Core.notification('error', 'Failed to log in or Unauthorized');
+                    }
+                },
+                error: function (xhr, textStatus, error) {
+                    Core.notification('error', 'Failed to log in, ' + error);
+                }
+            });
         }
         else {
             Core.notification('error', 'Keycloak auth token not found.');
@@ -6328,26 +6359,6 @@ var Core;
                     log.debug('keycloakAuth.onAuthLogout triggered!');
                     Core.logout(jolokiaUrl, userDetails, localStorage, $rootScope);
                 };
-                var setPeriodicTokenRefresh = function () {
-                    if (keycloakAuth.authenticated) {
-                        setTimeout(function () {
-                            keycloakAuth.updateToken(10).success(function (refreshed) {
-                                if (refreshed) {
-                                    log.debug('Keycloak token refreshed. Set new value to userDetails');
-                                    userDetails.password = keycloakAuth.token;
-                                }
-                            }).error(function () {
-                                log.warn('Failed to refresh keycloak token!');
-                                Core.logout(jolokiaUrl, userDetails, localStorage, $rootScope);
-                            });
-                            setPeriodicTokenRefresh();
-                        }, 5000);
-                    }
-                    else {
-                        log.debug('Keycloak not authenticated any more. Skip period for token refreshing');
-                    }
-                };
-                setPeriodicTokenRefresh();
             }
         };
         var answer = {
