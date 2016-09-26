@@ -10,13 +10,13 @@ Prepare Keycloak server
 
 **1)** Download file [demorealm.json](demorealm.json) with Keycloak sample metadata about `hawtio-demo` realm. It's assumed you downloaded it to directory `/downloads` on your laptop. 
 
-**2)**  Download keycloak server from [http://www.keycloak.org](http://www.keycloak.org) and download version 2.2.0.Final . 
+**2)**  Download keycloak server from [http://www.keycloak.org](http://www.keycloak.org) and download version 2.2.1.Final . 
 Then unpack and run keycloak server on localhost:8081 . You also need to import downloaded `demorealm.json` file into your Keycloak. Import can be done either via Keycloak admin console or by 
 using `keycloak.import` system property:
 
 ```
-unzip -q /downloads/keycloak-2.2.0.Final.zip
-cd keycloak-2.2.0.Final/bin/
+unzip -q /downloads/keycloak-2.2.1.Final.zip
+cd keycloak-2.2.1.Final/bin/
 ./standalone.sh -Djboss.http.port=8081 -Dkeycloak.import=/downloads/demorealm.json
 ```
 
@@ -84,7 +84,7 @@ features:install hawtio
 * Install keycloak OSGI bundling into Fuse/Karaf . It contains few jars with Keycloak adapter and also configuration of `keycloak` JAAS realm
 
 ```
-features:addurl mvn:org.keycloak/keycloak-osgi-features/2.2.0.Final/xml/features
+features:addurl mvn:org.keycloak/keycloak-osgi-features/2.2.1.Final/xml/features
 features:install keycloak-jaas
 ```
 
@@ -188,6 +188,20 @@ Also add hawtio realm to this file to `security-domains` section:
     </authentication>
 </security-domain>
 ```
+
+* Install Keycloak adapter subsystem to your Wildfly as described in [Keycloak documentation](http://www.keycloak.org) .
+
+* Add the `secure-deployment` section hawtio into `$JBOSS_HOME/standalone/configuration/standalone.xml`  to the keycloak subsystem. 
+It should ensure that Hawtio WAR is able to find the JAAS login modules.
+ 
+```
+<subsystem xmlns="urn:jboss:domain:keycloak:1.1">
+    <secure-deployment name="hawtio.war">
+        <resource>does-not-matter</resource>
+        <auth-server-url>does-not-matter</auth-server-url>
+    </secure-deployment>
+</subsystem>
+```        
 
 * Run WildFly on port 8081 as described in [Prepare Keycloak Server](#prepare-keycloak-server) section and go to [http://localhost:8081/hawtio](http://localhost:8081/hawtio) . 
 Users are again `root` and `john` with access and `mary` without access. 
