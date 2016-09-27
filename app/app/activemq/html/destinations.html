@@ -17,7 +17,7 @@
                         <option ng-repeat="option in destinationFilterOptions" value="{{option.id}}">{{option.name}}
                         </option>
                     </select>
-                    <button class="btn" ng-click="loadTable()"
+                    <button class="btn" ng-click="refresh()"
                             title="Filter">
                         <i class="icon-refresh"></i>
                     </button>
@@ -28,7 +28,7 @@
 
 
     <div class="row-fluid">
-        <div class="gridStyle" ng-grid="gridOptions"></div>
+        <div class="gridStyle" ng-grid="gridOptions" ui-grid-resize-columns></div>
     </div>
 
 </div>

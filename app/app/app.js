@@ -8592,7 +8592,125 @@ var ActiveMQ;
             fields: ["name"],
             directions: ["asc"]
         };
+        var refreshed = false;
         var attributes = [];
+        var hiddenAttributes = [
+            {
+                field: 'inFlightCount',
+                displayName: 'In-flight Count',
+                visible: false
+            },
+            {
+                field: 'expiredCount',
+                displayName: 'Expired Count',
+                visible: false
+            },
+            {
+                field: 'memoryPercentUsage',
+                displayName: 'Memory Percent Usage [%]',
+                visible: false
+            },
+            {
+                field: 'memoryLimit',
+                displayName: 'Memory Limit',
+                visible: false
+            },
+            {
+                field: 'memoryUsageByteCount',
+                displayName: 'Memory Usage Byte Count',
+                visible: false
+            },
+            {
+                field: 'memoryUsagePortion',
+                displayName: 'Memory Usage Portion',
+                visible: false
+            },
+            {
+                field: 'forwardCount',
+                displayName: 'Forward Count',
+                visible: false
+            },
+            {
+                field: 'maxAuditDepth',
+                displayName: 'Max Audit Depth',
+                visible: false
+            },
+            {
+                field: 'maxEnqueueTime',
+                displayName: 'Max Enqueue Time',
+                visible: false
+            },
+            {
+                field: 'maxMessageSize',
+                displayName: 'Max Message Size',
+                visible: false
+            },
+            {
+                field: 'maxPageSize',
+                displayName: 'Max Page Size',
+                visible: false
+            },
+            {
+                field: 'maxProducersToAudit',
+                displayName: 'Max Producers To Audit',
+                visible: false
+            },
+            {
+                field: 'messagesCached',
+                displayName: 'Messages Cached',
+                visible: false
+            },
+            {
+                field: 'minEnqueueTime',
+                displayName: 'Min Enqueue Time',
+                visible: false
+            },
+            {
+                field: 'minMessageSize',
+                displayName: 'Min Message Size',
+                visible: false
+            },
+            {
+                field: 'options',
+                displayName: 'Options',
+                visible: false
+            },
+            {
+                field: 'storeMessageSize',
+                displayName: 'Store Message Size',
+                visible: false
+            },
+            {
+                field: 'totalBlockedTime',
+                displayName: 'Totel Blocked Time',
+                visible: false
+            },
+            {
+                field: 'dlq',
+                displayName: 'DLQ?',
+                visible: false
+            },
+            {
+                field: 'enableAudit',
+                displayName: 'Audit Enabled?',
+                visible: false
+            },
+            {
+                field: 'prioritizedMessages',
+                displayName: 'Prioritized Messages?',
+                visible: false
+            },
+            {
+                field: 'producerFlowControl',
+                displayName: 'Producer Flow Control?',
+                visible: false
+            },
+            {
+                field: 'useCache',
+                displayName: 'Use Cache?',
+                visible: false
+            }
+        ];
         if ($scope.destinationType == 'topic') {
             $scope.destinationFilterOptions.push({ id: "nonAdvisory", name: "No Advisory Topics" });
             $scope.destinationFilterPlaceholder = "Filter Topic Names...";
@@ -8600,34 +8718,35 @@ var ActiveMQ;
                 {
                     field: 'name',
                     displayName: 'Name',
-                    width: '20%'
+                    width: '*'
                 },
                 {
                     field: 'producerCount',
                     displayName: 'Producer Count',
-                    width: '10%'
+                    width: '10%',
                 },
                 {
                     field: 'consumerCount',
                     displayName: 'Consumer Count',
-                    width: '10%'
+                    width: '10%',
                 },
                 {
                     field: 'enqueueCount',
                     displayName: 'Enqueue Count',
-                    width: '10%'
+                    width: '10%',
                 },
                 {
                     field: 'dequeueCount',
                     displayName: 'Dequeue Count',
-                    width: '10%'
+                    width: '10%',
                 },
                 {
                     field: 'dispatchCount',
                     displayName: 'Dispatch Count',
-                    width: '10%'
+                    width: '10%',
                 }
             ];
+            attributes = attributes.concat(hiddenAttributes);
         }
         else {
             $scope.destinationFilterOptions.push({ id: "empty", name: "Only Empty" });
@@ -8637,7 +8756,7 @@ var ActiveMQ;
                 {
                     field: 'name',
                     displayName: 'Name',
-                    width: '20%',
+                    width: '*',
                     cellTemplate: '<div class="ngCellText"><a href="#/activemq/browseQueue?tab=activemq&queueName={{row.entity.name}}">{{row.entity.name}}</a></div>'
                 },
                 {
@@ -8666,21 +8785,12 @@ var ActiveMQ;
                     width: '10%'
                 },
                 {
-                    field: 'inFlightCount',
-                    displayName: 'In-flight Count',
-                    width: '10%'
-                },
-                {
                     field: 'dispatchCount',
                     displayName: 'Dispatch Count',
                     width: '10%'
-                },
-                {
-                    field: 'memoryPercentUsage',
-                    displayName: 'Memory Percent Usage [%]',
-                    width: '10%'
-                },
+                }
             ];
+            attributes = attributes.concat(hiddenAttributes);
         }
         $scope.gridOptions = {
             selectedItems: [],
@@ -8709,6 +8819,10 @@ var ActiveMQ;
             sortInfo: $scope.sortOptions,
             useExternalSorting: true
         };
+        $scope.refresh = function () {
+            refreshed = true;
+            $scope.loadTable();
+        };
         $scope.loadTable = function () {
             $scope.destinationFilter.name = $scope.gridOptions.filterOptions.filterText;
             $scope.destinationFilter.sortColumn = $scope.sortOptions.fields[0];
@@ -8733,6 +8847,10 @@ var ActiveMQ;
                 $scope.destinations.push(value);
             });
             $scope.totalServerItems = data["count"];
+            if (refreshed == true) {
+                $scope.gridOptions.pagingOptions.currentPage = 1;
+                refreshed = false;
+            }
             Core.$apply($scope);
         }
         $scope.$watch('sortOptions', function (newVal, oldVal) {
