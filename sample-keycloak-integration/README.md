@@ -8,16 +8,16 @@ to use Keycloak for authentication.
 Prepare Keycloak server
 -----------------------
 
-**1)** Download file [demorealm.json](demorealm.json) with Keycloak sample metadata about `hawtio-demo` realm. It's assumed you downloaded it to directory `/downloads` on your laptop. 
+**1)** Download file [https://github.com/keycloak/keycloak/blob/master/examples/fuse/testrealm.json] with Keycloak sample metadata about `demo` realm. It's assumed you downloaded it to directory `/downloads` on your laptop. 
 
 **2)**  Download keycloak server from [http://www.keycloak.org](http://www.keycloak.org) and download version 2.2.1.Final . 
-Then unpack and run keycloak server on localhost:8081 . You also need to import downloaded `demorealm.json` file into your Keycloak. Import can be done either via Keycloak admin console or by 
+Then unpack and run keycloak server on localhost:8080 . You also need to import downloaded `demorealm.json` file into your Keycloak. Import can be done either via Keycloak admin console or by 
 using `keycloak.import` system property:
 
 ```
 unzip -q /downloads/keycloak-2.2.1.Final.zip
 cd keycloak-2.2.1.Final/bin/
-./standalone.sh -Djboss.http.port=8081 -Dkeycloak.import=/downloads/demorealm.json
+./standalone.sh -Djboss.http.port=8080 -Dkeycloak.import=/downloads/demorealm.json
 ```
 
 Realm has `hawtio-client` application installed as public client. There are couple of realm roles like `admin` and `viewer` . Names of these roles are same like 
@@ -35,7 +35,7 @@ There are also 3 users:
 Hawtio and Keycloak integration on JBoss Fuse or Karaf
 ------------------------------------------------------
 
-This was tested with JBoss Fuse jboss-fuse-6.3.0.redhat-067 and Apache Karaf 2.4 . Steps are almost same on both. Assuming `$FUSE_HOME` is the root directory of your fuse/karaf
+This was tested with JBoss Fuse jboss-fuse-6.3.0.redhat-187 and Apache Karaf 2.4 . Steps are almost same on both. Assuming `$FUSE_HOME` is the root directory of your fuse/karaf
 
 * Add this into the end of file `$FUSE_HOME/etc/system.properties` :
 
@@ -148,7 +148,7 @@ Hawtio and Keycloak integration on Wildfly
 
 This is even easier as you can use same WildFly server where Keycloak is already running. No need to have separate server, but you can use separate server if you want. 
 
-So in next steps we will use the existing Keycloak server on localhost:8081 and assume that Hawtio WAR is already deployed on WildFly as 
+So in next steps we will use the existing Keycloak server on localhost:8080 and assume that Hawtio WAR is already deployed on WildFly as 
 described in [http://hawt.io/getstarted/index.html](http://hawt.io/getstarted/index.html) .
 
 * Download and copy [keycloak-hawtio.json](keycloak-hawtio.json) and [keycloak-hawtio-client.json](keycloak-hawtio-client.json) into Wildfly. 
@@ -203,6 +203,6 @@ It should ensure that Hawtio WAR is able to find the JAAS login modules.
 </subsystem>
 ```        
 
-* Run WildFly on port 8081 as described in [Prepare Keycloak Server](#prepare-keycloak-server) section and go to [http://localhost:8081/hawtio](http://localhost:8081/hawtio) . 
+* Run WildFly on port 8080 as described in [Prepare Keycloak Server](#prepare-keycloak-server) section and go to [http://localhost:8080/hawtio](http://localhost:8080/hawtio) . 
 Users are again `root` and `john` with access and `mary` without access. 
 
