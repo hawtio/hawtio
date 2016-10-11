@@ -9,11 +9,12 @@
   You can resolve those exceptions by fulfilling the required configurations on the running container.
 * Added support for customization of Jolokia through Java system properties, i.e.:
   `-Djolokia.policyLocation=file:///home/fuse/my-access.xml`
+* Added new pages to the ActiveMQ plugin for monitoring brokers with large number of destinations
+* Improved KeyCloak plugin to better support WildFly and EAP
 * Various fixes and improvements for RBAC on Hawtio web UI
 * Upgraded to Camel 2.18.0
-* Upgraded to Jolokia 1.3.4
-* KeyCloak updated to 2.2.0
-* Added new pages to the ActiveMQ plugin for monitoring brokers with large number of destinations
+* Upgraded to Jolokia 1.3.5
+* KeyCloak updated to 2.2.1
 
 #### 1.4.65
 
