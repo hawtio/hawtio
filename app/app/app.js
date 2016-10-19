@@ -6391,14 +6391,6 @@ var Core;
             $scope.entity.password = details.password;
         }
         $scope.branding = branding;
-        $scope.$watch('userDetails', function (newValue) {
-            if (newValue.username) {
-                $scope.entity.username = newValue.username;
-            }
-            if (newValue.password) {
-                $scope.entity.password = newValue.password;
-            }
-        }, true);
         $scope.$on('$routeChangeStart', function () {
             if ($scope.backstretch) {
                 $scope.backstretch.destroy();
