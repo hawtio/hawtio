@@ -21,7 +21,7 @@
     <appjs-outfile>${basedir}/src/main/webapp/app/app.js</appjs-outfile>
     <watch>false</watch>
     <gruntArguments>default</gruntArguments>
-    <gruntOptions />
+    <gruntOptions>--force</gruntOptions>
     <gruntE2EArguments>e2e</gruntE2EArguments>
     <gruntE2EOptions>--headless</gruntE2EOptions>
     <warSourceDirectory>${basedir}/src/main/webapp</warSourceDirectory>

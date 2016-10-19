@@ -45,15 +45,6 @@ module Core {
     }
     $scope.branding = branding;
 
-    $scope.$watch('userDetails', (newValue:Core.UserDetails) => {
-      if (newValue.username) {
-        $scope.entity.username = newValue.username;
-      }
-      if (newValue.password) {
-        $scope.entity.password = newValue.password;
-      }
-    }, true);
-
     $scope.$on('$routeChangeStart', function() {
       if ($scope.backstretch) {
         $scope.backstretch.destroy();
