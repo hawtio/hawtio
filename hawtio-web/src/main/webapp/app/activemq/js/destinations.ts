@@ -245,6 +245,7 @@ module ActiveMQ {
             showFilter: true,
             showColumnMenu: true,
             enableCellSelection: false,
+            enableHighlighting: true,
             enableColumnResize: true,
             enableColumnReordering: true,
             selectWithCheckboxOnly: false,
