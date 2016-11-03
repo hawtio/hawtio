@@ -61,7 +61,7 @@ you are now ready to run the default build with gulp
 
     gulp
 
-and you should be able to open a web browser and work on the code and have things rebuild etc.
+and you should be able to open a web browser to http://localhost:2772 and work on the code and have things rebuild etc.
 
 ### initial setup
 
