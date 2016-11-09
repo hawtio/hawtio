@@ -8,10 +8,10 @@ declare module KeycloakModule {
     export interface InitOptions {
         checkLoginIframe?: boolean;
         checkLoginIframeInterval?: number;
-        onLoad?: 'login-required' | 'check-sso';
+        onLoad?: string;
         adapter?: string;
         responseMode?: string;
-        flow?: 'standard' | 'implicit' | 'hybrid';
+        flow?: string;
         token?: string;
         refreshToken?: string;
         idToken?: string;
