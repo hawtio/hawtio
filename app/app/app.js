@@ -6321,7 +6321,13 @@ var Core;
                         callback();
                     }
                     else {
-                        Core.notification('error', 'Failed to log in or Unauthorized');
+                        var notificationOptions = {
+                            timeOut: "60000",
+                            onclick: function () {
+                                keycloak.logout();
+                            }
+                        };
+                        Core.notification('error', 'Unauthorized User<br />Click here to Logout', notificationOptions);
                     }
                 },
                 error: function (xhr, textStatus, error) {
