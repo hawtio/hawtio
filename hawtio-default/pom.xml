@@ -82,6 +82,14 @@
           <groupId>commons-logging</groupId>
           <artifactId>commons-logging</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpclient</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpcore</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -142,7 +150,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>${war-plugin-version}</version>
         <configuration>
-          <packagingExcludes>**/lib/commons-logging-1.0.3.jar,**/lib/httpclient-4.3.4.jar</packagingExcludes>
+          <packagingExcludes>**/lib/commons-logging-1.0.3.jar</packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
