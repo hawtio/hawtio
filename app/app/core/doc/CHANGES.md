@@ -1,6 +1,10 @@
 
 ### Change Log
 
+#### 1.4.67
+
+* Fixed hawtio-app may not start due two different versions of http-client included.
+
 #### 1.4.66
 
 * Now every Jolokia call within Hawtio is checked based on RBAC. This means Hawtio is made more secure, but
