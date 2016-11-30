@@ -15700,6 +15700,18 @@ var Camel;
                 var routes = $(doc).find('route[id="' + selectedRouteId + '"]');
                 if (routes && routes.length) {
                     var selectedRoute = routes[0];
+                    var routeParent = selectedRoute.parentNode;
+                    if (routeParent && routeParent.nodeName === 'routes') {
+                        if (routeParent.attributes) {
+                            angular.forEach(routeParent.attributes, function (attr) {
+                                if (attr.name.startsWith("xmlns")) {
+                                    var attrCopy = doc.createAttribute(attr.name);
+                                    attrCopy.value = attr.value;
+                                    selectedRoute.attributes.setNamedItem(attrCopy);
+                                }
+                            });
+                        }
+                    }
                     var routeXml = getSource(selectedRoute);
                     if (routeXml) {
                         data = routeXml;
