@@ -2,6 +2,9 @@
   "name": "hawtio-console-assembly",
   "version": "2.0.0",
   "scripts": {
+    "start": "gulp",
+    "build": "gulp build",
+    "postinstall": "bower install"
   },
   "devDependencies": {
     "URIjs": "^1.14.1",

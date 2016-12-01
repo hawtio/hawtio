@@ -42,15 +42,20 @@ var DevExample;
 (function (DevExample) {
     DevExample._module = angular.module(DevExample.pluginName, []);
     var tab = undefined;
-    DevExample._module.config(["$locationProvider", "$routeProvider", "HawtioNavBuilderProvider", function ($locationProvider, $routeProvider, builder) {
-        tab = builder.create().id(DevExample.pluginName).title(function () { return "Test DevExample"; }).href(function () { return "/test_example"; }).subPath("Page 1", "page1", builder.join(DevExample.templatePath, "page1.html")).build();
-        builder.configureRouting($routeProvider, tab);
-    }]);
+    DevExample._module.config(["$locationProvider", "$routeProvider", "HawtioNavBuilderProvider",
+        function ($locationProvider, $routeProvider, builder) {
+            tab = builder.create()
+                .id(DevExample.pluginName)
+                .title(function () { return "Test DevExample"; })
+                .href(function () { return "/test_example"; })
+                .subPath("Page 1", "page1", builder.join(DevExample.templatePath, "page1.html"))
+                .build();
+            builder.configureRouting($routeProvider, tab);
+        }]);
     DevExample._module.run(["HawtioNav", function (HawtioNav) {
-        HawtioNav.add(tab);
-        DevExample.log.debug("loaded");
-    }]);
-    hawtioPluginLoader.addModule(DevExample.pluginName);
+            HawtioNav.add(tab);
+            DevExample.log.debug("loaded");
+        }]);
 })(DevExample || (DevExample = {}));
 
 /// Copyright 2014-2015 Red Hat, Inc. and/or its affiliates
@@ -71,8 +76,8 @@ var DevExample;
 var DevExample;
 (function (DevExample) {
     DevExample.Page1Controller = DevExample._module.controller("DevExample.Page1Controller", ["$scope", function ($scope) {
-        $scope.target = "World!";
-    }]);
+            $scope.target = "World!";
+        }]);
 })(DevExample || (DevExample = {}));
 
 angular.module("hawtio-console-assembly-test-templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("test-plugins/example/html/page1.html","<div class=\"row\">\n  <div class=\"col-md-12\" ng-controller=\"DevExample.Page1Controller\">\n    <h1>Page 1</h1>\n    <p>This plugin won\'t be exported in the bower package</p>\n    <p class=\'customClass\'>Hello {{target}}</p>\n  </div>\n</div>\n");}]); hawtioPluginLoader.addModule("hawtio-console-assembly-test-templates");
