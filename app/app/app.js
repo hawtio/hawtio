@@ -27757,6 +27757,9 @@ var Fabric;
         $scope.doSave = function (response) {
             var configFile = response.value.decodeBase64();
             var lines = configFile.lines();
+            lines = lines.filter(function (entry) {
+                return entry.trim() != '';
+            });
             if ($scope.deletingFeatures.length > 0) {
                 $scope.deletingFeatures.each(function (feature) {
                     lines.remove(function (line) {
