@@ -1,6 +1,10 @@
 
 ### Change Log
 
+#### 1.4.68
+
+* Fixed hawtio-wildfly to run on WildFly / JBoss EAP even after JBoss RBAC is enabled.
+
 #### 1.4.67
 
 * Fixed hawtio-app may not start due two different versions of http-client included.
