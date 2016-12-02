@@ -86,8 +86,14 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        AccessControlContext acc = AccessController.getContext();
-        Subject subject = Subject.getSubject(acc);
+        Subject subject = null;
+        if (System.getProperty("jboss.server.name") != null) {
+            // In WildFly / JBoss EAP privileged action is skipped at AuthenticationFilter
+            subject = (Subject) req.getAttribute("subject");
+        } else {
+            AccessControlContext acc = AccessController.getContext();
+            subject = Subject.getSubject(acc);
+        }
 
         if (subject == null) {
             Helpers.doForbidden(resp);
