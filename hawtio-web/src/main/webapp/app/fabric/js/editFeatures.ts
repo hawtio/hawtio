@@ -105,6 +105,9 @@ module Fabric {
     $scope.doSave = (response) => {
       var configFile = response.value.decodeBase64();
       var lines = configFile.lines();
+      lines = lines.filter(function(entry) {
+        return entry.trim() != '';
+      });
 
       if ($scope.deletingFeatures.length > 0) {
         $scope.deletingFeatures.each((feature) => {
