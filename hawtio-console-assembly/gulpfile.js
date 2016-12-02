@@ -6,7 +6,7 @@ var gulp = require('gulp'),
     fs = require('fs'),
     path = require('path'),
     size = require('gulp-size'),
-    uri = require('URIjs'),
+    uri = require('urijs'),
     s = require('underscore.string'),
     hawtio = require('hawtio-node-backend'),
     tslint = require('gulp-tslint'),
@@ -32,14 +32,14 @@ var config = {
     target: 'ES5',
     module: 'commonjs',
     declarationFiles: true,
-    noExternalResolve: false,
+    noResolve: false,
     removeComments: true
   }),
   testTsProject: plugins.typescript.createProject({
     target: 'ES5',
     module: 'commonjs',
     declarationFiles: false,
-    noExternalResolve: false
+    noResolve: false
   }),
   tsLintOptions: {
     rulesDirectory: './tslint-rules/'
@@ -79,7 +79,7 @@ gulp.task('clean-defs', function() {
 
 gulp.task('example-tsc', ['tsc'], function() {
   var tsResult = gulp.src(config.testTs)
-    .pipe(plugins.typescript(config.testTsProject))
+    .pipe(config.testTsProject())
     .on('error', plugins.notify.onError({
       message: '#{ error.message }',
       title: 'Typescript compilation error - test'
@@ -117,7 +117,7 @@ gulp.task('tsc', ['clean-defs'], function() {
   var cwd = process.cwd();
   var tsResult = gulp.src(config.ts)
     .pipe(plugins.sourcemaps.init())
-    .pipe(plugins.typescript(config.tsProject))
+    .pipe(config.tsProject())
     .on('error', plugins.notify.onError({
       message: '#{ error.message }',
       title: 'Typescript compilation error'
@@ -311,7 +311,7 @@ gulp.task('site-files', ['tweak-open-sans', 'tweak-droid-sans-mono'], function()
 gulp.task('usemin', ['site-files'], function() {
   return gulp.src('index.html')
     .pipe(plugins.usemin({
-      css: [plugins.minifyCss(), 'concat'],
+      css: [plugins.cleanCss(), 'concat'],
       js: [plugins.sourcemaps.init({
             loadMaps: true
           }),

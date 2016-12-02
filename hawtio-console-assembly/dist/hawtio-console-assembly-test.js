@@ -80,4 +80,4 @@ var DevExample;
         }]);
 })(DevExample || (DevExample = {}));
 
-angular.module("hawtio-console-assembly-test-templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("test-plugins/example/html/page1.html","<div class=\"row\">\n  <div class=\"col-md-12\" ng-controller=\"DevExample.Page1Controller\">\n    <h1>Page 1</h1>\n    <p>This plugin won\'t be exported in the bower package</p>\n    <p class=\'customClass\'>Hello {{target}}</p>\n  </div>\n</div>\n");}]); hawtioPluginLoader.addModule("hawtio-console-assembly-test-templates");
+angular.module('hawtio-console-assembly-test-templates', []).run(['$templateCache', function($templateCache) {$templateCache.put('test-plugins/example/html/page1.html','<div class="row">\n  <div class="col-md-12" ng-controller="DevExample.Page1Controller">\n    <h1>Page 1</h1>\n    <p>This plugin won\'t be exported in the bower package</p>\n    <p class=\'customClass\'>Hello {{target}}</p>\n  </div>\n</div>\n');}]); hawtioPluginLoader.addModule("hawtio-console-assembly-test-templates");
