@@ -4,6 +4,7 @@
 #### 1.4.68
 
 * Fixed hawtio-wildfly to run on WildFly / JBoss EAP even after JBoss RBAC is enabled.
+* Upgraded to Camel 2.18.1
 
 #### 1.4.67
 

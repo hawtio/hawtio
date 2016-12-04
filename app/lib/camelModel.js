@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.18.0';
+var _apacheCamelModelVersion = '2.18.1';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -47,7 +47,7 @@ var _apacheCamelModel ={
         "completionPredicate": {
           "kind": "expression",
           "type": "object",
-          "description": "Sets the predicate used to determine if the aggregation is completed",
+          "description": "TODO: document Note: this is experimental and subject to changes in future releases.",
           "title": "Completion Predicate",
           "required": false,
           "deprecated": false
@@ -449,8 +449,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration",
       "icon": "generic24.png",
       "description": "Spring specific DefaultCamelBeanPostProcessor which uses Spring BeanPostProcessor to post process beans.",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
       }
@@ -461,8 +461,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration",
       "icon": "generic24.png",
       "description": "CamelContext using XML configuration.",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "depends-on": {
@@ -1079,8 +1079,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration",
       "icon": "generic24.png",
       "description": "Configures a ConsumerTemplate",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "maximumCacheSize": {
@@ -1586,8 +1586,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration,endpoint",
       "icon": "generic24.png",
       "description": "Camel endpoint configuration",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "singleton": {
@@ -1744,8 +1744,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration,error",
       "icon": "generic24.png",
       "description": "Error handler settings",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "type": {
@@ -1993,8 +1993,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration",
       "icon": "generic24.png",
       "description": "Used for export a service using Spring Remoting to hide the network call using an interface.",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "uri": {
@@ -2136,8 +2136,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration",
       "icon": "generic24.png",
       "description": "Configures a org.apache.camel.FluentProducerTemplate",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "defaultEndpoint": {
@@ -2826,8 +2826,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration",
       "icon": "generic24.png",
       "description": "JMX configuration.",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "disabled": {
@@ -4098,8 +4098,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration",
       "icon": "generic24.png",
       "description": "Function to use with properties placeholder",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "ref": {
@@ -4154,8 +4154,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration",
       "icon": "generic24.png",
       "description": "Properties placeholder",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "location": {
@@ -4275,8 +4275,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration",
       "icon": "generic24.png",
       "description": "To proxy a service call using a interface",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "serviceUrl": {
@@ -4711,8 +4711,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration",
       "icon": "generic24.png",
       "description": "Configuration of redelivery policy.",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "maximumRedeliveries": {
@@ -5414,8 +5414,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration,routing",
       "icon": "generic24.png",
       "description": "Configuration of routes using XML",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "route": {
@@ -6264,8 +6264,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration",
       "icon": "generic24.png",
       "description": "Stream caching configuration.",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "enabled": {
@@ -6375,8 +6375,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration",
       "icon": "generic24.png",
       "description": "Configures a ProducerTemplate",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "defaultEndpoint": {
@@ -6419,8 +6419,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration",
       "icon": "generic24.png",
       "description": "Configuration of thread pools",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "poolSize": {
@@ -8897,8 +8897,8 @@ var _apacheCamelModel ={
       "group": "spring,configuration,rest",
       "icon": "generic24.png",
       "description": "Configuration of REST services using rest-dsl using XML",
-      "acceptInput": "null",
-      "acceptOutput": "null",
+      "acceptInput": "false",
+      "acceptOutput": "false",
       "nextSiblingAddedAsChild": "false",
       "properties": {
         "rest": {
