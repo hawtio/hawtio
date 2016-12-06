@@ -35,7 +35,7 @@ module Jmx {
                                        jmxWidgetTypes,
                                        $templateCache,
                                        localStorage,
-                                        $browser) => {
+                                       $browser) => {
     $scope.searchText = '';
     $scope.nid = 'empty';
     $scope.selectedItems = [];
@@ -130,7 +130,7 @@ module Jmx {
       $scope.nid = $location.search()['nid'];
       log.debug("nid: ", $scope.nid);
 
-      setTimeout(updateTableContents, 50);
+      pendingUpdate = setTimeout(updateTableContents, 50);
     });
 
     $scope.$on('jmxTreeUpdated', function () {
@@ -138,9 +138,7 @@ module Jmx {
       if (pendingUpdate) {
         clearTimeout(pendingUpdate);
       }
-      pendingUpdate = setTimeout(() => {
-        updateTableContents();
-      }, 500);
+      pendingUpdate = setTimeout(updateTableContents, 500);
     });
 
     var pendingUpdate = null;
@@ -150,9 +148,7 @@ module Jmx {
       if (pendingUpdate) {
         clearTimeout(pendingUpdate);
       }
-      pendingUpdate = setTimeout(() => {
-        updateTableContents();
-      }, 500);
+      pendingUpdate = setTimeout(updateTableContents, 500);
     });
 
     $scope.$watch('workspace.selection', function () {
@@ -160,12 +156,13 @@ module Jmx {
         Core.unregister(jolokia, $scope);
         return;
       }
-      setTimeout(() => {
+      if (pendingUpdate) {
+        clearTimeout(pendingUpdate);
+      }
+      pendingUpdate = setTimeout(() => {
         $scope.gridData = [];
         Core.$apply($scope);
-        setTimeout(() => {
-          updateTableContents();
-        }, 10);
+        setTimeout(updateTableContents, 10);
       }, 10);
     });
 

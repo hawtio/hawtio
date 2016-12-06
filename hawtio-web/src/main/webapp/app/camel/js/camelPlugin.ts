@@ -67,7 +67,7 @@ module Camel {
       return workspace.treeContainsDomainAndProperties(camelJmxDomain);
     });
     preferencesRegistry.addTab('Camel', 'app/camel/html/preferences.html', () => {
-      return workspace.treeContainsDomainAndProperties(camelJmxDomain); 
+      return workspace.treeContainsDomainAndProperties(camelJmxDomain);
     });
 
     // TODO should really do this via a service that the JMX plugin exposes
