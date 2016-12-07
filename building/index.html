@@ -115,7 +115,7 @@ will install node.js <span class="amp">&amp;</span> npm into a subdirectory, run
 
 <h2 id = "Building">Building</h2>
 
-<p>After you've cloned hawtio's git repo the first thing you should do is build the whole project.  First <code>cd</code> into the root directory of the hawtio project and run:</p>
+<p>After you've cloned hawtio's git repo the first thing you should do is build the whole project. First <code>cd</code> into the root directory of the hawtio project and run:</p>
 
 <pre><code>mvn clean install</code></pre>
 
@@ -223,7 +223,7 @@ $FILE_PATH$&#40;$LINE$,$COLUMN$&#41;\:
 
 <h2 id = "Adding_additional_Javascript_dependencies">Adding additional Javascript dependencies</h2>
 
-<p>Hawtio is (finally) adopting <a href="http://bower.io/">bower</a> for managing dependencies, these are automatically pulled in when building the project.  It's now really easy to add third-party Javascript/CSS stuff to hawtio:</p>
+<p>Hawtio is (finally) adopting <a href="http://bower.io/">bower</a> for managing dependencies, these are automatically pulled in when building the project. It's now really easy to add third-party Javascript/CSS stuff to hawtio:</p>
 
 <ul>
 <li>cd into 'hawtio-web', and build it</li>
@@ -233,7 +233,7 @@ $FILE_PATH$&#40;$LINE$,$COLUMN$&#41;\:
 <li>commit the change to bower.json and index.html</li>
 </ul>
 
-<p>When running in development mode be sure you've run 'grunt bower' if you see 404 errors for the bower package you've installed.  This is normally done for you when running 'mvn clean install'</p>
+<p>When running in development mode be sure you've run 'grunt bower' if you see 404 errors for the bower package you've installed. This is normally done for you when running 'mvn clean install'</p>
 
 <h2 id = "Using_LiveReload">Using LiveReload</h2>
 
@@ -243,15 +243,15 @@ $FILE_PATH$&#40;$LINE$,$COLUMN$&#41;\:
 
 <p>mvn test-compile exec:java</p>
 
-<p>The sample server runs an embedded LiveReload server that's all set up to look at src/main/webapp for file changes.  If you don't want to load all of the sample apps because you're connecting to another JVM you don't have to:</p>
+<p>The sample server runs an embedded LiveReload server that's all set up to look at src/main/webapp for file changes. If you don't want to load all of the sample apps because you're connecting to another JVM you don't have to:</p>
 
 <p>mvn test-compile exec:java -DloadApps=false</p>
 
-<p>The Live Reload server implementation is provided by <a href="https://github.com/davidB/livereload-jvm">livereload-jvm</a>.  When using other methods run run hawtio like &ldquo;mvn jetty:run&rdquo; or &ldquo;mvn tomcat:run&rdquo; you can run <a href="https://github.com/davidB/livereload-jvm">livereload-jvm</a> directly, for example from the hawtio-web directory:</p>
+<p>The Live Reload server implementation is provided by <a href="https://github.com/davidB/livereload-jvm">livereload-jvm</a>. When using other methods to run hawtio, like &ldquo;mvn jetty:run&rdquo; or &ldquo;mvn tomcat:run&rdquo;, you can run <a href="https://github.com/davidB/livereload-jvm">livereload-jvm</a> directly, for example from the hawtio-web directory:</p>
 
 <pre><code>java -jar livereload-jvm-0.2.0-SNAPSHOT-onejar.jar -d src/main/webapp/ -e .*\.ts$</code></pre>
 
-<p>Install the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">LiveReload</a> plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar).  There is also a LiveReload plugin for Firefox, you can get it straight from the <a href="http://livereload.com">LiveReload site</a>.</p>
+<p>Install the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">LiveReload</a> plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar). There is also a LiveReload plugin for Firefox, you can get it straight from the <a href="http://livereload.com">LiveReload site</a>.</p>
 
 <p>In another shell (as mentioned above in the &ldquo;Incrementally compile TypeScript&rdquo; section you probably want to auto-recompile all the TypeScript files into app.js in <em>another shell</em> via this command:</p>
 

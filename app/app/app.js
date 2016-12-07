@@ -33748,16 +33748,14 @@ var Jmx;
             }
             $scope.nid = $location.search()['nid'];
             Jmx.log.debug("nid: ", $scope.nid);
-            setTimeout(updateTableContents, 50);
+            pendingUpdate = setTimeout(updateTableContents, 50);
         });
         $scope.$on('jmxTreeUpdated', function () {
             Core.unregister(jolokia, $scope);
             if (pendingUpdate) {
                 clearTimeout(pendingUpdate);
             }
-            pendingUpdate = setTimeout(function () {
-                updateTableContents();
-            }, 500);
+            pendingUpdate = setTimeout(updateTableContents, 500);
         });
         var pendingUpdate = null;
         $scope.$watch('gridOptions.filterOptions.filterText', function (newValue, oldValue) {
@@ -33765,21 +33763,20 @@ var Jmx;
             if (pendingUpdate) {
                 clearTimeout(pendingUpdate);
             }
-            pendingUpdate = setTimeout(function () {
-                updateTableContents();
-            }, 500);
+            pendingUpdate = setTimeout(updateTableContents, 500);
         });
         $scope.$watch('workspace.selection', function () {
             if (workspace.moveIfViewInvalid()) {
                 Core.unregister(jolokia, $scope);
                 return;
             }
-            setTimeout(function () {
+            if (pendingUpdate) {
+                clearTimeout(pendingUpdate);
+            }
+            pendingUpdate = setTimeout(function () {
                 $scope.gridData = [];
                 Core.$apply($scope);
-                setTimeout(function () {
-                    updateTableContents();
-                }, 10);
+                setTimeout(updateTableContents, 10);
             }, 10);
         });
         $scope.hasWidget = function (row) {
