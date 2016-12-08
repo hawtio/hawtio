@@ -3,7 +3,8 @@
 
 #### 1.4.68
 
-* Fixed hawtio-wildfly to run on WildFly / JBoss EAP even after JBoss RBAC is enabled.
+* Fixed hawtio-wildfly to run on WildFly / JBoss EAP even after JBoss RBAC is enabled
+* Fixed an issue whereby many pages where flickering
 * Upgraded to Camel 2.18.1
 
 #### 1.4.67
@@ -213,7 +214,7 @@
 #### 1.4.30
 
 * Bug fixes
-* Fixed Camel diagram to render in Firefox browser 
+* Fixed Camel diagram to render in Firefox browser
 * Hawtio Karaf Terminal now installs and works in Karaf 2.x and 3.0.x out of the box
 * Upgraded to TypeScript 1.1.0
 * Fixed jolokia connectivity to Java containers with jolokia when running Kubernetes on RHEL / Fedora / Vagrant
@@ -342,7 +343,7 @@
 * Perspective switcher now also maintains a list of 5 recently used connections automatically
 * Added [fabric8](http://fabric8.io/) branding plugin
 * Fixed some minor bugs and issues in the fabric plugin.
-* Upgraded to [Jolokia](http://jolokia.org/) 1.2.1 
+* Upgraded to [Jolokia](http://jolokia.org/) 1.2.1
 * Fixes [these 18 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=11&state=closed)
 
 #### 1.3.1
@@ -424,7 +425,7 @@
 #### 1.1
 
 * Added the following new plugins:
-  * [forms](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/forms/doc/developer.md) a developer plugin for automatically creating tables and forms from json-schema models 
+  * [forms](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/forms/doc/developer.md) a developer plugin for automatically creating tables and forms from json-schema models
   * [infinispan](http://hawt.io/plugins/infinispan/) for viewing metrics for your Infinispan caches or using the CLI to query or update them
   * [jclouds](http://hawt.io/plugins/jclouds/) to help make your cloud hawt
   * [maven](http://hawt.io/plugins/maven/) to let you search maven repositories, find versions, view source or javadoc
@@ -437,4 +438,3 @@
 
 * First main release of hawtio with [lots of hawt plugins](http://hawt.io/plugins/index.html).
 * Fixes [these 74 issues and enhancements](https://github.com/hawtio/hawtio/issues?milestone=1&state=closed)
-
