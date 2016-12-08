@@ -65,7 +65,7 @@
                  on-index-change="selectRowIndex"
                  row-index="rowIndex"></div>
 
-            <button class="btn" ng-disabled="!gridOptions.selectedItems.length" ng-show="showButtons" ng-click="moveDialog = true"
+            <button class="btn" ng-disabled="!gridOptions.selectedItems.length || queueNames.length === 0" ng-show="showButtons" ng-click="moveDialog = true"
                     hawtio-show object-name="{{workspace.selection.objectName}}" method-name="moveMessageTo" mode="remove"
                     title="Move the selected messages to another destination" data-placement="bottom">
               <i class="icon-share-alt"></i> Move
@@ -140,7 +140,7 @@
       <p>Move
         <ng-pluralize count="gridOptions.selectedItems.length"
                       when="{'1': 'message', 'other': '{} messages'}"></ng-pluralize>
-        to: <select ng-model="queueName" ng-options="qn for qn in queueNames"></select>
+        to: <select ng-model="queueName" ng-options="qn for qn in queueNames" ng-init="queueName=queueNames[0]""></select>
       </p>
       <p>
         You cannot undo this operation.<br>
