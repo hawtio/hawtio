@@ -19,7 +19,6 @@ package io.hawt.web.plugin.karaf.terminal;
 import java.io.PipedInputStream;
 import java.io.PrintStream;
 
-import org.apache.felix.service.command.CommandSession;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -29,8 +28,6 @@ import org.osgi.framework.BundleContext;
  * However it keeps being annoying so we only support Karaf 4.0 onwards.
  */
 public interface KarafConsoleFactory {
-
-    CommandSession getSession(Object console);
 
     void close(Object console, boolean param);
 

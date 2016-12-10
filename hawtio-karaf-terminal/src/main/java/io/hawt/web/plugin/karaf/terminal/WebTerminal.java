@@ -26,5 +26,4 @@ public class WebTerminal extends TerminalSupport {
     public int getHeight() {
         return height;
     }
-
 }
