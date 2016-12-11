@@ -4,13 +4,20 @@
 /// <reference path="./osgiPlugin.ts"/>
 module Osgi {
 
-  _module.controller("Osgi.BundlesController", ["$scope", "workspace", "jolokia", ($scope, workspace:Workspace, jolokia) => {
+  _module.controller("Osgi.BundlesController", ["$scope", "$timeout", "workspace", "jolokia", ($scope, $timeout, workspace:Workspace, jolokia) => {
 
     $scope.result = {};
     $scope.bundles = [];
     $scope.selected = [];
     $scope.loading = true;
     $scope.bundleUrl = "";
+
+    $scope.showStartEventFeedback = false;
+    $scope.showStopEventFeedback = false;
+    $scope.showRefreshEventFeedback = false;
+    $scope.showUpdateEventFeedback = false;
+    $scope.showUninstallEventFeedback = false;
+    $scope.defaultTimeout = 3000;
 
     $scope.installDisabled = function() {
       return $scope.bundleUrl === "";
@@ -105,22 +112,32 @@ module Osgi {
     }
 
     $scope.stop = function() {
+      $scope.showStopEventFeedback = true;
+      $timeout(function () { $scope.showStopEventFeedback = false; }, $scope.defaultTimeout);
       $scope.controlBundles('stopBundles([J)');
     }
 
     $scope.start = function() {
+      $scope.showStartEventFeedback = true;
+      $timeout(function () { $scope.showStartEventFeedback = false; }, $scope.defaultTimeout);
       $scope.controlBundles('startBundles([J)');
     }
 
     $scope.update = function() {
+      $scope.showUpdateEventFeedback = true;
+      $timeout(function () { $scope.showUpdateEventFeedback = false; }, $scope.defaultTimeout);
       $scope.controlBundles('updateBundles([J)');
     }
 
     $scope.refresh = function() {
+      $scope.showRefreshEventFeedback = true;
+      $timeout(function () { $scope.showRefreshEventFeedback = false; }, $scope.defaultTimeout);
       $scope.controlBundles('refreshBundles([J)');
     }
 
     $scope.uninstall = function() {
+      $scope.showUninstallEventFeedback = true;
+      $timeout(function () { $scope.showUninstallEventFeedback = false; }, $scope.defaultTimeout);
       $scope.controlBundles('uninstallBundles([J)');
     }
 
