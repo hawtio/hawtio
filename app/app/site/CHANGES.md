@@ -6,6 +6,7 @@
 * Fixed hawtio-wildfly to run on WildFly / JBoss EAP even after JBoss RBAC is enabled
 * Fixed an issue whereby many pages where flickering
 * Upgraded to Camel 2.18.1
+* The Karaf Terminal plugin now works again when using Karaf 4.0.7 or newer.
 
 #### 1.4.67
 
