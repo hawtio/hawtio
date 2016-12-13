@@ -1,3 +1,33 @@
 <div class="controller-section" ng-controller="Osgi.BundleController">
+    <div ng-show="showStartEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, starting bundle...
+      </div>
+    </div>
+    <div ng-show="showStopEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, stopping bundle...
+      </div>
+    </div>
+    <div ng-show="showRefreshEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, refreshing bundle...
+      </div>
+    </div>
+    <div ng-show="showUpdateEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, updating bundle...
+      </div>
+    </div>
+    <div ng-show="showUninstallEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, uninstalling bundle...
+      </div>
+    </div>
   <div ng-include src="'app/osgi/html/bundle-details.html'"></div>
 </div>

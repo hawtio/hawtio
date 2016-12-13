@@ -38025,7 +38025,7 @@ var Osgi;
         rv.sort();
         return rv.toString();
     }
-    Osgi._module.controller("Osgi.BundleController", ["$scope", "$location", "workspace", "$routeParams", "jolokia", function ($scope, $location, workspace, $routeParams, jolokia) {
+    Osgi._module.controller("Osgi.BundleController", ["$scope", "$location", "$timeout", "workspace", "$routeParams", "jolokia", function ($scope, $location, $timeout, workspace, $routeParams, jolokia) {
         $scope.bundleId = $routeParams.bundleId;
         updateTableContents();
         $scope.showValue = function (key) {
@@ -38040,6 +38040,12 @@ var Osgi;
                     return true;
             }
         };
+        $scope.showStartEventFeedback = false;
+        $scope.showStopEventFeedback = false;
+        $scope.showRefreshEventFeedback = false;
+        $scope.showUpdateEventFeedback = false;
+        $scope.showUninstallEventFeedback = false;
+        $scope.defaultTimeout = 3000;
         $scope.executeLoadClass = function (clazz) {
             var mbean = Osgi.getHawtioOSGiToolsMBean(workspace);
             if (mbean) {
@@ -38103,26 +38109,46 @@ var Osgi;
             return "";
         };
         $scope.startBundle = function (bundleId) {
+            $scope.showStartEventFeedback = true;
+            $timeout(function () {
+                $scope.showStartEventFeedback = false;
+            }, $scope.defaultTimeout);
             jolokia.request([
                 { type: 'exec', mbean: Osgi.getSelectionFrameworkMBean(workspace), operation: 'startBundle', arguments: [bundleId] }
             ], onSuccess(updateTableContents));
         };
         $scope.stopBundle = function (bundleId) {
+            $scope.showStopEventFeedback = true;
+            $timeout(function () {
+                $scope.showStopEventFeedback = false;
+            }, $scope.defaultTimeout);
             jolokia.request([
                 { type: 'exec', mbean: Osgi.getSelectionFrameworkMBean(workspace), operation: 'stopBundle', arguments: [bundleId] }
             ], onSuccess(updateTableContents));
         };
         $scope.updatehBundle = function (bundleId) {
+            $scope.showUpdateEventFeedback = true;
+            $timeout(function () {
+                $scope.showUpdateEventFeedback = false;
+            }, $scope.defaultTimeout);
             jolokia.request([
                 { type: 'exec', mbean: Osgi.getSelectionFrameworkMBean(workspace), operation: 'updateBundle', arguments: [bundleId] }
             ], onSuccess(updateTableContents));
         };
         $scope.refreshBundle = function (bundleId) {
+            $scope.showRefreshEventFeedback = true;
+            $timeout(function () {
+                $scope.showRefreshEventFeedback = false;
+            }, $scope.defaultTimeout);
             jolokia.request([
                 { type: 'exec', mbean: Osgi.getSelectionFrameworkMBean(workspace), operation: 'refreshBundle', arguments: [bundleId] }
             ], onSuccess(updateTableContents));
         };
         $scope.uninstallBundle = function (bundleId) {
+            $scope.showUninstallEventFeedback = true;
+            $timeout(function () {
+                $scope.showUninstallEventFeedback = false;
+            }, $scope.defaultTimeout);
             jolokia.request([{
                 type: 'exec',
                 mbean: Osgi.getSelectionFrameworkMBean(workspace),
@@ -38276,12 +38302,18 @@ var Osgi;
 })(Osgi || (Osgi = {}));
 var Osgi;
 (function (Osgi) {
-    Osgi._module.controller("Osgi.BundlesController", ["$scope", "workspace", "jolokia", function ($scope, workspace, jolokia) {
+    Osgi._module.controller("Osgi.BundlesController", ["$scope", "$timeout", "workspace", "jolokia", function ($scope, $timeout, workspace, jolokia) {
         $scope.result = {};
         $scope.bundles = [];
         $scope.selected = [];
         $scope.loading = true;
         $scope.bundleUrl = "";
+        $scope.showStartEventFeedback = false;
+        $scope.showStopEventFeedback = false;
+        $scope.showRefreshEventFeedback = false;
+        $scope.showUpdateEventFeedback = false;
+        $scope.showUninstallEventFeedback = false;
+        $scope.defaultTimeout = 3000;
         $scope.installDisabled = function () {
             return $scope.bundleUrl === "";
         };
@@ -38363,18 +38395,38 @@ var Osgi;
             });
         };
         $scope.stop = function () {
+            $scope.showStopEventFeedback = true;
+            $timeout(function () {
+                $scope.showStopEventFeedback = false;
+            }, $scope.defaultTimeout);
             $scope.controlBundles('stopBundles([J)');
         };
         $scope.start = function () {
+            $scope.showStartEventFeedback = true;
+            $timeout(function () {
+                $scope.showStartEventFeedback = false;
+            }, $scope.defaultTimeout);
             $scope.controlBundles('startBundles([J)');
         };
         $scope.update = function () {
+            $scope.showUpdateEventFeedback = true;
+            $timeout(function () {
+                $scope.showUpdateEventFeedback = false;
+            }, $scope.defaultTimeout);
             $scope.controlBundles('updateBundles([J)');
         };
         $scope.refresh = function () {
+            $scope.showRefreshEventFeedback = true;
+            $timeout(function () {
+                $scope.showRefreshEventFeedback = false;
+            }, $scope.defaultTimeout);
             $scope.controlBundles('refreshBundles([J)');
         };
         $scope.uninstall = function () {
+            $scope.showUninstallEventFeedback = true;
+            $timeout(function () {
+                $scope.showUninstallEventFeedback = false;
+            }, $scope.defaultTimeout);
             $scope.controlBundles('uninstallBundles([J)');
         };
         $scope.install = function () {
