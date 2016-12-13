@@ -1,4 +1,16 @@
 <div class="controller-section" ng-controller="Karaf.ScrComponentController">
+    <div ng-show="showActivateEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, Activating service...
+      </div>
+    </div>
+    <div ng-show="showDeactivateEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, Deactivating service...
+      </div>
+    </div>
     <div class="row-fluid">
         <div class="span4">
             <h1>{{row.id}}</h1>

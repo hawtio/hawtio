@@ -4,7 +4,7 @@
 /// <reference path="./karafPlugin.ts"/>
 module Karaf {
 
-    export var ScrComponentsController = _module.controller("Karaf.ScrComponentsController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace, jolokia) => {
+    export var ScrComponentsController = _module.controller("Karaf.ScrComponentsController", ["$scope", "$location", "$timeout", "workspace", "jolokia", ($scope, $location, $timeout, workspace, jolokia) => {
 
         $scope.component = empty();
 
@@ -17,6 +17,9 @@ module Karaf {
         // selected components
         $scope.selectedComponents = [];
 
+        $scope.showActivateEventFeedback = false;
+        $scope.showDeactivateEventFeedback = false;
+        $scope.defaultTimeout = 3000;
 
         $scope.scrOptions = {
             //plugins: [searchProvider],
@@ -80,6 +83,8 @@ module Karaf {
         }
 
         $scope.activate = () => {
+            $scope.showActivateEventFeedback = true;
+            $timeout(function () { $scope.showActivateEventFeedback = false; }, $scope.defaultTimeout);
             $scope.selectedComponents.forEach(function (component) {
                 activateComponent(workspace, jolokia, component.Name, function () {
                     console.log("Activated!")
@@ -91,6 +96,8 @@ module Karaf {
         };
 
         $scope.deactivate = () => {
+            $scope.showDeactivateEventFeedback = true;
+            $timeout(function () { $scope.showDeactivateEventFeedback = false; }, $scope.defaultTimeout);
             $scope.selectedComponents.forEach(function (component) {
                 deactivateComponent(workspace, jolokia, component.Name, function () {
                     console.log("Deactivated!")
