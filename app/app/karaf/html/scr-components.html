@@ -1,5 +1,17 @@
 <div class="controller-section" ng-controller="Karaf.ScrComponentsController">
   <div class="row-fluid">
+    <div ng-show="showActivateEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, Activating services...
+      </div>
+    </div>
+    <div ng-show="showDeactivateEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, Deactivating services...
+      </div>
+    </div>
     <div class="pull-left">
       <form class="form-inline no-bottom-margin">
         <fieldset>

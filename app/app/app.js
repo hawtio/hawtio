@@ -36637,7 +36637,10 @@ var Karaf;
 })(Karaf || (Karaf = {}));
 var Karaf;
 (function (Karaf) {
-    Karaf._module.controller("Karaf.ScrComponentController", ["$scope", "$location", "workspace", "jolokia", "$routeParams", function ($scope, $location, workspace, jolokia, $routeParams) {
+    Karaf._module.controller("Karaf.ScrComponentController", ["$scope", "$location", "$timeout", "workspace", "jolokia", "$routeParams", function ($scope, $location, $timeout, workspace, jolokia, $routeParams) {
+        $scope.showActivateEventFeedback = false;
+        $scope.showDeactivateEventFeedback = false;
+        $scope.defaultTimeout = 3000;
         $scope.name = $routeParams.name;
         populateTable();
         function populateTable() {
@@ -36649,28 +36652,43 @@ var Karaf;
             return result;
         };
         $scope.activate = function () {
+            $scope.showActivateEventFeedback = true;
+            $timeout(function () {
+                $scope.showActivateEventFeedback = false;
+            }, $scope.defaultTimeout);
             Karaf.activateComponent(workspace, jolokia, $scope.row['Name'], function () {
                 console.log("Activated!");
+                populateTable();
             }, function () {
                 console.log("Failed to activate!");
+                populateTable();
             });
         };
         $scope.deactivate = function () {
+            $scope.showDeactivateEventFeedback = true;
+            $timeout(function () {
+                $scope.showDeactivateEventFeedback = false;
+            }, $scope.defaultTimeout);
             Karaf.deactivateComponent(workspace, jolokia, $scope.row['Name'], function () {
                 console.log("Deactivated!");
+                populateTable();
             }, function () {
                 console.log("Failed to deactivate!");
+                populateTable();
             });
         };
     }]);
 })(Karaf || (Karaf = {}));
 var Karaf;
 (function (Karaf) {
-    Karaf.ScrComponentsController = Karaf._module.controller("Karaf.ScrComponentsController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+    Karaf.ScrComponentsController = Karaf._module.controller("Karaf.ScrComponentsController", ["$scope", "$location", "$timeout", "workspace", "jolokia", function ($scope, $location, $timeout, workspace, jolokia) {
         $scope.component = empty();
         $scope.result = [];
         $scope.components = [];
         $scope.selectedComponents = [];
+        $scope.showActivateEventFeedback = false;
+        $scope.showDeactivateEventFeedback = false;
+        $scope.defaultTimeout = 3000;
         $scope.scrOptions = {
             data: 'components',
             showFilter: false,
@@ -36727,6 +36745,10 @@ var Karaf;
             return result;
         };
         $scope.activate = function () {
+            $scope.showActivateEventFeedback = true;
+            $timeout(function () {
+                $scope.showActivateEventFeedback = false;
+            }, $scope.defaultTimeout);
             $scope.selectedComponents.forEach(function (component) {
                 Karaf.activateComponent(workspace, jolokia, component.Name, function () {
                     console.log("Activated!");
@@ -36737,6 +36759,10 @@ var Karaf;
             $scope.selectedComponents.splice(0, $scope.selectedComponents.length);
         };
         $scope.deactivate = function () {
+            $scope.showDeactivateEventFeedback = true;
+            $timeout(function () {
+                $scope.showDeactivateEventFeedback = false;
+            }, $scope.defaultTimeout);
             $scope.selectedComponents.forEach(function (component) {
                 Karaf.deactivateComponent(workspace, jolokia, component.Name, function () {
                     console.log("Deactivated!");
