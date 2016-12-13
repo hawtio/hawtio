@@ -1,5 +1,35 @@
 <div class="controller-section" ng-controller="Osgi.BundlesController">
   <div class="row-fluid">
+    <div ng-show="showStartEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, starting bundles...
+      </div>
+    </div>
+    <div ng-show="showStopEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, stopping bundles...
+      </div>
+    </div>
+    <div ng-show="showRefreshEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, refreshing bundles...
+      </div>
+    </div>
+    <div ng-show="showUpdateEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, updating bundles...
+      </div>
+    </div>
+    <div ng-show="showUninstallEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, uninstalling bundles...
+      </div>
+    </div>
     <div class="pull-left">
 
       <form class="form-inline no-bottom-margin">
