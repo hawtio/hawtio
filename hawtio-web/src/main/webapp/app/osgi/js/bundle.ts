@@ -191,7 +191,7 @@ module Osgi {
               onSuccess(updateTableContents));
     };
 
-    $scope.updatehBundle = (bundleId) => {
+    $scope.updateBundle = (bundleId) => {
       $scope.showUpdateEventFeedback = true;
       $timeout(function () { $scope.showUpdateEventFeedback = false; }, $scope.defaultTimeout);
       jolokia.request([
