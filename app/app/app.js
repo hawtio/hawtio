@@ -38152,7 +38152,7 @@ var Osgi;
                 { type: 'exec', mbean: Osgi.getSelectionFrameworkMBean(workspace), operation: 'stopBundle', arguments: [bundleId] }
             ], onSuccess(updateTableContents));
         };
-        $scope.updatehBundle = function (bundleId) {
+        $scope.updateBundle = function (bundleId) {
             $scope.showUpdateEventFeedback = true;
             $timeout(function () {
                 $scope.showUpdateEventFeedback = false;
