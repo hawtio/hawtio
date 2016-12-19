@@ -159,7 +159,7 @@
 
   <servlet>
     <servlet-name>user</servlet-name>
-    <servlet-class>io.hawt.web.UserServlet</servlet-class>
+    <servlet-class>io.hawt.web.keycloak.KeycloakUserServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>user</servlet-name>
