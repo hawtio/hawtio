@@ -5,7 +5,7 @@ will install node.js & npm into a subdirectory, run `npm install` to install dep
 
 ## Building
 
-After you've cloned hawtio's git repo the first thing you should do is build the whole project. First ```cd``` into the root directory of the hawtio project and run:
+After you've cloned hawtio's git repo the first thing you should do is build the whole project. First `cd` into the root directory of the hawtio project and run:
 
     mvn clean install
 
@@ -36,7 +36,7 @@ Where `yourusernamehere` is your username. This will change the file permissions
 
 ### Troubleshooting
 
-This section should help you to figure out problems that you could discover when you build/compile the `hawtio`or `hawtio-web` module :
+This section should help you to figure out problems that you could discover when you build/compile the `hawtio` or `hawtio-web` module :
 
 1. ERROR : Can not find the binary /usr/local/bin/phantomjs
 If during the build, you get this error message
