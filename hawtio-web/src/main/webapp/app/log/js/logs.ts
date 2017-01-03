@@ -12,6 +12,7 @@ module Log {
     level: string;
     logger: string;
     message: string;
+    sanitizedMessage: string;
   }
 
   _module.controller("Log.LogController", ["$scope", "$rootScope", "$routeParams", "$location", "localStorage", "workspace", "jolokia", "$window", "$document", "$templateCache", ($scope, $rootScope, $routeParams, $location, localStorage, workspace:Workspace, jolokia, $window, $document, $templateCache) => {
@@ -362,7 +363,7 @@ module Log {
         logs.forEach((log:ILog) => {
           if (log) {
             // TODO Why do we compare 'item.seq === log.message' ?
-            log.message = Core.escapeHtml(log.message);
+            log.sanitizedMessage = Core.escapeHtml(log.message);
             if (!$scope.logs.any((key, item:ILog) => item.message === log.message && item.seq === log.message && item.timestamp === log.timestamp)) {
               counter += 1;
               // if there is a seq in the reply, then its the timestamp with milli seconds
