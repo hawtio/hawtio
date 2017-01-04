@@ -8,7 +8,7 @@
 * Upgraded to Camel 2.18.1
 * The Karaf Terminal plugin now works again when using Karaf 4.0.7 or newer.
 
-#### 1.4.67
+#### 1.4.68
 
 * Fixed hawtio-app may not start due two different versions of http-client included.
 
