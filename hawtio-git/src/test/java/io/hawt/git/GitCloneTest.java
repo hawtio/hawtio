@@ -2,7 +2,6 @@ package io.hawt.git;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static io.hawt.git.GitFacadeTest.assertConfigDirectoryExists;
@@ -12,7 +11,6 @@ import static io.hawt.git.GitFacadeTest.createTestGitFacade;
 /**
  * Tests we can clone a remote repo
  */
-@Ignore("Fails on CircleCI with Java 7")
 public class GitCloneTest {
     GitFacade git = createTestGitFacade();
 
