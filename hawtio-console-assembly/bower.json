@@ -25,5 +25,8 @@
   },
   "devDependencies": {
     "hawtio-core-dts": "~2.0.0"
+  },
+  "resolutions": {
+    "hawtio-core": "~2.0.0"
   }
 }
