@@ -10,5 +10,6 @@ mvn jetty:run
 
 To generate the static html try:
 ```
-mvn scalate:sitegen
+mvn compile
+mvn org.scalatra.scalate:maven-scalate-plugin_2.11:sitegen
 ```

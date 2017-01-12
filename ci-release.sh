@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export MAVEN_OPTS="-Xmx986m -XX:MaxPermSize=350m"
+export MAVEN_OPTS="-Xmx986m"
 
 echo ============================================================================
 echo Creating hawtio release: ${release_version}

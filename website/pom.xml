@@ -21,18 +21,9 @@
     <!-- lets use the latest greatest! :) -->
     <hawtio-release-version>${project.version}</hawtio-release-version>
 
-    <scala-version>2.9.0</scala-version>
-<!--
-    TODO lets not use 2.10 scala yet as it seems the 1.6.1 distro of scalate borks the scalate plugin
-    Or at least I've not figured out yet how to run it! :)
-    Wonder if the maven-scalate-plugin_2.10 needs to be called maven-scalate-plugin?
-
-    <scala-version>2.10.0</scala-version>
-    <scala-plugin-version>3.1.2</scala-plugin-version>
-    <scalate-version>1.6.1</scalate-version>
--->
-    <scala-plugin-version>3.0.2</scala-plugin-version>
-    <scalate-version>1.5.3</scalate-version>
+    <scala-version>2.11.8</scala-version>
+    <scala-plugin-version>3.2.2</scala-plugin-version>
+    <scalate-version>1.7.1</scalate-version>
 
     <netbeans.hint.deploy.server>Tomcat60</netbeans.hint.deploy.server>
   </properties>
@@ -48,8 +39,8 @@
     -->
 
     <dependency>
-      <groupId>org.fusesource.scalate</groupId>
-      <artifactId>scalate-page</artifactId>
+      <groupId>org.scalatra.scalate</groupId>
+      <artifactId>scalate-page_2.11</artifactId>
 <!--
       <artifactId>scalate-page_2.10</artifactId>
 -->
@@ -248,14 +239,11 @@
       </plugin>
 
       <plugin>
-        <groupId>org.fusesource.scalate</groupId>
-        <artifactId>maven-scalate-plugin</artifactId>
-<!--
-        <artifactId>maven-scalate-plugin_2.10</artifactId>
--->
+        <groupId>org.scalatra.scalate</groupId>
+        <artifactId>maven-scalate-plugin_2.11</artifactId>
         <version>${scalate-version}</version>
         <configuration>
-          <warSourceDirectory>${basedir}/src</warSourceDirectory>
+          <webappDirectory>${basedir}/src</webappDirectory>
 <!--
           <targetDirectory>${project.build.directory}/site</targetDirectory>
 -->
