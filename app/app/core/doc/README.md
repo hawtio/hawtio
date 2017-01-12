@@ -1,3 +1,6 @@
+![hawtio][logo]
+
+[![CircleCI](https://circleci.com/gh/hawtio/hawtio.svg?style=shield)](https://circleci.com/gh/hawtio/hawtio)
 
 Don't cha wish your console was [hawt like me?](http://www.youtube.com/watch?v=YNSxNsr4wmA) I'm hawt so you can stay cool
 
@@ -28,3 +31,4 @@ We love [contributions](http://hawt.io/contributing/index.html)!
 
 Check out our [huboard](https://huboard.com/hawtio/hawtio#/) for prioritizing issues.
 
+[logo]: http://hawt.io/images/hawtio_logo.svg "hawtio"
