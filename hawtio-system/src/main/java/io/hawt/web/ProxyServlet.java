@@ -8,11 +8,9 @@ import org.apache.http.client.methods.AbortableHttpRequest;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContextBuilder;
-import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
@@ -27,7 +25,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -35,15 +32,10 @@ import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.BitSet;
 import java.util.Enumeration;
 import java.util.Formatter;
-
-/**
- * Original implementation at https://github.com/mitre/HTTP-Proxy-Servlet, released under ASL 2.0.
- */
 
 /**
  * An HTTP reverse proxy/gateway servlet. It is designed to be extended for customization
@@ -57,12 +49,15 @@ import java.util.Formatter;
  * <p>
  * Inspiration: http://httpd.apache.org/docs/2.0/mod/mod_proxy.html
  * </p>
+ * <p>
+ * Original implementation at https://github.com/mitre/HTTP-Proxy-Servlet, released under ASL 2.0.
+ * </p>
  *
  * @author David Smiley dsmiley@mitre.org
  */
 public class ProxyServlet extends HttpServlet {
 
-  /* INIT PARAMETER NAME CONSTANTS */
+    /* INIT PARAMETER NAME CONSTANTS */
 
     /**
      * A boolean parameter name to enable logging of input and target URLs to the servlet log.
@@ -131,12 +126,7 @@ public class ProxyServlet extends HttpServlet {
         if (acceptSelfSignedCerts) {
             try {
                 SSLContextBuilder builder = new SSLContextBuilder();
-                builder.loadTrustMaterial(null, new TrustStrategy() {
-                    @Override
-                    public boolean isTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-                        return true;
-                    }
-                });
+                builder.loadTrustMaterial(null, (X509Certificate[] x509Certificates, String s) -> true);
                 SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
                         builder.build(), SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
                 httpClientBuilder.setSSLSocketFactory(sslsf);
@@ -313,14 +303,6 @@ public class ProxyServlet extends HttpServlet {
             return true;
         }
         return false;
-    }
-
-    protected void closeQuietly(Closeable closeable) {
-        try {
-            closeable.close();
-        } catch (IOException e) {
-            log(e.getMessage(), e);
-        }
     }
 
     /**
