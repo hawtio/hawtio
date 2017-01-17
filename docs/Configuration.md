@@ -394,7 +394,7 @@ The following table contains the various configuration settings for the various 
     </tr>
     <tr>
       <td>hawtio.proxyWhitelist</td>
-      <td><strong>hawtio 1.4.69</strong> - Comma-separated whitelist for target hosts that the remote JVM connect plugin `ProxyServlet` can connect to (default `localhost, 127.0.0.1`). All hosts that are not listed in this whitelist are denied to connect for security reasons.</td>
+      <td><strong>hawtio 1.4.69</strong> - Comma-separated whitelist for target hosts that the remote JVM connect plugin <code>ProxyServlet</code> can connect to (default <code>localhost, 127.0.0.1</code>). All hosts that are not listed in this whitelist are denied to connect for security reasons.</td>
     </tr>
   </tbody>
 </table>
