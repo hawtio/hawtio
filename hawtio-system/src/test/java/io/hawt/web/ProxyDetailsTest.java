@@ -1,10 +1,15 @@
 package io.hawt.web;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -233,5 +238,42 @@ public class ProxyDetailsTest {
         assertEquals("getProxyPath()", "/jolokia//exec/org.apache.camel:context=camel-1,type=context,name=%22camel-1%22/canSendToEndpoint(java.lang.String)/activemq:!/!/queue:newOrder", details.getProxyPath());
         assertEquals("getScheme()", "http", details.getScheme());
         assertEquals("getStringProxyURL()", "http://127.0.0.1:54155/jolokia//exec/org.apache.camel:context=camel-1,type=context,name=%22camel-1%22/canSendToEndpoint(java.lang.String)/activemq:!/!/queue:newOrder?maxDepth=7&maxCollectionSize=5000&ignoreErrors=true&canonicalNaming=false", details.getFullProxyUrl());
+    }
+
+    @Test
+    public void testIsAllowed() throws Exception {
+        HttpServletRequest mockReq = mock(HttpServletRequest.class);
+        when(mockReq.getPathInfo())
+            .thenReturn("/localhost/9000/jolokia/")
+            .thenReturn("/localhost:8181/jolokia/")
+            .thenReturn("/www.myhost.com/jolokia/")
+            .thenReturn("/www.banned.com/jolokia/");
+
+        List<String> whitelist = Arrays.asList("localhost", "www.myhost.com");
+        ProxyDetails details1 = new ProxyDetails(mockReq);
+        ProxyDetails details2 = new ProxyDetails(mockReq);
+        ProxyDetails details3 = new ProxyDetails(mockReq);
+        ProxyDetails details4 = new ProxyDetails(mockReq);
+        assertTrue("localhost/9000", details1.isAllowed(whitelist));
+        assertTrue("localhost:8181", details2.isAllowed(whitelist));
+        assertTrue("www.myhost.com", details3.isAllowed(whitelist));
+        assertFalse("www.banned.com", details4.isAllowed(whitelist));
+    }
+
+    @Test
+    public void testIsAllowedWithAllowAll() throws Exception {
+        HttpServletRequest mockReq = mock(HttpServletRequest.class);
+        when(mockReq.getPathInfo())
+            .thenReturn("/localhost/9000/jolokia/")
+            .thenReturn("/www.myhost.com/jolokia/")
+            .thenReturn("/www.banned.com/jolokia/");
+
+        List<String> whitelist = Arrays.asList("*");
+        ProxyDetails details1 = new ProxyDetails(mockReq);
+        ProxyDetails details2 = new ProxyDetails(mockReq);
+        ProxyDetails details3 = new ProxyDetails(mockReq);
+        assertTrue("localhost", details1.isAllowed(whitelist));
+        assertTrue("www.myhost.com", details2.isAllowed(whitelist));
+        assertTrue("www.banned.com", details3.isAllowed(whitelist));
     }
 }

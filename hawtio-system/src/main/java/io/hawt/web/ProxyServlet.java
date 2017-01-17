@@ -1,5 +1,6 @@
 package io.hawt.web;
 
+import io.hawt.system.Helpers;
 import io.hawt.util.Strings;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.*;
@@ -18,6 +19,8 @@ import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.message.HeaderGroup;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -34,8 +37,10 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Formatter;
+import java.util.List;
 
 /**
  * An HTTP reverse proxy/gateway servlet. It is designed to be extended for customization
@@ -57,11 +62,16 @@ import java.util.Formatter;
  */
 public class ProxyServlet extends HttpServlet {
 
+    private static final transient Logger LOG = LoggerFactory.getLogger(ProxyServlet.class);
+
     /* INIT PARAMETER NAME CONSTANTS */
 
     /**
      * A boolean parameter name to enable logging of input and target URLs to the servlet log.
+     *
+     * @deprecated Use SLF4J {@link Logger}
      */
+    @Deprecated
     public static final String P_LOG = "log";
 
     /**
@@ -70,25 +80,21 @@ public class ProxyServlet extends HttpServlet {
     public static final String P_FORWARDEDFOR = "forwardip";
 
     /**
-     * The parameter name for the target (destination) URI to proxy to.
-     */
-    private static final String P_TARGET_URI = "targetUri";
-
-    /**
      * Whether we accept self-signed SSL certificates
      */
     private static final String PROXY_ACCEPT_SELF_SIGNED_CERTS = "hawtio.proxyDisableCertificateValidation";
     private static final String PROXY_ACCEPT_SELF_SIGNED_CERTS_ENV = "PROXY_DISABLE_CERT_VALIDATION";
+
+    public static final String PROXY_WHITELIST = "proxyWhitelist";
+    public static final String HAWTIO_PROXY_WHITELIST = "hawtio." + PROXY_WHITELIST;
 
     /* MISC */
 
     protected boolean doLog = false;
     protected boolean doForwardIP = true;
     protected boolean acceptSelfSignedCerts = false;
-    /**
-     * User agents shouldn't send the url fragment but what if it does?
-     */
-    protected boolean doSendUrlFragment = true;
+
+    protected List<String> whitelist;
 
     protected CloseableHttpClient proxyClient;
     private CookieStore cookieStore;
@@ -101,6 +107,17 @@ public class ProxyServlet extends HttpServlet {
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         super.init(servletConfig);
+
+        String whitelistStr = servletConfig.getInitParameter(PROXY_WHITELIST);
+        if (System.getProperty(HAWTIO_PROXY_WHITELIST) != null) {
+            whitelistStr = System.getProperty(HAWTIO_PROXY_WHITELIST);
+        }
+        if (Strings.isBlank(whitelistStr)) {
+            whitelist = Collections.emptyList();
+        } else {
+            whitelist = Collections.unmodifiableList(Strings.split(whitelistStr, ","));
+        }
+        LOG.info("Proxy whitelist: {}", whitelist);
 
         String doForwardIPString = servletConfig.getInitParameter(P_FORWARDEDFOR);
         if (doForwardIPString != null) {
@@ -148,6 +165,7 @@ public class ProxyServlet extends HttpServlet {
             proxyClient.close();
         } catch (IOException e) {
             log("While destroying servlet, shutting down httpclient: " + e, e);
+            LOG.error("While destroying servlet, shutting down httpclient: " + e, e);
         }
         super.destroy();
     }
@@ -157,14 +175,19 @@ public class ProxyServlet extends HttpServlet {
             throws ServletException, IOException {
         // Make the Request
         //note: we won't transfer the protocol version because I'm not sure it would truly be compatible
-        ProxyAddress proxyAddress = parseProxyAddress(servletRequest);
-        if (proxyAddress == null || proxyAddress.getFullProxyUrl() == null) {
+        ProxyDetails proxyDetails = parseProxyDetails(servletRequest);
+        if (proxyDetails == null || proxyDetails.getFullProxyUrl() == null) {
             servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        if (!proxyDetails.isAllowed(whitelist)) {
+            LOG.debug("Rejecting {}", proxyDetails);
+            Helpers.doForbidden(servletResponse);
             return;
         }
 
         String method = servletRequest.getMethod();
-        String proxyRequestUri = proxyAddress.getFullProxyUrl();
+        String proxyRequestUri = proxyDetails.getFullProxyUrl();
 
         URI targetUriObj;
         try {
@@ -188,8 +211,8 @@ public class ProxyServlet extends HttpServlet {
 
         copyRequestHeaders(servletRequest, proxyRequest, targetUriObj);
 
-        String username = proxyAddress.getUserName();
-        String password = proxyAddress.getPassword();
+        String username = proxyDetails.getUserName();
+        String password = proxyDetails.getPassword();
 
         if (Strings.isNotBlank(username) && Strings.isNotBlank(password)) {
             String encodedCreds = Base64.encodeBase64String((username + ":" + password).getBytes());
@@ -219,6 +242,7 @@ public class ProxyServlet extends HttpServlet {
             if (doLog) {
                 log("proxy " + method + " uri: " + servletRequest.getRequestURI() + " -- " + proxyRequest.getRequestLine().getUri());
             }
+            LOG.debug("proxy {} uri: {} -- {}", method, servletRequest.getRequestURI(), proxyRequest.getRequestLine().getUri());
             proxyResponse = proxyClient.execute(URIUtils.extractHost(targetUriObj), proxyRequest);
 
             // Process the response
@@ -228,6 +252,7 @@ public class ProxyServlet extends HttpServlet {
                 if (doLog) {
                     log("Authentication Failed on remote server " + proxyRequestUri);
                 }
+                LOG.debug("Authentication Failed on remote server {}", proxyRequestUri);
             } else if (doResponseRedirectOrNotModifiedLogic(servletRequest, servletResponse, proxyResponse, statusCode, targetUriObj)) {
                 //the response is already "committed" now without any body to send
                 //TODO copy response headers?
@@ -268,7 +293,7 @@ public class ProxyServlet extends HttpServlet {
         }
     }
 
-    protected ProxyAddress parseProxyAddress(HttpServletRequest servletRequest) {
+    protected ProxyDetails parseProxyDetails(HttpServletRequest servletRequest) {
         return new ProxyDetails(servletRequest);
     }
 
