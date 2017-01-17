@@ -1,3 +1,4 @@
+
 ## Environment Variables
 
 Using [Docker](http://docker.io/) containers is increasingly common. We now have a [docker container for running hawtio](https://github.com/fabric8io/hawtio-docker) for example.
@@ -69,7 +70,7 @@ By default the security in hawtio uses these system properties when running in A
     <td>
       hawtio.rolePrincipalClasses
     </td>
-    <td>      
+    <td>
     </td>
     <td>
       Principal fully qualified classname(s). Multiple classes can be separated by a comma.  Leave unset or set to an empty value to disable role checking when hawtio authenticates a user.
@@ -96,7 +97,7 @@ By default the security in hawtio uses these system properties when running in A
     <td>
         List of used AuthenticationContainerDiscovery implementations separated by comma. By default there is just TomcatAuthenticationContainerDiscovery, which is used to authenticate users on Tomcat from tomcat-users.xml file. Feel free to remove it if you want to authenticate users on Tomcat from configured jaas login module or feel free to add more classes of your own.
     </td>
-  </tr>    
+  </tr>
   <tr>
     <td>
       hawtio.authenticationContainerTomcatDigestAlgorithm
@@ -107,7 +108,7 @@ By default the security in hawtio uses these system properties when running in A
     <td>
       When using the tomcat tomcat-users.xml file, passwords can be hashed instead of plain text.  Use this to specify the digest algorithm; valid values are NONE MD5 SHA SHA-256 SHA-384 SHA-512.
     </td>
-  </tr>    
+  </tr>
   </tbody>
 </table>
 
@@ -207,7 +208,7 @@ By default the security in hawtio uses these system properties when running in a
     <td>
         List of used AuthenticationContainerDiscovery implementations separated by comma. By default there is just TomcatAuthenticationContainerDiscovery, which is used to authenticate users on Tomcat from tomcat-users.xml file. Feel free to remove it if you want to authenticate users on Tomcat from configured jaas login module or feel free to add more classes of your own.
     </td>
-  </tr>  
+  </tr>
   </tbody>
 </table>
 
@@ -272,7 +273,7 @@ Now create a second file in the same directory called login.conf. This is the lo
     };
 
 Next you have to change the hawtio configuration:
-    
+
 <table class="buttonTable table table-striped">
   <thead>
   <tr>
@@ -355,11 +356,11 @@ The following table contains the various configuration settings for the various 
       <td>hawtio.offline</td>
       <td>Whether to run hawtio in offline mode (default false). When in offline mode, then some plugins is not enabled such as <a href="http://hawt.io/plugins/maven/">Maven</a> and <a href="http://hawt.io/plugins/git/">Git</a>.</td>
     </tr>
-    <tr> 
+    <tr>
       <td>hawtio.dirname</td>
       <td>The directory name for the hawtio home. Is by default <tt>/.hawtio</tt>. This complete home directory for hawtio is the <tt>hawtio.config.dir</tt><tt>hawtio.dirname</tt>, so remember to have leading / in this option. The out of the box options translates as the: <tt>user.home/.hawtio</tt> directory.</td>
     </tr>
-    <tr> 
+    <tr>
       <td>hawtio.config.dir</td>
       <td>The directory on the file system used to keep a copy of the configuration for hawtio; for all user settings, the dashboard configurations, the wiki etc. Typically you will push this configuration to some remote git server (maybe even github itself) so if not specified this directory will be a temporary created directory. However if you are only running one hawtio server then set this somewhere safe and you probably want to back this up!. See also the hawtio.dirname option.</td>
     </tr>
@@ -385,11 +386,15 @@ The following table contains the various configuration settings for the various 
     </tr>
     <tr>
       <td>hawtio.sessionTimeout</td>
-      <td><strong>hawtio 1.2.2</strong> The maximum time interval, in seconds, that the servlet container will keep this session open between client accesses. If this option is not configured, then hawtio uses the default session timeout of the servlet container.</td>
+      <td><strong>hawtio 1.2.2</strong> - The maximum time interval, in seconds, that the servlet container will keep this session open between client accesses. If this option is not configured, then hawtio uses the default session timeout of the servlet container.</td>
     </tr>
     <tr>
       <td>hawtio.activemq.verbose.tree</td>
-      <td><strong>hawtio 1.4.59</strong> Is default <tt>false</tt> to filter out verbose ActiveMQ details from the tree in hawtio. This ensures situations when ActiveMQ will constantly add/remove same set of mbeans for a client connection because the client is not using pooled connections or using XA transactions without caching the consumer. In situations like these ActiveMQ keeps changing the mbeans which would cause the hawtio web console to trigger an update in the tree, which makes using the web console more sluggish. Therefore this is filtered out by default. This option can be set to <tt>true</tt> to restore old behavior.</td>
+      <td><strong>hawtio 1.4.59</strong> - Is default <tt>false</tt> to filter out verbose ActiveMQ details from the tree in hawtio. This ensures situations when ActiveMQ will constantly add/remove same set of mbeans for a client connection because the client is not using pooled connections or using XA transactions without caching the consumer. In situations like these ActiveMQ keeps changing the mbeans which would cause the hawtio web console to trigger an update in the tree, which makes using the web console more sluggish. Therefore this is filtered out by default. This option can be set to <tt>true</tt> to restore old behavior.</td>
+    </tr>
+    <tr>
+      <td>hawtio.proxyWhitelist</td>
+      <td><strong>hawtio 1.4.69</strong> - Comma-separated whitelist for target hosts that the remote JVM connect plugin `ProxyServlet` can connect to (default `localhost, 127.0.0.1`). All hosts that are not listed in this whitelist are denied to connect for security reasons.</td>
     </tr>
   </tbody>
 </table>
