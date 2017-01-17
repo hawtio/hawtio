@@ -104,6 +104,15 @@
 
 <h3 id = "Change_Log">Change Log</h3>
 
+<h4 id = "1_4_69">1.4.69</h4>
+
+<ul>
+<li>Turned <code>ProxyServlet</code> to whitelist-based host selection model for security reasons.
+Now only <code>localhost</code> / <code>127.0.0.1</code> is allowed in the remote JVM connect plugin by default.
+To connect to other hosts you need to add them to whitelist either at <code>proxyWhitelist</code>
+init parameter in <code>web.xml</code> or through <code>hawtio.proxyWhitelist</code> system property.</li>
+</ul>
+
 <h4 id = "1_4_68">1.4.68</h4>
 
 <ul>
@@ -111,11 +120,6 @@
 <li>Fixed an issue whereby many pages where flickering</li>
 <li>Upgraded to Camel 2.18.1</li>
 <li>The Karaf Terminal plugin now works again when using Karaf 4.0.7 or newer.</li>
-</ul>
-
-<h4 id = "1_4_68">1.4.68</h4>
-
-<ul>
 <li>Fixed hawtio-app may not start due two different versions of http-client included.</li>
 </ul>
 
