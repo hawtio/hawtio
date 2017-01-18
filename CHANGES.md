@@ -1,12 +1,15 @@
 
 ### Change Log
 
-#### 1.4.69
+#### 1.5.0
 
+* Hawtio 1.5 requires Java 1.8 onwards
 * Turned `ProxyServlet` to whitelist-based host selection model for security reasons.
   Now only `localhost` / `127.0.0.1` is allowed in the remote JVM connect plugin by default.
   To connect to other hosts you need to add them to whitelist either at `proxyWhitelist`
   init parameter in `web.xml` or through `hawtio.proxyWhitelist` system property.
+
+Hawtio 1.4.x is now in maintenance mode.
 
 #### 1.4.68
 
@@ -14,6 +17,9 @@
 * Fixed an issue whereby many pages where flickering
 * Upgraded to Camel 2.18.1
 * The Karaf Terminal plugin now works again when using Karaf 4.0.7 or newer.
+
+#### 1.4.67
+
 * Fixed hawtio-app may not start due two different versions of http-client included.
 
 #### 1.4.66
