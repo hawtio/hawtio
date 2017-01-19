@@ -140,10 +140,9 @@
 
 <h4 id = "How_do_I_enable_hawtio_inside_my_Java_Application___Spring_Boot___DropWizard___Micro_Service">How do I enable hawtio inside my Java Application / Spring Boot / DropWizard / Micro Service</h4>
 
-<p>The easiest thing to do is add jolokia as a java agent via a java agent command line:
-```
-java -javaagent:jolokia-agent.jar=host=0.0.0.0 -jar foo.jar
-```</p>
+<p>The easiest thing to do is add jolokia as a java agent via a java agent command line:</p>
+
+<pre><code>java -javaagent:jolokia-agent.jar=host=0.0.0.0 -jar foo.jar</code></pre>
 
 <p>Then by default you can connect on http;//localhost:8778/jolokia to access the jolokia REST API.</p>
 
@@ -171,9 +170,9 @@ java -javaagent:jolokia-agent.jar=host=0.0.0.0 -jar foo.jar
 <li><a href="http://jolokia.org/agent/jvm.html">JVM agent</a> if you are using a stand alone Java process</li>
 </ul>
 
-<p>So once you've got a jolokia agent in your JVM you can test it by accessing http://host:port/jolokia in a browser to see if you can view the JSON returned for the version information of the jolokia agent.</p>
+<p>So once you've got a jolokia agent in your JVM you can test it by accessing <code>http://host:port/jolokia</code> in a browser to see if you can view the JSON returned for the version information of the jolokia agent.</p>
 
-<p>Assuming you have jolokia working in your JVM, then you can use the <strong>Remote</strong> tab on the <strong>Connect</strong> menu in hawtio to connect; just enter the host, port, jolokia path and user/password.</p>
+<p>Assuming you have jolokia working in your JVM, then you can use the <strong>Remote</strong> tab on the <strong>Connect</strong> menu in hawtio to connect; just enter the host, port, jolokia path and user/password. Note by default only <code>localhost</code> is accepted to connect for security, so you need to configure <code>hawtio.proxyWhitelist</code> system property or <code>proxyWhitelist</code> init parameter on <code>ProxyServlet</code> in <code>hawtio.war</code>'s <code>WEB-INF/web.xml</code> to explicitly allow hosts that you are connecting to.</p>
 
 <p>After trying the above if you have problems connecting to your JVM, please <a href="http://hawt.io/community/index.html">let us know</a> by <a href="https://github.com/hawtio/hawtio/issues?state=open">raising an issue</a> and we'll try to help.</p>
 
@@ -229,16 +228,15 @@ java -javaagent:jolokia-agent.jar=host=0.0.0.0 -jar foo.jar
 
 <h4 id = "Provider_sun_tools_attach_WindowsAttachProvider_could_not_be_instantiated:_java_lang_UnsatisfiedLinkError:_no_attach_in_java_library_path">Provider sun.tools.attach.WindowsAttachProvider could not be instantiated: java.lang.UnsatisfiedLinkError: no attach in java.library.path</h4>
 
-<p>If you see an error like this:
-```
-java.util.ServiceConfigurationError: com.sun.tools.attach.spi.AttachProvider: Provider sun.tools.attach.WindowsAttachProvider could not be instantiated: java.lang.UnsatisfiedLinkError: no attach in java.library.path
-```
-when starting up or trying the <strong>Connect/Local</strong> tab then its probably related to <a href="http://stackoverflow.com/questions/14027164/fix-the-java-lang-unsatisfiedlinkerror-no-attach-in-java-library-path">this issue</a> as was found on <a href="https://github.com/hawtio/hawtio/issues/718#issuecomment-27677738">#718</a>.</p>
+<p>If you see an error like this:</p>
 
-<p>Basically you need to make sure that you have JAVA_HOME/bin on your path. e.g. try this first before starting hawtio:
-```
-set path=%path%;%JAVA_HOME%\jre\bin
-```</p>
+<pre><code>java.util.ServiceConfigurationError: com.sun.tools.attach.spi.AttachProvider: Provider sun.tools.attach.WindowsAttachProvider could not be instantiated: java.lang.UnsatisfiedLinkError: no attach in java.library.path</code></pre>
+
+<p>when starting up or trying the <strong>Connect/Local</strong> tab then its probably related to <a href="http://stackoverflow.com/questions/14027164/fix-the-java-lang-unsatisfiedlinkerror-no-attach-in-java-library-path">this issue</a> as was found on <a href="https://github.com/hawtio/hawtio/issues/718#issuecomment-27677738">#718</a>.</p>
+
+<p>Basically you need to make sure that you have JAVA_HOME/bin on your path. e.g. try this first before starting hawtio:</p>
+
+<pre><code>set path=%path%;%JAVA_HOME%\jre\bin</code></pre>
 
 <h4 id = "The_Terminal_plugin_in_Karaf_does_not_work">The Terminal plugin in Karaf does not work</h4>
 
