@@ -26,8 +26,9 @@ Here's how to [disable security](https://github.com/hawtio/hawtio/blob/master/do
 
 #### Which Java version is required?
 
-Hawtio 1.4 onwards requires Java 7 or 8. 
-Hawtio 1.3 or older supports Java 6 and 7.
+- Hawtio 1.5 onwards - requires Java 8.
+- Hawtio 1.4 - requires Java 7 or 8. 
+- Hawtio 1.3 or older - supports Java 6 and 7.
 
 #### How do I enable hawtio inside my Java Application / Spring Boot / DropWizard / Micro Service
 
