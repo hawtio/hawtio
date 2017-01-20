@@ -236,7 +236,11 @@ module DataTable {
       };
 
       $scope.isSelected = (row) => {
-        return (row) && config.selectedItems.some(row.entity);
+        return (row) && config.selectedItems.some(s => {
+              var spk = primaryKeyFn(s, s.index);
+              var rpk = primaryKeyFn(row.entity, row.index);
+              return angular.equals(spk, rpk);
+            });
       };
 
       $scope.onRowClicked = (row) => {
