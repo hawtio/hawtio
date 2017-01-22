@@ -122,6 +122,7 @@
     <module>hawtio-default</module>
     <module>hawtio-embedded</module>
     <module>hawtio-app</module>
+    <module>hawtio-wildfly</module>
   </modules>
 
   <build>
