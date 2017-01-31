@@ -8,6 +8,7 @@
   Now only `localhost` / `127.0.0.1` is allowed in the remote JVM connect plugin by default.
   To connect to other hosts you need to add them to whitelist either at `proxyWhitelist`
   init parameter in `web.xml` or through `hawtio.proxyWhitelist` system property.
+* Upgraded to Camel 2.18.2
 
 Hawtio 1.4.x is now in maintenance mode.
 

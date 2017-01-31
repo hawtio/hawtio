@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.18.1';
+var _apacheCamelModelVersion = '2.18.2';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -2437,7 +2437,7 @@ var _apacheCamelModel ={
         "metricsRollingPercentileWindowInMilliseconds": {
           "kind": "attribute",
           "type": "integer",
-          "defaultValue": "false",
+          "defaultValue": "10000",
           "description": "Duration of percentile rolling window in milliseconds. This is passed into HystrixRollingPercentile inside HystrixCommandMetrics.",
           "title": "Metrics Rolling Percentile Window In Milliseconds",
           "required": false,
@@ -10098,6 +10098,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "allowUnmarshallType": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.",
+          "title": "Allow Unmarshall Type",
+          "required": false,
+          "deprecated": false
+        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -10422,6 +10431,15 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from xml/json to Java beans. A permission must be configured either here or globally using a JVM system property. The permission can be specified in a syntax where a plus sign is allow and minus sign is deny. Wildcards is supported by using . as prefix. For example to allow com.foo and all subpackages then specfy com.foo.. Multiple permissions can be configured separated by comma such as com.foo.-com.foo.bar.MySecretBean. The following default permission is always included: -java.lang.java.util. unless its overridden by specifying a JVM system property with they key org.apache.camel.xstream.permissions.",
           "title": "Permissions",
+          "required": false,
+          "deprecated": false
+        },
+        "allowUnmarshallType": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.",
+          "title": "Allow Unmarshall Type",
           "required": false,
           "deprecated": false
         },
@@ -11811,6 +11829,23 @@ var _apacheCamelModel ={
           "defaultValue": "false",
           "description": "Force the emitter to produce a pretty YAML document when using the flow style.",
           "title": "Pretty Flow",
+          "required": false,
+          "deprecated": false
+        },
+        "allowAnyType": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Allow any class to be un-marshaled",
+          "title": "Allow Any Type",
+          "required": false,
+          "deprecated": false
+        },
+        "typeFilter": {
+          "kind": "element",
+          "type": "array",
+          "description": "Set the types SnakeYAML is allowed to un-marshall",
+          "title": "Type Filter",
           "required": false,
           "deprecated": false
         },
