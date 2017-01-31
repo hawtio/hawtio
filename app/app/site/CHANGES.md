@@ -9,6 +9,7 @@
   To connect to other hosts you need to add them to whitelist either at `proxyWhitelist`
   init parameter in `web.xml` or through `hawtio.proxyWhitelist` system property.
 * Upgraded to Camel 2.18.2
+* Upgraded to Spring Boot 1.5.1
 
 Hawtio 1.4.x is now in maintenance mode.
 
