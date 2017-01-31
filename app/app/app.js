@@ -21696,7 +21696,11 @@ var DataTable;
                 return match;
             };
             $scope.isSelected = function (row) {
-                return (row) && config.selectedItems.some(row.entity);
+                return (row) && config.selectedItems.some(function (s) {
+                    var spk = primaryKeyFn(s, s.index);
+                    var rpk = primaryKeyFn(row.entity, row.index);
+                    return angular.equals(spk, rpk);
+                });
             };
             $scope.onRowClicked = function (row) {
                 var id = $scope.config.gridKey;
