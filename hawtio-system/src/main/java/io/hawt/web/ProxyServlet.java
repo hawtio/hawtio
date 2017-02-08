@@ -30,8 +30,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -193,7 +195,9 @@ public class ProxyServlet extends HttpServlet {
         try {
             targetUriObj = new URI(proxyRequestUri);
         } catch (URISyntaxException e) {
-            throw new ServletException(e);
+            LOG.debug("URL '{}' is not valid: {}", proxyRequestUri, e.getMessage());
+            servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
         }
 
         HttpRequest proxyRequest;
@@ -275,14 +279,17 @@ public class ProxyServlet extends HttpServlet {
                 AbortableHttpRequest abortableHttpRequest = (AbortableHttpRequest) proxyRequest;
                 abortableHttpRequest.abort();
             }
-            if (e instanceof RuntimeException)
-                throw (RuntimeException) e;
-            if (e instanceof ServletException)
-                throw (ServletException) e;
-            //noinspection ConstantConditions
-            if (e instanceof IOException)
-                throw (IOException) e;
-            throw new RuntimeException(e);
+            // Exception needs to be suppressed for security reason
+            LOG.debug("Proxy to " + proxyRequestUri + " failed", e);
+            if (e instanceof ConnectException || e instanceof UnknownHostException) {
+                // Target host refused connection or doesn't exist
+                servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } else if (e instanceof ServletException) {
+                // Redirect / Not Modified failed
+                servletResponse.sendError(HttpServletResponse.SC_BAD_GATEWAY, e.getMessage());
+            } else {
+                servletResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            }
 
         } finally {
             // make sure the entire entity was consumed, so the connection is released
