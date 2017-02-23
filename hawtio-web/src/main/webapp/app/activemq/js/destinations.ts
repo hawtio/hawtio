@@ -317,7 +317,7 @@ module ActiveMQ {
         }, true);
 
         $scope.$watch('pagingOptions', function (newVal, oldVal) {
-            if (newVal !== oldVal && newVal.currentPage !== oldVal.currentPage) {
+            if (parseInt(newVal.currentPage) && newVal !== oldVal && newVal.currentPage !== oldVal.currentPage) {
                 $scope.loadTable();
             }
         }, true);
