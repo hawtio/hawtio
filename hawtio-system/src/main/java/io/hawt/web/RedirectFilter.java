@@ -42,7 +42,7 @@ public class RedirectFilter implements Filter {
     }
 
     private void process(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String uri = request.getRequestURI();
+        String uri = request.getPathInfo();
         if (uri.startsWith("/")) {
             uri = uri.substring(1);
         }
