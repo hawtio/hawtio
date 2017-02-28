@@ -79,10 +79,10 @@ public class AuthenticationFilter implements Filter {
 
         // JVM system properties can override always
         if (System.getProperty(HAWTIO_AUTHENTICATION_ENABLED) != null) {
-            configuration.setEnabled(Boolean.getBoolean(System.getProperty(HAWTIO_AUTHENTICATION_ENABLED)));
+            configuration.setEnabled(Boolean.getBoolean(HAWTIO_AUTHENTICATION_ENABLED));
         }
         if (System.getProperty(HAWTIO_NO_CREDENTIALS_401) != null) {
-            configuration.setNoCredentials401(Boolean.getBoolean(System.getProperty(HAWTIO_NO_CREDENTIALS_401)));
+            configuration.setNoCredentials401(Boolean.getBoolean(HAWTIO_NO_CREDENTIALS_401));
         }
         if (System.getProperty(HAWTIO_REALM) != null) {
             configuration.setRealm(System.getProperty(HAWTIO_REALM));
