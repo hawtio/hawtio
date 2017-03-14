@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.18.2';
+var _apacheCamelModelVersion = '2.18.3';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -9729,6 +9729,33 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Sets the quote mode",
           "title": "Quote Mode",
+          "required": false,
+          "deprecated": false
+        },
+        "ignoreHeaderCase": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Sets whether or not to ignore case when accessing header names.",
+          "title": "Ignore Header Case",
+          "required": false,
+          "deprecated": false
+        },
+        "trim": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Sets whether or not to trim leading and trailing blanks.",
+          "title": "Trim",
+          "required": false,
+          "deprecated": false
+        },
+        "trailingDelimiter": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Sets whether or not to add a trailing delimiter.",
+          "title": "Trailing Delimiter",
           "required": false,
           "deprecated": false
         },
