@@ -1,6 +1,11 @@
 
 ### Change Log
 
+#### 1.5.1
+
+* Upgraded to Camel 2.18.3
+* Upgraded to Spring Boot 1.5.2
+
 #### 1.5.0
 
 * Hawtio 1.5 requires Java 1.8 onwards
