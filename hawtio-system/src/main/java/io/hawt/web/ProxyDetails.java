@@ -1,6 +1,6 @@
 package io.hawt.web;
 
-import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
@@ -100,7 +100,7 @@ public class ProxyDetails {
         }
     }
 
-    public boolean isAllowed(List<String> whitelist) {
+    public boolean isAllowed(Set<String> whitelist) {
         if (whitelist.contains("*")) {
             return true;
         }

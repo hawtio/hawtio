@@ -1,6 +1,7 @@
 package io.hawt.web;
 
 import io.hawt.system.Helpers;
+import io.hawt.system.ProxyWhitelist;
 import io.hawt.util.Strings;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.*;
@@ -39,10 +40,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Formatter;
-import java.util.List;
 
 /**
  * An HTTP reverse proxy/gateway servlet. It is designed to be extended for customization
@@ -96,7 +95,7 @@ public class ProxyServlet extends HttpServlet {
     protected boolean doForwardIP = true;
     protected boolean acceptSelfSignedCerts = false;
 
-    protected List<String> whitelist;
+    protected ProxyWhitelist whitelist;
 
     protected CloseableHttpClient proxyClient;
     private CookieStore cookieStore;
@@ -114,12 +113,7 @@ public class ProxyServlet extends HttpServlet {
         if (System.getProperty(HAWTIO_PROXY_WHITELIST) != null) {
             whitelistStr = System.getProperty(HAWTIO_PROXY_WHITELIST);
         }
-        if (Strings.isBlank(whitelistStr)) {
-            whitelist = Collections.emptyList();
-        } else {
-            whitelist = Collections.unmodifiableList(Strings.split(whitelistStr, ","));
-        }
-        LOG.info("Proxy whitelist: {}", whitelist);
+        whitelist = new ProxyWhitelist(whitelistStr);
 
         String doForwardIPString = servletConfig.getInitParameter(P_FORWARDEDFOR);
         if (doForwardIPString != null) {
@@ -182,7 +176,7 @@ public class ProxyServlet extends HttpServlet {
             servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        if (!proxyDetails.isAllowed(whitelist)) {
+        if (!whitelist.isAllowed(proxyDetails)) {
             LOG.debug("Rejecting {}", proxyDetails);
             Helpers.doForbidden(servletResponse);
             return;

@@ -15,6 +15,7 @@
  */
 package io.hawt.web;
 
+import io.hawt.system.JmxHelpers;
 import org.jolokia.config.ConfigKey;
 import org.jolokia.config.Configuration;
 import org.jolokia.restrictor.AllowAllRestrictor;
@@ -92,18 +93,7 @@ public class RBACRestrictor implements Restrictor {
             return;
         }
 
-        ObjectName chosen = null;
-        if (mbeans.size() == 1) {
-            chosen = mbeans.iterator().next();
-        } else if (mbeans.size() > 1) {
-            for (ObjectName mbean : mbeans) {
-                String name = mbean.toString();
-                if (!name.contains("HawtioDummy") && !name.contains("rank=")) {
-                    chosen = mbean;
-                    break;
-                }
-            }
-        }
+        ObjectName chosen = JmxHelpers.chooseMBean(mbeans);
         LOG.info("Using MBean [{}] for role based access control", chosen);
         this.securityMBean = chosen;
     }

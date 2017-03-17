@@ -1,7 +1,8 @@
 package io.hawt.web;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -249,7 +250,7 @@ public class ProxyDetailsTest {
             .thenReturn("/www.myhost.com/jolokia/")
             .thenReturn("/www.banned.com/jolokia/");
 
-        List<String> whitelist = Arrays.asList("localhost", "www.myhost.com");
+        Set<String> whitelist = new HashSet<>(Arrays.asList("localhost", "www.myhost.com"));
         ProxyDetails details1 = new ProxyDetails(mockReq);
         ProxyDetails details2 = new ProxyDetails(mockReq);
         ProxyDetails details3 = new ProxyDetails(mockReq);
@@ -268,7 +269,7 @@ public class ProxyDetailsTest {
             .thenReturn("/www.myhost.com/jolokia/")
             .thenReturn("/www.banned.com/jolokia/");
 
-        List<String> whitelist = Arrays.asList("*");
+        Set<String> whitelist = new HashSet<>(Arrays.asList("*"));
         ProxyDetails details1 = new ProxyDetails(mockReq);
         ProxyDetails details2 = new ProxyDetails(mockReq);
         ProxyDetails details3 = new ProxyDetails(mockReq);
