@@ -12,7 +12,6 @@ module Diagnostics {
 
   export var logoPath = 'img/icons/jvm/';
 
-  export var logoRegistry = {
 
   /**
    * Adds common properties and functions to the scope
@@ -36,19 +35,19 @@ module Diagnostics {
 
     $scope.breadcrumbs = [
       {
-        content: '<i class=" icon-signin"></i> Flight Recorder',
+        content: '<i class="icon-plane"></i> Flight Recorder',
         title: "Make flight recordings",
         isValid: (workspace:Workspace) => true,
         href: "#/diagnostics/jfr"
       },
       {
-        content: '<i class="icon-list-ul"></i> Heap',
+        content: '<i class="icon-hdd"></i> Heap Use',
         title: "See heap use",
         isValid: (workspace:Workspace) => true,
         href: "#/diagnostics/heap"
       },
       {
-        content: '<i class="icon-signin"></i> JVM Flags',
+        content: '<i class="icon-gear"></i> JVM Flags',
         title: "JVM Flags",
         isValid: (workspace:Workspace) => hasHotspotDiagnostic(workspace),
         href: "#/diagnostics/flags"

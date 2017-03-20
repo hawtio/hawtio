@@ -13,17 +13,19 @@ module Diagnostics {
 
   _module.config(["$routeProvider", ($routeProvider) => {
     $routeProvider.
-            when('/diagnostics/jfr', {templateUrl: templatePath + 'discover.html'}).
-            when('/diagnostics/heap', {templateUrl: templatePath + 'connect.html'}).
-            when('/diagnostics/flags', {templateUrl: templatePath + 'local.html'});
+            when('/diagnostics/jfr', {templateUrl: templatePath + 'jfr.html'}).
+            when('/diagnostics/heap', {templateUrl: templatePath + 'heap.html'}).
+            when('/diagnostics/flags', {templateUrl: templatePath + 'flags.html'});
   }]);
 
   _module.constant('mbeanName', 'com.sun.management:type=DiagnosticCommand');
 
-  _module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry", "ConnectOptions", ($location, workspace:Workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry, connectOptions:Core.ConnectOptions) => {
+  _module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry",  ($location, workspace:Workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) => {
 
     viewRegistry[pluginName] = templatePath + 'layoutDiagnostics.html';
     helpRegistry.addUserDoc('jvm', 'app/diagnostics/doc/help.md');
+    
+    Core.addCSS(rootPath + "/css/diagnostics.css");
 
 //    preferencesRegistry.addTab("Connect", 'app/jvm/html/reset.html');
 
@@ -35,7 +37,7 @@ module Diagnostics {
           return workspace.treeContainsDomainAndProperties("com.sun.management")
       },
       href: () => {
-        return '#/jvm/connect';
+        return '#/diagnostics/jfr';
       },
       isActive: (workspace:Workspace) => workspace.isLinkActive("diagnostics")
     });
