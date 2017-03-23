@@ -60,5 +60,16 @@ module Diagnostics {
   export function hasHotspotDiagnostic(workspace) {
     return workspace.treeContainsDomainAndProperties('com.sun.management', {type: 'HotSpotDiagnostic'});
   }
+  
+  export function findMyPid() {
+     //snatch PID from window title
+     var regex=/pid:(\d+)/g;
+     var pid = regex.exec(window.document.title);
+     if(pid) {
+         return pid[1];
+     } else {
+         return null;
+     }
+  }
 
 }
