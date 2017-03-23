@@ -30,6 +30,21 @@ module Jmx {
     var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
     $scope.jolokiaUrl = url + localStorage["url"] + "/exec/" + workspace.getSelectedMBeanName() + "/" + $scope.item.name;
 
+    function initItemArgs() {
+      $scope.item.args.forEach((arg) => {
+        switch (arg.type) {
+          case "boolean":
+            arg.value = false;
+            break;
+          default:
+            arg.value = null;
+        }
+      });
+    }
+
+    // Initialise item args here to make sure it sends the correct number of args to Jolokia
+    initItemArgs();
+
     $scope.item.args.forEach((arg) => {
       $scope.formConfig.properties[arg.name] = {
         type: arg.type,
@@ -73,6 +88,7 @@ module Jmx {
 
 
     $scope.reset = () => {
+      initItemArgs();
       $scope.entity = {};
     };
 
