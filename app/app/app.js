@@ -34992,6 +34992,18 @@ var Jmx;
         };
         var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
         $scope.jolokiaUrl = url + localStorage["url"] + "/exec/" + workspace.getSelectedMBeanName() + "/" + $scope.item.name;
+        function initItemArgs() {
+            $scope.item.args.forEach(function (arg) {
+                switch (arg.type) {
+                    case "boolean":
+                        arg.value = false;
+                        break;
+                    default:
+                        arg.value = null;
+                }
+            });
+        }
+        initItemArgs();
         $scope.item.args.forEach(function (arg) {
             $scope.formConfig.properties[arg.name] = {
                 type: arg.type,
@@ -35025,6 +35037,7 @@ var Jmx;
             $scope.operationResult = '';
         };
         $scope.reset = function () {
+            initItemArgs();
             $scope.entity = {};
         };
         $scope.close = function () {
