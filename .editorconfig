@@ -9,8 +9,5 @@ indent_size = 4
 [*.java]
 indent_size = 4
 
-[*.ts]
-indent_size = 2
-
-[*.xml]
+[*.{ts,xml,html}]
 indent_size = 2
