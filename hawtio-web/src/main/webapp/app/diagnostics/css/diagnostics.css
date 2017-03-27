@@ -124,7 +124,7 @@
   box-sizing: border-box;
   position: absolute;
   top: 50%;
-  left: 37.5%;
+  left: 50%;
   width: 100px;
   height: 100px;
   margin-top: -50px;
@@ -137,6 +137,10 @@
 
 .heapTable {
 	spacing-top: 20px;
+}
+
+.rightAlignedNumber {
+	text-align: right;
 }
 
 

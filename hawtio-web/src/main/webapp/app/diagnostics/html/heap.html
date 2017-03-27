@@ -4,7 +4,8 @@
 		<div class="alert alert-warning alert-dismissable">
 			<a href="" class="close" data-dismiss="alert" aria-label="close">×</a>
 			<strong>Please note:</strong> Retrieving class histogram may be very
-			expensive, depending on the size and layout of the heap.
+			expensive, depending on the size and layout of the heap. 
+			Equivalent JCMD Command line: <code>jcmd {{pid}} GC.class_histogram</code>
 		</div>
 		<button class="btn" ng-click="loadClassStats()">
 			<i class="icon-repeat" ng-disabled="loading"></i>(Re)load class histogram

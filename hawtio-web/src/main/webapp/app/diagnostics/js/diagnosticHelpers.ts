@@ -61,10 +61,10 @@ module Diagnostics {
     return workspace.treeContainsDomainAndProperties('com.sun.management', {type: 'HotSpotDiagnostic'});
   }
   
-  export function findMyPid() {
+  export function findMyPid(title) {
      //snatch PID from window title
      var regex=/pid:(\d+)/g;
-     var pid = regex.exec(window.document.title);
+     var pid = regex.exec(title); 
      if(pid) {
          return pid[1];
      } else {

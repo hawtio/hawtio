@@ -2,8 +2,6 @@
  * @module Diagnostics
  */
 /// <reference path="diagnosticsPlugin.ts"/>
-/// <reference path="../../core/js/coreInterfaces.ts"/>
-/// <reference path="../../core/js/coreHelpers.ts"/>
 /// <reference path="../../forms/js/formInterfaces.ts"/>
 module Diagnostics {
 
@@ -22,10 +20,9 @@ module Diagnostics {
     limitType: string;
     limitValue: string;
     formConfig: Forms.FormConfiguration;
-    newConnection: () => void;
-    deleteConnection: () => void;
-    save: () => void;
-    gotoServer: (options?:Core.ConnectOptions, form?:JQueryStatic, save?:boolean) => void;
+    startRecording: () => void;
+    stopRecording: () => void;
+    dumpRecording: () => void;
   }
 
   export var ConnectController = _module.controller("Diagnostics.JfrController", ["$scope", "$location", "localStorage", "workspace", ($scope:JfrControllerScope, $location:ng.ILocationService, localStorage:WindowLocalStorage, workspace:Core.Workspace) => {
@@ -46,7 +43,6 @@ module Diagnostics {
         name: <Forms.FormElement> {
           type: "java.lang.String",
           tooltip: "Name for this connection",
-          required: false,
           "input-attributes": {
             "placeholder": "Recording name (optional)..."
           }
@@ -54,8 +50,7 @@ module Diagnostics {
         limitType: <Forms.FormElement> {
           type: "java.lang.String",
           tooltip: "Duration if any",
-          enum: ["unlimited", "duration", "size"],
-          required: true
+          enum: ["unlimited", "duration", "size"]
         },
         limitValue: <Forms.FormElement> {
           type: "java.lang.String",
@@ -67,8 +62,7 @@ module Diagnostics {
         },
         compress: <Forms.FormElement> {
           type: "java.lang.Boolean",
-          tooltip: "Compress recording",
-          required: true
+          tooltip: "Compress recording"
         },
         dumpOnExit: <Forms.FormElement> {
           type: "java.lang.Boolean",
@@ -76,8 +70,7 @@ module Diagnostics {
         },
         filename: <Forms.FormElement> {
             type: "java.lang.String",
-            tooltip: "Filename",
-            required: false
+            tooltip: "Filename"
           },
       }
     };

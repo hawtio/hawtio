@@ -1,45 +1,112 @@
 <div ng-controller="Diagnostics.JfrController">
 
-  <div class="row-fluid jfr-column-container" hawtio-auto-columns=".jfr-column">
+	<div class="row-fluid jfr-column-container"
+		hawtio-auto-columns=".jfr-column">
 
-    <div class="jfr-column">
-      <div class="alert alert-info">
-        <p>
-          This page allows you to connect to remote processes which <strong>already have a <a
-                href="http://jolokia.org/">jolokia agent</a> running inside them</strong>. You will need to know the
-          host name, port and path of the jolokia agent to be able to connect.
-        </p>
+		<div class="jfr-column">
+			<div class="alert alert-danger alert-dismissable">
+				<a href="" class="close" data-dismiss="alert" aria-label="close">×</a>
+				<strong>Please note:</strong> Running Java Flight Recorder on
+				production systems requires a <a
+					href="http://www.oracle.com/technetwork/java/javaseproducts/overview/index.html"
+					class="alert-link">license</a>.
+			</div>
+			<div class="casettePlayer">
+				<div class="casette">
+					<svg role="img" aria-label="recording indicator"
+						xmlns="http://www.w3.org/2000/svg" version="1.1"
+						viewBox="0 0 24 24" width="25" height="25" id="recordingIndicator">
+							<circle cx="12" cy="12" r="11" fill="red" ng-show="isRecording">
+								<animate attributeType="XML" attributeName="fill" from="#ff0000"
+							to="#000000" dur="2s" repeatCount="indefinite" />
+							</circle>
+				</svg>
+					<div class="cassetteLabelCutCorners"></div>
+					<div class="casetteLabel">
+						{{jfrStatus}}
+						<div class="notLabel">
+							<div class="wrapCog" ng-class="{'spinning': isRecording}">
+								<svg role="img" aria-label="cassette wheel"
+									xmlns="http://www.w3.org/2000/svg" version="1.1"
+									viewBox="0 0 24 24" width="50" height="50"
+									ng-class="{'spinning': isRecording}" id="leftcog">
+				<circle cx="12" cy="12" r="11" fill="white" />
+				<circle cx="12" cy="12" r="8" fill="black" />
+				<rect x="2" y="10" width="20" height="4" fill="black" stroke="none" />
+				<rect x="2" y="10" width="20" height="4" fill="black" stroke="none"
+										transform="rotate(45,12,12)" />
+				<rect x="2" y="10" width="20" height="4" fill="black" stroke="none"
+										transform="rotate(90,12,12)" />
+				<rect x="2" y="10" width="20" height="4" fill="black" stroke="none"
+										transform="rotate(135,12,12)" />
+				</svg>
+							</div>
+							<div class="wrapCog" ng-class="{'spinning': isRecording}"
+								id="rightCogWrapper">
+								<svg role="img" aria-label="cassette wheel"
+									xmlns="http://www.w3.org/2000/svg" version="1.1"
+									viewBox="0 0 24 24" width="50" height="50"
+									ng-class="{'spinning': isRecording}">
+					<circle cx="12" cy="12" r="11" fill="white" />
+					<circle cx="12" cy="12" r="8" fill="black" />
+					<rect x="2" y="10" width="20" height="4" fill="black" stroke="none" />
+					<rect x="2" y="10" width="20" height="4" fill="black" stroke="none"
+										transform="rotate(45,12,12)" />
+					<rect x="2" y="10" width="20" height="4" fill="black" stroke="none"
+										transform="rotate(90,12,12)" />
+					<rect x="2" y="10" width="20" height="4" fill="black" stroke="none"
+										transform="rotate(135,12,12)" />
+				</svg>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="casetteButtons">
 
-        <p>
-          If the process you wish to connect to does not have a jolokia agent inside, please refer to the <a
-                href="http://jolokia.org/agent.html">jolokia documentation</a> for how to add a JVM, servlet or OSGi
-          based agent inside it.
-        </p>
+					<button class="recorderButton btn"
+						tooltip="Unlock commercial features, command line: jcmd {{pid}} VM.unlock_commercial_features"
+						ng-click="unlock()" ng-disabled="jfrEnabled"
+						ng-class="jfrEnabled ? 'disabled' : 'raisedButton'">
+						<i class="icon-5x"
+							ng-class="jfrEnabled ? 'icon-unlock' : 'icon-lock'"></i>
+					</button>
+					<button class="recorderButton btn" ng-enabled="!isRecording"
+						ng-class="!jfrEnabled || isRecording ? 'disabled' : 'raisedButton'"
+						tooltip="Start recording, command line: jcmd {{pid}} JFR.start"
+						ng-click="startRecording()" ng-disabled="isRecording">
+						<div class="recordingSymbol" id="rec"></div>
+					</button>
+					<button class="recorderButton btn" title="Dump recording to disk"
+						ng-class="jfrEnabled && isRecording ? 'raisedButton' : 'disabled'"
+						ng-disabled="!isRecording"
+						tooltip="Dump {{jfrSettings.name}} to disk, command line: jcmd {{pid}} JFR.dump recording={{recording}} filename={{}}"
+						ng-click="dumpRecording()">
+						<i class="icon-save icon-5x"></i>
+					</button>
+					<button class="recorderButton btn" ng-disabled="!isRecording"
+						ng-class="jfrEnabled && isRecording ? 'raisedButton' : 'disabled'"
+						tooltip="Stop current recording, command line: jcmd {{pid}} JFR.stop recording={{recording}}"
+						ng-click="stopRecording()">
+						<div class="recordingSymbol" id="stop"></div>
+					</button>
+				</div>
+			</div>
+		</div>
 
-        <p>
-          If you are using <a href="http://fabric8.io/">Fabric8</a>, <a href="http://www.jboss.org/products/fuse">JBoss Fuse</a>, or <a href="http://activemq.apache.org">Apache ActiveMQ</a>;
-          then a jolokia agent is included by default (use context path of jolokia agent, usually <code>jolokia</code>, for Apache ActiveMQ the context path is <code>api/jolokia</code>).
-          Or you can always just deploy hawtio inside the process (which includes the jolokia agent, use Jolokia servlet mapping inside hawtio context path, usually <code>hawtio/jolokia</code>).
-          The port number is usually 8181 for <a href="http://fabric8.io/">Fabric8</a>, <a href="http://www.jboss.org/products/fuse">JBoss Fuse</a>, and 8161 when using <a href="http://activemq.apache.org">Apache ActiveMQ</a>.
-        </p>
-
-       
-      </div>
-    </div>
-
-    <div class="jfr-column">
+		<div class="jfr-column">
 
 
-      <dl>
-        <dt>Recorder Settings</dt>
-        <dd>
-          <div simple-form name="connectForm" data="formConfig" entity="jfrSettings" ></div>
+			<dl>
+				<dt>Recorder Settings</dt>
+				<dd>
+					<div simple-form name="connectForm" data="formConfig"
+						entity="jfrSettings"></div>
 
-        </dd>
-      </dl>
+				</dd>
+			</dl>
 
-    </div>
+		</div>
 
-  </div>
+	</div>
 
 </div>

@@ -2,9 +2,10 @@
  * @module Diagnostics
  */
 /// <reference path="./diagnosticsPlugin.ts"/>
+/// <reference path="./diagnosticHelpers.ts"/>
 module Diagnostics {
 
-    _module.controller( "Diagnostics.HeapController", ["$scope", "$window", "$location", "localStorage", "workspace", "jolokia", "mbeanName", ( $scope, $window, $location, localStorage: WindowLocalStorage, workspace, jolokia, mbeanName ) => {
+    _module.controller( "Diagnostics.HeapController", ["$scope", "$window", "$location", "localStorage", "workspace", "jolokia", ( $scope, $window, $location, localStorage: WindowLocalStorage, workspace, jolokia ) => {
 
         Diagnostics.configureScope( $scope, $location, workspace );
         $scope.classHistogram = '';
@@ -13,6 +14,7 @@ module Diagnostics {
         $scope.classes = [{ num: 0, count: 0, bytes: 0, name: 'Click reload to read class histogram' }];
         $scope.loading = false;
         $scope.lastLoaded = 'n/a';
+        $scope.pid = findMyPid($scope.pageTitle);
 
 
         $scope.loadClassStats = () => {
@@ -34,7 +36,6 @@ module Diagnostics {
         };
 
 
-
         function render( response ) {
             $scope.classHistogram = response.value;
             var lines = response.value.split( '\n' );
@@ -47,15 +48,15 @@ module Diagnostics {
                     var className = translateJniName( values[4] );
                     var count = values[2];
                     var bytes = values[3];
-                    var entry = { 
-                            num: values[1], 
-                            count: count, 
-                            bytes: bytes, 
-                            name: className, 
-                            deltaCount: findDelta( $scope.instanceCounts, className, count ), 
-                            deltaBytes: findDelta( $scope.byteCounts, className, bytes ) 
-                            };
-                    
+                    var entry = {
+                        num: values[1],
+                        count: count,
+                        bytes: bytes,
+                        name: className,
+                        deltaCount: findDelta( $scope.instanceCounts, className, count ),
+                        deltaBytes: findDelta( $scope.byteCounts, className, bytes )
+                    };
+
                     parsed.push( entry );
                     classCounts[className] = count;
                     bytesCounts[className] = bytes;
@@ -81,6 +82,10 @@ module Diagnostics {
             }
         }
 
+        function numberColumnTemplate( field ) {
+            return '<div class="rightAlignedNumber ngCellText" title="{{row.entity.' + field + '}}">{{row.entity.' + field + '}}</div>';
+        }
+
         function tableDef() {
             return {
                 selectedItems: [],
@@ -99,63 +104,61 @@ module Diagnostics {
                     {
                         field: 'num',
                         displayName: '#',
-                        resizable: true,
-                        width : 20
                     }, {
                         field: 'count',
-                        displayName: 'Instance count',
-                        resizable: true,
-                        width : 50
+                        displayName: 'Instances',
+                        cellTemplate: numberColumnTemplate('count')
                     }, {
                         field: 'deltaCount',
                         displayName: '>delta',
-                        resizable: true,
-                        width : 35
+                        cellTemplate: numberColumnTemplate('deltaCount')
                     }, {
                         field: 'bytes',
-                        displayName: 'Total bytes',
-                        resizable: true,
-                        width : 50
+                        displayName: 'Bytes',
+                        cellTemplate: numberColumnTemplate('bytes')
                     }, {
                         field: 'deltaBytes',
                         displayName: '>delta',
-                        resizable: true,
-                        width : 35
+                        cellTemplate: numberColumnTemplate('deltaBytes')
                     }, {
                         field: 'name',
-                        displayName: 'Class name',
-                        resizable: true,
-                        width : 300
+                        displayName: 'Class name'
                     }]
             };
 
         }
 
         function translateJniName( name ) {
-            switch ( name.charAt( 0 ) ) {
-                case '[':
-                    return translateJniName( name.substring( 1 ) ) + '[]';
-                case 'L':
-                    return translateJniName( name.substring( 1, name.indexOf( ';' ) ) );
-                case 'I':
-                    return 'int';
-                case 'S':
-                    return 'short';
-                case 'C':
-                    return 'char';
-                case 'Z':
-                    return 'boolean';
-                case 'D':
-                    return 'double';
-                case 'F':
-                    return 'float';
-                case 'J':
-                    return 'long';
-                case 'B':
-                    return 'byte';
-                default:
-                    return name;
+            if ( name.length == 1 ) {
+                switch ( name.charAt( 0 ) ) {
+                    case 'I':
+                        return 'int';
+                    case 'S':
+                        return 'short';
+                    case 'C':
+                        return 'char';
+                    case 'Z':
+                        return 'boolean';
+                    case 'D':
+                        return 'double';
+                    case 'F':
+                        return 'float';
+                    case 'J':
+                        return 'long';
+                    case 'B':
+                        return 'byte';
+                }
+            } else {
+                switch ( name.charAt( 0 ) ) {
+                    case '[':
+                        return translateJniName( name.substring( 1 ) ) + '[]';
+                    case 'L':
+                        return translateJniName( name.substring( 1, name.indexOf( ';' ) ) );
+                    default:
+                        return name;
+                }
             }
+
         }
 
     }] );
