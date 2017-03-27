@@ -1,6 +1,7 @@
 package io.hawt.web;
 
 import io.hawt.system.Helpers;
+import io.hawt.system.ProxyWhitelist;
 import io.hawt.util.Strings;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.*;
@@ -30,17 +31,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Formatter;
-import java.util.List;
 
 /**
  * An HTTP reverse proxy/gateway servlet. It is designed to be extended for customization
@@ -94,7 +95,7 @@ public class ProxyServlet extends HttpServlet {
     protected boolean doForwardIP = true;
     protected boolean acceptSelfSignedCerts = false;
 
-    protected List<String> whitelist;
+    protected ProxyWhitelist whitelist;
 
     protected CloseableHttpClient proxyClient;
     private CookieStore cookieStore;
@@ -112,12 +113,7 @@ public class ProxyServlet extends HttpServlet {
         if (System.getProperty(HAWTIO_PROXY_WHITELIST) != null) {
             whitelistStr = System.getProperty(HAWTIO_PROXY_WHITELIST);
         }
-        if (Strings.isBlank(whitelistStr)) {
-            whitelist = Collections.emptyList();
-        } else {
-            whitelist = Collections.unmodifiableList(Strings.split(whitelistStr, ","));
-        }
-        LOG.info("Proxy whitelist: {}", whitelist);
+        whitelist = new ProxyWhitelist(whitelistStr);
 
         String doForwardIPString = servletConfig.getInitParameter(P_FORWARDEDFOR);
         if (doForwardIPString != null) {
@@ -180,7 +176,7 @@ public class ProxyServlet extends HttpServlet {
             servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        if (!proxyDetails.isAllowed(whitelist)) {
+        if (!whitelist.isAllowed(proxyDetails)) {
             LOG.debug("Rejecting {}", proxyDetails);
             Helpers.doForbidden(servletResponse);
             return;
@@ -193,7 +189,9 @@ public class ProxyServlet extends HttpServlet {
         try {
             targetUriObj = new URI(proxyRequestUri);
         } catch (URISyntaxException e) {
-            throw new ServletException(e);
+            LOG.debug("URL '{}' is not valid: {}", proxyRequestUri, e.getMessage());
+            servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
         }
 
         HttpRequest proxyRequest;
@@ -275,14 +273,17 @@ public class ProxyServlet extends HttpServlet {
                 AbortableHttpRequest abortableHttpRequest = (AbortableHttpRequest) proxyRequest;
                 abortableHttpRequest.abort();
             }
-            if (e instanceof RuntimeException)
-                throw (RuntimeException) e;
-            if (e instanceof ServletException)
-                throw (ServletException) e;
-            //noinspection ConstantConditions
-            if (e instanceof IOException)
-                throw (IOException) e;
-            throw new RuntimeException(e);
+            // Exception needs to be suppressed for security reason
+            LOG.debug("Proxy to " + proxyRequestUri + " failed", e);
+            if (e instanceof ConnectException || e instanceof UnknownHostException) {
+                // Target host refused connection or doesn't exist
+                servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } else if (e instanceof ServletException) {
+                // Redirect / Not Modified failed
+                servletResponse.sendError(HttpServletResponse.SC_BAD_GATEWAY, e.getMessage());
+            } else {
+                servletResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            }
 
         } finally {
             // make sure the entire entity was consumed, so the connection is released

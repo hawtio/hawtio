@@ -1,6 +1,13 @@
 
 ### Change Log
 
+#### 1.5.1
+
+* Proxy whitelist is automatically constructed based on network interfaces for local machine.
+  You can continue to use `hawtio.proxyWhitelist` system properties for further customisation.
+* Upgraded to Camel 2.18.3
+* Upgraded to Spring Boot 1.5.2
+
 #### 1.5.0
 
 * Hawtio 1.5 requires Java 1.8 onwards
@@ -8,6 +15,8 @@
   Now only `localhost` / `127.0.0.1` is allowed in the remote JVM connect plugin by default.
   To connect to other hosts you need to add them to whitelist either at `proxyWhitelist`
   init parameter in `web.xml` or through `hawtio.proxyWhitelist` system property.
+* Upgraded to Camel 2.18.2
+* Upgraded to Spring Boot 1.5.1
 
 Hawtio 1.4.x is now in maintenance mode.
 
