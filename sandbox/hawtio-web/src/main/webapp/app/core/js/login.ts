@@ -19,19 +19,17 @@ module Core {
    * @param localStorage
    * @param branding
    */
-  _module.controller("Core.LoginController", ["$scope", "jolokia", "userDetails", "jolokiaUrl", "workspace", "localStorage", "branding", "keycloakContext", "postLoginTasks", "postLogoutTasks", ($scope, jolokia, userDetails:Core.UserDetails, jolokiaUrl, workspace, localStorage, branding, keycloakContext, postLoginTasks, postLogoutTasks) => {
+  _module.controller("Core.LoginController", ["$scope", "jolokia", "jolokiaStatus", "userDetails", "jolokiaUrl", "workspace", "localStorage", "branding", "keycloakContext", "postLoginTasks", "postLogoutTasks", ($scope, jolokia, jolokiaStatus, userDetails:Core.UserDetails, jolokiaUrl, workspace, localStorage, branding, keycloakContext, postLoginTasks, postLogoutTasks) => {
     jolokia.stop();
 
     $scope.keycloakEnabled = keycloakContext.enabled;
 
-    if ($scope.keycloakEnabled) {
-      keycloakLoginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, keycloakContext, postLogoutTasks);
-    } else {
-      loginController($scope, jolokia, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks);
+    if (!$scope.keycloakEnabled) {
+      loginController($scope, jolokia, jolokiaStatus, userDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks);
     }
   }]);
 
-  var loginController = ($scope, jolokia, userDetails:Core.UserDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) => {
+  var loginController = ($scope, jolokia, jolokiaStatus, userDetails:Core.UserDetails, jolokiaUrl, workspace, localStorage, branding, postLoginTasks) => {
     $scope.userDetails = userDetails;
     $scope.entity = <Core.UserDetails> {
       username: '',
@@ -46,15 +44,6 @@ module Core {
       $scope.entity.password = details.password;
     }
     $scope.branding = branding;
-
-    $scope.$watch('userDetails', (newValue:Core.UserDetails) => {
-      if (newValue.username) {
-        $scope.entity.username = newValue.username;
-      }
-      if (newValue.password) {
-        $scope.entity.password = newValue.password;
-      }
-    }, true);
 
     $scope.$on('$routeChangeStart', function() {
       if ($scope.backstretch) {
@@ -79,6 +68,9 @@ module Core {
               } else {
                 delete localStorage['userDetails'];
               }
+
+              // let's check if we can call faster jolokia.list()
+              Core.checkJolokiaOptimization(jolokia, jolokiaStatus);
 
               jolokia.start();
               workspace.loadTree();

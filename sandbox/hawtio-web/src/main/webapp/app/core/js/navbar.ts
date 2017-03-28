@@ -56,7 +56,10 @@ module Core {
       perspective: null
     };
 
-    $scope.topLevelTabs = () => {
+    // this may immediately need $scope.perspectiveDetails, so we've initialized it above
+    postLoginTasks.addTask('navbarReloadPerspectives', reloadPerspective);
+
+    $scope.getCurrentTopLevelTabs = () => {
       reloadPerspective();
       // TODO transform the top level tabs based on the current perspective
 
@@ -68,8 +71,11 @@ module Core {
       reloadPerspective();
     });
 
-    $scope.$watch('workspace.topLevelTabs', function () {
-      reloadPerspective();
+    $scope.$watch('workspace.topLevelTabs', function (newValue, oldValue) {
+      if (newValue) {
+        // newValue === undefined on initial call - we don't want to reload perspective in this case
+        reloadPerspective();
+      }
     });
 
     $scope.validSelection = (uri) => workspace.validSelection(uri);
@@ -207,7 +213,7 @@ module Core {
     };
 
     $scope.activeLink = () => {
-      var tabs = $scope.topLevelTabs();
+      var tabs = $scope.getCurrentTopLevelTabs();
       if (!tabs) {
         return "Loading...";
       }
@@ -221,7 +227,7 @@ module Core {
 
     $scope.isCustomLinkSet = () => {
       return $scope.navBarViewCustomLinks.list.length;
-    }
+    };
 
     function reloadPerspective() {
       var perspectives = Perspective.getPerspectives($location, workspace, jolokia, localStorage);

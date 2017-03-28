@@ -5,7 +5,7 @@ will install node.js & npm into a subdirectory, run `npm install` to install dep
 
 ## Building
 
-After you've cloned hawtio's git repo the first thing you should do is build the whole project.  First ```cd``` into the root directory of the hawtio project and run:
+After you've cloned hawtio's git repo the first thing you should do is build the whole project. First `cd` into the root directory of the hawtio project and run:
 
     mvn clean install
 
@@ -34,9 +34,9 @@ In case you get any building error of `hawtio-web`, then it may be due permissio
 
 Where `yourusernamehere` is your username. This will change the file permissions of the node files so you can build the project. After this try building the hawtio source code again.
 
-### Troubleshooting 
+### Troubleshooting
 
-This section should help you to figure out problems that you could discover when you build/compile the `hawtio`or `hawtio-web` module :
+This section should help you to figure out problems that you could discover when you build/compile the `hawtio` or `hawtio-web` module :
 
 1. ERROR : Can not find the binary /usr/local/bin/phantomjs
 If during the build, you get this error message
@@ -111,7 +111,7 @@ I spotted a handy tip on [this issue](http://youtrack.jetbrains.com/issue/IDEA-7
 
 ## Adding additional Javascript dependencies
 
-Hawtio is (finally) adopting [bower](http://bower.io/) for managing dependencies, these are automatically pulled in when building the project.  It's now really easy to add third-party Javascript/CSS stuff to hawtio:
+Hawtio is (finally) adopting [bower](http://bower.io/) for managing dependencies, these are automatically pulled in when building the project. It's now really easy to add third-party Javascript/CSS stuff to hawtio:
 
 * cd into 'hawtio-web', and build it
 * source 'setenv.sh' to add bower to your PATH (it's under node_modules) if you haven't installed it globally
@@ -119,7 +119,7 @@ Hawtio is (finally) adopting [bower](http://bower.io/) for managing dependencies
 * run 'grunt bower wiredep' to update index.html
 * commit the change to bower.json and index.html
 
-When running in development mode be sure you've run 'grunt bower' if you see 404 errors for the bower package you've installed.  This is normally done for you when running 'mvn clean install'
+When running in development mode be sure you've run 'grunt bower' if you see 404 errors for the bower package you've installed. This is normally done for you when running 'mvn clean install'
 
 ## Using LiveReload
 
@@ -129,16 +129,16 @@ The easiest method to run with LiveReload support is to cd into the "hawtio-web"
 
 mvn test-compile exec:java
 
-The sample server runs an embedded LiveReload server that's all set up to look at src/main/webapp for file changes.  If you don't want to load all of the sample apps because you're connecting to another JVM you don't have to:
+The sample server runs an embedded LiveReload server that's all set up to look at src/main/webapp for file changes. If you don't want to load all of the sample apps because you're connecting to another JVM you don't have to:
 
 mvn test-compile exec:java -DloadApps=false
 
 
-The Live Reload server implementation is provided by [livereload-jvm](https://github.com/davidB/livereload-jvm).  When using other methods run run hawtio like "mvn jetty:run" or "mvn tomcat:run" you can run [livereload-jvm](https://github.com/davidB/livereload-jvm) directly, for example from the hawtio-web directory:
+The Live Reload server implementation is provided by [livereload-jvm](https://github.com/davidB/livereload-jvm). When using other methods to run hawtio, like "mvn jetty:run" or "mvn tomcat:run", you can run [livereload-jvm](https://github.com/davidB/livereload-jvm) directly, for example from the hawtio-web directory:
 
     java -jar livereload-jvm-0.2.0-SNAPSHOT-onejar.jar -d src/main/webapp/ -e .*\.ts$
 
-Install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar).  There is also a LiveReload plugin for Firefox, you can get it straight from the [LiveReload site](http://livereload.com).
+Install the [LiveReload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei) plugin for Chrome and then enable it for the website (click the live reload icon on the right of the address bar). There is also a LiveReload plugin for Firefox, you can get it straight from the [LiveReload site](http://livereload.com).
 
 
 In another shell (as mentioned above in the "Incrementally compile TypeScript" section you probably want to auto-recompile all the TypeScript files into app.js in *another shell* via this command:

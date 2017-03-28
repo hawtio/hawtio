@@ -68,6 +68,7 @@ module Camel {
   export var endpointToCategory = {};
 
   export var endpointIcon = "/img/icons/camel/endpoint24.png";
+
   /**
    *  specify custom label & icon properties for endpoint names
    * @property
@@ -75,32 +76,113 @@ module Camel {
    * @type {ObjecT}
    */
   export var endpointConfigurations = {
-    drools: {
-      icon: "/img/icons/camel/endpointQueue24.png"
+    activemq: {
+      icon: "/img/icons/camel/endpoints/activemq24.png"
     },
-    quartz: {
-      icon: "/img/icons/camel/endpointTimer24.png"
+    atom: {
+      icon: "/img/icons/camel/endpoints/atom24.png"
+    },
+    bean: {
+      icon: "/img/icons/camel/endpoints/bean24.png"
+    },
+    cxf: {
+      icon: "/img/icons/camel/endpoints/cxf24.png"
+    },
+    cxfrs: {
+      icon: "/img/icons/camel/endpoints/cxfrs24.png"
+    },
+    ejb: {
+      icon: "/img/icons/camel/endpoints/ejb24.png"
     },
     facebook: {
       icon: "/img/icons/camel/endpoints/facebook24.jpg"
+    },
+    file: {
+      icon: "/img/icons/camel/endpoints/file24.png"
+    },
+    ftp: {
+      icon: "/img/icons/camel/endpoints/ftp24.png"
+    },
+    ftps: {
+      icon: "/img/icons/camel/endpoints/ftps24.png"
+    },
+    imap: {
+      icon: "/img/icons/camel/endpoints/imap24.png"
+    },
+    imaps: {
+      icon: "/img/icons/camel/endpoints/imaps24.png"
+    },
+    jdbc: {
+      icon: "/img/icons/camel/endpoints/jdbc24.png"
+    },
+    jms: {
+      icon: "/img/icons/camel/endpoints/jms24.png"
+    },
+    language: {
+      icon: "/img/icons/camel/endpoints/language24.png"
+    },
+    linkedin: {
+      icon: "/img/icons/camel/endpoints/linkedin24.png"
+    },
+    log: {
+      icon: "/img/icons/camel/endpoints/log24.png"
+    },
+    mqtt: {
+      icon: "/img/icons/camel/endpoints/mqtt24.png"
+    },
+    pop3: {
+      icon: "/img/icons/camel/endpoints/pop324.png"
+    },
+    pop3s: {
+      icon: "/img/icons/camel/endpoints/pop3s24.png"
+    },
+    quartz: {
+      icon: "/img/icons/camel/endpoints/quartz24.png"
+    },
+    quartz2: {
+      icon: "/img/icons/camel/endpoints/quartz224.png"
+    },
+    rss: {
+      icon: "/img/icons/camel/endpoints/rss24.png"
     },
     salesforce: {
       icon: "/img/icons/camel/endpoints/salesForce24.png"
     },
     sap: {
-      icon: "/img/icons/camel/endpoints/SAPe24.png"
+      icon: "/img/icons/camel/endpoints/SAP24.png"
     },
     "sap-netweaver": {
       icon: "/img/icons/camel/endpoints/SAPNetweaver24.jpg"
     },
+    servlet: {
+      icon: "/img/icons/camel/endpoints/servlet24.png"
+    },
+    sftp: {
+      icon: "/img/icons/camel/endpoints/sftp24.png"
+    },
+    smtp: {
+      icon: "/img/icons/camel/endpoints/smtp24.png"
+    },
+    smtps: {
+      icon: "/img/icons/camel/endpoints/smtps24.png"
+    },
+    snmp: {
+      icon: "/img/icons/camel/endpoints/snmp24.png"
+    },
+    sql: {
+      icon: "/img/icons/camel/endpoints/sql24.png"
+    },
     timer: {
-      icon: "/img/icons/camel/endpointTimer24.png"
+      icon: "/img/icons/camel/endpoints/timer24.png"
     },
     twitter: {
       icon: "/img/icons/camel/endpoints/twitter24.png"
     },
     weather: {
       icon: "/img/icons/camel/endpoints/weather24.jpg"
+    },
+    xslt: {
+      icon: "/img/icons/camel/endpoints/xslt24.jpg"
     }
   };
 
@@ -258,13 +340,7 @@ module Camel {
       $scope.componentNames = null;
       var mbean = findCamelContextMBean();
       if (mbean) {
-        //$scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, silentOptions));
         $scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, {silent: true}));
-/*
-        $scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, {error: function (response) {
-          console.log("FAILED: " + response);
-        }}));
-*/
       } else {
         console.log("WARNING: No camel context mbean so cannot load component names");
       }
@@ -316,12 +392,14 @@ module Camel {
     function findCamelContextMBean() {
       var profileWorkspace = $scope.profileWorkspace;
       if (!profileWorkspace) {
-        var removeJolokia = $scope.jolokia;
-        if (removeJolokia) {
-          profileWorkspace = Core.createRemoteWorkspace(removeJolokia, $location, localStorage);
+        var remoteJolokia = $scope.jolokia;
+        if (remoteJolokia) {
+          profileWorkspace = Core.createRemoteWorkspace(remoteJolokia, workspace.jolokiaStatus, $location, localStorage);
           $scope.profileWorkspace = profileWorkspace;
         }
       }
+
+      var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
       if (!profileWorkspace) {
         log.info("No profileWorkspace found so defaulting it to workspace for now");
         profileWorkspace = workspace;
@@ -340,7 +418,7 @@ module Camel {
               " selectedCamelContextId: " + selectedCamelContextId +
               " selectedRouteId: " + selectedRouteId);
 
-      var contextsById = Camel.camelContextMBeansById(profileWorkspace);
+      var contextsById = Camel.camelContextMBeansById(profileWorkspace, camelJmxDomain);
       if (selectedCamelContextId) {
         var mbean = Core.pathGet(contextsById, [selectedCamelContextId, "mbean"]);
         if (mbean) {
@@ -348,14 +426,14 @@ module Camel {
         }
       }
       if (selectedRouteId) {
-        var map = Camel.camelContextMBeansByRouteId(profileWorkspace);
+        var map = Camel.camelContextMBeansByRouteId(profileWorkspace, camelJmxDomain);
         var mbean = Core.pathGet(map, [selectedRouteId, "mbean"]);
         if (mbean) {
           return mbean;
         }
       }
       if (componentName) {
-        var map = Camel.camelContextMBeansByComponentName(profileWorkspace);
+        var map = Camel.camelContextMBeansByComponentName(profileWorkspace, camelJmxDomain);
         var mbean = Core.pathGet(map, [componentName, "mbean"]);
         if (mbean) {
           return mbean;

@@ -2,6 +2,7 @@
 module Camel {
   _module.controller("Camel.EndpointController", ["$scope", "$location", "localStorage", "workspace", "jolokia", ($scope, $location, localStorage:WindowLocalStorage, workspace:Workspace, jolokia) => {
     Camel.initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia);
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     $scope.workspace = workspace;
     $scope.message = "";
@@ -9,9 +10,9 @@ module Camel {
     $scope.createEndpoint = (name) => {
       var jolokia = workspace.jolokia;
       if (jolokia) {
-        var mbean = getSelectionCamelContextMBean(workspace);
+        var mbean = getSelectionCamelContextMBean(workspace, camelJmxDomain);
         if (mbean) {
-          $scope.message = "Creating endpoint " + name;
+          $scope.message = name;
           var operation = "createEndpoint(java.lang.String)";
           jolokia.execute(mbean, operation, name, onSuccess(operationSuccess));
         } else {
@@ -56,11 +57,16 @@ module Camel {
       }
     };
 
-    function operationSuccess() {
+    function operationSuccess(endpointCreated) {
       $scope.endpointName = "";
       $scope.workspace.operationCounter += 1;
       Core.$apply($scope);
-      Core.notification("success", $scope.message);
+
+      if (endpointCreated && endpointCreated === true) {
+        Core.notification('success', "Creating endpoint " + $scope.message);
+      } else {
+        Core.notification('error', "Failed to create endpoint " + $scope.message);
+      }
     }
 
     function deleteSuccess() {

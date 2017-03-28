@@ -46,12 +46,12 @@ public class Authenticator {
 
         if (authType.equalsIgnoreCase(AUTHENTICATION_SCHEME_BASIC)) {
             String decoded = new String(Base64.decodeBase64(authInfo));
-            parts = decoded.split(":");
-            if (parts.length != 2) {
+            int delimiter = decoded.indexOf(':');
+            if(delimiter<0){
                 return;
             }
-            String user = parts[0];
-            String password = parts[1];
+            String user = decoded.substring(0,delimiter);
+            String password = decoded.substring(delimiter+1);
             cb.getAuthInfo(user, password);
         }
     }
@@ -224,10 +224,14 @@ public class Authenticator {
                         for (Object group : groups) {
                             LOG.debug("Matching IBM Websphere group name {} to required role {}", group, role);
 
-                            if (role.equals(group.toString())) {
-                                LOG.debug("Required role {} found in IBM specific credentials", role);
-                                found = true;
-                                break;
+                            String[] roleArray = role.split(",");
+                            for (String r : roleArray) {
+                                if (r.equals(group.toString())) {
+                                    LOG.debug("Required role {} found in IBM WebSphere specific credentials", r);
+                                    return true;
+                                } else {
+                                    LOG.debug("role {} doesn't match {}, continuing", r, group.toString());
+                                }
                             }
                         }
                     } else {

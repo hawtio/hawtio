@@ -17,7 +17,8 @@ module Fabric {
 
     // is it possible to delete selected containers? no, if deletion of container didn't complete
     $scope.showDeleteButton = () => {
-      return $scope.selectedContainers.length > 0 && $scope.selectedContainers.all((c) => { return !$scope.deletePending[c.id] && !c.root});
+      return $scope.selectedContainers.length > 0 && $scope.selectedContainers.all((c) =>
+          { return !$scope.deletePending[c.id] && !(c.root && $scope.ensembleContainerIds.includes(c.id))});
     };
 
     $scope.addToDashboardLink = () => {
@@ -41,6 +42,12 @@ module Fabric {
         if ($scope.selectedContainers.length > 0) {
           $scope.activeContainerId = '';
         }
+
+        $scope.containers.forEach((container) => {
+          if (Core.isBlank(container.location)) {
+            container.location = ContainerHelpers.NO_LOCATION;
+          }
+        });
       }
     }, true);
   }]);

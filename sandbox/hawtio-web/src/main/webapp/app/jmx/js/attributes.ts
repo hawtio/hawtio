@@ -35,7 +35,7 @@ module Jmx {
                                        jmxWidgetTypes,
                                        $templateCache,
                                        localStorage,
-                                        $browser) => {
+                                       $browser) => {
     $scope.searchText = '';
     $scope.nid = 'empty';
     $scope.selectedItems = [];
@@ -46,7 +46,7 @@ module Jmx {
     $scope.entity = {};
     $scope.attributeSchema = {};
     $scope.gridData = [];
-    $scope.attributes = ""
+    $scope.attributes = "";
 
     $scope.$watch('gridData.length', (newValue, oldValue) => {
       if (newValue !== oldValue) {
@@ -130,7 +130,25 @@ module Jmx {
       $scope.nid = $location.search()['nid'];
       log.debug("nid: ", $scope.nid);
 
-      setTimeout(updateTableContents, 50);
+      pendingUpdate = setTimeout(updateTableContents, 50);
+    });
+
+    $scope.$on('jmxTreeUpdated', function () {
+      Core.unregister(jolokia, $scope);
+      if (pendingUpdate) {
+        clearTimeout(pendingUpdate);
+      }
+      pendingUpdate = setTimeout(updateTableContents, 500);
+    });
+
+    var pendingUpdate = null;
+
+    $scope.$watch('gridOptions.filterOptions.filterText', (newValue, oldValue) => {
+      Core.unregister(jolokia, $scope);
+      if (pendingUpdate) {
+        clearTimeout(pendingUpdate);
+      }
+      pendingUpdate = setTimeout(updateTableContents, 500);
     });
 
     $scope.$watch('workspace.selection', function () {
@@ -138,12 +156,13 @@ module Jmx {
         Core.unregister(jolokia, $scope);
         return;
       }
-      setTimeout(() => {
+      if (pendingUpdate) {
+        clearTimeout(pendingUpdate);
+      }
+      pendingUpdate = setTimeout(() => {
         $scope.gridData = [];
         Core.$apply($scope);
-        setTimeout(() => {
-          updateTableContents();
-        }, 10);
+        setTimeout(updateTableContents, 10);
       }, 10);
     });
 
@@ -154,7 +173,7 @@ module Jmx {
     $scope.onCancelAttribute = () => {
       // clear entity
       $scope.entity = {};
-    }
+    };
 
     $scope.onUpdateAttribute = () => {
       var value = $scope.entity["attrValueEdit"];
@@ -223,7 +242,7 @@ module Jmx {
           tooltip: 'Attribute value',
           type: 'string',
           formTemplate: "<textarea class='input-xlarge' rows='" + rows + "' readonly='true'></textarea>"
-        }
+        };
         // just to be safe, then delete not needed part of the schema
         if ($scope.attributeSchemaView) {
           delete $scope.attributeSchemaView.properties.attrValueEdit;
@@ -250,7 +269,7 @@ module Jmx {
           tooltip: 'Attribute value',
           type: 'string',
           formTemplate: "<textarea class='input-xlarge' rows='" + rows + "'></textarea>"
-        }
+        };
         // just to be safe, then delete not needed part of the schema
         if ($scope.attributeSchemaEdit) {
           delete $scope.attributeSchemaEdit.properties.attrValueView;
@@ -258,7 +277,7 @@ module Jmx {
       }
 
       $scope.showAttributeDialog = true;
-    }
+    };
 
     $scope.getDashboardWidgets = (row) => {
       var mbean = workspace.getSelectedMBeanName();
@@ -283,7 +302,7 @@ module Jmx {
 
       row.addChartToDashboard = (type) => {
         $scope.addChartToDashboard(row, type);
-      }
+      };
 
       var rc = [];
       potentialCandidates.forEach((widget) => {
@@ -449,7 +468,9 @@ module Jmx {
         var children = node.children;
         if (children) {
           var childNodes = children.map((child) => child.objectName);
-          var mbeans = childNodes.filter((mbean) => mbean);
+          var mbeans = childNodes.filter((mbean) => FilterHelpers.search(mbean, $scope.gridOptions.filterOptions.filterText));
+          var maxFolderSize = localStorage["jmxMaxFolderSize"];
+          mbeans = mbeans.slice(0, maxFolderSize);
           if (mbeans) {
             var typeNames = Jmx.getUniqueTypeNames(children);
             if (typeNames.length <= 1) {
@@ -515,7 +536,10 @@ module Jmx {
 
             if (!$scope.gridOptions.columnDefs.length) {
               // lets update the column definitions based on any configured defaults
+
               var key = workspace.selectionConfigKey();
+              $scope.gridOptions.gridKey = key;
+              $scope.gridOptions.onClickRowHandlers = workspace.onClickRowHandlers;
               var defaultDefs = workspace.attributeColumnDefs[key] || [];
               var defaultSize = defaultDefs.length;
               var map = {};
@@ -552,12 +576,18 @@ module Jmx {
               });
               extraDefs.forEach(e => {
                 defaultDefs.push(e);
-              })
+              });
 
               $scope.gridOptions.columnDefs = defaultDefs;
               $scope.gridOptions.enableRowClickSelection = true;
             }
           }
+          // mask attribute read error
+          angular.forEach(data, (value, key) => {
+            if (includePropertyValue(key, value)) {
+              data[key] = maskReadError(value);
+            }
+          });
           // assume 1 row of data per mbean
           $scope.gridData[idx] = data;
           addHandlerFunctions($scope.gridData);
@@ -598,7 +628,11 @@ module Jmx {
                 }
                 // the value must be string as the sorting/filtering of the table relies on that
                 var type = lookupAttributeType(key);
-                var data = {key: key, name: Core.humanizeValue(key), value: safeNullAsString(value, type)};
+                var data = {
+                  key: key,
+                  name: Core.humanizeValue(key),
+                  value: maskReadError(safeNullAsString(value, type))
+                };
 
                 generateSummaryAndDetail(key, data);
                 properties.push(data);
@@ -626,6 +660,21 @@ module Jmx {
       }
     }
 
+    function maskReadError(value) {
+      if (typeof value !== 'string') {
+        return value;
+      }
+      var forbidden = /^ERROR: Reading attribute .+ \(class java\.lang\.SecurityException\)$/;
+      var unsupported = /^ERROR: java\.lang\.UnsupportedOperationException: .+ \(class javax\.management\.RuntimeMBeanException\)$/;
+      if (value.match(forbidden)) {
+        return "**********";
+      } else if (value.match(unsupported)) {
+        return "(Not supported)";
+      } else {
+        return value;
+      }
+    }
+
     function addHandlerFunctions(data) {
       data.forEach((item) => {
         item['inDashboard'] = $scope.inDashboard;
@@ -636,7 +685,7 @@ module Jmx {
           $scope.onViewAttribute(item);
         };
         item['folderIconClass'] = (row) => {
-          return $scope.folderIconClass(row);            
+          return $scope.folderIconClass(row);
         };
         item['folderHref'] = (row) => {
           return $scope.folderHref(row);

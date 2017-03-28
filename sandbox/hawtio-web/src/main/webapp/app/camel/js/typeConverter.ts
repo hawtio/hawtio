@@ -1,7 +1,8 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.TypeConverterController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
+  _module.controller("Camel.TypeConverterController", ["$scope", "$location", "$timeout", "workspace", "jolokia", "localStorage", ($scope, $location, $timeout, workspace:Workspace, jolokia, localStorage) => {
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     $scope.workspace = workspace;
 
@@ -9,6 +10,9 @@ module Camel {
     $scope.selectedMBean = null;
 
     $scope.mbeanAttributes = {};
+    $scope.enableTypeConvertersStats = false;
+    $scope.disableTypeConvertersStats = false;
+    $scope.defaultTimeout = 3000;
 
     var columnDefs:any[] = [
       {
@@ -78,15 +82,19 @@ module Camel {
     }
 
     $scope.disableStatistics = () => {
+      $scope.disableTypeConvertersStats = true;
       if ($scope.selectedMBean) {
         jolokia.setAttribute($scope.selectedMBean, "StatisticsEnabled", false);
       }
+      $timeout(function () { $scope.disableTypeConvertersStats = false; }, $scope.defaultTimeout);
     }
 
     $scope.enableStatistics = () => {
+      $scope.enableTypeConvertersStats = true;
       if ($scope.selectedMBean) {
         jolokia.setAttribute($scope.selectedMBean, "StatisticsEnabled", true);
       }
+      $timeout(function () { $scope.enableTypeConvertersStats = false; }, $scope.defaultTimeout);
     }
 
     $scope.resetStatistics = () => {
@@ -97,7 +105,7 @@ module Camel {
 
     function loadConverters() {
       console.log("Loading TypeConverter data...");
-      var mbean = getSelectionCamelTypeConverter(workspace);
+      var mbean = getSelectionCamelTypeConverter(workspace, camelJmxDomain);
       if (mbean) {
         // grab attributes in real time
         var query = {type: "read", mbean: mbean,

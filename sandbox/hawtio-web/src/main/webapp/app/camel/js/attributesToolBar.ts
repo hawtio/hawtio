@@ -1,7 +1,11 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.AttributesToolBarController", ["$scope", "workspace", "jolokia", ($scope, workspace:Workspace, jolokia) => {
+  _module.controller("Camel.AttributesToolBarController", ["$scope", "workspace", "jolokia", "localStorage", ($scope, workspace:Workspace, jolokia, localStorage) => {
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
+
+    $scope.camelContextMBean = getSelectionCamelContextMBean(workspace, camelJmxDomain);
+    $scope.routeMBean = searchRouteMBean();
 
     $scope.deleteDialog = false
 
@@ -20,6 +24,7 @@ module Camel {
         // lets navigate to the parent folder!
         // as this will be going way
         workspace.removeAndSelectParentNode();
+        Core.$apply($scope);
       });
     };
 
@@ -29,7 +34,9 @@ module Camel {
     $scope.delete = () => {
       $scope.invokeSelectedMBeans("remove()", () => {
         // force a reload of the tree
-        $scope.workspace.operationCounter += 1;
+        if ($scope.workspace) {
+          $scope.workspace.operationCounter += 1;
+        }
         Core.$apply($scope);
       });
     };
@@ -43,5 +50,22 @@ module Camel {
       var selected = $scope.selectedItems || [];
       return selected.length && selected.every((s) => isState(s, state));
     };
+
+    function searchRouteMBean() {
+      var routeId = getSelectedRouteId(workspace);
+      if (!routeId) {
+        // parent may have the route
+        routeId = getSelectedRouteId(workspace, workspace.selection.parent);
+      }
+      if (!routeId) {
+        // forces selecting one route so that RBAC can be determined
+        var children = workspace.selection.children;
+        if (children && children.length > 0) {
+          routeId = getSelectedRouteId(workspace, children[0])
+        }
+      }
+      return getSelectionRouteMBean(workspace, routeId, camelJmxDomain);
+    }
   }]);
+
 }

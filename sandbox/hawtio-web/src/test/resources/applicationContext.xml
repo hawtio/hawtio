@@ -64,6 +64,7 @@
   -->
   <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
     <property name="brokerURL" value="failover:tcp://localhost:31316"/>
+    <property name="username" value="admin"/>
     <property name="userName" value="admin"/>
     <property name="password" value="admin"/>
     <property name="preserveMessageQos" value="true"/>
@@ -80,10 +81,6 @@
   <!-- use camel-metrics route policy to gather metrics for all routes -->
   <bean id="metricsRoutePolicyFactory" class="org.apache.camel.component.metrics.routepolicy.MetricsRoutePolicyFactory"/>
 
-  <!-- TODO: require Camel 2.17 onwards -->
-  <!-- use camel-metrics message history to gather message history statistics for all routes -->
-  <!--<bean id="metricsMessageHistoryFactory" class="org.apache.camel.component.metrics.messagehistory.MetricsMessageHistoryFactory"/>-->
-
   <!-- Here is a sample which processes the input files
          (leaving them in place - see the 'noop' flag), and
          sends them on a JMS queue. This queue is watched by
@@ -91,7 +88,6 @@
          routing on the messages using XPath.
   -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <!--<route id="fileInputRoute from file:src/test/data?noop=true">-->
     <route id="fileInputRoute from file:src/test/data?noop=true">
       <from id="inputFiles" uri="file:src/test/data?noop=true"/>
       <to id="firstStep" uri="activemq:personnel.records"/>
@@ -238,8 +234,7 @@
 
   <!-- lets have a Camel with the Rest DSL too -->
   <camelContext id="restCamel" xmlns="http://camel.apache.org/schema/spring">
-
-    <restConfiguration component="jetty" bindingMode="json">
+    <restConfiguration component="restlet" bindingMode="json">
       <dataFormatProperty key="prettyPrint" value="true"/>
     </restConfiguration>
 

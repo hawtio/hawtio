@@ -5,6 +5,7 @@
  */
 module DataTable {
 
+  import isBlank = Core.isBlank;
   export class SimpleDataTable {
     public restrict = 'A';
 
@@ -65,6 +66,17 @@ module DataTable {
         }
 
         var sortInfo = $scope.config.sortInfo;
+
+        // Set null fields to empty string as sugar sortBy doesn't handle them correctly
+        for (var rowKey in value) {
+          var row = value[rowKey];
+          for (var fieldKey in row) {
+            var field = row[fieldKey];
+            if (field === null) {
+              value[rowKey][fieldKey] = "";
+            }
+          }
+        }
 
         // enrich the rows with information about their index
         var idx = -1;
@@ -224,7 +236,21 @@ module DataTable {
       };
 
       $scope.isSelected = (row) => {
-        return config.selectedItems.some(row.entity);
+        return (row) && config.selectedItems.some(s => {
+              var spk = primaryKeyFn(s, s.index);
+              var rpk = primaryKeyFn(row.entity, row.index);
+              return angular.equals(spk, rpk);
+            });
+      };
+
+      $scope.onRowClicked = (row) => {
+        var id = $scope.config.gridKey;
+        if(id){
+            var func = $scope.config.onClickRowHandlers[id];
+            if(func) {
+                func(row);
+            }
+        }
       };
 
       $scope.onRowSelected = (row) => {
@@ -258,7 +284,7 @@ module DataTable {
       }
       var headHtml = "<thead><tr>";
       // use a function to check if a row is selected so the UI can be kept up to date asap
-      var bodyHtml = "<tbody><tr ng-repeat='row in rows track by $index' ng-show='showRow(row)' " + onMouseDown + "ng-class=\"{'selected': isSelected(row)}\" >";
+      var bodyHtml = "<tbody><tr ng-repeat='row in rows track by $index' ng-show='showRow(row)' ng-click='onRowClicked(row)'" + onMouseDown + "ng-class=\"{'selected': isSelected(row)}\" >";
       var idx = 0;
       if (showCheckBox) {
         var toggleAllHtml = isMultiSelect() ?
@@ -272,8 +298,13 @@ module DataTable {
       angular.forEach(config.columnDefs, (colDef) => {
         var field = colDef.field;
         var cellTemplate = colDef.cellTemplate || '<div class="ngCellText" title="{{row.entity.' + field + '}}">{{row.entity.' + field + '}}</div>';
+        var sortable = colDef.sortable;
 
-        headHtml += "\n<th class='clickable no-fade table-header' ng-click=\"sortBy('" + field + "')\" ng-class=\"getClass('" + field + "')\">{{config.columnDefs[" + idx + "].displayName}}<span class='indicator'></span></th>"
+        headHtml += "\n<th class='clickable no-fade table-header'";
+        if (isBlank(sortable) || sortable) {
+          headHtml += "ng-click=\"sortBy('" + field + "')\"";
+        }
+        headHtml += "ng-class=\"getClass('" + field + "')\">{{config.columnDefs[" + idx + "].displayName}}<span class='indicator'></span></th>";
 
         bodyHtml += "\n<td>" + cellTemplate + "</td>"
         idx += 1;

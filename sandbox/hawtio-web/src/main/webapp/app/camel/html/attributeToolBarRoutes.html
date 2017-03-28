@@ -1,15 +1,28 @@
 <div class="row-fluid">
   <div class="span6">
     <div class="control-group"  ng-controller="Camel.AttributesToolBarController">
-      <button class="btn" ng-disabled="!anySelectionHasState(['stop', 'suspend'])" ng-click="start()"><i class="icon-play-circle"></i> Start</button>
-      <button class="btn" ng-disabled="!anySelectionHasState('start')" ng-click="pause()"><i class="icon-pause"></i> Pause</button>
-      <button class="btn" ng-disabled="!anySelectionHasState(['start', 'suspend'])" ng-click="stop()"><i class="icon-off"></i> Stop</button>
-      <button class="btn" ng-disabled="!everySelectionHasState('stop')" ng-click="delete()"><i class="icon-remove"></i> Delete</button>
+      <button class="btn" ng-disabled="!anySelectionHasState(['stop', 'suspend'])" ng-click="start()"
+              hawtio-show object-name="{{routeMBean}}" method-name="start"
+              ><i class="icon-play-circle"></i> Start</button>
+      <button class="btn" ng-disabled="!anySelectionHasState('start')" ng-click="pause()"
+              hawtio-show object-name="{{routeMBean}}" method-name="suspend"
+              ><i class="icon-pause"></i> Pause</button>
+      <button class="btn" ng-disabled="!anySelectionHasState(['start', 'suspend'])" ng-click="stop()"
+              hawtio-show object-name="{{routeMBean}}" method-name="stop"
+              ><i class="icon-off"></i> Stop</button>
+      <button class="btn" ng-disabled="!everySelectionHasState('stop')" ng-click="delete()"
+              hawtio-show object-name="{{routeMBean}}" method-name="remove"
+              ><i class="icon-remove"></i> Delete</button>
     </div>
   </div>
   <div class="span6">
+  <div class="section-filter pull-right">
     <div class="control-group">
       <input type="text" class="span12 search-query" ng-model="$parent.gridOptions.filterOptions.filterText" placeholder="Filter...">
+      <i class="icon-remove clickable"
+            title="Clear filter"
+            ng-click="gridOptions.filterOptions.filterText = ''"></i>
+    </div>
     </div>
   </div>
 </div>

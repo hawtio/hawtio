@@ -65,7 +65,7 @@ The "lastPage" attribute is how the perspective plugin keeps track of the last t
 
 The plugin does still define an Import-Package so it can be deployed into Apache Karaf by dropping it into the "deploy" directory or doing something like:
 
-    osgi:install -s mvn:io.hawt/custom-perspective/1.5-SNAPSHOT/war
+    install -s mvn:io.hawt/custom-perspective/1.5-SNAPSHOT/war
 
 (substitute 1.5-SNAPSHOT with the version of choice)
 

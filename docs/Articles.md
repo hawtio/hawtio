@@ -25,7 +25,7 @@
 
 The following videos are in the [hawtio video album](https://vimeo.com/album/3324251):
 
-* [create a hawtio pluing in 3 minutes](https://vimeo.com/123423650)
+* [create a hawtio plugin in 3 minutes](https://vimeo.com/123423650)
 * [add hawtio forms to your plugin](https://vimeo.com/123441243) using [hawtio-forms](https://github.com/hawtio/hawtio-forms)
 
 # Demos (1.x)
@@ -46,6 +46,7 @@ The following videos has been found on the web about hawtio.  If you find any ot
 
 The following articles have been found on the web about hawtio. If you find any others please [let us know](http://hawt.io/community/index.html) or [raise an issue](https://github.com/hawtio/hawtio/issues?state=open) and we'll add it to the list.
 
+* [Running Apache ActiveMQ and hawtio in Standalone Mode (2016)](http://www.bennet-schulz.com/2016/07/apache-activemq-and-hawtio.html) by [Bennet Schulz](https://twitter.com/bennetelli)
 * [Hawtio + ActiveMQ](http://www.christianposta.com/blog/?p=315) by [Christian Posta](http://www.christianposta.com/)
 * [Hawtio & Apache Jclouds](http://iocanel.blogspot.co.uk/2013/07/hawtio-apache-jclouds.html) by [Ioannis Canellos](http://iocanel.blogspot.co.uk/)
 * [Apache Camel web dashboard with hawtio](http://www.davsclaus.com/2013/04/apache-camel-web-dashboard-with-hawtio.html) by [Claus Ibsen](http://www.davsclaus.com)

@@ -1,14 +1,14 @@
 package io.hawt.web;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.BitSet;
 import java.util.Enumeration;
@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import io.hawt.system.Helpers;
+import io.hawt.system.ProxyWhitelist;
 import io.hawt.util.Strings;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Header;
@@ -34,7 +36,6 @@ import org.apache.http.client.methods.AbortableHttpRequest;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContextBuilder;
-import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -45,10 +46,8 @@ import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.message.HeaderGroup;
 import org.apache.http.util.EntityUtils;
-
-/**
- * Original implementation at https://github.com/mitre/HTTP-Proxy-Servlet, released under ASL 2.0.
- */
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An HTTP reverse proxy/gateway servlet. It is designed to be extended for customization
@@ -62,16 +61,24 @@ import org.apache.http.util.EntityUtils;
  * <p>
  * Inspiration: http://httpd.apache.org/docs/2.0/mod/mod_proxy.html
  * </p>
+ * <p>
+ * Original implementation at https://github.com/mitre/HTTP-Proxy-Servlet, released under ASL 2.0.
+ * </p>
  *
  * @author David Smiley dsmiley@mitre.org
  */
 public class ProxyServlet extends HttpServlet {
 
-  /* INIT PARAMETER NAME CONSTANTS */
+    private static final transient Logger LOG = LoggerFactory.getLogger(ProxyServlet.class);
+
+    /* INIT PARAMETER NAME CONSTANTS */
 
     /**
      * A boolean parameter name to enable logging of input and target URLs to the servlet log.
+     *
+     * @deprecated Use SLF4J {@link Logger}
      */
+    @Deprecated
     public static final String P_LOG = "log";
 
     /**
@@ -80,25 +87,21 @@ public class ProxyServlet extends HttpServlet {
     public static final String P_FORWARDEDFOR = "forwardip";
 
     /**
-     * The parameter name for the target (destination) URI to proxy to.
-     */
-    private static final String P_TARGET_URI = "targetUri";
-
-    /**
      * Whether we accept self-signed SSL certificates
      */
     private static final String PROXY_ACCEPT_SELF_SIGNED_CERTS = "hawtio.proxyDisableCertificateValidation";
     private static final String PROXY_ACCEPT_SELF_SIGNED_CERTS_ENV = "PROXY_DISABLE_CERT_VALIDATION";
+
+    public static final String PROXY_WHITELIST = "proxyWhitelist";
+    public static final String HAWTIO_PROXY_WHITELIST = "hawtio." + PROXY_WHITELIST;
 
     /* MISC */
 
     protected boolean doLog = false;
     protected boolean doForwardIP = true;
     protected boolean acceptSelfSignedCerts = false;
-    /**
-     * User agents shouldn't send the url fragment but what if it does?
-     */
-    protected boolean doSendUrlFragment = true;
+
+    protected ProxyWhitelist whitelist;
 
     protected CloseableHttpClient proxyClient;
     private CookieStore cookieStore;
@@ -111,6 +114,12 @@ public class ProxyServlet extends HttpServlet {
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         super.init(servletConfig);
+
+        String whitelistStr = servletConfig.getInitParameter(PROXY_WHITELIST);
+        if (System.getProperty(HAWTIO_PROXY_WHITELIST) != null) {
+            whitelistStr = System.getProperty(HAWTIO_PROXY_WHITELIST);
+        }
+        whitelist = new ProxyWhitelist(whitelistStr);
 
         String doForwardIPString = servletConfig.getInitParameter(P_FORWARDEDFOR);
         if (doForwardIPString != null) {
@@ -136,12 +145,7 @@ public class ProxyServlet extends HttpServlet {
         if (acceptSelfSignedCerts) {
             try {
                 SSLContextBuilder builder = new SSLContextBuilder();
-                builder.loadTrustMaterial(null, new TrustStrategy() {
-                    @Override
-                    public boolean isTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-                        return true;
-                    }
-                });
+                builder.loadTrustMaterial(null, (X509Certificate[] x509Certificates, String s) -> true);
                 SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
                         builder.build(), SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
                 httpClientBuilder.setSSLSocketFactory(sslsf);
@@ -163,6 +167,7 @@ public class ProxyServlet extends HttpServlet {
             proxyClient.close();
         } catch (IOException e) {
             log("While destroying servlet, shutting down httpclient: " + e, e);
+            LOG.error("While destroying servlet, shutting down httpclient: " + e, e);
         }
         super.destroy();
     }
@@ -177,6 +182,15 @@ public class ProxyServlet extends HttpServlet {
             servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
+        // TODO Implement whitelist protection for Kubernetes services as well
+        if (proxyAddress instanceof ProxyDetails) {
+            ProxyDetails details = (ProxyDetails) proxyAddress;
+            if (!whitelist.isAllowed(details)) {
+                LOG.debug("Rejecting {}", proxyAddress);
+                Helpers.doForbidden(servletResponse);
+                return;
+            }
+        }
 
         String method = servletRequest.getMethod();
         String proxyRequestUri = proxyAddress.getFullProxyUrl();
@@ -185,7 +199,9 @@ public class ProxyServlet extends HttpServlet {
         try {
             targetUriObj = new URI(proxyRequestUri);
         } catch (URISyntaxException e) {
-            throw new ServletException(e);
+            LOG.debug("URL '{}' is not valid: {}", proxyRequestUri, e.getMessage());
+            servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
         }
 
         HttpRequest proxyRequest;
@@ -234,13 +250,17 @@ public class ProxyServlet extends HttpServlet {
             if (doLog) {
                 log("proxy " + method + " uri: " + servletRequest.getRequestURI() + " -- " + proxyRequest.getRequestLine().getUri());
             }
+            LOG.debug("proxy {} uri: {} -- {}", method, servletRequest.getRequestURI(), proxyRequest.getRequestLine().getUri());
             proxyResponse = proxyClient.execute(URIUtils.extractHost(targetUriObj), proxyRequest);
 
             // Process the response
             int statusCode = proxyResponse.getStatusLine().getStatusCode();
 
             if (statusCode == 401 || statusCode == 403) {
-                log("Authentication Failed on remote server " + proxyRequestUri);
+                if (doLog) {
+                    log("Authentication Failed on remote server " + proxyRequestUri);
+                }
+                LOG.debug("Authentication Failed on remote server {}", proxyRequestUri);
             } else if (doResponseRedirectOrNotModifiedLogic(servletRequest, servletResponse, proxyResponse, statusCode, targetUriObj)) {
                 //the response is already "committed" now without any body to send
                 //TODO copy response headers?
@@ -263,14 +283,17 @@ public class ProxyServlet extends HttpServlet {
                 AbortableHttpRequest abortableHttpRequest = (AbortableHttpRequest) proxyRequest;
                 abortableHttpRequest.abort();
             }
-            if (e instanceof RuntimeException)
-                throw (RuntimeException) e;
-            if (e instanceof ServletException)
-                throw (ServletException) e;
-            //noinspection ConstantConditions
-            if (e instanceof IOException)
-                throw (IOException) e;
-            throw new RuntimeException(e);
+            // Exception needs to be suppressed for security reason
+            LOG.debug("Proxy to " + proxyRequestUri + " failed", e);
+            if (e instanceof ConnectException || e instanceof UnknownHostException) {
+                // Target host refused connection or doesn't exist
+                servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            } else if (e instanceof ServletException) {
+                // Redirect / Not Modified failed
+                servletResponse.sendError(HttpServletResponse.SC_BAD_GATEWAY, e.getMessage());
+            } else {
+                servletResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            }
 
         } finally {
             // make sure the entire entity was consumed, so the connection is released
@@ -316,14 +339,6 @@ public class ProxyServlet extends HttpServlet {
             return true;
         }
         return false;
-    }
-
-    protected void closeQuietly(Closeable closeable) {
-        try {
-            closeable.close();
-        } catch (IOException e) {
-            log(e.getMessage(), e);
-        }
     }
 
     /**

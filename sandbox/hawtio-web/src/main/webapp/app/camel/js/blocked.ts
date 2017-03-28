@@ -1,7 +1,8 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.BlockedExchangesController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
+  _module.controller("Camel.BlockedExchangesController", ["$scope", "$location", "workspace", "jolokia", "localStorage", ($scope, $location, workspace:Workspace, jolokia, localStorage) => {
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     var log:Logging.Logger = Logger.get("Camel");
 
@@ -72,7 +73,7 @@ module Camel {
     };
 
     $scope.doUnblock = () => {
-      var mbean = getSelectionCamelBlockedExchanges(workspace);
+      var mbean = getSelectionCamelBlockedExchanges(workspace, camelJmxDomain);
       var selectedItems = $scope.gridOptions.selectedItems;
 
       if (mbean && selectedItems && selectedItems.length === 1) {
@@ -136,7 +137,7 @@ module Camel {
         $scope.gridOptions.filterOptions.filterText = routeId;
       }
 
-      var mbean = getSelectionCamelBlockedExchanges(workspace);
+      var mbean = getSelectionCamelBlockedExchanges(workspace, camelJmxDomain);
       if (mbean) {
 
         // grab blocked in real time

@@ -1,19 +1,31 @@
 <div class="controller-section" ng-controller="Karaf.ScrComponentsController">
   <div class="row-fluid">
+    <div ng-show="showActivateEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, Activating services...
+      </div>
+    </div>
+    <div ng-show="showDeactivateEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, Deactivating services...
+      </div>
+    </div>
     <div class="pull-left">
       <form class="form-inline no-bottom-margin">
         <fieldset>
           <div class="control-group inline-block">
             <div class="btn-group">
-              <button ng-disabled="selectedComponents.length == 0" 
-                      class="btn" 
+              <button ng-disabled="!canActivateAllSelected()"
+                      class="btn"
                       ng-click="activate()"
                       hawtio-show
                       object-name="{{scrMBean}}"
                       method-name="activateComponent"><i
                       class="icon-play-circle"></i> Activate
               </button>
-              <button ng-disabled="selectedComponents.length == 0" 
+              <button ng-disabled="!canDeactivateAllSelected()"
                       class="btn" 
                       ng-click="deactivate()"
                       hawtio-show

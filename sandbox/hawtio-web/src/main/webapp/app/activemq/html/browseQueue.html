@@ -1,31 +1,41 @@
 <div ng-controller="ActiveMQ.BrowseQueueController">
   <div class="row-fluid">
     <div class="span6">
-      <input class="search-query span12" type="text" ng-model="gridOptions.filterOptions.filterText"
-             placeholder="Filter messages">
+      <div class="section-filter">
+        <input class="search-query span12" type="text" ng-model="gridOptions.filterOptions.filterText"
+               placeholder="Filter messages">
+        <i class="icon-remove clickable"
+              title="Clear filter"
+              ng-click="gridOptions.filterOptions.filterText = ''"></i>
+      </div>
     </div>
     <div class="span6">
       <div class="pull-right">
         <form class="form-inline">
           <button class="btn" ng-disabled="!gridOptions.selectedItems.length" ng-show="dlq" ng-click="retryMessages()"
+                  hawtio-show object-name="{{workspace.selection.objectName}}" method-name="retryMessage" mode="remove"
                   title="Moves the dead letter queue message back to its original destination so it can be retried" data-placement="bottom">
             <i class="icon-reply"></i> Retry
           </button>
-          <button class="btn" ng-disabled="gridOptions.selectedItems.length !== 1" ng-click="resendMessage()"
-                    title="Edit the message to resend it" data-placement="bottom">
+          <button class="btn" ng-disabled="gridOptions.selectedItems.length !== 1" ng-show="showButtons" ng-click="resendMessage()"
+                  hawtio-show object-name="{{workspace.selection.objectName}}" method-name="sendTextMessage" mode="remove"
+                  title="Edit the message to resend it" data-placement="bottom">
            <i class="icon-share-alt"></i> Resend
           </button>
 
-          <button class="btn" ng-disabled="!gridOptions.selectedItems.length" ng-click="moveDialog = true"
+          <button class="btn" ng-disabled="!gridOptions.selectedItems.length || queueNames.length === 0" ng-show="showButtons" ng-click="moveDialog = true"
+                  hawtio-show object-name="{{workspace.selection.objectName}}" method-name="moveMessageTo" mode="remove"
                   title="Move the selected messages to another destination" data-placement="bottom">
             <i class="icon-share-alt"></i> Move
           </button>
-          <button class="btn" ng-disabled="!gridOptions.selectedItems.length"
+          <button class="btn" ng-disabled="!gridOptions.selectedItems.length" ng-show="showButtons"
                   ng-click="deleteDialog = true"
+                  hawtio-show object-name="{{workspace.selection.objectName}}" method-name="removeMessage" mode="remove"
                   title="Delete the selected messages">
             <i class="icon-remove"></i> Delete
           </button>
           <button class="btn" ng-click="refresh()"
+                  hawtio-show object-name="{{workspace.selection.objectName}}" method-name="browse" mode="remove"
                   title="Refreshes the list of messages">
             <i class="icon-refresh"></i>
           </button>
@@ -37,8 +47,9 @@
   <div class="row-fluid">
     <div class="gridStyle" ng-grid="gridOptions"></div>
   </div>
-  
-  <div ng-class="hide">
+
+  <!-- include the message body hidden so we can use it for the copy button -->
+  <div ng-show="false">
     <p id="message_body">{{row.bodyText}}</p>
   </div>
 
@@ -54,20 +65,22 @@
                  on-index-change="selectRowIndex"
                  row-index="rowIndex"></div>
 
-            <button class="btn" ng-disabled="!gridOptions.selectedItems.length" ng-click="moveDialog = true"
+            <button class="btn" ng-disabled="!gridOptions.selectedItems.length || queueNames.length === 0" ng-show="showButtons" ng-click="moveDialog = true"
+                    hawtio-show object-name="{{workspace.selection.objectName}}" method-name="moveMessageTo" mode="remove"
                     title="Move the selected messages to another destination" data-placement="bottom">
               <i class="icon-share-alt"></i> Move
             </button>
             
             <button class="btn"
                     zero-clipboard
-                    data-clipboard-target="message_body"
+                    data-clipboard-target="message_body" ng-show="showButtons"
                     title="Click to copy the message body to the clipboard">
               <i class="icon-copy"></i> Copy
             </button>
 
             <button class="btn btn-danger" ng-disabled="!gridOptions.selectedItems.length"
-                    ng-click="deleteDialog = true"
+                    ng-click="deleteDialog = true" ng-show="showButtons"
+                    hawtio-show object-name="{{workspace.selection.objectName}}" method-name="removeMessage" mode="remove"
                     title="Delete the selected messages">
               <i class="icon-remove"></i> Delete
             </button>
@@ -93,14 +106,7 @@
                 <th>Value</th>
               </tr>
               </thead>
-              <tbody ng-bind-html-unsafe="row.headerHtml">
-              </tbody>
-              <!--
-                            <tr ng-repeat="(key, value) in row.headers">
-                              <td class="property-name">{{key}}</td>
-                              <td class="property-value">{{value}}</td>
-                            </tr>
-              -->
+              <tbody ng-bind-html-unsafe="row.headerHtml"></tbody>
             </table>
           </div>
         </div>
@@ -134,8 +140,8 @@
       <p>Move
         <ng-pluralize count="gridOptions.selectedItems.length"
                       when="{'1': 'message', 'other': '{} messages'}"></ng-pluralize>
-        to: <input type="text" ng-model="queueName" placeholder="Queue name"
-                   typeahead="title.unescapeHTML() for title in queueNames($viewValue) | filter:$viewValue" typeahead-editable='true'></p>
+        to: <select ng-model="queueName" ng-options="qn for qn in queueNames" ng-init="queueName=queueNames[0]""></select>
+      </p>
       <p>
         You cannot undo this operation.<br>
         Though after the move you can always move the

@@ -8,6 +8,7 @@ module ActiveMQ {
     $scope.message = "";
     $scope.queueType = 'true';
 
+    $scope.createDialog = false;
     $scope.deleteDialog = false;
     $scope.purgeDialog = false;
 
@@ -65,6 +66,18 @@ module ActiveMQ {
       return mbean;
     }
 
+    function validateDestinationName(name:string) {
+      return name.indexOf(":") == -1;
+    }
+
+    $scope.validateAndCreateDestination = (name, isQueue) => {
+      if (!validateDestinationName(name)) {
+        $scope.createDialog = true;
+        return;
+      }
+      $scope.createDestination(name, isQueue);
+    }
+
     $scope.createDestination = (name, isQueue) => {
       var mbean = getBrokerMBean(jolokia);
       name = Core.escapeHtml(name);
@@ -93,6 +106,11 @@ module ActiveMQ {
         var domain = selection.domain;
         var name = entries["Destination"] || entries["destinationName"] || selection.title;
         name = name.unescapeHTML();
+        if (name.indexOf("_") != -1) {
+          // when destination name contains "_" like "aaa_bbb", the actual name might be either
+          // "aaa_bbb" or "aaa:bbb", so the actual name needs to be checked before removal.
+          name = jolokia.getAttribute(workspace.getSelectedMBeanName(), "Name", onSuccess(null));
+        }
         var isQueue = "Topic" !== (entries["Type"] || entries["destinationType"]);
         var operation;
         if (isQueue) {

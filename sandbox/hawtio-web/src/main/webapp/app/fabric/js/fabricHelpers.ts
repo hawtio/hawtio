@@ -281,7 +281,8 @@ module Fabric {
 
     // is it possible to delete selected containers? no, if deletion of container didn't complete
     $scope.mayDelete = () => {
-      return $scope.selectedContainers.length > 0 && $scope.selectedContainers.all((c) => { return !$scope.deletePending[c.id] && !c.root});
+      return $scope.selectedContainers.length > 0 && $scope.selectedContainers.all((c) =>
+          { return !$scope.deletePending[c.id] && !(c.root && c.ensembleServer)});
     };
 
     $scope.confirmDeleteDialog = {
@@ -343,6 +344,7 @@ module Fabric {
         Core.notification('success', "Initiated container migration to version <strong>" + version + "</strong>, changes make take some time to complete");
         Core.$apply($scope);
       }, (response) => {
+        Core.notification('error', 'Failed to migrate container ' + response.error);
         log.error("Failed to migrate containers due to ", response.error);
         log.info("Stack trace: ", response.stacktrace);
         Core.$apply($scope);

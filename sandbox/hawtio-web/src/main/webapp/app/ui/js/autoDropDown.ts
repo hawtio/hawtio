@@ -60,13 +60,13 @@ module UI {
           overflowEl.css({visibility: "visible"});
         }
 
+        var notDisplayNone = function() { return $(this).css('display') !== 'none'; }
+
         if (availableWidth > 130) {
 
           var noSpace = false;
 
-          overflowMenu.children('li:not(.overflow):not(.pull-right)').filter(function() {
-            return $(this).css('display') !== 'none';
-          }).each(function() {
+          overflowMenu.children('li:not(.overflow):not(.pull-right)').filter(notDisplayNone).each(function() {
             if (noSpace) {
               return;
             }
@@ -82,7 +82,7 @@ module UI {
           });
         }
 
-        if (overflowMenu.children().length === 0) {
+        if (overflowMenu.children().filter(notDisplayNone).length === 0) {
           overflowEl.css({visibility: "hidden"});
         }
 

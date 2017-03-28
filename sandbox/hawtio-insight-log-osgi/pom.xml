@@ -27,25 +27,25 @@
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
-      <version>4.3.0</version>
+      <version>5.0.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.enterprise</artifactId>
-      <version>4.2.0</version>
+      <version>5.0.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.karaf.log</groupId>
       <artifactId>org.apache.karaf.log.core</artifactId>
-      <version>4.0.2</version>
+      <version>4.0.4</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.logging</groupId>
       <artifactId>pax-logging-api</artifactId>
-      <version>1.8.2</version>
+      <version>1.8.5</version>
       <scope>provided</scope>
     </dependency>
 
@@ -73,6 +73,8 @@
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
             <Bundle-Activator>io.hawt.log.osgi.Activator</Bundle-Activator>
             <Import-Package>
+              org.osgi.framework;version="[1.5,2)",
+              org.osgi.framework.wiring;version="[1.0,2)",
               org.apache.karaf.log.core;version="[3,5)",
               *
             </Import-Package>

@@ -12,7 +12,4 @@ The plugin has sub tabs that allows you to see among others the following detail
 The Applications sub tab lists all the web applications deployed in Tomcat. The lifecycle of the application(s) can
 be controlled using the buttons bar, such as restarting or stopping the applications.
 
-A screen shot of the application tab is shown below
-
-![Applications](app/jboss/doc/img/applications.png "Applications")
 

@@ -111,4 +111,26 @@ module ActiveMQ {
     });
   }
 
+  export function getBrokerMBean(workspace, jolokia, jmxDomain) {
+    var mbean = null;
+    var selection = workspace.selection;
+    if (selection && isBroker(workspace, jmxDomain) && selection.objectName) {
+      return selection.objectName;
+    }
+    var folderNames = selection.folderNames;
+    var parent = selection ? selection.parent : null;
+    if (selection && parent && jolokia && folderNames && folderNames.length > 1) {
+      mbean = parent.objectName;
+
+      // we might be a destination, so lets try one more parent
+      if (!mbean && parent) {
+        mbean = parent.parent.objectName;
+      }
+      if (!mbean) {
+        mbean = "" + folderNames[0] + ":BrokerName=" + folderNames[1] + ",Type=Broker";
+      }
+    }
+    return mbean;
+  };
+
 }

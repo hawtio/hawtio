@@ -19,7 +19,10 @@
       },
       'logBatchSize': {
         'value': 20,
-        'converter': parseInt
+        'converter': parseInt,
+        'post': (newValue) => {
+          $scope.$emit('logBatchSize', newValue);
+        }
       }
     });
   }]);

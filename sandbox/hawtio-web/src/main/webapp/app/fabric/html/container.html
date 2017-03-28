@@ -72,7 +72,7 @@
 
           </span>
 
-          <button class="btn" ng-show="row.alive" ng-click="stop()" hawtio-show object-name="{{managerMBean}}" method-name="stopContainer"><i class="icon-off"></i> Stop</button>
+          <button class="btn" ng-show="row.alive" ng-click="stop()" ng-disabled="containerId == 'root'" hawtio-show object-name="{{managerMBean}}" method-name="stopContainer"><i class="icon-off"></i> Stop</button>
           <button class="btn" ng-hide="row.alive" ng-click="start()" hawtio-show object-name="{{managerMBean}}" method-name="startContainer"><i class="icon-play-circle"></i> Start</button>
           <button class="btn" ng-hide="row.root" ng-click="confirmDeleteDialog.open()" hawtio-show object-name="{{managerMBean}}" method-name="destroyContainer"><i class="icon-remove"></i> Delete</button>
           <a class="btn" ng-href="{{addToDashboardLink()}}" title="Add this view to a dashboard" data-placement="bottom">
@@ -284,7 +284,7 @@
                          style="width: 300px">
                   <button class="btn"
                           zero-clipboard
-                          data-clipboard-text="{{row.httpUrl}}"
+                          data-clipboard-text="{{row.httpUrl | maskPassword}}"
                           title="Click to copy this host to the clipboard">
                     <i class="icon-copy"></i>
                   </button>
@@ -329,7 +329,7 @@
                          style="width: 300px">
                   <button class="btn"
                           zero-clipboard
-                          data-clipboard-text="{{getGitURL(row.jolokiaUrl)}}"
+                          data-clipboard-text="{{getGitURL(row.jolokiaUrl) | maskPassword}}"
                           title="Click to copy this command to the clipboard">
                     <i class="icon-copy"></i>
                   </button>
@@ -344,7 +344,7 @@
                          style="width: 300px">
                   <button class="btn"
                           zero-clipboard
-                          data-clipboard-text="{{getSshURL(row.sshUrl)}}"
+                          data-clipboard-text="{{getSshURL(row.sshUrl) | maskPassword}}"
                           title="Click to copy this command to the clipboard">
                     <i class="icon-copy"></i>
                   </button>
@@ -359,7 +359,7 @@
                          style="width: 300px">
                   <button class="btn"
                           zero-clipboard
-                          data-clipboard-text="{{getJmxURL(row.jmxUrl)}}"
+                          data-clipboard-text="{{getJmxURL(row.jmxUrl) | maskPassword}}"
                           title="Click to copy this URL to the clipboard">
                     <i class="icon-copy"></i>
                   </button>
@@ -374,7 +374,7 @@
                          style="width: 300px">
                   <button class="btn"
                           zero-clipboard
-                          data-clipboard-text="{{row.jolokiaUrl}}"
+                          data-clipboard-text="{{row.jolokiaUrl | maskPassword}}"
                           title="Click to copy this URL to the clipboard">
                     <i class="icon-copy"></i>
                   </button>
@@ -389,7 +389,7 @@
                          style="width: 300px">
                   <button class="btn"
                           zero-clipboard
-                          data-clipboard-text="{{zookeeperUrl}}"
+                          data-clipboard-text="{{zookeeperUrl | maskPassword}}"
                           title="Click to copy this URL to the clipboard">
                     <i class="icon-copy"></i>
                   </button>
@@ -404,7 +404,7 @@
                          style="width: 300px">
                   <button class="btn"
                           zero-clipboard
-                          data-clipboard-text="{{mavenRepoUploadUri}}"
+                          data-clipboard-text="{{mavenRepoUploadUri | maskPassword}}"
                           title="Click to copy this URL to the clipboard">
                     <i class="icon-copy"></i>
                   </button>
@@ -419,7 +419,7 @@
                          style="width: 300px">
                   <button class="btn"
                           zero-clipboard
-                          data-clipboard-text="{{mavenRepoDownloadUri}}"
+                          data-clipboard-text="{{mavenRepoDownloadUri | maskPassword}}"
                           title="Click to copy this URL to the clipboard">
                     <i class="icon-copy"></i>
                   </button>

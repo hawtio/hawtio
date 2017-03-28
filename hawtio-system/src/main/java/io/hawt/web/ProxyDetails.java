@@ -159,6 +159,14 @@ public class ProxyDetails implements ProxyAddress {
         }
     }
 
+    public boolean isAllowed(Set<String> whitelist) {
+        if (whitelist.contains("*")) {
+            return true;
+        }
+        // host may contain port number! (e.g. "localhost:9000")
+        return whitelist.contains(host.split(":")[0]);
+    }
+
     @Override
     public String getFullProxyUrl() {
         return stringProxyURL;
@@ -224,10 +232,12 @@ public class ProxyDetails implements ProxyAddress {
         return port;
     }
 
+    @Override
     public String getUserName() {
         return userName;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }

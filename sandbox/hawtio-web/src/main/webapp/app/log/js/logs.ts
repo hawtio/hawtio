@@ -12,9 +12,10 @@ module Log {
     level: string;
     logger: string;
     message: string;
+    sanitizedMessage: string;
   }
 
-  _module.controller("Log.LogController", ["$scope", "$routeParams", "$location", "localStorage", "workspace", "jolokia", "$window", "$document", "$templateCache", ($scope, $routeParams, $location, localStorage, workspace:Workspace, jolokia, $window, $document, $templateCache) => {
+  _module.controller("Log.LogController", ["$scope", "$rootScope", "$routeParams", "$location", "localStorage", "workspace", "jolokia", "$window", "$document", "$templateCache", ($scope, $rootScope, $routeParams, $location, localStorage, workspace:Workspace, jolokia, $window, $document, $templateCache) => {
     $scope.sortAsc = true;
     var value = localStorage["logSortAsc"];
     if (angular.isString(value)) {
@@ -28,6 +29,13 @@ module Log {
 
     value = localStorage["logBatchSize"];
     $scope.logBatchSize = angular.isNumber(value) ? value : 20;
+
+    $rootScope.$on('logBatchSize', (event, value) => {
+      if (angular.isNumber(value)) {
+        $scope.logBatchSize = value;
+        $scope.logFilter.count = value;
+      }
+    });
 
     $scope.logs = [];
     $scope.showRowDetails = false;
@@ -355,6 +363,7 @@ module Log {
         logs.forEach((log:ILog) => {
           if (log) {
             // TODO Why do we compare 'item.seq === log.message' ?
+            log.sanitizedMessage = Core.escapeHtml(log.message);
             if (!$scope.logs.any((key, item:ILog) => item.message === log.message && item.seq === log.message && item.timestamp === log.timestamp)) {
               counter += 1;
               // if there is a seq in the reply, then its the timestamp with milli seconds

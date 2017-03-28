@@ -1,7 +1,10 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  export var BrowseEndpointController = _module.controller("Camel.BrowseEndpointController", ["$scope", "$routeParams", "workspace", "jolokia", ($scope, $routeParams, workspace:Workspace, jolokia) => {
+  export var BrowseEndpointController = _module.controller("Camel.BrowseEndpointController", ["$scope", "$routeParams", "workspace", "jolokia", "localStorage", ($scope, $routeParams, workspace:Workspace, jolokia, localStorage) => {
+
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
+
     $scope.workspace = workspace;
 
     $scope.forwardDialog = new UI.Dialog();
@@ -18,7 +21,7 @@ module Camel {
 
     $scope.$watch('workspace.selection', function () {
       if ($scope.isJmxTab && workspace.moveIfViewInvalid()) return;
-      loadData();
+      loadData(camelJmxDomain);
     });
 
     // TODO can we share these 2 methods from activemq browse / camel browse / came trace?
@@ -33,7 +36,7 @@ module Camel {
     ActiveMQ.decorate($scope);
 
     $scope.forwardMessagesAndCloseForwardDialog = () => {
-      var mbean = getSelectionCamelContextMBean(workspace);
+      var mbean = getSelectionCamelContextMBean(workspace, camelJmxDomain);
       var selectedItems = $scope.gridOptions.selectedItems;
       var uri = $scope.endpointUri;
       if (mbean && uri && selectedItems && selectedItems.length) {
@@ -53,7 +56,7 @@ module Camel {
     };
 
     $scope.endpointUris = () => {
-      var endpointFolder = Camel.getSelectionCamelContextEndpoints(workspace);
+      var endpointFolder = Camel.getSelectionCamelContextEndpoints(workspace, camelJmxDomain);
       return (endpointFolder) ? endpointFolder.children.map(n => n.title) : [];
     };
 
@@ -71,10 +74,10 @@ module Camel {
       setTimeout(loadData, 50);
     }
 
-    function loadData() {
+    function loadData(camelJmxDomain) {
       var mbean: string = null;
       if ($scope.contextId && $scope.endpointPath) {
-        var node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
+        var node = workspace.findMBeanWithProperties(camelJmxDomain, {
           context: $scope.contextId,
           type: "endpoints",
           name: $scope.endpointPath

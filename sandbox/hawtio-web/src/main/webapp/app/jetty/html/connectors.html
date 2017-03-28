@@ -8,8 +8,10 @@
           <div class="controls control-group inline-block controls-row">
             <div class="btn-group">
               <button ng-disabled="selected.length == 0 || everySelectionIsRunning()"
+                      hawtio-show object-name="{{sampleConnector}}" method-name="start"
                       class="btn" ng-click="start()" title="Start"> <i class="icon-play-circle"></i> </button>
               <button ng-disabled="selected.length == 0 || !anySelectionIsRunning()"
+                      hawtio-show object-name="{{sampleConnector}}" method-name="stop"
                       class="btn" ng-click="stop()" title="Stop"> <i class="icon-off"></i></button>
               
             </div>

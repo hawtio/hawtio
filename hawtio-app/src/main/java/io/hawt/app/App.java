@@ -106,7 +106,9 @@ public class App {
                 // set what is the url
                 System.setProperty("hawtio.url", url);
 
-                boolean openUrl = "true".equals(System.getProperty("hawtio.openUrl", "true"));
+                String open = main.isOpenUrl() ? "true" : "false";
+                // JVM system override the main option
+                boolean openUrl = "true".equals(System.getProperty("hawtio.openUrl", open));
                 if (openUrl && Desktop.isDesktopSupported()) {
                     try {
                         Desktop.getDesktop().browse(new URI(url));

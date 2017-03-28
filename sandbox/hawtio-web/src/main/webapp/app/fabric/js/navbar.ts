@@ -38,7 +38,6 @@ module Fabric {
 
     function onDroolsUrl(response) {
       var url = response ? response.value : null;
-      console.log("========== onDroolsUrl: " + url);
       $scope.droolsHref = url;
       Core.$apply($scope);
     }

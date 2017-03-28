@@ -1,8 +1,10 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.BreadcrumbBarController", ["$scope", "$routeParams", "workspace", "jolokia", ($scope, $routeParams, workspace:Workspace, jolokia) => {
+  _module.controller("Camel.BreadcrumbBarController", ["$scope", "$routeParams", "workspace", "jolokia", "localStorage", ($scope, $routeParams, workspace:Workspace, jolokia, localStorage) => {
     $scope.workspace = workspace;
+
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     // if we are in dashboard then $routeParams may be null
     if ($routeParams != null) {
@@ -12,7 +14,7 @@ module Camel {
       $scope.routeId = $routeParams["routeId"];
     }
 
-    $scope.treeViewLink = linkToTreeView();
+    $scope.treeViewLink = linkToTreeView(camelJmxDomain);
 
     var defaultChildEntity = $scope.endpointPath ? "endpoints" : "routes";
     var childEntityToolTips = {
@@ -27,31 +29,31 @@ module Camel {
     $scope.breadcrumbs = [
       {
         name: $scope.contextId,
-        items: findContexts(),
+        items: findContexts(camelJmxDomain),
         tooltip: "Camel Context"
       },
       {
         name: defaultChildEntity,
-        items: findChildEntityTypes($scope.contextId),
+        items: findChildEntityTypes($scope.contextId, camelJmxDomain),
         tooltip: "Entity inside a Camel Context"
       },
       {
         name: $scope.endpointName || tidyJmxName($scope.routeId),
-        items: findChildEntityLinks($scope.contextId, currentChildEntity()),
+        items: findChildEntityLinks($scope.contextId, currentChildEntity(), camelJmxDomain),
         tooltip: childEntityToolTips[defaultChildEntity]
       }
     ];
 
     // lets find all the camel contexts
-    function findContexts() {
+    function findContexts(camelJmxDomain) {
       var answer = [];
-      var rootFolder = Camel.getRootCamelFolder(workspace);
+      var rootFolder = Camel.getRootCamelFolder(workspace, camelJmxDomain);
       if (rootFolder) {
         angular.forEach(rootFolder.children, (contextFolder) => {
           var id = contextFolder.title;
           if (id && id !== $scope.contextId) {
             var name = id;
-            var link = createLinkToFirstChildEntity(id, currentChildEntity());
+            var link = createLinkToFirstChildEntity(id, currentChildEntity(), camelJmxDomain);
             answer.push({
               name: name,
               tooltip: "Camel Context",
@@ -64,11 +66,11 @@ module Camel {
     }
 
     // lets find all the the child entities of a camel context
-    function findChildEntityTypes(contextId) {
+    function findChildEntityTypes(contextId, camelJmxDomain) {
       var answer = [];
       angular.forEach(["endpoints", "routes"], (childEntityName) => {
         if (childEntityName && childEntityName !== currentChildEntity()) {
-          var link = createLinkToFirstChildEntity(contextId, childEntityName);
+          var link = createLinkToFirstChildEntity(contextId, childEntityName, camelJmxDomain);
           answer.push({
             name: childEntityName,
             tooltip: "Entity inside a Camel Context",
@@ -88,25 +90,25 @@ module Camel {
      * Based on the current child entity type, find the child links for the given context id and
      * generate a link to the first child; used when changing context or child entity type
      */
-    function createLinkToFirstChildEntity(id, childEntityValue) {
-      var links = findChildEntityLinks(id, childEntityValue);
+    function createLinkToFirstChildEntity(id, childEntityValue, camelJmxDomain) {
+      var links = findChildEntityLinks(id, childEntityValue, camelJmxDomain);
       // TODO here we should switch to a default context view if there's no endpoints available...
       var link = links.length > 0 ? links[0].link : linkToBrowseEndpointFullScreen(id, "noEndpoints");
       return link;
     }
 
-    function findChildEntityLinks(contextId, childEntityValue) {
+    function findChildEntityLinks(contextId, childEntityValue, camelJmxDomain) {
       if ("endpoints" === childEntityValue) {
-        return findEndpoints(contextId);
+        return findEndpoints(contextId, camelJmxDomain);
       } else {
-        return findRoutes(contextId);
+        return findRoutes(contextId, camelJmxDomain);
       }
     }
 
     // lets find all the endpoints for the given context id
-    function findEndpoints(contextId) {
+    function findEndpoints(contextId, camelJmxDomain) {
       var answer = [];
-      var contextFolder = Camel.getCamelContextFolder(workspace, contextId);
+      var contextFolder = Camel.getCamelContextFolder(workspace, contextId, camelJmxDomain);
       if (contextFolder) {
         var endpoints = (contextFolder["children"] || []).find((n) => "endpoints" === n.title);
         if (endpoints) {
@@ -134,9 +136,9 @@ module Camel {
     }
 
     // lets find all the routes for the given context id
-    function findRoutes(contextId) {
+    function findRoutes(contextId, camelJmxDomain) {
       var answer = [];
-      var contextFolder = Camel.getCamelContextFolder(workspace, contextId);
+      var contextFolder = Camel.getCamelContextFolder(workspace, contextId, camelJmxDomain);
       if (contextFolder) {
         var folders = (contextFolder["children"] || []).find((n) => "routes" === n.title);
         if (folders) {
@@ -166,21 +168,21 @@ module Camel {
     /**
      * Creates a link to the tree view version of this view
      */
-    function linkToTreeView() {
+    function linkToTreeView(camelJmxDomain) {
       var answer:string = null;
       if ($scope.contextId) {
         var node = null;
         var tab:string = null;
         if ($scope.endpointPath) {
           tab = "browseEndpoint";
-          node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
+          node = workspace.findMBeanWithProperties(camelJmxDomain, {
             context: $scope.contextId,
             type: "endpoints",
             name: $scope.endpointPath
           });
         } else if ($scope.routeId) {
           tab = "routes";
-          node = workspace.findMBeanWithProperties(Camel.jmxDomain, {
+          node = workspace.findMBeanWithProperties(camelJmxDomain, {
             context: $scope.contextId,
             type: "routes",
             name: $scope.routeId

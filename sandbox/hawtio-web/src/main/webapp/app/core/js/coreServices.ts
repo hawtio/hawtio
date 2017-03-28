@@ -110,15 +110,24 @@ module Core {
     return jolokiaUrl;
   });
 
-  // holds the status returned from the last jolokia call (?)
+  // holds the status returned from the last jolokia call and hints for jolokia.list optimization
   _module.factory('jolokiaStatus', () => {
     return {
-      xhr: null
+      xhr: null,
+      listMethod: LIST_GENERAL,
+      listMBean: "hawtio:type=security,name=RBACRegistry"
     };
   });
 
+  // constant meaning that general LIST+EXEC Jolokia operations should be used
+  export var LIST_GENERAL = "list";
+  // constant meaning that optimized hawtio:type=security,name=RBACRegistry may be used
+  export var LIST_WITH_RBAC = "list_rbac";
+  // when we get this status, we have to try checking again after logging in
+  export var LIST_CANT_DETERMINE = "cant_determine";
+
   export var DEFAULT_MAX_DEPTH = 7;
-  export var DEFAULT_MAX_COLLECTION_SIZE = 5000;
+  export var DEFAULT_MAX_COLLECTION_SIZE = 50000;
 
   _module.factory('jolokiaParams', ["jolokiaUrl", "localStorage", (jolokiaUrl, localStorage) => {
     var answer = {

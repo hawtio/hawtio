@@ -76,6 +76,15 @@
   </filter-mapping>
 
   <filter>
+    <filter-name>XXSSProtectionFilter</filter-name>
+    <filter-class>io.hawt.web.XXSSProtectionFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>XXSSProtectionFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
     <filter-name>CORSFilter</filter-name>
     <filter-class>io.hawt.web.CORSFilter</filter-class>
   </filter>
@@ -120,6 +129,11 @@
       <param-name>mbeanQualifier</param-name>
       <param-value>qualifier=hawtio</param-value>
     </init-param>
+    <!-- turn off returning exceptions and stacktraces from jolokia -->
+    <init-param>
+      <param-name>allowErrorDetails</param-name>
+      <param-value>false</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
@@ -131,6 +145,17 @@
   <servlet>
     <servlet-name>jolokia-proxy</servlet-name>
     <servlet-class>io.hawt.web.ProxyServlet</servlet-class>
+    <!--
+      Comma-separated list of allowed target hosts. It is required for security.
+      '*' allows all hosts but keep in mind it's vulnerable to security attacks.
+    -->
+    <init-param>
+      <param-name>proxyWhitelist</param-name>
+      <param-value>
+        localhost,
+        127.0.0.1
+      </param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -150,7 +175,7 @@
 
   <servlet>
     <servlet-name>user</servlet-name>
-    <servlet-class>io.hawt.web.UserServlet</servlet-class>
+    <servlet-class>io.hawt.web.keycloak.KeycloakUserServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>user</servlet-name>

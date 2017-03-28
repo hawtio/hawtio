@@ -63,8 +63,13 @@ module Fabric {
                 $scope.warning = "This version is in use and cannot be deleted."
                 $scope.invalid = true;
               } else {
-                $scope.warning = "This operation cannot be undone!";
-                $scope.invalid = false;
+    	        if ($scope.selectedVersion.defaultVersion === true) {
+    		  $scope.warning = "This version is set default and cannot be deleted."
+    		  $scope.invalid = true;
+    	        } else {
+    		  $scope.warning = "This operation cannot be undone!";
+    		  $scope.invalid = false;
+    	        }
               }
             }
           });

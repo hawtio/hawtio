@@ -1,11 +1,17 @@
 package io.hawt.web;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -25,7 +31,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 8181, details.getPort());
         assertEquals("getProxyPath()", "/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "http", details.getScheme());
-        assertEquals("getStringProxyURL()", "http://localhost:8181/jolokia/", details.getFullProxyUrl());
+        assertEquals("getFullProxyUrl()", "http://localhost:8181/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -42,7 +48,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 80, details.getPort());
         assertEquals("getProxyPath()", "/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "http", details.getScheme());
-        assertEquals("getStringProxyURL()", "http://localhost/jolokia/", details.getFullProxyUrl());
+        assertEquals("getFullProxyUrl()", "http://localhost/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -59,7 +65,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 80, details.getPort());
         assertEquals("getProxyPath()", "/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "http", details.getScheme());
-        assertEquals("getStringProxyURL()", "http://localhost/jolokia/", details.getFullProxyUrl());
+        assertEquals("getFullProxyUrl()", "http://localhost/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -75,7 +81,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 90, details.getPort());
         assertEquals("getProxyPath()", "/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "http", details.getScheme());
-        assertEquals("getStringProxyURL()", "http://localhost:90/jolokia/", details.getFullProxyUrl());
+        assertEquals("getFullProxyUrl()", "http://localhost:90/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -91,7 +97,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 80, details.getPort());
         assertEquals("getProxyPath()", "/cxf/crm/customerservice/customers/123", details.getProxyPath());
         assertEquals("getScheme()", "http", details.getScheme());
-        assertEquals("getStringProxyURL()", "http://somerest-davsclaus2.rhcloud.com/cxf/crm/customerservice/customers/123", details.getFullProxyUrl());
+        assertEquals("getFullProxyUrl()", "http://somerest-davsclaus2.rhcloud.com/cxf/crm/customerservice/customers/123", details.getFullProxyUrl());
     }
 
     @Test
@@ -108,7 +114,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 443, details.getPort());
         assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "https", details.getScheme());
-        assertEquals("getStringProxyURL()", "https://www.myhost.com:443/myApp/jolokia/", details.getFullProxyUrl());
+        assertEquals("getFullProxyUrl()", "https://www.myhost.com:443/myApp/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -126,7 +132,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 443, details.getPort());
         assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "https", details.getScheme());
-        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getFullProxyUrl());
+        assertEquals("getFullProxyUrl()", "https://www.myhost.com/myApp/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -143,7 +149,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 443, details.getPort());
         assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "https", details.getScheme());
-        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getFullProxyUrl());
+        assertEquals("getFullProxyUrl()", "https://www.myhost.com/myApp/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -163,7 +169,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 443, details.getPort());
         assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "https", details.getScheme());
-        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/?foo=bar", details.getFullProxyUrl());
+        assertEquals("getFullProxyUrl()", "https://www.myhost.com/myApp/jolokia/?foo=bar", details.getFullProxyUrl());
     }
 
     @Test
@@ -181,7 +187,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 443, details.getPort());
         assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "https", details.getScheme());
-        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getFullProxyUrl());
+        assertEquals("getFullProxyUrl()", "https://www.myhost.com/myApp/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -199,7 +205,7 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 443, details.getPort());
         assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "https", details.getScheme());
-        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/", details.getFullProxyUrl());
+        assertEquals("getFullProxyUrl()", "https://www.myhost.com/myApp/jolokia/", details.getFullProxyUrl());
     }
 
     @Test
@@ -218,6 +224,43 @@ public class ProxyDetailsTest {
         assertEquals("getPort()", 443, details.getPort());
         assertEquals("getProxyPath()", "/myApp/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "https", details.getScheme());
-        assertEquals("getStringProxyURL()", "https://www.myhost.com/myApp/jolokia/?search=1234&page=4", details.getFullProxyUrl());
+        assertEquals("getFullProxyUrl()", "https://www.myhost.com/myApp/jolokia/?search=1234&page=4", details.getFullProxyUrl());
+    }
+
+    @Test
+    public void testIsAllowed() throws Exception {
+        HttpServletRequest mockReq = mock(HttpServletRequest.class);
+        when(mockReq.getPathInfo())
+            .thenReturn("/localhost/9000/jolokia/")
+            .thenReturn("/localhost:8181/jolokia/")
+            .thenReturn("/www.myhost.com/jolokia/")
+            .thenReturn("/www.banned.com/jolokia/");
+
+        Set<String> whitelist = new HashSet<>(Arrays.asList("localhost", "www.myhost.com"));
+        ProxyDetails details1 = new ProxyDetails(mockReq);
+        ProxyDetails details2 = new ProxyDetails(mockReq);
+        ProxyDetails details3 = new ProxyDetails(mockReq);
+        ProxyDetails details4 = new ProxyDetails(mockReq);
+        assertTrue("localhost/9000", details1.isAllowed(whitelist));
+        assertTrue("localhost:8181", details2.isAllowed(whitelist));
+        assertTrue("www.myhost.com", details3.isAllowed(whitelist));
+        assertFalse("www.banned.com", details4.isAllowed(whitelist));
+    }
+
+    @Test
+    public void testIsAllowedWithAllowAll() throws Exception {
+        HttpServletRequest mockReq = mock(HttpServletRequest.class);
+        when(mockReq.getPathInfo())
+            .thenReturn("/localhost/9000/jolokia/")
+            .thenReturn("/www.myhost.com/jolokia/")
+            .thenReturn("/www.banned.com/jolokia/");
+
+        Set<String> whitelist = new HashSet<>(Arrays.asList("*"));
+        ProxyDetails details1 = new ProxyDetails(mockReq);
+        ProxyDetails details2 = new ProxyDetails(mockReq);
+        ProxyDetails details3 = new ProxyDetails(mockReq);
+        assertTrue("localhost", details1.isAllowed(whitelist));
+        assertTrue("www.myhost.com", details2.isAllowed(whitelist));
+        assertTrue("www.banned.com", details3.isAllowed(whitelist));
     }
 }

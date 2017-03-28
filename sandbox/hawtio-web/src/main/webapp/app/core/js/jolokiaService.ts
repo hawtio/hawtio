@@ -139,6 +139,10 @@ module Core {
       var jolokia = new Jolokia(jolokiaParams);
       localStorage['url'] = jolokiaUrl;
       jolokia.stop();
+
+      // let's check if we can call faster jolokia.list()
+      Core.checkJolokiaOptimization(jolokia, jolokiaStatus);
+
       return jolokia;
     } else {
 

@@ -277,6 +277,14 @@ public class Main {
         options.setJointServerThread(joinServerThread);
     }
 
+    public boolean isOpenUrl() {
+        return options.isOpenUrl();
+    }
+
+    public void setOpenUrl(boolean openUrl) {
+        options.setOpenUrl(openUrl);
+    }
+
     public boolean isHelp() {
         return options.isHelp();
     }

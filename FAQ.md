@@ -26,15 +26,15 @@ Here's how to [disable security](https://github.com/hawtio/hawtio/blob/master/do
 
 #### Which Java version is required?
 
-Hawtio 1.4 onwards requires Java 7 or 8. 
-Hawtio 1.3 or older supports Java 6 and 7.
+- Hawtio 1.5 onwards - requires Java 8.
+- Hawtio 1.4 - requires Java 7 or 8. 
+- Hawtio 1.3 or older - supports Java 6 and 7.
 
 #### How do I enable hawtio inside my Java Application / Spring Boot / DropWizard / Micro Service
 
 The easiest thing to do is add jolokia as a java agent via a java agent command line:
-```
-java -javaagent:jolokia-agent.jar=host=0.0.0.0 -jar foo.jar
-```
+
+    java -javaagent:jolokia-agent.jar=host=0.0.0.0 -jar foo.jar
 
 Then by default you can connect on http;//localhost:8778/jolokia to access the jolokia REST API.
 
@@ -60,9 +60,9 @@ There are a [few different agents you can use](http://jolokia.org/agent.html):
 * [OSGi agent](http://jolokia.org/agent/osgi.html) if you are using OSGi (note that Jolokia is enabled by default in [Fuse](http://www.jboss.org/products/fuse) so you don't have to worry)
 * [JVM agent](http://jolokia.org/agent/jvm.html) if you are using a stand alone Java process
 
-So once you've got a jolokia agent in your JVM you can test it by accessing http://host:port/jolokia in a browser to see if you can view the JSON returned for the version information of the jolokia agent.
+So once you've got a jolokia agent in your JVM you can test it by accessing `http://host:port/jolokia` in a browser to see if you can view the JSON returned for the version information of the jolokia agent.
 
-Assuming you have jolokia working in your JVM, then you can use the **Remote** tab on the **Connect** menu in hawtio to connect; just enter the host, port, jolokia path and user/password.
+Assuming you have jolokia working in your JVM, then you can use the **Remote** tab on the **Connect** menu in hawtio to connect; just enter the host, port, jolokia path and user/password. Note by default only `localhost` is accepted to connect for security, so you need to configure `hawtio.proxyWhitelist` system property or `proxyWhitelist` init parameter on `ProxyServlet` in `hawtio.war`'s `WEB-INF/web.xml` to explicitly allow hosts that you are connecting to.
 
 After trying the above if you have problems connecting to your JVM, please [let us know](http://hawt.io/community/index.html) by [raising an issue](https://github.com/hawtio/hawtio/issues?state=open) and we'll try to help.
 
@@ -121,15 +121,14 @@ From **hawtio 1.2.2** onwards you can reorder and hide plugins from the preferen
 #### Provider sun.tools.attach.WindowsAttachProvider could not be instantiated: java.lang.UnsatisfiedLinkError: no attach in java.library.path
 
 If you see an error like this:
-```
-java.util.ServiceConfigurationError: com.sun.tools.attach.spi.AttachProvider: Provider sun.tools.attach.WindowsAttachProvider could not be instantiated: java.lang.UnsatisfiedLinkError: no attach in java.library.path
-```
+
+    java.util.ServiceConfigurationError: com.sun.tools.attach.spi.AttachProvider: Provider sun.tools.attach.WindowsAttachProvider could not be instantiated: java.lang.UnsatisfiedLinkError: no attach in java.library.path
+
 when starting up or trying the **Connect/Local** tab then its probably related to [this issue](http://stackoverflow.com/questions/14027164/fix-the-java-lang-unsatisfiedlinkerror-no-attach-in-java-library-path) as was found on [#718](https://github.com/hawtio/hawtio/issues/718#issuecomment-27677738).
 
 Basically you need to make sure that you have JAVA_HOME/bin on your path. e.g. try this first before starting hawtio:
-```
-set path=%path%;%JAVA_HOME%\jre\bin
-```
+
+    set path=%path%;%JAVA_HOME%\jre\bin
 
 #### The Terminal plugin in Karaf does not work
 

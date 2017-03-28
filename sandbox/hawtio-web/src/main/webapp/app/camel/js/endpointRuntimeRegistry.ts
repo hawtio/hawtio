@@ -2,7 +2,8 @@
 
 module Camel {
 
-  _module.controller("Camel.EndpointRuntimeRegistryController", ["$scope", "$location", "workspace", "jolokia", ($scope, $location, workspace:Workspace, jolokia) => {
+  _module.controller("Camel.EndpointRuntimeRegistryController", ["$scope", "$location", "workspace", "jolokia", "localStorage", ($scope, $location, workspace:Workspace, jolokia, localStorage) => {
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     $scope.workspace = workspace;
     $scope.data = [];
@@ -106,7 +107,7 @@ module Camel {
 
     function loadEndpointRegistry() {
       console.log("Loading EndpointRuntimeRegistry data...");
-      var mbean = getSelectionCamelEndpointRuntimeRegistry(workspace);
+      var mbean = getSelectionCamelEndpointRuntimeRegistry(workspace, camelJmxDomain);
       if (mbean) {
         jolokia.request({type: 'exec', mbean: mbean, operation: 'endpointStatistics'}, onSuccess(onEndpointRegistry));
       }

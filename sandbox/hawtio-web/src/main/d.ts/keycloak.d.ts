@@ -9,11 +9,22 @@ declare module KeycloakModule {
         checkLoginIframe?: boolean;
         checkLoginIframeInterval?: number;
         onLoad?: string;
+        adapter?: string;
+        responseMode?: string;
+        flow?: string;
+        token?: string;
+        refreshToken?: string;
+        idToken?: string;
+        timeSkew?: number;
     }
 
     export interface LoginOptions {
-        prompt?: String;
-        loginHint?: String;
+        redirectUri?: string;
+        prompt?: string;
+        maxAge?: number;
+        loginHint?: string;
+        action?: string;
+        locale?: string;
     }
 
     export interface RedirectUriOptions {
@@ -26,13 +37,16 @@ declare module KeycloakModule {
         createLoginUrl(options?: LoginOptions): string;
         logout(options?: RedirectUriOptions): Promise;
         createLogoutUrl(options?: RedirectUriOptions): string;
-        createAccountUrl(options?: RedirectUriOptions): string;
+        register(options?: LoginOptions): Promise;
+        createRegisterUrl(options?: RedirectUriOptions): string;
         accountManagement(): Promise;
+        createAccountUrl(options?: RedirectUriOptions): string;
         hasRealmRole(role: string): boolean;
         hasResourceRole(role: string, resource?: string): boolean;
         loadUserProfile(): Promise;
         isTokenExpired(minValidity: number): boolean;
         updateToken(minValidity: number): Promise;
+        clearToken();
 
         realm: string;
         clientId: string;
@@ -43,14 +57,20 @@ declare module KeycloakModule {
         refreshToken: string;
         refreshTokenParsed: any;
         idToken: string;
+        idTokenParsed: any;
+        realmAccess: any;
+        resourceAccess: any;
         authenticated: boolean;
         subject: string;
+        timeSkew: number;
 
+        onReady: Function;
         onAuthSuccess: Function;
         onAuthError: Function;
         onAuthRefreshSuccess: Function;
         onAuthRefreshError: Function;
         onAuthLogout: Function;
+        onTokenExpired: Function;
     }
 }
 

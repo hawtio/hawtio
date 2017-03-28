@@ -16,8 +16,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import io.hawt.system.AuthInfo;
 import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
+import io.hawt.system.ExtractAuthInfoCallback;
 import io.hawt.system.Helpers;
 import io.hawt.system.PrivilegedCallback;
 import org.slf4j.Logger;
@@ -38,6 +40,8 @@ public class AuthenticationFilter implements Filter {
     public static final String HAWTIO_ROLES = "hawtio.roles";
     public static final String HAWTIO_ROLE_PRINCIPAL_CLASSES = "hawtio.rolePrincipalClasses";
     public static final String HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES = "hawtio.authenticationContainerDiscoveryClasses";
+
+    public static final String AUTHENTICATION_CONFIGURATION = "authenticationConfig";
 
     private final AuthenticationConfiguration configuration = new AuthenticationConfiguration();
 
@@ -107,6 +111,7 @@ public class AuthenticationFilter implements Filter {
         }
 
         filterConfig.getServletContext().setAttribute("authenticationEnabled", configuration.isEnabled());
+        filterConfig.getServletContext().setAttribute(AUTHENTICATION_CONFIGURATION, configuration);
 
         if (configuration.isEnabled()) {
             LOG.info("Starting hawtio authentication filter, JAAS realm: \"{}\" authorized role(s): \"{}\" role principal classes: \"{}\"",
@@ -151,8 +156,9 @@ public class AuthenticationFilter implements Filter {
         HttpSession session = httpRequest.getSession(false);
         if (session != null) {
             Subject subject = (Subject) session.getAttribute("subject");
-            if (subject != null) {
-                LOG.debug("Session subject {}", subject);
+            // Connecting from another Hawtio may have a different user authentication, so
+            // let's check if the session user is the same as in the authorization header here
+            if (subject != null && validateSession(httpRequest, session, subject)) {
                 executeAs(request, response, chain, subject);
                 return;
             }
@@ -184,8 +190,37 @@ public class AuthenticationFilter implements Filter {
         }
     }
 
+    private boolean validateSession(HttpServletRequest request, HttpSession session, Subject subject) {
+        String authHeader = request.getHeader(Authenticator.HEADER_AUTHORIZATION);
+        final AuthInfo info = new AuthInfo();
+        if (authHeader != null && !authHeader.equals("")) {
+            Authenticator.extractAuthInfo(authHeader, new ExtractAuthInfoCallback() {
+                @Override
+                public void getAuthInfo(String userName, String password) {
+                    info.username = userName;
+                }
+            });
+        }
+        String sessionUser = (String) session.getAttribute("user");
+        if (info.username == null || info.username.equals(sessionUser)) {
+            LOG.debug("Session subject - {}", subject);
+            return true;
+        } else {
+            LOG.debug("User differs, re-authenticating: {} (request) != {} (session)", info.username, sessionUser);
+            session.invalidate();
+            return false;
+        }
+    }
+
     private static void executeAs(final ServletRequest request, final ServletResponse response, final FilterChain chain, Subject subject) {
         try {
+            if (System.getProperty("jboss.server.name") != null) {
+                // WildFly / JBoss EAP currently do not support in-vm privileged action with subject
+                LOG.debug("Running on WildFly / JBoss EAP. Directly invoking filter chain instead of privileged action");
+                request.setAttribute("subject", subject);
+                chain.doFilter(request, response);
+                return;
+            }
             Subject.doAs(subject, new PrivilegedExceptionAction<Object>() {
                 @Override
                 public Object run() throws Exception {
@@ -193,7 +228,7 @@ public class AuthenticationFilter implements Filter {
                     return null;
                 }
             });
-        } catch (PrivilegedActionException e) {
+        } catch (ServletException | IOException | PrivilegedActionException e) {
             LOG.info("Failed to invoke action " + ((HttpServletRequest) request).getPathInfo() + " due to:", e);
         }
     }

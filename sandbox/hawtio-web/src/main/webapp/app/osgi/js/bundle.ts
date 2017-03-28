@@ -74,7 +74,7 @@ module Osgi {
     return rv.toString();
   }
 
-  _module.controller("Osgi.BundleController", ["$scope", "$location", "workspace", "$routeParams", "jolokia", ($scope, $location, workspace:Workspace, $routeParams, jolokia) => {
+  _module.controller("Osgi.BundleController", ["$scope", "$location", "$timeout", "workspace", "$routeParams", "jolokia", ($scope, $location, $timeout, workspace:Workspace, $routeParams, jolokia) => {
     $scope.bundleId = $routeParams.bundleId;
 
     updateTableContents();
@@ -91,6 +91,13 @@ module Osgi {
           return true;
       }
     };
+
+    $scope.showStartEventFeedback = false;
+    $scope.showStopEventFeedback = false;
+    $scope.showRefreshEventFeedback = false;
+    $scope.showUpdateEventFeedback = false;
+    $scope.showUninstallEventFeedback = false;
+    $scope.defaultTimeout = 3000;
 
     $scope.executeLoadClass = (clazz) => {
       var mbean = getHawtioOSGiToolsMBean(workspace);
@@ -167,6 +174,8 @@ module Osgi {
     };
 
     $scope.startBundle = (bundleId) => {
+      $scope.showStartEventFeedback = true;
+      $timeout(function () { $scope.showStartEventFeedback = false; }, $scope.defaultTimeout);
       jolokia.request([
         {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'startBundle', arguments: [bundleId]}
       ],
@@ -174,13 +183,17 @@ module Osgi {
     };
 
     $scope.stopBundle = (bundleId) => {
+      $scope.showStopEventFeedback = true;
+      $timeout(function () { $scope.showStopEventFeedback = false; }, $scope.defaultTimeout);
       jolokia.request([
         {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'stopBundle', arguments: [bundleId]}
       ],
               onSuccess(updateTableContents));
     };
 
-    $scope.updatehBundle = (bundleId) => {
+    $scope.updateBundle = (bundleId) => {
+      $scope.showUpdateEventFeedback = true;
+      $timeout(function () { $scope.showUpdateEventFeedback = false; }, $scope.defaultTimeout);
       jolokia.request([
         {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'updateBundle', arguments: [bundleId]}
       ],
@@ -188,6 +201,8 @@ module Osgi {
     };
 
     $scope.refreshBundle = (bundleId) => {
+      $scope.showRefreshEventFeedback = true;
+      $timeout(function () { $scope.showRefreshEventFeedback = false; }, $scope.defaultTimeout);
       jolokia.request([
         {type: 'exec', mbean: getSelectionFrameworkMBean(workspace), operation: 'refreshBundle', arguments: [bundleId]}
       ],
@@ -195,6 +210,8 @@ module Osgi {
     };
 
     $scope.uninstallBundle = (bundleId) => {
+      $scope.showUninstallEventFeedback = true;
+      $timeout(function () { $scope.showUninstallEventFeedback = false; }, $scope.defaultTimeout);
       jolokia.request([{
         type: 'exec', 
         mbean: getSelectionFrameworkMBean(workspace), 

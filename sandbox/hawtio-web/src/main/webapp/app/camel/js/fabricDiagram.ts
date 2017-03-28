@@ -2,6 +2,7 @@
 module Camel {
 
   _module.controller("Camel.FabricDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", ($scope, $compile, $location, localStorage, jolokia, workspace) => {
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     $scope.workspace = workspace;
     Fabric.initScope($scope, $location, jolokia, workspace);
@@ -256,7 +257,7 @@ module Camel {
         $scope.responseJson = responseJson;
 
         var containersToDelete = $scope.activeContainers || {};
-        $scope.activeContainers = (response || {}).filter(c => c.jmxDomains.any(Camel.jmxDomain));
+        $scope.activeContainers = (response || {}).filter(c => c.jmxDomains.any(camelJmxDomain));
         $scope.containerCount = $scope.activeContainers.length;
 
         // query containers which have camel...
@@ -294,7 +295,7 @@ module Camel {
      */
     function matchesContextId(contextId) {
       if (contextId) {
-        return !$scope.searchFilter || contextId.indexOf($scope.searchFilter) >= 0;
+        return !$scope.searchFilter || contextId.toLowerCase().indexOf($scope.searchFilter.toLowerCase())  >= 0;
       }
       return false;
     }
@@ -309,9 +310,10 @@ module Camel {
         var startedLoadMetaDataFromEndpointMBeans = false;
 
         function getOrCreateRoute(objectName, properties, addEndpointLink, routeId = null, contextId = null, camelContext = null) {
+
           if (!objectName) {
             // lets try guess the mbean name
-            objectName = Camel.jmxDomain + ':context=' + contextId + ',type=routes,name="' + routeId + '"';
+            objectName = camelJmxDomain + ':context=' + contextId + ',type=routes,name="' + routeId + '"';
           }
           var details = Core.parseMBean(objectName);
           var attributes = details['attributes'];
@@ -376,9 +378,10 @@ module Camel {
         }
 
         function getOrCreateEndpoint(objectName, uri = null, contextId = null) {
+
           if (!objectName) {
             // lets try guess the mbean name
-            objectName = Camel.jmxDomain + ':context=' + contextId + ',type=endpoints,name="' + Camel.escapeEndpointUriNameForJmx(uri) + '"';
+            objectName = camelJmxDomain + ':context=' + contextId + ',type=endpoints,name="' + Camel.escapeEndpointUriNameForJmx(uri) + '"';
           }
           var details = Core.parseMBean(objectName);
           var attributes = details['attributes'];
@@ -418,7 +421,7 @@ module Camel {
         function loadMetaDataFromEndpointMBeans() {
            // find routes
           if ($scope.viewSettings.route) {
-            containerJolokia.request({type: "read", mbean: "org.apache.camel:type=routes,*", attribute: ["EndpointUri"]}, onSuccess((response) => {
+            containerJolokia.request({type: "read", mbean: camelJmxDomain + ":type=routes,*", attribute: ["EndpointUri"]}, onSuccess((response) => {
               angular.forEach(response.value, (properties, objectName) => {
                 getOrCreateRoute(objectName, properties, true);
               });
@@ -427,7 +430,7 @@ module Camel {
           }
 
           if ($scope.viewSettings.endpoint) {
-            containerJolokia.search("org.apache.camel:type=endpoints,*", onSuccess((response) => {
+            containerJolokia.search(camelJmxDomain + ":type=endpoints,*", onSuccess((response) => {
               angular.forEach(response, (objectName) => {
                 var endpoint = getOrCreateEndpoint(objectName);
                 var camelContext = getOrCreateCamelContext(null, objectName);
@@ -444,7 +447,7 @@ module Camel {
           if (matchesContextId(contextId)) {
             if (!contextMBean) {
               // try guess the mbean name
-              contextMBean = Camel.jmxDomain + ':context=' + contextId + ',type=context,name="' + contextId + '"';
+              contextMBean = camelJmxDomain + ':context=' + contextId + ',type=context,name="' + contextId + '"';
             }
             if (!contextId && contextMBean) {
               var details = Core.parseMBean(contextMBean);
@@ -524,7 +527,7 @@ module Camel {
           return answer;
         }
 
-        containerJolokia.search("org.apache.camel:type=context,*", onSuccess((response) => {
+        containerJolokia.search(camelJmxDomain + ":type=context,*", onSuccess((response) => {
           angular.forEach(response, (objectName) => {
             var details = Core.parseMBean(objectName);
             var attributes = details['attributes'];

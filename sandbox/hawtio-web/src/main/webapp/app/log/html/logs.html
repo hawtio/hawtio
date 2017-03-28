@@ -65,7 +65,7 @@
             <a ng-href="{{logSourceHref(log)}}" ng-switch-when="true">{{log.logger}}</a>
             <span ng-switch-default>{{log.logger}}</span>
           </div>
-          <div class="title" ng-bind-html="log.message | highlight:searchText:caseSensitive"></div>
+          <div class="title" ng-bind-html="log.sanitizedMessage | highlight:searchText:caseSensitive"></div>
           <!--
           <div class="expandable-body well">
             {{log.message}}
@@ -143,7 +143,9 @@
                 <i class="icon-copy"></i>
               </button>
             </dt>
-            <dd><div hawtio-editor="selectedRow.message" read-only="true"></div></dd>
+            <dd>
+              <pre ng-bind-html="selectedRow.sanitizedMessage"></pre>
+            </dd>
           </dl>
           <dl class="log-stack-trace" ng-hide="!selectedRow.exception">
             <dt>

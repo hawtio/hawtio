@@ -24,6 +24,7 @@ module Fabric {
     $scope.filterProfilesText = 'Filter Profiles...';
     $scope.filterLocationsText = 'Filter Locations...';
     $scope.filterBoxText = $scope.filterContainersText;
+    $scope.selectedTags = [];
 
     $scope.createLocationDialog = ContainerHelpers.getCreateLocationDialog($scope, $dialog);
 
@@ -98,6 +99,10 @@ module Fabric {
       $scope.groupBy = 'none';
     }
 
+    $scope.filterLocation = (locationId) => {
+      return FilterHelpers.searchObject(locationId, $scope.filter);
+    }
+    
     $scope.filterProfiles = (profile) => {
       return FilterHelpers.searchObject(profile.id, $scope.filter);
     }

@@ -1,7 +1,8 @@
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 
-  _module.controller("Camel.RouteController", ["$scope", "$routeParams", "$element", "$timeout", "workspace", "$location", "jolokia", "localStorage", ($scope, $routeParams, $element, $timeout, workspace:Workspace, $location, jolokia, localStorage) => {
+  _module.controller("Camel.RouteController", ["$scope", "$rootScope", "$routeParams", "$element", "$timeout", "workspace", "$location", "jolokia", "localStorage", ($scope, $rootScope, $routeParams, $element, $timeout, workspace:Workspace, $location, jolokia, localStorage) => {
+   var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
     var log:Logging.Logger = Logger.get("Camel");
 
     $scope.workspace = workspace;
@@ -30,6 +31,11 @@ module Camel {
     // fully loaded the workspace and/or the XML model
     var delayUpdatingRoutes = 300;
 
+    $rootScope.$on('ignoreIdForLabel', (event, value) => {
+      $scope.camelIgnoreIdForLabel = value;
+      $timeout(updateRoutes, delayUpdatingRoutes);
+    });
+
     $scope.updateSelectedRoute = function() {
       $timeout(updateRoutes, delayUpdatingRoutes);
     };
@@ -56,7 +62,7 @@ module Camel {
     function doUpdateRoutes() {
       var routeXmlNode = null;
       if (!$scope.ignoreRouteXmlNode) {
-        routeXmlNode = getSelectedRouteNode(workspace);
+        routeXmlNode = getSelectedRouteNode(workspace, camelJmxDomain);
         if (!routeXmlNode) {
           routeXmlNode = $scope.nodeXmlNode;
         }
@@ -66,16 +72,16 @@ module Camel {
           routeXmlNode = wrapper;
         }
       }
-      $scope.mbean = getSelectionCamelContextMBean(workspace);
+      $scope.mbean = getSelectionCamelContextMBean(workspace, camelJmxDomain);
       if (!$scope.mbean && $scope.contextId) {
-        $scope.mbean = getCamelContextMBean(workspace, $scope.contextId)
+        $scope.mbean = getCamelContextMBean(workspace, $scope.contextId, camelJmxDomain)
       }
       if (routeXmlNode) {
         // lets show the remaining parts of the diagram of this route node
         $scope.nodes = {};
         var nodes = [];
         var links = [];
-        $scope.processorTree = camelProcessorMBeansById(workspace);
+        $scope.processorTree = camelProcessorMBeansById(workspace, camelJmxDomain);
         var routeId = routeXmlNode.getAttribute("id");
         // init the view settings the first time
         if ($scope.viewSettings.routes.length === 0) {
@@ -125,7 +131,7 @@ module Camel {
           });
         }
 
-        $scope.processorTree = camelProcessorMBeansById(workspace);
+        $scope.processorTree = camelProcessorMBeansById(workspace, camelJmxDomain);
         Camel.loadSelectedRouteXmlNodes($scope, doc, nodes, links, getWidth(), (routeId) => {
           if ($scope.viewSettings.routes.length > 0) {
             for (var idx in $scope.viewSettings.routes) {
@@ -178,10 +184,94 @@ module Camel {
     }
 
     var onClickGraphNode = function (node) {
-      // stop marking the node as selected which it does by default
       log.debug("Clicked on Camel Route Diagram node: " + node.cid);
-      $location.path('/camel/properties').search({"tab": "camel", "nid": node.cid});
+
+      if (workspace.isRoutesFolder(camelJmxDomain)) {
+        // Handle nodes selection from a diagram displaying multiple routes
+        handleGraphNode(node);
+      } else {
+        navigateToNodeProperties(node.cid);
+      }
     };
+
+    function navigateToNodeProperties(cid) {
+      $location.path('/camel/properties').search({"tab": "camel", "nid": cid});
+      Core.$apply($scope);
+    }
+
+    function handleGraphNode(node) {
+      var cid = node.cid;
+      var routes = $scope.routes;
+      if (routes) {
+        var route = null;
+
+        // Find the route associated with the node that was clicked on the diagram
+        var doc = $.parseXML(routes);
+        route = $(doc).find("#" + cid).parents("route") || $(doc).find("[uri='" + cid + "']").parents("route");
+
+        // Fallback on using rid if no matching route was found
+        if ((!route || !route.length) && node.rid) {
+          route = $(doc).find("[id='" + node.rid + "']");
+        }
+
+        if (route && route.length) {
+          var routeFolder = null;
+          angular.forEach(workspace.selection.children, (c) => {
+            if (c.title === route[0].id) {
+              routeFolder = c;
+            }
+          });
+
+          if (routeFolder) {
+            // Populate route folder child nodes for the context tree
+            if (!routeFolder.children.length) {
+              processRouteXml(workspace, workspace.jolokia, routeFolder, (route) => {
+                addRouteChildren(routeFolder, route, camelJmxDomain);
+                updateRouteProperties(node, route, routeFolder)
+              }, camelJmxDomain);
+            } else {
+              updateRouteProperties(node, route, routeFolder);
+            }
+          }
+        } else {
+          log.debug("No route found for " + cid);
+        }
+      }
+    }
+
+    function updateRouteProperties(node, route, routeFolder) {
+      var cid = node.cid;
+
+      $("#cameltree").dynatree("getTree").getNodeByKey(routeFolder.key).expand("true");
+
+      // Get the 'real' cid of the selected diagram node
+      var routeChild = routeFolder.findDescendant((d) => {
+        var uri = node.uri;
+        if (uri && uri.indexOf('?') > 0) {
+          uri = uri.substring(0, uri.indexOf('?'))
+        }
+        return d.title === node.cid || (d.routeXmlNode.nodeName === node.type && d.title === uri);
+      });
+      if (routeChild) {
+        cid = routeChild.key;
+      }
+
+      // Setup the properties tab view for the selected diagram node
+      $scope.model = getCamelSchema("route");
+      if ($scope.model) {
+        var labels = [];
+        if ($scope.model.group) {
+          labels = $scope.model.group.split(",");
+        }
+
+        $scope.labels = labels;
+        $scope.nodeData = getRouteNodeJSON(route[0]);
+        $scope.icon = getRouteNodeIcon(routeFolder);
+        $scope.viewTemplate = "app/camel/html/nodePropertiesView.html";
+      }
+
+      navigateToNodeProperties(cid);
+    }
 
     function showGraph(nodes, links) {
       var canvasDiv = $($element);
@@ -201,23 +291,26 @@ module Camel {
       // re-layout the graph
       $scope.graphData = Core.dagreLayoutGraph(nodes, links, width, height, svg, false, onClick);
 
-      var gNodes = canvasDiv.find("g.node");
-      gNodes.click(function() {
-        var selected = isSelected(this);
+      // Only apply node selection behavior if debugging or tracing
+      if (path.startsWith("/camel/debugRoute") || path.startsWith("/camel/traceRoute")) {
+        var gNodes = canvasDiv.find("g.node");
+        gNodes.click(function () {
+          var selected = isSelected(this);
 
-        // lets clear all selected flags
-        gNodes.each((idx, element) => {
-          setSelected(element, false);
+          // lets clear all selected flags
+          gNodes.each((idx, element) => {
+            setSelected(element, false);
+          });
+
+          var cid = null;
+          if (!selected) {
+            cid = this.getAttribute("data-cid");
+            setSelected(this, true);
+          }
+          $scope.$emit("camel.diagram.selectedNodeId", cid);
+          Core.$apply($scope);
         });
-
-        var cid = null;
-        if (!selected) {
-          cid = this.getAttribute("data-cid");
-          setSelected(this, true);
-        }
-        $scope.$emit("camel.diagram.selectedNodeId", cid);
-        Core.$apply($scope);
-      });
+      }
 
       if ($scope.mbean) {
         Core.register(jolokia, $scope, {

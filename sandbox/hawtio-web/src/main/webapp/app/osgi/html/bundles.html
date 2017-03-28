@@ -1,5 +1,35 @@
 <div class="controller-section" ng-controller="Osgi.BundlesController">
   <div class="row-fluid">
+    <div ng-show="showStartEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, starting bundles...
+      </div>
+    </div>
+    <div ng-show="showStopEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, stopping bundles...
+      </div>
+    </div>
+    <div ng-show="showRefreshEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, refreshing bundles...
+      </div>
+    </div>
+    <div ng-show="showUpdateEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, updating bundles...
+      </div>
+    </div>
+    <div ng-show="showUninstallEventFeedback">
+      <p></p>
+      <div class="alert alert-info">
+        <i class="icon-spinner icon-spin"></i> Please wait, uninstalling bundles...
+      </div>
+    </div>
     <div class="pull-left">
 
       <form class="form-inline no-bottom-margin">
@@ -22,13 +52,23 @@
 
           <div class="controls control-group inline-block controls-row">
             <div class="btn-group">
-              <button ng-disabled="selected.length == 0" class="btn" ng-click="stop()" title="Stop"><i class="icon-off"></i></button>
-              <button ng-disabled="selected.length == 0" class="btn" ng-click="start()" title="Start"><i class="icon-play-circle"></i></button>
-              <button ng-disabled="selected.length == 0" class="btn" ng-click="refresh()" title="Refresh"><i class="icon-refresh"></i></button>
-              <button ng-disabled="selected.length == 0" class="btn" ng-click="update()" title="Update"><i class="icon-cloud-download"></i></button>
-              <button ng-disabled="selected.length == 0" class="btn" ng-click="uninstall()" title="Uninstall"><i class="icon-eject"></i></button>
+              <button ng-disabled="selected.length == 0" class="btn" ng-click="stop()"
+                      hawtio-show object-name="{{frameworkMBean}}" method-name="stopBundle"
+                      title="Stop"><i class="icon-off"></i></button>
+              <button ng-disabled="selected.length == 0" class="btn" ng-click="start()"
+                      hawtio-show object-name="{{frameworkMBean}}" method-name="startBundle"
+                      title="Start"><i class="icon-play-circle"></i></button>
+              <button ng-disabled="selected.length == 0" class="btn" ng-click="refresh()"
+                      hawtio-show object-name="{{frameworkMBean}}" method-name="refreshBundle"
+                      title="Refresh"><i class="icon-refresh"></i></button>
+              <button ng-disabled="selected.length == 0" class="btn" ng-click="update()"
+                      hawtio-show object-name="{{frameworkMBean}}" method-name="updateBundle"
+                      title="Update"><i class="icon-cloud-download"></i></button>
+              <button ng-disabled="selected.length == 0" class="btn" ng-click="uninstall()"
+                      hawtio-show object-name="{{frameworkMBean}}" method-name="uninstallBundle"
+                      title="Uninstall"><i class="icon-eject"></i></button>
             </div>
-            <div class="input-append">
+            <div class="input-append" hawtio-show object-name="{{frameworkMBean}}" method-name="installBundle">
               <input class="input-xlarge" type="text" placeholder="Install Bundle..." ng-model="bundleUrl">
               <button ng-disabled="installDisabled()" class="btn" ng-click="install()" title="Install"><i class="icon-ok"></i></button>
             </div>

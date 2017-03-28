@@ -24,9 +24,10 @@
 
         <div class="hero-unit" ng-show="apis.length === 0 || (apis.length === 1  && apis[0].port.has('FabricResource'))">
 
-          <p>To try out the API browser try creating one of the example <a href="#/wiki/branch/{{versionId}}/view/fabric/profiles/example/quickstarts">quickstarts</a> or </p>
+          <p>To try out the API browser try creating one of the example <a href="#/wiki/branch/{{versionId}}/view/fabric/profiles/quickstarts">quickstarts</a></p>
 
-          <p>Try creating a container for:
+          <p hawtio-show object-name="{{managerMBean}}" method-name="createContainers">
+            or try creating a container for:
             <a class="btn btn-primary"
                href="#/fabric/containers/createContainer?profileIds=example-quickstarts-rest&versionId={{versionId}}">
               REST Quickstart

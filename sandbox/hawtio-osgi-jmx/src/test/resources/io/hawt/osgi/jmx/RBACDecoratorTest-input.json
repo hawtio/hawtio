@@ -1,0 +1,286 @@
+{
+  "domains": {
+    "org.apache.activemq": {
+      "type=Broker,brokerName=amq": {
+        "attr": {},
+        "canInvoke": true,
+        "op": {
+          "removeQueue": {
+            "args": [
+              {
+                "type": "java.lang.String",
+                "name": "name",
+                "desc": ""
+              }
+            ],
+            "desc": "Removes a Queue destination from the broker.",
+            "ret": "void"
+          },
+          "addQueue": {
+            "args": [
+              {
+                "type": "java.lang.String",
+                "name": "name",
+                "desc": ""
+              }
+            ],
+            "desc": "Adds a Queue destination to the broker.",
+            "ret": "void"
+          },
+          "stop": {
+            "args": [],
+            "desc": "Stop the broker and all its components.",
+            "ret": "void"
+          },
+          "start": {
+            "args": [],
+            "desc": "Operation exposed for management",
+            "ret": "void"
+          },
+          "overloadedMethod": [
+            {
+              "args": [
+                {
+                  "type": "java.lang.String",
+                  "name": "arg1",
+                  "desc": ""
+                }
+              ],
+              "desc": "Dummy method 1 for testing method overloading",
+              "ret": "java.lang.String"
+            },
+            {
+              "args": [
+                {
+                  "type": "java.lang.String",
+                  "name": "arg1",
+                  "desc": ""
+                },
+                {
+                  "type": "java.lang.Object",
+                  "name": "arg2",
+                  "desc": ""
+                }
+              ],
+              "desc": "Dummy method 2 for testing method overloading",
+              "ret": "java.lang.String"
+            },
+            {
+              "args": [],
+              "desc": "Dummy method 3 for testing method overloading",
+              "ret": "java.lang.String"
+            }
+          ]
+        },
+        "desc": "Information on the management interface of the MBean",
+        "not": {}
+      }
+    }
+  },
+  "cache": {
+    "activemq:queue": {
+      "attr": {},
+      "canInvoke": true,
+      "op": {
+        "sendTextMessage": [
+          {
+            "args": [
+              {
+                "type": "java.lang.String",
+                "name": "body",
+                "desc": ""
+              },
+              {
+                "type": "java.lang.String",
+                "name": "user",
+                "desc": ""
+              },
+              {
+                "type": "java.lang.String",
+                "name": "password",
+                "desc": ""
+              }
+            ],
+            "desc": "Sends a TextMessage to a password-protected destination.",
+            "ret": "java.lang.String"
+          },
+          {
+            "args": [
+              {
+                "type": "java.util.Map",
+                "name": "headers",
+                "desc": ""
+              },
+              {
+                "type": "java.lang.String",
+                "name": "body",
+                "desc": ""
+              },
+              {
+                "type": "java.lang.String",
+                "name": "user",
+                "desc": ""
+              },
+              {
+                "type": "java.lang.String",
+                "name": "password",
+                "desc": ""
+              }
+            ],
+            "desc": "Sends a TextMessage to a password-protected destination.",
+            "ret": "java.lang.String"
+          },
+          {
+            "args": [
+              {
+                "type": "java.lang.String",
+                "name": "body",
+                "desc": ""
+              }
+            ],
+            "desc": "Sends a TextMessage to the destination.",
+            "ret": "java.lang.String"
+          },
+          {
+            "args": [
+              {
+                "type": "java.util.Map",
+                "name": "headers",
+                "desc": ""
+              },
+              {
+                "type": "java.lang.String",
+                "name": "body",
+                "desc": ""
+              }
+            ],
+            "desc": "Sends a TextMessage to the destination.",
+            "ret": "java.lang.String"
+          }
+        ],
+        "browse": [
+          {
+            "args": [],
+            "desc": "An array of all messages in the destination. Not HTML friendly.",
+            "ret": "[Ljavax.management.openmbean.CompositeData;"
+          },
+          {
+            "args": [
+              {
+                "type": "java.lang.String",
+                "name": "selector",
+                "desc": ""
+              }
+            ],
+            "desc": "An array of all messages in the destination based on an SQL-92 selection on the message headers or XPATH on the body. Not HTML friendly.",
+            "ret": "[Ljavax.management.openmbean.CompositeData;"
+          }
+        ]
+      },
+      "desc": "Information on the management interface of the MBean",
+      "not": {}
+    },
+    "activemq:topic": {
+      "attr": {},
+      "canInvoke": true,
+      "op": {
+        "browse": [
+          {
+            "args": [],
+            "desc": "An array of all messages in the destination. Not HTML friendly.",
+            "ret": "[Ljavax.management.openmbean.CompositeData;"
+          },
+          {
+            "args": [
+              {
+                "type": "java.lang.String",
+                "name": "selector",
+                "desc": ""
+              }
+            ],
+            "desc": "An array of all messages in the destination based on an SQL-92 selection on the message headers or XPATH on the body. Not HTML friendly.",
+            "ret": "[Ljavax.management.openmbean.CompositeData;"
+          }
+        ],
+        "sendTextMessage": [
+          {
+            "args": [
+              {
+                "type": "java.lang.String",
+                "name": "body",
+                "desc": ""
+              },
+              {
+                "type": "java.lang.String",
+                "name": "user",
+                "desc": ""
+              },
+              {
+                "type": "java.lang.String",
+                "name": "password",
+                "desc": ""
+              }
+            ],
+            "desc": "Sends a TextMessage to a password-protected destination.",
+            "ret": "java.lang.String"
+          },
+          {
+            "args": [
+              {
+                "type": "java.util.Map",
+                "name": "headers",
+                "desc": ""
+              },
+              {
+                "type": "java.lang.String",
+                "name": "body",
+                "desc": ""
+              },
+              {
+                "type": "java.lang.String",
+                "name": "user",
+                "desc": ""
+              },
+              {
+                "type": "java.lang.String",
+                "name": "password",
+                "desc": ""
+              }
+            ],
+            "desc": "Sends a TextMessage to a password-protected destination.",
+            "ret": "java.lang.String"
+          },
+          {
+            "args": [
+              {
+                "type": "java.lang.String",
+                "name": "body",
+                "desc": ""
+              }
+            ],
+            "desc": "Sends a TextMessage to the destination.",
+            "ret": "java.lang.String"
+          },
+          {
+            "args": [
+              {
+                "type": "java.util.Map",
+                "name": "headers",
+                "desc": ""
+              },
+              {
+                "type": "java.lang.String",
+                "name": "body",
+                "desc": ""
+              }
+            ],
+            "desc": "Sends a TextMessage to the destination.",
+            "ret": "java.lang.String"
+          }
+        ]
+      },
+      "desc": "Information on the management interface of the MBean",
+      "not": {}
+    }
+  }
+}

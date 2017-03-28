@@ -16,6 +16,8 @@
     <fuse.osgi.export>
     </fuse.osgi.export>
     <fuse.osgi.import>
+      org.osgi.framework;version="[1.5,2)",
+      org.osgi.framework.wiring;version="[1.0,2)",
       !org.apache.avalon.*,
       !org.apache.xerces.*,
       !org.apache.log4j.*,

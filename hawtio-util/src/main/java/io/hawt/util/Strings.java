@@ -1,6 +1,11 @@
 package io.hawt.util;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
+ * String utility.
  */
 public class Strings {
     public static String trimString(String value, int max) {
@@ -46,5 +51,15 @@ public class Strings {
             return name;
         }
         return sanitize(name).replace(".", "");
+    }
+
+    public static List<String> split(String text, String delimiter) {
+        if (text == null || delimiter == null) {
+            throw new IllegalArgumentException("Both 'text' and 'delimiter' should not be null.");
+        }
+        return Arrays.stream(text.split(delimiter))
+            .map(s -> s.trim())
+            .filter(s -> isNotBlank(s))
+            .collect(Collectors.toList());
     }
 }

@@ -14,7 +14,7 @@ describe("BaseHelpers", function() {
     spyOn(Core, 'windowLocation').andReturn({ pathname: "/a/b" });
     spyOn($.fn, "attr").andReturn("/a");
     expect(Core.url("/#")).toBe("/a/#");
-    expect(Core.url("/a/b/c")).toBe("/a/a/b/c");
+    expect(Core.url("/a/b/c")).toBe("/a/b/c");
   });
 
   it("returns absolute url for absolute path when there's no context path", function() {

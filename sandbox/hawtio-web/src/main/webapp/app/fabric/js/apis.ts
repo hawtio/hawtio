@@ -42,6 +42,7 @@ module Fabric {
             '<a ng-show="row.entity.wsdlHref" ng-href="{{row.entity.wsdlHref}}"><i class="icon-puzzle-piece"></i> WSDL</a>' +
             '</div>',
           //width: 100
+          sortable: false,
           width: "*"
         },
         {

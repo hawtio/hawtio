@@ -2,11 +2,24 @@
   <form class="form-horizontal">
 
     <div class="control-group">
-      <label class="control-label">ActiveMQ</label>
+
+      <label class="control-label">Max folder size</label>
+      <div class="controls">
+        <input type="number" ng-model="jmxMaxFolderSize">
+        <span class="help-block">The number of MBeans in folder for which attributes will be shown</span>
+      </div>
+
+      <label class="control-label">ActiveMQ Domain</label>
 
       <div class="controls">
         <input type="text" ng-model="activemqJmxDomain">
-        <span class="help-block">The JMX domain name</span>
+        <span class="help-block">Apache ActiveMQ JMX domain name</span>
+      </div>
+
+      <label class="control-label">Camel Domain</label>
+      <div class="controls">
+        <input type="text" ng-model="camelJmxDomain">
+        <span class="help-block">Apache Camel JMX domain name</span>
       </div>
 
     </div>

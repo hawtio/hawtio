@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+	      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	      xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+	      http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+	      version="2.4">
+  <!-- The hawtio main configuration -->
+  <env-entry>
+    <description>Enable/disable hawtio's authentication filter, value is really a boolean</description>
+    <env-entry-name>hawtio/authenticationEnabled</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>false</env-entry-value>
+  </env-entry>
+  <env-entry>
+    <description>Path to store file uploads, defaults to ${java.io.tmpdir}/uploads if blank</description>
+    <env-entry-name>hawtio/uploadDirectory</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value></env-entry-value>
+  </env-entry>-
+
+  <servlet>
+    <servlet-name>jolokia-agent</servlet-name>
+    <servlet-class>org.jolokia.http.AgentServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>jolokia-agent</servlet-name>
+    <url-pattern>/jolokia/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>jolokia-proxy</servlet-name>
+    <servlet-class>io.hawt.web.ProxyServlet</servlet-class>
+    <!--
+      Comma-separated list of allowed target hosts. It is required for security.
+      '*' allows all hosts but keep in mind it's vulnerable to security attacks.
+    -->
+    <init-param>
+      <param-name>proxyWhitelist</param-name>
+      <param-value>
+        localhost,
+        127.0.0.1
+      </param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>jolokia-proxy</servlet-name>
+    <url-pattern>/proxy/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>maven-source</servlet-name>
+    <servlet-class>io.hawt.web.JavaDocServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>maven-source</servlet-name>
+    <url-pattern>/javadoc/*</url-pattern>
+  </servlet-mapping>
+
+  <!-- Disable file locking on windows
+  -->
+  <!--<servlet>-->
+    <!--<servlet-name>default</servlet-name>-->
+    <!--<init-param>-->
+      <!--<param-name>useFileMappedBuffer</param-name>-->
+      <!--<param-value>false</param-value>-->
+    <!--</init-param>-->
+  <!--</servlet>-->
+
+  <servlet>
+    <servlet-name>user</servlet-name>
+    <servlet-class>io.hawt.web.UserServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>user</servlet-name>
+    <url-pattern>/user/*</url-pattern>
+  </servlet-mapping>
+
+  <filter>
+    <filter-name>RedirectFilter</filter-name>
+    <filter-class>io.hawt.web.RedirectFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>RedirectFilter</filter-name>
+    <url-pattern>*</url-pattern>
+  </filter-mapping>
+
+  <listener>
+    <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
+  </listener>
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>io.hawt.blueprint.HawtioBlueprintContextListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>io.hawt.HawtioContextListener</listener-class>
+  </listener>
+
+  <context-param>
+    <param-name>blueprintProperties</param-name>
+    <param-value>blueprint.properties</param-value>
+  </context-param>
+  <context-param>
+    <param-name>blueprintLocation</param-name>
+    <param-value>OSGI-INF/blueprint/blueprint.xml</param-value>
+  </context-param>
+
+  <!-- Plugin discovery, very important to be
+   included or your plugin will not be triggered at all -->
+  <servlet>
+    <servlet-name>plugin</servlet-name>
+    <servlet-class>io.hawt.web.PluginServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>plugin</servlet-name>
+    <url-pattern>/plugin/*</url-pattern>
+  </servlet-mapping>
+  <!--
+  <servlet-mapping>
+    <servlet-name>plugin</servlet-name>
+    <url-pattern>/plugin</url-pattern>
+  </servlet-mapping>
+  -->
+  <!-- The special plugin's configurations -->
+  <description>Sample hawtio hello-world statically linked plugin</description>
+  <display-name>hawt.io sample plugin</display-name>
+
+  <context-param>
+    <description>Plugin's path on the server</description>
+    <param-name>plugin-context</param-name>
+    <param-value>${plugin-context}</param-value>
+  </context-param>
+
+  <context-param>
+    <description>Plugin's path on the server</description>
+    <param-name>plugin-name</param-name>
+    <param-value>${project.artifactId}</param-value>
+  </context-param>
+
+  <context-param>
+    <description>Plugin's path on the server</description>
+    <param-name>plugin-domain</param-name>
+    <param-value>${plugin-domain}</param-value>
+  </context-param>
+
+  <context-param>
+    <description>Plugin's path on the server</description>
+    <param-name>plugin-scripts</param-name>
+    <param-value>${plugin-scripts}</param-value>
+  </context-param>
+
+  <listener>
+    <listener-class>io.hawt.sampleplugin.PluginContextListener</listener-class>
+  </listener>
+
+
+</web-app>
+

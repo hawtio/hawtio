@@ -214,12 +214,16 @@ module Core {
     });
 
     var edges = svgGroup
-      .selectAll("path .edge")
-      .data(transitions)
-      .enter()
-      .append("path")
-      .attr("class", "edge")
-      .attr("marker-end", "url(#arrowhead)");
+        .selectAll("path .edge")
+        .data(transitions)
+	.enter()
+        .append("path")
+        .attr("class", "edge");
+
+    // Don't append marker-ends on IE11; there's a bug that results in the path not being drawn at all
+    if (navigator.userAgent.match(/Trident.*rv[ :]*11\./) == null) {
+      edges.attr("marker-end", "url(#arrowhead)");
+    }
 
     // Append rectangles to the nodes. We do this before laying out the text
     // because we want the text above the rectangle.
@@ -279,10 +283,12 @@ module Core {
     labels.each(function (d) {
       var bbox = this.getBBox();
       d.bbox = bbox;
-      if (bbox.width < minLabelwidth) {
-        bbox.width = minLabelwidth;
+
+      var width = bbox.width;
+      if (width < minLabelwidth) {
+        width = minLabelwidth;
       }
-      d.width = bbox.width + 2 * nodePadding;
+      d.width = width + 2 * nodePadding;
       d.height = bbox.height + 2 * nodePadding + labelPadding;
     });
 

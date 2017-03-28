@@ -33,6 +33,7 @@ public class Options {
     private String extraClassPath;
     private boolean help;
     private boolean jointServerThread;
+    private boolean openUrl = true;
 
     private abstract class Option {
         private String abbreviation;
@@ -153,6 +154,12 @@ public class Options {
             }
         });
 
+        addOption(new ParameterOption("ou", "openUrl", "Open the web console automatic in the web browser") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                openUrl = Boolean.valueOf(parameter);
+            }
+        });
+
     }
 
     private void addOption(Option option) {
@@ -190,6 +197,7 @@ public class Options {
         if (plugins != null) {
             sb.append("\n\tplugins=").append(plugins);
         }
+        sb.append("\n\topenUrl=").append(openUrl);
         sb.append("\n\tjointServerThread=").append(jointServerThread);
         sb.append("\n\thelp=").append(help);
         sb.append("]");
@@ -277,7 +285,16 @@ public class Options {
         this.jointServerThread = jointServerThread;
     }
 
+    public boolean isOpenUrl() {
+        return openUrl;
+    }
+
+    public void setOpenUrl(boolean openUrl) {
+        this.openUrl = openUrl;
+    }
+
     public boolean isHelp() {
         return help;
     }
+
 }

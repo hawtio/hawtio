@@ -124,6 +124,15 @@
   </filter-mapping>
 
   <filter>
+    <filter-name>XXSSProtectionFilter</filter-name>
+    <filter-class>io.hawt.web.XXSSProtectionFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>XXSSProtectionFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
     <filter-name>AuthenticationFilter</filter-name>
     <filter-class>io.hawt.web.AuthenticationFilter</filter-class>
   </filter>
@@ -161,7 +170,7 @@
 
   <servlet>
     <servlet-name>jolokia-agent</servlet-name>
-    <servlet-class>org.jolokia.http.AgentServlet</servlet-class>
+    <servlet-class>io.hawt.web.JolokiaConfiguredAgentServlet</servlet-class>
     <init-param>
       <param-name>mbeanQualifier</param-name>
       <param-value>qualifier=hawtio</param-value>
@@ -169,6 +178,10 @@
     <init-param>
       <param-name>includeStackTrace</param-name>
       <param-value>false</param-value>
+    </init-param>
+    <init-param>
+      <param-name>restrictorClass</param-name>
+      <param-value>io.hawt.web.RBACRestrictor</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
@@ -181,6 +194,17 @@
   <servlet>
     <servlet-name>jolokia-proxy</servlet-name>
     <servlet-class>io.hawt.web.ProxyServlet</servlet-class>
+    <!--
+      Comma-separated list of allowed target hosts. It is required for security.
+      '*' allows all hosts but keep in mind it's vulnerable to security attacks.
+    -->
+    <init-param>
+      <param-name>proxyWhitelist</param-name>
+      <param-value>
+        localhost,
+        127.0.0.1
+      </param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -200,7 +224,7 @@
 
   <servlet>
     <servlet-name>user</servlet-name>
-    <servlet-class>io.hawt.web.UserServlet</servlet-class>
+    <servlet-class>io.hawt.web.keycloak.KeycloakUserServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>user</servlet-name>
@@ -299,6 +323,11 @@
         <url-pattern>/git/*</url-pattern>
     </servlet-mapping>
 
+    <mime-mapping>
+      <extension>woff</extension>
+      <mime-type>application/font-woff</mime-type>
+    </mime-mapping>
+
     <listener>
         <listener-class>io.hawt.HawtioContextListener</listener-class>
     </listener>
@@ -317,4 +346,3 @@
     </welcome-file-list>
 
 </web-app>
-

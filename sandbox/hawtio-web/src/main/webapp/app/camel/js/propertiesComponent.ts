@@ -3,6 +3,7 @@ module Camel {
 
   _module.controller("Camel.PropertiesComponentController", ["$scope", "workspace", "localStorage", "jolokia", ($scope, workspace:Workspace, localStorage:WindowLocalStorage, jolokia) => {
     var log:Logging.Logger = Logger.get("Camel");
+    var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
 
     $scope.workspace = workspace;
 
@@ -90,7 +91,7 @@ module Camel {
     }
 
     function updateData() {
-      var contextMBean = getSelectionCamelContextMBean(workspace);
+      var contextMBean = getSelectionCamelContextMBean(workspace, camelJmxDomain);
 
       var componentMBeanName:string = null;
       if (!componentMBeanName) {

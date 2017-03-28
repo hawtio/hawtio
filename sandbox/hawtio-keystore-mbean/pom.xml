@@ -17,6 +17,8 @@
       io.hawt.keystore
     </fuse.osgi.export>
     <fuse.osgi.import>
+      org.osgi.framework;version="[1.5,2)",
+      org.osgi.framework.wiring;version="[1.0,2)",
       io.hawt.keystore,
       *;resolution:=optional
     </fuse.osgi.import>

@@ -8,6 +8,15 @@
     </div>
 
     <div class="control-group">
-        <button type="submit" class="btn btn-info" ng-click="createDestination(destinationName, false)" ng-disabled="!destinationName">Create topic</button>
+        <button type="submit" class="btn btn-info" ng-click="validateAndCreateDestination(destinationName, false)" ng-disabled="!destinationName">Create topic</button>
+    </div>
+
+    <div hawtio-confirm-dialog="createDialog"
+         ok-button-text="Create"
+         on-ok="createDestination(destinationName, false)">
+      <div class="dialog-body">
+        <p>Topic name <b>{{destinationName}}</b> contains unrecommended characters: ":"</p>
+        <p>This may cause unexpected problems. Are you really sure to create this topic?</p>
+      </div>
     </div>
 </form>

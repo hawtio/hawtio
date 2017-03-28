@@ -84,7 +84,21 @@ module JBoss {
 
                   updateUrl();
 
-                  // lets try find the undertow contextPath
+                  // lets try find the web contextPath (EAP)
+                  var undertowMBean = mbean + ",subsystem=web";
+                  jolokia.request( {type: "read", mbean: undertowMBean, attribute: ["contextRoot"]}, onSuccess((response) => {
+                    var value = response.value;
+                    if (value) {
+                      var contextPath = value["contextRoot"];
+                      if (contextPath) {
+                        obj.contextPath = contextPath;
+                        updateUrl();
+                        Core.$apply($scope);
+                      }
+                    }
+                  }));
+
+                  // lets try find the undertow contextPath (wildfly)
                   var undertowMBean = mbean + ",subsystem=undertow";
                   jolokia.request( {type: "read", mbean: undertowMBean, attribute: ["contextRoot"]}, onSuccess((response) => {
                     var value = response.value;

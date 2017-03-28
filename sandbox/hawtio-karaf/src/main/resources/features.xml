@@ -13,6 +13,11 @@
 
   </feature>
 
+  <feature name="hawtio-rbac" version="${project.version}" resolver="(obr)">
+    <details>Installs the hawtio RBAC enabler bundle(s)</details>
+    <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
+  </feature>
+
   <feature name="hawtio-log" version="${project.version}" resolver="(obr)">
     <details>Installs the hawtio logging</details>
     <bundle>mvn:io.hawt/hawtio-insight-log/${project.version}</bundle>
@@ -25,6 +30,7 @@
   <feature name="hawtio" version="${project.version}" resolver="(obr)">
     <details>Installs the main hawtio web console</details>
     <feature>hawtio-core</feature>
+    <feature>hawtio-rbac</feature>
     <feature>hawtio-log</feature>
     <feature>hawtio-karaf-terminal</feature>
     <feature>hawtio-maven-indexer</feature>
