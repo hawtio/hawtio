@@ -1,6 +1,12 @@
 {
   "name": "hawtio-console-assembly",
   "version": "2.0.0",
+  "description": "The hawt.io web console helps you manage your JVM stuff and stay cool!",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:hawtio/hawtio.git"
+  },
   "scripts": {
     "start": "gulp",
     "build": "gulp build",
@@ -12,7 +18,7 @@
     "gulp": "^3.0.0",
     "gulp-angular-templatecache": "^2.0.0",
     "gulp-clean": "~0.3.0",
-    "gulp-clean-css": "^2.0.0",
+    "gulp-clean-css": "^3.0.0",
     "gulp-concat": "^2.0.0",
     "gulp-debug": "^2.0.0",
     "gulp-flatten": "~0.3.0",

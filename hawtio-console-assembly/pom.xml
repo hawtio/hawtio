@@ -43,6 +43,7 @@
               <arguments>install</arguments>
             </configuration>
           </execution>
+          <!-- "bower install" is run by npm postinstall
           <execution>
             <id>bower install</id>
             <goals>
@@ -52,6 +53,7 @@
               <arguments>install</arguments>
             </configuration>
           </execution>
+          -->
           <execution>
             <id>prep compile</id>
             <goals>
