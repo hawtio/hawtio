@@ -19,14 +19,24 @@
     "tslint-rules"
   ],
   "dependencies": {
-    "hawtio-integration": "~2.1.0",
-    "hawtio-preferences": "~2.0.0",
+    "hawtio-integration": "~3.0.0",
+    "hawtio-preferences": "~3.0.0",
     "patternfly": "~3.15.0"
   },
   "devDependencies": {
     "hawtio-core-dts": "~2.0.0"
   },
   "resolutions": {
-    "hawtio-core": "~2.0.0"
+    "angular": "^1.1.5",
+    "angular-bootstrap": "0.14.x",
+    "hawtio-core": "~3.0.0",
+    "hawtio-core-navigation": "~3.0.0",
+    "hawtio-forms": "~3.0.0",
+    "hawtio-template-cache": "~3.0.0",
+    "hawtio-ui": "~3.0.0",
+    "hawtio-utilities": "~3.0.0",
+    "jquery": ">= 1.9.0",
+    "patternfly": "~3.23.0",
+    "urijs": "<2.0.0"
   }
 }

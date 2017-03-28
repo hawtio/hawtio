@@ -10,13 +10,6 @@
     <!-- build:css style.css -->
 
     <!-- bower:css -->
-    <link rel="stylesheet" href="libs/codemirror/lib/codemirror.css" />
-    <link rel="stylesheet" href="libs/toastr/toastr.css" />
-    <link rel="stylesheet" href="libs/hawtio-ui/dist/hawtio-ui.css" />
-    <link rel="stylesheet" href="libs/hawtio-forms/dist/hawtio-forms.css" />
-    <link rel="stylesheet" href="libs/hawtio-forms/dist/bootstrap-combobox.css" />
-    <link rel="stylesheet" href="libs/hawtio-jmx/dist/hawtio-jmx.css" />
-    <link rel="stylesheet" href="libs/hawtio-integration/dist/hawtio-integration.css" />
     <link rel="stylesheet" href="libs/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css" />
     <link rel="stylesheet" href="libs/bootstrap-select/dist/css/bootstrap-select.css" />
     <link rel="stylesheet" href="libs/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css" />
@@ -29,6 +22,13 @@
     <link rel="stylesheet" href="libs/patternfly-bootstrap-combobox/css/bootstrap-combobox.css" />
     <link rel="stylesheet" href="libs/patternfly/dist/css/patternfly.css" />
     <link rel="stylesheet" href="libs/patternfly/dist/css/patternfly-additions.css" />
+    <link rel="stylesheet" href="libs/angular-patternfly/dist/styles/angular-patternfly.css" />
+    <link rel="stylesheet" href="libs/codemirror/lib/codemirror.css" />
+    <link rel="stylesheet" href="libs/toastr/toastr.css" />
+    <link rel="stylesheet" href="libs/hawtio-ui/dist/hawtio-ui.css" />
+    <link rel="stylesheet" href="libs/hawtio-forms/dist/hawtio-forms.css" />
+    <link rel="stylesheet" href="libs/hawtio-jmx/dist/hawtio-jmx.css" />
+    <link rel="stylesheet" href="libs/hawtio-integration/dist/hawtio-integration.css" />
     <!-- endbower -->
 
     <link rel="stylesheet" href="dist/hawtio-console-assembly.css" />
@@ -38,53 +38,20 @@
     <!-- build:js libs.js -->
 
     <!-- bower:js -->
-    <script src="libs/jquery/dist/jquery.js"></script>
-    <script src="libs/angular/angular.js"></script>
-    <script src="libs/angular-sanitize/angular-sanitize.js"></script>
-    <script src="libs/js-logger/src/logger.js"></script>
-    <script src="libs/hawtio-core/dist/hawtio-core.js"></script>
-    <script src="libs/lodash/lodash.js"></script>
-    <script src="libs/angular-route/angular-route.js"></script>
-    <script src="libs/urijs/src/URI.js"></script>
-    <script src="libs/hawtio-core-navigation/dist/hawtio-core-navigation.js"></script>
-    <script src="libs/human-date/humandate.js"></script>
-    <script src="libs/humanize-duration/humanize-duration.js"></script>
-    <script src="libs/hawtio-utilities/dist/angular-file-upload.js"></script>
-    <script src="libs/hawtio-utilities/dist/hawtio-utilities.js"></script>
-    <script src="libs/codemirror/lib/codemirror.js"></script>
-    <script src="libs/graphlib/dist/graphlib.core.js"></script>
-    <script src="libs/dagre/dist/dagre.core.js"></script>
-    <script src="libs/dagre/dist/dagre.core.min.js"></script>
-    <script src="libs/zeroclipboard/dist/ZeroClipboard.js"></script>
-    <script src="libs/toastr/toastr.js"></script>
-    <script src="libs/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="libs/d3/d3.js"></script>
+    <script src="libs/jquery/jquery.js"></script>
     <script src="libs/jquery-ui/jquery-ui.js"></script>
-    <script src="libs/jquery.dynatree/dist/jquery.dynatree.js"></script>
-    <script src="libs/marked/lib/marked.js"></script>
+    <script src="libs/angular/angular.js"></script>
+    <script src="libs/angular-animate/angular-animate.js"></script>
+    <script src="libs/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>
+    <script src="libs/angular-sanitize/angular-sanitize.js"></script>
     <script src="libs/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="libs/hawtio-ui/dist/hawtio-ui.js"></script>
-    <script src="libs/hawtio-forms/dist/jsdiff.js"></script>
-    <script src="libs/hawtio-forms/dist/hawtio-forms.js"></script>
-    <script src="libs/hawtio-forms/dist/bootstrap-combobox.js"></script>
-    <script src="libs/hawtio-template-cache/dist/hawtio-template-cache.js"></script>
-    <script src="libs/hawtio-jmx/dist/dangle.js"></script>
-    <script src="libs/hawtio-jmx/dist/dagre.js"></script>
-    <script src="libs/hawtio-jmx/dist/jolokia.js"></script>
-    <script src="libs/hawtio-jmx/dist/cubism.v1.js"></script>
-    <script src="libs/hawtio-jmx/dist/jolokia-simple.js"></script>
-    <script src="libs/hawtio-jmx/dist/jolokia-cubism.js"></script>
-    <script src="libs/hawtio-jmx/dist/hawtio-jmx.js"></script>
-    <script src="libs/angular-resource/angular-resource.js"></script>
-    <script src="libs/hawtio-integration/dist/metrics-watcher.js"></script>
-    <script src="libs/hawtio-integration/dist/camelModel.js"></script>
-    <script src="libs/hawtio-integration/dist/hawtio-integration.js"></script>
-    <script src="libs/hawtio-extension-service/dist/hawtio-extension-service.js"></script>
-    <script src="libs/hawtio-preferences/dist/hawtio-preferences.js"></script>
+    <script src="libs/lodash/lodash.js"></script>
+    <script src="libs/bootstrap/dist/js/bootstrap.js"></script>
     <script src="libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
     <script src="libs/bootstrap-select/dist/js/bootstrap-select.js"></script>
     <script src="libs/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
     <script src="libs/bootstrap-touchspin/src/jquery.bootstrap-touchspin.js"></script>
+    <script src="libs/d3/d3.js"></script>
     <script src="libs/c3/c3.js"></script>
     <script src="libs/datatables/media/js/jquery.dataTables.js"></script>
     <script src="libs/datatables-colreorder/js/dataTables.colReorder.js"></script>
@@ -96,6 +63,43 @@
     <script src="libs/patternfly-bootstrap-combobox/js/bootstrap-combobox.js"></script>
     <script src="libs/patternfly-bootstrap-treeview/dist/bootstrap-treeview.min.js"></script>
     <script src="libs/patternfly/dist/js/patternfly.js"></script>
+    <script src="libs/angular-patternfly/dist/angular-patternfly.js"></script>
+    <script src="libs/js-logger/src/logger.js"></script>
+    <script src="libs/hawtio-core/dist/hawtio-core.js"></script>
+    <script src="libs/angular-route/angular-route.js"></script>
+    <script src="libs/urijs/src/URI.js"></script>
+    <script src="libs/hawtio-core-navigation/dist/hawtio-core-navigation.js"></script>
+    <script src="libs/angular-file-upload/dist/angular-file-upload.min.js"></script>
+    <script src="libs/human-date/humandate.js"></script>
+    <script src="libs/humanize-duration/humanize-duration.js"></script>
+    <script src="libs/hawtio-utilities/dist/hawtio-utilities.js"></script>
+    <script src="libs/jquery.dynatree/dist/jquery.dynatree.js"></script>
+    <script src="libs/codemirror/lib/codemirror.js"></script>
+    <script src="libs/graphlib/dist/graphlib.core.js"></script>
+    <script src="libs/dagre/dist/dagre.core.js"></script>
+    <script src="libs/dagre/dist/dagre.core.min.js"></script>
+    <script src="libs/zeroclipboard/dist/ZeroClipboard.js"></script>
+    <script src="libs/clipboard/dist/clipboard.js"></script>
+    <script src="libs/toastr/toastr.js"></script>
+    <script src="libs/marked/lib/marked.js"></script>
+    <script src="libs/js-beautify/js/lib/beautify.js"></script>
+    <script src="libs/js-beautify/js/lib/beautify-css.js"></script>
+    <script src="libs/js-beautify/js/lib/beautify-html.js"></script>
+    <script src="libs/hawtio-template-cache/dist/hawtio-template-cache.js"></script>
+    <script src="libs/hawtio-ui/dist/hawtio-ui.js"></script>
+    <script src="libs/hawtio-forms/dist/jsdiff.js"></script>
+    <script src="libs/hawtio-forms/dist/hawtio-forms.js"></script>
+    <script src="libs/angular-resizable/src/angular-resizable.js"></script>
+    <script src="libs/hawtio-jmx/dist/dangle.js"></script>
+    <script src="libs/hawtio-jmx/dist/jolokia.js"></script>
+    <script src="libs/hawtio-jmx/dist/cubism.v1.js"></script>
+    <script src="libs/hawtio-jmx/dist/jolokia-simple.js"></script>
+    <script src="libs/hawtio-jmx/dist/jolokia-cubism.js"></script>
+    <script src="libs/hawtio-jmx/dist/hawtio-jmx.js"></script>
+    <script src="libs/angular-resource/angular-resource.js"></script>
+    <script src="libs/hawtio-integration/dist/hawtio-integration.js"></script>
+    <script src="libs/hawtio-extension-service/dist/hawtio-extension-service.js"></script>
+    <script src="libs/hawtio-preferences/dist/hawtio-preferences.js"></script>
     <!-- endbower -->
 
     <script type="text/javascript" src="libs/codemirror/addon/edit/closetag.js"></script>
