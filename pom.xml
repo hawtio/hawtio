@@ -90,7 +90,7 @@
     -->
     <guava-version>10.0</guava-version>
     <guava.version>14.0.1</guava.version>
-    <hawtio-release-version>1.4.19</hawtio-release-version>
+    <hawtio-release-version>1.5.0</hawtio-release-version>
     <infinispan-version>5.3.0.Final</infinispan-version>
 <!--
     TODO doesn't yet work - I think the config changed?
