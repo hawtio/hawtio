@@ -315,20 +315,6 @@
         </configuration>
       </plugin>
 
-      <!-- plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.8</version>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin -->
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -354,25 +340,6 @@
   </build>
 
   <profiles>
-
-    <profile>
-      <id>doclint-java8-disable</id>
-      <activation>
-        <jdk>[1.8, 2)</jdk>
-      </activation>
-
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-              <additionalparam>-Xdoclint:none</additionalparam>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
 
     <!-- watcher profile is needed to break build cycle with fabric -->
     <profile>
@@ -500,6 +467,7 @@
             <artifactId>maven-javadoc-plugin</artifactId>
             <configuration>
               <encoding>${project.build.sourceEncoding}</encoding>
+              <additionalparam>-Xdoclint:none</additionalparam>
             </configuration>
             <executions>
               <execution>
