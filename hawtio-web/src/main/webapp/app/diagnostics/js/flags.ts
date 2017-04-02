@@ -3,8 +3,24 @@
  */
 /// <reference path="./diagnosticsPlugin.ts"/>
 module Diagnostics {
+    
+    interface JvmFlag  {
+        name:string;
+        value:any;
+        writeable:boolean;
+        origin:string;
+        deregisterWatch: any;
+        dataType: string;
+    }
 
-    _module.controller( "Diagnostics.FlagsController", ["$scope", "$window", "$location", "localStorage", "workspace", "jolokia", ( $scope, $window, $location, localStorage: WindowLocalStorage, workspace, jolokia ) => {
+    
+    interface JvmFlagsScope extends ng.IScope {
+        flags: Array<JvmFlag>;
+        tableDef:any;
+    }
+
+
+    _module.controller( "Diagnostics.FlagsController", ["$scope", "$location", "workspace", "jolokia", ( $scope: JvmFlagsScope, $location: ng.ILocationService, workspace: Core.Workspace, jolokia: Jolokia.IJolokia ) => {
 
         Diagnostics.configureScope( $scope, $location, workspace );
         $scope.flags = [];
@@ -27,7 +43,7 @@ module Diagnostics {
                 $scope.flags[i].deregisterWatch();
             }
 
-            $scope.flags = response.value.DiagnosticOptions;;
+            $scope.flags = response.value.DiagnosticOptions;
             for ( var i = 0; i < $scope.flags.length; i++ ) {
                 var flag=$scope.flags[i];
                 flag.value  = parseValue(flag.value); //convert to typed value

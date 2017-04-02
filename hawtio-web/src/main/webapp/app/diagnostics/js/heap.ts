@@ -28,7 +28,7 @@ module Diagnostics {
         byteCounts: any;
     }
     
-    _module.controller( "Diagnostics.HeapController", ["$scope", "$window", "$location", "localStorage", "workspace", "jolokia", ( $scope: HeapControllerScope, $window: ng.IWindowService, $location: ng.ILocationService, localStorage: WindowLocalStorage, workspace, jolokia ) => {
+    _module.controller( "Diagnostics.HeapController", ["$scope", "$window", "$location",  "workspace", "jolokia", ( $scope: HeapControllerScope, $window: ng.IWindowService, $location: ng.ILocationService, workspace: Core.Workspace, jolokia: Jolokia.IJolokia ) => {
 
         Diagnostics.configureScope( $scope, $location, workspace );
         $scope.classHistogram = '';
@@ -71,13 +71,15 @@ module Diagnostics {
                     var className = translateJniName( values[4] );
                     var count = values[2];
                     var bytes = values[3];
+                    var sourceReference = javaSource(className);
                     var entry = {
                         num: values[1],
                         count: count,
                         bytes: bytes,
                         name: className,
                         deltaCount: findDelta( $scope.instanceCounts, className, count ),
-                        deltaBytes: findDelta( $scope.byteCounts, className, bytes )
+                        deltaBytes: findDelta( $scope.byteCounts, className, bytes ),
+                        sourceReference : sourceReference,
                     };
 
                     parsed.push( entry );
@@ -133,7 +135,7 @@ module Diagnostics {
                         cellTemplate: numberColumnTemplate('count')
                     }, {
                         field: 'deltaCount',
-                        displayName: '>delta',
+                        displayName: '<delta',
                         cellTemplate: numberColumnTemplate('deltaCount')
                     }, {
                         field: 'bytes',
@@ -141,11 +143,12 @@ module Diagnostics {
                         cellTemplate: numberColumnTemplate('bytes')
                     }, {
                         field: 'deltaBytes',
-                        displayName: '>delta',
+                        displayName: '<delta',
                         cellTemplate: numberColumnTemplate('deltaBytes')
                     }, {
                         field: 'name',
-                        displayName: 'Class name'
+                        displayName: 'Class name',
+                        cellTemplate: '{{row.entity.name}}<div ng-switch on="!!row.entity.sourceReference"><hawtio-open-ide ng-switch-when="true" file-name="{{row.entity.sourceReference.sourceFile}}" class-name="{{row.entity.sourceReference.className}}" line="1" column="1"></hawtio-open-ide></div>'
                     }]
             };
 
@@ -183,6 +186,32 @@ module Diagnostics {
             }
 
         }
+        
+        function javaSource(className) {
+            var baseName = className;
+            
+            //trim array types
+            if(baseName.indexOf('[') > -1) {
+                baseName = baseName.substring(0, className.indexOf('['));
+            }
+            
+            var lastPackage = baseName.lastIndexOf('.');
+            if(lastPackage < 0) {
+                return null;
+            }
+            
+            var simpleName = baseName.substring(lastPackage + 1);
+            var nestedClassIndex = simpleName.indexOf('$');
+            if(nestedClassIndex > -1) {
+                simpleName = simpleName.substring(0, nestedClassIndex);
+            }
+            
+            return {
+                className: baseName,
+                sourceFile: simpleName + '.java'
+            };
+        }
+
 
     }] );
 

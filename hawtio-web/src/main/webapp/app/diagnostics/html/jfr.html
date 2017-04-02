@@ -68,7 +68,7 @@
 				<div class="casetteButtons">
 
 					<button class="recorderButton btn"
-						tooltip="Unlock commercial features, command line: jcmd {{pid}} VM.unlock_commercial_features"
+						tooltip="Unlock commercial features to be able to record"
 						ng-click="unlock()" ng-disabled="jfrEnabled"
 						ng-class="jfrEnabled ? 'disabled' : 'raisedButton'">
 						<i class="icon-5x"
@@ -76,20 +76,20 @@
 					</button>
 					<button class="recorderButton btn" ng-enabled="!isRecording"
 						ng-class="!jfrEnabled || isRecording ? 'disabled' : 'raisedButton'"
-						tooltip="Start recording, command line: jcmd {{pid}} JFR.start"
+						tooltip="Start recording"
 						ng-click="startRecording()" ng-disabled="isRecording">
 						<div class="recordingSymbol" id="rec"></div>
 					</button>
 					<button class="recorderButton btn" title="Dump recording to disk"
 						ng-class="jfrEnabled && isRecording ? 'raisedButton' : 'disabled'"
 						ng-disabled="!isRecording"
-						tooltip="Dump {{jfrSettings.name}} to disk, command line: jcmd {{pid}} JFR.dump recording={{recording}} filename={{}}"
+						tooltip="Dump {{jfrSettings.name}} to disk"
 						ng-click="dumpRecording()">
 						<i class="icon-save icon-5x"></i>
 					</button>
 					<button class="recorderButton btn" ng-disabled="!isRecording"
 						ng-class="jfrEnabled && isRecording ? 'raisedButton' : 'disabled'"
-						tooltip="Stop current recording, command line: jcmd {{pid}} JFR.stop recording={{recording}}"
+						tooltip="Stop {{jfrSettings.name}}"
 						ng-click="stopRecording()">
 						<div class="recordingSymbol" id="stop"></div>
 					</button>

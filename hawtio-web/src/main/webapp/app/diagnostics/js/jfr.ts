@@ -74,7 +74,7 @@ module Diagnostics {
         jcmd: string;
     }
 
-    export var JfrController = _module.controller( "Diagnostics.JfrController", ["$scope", "$location", "localStorage", "workspace", "jolokia", ( $scope: JfrControllerScope, $location: ng.ILocationService, localStorage: WindowLocalStorage, workspace: Core.Workspace, jolokia: Jolokia.IJolokia ) => {
+    export var JfrController = _module.controller( "Diagnostics.JfrController", ["$scope", "$location", "workspace", "jolokia", ( $scope: JfrControllerScope, $location: ng.ILocationService, workspace: Core.Workspace, jolokia: Jolokia.IJolokia ) => {
 
         function render( response ) {
 
