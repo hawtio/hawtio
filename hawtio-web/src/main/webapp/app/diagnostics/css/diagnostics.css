@@ -81,10 +81,13 @@
 	margin-bottom: 15px;
 	float: left;
 	overflow: hidden;
+	margin-right: 15px;
 }
 
 .casetteButtons {
-	margin: 25px;
+	margin-top: 25px;
+	margin-bottom: 25px;
+	margin-left: 5px;
 }
 
 .recordingSymbol {

@@ -23,7 +23,7 @@ module Diagnostics {
   _module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry",  ($location, workspace:Workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) => {
 
     viewRegistry[pluginName] = templatePath + 'layoutDiagnostics.html';
-    helpRegistry.addUserDoc('jvm', 'app/diagnostics/doc/help.md');
+    helpRegistry.addUserDoc('diagnostics', 'app/diagnostics/doc/help.md');
     
     Core.addCSS(rootPath + "/css/diagnostics.css");
 

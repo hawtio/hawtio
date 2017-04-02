@@ -11,6 +11,10 @@
 					href="http://www.oracle.com/technetwork/java/javaseproducts/overview/index.html"
 					class="alert-link">license</a>.
 			</div>
+			<div class="alert alert-info alert-dismissable">
+				<a href="" class="close" data-dismiss="alert" aria-label="close">×</a>
+				<strong>Info:</strong>Equivalent command of last action: <code>{{jcmd}}</code> 
+			</div>
 			<div class="casettePlayer">
 				<div class="casette">
 					<svg role="img" aria-label="recording indicator"
@@ -89,23 +93,44 @@
 						ng-click="stopRecording()">
 						<div class="recordingSymbol" id="stop"></div>
 					</button>
+					<button class="recorderButton btn" 
+						ng-class="jfrEnabled && !settingsVisible ? 'raisedButton' : 'disabled'"
+						tooltip="Show/hide settings"
+						ng-click="toggleSettingsVisible()">
+						<i class="icon-cog icon-5x"></i>
+					</button>
 				</div>
 			</div>
 		</div>
 
-		<div class="jfr-column">
+		<div class="jfr-column" ng-show="settingsVisible">
 
 
 			<dl>
 				<dt>Recorder Settings</dt>
 				<dd>
-					<div simple-form name="connectForm" data="formConfig"
+					<div simple-form name="jfrForm" data="formConfig"
 						entity="jfrSettings"></div>
 
 				</dd>
 			</dl>
 
 		</div>
+		<table ng-show="!!recordings.length"
+				class="table table-condensed table-striped">
+				<tr>
+					<th>Rec#</th>
+					<th>Size</th>
+					<th>Time</th>
+					<th>File</th>
+				</tr>
+				<tr ng-repeat="aRecording in recordings">
+					<td>{{aRecording.number}}</td>
+					<td>{{aRecording.size}}</td>
+					<td>{{aRecording.time | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+					<td><a href="file://{{aRecording.file}}">{{aRecording.file}}</a></td>
+				</tr>
+			</table>
 
 	</div>
 

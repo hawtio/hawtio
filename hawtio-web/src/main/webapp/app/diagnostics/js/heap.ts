@@ -5,13 +5,36 @@
 /// <reference path="./diagnosticHelpers.ts"/>
 module Diagnostics {
 
-    _module.controller( "Diagnostics.HeapController", ["$scope", "$window", "$location", "localStorage", "workspace", "jolokia", ( $scope, $window, $location, localStorage: WindowLocalStorage, workspace, jolokia ) => {
+    interface ClassStats {
+        num: string;
+        count: string;
+        bytes: string;
+        name: string;
+        deltaCount: string;
+        deltaBytes: string;
+    };
+
+    interface HeapControllerScope extends ng.IScope {
+        classHistogram: string;
+        status: string;
+        loading: boolean;
+        pid: string;
+        lastLoaded: any;        
+        loadClassStats: () => void;
+        classes: Array<ClassStats>;
+        tableDef: any;
+        pageTitle: string;
+        instanceCounts: any;
+        byteCounts: any;
+    }
+    
+    _module.controller( "Diagnostics.HeapController", ["$scope", "$window", "$location", "localStorage", "workspace", "jolokia", ( $scope: HeapControllerScope, $window: ng.IWindowService, $location: ng.ILocationService, localStorage: WindowLocalStorage, workspace, jolokia ) => {
 
         Diagnostics.configureScope( $scope, $location, workspace );
         $scope.classHistogram = '';
         $scope.status = '';
         $scope.tableDef = tableDef();
-        $scope.classes = [{ num: 0, count: 0, bytes: 0, name: 'Click reload to read class histogram' }];
+        $scope.classes = [{ num: null, count: null, bytes: null, deltaBytes: null, deltaCount: null, name: 'Click reload to read class histogram' }];
         $scope.loading = false;
         $scope.lastLoaded = 'n/a';
         $scope.pid = findMyPid($scope.pageTitle);

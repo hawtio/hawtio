@@ -65,7 +65,7 @@ module Diagnostics {
      //snatch PID from window title
      var regex=/pid:(\d+)/g;
      var pid = regex.exec(title); 
-     if(pid) {
+     if(pid && pid[1]) {
          return pid[1];
      } else {
          return null;
