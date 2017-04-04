@@ -1,0 +1,27 @@
+<div ng-controller="Diagnostics.HeapController">
+
+	<div class="row-fluid span12" ng-class="{'spinner' : loading}">
+		<div class="alert alert-warning alert-dismissable">
+			<a href="" class="close" data-dismiss="alert" aria-label="close">×</a>
+			<strong>Please note:</strong> Retrieving class histogram may be very
+			expensive, depending on the size and layout of the heap. 
+			Equivalent JCMD Command line: <code>jcmd {{pid}} GC.class_histogram</code>
+		</div>
+		<button class="btn" ng-click="loadClassStats()">
+			<i class="icon-repeat" ng-disabled="loading"></i>(Re)load class histogram
+		</button>
+		<div class="control-group inline-block">
+			Last loaded: {{lastLoaded | date: 'yyyy-MM-dd hh:mm:ss'}}
+		</div>
+		<div class="control-group inline-block pull-right">
+			<input type="text" class="search-query ng-pristine ng-valid"
+				placeholder="Filter..." ng-model="tableDef.filterOptions.filterText">
+			<i class="icon-remove clickable" title="Clear filter"
+				ng-click="tableDef.filterOptions.filterText = ''"></i>
+		</div>
+
+
+		<table class="table table-condensed table-striped heapTable"
+			hawtio-simple-table="tableDef"></table>
+
+	</div>
