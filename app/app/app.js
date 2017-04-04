@@ -21778,6 +21778,571 @@ var DataTable;
     }
     DataTable._module.directive('hawtioSimpleTable', ["$compile", function ($compile) { return new DataTable.SimpleDataTable($compile); }]);
 })(DataTable || (DataTable = {}));
+var Diagnostics;
+(function (Diagnostics) {
+    Diagnostics.log = Logger.get("Diagnostics");
+    Diagnostics.connectControllerKey = "jvmConnectSettings";
+    Diagnostics.connectionSettingsKey = Core.connectionSettingsKey;
+    Diagnostics.logoPath = 'img/icons/jvm/';
+    function configureScope($scope, $location, workspace) {
+        $scope.isActive = function (href) {
+            var tidy = Core.trimLeading(href, "#");
+            var loc = $location.path();
+            return loc === tidy;
+        };
+        $scope.isValid = function (link) {
+            return link && link.isValid(workspace);
+        };
+        $scope.breadcrumbs = [
+            {
+                content: '<i class="icon-plane"></i> Flight Recorder',
+                title: "Make flight recordings",
+                isValid: function (workspace) { return true; },
+                href: "#/diagnostics/jfr"
+            },
+            {
+                content: '<i class="icon-hdd"></i> Heap Use',
+                title: "See heap use",
+                isValid: function (workspace) { return true; },
+                href: "#/diagnostics/heap"
+            },
+            {
+                content: '<i class="icon-gear"></i> JVM Flags',
+                title: "JVM Flags",
+                isValid: function (workspace) { return hasHotspotDiagnostic(workspace); },
+                href: "#/diagnostics/flags"
+            }
+        ];
+    }
+    Diagnostics.configureScope = configureScope;
+    function hasHotspotDiagnostic(workspace) {
+        return workspace.treeContainsDomainAndProperties('com.sun.management', { type: 'HotSpotDiagnostic' });
+    }
+    Diagnostics.hasHotspotDiagnostic = hasHotspotDiagnostic;
+    function findMyPid(title) {
+        var regex = /pid:(\d+)/g;
+        var pid = regex.exec(title);
+        if (pid && pid[1]) {
+            return pid[1];
+        }
+        else {
+            return null;
+        }
+    }
+    Diagnostics.findMyPid = findMyPid;
+})(Diagnostics || (Diagnostics = {}));
+var Diagnostics;
+(function (Diagnostics) {
+    Diagnostics.rootPath = 'app/diagnostics';
+    Diagnostics.templatePath = Diagnostics.rootPath + '/html/';
+    Diagnostics.pluginName = 'diagnostics';
+    Diagnostics._module = angular.module(Diagnostics.pluginName, ['bootstrap', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-forms', 'ui']);
+    Diagnostics._module.config(["$routeProvider", function ($routeProvider) {
+        $routeProvider.when('/diagnostics/jfr', { templateUrl: Diagnostics.templatePath + 'jfr.html' }).when('/diagnostics/heap', { templateUrl: Diagnostics.templatePath + 'heap.html' }).when('/diagnostics/flags', { templateUrl: Diagnostics.templatePath + 'flags.html' });
+    }]);
+    Diagnostics._module.constant('mbeanName', 'com.sun.management:type=DiagnosticCommand');
+    Diagnostics._module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry", function ($location, workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) {
+        viewRegistry[Diagnostics.pluginName] = Diagnostics.templatePath + 'layoutDiagnostics.html';
+        helpRegistry.addUserDoc('diagnostics', 'app/diagnostics/doc/help.md');
+        Core.addCSS(Diagnostics.rootPath + "/css/diagnostics.css");
+        workspace.topLevelTabs.push({
+            id: "diagnostics",
+            content: "Diagnostics",
+            title: "JVM Diagnostics",
+            isValid: function (workspace) {
+                return workspace.treeContainsDomainAndProperties("com.sun.management");
+            },
+            href: function () {
+                return '#/diagnostics/jfr';
+            },
+            isActive: function (workspace) { return workspace.isLinkActive("diagnostics"); }
+        });
+    }]);
+    hawtioPluginLoader.addModule(Diagnostics.pluginName);
+})(Diagnostics || (Diagnostics = {}));
+var Diagnostics;
+(function (Diagnostics) {
+    Diagnostics._module.controller("Diagnostics.FlagsController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+        Diagnostics.configureScope($scope, $location, workspace);
+        $scope.flags = [];
+        $scope.tableDef = tableDef();
+        Core.register(jolokia, $scope, {
+            type: 'read',
+            mbean: 'com.sun.management:type=HotSpotDiagnostic',
+            arguments: []
+        }, onSuccess(render));
+        function render(response) {
+            for (var i = 0; i < $scope.flags.length; i++) {
+                $scope.flags[i].deregisterWatch();
+            }
+            $scope.flags = response.value.DiagnosticOptions;
+            for (var i = 0; i < $scope.flags.length; i++) {
+                var flag = $scope.flags[i];
+                flag.value = parseValue(flag.value);
+                if (flag.writeable) {
+                    flag.dataType = typeof (flag.value);
+                }
+                else {
+                    flag.dataType = "readonly";
+                }
+                flag.deregisterWatch = $scope.$watch('flags[' + i + ']', function (newValue, oldValue) {
+                    if (newValue.value != oldValue.value) {
+                        jolokia.request([{
+                            type: 'exec',
+                            mbean: 'com.sun.management:type=HotSpotDiagnostic',
+                            operation: 'setVMOption(java.lang.String,java.lang.String)',
+                            arguments: [newValue.name, newValue.value]
+                        }], onSuccess(function (response) {
+                            Diagnostics.log.info(response.value);
+                        }));
+                    }
+                }, true);
+            }
+            Core.$apply($scope);
+        }
+        function parseValue(value) {
+            if (typeof (value) === "string") {
+                if (value.match(/true/)) {
+                    return true;
+                }
+                else if (value.match(/false/)) {
+                    return false;
+                }
+                else if (value.match(/\d+/)) {
+                    return Number(value);
+                }
+            }
+            return value;
+        }
+        function tableDef() {
+            return {
+                selectedItems: [],
+                data: 'flags',
+                showFilter: true,
+                filterOptions: {
+                    filterText: ''
+                },
+                showSelectionCheckbox: false,
+                enableRowClickSelection: true,
+                multiSelect: false,
+                primaryKeyFn: function (entity, idx) {
+                    return entity.name;
+                },
+                columnDefs: [
+                    {
+                        field: 'name',
+                        displayName: 'VM Flag',
+                        resizable: true
+                    },
+                    {
+                        field: 'origin',
+                        displayName: 'Origin',
+                        resizable: true
+                    },
+                    {
+                        field: 'value',
+                        displayName: 'Value',
+                        resizable: true,
+                        cellTemplate: '<div ng-switch on="row.entity.dataType"><span ng-switch-when="readonly">{{row.entity.value}}</span><input ng-switch-when="boolean" type="checkbox" ng-model="row.entity.value"></input><input ng-switch-when="string" type="text" ng-model="row.entity.value"></input><input ng-switch-when="number" type="number" ng-model="row.entity.value"></input></div>'
+                    }
+                ]
+            };
+        }
+    }]);
+})(Diagnostics || (Diagnostics = {}));
+var Diagnostics;
+(function (Diagnostics) {
+    ;
+    Diagnostics._module.controller("Diagnostics.HeapController", ["$scope", "$window", "$location", "workspace", "jolokia", function ($scope, $window, $location, workspace, jolokia) {
+        Diagnostics.configureScope($scope, $location, workspace);
+        $scope.classHistogram = '';
+        $scope.status = '';
+        $scope.tableDef = tableDef();
+        $scope.classes = [{ num: null, count: null, bytes: null, deltaBytes: null, deltaCount: null, name: 'Click reload to read class histogram' }];
+        $scope.loading = false;
+        $scope.lastLoaded = 'n/a';
+        $scope.pid = Diagnostics.findMyPid($scope.pageTitle);
+        $scope.loadClassStats = function () {
+            $scope.loading = true;
+            Core.$apply($scope);
+            jolokia.request({
+                type: 'exec',
+                mbean: 'com.sun.management:type=DiagnosticCommand',
+                operation: 'gcClassHistogram([Ljava.lang.String;)',
+                arguments: ['']
+            }, {
+                success: render,
+                error: function (response) {
+                    $scope.status = 'Could not get class histogram : ' + response.error;
+                    $scope.loading = false;
+                    Core.$apply($scope);
+                }
+            });
+        };
+        function render(response) {
+            $scope.classHistogram = response.value;
+            var lines = response.value.split('\n');
+            var parsed = [];
+            var classCounts = {};
+            var bytesCounts = {};
+            for (var i = 0; i < lines.length; i++) {
+                var values = lines[i].match(/\s*(\d+):\s*(\d+)\s*(\d+)\s*(\S+)\s*/);
+                if (values && values.length >= 5) {
+                    var className = translateJniName(values[4]);
+                    var count = values[2];
+                    var bytes = values[3];
+                    var sourceReference = javaSource(className);
+                    var entry = {
+                        num: values[1],
+                        count: count,
+                        bytes: bytes,
+                        name: className,
+                        deltaCount: findDelta($scope.instanceCounts, className, count),
+                        deltaBytes: findDelta($scope.byteCounts, className, bytes),
+                        sourceReference: sourceReference,
+                    };
+                    parsed.push(entry);
+                    classCounts[className] = count;
+                    bytesCounts[className] = bytes;
+                }
+            }
+            $scope.classes = parsed;
+            $scope.instanceCounts = classCounts;
+            $scope.byteCounts = bytesCounts;
+            $scope.loading = false;
+            $scope.lastLoaded = Date.now();
+            Core.$apply($scope);
+        }
+        function findDelta(oldCounts, className, newValue) {
+            if (!oldCounts) {
+                return '';
+            }
+            var oldValue = oldCounts[className];
+            if (oldValue) {
+                return oldValue - newValue;
+            }
+            else {
+                return newValue;
+            }
+        }
+        function numberColumnTemplate(field) {
+            return '<div class="rightAlignedNumber ngCellText" title="{{row.entity.' + field + '}}">{{row.entity.' + field + '}}</div>';
+        }
+        function tableDef() {
+            return {
+                selectedItems: [],
+                data: 'classes',
+                showFilter: true,
+                filterOptions: {
+                    filterText: ''
+                },
+                showSelectionCheckbox: false,
+                enableRowClickSelection: true,
+                multiSelect: false,
+                primaryKeyFn: function (entity, idx) {
+                    return entity.num;
+                },
+                columnDefs: [
+                    {
+                        field: 'num',
+                        displayName: '#',
+                    },
+                    {
+                        field: 'count',
+                        displayName: 'Instances',
+                        cellTemplate: numberColumnTemplate('count')
+                    },
+                    {
+                        field: 'deltaCount',
+                        displayName: '<delta',
+                        cellTemplate: numberColumnTemplate('deltaCount')
+                    },
+                    {
+                        field: 'bytes',
+                        displayName: 'Bytes',
+                        cellTemplate: numberColumnTemplate('bytes')
+                    },
+                    {
+                        field: 'deltaBytes',
+                        displayName: '<delta',
+                        cellTemplate: numberColumnTemplate('deltaBytes')
+                    },
+                    {
+                        field: 'name',
+                        displayName: 'Class name',
+                        cellTemplate: '{{row.entity.name}}<div ng-switch on="!!row.entity.sourceReference"><hawtio-open-ide ng-switch-when="true" file-name="{{row.entity.sourceReference.sourceFile}}" class-name="{{row.entity.sourceReference.className}}" line="1" column="1"></hawtio-open-ide></div>'
+                    }
+                ]
+            };
+        }
+        function translateJniName(name) {
+            if (name.length == 1) {
+                switch (name.charAt(0)) {
+                    case 'I':
+                        return 'int';
+                    case 'S':
+                        return 'short';
+                    case 'C':
+                        return 'char';
+                    case 'Z':
+                        return 'boolean';
+                    case 'D':
+                        return 'double';
+                    case 'F':
+                        return 'float';
+                    case 'J':
+                        return 'long';
+                    case 'B':
+                        return 'byte';
+                }
+            }
+            else {
+                switch (name.charAt(0)) {
+                    case '[':
+                        return translateJniName(name.substring(1)) + '[]';
+                    case 'L':
+                        return translateJniName(name.substring(1, name.indexOf(';')));
+                    default:
+                        return name;
+                }
+            }
+        }
+        function javaSource(className) {
+            var baseName = className;
+            if (baseName.indexOf('[') > -1) {
+                baseName = baseName.substring(0, className.indexOf('['));
+            }
+            var lastPackage = baseName.lastIndexOf('.');
+            if (lastPackage < 0) {
+                return null;
+            }
+            var simpleName = baseName.substring(lastPackage + 1);
+            var nestedClassIndex = simpleName.indexOf('$');
+            if (nestedClassIndex > -1) {
+                simpleName = simpleName.substring(0, nestedClassIndex);
+            }
+            return {
+                className: baseName,
+                sourceFile: simpleName + '.java'
+            };
+        }
+    }]);
+})(Diagnostics || (Diagnostics = {}));
+var Forms;
+(function (Forms) {
+    function createFormElement() {
+        return {
+            type: undefined
+        };
+    }
+    Forms.createFormElement = createFormElement;
+    function createFormTabs() {
+        return {};
+    }
+    Forms.createFormTabs = createFormTabs;
+    function createFormConfiguration() {
+        return {
+            properties: {}
+        };
+    }
+    Forms.createFormConfiguration = createFormConfiguration;
+    function createFormGridConfiguration() {
+        return {
+            rowSchema: {},
+            rows: []
+        };
+    }
+    Forms.createFormGridConfiguration = createFormGridConfiguration;
+})(Forms || (Forms = {}));
+var Diagnostics;
+(function (Diagnostics) {
+    function splitResponse(response) {
+        return response.match(/Dumped recording (\d+),(.+) written to:\n\n(.+)/);
+    }
+    function buildStartParams(jfrSettings) {
+        var params = [];
+        if (jfrSettings.name && jfrSettings.name.length > 0) {
+            params.push('name=' + jfrSettings.name);
+        }
+        if (jfrSettings.filename && jfrSettings.filename.length > 0) {
+            params.push('filename=' + jfrSettings.filename);
+        }
+        params.push('dumponexit=' + jfrSettings.dumpOnExit);
+        params.push('compress=' + jfrSettings.compress);
+        if (jfrSettings.limitType != 'unlimited') {
+            params.push(jfrSettings.limitType + '=' + jfrSettings.limitValue);
+        }
+        return params;
+    }
+    function buildDumpParams(jfrSettings) {
+        return [
+            'filename=' + jfrSettings.filename,
+            'compress=' + jfrSettings.compress,
+            'recording=' + jfrSettings.recordingNumber
+        ];
+    }
+    ;
+    Diagnostics.JfrController = Diagnostics._module.controller("Diagnostics.JfrController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+        function render(response) {
+            var statusString = response.value;
+            $scope.jfrEnabled = statusString.indexOf("not enabled") == -1;
+            $scope.isRecording = statusString.indexOf("(running)") > -1;
+            if ((statusString.indexOf("Use JFR.") > -1 || statusString.indexOf("Use VM.") > -1) && $scope.pid) {
+                statusString = statusString.replace("Use ", "Use command line: jcmd " + $scope.pid + " ");
+            }
+            $scope.jfrStatus = statusString;
+            if ($scope.isRecording) {
+                var regex = /recording=(\d+).*name="(.+)"/g;
+                var parsed = regex.exec(statusString);
+                $scope.jfrSettings.recordingNumber = parsed[1];
+                $scope.jfrSettings.name = parsed[2];
+                var parsedFilename = statusString.match(/filename="(.+)"/);
+                if (parsedFilename && parsedFilename[1]) {
+                    $scope.jfrSettings.filename = parsedFilename[1];
+                }
+                else {
+                    $scope.jfrSettings.filename = 'recording' + parsed[1] + '.jfr';
+                }
+            }
+            Core.$apply($scope);
+        }
+        function showArguments(arguments) {
+            var result = '';
+            var first = true;
+            for (var i = 0; i < arguments.length; i++) {
+                if (true) {
+                    first = false;
+                }
+                else {
+                    result += ',';
+                }
+                result += arguments[i];
+            }
+            return result;
+        }
+        function executeDiagnosticFunction(operation, jcmd, arguments, callback) {
+            Diagnostics.log.debug(Date.now() + " Invoking operation " + operation + " with arguments" + arguments + " settings: " + JSON.stringify($scope.jfrSettings));
+            $scope.jcmd = 'jcmd ' + $scope.pid + ' ' + jcmd + ' ' + showArguments(arguments);
+            jolokia.request([{
+                type: "exec",
+                operation: operation,
+                mbean: 'com.sun.management:type=DiagnosticCommand',
+                arguments: arguments
+            }, {
+                type: 'exec',
+                operation: 'jfrCheck([Ljava.lang.String;)',
+                mbean: 'com.sun.management:type=DiagnosticCommand',
+                arguments: ['']
+            }], onSuccess(function (response) {
+                Diagnostics.log.debug(Date.now() + " Operation " + operation + " was successful" + response.value);
+                if (response.request.operation.indexOf("jfrCheck") > -1) {
+                    render(response);
+                }
+                else {
+                    if (callback) {
+                        callback(response.value);
+                    }
+                    Core.$apply($scope);
+                }
+            }));
+        }
+        $scope.forms = {};
+        $scope.pid = Diagnostics.findMyPid($scope.pageTitle);
+        $scope.recordings = [];
+        $scope.settingsVisible = false;
+        $scope.jfrSettings = {
+            limitType: 'unlimited',
+            limitValue: '',
+            compress: false,
+            name: '',
+            dumpOnExit: true,
+            recordingNumber: '',
+            filename: ''
+        };
+        $scope.formConfig = {
+            properties: {
+                name: {
+                    type: "java.lang.String",
+                    tooltip: "Name for this connection",
+                    "input-attributes": {
+                        "placeholder": "Recording name (optional)..."
+                    }
+                },
+                limitType: {
+                    type: "java.lang.String",
+                    tooltip: "Duration if any",
+                    enum: ['unlimited', 'duration']
+                },
+                limitValue: {
+                    type: "java.lang.String",
+                    tooltip: "Limit value. duration: [val]s/m/h",
+                    required: false,
+                    "input-attributes": {
+                        "ng-show": "jfrSettings.limitType != 'unlimited'"
+                    }
+                },
+                compress: {
+                    type: "java.lang.Boolean",
+                    tooltip: "Compress recording"
+                },
+                dumpOnExit: {
+                    type: "java.lang.Boolean",
+                    tooltip: "Automatically dump recording on VM exit"
+                },
+                filename: {
+                    type: "java.lang.String",
+                    tooltip: "Filename",
+                    "input-attributes": {
+                        "placeholder": "Specify file name *.jfr (optional)..."
+                    }
+                },
+            }
+        };
+        $scope.unlock = function () {
+            executeDiagnosticFunction('vmUnlockCommercialFeatures()', 'VM.unlock_commercial_features', [], null);
+        };
+        $scope.startRecording = function () {
+            executeDiagnosticFunction('jfrStart([Ljava.lang.String;)', 'JFR.start', [buildStartParams($scope.jfrSettings)], null);
+        };
+        $scope.dumpRecording = function () {
+            executeDiagnosticFunction('jfrDump([Ljava.lang.String;)', 'JFR.dump', [buildDumpParams($scope.jfrSettings)], function (response) {
+                var matches = splitResponse(response);
+                Diagnostics.log.debug("response: " + response + " split: " + matches + "split2: " + splitResponse(response));
+                if (matches) {
+                    var recordingData = {
+                        number: matches[1],
+                        size: matches[2],
+                        file: matches[3],
+                        time: Date.now()
+                    };
+                    Diagnostics.log.debug("data: " + recordingData);
+                    $scope.recordings.push(recordingData);
+                }
+            });
+        };
+        $scope.stopRecording = function () {
+            $scope.jfrSettings.filename = '';
+            $scope.jfrSettings.name = '';
+            executeDiagnosticFunction('jfrStop([Ljava.lang.String;)', 'JFR.stop', ["recording=" + $scope.jfrSettings.recordingNumber], null);
+        };
+        $scope.toggleSettingsVisible = function () {
+            $scope.settingsVisible = !$scope.settingsVisible;
+            Core.$apply($scope);
+        };
+        Core.register(jolokia, $scope, [{
+            type: 'exec',
+            operation: 'jfrCheck([Ljava.lang.String;)',
+            mbean: 'com.sun.management:type=DiagnosticCommand',
+            arguments: ['']
+        }], onSuccess(render));
+    }]);
+})(Diagnostics || (Diagnostics = {}));
+var Diagnostics;
+(function (Diagnostics) {
+    Diagnostics._module.controller("Diagnostics.NavController", ["$scope", "$location", "workspace", function ($scope, $location, workspace) {
+        Diagnostics.configureScope($scope, $location, workspace);
+    }]);
+})(Diagnostics || (Diagnostics = {}));
 var Dozer;
 (function (Dozer) {
     Dozer.jmxDomain = 'net.sourceforge.dozer';
@@ -25139,32 +25704,6 @@ var Forms;
         helpRegistry.addDevDoc("forms", 'app/forms/doc/developer.md');
     }]);
     hawtioPluginLoader.addModule(Forms.pluginName);
-})(Forms || (Forms = {}));
-var Forms;
-(function (Forms) {
-    function createFormElement() {
-        return {
-            type: undefined
-        };
-    }
-    Forms.createFormElement = createFormElement;
-    function createFormTabs() {
-        return {};
-    }
-    Forms.createFormTabs = createFormTabs;
-    function createFormConfiguration() {
-        return {
-            properties: {}
-        };
-    }
-    Forms.createFormConfiguration = createFormConfiguration;
-    function createFormGridConfiguration() {
-        return {
-            rowSchema: {},
-            rows: []
-        };
-    }
-    Forms.createFormGridConfiguration = createFormGridConfiguration;
 })(Forms || (Forms = {}));
 var Forms;
 (function (Forms) {
