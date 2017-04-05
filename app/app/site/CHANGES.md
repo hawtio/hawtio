@@ -3,10 +3,12 @@
 
 #### 1.5.1
 
+* New Diagnostics plugin using JVM Flight Recorder
 * Proxy whitelist is automatically constructed based on network interfaces for local machine.
   You can continue to use `hawtio.proxyWhitelist` system properties for further customisation.
 * Upgraded to Camel 2.18.3
 * Upgraded to Spring Boot 1.5.2
+* Upgraded to Jolokia 1.3.6
 
 #### 1.5.0
 
