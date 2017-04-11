@@ -2,50 +2,67 @@ var ActiveMQ;
 (function (ActiveMQ) {
     ActiveMQ.log = Logger.get("activemq");
     ActiveMQ.jmxDomain = 'org.apache.activemq';
-    function getSelectionQueuesFolder(workspace) {
-        function findQueuesFolder(node) {
-            if (node) {
-                if (node.title === "Queues" || node.title === "Queue") {
-                    return node;
-                }
-                var parent = node.parent;
-                if (parent) {
-                    return findQueuesFolder(parent);
-                }
-            }
+    function findFolder(node, titles, ascend) {
+        if (!node) {
             return null;
         }
+        var answer = null;
+        angular.forEach(titles, function (title) {
+            if (node.title === title) {
+                answer = node;
+            }
+        });
+        if (answer === null) {
+            if (ascend) {
+                var parent = node.parent;
+                if (parent) {
+                    answer = findFolder(parent, titles, ascend);
+                }
+            }
+            else {
+                angular.forEach(node.children, function (child) {
+                    angular.forEach(titles, function (title) {
+                        if (child.title === title) {
+                            answer = node;
+                        }
+                    });
+                });
+            }
+        }
+        return answer;
+    }
+    function getSelectionQueuesFolder(workspace, ascend) {
         var selection = workspace.selection;
         if (selection) {
-            return findQueuesFolder(selection);
+            return findFolder(selection, ["Queues", "Queue"], ascend);
         }
         return null;
     }
     ActiveMQ.getSelectionQueuesFolder = getSelectionQueuesFolder;
-    function getSelectionTopicsFolder(workspace) {
-        function findTopicsFolder(node) {
-            var answer = null;
-            if (node) {
-                if (node.title === "Topics" || node.title === "Topic") {
-                    answer = node;
-                }
-                if (answer === null) {
-                    angular.forEach(node.children, function (child) {
-                        if (child.title === "Topics" || child.title === "Topic") {
-                            answer = child;
-                        }
-                    });
-                }
-            }
-            return answer;
+    function retrieveQueueNames(workspace, ascend) {
+        var queuesFolder = getSelectionQueuesFolder(workspace, ascend);
+        if (queuesFolder) {
+            return queuesFolder.children.map(function (n) { return n.title; });
         }
+        return [];
+    }
+    ActiveMQ.retrieveQueueNames = retrieveQueueNames;
+    function getSelectionTopicsFolder(workspace, ascend) {
         var selection = workspace.selection;
         if (selection) {
-            return findTopicsFolder(selection);
+            return findFolder(selection, ["Topics", "Topic"], ascend);
         }
         return null;
     }
     ActiveMQ.getSelectionTopicsFolder = getSelectionTopicsFolder;
+    function retrieveTopicNames(workspace, ascend) {
+        var topicsFolder = getSelectionTopicsFolder(workspace, ascend);
+        if (topicsFolder) {
+            return topicsFolder.children.map(function (n) { return n.title; });
+        }
+        return [];
+    }
+    ActiveMQ.retrieveTopicNames = retrieveTopicNames;
     function selectCurrentMessage(message, key, $scope) {
         $scope.gridOptions.selectAll(false);
         var idx = Core.pathGet(message, ["rowIndex"]);
@@ -8155,23 +8172,14 @@ var ActiveMQ;
                 });
             }
         };
-        function retrieveQueueNames() {
-            var queuesFolder = ActiveMQ.getSelectionQueuesFolder(workspace);
-            if (queuesFolder) {
-                var selectedQueue = workspace.selection.key;
-                var otherQueues = queuesFolder.children.exclude(function (child) {
-                    return child.key == selectedQueue;
-                });
-                return (otherQueues) ? otherQueues.map(function (n) { return n.title; }) : [];
-            }
-            else {
-                return [];
-            }
-        }
         function populateTable(response) {
             log.debug("populateTable");
             if ($scope.queueNames.length === 0) {
-                $scope.queueNames = retrieveQueueNames();
+                var queueNames = ActiveMQ.retrieveQueueNames(workspace, true);
+                var selectedQueue = workspace.selection.key;
+                $scope.queueNames = queueNames.exclude(function (child) {
+                    return child.key == selectedQueue;
+                });
             }
             var data = response.value;
             if (!angular.isArray(data)) {
@@ -8471,9 +8479,23 @@ var ActiveMQ;
         function validateDestinationName(name) {
             return name.indexOf(":") == -1;
         }
+        function checkIfDestinationExists(name, isQueue) {
+            var answer = false;
+            var destinations = isQueue ? ActiveMQ.retrieveQueueNames(workspace, false) : ActiveMQ.retrieveTopicNames(workspace, false);
+            angular.forEach(destinations, function (destination) {
+                if (name === destination) {
+                    answer = true;
+                }
+            });
+            return answer;
+        }
         $scope.validateAndCreateDestination = function (name, isQueue) {
             if (!validateDestinationName(name)) {
                 $scope.createDialog = true;
+                return;
+            }
+            if (checkIfDestinationExists(name, isQueue)) {
+                Core.notification("error", "The " + (isQueue ? "queue" : "topic") + " \"" + name + "\" already exists");
                 return;
             }
             $scope.createDestination(name, isQueue);
@@ -8947,8 +8969,7 @@ var ActiveMQ;
             }));
         };
         $scope.topicNames = function (completionText) {
-            var topicsFolder = ActiveMQ.getSelectionTopicsFolder(workspace);
-            return (topicsFolder) ? topicsFolder.children.map(function (n) { return n.title; }) : [];
+            return ActiveMQ.retrieveTopicNames(workspace, false);
         };
         $scope.$watch('workspace.selection', function () {
             if (workspace.moveIfViewInvalid())
