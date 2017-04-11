@@ -8468,25 +8468,6 @@ var ActiveMQ;
             Core.notification("success", $scope.message);
             $scope.workspace.loadTree();
         }
-        function getBrokerMBean(jolokia) {
-            var mbean = null;
-            var selection = workspace.selection;
-            if (selection && ActiveMQ.isBroker(workspace, amqJmxDomain) && selection.objectName) {
-                return selection.objectName;
-            }
-            var folderNames = selection.folderNames;
-            var parent = selection ? selection.parent : null;
-            if (selection && parent && jolokia && folderNames && folderNames.length > 1) {
-                mbean = parent.objectName;
-                if (!mbean && parent) {
-                    mbean = parent.parent.objectName;
-                }
-                if (!mbean) {
-                    mbean = "" + folderNames[0] + ":BrokerName=" + folderNames[1] + ",Type=Broker";
-                }
-            }
-            return mbean;
-        }
         function validateDestinationName(name) {
             return name.indexOf(":") == -1;
         }
@@ -8498,7 +8479,7 @@ var ActiveMQ;
             $scope.createDestination(name, isQueue);
         };
         $scope.createDestination = function (name, isQueue) {
-            var mbean = getBrokerMBean(jolokia);
+            var mbean = ActiveMQ.getBrokerMBean(workspace, jolokia, amqJmxDomain);
             name = Core.escapeHtml(name);
             if (mbean) {
                 var operation;
@@ -8519,7 +8500,7 @@ var ActiveMQ;
             }
         };
         $scope.deleteDestination = function () {
-            var mbean = getBrokerMBean(jolokia);
+            var mbean = ActiveMQ.getBrokerMBean(workspace, jolokia, amqJmxDomain);
             var selection = workspace.selection;
             var entries = selection.entries;
             if (mbean && selection && jolokia && entries) {
@@ -8929,7 +8910,7 @@ var ActiveMQ;
             if (Core.isBlank($scope.subSelector)) {
                 $scope.subSelector = null;
             }
-            var mbean = getBrokerMBean(jolokia);
+            var mbean = ActiveMQ.getBrokerMBean(workspace, jolokia, amqJmxDomain);
             if (mbean) {
                 jolokia.execute(mbean, "createDurableSubscriber(java.lang.String, java.lang.String, java.lang.String, java.lang.String)", $scope.clientId, $scope.subscriberName, $scope.topicName, $scope.subSelector, onSuccess(function () {
                     Core.notification('success', "Created durable subscriber " + clientId);
@@ -8975,7 +8956,7 @@ var ActiveMQ;
             setTimeout(loadTable, 50);
         });
         function loadTable() {
-            var mbean = getBrokerMBean(jolokia);
+            var mbean = ActiveMQ.getBrokerMBean(workspace, jolokia, amqJmxDomain);
             if (mbean) {
                 $scope.durableSubscribers = [];
                 jolokia.request({ type: "read", mbean: mbean, attribute: ["DurableTopicSubscribers"] }, onSuccess(function (response) { return populateTable(response, "DurableTopicSubscribers", "Active"); }));
@@ -8999,25 +8980,6 @@ var ActiveMQ;
                 return entries;
             }));
             Core.$apply($scope);
-        }
-        function getBrokerMBean(jolokia) {
-            var mbean = null;
-            var selection = workspace.selection;
-            if (selection && ActiveMQ.isBroker(workspace, amqJmxDomain) && selection.objectName) {
-                return selection.objectName;
-            }
-            var folderNames = selection.folderNames;
-            var parent = selection ? selection.parent : null;
-            if (selection && parent && jolokia && folderNames && folderNames.length > 1) {
-                mbean = parent.objectName;
-                if (!mbean && parent) {
-                    mbean = parent.parent.objectName;
-                }
-                if (!mbean) {
-                    mbean = "" + folderNames[0] + ":BrokerName=" + folderNames[1] + ",Type=Broker";
-                }
-            }
-            return mbean;
         }
     }]);
 })(ActiveMQ || (ActiveMQ = {}));
