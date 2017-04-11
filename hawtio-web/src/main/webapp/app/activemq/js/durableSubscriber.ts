@@ -112,8 +112,7 @@ module ActiveMQ {
     };
 
     $scope.topicNames = (completionText) => {
-      var topicsFolder = getSelectionTopicsFolder(workspace);
-      return (topicsFolder) ? topicsFolder.children.map(n => n.title) : [];
+      return retrieveTopicNames(workspace, false);
     };
 
 

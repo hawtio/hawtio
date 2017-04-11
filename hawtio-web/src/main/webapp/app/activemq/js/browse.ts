@@ -1,4 +1,5 @@
 /// <reference path="activemqPlugin.ts"/>
+/// <reference path="../../ui/js/CodeEditor.ts"/>
 module ActiveMQ {
   export var BrowseQueueController = _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", "$routeParams", ($scope, workspace:Workspace, jolokia, localStorage, location, activeMQMessage, $timeout, $routeParams) => {
 
@@ -174,23 +175,14 @@ module ActiveMQ {
       }
     };
 
-    function retrieveQueueNames() {
-      var queuesFolder = getSelectionQueuesFolder(workspace);
-      if (queuesFolder) {
-        var selectedQueue = workspace.selection.key;
-        var otherQueues = queuesFolder.children.exclude((child) => {return child.key == selectedQueue});
-        return (otherQueues)? otherQueues.map(n => n.title) : [];
-      } else {
-        return [];
-      }
-    }
-
     function populateTable(response) {
       log.debug("populateTable");
 
       // setup queue names
       if ($scope.queueNames.length === 0) {
-        $scope.queueNames = retrieveQueueNames();
+        var queueNames = retrieveQueueNames(workspace, true);
+        var selectedQueue = workspace.selection.key;
+        $scope.queueNames = queueNames.exclude((child) => { return child.key == selectedQueue });
       }
 
       var data = response.value;

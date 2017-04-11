@@ -3,52 +3,66 @@ module ActiveMQ {
   export var log:Logging.Logger = Logger.get("activemq");
   export var jmxDomain = 'org.apache.activemq';
 
-  export function getSelectionQueuesFolder(workspace) {
-    function findQueuesFolder(node) {
-      if (node) {
-        if (node.title === "Queues" || node.title === "Queue") {
-          return node;
-        }
-        var parent = node.parent;
-        if (parent) {
-          return findQueuesFolder(parent);
-        }
-      }
+  function findFolder(node, titles:string[], ascend:boolean) {
+    if (!node) {
       return null;
     }
+    var answer = null;
+    angular.forEach(titles, (title) => {
+      if (node.title === title) {
+        answer = node;
+      }
+    });
+    if (answer === null) {
+      if (ascend) {
+        var parent = node.parent;
+        if (parent) {
+          answer = findFolder(parent, titles, ascend);
+        }
+      } else {
+        // retrieves only one level down for children
+        angular.forEach(node.children, (child) => {
+          angular.forEach(titles, (title) => {
+            if (child.title === title) {
+              answer = node;
+            }
+          });
+        });
+      }
+    }
+    return answer;
+  }
 
+  export function getSelectionQueuesFolder(workspace:Workspace, ascend:boolean) {
     var selection = workspace.selection;
     if (selection) {
-      return findQueuesFolder(selection);
+      return findFolder(selection, ["Queues", "Queue"], ascend);
     }
     return null;
   }
 
-  export function getSelectionTopicsFolder(workspace) {
-    function findTopicsFolder(node) {
-      var answer = null;
-      if (node) {
-        if (node.title === "Topics" || node.title === "Topic") {
-          answer = node;
-        }
-
-        if (answer === null) {
-          angular.forEach(node.children, (child) => {
-              if (child.title === "Topics" || child.title === "Topic") {
-                answer = child;
-              }
-          });
-        }
-      }
-      return answer;
+  export function retrieveQueueNames(workspace:Workspace, ascend:boolean) {
+    var queuesFolder = getSelectionQueuesFolder(workspace, ascend);
+    if (queuesFolder) {
+      return queuesFolder.children.map(n => n.title);
     }
+    return [];
+  }
 
-
+  export function getSelectionTopicsFolder(workspace:Workspace, ascend:boolean) {
     var selection = workspace.selection;
     if (selection) {
-      return findTopicsFolder(selection);
+      return findFolder(selection, ["Topics", "Topic"], ascend);
     }
     return null;
+  }
+
+  export function retrieveTopicNames(workspace:Workspace, ascend:boolean) {
+    var topicsFolder = getSelectionTopicsFolder(workspace, ascend);
+    if (topicsFolder) {
+      return topicsFolder.children.map(n => n.title);
+    }
+    return [];
   }
 
   /**
@@ -111,7 +125,7 @@ module ActiveMQ {
     });
   }
 
-  export function getBrokerMBean(workspace, jolokia, jmxDomain) {
+  export function getBrokerMBean(workspace:Workspace, jolokia, jmxDomain:string) {
     var mbean = null;
     var selection = workspace.selection;
     if (selection && isBroker(workspace, jmxDomain) && selection.objectName) {
