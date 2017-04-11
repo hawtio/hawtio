@@ -43,34 +43,11 @@ module ActiveMQ {
       $scope.workspace.loadTree();
     }
 
-    function getBrokerMBean(jolokia) {
-      var mbean = null;
-      var selection = workspace.selection;
-      if (selection && isBroker(workspace, amqJmxDomain) && selection.objectName) {
-        return selection.objectName;
-      }
-      var folderNames = selection.folderNames;
-      //if (selection && jolokia && folderNames && folderNames.length > 1) {
-      var parent = selection ? selection.parent : null;
-      if (selection && parent && jolokia && folderNames && folderNames.length > 1) {
-        mbean = parent.objectName;
-
-        // we might be a destination, so lets try one more parent
-        if (!mbean && parent) {
-          mbean = parent.parent.objectName;
-        }
-        if (!mbean) {
-          mbean = "" + folderNames[0] + ":BrokerName=" + folderNames[1] + ",Type=Broker";
-        }
-      }
-      return mbean;
-    }
-
     function validateDestinationName(name:string) {
       return name.indexOf(":") == -1;
     }
 
-    $scope.validateAndCreateDestination = (name, isQueue) => {
+    $scope.validateAndCreateDestination = (name:string, isQueue:boolean) => {
       if (!validateDestinationName(name)) {
         $scope.createDialog = true;
         return;
@@ -79,7 +56,7 @@ module ActiveMQ {
     }
 
     $scope.createDestination = (name, isQueue) => {
-      var mbean = getBrokerMBean(jolokia);
+      var mbean = getBrokerMBean(workspace, jolokia, amqJmxDomain);
       name = Core.escapeHtml(name);
       if (mbean) {
         var operation;
@@ -99,7 +76,7 @@ module ActiveMQ {
     };
 
     $scope.deleteDestination = () => {
-      var mbean = getBrokerMBean(jolokia);
+      var mbean = getBrokerMBean(workspace, jolokia, amqJmxDomain);
       var selection = workspace.selection;
       var entries = selection.entries;
       if (mbean && selection && jolokia && entries) {
