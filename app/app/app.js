@@ -8528,10 +8528,6 @@ var ActiveMQ;
             if (mbean && selection && jolokia && entries) {
                 var domain = selection.domain;
                 var name = entries["Destination"] || entries["destinationName"] || selection.title;
-                name = name.unescapeHTML();
-                if (name.indexOf("_") != -1) {
-                    name = jolokia.getAttribute(workspace.getSelectedMBeanName(), "Name", onSuccess(null));
-                }
                 var isQueue = "Topic" !== (entries["Type"] || entries["destinationType"]);
                 var operation;
                 if (isQueue) {
@@ -8542,6 +8538,10 @@ var ActiveMQ;
                     operation = "removeTopic(java.lang.String)";
                     $scope.message = "Deleted topic " + name;
                 }
+                name = name.unescapeHTML();
+                if (name.indexOf("_") != -1) {
+                    name = jolokia.getAttribute(workspace.getSelectedMBeanName(), "Name", onSuccess(null));
+                }
                 jolokia.execute(mbean, operation, name, onSuccess(deleteSuccess));
             }
         };
@@ -8551,9 +8551,9 @@ var ActiveMQ;
             var entries = selection.entries;
             if (mbean && selection && jolokia && entries) {
                 var name = entries["Destination"] || entries["destinationName"] || selection.title;
-                name = name.unescapeHTML();
                 var operation = "purge()";
                 $scope.message = "Purged queue " + name;
+                name = name.unescapeHTML();
                 jolokia.execute(mbean, operation, onSuccess(operationSuccess));
             }
         };
