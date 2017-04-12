@@ -106,13 +106,12 @@ module ActiveMQ {
           operation = "removeTopic(java.lang.String)";
           $scope.message = "Deleted topic " + name;
         }
-        // unescape should be done right before invoking jolokia
-        name = name.unescapeHTML();
         if (name.indexOf("_") != -1) {
           // when destination name contains "_" like "aaa_bbb", the actual name might be either
           // "aaa_bbb" or "aaa:bbb", so the actual name needs to be checked before removal.
           name = jolokia.getAttribute(workspace.getSelectedMBeanName(), "Name", onSuccess(null));
         }
+        // do not unescape name for destination deletion
         jolokia.execute(mbean, operation, name, onSuccess(deleteSuccess));
       }
     };
