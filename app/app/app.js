@@ -8538,7 +8538,6 @@ var ActiveMQ;
                     operation = "removeTopic(java.lang.String)";
                     $scope.message = "Deleted topic " + name;
                 }
-                name = name.unescapeHTML();
                 if (name.indexOf("_") != -1) {
                     name = jolokia.getAttribute(workspace.getSelectedMBeanName(), "Name", onSuccess(null));
                 }
