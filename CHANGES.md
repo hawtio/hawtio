@@ -9,6 +9,7 @@
 * Upgraded to Camel 2.18.3
 * Upgraded to Spring Boot 1.5.2
 * Upgraded to Jolokia 1.3.6
+* Upgraded to JGit 4.7.x
 
 #### 1.5.0
 
