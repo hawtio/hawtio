@@ -151,6 +151,27 @@ module Jmx {
     return typeNames;
   }
 
+  /**
+   * Escape only '<' and '>' as opposed to Core.escapeHtml() and _.escape()
+   * 
+   * @param {string} str string to be escaped
+   */
+  export function escapeTagOnly(str: string): string {
+    var tagChars = {
+      "<": "&lt;",
+      ">": "&gt;"
+    };
+    if (!angular.isString(str)) {
+      return str;
+    }
+    var escaped = "";
+    for (var i = 0; i < str.length; i++) {
+      var c = str.charAt(i);
+      escaped += tagChars[c] || c;
+    }
+    return escaped;
+  }
+
   export function enableTree($scope, $location: ng.ILocationService, workspace: Core.Workspace, treeElement, children, redraw = false, onActivateFn = null) {
     //$scope.workspace = workspace;
     if (treeElement.length) {
