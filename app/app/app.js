@@ -1269,6 +1269,22 @@ var Jmx;
         return typeNames;
     }
     Jmx.getUniqueTypeNames = getUniqueTypeNames;
+    function escapeTagOnly(str) {
+        var tagChars = {
+            "<": "&lt;",
+            ">": "&gt;"
+        };
+        if (!angular.isString(str)) {
+            return str;
+        }
+        var escaped = "";
+        for (var i = 0; i < str.length; i++) {
+            var c = str.charAt(i);
+            escaped += tagChars[c] || c;
+        }
+        return escaped;
+    }
+    Jmx.escapeTagOnly = escapeTagOnly;
     function enableTree($scope, $location, workspace, treeElement, children, redraw, onActivateFn) {
         if (redraw === void 0) { redraw = false; }
         if (onActivateFn === void 0) { onActivateFn = null; }
@@ -1537,6 +1553,7 @@ var Core;
             for (var domainName in domains) {
                 var domainClass = escapeDots(domainName);
                 var domain = domains[domainName];
+                domainName = Jmx.escapeTagOnly(domainName);
                 for (var mbeanName in domain) {
                     log.debug("JMX tree mbean name: " + mbeanName);
                     var entries = {};
@@ -1563,7 +1580,7 @@ var Core;
                             kv[0] = item;
                         }
                         var key = kv[0];
-                        var value = kv[1] || key;
+                        var value = Jmx.escapeTagOnly(kv[1] || key);
                         entries[key] = value;
                         var moveToFront = false;
                         var lowerKey = key.toLowerCase();
@@ -9142,6 +9159,194 @@ var ActiveMQ;
         });
     }]);
 })(ActiveMQ || (ActiveMQ = {}));
+var Tree;
+(function (Tree) {
+    Tree.pluginName = 'tree';
+    Tree.log = Logger.get("Tree");
+    function expandAll(el) {
+        treeAction(el, true);
+    }
+    Tree.expandAll = expandAll;
+    function contractAll(el) {
+        treeAction(el, false);
+    }
+    Tree.contractAll = contractAll;
+    function treeAction(el, expand) {
+        $(el).dynatree("getRoot").visit(function (node) {
+            node.expand(expand);
+        });
+    }
+    function sanitize(tree) {
+        if (!tree) {
+            return;
+        }
+        if (angular.isArray(tree)) {
+            tree.forEach(function (folder) {
+                Tree.sanitize(folder);
+            });
+        }
+        var title = tree['title'];
+        if (title) {
+            tree['title'] = title.unescapeHTML(true).escapeHTML();
+        }
+        if (tree.children) {
+            Tree.sanitize(tree.children);
+        }
+    }
+    Tree.sanitize = sanitize;
+    Tree._module = angular.module(Tree.pluginName, ['bootstrap', 'ngResource', 'hawtioCore']);
+    Tree._module.directive('hawtioTree', ["workspace", "$timeout", "$location", function (workspace, $timeout, $location) {
+        return function (scope, element, attrs) {
+            var tree = null;
+            var data = null;
+            var widget = null;
+            var timeoutId = null;
+            var onSelectFn = lookupFunction("onselect");
+            var onDragStartFn = lookupFunction("ondragstart");
+            var onDragEnterFn = lookupFunction("ondragenter");
+            var onDropFn = lookupFunction("ondrop");
+            function lookupFunction(attrName) {
+                var answer = null;
+                var fnName = attrs[attrName];
+                if (fnName) {
+                    answer = Core.pathGet(scope, fnName);
+                    if (!angular.isFunction(answer)) {
+                        answer = null;
+                    }
+                }
+                return answer;
+            }
+            var data = attrs.hawtioTree;
+            var queryParam = data;
+            scope.$watch(data, onWidgetDataChange);
+            scope.$on("hawtio.tree." + data, function (args) {
+                var value = Core.pathGet(scope, data);
+                onWidgetDataChange(value);
+            });
+            element.bind('$destroy', function () {
+                $timeout.cancel(timeoutId);
+            });
+            updateLater();
+            function updateWidget() {
+                Core.$applyNowOrLater(scope);
+            }
+            function onWidgetDataChange(value) {
+                tree = value;
+                if (tree) {
+                    Tree.sanitize(tree);
+                }
+                if (tree && !widget) {
+                    var treeElement = $(element);
+                    var children = Core.asArray(tree);
+                    var hideRoot = attrs["hideroot"];
+                    if ("true" === hideRoot) {
+                        children = tree['children'];
+                    }
+                    var config = {
+                        clickFolderMode: 3,
+                        onActivate: function (node) {
+                            var data = node.data;
+                            if (onSelectFn) {
+                                onSelectFn(data, node);
+                            }
+                            else {
+                                workspace.updateSelectionNode(data);
+                            }
+                            Core.$apply(scope);
+                        },
+                        onClick: function (node, event) {
+                            if (event["metaKey"]) {
+                                event.preventDefault();
+                                var url = $location.absUrl();
+                                if (node && node.data) {
+                                    var key = node.data["key"];
+                                    if (key) {
+                                        var hash = $location.search();
+                                        hash[queryParam] = key;
+                                        var idx = url.indexOf('?');
+                                        if (idx <= 0) {
+                                            url += "?";
+                                        }
+                                        else {
+                                            url = url.substring(0, idx + 1);
+                                        }
+                                        url += $.param(hash);
+                                    }
+                                }
+                                window.open(url, '_blank');
+                                window.focus();
+                                return false;
+                            }
+                            return true;
+                        },
+                        persist: false,
+                        debugLevel: 0,
+                        children: children,
+                        dnd: {
+                            onDragStart: onDragStartFn ? onDragStartFn : function (node) {
+                                console.log("onDragStart!");
+                                return true;
+                            },
+                            onDragEnter: onDragEnterFn ? onDragEnterFn : function (node, sourceNode) {
+                                console.log("onDragEnter!");
+                                return true;
+                            },
+                            onDrop: onDropFn ? onDropFn : function (node, sourceNode, hitMode) {
+                                console.log("onDrop!");
+                                sourceNode.move(node, hitMode);
+                                return true;
+                            }
+                        }
+                    };
+                    if (!onDropFn && !onDragEnterFn && !onDragStartFn) {
+                        delete config["dnd"];
+                    }
+                    widget = treeElement.dynatree(config);
+                    var activatedNode = false;
+                    var activateNodeName = attrs["activatenodes"];
+                    if (activateNodeName) {
+                        var values = scope[activateNodeName];
+                        var tree = treeElement.dynatree("getTree");
+                        if (values && tree) {
+                            angular.forEach(Core.asArray(values), function (value) {
+                                tree.activateKey(value);
+                                activatedNode = true;
+                            });
+                        }
+                    }
+                    var root = treeElement.dynatree("getRoot");
+                    if (root) {
+                        var onRootName = attrs["onroot"];
+                        if (onRootName) {
+                            var fn = scope[onRootName];
+                            if (fn) {
+                                fn(root);
+                            }
+                        }
+                        if (!activatedNode) {
+                            var children = root['getChildren']();
+                            if (children && children.length) {
+                                var child = children[0];
+                                child.expand(true);
+                                child.activate(true);
+                            }
+                        }
+                    }
+                }
+                updateWidget();
+            }
+            function updateLater() {
+                timeoutId = $timeout(function () {
+                    updateWidget();
+                }, 300);
+            }
+        };
+    }]);
+    Tree._module.run(["helpRegistry", function (helpRegistry) {
+        helpRegistry.addDevDoc(Tree.pluginName, 'app/tree/doc/developer.md');
+    }]);
+    hawtioPluginLoader.addModule(Tree.pluginName);
+})(Tree || (Tree = {}));
 var ActiveMQ;
 (function (ActiveMQ) {
     ActiveMQ._module.controller("ActiveMQ.TreeHeaderController", ["$scope", function ($scope) {
@@ -9186,7 +9391,6 @@ var ActiveMQ;
                 children.forEach(function (broker) {
                     var grandChildren = broker.children;
                     if (grandChildren) {
-                        Tree.sanitize(grandChildren);
                         var idx = grandChildren.findIndex(function (n) { return n.title === "Topic"; });
                         if (idx > 0) {
                             var old = grandChildren[idx];
@@ -35272,194 +35476,6 @@ var Jmx;
         Core.register(jolokia, $scope, $scope.reqs, onSuccess($scope.render));
     }]);
 })(Jmx || (Jmx = {}));
-var Tree;
-(function (Tree) {
-    Tree.pluginName = 'tree';
-    Tree.log = Logger.get("Tree");
-    function expandAll(el) {
-        treeAction(el, true);
-    }
-    Tree.expandAll = expandAll;
-    function contractAll(el) {
-        treeAction(el, false);
-    }
-    Tree.contractAll = contractAll;
-    function treeAction(el, expand) {
-        $(el).dynatree("getRoot").visit(function (node) {
-            node.expand(expand);
-        });
-    }
-    function sanitize(tree) {
-        if (!tree) {
-            return;
-        }
-        if (angular.isArray(tree)) {
-            tree.forEach(function (folder) {
-                Tree.sanitize(folder);
-            });
-        }
-        var title = tree['title'];
-        if (title) {
-            tree['title'] = title.unescapeHTML(true).escapeHTML();
-        }
-        if (tree.children) {
-            Tree.sanitize(tree.children);
-        }
-    }
-    Tree.sanitize = sanitize;
-    Tree._module = angular.module(Tree.pluginName, ['bootstrap', 'ngResource', 'hawtioCore']);
-    Tree._module.directive('hawtioTree', ["workspace", "$timeout", "$location", function (workspace, $timeout, $location) {
-        return function (scope, element, attrs) {
-            var tree = null;
-            var data = null;
-            var widget = null;
-            var timeoutId = null;
-            var onSelectFn = lookupFunction("onselect");
-            var onDragStartFn = lookupFunction("ondragstart");
-            var onDragEnterFn = lookupFunction("ondragenter");
-            var onDropFn = lookupFunction("ondrop");
-            function lookupFunction(attrName) {
-                var answer = null;
-                var fnName = attrs[attrName];
-                if (fnName) {
-                    answer = Core.pathGet(scope, fnName);
-                    if (!angular.isFunction(answer)) {
-                        answer = null;
-                    }
-                }
-                return answer;
-            }
-            var data = attrs.hawtioTree;
-            var queryParam = data;
-            scope.$watch(data, onWidgetDataChange);
-            scope.$on("hawtio.tree." + data, function (args) {
-                var value = Core.pathGet(scope, data);
-                onWidgetDataChange(value);
-            });
-            element.bind('$destroy', function () {
-                $timeout.cancel(timeoutId);
-            });
-            updateLater();
-            function updateWidget() {
-                Core.$applyNowOrLater(scope);
-            }
-            function onWidgetDataChange(value) {
-                tree = value;
-                if (tree) {
-                    Tree.sanitize(tree);
-                }
-                if (tree && !widget) {
-                    var treeElement = $(element);
-                    var children = Core.asArray(tree);
-                    var hideRoot = attrs["hideroot"];
-                    if ("true" === hideRoot) {
-                        children = tree['children'];
-                    }
-                    var config = {
-                        clickFolderMode: 3,
-                        onActivate: function (node) {
-                            var data = node.data;
-                            if (onSelectFn) {
-                                onSelectFn(data, node);
-                            }
-                            else {
-                                workspace.updateSelectionNode(data);
-                            }
-                            Core.$apply(scope);
-                        },
-                        onClick: function (node, event) {
-                            if (event["metaKey"]) {
-                                event.preventDefault();
-                                var url = $location.absUrl();
-                                if (node && node.data) {
-                                    var key = node.data["key"];
-                                    if (key) {
-                                        var hash = $location.search();
-                                        hash[queryParam] = key;
-                                        var idx = url.indexOf('?');
-                                        if (idx <= 0) {
-                                            url += "?";
-                                        }
-                                        else {
-                                            url = url.substring(0, idx + 1);
-                                        }
-                                        url += $.param(hash);
-                                    }
-                                }
-                                window.open(url, '_blank');
-                                window.focus();
-                                return false;
-                            }
-                            return true;
-                        },
-                        persist: false,
-                        debugLevel: 0,
-                        children: children,
-                        dnd: {
-                            onDragStart: onDragStartFn ? onDragStartFn : function (node) {
-                                console.log("onDragStart!");
-                                return true;
-                            },
-                            onDragEnter: onDragEnterFn ? onDragEnterFn : function (node, sourceNode) {
-                                console.log("onDragEnter!");
-                                return true;
-                            },
-                            onDrop: onDropFn ? onDropFn : function (node, sourceNode, hitMode) {
-                                console.log("onDrop!");
-                                sourceNode.move(node, hitMode);
-                                return true;
-                            }
-                        }
-                    };
-                    if (!onDropFn && !onDragEnterFn && !onDragStartFn) {
-                        delete config["dnd"];
-                    }
-                    widget = treeElement.dynatree(config);
-                    var activatedNode = false;
-                    var activateNodeName = attrs["activatenodes"];
-                    if (activateNodeName) {
-                        var values = scope[activateNodeName];
-                        var tree = treeElement.dynatree("getTree");
-                        if (values && tree) {
-                            angular.forEach(Core.asArray(values), function (value) {
-                                tree.activateKey(value);
-                                activatedNode = true;
-                            });
-                        }
-                    }
-                    var root = treeElement.dynatree("getRoot");
-                    if (root) {
-                        var onRootName = attrs["onroot"];
-                        if (onRootName) {
-                            var fn = scope[onRootName];
-                            if (fn) {
-                                fn(root);
-                            }
-                        }
-                        if (!activatedNode) {
-                            var children = root['getChildren']();
-                            if (children && children.length) {
-                                var child = children[0];
-                                child.expand(true);
-                                child.activate(true);
-                            }
-                        }
-                    }
-                }
-                updateWidget();
-            }
-            function updateLater() {
-                timeoutId = $timeout(function () {
-                    updateWidget();
-                }, 300);
-            }
-        };
-    }]);
-    Tree._module.run(["helpRegistry", function (helpRegistry) {
-        helpRegistry.addDevDoc(Tree.pluginName, 'app/tree/doc/developer.md');
-    }]);
-    hawtioPluginLoader.addModule(Tree.pluginName);
-})(Tree || (Tree = {}));
 var Jmx;
 (function (Jmx) {
     Jmx._module.controller("Jmx.TreeHeaderController", ["$scope", function ($scope) {
