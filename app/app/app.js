@@ -2776,21 +2776,14 @@ var Core;
     Core.unregister = unregister;
     function defaultJolokiaErrorHandler(response, options) {
         if (options === void 0) { options = {}; }
+        var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
+        var silent = options['silent'];
         var stacktrace = response.stacktrace;
-        if (stacktrace) {
-            var silent = options['silent'];
-            if (!silent) {
-                var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
-                if (stacktrace.indexOf("InstanceNotFoundException") >= 0 || stacktrace.indexOf("AttributeNotFoundException") >= 0 || stacktrace.indexOf("IllegalArgumentException: No operation") >= 0) {
-                    Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
-                }
-                else {
-                    Core.log.warn("Operation ", operation, " failed due to: ", response['error']);
-                }
-            }
-            else {
-                Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
-            }
+        if (silent || (stacktrace && (stacktrace.indexOf("InstanceNotFoundException") >= 0 || stacktrace.indexOf("AttributeNotFoundException") >= 0 || stacktrace.indexOf("IllegalArgumentException: No operation") >= 0))) {
+            Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
+        }
+        else {
+            Core.log.warn("Operation ", operation, " failed due to: ", response['error']);
         }
     }
     Core.defaultJolokiaErrorHandler = defaultJolokiaErrorHandler;
