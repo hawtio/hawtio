@@ -37,6 +37,13 @@
   </env-entry>
 
   <env-entry>
+    <description>AuthenticationContainerDiscovery classes divided by comma, used to discover container environments</description>
+    <env-entry-name>hawtio/authenticationContainerDiscoveryClasses</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery</env-entry-value>
+  </env-entry>
+
+  <env-entry>
     <description>Enable/disable Keycloak integration. Value is really a boolean</description>
     <env-entry-name>hawtio/keycloakEnabled</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
@@ -51,11 +58,34 @@
   </env-entry>
 
   <env-entry>
+    <description>Whether or not to check and see if branding should be enabled, value is really a boolean</description>
+    <env-entry-name>hawtio/useBranding</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>true</env-entry-value>
+  </env-entry>
+
+  <env-entry>
     <description>Path to store file uploads, defaults to ${java.io.tmpdir}/uploads if blank</description>
     <env-entry-name>hawtio/uploadDirectory</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
     <env-entry-value></env-entry-value>
   </env-entry>
+
+  <env-entry>
+    <description>The maximum time interval, in seconds, that the servlet container will keep this session open between client accesses.</description>
+    <env-entry-name>hawtio/sessionTimeout</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value></env-entry-value>
+  </env-entry>
+
+  <filter>
+    <filter-name>RedirectFilter</filter-name>
+    <filter-class>io.hawt.web.RedirectFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>RedirectFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
   <filter>
     <filter-name>SessionExpiryFilter</filter-name>
@@ -63,6 +93,24 @@
   </filter>
   <filter-mapping>
     <filter-name>SessionExpiryFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>cache</filter-name>
+    <filter-class>io.hawt.web.CacheHeadersFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>cache</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>CORSFilter</filter-name>
+    <filter-class>io.hawt.web.CORSFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CORSFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
@@ -81,15 +129,6 @@
   </filter>
   <filter-mapping>
     <filter-name>XXSSProtectionFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <filter>
-    <filter-name>CORSFilter</filter-name>
-    <filter-class>io.hawt.web.CORSFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>CORSFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
@@ -124,7 +163,7 @@
 
   <servlet>
     <servlet-name>jolokia-agent</servlet-name>
-    <servlet-class>org.jolokia.http.AgentServlet</servlet-class>
+    <servlet-class>io.hawt.web.JolokiaConfiguredAgentServlet</servlet-class>
     <init-param>
       <param-name>mbeanQualifier</param-name>
       <param-value>qualifier=hawtio</param-value>
@@ -133,6 +172,14 @@
     <init-param>
       <param-name>allowErrorDetails</param-name>
       <param-value>false</param-value>
+    </init-param>
+    <init-param>
+      <param-name>includeStackTrace</param-name>
+      <param-value>false</param-value>
+    </init-param>
+    <init-param>
+      <param-name>restrictorClass</param-name>
+      <param-value>io.hawt.web.RBACRestrictor</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
@@ -218,6 +265,15 @@
     <url-pattern>/plugin/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>exportContext</servlet-name>
+    <servlet-class>io.hawt.web.ExportContextServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>exportContext</servlet-name>
+    <url-pattern>/exportContext/*</url-pattern>
+  </servlet-mapping>
+
 <!--
   <servlet>
     <servlet-name>GitServlet</servlet-name>
@@ -256,12 +312,29 @@
     <url-pattern>/javadoc/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>contextFormatter</servlet-name>
+    <servlet-class>io.hawt.web.ContextFormatterServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>contextFormatter</servlet-name>
+    <url-pattern>/contextFormatter/*</url-pattern>
+  </servlet-mapping>
+
+  <mime-mapping>
+    <extension>woff</extension>
+    <mime-type>application/font-woff</mime-type>
+  </mime-mapping>
+
   <listener>
     <listener-class>io.hawt.HawtioContextListener</listener-class>
   </listener>
+
   <listener>
     <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
   </listener>
+
   <listener>
     <listener-class>io.hawt.blueprint.HawtioBlueprintContextListener</listener-class>
   </listener>

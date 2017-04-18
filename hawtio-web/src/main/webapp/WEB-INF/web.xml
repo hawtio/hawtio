@@ -175,6 +175,11 @@
       <param-name>mbeanQualifier</param-name>
       <param-value>qualifier=hawtio</param-value>
     </init-param>
+    <!-- turn off returning exceptions and stacktraces from jolokia -->
+    <init-param>
+      <param-name>allowErrorDetails</param-name>
+      <param-value>false</param-value>
+    </init-param>
     <init-param>
       <param-name>includeStackTrace</param-name>
       <param-value>false</param-value>
@@ -294,6 +299,15 @@
     <url-pattern>/git/*</url-pattern>
   </servlet-mapping>
 -->
+  <servlet>
+    <servlet-name>gitServlet</servlet-name>
+    <servlet-class>io.hawt.web.GitServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>gitServlet</servlet-name>
+    <url-pattern>/git/*</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>maven-source</servlet-name>
@@ -304,6 +318,7 @@
     <servlet-name>maven-source</servlet-name>
     <url-pattern>/javadoc/*</url-pattern>
   </servlet-mapping>
+
   <servlet>
     <servlet-name>contextFormatter</servlet-name>
     <servlet-class>io.hawt.web.ContextFormatterServlet</servlet-class>
@@ -312,15 +327,6 @@
   <servlet-mapping>
     <servlet-name>contextFormatter</servlet-name>
     <url-pattern>/contextFormatter/*</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <servlet-name>gitServlet</servlet-name>
-    <servlet-class>io.hawt.web.GitServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>gitServlet</servlet-name>
-    <url-pattern>/git/*</url-pattern>
   </servlet-mapping>
 
   <mime-mapping>
