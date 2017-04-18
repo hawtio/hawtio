@@ -6875,7 +6875,6 @@ var Fabric;
         else {
             return min <= count && count <= max ? "badge-success" : "badge-warning";
         }
-        return "";
     }
     Fabric.containerCountBadgeStyle = containerCountBadgeStyle;
     function gotoProfile(workspace, jolokia, localStorage, $location, versionId, profile) {
@@ -9224,6 +9223,52 @@ var ActiveMQ;
         }
     }]);
 })(ActiveMQ || (ActiveMQ = {}));
+var JUnit;
+(function (JUnit) {
+    JUnit.log = Logger.get("JUnit");
+    function isJUnitPluginEnabled(workspace) {
+        return getIntrospectorMBean(workspace) && getJUnitMBean(workspace);
+    }
+    JUnit.isJUnitPluginEnabled = isJUnitPluginEnabled;
+    function getJUnitMBean(workspace) {
+        return Core.getMBeanTypeObjectName(workspace, "hawtio", "JUnitFacade");
+    }
+    JUnit.getJUnitMBean = getJUnitMBean;
+    function getIntrospectorMBean(workspace) {
+        return Core.getMBeanTypeObjectName(workspace, "hawtio", "Introspector");
+    }
+    JUnit.getIntrospectorMBean = getIntrospectorMBean;
+})(JUnit || (JUnit = {}));
+var JUnit;
+(function (JUnit) {
+    var pluginName = 'junit';
+    JUnit._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']);
+    JUnit._module.config(["$routeProvider", function ($routeProvider) {
+        $routeProvider.when('/junit/tests', { templateUrl: 'app/junit/html/tests.html', reloadOnSearch: false });
+    }]);
+    JUnit._module.factory('inProgressStatus', function () {
+        return {
+            jhandle: null,
+            data: null,
+            result: null,
+            alertClass: "success"
+        };
+    });
+    JUnit._module.run(["$location", "workspace", "jolokia", "viewRegistry", "layoutFull", "helpRegistry", function ($location, workspace, jolokia, viewRegistry, layoutFull, helpRegistry) {
+        viewRegistry['junit'] = 'app/junit/html/layoutJUnitTree.html';
+        helpRegistry.addUserDoc('junit', 'app/junit/doc/help.md', function () {
+            return JUnit.isJUnitPluginEnabled(workspace);
+        });
+        workspace.topLevelTabs.push({
+            id: "junit",
+            content: "JUnit",
+            title: "View and run test cases in this process",
+            isValid: function (workspace) { return JUnit.isJUnitPluginEnabled(workspace); },
+            href: function () { return "#/junit/tests"; }
+        });
+    }]);
+    hawtioPluginLoader.addModule(pluginName);
+})(JUnit || (JUnit = {}));
 var Insight;
 (function (Insight) {
     Insight.managerMBean = "io.fabric8:type=Fabric";
@@ -35775,52 +35820,6 @@ var Jmx;
         }
     }]);
 })(Jmx || (Jmx = {}));
-var JUnit;
-(function (JUnit) {
-    JUnit.log = Logger.get("JUnit");
-    function isJUnitPluginEnabled(workspace) {
-        return getIntrospectorMBean(workspace) && getJUnitMBean(workspace);
-    }
-    JUnit.isJUnitPluginEnabled = isJUnitPluginEnabled;
-    function getJUnitMBean(workspace) {
-        return Core.getMBeanTypeObjectName(workspace, "hawtio", "JUnitFacade");
-    }
-    JUnit.getJUnitMBean = getJUnitMBean;
-    function getIntrospectorMBean(workspace) {
-        return Core.getMBeanTypeObjectName(workspace, "hawtio", "Introspector");
-    }
-    JUnit.getIntrospectorMBean = getIntrospectorMBean;
-})(JUnit || (JUnit = {}));
-var JUnit;
-(function (JUnit) {
-    var pluginName = 'junit';
-    JUnit._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'ngGrid', 'datatable', 'hawtioCore']);
-    JUnit._module.config(["$routeProvider", function ($routeProvider) {
-        $routeProvider.when('/junit/tests', { templateUrl: 'app/junit/html/tests.html', reloadOnSearch: false });
-    }]);
-    JUnit._module.factory('inProgressStatus', function () {
-        return {
-            jhandle: null,
-            data: null,
-            result: null,
-            alertClass: "success"
-        };
-    });
-    JUnit._module.run(["$location", "workspace", "jolokia", "viewRegistry", "layoutFull", "helpRegistry", function ($location, workspace, jolokia, viewRegistry, layoutFull, helpRegistry) {
-        viewRegistry['junit'] = 'app/junit/html/layoutJUnitTree.html';
-        helpRegistry.addUserDoc('junit', 'app/junit/doc/help.md', function () {
-            return JUnit.isJUnitPluginEnabled(workspace);
-        });
-        workspace.topLevelTabs.push({
-            id: "junit",
-            content: "JUnit",
-            title: "View and run test cases in this process",
-            isValid: function (workspace) { return JUnit.isJUnitPluginEnabled(workspace); },
-            href: function () { return "#/junit/tests"; }
-        });
-    }]);
-    hawtioPluginLoader.addModule(pluginName);
-})(JUnit || (JUnit = {}));
 var JUnit;
 (function (JUnit) {
     JUnit._module.controller("JUnit.TreeController", ["$scope", "$location", "workspace", "jolokia", "inProgressStatus", function ($scope, $location, workspace, jolokia, inProgressStatus) {
