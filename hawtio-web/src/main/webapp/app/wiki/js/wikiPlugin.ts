@@ -4,6 +4,8 @@
  */
 /// <reference path="wikiHelpers.ts"/>
 /// <reference path="../../ui/js/dropDown.ts"/>
+/// <reference path="../../core/js/helpRegistry.ts"/>
+/// <reference path="../../core/js/preferencesRegistry.ts"/>
 /// <reference path="../../core/js/workspace.ts"/>
 /// <reference path="../../git/js/git.ts"/>
 /// <reference path="../../git/js/gitHelpers.ts"/>
@@ -98,17 +100,18 @@ module Wiki {
 
   _module.filter('fileIconClass', () => iconClass);
 
-  _module.run(["$location", "workspace", "viewRegistry", "jolokia", "localStorage", "layoutFull", "helpRegistry", "preferencesRegistry", "wikiRepository", "postLoginTasks", "$rootScope", ($location:ng.ILocationService,
-        workspace:Workspace,
-        viewRegistry,
-        jolokia,
-        localStorage,
+  _module.run(["$location", "workspace", "viewRegistry", "jolokia", "localStorage", "layoutFull", "helpRegistry", "preferencesRegistry", "wikiRepository", "postLoginTasks", "$rootScope", (
+        $location: ng.ILocationService,
+        workspace: Workspace,
+        viewRegistry: any,
+        jolokia: Jolokia.IJolokia,
+        localStorage: WindowLocalStorage,
         layoutFull,
-        helpRegistry,
-        preferencesRegistry,
-        wikiRepository,
-        postLoginTasks,
-        $rootScope) => {
+        helpRegistry: Core.HelpRegistry,
+        preferencesRegistry: Core.PreferencesRegistry,
+        wikiRepository: WikiRepository,
+        postLoginTasks: Core.Tasks,
+        $rootScope: ng.IRootScopeService) => {
 
     viewRegistry['wiki'] = templatePath + 'layoutWiki.html';
     helpRegistry.addUserDoc('wiki', 'app/wiki/doc/help.md', () => {

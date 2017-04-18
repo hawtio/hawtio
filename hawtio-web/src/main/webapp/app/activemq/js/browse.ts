@@ -1,7 +1,15 @@
 /// <reference path="activemqPlugin.ts"/>
 /// <reference path="../../ui/js/CodeEditor.ts"/>
 module ActiveMQ {
-  export var BrowseQueueController = _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", "$routeParams", ($scope, workspace:Workspace, jolokia, localStorage, location, activeMQMessage, $timeout, $routeParams) => {
+  export var BrowseQueueController = _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", "$routeParams", (
+      $scope,
+      workspace: Workspace,
+      jolokia: Jolokia.IJolokia,
+      localStorage: WindowLocalStorage,
+      location: ng.ILocationService,
+      activeMQMessage,
+      $timeout: ng.ITimeoutService,
+      $routeParams: ng.IRootScopeService) => {
 
     var log:Logging.Logger = Logger.get("ActiveMQ");
     var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";

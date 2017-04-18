@@ -1,6 +1,10 @@
 /// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
-    _module.controller("ActiveMQ.QueuesController", ["$scope", "workspace", "jolokia", "localStorage", ($scope, workspace:Workspace, jolokia, localStorage) => {
+    _module.controller("ActiveMQ.QueuesController", ["$scope", "workspace", "jolokia", "localStorage", (
+        $scope,
+        workspace: Workspace,
+        jolokia: Jolokia.IJolokia,
+        localStorage: WindowLocalStorage) => {
 
         var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
 

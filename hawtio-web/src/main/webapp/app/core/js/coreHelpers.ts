@@ -171,7 +171,7 @@ function closeHandle($scope, jolokia) {
  * @param {Object} Options object to pass on to Jolokia request
  * @return {Object} initialized options object
  */
-function onSuccess(fn, options = {}) {
+function onSuccess(fn, options: any = {}) {
   options['mimeType'] = 'application/json';
   if (angular.isDefined(fn)) {
     options['success'] = fn;

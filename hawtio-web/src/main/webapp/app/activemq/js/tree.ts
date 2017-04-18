@@ -12,7 +12,11 @@ module ActiveMQ {
     };
   }]);
 
-  _module.controller("ActiveMQ.TreeController", ["$scope", "$location", "workspace", "localStorage", ($scope, $location:ng.ILocationService, workspace:Workspace, localStorage) => {
+  _module.controller("ActiveMQ.TreeController", ["$scope", "$location", "workspace", "localStorage", (
+      $scope,
+      $location: ng.ILocationService,
+      workspace: Workspace,
+      localStorage: WindowLocalStorage) => {
 
     var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
 
