@@ -6,7 +6,7 @@
 /// <reference path="../../site/js/siteHelpers.ts"/>
 module Perspective {
 
-  export var containerPerspectiveEnabled = true;
+  export var containerPerspectiveEnabled: boolean = true;
 
   /**
    * Configuration for the perspective plugin that defines what tabs are in which perspectives

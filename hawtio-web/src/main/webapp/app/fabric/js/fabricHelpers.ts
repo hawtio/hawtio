@@ -472,7 +472,6 @@ module Fabric {
     } else {
       return min <= count && count <= max ? "badge-success" : "badge-warning";
     }
-    return "";
   }
 
   export function gotoProfile(workspace, jolokia, localStorage, $location, versionId, profile:any) {
