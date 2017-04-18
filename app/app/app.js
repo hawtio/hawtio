@@ -7342,6 +7342,105 @@ var Fabric;
     }
     Fabric.sanitizeJson = sanitizeJson;
 })(Fabric || (Fabric = {}));
+var ForceGraph;
+(function (ForceGraph) {
+    var GraphBuilder = (function () {
+        function GraphBuilder() {
+            this.nodes = {};
+            this.links = [];
+            this.linkTypes = {};
+        }
+        GraphBuilder.prototype.addNode = function (node) {
+            if (!this.nodes[node.id]) {
+                this.nodes[node.id] = node;
+            }
+        };
+        GraphBuilder.prototype.getNode = function (id) {
+            return this.nodes[id];
+        };
+        GraphBuilder.prototype.hasLinks = function (id) {
+            var _this = this;
+            var result = false;
+            this.links.forEach(function (link) {
+                if (link.source.id == id || link.target.id == id) {
+                    result = result || (_this.nodes[link.source.id] != null && _this.nodes[link.target.id] != null);
+                }
+            });
+            return result;
+        };
+        GraphBuilder.prototype.addLink = function (srcId, targetId, linkType) {
+            if ((this.nodes[srcId] != null) && (this.nodes[targetId] != null)) {
+                this.links.push({
+                    source: this.nodes[srcId],
+                    target: this.nodes[targetId],
+                    type: linkType
+                });
+                if (!this.linkTypes[linkType]) {
+                    this.linkTypes[linkType] = {
+                        used: true
+                    };
+                }
+                ;
+            }
+        };
+        GraphBuilder.prototype.nodeIndex = function (id, nodes) {
+            var result = -1;
+            var index = 0;
+            for (index = 0; index < nodes.length; index++) {
+                var node = nodes[index];
+                if (node.id == id) {
+                    result = index;
+                    break;
+                }
+            }
+            return result;
+        };
+        GraphBuilder.prototype.filterNodes = function (filter) {
+            var filteredNodes = {};
+            var newLinks = [];
+            d3.values(this.nodes).forEach(function (node) {
+                if (filter(node)) {
+                    filteredNodes[node.id] = node;
+                }
+            });
+            this.links.forEach(function (link) {
+                if (filteredNodes[link.source.id] && filteredNodes[link.target.id]) {
+                    newLinks.push(link);
+                }
+            });
+            this.nodes = filteredNodes;
+            this.links = newLinks;
+        };
+        GraphBuilder.prototype.buildGraph = function () {
+            var _this = this;
+            var graphNodes = [];
+            var linktypes = d3.keys(this.linkTypes);
+            var graphLinks = [];
+            d3.values(this.nodes).forEach(function (node) {
+                if (node.includeInGraph == null || node.includeInGraph) {
+                    node.includeInGraph = true;
+                    graphNodes.push(node);
+                }
+            });
+            this.links.forEach(function (link) {
+                if (_this.nodes[link.source.id] != null && _this.nodes[link.target.id] != null && _this.nodes[link.source.id].includeInGraph && _this.nodes[link.target.id].includeInGraph) {
+                    graphLinks.push({
+                        source: _this.nodeIndex(link.source.id, graphNodes),
+                        target: _this.nodeIndex(link.target.id, graphNodes),
+                        type: link.type
+                    });
+                }
+            });
+            return {
+                nodes: graphNodes,
+                links: graphLinks,
+                linktypes: linktypes
+            };
+        };
+        return GraphBuilder;
+    })();
+    ForceGraph.GraphBuilder = GraphBuilder;
+})(ForceGraph || (ForceGraph = {}));
 var ActiveMQ;
 (function (ActiveMQ) {
     ActiveMQ._module.controller("ActiveMQ.BrokerDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", "$routeParams", function ($scope, $compile, $location, localStorage, jolokia, workspace, $routeParams) {
@@ -7566,11 +7665,11 @@ var ActiveMQ;
                 var typeLabel = selectedNode["typeLabel"];
                 var name = selectedNode["name"] || selectedNode["id"] || selectedNode['objectName'];
                 if (typeLabel) {
-                    var html = name;
+                    var html2;
                     if (nodeType === "queue" || nodeType === "topic") {
-                        html = createDestinationLink(name, nodeType);
+                        html2 = createDestinationLink(name, nodeType);
                     }
-                    var typeProperty = { key: typeLabel, value: html };
+                    var typeProperty = { key: typeLabel, value: ((html2) ? html2 : name) };
                     if (isBroker && brokerProperty) {
                         typeProperty = brokerProperty;
                     }
@@ -9132,6 +9231,731 @@ var ActiveMQ;
         }
     }]);
 })(ActiveMQ || (ActiveMQ = {}));
+var Insight;
+(function (Insight) {
+    Insight.managerMBean = "io.fabric8:type=Fabric";
+    Insight.allContainers = { id: '-- all --' };
+    function hasInsight(workspace) {
+        return workspace.treeContainsDomainAndProperties('io.fabric8.insight', { type: 'Elasticsearch' });
+    }
+    Insight.hasInsight = hasInsight;
+    function hasKibana(workspace) {
+        return workspace.treeContainsDomainAndProperties('hawtio', { type: 'plugin', name: 'hawtio-kibana' });
+    }
+    Insight.hasKibana = hasKibana;
+    function hasEsHead(workspace) {
+        return workspace.treeContainsDomainAndProperties('hawtio', { type: 'plugin', name: 'hawtio-eshead' });
+    }
+    Insight.hasEsHead = hasEsHead;
+    function getInsightMetricsCollectorMBean(workspace) {
+        var node = workspace.findMBeanWithProperties('io.fabric8.insight', { type: 'MetricsCollector' });
+        if (!node) {
+            node = workspace.findMBeanWithProperties('org.fusesource.insight', { type: 'MetricsCollector' });
+        }
+        return node ? node.objectName : null;
+    }
+    Insight.getInsightMetricsCollectorMBean = getInsightMetricsCollectorMBean;
+    function getChildren(node, type, field, hasHost) {
+        var children = [];
+        for (var p in node["properties"]) {
+            var obj = node["properties"][p];
+            if (obj["type"] === 'long' || obj["type"] === 'double') {
+                children.push({ title: p, field: field + p, type: type, hasHost: hasHost });
+            }
+            else if (obj["properties"]) {
+                children.push({ title: p, isFolder: true, children: getChildren(obj, type, field + p + ".", hasHost) });
+            }
+        }
+        return children;
+    }
+    Insight.getChildren = getChildren;
+    function createCharts($scope, chartsDef, element, jolokia) {
+        var chartsDiv = $(element);
+        var width = chartsDiv.width() - 80;
+        var context = cubism.context().serverDelay(interval_to_seconds('1m') * 1000).clientDelay($scope.updateRate).step(interval_to_seconds($scope.timespan) * 1000).size(width);
+        var d3Selection = d3.select(chartsDiv[0]);
+        d3Selection.html("");
+        d3Selection.selectAll(".axis").data(["top", "bottom"]).enter().append("div").attr("class", function (d) {
+            return d + " axis";
+        }).each(function (d) {
+            d3.select(this).call(context.axis().ticks(12).orient(d));
+        });
+        d3Selection.append("div").attr("class", "rule").call(context.rule());
+        context.on("focus", function (i) {
+            d3Selection.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
+        });
+        chartsDef.forEach(function (chartDef) {
+            d3Selection.call(function (div) {
+                div.append("div").data([chart(context, chartDef, jolokia)]).attr("class", "horizon").call(context.horizon());
+            });
+        });
+    }
+    Insight.createCharts = createCharts;
+    function chart(context, chartDef, jolokia) {
+        return context.metric(function (start, stop, step, callback) {
+            var values = [], value = 0, start = +start, stop = +stop;
+            var range = {
+                range: {
+                    timestamp: {
+                        from: new Date(start).toISOString(),
+                        to: new Date(stop).toISOString()
+                    }
+                }
+            };
+            var filter;
+            if (chartDef.query) {
+                filter = {
+                    fquery: {
+                        query: {
+                            filtered: {
+                                query: {
+                                    query_string: {
+                                        query: chartDef.query
+                                    }
+                                },
+                                filter: range
+                            }
+                        }
+                    }
+                };
+            }
+            else {
+                filter = range;
+            }
+            var request = {
+                size: 0,
+                facets: {
+                    histo: {
+                        date_histogram: {
+                            value_field: chartDef.field,
+                            key_field: "timestamp",
+                            interval: step + "ms"
+                        },
+                        facet_filter: filter
+                    }
+                }
+            };
+            var jreq = { type: 'exec', mbean: 'org.elasticsearch:service=restjmx', operation: 'exec', arguments: ['POST', '/_all/' + chartDef.type + '/_search', JSON.stringify(request)] };
+            jolokia.request(jreq, { success: function (response) {
+                var map = {};
+                var data = jQuery.parseJSON(response.value)["facets"]["histo"]["entries"];
+                data.forEach(function (entry) {
+                    map[entry.time] = entry.max;
+                });
+                var delta = 0;
+                if (chartDef.meta !== undefined) {
+                    if (chartDef.meta['type'] === 'trends-up' || chartDef.meta['type'] === 'peak') {
+                        delta = +1;
+                    }
+                    else if (chartDef.meta['type'] === 'trends-down') {
+                        delta = -1;
+                    }
+                }
+                while (start < stop) {
+                    var v = 0;
+                    if (delta !== 0) {
+                        if (map[start - step] !== undefined) {
+                            var d = (map[start] - map[start - step]) * delta;
+                            v = d > 0 ? d : 0;
+                        }
+                    }
+                    else {
+                        if (map[start] !== undefined) {
+                            v = map[start];
+                        }
+                    }
+                    values.push(v);
+                    start += step;
+                }
+                callback(null, values);
+            } });
+        }, chartDef.name);
+    }
+    function interval_to_seconds(string) {
+        var matches = string.match(/(\d+)([Mwdhms])/);
+        switch (matches[2]) {
+            case 'M':
+                return matches[1] * 2592000;
+                ;
+            case 'w':
+                return matches[1] * 604800;
+                ;
+            case 'd':
+                return matches[1] * 86400;
+                ;
+            case 'h':
+                return matches[1] * 3600;
+                ;
+            case 'm':
+                return matches[1] * 60;
+                ;
+            case 's':
+                return matches[1];
+        }
+    }
+    function time_ago(string) {
+        return new Date(new Date().getTime() - (interval_to_seconds(string) * 1000));
+    }
+})(Insight || (Insight = {}));
+var Site;
+(function (Site) {
+    Site.sitePluginEnabled = false;
+    function isSiteNavBarValid() {
+        return Site.sitePluginEnabled;
+    }
+    Site.isSiteNavBarValid = isSiteNavBarValid;
+})(Site || (Site = {}));
+var Perspective;
+(function (Perspective) {
+    Perspective.containerPerspectiveEnabled = true;
+    Perspective.metadata = {
+        fabric: {
+            icon: {
+                title: "Fabric8",
+                type: "img",
+                src: "img/icons/fabric8_icon.svg"
+            },
+            label: "Fabric",
+            isValid: function (workspace) { return Fabric.isFMCContainer(workspace); },
+            lastPage: "#/fabric/containers",
+            topLevelTabs: {
+                includes: [
+                    {
+                        id: "kubernetes"
+                    },
+                    {
+                        id: "fabric.containers"
+                    },
+                    {
+                        id: "fabric.profiles"
+                    },
+                    {
+                        href: "#/wiki/branch/"
+                    },
+                    {
+                        href: "#/fabric"
+                    },
+                    {
+                        id: "fabric.requirements"
+                    },
+                    {
+                        href: "#/wiki/profile"
+                    },
+                    {
+                        href: "#/docker"
+                    },
+                    {
+                        href: "#/dashboard"
+                    },
+                    {
+                        href: "#/health"
+                    }
+                ]
+            }
+        },
+        container: {
+            icon: {
+                title: "Java",
+                type: "img",
+                src: "img/icons/java.svg"
+            },
+            label: "Container",
+            lastPage: "#/logs",
+            isValid: function (workspace) { return workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length; },
+            topLevelTabs: {
+                excludes: [
+                    {
+                        href: "#/fabric"
+                    },
+                    {
+                        href: "#/kubernetes"
+                    },
+                    {
+                        id: "fabric.profiles"
+                    },
+                    {
+                        id: "fabric.containers"
+                    },
+                    {
+                        id: "fabric.requirements"
+                    },
+                    {
+                        id: "fabric.kubernetes"
+                    },
+                    {
+                        href: "#/insight"
+                    },
+                    {
+                        href: "#/camin"
+                    },
+                    {
+                        id: "insight-camel"
+                    },
+                    {
+                        id: "insight-logs"
+                    },
+                    {
+                        id: "dashboard",
+                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
+                    },
+                    {
+                        id: "health",
+                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
+                    },
+                    {
+                        id: "wiki",
+                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
+                    }
+                ]
+            }
+        },
+        limited: {
+            label: "Limited",
+            lastPage: "#/logs",
+            isValid: function (workspace) { return false; },
+            topLevelTabs: {
+                includes: [
+                    {
+                        href: "#/jmx"
+                    },
+                    {
+                        href: "#/camel"
+                    },
+                    {
+                        href: "#/activemq"
+                    },
+                    {
+                        href: "#/jetty"
+                    },
+                    {
+                        href: "#/logs"
+                    }
+                ]
+            }
+        },
+        website: {
+            label: "WebSite",
+            isValid: function (workspace) { return Site.sitePluginEnabled && Site.isSiteNavBarValid(); },
+            lastPage: "#/site/doc/index.md",
+            topLevelTabs: {
+                includes: [
+                    {
+                        content: "Get Started",
+                        title: "How to get started using hawtio",
+                        href: function () { return "#/site/doc/GetStarted.md"; },
+                        isValid: function () { return Site.isSiteNavBarValid(); }
+                    },
+                    {
+                        content: "FAQ",
+                        title: "Frequently Asked Questions",
+                        href: function () { return "#/site/FAQ.md"; },
+                        isValid: function () { return Site.isSiteNavBarValid(); }
+                    },
+                    {
+                        content: "User Guide",
+                        title: "All the docs on using hawtio",
+                        href: function () { return "#/site/book/doc/index.md"; },
+                        isValid: function () { return Site.isSiteNavBarValid(); }
+                    },
+                    {
+                        content: "Community",
+                        title: "Come on in and join our community!",
+                        href: function () { return "#/site/doc/Community.html"; },
+                        isValid: function () { return Site.isSiteNavBarValid(); }
+                    },
+                    {
+                        content: "Developers",
+                        title: "Resources for developers if you want to hack on hawtio or provide your own plugins",
+                        href: function () { return "#/site/doc/developers/index.md"; },
+                        isValid: function () { return Site.isSiteNavBarValid(); }
+                    },
+                    {
+                        content: "github",
+                        title: "Hawtio's source code and issue tracker",
+                        href: function () { return "https://github.com/hawtio/hawtio"; },
+                        isValid: function () { return Site.isSiteNavBarValid(); }
+                    }
+                ]
+            }
+        }
+    };
+})(Perspective || (Perspective = {}));
+var Perspective;
+(function (Perspective) {
+    Perspective.log = Logger.get("Perspective");
+    Perspective.perspectiveSearchId = "p";
+    Perspective.defaultPerspective = null;
+    Perspective.defaultPageLocation = null;
+    function currentPerspectiveId($location, workspace, jolokia, localStorage) {
+        var perspective = $location.search()[Perspective.perspectiveSearchId];
+        if (!perspective) {
+            perspective = Perspective.choosePerspective($location, workspace, jolokia, localStorage);
+        }
+        return perspective;
+    }
+    Perspective.currentPerspectiveId = currentPerspectiveId;
+    function getPerspectives($location, workspace, jolokia, localStorage) {
+        var perspectives = [];
+        angular.forEach(Perspective.metadata, function (perspective, key) {
+            if (isValidFunction(workspace, perspective.isValid)) {
+                if (!perspective.label) {
+                    perspective.label = key;
+                }
+                if (!perspective.title) {
+                    perspective.title = perspective.label;
+                }
+                perspective.id = key;
+                perspectives.push(perspective);
+            }
+        });
+        return perspectives;
+    }
+    Perspective.getPerspectives = getPerspectives;
+    function getPerspectiveById(id) {
+        var answer;
+        angular.forEach(Perspective.metadata, function (perspective, key) {
+            if (key === id) {
+                answer = perspective;
+            }
+        });
+        return answer;
+    }
+    Perspective.getPerspectiveById = getPerspectiveById;
+    function topLevelTabsForPerspectiveId(workspace, perspective) {
+        var sortedTopLevelTabs = workspace.topLevelTabs.sortBy(function (f) { return f.content; });
+        var data = perspective ? Perspective.metadata[perspective] : null;
+        var metaData = data;
+        var answer = [];
+        if (!data) {
+            answer = sortedTopLevelTabs;
+        }
+        else {
+            var topLevelTabs = data.topLevelTabs;
+            var includes = filterTabs(topLevelTabs.includes, workspace);
+            var excludes = filterTabs(topLevelTabs.excludes, workspace);
+            if (metaData) {
+                excludes = excludes.filter(function (t) {
+                    var metaTab = metaData.topLevelTabs.excludes.find(function (et) {
+                        var etid = et.id;
+                        return etid && etid === t.id;
+                    });
+                    if (metaTab != null && angular.isFunction(metaTab.onCondition)) {
+                        var answer = metaTab.onCondition(workspace);
+                        if (answer) {
+                            Perspective.log.debug("Plugin " + t.id + " excluded in perspective " + perspective);
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+            if (!topLevelTabs.includes) {
+                answer = sortedTopLevelTabs;
+            }
+            else {
+                answer = includes;
+            }
+            answer = answer.subtract(excludes);
+        }
+        return answer;
+    }
+    Perspective.topLevelTabsForPerspectiveId = topLevelTabsForPerspectiveId;
+    function filterTabs(tabs, workspace) {
+        var matched = [];
+        function pushMatchedTab(tabSpec, tab) {
+            if (tab) {
+                var content = tabSpec.content;
+                if (content) {
+                    tab = angular.copy(tab);
+                    tab.content = content;
+                }
+                matched.push(tab);
+            }
+        }
+        angular.forEach(tabs, function (tabSpec) {
+            var href = tabSpec.href;
+            var id = tabSpec.id;
+            var rhref = tabSpec.rhref;
+            if (href) {
+                var hrefValue = href;
+                if (angular.isFunction(href)) {
+                    hrefValue = href();
+                }
+                var tab = workspace.topLevelTabs.find(function (t) {
+                    var thref = t.href();
+                    return thref && thref.startsWith(hrefValue);
+                });
+                if (!tab && !id && tabSpec.content) {
+                    tab = tabSpec;
+                }
+                pushMatchedTab(tabSpec, tab);
+            }
+            else if (id) {
+                var tab = workspace.topLevelTabs.find(function (t) {
+                    var tid = t.id;
+                    return tid && tid === id;
+                });
+                pushMatchedTab(tabSpec, tab);
+            }
+            else if (rhref) {
+                var tab = workspace.topLevelTabs.find(function (t) {
+                    var thref = t.href();
+                    return thref && thref.match(rhref);
+                });
+                pushMatchedTab(tabSpec, tab);
+            }
+        });
+        return matched;
+    }
+    function filterOnlyValidTopLevelTabs(workspace, topLevelTabs) {
+        var answer = topLevelTabs.filter(function (tab) {
+            var href = tab.href();
+            return href && isValidFunction(workspace, tab.isValid);
+        });
+        return answer;
+    }
+    Perspective.filterOnlyValidTopLevelTabs = filterOnlyValidTopLevelTabs;
+    function filterOnlyActiveTopLevelTabs(workspace, topLevelTabs) {
+        var answer = topLevelTabs.filter(function (tab) {
+            var href = tab.href();
+            return href && isValidFunction(workspace, tab.isActive);
+        });
+        return answer;
+    }
+    Perspective.filterOnlyActiveTopLevelTabs = filterOnlyActiveTopLevelTabs;
+    function getTopLevelTabsForPerspective($location, workspace, jolokia, localStorage) {
+        var perspective = currentPerspectiveId($location, workspace, jolokia, localStorage);
+        var plugins = Core.configuredPluginsForPerspectiveId(perspective, workspace, jolokia, localStorage);
+        var tabs = Core.filterTopLevelTabs(perspective, workspace, plugins);
+        tabs = Perspective.filterOnlyValidTopLevelTabs(workspace, tabs);
+        return tabs;
+    }
+    Perspective.getTopLevelTabsForPerspective = getTopLevelTabsForPerspective;
+    function choosePerspective($location, workspace, jolokia, localStorage) {
+        var answer;
+        var url = $location.url();
+        var inFMC = Fabric.isFMCContainer(workspace);
+        if (inFMC) {
+            if (url.startsWith("/perspective/defaultPage") || url.startsWith("/login") || url.startsWith("/welcome") || url.startsWith("/index") || url.startsWith("/fabric") || url.startsWith("/profiles") || url.startsWith("/dashboard") || url.startsWith("/health") || (url.startsWith("/wiki") && url.has("/fabric/profiles")) || (url.startsWith("/wiki") && url.has("/editFeatures"))) {
+                answer = "fabric";
+            }
+        }
+        answer = answer || Perspective.defaultPerspective || "container";
+        return answer;
+    }
+    Perspective.choosePerspective = choosePerspective;
+    function defaultPage($location, workspace, jolokia, localStorage) {
+        var isJUnit = JUnit.isJUnitPluginEnabled(workspace);
+        if (isJUnit) {
+            Perspective.log.info("JUnit detected");
+            return "/junit/tests";
+        }
+        var isProxy = Core.isProxyUrl($location);
+        var isChomeApp = Core.isChromeApp();
+        if (!isProxy && !isChomeApp && shouldShowWelcomePage(localStorage)) {
+            return "/welcome";
+        }
+        var answer = Perspective.defaultPageLocation;
+        if (!answer && $location && workspace) {
+            var perspectiveId = currentPerspectiveId($location, workspace, jolokia, localStorage);
+            var defaultPlugin = Core.getDefaultPlugin(perspectiveId, workspace, jolokia, localStorage);
+            var tabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspectiveId);
+            tabs = Perspective.filterOnlyValidTopLevelTabs(workspace, tabs);
+            var defaultTab;
+            if (defaultPlugin) {
+                tabs.forEach(function (tab) {
+                    if (tab.id === defaultPlugin.id) {
+                        defaultTab = tab;
+                    }
+                });
+            }
+            else {
+                defaultTab = tabs[0];
+            }
+            if (defaultTab) {
+                answer = Core.trimLeading(defaultTab.href(), "#");
+            }
+        }
+        return answer || '/help/index';
+    }
+    Perspective.defaultPage = defaultPage;
+    function shouldShowWelcomePage(localStorage) {
+        var value = localStorage["showWelcomePage"];
+        if (angular.isString(value)) {
+            return "true" === value;
+        }
+        return true;
+    }
+    Perspective.shouldShowWelcomePage = shouldShowWelcomePage;
+    function isValidFunction(workspace, validFn) {
+        return !validFn || validFn(workspace);
+    }
+})(Perspective || (Perspective = {}));
+var Core;
+(function (Core) {
+    function parsePreferencesJson(value, key) {
+        var answer = null;
+        if (angular.isDefined(value)) {
+            answer = Core.parseJsonText(value, "localStorage for " + key);
+        }
+        return answer;
+    }
+    Core.parsePreferencesJson = parsePreferencesJson;
+    function configuredPluginsForPerspectiveId(perspectiveId, workspace, jolokia, localStorage) {
+        var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspectiveId);
+        if (topLevelTabs && topLevelTabs.length > 0) {
+            topLevelTabs = topLevelTabs.filter(function (tab) {
+                var href = undefined;
+                if (angular.isFunction(tab.href)) {
+                    href = tab.href();
+                }
+                else if (angular.isString(tab.href)) {
+                    href = tab.href;
+                }
+                return href && isValidFunction(workspace, tab.isValid, perspectiveId);
+            });
+            var id = "plugins-" + perspectiveId;
+            var initPlugins = parsePreferencesJson(localStorage[id], id);
+            if (initPlugins) {
+                initPlugins = initPlugins.filter(function (p) {
+                    return topLevelTabs.some(function (tab) { return tab.id === p.id; });
+                });
+                topLevelTabs.forEach(function (tab) {
+                    var knownPlugin = initPlugins.some(function (p) { return p.id === tab.id; });
+                    if (!knownPlugin) {
+                        Core.log.info("Discovered new plugin in JVM since loading configuration: " + tab.id);
+                        initPlugins.push({ id: tab.id, index: -1, displayName: tab.content, enabled: true, isDefault: false });
+                    }
+                });
+            }
+            else {
+                initPlugins = topLevelTabs;
+            }
+        }
+        var answer = safeTabsToPlugins(initPlugins);
+        return answer;
+    }
+    Core.configuredPluginsForPerspectiveId = configuredPluginsForPerspectiveId;
+    function safeTabsToPlugins(tabs) {
+        var answer = [];
+        if (tabs) {
+            tabs.forEach(function (tab, idx) {
+                var name;
+                if (angular.isUndefined(tab.displayName)) {
+                    name = tab.content;
+                }
+                else {
+                    name = tab.displayName;
+                }
+                var enabled;
+                if (angular.isUndefined(tab.enabled)) {
+                    enabled = true;
+                }
+                else {
+                    enabled = tab.enabled;
+                }
+                var isDefault;
+                if (angular.isUndefined(tab.isDefault)) {
+                    isDefault = false;
+                }
+                else {
+                    isDefault = tab.isDefault;
+                }
+                answer.push({ id: tab.id, index: idx, displayName: name, enabled: enabled, isDefault: isDefault });
+            });
+        }
+        return answer;
+    }
+    Core.safeTabsToPlugins = safeTabsToPlugins;
+    function filterTopLevelTabs(perspective, workspace, configuredPlugins) {
+        var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspective);
+        if (perspective === "website")
+            return topLevelTabs;
+        var result = [];
+        configuredPlugins.forEach(function (p) {
+            if (p.enabled) {
+                var pid = p.id;
+                var tab = null;
+                if (pid) {
+                    tab = topLevelTabs.find(function (t) { return t.id === pid; });
+                }
+                if (tab) {
+                    result.push(tab);
+                }
+            }
+        });
+        return result;
+    }
+    Core.filterTopLevelTabs = filterTopLevelTabs;
+    function initPreferenceScope($scope, localStorage, defaults) {
+        angular.forEach(defaults, function (_default, key) {
+            $scope[key] = _default['value'];
+            var converter = _default['converter'];
+            var formatter = _default['formatter'];
+            if (!formatter) {
+                formatter = function (value) {
+                    return value;
+                };
+            }
+            if (!converter) {
+                converter = function (value) {
+                    return value;
+                };
+            }
+            if (key in localStorage) {
+                var value = converter(localStorage[key]);
+                Core.log.debug("from local storage, setting ", key, " to ", value);
+                $scope[key] = value;
+            }
+            else {
+                var value = _default['value'];
+                Core.log.debug("from default, setting ", key, " to ", value);
+                localStorage[key] = value;
+            }
+            var watchFunc = _default['override'];
+            if (!watchFunc) {
+                watchFunc = function (newValue, oldValue) {
+                    if (newValue !== oldValue) {
+                        if (angular.isFunction(_default['pre'])) {
+                            _default.pre(newValue);
+                        }
+                        var value = formatter(newValue);
+                        Core.log.debug("to local storage, setting ", key, " to ", value);
+                        localStorage[key] = value;
+                        if (angular.isFunction(_default['post'])) {
+                            _default.post(newValue);
+                        }
+                    }
+                };
+            }
+            if (_default['compareAsObject']) {
+                $scope.$watch(key, watchFunc, true);
+            }
+            else {
+                $scope.$watch(key, watchFunc);
+            }
+        });
+    }
+    Core.initPreferenceScope = initPreferenceScope;
+    function isValidFunction(workspace, validFn, perspectiveId) {
+        return !validFn || validFn(workspace, perspectiveId);
+    }
+    Core.isValidFunction = isValidFunction;
+    function getDefaultPlugin(perspectiveId, workspace, jolokia, localStorage) {
+        var plugins = Core.configuredPluginsForPerspectiveId(perspectiveId, workspace, jolokia, localStorage);
+        var defaultPlugin = null;
+        plugins.forEach(function (p) {
+            if (p.isDefault) {
+                defaultPlugin = p;
+            }
+        });
+        return defaultPlugin;
+    }
+    Core.getDefaultPlugin = getDefaultPlugin;
+})(Core || (Core = {}));
 var ActiveMQ;
 (function (ActiveMQ) {
     ActiveMQ._module.controller("ActiveMQ.PreferencesController", ["$scope", "localStorage", "userDetails", "$rootScope", function ($scope, localStorage, userDetails, $rootScope) {
@@ -17121,731 +17945,6 @@ var Core;
         });
     }]);
 })(Core || (Core = {}));
-var Core;
-(function (Core) {
-    function parsePreferencesJson(value, key) {
-        var answer = null;
-        if (angular.isDefined(value)) {
-            answer = Core.parseJsonText(value, "localStorage for " + key);
-        }
-        return answer;
-    }
-    Core.parsePreferencesJson = parsePreferencesJson;
-    function configuredPluginsForPerspectiveId(perspectiveId, workspace, jolokia, localStorage) {
-        var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspectiveId);
-        if (topLevelTabs && topLevelTabs.length > 0) {
-            topLevelTabs = topLevelTabs.filter(function (tab) {
-                var href = undefined;
-                if (angular.isFunction(tab.href)) {
-                    href = tab.href();
-                }
-                else if (angular.isString(tab.href)) {
-                    href = tab.href;
-                }
-                return href && isValidFunction(workspace, tab.isValid, perspectiveId);
-            });
-            var id = "plugins-" + perspectiveId;
-            var initPlugins = parsePreferencesJson(localStorage[id], id);
-            if (initPlugins) {
-                initPlugins = initPlugins.filter(function (p) {
-                    return topLevelTabs.some(function (tab) { return tab.id === p.id; });
-                });
-                topLevelTabs.forEach(function (tab) {
-                    var knownPlugin = initPlugins.some(function (p) { return p.id === tab.id; });
-                    if (!knownPlugin) {
-                        Core.log.info("Discovered new plugin in JVM since loading configuration: " + tab.id);
-                        initPlugins.push({ id: tab.id, index: -1, displayName: tab.content, enabled: true, isDefault: false });
-                    }
-                });
-            }
-            else {
-                initPlugins = topLevelTabs;
-            }
-        }
-        var answer = safeTabsToPlugins(initPlugins);
-        return answer;
-    }
-    Core.configuredPluginsForPerspectiveId = configuredPluginsForPerspectiveId;
-    function safeTabsToPlugins(tabs) {
-        var answer = [];
-        if (tabs) {
-            tabs.forEach(function (tab, idx) {
-                var name;
-                if (angular.isUndefined(tab.displayName)) {
-                    name = tab.content;
-                }
-                else {
-                    name = tab.displayName;
-                }
-                var enabled;
-                if (angular.isUndefined(tab.enabled)) {
-                    enabled = true;
-                }
-                else {
-                    enabled = tab.enabled;
-                }
-                var isDefault;
-                if (angular.isUndefined(tab.isDefault)) {
-                    isDefault = false;
-                }
-                else {
-                    isDefault = tab.isDefault;
-                }
-                answer.push({ id: tab.id, index: idx, displayName: name, enabled: enabled, isDefault: isDefault });
-            });
-        }
-        return answer;
-    }
-    Core.safeTabsToPlugins = safeTabsToPlugins;
-    function filterTopLevelTabs(perspective, workspace, configuredPlugins) {
-        var topLevelTabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspective);
-        if (perspective === "website")
-            return topLevelTabs;
-        var result = [];
-        configuredPlugins.forEach(function (p) {
-            if (p.enabled) {
-                var pid = p.id;
-                var tab = null;
-                if (pid) {
-                    tab = topLevelTabs.find(function (t) { return t.id === pid; });
-                }
-                if (tab) {
-                    result.push(tab);
-                }
-            }
-        });
-        return result;
-    }
-    Core.filterTopLevelTabs = filterTopLevelTabs;
-    function initPreferenceScope($scope, localStorage, defaults) {
-        angular.forEach(defaults, function (_default, key) {
-            $scope[key] = _default['value'];
-            var converter = _default['converter'];
-            var formatter = _default['formatter'];
-            if (!formatter) {
-                formatter = function (value) {
-                    return value;
-                };
-            }
-            if (!converter) {
-                converter = function (value) {
-                    return value;
-                };
-            }
-            if (key in localStorage) {
-                var value = converter(localStorage[key]);
-                Core.log.debug("from local storage, setting ", key, " to ", value);
-                $scope[key] = value;
-            }
-            else {
-                var value = _default['value'];
-                Core.log.debug("from default, setting ", key, " to ", value);
-                localStorage[key] = value;
-            }
-            var watchFunc = _default['override'];
-            if (!watchFunc) {
-                watchFunc = function (newValue, oldValue) {
-                    if (newValue !== oldValue) {
-                        if (angular.isFunction(_default['pre'])) {
-                            _default.pre(newValue);
-                        }
-                        var value = formatter(newValue);
-                        Core.log.debug("to local storage, setting ", key, " to ", value);
-                        localStorage[key] = value;
-                        if (angular.isFunction(_default['post'])) {
-                            _default.post(newValue);
-                        }
-                    }
-                };
-            }
-            if (_default['compareAsObject']) {
-                $scope.$watch(key, watchFunc, true);
-            }
-            else {
-                $scope.$watch(key, watchFunc);
-            }
-        });
-    }
-    Core.initPreferenceScope = initPreferenceScope;
-    function isValidFunction(workspace, validFn, perspectiveId) {
-        return !validFn || validFn(workspace, perspectiveId);
-    }
-    Core.isValidFunction = isValidFunction;
-    function getDefaultPlugin(perspectiveId, workspace, jolokia, localStorage) {
-        var plugins = Core.configuredPluginsForPerspectiveId(perspectiveId, workspace, jolokia, localStorage);
-        var defaultPlugin = null;
-        plugins.forEach(function (p) {
-            if (p.isDefault) {
-                defaultPlugin = p;
-            }
-        });
-        return defaultPlugin;
-    }
-    Core.getDefaultPlugin = getDefaultPlugin;
-})(Core || (Core = {}));
-var Insight;
-(function (Insight) {
-    Insight.managerMBean = "io.fabric8:type=Fabric";
-    Insight.allContainers = { id: '-- all --' };
-    function hasInsight(workspace) {
-        return workspace.treeContainsDomainAndProperties('io.fabric8.insight', { type: 'Elasticsearch' });
-    }
-    Insight.hasInsight = hasInsight;
-    function hasKibana(workspace) {
-        return workspace.treeContainsDomainAndProperties('hawtio', { type: 'plugin', name: 'hawtio-kibana' });
-    }
-    Insight.hasKibana = hasKibana;
-    function hasEsHead(workspace) {
-        return workspace.treeContainsDomainAndProperties('hawtio', { type: 'plugin', name: 'hawtio-eshead' });
-    }
-    Insight.hasEsHead = hasEsHead;
-    function getInsightMetricsCollectorMBean(workspace) {
-        var node = workspace.findMBeanWithProperties('io.fabric8.insight', { type: 'MetricsCollector' });
-        if (!node) {
-            node = workspace.findMBeanWithProperties('org.fusesource.insight', { type: 'MetricsCollector' });
-        }
-        return node ? node.objectName : null;
-    }
-    Insight.getInsightMetricsCollectorMBean = getInsightMetricsCollectorMBean;
-    function getChildren(node, type, field, hasHost) {
-        var children = [];
-        for (var p in node["properties"]) {
-            var obj = node["properties"][p];
-            if (obj["type"] === 'long' || obj["type"] === 'double') {
-                children.push({ title: p, field: field + p, type: type, hasHost: hasHost });
-            }
-            else if (obj["properties"]) {
-                children.push({ title: p, isFolder: true, children: getChildren(obj, type, field + p + ".", hasHost) });
-            }
-        }
-        return children;
-    }
-    Insight.getChildren = getChildren;
-    function createCharts($scope, chartsDef, element, jolokia) {
-        var chartsDiv = $(element);
-        var width = chartsDiv.width() - 80;
-        var context = cubism.context().serverDelay(interval_to_seconds('1m') * 1000).clientDelay($scope.updateRate).step(interval_to_seconds($scope.timespan) * 1000).size(width);
-        var d3Selection = d3.select(chartsDiv[0]);
-        d3Selection.html("");
-        d3Selection.selectAll(".axis").data(["top", "bottom"]).enter().append("div").attr("class", function (d) {
-            return d + " axis";
-        }).each(function (d) {
-            d3.select(this).call(context.axis().ticks(12).orient(d));
-        });
-        d3Selection.append("div").attr("class", "rule").call(context.rule());
-        context.on("focus", function (i) {
-            d3Selection.selectAll(".value").style("right", i === null ? null : context.size() - i + "px");
-        });
-        chartsDef.forEach(function (chartDef) {
-            d3Selection.call(function (div) {
-                div.append("div").data([chart(context, chartDef, jolokia)]).attr("class", "horizon").call(context.horizon());
-            });
-        });
-    }
-    Insight.createCharts = createCharts;
-    function chart(context, chartDef, jolokia) {
-        return context.metric(function (start, stop, step, callback) {
-            var values = [], value = 0, start = +start, stop = +stop;
-            var range = {
-                range: {
-                    timestamp: {
-                        from: new Date(start).toISOString(),
-                        to: new Date(stop).toISOString()
-                    }
-                }
-            };
-            var filter;
-            if (chartDef.query) {
-                filter = {
-                    fquery: {
-                        query: {
-                            filtered: {
-                                query: {
-                                    query_string: {
-                                        query: chartDef.query
-                                    }
-                                },
-                                filter: range
-                            }
-                        }
-                    }
-                };
-            }
-            else {
-                filter = range;
-            }
-            var request = {
-                size: 0,
-                facets: {
-                    histo: {
-                        date_histogram: {
-                            value_field: chartDef.field,
-                            key_field: "timestamp",
-                            interval: step + "ms"
-                        },
-                        facet_filter: filter
-                    }
-                }
-            };
-            var jreq = { type: 'exec', mbean: 'org.elasticsearch:service=restjmx', operation: 'exec', arguments: ['POST', '/_all/' + chartDef.type + '/_search', JSON.stringify(request)] };
-            jolokia.request(jreq, { success: function (response) {
-                var map = {};
-                var data = jQuery.parseJSON(response.value)["facets"]["histo"]["entries"];
-                data.forEach(function (entry) {
-                    map[entry.time] = entry.max;
-                });
-                var delta = 0;
-                if (chartDef.meta !== undefined) {
-                    if (chartDef.meta['type'] === 'trends-up' || chartDef.meta['type'] === 'peak') {
-                        delta = +1;
-                    }
-                    else if (chartDef.meta['type'] === 'trends-down') {
-                        delta = -1;
-                    }
-                }
-                while (start < stop) {
-                    var v = 0;
-                    if (delta !== 0) {
-                        if (map[start - step] !== undefined) {
-                            var d = (map[start] - map[start - step]) * delta;
-                            v = d > 0 ? d : 0;
-                        }
-                    }
-                    else {
-                        if (map[start] !== undefined) {
-                            v = map[start];
-                        }
-                    }
-                    values.push(v);
-                    start += step;
-                }
-                callback(null, values);
-            } });
-        }, chartDef.name);
-    }
-    function interval_to_seconds(string) {
-        var matches = string.match(/(\d+)([Mwdhms])/);
-        switch (matches[2]) {
-            case 'M':
-                return matches[1] * 2592000;
-                ;
-            case 'w':
-                return matches[1] * 604800;
-                ;
-            case 'd':
-                return matches[1] * 86400;
-                ;
-            case 'h':
-                return matches[1] * 3600;
-                ;
-            case 'm':
-                return matches[1] * 60;
-                ;
-            case 's':
-                return matches[1];
-        }
-    }
-    function time_ago(string) {
-        return new Date(new Date().getTime() - (interval_to_seconds(string) * 1000));
-    }
-})(Insight || (Insight = {}));
-var Site;
-(function (Site) {
-    Site.sitePluginEnabled = false;
-    function isSiteNavBarValid() {
-        return Site.sitePluginEnabled;
-    }
-    Site.isSiteNavBarValid = isSiteNavBarValid;
-})(Site || (Site = {}));
-var Perspective;
-(function (Perspective) {
-    Perspective.containerPerspectiveEnabled = true;
-    Perspective.metadata = {
-        fabric: {
-            icon: {
-                title: "Fabric8",
-                type: "img",
-                src: "img/icons/fabric8_icon.svg"
-            },
-            label: "Fabric",
-            isValid: function (workspace) { return Fabric.isFMCContainer(workspace); },
-            lastPage: "#/fabric/containers",
-            topLevelTabs: {
-                includes: [
-                    {
-                        id: "kubernetes"
-                    },
-                    {
-                        id: "fabric.containers"
-                    },
-                    {
-                        id: "fabric.profiles"
-                    },
-                    {
-                        href: "#/wiki/branch/"
-                    },
-                    {
-                        href: "#/fabric"
-                    },
-                    {
-                        id: "fabric.requirements"
-                    },
-                    {
-                        href: "#/wiki/profile"
-                    },
-                    {
-                        href: "#/docker"
-                    },
-                    {
-                        href: "#/dashboard"
-                    },
-                    {
-                        href: "#/health"
-                    }
-                ]
-            }
-        },
-        container: {
-            icon: {
-                title: "Java",
-                type: "img",
-                src: "img/icons/java.svg"
-            },
-            label: "Container",
-            lastPage: "#/logs",
-            isValid: function (workspace) { return workspace && workspace.tree && workspace.tree.children && workspace.tree.children.length; },
-            topLevelTabs: {
-                excludes: [
-                    {
-                        href: "#/fabric"
-                    },
-                    {
-                        href: "#/kubernetes"
-                    },
-                    {
-                        id: "fabric.profiles"
-                    },
-                    {
-                        id: "fabric.containers"
-                    },
-                    {
-                        id: "fabric.requirements"
-                    },
-                    {
-                        id: "fabric.kubernetes"
-                    },
-                    {
-                        href: "#/insight"
-                    },
-                    {
-                        href: "#/camin"
-                    },
-                    {
-                        id: "insight-camel"
-                    },
-                    {
-                        id: "insight-logs"
-                    },
-                    {
-                        id: "dashboard",
-                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
-                    },
-                    {
-                        id: "health",
-                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
-                    },
-                    {
-                        id: "wiki",
-                        onCondition: function (workspace) { return Fabric.isFMCContainer(workspace); }
-                    }
-                ]
-            }
-        },
-        limited: {
-            label: "Limited",
-            lastPage: "#/logs",
-            isValid: function (workspace) { return false; },
-            topLevelTabs: {
-                includes: [
-                    {
-                        href: "#/jmx"
-                    },
-                    {
-                        href: "#/camel"
-                    },
-                    {
-                        href: "#/activemq"
-                    },
-                    {
-                        href: "#/jetty"
-                    },
-                    {
-                        href: "#/logs"
-                    }
-                ]
-            }
-        },
-        website: {
-            label: "WebSite",
-            isValid: function (workspace) { return Site.sitePluginEnabled && Site.isSiteNavBarValid(); },
-            lastPage: "#/site/doc/index.md",
-            topLevelTabs: {
-                includes: [
-                    {
-                        content: "Get Started",
-                        title: "How to get started using hawtio",
-                        href: function () { return "#/site/doc/GetStarted.md"; },
-                        isValid: function () { return Site.isSiteNavBarValid(); }
-                    },
-                    {
-                        content: "FAQ",
-                        title: "Frequently Asked Questions",
-                        href: function () { return "#/site/FAQ.md"; },
-                        isValid: function () { return Site.isSiteNavBarValid(); }
-                    },
-                    {
-                        content: "User Guide",
-                        title: "All the docs on using hawtio",
-                        href: function () { return "#/site/book/doc/index.md"; },
-                        isValid: function () { return Site.isSiteNavBarValid(); }
-                    },
-                    {
-                        content: "Community",
-                        title: "Come on in and join our community!",
-                        href: function () { return "#/site/doc/Community.html"; },
-                        isValid: function () { return Site.isSiteNavBarValid(); }
-                    },
-                    {
-                        content: "Developers",
-                        title: "Resources for developers if you want to hack on hawtio or provide your own plugins",
-                        href: function () { return "#/site/doc/developers/index.md"; },
-                        isValid: function () { return Site.isSiteNavBarValid(); }
-                    },
-                    {
-                        content: "github",
-                        title: "Hawtio's source code and issue tracker",
-                        href: function () { return "https://github.com/hawtio/hawtio"; },
-                        isValid: function () { return Site.isSiteNavBarValid(); }
-                    }
-                ]
-            }
-        }
-    };
-})(Perspective || (Perspective = {}));
-var Perspective;
-(function (Perspective) {
-    Perspective.log = Logger.get("Perspective");
-    Perspective.perspectiveSearchId = "p";
-    Perspective.defaultPerspective = null;
-    Perspective.defaultPageLocation = null;
-    function currentPerspectiveId($location, workspace, jolokia, localStorage) {
-        var perspective = $location.search()[Perspective.perspectiveSearchId];
-        if (!perspective) {
-            perspective = Perspective.choosePerspective($location, workspace, jolokia, localStorage);
-        }
-        return perspective;
-    }
-    Perspective.currentPerspectiveId = currentPerspectiveId;
-    function getPerspectives($location, workspace, jolokia, localStorage) {
-        var perspectives = [];
-        angular.forEach(Perspective.metadata, function (perspective, key) {
-            if (isValidFunction(workspace, perspective.isValid)) {
-                if (!perspective.label) {
-                    perspective.label = key;
-                }
-                if (!perspective.title) {
-                    perspective.title = perspective.label;
-                }
-                perspective.id = key;
-                perspectives.push(perspective);
-            }
-        });
-        return perspectives;
-    }
-    Perspective.getPerspectives = getPerspectives;
-    function getPerspectiveById(id) {
-        var answer;
-        angular.forEach(Perspective.metadata, function (perspective, key) {
-            if (key === id) {
-                answer = perspective;
-            }
-        });
-        return answer;
-    }
-    Perspective.getPerspectiveById = getPerspectiveById;
-    function topLevelTabsForPerspectiveId(workspace, perspective) {
-        var sortedTopLevelTabs = workspace.topLevelTabs.sortBy(function (f) { return f.content; });
-        var data = perspective ? Perspective.metadata[perspective] : null;
-        var metaData = data;
-        var answer = [];
-        if (!data) {
-            answer = sortedTopLevelTabs;
-        }
-        else {
-            var topLevelTabs = data.topLevelTabs;
-            var includes = filterTabs(topLevelTabs.includes, workspace);
-            var excludes = filterTabs(topLevelTabs.excludes, workspace);
-            if (metaData) {
-                excludes = excludes.filter(function (t) {
-                    var metaTab = metaData.topLevelTabs.excludes.find(function (et) {
-                        var etid = et.id;
-                        return etid && etid === t.id;
-                    });
-                    if (metaTab != null && angular.isFunction(metaTab.onCondition)) {
-                        var answer = metaTab.onCondition(workspace);
-                        if (answer) {
-                            Perspective.log.debug("Plugin " + t.id + " excluded in perspective " + perspective);
-                            return true;
-                        }
-                        else {
-                            return false;
-                        }
-                    }
-                    return true;
-                });
-            }
-            if (!topLevelTabs.includes) {
-                answer = sortedTopLevelTabs;
-            }
-            else {
-                answer = includes;
-            }
-            answer = answer.subtract(excludes);
-        }
-        return answer;
-    }
-    Perspective.topLevelTabsForPerspectiveId = topLevelTabsForPerspectiveId;
-    function filterTabs(tabs, workspace) {
-        var matched = [];
-        function pushMatchedTab(tabSpec, tab) {
-            if (tab) {
-                var content = tabSpec.content;
-                if (content) {
-                    tab = angular.copy(tab);
-                    tab.content = content;
-                }
-                matched.push(tab);
-            }
-        }
-        angular.forEach(tabs, function (tabSpec) {
-            var href = tabSpec.href;
-            var id = tabSpec.id;
-            var rhref = tabSpec.rhref;
-            if (href) {
-                var hrefValue = href;
-                if (angular.isFunction(href)) {
-                    hrefValue = href();
-                }
-                var tab = workspace.topLevelTabs.find(function (t) {
-                    var thref = t.href();
-                    return thref && thref.startsWith(hrefValue);
-                });
-                if (!tab && !id && tabSpec.content) {
-                    tab = tabSpec;
-                }
-                pushMatchedTab(tabSpec, tab);
-            }
-            else if (id) {
-                var tab = workspace.topLevelTabs.find(function (t) {
-                    var tid = t.id;
-                    return tid && tid === id;
-                });
-                pushMatchedTab(tabSpec, tab);
-            }
-            else if (rhref) {
-                var tab = workspace.topLevelTabs.find(function (t) {
-                    var thref = t.href();
-                    return thref && thref.match(rhref);
-                });
-                pushMatchedTab(tabSpec, tab);
-            }
-        });
-        return matched;
-    }
-    function filterOnlyValidTopLevelTabs(workspace, topLevelTabs) {
-        var answer = topLevelTabs.filter(function (tab) {
-            var href = tab.href();
-            return href && isValidFunction(workspace, tab.isValid);
-        });
-        return answer;
-    }
-    Perspective.filterOnlyValidTopLevelTabs = filterOnlyValidTopLevelTabs;
-    function filterOnlyActiveTopLevelTabs(workspace, topLevelTabs) {
-        var answer = topLevelTabs.filter(function (tab) {
-            var href = tab.href();
-            return href && isValidFunction(workspace, tab.isActive);
-        });
-        return answer;
-    }
-    Perspective.filterOnlyActiveTopLevelTabs = filterOnlyActiveTopLevelTabs;
-    function getTopLevelTabsForPerspective($location, workspace, jolokia, localStorage) {
-        var perspective = currentPerspectiveId($location, workspace, jolokia, localStorage);
-        var plugins = Core.configuredPluginsForPerspectiveId(perspective, workspace, jolokia, localStorage);
-        var tabs = Core.filterTopLevelTabs(perspective, workspace, plugins);
-        tabs = Perspective.filterOnlyValidTopLevelTabs(workspace, tabs);
-        return tabs;
-    }
-    Perspective.getTopLevelTabsForPerspective = getTopLevelTabsForPerspective;
-    function choosePerspective($location, workspace, jolokia, localStorage) {
-        var answer;
-        var url = $location.url();
-        var inFMC = Fabric.isFMCContainer(workspace);
-        if (inFMC) {
-            if (url.startsWith("/perspective/defaultPage") || url.startsWith("/login") || url.startsWith("/welcome") || url.startsWith("/index") || url.startsWith("/fabric") || url.startsWith("/profiles") || url.startsWith("/dashboard") || url.startsWith("/health") || (url.startsWith("/wiki") && url.has("/fabric/profiles")) || (url.startsWith("/wiki") && url.has("/editFeatures"))) {
-                answer = "fabric";
-            }
-        }
-        answer = answer || Perspective.defaultPerspective || "container";
-        return answer;
-    }
-    Perspective.choosePerspective = choosePerspective;
-    function defaultPage($location, workspace, jolokia, localStorage) {
-        var isJUnit = JUnit.isJUnitPluginEnabled(workspace);
-        if (isJUnit) {
-            Perspective.log.info("JUnit detected");
-            return "/junit/tests";
-        }
-        var isProxy = Core.isProxyUrl($location);
-        var isChomeApp = Core.isChromeApp();
-        if (!isProxy && !isChomeApp && shouldShowWelcomePage(localStorage)) {
-            return "/welcome";
-        }
-        var answer = Perspective.defaultPageLocation;
-        if (!answer && $location && workspace) {
-            var perspectiveId = currentPerspectiveId($location, workspace, jolokia, localStorage);
-            var defaultPlugin = Core.getDefaultPlugin(perspectiveId, workspace, jolokia, localStorage);
-            var tabs = Perspective.topLevelTabsForPerspectiveId(workspace, perspectiveId);
-            tabs = Perspective.filterOnlyValidTopLevelTabs(workspace, tabs);
-            var defaultTab;
-            if (defaultPlugin) {
-                tabs.forEach(function (tab) {
-                    if (tab.id === defaultPlugin.id) {
-                        defaultTab = tab;
-                    }
-                });
-            }
-            else {
-                defaultTab = tabs[0];
-            }
-            if (defaultTab) {
-                answer = Core.trimLeading(defaultTab.href(), "#");
-            }
-        }
-        return answer || '/help/index';
-    }
-    Perspective.defaultPage = defaultPage;
-    function shouldShowWelcomePage(localStorage) {
-        var value = localStorage["showWelcomePage"];
-        if (angular.isString(value)) {
-            return "true" === value;
-        }
-        return true;
-    }
-    Perspective.shouldShowWelcomePage = shouldShowWelcomePage;
-    function isValidFunction(workspace, validFn) {
-        return !validFn || validFn(workspace);
-    }
-})(Perspective || (Perspective = {}));
 var Core;
 (function (Core) {
     Core.ConsoleController = Core._module.controller("Core.ConsoleController", ["$scope", "$element", "$templateCache", function ($scope, $element, $templateCache) {
@@ -30728,105 +30827,6 @@ var ForceGraph;
         return ForceGraphDirective;
     })();
     ForceGraph.ForceGraphDirective = ForceGraphDirective;
-})(ForceGraph || (ForceGraph = {}));
-var ForceGraph;
-(function (ForceGraph) {
-    var GraphBuilder = (function () {
-        function GraphBuilder() {
-            this.nodes = {};
-            this.links = [];
-            this.linkTypes = {};
-        }
-        GraphBuilder.prototype.addNode = function (node) {
-            if (!this.nodes[node.id]) {
-                this.nodes[node.id] = node;
-            }
-        };
-        GraphBuilder.prototype.getNode = function (id) {
-            return this.nodes[id];
-        };
-        GraphBuilder.prototype.hasLinks = function (id) {
-            var _this = this;
-            var result = false;
-            this.links.forEach(function (link) {
-                if (link.source.id == id || link.target.id == id) {
-                    result = result || (_this.nodes[link.source.id] != null && _this.nodes[link.target.id] != null);
-                }
-            });
-            return result;
-        };
-        GraphBuilder.prototype.addLink = function (srcId, targetId, linkType) {
-            if ((this.nodes[srcId] != null) && (this.nodes[targetId] != null)) {
-                this.links.push({
-                    source: this.nodes[srcId],
-                    target: this.nodes[targetId],
-                    type: linkType
-                });
-                if (!this.linkTypes[linkType]) {
-                    this.linkTypes[linkType] = {
-                        used: true
-                    };
-                }
-                ;
-            }
-        };
-        GraphBuilder.prototype.nodeIndex = function (id, nodes) {
-            var result = -1;
-            var index = 0;
-            for (index = 0; index < nodes.length; index++) {
-                var node = nodes[index];
-                if (node.id == id) {
-                    result = index;
-                    break;
-                }
-            }
-            return result;
-        };
-        GraphBuilder.prototype.filterNodes = function (filter) {
-            var filteredNodes = {};
-            var newLinks = [];
-            d3.values(this.nodes).forEach(function (node) {
-                if (filter(node)) {
-                    filteredNodes[node.id] = node;
-                }
-            });
-            this.links.forEach(function (link) {
-                if (filteredNodes[link.source.id] && filteredNodes[link.target.id]) {
-                    newLinks.push(link);
-                }
-            });
-            this.nodes = filteredNodes;
-            this.links = newLinks;
-        };
-        GraphBuilder.prototype.buildGraph = function () {
-            var _this = this;
-            var graphNodes = [];
-            var linktypes = d3.keys(this.linkTypes);
-            var graphLinks = [];
-            d3.values(this.nodes).forEach(function (node) {
-                if (node.includeInGraph == null || node.includeInGraph) {
-                    node.includeInGraph = true;
-                    graphNodes.push(node);
-                }
-            });
-            this.links.forEach(function (link) {
-                if (_this.nodes[link.source.id] != null && _this.nodes[link.target.id] != null && _this.nodes[link.source.id].includeInGraph && _this.nodes[link.target.id].includeInGraph) {
-                    graphLinks.push({
-                        source: _this.nodeIndex(link.source.id, graphNodes),
-                        target: _this.nodeIndex(link.target.id, graphNodes),
-                        type: link.type
-                    });
-                }
-            });
-            return {
-                nodes: graphNodes,
-                links: graphLinks,
-                linktypes: linktypes
-            };
-        };
-        return GraphBuilder;
-    })();
-    ForceGraph.GraphBuilder = GraphBuilder;
 })(ForceGraph || (ForceGraph = {}));
 var Forms;
 (function (Forms) {
