@@ -5,16 +5,15 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-import io.hawt.web.AuthenticationConfiguration;
-import io.hawt.web.AuthenticationContainerDiscovery;
-import io.hawt.web.AuthenticationHelpers;
+import io.hawt.web.auth.AuthenticationConfiguration;
+import io.hawt.web.auth.AuthenticationContainerDiscovery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * To use Apache Tomcat using its conf/tomcat-users.xml for authentication.
  * <p/>
- * To use this, then the {@link io.hawt.web.AuthenticationConfiguration#getRealm()} must be empty or "*". Otherwise
+ * To use this, then the {@link AuthenticationConfiguration#getRealm()} must be empty or "*". Otherwise
  * if an explicit configured realm has been set, then regular JAAS authentication is in use.
  */
 public class TomcatAuthenticationContainerDiscovery implements AuthenticationContainerDiscovery {
@@ -30,7 +29,7 @@ public class TomcatAuthenticationContainerDiscovery implements AuthenticationCon
 
     @Override
     public boolean canAuthenticate(AuthenticationConfiguration configuration) {
-        if (!AuthenticationHelpers.isEmptyOrAllRealm(configuration.getRealm())) {
+        if (!isEmptyOrAllRealm(configuration.getRealm())) {
             LOG.debug("Realm explicit configured {}. {} userdata authentication integration not in use.", configuration.getRealm(), getContainerName());
             return false;
         }
@@ -55,6 +54,17 @@ public class TomcatAuthenticationContainerDiscovery implements AuthenticationCon
         }
 
         return false;
+    }
+
+    /**
+     * Is the realm empty or * to denote any realm.
+     */
+    private static boolean isEmptyOrAllRealm(String realm) {
+        if (realm == null || realm.trim().isEmpty() || realm.trim().equals("*")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

@@ -59,7 +59,7 @@
 
   <filter>
     <filter-name>SessionExpiryFilter</filter-name>
-    <filter-class>io.hawt.web.SessionExpiryFilter</filter-class>
+    <filter-class>io.hawt.web.filters.SessionExpiryFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>SessionExpiryFilter</filter-name>
@@ -68,7 +68,7 @@
 
   <filter>
     <filter-name>CORSFilter</filter-name>
-    <filter-class>io.hawt.web.CORSFilter</filter-class>
+    <filter-class>io.hawt.web.filters.CORSFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>CORSFilter</filter-name>
@@ -77,7 +77,7 @@
 
   <filter>
     <filter-name>XFrameOptionsFilter</filter-name>
-    <filter-class>io.hawt.web.XFrameOptionsFilter</filter-class>
+    <filter-class>io.hawt.web.filters.XFrameOptionsFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>XFrameOptionsFilter</filter-name>
@@ -86,7 +86,7 @@
 
   <filter>
     <filter-name>XXSSProtectionFilter</filter-name>
-    <filter-class>io.hawt.web.XXSSProtectionFilter</filter-class>
+    <filter-class>io.hawt.web.filters.XXSSProtectionFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>XXSSProtectionFilter</filter-name>
@@ -95,7 +95,7 @@
 
   <filter>
     <filter-name>AuthenticationFilter</filter-name>
-    <filter-class>io.hawt.web.AuthenticationFilter</filter-class>
+    <filter-class>io.hawt.web.auth.AuthenticationFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>AuthenticationFilter</filter-name>
@@ -139,7 +139,7 @@
 
   <servlet>
     <servlet-name>jolokia-proxy</servlet-name>
-    <servlet-class>io.hawt.web.ProxyServlet</servlet-class>
+    <servlet-class>io.hawt.web.proxy.ProxyServlet</servlet-class>
     <!--
       Comma-separated list of allowed target hosts. It is required for security.
       '*' allows all hosts but keep in mind it's vulnerable to security attacks.
@@ -160,7 +160,7 @@
 
   <servlet>
     <servlet-name>file-upload</servlet-name>
-    <servlet-class>io.hawt.web.UploadServlet</servlet-class>
+    <servlet-class>io.hawt.web.servlets.UploadServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -179,7 +179,7 @@
 
   <servlet>
     <servlet-name>login</servlet-name>
-    <servlet-class>io.hawt.web.LoginServlet</servlet-class>
+    <servlet-class>io.hawt.web.auth.LoginServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>login</servlet-name>
@@ -188,7 +188,7 @@
 
   <servlet>
     <servlet-name>logout</servlet-name>
-    <servlet-class>io.hawt.web.LogoutServlet</servlet-class>
+    <servlet-class>io.hawt.web.auth.LogoutServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>logout</servlet-name>
@@ -206,7 +206,7 @@
 
   <servlet>
     <servlet-name>plugin</servlet-name>
-    <servlet-class>io.hawt.web.PluginServlet</servlet-class>
+    <servlet-class>io.hawt.web.servlets.PluginServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>plugin</servlet-name>
@@ -215,7 +215,7 @@
 
   <servlet>
     <servlet-name>maven-source</servlet-name>
-    <servlet-class>io.hawt.web.JavaDocServlet</servlet-class>
+    <servlet-class>io.hawt.web.servlets.JavaDocServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>

@@ -79,7 +79,7 @@
 
   <filter>
     <filter-name>RedirectFilter</filter-name>
-    <filter-class>io.hawt.web.RedirectFilter</filter-class>
+    <filter-class>io.hawt.web.filters.RedirectFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>RedirectFilter</filter-name>
@@ -88,7 +88,7 @@
 
   <filter>
     <filter-name>SessionExpiryFilter</filter-name>
-    <filter-class>io.hawt.web.SessionExpiryFilter</filter-class>
+    <filter-class>io.hawt.web.filters.SessionExpiryFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>SessionExpiryFilter</filter-name>
@@ -97,7 +97,7 @@
 
   <filter>
     <filter-name>cache</filter-name>
-    <filter-class>io.hawt.web.CacheHeadersFilter</filter-class>
+    <filter-class>io.hawt.web.filters.CacheHeadersFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>cache</filter-name>
@@ -106,7 +106,7 @@
 
   <filter>
     <filter-name>CORSFilter</filter-name>
-    <filter-class>io.hawt.web.CORSFilter</filter-class>
+    <filter-class>io.hawt.web.filters.CORSFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>CORSFilter</filter-name>
@@ -115,7 +115,7 @@
 
   <filter>
     <filter-name>XFrameOptionsFilter</filter-name>
-    <filter-class>io.hawt.web.XFrameOptionsFilter</filter-class>
+    <filter-class>io.hawt.web.filters.XFrameOptionsFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>XFrameOptionsFilter</filter-name>
@@ -124,7 +124,7 @@
 
   <filter>
     <filter-name>XXSSProtectionFilter</filter-name>
-    <filter-class>io.hawt.web.XXSSProtectionFilter</filter-class>
+    <filter-class>io.hawt.web.filters.XXSSProtectionFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>XXSSProtectionFilter</filter-name>
@@ -133,7 +133,7 @@
 
   <filter>
     <filter-name>AuthenticationFilter</filter-name>
-    <filter-class>io.hawt.web.AuthenticationFilter</filter-class>
+    <filter-class>io.hawt.web.auth.AuthenticationFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>AuthenticationFilter</filter-name>
@@ -169,7 +169,7 @@
 
   <servlet>
     <servlet-name>jolokia-agent</servlet-name>
-    <servlet-class>io.hawt.web.JolokiaConfiguredAgentServlet</servlet-class>
+    <servlet-class>io.hawt.web.servlets.JolokiaConfiguredAgentServlet</servlet-class>
     <init-param>
       <param-name>mbeanQualifier</param-name>
       <param-value>qualifier=hawtio</param-value>
@@ -185,7 +185,7 @@
     </init-param>
     <init-param>
       <param-name>restrictorClass</param-name>
-      <param-value>io.hawt.web.RBACRestrictor</param-value>
+      <param-value>io.hawt.system.RBACRestrictor</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
@@ -197,7 +197,7 @@
 
   <servlet>
     <servlet-name>jolokia-proxy</servlet-name>
-    <servlet-class>io.hawt.web.ProxyServlet</servlet-class>
+    <servlet-class>io.hawt.web.proxy.ProxyServlet</servlet-class>
     <!--
       Comma-separated list of allowed target hosts. It is required for security.
       '*' allows all hosts but keep in mind it's vulnerable to security attacks.
@@ -218,7 +218,7 @@
 
   <servlet>
     <servlet-name>file-upload</servlet-name>
-    <servlet-class>io.hawt.web.UploadServlet</servlet-class>
+    <servlet-class>io.hawt.web.servlets.UploadServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -229,7 +229,7 @@
   <!--
   <servlet>
     <servlet-name>kube-service</servlet-name>
-    <servlet-class>io.hawt.web.ServiceServlet</servlet-class>
+    <servlet-class>io.hawt.web.kubernetes.ServiceServletvlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -238,7 +238,7 @@
   </servlet-mapping>
   <servlet>
     <servlet-name>kube-pod</servlet-name>
-    <servlet-class>io.hawt.web.PodServlet</servlet-class>
+    <servlet-class>io.hawt.web.kubernetes.PodServletvlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -258,7 +258,7 @@
 
   <servlet>
     <servlet-name>login</servlet-name>
-    <servlet-class>io.hawt.web.LoginServlet</servlet-class>
+    <servlet-class>io.hawt.web.auth.LoginServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>login</servlet-name>
@@ -267,7 +267,7 @@
 
   <servlet>
     <servlet-name>logout</servlet-name>
-    <servlet-class>io.hawt.web.LogoutServlet</servlet-class>
+    <servlet-class>io.hawt.web.auth.LogoutServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>logout</servlet-name>
@@ -285,7 +285,7 @@
 
   <servlet>
     <servlet-name>plugin</servlet-name>
-    <servlet-class>io.hawt.web.PluginServlet</servlet-class>
+    <servlet-class>io.hawt.web.servlets.PluginServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>plugin</servlet-name>
@@ -294,7 +294,7 @@
 
   <servlet>
     <servlet-name>exportContext</servlet-name>
-    <servlet-class>io.hawt.web.ExportContextServlet</servlet-class>
+    <servlet-class>io.hawt.web.servlets.ExportContextServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>exportContext</servlet-name>
@@ -303,7 +303,7 @@
 
   <servlet>
     <servlet-name>gitServlet</servlet-name>
-    <servlet-class>io.hawt.web.GitServlet</servlet-class>
+    <servlet-class>io.hawt.web.servlets.GitServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -313,7 +313,7 @@
 
   <servlet>
     <servlet-name>maven-source</servlet-name>
-    <servlet-class>io.hawt.web.JavaDocServlet</servlet-class>
+    <servlet-class>io.hawt.web.servlets.JavaDocServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -323,7 +323,7 @@
 
   <servlet>
     <servlet-name>contextFormatter</servlet-name>
-    <servlet-class>io.hawt.web.ContextFormatterServlet</servlet-class>
+    <servlet-class>io.hawt.web.servlets.ContextFormatterServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>

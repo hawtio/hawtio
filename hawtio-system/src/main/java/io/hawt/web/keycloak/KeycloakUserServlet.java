@@ -6,10 +6,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.hawt.system.Authenticator;
-import io.hawt.web.AuthenticationConfiguration;
-import io.hawt.web.AuthenticationFilter;
-import io.hawt.web.LoginServlet;
-import io.hawt.web.UserServlet;
+import io.hawt.web.auth.AuthenticationConfiguration;
+import io.hawt.web.auth.AuthenticationFilter;
+import io.hawt.web.auth.LoginServlet;
+import io.hawt.web.auth.UserServlet;
 
 
 public class KeycloakUserServlet extends UserServlet {

@@ -51,13 +51,13 @@ public class ServletHelpers {
 
     }
 
-    static void writeEmpty(PrintWriter out) {
+    public static void writeEmpty(PrintWriter out) {
         out.write("{}");
         out.flush();
         out.close();
     }
 
-    static void writeObject(Converters converters, JsonConvertOptions options, PrintWriter out, Object answer) {
+    public static void writeObject(Converters converters, JsonConvertOptions options, PrintWriter out, Object answer) {
         Object result = null;
 
         try {

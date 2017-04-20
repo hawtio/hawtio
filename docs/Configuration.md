@@ -412,7 +412,7 @@ Just update the blueprint configuration values in OSGi config admim as you would
 
 #### Jolokia configuration
 
-Jolokia agent is deployed automatically with `io.hawt.web.JolokiaConfiguredAgentServlet` that extends Jolokia native `org.jolokia.http.AgentServlet` class, defined in `hawtio-web/WEB-INF/web.xml`.  
+Jolokia agent is deployed automatically with `io.hawt.web.servlets.JolokiaConfiguredAgentServlet` that extends Jolokia native `org.jolokia.http.AgentServlet` class, defined in `hawtio-web/WEB-INF/web.xml`.  
 To customize Jolokia Servlet configuration, according to the parameters that it supports and that are defined here:  
 https://jolokia.org/reference/html/agents.html#agent-war-init-params
 
@@ -422,7 +422,7 @@ EX.
 
     -Djolokia.policyLocation=file:///home/fuse/my-access.xml
 
-**NOTE** The parameter `restrictorClass` is already used in `hawtio-web/WEB-INF/web.xml` to implement role-based access control (RBAC) for Jolokia invocations. If you want to use your own Jolokia restrictor, make sure to extend `io.hawt.web.RBACRestrictor` to implement your own restrictor class. Otherwise, part of Hawtio's RBAC functions will be lost.
+**NOTE** The parameter `restrictorClass` is already used in `hawtio-web/WEB-INF/web.xml` to implement role-based access control (RBAC) for Jolokia invocations. If you want to use your own Jolokia restrictor, make sure to extend `io.hawt.system.RBACRestrictor` to implement your own restrictor class. Otherwise, part of Hawtio's RBAC functions will be lost.
 
 #### More information
 

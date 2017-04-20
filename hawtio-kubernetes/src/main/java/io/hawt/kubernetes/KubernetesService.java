@@ -17,7 +17,7 @@ package io.hawt.kubernetes;
 
 import io.hawt.git.GitFacade;
 import io.hawt.util.*;
-import io.hawt.web.ServiceResolver;
+import io.hawt.web.kubernetes.ServiceResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

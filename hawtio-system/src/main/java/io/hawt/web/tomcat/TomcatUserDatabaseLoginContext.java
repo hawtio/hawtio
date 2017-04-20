@@ -16,6 +16,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import io.hawt.util.Predicate;
+import io.hawt.web.auth.AuthenticationFilter;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * To use Apache Tomcat's conf/tomcat-users.xml user database as JAAS {@link javax.security.auth.login.LoginContext},
- * so hawtio can use that for its {@link io.hawt.web.AuthenticationFilter}.
+ * so hawtio can use that for its {@link AuthenticationFilter}.
  */
 public class TomcatUserDatabaseLoginContext implements LoginModule {
 

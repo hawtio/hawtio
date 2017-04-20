@@ -2,7 +2,7 @@ package io.hawt.system;
 
 import io.hawt.util.Hosts;
 import io.hawt.util.Strings;
-import io.hawt.web.ProxyDetails;
+import io.hawt.web.proxy.ProxyDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
