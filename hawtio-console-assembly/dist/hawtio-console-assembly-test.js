@@ -56,6 +56,7 @@ var DevExample;
             HawtioNav.add(tab);
             DevExample.log.debug("loaded");
         }]);
+    // hawtioPluginLoader.addModule(DevExample.pluginName);
 })(DevExample || (DevExample = {}));
 
 /// Copyright 2014-2015 Red Hat, Inc. and/or its affiliates

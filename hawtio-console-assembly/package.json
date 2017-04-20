@@ -24,6 +24,7 @@
     "gulp-flatten": "~0.3.0",
     "gulp-gh-pages": "~0.5.0",
     "gulp-header": "^1.0.0",
+    "gulp-if": "^2.0.2",
     "gulp-less": "^3.0.0",
     "gulp-load-plugins": "^1.0.0",
     "gulp-notify": "^2.0.0",
@@ -42,8 +43,8 @@
     "tslint": "^4.0.0",
     "typescript": "^2.0.0",
     "underscore.string": "^3.0.0",
-    "url-join": "^1.0.0",
     "urijs": "^1.0.0",
+    "url-join": "^1.0.0",
     "vinyl-map": "^1.0.0",
     "which": "^1.0.0",
     "wiredep": "^4.0.0"

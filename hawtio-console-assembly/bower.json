@@ -20,10 +20,26 @@
   "dependencies": {
     "hawtio-integration": "~3.0.0",
     "hawtio-preferences": "~3.0.0",
+    "angular-resizable": "~1.2.0",
     "patternfly": "~4.0.0-rc.1"
   },
   "devDependencies": {
-    "hawtio-core-dts": "~3.0.0"
+    "hawtio-core-dts": "~3.0.0",
+    "hawtio-extension-service": "~3.0.0"
+  },
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "dist/css/bootstrap.css",
+        "dist/js/bootstrap.js"
+      ]
+    },
+    "angular-resizable": {
+      "main": [
+        "src/angular-resizable.css",
+        "src/angular-resizable.js"
+      ]
+    }
   },
   "resolutions": {
     "jquery": ">= 1.9.0",

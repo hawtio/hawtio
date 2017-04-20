@@ -1,8 +1,6 @@
-hawtio web console for Java
----------------------------
+## hawtio web console for Java
 
-This is the default hawtio web console for Java that is a distributed as a .war deployment unit.
-
+This is the default hawtio web console for Java that is a distributed as a `.war` deployment unit.
 
 ### Running locally
 

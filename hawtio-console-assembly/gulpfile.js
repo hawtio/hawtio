@@ -8,6 +8,8 @@ var gulp = require('gulp'),
     size = require('gulp-size'),
     uri = require('urijs'),
     s = require('underscore.string'),
+    argv = require('yargs').argv,
+    logger = require('js-logger'),
     hawtio = require('hawtio-node-backend'),
     tslint = require('gulp-tslint'),
     tslintRules = require('./tslint.json');
@@ -16,6 +18,9 @@ var plugins = gulpLoadPlugins({});
 var pkg = require('./package.json');
 
 var config = {
+  proxyPort: argv.port || 8181,
+  targetPath: argv.path || '/hawtio/jolokia',
+  logLevel: argv.debug ? logger.DEBUG : logger.INFO,
   main: '.',
   ts: ['plugins/**/*.ts'],
   testTs: ['test-plugins/**/*.ts'],
@@ -43,7 +48,8 @@ var config = {
   }),
   tsLintOptions: {
     rulesDirectory: './tslint-rules/'
-  }
+  },
+  sourceMap: argv.sourcemap
 };
 
 var normalSizeOptions = {
@@ -52,7 +58,6 @@ var normalSizeOptions = {
     showFiles: true,
     gzip: true
 };
-
 
 gulp.task('bower', function() {
   return gulp.src('index.html')
@@ -66,7 +71,9 @@ gulp.task('path-adjust', function() {
     .pipe(map(function(buf, filename) {
       var textContent = buf.toString();
       var newTextContent = textContent.replace(/"\.\.\/libs/gm, '"../../../libs');
-      // console.log("Filename: ", filename, " old: ", textContent, " new:", newTextContent);
+      if (argv.debug) {
+        console.log("Filename: ", filename, " old: ", textContent, " new: ", newTextContent);
+      }
       return newTextContent;
     }))
     .pipe(gulp.dest('libs'));
@@ -81,7 +88,7 @@ gulp.task('example-tsc', ['tsc'], function() {
   var tsResult = gulp.src(config.testTs)
     .pipe(config.testTsProject())
     .on('error', plugins.notify.onError({
-      message: '#{ error.message }',
+      message: '<%= error.message %>',
       title: 'Typescript compilation error - test'
     }));
 
@@ -116,28 +123,28 @@ gulp.task('example-clean', ['example-concat'], function() {
 gulp.task('tsc', ['clean-defs'], function() {
   var cwd = process.cwd();
   var tsResult = gulp.src(config.ts)
-    .pipe(plugins.sourcemaps.init())
+    .pipe(plugins.if(config.sourceMap, plugins.sourcemaps.init()))
     .pipe(config.tsProject())
     .on('error', plugins.notify.onError({
-      message: '#{ error.message }',
+      message: '<%= error.message %>',
       title: 'Typescript compilation error'
     }));
 
-    return eventStream.merge(
-      tsResult.js
-        .pipe(plugins.concat('compiled.js'))
-        .pipe(plugins.sourcemaps.write())
-        .pipe(gulp.dest('.')),
-      tsResult.dts
-        .pipe(gulp.dest('d.ts')))
-        .pipe(map(function(buf, filename) {
-          if (!s.endsWith(filename, 'd.ts')) {
-            return buf;
-          }
-          var relative = path.relative(cwd, filename);
-          fs.appendFileSync('defs.d.ts', '/// <reference path="' + relative + '"/>\n');
-          return buf;
-        }));
+  return eventStream.merge(
+    tsResult.js
+      .pipe(plugins.concat('compiled.js'))
+      .pipe(plugins.if(config.sourceMap, plugins.sourcemaps.write()))
+      .pipe(gulp.dest('.')),
+    tsResult.dts
+      .pipe(gulp.dest('d.ts')))
+    .pipe(map(function(buf, filename) {
+      if (!s.endsWith(filename, 'd.ts')) {
+        return buf;
+      }
+      var relative = path.relative(cwd, filename);
+      fs.appendFileSync('defs.d.ts', '/// <reference path="' + relative + '"/>\n');
+      return buf;
+    }));
 });
 
 /*
@@ -156,7 +163,7 @@ gulp.task('tslint-watch', function(){
 });
 */
 
-gulp.task('less', function () {
+gulp.task('less', function() {
   return gulp.src(config.less)
     .pipe(plugins.less({
       paths: [ path.join(__dirname, 'less', 'includes') ]
@@ -203,7 +210,7 @@ gulp.task('watch', ['build', 'build-example'], function() {
   plugins.watch([config.testTs, config.testTemplates], function() {
     gulp.start(['example-tsc', 'example-template', 'example-concat', 'example-clean']);
   });
-  plugins.watch(config.less, function(){
+  plugins.watch(config.less, function() {
     gulp.start('less', 'reload');
   })
 });
@@ -217,14 +224,15 @@ gulp.task('connect', ['watch'], function() {
   */
 
   hawtio.setConfig({
+    logLevel: config.logLevel,
     port: 2772,
     staticProxies: [
     {
       proto: 'http',
-      port: 8080,
+      port: config.proxyPort,
       hostname: 'localhost',
       path: '/hawtio/jolokia',
-      targetPath: '/jolokia'
+      targetPath: config.targetPath
     }
     /*
     // proxy to a service, in this case kubernetes
