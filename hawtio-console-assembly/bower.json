@@ -1,6 +1,5 @@
 {
   "name": "hawtio-console-assembly",
-  "version": "2.0.0",
   "keywords": [
     "hawtio"
   ],
@@ -21,23 +20,13 @@
   "dependencies": {
     "hawtio-integration": "~3.0.0",
     "hawtio-preferences": "~3.0.0",
-    "patternfly": "~3.15.0"
+    "patternfly": "~4.0.0-rc.1"
   },
   "devDependencies": {
-    "hawtio-core-dts": "~2.0.0"
+    "hawtio-core-dts": "~3.0.0"
   },
   "resolutions": {
-    "angular": "^1.1.5",
-    "angular-bootstrap": "2.2.x",
-    "hawtio-core": "~3.0.0",
-    "hawtio-core-navigation": "~3.0.0",
-    "hawtio-forms": "~3.0.0",
-    "hawtio-template-cache": "~3.0.0",
-    "hawtio-ui": "~3.0.0",
-    "hawtio-utilities": "~3.0.0",
     "jquery": ">= 1.9.0",
-    "patternfly": "~4.0.0-alpha.3",
-    "urijs": "<2.0.0",
-    "lodash": "4.x"
+    "angular": "^1.5.11"
   }
 }
