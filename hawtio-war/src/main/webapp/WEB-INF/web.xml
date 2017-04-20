@@ -36,6 +36,13 @@
   </env-entry>
 
   <env-entry>
+    <description>AuthenticationContainerDiscovery classes divided by comma, used to discover container environments</description>
+    <env-entry-name>hawtio/authenticationContainerDiscoveryClasses</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery</env-entry-value>
+  </env-entry>
+
+  <env-entry>
     <description>Enable/disable Keycloak integration. Value is really a boolean</description>
     <env-entry-name>hawtio/keycloakEnabled</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
@@ -50,11 +57,34 @@
   </env-entry>
 
   <env-entry>
+    <description>Whether or not to check and see if branding should be enabled, value is really a boolean</description>
+    <env-entry-name>hawtio/useBranding</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>true</env-entry-value>
+  </env-entry>
+
+  <env-entry>
     <description>Path to store file uploads, defaults to ${java.io.tmpdir}/uploads if blank</description>
     <env-entry-name>hawtio/uploadDirectory</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
     <env-entry-value></env-entry-value>
   </env-entry>
+
+  <env-entry>
+    <description>The maximum time interval, in seconds, that the servlet container will keep this session open between client accesses.</description>
+    <env-entry-name>hawtio/sessionTimeout</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value></env-entry-value>
+  </env-entry>
+
+  <filter>
+    <filter-name>RedirectFilter</filter-name>
+    <filter-class>io.hawt.web.RedirectFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>RedirectFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
   <filter>
     <filter-name>SessionExpiryFilter</filter-name>
@@ -64,14 +94,16 @@
     <filter-name>SessionExpiryFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+
   <filter>
-    <filter-name>XFrameOptionsFilter</filter-name>
-    <filter-class>io.hawt.web.XFrameOptionsFilter</filter-class>
+    <filter-name>cache</filter-name>
+    <filter-class>io.hawt.web.CacheHeadersFilter</filter-class>
   </filter>
   <filter-mapping>
-    <filter-name>XFrameOptionsFilter</filter-name>
+    <filter-name>cache</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+
   <filter>
     <filter-name>CORSFilter</filter-name>
     <filter-class>io.hawt.web.CORSFilter</filter-class>
@@ -80,6 +112,25 @@
     <filter-name>CORSFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+
+  <filter>
+    <filter-name>XFrameOptionsFilter</filter-name>
+    <filter-class>io.hawt.web.XFrameOptionsFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>XFrameOptionsFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>XXSSProtectionFilter</filter-name>
+    <filter-class>io.hawt.web.XXSSProtectionFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>XXSSProtectionFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
   <filter>
     <filter-name>AuthenticationFilter</filter-name>
     <filter-class>io.hawt.web.AuthenticationFilter</filter-class>
@@ -93,14 +144,20 @@
     <url-pattern>/auth/*</url-pattern>
   </filter-mapping>
 
-  <!-- don't want to try and interpret the authentication header intended for the proxy
+  <!-- plugin discovery needs to be authenticated for rbac in karaf 3.x onwards
+       or we need a wait to have hawtio in the whitelist out of the box
+  <filter-mapping>
+    <filter-name>AuthenticationFilter</filter-name>
+    <url-pattern>/plugin/*</url-pattern>
+  </filter-mapping> -->
+  <!--
+       don't want to try and interpret the authentication header
+       intended for the proxy
   <filter-mapping>
     <filter-name>AuthenticationFilter</filter-name>
     <url-pattern>/proxy/*</url-pattern>
   </filter-mapping>
   -->
-
-  <!--
   <filter-mapping>
     <filter-name>AuthenticationFilter</filter-name>
     <url-pattern>/upload/*</url-pattern>
@@ -109,25 +166,49 @@
     <filter-name>AuthenticationFilter</filter-name>
     <url-pattern>/javadoc/*</url-pattern>
   </filter-mapping>
-  -->
 
-  <!-- jolokia -->
   <servlet>
     <servlet-name>jolokia-agent</servlet-name>
-    <servlet-class>org.jolokia.http.AgentServlet</servlet-class>
+    <servlet-class>io.hawt.web.JolokiaConfiguredAgentServlet</servlet-class>
     <init-param>
       <param-name>mbeanQualifier</param-name>
       <param-value>qualifier=hawtio</param-value>
     </init-param>
+    <!-- turn off returning exceptions and stacktraces from jolokia -->
+    <init-param>
+      <param-name>allowErrorDetails</param-name>
+      <param-value>false</param-value>
+    </init-param>
+    <init-param>
+      <param-name>includeStackTrace</param-name>
+      <param-value>false</param-value>
+    </init-param>
+    <init-param>
+      <param-name>restrictorClass</param-name>
+      <param-value>io.hawt.web.RBACRestrictor</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
+
   <servlet-mapping>
     <servlet-name>jolokia-agent</servlet-name>
     <url-pattern>/jolokia/*</url-pattern>
   </servlet-mapping>
+
   <servlet>
     <servlet-name>jolokia-proxy</servlet-name>
     <servlet-class>io.hawt.web.ProxyServlet</servlet-class>
+    <!--
+      Comma-separated list of allowed target hosts. It is required for security.
+      '*' allows all hosts but keep in mind it's vulnerable to security attacks.
+    -->
+    <init-param>
+      <param-name>proxyWhitelist</param-name>
+      <param-value>
+        localhost,
+        127.0.0.1
+      </param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
@@ -135,14 +216,14 @@
     <url-pattern>/proxy/*</url-pattern>
   </servlet-mapping>
 
-  <!-- to discover 3rd party plugins deployed in same JVM -->
   <servlet>
-    <servlet-name>plugin</servlet-name>
-    <servlet-class>io.hawt.web.PluginServlet</servlet-class>
+    <servlet-name>file-upload</servlet-name>
+    <servlet-class>io.hawt.web.UploadServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
-    <servlet-name>plugin</servlet-name>
-    <url-pattern>/plugin/*</url-pattern>
+    <servlet-name>file-upload</servlet-name>
+    <url-pattern>/upload/*</url-pattern>
   </servlet-mapping>
 
   <!--
@@ -166,15 +247,15 @@
   </servlet-mapping>
   -->
 
-  <!-- login/logout and security related servlets -->
   <servlet>
     <servlet-name>user</servlet-name>
-    <servlet-class>io.hawt.web.UserServlet</servlet-class>
+    <servlet-class>io.hawt.web.keycloak.KeycloakUserServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>user</servlet-name>
     <url-pattern>/user/*</url-pattern>
   </servlet-mapping>
+
   <servlet>
     <servlet-name>login</servlet-name>
     <servlet-class>io.hawt.web.LoginServlet</servlet-class>
@@ -183,6 +264,7 @@
     <servlet-name>login</servlet-name>
     <url-pattern>/auth/login/*</url-pattern>
   </servlet-mapping>
+
   <servlet>
     <servlet-name>logout</servlet-name>
     <servlet-class>io.hawt.web.LogoutServlet</servlet-class>
@@ -191,6 +273,7 @@
     <servlet-name>logout</servlet-name>
     <url-pattern>/auth/logout/*</url-pattern>
   </servlet-mapping>
+
   <servlet>
     <servlet-name>keycloak</servlet-name>
     <servlet-class>io.hawt.web.keycloak.KeycloakServlet</servlet-class>
@@ -200,16 +283,24 @@
     <url-pattern>/keycloak/*</url-pattern>
   </servlet-mapping>
 
-  <!-- various other servlets -->
   <servlet>
-    <servlet-name>file-upload</servlet-name>
-    <servlet-class>io.hawt.web.UploadServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
+    <servlet-name>plugin</servlet-name>
+    <servlet-class>io.hawt.web.PluginServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>file-upload</servlet-name>
-    <url-pattern>/upload/*</url-pattern>
+    <servlet-name>plugin</servlet-name>
+    <url-pattern>/plugin/*</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>exportContext</servlet-name>
+    <servlet-class>io.hawt.web.ExportContextServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>exportContext</servlet-name>
+    <url-pattern>/exportContext/*</url-pattern>
+  </servlet-mapping>
+
   <servlet>
     <servlet-name>gitServlet</servlet-name>
     <servlet-class>io.hawt.web.GitServlet</servlet-class>
@@ -219,6 +310,7 @@
     <servlet-name>gitServlet</servlet-name>
     <url-pattern>/git/*</url-pattern>
   </servlet-mapping>
+
   <servlet>
     <servlet-name>maven-source</servlet-name>
     <servlet-class>io.hawt.web.JavaDocServlet</servlet-class>
@@ -229,12 +321,29 @@
     <url-pattern>/javadoc/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>contextFormatter</servlet-name>
+    <servlet-class>io.hawt.web.ContextFormatterServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>contextFormatter</servlet-name>
+    <url-pattern>/contextFormatter/*</url-pattern>
+  </servlet-mapping>
+
+  <mime-mapping>
+    <extension>woff</extension>
+    <mime-type>application/font-woff</mime-type>
+  </mime-mapping>
+
   <listener>
     <listener-class>io.hawt.HawtioContextListener</listener-class>
   </listener>
+
   <listener>
     <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
   </listener>
+
   <listener>
     <listener-class>io.hawt.blueprint.HawtioBlueprintContextListener</listener-class>
   </listener>
