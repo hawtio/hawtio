@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import io.hawt.system.Helpers;
 import io.hawt.system.ProxyWhitelist;
 import io.hawt.util.Strings;
 import org.apache.commons.codec.binary.Base64;
@@ -187,7 +186,7 @@ public class ProxyServlet extends HttpServlet {
             ProxyDetails details = (ProxyDetails) proxyAddress;
             if (!whitelist.isAllowed(details)) {
                 LOG.debug("Rejecting {}", proxyAddress);
-                Helpers.doForbidden(servletResponse);
+                ServletHelpers.doForbidden(servletResponse);
                 return;
             }
         }

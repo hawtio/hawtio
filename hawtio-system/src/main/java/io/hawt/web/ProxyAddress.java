@@ -18,8 +18,10 @@
 package io.hawt.web;
 
 /**
+ * Proxy address interface.
  */
 public interface ProxyAddress {
+
     String getFullProxyUrl();
 
     String getUserName();

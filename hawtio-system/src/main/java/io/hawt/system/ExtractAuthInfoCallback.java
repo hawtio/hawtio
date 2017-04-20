@@ -1,10 +1,10 @@
 package io.hawt.system;
 
 /**
- *
+ * Callback for extracting authentication information
  */
 public interface ExtractAuthInfoCallback {
 
-    public void getAuthInfo(String userName, String password);
+    void getAuthInfo(String userName, String password);
 
 }

@@ -3,7 +3,7 @@ package io.hawt.system;
 import io.hawt.util.Strings;
 
 /**
- *
+ * Authentication information that represents a set of user name and password.
  */
 public class AuthInfo {
 

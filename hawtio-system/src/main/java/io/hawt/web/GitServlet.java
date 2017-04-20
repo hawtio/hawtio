@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Git servlet
  */
 public class GitServlet extends UploadServlet {
     private static final transient Logger LOG = LoggerFactory.getLogger(GitServlet.class);

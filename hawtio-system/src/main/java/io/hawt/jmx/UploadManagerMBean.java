@@ -3,7 +3,7 @@ package io.hawt.jmx;
 import java.util.List;
 
 /**
- *
+ * Upload manager MBean
  */
 public interface UploadManagerMBean {
 

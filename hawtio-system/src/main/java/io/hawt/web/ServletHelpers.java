@@ -1,5 +1,6 @@
 package io.hawt.web;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.management.AttributeNotFoundException;
+import javax.servlet.http.HttpServletResponse;
 
+import io.hawt.system.Authenticator;
 import org.jolokia.converter.Converters;
 import org.jolokia.converter.json.JsonConvertOptions;
 import org.json.simple.JSONObject;
@@ -17,11 +20,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Helpers for servlet
  */
 public class ServletHelpers {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(ServletHelpers.class);
+
+    private static final String HEADER_WWW_AUTHENTICATE = "WWW-Authenticate";
+
+    public static void doForbidden(HttpServletResponse response) {
+        try {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentLength(0);
+            response.flushBuffer();
+        } catch (IOException ioe) {
+            LOG.debug("Failed to send forbidden response: {}", ioe);
+        }
+    }
+
+    public static void doAuthPrompt(String realm, HttpServletResponse response) {
+        // request authentication
+        try {
+            response.setHeader(HEADER_WWW_AUTHENTICATE, Authenticator.AUTHENTICATION_SCHEME_BASIC + " realm=\"" + realm + "\"");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentLength(0);
+            response.flushBuffer();
+        } catch (IOException ioe) {
+            LOG.debug("Failed to send auth response: {}", ioe);
+        }
+
+    }
 
     static void writeEmpty(PrintWriter out) {
         out.write("{}");

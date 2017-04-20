@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Hawtio plugin registry
  */
 public class PluginRegistry extends JmxTreeWatcher implements PluginRegistryMBean {
 

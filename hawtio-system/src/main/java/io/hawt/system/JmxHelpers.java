@@ -3,6 +3,9 @@ package io.hawt.system;
 import javax.management.ObjectName;
 import java.util.Set;
 
+/**
+ * Helpers for JMX
+ */
 public class JmxHelpers {
 
     public static ObjectName chooseMBean(Set<ObjectName> mbeans) {

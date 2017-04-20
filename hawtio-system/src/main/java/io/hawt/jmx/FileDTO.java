@@ -3,7 +3,7 @@ package io.hawt.jmx;
 import java.io.File;
 
 /**
- *
+ * File DTO
  */
 public class FileDTO {
 

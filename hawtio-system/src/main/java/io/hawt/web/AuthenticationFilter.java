@@ -20,7 +20,6 @@ import io.hawt.system.AuthInfo;
 import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
 import io.hawt.system.ExtractAuthInfoCallback;
-import io.hawt.system.Helpers;
 import io.hawt.system.PrivilegedCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,15 +175,15 @@ public class AuthenticationFilter implements Filter {
                 // request was executed using the authenticated subject, nothing more to do
                 break;
             case NOT_AUTHORIZED:
-                Helpers.doForbidden((HttpServletResponse) response);
+                ServletHelpers.doForbidden((HttpServletResponse) response);
                 break;
             case NO_CREDENTIALS:
                 if (configuration.isNoCredentials401()) {
                     // return auth prompt 401
-                    Helpers.doAuthPrompt(configuration.getRealm(), (HttpServletResponse) response);
+                    ServletHelpers.doAuthPrompt(configuration.getRealm(), (HttpServletResponse) response);
                 } else {
                     // return forbidden 403 so the browser login does not popup
-                    Helpers.doForbidden((HttpServletResponse) response);
+                    ServletHelpers.doForbidden((HttpServletResponse) response);
                 }
                 break;
         }

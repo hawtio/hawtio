@@ -21,14 +21,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import io.hawt.system.ConfigManager;
-import io.hawt.system.Helpers;
 import org.jolokia.converter.Converters;
 import org.jolokia.converter.json.JsonConvertOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Login servlet
  */
 public class LoginServlet extends HttpServlet {
 
@@ -79,7 +78,7 @@ public class LoginServlet extends HttpServlet {
             if (subject == null) {
                 LOG.warn("No security subject stored in existing session, invalidating");
                 session.invalidate();
-                Helpers.doForbidden(resp);
+                ServletHelpers.doForbidden(resp);
                 return;
             }
             sendResponse(session, subject, out);
@@ -96,7 +95,7 @@ public class LoginServlet extends HttpServlet {
         }
 
         if (subject == null) {
-            Helpers.doForbidden(resp);
+            ServletHelpers.doForbidden(resp);
             return;
         }
 

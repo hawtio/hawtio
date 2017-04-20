@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import io.hawt.system.Helpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,7 +110,7 @@ public class SessionExpiryFilter implements Filter {
                             subContext.equals("contextFormatter") ||
                             subContext.equals("upload")) {
                         LOG.debug("Authentication enabled, denying request for {}", subContext);
-                        Helpers.doForbidden(response);
+                        ServletHelper.doForbidden(response);
                     } else {
                         LOG.debug("Authentication enabled, but allowing request for {}", subContext);
                         chain.doFilter(request, response);
@@ -130,7 +129,7 @@ public class SessionExpiryFilter implements Filter {
             if (remainder > maxInactiveInterval) {
                 LOG.info("Expiring session due to inactivity");
                 session.invalidate();
-                Helpers.doForbidden(response);
+                ServletHelpers.doForbidden(response);
                 return;
             }
         }
