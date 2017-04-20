@@ -5,12 +5,11 @@
     <details>Installs the core hawtio war file with minimal extensions</details>
     <feature>war</feature>
     <bundle>mvn:io.hawt/hawtio-json-schema-mbean/${project.version}</bundle>
-    <bundle>mvn:io.hawt/hawtio-web/${project.version}/war</bundle>
+    <bundle>mvn:io.hawt/hawtio-war/${project.version}/war</bundle>
 
     <config name="jmx.acl.hawtio.plugin">
       * = *
     </config>
-
   </feature>
 
   <feature name="hawtio-rbac" version="${project.version}" resolver="(obr)">
@@ -18,22 +17,15 @@
     <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
   </feature>
 
-  <feature name="hawtio-log" version="${project.version}" resolver="(obr)">
-    <details>Installs the hawtio logging</details>
-    <bundle>mvn:io.hawt/hawtio-insight-log/${project.version}</bundle>
-    <bundle>mvn:io.hawt/hawtio-insight-log-osgi/${project.version}</bundle>
-    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-core/${jackson-version}</bundle>
-    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson-version}</bundle>
-    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-databind/${jackson-version}</bundle>
-  </feature>
-
   <feature name="hawtio" version="${project.version}" resolver="(obr)">
     <details>Installs the main hawtio web console</details>
     <feature>hawtio-core</feature>
     <feature>hawtio-rbac</feature>
+    <!--
     <feature>hawtio-log</feature>
     <feature>hawtio-karaf-terminal</feature>
     <feature>hawtio-maven-indexer</feature>
+    -->
   </feature>
 
   <feature name="hawtio-offline" version="${project.version}" resolver="(obr)">
@@ -101,6 +93,7 @@
     <bundle>mvn:io.hawt/social-plugin/${project.version}/war</bundle>
   </feature>
 
+  <!--
   <feature name="hawtio-karaf-terminal" version="${project.version}" resolver="(obr)">
     <details>A terminal plugin for hawtio when installed in Karaf</details>
     <bundle dependency="true">mvn:jline/jline/${jline.version}</bundle>
@@ -110,23 +103,6 @@
       * = *
     </config>
   </feature>
-
-  <feature name="hawtio-redhat-fuse-branding" version="${project.version}" resolver="(obr)">
-    <details>The Red Hat JBoss Fuse branding and theme for hawtio</details>
-    <feature>war</feature>
-    <bundle>mvn:io.hawt/hawtio-redhat-fuse-branding/${project.version}/war</bundle>
-  </feature>
-
-  <feature name="hawtio-redhat-amq-branding" version="${project.version}" resolver="(obr)">
-    <details>The Red Hat JBoss A-MQ branding and theme for hawtio</details>
-    <feature>war</feature>
-    <bundle>mvn:io.hawt/hawtio-redhat-amq-branding/${project.version}/war</bundle>
-  </feature>
-
-  <feature name="hawtio-fabric8-branding" version="${project.version}" resolver="(obr)">
-    <details>The fabric8 branding and theme for hawtio</details>
-    <feature>war</feature>
-    <bundle>mvn:io.hawt/hawtio-fabric8-branding/${project.version}/war</bundle>
-  </feature>
+  -->
 
 </features>

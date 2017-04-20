@@ -3,15 +3,16 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>hawtio-karaf</artifactId>
+  <packaging>jar</packaging>
   <name>${project.artifactId}</name>
   <description>hawtio :: Provides resources for running hawtio in Apache Karaf</description>
 
- <build>
+  <build>
     <resources>
       <resource>
         <directory>src/main/resources</directory>

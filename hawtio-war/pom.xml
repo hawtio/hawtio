@@ -112,7 +112,7 @@
 
     <plugins>
 
-      <!-- Step 4. Add hawtio-console Resources to the WAR -->
+      <!-- Step 4. Add hawtio-console resources to the WAR -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -125,6 +125,84 @@
               </includes>
             </resource>
           </webResources>
+          <archive>
+            <manifestFile>${project.build.directory}/classes/META-INF/MANIFEST.MF</manifestFile>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>${maven-bundle-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <supportedProjectTypes>
+            <supportedProjectType>war</supportedProjectType>
+          </supportedProjectTypes>
+          <instructions>
+            <Webapp-Context>${context}</Webapp-Context>
+            <Web-ContextPath>${context}</Web-ContextPath>
+
+            <Embed-Directory>WEB-INF/lib</Embed-Directory>
+            <Embed-Dependency>*;scope=compile|runtime;artifactId=!org.osgi.enterprise|org.osgi.core</Embed-Dependency>
+            <Embed-Transitive>true</Embed-Transitive>
+
+            <!--
+            <Import-Package>
+              org.osgi.framework;version="[1.5,2)",
+              org.osgi.framework.wiring;version="[1.0,2)",
+              org.osgi.util.tracker,
+              io.hawt.git;resolution:=optional;version="[1.4,2)",
+              io.hawt.util;resolution:=optional;version="[1.4,2)",
+              io.hawt.util.introspect;resolution:=optional;version="[1.4,2)",
+              io.hawt.util.introspect.support;resolution:=optional;version="[1.4,2)",
+              org.eclipse.jetty.plus.jaas.spi;resolution:=optional,
+              org.eclipse.jetty.plus.jaas.callback;resolution:=optional,
+              org.apache.commons.logging;resolution:=optional,
+              org.slf4j;resolution:=optional;version="[1.6,2)",
+              !org.slf4j.impl,
+              !org.apache.avalon*,
+              !org.apache.log*,
+              !javax.persistence,
+              !com.jcraft.jzlib,
+              !keypairgen,
+              !signature,
+              !userauth,
+              !com.ibm.uvm.tools*,!com.sun.jdmk.comm*,!javax.jmdns*,!javax.jms*,!javax.portlet*,
+              !com.sun.net*,!com.sun.tools*,!sun.security.x509*,
+              !org.apache.commons.io*,
+              org.apache.karaf.jaas.boot.principal;resolution:=optional,
+              *
+            </Import-Package>
+            -->
+            <Import-Package>
+              org.apache.commons.logging;resolution:=optional,
+              org.slf4j;resolution:=optional;version="[1.6,2)",
+              !org.slf4j.impl,
+              !org.apache.avalon*,
+              !org.apache.log*,
+              !javax.jmdns*,!javax.jms*,!javax.portlet*,
+              !com.ibm.uvm.tools*,
+              !com.sun.jdmk.comm*,!com.sun.net*,!com.sun.tools*,!sun.security.x509*,
+              *
+            </Import-Package>
+            <Private-Package></Private-Package>
+
+            <Bundle-ClassPath>.</Bundle-ClassPath>
+            <Bundle-Name>${project.description}</Bundle-Name>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Implementation-Title>hawtio osgi</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+          </instructions>
         </configuration>
       </plugin>
 
