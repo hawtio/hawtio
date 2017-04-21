@@ -105,7 +105,21 @@ public class ProxyDetails {
             return true;
         }
         // host may contain port number! (e.g. "localhost:9000")
-        return whitelist.contains(host.split(":")[0]);
+        String hostWithoutPort = host.split(":")[0];
+        if (whitelist.contains(hostWithoutPort)) {
+            return true;
+        }
+
+        for (String element : whitelist) {
+            if (element.startsWith("r:")) {
+                String regex = element.substring(2);
+                if (Pattern.compile(regex).matcher(hostWithoutPort).matches()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     @Override
