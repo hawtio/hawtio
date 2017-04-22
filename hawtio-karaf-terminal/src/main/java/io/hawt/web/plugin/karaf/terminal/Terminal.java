@@ -8,13 +8,12 @@
  *       and http://vt100.net/docs/vt510-rm/
  */
 package io.hawt.web.plugin.karaf.terminal;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Terminal {
@@ -1699,11 +1698,9 @@ public class Terminal {
                 }
             } else {
                 o += c;
-                /* Seems like this adds an extra newline...
                 if (vt100_mode_lfnewline && c == 13) {
                     o += (char) 10;
                 }
-                */
             }
         }
         return o;
