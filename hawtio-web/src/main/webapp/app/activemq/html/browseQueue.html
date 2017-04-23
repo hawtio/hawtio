@@ -140,7 +140,7 @@
       <p>Move
         <ng-pluralize count="gridOptions.selectedItems.length"
                       when="{'1': 'message', 'other': '{} messages'}"></ng-pluralize>
-        to: <select ng-model="queueName" ng-options="qn for qn in queueNames" ng-init="queueName=queueNames[0]""></select>
+        to: <select ng-model="queueName" ng-options="qn.unescapeHTML() for qn in queueNames" ng-init="queueName=queueNames[0].unescapeHTML()""></select>
       </p>
       <p>
         You cannot undo this operation.<br>

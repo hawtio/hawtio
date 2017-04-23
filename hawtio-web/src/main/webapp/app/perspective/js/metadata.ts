@@ -6,7 +6,7 @@
 /// <reference path="../../site/js/siteHelpers.ts"/>
 module Perspective {
 
-  export var containerPerspectiveEnabled = true;
+  export var containerPerspectiveEnabled: boolean = true;
 
   /**
    * Configuration for the perspective plugin that defines what tabs are in which perspectives
@@ -102,21 +102,21 @@ module Perspective {
           },
           {
             id: "dashboard",
-            // we only want to include dashboard if we are running in fabric (as they are in another perspective)
+            // we only want to include dashboard in 'fabric' perspective if we are running in fabric
+            // we will see dashboard in 'container' perspective otherwise
             // (must use "id" attribute for the plugin, an not href, when using onCondition)
             onCondition: (workspace) => Fabric.isFMCContainer(workspace)
           },
           {
             id: "health",
-            // we only want to include health if we are running in fabric (as they are in another perspective)
+            // we only want to include health in 'fabric' perspective if we are running in fabric
+            // we will see health in 'container' perspective otherwise
             // (must use "id" attribute for the plugin, an not href, when using onCondition)
             onCondition: (workspace) => Fabric.isFMCContainer(workspace)
           },
           {
-            id: "wiki",
-            // we only want to include wiki if we are running in fabric (as they are in another perspective)
-            // (must use "id" attribute for the plugin, an not href, when using onCondition)
-            onCondition: (workspace) => Fabric.isFMCContainer(workspace)
+            // hide wiki in 'container' perspective as it depends on fabric
+            id: "wiki"
           }
         ]
       }

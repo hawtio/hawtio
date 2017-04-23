@@ -47,7 +47,7 @@ function lineCount(value): number {
   return rows;
 }
 
-function safeNull(value:any):string {
+function safeNull(value: any): any {
   if (typeof value === 'boolean') {
     return value;
   } else if (typeof value === 'number') {
@@ -171,7 +171,7 @@ function closeHandle($scope, jolokia) {
  * @param {Object} Options object to pass on to Jolokia request
  * @return {Object} initialized options object
  */
-function onSuccess(fn, options = {}) {
+function onSuccess(fn, options: any = {}) {
   options['mimeType'] = 'application/json';
   if (angular.isDefined(fn)) {
     options['success'] = fn;
@@ -792,29 +792,20 @@ module Core {
    * The default error handler which logs errors either using debug or log level logging based on the silent setting
    * @param response the response from a jolokia request
    */
-  export function defaultJolokiaErrorHandler (response, options = {}) {
-    //alert("Jolokia request failed: " + response.error);
+  export function defaultJolokiaErrorHandler(response, options: any = {}): void {
+    var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
+    var silent = options['silent'];
     var stacktrace = response.stacktrace;
-    if (stacktrace) {
-      var silent = options['silent'];
-      if (!silent) {
-        var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
-        if (stacktrace.indexOf("InstanceNotFoundException") >= 0 ||
-          stacktrace.indexOf("AttributeNotFoundException") >= 0 ||
-          stacktrace.indexOf("IllegalArgumentException: No operation") >= 0) {
-          // ignore these errors as they can happen on timing issues
-          // such as its been removed
-          // or if we run against older containers
-          Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
-          // Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
-        } else {
-          Core.log.warn("Operation ", operation, " failed due to: ", response['error']);
-          // Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
-        }
-      } else {
-        Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
-        // Core.log.debug("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
-      }
+    if (silent || (stacktrace && (
+      stacktrace.indexOf("InstanceNotFoundException") >= 0 ||
+      stacktrace.indexOf("AttributeNotFoundException") >= 0 ||
+      stacktrace.indexOf("IllegalArgumentException: No operation") >= 0))) {
+      // ignore these errors as they can happen on timing issues
+      // such as its been removed
+      // or if we run against older containers
+      Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
+    } else {
+      Core.log.warn("Operation ", operation, " failed due to: ", response['error']);
     }
   }
 

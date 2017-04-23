@@ -10,10 +10,10 @@ module Perspective {
    * @for Perspective
    * @param {*} $scope
    * @param {ng.ILocationService} $location
-   * @param {any} localStorage
+   * @param {Storage} localStorage
    * @param {Core.Workspace} workspace
    */
-  export function DefaultPageController($scope, $location, localStorage, workspace:Workspace, jolokia) {
+  export function DefaultPageController($scope, $location: ng.ILocationService, localStorage: Storage, workspace: Workspace, jolokia: Jolokia.IJolokia) {
     var params = $location.search();
     var url = Perspective.defaultPage($location, workspace, jolokia, localStorage);
     var path = Core.trimLeading(url, "#");
