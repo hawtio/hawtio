@@ -29,6 +29,7 @@ public class Options {
     private String war;
     private String contextPath = "/hawtio";
     private String plugins = "plugins";
+    private String host = "0.0.0.0";
     private Integer port = 8080;
     private String extraClassPath;
     private boolean help;
@@ -138,6 +139,12 @@ public class Options {
             }
         });
 
+        addOption(new ParameterOption("hst", "host", "Hostname to listen to") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                host = parameter;
+            }
+        });
+
         addOption(new ParameterOption("p", "port", "Port number") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 try {
@@ -187,6 +194,9 @@ public class Options {
         }
         if (contextPath != null) {
             sb.append("\n\tcontextPath=").append(contextPath);
+        }
+        if (host != null) {
+            sb.append("\n\thost=").append(host);
         }
         if (port != null) {
             sb.append("\n\tport=").append(port);
@@ -252,6 +262,12 @@ public class Options {
     public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
     }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) { this.host = host; }
 
     public Integer getPort() {
         return port;
