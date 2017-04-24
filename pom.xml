@@ -113,10 +113,10 @@
     <jetty-webapp-artifactId>jetty-webapp</jetty-webapp-artifactId>
 
     <jgit-version>4.7.0.201704051617-r</jgit-version>
-    <jline.version>2.14.3</jline.version>
+    <jline.version>3.2.0</jline.version>
     <jolokia-version>1.3.6</jolokia-version>
     <junit-version>4.11</junit-version>
-    <karaf-version>4.0.8</karaf-version>
+    <karaf-version>4.1.1</karaf-version>
     <karaf-version-range>[3.0,5)</karaf-version-range>
     <log4j-version>1.2.17</log4j-version>
     <maven-version>3.0.4</maven-version>
