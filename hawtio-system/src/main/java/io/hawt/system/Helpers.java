@@ -1,18 +1,22 @@
 package io.hawt.system;
 
 import java.io.IOException;
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletResponse;
 
-import io.hawt.web.AuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- */
 public class Helpers {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(Helpers.class);
+
+    public static final List<String> KNOWN_PRINCIPALS = Arrays.asList(
+        "UserPrincipal", "KeycloakPrincipal", "JAASPrincipal", "SimplePrincipal");
 
     private static final String HEADER_WWW_AUTHENTICATE = "WWW-Authenticate";
 
@@ -38,4 +42,23 @@ public class Helpers {
         }
 
     }
+
+    public static String getUsernameFromSubject(Subject subject) {
+        Set<Principal> principals = subject.getPrincipals();
+
+        String username = null;
+
+        if (principals != null) {
+            for (Principal principal : principals) {
+                String principalClass = principal.getClass().getSimpleName();
+                if (KNOWN_PRINCIPALS.contains(principalClass)) {
+                    username = principal.getName();
+                    LOG.debug("Authorizing user {}", username);
+                }
+            }
+        }
+
+        return username;
+    }
+
 }

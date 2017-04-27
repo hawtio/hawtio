@@ -84,11 +84,7 @@
     <frontend-maven-plugin-version>0.0.24</frontend-maven-plugin-version>
     <gitective-version>0.9.20</gitective-version>
 
-    <!-- We are using an old guava to avoid breaking ActiveMQ in the test cases of hawtio-web -->
-    <!--
-        <guava-version>13.0.1</guava-version>
-    -->
-    <guava-version>10.0</guava-version>
+    <guava-version>21.0</guava-version>
     <guava14-version>14.0.1</guava14-version>
     <hawtio-release-version>1.5.0</hawtio-release-version>
     <infinispan-version>5.3.0.Final</infinispan-version>
