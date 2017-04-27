@@ -823,159 +823,16 @@ var ControllerHelpers;
     }
     ControllerHelpers.reloadWhenParametersChange = reloadWhenParametersChange;
 })(ControllerHelpers || (ControllerHelpers = {}));
+var UI;
+(function (UI) {
+    UI.colors = ["#5484ED", "#A4BDFC", "#46D6DB", "#7AE7BF", "#51B749", "#FBD75B", "#FFB878", "#FF887C", "#DC2127", "#DBADFF", "#E1E1E1"];
+})(UI || (UI = {}));
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Core;
-(function (Core) {
-    var log = Logger.get("Core");
-    var TasksImpl = (function () {
-        function TasksImpl() {
-            this.tasks = {};
-            this.tasksExecuted = false;
-            this._onComplete = null;
-        }
-        TasksImpl.prototype.addTask = function (name, task) {
-            this.tasks[name] = task;
-            if (this.tasksExecuted) {
-                this.executeTask(name, task);
-            }
-        };
-        TasksImpl.prototype.executeTask = function (name, task) {
-            if (angular.isFunction(task)) {
-                log.debug("Executing task : ", name);
-                try {
-                    task();
-                }
-                catch (error) {
-                    log.debug("Failed to execute task: ", name, " error: ", error);
-                }
-            }
-        };
-        TasksImpl.prototype.onComplete = function (cb) {
-            this._onComplete = cb;
-        };
-        TasksImpl.prototype.execute = function () {
-            var _this = this;
-            if (this.tasksExecuted) {
-                return;
-            }
-            angular.forEach(this.tasks, function (task, name) {
-                _this.executeTask(name, task);
-            });
-            this.tasksExecuted = true;
-            if (angular.isFunction(this._onComplete)) {
-                this._onComplete();
-            }
-        };
-        TasksImpl.prototype.reset = function () {
-            this.tasksExecuted = false;
-        };
-        return TasksImpl;
-    })();
-    Core.TasksImpl = TasksImpl;
-    var ParameterizedTasksImpl = (function (_super) {
-        __extends(ParameterizedTasksImpl, _super);
-        function ParameterizedTasksImpl() {
-            var _this = this;
-            _super.call(this);
-            this.tasks = {};
-            this.onComplete(function () {
-                _this.reset();
-            });
-        }
-        ParameterizedTasksImpl.prototype.addTask = function (name, task) {
-            this.tasks[name] = task;
-        };
-        ParameterizedTasksImpl.prototype.execute = function () {
-            var _this = this;
-            var params = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                params[_i - 0] = arguments[_i];
-            }
-            if (this.tasksExecuted) {
-                return;
-            }
-            var theArgs = params;
-            var keys = Object.keys(this.tasks);
-            keys.forEach(function (name) {
-                var task = _this.tasks[name];
-                if (angular.isFunction(task)) {
-                    log.debug("Executing task: ", name, " with parameters: ", theArgs);
-                    try {
-                        task.apply(task, theArgs);
-                    }
-                    catch (e) {
-                        log.debug("Failed to execute task: ", name, " error: ", e);
-                    }
-                }
-            });
-            this.tasksExecuted = true;
-            if (angular.isFunction(this._onComplete)) {
-                this._onComplete();
-            }
-        };
-        return ParameterizedTasksImpl;
-    })(TasksImpl);
-    Core.ParameterizedTasksImpl = ParameterizedTasksImpl;
-    var ConditionalTasksImpl = (function (_super) {
-        __extends(ConditionalTasksImpl, _super);
-        function ConditionalTasksImpl() {
-            _super.apply(this, arguments);
-        }
-        ConditionalTasksImpl.prototype.executeConditionalTask = function (name, task) {
-            if (angular.isFunction(task)) {
-                log.debug("Executing task : ", name);
-                try {
-                    return task();
-                }
-                catch (error) {
-                    log.debug("Failed to execute conditional task: ", name, " error: ", error);
-                    return false;
-                }
-            }
-        };
-        ConditionalTasksImpl.prototype.execute = function () {
-            var _this = this;
-            if (this.tasksExecuted) {
-                return;
-            }
-            var success = true;
-            angular.forEach(this.tasks, function (task, name) {
-                success = success && _this.executeConditionalTask(name, task);
-            });
-            this.tasksExecuted = true;
-            if (angular.isFunction(this._onComplete) && success) {
-                this._onComplete();
-            }
-        };
-        return ConditionalTasksImpl;
-    })(TasksImpl);
-    Core.ConditionalTasksImpl = ConditionalTasksImpl;
-    Core.postLoginTasks = new Core.TasksImpl();
-    Core.preLogoutTasks = new Core.TasksImpl();
-    Core.postLogoutTasks = new Core.ConditionalTasksImpl();
-})(Core || (Core = {}));
-var Core;
-(function (Core) {
-    function operationToString(name, args) {
-        if (!args || args.length === 0) {
-            return name + '()';
-        }
-        else {
-            return name + '(' + args.map(function (arg) {
-                if (angular.isString(arg)) {
-                    arg = angular.fromJson(arg);
-                }
-                return arg.type;
-            }).join(',') + ')';
-        }
-    }
-    Core.operationToString = operationToString;
-})(Core || (Core = {}));
 var Core;
 (function (Core) {
     var Folder = (function () {
@@ -1146,6 +1003,153 @@ var Folder = (function (_super) {
     return Folder;
 })(Core.Folder);
 ;
+var Core;
+(function (Core) {
+    var log = Logger.get("Core");
+    var TasksImpl = (function () {
+        function TasksImpl() {
+            this.tasks = {};
+            this.tasksExecuted = false;
+            this._onComplete = null;
+        }
+        TasksImpl.prototype.addTask = function (name, task) {
+            this.tasks[name] = task;
+            if (this.tasksExecuted) {
+                this.executeTask(name, task);
+            }
+        };
+        TasksImpl.prototype.executeTask = function (name, task) {
+            if (angular.isFunction(task)) {
+                log.debug("Executing task : ", name);
+                try {
+                    task();
+                }
+                catch (error) {
+                    log.debug("Failed to execute task: ", name, " error: ", error);
+                }
+            }
+        };
+        TasksImpl.prototype.onComplete = function (cb) {
+            this._onComplete = cb;
+        };
+        TasksImpl.prototype.execute = function () {
+            var _this = this;
+            if (this.tasksExecuted) {
+                return;
+            }
+            angular.forEach(this.tasks, function (task, name) {
+                _this.executeTask(name, task);
+            });
+            this.tasksExecuted = true;
+            if (angular.isFunction(this._onComplete)) {
+                this._onComplete();
+            }
+        };
+        TasksImpl.prototype.reset = function () {
+            this.tasksExecuted = false;
+        };
+        return TasksImpl;
+    })();
+    Core.TasksImpl = TasksImpl;
+    var ParameterizedTasksImpl = (function (_super) {
+        __extends(ParameterizedTasksImpl, _super);
+        function ParameterizedTasksImpl() {
+            var _this = this;
+            _super.call(this);
+            this.tasks = {};
+            this.onComplete(function () {
+                _this.reset();
+            });
+        }
+        ParameterizedTasksImpl.prototype.addTask = function (name, task) {
+            this.tasks[name] = task;
+        };
+        ParameterizedTasksImpl.prototype.execute = function () {
+            var _this = this;
+            var params = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                params[_i - 0] = arguments[_i];
+            }
+            if (this.tasksExecuted) {
+                return;
+            }
+            var theArgs = params;
+            var keys = Object.keys(this.tasks);
+            keys.forEach(function (name) {
+                var task = _this.tasks[name];
+                if (angular.isFunction(task)) {
+                    log.debug("Executing task: ", name, " with parameters: ", theArgs);
+                    try {
+                        task.apply(task, theArgs);
+                    }
+                    catch (e) {
+                        log.debug("Failed to execute task: ", name, " error: ", e);
+                    }
+                }
+            });
+            this.tasksExecuted = true;
+            if (angular.isFunction(this._onComplete)) {
+                this._onComplete();
+            }
+        };
+        return ParameterizedTasksImpl;
+    })(TasksImpl);
+    Core.ParameterizedTasksImpl = ParameterizedTasksImpl;
+    var ConditionalTasksImpl = (function (_super) {
+        __extends(ConditionalTasksImpl, _super);
+        function ConditionalTasksImpl() {
+            _super.apply(this, arguments);
+        }
+        ConditionalTasksImpl.prototype.executeConditionalTask = function (name, task) {
+            if (angular.isFunction(task)) {
+                log.debug("Executing task : ", name);
+                try {
+                    return task();
+                }
+                catch (error) {
+                    log.debug("Failed to execute conditional task: ", name, " error: ", error);
+                    return false;
+                }
+            }
+        };
+        ConditionalTasksImpl.prototype.execute = function () {
+            var _this = this;
+            if (this.tasksExecuted) {
+                return;
+            }
+            var success = true;
+            angular.forEach(this.tasks, function (task, name) {
+                success = success && _this.executeConditionalTask(name, task);
+            });
+            this.tasksExecuted = true;
+            if (angular.isFunction(this._onComplete) && success) {
+                this._onComplete();
+            }
+        };
+        return ConditionalTasksImpl;
+    })(TasksImpl);
+    Core.ConditionalTasksImpl = ConditionalTasksImpl;
+    Core.postLoginTasks = new Core.TasksImpl();
+    Core.preLogoutTasks = new Core.TasksImpl();
+    Core.postLogoutTasks = new Core.ConditionalTasksImpl();
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
+    function operationToString(name, args) {
+        if (!args || args.length === 0) {
+            return name + '()';
+        }
+        else {
+            return name + '(' + args.map(function (arg) {
+                if (angular.isString(arg)) {
+                    arg = angular.fromJson(arg);
+                }
+                return arg.type;
+            }).join(',') + ')';
+        }
+    }
+    Core.operationToString = operationToString;
+})(Core || (Core = {}));
 var Jmx;
 (function (Jmx) {
     Jmx.log = Logger.get("JMX");
@@ -2217,10 +2221,6 @@ var Workspace = (function (_super) {
     return Workspace;
 })(Core.Workspace);
 ;
-var UI;
-(function (UI) {
-    UI.colors = ["#5484ED", "#A4BDFC", "#46D6DB", "#7AE7BF", "#51B749", "#FBD75B", "#FFB878", "#FF887C", "#DC2127", "#DBADFF", "#E1E1E1"];
-})(UI || (UI = {}));
 var Core;
 (function (Core) {
     Core.log = Logger.get("Core");
@@ -2779,7 +2779,7 @@ var Core;
         var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
         var silent = options['silent'];
         var stacktrace = response.stacktrace;
-        if (silent || (stacktrace && (stacktrace.indexOf("InstanceNotFoundException") >= 0 || stacktrace.indexOf("AttributeNotFoundException") >= 0 || stacktrace.indexOf("IllegalArgumentException: No operation") >= 0))) {
+        if (silent || isIgnorableException(response)) {
             Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
         }
         else {
@@ -2787,6 +2787,11 @@ var Core;
         }
     }
     Core.defaultJolokiaErrorHandler = defaultJolokiaErrorHandler;
+    function isIgnorableException(response) {
+        var isNotFound = function (target) { return target.indexOf("InstanceNotFoundException") >= 0 || target.indexOf("AttributeNotFoundException") >= 0 || target.indexOf("IllegalArgumentException: No operation") >= 0; };
+        return (response.stacktrace && isNotFound(response.stacktrace)) || (response.error && isNotFound(response.error));
+    }
+    Core.isIgnorableException = isIgnorableException;
     function logJolokiaStackTrace(response) {
         var stacktrace = response.stacktrace;
         if (stacktrace) {
@@ -35301,7 +35306,9 @@ var Jmx;
                 var infoQuery = asQuery(mbean);
                 var meta = $scope.jolokia.request(infoQuery, { method: "post" });
                 if (meta) {
-                    Core.defaultJolokiaErrorHandler(meta, {});
+                    if (meta.error) {
+                        Core.defaultJolokiaErrorHandler(meta, {});
+                    }
                     var attributes = meta.value ? meta.value.attr : null;
                     if (attributes) {
                         var foundNames = [];
