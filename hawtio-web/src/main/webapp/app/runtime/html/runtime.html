@@ -1,0 +1,50 @@
+<div class="runtime-controller"
+	ng-controller="Runtime.RuntimeController">
+
+	<div class="row-fluid">
+		<div class="span10">
+			<div class="expandable open">
+				<div title="Overview" class="title">
+					<i class="expandable-indicator"></i> Overview
+				</div>
+				<div class="expandable-body well">
+					Running: (pid: <b>{{pid}}</b>) {{vmName}} - {{version}} ({{build}})
+					by {{vendor}} in {{os}} {{osVersion}} ({{architecture}}) on <b>{{user}}@{{host}}</b>
+					since <b>{{startTime | date: 'yyyy-MM-dd hh:mm:ss' }}</b>
+				</div>
+			</div>
+			<div class="expandable closed">
+				<div title="Command Line" class="title">
+					<i class="expandable-indicator"></i> Command line (simulated)
+				</div>
+				<div class="expandable-body well breakLong" zero-clipboard data-clipboard-text="{{commandLine}}">
+					{{commandLine}}</b>
+				</div>
+			</div>
+			<div class="expandable closed">
+				<div title="Working directory" class="title">
+					<i class="expandable-indicator"></i> Working directory
+				</div>
+				<div class="expandable-body well" zero-clipboard data-clipboard-text="{{workingDirectory}}">
+					<a href="file://{{workingDirectory}}">{{workingDirectory}}</a></b>
+				</div>
+			</div>
+			<div class="expandable closed" >
+				<div title="System Properties" class="title" >
+					<i class="expandable-indicator"></i> System Properties
+				</div>
+				<div class="expandable-body">
+					<div class="control-group inline-block pull-right">
+						<input type="text" class="search-query ng-pristine ng-valid"
+							placeholder="Filter..."
+							ng-model="gridOptions.filterOptions.filterText"> <i
+							class="icon-remove clickable" title="Clear filter"
+							ng-click="gridOptions.filterOptions.filterText = ''"></i>
+					</div>
+					<table class="table table-condensed table-striped"
+						hawtio-simple-table="gridOptions"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
