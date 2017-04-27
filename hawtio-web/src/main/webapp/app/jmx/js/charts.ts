@@ -134,8 +134,10 @@ module Jmx {
         // must use post, so we pass in {method: "post"}
         var meta = $scope.jolokia.request(infoQuery, {method: "post"});
         if (meta) {
-          // in case of error then use the default error handler
-          Core.defaultJolokiaErrorHandler(meta, {});
+          if (meta.error) {
+            // in case of error then use the default error handler
+            Core.defaultJolokiaErrorHandler(meta, {});
+          }
           var attributes = meta.value ? meta.value.attr : null;
           if (attributes) {
             var foundNames = [];
