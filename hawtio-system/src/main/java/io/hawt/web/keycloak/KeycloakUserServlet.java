@@ -1,16 +1,14 @@
 package io.hawt.web.keycloak;
 
-import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.hawt.system.AuthHelpers;
 import io.hawt.system.Authenticator;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import io.hawt.web.auth.AuthenticationFilter;
-import io.hawt.web.auth.LoginServlet;
 import io.hawt.web.auth.UserServlet;
-
 
 public class KeycloakUserServlet extends UserServlet {
 
@@ -44,7 +42,7 @@ public class KeycloakUserServlet extends UserServlet {
 
         Authenticator.authenticate(configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses(),
             configuration.getConfiguration(), req, (subject) -> {
-                usernameHolder.username = LoginServlet.getUsernameFromSubject(subject, Arrays.asList(LoginServlet.KNOWN_PRINCIPALS));
+                usernameHolder.username = AuthHelpers.getUsernameFromSubject(subject);
 
                 // Start httpSession
                 req.getSession(true);
