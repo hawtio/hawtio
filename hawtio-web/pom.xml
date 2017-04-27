@@ -66,6 +66,12 @@
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava-version}</version>
+    </dependency>
+
     <!-- Git module -->
     <dependency>
       <groupId>io.hawt</groupId>
@@ -147,12 +153,6 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${guava-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -630,6 +630,7 @@
               org.eclipse.jetty.plus.jaas.callback;resolution:=optional,
               org.apache.commons.logging;resolution:=optional,
               org.slf4j;resolution:=optional;version="[1.6,2)",
+              org.apache.karaf.jaas.boot.principal;resolution:=optional,
               !org.slf4j.impl,
               !org.apache.avalon*,
               !org.apache.log*,
@@ -640,12 +641,10 @@
               !userauth,
               !com.ibm.uvm.tools*,!com.sun.jdmk.comm*,!javax.jmdns*,!javax.jms*,!javax.portlet*,
               !org.apache.commons.io*,
-              org.apache.karaf.jaas.boot.principal;resolution:=optional,
+              !com.google.errorprone.annotations.concurrent,
               *
             </Import-Package>
-            <Private-Package>
-              javaewah
-            </Private-Package>
+            <Private-Package></Private-Package>
 
             <Bundle-ClassPath>.</Bundle-ClassPath>
             <Bundle-Name>${project.description}</Bundle-Name>
