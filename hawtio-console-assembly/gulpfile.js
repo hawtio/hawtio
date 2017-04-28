@@ -71,17 +71,16 @@ gulp.task('bower', function() {
 
 /** Adjust the reference path of any typescript-built plugin this project depends on */
 gulp.task('path-adjust', function() {
-  return gulp.src('libs/**/includes.d.ts')
-    .pipe(plugins.debug({ title: 'path adjust' }))
-    .pipe(map(function(buf, filename) {
-      var textContent = buf.toString();
-      var newTextContent = textContent.replace(/"\.\.\/libs/gm, '"../../../libs');
-      if (argv.debug) {
-        console.log("Filename: ", filename, " old: ", textContent, " new: ", newTextContent);
-      }
-      return newTextContent;
-    }))
-    .pipe(gulp.dest('libs'));
+  return eventStream.merge(
+    gulp.src('libs/**/includes.d.ts')
+      .pipe(plugins.debug({ title: 'path adjust' }))
+      .pipe(plugins.replace(/"\.\.\/libs/gm, '"../../../libs'))
+      .pipe(gulp.dest('libs')),
+    gulp.src('libs/**/defs.d.ts')
+      .pipe(plugins.debug({ title: 'path adjust' }))
+      .pipe(plugins.replace(/"libs/gm, '"../../libs'))
+      .pipe(gulp.dest('libs'))
+  );
 });
 
 gulp.task('clean-defs', function() {
@@ -355,16 +354,11 @@ gulp.task('usemin', ['site-files'], function() {
     }))
     .pipe(plugins.debug({ title: 'usemin' }))
     // adjust image paths here
-    .pipe(map(function(buf, filename) {
-      var textContent = buf.toString();
-      // convert: 'libs/*/img/' | '/img/' | '../img/'  -> 'img/'
-      // convert: '../fonts/' -> 'fonts/'
-      var newTextContent = textContent
-        .replace(/"libs\/[^/]+\/img\//gm, '"img/')
-        .replace(/\/img\/|\.\.\/img\//gm, 'img/')
-        .replace(/\.\.\/fonts\//gm, 'fonts/');
-      return newTextContent;
-    }))
+    // convert: 'libs/*/img/' | '/img/' | '../img/'  -> 'img/'
+    .pipe(plugins.replace(/"libs\/[^/]+\/img\//gm, '"img/'))
+    .pipe(plugins.replace(/\/img\/|\.\.\/img\//gm, 'img/'))
+    // convert: '../fonts/' -> 'fonts/'
+    .pipe(plugins.replace(/\.\.\/fonts\//gm, 'fonts/'))
     .pipe(gulp.dest('target/site'));
 });
 
