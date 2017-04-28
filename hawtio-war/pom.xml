@@ -44,11 +44,13 @@
       <artifactId>hawtio-util</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!-- hawtio-console-assembly-*.jar is not necessary
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-console-assembly</artifactId>
       <version>${project.version}</version>
     </dependency>
+    -->
 
     <!-- optional hawtio modules we want to use in this WAR -->
     <dependency>
@@ -112,7 +114,7 @@
 
     <plugins>
 
-      <!-- Step 4. Add hawtio-console resources to the WAR -->
+      <!-- Add hawtio-console resources to the WAR -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -214,8 +216,7 @@
           <webAppSourceDirectory>../hawtio-console-assembly/</webAppSourceDirectory>
           <scanIntervalSeconds>1</scanIntervalSeconds>
           <webAppConfig>
-            <contextPath>/hawtio/</contextPath>
-            <!--<contextPath>${context}</contextPath>-->
+            <contextPath>${context}</contextPath>
           </webAppConfig>
           <classesDirectory>${project.build.directory}/${project.name}/WEB-INF/classes</classesDirectory>
           <systemProperties>

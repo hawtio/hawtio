@@ -59,6 +59,10 @@ var normalSizeOptions = {
     gzip: true
 };
 
+//------------------------------------------------------------------------------
+// build tasks
+//------------------------------------------------------------------------------
+
 gulp.task('bower', function() {
   return gulp.src('index.html')
     .pipe(wiredep({}))
@@ -68,6 +72,7 @@ gulp.task('bower', function() {
 /** Adjust the reference path of any typescript-built plugin this project depends on */
 gulp.task('path-adjust', function() {
   return gulp.src('libs/**/includes.d.ts')
+    .pipe(plugins.debug({ title: 'path adjust' }))
     .pipe(map(function(buf, filename) {
       var textContent = buf.toString();
       var newTextContent = textContent.replace(/"\.\.\/libs/gm, '"../../../libs');
@@ -299,10 +304,14 @@ gulp.task('reload', function() {
     .pipe(hawtio.reload());
 });
 
+//------------------------------------------------------------------------------
+// site tasks
+//------------------------------------------------------------------------------
+
 gulp.task('site-fonts', function() {
   return gulp.src(['libs/**/*.woff', 'libs/**/*.woff2', 'libs/**/*.ttf'], { base: '.' })
     .pipe(plugins.flatten())
-    .pipe(plugins.debug({title: 'site font files'}))
+    .pipe(plugins.debug({ title: 'site font files' }))
     .pipe(gulp.dest('target/site/fonts'));
 });
 
@@ -318,9 +327,17 @@ gulp.task('tweak-droid-sans-mono', ['site-fonts'], function() {
     .pipe(gulp.dest('target/site/fonts'));
 });
 
-gulp.task('site-files', ['tweak-open-sans', 'tweak-droid-sans-mono'], function() {
-  return gulp.src(['images/**', 'img/**', 'libs/**/*.swf'], {base: '.'})
-    .pipe(plugins.debug({title: 'site files'}))
+gulp.task('site-flash-files', function() {
+  return gulp.src('libs/**/*.swf')
+    .pipe(plugins.flatten())
+    .pipe(plugins.debug({ title: 'site flash files' }))
+    .pipe(gulp.dest('target/site/img'));
+});
+
+gulp.task('site-files', ['tweak-open-sans', 'tweak-droid-sans-mono', 'site-flash-files'], function() {
+  // in case there are hawtio-console-assembly specific images
+  return gulp.src(['images/**', 'img/**'], { base: '.' })
+    .pipe(plugins.debug({ title: 'site files' }))
     .pipe(gulp.dest('target/site'));
 });
 
@@ -336,7 +353,18 @@ gulp.task('usemin', ['site-files'], function() {
           plugins.rev(),
           plugins.sourcemaps.write('./')]
     }))
-    .pipe(plugins.debug({title: 'usemin'}))
+    .pipe(plugins.debug({ title: 'usemin' }))
+    // adjust image paths here
+    .pipe(map(function(buf, filename) {
+      var textContent = buf.toString();
+      // convert: 'libs/*/img/' | '/img/' | '../img/'  -> 'img/'
+      // convert: '../fonts/' -> 'fonts/'
+      var newTextContent = textContent
+        .replace(/"libs\/[^/]+\/img\//gm, '"img/')
+        .replace(/\/img\/|\.\.\/img\//gm, 'img/')
+        .replace(/\.\.\/fonts\//gm, 'fonts/');
+      return newTextContent;
+    }))
     .pipe(gulp.dest('target/site'));
 });
 
@@ -344,15 +372,13 @@ gulp.task('site', ['usemin'], function() {
   gulp.src('target/site/index.html')
     .pipe(plugins.rename('404.html'))
     .pipe(gulp.dest('target/site'));
-  gulp.src(['img/**'], { base: '.' })
-    .pipe(gulp.dest('target/site'));
   var dirs = fs.readdirSync('./libs');
   var patterns = [];
   dirs.forEach(function(dir) {
     var path = './libs/' + dir + "/img";
     try {
       if (fs.statSync(path).isDirectory()) {
-        console.log("found image dir: " + path);
+        console.log("found image dir: ", path);
         var pattern = 'libs/' + dir + "/img/**";
         patterns.push(pattern);
       }
@@ -360,7 +386,9 @@ gulp.task('site', ['usemin'], function() {
       // ignore, file does not exist
     }
   });
-  return gulp.src(patterns).pipe(plugins.debug({ title: 'img-copy' })).pipe(gulp.dest('target/site/img'));
+  return gulp.src(patterns)
+    .pipe(plugins.debug({ title: 'image copy' }))
+    .pipe(gulp.dest('target/site/img'));
 });
 
 gulp.task('mvn', ['build', 'site']);
