@@ -8,17 +8,18 @@
 					<i class="expandable-indicator"></i> Overview
 				</div>
 				<div class="expandable-body well">
-					Running: (pid: <b>{{pid}}</b>) {{vmName}} - {{version}} ({{build}})
-					by {{vendor}} in {{os}} {{osVersion}} ({{architecture}}) on <b>{{user}}@{{host}}</b>
-					since <b>{{startTime | date: 'yyyy-MM-dd hh:mm:ss' }}</b>
+					Running: (pid: <b>{{pid}}</b>) {{runtime.VmName}} - {{runtime.SpecVersion}} ({{runtime.VmVersion}})
+					by {{runtime.VmVendor}} in {{runtime.Os}} {{runtime.OsVersion}} ({{runtime.SystemProperties['os.arch']}}) on <b>{{user}}@{{host}}</b>
+					since <b>{{runtime.StartTime | date: 'yyyy-MM-dd hh:mm:ss' }}</b>
 				</div>
 			</div>
 			<div class="expandable closed">
 				<div title="Command Line" class="title">
 					<i class="expandable-indicator"></i> Command line (simulated)
 				</div>
-				<div class="expandable-body well breakLong" zero-clipboard data-clipboard-text="{{commandLine}}">
-					{{commandLine}}</b>
+				<div class="expandable-body well breakLong" zero-clipboard data-clipboard-text="{{javaPath}} {{vmArgs}} {{runtime.SystemProperties['sun.java.command']}}" 
+				tooltip="minimal command line (add system properties from below if not specific enough)">
+					{{javaPath}} {{vmArgs}} <strong>{{runtime.SystemProperties['sun.java.command']}}</strong>
 				</div>
 			</div>
 			<div class="expandable closed">

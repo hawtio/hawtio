@@ -7,29 +7,33 @@
 /// <reference path="../../baseIncludes.ts"/>
 /// <reference path="../../core/js/coreHelpers.ts"/>
 module Runtime {
-    
-   interface SystemProperty {
-       name: string;
-       value: string;
-   }
-    
+
+    interface SystemProperty {
+        name: string;
+        value: string;
+    }
+
     interface RuntimeControllerScope extends ng.IScope {
         gridOptions: any;
-        vmName: string;
-        version: string;
-        build: string;
-        vendor: string;
-        os: string;
-        osVersion: string;
-        architecture: string;
-        user: string;
         pid: string;
         host: string;
-        startTime: string;
-        commandLine: string;
         workingDirectory: string;
         showFilterBar: boolean;
-        systemProperties: Array<SystemProperty>;    
+        systemProperties: Array<SystemProperty>;
+        vmArgs: string;
+        javaPath: string;
+        runtime: Runtime;
+    }
+    
+    interface Runtime {
+        VmName: string;
+        SpecVersion: string;
+        VmVersion: string;
+        VmVendor: string;
+        StartTime: string;
+        SystemProperties: { [index: string]: string; };
+        Name: string;
+        InputArguments: Array<string>;
     }
 
 
@@ -40,7 +44,7 @@ module Runtime {
 
     export var _module = angular.module( pluginName, ['hawtioCore'] );
     _module.config(
-        ['$routeProvider', ( $routeProvider:ng.route.IRouteProvider ) => {
+        ['$routeProvider', ( $routeProvider: ng.route.IRouteProvider ) => {
 
             $routeProvider.when( '/runtime_plugin', {
                 templateUrl: templatePath + 'runtime.html'
@@ -48,9 +52,8 @@ module Runtime {
         }] );
 
 
-    _module.run(( workspace:Workspace, viewRegistry, layoutFull ) => {
+    _module.run(( workspace: Workspace, viewRegistry, layoutFull ) => {
 
-        log.info( Runtime.pluginName, " loaded" );
         viewRegistry[pluginName] = layoutFull;
 
         workspace.topLevelTabs.push( {
@@ -79,7 +82,7 @@ module Runtime {
 	 * hawtioCore
 	 * 
 	 */
-    _module.controller( "Runtime.RuntimeController", ["$scope", "jolokia", "workspace", ( $scope:RuntimeControllerScope, jolokia: Jolokia.IJolokia, workspace:Workspace ) => {
+    _module.controller( "Runtime.RuntimeController", ["$scope", "jolokia", "workspace", ( $scope: RuntimeControllerScope, jolokia: Jolokia.IJolokia, workspace: Workspace ) => {
 
         $scope.gridOptions = setupGridOptions();
 
@@ -91,7 +94,7 @@ module Runtime {
             arguments: []
         }, onSuccess( render ) );
 
-        function reconstructCommandLine( runtime ) {
+        function javaPath( runtime: Runtime ) {
             var commandLine = '';
             var javaHome = runtime.SystemProperties['java.home'];
             if ( javaHome ) {
@@ -99,36 +102,33 @@ module Runtime {
                 commandLine += javaHome + fileSeparator + 'bin' + fileSeparator;
             }
             commandLine += 'java ';
+            return commandLine;
+        }
+        function vmArgs( runtime:Runtime ) {
 
-            for (var i=0;i< runtime.InputArguments.lenght; i++ ) {
-                commandLine += escapeSpaces( runtime.InputArguments[i] ) + ' ';
+            var commandLine: string = "";
+            for (var argument in runtime.InputArguments) {
+                commandLine += escapeSpaces( runtime.InputArguments[argument] ) + ' ';
             }
-            commandLine += '-classpath ' + runtime.SystemProperties['java.class.path'] + ' ';
-            commandLine += runtime.SystemProperties['sun.java.command'];
             return commandLine;
         }
 
-        function escapeSpaces( string ) {
-            return string.replace( / /g, '\\ ' );
+        function escapeSpaces( argument:string ) {
+            return argument.replace( / /g, '\\ ' );
         }
 
         // update display of metric
         function render( response ) {
-            $scope.vmName = response.value['VmName'];
-            $scope.version = response.value['SpecVersion'];
-            $scope.build = response.value['VmVersion'];
-            $scope.vendor = response.value['VmVendor'];
-            $scope.os = response.value.SystemProperties['os.name'];
-            $scope.osVersion = response.value.SystemProperties['os.version'];
-            $scope.architecture = response.value.SystemProperties['os.arch'];
-            $scope.user = response.value.SystemProperties['user.name'];
+            var runtime:Runtime = response.value;
+            $scope.runtime = response.value;
+//            $scope.user = runtime.SystemProperties['user.name'];
             var regex = /(\d+)@(.+)/g;
-            var pidAndHost = regex.exec( response.value.Name );
+            var pidAndHost = regex.exec( runtime.Name );
             $scope.pid = pidAndHost[1];
             $scope.host = pidAndHost[2];
-            $scope.startTime = response.value['StartTime'];
-            $scope.commandLine = reconstructCommandLine( response.value );
-            $scope.workingDirectory = response.value.SystemProperties['user.dir'];
+            $scope.javaPath = javaPath( runtime );
+            $scope.vmArgs = vmArgs( runtime );
+            $scope.workingDirectory = runtime.SystemProperties['user.dir'];
 
             //system property table
             $scope.showFilterBar = true;
@@ -136,7 +136,7 @@ module Runtime {
 
             var systemProperties: { [index: string]: string; } = response.value['SystemProperties'];
 
-            for(var key in systemProperties)  {
+            for ( var key in systemProperties ) {
                 $scope.systemProperties.push( { name: key, value: systemProperties[key] });
             }
             Core.$apply( $scope );
