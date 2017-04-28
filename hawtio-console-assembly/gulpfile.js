@@ -263,6 +263,14 @@ gulp.task('connect', ['watch'], function() {
       enabled: true
     }
   });
+  hawtio.use('/', function(req, res, next) {
+    var path = req.originalUrl;
+    if (!s.startsWith(path, '/hawtio/')) {
+      res.redirect('/hawtio/');
+    } else {
+      next();
+    }
+  });
   /*
    * Example middleware that returns a 404 for templates
    * as they're already embedded in the js
