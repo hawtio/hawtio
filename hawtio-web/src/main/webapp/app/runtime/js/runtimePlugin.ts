@@ -23,6 +23,7 @@ module Runtime {
         vmArgs: string;
         javaPath: string;
         runtime: Runtime;
+        classPath: string;
     }
     
     interface Runtime {
@@ -34,6 +35,7 @@ module Runtime {
         SystemProperties: { [index: string]: string; };
         Name: string;
         InputArguments: Array<string>;
+        ClassPath: string;
     }
 
 
@@ -127,6 +129,7 @@ module Runtime {
             $scope.pid = pidAndHost[1];
             $scope.host = pidAndHost[2];
             $scope.javaPath = javaPath( runtime );
+            $scope.classPath = escapeSpaces(runtime.ClassPath);
             $scope.vmArgs = vmArgs( runtime );
             $scope.workingDirectory = runtime.SystemProperties['user.dir'];
 

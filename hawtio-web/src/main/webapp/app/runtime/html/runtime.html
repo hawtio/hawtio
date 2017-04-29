@@ -17,9 +17,9 @@
 				<div title="Command Line" class="title">
 					<i class="expandable-indicator"></i> Command line (simulated)
 				</div>
-				<div class="expandable-body well breakLong" zero-clipboard data-clipboard-text="{{javaPath}} {{vmArgs}} {{runtime.SystemProperties['sun.java.command']}}" 
+				<div class="expandable-body well breakLong" zero-clipboard data-clipboard-text="{{javaPath}} -classpath {{classPath}} {{vmArgs}} {{runtime.SystemProperties['sun.java.command']}}" 
 				tooltip="minimal command line (add system properties from below if not specific enough)">
-					{{javaPath}} {{vmArgs}} <strong>{{runtime.SystemProperties['sun.java.command']}}</strong>
+					{{javaPath}} -classpath {{classPath}} {{vmArgs}} <strong>{{runtime.SystemProperties['sun.java.command']}}</strong>
 				</div>
 			</div>
 			<div class="expandable closed">
