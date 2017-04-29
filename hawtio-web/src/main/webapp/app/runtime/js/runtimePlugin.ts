@@ -60,13 +60,13 @@ module Runtime {
             id: "runtime",
             content: "Runtime",
             title: "Java Runtime Process Information",
-            isValid: ( workspace ) => {
+            isValid: ( workspace:Workspace ) => {
                 return true;
             },
-            href: function() {
+            href: () => {
                 return "#/" + pluginName;
             },
-            isActive: function( workspace ) {
+            isActive: ( workspace:Workspace ) => {
                 return workspace.isLinkActive( pluginName );
             }
         });
@@ -120,7 +120,7 @@ module Runtime {
         // update display of metric
         function render( response ) {
             var runtime:Runtime = response.value;
-            $scope.runtime = response.value;
+            $scope.runtime = runtime;
 //            $scope.user = runtime.SystemProperties['user.name'];
             var regex = /(\d+)@(.+)/g;
             var pidAndHost = regex.exec( runtime.Name );
@@ -134,10 +134,8 @@ module Runtime {
             $scope.showFilterBar = true;
             $scope.systemProperties = [];
 
-            var systemProperties: { [index: string]: string; } = response.value['SystemProperties'];
-
-            for ( var key in systemProperties ) {
-                $scope.systemProperties.push( { name: key, value: systemProperties[key] });
+            for ( var key in runtime.SystemProperties ) {
+                $scope.systemProperties.push( { name: key, value: runtime.SystemProperties[key] });
             }
             Core.$apply( $scope );
         }
@@ -154,7 +152,7 @@ module Runtime {
                 showSelectionCheckbox: false,
                 enableRowClickSelection: true,
                 multiSelect: false,
-                primaryKeyFn: function( entity, idx ) {
+                primaryKeyFn: ( entity, idx ) => {
                     return entity.name;
                 },
                 columnDefs: [
