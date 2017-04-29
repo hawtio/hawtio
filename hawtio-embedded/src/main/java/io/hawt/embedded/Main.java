@@ -19,6 +19,8 @@ package io.hawt.embedded;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerCollection;
@@ -75,7 +77,7 @@ public class Main {
         Slf4jLog log = new Slf4jLog("jetty");
         Log.setLog(log);
 
-        Server server = new Server(options.getPort());
+        Server server = new Server(new InetSocketAddress(InetAddress.getByName(options.getHost()), options.getPort()));
 
         HandlerCollection handlers = new HandlerCollection();
         handlers.setServer(server);

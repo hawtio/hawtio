@@ -1,10 +1,10 @@
 /// <reference path="../../baseHelpers.ts"/>
 /// <reference path="../../helpers/js/controllerHelpers.ts"/>
-/// <reference path="coreInterfaces.ts"/>
-/// <reference path="./tasks.ts"/>
-/// <reference path="./workspace.ts"/>
-/// <reference path="./folder.ts"/>
 /// <reference path="../../ui/js/colors.ts"/>
+/// <reference path="coreInterfaces.ts"/>
+/// <reference path="folder.ts"/>
+/// <reference path="tasks.ts"/>
+/// <reference path="workspace.ts"/>
 
 module Core {
 
@@ -796,17 +796,23 @@ module Core {
     var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
     var silent = options['silent'];
     var stacktrace = response.stacktrace;
-    if (silent || (stacktrace && (
-      stacktrace.indexOf("InstanceNotFoundException") >= 0 ||
-      stacktrace.indexOf("AttributeNotFoundException") >= 0 ||
-      stacktrace.indexOf("IllegalArgumentException: No operation") >= 0))) {
-      // ignore these errors as they can happen on timing issues
-      // such as its been removed
-      // or if we run against older containers
+    if (silent || isIgnorableException(response)) {
       Core.log.debug("Operation ", operation, " failed due to: ", response['error']);
     } else {
       Core.log.warn("Operation ", operation, " failed due to: ", response['error']);
     }
+  }
+
+  /**
+   * Checks if it's an error that can happen on timing issues such as its been removed or if we run against older containers
+   * @param {Object} response the error response from a jolokia request
+   */
+  export function isIgnorableException(response: { error: string; stacktrace: string }): boolean {
+    var isNotFound = target =>
+      target.indexOf("InstanceNotFoundException") >= 0
+      || target.indexOf("AttributeNotFoundException") >= 0
+      || target.indexOf("IllegalArgumentException: No operation") >= 0;
+    return (response.stacktrace && isNotFound(response.stacktrace)) || (response.error && isNotFound(response.error));
   }
 
   /**
@@ -817,7 +823,6 @@ module Core {
     if (stacktrace) {
       var operation = Core.pathGet(response, ['request', 'operation']) || "unknown";
       Core.log.info("Operation ", operation, " failed due to: ", response['error']);
-      // Core.log.info("Stack trace: ", Logger.formatStackTraceString(response['stacktrace']));
     }
   }
 

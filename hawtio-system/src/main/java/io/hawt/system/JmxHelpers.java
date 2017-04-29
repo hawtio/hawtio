@@ -18,6 +18,6 @@ public class JmxHelpers {
     }
 
     private static boolean isHawtioDummy(String name) {
-        return name.contains("HawtioDummy") || name.contains("rank=");
+        return name.contains("HawtioDummy");
     }
 }

@@ -6,12 +6,10 @@ import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.security.auth.Subject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -27,25 +25,19 @@ import org.jolokia.converter.json.JsonConvertOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- */
 public class LoginServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final transient Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
     private static final int DEFAULT_SESSION_TIMEOUT = 1800;
-    public static final String KNOWN_PRINCIPALS[] = {"UserPrincipal", "KeycloakPrincipal", "JAASPrincipal", "SimplePrincipal"};
 
     protected Converters converters = new Converters();
     protected JsonConvertOptions options = JsonConvertOptions.DEFAULT;
     protected ConfigManager config;
     private Integer timeout = DEFAULT_SESSION_TIMEOUT;
-    private List<String> knownPrincipalList;
 
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
-        knownPrincipalList = Arrays.asList(KNOWN_PRINCIPALS);
         config = (ConfigManager) servletConfig.getServletContext().getAttribute("ConfigManager");
         if (config != null) {
             String s = config.get("sessionTimeout", "" + DEFAULT_SESSION_TIMEOUT);
@@ -100,7 +92,7 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        String username = getUsernameFromSubject(subject, knownPrincipalList);
+        String username = Helpers.getUsernameFromSubject(subject);
 
         session = req.getSession(true);
         session.setAttribute("subject", subject);
@@ -117,26 +109,6 @@ public class LoginServlet extends HttpServlet {
 
         sendResponse(session, subject, out);
     }
-
-
-    public static String getUsernameFromSubject(Subject subject, List<String> knownPrincipalList) {
-        Set<Principal> principals = subject.getPrincipals();
-
-        String username = null;
-
-        if (principals != null) {
-            for (Principal principal : principals) {
-                String principalClass = principal.getClass().getSimpleName();
-                if (knownPrincipalList.contains(principalClass)) {
-                    username = principal.getName();
-                    LOG.debug("Authorizing user {}", username);
-                }
-            }
-        }
-
-        return username;
-    }
-
 
     protected void sendResponse(HttpSession session, Subject subject, PrintWriter out) {
 

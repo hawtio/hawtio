@@ -12,10 +12,6 @@
   <name>${project.artifactId}</name>
   <description>hawtio :: Wildfly Web Application</description>
 
-  <properties>
-    <guava.version>15.0</guava.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>javax.servlet</groupId>
