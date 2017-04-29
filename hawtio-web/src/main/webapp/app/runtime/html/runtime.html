@@ -9,7 +9,7 @@
 				</div>
 				<div class="expandable-body well">
 					Running: (pid: <b>{{pid}}</b>) {{runtime.VmName}} - {{runtime.SpecVersion}} ({{runtime.VmVersion}})
-					by {{runtime.VmVendor}} in {{runtime.Os}} {{runtime.OsVersion}} ({{runtime.SystemProperties['os.arch']}}) on <b>{{user}}@{{host}}</b>
+					by {{runtime.VmVendor}} in {{runtime.Os}} {{runtime.OsVersion}} ({{runtime.SystemProperties['os.arch']}}) on <b>{{runtime.SystemProperties['user.name']}}@{{host}}</b>
 					since <b>{{runtime.StartTime | date: 'yyyy-MM-dd hh:mm:ss' }}</b>
 				</div>
 			</div>
