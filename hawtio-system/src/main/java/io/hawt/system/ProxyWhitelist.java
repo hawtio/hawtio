@@ -14,12 +14,9 @@ import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.regex.Pattern;
 
 /**
  * Whitelist manager for hawtio proxy.
@@ -33,14 +30,17 @@ public class ProxyWhitelist {
     private static final String FABRIC_MBEAN = "io.fabric8:type=Fabric";
 
     protected CopyOnWriteArraySet<String> whitelist;
+    protected List<Pattern> regexWhitelist;
     protected MBeanServer mBeanServer;
     protected ObjectName fabricMBean;
 
     public ProxyWhitelist(String whitelistStr) {
         if (Strings.isBlank(whitelistStr)) {
             whitelist = new CopyOnWriteArraySet<>();
+            regexWhitelist = Collections.emptyList();
         } else {
-            whitelist = new CopyOnWriteArraySet<>(Strings.split(whitelistStr, ","));
+            whitelist = new CopyOnWriteArraySet<>(filterRegex(Strings.split(whitelistStr, ",")));
+            regexWhitelist = buildRegexWhitelist(Strings.split(whitelistStr, ","));
         }
         initialiseWhitelist();
         LOG.info("Initial proxy whitelist: {}", whitelist);
@@ -53,6 +53,30 @@ public class ProxyWhitelist {
         }
     }
 
+    protected List<String> filterRegex(List<String> whitelist) {
+        List<String> result = new ArrayList<>();
+
+        for (String element : whitelist) {
+            if (!element.startsWith("r:")) {
+                result.add(element);
+            }
+        }
+
+        return result;
+    }
+
+    protected List<Pattern> buildRegexWhitelist(List<String> whitelist) {
+        List<Pattern> patterns = new ArrayList<>();
+
+        for (String element : whitelist) {
+            if (element.startsWith("r:")) {
+                String regex = element.substring(2);
+                patterns.add(Pattern.compile(regex));
+            }
+        }
+
+        return patterns;
+    }
     protected void initialiseWhitelist() {
         Map<String, Set<InetAddress>> localAddresses = Hosts.getNetworkInterfaceAddresses(true);
         for (Set<InetAddress> addresses : localAddresses.values()) {
@@ -71,11 +95,17 @@ public class ProxyWhitelist {
 
         // Update whitelist and check again
         LOG.debug("Updating proxy whitelist: {}, {}", whitelist, details);
-        if (update()) {
-            return details.isAllowed(whitelist);
+        if (update() && details.isAllowed(whitelist)) {
+            return true;
+        }
+
+        // test against the regex as last resort
+        if (details.isAllowed(regexWhitelist)) {
+            return true;
         } else {
             return false;
         }
+
     }
 
     public boolean update() {
