@@ -3,7 +3,9 @@ package io.hawt.web.proxy;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import io.hawt.system.AuthInfo;
@@ -164,6 +166,19 @@ public class ProxyDetails implements ProxyAddress {
         }
         // host may contain port number! (e.g. "localhost:9000")
         return whitelist.contains(host.split(":")[0]);
+    }
+
+    public boolean isAllowed(List<Pattern> regexWhitelist) {
+        // host may contain port number! (e.g. "localhost:9000")
+        String hostWithoutPort = host.split(":")[0];
+
+        for (Pattern pattern : regexWhitelist) {
+            if (pattern.matcher(hostWithoutPort).matches()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
