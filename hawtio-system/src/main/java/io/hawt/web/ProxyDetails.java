@@ -1,5 +1,6 @@
 package io.hawt.web;
 
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,6 +107,19 @@ public class ProxyDetails {
         }
         // host may contain port number! (e.g. "localhost:9000")
         return whitelist.contains(host.split(":")[0]);
+    }
+
+    public boolean isAllowed(List<Pattern> regexWhitelist) {
+        // host may contain port number! (e.g. "localhost:9000")
+        String hostWithoutPort = host.split(":")[0];
+
+        for (Pattern pattern : regexWhitelist) {
+            if (pattern.matcher(hostWithoutPort).matches()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
