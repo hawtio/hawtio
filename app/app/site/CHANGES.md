@@ -1,7 +1,7 @@
 
 ### Change Log
 
-#### 1.5.1 (To be released)
+#### 1.5.1
 
 * New Diagnostics plugin using JVM Flight Recorder
 * Proxy whitelist is automatically constructed based on network interfaces for local machine.
