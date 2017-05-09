@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.5.1</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -644,7 +644,7 @@
               !com.google.errorprone.annotations.concurrent,
               *
             </Import-Package>
-            <Private-Package></Private-Package>
+            <Private-Package />
 
             <Bundle-ClassPath>.</Bundle-ClassPath>
             <Bundle-Name>${project.description}</Bundle-Name>
