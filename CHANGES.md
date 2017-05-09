@@ -13,7 +13,7 @@
 * Upgraded to JGit 4.7.x
 * Various bug fixes
 
-#### 1.5.0
+#### 1.5.1
 
 * Hawtio 1.5 requires Java 1.8 onwards
 * Turned `ProxyServlet` to whitelist-based host selection model for security reasons.
