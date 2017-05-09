@@ -7,8 +7,8 @@
 * Proxy whitelist is automatically constructed based on network interfaces for local machine.
   You can continue to use `hawtio.proxyWhitelist` system properties for further customisation.
 * Proxy whitelist supports regex by prefixing them with `r:` in the `hawtio.proxyWhitelist` system property
-* Upgraded to Camel 2.18.3
-* Upgraded to Spring Boot 1.5.2
+* Upgraded to Camel 2.19.0
+* Upgraded to Spring Boot 1.5.3
 * Upgraded to Jolokia 1.3.6
 * Upgraded to JGit 4.7.x
 * Various bug fixes
