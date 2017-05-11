@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
@@ -61,7 +62,13 @@ public class RBACRegistry implements RBACRegistryMBean {
         }
         if (mBeanServer != null) {
             rbacDecorator = new ObjectName("hawtio:type=security,area=jolokia,name=RBACDecorator");
-            mBeanServer.registerMBean(this, objectName);
+            try {
+                mBeanServer.registerMBean(this, objectName);
+            } catch (InstanceAlreadyExistsException iaee) {
+                // Try to remove and re-register
+                mBeanServer.unregisterMBean(objectName);
+                mBeanServer.registerMBean(this, objectName);
+            }
         }
     }
 
