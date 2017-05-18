@@ -359,9 +359,17 @@ module ActiveMQ {
         $scope.showButtons = false;
         $scope.dlq = false;
         var mbean = getBrokerMBean(workspace, jolokia, amqJmxDomain);
+        // browseQueue(java.lang.String) is not available until ActiveMQ 5.15.0
+        // https://issues.apache.org/jira/browse/AMQ-6435
         jolokia.request(
             {type: 'exec', mbean: mbean, operation: 'browseQueue(java.lang.String)', arguments: [$scope.queueName]},
-            onSuccess(populateTable));
+            onSuccess(populateTable, {
+              error: (response) => {
+                // try again with the old ActiveMQ API
+                $scope.queueName = null;
+                loadTable();
+              }
+            }));
         $scope.queueName = null;
       } else {
         if (workspace.selection) {
