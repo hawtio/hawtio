@@ -8424,7 +8424,12 @@ var ActiveMQ;
                 $scope.showButtons = false;
                 $scope.dlq = false;
                 var mbean = ActiveMQ.getBrokerMBean(workspace, jolokia, amqJmxDomain);
-                jolokia.request({ type: 'exec', mbean: mbean, operation: 'browseQueue(java.lang.String)', arguments: [$scope.queueName] }, onSuccess(populateTable));
+                jolokia.request({ type: 'exec', mbean: mbean, operation: 'browseQueue(java.lang.String)', arguments: [$scope.queueName] }, onSuccess(populateTable, {
+                    error: function (response) {
+                        $scope.queueName = null;
+                        loadTable();
+                    }
+                }));
                 $scope.queueName = null;
             }
             else {
