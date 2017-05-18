@@ -8289,9 +8289,9 @@ var ActiveMQ;
             log.debug("populateTable");
             if ($scope.queueNames.length === 0) {
                 var queueNames = ActiveMQ.retrieveQueueNames(workspace, true);
-                var selectedQueue = workspace.selection.key;
-                $scope.queueNames = queueNames.exclude(function (child) {
-                    return child.key == selectedQueue;
+                var selectedQueue = workspace.selection.title;
+                $scope.queueNames = queueNames.filter(function (name) {
+                    return name !== selectedQueue;
                 });
             }
             var data = response.value;
