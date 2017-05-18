@@ -35564,6 +35564,7 @@ var Jmx;
         $scope.title = $scope.item.humanReadable;
         $scope.desc = $scope.item.desc;
         $scope.operationResult = '';
+        $scope.isExecuting = false;
         $scope.executeIcon = "icon-ok";
         $scope.mode = "text";
         $scope.entity = {};
@@ -35625,6 +35626,7 @@ var Jmx;
             $scope.$parent.showInvoke = false;
         };
         $scope.handleResponse = function (response) {
+            $scope.isExecuting = false;
             $scope.executeIcon = "icon-ok";
             $scope.operationStatus = "success";
             if (response === null || 'null' === response) {
@@ -35666,6 +35668,7 @@ var Jmx;
             }
             args.push(onSuccess($scope.handleResponse, {
                 error: function (response) {
+                    $scope.isExecuting = false;
                     $scope.executeIcon = "icon-ok";
                     $scope.operationStatus = "error";
                     var error = response.error;
@@ -35677,7 +35680,9 @@ var Jmx;
                     Core.$apply($scope);
                 }
             }));
+            $scope.isExecuting = true;
             $scope.executeIcon = "icon-spinner icon-spin";
+            Core.$apply($scope);
             var fn = jolokia.execute;
             fn.apply(jolokia, args);
         };
