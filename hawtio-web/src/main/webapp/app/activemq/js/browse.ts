@@ -189,8 +189,8 @@ module ActiveMQ {
       // setup queue names
       if ($scope.queueNames.length === 0) {
         var queueNames = retrieveQueueNames(workspace, true);
-        var selectedQueue = workspace.selection.key;
-        $scope.queueNames = queueNames.exclude((child) => { return child.key == selectedQueue });
+        var selectedQueue = workspace.selection.title;
+        $scope.queueNames = queueNames.filter((name) => { return name !== selectedQueue });
       }
 
       var data = response.value;
