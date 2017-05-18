@@ -19,6 +19,7 @@ module Jmx {
     $scope.title = $scope.item.humanReadable;
     $scope.desc = $scope.item.desc;
     $scope.operationResult = '';
+    $scope.isExecuting = false;
     $scope.executeIcon = "icon-ok";
     $scope.mode = "text";
     $scope.entity = {};
@@ -98,6 +99,7 @@ module Jmx {
 
 
     $scope.handleResponse = (response) => {
+      $scope.isExecuting = false;
       $scope.executeIcon = "icon-ok";
       $scope.operationStatus = "success";
 
@@ -149,6 +151,7 @@ module Jmx {
 
       args.push(onSuccess($scope.handleResponse, {
         error: function (response) {
+          $scope.isExecuting = false;
           $scope.executeIcon = "icon-ok";
           $scope.operationStatus = "error";
           var error = response.error;
@@ -161,7 +164,9 @@ module Jmx {
         }
       }));
 
+      $scope.isExecuting = true;
       $scope.executeIcon = "icon-spinner icon-spin";
+      Core.$apply($scope);
       var fn = jolokia.execute;
       fn.apply(jolokia, args);
      };
