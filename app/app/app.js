@@ -22195,14 +22195,14 @@ var Diagnostics;
 var Diagnostics;
 (function (Diagnostics) {
     Diagnostics._module.controller("Diagnostics.FlagsController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
-        Diagnostics.configureScope($scope, $location, workspace);
         $scope.flags = [];
         $scope.tableDef = tableDef();
-        Core.register(jolokia, $scope, {
+        var readRequest = {
             type: 'read',
             mbean: 'com.sun.management:type=HotSpotDiagnostic',
             arguments: []
-        }, onSuccess(render));
+        };
+        Core.register(jolokia, $scope, [readRequest], onSuccess(render));
         function render(response) {
             for (var i = 0; i < $scope.flags.length; i++) {
                 $scope.flags[i].deregisterWatch();
@@ -22224,8 +22224,13 @@ var Diagnostics;
                             mbean: 'com.sun.management:type=HotSpotDiagnostic',
                             operation: 'setVMOption(java.lang.String,java.lang.String)',
                             arguments: [newValue.name, newValue.value]
-                        }], onSuccess(function (response) {
-                            Diagnostics.log.info(response.value);
+                        }, readRequest], onSuccess(function (response) {
+                            if (response.request.type === "read") {
+                                render(response);
+                            }
+                            else {
+                                Diagnostics.log.info("Set VM option " + newValue.name + "=" + newValue.value);
+                            }
                         }));
                     }
                 }, true);
@@ -22286,7 +22291,6 @@ var Diagnostics;
 (function (Diagnostics) {
     ;
     Diagnostics._module.controller("Diagnostics.HeapController", ["$scope", "$window", "$location", "workspace", "jolokia", function ($scope, $window, $location, workspace, jolokia) {
-        Diagnostics.configureScope($scope, $location, workspace);
         $scope.classHistogram = '';
         $scope.status = '';
         $scope.tableDef = tableDef();
@@ -22297,12 +22301,12 @@ var Diagnostics;
         $scope.loadClassStats = function () {
             $scope.loading = true;
             Core.$apply($scope);
-            jolokia.request({
+            jolokia.request([{
                 type: 'exec',
                 mbean: 'com.sun.management:type=DiagnosticCommand',
                 operation: 'gcClassHistogram([Ljava.lang.String;)',
                 arguments: ['']
-            }, {
+            }], {
                 success: render,
                 error: function (response) {
                     $scope.status = 'Could not get class histogram : ' + response.error;
@@ -22433,7 +22437,9 @@ var Diagnostics;
                     case '[':
                         return translateJniName(name.substring(1)) + '[]';
                     case 'L':
-                        return translateJniName(name.substring(1, name.indexOf(';')));
+                        if (name.endsWith(';')) {
+                            return translateJniName(name.substring(1, name.indexOf(';')));
+                        }
                     default:
                         return name;
                 }
