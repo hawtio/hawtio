@@ -8233,7 +8233,7 @@ var ActiveMQ;
             var mbean = selection.objectName;
             if (mbean && selection && $scope.queueName) {
                 var selectedItems = $scope.gridOptions.selectedItems;
-                $scope.message = "Moved " + Core.maybePlural(selectedItems.length, "message" + " to " + $scope.queueName);
+                $scope.message = "Moved " + Core.maybePlural(selectedItems.length, "message") + " to " + $scope.queueName;
                 var operation = "moveMessageTo(java.lang.String, java.lang.String)";
                 angular.forEach(selectedItems, function (item, idx) {
                     var id = item.JMSMessageID;
@@ -8427,6 +8427,8 @@ var ActiveMQ;
                 jolokia.request({ type: 'exec', mbean: mbean, operation: 'browseQueue(java.lang.String)', arguments: [$scope.queueName] }, onSuccess(populateTable, {
                     error: function (response) {
                         $scope.queueName = null;
+                        $scope.showButtons = true;
+                        Core.$apply($scope);
                         loadTable();
                     }
                 }));
@@ -8455,7 +8457,6 @@ var ActiveMQ;
         function intermediateResult() {
         }
         function operationSuccess() {
-            $scope.messageDialog = false;
             deselectAll();
             Core.notification("success", $scope.message);
             setTimeout(loadTable, 50);
@@ -8555,7 +8556,7 @@ var ActiveMQ;
             }
         }
         function deselectAll() {
-            $scope.gridOptions.selectedItems = [];
+            $scope.gridOptions.selectedItems.length = 0;
             $scope.gridOptions['$gridScope'].allSelected = false;
         }
     }]);
