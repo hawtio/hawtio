@@ -21,23 +21,23 @@ module Diagnostics {
 
 
     _module.controller( "Diagnostics.FlagsController", ["$scope", "$location", "workspace", "jolokia", ( $scope: JvmFlagsScope, $location: ng.ILocationService, workspace: Core.Workspace, jolokia: Jolokia.IJolokia ) => {
-
-        Diagnostics.configureScope( $scope, $location, workspace );
         $scope.flags = [];
         $scope.tableDef = tableDef();
+        var readRequest = {
+          type: 'read',
+          mbean: 'com.sun.management:type=HotSpotDiagnostic',
+          arguments: []
+
+        };
 
 
-        Core.register( jolokia, $scope, {
-            type: 'read',
-            mbean: 'com.sun.management:type=HotSpotDiagnostic',
-            arguments: []
-
-        }, onSuccess( render ) );
+        Core.register( jolokia, $scope,[readRequest] , onSuccess( render ) );
 
 
 
 
         function render( response ) {
+
             //remove watches on previous content
             for ( var i = 0; i < $scope.flags.length; i++ ) {
                 $scope.flags[i].deregisterWatch();
@@ -55,16 +55,19 @@ module Diagnostics {
                 
                 flag.deregisterWatch = $scope.$watch( 'flags[' + i + ']', ( newValue,  oldValue) => {
                     if ( newValue.value != oldValue.value ) {
-                        jolokia.request( [{
-                            type: 'exec',
-                            mbean: 'com.sun.management:type=HotSpotDiagnostic',
-                            operation: 'setVMOption(java.lang.String,java.lang.String)',
-                            arguments: [newValue.name, newValue.value]
-                        }], onSuccess(( response ) => {
-                            log.info( response.value );
-                        }) );
+                      jolokia.request([{
+                        type: 'exec',
+                        mbean: 'com.sun.management:type=HotSpotDiagnostic',
+                        operation: 'setVMOption(java.lang.String,java.lang.String)',
+                        arguments: [newValue.name, newValue.value]
+                      }, readRequest], onSuccess((response) => {//immediate refresh piggybacked read value
+                        if (response.request.type === "read") {
+                          render(response);
+                        } else {
+                          log.info("Set VM option " + newValue.name + "=" + newValue.value);
+                        }
+                      }));
                     }
-
                 }, true );
             }
 
