@@ -126,7 +126,7 @@ module ActiveMQ {
         var mbean = selection.objectName;
         if (mbean && selection && $scope.queueName) {
             var selectedItems = $scope.gridOptions.selectedItems;
-            $scope.message = "Moved " + Core.maybePlural(selectedItems.length, "message" + " to " + $scope.queueName);
+            $scope.message = "Moved " + Core.maybePlural(selectedItems.length, "message") + " to " + $scope.queueName;
             var operation = "moveMessageTo(java.lang.String, java.lang.String)";
             angular.forEach(selectedItems, (item, idx) => {
                 var id = item.JMSMessageID;
@@ -367,6 +367,8 @@ module ActiveMQ {
               error: (response) => {
                 // try again with the old ActiveMQ API
                 $scope.queueName = null;
+                $scope.showButtons = true;
+                Core.$apply($scope);
                 loadTable();
               }
             }));
@@ -400,7 +402,6 @@ module ActiveMQ {
     }
 
     function operationSuccess() {
-      $scope.messageDialog = false;
       deselectAll();
       Core.notification("success", $scope.message);
       setTimeout(loadTable, 50);
@@ -511,7 +512,7 @@ module ActiveMQ {
     }
 
     function deselectAll() {
-      $scope.gridOptions.selectedItems = [];
+      $scope.gridOptions.selectedItems.length = 0;
       $scope.gridOptions['$gridScope'].allSelected = false;
     }
 
