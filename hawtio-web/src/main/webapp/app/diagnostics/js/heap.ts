@@ -30,7 +30,6 @@ module Diagnostics {
     
     _module.controller( "Diagnostics.HeapController", ["$scope", "$window", "$location",  "workspace", "jolokia", ( $scope: HeapControllerScope, $window: ng.IWindowService, $location: ng.ILocationService, workspace: Core.Workspace, jolokia: Jolokia.IJolokia ) => {
 
-        Diagnostics.configureScope( $scope, $location, workspace );
         $scope.classHistogram = '';
         $scope.status = '';
         $scope.tableDef = tableDef();
@@ -43,12 +42,12 @@ module Diagnostics {
         $scope.loadClassStats = () => {
             $scope.loading = true;
             Core.$apply( $scope );
-            jolokia.request( {
+            jolokia.request( [{
                 type: 'exec',
                 mbean: 'com.sun.management:type=DiagnosticCommand',
                 operation: 'gcClassHistogram([Ljava.lang.String;)',
                 arguments: ['']
-            }, {
+            }], {
                     success: render,
                     error: ( response ) => {
                         $scope.status = 'Could not get class histogram : ' + response.error;
@@ -179,7 +178,9 @@ module Diagnostics {
                     case '[':
                         return translateJniName( name.substring( 1 ) ) + '[]';
                     case 'L':
-                        return translateJniName( name.substring( 1, name.indexOf( ';' ) ) );
+                        if(name.endsWith(';')) {
+                          return translateJniName(name.substring(1, name.indexOf(';')));
+                        }
                     default:
                         return name;
                 }
