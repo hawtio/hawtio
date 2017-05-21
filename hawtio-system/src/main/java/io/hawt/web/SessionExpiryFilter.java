@@ -84,7 +84,7 @@ public class SessionExpiryFilter implements Filter {
         }
         HttpSession session = request.getSession(false);
         boolean enabled = (boolean) context.getAttribute("authenticationEnabled");
-        String uri = request.getRequestURI();
+        String uri = request.getRequestURI().substring(request.getContextPath().length());
         if (uri.startsWith("/")) {
             uri = uri.substring(1);
         }
