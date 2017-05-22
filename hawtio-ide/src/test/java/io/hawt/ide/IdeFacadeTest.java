@@ -1,19 +1,24 @@
 package io.hawt.ide;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
-
 
 public class IdeFacadeTest {
     IdeFacade facade = new IdeFacade();
+    SourceReference sourceReference = new SourceReference();
 
     @Before
     public void init() throws Exception {
         facade.init();
+        sourceReference.fileName="IdeFacade.java";
+        sourceReference.className="io.hawt.ide.IdeFacade";
+        sourceReference.line=17;
+        sourceReference.column=5;
     }
 
     @After
@@ -30,13 +35,12 @@ public class IdeFacadeTest {
     //@Test
     @Ignore
     public void testOpenInIDEA() throws Exception {
-        String fileName = assertFindSampleFileName();
-        //assertOperation("ideaOpen", facade.ideaOpen(fileName));
-        assertOperation("ideaOpenAndNavigate", facade.ideaOpenAndNavigate(fileName, 17, 5));
+        assertFindSampleFileName();
+        assertOperation("ideaOpenAndNavigate", facade.ideaOpen(sourceReference));
     }
 
     protected String assertFindSampleFileName() {
-        String absoluteFile = facade.findClassAbsoluteFileName("IdeFacade.java", "io.hawt.ide.IdeFacade", null);
+        String absoluteFile = SourceLocator.findClassAbsoluteFileName(sourceReference.fileName, sourceReference.className, facade.getBaseDir());
         assertNotNull("Should have found an absolute file", absoluteFile);
         return absoluteFile;
     }
