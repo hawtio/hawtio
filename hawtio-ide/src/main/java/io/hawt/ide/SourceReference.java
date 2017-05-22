@@ -30,22 +30,6 @@ public class SourceReference {
 		return column != null ? column : 1;
 	}
 
-	/**
-	 * @param file
-	 * @return myself represented as properties
-	 */
-	public Map<String, String> resolveFilePath(File baseDir) {
-		Map<String, String> ideaParameters=new HashMap<>();
-		ideaParameters.put("file", SourceLocator.findClassAbsoluteFileName(this.fileName, this.className, baseDir));
-		if(this.line != null) {
-			ideaParameters.put("line", this.line.toString());
-		}
-		if(this.column != null) {
-			ideaParameters.put("column", this.column.toString());
-		}
-		
-		return ideaParameters;
-	}
 
 	public boolean hasLineOrColumn() {
 		return line != null || column != null;

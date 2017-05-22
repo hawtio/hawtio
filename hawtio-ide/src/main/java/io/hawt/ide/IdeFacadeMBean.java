@@ -18,13 +18,6 @@ public interface IdeFacadeMBean {
      */
 	@Deprecated
     String ideaOpenAndNavigate(String absoluteFileName, int line, int column) throws Exception;
-
-    /**
-     * Open an absolute file name in IDEA
-     * @deprecated Kept for compatibility with older frontends if relevant , prefer {@link #ideOpen(String, String, Integer, Integer)}
-     */
-	@Deprecated
-    String ideaOpen(String absoluteFileName) throws Exception;
 	
     /**
      * Given a class name and a file name, try to find the absolute file name of the

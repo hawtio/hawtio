@@ -39,13 +39,6 @@ module IDE {
       var mbean = IDE.getIdeMBean(workspace);
       var fileName = $scope.fileName;
       if (mbean && fileName) {
-        var className = $scope.className;
-        var line = $scope.line;
-        var col = $scope.col;
-        if (!angular.isDefined(line) || line === null) line = 0;
-        if (!angular.isDefined(col) || col === null) col = 0;
-
-
         if (IDE.isOpenInIdeaSupported(workspace, localStorage)) {
           var ideaButton = $('<button class="btn btn-mini"><img src="app/ide/img/intellijidea.png" width="16" height="16"></button>');
           ideaButton.on( "click", function() {
