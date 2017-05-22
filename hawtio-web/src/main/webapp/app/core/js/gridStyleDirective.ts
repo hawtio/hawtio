@@ -48,11 +48,17 @@ module Core {
 
       scope.$watch(resizeFunc);
 
-      $(this.$window).resize(function() {
+      angular.element(window).on('resize', function(){
         resizeFunc();
         Core.$apply(scope);
         return false;
       });
+
+      element.on('$destroy', angular.bind(this, function() {
+          $(this.$window).off('resize');
+          angular.element(window).off('resize');
+      }));
+      
     }
   }// end class GridStyle
 
