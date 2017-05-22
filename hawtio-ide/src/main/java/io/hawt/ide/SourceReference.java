@@ -34,7 +34,7 @@ public class SourceReference {
 	 * @param file
 	 * @return myself represented as properties
 	 */
-	public Map<String, String> resolveFilePath(File baseDir) {
+	public Map<String, String> buildRestRequestParameters(File baseDir) {
 		Map<String, String> ideaParameters=new HashMap<>();
 		ideaParameters.put("file", SourceLocator.findClassAbsoluteFileName(this.fileName, this.className, baseDir));
 		if(this.line != null) {

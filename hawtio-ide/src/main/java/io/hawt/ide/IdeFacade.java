@@ -17,12 +17,12 @@ import io.hawt.util.IOHelper;
 import io.hawt.util.MBeanSupport;
 
 /**
- * A facade for working with IDEs
+ * A facade for working with IDEs to open a source code editor
  */
 public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
-    private static final String IDEA_URL = "http://localhost:63342";
-	private static final String REST_API = IDEA_URL + "/api/file";
 	private static final transient Logger LOG = LoggerFactory.getLogger(IdeFacade.class);
+	private static final String IDEA_URL = "http://localhost:63342";
+	private static final String REST_API = IDEA_URL + "/api/file";
     private static IdeFacade singleton;
     private File baseDir;
     private Boolean restApiSupported;
@@ -67,25 +67,20 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
      *  - fall back to Intellij's XmlRPC mechanism to open and navigate to a file
      */
     public String ideaOpen(final SourceReference sourceReference) throws Exception {
-    	if(invokeRestApi(sourceReference.resolveFilePath(getBaseDir()))) {
+    	if(invokeRestApi(sourceReference.buildRestRequestParameters(getBaseDir()))) {
     		return "OK";
     	} else {
+			String absoluteFileName = SourceLocator.findClassAbsoluteFileName(sourceReference.fileName, sourceReference.className, getBaseDir());
     		if(sourceReference.hasLineOrColumn()) {
-    			return ideaOpenAndNavigate(sourceReference);    			
+    			return ideaOpenAndNavigateWithRpc(absoluteFileName, sourceReference.getLineOrDefault(), sourceReference.getLineOrDefault());    			
     		} else {
-    			return ideaOpen(SourceLocator.findClassAbsoluteFileName(sourceReference.fileName, sourceReference.className, getBaseDir()));
+				return ideaOpen(absoluteFileName);
     		}
     	} 
     }
 
-	private String ideaOpenAndNavigate(final SourceReference sourceReference) throws IOException {
-		return openAndNavigateInIdea(
-				SourceLocator.findClassAbsoluteFileName(sourceReference.fileName, sourceReference.className, getBaseDir()), 
-				sourceReference.getLineOrDefault(), 
-				sourceReference.getColumnOrDefault());
-	}
-
-	private String openAndNavigateInIdea(String absoluteFileName, int line, int column) throws IOException {
+    
+	private String ideaOpenAndNavigateWithRpc(String absoluteFileName, int line, int column) throws IOException {
 		String xml = "<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\n" +
                 "<methodCall>\n" +
                 "  <methodName>fileOpener.openAndNavigate</methodName>\n" +
@@ -100,6 +95,11 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
 
 
 
+	/**
+	 * Use HTTP to invoke open file API
+	 * @param parameters to include as query parameters in URL
+	 * @return true - if call succeeded with OK 200 response code
+	 */
 	private boolean invokeRestApi(final Map<String,String> parameters) {
 		//previously probed to not be supported
 		if(restApiSupported == Boolean.FALSE) {
@@ -124,13 +124,19 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
         	URL requestUrl = new URL(builder.toString());
 			HttpURLConnection connection = (HttpURLConnection) requestUrl.openConnection();
         	connection.setRequestMethod("GET");
+        	LOG.debug("Calling URL: " + builder.toString());
 			return inferApiSupport(connection.getResponseCode() == HttpURLConnection.HTTP_OK);
 		} catch (IOException e) {//error on first attempt, take this as as sign that url is not supported
-			LoggerFactory.getLogger(this.getClass()).debug("Error invoking IDEA REST API to open file", e);
+			LOG.debug("Error invoking IDEA REST API to open file", e);
 			return inferApiSupport(false);
 		}
     }
 
+	/**
+	 * Lazily infer whether REST API is supported as calls always return OK 200 , any call can be used to probe this
+	 * @param status from actual call
+	 * @return status
+	 */
 	private boolean inferApiSupport(final boolean status) {
 		if(restApiSupported == null) {
 			restApiSupported = status;
@@ -139,7 +145,7 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
 		return status;
 	}
 
-    public String ideaOpen(String fileName) throws Exception {
+    private String ideaOpen(String fileName) throws Exception {
         String xml = "<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\n" +
                 "<methodCall>\n" +
                 "  <methodName>fileOpener.open</methodName>\n" +
@@ -151,7 +157,7 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
         return ideaXmlRpc(xml);
     }
 
-    protected String ideaXmlRpc(String xml) throws IOException {
+    private String ideaXmlRpc(String xml) throws IOException {
         String charset = "UTF-8";
 
         HttpURLConnection connection = (HttpURLConnection) new URL(IDEA_URL).openConnection();
@@ -194,7 +200,7 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
 	@Override
 	@Deprecated
 	public String ideaOpenAndNavigate(String absoluteFileName, int line, int column) throws Exception {
-		return openAndNavigateInIdea(absoluteFileName, line, column);
+		return ideaOpenAndNavigateWithRpc(absoluteFileName, line, column);
 	}
 
 	/**
