@@ -72,14 +72,14 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
     		return "OK";
     	} else {
     		if(sourceReference.hasLineOrColumn()) {
-    			return ideaOpenAndNavigateWithRpc(absoluteFileName, sourceReference.getLineOrDefault(), sourceReference.getLineOrDefault());    			
+    			return ideaOpenAndNavigateWithRpc(absoluteFileName, sourceReference.getLineOrDefault(), sourceReference.getLineOrDefault());
     		} else {
 				return ideaOpenWithRpc(absoluteFileName);
     		}
     	} 
     }
 
-    
+
 	private String ideaOpenAndNavigateWithRpc(String absoluteFileName, int line, int column) throws IOException {
 		String xml = "<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\n" +
                 "<methodCall>\n" +
@@ -118,7 +118,6 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
             		builder.append(sourceReference.column);
             	}
         	}
-
         	URL requestUrl = new URL(builder.toString());
 			HttpURLConnection connection = (HttpURLConnection) requestUrl.openConnection();
         	connection.setRequestMethod("GET");
