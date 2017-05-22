@@ -96,7 +96,8 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
 
 
 	/**
-	 * Use HTTP to invoke open file API
+	 * Use HTTP to invoke open file API , 
+	 * see https://github.com/JetBrains/intellij-community/blob/master/platform/built-in-server/src/org/jetbrains/ide/OpenFileHttpService.kt
 	 * @param parameters to include as query parameters in URL
 	 * @return true - if call succeeded with OK 200 response code
 	 */
