@@ -22,7 +22,7 @@ module DevExample {
   var tab = undefined;
 
   _module.config(["$locationProvider", "$routeProvider", "HawtioNavBuilderProvider",
-    ($locationProvider, $routeProvider: ng.route.IRouteProvider, builder: HawtioMainNav.BuilderFactory) => {
+    ($locationProvider, $routeProvider: angular.route.IRouteProvider, builder: HawtioMainNav.BuilderFactory) => {
     tab = builder.create()
       .id(DevExample.pluginName)
       .title(() => "Test DevExample")
