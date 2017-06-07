@@ -19,9 +19,7 @@
   ],
   "dependencies": {
     "hawtio-integration": "~3.0.0",
-    "hawtio-preferences": "~3.0.0",
-    "angular-resizable": "~1.2.0",
-    "patternfly": "~4.0.0-rc.1"
+    "hawtio-preferences": "~3.0.0"
   },
   "devDependencies": {
     "hawtio-core-dts": "~3.0.0",
@@ -42,11 +40,7 @@
     }
   },
   "resolutions": {
-    "patternfly": "~4.0.0-rc.1",
-    "angular": ">=1.2.0",
-    "bootstrap-select": "~1.12.2",
-    "font-awesome": "~4.7.0",
-    "jquery": ">=1.11.0",
-    "moment": "~2.18.1"
+    "jquery": "~3.2.1",
+    "angular": "1.5.11"
   }
 }
