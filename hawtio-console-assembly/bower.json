@@ -40,7 +40,7 @@
     }
   },
   "resolutions": {
-    "jquery": "~3.2.1",
+    "jquery": "~2.1.0",
     "angular": "1.5.11"
   }
 }
