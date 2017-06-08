@@ -326,14 +326,7 @@ gulp.task('site-fonts', () =>
     .pipe(gulp.dest('target/site/fonts/', { overwrite: false }))
 );
 
-gulp.task('site-flash-files', function() {
-  return gulp.src('libs/**/*.swf')
-    .pipe(plugins.flatten())
-    .pipe(plugins.debug({ title: 'site flash files' }))
-    .pipe(gulp.dest('target/site/img'));
-});
-
-gulp.task('site-files', ['site-fonts', 'site-flash-files'], function() {
+gulp.task('site-files', ['site-fonts'], function() {
   // in case there are hawtio-console-assembly specific images
   return gulp.src(['images/**', 'img/**'], { base: '.' })
     .pipe(plugins.debug({ title: 'site files' }))
