@@ -307,24 +307,24 @@ gulp.task('reload', function() {
 // site tasks
 //------------------------------------------------------------------------------
 
-gulp.task('site-fonts', function() {
-  return gulp.src(['libs/**/*.woff', 'libs/**/*.woff2', 'libs/**/*.ttf'], { base: '.' })
+gulp.task('site-fonts', () =>
+  gulp
+    .src(
+      [
+        'libs/**/*.woff',
+        'libs/**/*.woff2',
+        'libs/**/*.ttf',
+        'libs/**/fonts/*.eot',
+        'libs/**/fonts/*.svg'
+      ],
+      { base: '.' }
+    )
     .pipe(plugins.flatten())
+    .pipe(plugins.chmod(0o644))
+    .pipe(plugins.dedupe({ same: false }))
     .pipe(plugins.debug({ title: 'site font files' }))
-    .pipe(gulp.dest('target/site/fonts'));
-});
-
-gulp.task('tweak-open-sans', ['site-fonts'], function() {
-  return gulp.src('target/site/fonts/OpenSans*')
-    .pipe(plugins.flatten())
-    .pipe(gulp.dest('target/site/fonts'));
-});
-
-gulp.task('tweak-droid-sans-mono', ['site-fonts'], function() {
-  return gulp.src('target/site/fonts/DroidSansMono*')
-    .pipe(plugins.flatten())
-    .pipe(gulp.dest('target/site/fonts'));
-});
+    .pipe(gulp.dest('target/site/fonts/', { overwrite: false }))
+);
 
 gulp.task('site-flash-files', function() {
   return gulp.src('libs/**/*.swf')
@@ -333,7 +333,7 @@ gulp.task('site-flash-files', function() {
     .pipe(gulp.dest('target/site/img'));
 });
 
-gulp.task('site-files', ['tweak-open-sans', 'tweak-droid-sans-mono', 'site-flash-files'], function() {
+gulp.task('site-files', ['site-fonts', 'site-flash-files'], function() {
   // in case there are hawtio-console-assembly specific images
   return gulp.src(['images/**', 'img/**'], { base: '.' })
     .pipe(plugins.debug({ title: 'site files' }))
