@@ -23,15 +23,11 @@ var config = {
   logLevel: argv.debug ? logger.DEBUG : logger.INFO,
   main: '.',
   ts: ['plugins/**/*.ts'],
-  testTs: ['test-plugins/**/*.ts'],
   less: './less/**/*.less',
   templates: ['plugins/**/*.html'],
-  testTemplates: ['test-plugins/**/*.html'],
   templateModule: pkg.name + '-templates',
-  testTemplateModule: pkg.name + '-test-templates',
   dist: './dist/',
   js: pkg.name + '.js',
-  testJs: pkg.name + '-test.js',
   css: pkg.name + '.css',
   tsProject: plugins.typescript.createProject({
     target: 'ES5',
@@ -39,12 +35,6 @@ var config = {
     declarationFiles: true,
     noResolve: false,
     removeComments: true
-  }),
-  testTsProject: plugins.typescript.createProject({
-    target: 'ES5',
-    module: 'commonjs',
-    declarationFiles: false,
-    noResolve: false
   }),
   tsLintOptions: {
     rulesDirectory: './tslint-rules/'
@@ -85,42 +75,6 @@ gulp.task('path-adjust', function() {
 
 gulp.task('clean-defs', function() {
   return gulp.src('defs.d.ts', { read: false })
-    .pipe(plugins.clean());
-});
-
-gulp.task('example-tsc', ['tsc'], function() {
-  var tsResult = gulp.src(config.testTs)
-    .pipe(config.testTsProject())
-    .on('error', plugins.notify.onError({
-      message: '<%= error.message %>',
-      title: 'Typescript compilation error - test'
-    }));
-
-    return tsResult.js
-        .pipe(plugins.concat('test-compiled.js'))
-        .pipe(gulp.dest('.'));
-});
-
-gulp.task('example-template', ['example-tsc'], function() {
-  return gulp.src(config.testTemplates)
-    .pipe(plugins.angularTemplatecache({
-      filename: 'test-templates.js',
-      root: 'test-plugins/',
-      standalone: true,
-      module: config.testTemplateModule,
-      templateFooter: '}]); hawtioPluginLoader.addModule("' + config.testTemplateModule + '");'
-    }))
-    .pipe(gulp.dest('.'));
-});
-
-gulp.task('example-concat', ['example-template'], function() {
-  return gulp.src(['test-compiled.js', 'test-templates.js'])
-    .pipe(plugins.concat(config.testJs))
-    .pipe(gulp.dest(config.dist));
-});
-
-gulp.task('example-clean', ['example-concat'], function() {
-  return gulp.src(['test-templates.js', 'test-compiled.js'], { read: false })
     .pipe(plugins.clean());
 });
 
@@ -204,21 +158,17 @@ gulp.task('clean', ['concat'], function() {
     .pipe(plugins.clean());
 });
 
-gulp.task('watch', ['build', 'build-example'], function() {
+gulp.task('watch', ['build'], function() {
   plugins.watch(['libs/**/*.js', 'libs/**/*.css', 'index.html', config.dist + '/' + config.js], function() {
     gulp.start('reload');
   });
   plugins.watch(['libs/**/*.d.ts', config.ts, config.templates], function() {
     gulp.start(['tsc', 'template', 'concat', 'clean']);
   });
-  plugins.watch([config.testTs, config.testTemplates], function() {
-    gulp.start(['example-tsc', 'example-template', 'example-concat', 'example-clean']);
-  });
   plugins.watch(config.less, function() {
     gulp.start('less', 'reload');
   })
 });
-
 
 gulp.task('connect', ['watch'], function() {
   /*
@@ -407,8 +357,6 @@ gulp.task('serve-site', function() {
 gulp.task('mvn', ['build', 'site']);
 
 gulp.task('build', ['bower', 'path-adjust', 'tsc', 'less', 'template', 'concat', 'clean']);
-
-gulp.task('build-example', ['example-tsc', 'example-template', 'example-concat', 'example-clean']);
 
 gulp.task('default', ['connect']);
 
