@@ -385,6 +385,32 @@ gulp.task('site', ['usemin'], function() {
     .pipe(gulp.dest('target/site/img'));
 });
 
+gulp.task('serve-site', function() {
+  hawtio.setConfig({
+    port: 2772,
+    staticProxies: [
+      {
+        proto      : 'http',
+        hostname   : 'localhost',
+        port       : config.proxyPort,
+        path       : '/hawtio/jolokia',
+        targetPath : config.targetPath
+      }
+    ],
+    staticAssets: [
+      {
+        path : '/hawtio',
+        dir  : 'target/site'
+      }
+    ],
+    liveReload : {
+      enabled  : false
+    }
+  });
+  return hawtio.listen(server => console.log('started from gulp file at ',
+    server.address().address, ':', server.address().port));
+});
+
 gulp.task('mvn', ['build', 'site']);
 
 gulp.task('build', ['bower', 'path-adjust', 'tsc', 'less', 'template', 'concat', 'clean']);
