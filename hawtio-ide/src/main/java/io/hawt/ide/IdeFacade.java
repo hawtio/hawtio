@@ -7,8 +7,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +47,7 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
     /**
      * Returns the base directory of the current project
      */
-    public File getBaseDir() {
+    File getBaseDir() {
         if (baseDir == null) {
             baseDir = new File(System.getProperty("basedir", "."));
         }
@@ -66,7 +64,7 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
      *  - attempt REST interface
      *  - fall back to Intellij's XmlRPC mechanism to open and navigate to a file
      */
-    public String ideaOpen(final SourceReference sourceReference) throws Exception {
+    String ideaOpen(final SourceReference sourceReference) throws Exception {
 		String absoluteFileName = SourceLocator.findClassAbsoluteFileName(sourceReference.fileName, sourceReference.className, getBaseDir());
     	if(invokeRestApi(absoluteFileName, sourceReference)) {
     		return "OK";
@@ -98,7 +96,7 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
 	/**
 	 * Use HTTP to invoke open file API , 
 	 * see https://github.com/JetBrains/intellij-community/blob/master/platform/built-in-server/src/org/jetbrains/ide/OpenFileHttpService.kt
-	 * @param parameters to include as query parameters in URL
+	 * @param sourceReference to include as query parameters in URL
 	 * @return true - if call succeeded with OK 200 response code
 	 */
 	private boolean invokeRestApi(final String absoluteFileName, final SourceReference sourceReference) {
@@ -191,24 +189,5 @@ public class IdeFacade extends MBeanSupport implements IdeFacadeMBean {
 		return ideaOpen(sourceReference);
 	}
 
-	/**
-	 * Attempt to open file and navigate to line and column
-	 * @deprecated go via {@link #ideOpen(String, String, Integer, Integer)} instead
-	 */
-	@Override
-	@Deprecated
-	public String ideaOpenAndNavigate(String absoluteFileName, int line, int column) throws Exception {
-		return ideaOpenAndNavigateWithRpc(absoluteFileName, line, column);
-	}
-
-	/**
-	 * @deprecated kept for any old clients, file name resolution is now handled as part of {@link #ideOpen(String, String, Integer, Integer)}
-	 */
-	@Override
-	@Deprecated
-	public String findClassAbsoluteFileName(String fileName, String className, List<String> sourceRoots) {
-		
-		return SourceLocator.findClassAbsoluteFileName(fileName, className, baseDir);
-	}
 
 }
