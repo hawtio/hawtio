@@ -31,8 +31,7 @@ var config = {
   css: pkg.name + '.css',
   tsProject: plugins.typescript.createProject({
     target: 'ES5',
-    module: 'commonjs',
-    declarationFiles: true,
+    declaration: true,
     noResolve: false,
     removeComments: true
   }),
@@ -90,19 +89,11 @@ gulp.task('tsc', ['clean-defs'], function() {
 
   return eventStream.merge(
     tsResult.js
-      .pipe(plugins.concat('compiled.js'))
       .pipe(plugins.if(config.sourceMap, plugins.sourcemaps.write()))
       .pipe(gulp.dest('.')),
     tsResult.dts
-      .pipe(gulp.dest('d.ts')))
-    .pipe(map(function(buf, filename) {
-      if (!s.endsWith(filename, 'd.ts')) {
-        return buf;
-      }
-      var relative = path.relative(cwd, filename);
-      fs.appendFileSync('defs.d.ts', '/// <reference path="' + relative + '"/>\n');
-      return buf;
-    }));
+      .pipe(plugins.rename('defs.d.ts'))
+      .pipe(gulp.dest('.')));
 });
 
 /*
