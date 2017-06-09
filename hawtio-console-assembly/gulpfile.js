@@ -290,14 +290,26 @@ gulp.task('usemin', function() {
       ]
     }))
     .pipe(plugins.debug({ title: 'usemin' }))
-    // adjust image paths here
-    // convert: 'libs/*/img/' | '/img/' | '../img/'  -> 'img/'
-    .pipe(plugins.replace(/"libs\/[^/]+\/img\//gm, '"img/'))
-    .pipe(plugins.replace(/\/img\/|\.\.\/img\//gm, 'img/'))
-    // convert: '../fonts/' -> 'fonts/'
-    .pipe(plugins.replace(/\.\.\/fonts\//gm, 'fonts/'))
     .pipe(gulp.dest('target/site'));
 });
+
+gulp.task('tweak-urls', ['usemin'], () =>
+  eventStream.merge(
+    gulp.src('target/site/index.html')
+      // adjust image paths
+      .pipe(plugins.replace(/"libs\/[^/]+\/img\//gm, '"img/')),
+    gulp.src('target/site/style.css')
+      .pipe(plugins.replace(/url\(\.\.\//g, 'url('))
+      // tweak fonts URL coming from PatternFly that does not repackage then in dist
+      .pipe(plugins.replace(/url\(\.\.\/components\/font-awesome\//g, 'url('))
+      .pipe(plugins.replace(/url\(\.\.\/components\/bootstrap\/dist\//g, 'url('))
+      .pipe(plugins.replace(/url\(libs\/bootstrap\/dist\//g, 'url('))
+      .pipe(plugins.replace(/url\(libs\/patternfly\/components\/bootstrap\/dist\//g, 'url('))
+      .pipe(plugins.debug({ title: 'tweak-urls' }))
+    )
+    .pipe(gulp.dest('target/site')
+  )
+);
 
 gulp.task('404', ['usemin'], function() {
   return gulp.src('target/site/index.html')
@@ -353,7 +365,7 @@ gulp.task('serve-site', function() {
 
 gulp.task('build', callback => sequence(['bower', 'path-adjust', 'tsc', 'less', 'template', 'concat'], 'clean', callback));
 
-gulp.task('site', callback => sequence('clean', ['site-fonts', 'site-files', 'usemin', '404', 'copy-images'], callback));
+gulp.task('site', callback => sequence('clean', ['site-fonts', 'site-files', 'usemin', 'tweak-urls', '404', 'copy-images'], callback));
 
 gulp.task('mvn', callback => sequence('build', 'site'));
 
