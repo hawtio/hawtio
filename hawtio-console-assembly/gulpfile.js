@@ -1,40 +1,40 @@
-var gulp = require('gulp'),
-    wiredep = require('wiredep').stream,
-    eventStream = require('event-stream'),
+const gulp          = require('gulp'),
+    wiredep         = require('wiredep').stream,
+    eventStream     = require('event-stream'),
     gulpLoadPlugins = require('gulp-load-plugins'),
-    map = require('vinyl-map'),
-    fs = require('fs'),
-    path = require('path'),
-    sequence = require('run-sequence'),
-    size = require('gulp-size'),
-    uri = require('urijs'),
-    s = require('underscore.string'),
-    argv = require('yargs').argv,
-    logger = require('js-logger'),
-    hawtio = require('hawtio-node-backend'),
-    tslint = require('gulp-tslint'),
-    tslintRules = require('./tslint.json');
+    map             = require('vinyl-map'),
+    fs              = require('fs'),
+    path            = require('path'),
+    sequence        = require('run-sequence'),
+    size            = require('gulp-size'),
+    uri             = require('urijs'),
+    s               = require('underscore.string'),
+    argv            = require('yargs').argv,
+    logger          = require('js-logger'),
+    hawtio          = require('hawtio-node-backend'),
+    tslint          = require('gulp-tslint'),
+    tslintRules     = require('./tslint.json');
 
-var plugins = gulpLoadPlugins({});
-var pkg = require('./package.json');
+const plugins = gulpLoadPlugins({});
+const pkg     = require('./package.json');
 
-var config = {
-  proxyPort: argv.port || 8181,
-  targetPath: argv.path || '/hawtio/jolokia',
-  logLevel: argv.debug ? logger.DEBUG : logger.INFO,
-  main: '.',
-  ts: ['plugins/**/*.ts'],
-  less: './less/**/*.less',
-  templates: ['plugins/**/*.html'],
-  templateModule: pkg.name + '-templates',
-  dist: './dist/',
-  js: pkg.name + '.js',
-  css: pkg.name + '.css',
-  tsProject: plugins.typescript.createProject({
-    target: 'ES5',
-    declaration: true,
-    noResolve: false,
-    removeComments: true
+const config = {
+  proxyPort      : argv.port || 8181,
+  targetPath     : argv.path || '/hawtio/jolokia',
+  logLevel       : argv.debug ? logger.DEBUG : logger.INFO,
+  main           : '.',
+  ts             : ['plugins/**/*.ts'],
+  less           : './less/**/*.less',
+  templates      : ['plugins/**/*.html'],
+  templateModule : pkg.name + '-templates',
+  dist           : './dist/',
+  js             : pkg.name + '.js',
+  css            : pkg.name + '.css',
+  tsProject      : plugins.typescript.createProject({
+  target         : 'ES5',
+  declaration    : true,
+  noResolve      : false,
+  removeComments : true
   }),
   tsLintOptions: {
     rulesDirectory: './tslint-rules/'
@@ -163,12 +163,6 @@ gulp.task('watch', ['build'], function() {
 });
 
 gulp.task('connect', ['watch'], function() {
-  /*
-   * Example of fetching a URL from the environment, in this case for kubernetes
-  var kube = uri(process.env.KUBERNETES_MASTER || 'http://localhost:8080');
-  console.log("Connecting to Kubernetes on: " + kube);
-  */
-
   hawtio.setConfig({
     logLevel: config.logLevel,
     port: 2772,
@@ -180,24 +174,6 @@ gulp.task('connect', ['watch'], function() {
       path: '/hawtio/jolokia',
       targetPath: config.targetPath
     }
-    /*
-    // proxy to a service, in this case kubernetes
-    {
-      proto: kube.protocol(),
-      port: kube.port(),
-      hostname: kube.hostname(),
-      path: '/services/kubernetes',
-      targetPath: kube.path()
-    },
-    // proxy to a jolokia instance
-    {
-      proto: kube.protocol(),
-      hostname: kube.hostname(),
-      port: kube.port(),
-      path: '/jolokia',
-      targetPath: '/hawtio/jolokia'
-    }
-    */
     ],
     staticAssets: [{
       path: '/hawtio',
@@ -209,9 +185,8 @@ gulp.task('connect', ['watch'], function() {
       enabled: true
     }
   });
-  hawtio.use('/', function(req, res, next) {
-    var path = req.originalUrl;
-    if (!s.startsWith(path, '/hawtio/')) {
+  hawtio.use('/', (req, res, next) => {
+    if (!s.startsWith(req.originalUrl, '/hawtio/')) {
       res.redirect('/hawtio/');
     } else {
       next();
@@ -232,22 +207,7 @@ gulp.task('connect', ['watch'], function() {
       res.end(`File ${file} does not exist in dependencies`);
     }
   });
-  /*
-   * Example middleware that returns a 404 for templates
-   * as they're already embedded in the js
-  hawtio.use('/', function(req, res, next) {
-          var path = req.originalUrl;
-          // avoid returning these files, they should get pulled from js
-          if (s.startsWith(path, '/plugins/') && s.endsWith(path, 'html')) {
-            console.log("returning 404 for: ", path);
-            res.statusCode = 404;
-            res.end();
-          } else {
-            console.log("allowing: ", path);
-            next();
-          }
-        });
-        */
+
   hawtio.listen(function(server) {
     var host = server.address().address;
     var port = server.address().port;
