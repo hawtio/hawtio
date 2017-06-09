@@ -41,6 +41,7 @@
     "gulp-usemin": "~0.3.0",
     "gulp-watch": "^3.0.0",
     "hawtio-node-backend": "^2.0.0",
+    "run-sequence": "^1.2.2",
     "through2": "^2.0.0",
     "tslint": "^4.0.0",
     "typescript": "^2.0.0",

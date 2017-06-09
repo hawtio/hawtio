@@ -5,6 +5,7 @@ var gulp = require('gulp'),
     map = require('vinyl-map'),
     fs = require('fs'),
     path = require('path'),
+    sequence = require('run-sequence'),
     size = require('gulp-size'),
     uri = require('urijs'),
     s = require('underscore.string'),
@@ -144,8 +145,8 @@ gulp.task('concat', ['template'], function() {
     .pipe(gulp.dest(config.dist));
 });
 
-gulp.task('clean', ['concat'], function() {
-  return gulp.src(['templates.js', 'compiled.js'], { read: false })
+gulp.task('clean', function() {
+  return gulp.src(['templates.js', 'compiled.js', 'target/site/'], { read: false })
     .pipe(plugins.clean());
 });
 
@@ -267,14 +268,14 @@ gulp.task('site-fonts', () =>
     .pipe(gulp.dest('target/site/fonts/', { overwrite: false }))
 );
 
-gulp.task('site-files', ['site-fonts'], function() {
+gulp.task('site-files', function() {
   // in case there are hawtio-console-assembly specific images
   return gulp.src(['images/**', 'img/**'], { base: '.' })
     .pipe(plugins.debug({ title: 'site files' }))
     .pipe(gulp.dest('target/site'));
 });
 
-gulp.task('usemin', ['site-files'], function() {
+gulp.task('usemin', function() {
   return gulp.src('index.html')
     .pipe(plugins.usemin({
       css: [plugins.cleanCss(), 'concat'],
@@ -296,13 +297,13 @@ gulp.task('usemin', ['site-files'], function() {
     .pipe(gulp.dest('target/site'));
 });
 
-gulp.task('404', ['usemin', 'site-files'], function() {
+gulp.task('404', ['usemin'], function() {
   return gulp.src('target/site/index.html')
     .pipe(plugins.rename('404.html'))
     .pipe(gulp.dest('target/site'));
 });
 
-gulp.task('copy-images', ['404'], function() {
+gulp.task('copy-images', function() {
   var dirs = fs.readdirSync('./libs');
   var patterns = [];
   dirs.forEach(function(dir) {
@@ -348,13 +349,10 @@ gulp.task('serve-site', function() {
     server.address().address, ':', server.address().port));
 });
 
-gulp.task('site', ['site-fonts', 'site-files', 'usemin', '404', 'copy-images']);
+gulp.task('build', callback => sequence(['bower', 'path-adjust', 'tsc', 'less', 'template', 'concat'], 'clean', callback));
 
-gulp.task('mvn', ['build', 'site']);
+gulp.task('site', callback => sequence('clean', ['site-fonts', 'site-files', 'usemin', '404', 'copy-images'], callback));
 
-gulp.task('build', ['bower', 'path-adjust', 'tsc', 'less', 'template', 'concat', 'clean']);
+gulp.task('mvn', callback => sequence('build', 'site'));
 
-gulp.task('default', ['connect']);
-
-
-
+gulp.task('default', callback => sequence('connect', callback));
