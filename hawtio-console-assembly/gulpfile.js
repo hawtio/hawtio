@@ -296,18 +296,21 @@ gulp.task('usemin', ['site-files'], function() {
     .pipe(gulp.dest('target/site'));
 });
 
-gulp.task('site', ['usemin'], function() {
-  gulp.src('target/site/index.html')
+gulp.task('404', ['usemin', 'site-files'], function() {
+  return gulp.src('target/site/index.html')
     .pipe(plugins.rename('404.html'))
     .pipe(gulp.dest('target/site'));
+});
+
+gulp.task('copy-images', ['404'], function() {
   var dirs = fs.readdirSync('./libs');
   var patterns = [];
   dirs.forEach(function(dir) {
-    var path = './libs/' + dir + "/img";
+    var path = './libs/' + dir + '/img';
     try {
       if (fs.statSync(path).isDirectory()) {
-        console.log("found image dir: ", path);
-        var pattern = 'libs/' + dir + "/img/**";
+        console.log('found image dir: ', path);
+        var pattern = 'libs/' + dir + '/img/**';
         patterns.push(pattern);
       }
     } catch (e) {
@@ -344,6 +347,8 @@ gulp.task('serve-site', function() {
   return hawtio.listen(server => console.log('started from gulp file at ',
     server.address().address, ':', server.address().port));
 });
+
+gulp.task('site', ['site-fonts', 'site-files', 'usemin', '404', 'copy-images']);
 
 gulp.task('mvn', ['build', 'site']);
 
