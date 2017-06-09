@@ -278,14 +278,16 @@ gulp.task('site-files', function() {
 gulp.task('usemin', function() {
   return gulp.src('index.html')
     .pipe(plugins.usemin({
-      css: [plugins.cleanCss(), 'concat'],
-      js: [plugins.sourcemaps.init({
-            loadMaps: true
-          }),
-          'concat',
-          plugins.uglify(), 
-          plugins.rev(),
-          plugins.sourcemaps.write('./')]
+      css: [plugins.minifyCss({ keepBreaks: true }), 'concat'],
+      js: [
+        plugins.sourcemaps.init({
+          loadMaps: true
+        }),
+        'concat',
+        plugins.uglify(),
+        plugins.rev(),
+        plugins.sourcemaps.write('./')
+      ]
     }))
     .pipe(plugins.debug({ title: 'usemin' }))
     // adjust image paths here
