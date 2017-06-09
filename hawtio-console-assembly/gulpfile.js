@@ -217,6 +217,21 @@ gulp.task('connect', ['watch'], function() {
       next();
     }
   });
+
+  hawtio.use('/hawtio/img', (req, res) => {
+    // We may want to serve from other dependencies
+    const file = path.join(__dirname, 'libs', 'hawtio-integration', 'img', req.url);
+    if (fs.existsSync(file)) {
+      res.writeHead(200, {
+        'Content-Type'       : 'application/octet-stream',
+        'Content-Disposition': 'attachment; filename=' + file
+      });
+      fs.createReadStream(file).pipe(res);
+    } else {
+      res.writeHead(400, {'Content-Type': 'text/plain'});
+      res.end(`File ${file} does not exist in dependencies`);
+    }
+  });
   /*
    * Example middleware that returns a 404 for templates
    * as they're already embedded in the js
