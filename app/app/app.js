@@ -10955,6 +10955,597 @@ var Apm;
     }]);
     hawtioPluginLoader.addModule(Apm.pluginName);
 })(Apm || (Apm = {}));
+var Forms;
+(function (Forms) {
+    Forms.log = Logger.get("Forms");
+    function defaultValues(entity, schema) {
+        if (entity && schema) {
+            angular.forEach(schema.properties, function (property, key) {
+                var defaultValue = property.default;
+                if (defaultValue && !entity[key]) {
+                    console.log("===== defaulting value " + defaultValue + " into entity[" + key + "]");
+                    entity[key] = defaultValue;
+                }
+            });
+        }
+    }
+    Forms.defaultValues = defaultValues;
+    function resolveTypeNameAlias(type, schema) {
+        if (type && schema) {
+            var alias = lookupDefinition(type, schema);
+            if (alias) {
+                var realType = alias["type"];
+                if (realType) {
+                    type = realType;
+                }
+            }
+        }
+        return type;
+    }
+    Forms.resolveTypeNameAlias = resolveTypeNameAlias;
+    function isJsonType(name, schema, typeName) {
+        var definition = lookupDefinition(name, schema);
+        while (definition) {
+            var extendsTypes = Core.pathGet(definition, ["extends", "type"]);
+            if (extendsTypes) {
+                if (typeName === extendsTypes) {
+                    return true;
+                }
+                else {
+                    definition = lookupDefinition(extendsTypes, schema);
+                }
+            }
+            else {
+                return false;
+            }
+        }
+        return false;
+    }
+    Forms.isJsonType = isJsonType;
+    function safeIdentifier(id) {
+        if (id) {
+            return id.replace(/-/g, "_");
+        }
+        return id;
+    }
+    Forms.safeIdentifier = safeIdentifier;
+    function lookupDefinition(name, schema) {
+        if (schema) {
+            var defs = schema.definitions;
+            if (defs) {
+                var answer = defs[name];
+                if (answer) {
+                    var fullSchema = answer["fullSchema"];
+                    if (fullSchema) {
+                        return fullSchema;
+                    }
+                    var extendsTypes = Core.pathGet(answer, ["extends", "type"]);
+                    if (extendsTypes) {
+                        fullSchema = angular.copy(answer);
+                        fullSchema.properties = fullSchema.properties || {};
+                        if (!angular.isArray(extendsTypes)) {
+                            extendsTypes = [extendsTypes];
+                        }
+                        angular.forEach(extendsTypes, function (extendType) {
+                            if (angular.isString(extendType)) {
+                                var extendDef = lookupDefinition(extendType, schema);
+                                var properties = Core.pathGet(extendDef, ["properties"]);
+                                if (properties) {
+                                    angular.forEach(properties, function (property, key) {
+                                        fullSchema.properties[key] = property;
+                                    });
+                                }
+                            }
+                        });
+                        answer["fullSchema"] = fullSchema;
+                        return fullSchema;
+                    }
+                }
+                return answer;
+            }
+        }
+        return null;
+    }
+    Forms.lookupDefinition = lookupDefinition;
+    function findArrayItemsSchema(property, schema) {
+        var items = null;
+        if (property && schema) {
+            items = property.items;
+            if (items) {
+                var typeName = items["type"];
+                if (typeName) {
+                    var definition = lookupDefinition(typeName, schema);
+                    if (definition) {
+                        return definition;
+                    }
+                }
+            }
+            var additionalProperties = property.additionalProperties;
+            if (additionalProperties) {
+                if (additionalProperties["$ref"] === "#") {
+                    return schema;
+                }
+            }
+        }
+        return items;
+    }
+    Forms.findArrayItemsSchema = findArrayItemsSchema;
+    function isObjectType(definition) {
+        var typeName = Core.pathGet(definition, "type");
+        return typeName && "object" === typeName;
+    }
+    Forms.isObjectType = isObjectType;
+    function isKind(definition, kind) {
+        var kindName = Core.pathGet(definition, "kind");
+        return kindName && kind === kindName;
+    }
+    Forms.isKind = isKind;
+    function isArrayOrNestedObject(property, schema) {
+        if (property) {
+            var propType = resolveTypeNameAlias(property["type"], schema);
+            if (propType) {
+                if (propType === "object" || propType === "array") {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    Forms.isArrayOrNestedObject = isArrayOrNestedObject;
+    function configure(config, scopeConfig, attrs) {
+        if (angular.isDefined(scopeConfig)) {
+            config = angular.extend(config, scopeConfig);
+        }
+        return angular.extend(config, attrs);
+    }
+    Forms.configure = configure;
+    function getControlGroup(config, arg, id) {
+        var rc = angular.element('<div class="' + config.controlgroupclass + '"></div>');
+        if (angular.isDefined(arg.description)) {
+            rc.attr('title', arg.description);
+        }
+        if (config['properties'] && config['properties'][id]) {
+            var elementConfig = config['properties'][id];
+            if (elementConfig && 'control-attributes' in elementConfig) {
+                angular.forEach(elementConfig['control-attributes'], function (value, key) {
+                    rc.attr(key, value);
+                });
+            }
+        }
+        return rc;
+    }
+    Forms.getControlGroup = getControlGroup;
+    function getLabel(config, arg, label, required) {
+        if (required === void 0) { required = false; }
+        if (required) {
+            return angular.element('<label class="strong ' + config.labelclass + '">' + label + ': </label>');
+        }
+        else {
+            return angular.element('<label class="' + config.labelclass + '">' + label + ': </label>');
+        }
+    }
+    Forms.getLabel = getLabel;
+    function getControlDiv(config) {
+        return angular.element('<div class="' + config.controlclass + '"></div>');
+    }
+    Forms.getControlDiv = getControlDiv;
+    function getHelpSpan(config, arg, id, property) {
+        if (property === void 0) { property = null; }
+        var help = Core.pathGet(config.data, ['properties', id, 'help']);
+        if (Core.isBlank(help)) {
+            help = Core.pathGet(config.data, ['properties', id, 'description']);
+        }
+        if (Core.isBlank(help) && angular.isDefined(property)) {
+            help = Core.pathGet(property, ['help']);
+            if (Core.isBlank(help)) {
+                help = Core.pathGet(property, ['description']);
+            }
+        }
+        var show = config.showhelp || "true";
+        if (!Core.isBlank(help)) {
+            return angular.element('<span class="help-block" ng-show="' + show + '">' + help + '</span>');
+        }
+        else {
+            return angular.element('<span class="help-block"></span>');
+        }
+    }
+    Forms.getHelpSpan = getHelpSpan;
+})(Forms || (Forms = {}));
+var Camel;
+(function (Camel) {
+    Camel.endpointCategories = {
+        bigdata: {
+            label: "Big Data",
+            endpoints: ["hdfs", "hbase", "lucene", "solr"],
+            endpointIcon: "/img/icons/camel/endpointRepository24.png"
+        },
+        database: {
+            label: "Database",
+            endpoints: ["couchdb", "elasticsearch", "hbase", "jdbc", "jpa", "hibernate", "mongodb", "mybatis", "sql"],
+            endpointIcon: "/img/icons/camel/endpointRepository24.png"
+        },
+        cloud: {
+            label: "Cloud",
+            endpoints: [
+                "aws-cw",
+                "aws-ddb",
+                "aws-sdb",
+                "aws-ses",
+                "aws-sns",
+                "aws-sqs",
+                "aws-s3",
+                "gauth",
+                "ghhtp",
+                "glogin",
+                "gtask",
+                "jclouds"
+            ]
+        },
+        core: {
+            label: "Core",
+            endpoints: ["bean", "direct", "seda"]
+        },
+        messaging: {
+            label: "Messaging",
+            endpoints: ["jms", "activemq", "amqp", "cometd", "cometds", "mqtt", "netty", "vertx", "websocket"],
+            endpointIcon: "/img/icons/camel/endpointQueue24.png"
+        },
+        mobile: {
+            label: "Mobile",
+            endpoints: ["apns"]
+        },
+        sass: {
+            label: "SaaS",
+            endpoints: ["salesforce", "sap-netweaver"]
+        },
+        social: {
+            label: "Social",
+            endpoints: ["atom", "facebook", "irc", "ircs", "rss", "smpp", "twitter", "weather"]
+        },
+        storage: {
+            label: "Storage",
+            endpointIcon: "/img/icons/camel/endpointFolder24.png",
+            endpoints: ["file", "ftp", "sftp", "scp", "jsch"]
+        },
+        template: {
+            label: "Templating",
+            endpoints: ["freemarker", "velocity", "xquery", "xslt", "scalate", "string-template"]
+        }
+    };
+    Camel.endpointToCategory = {};
+    Camel.endpointIcon = "/img/icons/camel/endpoint24.png";
+    Camel.endpointConfigurations = {
+        activemq: {
+            icon: "/img/icons/camel/endpoints/activemq24.png"
+        },
+        atom: {
+            icon: "/img/icons/camel/endpoints/atom24.png"
+        },
+        bean: {
+            icon: "/img/icons/camel/endpoints/bean24.png"
+        },
+        cxf: {
+            icon: "/img/icons/camel/endpoints/cxf24.png"
+        },
+        cxfrs: {
+            icon: "/img/icons/camel/endpoints/cxfrs24.png"
+        },
+        ejb: {
+            icon: "/img/icons/camel/endpoints/ejb24.png"
+        },
+        facebook: {
+            icon: "/img/icons/camel/endpoints/facebook24.jpg"
+        },
+        file: {
+            icon: "/img/icons/camel/endpoints/file24.png"
+        },
+        ftp: {
+            icon: "/img/icons/camel/endpoints/ftp24.png"
+        },
+        ftps: {
+            icon: "/img/icons/camel/endpoints/ftps24.png"
+        },
+        imap: {
+            icon: "/img/icons/camel/endpoints/imap24.png"
+        },
+        imaps: {
+            icon: "/img/icons/camel/endpoints/imaps24.png"
+        },
+        jdbc: {
+            icon: "/img/icons/camel/endpoints/jdbc24.png"
+        },
+        jms: {
+            icon: "/img/icons/camel/endpoints/jms24.png"
+        },
+        language: {
+            icon: "/img/icons/camel/endpoints/language24.png"
+        },
+        linkedin: {
+            icon: "/img/icons/camel/endpoints/linkedin24.png"
+        },
+        log: {
+            icon: "/img/icons/camel/endpoints/log24.png"
+        },
+        mqtt: {
+            icon: "/img/icons/camel/endpoints/mqtt24.png"
+        },
+        pop3: {
+            icon: "/img/icons/camel/endpoints/pop324.png"
+        },
+        pop3s: {
+            icon: "/img/icons/camel/endpoints/pop3s24.png"
+        },
+        quartz: {
+            icon: "/img/icons/camel/endpoints/quartz24.png"
+        },
+        quartz2: {
+            icon: "/img/icons/camel/endpoints/quartz224.png"
+        },
+        rss: {
+            icon: "/img/icons/camel/endpoints/rss24.png"
+        },
+        salesforce: {
+            icon: "/img/icons/camel/endpoints/salesForce24.png"
+        },
+        sap: {
+            icon: "/img/icons/camel/endpoints/SAP24.png"
+        },
+        "sap-netweaver": {
+            icon: "/img/icons/camel/endpoints/SAPNetweaver24.jpg"
+        },
+        servlet: {
+            icon: "/img/icons/camel/endpoints/servlet24.png"
+        },
+        sftp: {
+            icon: "/img/icons/camel/endpoints/sftp24.png"
+        },
+        smtp: {
+            icon: "/img/icons/camel/endpoints/smtp24.png"
+        },
+        smtps: {
+            icon: "/img/icons/camel/endpoints/smtps24.png"
+        },
+        snmp: {
+            icon: "/img/icons/camel/endpoints/snmp24.png"
+        },
+        sql: {
+            icon: "/img/icons/camel/endpoints/sql24.png"
+        },
+        timer: {
+            icon: "/img/icons/camel/endpoints/timer24.png"
+        },
+        twitter: {
+            icon: "/img/icons/camel/endpoints/twitter24.png"
+        },
+        weather: {
+            icon: "/img/icons/camel/endpoints/weather24.jpg"
+        },
+        xslt: {
+            icon: "/img/icons/camel/endpoints/xslt24.jpg"
+        }
+    };
+    Camel.endpointForms = {
+        file: {
+            tabs: {
+                'Options': ['*']
+            }
+        },
+        activemq: {
+            tabs: {
+                'Connection': ['clientId', 'transacted', 'transactedInOut', 'transactionName', 'transactionTimeout'],
+                'Producer': ['timeToLive', 'priority', 'allowNullBody', 'pubSubNoLocal', 'preserveMessageQos'],
+                'Consumer': ['concurrentConsumers', 'acknowledgementModeName', 'selector', 'receiveTimeout'],
+                'Reply': ['replyToDestination', 'replyToDeliveryPersistent', 'replyToCacheLevelName', 'replyToDestinationSelectorName'],
+                'Options': ['*']
+            }
+        }
+    };
+    Camel.endpointForms["jms"] = Camel.endpointForms.activemq;
+    angular.forEach(Camel.endpointCategories, function (category, catKey) {
+        category.id = catKey;
+        angular.forEach(category.endpoints, function (endpoint) {
+            Camel.endpointToCategory[endpoint] = category;
+        });
+    });
+    var camelModelTabExtensions = {
+        route: {
+            'Overview': ['id', 'description'],
+            'Advanced': ['*']
+        }
+    };
+    function getEndpointIcon(endpointName) {
+        var value = Camel.getEndpointConfig(endpointName, null);
+        var answer = Core.pathGet(value, ["icon"]);
+        if (!answer) {
+            var category = getEndpointCategory(endpointName);
+            answer = Core.pathGet(category, ["endpointIcon"]);
+        }
+        return answer || Camel.endpointIcon;
+    }
+    Camel.getEndpointIcon = getEndpointIcon;
+    function getEndpointConfig(endpointName, category) {
+        var answer = Camel.endpointConfigurations[endpointName];
+        if (!answer) {
+            answer = {};
+            Camel.endpointConfigurations[endpointName] = answer;
+        }
+        if (!answer.label) {
+            answer.label = endpointName;
+        }
+        if (!answer.icon) {
+            answer.icon = Core.pathGet(category, ["endpointIcon"]) || Camel.endpointIcon;
+        }
+        if (!answer.category) {
+            answer.category = category;
+        }
+        return answer;
+    }
+    Camel.getEndpointConfig = getEndpointConfig;
+    function getEndpointCategory(endpointName) {
+        return Camel.endpointToCategory[endpointName] || Camel.endpointCategories.core;
+    }
+    Camel.getEndpointCategory = getEndpointCategory;
+    function getConfiguredCamelModel() {
+        var schema = _apacheCamelModel;
+        var definitions = schema["definitions"];
+        if (definitions) {
+            angular.forEach(camelModelTabExtensions, function (tabs, name) {
+                var model = definitions[name];
+                if (model) {
+                    if (!model["tabs"]) {
+                        model["tabs"] = tabs;
+                    }
+                }
+            });
+        }
+        return schema;
+    }
+    Camel.getConfiguredCamelModel = getConfiguredCamelModel;
+    function initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia) {
+        $scope.selectedComponentName = null;
+        $scope.endpointParameters = {};
+        $scope.endpointPath = "";
+        $scope.schema = {
+            definitions: {}
+        };
+        $scope.jolokia = jolokia;
+        var versionId = $scope.branch;
+        var profileId = Fabric.pagePathToProfileId($scope.pageId);
+        if (profileId && versionId) {
+            Fabric.profileJolokia(jolokia, profileId, versionId, function (profileJolokia) {
+                if (!profileJolokia) {
+                    Camel.log.info("No container is running for profile " + profileId + " and version " + versionId + " so using current container for endpoint completion");
+                    profileJolokia = jolokia;
+                }
+                $scope.jolokia = profileJolokia;
+                $scope.profileWorkspace = null;
+                $scope.loadEndpointNames();
+            });
+        }
+        var silentOptions = { silent: true };
+        $scope.$watch('workspace.selection', function () {
+            $scope.loadEndpointNames();
+        });
+        $scope.$watch('selectedComponentName', function () {
+            if ($scope.selectedComponentName !== $scope.loadedComponentName) {
+                $scope.endpointParameters = {};
+                $scope.loadEndpointSchema($scope.selectedComponentName);
+                $scope.loadedComponentName = $scope.selectedComponentName;
+            }
+        });
+        $scope.endpointCompletions = function (completionText) {
+            var answer = null;
+            var mbean = findCamelContextMBean();
+            var componentName = $scope.selectedComponentName;
+            var endpointParameters = {};
+            if (mbean && componentName && completionText) {
+                answer = $scope.jolokia.execute(mbean, 'completeEndpointPath', componentName, endpointParameters, completionText, onSuccess(null, silentOptions));
+            }
+            return answer || [];
+        };
+        $scope.loadEndpointNames = function () {
+            $scope.componentNames = null;
+            var mbean = findCamelContextMBean();
+            if (mbean) {
+                $scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, { silent: true }));
+            }
+            else {
+                console.log("WARNING: No camel context mbean so cannot load component names");
+            }
+        };
+        $scope.loadEndpointSchema = function (componentName) {
+            var mbean = findCamelContextMBean();
+            if (mbean && componentName && componentName !== $scope.loadedEndpointSchema) {
+                $scope.selectedComponentName = componentName;
+                $scope.jolokia.execute(mbean, 'componentParameterJsonSchema', componentName, onSuccess(onEndpointSchema, silentOptions));
+            }
+        };
+        function onComponents(response) {
+            $scope.componentNames = response;
+            Camel.log.info("onComponents: " + response);
+            $scope.hasComponentNames = $scope.componentNames ? true : false;
+            Core.$apply($scope);
+        }
+        function onEndpointSchema(response) {
+            if (response) {
+                try {
+                    var json = JSON.parse(response);
+                    var endpointName = $scope.selectedComponentName;
+                    configureEndpointSchema(endpointName, json);
+                    $scope.endpointSchema = json;
+                    $scope.schema.definitions[endpointName] = json;
+                    $scope.loadedEndpointSchema = endpointName;
+                    Core.$apply($scope);
+                }
+                catch (e) {
+                    console.log("Failed to parse JSON " + e);
+                    console.log("JSON: " + response);
+                }
+            }
+        }
+        function configureEndpointSchema(endpointName, json) {
+            console.log("======== configuring schema for " + endpointName);
+            var config = Camel.endpointForms[endpointName];
+            if (config && json) {
+                if (config.tabs) {
+                    json.tabs = config.tabs;
+                }
+            }
+        }
+        function findCamelContextMBean() {
+            var profileWorkspace = $scope.profileWorkspace;
+            if (!profileWorkspace) {
+                var remoteJolokia = $scope.jolokia;
+                if (remoteJolokia) {
+                    profileWorkspace = Core.createRemoteWorkspace(remoteJolokia, workspace.jolokiaStatus, $location, localStorage);
+                    $scope.profileWorkspace = profileWorkspace;
+                }
+            }
+            var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
+            if (!profileWorkspace) {
+                Camel.log.info("No profileWorkspace found so defaulting it to workspace for now");
+                profileWorkspace = workspace;
+            }
+            var componentName = $scope.selectedComponentName;
+            var selectedCamelContextId;
+            var selectedRouteId;
+            if (angular.isDefined($scope.camelSelectionDetails)) {
+                selectedCamelContextId = $scope.camelSelectionDetails.selectedCamelContextId;
+                selectedRouteId = $scope.camelSelectionDetails.selectedRouteId;
+            }
+            console.log("==== componentName " + componentName + " selectedCamelContextId: " + selectedCamelContextId + " selectedRouteId: " + selectedRouteId);
+            var contextsById = Camel.camelContextMBeansById(profileWorkspace, camelJmxDomain);
+            if (selectedCamelContextId) {
+                var mbean = Core.pathGet(contextsById, [selectedCamelContextId, "mbean"]);
+                if (mbean) {
+                    return mbean;
+                }
+            }
+            if (selectedRouteId) {
+                var map = Camel.camelContextMBeansByRouteId(profileWorkspace, camelJmxDomain);
+                var mbean = Core.pathGet(map, [selectedRouteId, "mbean"]);
+                if (mbean) {
+                    return mbean;
+                }
+            }
+            if (componentName) {
+                var map = Camel.camelContextMBeansByComponentName(profileWorkspace, camelJmxDomain);
+                var mbean = Core.pathGet(map, [componentName, "mbean"]);
+                if (mbean) {
+                    return mbean;
+                }
+            }
+            var answer = null;
+            angular.forEach(contextsById, function (details, id) {
+                var mbean = details.mbean;
+                if (!answer && mbean)
+                    answer = mbean;
+            });
+            return answer;
+        }
+    }
+    Camel.initEndpointChooserScope = initEndpointChooserScope;
+})(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
     Camel.log = Logger.get("Camel");
@@ -13856,401 +14447,6 @@ var Camel;
 })(Camel || (Camel = {}));
 var Camel;
 (function (Camel) {
-    Camel.endpointCategories = {
-        bigdata: {
-            label: "Big Data",
-            endpoints: ["hdfs", "hbase", "lucene", "solr"],
-            endpointIcon: "/img/icons/camel/endpointRepository24.png"
-        },
-        database: {
-            label: "Database",
-            endpoints: ["couchdb", "elasticsearch", "hbase", "jdbc", "jpa", "hibernate", "mongodb", "mybatis", "sql"],
-            endpointIcon: "/img/icons/camel/endpointRepository24.png"
-        },
-        cloud: {
-            label: "Cloud",
-            endpoints: [
-                "aws-cw",
-                "aws-ddb",
-                "aws-sdb",
-                "aws-ses",
-                "aws-sns",
-                "aws-sqs",
-                "aws-s3",
-                "gauth",
-                "ghhtp",
-                "glogin",
-                "gtask",
-                "jclouds"
-            ]
-        },
-        core: {
-            label: "Core",
-            endpoints: ["bean", "direct", "seda"]
-        },
-        messaging: {
-            label: "Messaging",
-            endpoints: ["jms", "activemq", "amqp", "cometd", "cometds", "mqtt", "netty", "vertx", "websocket"],
-            endpointIcon: "/img/icons/camel/endpointQueue24.png"
-        },
-        mobile: {
-            label: "Mobile",
-            endpoints: ["apns"]
-        },
-        sass: {
-            label: "SaaS",
-            endpoints: ["salesforce", "sap-netweaver"]
-        },
-        social: {
-            label: "Social",
-            endpoints: ["atom", "facebook", "irc", "ircs", "rss", "smpp", "twitter", "weather"]
-        },
-        storage: {
-            label: "Storage",
-            endpointIcon: "/img/icons/camel/endpointFolder24.png",
-            endpoints: ["file", "ftp", "sftp", "scp", "jsch"]
-        },
-        template: {
-            label: "Templating",
-            endpoints: ["freemarker", "velocity", "xquery", "xslt", "scalate", "string-template"]
-        }
-    };
-    Camel.endpointToCategory = {};
-    Camel.endpointIcon = "/img/icons/camel/endpoint24.png";
-    Camel.endpointConfigurations = {
-        activemq: {
-            icon: "/img/icons/camel/endpoints/activemq24.png"
-        },
-        atom: {
-            icon: "/img/icons/camel/endpoints/atom24.png"
-        },
-        bean: {
-            icon: "/img/icons/camel/endpoints/bean24.png"
-        },
-        cxf: {
-            icon: "/img/icons/camel/endpoints/cxf24.png"
-        },
-        cxfrs: {
-            icon: "/img/icons/camel/endpoints/cxfrs24.png"
-        },
-        ejb: {
-            icon: "/img/icons/camel/endpoints/ejb24.png"
-        },
-        facebook: {
-            icon: "/img/icons/camel/endpoints/facebook24.jpg"
-        },
-        file: {
-            icon: "/img/icons/camel/endpoints/file24.png"
-        },
-        ftp: {
-            icon: "/img/icons/camel/endpoints/ftp24.png"
-        },
-        ftps: {
-            icon: "/img/icons/camel/endpoints/ftps24.png"
-        },
-        imap: {
-            icon: "/img/icons/camel/endpoints/imap24.png"
-        },
-        imaps: {
-            icon: "/img/icons/camel/endpoints/imaps24.png"
-        },
-        jdbc: {
-            icon: "/img/icons/camel/endpoints/jdbc24.png"
-        },
-        jms: {
-            icon: "/img/icons/camel/endpoints/jms24.png"
-        },
-        language: {
-            icon: "/img/icons/camel/endpoints/language24.png"
-        },
-        linkedin: {
-            icon: "/img/icons/camel/endpoints/linkedin24.png"
-        },
-        log: {
-            icon: "/img/icons/camel/endpoints/log24.png"
-        },
-        mqtt: {
-            icon: "/img/icons/camel/endpoints/mqtt24.png"
-        },
-        pop3: {
-            icon: "/img/icons/camel/endpoints/pop324.png"
-        },
-        pop3s: {
-            icon: "/img/icons/camel/endpoints/pop3s24.png"
-        },
-        quartz: {
-            icon: "/img/icons/camel/endpoints/quartz24.png"
-        },
-        quartz2: {
-            icon: "/img/icons/camel/endpoints/quartz224.png"
-        },
-        rss: {
-            icon: "/img/icons/camel/endpoints/rss24.png"
-        },
-        salesforce: {
-            icon: "/img/icons/camel/endpoints/salesForce24.png"
-        },
-        sap: {
-            icon: "/img/icons/camel/endpoints/SAP24.png"
-        },
-        "sap-netweaver": {
-            icon: "/img/icons/camel/endpoints/SAPNetweaver24.jpg"
-        },
-        servlet: {
-            icon: "/img/icons/camel/endpoints/servlet24.png"
-        },
-        sftp: {
-            icon: "/img/icons/camel/endpoints/sftp24.png"
-        },
-        smtp: {
-            icon: "/img/icons/camel/endpoints/smtp24.png"
-        },
-        smtps: {
-            icon: "/img/icons/camel/endpoints/smtps24.png"
-        },
-        snmp: {
-            icon: "/img/icons/camel/endpoints/snmp24.png"
-        },
-        sql: {
-            icon: "/img/icons/camel/endpoints/sql24.png"
-        },
-        timer: {
-            icon: "/img/icons/camel/endpoints/timer24.png"
-        },
-        twitter: {
-            icon: "/img/icons/camel/endpoints/twitter24.png"
-        },
-        weather: {
-            icon: "/img/icons/camel/endpoints/weather24.jpg"
-        },
-        xslt: {
-            icon: "/img/icons/camel/endpoints/xslt24.jpg"
-        }
-    };
-    Camel.endpointForms = {
-        file: {
-            tabs: {
-                'Options': ['*']
-            }
-        },
-        activemq: {
-            tabs: {
-                'Connection': ['clientId', 'transacted', 'transactedInOut', 'transactionName', 'transactionTimeout'],
-                'Producer': ['timeToLive', 'priority', 'allowNullBody', 'pubSubNoLocal', 'preserveMessageQos'],
-                'Consumer': ['concurrentConsumers', 'acknowledgementModeName', 'selector', 'receiveTimeout'],
-                'Reply': ['replyToDestination', 'replyToDeliveryPersistent', 'replyToCacheLevelName', 'replyToDestinationSelectorName'],
-                'Options': ['*']
-            }
-        }
-    };
-    Camel.endpointForms["jms"] = Camel.endpointForms.activemq;
-    angular.forEach(Camel.endpointCategories, function (category, catKey) {
-        category.id = catKey;
-        angular.forEach(category.endpoints, function (endpoint) {
-            Camel.endpointToCategory[endpoint] = category;
-        });
-    });
-    var camelModelTabExtensions = {
-        route: {
-            'Overview': ['id', 'description'],
-            'Advanced': ['*']
-        }
-    };
-    function getEndpointIcon(endpointName) {
-        var value = Camel.getEndpointConfig(endpointName, null);
-        var answer = Core.pathGet(value, ["icon"]);
-        if (!answer) {
-            var category = getEndpointCategory(endpointName);
-            answer = Core.pathGet(category, ["endpointIcon"]);
-        }
-        return answer || Camel.endpointIcon;
-    }
-    Camel.getEndpointIcon = getEndpointIcon;
-    function getEndpointConfig(endpointName, category) {
-        var answer = Camel.endpointConfigurations[endpointName];
-        if (!answer) {
-            answer = {};
-            Camel.endpointConfigurations[endpointName] = answer;
-        }
-        if (!answer.label) {
-            answer.label = endpointName;
-        }
-        if (!answer.icon) {
-            answer.icon = Core.pathGet(category, ["endpointIcon"]) || Camel.endpointIcon;
-        }
-        if (!answer.category) {
-            answer.category = category;
-        }
-        return answer;
-    }
-    Camel.getEndpointConfig = getEndpointConfig;
-    function getEndpointCategory(endpointName) {
-        return Camel.endpointToCategory[endpointName] || Camel.endpointCategories.core;
-    }
-    Camel.getEndpointCategory = getEndpointCategory;
-    function getConfiguredCamelModel() {
-        var schema = _apacheCamelModel;
-        var definitions = schema["definitions"];
-        if (definitions) {
-            angular.forEach(camelModelTabExtensions, function (tabs, name) {
-                var model = definitions[name];
-                if (model) {
-                    if (!model["tabs"]) {
-                        model["tabs"] = tabs;
-                    }
-                }
-            });
-        }
-        return schema;
-    }
-    Camel.getConfiguredCamelModel = getConfiguredCamelModel;
-    function initEndpointChooserScope($scope, $location, localStorage, workspace, jolokia) {
-        $scope.selectedComponentName = null;
-        $scope.endpointParameters = {};
-        $scope.endpointPath = "";
-        $scope.schema = {
-            definitions: {}
-        };
-        $scope.jolokia = jolokia;
-        var versionId = $scope.branch;
-        var profileId = Fabric.pagePathToProfileId($scope.pageId);
-        if (profileId && versionId) {
-            Fabric.profileJolokia(jolokia, profileId, versionId, function (profileJolokia) {
-                if (!profileJolokia) {
-                    Camel.log.info("No container is running for profile " + profileId + " and version " + versionId + " so using current container for endpoint completion");
-                    profileJolokia = jolokia;
-                }
-                $scope.jolokia = profileJolokia;
-                $scope.profileWorkspace = null;
-                $scope.loadEndpointNames();
-            });
-        }
-        var silentOptions = { silent: true };
-        $scope.$watch('workspace.selection', function () {
-            $scope.loadEndpointNames();
-        });
-        $scope.$watch('selectedComponentName', function () {
-            if ($scope.selectedComponentName !== $scope.loadedComponentName) {
-                $scope.endpointParameters = {};
-                $scope.loadEndpointSchema($scope.selectedComponentName);
-                $scope.loadedComponentName = $scope.selectedComponentName;
-            }
-        });
-        $scope.endpointCompletions = function (completionText) {
-            var answer = null;
-            var mbean = findCamelContextMBean();
-            var componentName = $scope.selectedComponentName;
-            var endpointParameters = {};
-            if (mbean && componentName && completionText) {
-                answer = $scope.jolokia.execute(mbean, 'completeEndpointPath', componentName, endpointParameters, completionText, onSuccess(null, silentOptions));
-            }
-            return answer || [];
-        };
-        $scope.loadEndpointNames = function () {
-            $scope.componentNames = null;
-            var mbean = findCamelContextMBean();
-            if (mbean) {
-                $scope.jolokia.execute(mbean, 'findComponentNames', onSuccess(onComponents, { silent: true }));
-            }
-            else {
-                console.log("WARNING: No camel context mbean so cannot load component names");
-            }
-        };
-        $scope.loadEndpointSchema = function (componentName) {
-            var mbean = findCamelContextMBean();
-            if (mbean && componentName && componentName !== $scope.loadedEndpointSchema) {
-                $scope.selectedComponentName = componentName;
-                $scope.jolokia.execute(mbean, 'componentParameterJsonSchema', componentName, onSuccess(onEndpointSchema, silentOptions));
-            }
-        };
-        function onComponents(response) {
-            $scope.componentNames = response;
-            Camel.log.info("onComponents: " + response);
-            $scope.hasComponentNames = $scope.componentNames ? true : false;
-            Core.$apply($scope);
-        }
-        function onEndpointSchema(response) {
-            if (response) {
-                try {
-                    var json = JSON.parse(response);
-                    var endpointName = $scope.selectedComponentName;
-                    configureEndpointSchema(endpointName, json);
-                    $scope.endpointSchema = json;
-                    $scope.schema.definitions[endpointName] = json;
-                    $scope.loadedEndpointSchema = endpointName;
-                    Core.$apply($scope);
-                }
-                catch (e) {
-                    console.log("Failed to parse JSON " + e);
-                    console.log("JSON: " + response);
-                }
-            }
-        }
-        function configureEndpointSchema(endpointName, json) {
-            console.log("======== configuring schema for " + endpointName);
-            var config = Camel.endpointForms[endpointName];
-            if (config && json) {
-                if (config.tabs) {
-                    json.tabs = config.tabs;
-                }
-            }
-        }
-        function findCamelContextMBean() {
-            var profileWorkspace = $scope.profileWorkspace;
-            if (!profileWorkspace) {
-                var remoteJolokia = $scope.jolokia;
-                if (remoteJolokia) {
-                    profileWorkspace = Core.createRemoteWorkspace(remoteJolokia, workspace.jolokiaStatus, $location, localStorage);
-                    $scope.profileWorkspace = profileWorkspace;
-                }
-            }
-            var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
-            if (!profileWorkspace) {
-                Camel.log.info("No profileWorkspace found so defaulting it to workspace for now");
-                profileWorkspace = workspace;
-            }
-            var componentName = $scope.selectedComponentName;
-            var selectedCamelContextId;
-            var selectedRouteId;
-            if (angular.isDefined($scope.camelSelectionDetails)) {
-                selectedCamelContextId = $scope.camelSelectionDetails.selectedCamelContextId;
-                selectedRouteId = $scope.camelSelectionDetails.selectedRouteId;
-            }
-            console.log("==== componentName " + componentName + " selectedCamelContextId: " + selectedCamelContextId + " selectedRouteId: " + selectedRouteId);
-            var contextsById = Camel.camelContextMBeansById(profileWorkspace, camelJmxDomain);
-            if (selectedCamelContextId) {
-                var mbean = Core.pathGet(contextsById, [selectedCamelContextId, "mbean"]);
-                if (mbean) {
-                    return mbean;
-                }
-            }
-            if (selectedRouteId) {
-                var map = Camel.camelContextMBeansByRouteId(profileWorkspace, camelJmxDomain);
-                var mbean = Core.pathGet(map, [selectedRouteId, "mbean"]);
-                if (mbean) {
-                    return mbean;
-                }
-            }
-            if (componentName) {
-                var map = Camel.camelContextMBeansByComponentName(profileWorkspace, camelJmxDomain);
-                var mbean = Core.pathGet(map, [componentName, "mbean"]);
-                if (mbean) {
-                    return mbean;
-                }
-            }
-            var answer = null;
-            angular.forEach(contextsById, function (details, id) {
-                var mbean = details.mbean;
-                if (!answer && mbean)
-                    answer = mbean;
-            });
-            return answer;
-        }
-    }
-    Camel.initEndpointChooserScope = initEndpointChooserScope;
-})(Camel || (Camel = {}));
-var Camel;
-(function (Camel) {
     Camel._module.controller("Camel.EndpointRuntimeRegistryController", ["$scope", "$location", "workspace", "jolokia", "localStorage", function ($scope, $location, workspace, jolokia, localStorage) {
         var camelJmxDomain = localStorage['camelJmxDomain'] || "org.apache.camel";
         $scope.workspace = workspace;
@@ -16140,6 +16336,239 @@ var Camel;
         }
     }]);
 })(Camel || (Camel = {}));
+var Core;
+(function (Core) {
+    function d3ForceGraph(scope, nodes, links, canvasElement) {
+        if (scope.graphForce) {
+            scope.graphForce.stop();
+        }
+        if (!canvasElement) {
+            canvasElement = $("#canvas")[0];
+        }
+        var canvasDiv = $(canvasElement);
+        canvasDiv.children("svg").remove();
+        if (nodes.length) {
+            var width = canvasDiv.parent().width();
+            var height = canvasDiv.parent().height();
+            if (height < 100) {
+                var offset = canvasDiv.offset();
+                height = $(document).height() - 5;
+                if (offset) {
+                    height -= offset['top'];
+                }
+            }
+            var svg = d3.select(canvasDiv[0]).append("svg").attr("width", width).attr("height", height);
+            var force = d3.layout.force().distance(100).charge(-120 * 10).linkDistance(50).size([width, height]);
+            scope.graphForce = force;
+            svg.append("svg:defs").selectAll("marker").data(["from"]).enter().append("svg:marker").attr("id", String).attr("viewBox", "0 -5 10 10").attr("refX", 25).attr("refY", -1.5).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("svg:path").attr("d", "M0,-5L10,0L0,5");
+            force.nodes(nodes).links(links).start();
+            var link = svg.selectAll(".link").data(links).enter().append("line").attr("class", "link");
+            link.attr("class", "link from");
+            link.attr("marker-end", "url(#from)");
+            var node = svg.selectAll(".node").data(nodes).enter().append("g").attr("class", "node").call(force.drag);
+            node.append("image").attr("xlink:href", function (d) {
+                return d.imageUrl;
+            }).attr("x", -15).attr("y", -15).attr("width", 30).attr("height", 30);
+            node.append("text").attr("dx", 20).attr("dy", ".35em").text(function (d) {
+                return d.label;
+            });
+            force.on("tick", function () {
+                link.attr("x1", function (d) {
+                    return d.source.x;
+                }).attr("y1", function (d) {
+                    return d.source.y;
+                }).attr("x2", function (d) {
+                    return d.target.x;
+                }).attr("y2", function (d) {
+                    return d.target.y;
+                });
+                node.attr("transform", function (d) {
+                    return "translate(" + d.x + "," + d.y + ")";
+                });
+            });
+        }
+    }
+    Core.d3ForceGraph = d3ForceGraph;
+    function createGraphStates(nodes, links, transitions) {
+        var stateKeys = {};
+        nodes.forEach(function (node) {
+            var idx = node.id;
+            if (idx === undefined) {
+                console.log("No node found for node " + JSON.stringify(node));
+            }
+            else {
+                if (node.edges === undefined)
+                    node.edges = [];
+                if (!node.label)
+                    node.label = "node " + idx;
+                stateKeys[idx] = node;
+            }
+        });
+        var states = d3.values(stateKeys);
+        links.forEach(function (d) {
+            var source = stateKeys[d.source];
+            var target = stateKeys[d.target];
+            if (source === undefined || target === undefined) {
+                console.log("Bad link!  " + source + " target " + target + " for " + d);
+            }
+            else {
+                var edge = { source: source, target: target };
+                transitions.push(edge);
+                source.edges.push(edge);
+                target.edges.push(edge);
+            }
+        });
+        return states;
+    }
+    Core.createGraphStates = createGraphStates;
+    function dagreLayoutGraph(nodes, links, width, height, svgElement, allowDrag, onClick) {
+        if (allowDrag === void 0) { allowDrag = false; }
+        if (onClick === void 0) { onClick = null; }
+        var nodePadding = 10;
+        var transitions = [];
+        var states = Core.createGraphStates(nodes, links, transitions);
+        function spline(e) {
+            var points = e.dagre.points.slice(0);
+            var source = dagre.util.intersectRect(e.source.dagre, points.length > 0 ? points[0] : e.source.dagre);
+            var target = dagre.util.intersectRect(e.target.dagre, points.length > 0 ? points[points.length - 1] : e.source.dagre);
+            points.unshift(source);
+            points.push(target);
+            return d3.svg.line().x(function (d) {
+                return d.x;
+            }).y(function (d) {
+                return d.y;
+            }).interpolate("linear")(points);
+        }
+        function translateEdge(e, dx, dy) {
+            e.dagre.points.forEach(function (p) {
+                p.x = Math.max(0, Math.min(svgBBox.width, p.x + dx));
+                p.y = Math.max(0, Math.min(svgBBox.height, p.y + dy));
+            });
+        }
+        var svg = svgElement ? d3.select(svgElement) : d3.select("svg");
+        if (svgElement) {
+            $(svgElement).children("g").remove();
+        }
+        $(svg).children("g").remove();
+        $("svg").children("g").remove();
+        var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
+        var nodes = svgGroup.selectAll("g .node").data(states).enter().append("g").attr("class", "node").attr("data-cid", function (d) {
+            return d.cid;
+        }).attr("id", function (d) {
+            return "node-" + d.label;
+        });
+        nodes.append("title").text(function (d) {
+            return d.tooltip || "";
+        });
+        var edges = svgGroup.selectAll("path .edge").data(transitions).enter().append("path").attr("class", "edge");
+        if (navigator.userAgent.match(/Trident.*rv[ :]*11\./) == null) {
+            edges.attr("marker-end", "url(#arrowhead)");
+        }
+        var rects = nodes.append("rect").attr("rx", "4").attr("ry", "4").attr("class", function (d) {
+            return d.type;
+        });
+        var images = nodes.append("image").attr("xlink:href", function (d) {
+            return d.imageUrl;
+        }).attr("x", -12).attr("y", -20).attr("height", 24).attr("width", 24);
+        var counters = nodes.append("text").attr("text-anchor", "end").attr("class", "counter").attr("x", 0).attr("dy", 0).text(_counterFunction);
+        var inflights = nodes.append("text").attr("text-anchor", "middle").attr("class", "inflight").attr("x", 10).attr("dy", -32).text(_inflightFunction);
+        var labels = nodes.append("text").attr("text-anchor", "middle").attr("x", 0);
+        labels.append("tspan").attr("x", 0).attr("dy", 28).text(function (d) {
+            return d.label;
+        });
+        var labelPadding = 12;
+        var minLabelwidth = 80;
+        labels.each(function (d) {
+            var bbox = this.getBBox();
+            d.bbox = bbox;
+            var width = bbox.width;
+            if (width < minLabelwidth) {
+                width = minLabelwidth;
+            }
+            d.width = width + 2 * nodePadding;
+            d.height = bbox.height + 2 * nodePadding + labelPadding;
+        });
+        rects.attr("x", function (d) {
+            return -(d.bbox.width / 2 + nodePadding);
+        }).attr("y", function (d) {
+            return -(d.bbox.height / 2 + nodePadding + (labelPadding / 2));
+        }).attr("width", function (d) {
+            return d.width;
+        }).attr("height", function (d) {
+            return d.height;
+        });
+        if (onClick != null) {
+            rects.on("click", onClick);
+        }
+        images.attr("x", function (d) {
+            return -(d.bbox.width) / 2;
+        });
+        labels.attr("x", function (d) {
+            return -d.bbox.width / 2;
+        }).attr("y", function (d) {
+            return -d.bbox.height / 2;
+        });
+        counters.attr("x", function (d) {
+            var w = d.bbox.width;
+            return w / 2;
+        });
+        dagre.layout().nodeSep(50).edgeSep(10).rankSep(50).nodes(states).edges(transitions).debugLevel(1).run();
+        nodes.attr("transform", function (d) {
+            return 'translate(' + d.dagre.x + ',' + d.dagre.y + ')';
+        });
+        edges.attr('id', function (e) {
+            return e.dagre.id;
+        }).attr("d", function (e) {
+            return spline(e);
+        });
+        var svgNode = svg.node();
+        if (svgNode) {
+            var svgBBox = svgNode.getBBox();
+            if (svgBBox) {
+                svg.attr("width", svgBBox.width + 10);
+                svg.attr("height", svgBBox.height + 10);
+            }
+        }
+        if (allowDrag) {
+            var nodeDrag = d3.behavior.drag().origin(function (d) {
+                return d.pos ? { x: d.pos.x, y: d.pos.y } : { x: d.dagre.x, y: d.dagre.y };
+            }).on('drag', function (d, i) {
+                var prevX = d.dagre.x, prevY = d.dagre.y;
+                d.dagre.x = Math.max(d.width / 2, Math.min(svgBBox.width - d.width / 2, d3.event.x));
+                d.dagre.y = Math.max(d.height / 2, Math.min(svgBBox.height - d.height / 2, d3.event.y));
+                d3.select(this).attr('transform', 'translate(' + d.dagre.x + ',' + d.dagre.y + ')');
+                var dx = d.dagre.x - prevX, dy = d.dagre.y - prevY;
+                d.edges.forEach(function (e) {
+                    translateEdge(e, dx, dy);
+                    d3.select('#' + e.dagre.id).attr('d', spline(e));
+                });
+            });
+            var edgeDrag = d3.behavior.drag().on('drag', function (d, i) {
+                translateEdge(d, d3.event.dx, d3.event.dy);
+                d3.select(this).attr('d', spline(d));
+            });
+            nodes.call(nodeDrag);
+            edges.call(edgeDrag);
+        }
+        return states;
+    }
+    Core.dagreLayoutGraph = dagreLayoutGraph;
+    function dagreUpdateGraphData(data) {
+        var svg = d3.select("svg");
+        svg.selectAll("text.counter").text(_counterFunction);
+        svg.selectAll("text.inflight").text(_inflightFunction);
+        svg.selectAll("g .node title").text(function (d) {
+            return d.tooltip || "";
+        });
+    }
+    Core.dagreUpdateGraphData = dagreUpdateGraphData;
+    function _counterFunction(d) {
+        return d.counter || "";
+    }
+    function _inflightFunction(d) {
+        return d.inflight || "";
+    }
+})(Core || (Core = {}));
 var Camel;
 (function (Camel) {
     Camel._module.controller("Camel.RouteController", ["$scope", "$rootScope", "$routeParams", "$element", "$timeout", "workspace", "$location", "jolokia", "localStorage", function ($scope, $rootScope, $routeParams, $element, $timeout, workspace, $location, jolokia, localStorage) {
@@ -18962,239 +19391,6 @@ var Core;
     Core._module.directive('hawtioFileUpload', function () {
         return new Core.FileUpload();
     });
-})(Core || (Core = {}));
-var Core;
-(function (Core) {
-    function d3ForceGraph(scope, nodes, links, canvasElement) {
-        if (scope.graphForce) {
-            scope.graphForce.stop();
-        }
-        if (!canvasElement) {
-            canvasElement = $("#canvas")[0];
-        }
-        var canvasDiv = $(canvasElement);
-        canvasDiv.children("svg").remove();
-        if (nodes.length) {
-            var width = canvasDiv.parent().width();
-            var height = canvasDiv.parent().height();
-            if (height < 100) {
-                var offset = canvasDiv.offset();
-                height = $(document).height() - 5;
-                if (offset) {
-                    height -= offset['top'];
-                }
-            }
-            var svg = d3.select(canvasDiv[0]).append("svg").attr("width", width).attr("height", height);
-            var force = d3.layout.force().distance(100).charge(-120 * 10).linkDistance(50).size([width, height]);
-            scope.graphForce = force;
-            svg.append("svg:defs").selectAll("marker").data(["from"]).enter().append("svg:marker").attr("id", String).attr("viewBox", "0 -5 10 10").attr("refX", 25).attr("refY", -1.5).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("svg:path").attr("d", "M0,-5L10,0L0,5");
-            force.nodes(nodes).links(links).start();
-            var link = svg.selectAll(".link").data(links).enter().append("line").attr("class", "link");
-            link.attr("class", "link from");
-            link.attr("marker-end", "url(#from)");
-            var node = svg.selectAll(".node").data(nodes).enter().append("g").attr("class", "node").call(force.drag);
-            node.append("image").attr("xlink:href", function (d) {
-                return d.imageUrl;
-            }).attr("x", -15).attr("y", -15).attr("width", 30).attr("height", 30);
-            node.append("text").attr("dx", 20).attr("dy", ".35em").text(function (d) {
-                return d.label;
-            });
-            force.on("tick", function () {
-                link.attr("x1", function (d) {
-                    return d.source.x;
-                }).attr("y1", function (d) {
-                    return d.source.y;
-                }).attr("x2", function (d) {
-                    return d.target.x;
-                }).attr("y2", function (d) {
-                    return d.target.y;
-                });
-                node.attr("transform", function (d) {
-                    return "translate(" + d.x + "," + d.y + ")";
-                });
-            });
-        }
-    }
-    Core.d3ForceGraph = d3ForceGraph;
-    function createGraphStates(nodes, links, transitions) {
-        var stateKeys = {};
-        nodes.forEach(function (node) {
-            var idx = node.id;
-            if (idx === undefined) {
-                console.log("No node found for node " + JSON.stringify(node));
-            }
-            else {
-                if (node.edges === undefined)
-                    node.edges = [];
-                if (!node.label)
-                    node.label = "node " + idx;
-                stateKeys[idx] = node;
-            }
-        });
-        var states = d3.values(stateKeys);
-        links.forEach(function (d) {
-            var source = stateKeys[d.source];
-            var target = stateKeys[d.target];
-            if (source === undefined || target === undefined) {
-                console.log("Bad link!  " + source + " target " + target + " for " + d);
-            }
-            else {
-                var edge = { source: source, target: target };
-                transitions.push(edge);
-                source.edges.push(edge);
-                target.edges.push(edge);
-            }
-        });
-        return states;
-    }
-    Core.createGraphStates = createGraphStates;
-    function dagreLayoutGraph(nodes, links, width, height, svgElement, allowDrag, onClick) {
-        if (allowDrag === void 0) { allowDrag = false; }
-        if (onClick === void 0) { onClick = null; }
-        var nodePadding = 10;
-        var transitions = [];
-        var states = Core.createGraphStates(nodes, links, transitions);
-        function spline(e) {
-            var points = e.dagre.points.slice(0);
-            var source = dagre.util.intersectRect(e.source.dagre, points.length > 0 ? points[0] : e.source.dagre);
-            var target = dagre.util.intersectRect(e.target.dagre, points.length > 0 ? points[points.length - 1] : e.source.dagre);
-            points.unshift(source);
-            points.push(target);
-            return d3.svg.line().x(function (d) {
-                return d.x;
-            }).y(function (d) {
-                return d.y;
-            }).interpolate("linear")(points);
-        }
-        function translateEdge(e, dx, dy) {
-            e.dagre.points.forEach(function (p) {
-                p.x = Math.max(0, Math.min(svgBBox.width, p.x + dx));
-                p.y = Math.max(0, Math.min(svgBBox.height, p.y + dy));
-            });
-        }
-        var svg = svgElement ? d3.select(svgElement) : d3.select("svg");
-        if (svgElement) {
-            $(svgElement).children("g").remove();
-        }
-        $(svg).children("g").remove();
-        $("svg").children("g").remove();
-        var svgGroup = svg.append("g").attr("transform", "translate(5, 5)");
-        var nodes = svgGroup.selectAll("g .node").data(states).enter().append("g").attr("class", "node").attr("data-cid", function (d) {
-            return d.cid;
-        }).attr("id", function (d) {
-            return "node-" + d.label;
-        });
-        nodes.append("title").text(function (d) {
-            return d.tooltip || "";
-        });
-        var edges = svgGroup.selectAll("path .edge").data(transitions).enter().append("path").attr("class", "edge");
-        if (navigator.userAgent.match(/Trident.*rv[ :]*11\./) == null) {
-            edges.attr("marker-end", "url(#arrowhead)");
-        }
-        var rects = nodes.append("rect").attr("rx", "4").attr("ry", "4").attr("class", function (d) {
-            return d.type;
-        });
-        var images = nodes.append("image").attr("xlink:href", function (d) {
-            return d.imageUrl;
-        }).attr("x", -12).attr("y", -20).attr("height", 24).attr("width", 24);
-        var counters = nodes.append("text").attr("text-anchor", "end").attr("class", "counter").attr("x", 0).attr("dy", 0).text(_counterFunction);
-        var inflights = nodes.append("text").attr("text-anchor", "middle").attr("class", "inflight").attr("x", 10).attr("dy", -32).text(_inflightFunction);
-        var labels = nodes.append("text").attr("text-anchor", "middle").attr("x", 0);
-        labels.append("tspan").attr("x", 0).attr("dy", 28).text(function (d) {
-            return d.label;
-        });
-        var labelPadding = 12;
-        var minLabelwidth = 80;
-        labels.each(function (d) {
-            var bbox = this.getBBox();
-            d.bbox = bbox;
-            var width = bbox.width;
-            if (width < minLabelwidth) {
-                width = minLabelwidth;
-            }
-            d.width = width + 2 * nodePadding;
-            d.height = bbox.height + 2 * nodePadding + labelPadding;
-        });
-        rects.attr("x", function (d) {
-            return -(d.bbox.width / 2 + nodePadding);
-        }).attr("y", function (d) {
-            return -(d.bbox.height / 2 + nodePadding + (labelPadding / 2));
-        }).attr("width", function (d) {
-            return d.width;
-        }).attr("height", function (d) {
-            return d.height;
-        });
-        if (onClick != null) {
-            rects.on("click", onClick);
-        }
-        images.attr("x", function (d) {
-            return -(d.bbox.width) / 2;
-        });
-        labels.attr("x", function (d) {
-            return -d.bbox.width / 2;
-        }).attr("y", function (d) {
-            return -d.bbox.height / 2;
-        });
-        counters.attr("x", function (d) {
-            var w = d.bbox.width;
-            return w / 2;
-        });
-        dagre.layout().nodeSep(50).edgeSep(10).rankSep(50).nodes(states).edges(transitions).debugLevel(1).run();
-        nodes.attr("transform", function (d) {
-            return 'translate(' + d.dagre.x + ',' + d.dagre.y + ')';
-        });
-        edges.attr('id', function (e) {
-            return e.dagre.id;
-        }).attr("d", function (e) {
-            return spline(e);
-        });
-        var svgNode = svg.node();
-        if (svgNode) {
-            var svgBBox = svgNode.getBBox();
-            if (svgBBox) {
-                svg.attr("width", svgBBox.width + 10);
-                svg.attr("height", svgBBox.height + 10);
-            }
-        }
-        if (allowDrag) {
-            var nodeDrag = d3.behavior.drag().origin(function (d) {
-                return d.pos ? { x: d.pos.x, y: d.pos.y } : { x: d.dagre.x, y: d.dagre.y };
-            }).on('drag', function (d, i) {
-                var prevX = d.dagre.x, prevY = d.dagre.y;
-                d.dagre.x = Math.max(d.width / 2, Math.min(svgBBox.width - d.width / 2, d3.event.x));
-                d.dagre.y = Math.max(d.height / 2, Math.min(svgBBox.height - d.height / 2, d3.event.y));
-                d3.select(this).attr('transform', 'translate(' + d.dagre.x + ',' + d.dagre.y + ')');
-                var dx = d.dagre.x - prevX, dy = d.dagre.y - prevY;
-                d.edges.forEach(function (e) {
-                    translateEdge(e, dx, dy);
-                    d3.select('#' + e.dagre.id).attr('d', spline(e));
-                });
-            });
-            var edgeDrag = d3.behavior.drag().on('drag', function (d, i) {
-                translateEdge(d, d3.event.dx, d3.event.dy);
-                d3.select(this).attr('d', spline(d));
-            });
-            nodes.call(nodeDrag);
-            edges.call(edgeDrag);
-        }
-        return states;
-    }
-    Core.dagreLayoutGraph = dagreLayoutGraph;
-    function dagreUpdateGraphData(data) {
-        var svg = d3.select("svg");
-        svg.selectAll("text.counter").text(_counterFunction);
-        svg.selectAll("text.inflight").text(_inflightFunction);
-        svg.selectAll("g .node title").text(function (d) {
-            return d.tooltip || "";
-        });
-    }
-    Core.dagreUpdateGraphData = dagreUpdateGraphData;
-    function _counterFunction(d) {
-        return d.counter || "";
-    }
-    function _inflightFunction(d) {
-        return d.inflight || "";
-    }
 })(Core || (Core = {}));
 var Core;
 (function (Core) {
@@ -24263,202 +24459,6 @@ var FabricRequirements;
         });
     }]);
 })(FabricRequirements || (FabricRequirements = {}));
-var Forms;
-(function (Forms) {
-    Forms.log = Logger.get("Forms");
-    function defaultValues(entity, schema) {
-        if (entity && schema) {
-            angular.forEach(schema.properties, function (property, key) {
-                var defaultValue = property.default;
-                if (defaultValue && !entity[key]) {
-                    console.log("===== defaulting value " + defaultValue + " into entity[" + key + "]");
-                    entity[key] = defaultValue;
-                }
-            });
-        }
-    }
-    Forms.defaultValues = defaultValues;
-    function resolveTypeNameAlias(type, schema) {
-        if (type && schema) {
-            var alias = lookupDefinition(type, schema);
-            if (alias) {
-                var realType = alias["type"];
-                if (realType) {
-                    type = realType;
-                }
-            }
-        }
-        return type;
-    }
-    Forms.resolveTypeNameAlias = resolveTypeNameAlias;
-    function isJsonType(name, schema, typeName) {
-        var definition = lookupDefinition(name, schema);
-        while (definition) {
-            var extendsTypes = Core.pathGet(definition, ["extends", "type"]);
-            if (extendsTypes) {
-                if (typeName === extendsTypes) {
-                    return true;
-                }
-                else {
-                    definition = lookupDefinition(extendsTypes, schema);
-                }
-            }
-            else {
-                return false;
-            }
-        }
-        return false;
-    }
-    Forms.isJsonType = isJsonType;
-    function safeIdentifier(id) {
-        if (id) {
-            return id.replace(/-/g, "_");
-        }
-        return id;
-    }
-    Forms.safeIdentifier = safeIdentifier;
-    function lookupDefinition(name, schema) {
-        if (schema) {
-            var defs = schema.definitions;
-            if (defs) {
-                var answer = defs[name];
-                if (answer) {
-                    var fullSchema = answer["fullSchema"];
-                    if (fullSchema) {
-                        return fullSchema;
-                    }
-                    var extendsTypes = Core.pathGet(answer, ["extends", "type"]);
-                    if (extendsTypes) {
-                        fullSchema = angular.copy(answer);
-                        fullSchema.properties = fullSchema.properties || {};
-                        if (!angular.isArray(extendsTypes)) {
-                            extendsTypes = [extendsTypes];
-                        }
-                        angular.forEach(extendsTypes, function (extendType) {
-                            if (angular.isString(extendType)) {
-                                var extendDef = lookupDefinition(extendType, schema);
-                                var properties = Core.pathGet(extendDef, ["properties"]);
-                                if (properties) {
-                                    angular.forEach(properties, function (property, key) {
-                                        fullSchema.properties[key] = property;
-                                    });
-                                }
-                            }
-                        });
-                        answer["fullSchema"] = fullSchema;
-                        return fullSchema;
-                    }
-                }
-                return answer;
-            }
-        }
-        return null;
-    }
-    Forms.lookupDefinition = lookupDefinition;
-    function findArrayItemsSchema(property, schema) {
-        var items = null;
-        if (property && schema) {
-            items = property.items;
-            if (items) {
-                var typeName = items["type"];
-                if (typeName) {
-                    var definition = lookupDefinition(typeName, schema);
-                    if (definition) {
-                        return definition;
-                    }
-                }
-            }
-            var additionalProperties = property.additionalProperties;
-            if (additionalProperties) {
-                if (additionalProperties["$ref"] === "#") {
-                    return schema;
-                }
-            }
-        }
-        return items;
-    }
-    Forms.findArrayItemsSchema = findArrayItemsSchema;
-    function isObjectType(definition) {
-        var typeName = Core.pathGet(definition, "type");
-        return typeName && "object" === typeName;
-    }
-    Forms.isObjectType = isObjectType;
-    function isKind(definition, kind) {
-        var kindName = Core.pathGet(definition, "kind");
-        return kindName && kind === kindName;
-    }
-    Forms.isKind = isKind;
-    function isArrayOrNestedObject(property, schema) {
-        if (property) {
-            var propType = resolveTypeNameAlias(property["type"], schema);
-            if (propType) {
-                if (propType === "object" || propType === "array") {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    Forms.isArrayOrNestedObject = isArrayOrNestedObject;
-    function configure(config, scopeConfig, attrs) {
-        if (angular.isDefined(scopeConfig)) {
-            config = angular.extend(config, scopeConfig);
-        }
-        return angular.extend(config, attrs);
-    }
-    Forms.configure = configure;
-    function getControlGroup(config, arg, id) {
-        var rc = angular.element('<div class="' + config.controlgroupclass + '"></div>');
-        if (angular.isDefined(arg.description)) {
-            rc.attr('title', arg.description);
-        }
-        if (config['properties'] && config['properties'][id]) {
-            var elementConfig = config['properties'][id];
-            if (elementConfig && 'control-attributes' in elementConfig) {
-                angular.forEach(elementConfig['control-attributes'], function (value, key) {
-                    rc.attr(key, value);
-                });
-            }
-        }
-        return rc;
-    }
-    Forms.getControlGroup = getControlGroup;
-    function getLabel(config, arg, label, required) {
-        if (required === void 0) { required = false; }
-        if (required) {
-            return angular.element('<label class="strong ' + config.labelclass + '">' + label + ': </label>');
-        }
-        else {
-            return angular.element('<label class="' + config.labelclass + '">' + label + ': </label>');
-        }
-    }
-    Forms.getLabel = getLabel;
-    function getControlDiv(config) {
-        return angular.element('<div class="' + config.controlclass + '"></div>');
-    }
-    Forms.getControlDiv = getControlDiv;
-    function getHelpSpan(config, arg, id, property) {
-        if (property === void 0) { property = null; }
-        var help = Core.pathGet(config.data, ['properties', id, 'help']);
-        if (Core.isBlank(help)) {
-            help = Core.pathGet(config.data, ['properties', id, 'description']);
-        }
-        if (Core.isBlank(help) && angular.isDefined(property)) {
-            help = Core.pathGet(property, ['help']);
-            if (Core.isBlank(help)) {
-                help = Core.pathGet(property, ['description']);
-            }
-        }
-        var show = config.showhelp || "true";
-        if (!Core.isBlank(help)) {
-            return angular.element('<span class="help-block" ng-show="' + show + '">' + help + '</span>');
-        }
-        else {
-            return angular.element('<span class="help-block"></span>');
-        }
-    }
-    Forms.getHelpSpan = getHelpSpan;
-})(Forms || (Forms = {}));
 var Forms;
 (function (Forms) {
     function createWidget(propTypeName, property, schema, config, id, ignorePrefixInLabel, configScopeName, wrapInGroup, disableHumanizeLabel) {
