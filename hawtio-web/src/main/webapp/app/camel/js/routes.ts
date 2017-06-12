@@ -1,3 +1,4 @@
+/// <reference path="../../core/js/graphs.ts"/>
 /// <reference path="camelPlugin.ts"/>
 module Camel {
 

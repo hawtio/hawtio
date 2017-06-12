@@ -1,6 +1,9 @@
 /// <reference path="../../baseHelpers.ts"/>
 /// <reference path="../../core/js/coreHelpers.ts"/>
 /// <reference path="../../core/js/workspace.ts"/>
+/// <reference path="../../forms/js/formHelpers.ts"/>
+/// <reference path="endpointChooser.ts"/>
+
 /**
  * @module Camel
  */
