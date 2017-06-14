@@ -122,9 +122,14 @@ public class KeycloakServlet extends HttpServlet {
             return getClass().getClassLoader().getResourceAsStream(classPathLocation);
         } else {
             try {
+                if (!keycloakConfigFile.contains(":")) {
+                    //assume file protocol
+                    keycloakConfigFile = "file://" + keycloakConfigFile;
+                }
                 return new URL(keycloakConfigFile).openStream();
             } catch (Exception e) {
                 LOG.warn("Couldn't find keycloak config file on location: " + keycloakConfigFile);
+                LOG.debug("Couldn't find keycloak config file", e);
                 return null;
             }
         }
