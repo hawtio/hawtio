@@ -1,6 +1,0 @@
-language: java
-jdk:
-  - openjdk7
-  - oraclejdk7
-node_js:
-  - 0.8
