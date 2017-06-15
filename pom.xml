@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>14</version>
+    <version>23</version>
   </parent>
 
   <groupId>io.hawt</groupId>
@@ -100,7 +100,6 @@
     <maven-version>3.0.4</maven-version>
     <maven-bundle-plugin-version>3.0.1</maven-bundle-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
-    <war-plugin-version>2.1.1</war-plugin-version>
     <osgi-version>5.0.0</osgi-version>
     <wagon-version>2.7</wagon-version>
     <servlet-api-version>2.5</servlet-api-version>

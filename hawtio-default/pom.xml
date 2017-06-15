@@ -148,7 +148,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>${war-plugin-version}</version>
         <configuration>
           <packagingExcludes>**/lib/commons-logging-1.0.3.jar</packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
