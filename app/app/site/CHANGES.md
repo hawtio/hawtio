@@ -4,6 +4,7 @@
 #### 1.5.2 (To be released)
 
 * Various fixes and improvements
+* Upgraded to Camel 2.19.1
 
 #### 1.5.1
 
