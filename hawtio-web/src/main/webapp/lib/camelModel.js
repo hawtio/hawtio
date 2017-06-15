@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.19.0';
+var _apacheCamelModelVersion = '2.19.1';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -2550,7 +2550,7 @@ var _apacheCamelModel ={
         "circuitBreakerForceClosed": {
           "kind": "attribute",
           "type": "boolean",
-          "defaultValue": "true",
+          "defaultValue": "false",
           "description": "If true the HystrixCircuitBreakerallowRequest() will always return true to allow requests regardless of the error percentage from HystrixCommandMetrics.getHealthCounts(). The circuitBreakerForceOpen() property takes precedence so if it set to true this property does nothing.",
           "title": "Circuit Breaker Force Closed",
           "required": false,
