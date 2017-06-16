@@ -1,0 +1,8 @@
+# http://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+[*.{html,ts,js,json,css,less}]
+indent_style = space
+indent_size = 2

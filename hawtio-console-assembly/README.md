@@ -1,40 +1,37 @@
-## hawtio console assembly
+# hawtio console assembly
 
 This assembles all hawtio v2 components for the web console for Java.
 
-### Basic usage
+## Installation
 
-#### Running this project locally
-
-First clone the source
+### Clone the source code
 
     git clone -b 2.x https://github.com/hawtio/hawtio
     cd hawtio/hawtio-console-assembly
 
-Next you'll need to [install NodeJS](http://nodejs.org/download/) and then install the default global npm dependencies:
+### Install
 
-    npm install -g bower gulp slush slush-hawtio-javascript slush-hawtio-typescript typescript
+* [Node.js](http://nodejs.org)
+* [Yarn](https://yarnpkg.com)
+* [gulp](http://gulpjs.com/)
 
-Then install all local nodejs packages and update bower dependencies via:
+### Install all project dependencies
 
-    npm install
-    bower update
+    yarn install:dev
 
-Then to run the web application:
+## Usage
+
+### Run the web application:
 
     gulp
 
-#### Install the bower package
-
-    bower install --save hawtio-console-assembly
-
-#### Change the default proxy port
+### Change the default proxy port
 
 To proxy to a local JVM running on a different port than `8181` specify the `--port` CLI arguement to gulp:
 
     gulp --port=8282
 
-#### Turn on source maps generation for debugging TypeScript
+### Turn on source maps generation for debugging TypeScript
 
 If you want to debug `.ts` using a browser developer tool such as Chrome DevTools, pass the `--sourcemap` flag to gulp:
 

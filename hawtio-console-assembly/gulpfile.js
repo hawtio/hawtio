@@ -1,5 +1,4 @@
 const gulp          = require('gulp'),
-    wiredep         = require('wiredep').stream,
     eventStream     = require('event-stream'),
     gulpLoadPlugins = require('gulp-load-plugins'),
     map             = require('vinyl-map'),
@@ -11,12 +10,11 @@ const gulp          = require('gulp'),
     s               = require('underscore.string'),
     argv            = require('yargs').argv,
     logger          = require('js-logger'),
-    hawtio          = require('hawtio-node-backend'),
+    hawtio          = require('@hawtio/node-backend'),
     tslint          = require('gulp-tslint'),
     tslintRules     = require('./tslint.json');
 
 const plugins = gulpLoadPlugins({});
-const pkg     = require('./package.json');
 
 const config = {
   proxyPort      : argv.port || 8181,
@@ -26,16 +24,12 @@ const config = {
   ts             : ['plugins/**/*.ts'],
   less           : './less/**/*.less',
   templates      : ['plugins/**/*.html'],
-  templateModule : pkg.name + '-templates',
+  templateModule : 'hawtio-console-assembly-templates',
   dist           : './dist/',
-  js             : pkg.name + '.js',
-  css            : pkg.name + '.css',
-  tsProject      : plugins.typescript.createProject({
-    target         : 'ES5',
-    declaration    : true,
-    noResolve      : false,
-    removeComments : true
-  }),
+  js             : 'hawtio-console-assembly.js',
+  css            : 'hawtio-console-assembly.css',
+  dts            : 'hawtio-console-assembly.d.ts',
+  tsProject      : plugins.typescript.createProject('tsconfig.json'),
   tsLintOptions  : {
     rulesDirectory: './tslint-rules/'
   },
@@ -53,33 +47,12 @@ var normalSizeOptions = {
 // build tasks
 //------------------------------------------------------------------------------
 
-gulp.task('bower', function() {
-  return gulp.src('index.html')
-    .pipe(wiredep({}))
-    .pipe(gulp.dest('.'));
-});
-
-/** Adjust the reference path of any typescript-built plugin this project depends on */
-gulp.task('path-adjust', function() {
-  return eventStream.merge(
-    gulp.src('libs/**/includes.d.ts')
-      .pipe(plugins.debug({ title: 'path adjust' }))
-      .pipe(plugins.replace(/"\.\.\/libs/gm, '"../../../libs'))
-      .pipe(gulp.dest('libs')),
-    gulp.src('libs/**/defs.d.ts')
-      .pipe(plugins.debug({ title: 'path adjust' }))
-      .pipe(plugins.replace(/"libs/gm, '"../../libs'))
-      .pipe(gulp.dest('libs'))
-  );
-});
-
 gulp.task('clean-defs', function() {
-  return gulp.src('defs.d.ts', { read: false })
+  return gulp.src(config.dist + '*.d.ts', { read: false })
     .pipe(plugins.clean());
 });
 
 gulp.task('tsc', ['clean-defs'], function() {
-  var cwd = process.cwd();
   var tsResult = gulp.src(config.ts)
     .pipe(plugins.debug({ title: 'tsc' }))
     .pipe(plugins.if(config.sourceMap, plugins.sourcemaps.init()))
@@ -96,8 +69,8 @@ gulp.task('tsc', ['clean-defs'], function() {
       .pipe(gulp.dest('.')),
     tsResult.dts
       .pipe(plugins.debug({ title: 'tsc dts' }))
-      .pipe(plugins.rename('defs.d.ts'))
-      .pipe(gulp.dest('.')));
+      .pipe(plugins.rename(config.dts))
+      .pipe(gulp.dest(config.dist)));
 });
 
 /*
@@ -154,15 +127,18 @@ gulp.task('clean', function() {
 });
 
 gulp.task('watch', ['build'], function() {
-  plugins.watch(['libs/**/*.js', 'libs/**/*.css', 'index.html', config.dist + '/' + config.js], function() {
-    gulp.start('reload');
-  });
-  plugins.watch(['libs/**/*.d.ts', config.ts, config.templates], function() {
-    gulp.start(['tsc', 'template', 'concat', 'clean']);
-  });
-  plugins.watch(config.less, function() {
-    gulp.start('less', 'reload');
-  })
+  gulp.watch([
+    'node_modules/@hawtio/**/dist/*.js',
+    'node_modules/@hawtio/**/dist/*.css', 
+    'index.html', 
+    config.dist + '/' + config.js
+  ], ['reload']);
+  gulp.watch([
+    'node_modules/@hawtio/**/dist/*.d.ts', 
+    config.ts, 
+    config.templates
+  ], ['tsc', 'template', 'concat', 'clean']);
+  gulp.watch(config.less, ['less', 'reload']);
 });
 
 gulp.task('connect', ['watch'], function() {
@@ -198,7 +174,7 @@ gulp.task('connect', ['watch'], function() {
 
   hawtio.use('/hawtio/img', (req, res) => {
     // We may want to serve from other dependencies
-    const file = path.join(__dirname, 'libs', 'hawtio-integration', 'img', req.url);
+    const file = path.join(__dirname, 'node_modules', 'hawtio-integration', 'img', req.url);
     if (fs.existsSync(file)) {
       res.writeHead(200, {
         'Content-Type'       : 'application/octet-stream',
@@ -231,11 +207,11 @@ gulp.task('site-fonts', () =>
   gulp
     .src(
       [
-        'libs/**/*.woff',
-        'libs/**/*.woff2',
-        'libs/**/*.ttf',
-        'libs/**/fonts/*.eot',
-        'libs/**/fonts/*.svg'
+        'node_modules/**/*.woff',
+        'node_modules/**/*.woff2',
+        'node_modules/**/*.ttf',
+        'node_modules/**/fonts/*.eot',
+        'node_modules/**/fonts/*.svg'
       ],
       { base: '.' }
     )
@@ -275,14 +251,14 @@ gulp.task('tweak-urls', ['usemin'], () =>
   eventStream.merge(
     gulp.src('target/site/index.html')
       // adjust image paths
-      .pipe(plugins.replace(/"libs\/[^/]+\/img\//gm, '"img/')),
+      .pipe(plugins.replace(/"node_modules\/[^/]+\/img\//gm, '"img/')),
     gulp.src('target/site/style.css')
       .pipe(plugins.replace(/url\(\.\.\//g, 'url('))
       // tweak fonts URL coming from PatternFly that does not repackage then in dist
       .pipe(plugins.replace(/url\(\.\.\/components\/font-awesome\//g, 'url('))
       .pipe(plugins.replace(/url\(\.\.\/components\/bootstrap\/dist\//g, 'url('))
-      .pipe(plugins.replace(/url\(libs\/bootstrap\/dist\//g, 'url('))
-      .pipe(plugins.replace(/url\(libs\/patternfly\/components\/bootstrap\/dist\//g, 'url('))
+      .pipe(plugins.replace(/url\(node_modules\/bootstrap\/dist\//g, 'url('))
+      .pipe(plugins.replace(/url\(node_modules\/patternfly\/components\/bootstrap\/dist\//g, 'url('))
       .pipe(plugins.debug({ title: 'tweak-urls' }))
     )
     .pipe(gulp.dest('target/site')
@@ -296,14 +272,14 @@ gulp.task('404', ['usemin'], function() {
 });
 
 gulp.task('copy-images', function() {
-  var dirs = fs.readdirSync('./libs');
+  var dirs = fs.readdirSync('./node_modules');
   var patterns = [];
   dirs.forEach(function(dir) {
-    var path = './libs/' + dir + '/img';
+    var path = './node_modules/' + dir + '/img';
     try {
       if (fs.statSync(path).isDirectory()) {
         console.log('found image dir: ', path);
-        var pattern = 'libs/' + dir + '/img/**';
+        var pattern = 'node_modules/' + dir + '/img/**';
         patterns.push(pattern);
       }
     } catch (e) {
@@ -311,7 +287,7 @@ gulp.task('copy-images', function() {
     }
   });
   // Add PatternFly images package in dist
-  patterns.push('libs/patternfly/dist/img/**');
+  patterns.push('node_modules/patternfly/dist/img/**');
   return gulp.src(patterns)
     .pipe(plugins.debug({ title: 'image copy' }))
     .pipe(gulp.dest('target/site/img'));
@@ -343,7 +319,7 @@ gulp.task('serve-site', function() {
     server.address().address, ':', server.address().port));
 });
 
-gulp.task('build', callback => sequence(['bower', 'path-adjust', 'tsc', 'less', 'template', 'concat'], 'clean', callback));
+gulp.task('build', callback => sequence(['tsc', 'less', 'template', 'concat'], 'clean', callback));
 
 gulp.task('site', callback => sequence('clean', ['site-fonts', 'site-files', 'usemin', 'tweak-urls', '404', 'copy-images'], callback));
 

@@ -1,25 +1,28 @@
 {
-  "name": "hawtio-console-assembly",
+  "name": "@hawtio/console-assembly",
   "version": "2.0.0",
   "description": "The hawt.io web console helps you manage your JVM stuff and stay cool!",
-  "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:hawtio/hawtio.git"
-  },
+  "main": "dist/hawtio-console-assembly.js",
+  "types": "dist/hawtio-console-assembly.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "start": "gulp",
     "build": "gulp build",
-    "postinstall": "bower install"
+    "install:dev": "yarn install --flat --prod && yarn install"
+  },
+  "dependencies": {
+    "@hawtio/integration": "~3.0.0"
   },
   "devDependencies": {
-    "bower": "^1.0.0",
+    "@hawtio/node-backend": "^3.0.0",
     "event-stream": "^3.0.0",
     "gulp": "^3.0.0",
     "gulp-angular-templatecache": "^2.0.0",
+    "gulp-chmod": "^2.0.0",
     "gulp-clean": "~0.3.0",
     "gulp-clean-css": "^3.0.0",
-    "gulp-chmod": "^2.0.0",
     "gulp-concat": "^2.0.0",
     "gulp-debug": "^2.0.0",
     "gulp-dedupe": "0.0.2",
@@ -40,17 +43,24 @@
     "gulp-typescript": "^3.0.0",
     "gulp-uglify": "^2.0.0",
     "gulp-usemin": "~0.3.0",
-    "gulp-watch": "^3.0.0",
-    "hawtio-node-backend": "^2.0.0",
     "run-sequence": "^1.2.2",
-    "through2": "^2.0.0",
     "tslint": "^4.0.0",
     "typescript": "^2.0.0",
     "underscore.string": "^3.0.0",
     "urijs": "^1.0.0",
     "url-join": "^1.0.0",
-    "vinyl-map": "^1.0.0",
-    "which": "^1.0.0",
-    "wiredep": "^4.0.0"
+    "vinyl-map": "^1.0.0"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hawtio/hawtio.git"
+  },
+  "resolutions": {
+    "jquery": "2.2.4",
+    "angular": "1.6.4",
+    "angular-sanitize": "1.6.4",
+    "angular-ui-bootstrap": "2.5.0",
+    "bootstrap-select": "1.12.2"
   }
 }

@@ -24,43 +24,22 @@
         <version>${frontend-maven-plugin-version}</version>
         <executions>
           <execution>
-            <id>install node and npm</id>
+            <id>install node and yarn</id>
             <goals>
-              <goal>install-node-and-npm</goal>
+              <goal>install-node-and-yarn</goal>
             </goals>
-            <phase>generate-resources</phase>
             <configuration>
-              <nodeVersion>v6.9.1</nodeVersion>
-              <npmVersion>3.10.10</npmVersion>
+              <nodeVersion>v6.11.0</nodeVersion>
+              <yarnVersion>v0.24.6</yarnVersion>
             </configuration>
           </execution>
           <execution>
-            <id>npm install</id>
+            <id>yarn install</id>
             <goals>
-              <goal>npm</goal>
+              <goal>yarn</goal>
             </goals>
             <configuration>
-              <arguments>install</arguments>
-            </configuration>
-          </execution>
-          <!-- "bower install" is run by npm postinstall
-          <execution>
-            <id>bower install</id>
-            <goals>
-              <goal>bower</goal>
-            </goals>
-            <configuration>
-              <arguments>install</arguments>
-            </configuration>
-          </execution>
-          -->
-          <execution>
-            <id>prep compile</id>
-            <goals>
-              <goal>gulp</goal>
-            </goals>
-            <configuration>
-              <arguments>path-adjust</arguments>
+              <arguments>run install:dev</arguments>
             </configuration>
           </execution>
           <execution>
@@ -74,7 +53,6 @@
           </execution>
         </executions>
       </plugin>
-
 
     </plugins>
   </build>
