@@ -31,12 +31,12 @@ const config = {
   js             : pkg.name + '.js',
   css            : pkg.name + '.css',
   tsProject      : plugins.typescript.createProject({
-  target         : 'ES5',
-  declaration    : true,
-  noResolve      : false,
-  removeComments : true
+    target         : 'ES5',
+    declaration    : true,
+    noResolve      : false,
+    removeComments : true
   }),
-  tsLintOptions: {
+  tsLintOptions  : {
     rulesDirectory: './tslint-rules/'
   },
   sourceMap: argv.sourcemap
@@ -81,6 +81,7 @@ gulp.task('clean-defs', function() {
 gulp.task('tsc', ['clean-defs'], function() {
   var cwd = process.cwd();
   var tsResult = gulp.src(config.ts)
+    .pipe(plugins.debug({ title: 'tsc' }))
     .pipe(plugins.if(config.sourceMap, plugins.sourcemaps.init()))
     .pipe(config.tsProject())
     .on('error', plugins.notify.onError({
@@ -90,9 +91,11 @@ gulp.task('tsc', ['clean-defs'], function() {
 
   return eventStream.merge(
     tsResult.js
+      .pipe(plugins.debug({ title: 'tsc js' }))
       .pipe(plugins.if(config.sourceMap, plugins.sourcemaps.write()))
       .pipe(gulp.dest('.')),
     tsResult.dts
+      .pipe(plugins.debug({ title: 'tsc dts' }))
       .pipe(plugins.rename('defs.d.ts'))
       .pipe(gulp.dest('.')));
 });
@@ -146,7 +149,7 @@ gulp.task('concat', ['template'], function() {
 });
 
 gulp.task('clean', function() {
-  return gulp.src(['templates.js', 'compiled.js', 'target/site/'], { read: false })
+  return gulp.src(['templates.js', 'compiled.js', 'includes.js', 'target/site/'], { read: false })
     .pipe(plugins.clean());
 });
 
