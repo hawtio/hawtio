@@ -41502,6 +41502,379 @@ var RBAC;
         };
     }]);
 })(RBAC || (RBAC = {}));
+var Runtime;
+(function (Runtime) {
+    Runtime.pluginName = 'runtime';
+    Runtime.log = Logger.get('Runtime');
+    Runtime.contextPath = "app/runtime";
+    Runtime.templatePath = Runtime.contextPath + "/html/";
+    Runtime.runtimeMbean = 'java.lang:type=Runtime';
+    Runtime.osMbean = 'java.lang:type=OperatingSystem';
+    Runtime._module = angular.module(Runtime.pluginName, ['hawtioCore']);
+    function configureScope($scope, $location, workspace) {
+        $scope.isActive = function (href) {
+            var tidy = Core.trimLeading(href, "#");
+            var loc = $location.path();
+            return loc === tidy;
+        };
+        $scope.isValid = function (link) {
+            return link && link.isValid(workspace);
+        };
+        $scope.breadcrumbs = [
+            {
+                content: 'Overview',
+                title: "Summary of Java process",
+                isValid: function (workspace) { return true; },
+                href: "#/runtime/overview"
+            },
+            {
+                content: 'System Properties',
+                title: "List system properties",
+                isValid: function (workspace) { return true; },
+                href: "#/runtime/systemProperties"
+            },
+            {
+                content: 'Metrics',
+                title: "JVM Flags",
+                isValid: function (workspace) { return true; },
+                href: "#/runtime/metrics"
+            }
+        ];
+    }
+    Runtime.configureScope = configureScope;
+})(Runtime || (Runtime = {}));
+;
+var Runtime;
+(function (Runtime) {
+    function metricsTableConfig() {
+        return {
+            selectedItems: [],
+            data: 'metrics',
+            showFilter: true,
+            filterOptions: {
+                filterText: ''
+            },
+            showSelectionCheckbox: false,
+            enableRowClickSelection: true,
+            multiSelect: false,
+            primaryKeyFn: function (entity, idx) {
+                return entity.index;
+            },
+            columnDefs: [
+                {
+                    field: 'index',
+                    displayName: '#'
+                },
+                {
+                    field: 'name',
+                    displayName: 'Metric',
+                    resizable: true
+                },
+                {
+                    field: 'category',
+                    displayName: 'Category',
+                    resizable: true,
+                    cellTemplate: '<div class="ngCellText ng-binding" title="row.entity.category"><a href="{{row.entity.link}}">{{row.entity.category}}</a></div>'
+                },
+                {
+                    field: 'value',
+                    displayName: 'Value',
+                    resizable: true,
+                    cellTemplate: '<div class="align-right ngCellText ng-binding" title="row.entity.value">{{row.entity.value}}</div>'
+                },
+                {
+                    field: 'referenceValue',
+                    displayName: '',
+                    resizable: true,
+                    cellTemplate: '<div class="align-right ngCellText ng-binding" title="row.entity.referenceValue">{{row.entity.referenceValue}}</div>'
+                }
+            ]
+        };
+    }
+    function deriveMetrics(scope, filter) {
+        function toPercentage(value) {
+            return filter("number")(value * 100.0, 2) + '%';
+        }
+        function withSpaceAsThousandSeparator(value) {
+            var firstString = '' + value;
+            var formatted = '';
+            for (var i = 0; i < firstString.length; i++) {
+                var character = firstString.charAt(i);
+                if ((firstString.length - i) % 3 == 0) {
+                    formatted += ' ';
+                }
+                formatted += character;
+            }
+            return formatted;
+        }
+        function separatedAndWithPercent(value, referenceValue) {
+            var result = withSpaceAsThousandSeparator(value);
+            result += ' (';
+            result += toPercentage(1.0 * value / referenceValue);
+            result += ')';
+            return result;
+        }
+        var newMetrics = [];
+        var index = 1;
+        if (scope.operatingSystem) {
+            var osLink = 'jmx/attributes?nid=root-java.lang-OperatingSystem';
+            newMetrics.push({ index: index++, name: 'File descriptors (open/max)', category: 'OS', value: withSpaceAsThousandSeparator(scope.operatingSystem.OpenFileDescriptorCount), referenceValue: withSpaceAsThousandSeparator(scope.operatingSystem.MaxFileDescriptorCount), link: osLink });
+            newMetrics.push({ index: index++, name: 'System CPU load', category: 'OS', value: toPercentage(scope.operatingSystem.SystemCpuLoad), referenceValue: '', link: osLink });
+            newMetrics.push({
+                index: index++,
+                name: 'Physical memory (free/total)',
+                category: 'OS',
+                link: osLink,
+                value: separatedAndWithPercent(scope.operatingSystem.FreePhysicalMemorySize, scope.operatingSystem.TotalPhysicalMemorySize),
+                referenceValue: withSpaceAsThousandSeparator(scope.operatingSystem.TotalPhysicalMemorySize)
+            });
+            newMetrics.push({
+                index: index++,
+                name: 'Swap memory space (free/total)',
+                category: 'OS',
+                link: osLink,
+                value: separatedAndWithPercent(scope.operatingSystem.FreeSwapSpaceSize, scope.operatingSystem.TotalSwapSpaceSize),
+                referenceValue: withSpaceAsThousandSeparator(scope.operatingSystem.TotalSwapSpaceSize)
+            });
+            newMetrics.push({
+                index: index++,
+                name: 'Process CPU (load/time)',
+                category: 'OS',
+                link: osLink,
+                value: toPercentage(scope.operatingSystem.ProcessCpuLoad),
+                referenceValue: Core.humanizeMilliseconds(scope.operatingSystem.ProcessCpuTime / 1000000)
+            });
+        }
+        if (scope.heapUsage) {
+            newMetrics.push({
+                index: index++,
+                name: 'Heap usage (used/max)',
+                category: 'Memory',
+                link: 'diagnostics/heap',
+                value: separatedAndWithPercent(scope.heapUsage.used, scope.heapUsage.max),
+                referenceValue: withSpaceAsThousandSeparator(scope.heapUsage.max)
+            });
+        }
+        if (scope.threading) {
+            newMetrics.push({
+                index: index++,
+                name: 'Thread count (current/peak)',
+                category: 'Threads',
+                link: 'threads',
+                value: scope.threading.ThreadCount,
+                referenceValue: scope.threading.PeakThreadCount
+            });
+        }
+        if (scope.classLoading) {
+            newMetrics.push({
+                index: index++,
+                name: 'Classes loaded (current/peak)',
+                category: 'Code',
+                link: 'diagnostics/heap',
+                value: withSpaceAsThousandSeparator(scope.classLoading.LoadedClassCount),
+                referenceValue: withSpaceAsThousandSeparator(scope.classLoading.TotalLoadedClassCount)
+            });
+        }
+        for (var name in scope.garbageCollectors) {
+            var garbageCollector = scope.garbageCollectors[name];
+            newMetrics.push({
+                index: index++,
+                name: garbageCollector.Name + ' (collections/time)',
+                category: 'GC',
+                link: 'jmx/attributes?nid=root-java.lang-GarbageCollector',
+                value: garbageCollector.CollectionCount,
+                referenceValue: withSpaceAsThousandSeparator(garbageCollector.CollectionTime) + " ms"
+            });
+        }
+        return newMetrics;
+    }
+    Runtime._module.controller("Runtime.MetricsController", ["$scope", "jolokia", "workspace", "$filter", function ($scope, jolokia, workspace, $filter) {
+        function render(response) {
+            var mbean = response.request.mbean;
+            var updater = $scope.updaters[mbean];
+            if (updater) {
+                updater(response.value);
+            }
+            if (mbean = 'java.lang:type=Memory') {
+                $scope.metrics = deriveMetrics($scope, $filter);
+                Core.$apply($scope);
+            }
+        }
+        $scope.metricsTableConfig = metricsTableConfig();
+        $scope.updaters = {};
+        $scope.garbageCollectors = {};
+        $scope.updaters['java.lang:type=Threading'] = function (threading) {
+            $scope.threading = threading;
+        };
+        $scope.updaters['java.lang:type=OperatingSystem'] = function (operatingSystem) {
+            $scope.operatingSystem = operatingSystem;
+        };
+        $scope.updaters['java.lang:type=ClassLoading'] = function (classLoading) {
+            $scope.classLoading = classLoading;
+        };
+        if (workspace.tree) {
+            var collectors = workspace.tree.get('java.lang').map['GarbageCollector'];
+            if (collectors && collectors.children) {
+                for (var i = 0; i < collectors.children.length; i++) {
+                    var collector = collectors.children[i];
+                    var mbeanKey = '' + collector.domain + ':type=' + collector.entries['type'] + ',name=' + collector.entries['name'];
+                    $scope.updaters[mbeanKey] = function (garbageCollector) {
+                        $scope.garbageCollectors[garbageCollector.Name] = garbageCollector;
+                    };
+                }
+            }
+        }
+        $scope.updaters['java.lang:type=Memory'] = function (memory) {
+            $scope.heapUsage = memory.HeapMemoryUsage;
+        };
+        var requests = [];
+        for (var mbean in $scope.updaters) {
+            requests.push({
+                type: 'read',
+                mbean: mbean,
+                arguments: []
+            });
+        }
+        Core.register(jolokia, $scope, requests, onSuccess(render));
+    }]);
+})(Runtime || (Runtime = {}));
+var Runtime;
+(function (Runtime) {
+    Runtime._module.config(['$routeProvider', function ($routeProvider) {
+        $routeProvider.when('/runtime/overview', { templateUrl: Runtime.templatePath + 'overview.html' }).when('/runtime/systemProperties', { templateUrl: Runtime.templatePath + 'systemProperties.html' }).when('/runtime/metrics', { templateUrl: Runtime.templatePath + 'metrics.html' });
+    }]);
+    Runtime._module.run(["workspace", "viewRegistry", "layoutFull", function (workspace, viewRegistry, layoutFull) {
+        viewRegistry[Runtime.pluginName] = Runtime.templatePath + "layoutRuntime.html";
+        workspace.topLevelTabs.push({
+            id: "runtime",
+            content: "Runtime",
+            title: "Java Runtime Process Information",
+            isValid: function (workspace) {
+                return true;
+            },
+            href: function () {
+                return "#/" + Runtime.pluginName + "/overview";
+            },
+            isActive: function (workspace) {
+                return workspace.isLinkActive(Runtime.pluginName);
+            }
+        });
+    }]);
+    hawtioPluginLoader.addModule(Runtime.pluginName);
+})(Runtime || (Runtime = {}));
+;
+var Runtime;
+(function (Runtime) {
+    Runtime._module.controller("Runtime.NavController", ["$scope", "$location", "workspace", function ($scope, $location, workspace) {
+        Runtime.configureScope($scope, $location, workspace);
+    }]);
+})(Runtime || (Runtime = {}));
+var Runtime;
+(function (Runtime) {
+    function javaPath(runtime) {
+        var commandLine = '';
+        var javaHome = runtime.SystemProperties['java.home'];
+        if (javaHome) {
+            var fileSeparator = runtime.SystemProperties['file.separator'];
+            commandLine += javaHome + fileSeparator + 'bin' + fileSeparator;
+        }
+        commandLine += 'java ';
+        return commandLine;
+    }
+    function vmArgs(runtime) {
+        var commandLine = "";
+        for (var argument in runtime.InputArguments) {
+            commandLine += escapeSpaces(runtime.InputArguments[argument]) + ' ';
+        }
+        return commandLine;
+    }
+    function escapeSpaces(argument) {
+        return argument.replace(/ /g, '\\ ');
+    }
+    Runtime._module.controller("Runtime.OverviewController", ["$scope", "jolokia", "workspace", "$location", function ($scope, jolokia, workspace, $location) {
+        Runtime.configureScope($scope, $location, workspace);
+        function render(response) {
+            var mbean = response.request.mbean;
+            if (mbean === Runtime.runtimeMbean) {
+                var runtime = response.value;
+                $scope.runtime = runtime;
+                var regex = /(\d+)@(.+)/g;
+                var pidAndHost = regex.exec(runtime.Name);
+                $scope.pid = pidAndHost[1];
+                $scope.host = pidAndHost[2];
+                $scope.javaPath = javaPath(runtime);
+                $scope.classPath = escapeSpaces(runtime.ClassPath);
+                $scope.vmArgs = vmArgs(runtime);
+                $scope.workingDirectory = runtime.SystemProperties['user.dir'];
+                $scope.uptime = Core.humanizeMilliseconds(runtime.Uptime);
+            }
+            else if (mbean === Runtime.osMbean) {
+                $scope.operatingSystem = response.value;
+            }
+            Core.$apply($scope);
+        }
+        Core.register(jolokia, $scope, [{
+            type: 'read',
+            mbean: Runtime.runtimeMbean,
+            arguments: []
+        }, {
+            type: 'read',
+            mbean: Runtime.osMbean,
+            arguments: []
+        }], onSuccess(render));
+    }]);
+})(Runtime || (Runtime = {}));
+;
+var Runtime;
+(function (Runtime) {
+    function systemPropertiesTableConfig() {
+        return {
+            selectedItems: [],
+            data: 'systemProperties',
+            showFilter: true,
+            filterOptions: {
+                filterText: ''
+            },
+            showSelectionCheckbox: false,
+            enableRowClickSelection: true,
+            multiSelect: false,
+            primaryKeyFn: function (entity, idx) {
+                return entity.name;
+            },
+            columnDefs: [
+                {
+                    field: 'name',
+                    displayName: 'Property',
+                    resizable: true,
+                    cellTemplate: '<div class="forceBreakLongLines hardWidthLimitM" zero-clipboard data-clipboard-text="{{row.entity.name}}">{{row.entity.name}}</div>'
+                },
+                {
+                    field: 'value',
+                    displayName: 'Value',
+                    resizable: true,
+                    cellTemplate: '<div class="forceBreakLongLines hardWidthLimitM" zero-clipboard data-clipboard-text="{{row.entity.value}}">{{row.entity.value}}</div>'
+                }
+            ]
+        };
+    }
+    Runtime._module.controller("Runtime.SystemPropertiesController", ["$scope", "jolokia", "workspace", function ($scope, jolokia, workspace) {
+        $scope.systemPropertiesTableConfig = systemPropertiesTableConfig();
+        $scope.systemProperties = [];
+        function render(response) {
+            var runtime = response.value;
+            $scope.systemProperties = [];
+            for (var key in runtime.SystemProperties) {
+                $scope.systemProperties.push({ name: key, value: runtime.SystemProperties[key] });
+            }
+            Core.$apply($scope);
+        }
+        Core.register(jolokia, $scope, {
+            type: 'read',
+            mbean: Runtime.runtimeMbean,
+            arguments: []
+        }, onSuccess(render));
+    }]);
+})(Runtime || (Runtime = {}));
 var Service;
 (function (Service) {
     Service.pluginName = 'Service';
