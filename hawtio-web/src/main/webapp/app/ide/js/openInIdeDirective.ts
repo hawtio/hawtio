@@ -2,13 +2,21 @@ module IDE {
 
   var log:Logging.Logger = Logger.get("IDE");
 
+  export interface SourceReference {
+    fileName: string;
+    className: string;
+    line: string;
+    column: string;
+  }
+
+
   export class OpenInIdeDirective {
 
     public restrict = 'E';
     public replace = true;
     public transclude = false;
 
-    public scope = {
+    public scope: SourceReference = {
       fileName: '@',
       className: '@',
       line: '@',
@@ -31,29 +39,11 @@ module IDE {
       var mbean = IDE.getIdeMBean(workspace);
       var fileName = $scope.fileName;
       if (mbean && fileName) {
-        var className = $scope.className;
-        var line = $scope.line;
-        var col = $scope.col;
-        if (!angular.isDefined(line) || line === null) line = 0;
-        if (!angular.isDefined(col) || col === null) col = 0;
-
-
         if (IDE.isOpenInIdeaSupported(workspace, localStorage)) {
           var ideaButton = $('<button class="btn btn-mini"><img src="app/ide/img/intellijidea.png" width="16" height="16"></button>');
-
-          function onResult(absoluteName) {
-            if (!absoluteName) {
-              log.info("Could not find file in source code: " + fileName + " class: " + className);
-              ideaButton.attr("title", "Could not find source file: " + fileName);
-            } else {
-              ideaButton.attr("title", "Opening in IDEA: " + absoluteName);
-              IDE.ideaOpenAndNavigate(mbean, jolokia, absoluteName, line, col);
-            }
-          }
-
           ideaButton.on( "click", function() {
-            log.info("Finding local file name: " + fileName + " className: " + className);
-            IDE.findClassAbsoluteFileName(mbean, jolokia, localStorage, fileName, className, onResult);
+            log.info("Attempting to open source file for: " + $scope.className);
+            IDE.ideaOpenAndNavigate(mbean, jolokia, $scope, (response) => {log.info("open file request completed.")});
           });
           $element.append(ideaButton);
         }

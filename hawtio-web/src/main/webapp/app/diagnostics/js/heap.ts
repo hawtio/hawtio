@@ -3,6 +3,7 @@
  */
 /// <reference path="./diagnosticsPlugin.ts"/>
 /// <reference path="./diagnosticHelpers.ts"/>
+/// <reference path="../../ide/js/openInIdeDirective.ts"/>
 module Diagnostics {
 
     interface ClassStats {
@@ -12,6 +13,7 @@ module Diagnostics {
         name: string;
         deltaCount: string;
         deltaBytes: string;
+        sourceReference: IDE.SourceReference;
     };
 
     interface HeapControllerScope extends ng.IScope {
@@ -33,7 +35,7 @@ module Diagnostics {
         $scope.classHistogram = '';
         $scope.status = '';
         $scope.tableDef = tableDef();
-        $scope.classes = [{ num: null, count: null, bytes: null, deltaBytes: null, deltaCount: null, name: 'Click reload to read class histogram' }];
+        $scope.classes = [{ num: null, count: null, bytes: null, deltaBytes: null, deltaCount: null, name: 'Click reload to read class histogram', sourceReference: null }];
         $scope.loading = false;
         $scope.lastLoaded = 'n/a';
         $scope.pid = findMyPid($scope.pageTitle);
@@ -42,12 +44,12 @@ module Diagnostics {
         $scope.loadClassStats = () => {
             $scope.loading = true;
             Core.$apply( $scope );
-            jolokia.request( [{
+            jolokia.request( {
                 type: 'exec',
                 mbean: 'com.sun.management:type=DiagnosticCommand',
                 operation: 'gcClassHistogram([Ljava.lang.String;)',
                 arguments: ['']
-            }], {
+            }, {
                     success: render,
                     error: ( response ) => {
                         $scope.status = 'Could not get class histogram : ' + response.error;
@@ -147,7 +149,7 @@ module Diagnostics {
                     }, {
                         field: 'name',
                         displayName: 'Class name',
-                        cellTemplate: '{{row.entity.name}}<div ng-switch on="!!row.entity.sourceReference"><hawtio-open-ide ng-switch-when="true" file-name="{{row.entity.sourceReference.sourceFile}}" class-name="{{row.entity.sourceReference.className}}" line="1" column="1"></hawtio-open-ide></div>'
+                        cellTemplate: '<span ng-switch on="!!row.entity.sourceReference"><hawtio-open-ide ng-switch-when="true" file-name="{{row.entity.sourceReference.fileName}}" class-name="{{row.entity.sourceReference.className}}"></hawtio-open-ide> {{row.entity.name}}</span>'
                     }]
             };
 
@@ -188,7 +190,7 @@ module Diagnostics {
 
         }
         
-        function javaSource(className) {
+        function javaSource(className):IDE.SourceReference {
             var baseName = className;
             
             //trim array types
@@ -209,7 +211,9 @@ module Diagnostics {
             
             return {
                 className: baseName,
-                sourceFile: simpleName + '.java'
+                fileName: simpleName + '.java',
+                line: null,
+                column: null
             };
         }
 
