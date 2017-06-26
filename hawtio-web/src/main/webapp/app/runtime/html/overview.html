@@ -1,0 +1,40 @@
+<div class="runtime-controller"
+	ng-controller="Runtime.OverviewController">
+
+	<div class="row-fluid">
+		<div class="span10">
+			<div class="expandable open">
+				<div title="Overview" class="title">
+					<i class="expandable-indicator"></i> Overview
+				</div>
+				<div class="expandable-body well">
+					Running: (pid: <b>{{pid}}</b>) {{runtime.VmName}} -
+					{{runtime.SpecVersion}} ({{runtime.VmVersion}}) by
+					{{runtime.VmVendor}} in <b>{{runtime.SystemProperties['user.name']}}@{{host}}</b>
+					running ({{operatingSystem.Name}} version
+					{{operatingSystem.Version}} with
+					{{operatingSystem.AvailableProcessors}} * {{operatingSystem.Arch}}
+					CPU cores) since <b>{{runtime.StartTime | date: 'yyyy-MM-dd HH:mm:ss' }} (uptime: {{uptime}})</b>
+				</div>
+			</div>
+			<div class="expandable open">
+				<div title="Working directory" class="title">
+					<i class="expandable-indicator"></i> Working directory
+				</div>
+				<div class="expandable-body well" >
+					<a href="file://{{workingDirectory}}" target="_blank">{{workingDirectory}}</a></b>
+				</div>
+			</div>
+			<div class="expandable open">
+				<div title="Command Line" class="title">
+					<i class="expandable-indicator"></i> Command line (simulated)
+				</div>
+				<div class="expandable-body well breakLong" zero-clipboard
+					data-clipboard-text="{{javaPath}} -classpath {{classPath}} {{vmArgs}} {{runtime.SystemProperties['sun.java.command']}}"
+					tooltip="minimal command line (add system properties from below if not specific enough)">
+					{{javaPath}} -classpath {{classPath}} {{vmArgs}} <strong>{{runtime.SystemProperties['sun.java.command']}}</strong>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
