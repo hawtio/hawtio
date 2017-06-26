@@ -3437,49 +3437,24 @@ var IDE;
         return value !== "false";
     }
     IDE.isOpenInIdeaSupported = isOpenInIdeaSupported;
-    function isOpenInTextMateSupported(workspace, localStorage) {
-        var value = localStorage["openInTextMate"];
-        return value !== "false";
-    }
-    IDE.isOpenInTextMateSupported = isOpenInTextMateSupported;
-    function findClassAbsoluteFileName(mbean, jolokia, localStorage, fileName, className, onResult) {
-        var sourceRoots = [];
-        var answer = null;
-        if (mbean) {
-            answer = jolokia.execute(mbean, "findClassAbsoluteFileName", fileName, className, sourceRoots, onSuccess(onResult));
-        }
-        else {
-            onResult(answer);
-        }
-        return answer;
-    }
-    IDE.findClassAbsoluteFileName = findClassAbsoluteFileName;
-    function asNumber(value, defaultValue) {
-        if (defaultValue === void 0) { defaultValue = 0; }
-        if (angular.isNumber(value)) {
-            return value;
-        }
-        else if (angular.isString(value)) {
-            return parseInt(value);
-        }
-        else {
-            return defaultValue;
-        }
-    }
-    function max(v1, v2) {
-        return (v1 >= v2) ? v1 : v2;
-    }
-    function ideaOpenAndNavigate(mbean, jolokia, absoluteFileName, line, column, fn) {
+    function ideaOpenAndNavigate(mbean, jolokia, scope, fn) {
         if (fn === void 0) { fn = null; }
         var answer = null;
+        if (isInvalidAsNumber(scope.line)) {
+            scope.line = null;
+        }
+        if (isInvalidAsNumber(scope.column)) {
+            scope.column = null;
+        }
         if (mbean) {
-            line = max(asNumber(line) - 1, 0);
-            column = max(asNumber(column) - 1, 0);
-            answer = jolokia.execute(mbean, "ideaOpenAndNavigate", absoluteFileName, line, column, onSuccess(fn));
+            answer = jolokia.execute(mbean, "ideOpen", scope.fileName, scope.className, scope.line, scope.column, onSuccess(fn));
         }
         return answer;
     }
     IDE.ideaOpenAndNavigate = ideaOpenAndNavigate;
+    function isInvalidAsNumber(value) {
+        return !value || isNaN(value);
+    }
 })(IDE || (IDE = {}));
 var IDE;
 (function (IDE) {
@@ -3509,28 +3484,13 @@ var IDE;
             var mbean = IDE.getIdeMBean(workspace);
             var fileName = $scope.fileName;
             if (mbean && fileName) {
-                var className = $scope.className;
-                var line = $scope.line;
-                var col = $scope.col;
-                if (!angular.isDefined(line) || line === null)
-                    line = 0;
-                if (!angular.isDefined(col) || col === null)
-                    col = 0;
                 if (IDE.isOpenInIdeaSupported(workspace, localStorage)) {
                     var ideaButton = $('<button class="btn btn-mini"><img src="app/ide/img/intellijidea.png" width="16" height="16"></button>');
-                    function onResult(absoluteName) {
-                        if (!absoluteName) {
-                            log.info("Could not find file in source code: " + fileName + " class: " + className);
-                            ideaButton.attr("title", "Could not find source file: " + fileName);
-                        }
-                        else {
-                            ideaButton.attr("title", "Opening in IDEA: " + absoluteName);
-                            IDE.ideaOpenAndNavigate(mbean, jolokia, absoluteName, line, col);
-                        }
-                    }
                     ideaButton.on("click", function () {
-                        log.info("Finding local file name: " + fileName + " className: " + className);
-                        IDE.findClassAbsoluteFileName(mbean, jolokia, localStorage, fileName, className, onResult);
+                        log.info("Attempting to open source file for: " + $scope.className);
+                        IDE.ideaOpenAndNavigate(mbean, jolokia, $scope, function (response) {
+                            log.info("open file request completed.");
+                        });
                     });
                     $element.append(ideaButton);
                 }
@@ -22513,19 +22473,19 @@ var Diagnostics;
         $scope.classHistogram = '';
         $scope.status = '';
         $scope.tableDef = tableDef();
-        $scope.classes = [{ num: null, count: null, bytes: null, deltaBytes: null, deltaCount: null, name: 'Click reload to read class histogram' }];
+        $scope.classes = [{ num: null, count: null, bytes: null, deltaBytes: null, deltaCount: null, name: 'Click reload to read class histogram', sourceReference: null }];
         $scope.loading = false;
         $scope.lastLoaded = 'n/a';
         $scope.pid = Diagnostics.findMyPid($scope.pageTitle);
         $scope.loadClassStats = function () {
             $scope.loading = true;
             Core.$apply($scope);
-            jolokia.request([{
+            jolokia.request({
                 type: 'exec',
                 mbean: 'com.sun.management:type=DiagnosticCommand',
                 operation: 'gcClassHistogram([Ljava.lang.String;)',
                 arguments: ['']
-            }], {
+            }, {
                 success: render,
                 error: function (response) {
                     $scope.status = 'Could not get class histogram : ' + response.error;
@@ -22625,7 +22585,7 @@ var Diagnostics;
                     {
                         field: 'name',
                         displayName: 'Class name',
-                        cellTemplate: '{{row.entity.name}}<div ng-switch on="!!row.entity.sourceReference"><hawtio-open-ide ng-switch-when="true" file-name="{{row.entity.sourceReference.sourceFile}}" class-name="{{row.entity.sourceReference.className}}" line="1" column="1"></hawtio-open-ide></div>'
+                        cellTemplate: '<span ng-switch on="!!row.entity.sourceReference"><hawtio-open-ide ng-switch-when="true" file-name="{{row.entity.sourceReference.fileName}}" class-name="{{row.entity.sourceReference.className}}"></hawtio-open-ide> {{row.entity.name}}</span>'
                     }
                 ]
             };
@@ -22680,7 +22640,9 @@ var Diagnostics;
             }
             return {
                 className: baseName,
-                sourceFile: simpleName + '.java'
+                fileName: simpleName + '.java',
+                line: null,
+                column: null
             };
         }
     }]);
