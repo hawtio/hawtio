@@ -85,7 +85,7 @@
                     <ul class="stack-trace-list">
                       <li class="stack-trace" ng-repeat="stack in exception.stackTraceList">
                         {{stack.className}}.{{stack.methodName}}({{stack.fileName}}:{{stack.lineNumber}})
-                        <hawtio-open-ide file-name="{{stack.fileName}}" class-name="{{stack.className}}" line="{{stack.lineNumber}})" column="{{stack.columnNumber}})"></hawtio-open-ide>
+                        <hawtio-open-ide file-name="{{stack.fileName}}" class-name="{{stack.className}}" line="{{stack.lineNumber}}"></hawtio-open-ide>
                       </li>
                     </ul>
                   </div>

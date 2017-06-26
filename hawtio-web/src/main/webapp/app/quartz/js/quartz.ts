@@ -1,6 +1,8 @@
 /**
  * @module Quartz
  */
+/// <reference path="../../core/js/coreHelpers.ts"/>
+/// <reference path="../../ui/js/dialog.ts"/>
 /// <reference path="./quartzPlugin.ts"/>
 module Quartz {
 

@@ -1,6 +1,14 @@
 
 ### Change Log
 
+#### 1.5.2 (To be released)
+
+* Added a new java.lang.Runtime plugin
+* IDE plugin modification and update
+* Various fixes and improvements
+* Upgraded to Camel 2.19.1
+* Upgraded to JGit 4.8.x
+
 #### 1.5.1
 
 * New Diagnostics plugin using JVM Flight Recorder
@@ -13,7 +21,7 @@
 * Upgraded to JGit 4.7.x
 * Various bug fixes
 
-#### 1.5.1
+#### 1.5.0
 
 * Hawtio 1.5 requires Java 1.8 onwards
 * Turned `ProxyServlet` to whitelist-based host selection model for security reasons.

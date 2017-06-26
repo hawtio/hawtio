@@ -149,7 +149,7 @@ module Wiki {
      * @method getPath
      * @for GitWikiRepository
      * @param {String} path
-     * @return {String{
+     * @return {String}
      */
     public getPath(path:string) {
       var directoryPrefix = this.directoryPrefix;
