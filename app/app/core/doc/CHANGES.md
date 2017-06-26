@@ -3,8 +3,11 @@
 
 #### 1.5.2 (To be released)
 
+* Added a new java.lang.Runtime plugin
+* IDE plugin modification and update
 * Various fixes and improvements
 * Upgraded to Camel 2.19.1
+* Upgraded to JGit 4.8.x
 
 #### 1.5.1
 
