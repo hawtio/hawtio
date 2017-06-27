@@ -105,6 +105,16 @@ module Diagnostics {
             Core.$apply( $scope );
         }
         
+        function addRecording(recording:Recording, recordings:Array<Recording>) {
+            for(var i=0; i < recordings.length; i++) {
+                if(recordings[i].file === recording.file) {
+                    recordings[i] = recording;
+                    return;
+                }  
+            }
+            recordings.add(recording);
+        }
+        
         function showArguments(arguments: Array<any>) {
             var result='';
             var first = true;
@@ -221,7 +231,7 @@ module Diagnostics {
                     var matches = splitResponse( response );
                     Diagnostics.log.debug( "response: " + response
                         + " split: " + matches + "split2: "
-                        + splitResponse( response ) );
+                        + matches );
                     if ( matches ) {
                         var recordingData = {
                             number: matches[1],
@@ -231,7 +241,7 @@ module Diagnostics {
                         };
                         Diagnostics.log.debug( "data: "
                             + recordingData );
-                        $scope.recordings.push( recordingData );
+                        addRecording(recordingData, $scope.recordings);
                     }
 
                 });
