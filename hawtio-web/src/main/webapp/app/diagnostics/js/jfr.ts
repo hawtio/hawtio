@@ -6,7 +6,7 @@
 module Diagnostics {
 
     function splitResponse( response:string ) {
-        return response.match( /Dumped recording (\d+),(.+) written to:\n\n(.+)/ );
+        return response.match( /Dumped recording (\d+),(.+) written to:\r?\n\r?\n(.+)/ );
     }
 
     function buildStartParams( jfrSettings: JfrSettings ) {
