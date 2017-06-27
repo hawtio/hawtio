@@ -26,7 +26,7 @@ module JVM {
         return;
       }
       var options:Core.ConnectToServerOptions = Core.createConnectOptions();
-      options.name = agent.agent_description;
+      options.name = agent.agent_description  || 'discover-' + agent.agent_id;
       var urlObject = Core.parseUrl(agent.url);
       angular.extend(options, urlObject);
       options.userName = agent.username;
