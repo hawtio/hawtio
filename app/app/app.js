@@ -22676,7 +22676,7 @@ var Forms;
 var Diagnostics;
 (function (Diagnostics) {
     function splitResponse(response) {
-        return response.match(/Dumped recording (\d+),(.+) written to:\n\n(.+)/);
+        return response.match(/Dumped recording (\d+),(.+) written to:\r?\n\r?\n(.+)/);
     }
     function buildStartParams(jfrSettings) {
         var params = [];
@@ -22724,6 +22724,15 @@ var Diagnostics;
                 }
             }
             Core.$apply($scope);
+        }
+        function addRecording(recording, recordings) {
+            for (var i = 0; i < recordings.length; i++) {
+                if (recordings[i].file === recording.file) {
+                    recordings[i] = recording;
+                    return;
+                }
+            }
+            recordings.add(recording);
         }
         function showArguments(arguments) {
             var result = '';
@@ -22826,7 +22835,7 @@ var Diagnostics;
         $scope.dumpRecording = function () {
             executeDiagnosticFunction('jfrDump([Ljava.lang.String;)', 'JFR.dump', [buildDumpParams($scope.jfrSettings)], function (response) {
                 var matches = splitResponse(response);
-                Diagnostics.log.debug("response: " + response + " split: " + matches + "split2: " + splitResponse(response));
+                Diagnostics.log.debug("response: " + response + " split: " + matches + "split2: " + matches);
                 if (matches) {
                     var recordingData = {
                         number: matches[1],
@@ -22835,7 +22844,7 @@ var Diagnostics;
                         time: Date.now()
                     };
                     Diagnostics.log.debug("data: " + recordingData);
-                    $scope.recordings.push(recordingData);
+                    addRecording(recordingData, $scope.recordings);
                 }
             });
         };
