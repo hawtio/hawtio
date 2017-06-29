@@ -44,6 +44,11 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/dashboard">dashboard</a></td>
   </tr>
   <tr>
+    <td><a href="http://hawt.io/plugins/diagnostics/">diagnostics</a></td>
+    <td>The diagnostics plugin allow you to control the Java Flight Recorder, see class histogram and access to JVM flags.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/diagnostics">diagnostics</a></td>
+  </tr>
+  <tr>
     <td><a href="http://hawt.io/plugins/dozer/">dozer</a></td>
     <td>The Dozer plugin adds editing support for the <a href="http://dozer.sourceforge.net/">Dozer data mapping library</a> which can be used with <a href="http://camel.apache.org/">Apache Camel</a></td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/dozer">dozer</a></td>
