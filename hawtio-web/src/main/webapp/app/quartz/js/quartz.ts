@@ -477,11 +477,11 @@ module Quartz {
       }
     }
     function onManualTriggerError(response) {
-      Core.notification("error", "Could not manually trigger " + response.request.arguments[1] + "/" + response.request.arguments[0] + " due to: " + response.error);
+      Core.notification("error", "Could not manually fire trigger " + response.request.arguments[1] + "/" + response.request.arguments[0] + " due to: " + response.error);
     }
     
     function onManualTriggerSuccess(response) {
-      Core.notification("success", "Manually triggered " + response.request.arguments[1] + "/" + response.request.arguments[0]);
+      Core.notification("success", "Manually fired trigger " + response.request.arguments[1] + "/" + response.request.arguments[0]);
     }
     
     $scope.onManualTrigger = () => {
@@ -490,7 +490,7 @@ module Quartz {
       var triggerName = $scope.manualTrigger["name"];
 
       $scope.manualTrigger = {};
-      log.info("Mannually triggering " + groupName + "/" + triggerName + " with parameters " + parameters);
+      log.info("Mannually firing trigger " + groupName + "/" + triggerName + " with parameters " + parameters);
 
       jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
           operation: "triggerJob", arguments: [
