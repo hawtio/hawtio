@@ -2,8 +2,8 @@
 
 The [Quartz](#/quartz/schedulers/) plugin in [hawtio](http://hawt.io "hawtio") offers functionality for viewing and managing Quartz Schedulers.
 
-#### Schedulers
-Here you can see the list of schedulers and their state. You can also pause and resume a scheduler.
+#### Scheduler
+Here you can see the scheduler its state and statistics. You can also pause and resume a scheduler.
 
 #### Jobs
 Jobs lists and allows you to see information about job definitions.
