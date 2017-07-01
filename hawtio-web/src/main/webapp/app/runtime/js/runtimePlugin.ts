@@ -18,9 +18,10 @@ module Runtime {
         }] );
 
 
-    _module.run(( workspace: Workspace, viewRegistry, layoutFull ) => {
+    _module.run(( workspace: Workspace, viewRegistry, helpRegistry, layoutFull ) => {
 
         viewRegistry[pluginName] = templatePath + "layoutRuntime.html";
+        helpRegistry.addUserDoc('runtime', 'app/runtime/doc/help.md');
 
         workspace.topLevelTabs.push( {
             id: "runtime",
