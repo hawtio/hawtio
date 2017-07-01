@@ -146,6 +146,11 @@ The following plugins are all included by default in the [hawtio-web.war](https:
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/quartz">quartz</a></td>
   </tr>
   <tr>
+    <td><a href="http://hawt.io/plugins/runtime/">runtime</a></td>
+    <td>General overview of the Java process including command line, system properties and key metrics.</td>
+    <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/runtime">runtime</a></td>
+  </tr>  
+  <tr>
     <td><a href="http://hawt.io/plugins/source/">source</a></td>
     <td>Used by the <a href="http://hawt.io/plugins/logs/">log plugin</a> to view the source code of any file in a maven source artefact using the maven coordinates, class name / file name and line number.</td>
     <td><a href="https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/source">source</a></td>

@@ -41714,8 +41714,9 @@ var Runtime;
     Runtime._module.config(['$routeProvider', function ($routeProvider) {
         $routeProvider.when('/runtime/overview', { templateUrl: Runtime.templatePath + 'overview.html' }).when('/runtime/systemProperties', { templateUrl: Runtime.templatePath + 'systemProperties.html' }).when('/runtime/metrics', { templateUrl: Runtime.templatePath + 'metrics.html' });
     }]);
-    Runtime._module.run(["workspace", "viewRegistry", "layoutFull", function (workspace, viewRegistry, layoutFull) {
+    Runtime._module.run(["workspace", "viewRegistry", "helpRegistry", "layoutFull", function (workspace, viewRegistry, helpRegistry, layoutFull) {
         viewRegistry[Runtime.pluginName] = Runtime.templatePath + "layoutRuntime.html";
+        helpRegistry.addUserDoc('runtime', 'app/runtime/doc/help.md');
         workspace.topLevelTabs.push({
             id: "runtime",
             content: "Runtime",
