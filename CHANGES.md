@@ -3,6 +3,8 @@
 
 #### 1.5.3 (To be released)
 
+ * Quartz plugin can now be triggered manually via play button
+
 #### 1.5.2 
 
 * Added a new java.lang.Runtime plugin
