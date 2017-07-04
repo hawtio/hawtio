@@ -147,7 +147,8 @@ gulp.task('install-dependencies', function() {
       flat: true,
       noBinLinks: true,
       noProgress: true,
-      ignoreScripts: true
+      ignoreScripts: true,
+      nonInteractive: true
     }));
 });
 
