@@ -3,7 +3,8 @@ machine:
     version: 6.9.1
   java:
     version: oraclejdk8
-  services:
+  environment:
+    PATH: "${PATH}:${HOME}/${CIRCLE_PROJECT_REPONAME}/node_modules/.bin"
 
 branches:
   only:
@@ -11,9 +12,12 @@ branches:
 
 dependencies:
   pre:
-    - npm install -g gulp
+    - rm -rf ~/.yarn
+    - npm install --global yarn
   override:
     - mvn install
+  cache_directories:
+    - ~/.cache/yarn
 
 test:
   override:
