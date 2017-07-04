@@ -9,11 +9,10 @@
   ],
   "scripts": {
     "start": "gulp",
-    "build": "gulp build",
-    "install:dev": "yarn install --flat --prod && yarn install"
+    "build": "gulp build"
   },
   "dependencies": {
-    "@hawtio/integration": "~3.0.0"
+    "@hawtio/integration": "^3.0.16"
   },
   "devDependencies": {
     "@hawtio/node-backend": "^3.0.0",
@@ -24,7 +23,7 @@
     "gulp-clean": "~0.3.0",
     "gulp-clean-css": "^3.0.0",
     "gulp-concat": "^2.0.0",
-    "gulp-debug": "^2.0.0",
+    "gulp-debug": "^3.1.0",
     "gulp-dedupe": "0.0.2",
     "gulp-flatten": "~0.3.0",
     "gulp-gh-pages": "~0.5.0",
@@ -33,22 +32,23 @@
     "gulp-less": "^3.0.0",
     "gulp-load-plugins": "^1.0.0",
     "gulp-minify-css": "^1.0.0",
-    "gulp-notify": "^2.0.0",
+    "gulp-notify": "^3.0.0",
     "gulp-rename": "^1.0.0",
-    "gulp-replace": "^0.5.4",
+    "gulp-replace": "^0.6.1",
     "gulp-rev": "^7.0.0",
     "gulp-size": "^2.0.0",
-    "gulp-sourcemaps": "^1.0.0",
-    "gulp-tslint": "^7.0.0",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-tslint": "^8.1.1",
     "gulp-typescript": "^3.0.0",
-    "gulp-uglify": "^2.0.0",
+    "gulp-uglify": "^3.0.0",
     "gulp-usemin": "~0.3.0",
-    "run-sequence": "^1.2.2",
-    "tslint": "^4.0.0",
+    "gulp-yarn": "^1.0.0",
+    "run-sequence": "^2.0.0",
+    "tslint": "^5.4.3",
     "typescript": "^2.0.0",
     "underscore.string": "^3.0.0",
     "urijs": "^1.0.0",
-    "url-join": "^1.0.0",
+    "url-join": "^2.0.2",
     "vinyl-map": "^1.0.0"
   },
   "license": "Apache-2.0",
@@ -58,9 +58,12 @@
   },
   "resolutions": {
     "jquery": "2.2.4",
-    "angular": "1.6.4",
-    "angular-sanitize": "1.6.4",
+    "angular": "1.6.5",
+    "angular-sanitize": "1.6.5",
     "angular-ui-bootstrap": "2.5.0",
-    "bootstrap-select": "1.12.2"
+    "bootstrap-select": "1.12.2",
+    "@types/jquery": "2.0.48",
+    "datatables.net": "1.10.15",
+    "moment": "2.18.1"
   }
 }

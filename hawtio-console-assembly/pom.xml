@@ -40,7 +40,7 @@
             </goals>
             <configuration>
               <nodeVersion>v6.11.0</nodeVersion>
-              <yarnVersion>v0.24.6</yarnVersion>
+              <yarnVersion>v0.27.5</yarnVersion>
             </configuration>
           </execution>
           <execution>
@@ -49,7 +49,7 @@
               <goal>yarn</goal>
             </goals>
             <configuration>
-              <arguments>run install:dev</arguments>
+              <arguments>install</arguments>
             </configuration>
           </execution>
           <execution>
@@ -58,7 +58,7 @@
               <goal>gulp</goal>
             </goals>
             <configuration>
-              <arguments>mvn</arguments>
+              <arguments>build</arguments>
             </configuration>
           </execution>
         </executions>

@@ -121,7 +121,7 @@
         <configuration>
           <webResources>
             <resource>
-              <directory>../hawtio-console-assembly/target/site/</directory>
+              <directory>../hawtio-console-assembly/dist/</directory>
               <includes>
                 <include>**/*.*</include>
               </includes>

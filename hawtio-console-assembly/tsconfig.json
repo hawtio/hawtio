@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES5",
-    "declaration": true,
+    "declaration": false,
     "outFile": "compiled.js",
     "typeRoots": [
       "node_modules/@types",

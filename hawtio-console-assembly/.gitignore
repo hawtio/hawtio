@@ -1,3 +1,6 @@
-node_modules/
-libs/
-.vscode/
+.vscode
+dist
+node
+node_modules
+target
+temp
