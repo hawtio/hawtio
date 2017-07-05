@@ -34,10 +34,10 @@ module Diagnostics {
       content: "Diagnostics",
       title: "JVM Diagnostics",
       isValid: (workspace) => {
-          return workspace.treeContainsDomainAndProperties("com.sun.management")
+          return workspace.treeContainsDomainAndProperties("com.sun.management") && initialTab(workspace);
       },
       href: () => {
-        return '#/diagnostics/jfr';
+        return '#/diagnostics' + initialTab(workspace);
       },
       isActive: (workspace:Workspace) => workspace.isLinkActive("diagnostics")
     });

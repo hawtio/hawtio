@@ -37,13 +37,13 @@ module Diagnostics {
       {
         content: '<i class="icon-plane"></i> Flight Recorder',
         title: "Make flight recordings",
-        isValid: (workspace:Workspace) => true,
+        isValid: (workspace:Workspace) => hasDiagnosticFunction(workspace, 'jfrCheck'),
         href: "#/diagnostics/jfr"
       },
       {
         content: '<i class="icon-hdd"></i> Heap Use',
         title: "See heap use",
-        isValid: (workspace:Workspace) => true,
+        isValid: (workspace:Workspace) => hasDiagnosticFunction(workspace, 'gcClassHistogram'),
         href: "#/diagnostics/heap"
       },
       {
@@ -59,6 +59,24 @@ module Diagnostics {
 
   export function hasHotspotDiagnostic(workspace) {
     return workspace.treeContainsDomainAndProperties('com.sun.management', {type: 'HotSpotDiagnostic'});
+  }
+    
+  export function hasDiagnosticFunction(workspace:Workspace, operation:string) {
+       var diagnostics:Folder=workspace.findMBeanWithProperties('com.sun.management', {type: 'DiagnosticCommand'});
+       return diagnostics && diagnostics.mbean && diagnostics.mbean.op && diagnostics.mbean.op[operation];
+  }
+    
+  export function initialTab(workspace:Workspace) : string {
+      if(hasDiagnosticFunction(workspace, 'jfrCheck')) {
+          return '/jfr';
+      } else if(hasDiagnosticFunction(workspace, 'gcClassHistogram')) {
+          return '/heap';
+      } else if(hasHotspotDiagnostic(workspace)) {
+          return '/flags';
+      } else {
+          return '';
+      }
+      
   }
   
   export function findMyPid(title) {
