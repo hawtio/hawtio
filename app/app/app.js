@@ -22308,13 +22308,13 @@ var Diagnostics;
             {
                 content: '<i class="icon-plane"></i> Flight Recorder',
                 title: "Make flight recordings",
-                isValid: function (workspace) { return true; },
+                isValid: function (workspace) { return hasDiagnosticFunction(workspace, 'jfrCheck'); },
                 href: "#/diagnostics/jfr"
             },
             {
                 content: '<i class="icon-hdd"></i> Heap Use',
                 title: "See heap use",
-                isValid: function (workspace) { return true; },
+                isValid: function (workspace) { return hasDiagnosticFunction(workspace, 'gcClassHistogram'); },
                 href: "#/diagnostics/heap"
             },
             {
@@ -22330,6 +22330,26 @@ var Diagnostics;
         return workspace.treeContainsDomainAndProperties('com.sun.management', { type: 'HotSpotDiagnostic' });
     }
     Diagnostics.hasHotspotDiagnostic = hasHotspotDiagnostic;
+    function hasDiagnosticFunction(workspace, operation) {
+        var diagnostics = workspace.findMBeanWithProperties('com.sun.management', { type: 'DiagnosticCommand' });
+        return diagnostics && diagnostics.mbean && diagnostics.mbean.op && diagnostics.mbean.op[operation];
+    }
+    Diagnostics.hasDiagnosticFunction = hasDiagnosticFunction;
+    function initialTab(workspace) {
+        if (hasDiagnosticFunction(workspace, 'jfrCheck')) {
+            return '/jfr';
+        }
+        else if (hasDiagnosticFunction(workspace, 'gcClassHistogram')) {
+            return '/heap';
+        }
+        else if (hasHotspotDiagnostic(workspace)) {
+            return '/flags';
+        }
+        else {
+            return '';
+        }
+    }
+    Diagnostics.initialTab = initialTab;
     function findMyPid(title) {
         var regex = /pid:(\d+)/g;
         var pid = regex.exec(title);
@@ -22361,10 +22381,10 @@ var Diagnostics;
             content: "Diagnostics",
             title: "JVM Diagnostics",
             isValid: function (workspace) {
-                return workspace.treeContainsDomainAndProperties("com.sun.management");
+                return workspace.treeContainsDomainAndProperties("com.sun.management") && Diagnostics.initialTab(workspace);
             },
             href: function () {
-                return '#/diagnostics/jfr';
+                return '#/diagnostics' + Diagnostics.initialTab(workspace);
             },
             isActive: function (workspace) { return workspace.isLinkActive("diagnostics"); }
         });
