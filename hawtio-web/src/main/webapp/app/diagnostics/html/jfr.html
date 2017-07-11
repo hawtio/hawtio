@@ -20,7 +20,7 @@
 					<svg role="img" aria-label="recording indicator"
 						xmlns="http://www.w3.org/2000/svg" version="1.1"
 						viewBox="0 0 24 24" width="25" height="25" id="recordingIndicator">
-							<circle cx="12" cy="12" r="11" fill="red" ng-show="isRecording">
+							<circle cx="12" cy="12" r="11" fill="red" ng-show="isRunning">
 								<animate attributeType="XML" attributeName="fill" from="#ff0000"
 							to="#000000" dur="2s" repeatCount="indefinite" />
 							</circle>
@@ -29,7 +29,7 @@
 					<div class="casetteLabel">
 						{{jfrStatus}}
 						<div class="notLabel">
-							<div class="wrapCog" ng-class="{'spinning': isRecording}">
+							<div class="wrapCog" ng-class="{'spinning': isRunning}">
 								<svg role="img" aria-label="cassette wheel"
 									xmlns="http://www.w3.org/2000/svg" version="1.1"
 									viewBox="0 0 24 24" width="50" height="50"
@@ -45,7 +45,7 @@
 										transform="rotate(135,12,12)" />
 				</svg>
 							</div>
-							<div class="wrapCog" ng-class="{'spinning': isRecording}"
+							<div class="wrapCog" ng-class="{'spinning': isRunning}"
 								id="rightCogWrapper">
 								<svg role="img" aria-label="cassette wheel"
 									xmlns="http://www.w3.org/2000/svg" version="1.1"

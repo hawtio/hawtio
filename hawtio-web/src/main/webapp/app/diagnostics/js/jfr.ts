@@ -12,10 +12,10 @@ module Diagnostics {
     function buildStartParams( jfrSettings: JfrSettings ) {
         var params = [];
         if ( jfrSettings.name && jfrSettings.name.length > 0 ) {
-            params.push( 'name=' + jfrSettings.name );
+            params.push( 'name="' + jfrSettings.name + '"');
         }
         if ( jfrSettings.filename && jfrSettings.filename.length > 0 ) {
-            params.push( 'filename=' + jfrSettings.filename );
+            params.push( 'filename="' + jfrSettings.filename + '"');
         }
         params.push( 'dumponexit=' + jfrSettings.dumpOnExit );
         params.push( 'compress=' + jfrSettings.compress );
@@ -28,7 +28,7 @@ module Diagnostics {
 
     function buildDumpParams( jfrSettings: JfrSettings ) {
         return [
-            'filename=' + jfrSettings.filename,
+            'filename="' + jfrSettings.filename + '"',
             'compress=' + jfrSettings.compress,
             'recording=' + jfrSettings.recordingNumber
         ];
@@ -59,6 +59,7 @@ module Diagnostics {
         forms: any;
         jfrEnabled: boolean;
         isRecording: boolean;
+        isRunning: boolean;
         jfrSettings: JfrSettings;
         unlock: () => void;
         startRecording: () => void;
@@ -81,7 +82,8 @@ module Diagnostics {
 
             var statusString = response.value;
             $scope.jfrEnabled = statusString.indexOf( "not enabled" ) == -1;
-            $scope.isRecording = statusString.indexOf( "(running)" ) > -1;
+            $scope.isRunning = statusString.indexOf( "(running)" ) > -1;
+            $scope.isRecording = $scope.isRunning || statusString.indexOf("(stopped)") > -1;
             if ( ( statusString.indexOf( "Use JFR." ) > -1 || statusString
                 .indexOf( "Use VM." ) > -1 )
                 && $scope.pid ) {
@@ -90,7 +92,7 @@ module Diagnostics {
             }
             $scope.jfrStatus = statusString;
             if ( $scope.isRecording ) {
-                var regex = /recording=(\d+).*name="(.+)"/g;
+                var regex = /recording=(\d+) name="(.+?)"/g;
                 var parsed=regex.exec( statusString );
                 $scope.jfrSettings.recordingNumber = parsed[1];
                 $scope.jfrSettings.name = parsed[2];
