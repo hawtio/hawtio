@@ -36284,6 +36284,18 @@ var JVM;
         $scope.closePopover = function ($event) {
             $($event.currentTarget).parents('.popover').prev().popover('hide');
         };
+        function getMoreJvmDetails(agents) {
+            for (var key in agents) {
+                var agent = agents[key];
+                if (agent.url && !agent.secured) {
+                    var dedicatedJolokia = Core.createJolokia(agent.url, agent.username, agent.password);
+                    agent.startTime = dedicatedJolokia.getAttribute('java.lang:type=Runtime', 'StartTime');
+                    if (!$scope.hasName(agent)) {
+                        agent.command = dedicatedJolokia.getAttribute('java.lang:type=Runtime', 'SystemProperties', 'sun.java.command');
+                    }
+                }
+            }
+        }
         function doConnect(agent) {
             if (!agent.url) {
                 Core.notification('warning', 'No URL available to connect to agent');
@@ -36346,6 +36358,7 @@ var JVM;
                 if ($scope.responseJson !== responseJson) {
                     $scope.responseJson = responseJson;
                     $scope.agents = response;
+                    getMoreJvmDetails($scope.agents);
                 }
             }
             Core.$apply($scope);
