@@ -70,8 +70,11 @@
             <span ng-class="getAgentIdClass(agent)">
               <strong ng-show="hasName(agent)">Agent ID: </strong>{{agent.agent_id}}<br/>
               <strong ng-show="hasName(agent)">Agent Version: </strong><span ng-hide="hasName(agent)"> Version: </span>{{agent.agent_version}}</span><br/>
-              <strong ng-show="hasName(agent)">Agent Description: </strong><span
-                ng-hide="hasName(agent)"> Description: </span>{{agent.agent_description}}</span><br/>
+              <strong ng-show="hasName(agent)&&!!agent.agent_description">Agent Description: </strong>
+              <div
+                ng-hide="hasName(agent)||!agent.agent_description"><strong>Description: </strong>{{agent.agent_description}}</div>
+              <div ng-hide="!agent.startTime"><strong>JVM Started: </strong>{{agent.startTime | date: 'yyyy-MM-dd HH:mm:ss'}}</div>
+              <div ng-hide="!agent.command"><strong>Java Command: </strong>{{agent.command}}</div>
 
               <p ng-hide="!agent.url"><strong>Agent URL: </strong><a ng-href="{{agent.url}}"
                                                                      target="_blank">{{agent.url}}</a>
