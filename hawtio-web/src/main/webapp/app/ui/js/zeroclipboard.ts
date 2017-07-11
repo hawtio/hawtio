@@ -4,6 +4,8 @@
 /// <reference path="./uiPlugin.ts"/>
 module UI {
 
+  ZeroClipboard.config( { moviePath: "img/ZeroClipboard.swf" } );
+
   _module.directive('zeroClipboard', ["$parse", ($parse) => {
     return UI.ZeroClipboardDirective($parse);
   }]);
@@ -12,9 +14,7 @@ module UI {
     return {
       restrict:'A',
       link: ($scope, $element, $attr) => {
-        var clip = new (<any>window).ZeroClipboard($element.get(0), {
-          moviePath: "img/ZeroClipboard.swf"
-        });
+        var clip = new (<any>window).ZeroClipboard($element.get(0));
 
         clip.on('complete', (client, args) => {
 
@@ -30,6 +30,13 @@ module UI {
             func($scope, { clip: clip });
           }
         }
+
+        $scope.$on('$destroy', function(destroy) {
+          clip.destroy();
+          clip = null;
+          $element.off();
+        });
+
       }
     };
   }
