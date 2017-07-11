@@ -22701,10 +22701,10 @@ var Diagnostics;
     function buildStartParams(jfrSettings) {
         var params = [];
         if (jfrSettings.name && jfrSettings.name.length > 0) {
-            params.push('name=' + jfrSettings.name);
+            params.push('name="' + jfrSettings.name + '"');
         }
         if (jfrSettings.filename && jfrSettings.filename.length > 0) {
-            params.push('filename=' + jfrSettings.filename);
+            params.push('filename="' + jfrSettings.filename + '"');
         }
         params.push('dumponexit=' + jfrSettings.dumpOnExit);
         params.push('compress=' + jfrSettings.compress);
@@ -22715,7 +22715,7 @@ var Diagnostics;
     }
     function buildDumpParams(jfrSettings) {
         return [
-            'filename=' + jfrSettings.filename,
+            'filename="' + jfrSettings.filename + '"',
             'compress=' + jfrSettings.compress,
             'recording=' + jfrSettings.recordingNumber
         ];
@@ -22725,13 +22725,14 @@ var Diagnostics;
         function render(response) {
             var statusString = response.value;
             $scope.jfrEnabled = statusString.indexOf("not enabled") == -1;
-            $scope.isRecording = statusString.indexOf("(running)") > -1;
+            $scope.isRunning = statusString.indexOf("(running)") > -1;
+            $scope.isRecording = $scope.isRunning || statusString.indexOf("(stopped)") > -1;
             if ((statusString.indexOf("Use JFR.") > -1 || statusString.indexOf("Use VM.") > -1) && $scope.pid) {
                 statusString = statusString.replace("Use ", "Use command line: jcmd " + $scope.pid + " ");
             }
             $scope.jfrStatus = statusString;
             if ($scope.isRecording) {
-                var regex = /recording=(\d+).*name="(.+)"/g;
+                var regex = /recording=(\d+) name="(.+?)"/g;
                 var parsed = regex.exec(statusString);
                 $scope.jfrSettings.recordingNumber = parsed[1];
                 $scope.jfrSettings.name = parsed[2];
