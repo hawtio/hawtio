@@ -35642,6 +35642,11 @@ var Jmx;
             console.log(data);
         };
         $scope.ok = function () {
+            if ($scope.isExecuting) {
+                Jmx.log.debug("ok: rejected, operation still executing");
+                return;
+            }
+            Jmx.log.debug("ok: clear operation result");
             $scope.operationResult = '';
         };
         $scope.reset = function () {
@@ -35652,8 +35657,6 @@ var Jmx;
             $scope.$parent.showInvoke = false;
         };
         $scope.handleResponse = function (response) {
-            $scope.isExecuting = false;
-            $scope.executeIcon = "icon-ok";
             $scope.operationStatus = "success";
             if (response === null || 'null' === response) {
                 $scope.operationResult = "Operation Succeeded!";
@@ -35666,24 +35669,29 @@ var Jmx;
             }
             $scope.mode = CodeEditor.detectTextFormat($scope.operationResult);
             Core.$apply($scope);
+            finishExecuting('success');
         };
         $scope.onSubmit = function (json, form) {
             Jmx.log.debug("onSubmit: json:", json, " form: ", form);
+            if ($scope.isExecuting) {
+                Jmx.log.debug("onSubmit: already executing");
+                return;
+            }
+            startExecuting();
             Jmx.log.debug("$scope.item.args: ", $scope.item.args);
             angular.forEach(json, function (value, key) {
                 $scope.item.args.find(function (arg) {
                     return arg['name'] === key;
                 }).value = value;
             });
-            $scope.execute();
+            $timeout($scope.execute, 100);
         };
         $scope.execute = function () {
+            Jmx.log.debug("START: execute");
             var node = workspace.selection;
-            if (!node) {
-                return;
-            }
             var objectName = node.objectName;
-            if (!objectName) {
+            if (!node || !objectName) {
+                finishExecuting('node or objectName null');
                 return;
             }
             var args = [objectName, $scope.item.name];
@@ -35694,8 +35702,6 @@ var Jmx;
             }
             args.push(onSuccess($scope.handleResponse, {
                 error: function (response) {
-                    $scope.isExecuting = false;
-                    $scope.executeIcon = "icon-ok";
                     $scope.operationStatus = "error";
                     var error = response.error;
                     $scope.operationResult = error;
@@ -35704,14 +35710,25 @@ var Jmx;
                         $scope.operationResult = stacktrace;
                     }
                     Core.$apply($scope);
+                    finishExecuting('error');
                 }
             }));
-            $scope.isExecuting = true;
-            $scope.executeIcon = "icon-spinner icon-spin";
-            Core.$apply($scope);
             var fn = jolokia.execute;
             fn.apply(jolokia, args);
         };
+        function startExecuting() {
+            $scope.isExecuting = true;
+            $scope.executeIcon = "icon-spinner icon-spin";
+            Core.$apply($scope);
+        }
+        function finishExecuting(type) {
+            $timeout(function () {
+                Jmx.log.debug("END: execute -", type);
+                $scope.isExecuting = false;
+                $scope.executeIcon = "icon-ok";
+                Core.$apply($scope);
+            }, 500);
+        }
     }]);
     Jmx._module.controller("Jmx.OperationsController", ["$scope", "workspace", "jolokia", "rbacACLMBean", "$templateCache", function ($scope, workspace, jolokia, rbacACLMBean, $templateCache) {
         $scope.operations = {};
