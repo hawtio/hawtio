@@ -8,13 +8,15 @@
 module Jmx {
 
   // IOperationControllerScope
-  _module.controller("Jmx.OperationController", ["$scope", "workspace", "jolokia", "$timeout", "$location", "localStorage", "$browser", ($scope,
-                                      workspace:Workspace,
-                                      jolokia,
-                                      $timeout,
-                                      $location,
-                                      localStorage,
-                                      $browser) => {
+  _module.controller("Jmx.OperationController", ["$scope", "workspace", "jolokia", "$timeout", "$location", "localStorage", "$browser", (
+      $scope,
+      workspace: Workspace,
+      jolokia: Jolokia.IJolokia,
+      $timeout: ng.ITimeoutService,
+      $location: ng.ILocationService,
+      localStorage: WindowLocalStorage,
+      $browser) => {
+
     $scope.item = $scope.selectedOperation;
     $scope.title = $scope.item.humanReadable;
     $scope.desc = $scope.item.desc;
@@ -84,6 +86,11 @@ module Jmx {
 
 
     $scope.ok = () => {
+      if ($scope.isExecuting) {
+        log.debug("ok: rejected, operation still executing");
+        return;
+      }
+      log.debug("ok: clear operation result");
       $scope.operationResult = '';
     };
 
@@ -99,8 +106,6 @@ module Jmx {
 
 
     $scope.handleResponse = (response) => {
-      $scope.isExecuting = false;
-      $scope.executeIcon = "icon-ok";
       $scope.operationStatus = "success";
 
       if (response === null || 'null' === response) {
@@ -114,31 +119,34 @@ module Jmx {
       $scope.mode = CodeEditor.detectTextFormat($scope.operationResult);
 
       Core.$apply($scope);
+      finishExecuting('success');
     };
 
     $scope.onSubmit = (json, form) => {
       log.debug("onSubmit: json:", json, " form: ", form);
+      if ($scope.isExecuting) {
+        log.debug("onSubmit: already executing");
+        return;
+      }
+      startExecuting();
+
       log.debug("$scope.item.args: ", $scope.item.args);
       angular.forEach(json, (value, key) => {
         $scope.item.args.find((arg) => {
           return arg['name'] === key;
         }).value = value;
       });
-      $scope.execute();
+
+      $timeout($scope.execute, 100);
     };
 
 
     $scope.execute = () => {
-
+      log.debug("START: execute");
       var node = workspace.selection;
-
-      if (!node) {
-        return;
-      }
-
       var objectName = node.objectName;
-
-      if (!objectName) {
+      if (!node || !objectName) {
+        finishExecuting('node or objectName null');
         return;
       }
 
@@ -151,8 +159,6 @@ module Jmx {
 
       args.push(onSuccess($scope.handleResponse, {
         error: function (response) {
-          $scope.isExecuting = false;
-          $scope.executeIcon = "icon-ok";
           $scope.operationStatus = "error";
           var error = response.error;
           $scope.operationResult = error;
@@ -161,25 +167,39 @@ module Jmx {
             $scope.operationResult = stacktrace;
           }
           Core.$apply($scope);
+          finishExecuting('error');
         }
       }));
 
+      var fn = jolokia.execute;
+      fn.apply(jolokia, args);
+    };
+
+    function startExecuting() {
       $scope.isExecuting = true;
       $scope.executeIcon = "icon-spinner icon-spin";
       Core.$apply($scope);
-      var fn = jolokia.execute;
-      fn.apply(jolokia, args);
-     };
+    }
+
+    function finishExecuting(type: string) {
+      $timeout(() => {
+        log.debug("END: execute -", type);
+        $scope.isExecuting = false;
+        $scope.executeIcon = "icon-ok";
+        Core.$apply($scope);
+      }, 500);
+    }
 
 
   }]);
 
 
-  _module.controller("Jmx.OperationsController", ["$scope", "workspace", "jolokia", "rbacACLMBean", "$templateCache", ($scope,
-                                       workspace:Workspace,
-                                       jolokia,
-                                       rbacACLMBean:ng.IPromise<string>,
-                                       $templateCache) => {
+  _module.controller("Jmx.OperationsController", ["$scope", "workspace", "jolokia", "rbacACLMBean", "$templateCache", (
+      $scope,
+      workspace: Workspace,
+      jolokia: Jolokia.IJolokia,
+      rbacACLMBean: ng.IPromise<string>,
+      $templateCache: ng.ITemplateCacheService) => {
 
     $scope.operations = {};
     $scope.objectName = '';
