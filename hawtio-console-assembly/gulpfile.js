@@ -25,6 +25,7 @@ const config = {
   srcTs          : 'src/**/*.ts',
   srcLess        : 'src/**/*.less',
   srcTemplates   : 'src/**/!(index).html',
+  docTemplates   : '../@(CHANGES|FAQ).md',
   templateModule : 'hawtio-console-assembly-templates',
   temp           : 'temp/',
   dist           : 'dist/',
@@ -78,6 +79,18 @@ gulp.task('template', function() {
     .pipe(plugins.angularTemplatecache({
       filename: 'templates.js',
       root: config.src,
+      standalone: true,
+      module: config.templateModule,
+      templateFooter: '}]); hawtioPluginLoader.addModule("' + config.templateModule + '");'
+    }))
+    .pipe(gulp.dest(config.temp));
+});
+
+gulp.task('template-docs', function() {
+  return gulp.src(config.docTemplates)
+    .pipe(plugins.angularTemplatecache({
+      filename: 'doc-templates.js',
+      root: 'plugins/help/doc',
       standalone: true,
       module: config.templateModule,
       templateFooter: '}]); hawtioPluginLoader.addModule("' + config.templateModule + '");'
@@ -248,7 +261,7 @@ gulp.task('reload', function() {
 // main tasks
 //------------------------------------------------------------------------------
 
-gulp.task('build', callback => sequence('clean', 'tsc', 'template', 'concat', 'less', 'usemin', 'install-dependencies',
-  'copy-dependencies', 'copy-images', '404', callback));
+gulp.task('build', callback => sequence('clean', 'tsc', 'template', 'template-docs', 'concat', 'less', 'usemin',
+  'install-dependencies', 'copy-dependencies', 'copy-images', '404', callback));
 
 gulp.task('default', callback => sequence('build', ['connect', 'watch']));
