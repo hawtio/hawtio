@@ -12,7 +12,7 @@
     "build": "gulp build"
   },
   "dependencies": {
-    "@hawtio/integration": "^3.0.16"
+    "@hawtio/integration": "~3.0.16"
   },
   "devDependencies": {
     "@hawtio/node-backend": "^3.0.0",
@@ -61,7 +61,7 @@
     "angular": "1.6.5",
     "angular-sanitize": "1.6.5",
     "angular-ui-bootstrap": "2.5.0",
-    "bootstrap-select": "1.12.2",
+    "bootstrap-select": "1.12.3",
     "@types/jquery": "2.0.48",
     "datatables.net": "1.10.15",
     "moment": "2.18.1"
