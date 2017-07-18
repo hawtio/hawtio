@@ -539,12 +539,12 @@
       </build>
     </profile>
 
-      <profile>
-          <id>apidocs</id>
-          <modules>
-              <module>hawtio-api-docs</module>
-          </modules>
-      </profile>
+    <profile>
+      <id>apidocs</id>
+      <modules>
+        <module>hawtio-api-docs</module>
+      </modules>
+    </profile>
 
   </profiles>
 </project>
