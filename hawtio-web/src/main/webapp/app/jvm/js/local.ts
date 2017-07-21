@@ -12,6 +12,11 @@ module JVM {
     $scope.status = '';
     $scope.initDone = false;
     $scope.filter = '';
+    var listRequest = {
+        type: 'exec', mbean: mbeanName,
+        operation: 'listLocalJVMs()',
+        arguments: []
+      };
 
     $scope.filterMatches = (jvm) => {
       if (Core.isBlank($scope.filter)) {
@@ -22,11 +27,7 @@ module JVM {
     };
 
     $scope.fetch = () => {
-      jolokia.request({
-        type: 'exec', mbean: mbeanName,
-        operation: 'listLocalJVMs()',
-        arguments: []
-      }, {
+      jolokia.request(listRequest, {
         success: render,
         error: (response) => {
           $scope.data = [];
@@ -38,23 +39,19 @@ module JVM {
     };
 
     $scope.stopAgent = (pid) => {
-      jolokia.request({
+      jolokia.request([{
         type: 'exec', mbean: mbeanName,
         operation: 'stopAgent(java.lang.String)',
         arguments: [pid]
-      }, onSuccess(function() {
-        $scope.fetch()
-      }));
+      }, listRequest], onSuccess(renderIfList));
     };
 
     $scope.startAgent = (pid) => {
-      jolokia.request({
+      jolokia.request([{
         type: 'exec', mbean: mbeanName,
         operation: 'startAgent(java.lang.String)',
         arguments: [pid]
-      }, onSuccess(function() {
-        $scope.fetch()
-      }));
+      },listRequest], onSuccess(renderIfList));
     };
 
     $scope.connectTo = (url, scheme, host, port, path) => {
@@ -77,6 +74,16 @@ module JVM {
       Core.connectToServer(localStorage, con);
       Core.$apply($scope);
     };
+
+    /**
+     * Since the requests are bundled, check the operation in callback to decide on
+     * how to respond to success
+     */
+    function renderIfList(response) {
+        if ( response.request.operation.indexOf( "listLocalJVMs" ) > -1 ) {
+           render( response );
+        }
+    }
 
     function render(response) {
       $scope.initDone = true;
