@@ -36396,6 +36396,12 @@ var JVM;
         $scope.status = '';
         $scope.initDone = false;
         $scope.filter = '';
+        var listRequest = {
+            type: 'exec',
+            mbean: mbeanName,
+            operation: 'listLocalJVMs()',
+            arguments: []
+        };
         $scope.filterMatches = function (jvm) {
             if (Core.isBlank($scope.filter)) {
                 return true;
@@ -36405,12 +36411,7 @@ var JVM;
             }
         };
         $scope.fetch = function () {
-            jolokia.request({
-                type: 'exec',
-                mbean: mbeanName,
-                operation: 'listLocalJVMs()',
-                arguments: []
-            }, {
+            jolokia.request(listRequest, {
                 success: render,
                 error: function (response) {
                     $scope.data = [];
@@ -36421,24 +36422,20 @@ var JVM;
             });
         };
         $scope.stopAgent = function (pid) {
-            jolokia.request({
+            jolokia.request([{
                 type: 'exec',
                 mbean: mbeanName,
                 operation: 'stopAgent(java.lang.String)',
                 arguments: [pid]
-            }, onSuccess(function () {
-                $scope.fetch();
-            }));
+            }, listRequest], onSuccess(renderIfList));
         };
         $scope.startAgent = function (pid) {
-            jolokia.request({
+            jolokia.request([{
                 type: 'exec',
                 mbean: mbeanName,
                 operation: 'startAgent(java.lang.String)',
                 arguments: [pid]
-            }, onSuccess(function () {
-                $scope.fetch();
-            }));
+            }, listRequest], onSuccess(renderIfList));
         };
         $scope.connectTo = function (url, scheme, host, port, path) {
             var options = {};
@@ -36455,6 +36452,11 @@ var JVM;
             Core.connectToServer(localStorage, con);
             Core.$apply($scope);
         };
+        function renderIfList(response) {
+            if (response.request.operation.indexOf("listLocalJVMs") > -1) {
+                render(response);
+            }
+        }
         function render(response) {
             $scope.initDone = true;
             $scope.data = response.value;
