@@ -1,17 +1,23 @@
 package io.hawt.springboot;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import io.hawt.HawtioContextListener;
 import io.hawt.web.auth.AuthenticationFilter;
 import io.hawt.web.auth.LoginServlet;
 import io.hawt.web.auth.LogoutServlet;
-import io.hawt.web.auth.UserServlet;
-import io.hawt.web.filters.*;
+import io.hawt.web.filters.CORSFilter;
+import io.hawt.web.filters.CacheHeadersFilter;
+import io.hawt.web.filters.RedirectFilter;
+import io.hawt.web.filters.SessionExpiryFilter;
+import io.hawt.web.filters.XFrameOptionsFilter;
+import io.hawt.web.filters.XXSSProtectionFilter;
 import io.hawt.web.keycloak.KeycloakServlet;
+import io.hawt.web.keycloak.KeycloakUserServlet;
 import io.hawt.web.proxy.ProxyServlet;
-import io.hawt.web.servlets.*;
+import io.hawt.web.servlets.ContextFormatterServlet;
+import io.hawt.web.servlets.ExportContextServlet;
+import io.hawt.web.servlets.GitServlet;
+import io.hawt.web.servlets.JavaDocServlet;
+import io.hawt.web.servlets.UploadServlet;
 import org.apache.commons.fileupload.servlet.FileCleanerCleanup;
 import org.springframework.boot.actuate.autoconfigure.ManagementContextConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -44,71 +50,15 @@ public class HawtioConfiguration extends WebMvcConfigurerAdapter {
         registry.addViewController("/hawtio/").setViewName("redirect:/hawtio/index.html");
     }
 
-    @Bean
-    public ServletRegistrationBean userServlet() {
-        return new ServletRegistrationBean(new UserServlet(), "/user/*", "/hawtio/user/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean jolokiaproxy() {
-        return new ServletRegistrationBean(new ProxyServlet(), "/hawtio/proxy/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean fileupload() {
-        return new ServletRegistrationBean(new UploadServlet(), "/hawtio/file-upload/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean loginservlet() {
-        return new ServletRegistrationBean(new LoginServlet(), "/hawtio/auth/login/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean logoutservlet() {
-        return new ServletRegistrationBean(new LogoutServlet(), "/hawtio/auth/logout/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean keycloakservlet() {
-        return new ServletRegistrationBean(new KeycloakServlet(), "/hawtio/keycloak/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean exportcontextservlet() {
-        return new ServletRegistrationBean(new ExportContextServlet(), "/hawtio/exportContext/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean mavenSource() {
-        return new ServletRegistrationBean(new JavaDocServlet(), "/hawtio/javadoc/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean contextFormatter() {
-        return new ServletRegistrationBean(new ContextFormatterServlet(), "/hawtio/contextFormatter/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean gitServlet() {
-        return new ServletRegistrationBean(new GitServlet(), "/hawtio/git/*");
-    }
-
-    @Bean
-    public ServletListenerRegistrationBean hawtioContextListener() {
-        return new ServletListenerRegistrationBean<>(new HawtioContextListener());
-    }
-
-    @Bean
-    public ServletListenerRegistrationBean fileCleanerCleanup() {
-        return new ServletListenerRegistrationBean<>(new FileCleanerCleanup());
-    }
+    // -------------------------------------------------------------------------
+    // Filters
+    // -------------------------------------------------------------------------
 
     @Bean
     public FilterRegistrationBean redirectFilter() {
         final FilterRegistrationBean filter = new FilterRegistrationBean();
         filter.setFilter(new RedirectFilter());
-        filter.setUrlPatterns(Collections.singletonList("/hawtio/*"));
+        filter.addUrlPatterns("/hawtio/*");
         return filter;
     }
 
@@ -116,7 +66,7 @@ public class HawtioConfiguration extends WebMvcConfigurerAdapter {
     public FilterRegistrationBean sessionExpiryFilter() {
         final FilterRegistrationBean filter = new FilterRegistrationBean();
         filter.setFilter(new SessionExpiryFilter());
-        filter.setUrlPatterns(Collections.singletonList("/hawtio/*"));
+        filter.addUrlPatterns("/hawtio/*");
         return filter;
     }
 
@@ -124,32 +74,123 @@ public class HawtioConfiguration extends WebMvcConfigurerAdapter {
     public FilterRegistrationBean cacheFilter() {
         final FilterRegistrationBean filter = new FilterRegistrationBean();
         filter.setFilter(new CacheHeadersFilter());
-        filter.setUrlPatterns(Collections.singletonList("/hawtio/*"));
+        filter.addUrlPatterns("/hawtio/*");
         return filter;
     }
 
     @Bean
-    public FilterRegistrationBean CORSFilter() {
+    public FilterRegistrationBean corsFilter() {
         final FilterRegistrationBean filter = new FilterRegistrationBean();
         filter.setFilter(new CORSFilter());
-        filter.setUrlPatterns(Collections.singletonList("/hawtio/*"));
+        filter.addUrlPatterns("/hawtio/*");
         return filter;
     }
 
     @Bean
-    public FilterRegistrationBean XFrameOptionsFilter() {
+    public FilterRegistrationBean xframeOptionsFilter() {
         final FilterRegistrationBean filter = new FilterRegistrationBean();
         filter.setFilter(new XFrameOptionsFilter());
-        filter.setUrlPatterns(Collections.singletonList("/hawtio/*"));
+        filter.addUrlPatterns("/hawtio/*");
         return filter;
     }
 
     @Bean
-    public FilterRegistrationBean AuthenticationFilter() {
+    public FilterRegistrationBean xxssProtectionFilter() {
+        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        filter.setFilter(new XXSSProtectionFilter());
+        filter.addUrlPatterns("/hawtio/*");
+        return filter;
+    }
+
+    @Bean
+    public FilterRegistrationBean authenticationFilter() {
         final FilterRegistrationBean filter = new FilterRegistrationBean();
         filter.setFilter(new AuthenticationFilter());
-        filter.setUrlPatterns(Arrays.asList("/hawtio/auth/*", "/jolokia/*", "/hawtio/upload/*", "/hawtio/javadoc/*"));
+        filter.addUrlPatterns(
+            "/hawtio/auth/*",
+            "/jolokia/*",
+            "/hawtio/upload/*",
+            "/hawtio/javadoc/*");
         return filter;
+    }
+
+    // -------------------------------------------------------------------------
+    // Servlets
+    // -------------------------------------------------------------------------
+
+    @Bean
+    public ServletRegistrationBean jolokiaProxyServlet() {
+        return new ServletRegistrationBean(new ProxyServlet(),
+            "/hawtio/proxy/*");
+    }
+
+    @Bean
+    public ServletRegistrationBean fileUploadServlet() {
+        return new ServletRegistrationBean(new UploadServlet(),
+            "/hawtio/file-upload/*");
+    }
+
+    @Bean
+    public ServletRegistrationBean userServlet() {
+        return new ServletRegistrationBean(new KeycloakUserServlet(),
+            "/user/*", "/hawtio/user/*");
+    }
+
+    @Bean
+    public ServletRegistrationBean loginServlet() {
+        return new ServletRegistrationBean(new LoginServlet(),
+            "/hawtio/auth/login/*");
+    }
+
+    @Bean
+    public ServletRegistrationBean logoutServlet() {
+        return new ServletRegistrationBean(new LogoutServlet(),
+            "/hawtio/auth/logout/*");
+    }
+
+    @Bean
+    public ServletRegistrationBean keycloakServlet() {
+        return new ServletRegistrationBean(new KeycloakServlet(),
+            "/hawtio/keycloak/*");
+    }
+
+    @Bean
+    public ServletRegistrationBean exportContextServlet() {
+        return new ServletRegistrationBean(new ExportContextServlet(),
+            "/hawtio/exportContext/*");
+    }
+
+    @Bean
+    public ServletRegistrationBean gitServlet() {
+        return new ServletRegistrationBean(new GitServlet(),
+            "/hawtio/git/*");
+    }
+
+    @Bean
+    public ServletRegistrationBean mavenSourceServlet() {
+        return new ServletRegistrationBean(new JavaDocServlet(),
+            "/hawtio/javadoc/*");
+    }
+
+    @Bean
+    public ServletRegistrationBean contextFormatterServlet() {
+        return new ServletRegistrationBean(new ContextFormatterServlet(),
+            "/hawtio/contextFormatter/*");
+    }
+
+    // -------------------------------------------------------------------------
+    // Listeners
+    // -------------------------------------------------------------------------
+
+
+    @Bean
+    public ServletListenerRegistrationBean hawtioContextListener() {
+        return new ServletListenerRegistrationBean<>(new HawtioContextListener());
+    }
+
+    @Bean
+    public ServletListenerRegistrationBean fileCleanerCleanupListener() {
+        return new ServletListenerRegistrationBean<>(new FileCleanerCleanup());
     }
 
 }

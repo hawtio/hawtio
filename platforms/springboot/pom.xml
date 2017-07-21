@@ -13,8 +13,6 @@
   <name>${project.artifactId}</name>
   <description>hawtio :: Spring Boot starter</description>
 
-  <properties></properties>
-
   <dependencies>
     <dependency>
       <groupId>io.hawt</groupId>
