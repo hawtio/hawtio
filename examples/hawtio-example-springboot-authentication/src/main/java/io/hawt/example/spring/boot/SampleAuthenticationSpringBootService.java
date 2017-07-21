@@ -1,17 +1,12 @@
 package io.hawt.example.spring.boot;
 
 import java.net.URL;
-import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
 
 import io.hawt.config.ConfigFacade;
-import io.hawt.springboot.EnableHawtio;
 import io.hawt.springboot.HawtPlugin;
 import io.hawt.springboot.PluginService;
-import io.hawt.system.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -19,25 +14,15 @@ import org.springframework.context.annotation.Bean;
 import static io.hawt.web.auth.AuthenticationFilter.*;
 
 @SpringBootApplication
-@EnableHawtio
 public class SampleAuthenticationSpringBootService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SampleAuthenticationSpringBootService.class);
     private static final String JAVA_SECURITY_AUTH_LOGIN_CONFIG = "java.security.auth.login.config";
 
-    @Autowired
-    private ServletContext servletContext;
 
     public static void main(String[] args) {
         System.setProperty(HAWTIO_AUTHENTICATION_ENABLED, "false");
         SpringApplication.run(SampleAuthenticationSpringBootService.class, args);
-    }
-
-    @PostConstruct
-    public void init() {
-        final ConfigManager configManager = new ConfigManager();
-        configManager.init();
-        servletContext.setAttribute("ConfigManager", configManager);
     }
 
     /**
@@ -46,7 +31,7 @@ public class SampleAuthenticationSpringBootService {
      */
     @Bean
     public HawtPlugin samplePlugin() {
-        return new HawtPlugin("sample-plugin", "/hawtio/plugins", "", new String[]{"sample-plugin/js/sample-plugin.js"});
+        return new HawtPlugin("sample-plugin", "/hawtio/plugins", "", new String[] { "sample-plugin/js/sample-plugin.js" });
     }
 
 

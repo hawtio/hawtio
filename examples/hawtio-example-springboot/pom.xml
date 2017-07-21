@@ -46,11 +46,6 @@
       <artifactId>hawtio-springboot</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
 
   <build>
@@ -79,7 +74,8 @@
         </configuration>
       </plugin>
 
-      <!-- to run with mvn hawtio:spring-boot -->
+      <!-- TODO: to run with mvn hawtio:spring-boot -->
+      <!--
       <plugin>
         <groupId>io.hawt</groupId>
         <artifactId>hawtio-maven-plugin</artifactId>
@@ -88,6 +84,7 @@
           <mainClass>io.hawt.example.spring.boot.SampleSpringBootService</mainClass>
         </configuration>
       </plugin>
+      -->
 
     </plugins>
   </build>

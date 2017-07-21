@@ -1,13 +1,10 @@
 package io.hawt.example.spring.boot;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 
 import io.hawt.config.ConfigFacade;
-import io.hawt.springboot.EnableHawtio;
 import io.hawt.springboot.HawtPlugin;
 import io.hawt.springboot.PluginService;
-import io.hawt.system.ConfigManager;
 import io.hawt.web.auth.AuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -15,7 +12,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-@EnableHawtio
 public class SampleSpringBootService {
 
     @Autowired
@@ -26,20 +22,13 @@ public class SampleSpringBootService {
         SpringApplication.run(SampleSpringBootService.class, args);
     }
 
-    @PostConstruct
-    public void init() {
-        final ConfigManager configManager = new ConfigManager();
-        configManager.init();
-        servletContext.setAttribute("ConfigManager", configManager);
-    }
-
     /**
      * Loading an example plugin
      * @return
      */
     @Bean
     public HawtPlugin samplePlugin() {
-        return new HawtPlugin("sample-plugin", "/hawtio/plugins", "", new String[]{"sample-plugin/js/sample-plugin.js"});
+        return new HawtPlugin("sample-plugin", "/hawtio/plugins", "", new String[] { "sample-plugin/js/sample-plugin.js" });
     }
 
     /**

@@ -14,7 +14,8 @@ public class PluginService {
     List<HawtPlugin> registeredPlugins;
 
     @RequestMapping("/plugin")
-    public @ResponseBody List<HawtPlugin> getPlugins() {
+    @ResponseBody
+    public List<HawtPlugin> getPlugins() {
         return registeredPlugins;
     }
 

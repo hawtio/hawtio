@@ -66,11 +66,6 @@
       <artifactId>hawtio-springboot</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
 
   <build>

@@ -6,4 +6,4 @@ Run with
 
     mvn spring-boot:run
 
-Browse hawtio using the url: http://localhost:10000/hawtio/index.html
+Browse hawtio using the url: http://localhost:10001/hawtio/index.html
