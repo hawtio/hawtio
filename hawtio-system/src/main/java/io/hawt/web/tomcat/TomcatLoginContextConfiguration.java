@@ -13,11 +13,10 @@ public class TomcatLoginContextConfiguration extends Configuration {
 
     private final AppConfigurationEntry entry;
 
-    public TomcatLoginContextConfiguration(
-        final String digestAlgorithm
-    ) {
+    public TomcatLoginContextConfiguration(final String digestAlgorithm, final String tomcatUserLocation) {
         Map<String, Object> options = new HashMap<>(1);
         options.put(TomcatUserDatabaseLoginContext.OPTION_DIGEST_ALGORITHM, digestAlgorithm);
+        options.put(TomcatUserDatabaseLoginContext.OPTION_TOMCAT_USER_LOCATION, tomcatUserLocation);
         this.entry = new TomcatAppConfigurationEntry(Collections.unmodifiableMap(options));
     }
 

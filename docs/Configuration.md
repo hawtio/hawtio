@@ -109,6 +109,17 @@ By default the security in hawtio uses these system properties when running in A
       When using the tomcat tomcat-users.xml file, passwords can be hashed instead of plain text.  Use this to specify the digest algorithm; valid values are NONE MD5 SHA SHA-256 SHA-384 SHA-512.
     </td>
   </tr>
+  <tr>
+    <td>
+      hawtio.tomcatUserFileLocation
+    </td>
+    <td>
+      conf/tomcat-users.xml
+    </td>
+    <td>
+        Specify an alternative location for the tomcat-users.xml file. eg -Dhawtio.tomcatUserFileLocation=/production/userlocation/
+     </td>
+  </tr>
   </tbody>
 </table>
 

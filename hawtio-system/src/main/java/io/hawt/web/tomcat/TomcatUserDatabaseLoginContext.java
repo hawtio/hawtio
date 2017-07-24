@@ -37,8 +37,10 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
     private File file;
     private String digestAlgorithm;
 
+
     private static final Map<String, Predicate<PasswordPair>> PASSWORD_CHECKS;
     public static final String OPTION_DIGEST_ALGORITHM = "DIGEST_ALGORITHM";
+    public static final String OPTION_TOMCAT_USER_LOCATION = "USER_LOCATION";
 
     static {
         Map<String, Predicate<PasswordPair>> temp = new HashMap<>(6);
@@ -99,11 +101,18 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
         this.subject = subject;
         this.callbackHandler = callbackHandler;
 
-        String base = System.getProperty("catalina.base", ".");
-        LOG.debug("Using base directory: {}", base);
-        this.file = new File(base, fileName);
+        String customLocation = options.get(OPTION_TOMCAT_USER_LOCATION).toString();
+        if (customLocation != null) {
+            this.file = new File(customLocation, "tomcat-users.xml");
+        }
 
-        if (!file.exists()) {
+        if (file == null || ! file.exists()) {
+            String base = System.getProperty("catalina.base", ".");
+            LOG.debug("Using base directory: {}", base);
+            this.file = new File(base, fileName);
+        }
+
+        if (! file.exists()) {
             String msg = "Cannot find Apache Tomcat user database file: " + file;
             LOG.warn(msg);
             throw new IllegalStateException(msg);
@@ -111,7 +120,7 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
 
         digestAlgorithm = options.get(OPTION_DIGEST_ALGORITHM).toString();
 
-        if (!PASSWORD_CHECKS.containsKey(digestAlgorithm)) {
+        if (! PASSWORD_CHECKS.containsKey(digestAlgorithm)) {
             String msg = "Invalid digest algorithm specified: " + digestAlgorithm + " (valid: " + PASSWORD_CHECKS.keySet() + ")";
             LOG.warn(msg);
             throw new IllegalStateException(msg);
@@ -135,7 +144,7 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
             LOG.debug("Getting user details for username {}", username);
             String[] user = getUserPasswordRole(username);
             if (user != null) {
-                if (!passwordsMatch(new PasswordPair(user[1], password))) {
+                if (! passwordsMatch(new PasswordPair(user[1], password))) {
                     LOG.trace("Login denied due password did not match");
                     return false;
                 }
@@ -152,7 +161,7 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
             }
         } catch (UnsupportedCallbackException uce) {
             LoginException le = new LoginException("Error: " + uce.getCallback().toString()
-                    + " not available to gather authentication information from the user");
+                + " not available to gather authentication information from the user");
             le.initCause(uce);
             throw le;
         } catch (Exception ioe) {
@@ -200,7 +209,7 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
             Node roleNode = attributes != null ? attributes.getNamedItem("roles") : null;
             String nRoles = roleNode != null ? roleNode.getNodeValue() : null;
             if (username.equals(nUsername)) {
-                return new String[]{username, nPassword, nRoles};
+                return new String[] {username, nPassword, nRoles};
             }
         }
         return null;
