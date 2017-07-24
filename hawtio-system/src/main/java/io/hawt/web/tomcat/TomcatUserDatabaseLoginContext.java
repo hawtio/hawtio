@@ -106,7 +106,7 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
             this.file = new File(customLocation,"tomcat-users.xml");
         }
 
-        if (file==null || !file.exists()) {
+        if (file == null || !file.exists()) {
             String base = System.getProperty("catalina.base", ".");
             LOG.debug("Using base directory: {}", base);
             this.file = new File(base, fileName);
