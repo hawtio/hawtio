@@ -2,6 +2,7 @@
  * @module JVM
  */
 /// <reference path="../../core/js/coreInterfaces.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
 /// <reference path="jvmPlugin.ts"/>
 module JVM {
 
@@ -19,6 +20,19 @@ module JVM {
     $scope.closePopover = ($event) => {
       (<JQueryStatic>$)($event.currentTarget).parents('.popover').prev().popover('hide');
     };
+      
+    function getMoreJvmDetails(agents){
+        for(var key in agents) {
+            var agent=agents[key];
+            if(agent.url && !agent.secured ) {
+                var dedicatedJolokia=Core.createJolokia(agent.url, agent.username, agent.password);
+                agent.startTime=dedicatedJolokia.getAttribute('java.lang:type=Runtime', 'StartTime');
+                if(!$scope.hasName(agent)){//only look for command if agent vm is not known
+                    agent.command=dedicatedJolokia.getAttribute('java.lang:type=Runtime', 'SystemProperties', 'sun.java.command');
+                }
+            }
+        }
+    }
 
     function doConnect(agent) {
       if (!agent.url) {
@@ -26,7 +40,7 @@ module JVM {
         return;
       }
       var options:Core.ConnectToServerOptions = Core.createConnectOptions();
-      options.name = agent.agent_description;
+      options.name = agent.agent_description  || 'discover-' + agent.agent_id;
       var urlObject = Core.parseUrl(agent.url);
       angular.extend(options, urlObject);
       options.userName = agent.username;
@@ -87,6 +101,7 @@ module JVM {
         if ($scope.responseJson !== responseJson) {
           $scope.responseJson = responseJson;
           $scope.agents = response;
+          getMoreJvmDetails($scope.agents);
         }
       }
       Core.$apply($scope);

@@ -1,12 +1,11 @@
 package io.hawt.web.keycloak;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.URL;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -124,9 +123,14 @@ public class KeycloakServlet extends HttpServlet {
             return getClass().getClassLoader().getResourceAsStream(classPathLocation);
         } else {
             try {
-                return new FileInputStream(keycloakConfigFile);
-            } catch (FileNotFoundException fnfe) {
+                if (!keycloakConfigFile.contains(":")) {
+                    //assume file protocol
+                    keycloakConfigFile = "file://" + keycloakConfigFile;
+                }
+                return new URL(keycloakConfigFile).openStream();
+            } catch (Exception e) {
                 LOG.warn("Couldn't find keycloak config file on location: " + keycloakConfigFile);
+                LOG.debug("Couldn't find keycloak config file", e);
                 return null;
             }
         }

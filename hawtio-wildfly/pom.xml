@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
-    <version>1.5.0</version>
+    <version>1.5-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -11,10 +11,6 @@
   <packaging>war</packaging>
   <name>${project.artifactId}</name>
   <description>hawtio :: Wildfly Web Application</description>
-
-  <properties>
-    <guava.version>15.0</guava.version>
-  </properties>
 
   <dependencies>
     <dependency>

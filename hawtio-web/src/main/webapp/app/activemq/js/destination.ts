@@ -1,6 +1,10 @@
 /// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
-  _module.controller("ActiveMQ.DestinationController", ["$scope", "workspace", "jolokia", "localStorage", ($scope, workspace:Workspace, jolokia, localStorage) => {
+  _module.controller("ActiveMQ.DestinationController", ["$scope", "workspace", "jolokia", "localStorage", (
+      $scope,
+      workspace: Workspace,
+      jolokia: Jolokia.IJolokia,
+      localStorage: WindowLocalStorage) => {
 
     var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
 
@@ -43,43 +47,35 @@ module ActiveMQ {
       $scope.workspace.loadTree();
     }
 
-    function getBrokerMBean(jolokia) {
-      var mbean = null;
-      var selection = workspace.selection;
-      if (selection && isBroker(workspace, amqJmxDomain) && selection.objectName) {
-        return selection.objectName;
-      }
-      var folderNames = selection.folderNames;
-      //if (selection && jolokia && folderNames && folderNames.length > 1) {
-      var parent = selection ? selection.parent : null;
-      if (selection && parent && jolokia && folderNames && folderNames.length > 1) {
-        mbean = parent.objectName;
-
-        // we might be a destination, so lets try one more parent
-        if (!mbean && parent) {
-          mbean = parent.parent.objectName;
-        }
-        if (!mbean) {
-          mbean = "" + folderNames[0] + ":BrokerName=" + folderNames[1] + ",Type=Broker";
-        }
-      }
-      return mbean;
-    }
-
-    function validateDestinationName(name:string) {
+    function validateDestinationName(name:string):boolean {
       return name.indexOf(":") == -1;
     }
 
-    $scope.validateAndCreateDestination = (name, isQueue) => {
+    function checkIfDestinationExists(name:string, isQueue:boolean):boolean {
+      var answer = false;
+      var destinations = isQueue ? retrieveQueueNames(workspace, false) : retrieveTopicNames(workspace, false);
+      angular.forEach(destinations, (destination) => {
+        if (name === destination) {
+          answer = true;
+        }
+      })
+      return answer;
+    }
+
+    $scope.validateAndCreateDestination = (name:string, isQueue:boolean) => {
       if (!validateDestinationName(name)) {
         $scope.createDialog = true;
+        return;
+      }
+      if (checkIfDestinationExists(name, isQueue)) {
+        Core.notification("error", "The " + (isQueue ? "queue" : "topic") + " \"" + name + "\" already exists");
         return;
       }
       $scope.createDestination(name, isQueue);
     }
 
     $scope.createDestination = (name, isQueue) => {
-      var mbean = getBrokerMBean(jolokia);
+      var mbean = getBrokerMBean(workspace, jolokia, amqJmxDomain);
       name = Core.escapeHtml(name);
       if (mbean) {
         var operation;
@@ -99,18 +95,12 @@ module ActiveMQ {
     };
 
     $scope.deleteDestination = () => {
-      var mbean = getBrokerMBean(jolokia);
+      var mbean = getBrokerMBean(workspace, jolokia, amqJmxDomain);
       var selection = workspace.selection;
       var entries = selection.entries;
       if (mbean && selection && jolokia && entries) {
         var domain = selection.domain;
         var name = entries["Destination"] || entries["destinationName"] || selection.title;
-        name = name.unescapeHTML();
-        if (name.indexOf("_") != -1) {
-          // when destination name contains "_" like "aaa_bbb", the actual name might be either
-          // "aaa_bbb" or "aaa:bbb", so the actual name needs to be checked before removal.
-          name = jolokia.getAttribute(workspace.getSelectedMBeanName(), "Name", onSuccess(null));
-        }
         var isQueue = "Topic" !== (entries["Type"] || entries["destinationType"]);
         var operation;
         if (isQueue) {
@@ -120,6 +110,12 @@ module ActiveMQ {
           operation = "removeTopic(java.lang.String)";
           $scope.message = "Deleted topic " + name;
         }
+        if (name.indexOf("_") != -1) {
+          // when destination name contains "_" like "aaa_bbb", the actual name might be either
+          // "aaa_bbb" or "aaa:bbb", so the actual name needs to be checked before removal.
+          name = jolokia.getAttribute(workspace.getSelectedMBeanName(), "Name", onSuccess(null));
+        }
+        // do not unescape name for destination deletion
         jolokia.execute(mbean, operation, name, onSuccess(deleteSuccess));
       }
     };
@@ -130,9 +126,10 @@ module ActiveMQ {
       var entries = selection.entries;
       if (mbean && selection && jolokia && entries) {
         var name = entries["Destination"] || entries["destinationName"] || selection.title;
-        name = name.unescapeHTML();
         var operation = "purge()";
         $scope.message = "Purged queue " + name;
+        // unescape should be done right before invoking jolokia
+        name = name.unescapeHTML();
         jolokia.execute(mbean, operation, onSuccess(operationSuccess));
       }
     };

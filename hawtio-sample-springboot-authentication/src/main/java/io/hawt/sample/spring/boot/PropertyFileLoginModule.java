@@ -26,7 +26,7 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
     private static final Logger LOG = LoggerFactory.getLogger(PropertyFileLoginModule.class);
     private static ConcurrentHashMap<String, PropertyUserStore> PROPERTY_USERSTORES = new ConcurrentHashMap<>();
 
-    private int refreshInterval = 0;
+    private boolean hotReload = false;
     private String filename = null;
 
     /**
@@ -51,12 +51,12 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
         if (PROPERTY_USERSTORES.get(filename) == null) {
             final PropertyUserStore propertyUserStore = new PropertyUserStore();
             propertyUserStore.setConfig(filename);
-            propertyUserStore.setRefreshInterval(refreshInterval);
+            propertyUserStore.setHotReload(hotReload);
 
             final PropertyUserStore prev = PROPERTY_USERSTORES.putIfAbsent(filename, propertyUserStore);
             if (prev == null) {
                 LOG.info("setupPropertyUserStore: Starting new PropertyUserStore. PropertiesFile: " + filename
-                        + " refreshInterval: " + refreshInterval);
+                        + " hotReload: " + hotReload);
 
                 try {
                     propertyUserStore.start();
@@ -71,8 +71,8 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
         String tmp = (String) options.get("file");
         filename = (tmp == null ? DEFAULT_FILENAME : tmp);
         filename = System.getProperty("login.file", filename);
-        tmp = (String) options.get("refreshInterval");
-        refreshInterval = (tmp == null ? refreshInterval : Integer.parseInt(tmp));
+        tmp = (String) options.get("hotReload");
+        hotReload = tmp == null ? hotReload : Boolean.parseBoolean(tmp);
     }
 
     @Override

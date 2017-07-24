@@ -1,5 +1,6 @@
 /// <reference path="../../core/js/coreHelpers.ts"/>
 /// <reference path="../../core/js/preferenceHelpers.ts"/>
+/// <reference path="../../junit/js/junitPlugin.ts"/>
 /// <reference path="metadata.ts"/>
 /**
  * @module Perspective
@@ -14,7 +15,7 @@ module Perspective {
    * @for Perspective
    * @type String
    */
-  export var perspectiveSearchId = "p";
+  export var perspectiveSearchId: string = "p";
 
   /**
    * Lets you specify which perspective to default to if there's not a single active one
@@ -96,7 +97,7 @@ module Perspective {
    * @param {String} perspective
    * @return {Array}
    */
-  export function topLevelTabsForPerspectiveId(workspace, perspective) {
+  export function topLevelTabsForPerspectiveId(workspace: Workspace, perspective: string) {
     // lets sort using content which is the title in the navbar button, which is what the end user sees
     // if we sort on id, then they may be re-ordered, such as karaf.terminal
     var sortedTopLevelTabs = workspace.topLevelTabs.sortBy(f => f.content);
@@ -286,11 +287,11 @@ module Perspective {
    * @for Perspective
    * @param {ng.ILocationService} $location
    * @param {Core.Workspace} workspace
-   * @paran {*} jolokia
-   * @param {any} localStorage
+   * @paran {Jolokia.IJolokia} jolokia
+   * @param {Storage} localStorage
    * @return {String}
    */
-  export function defaultPage($location, workspace: Workspace, jolokia, localStorage) {
+  export function defaultPage($location, workspace: Workspace, jolokia: Jolokia.IJolokia, localStorage: Storage) {
     // we should not show welcome screen from junit
     var isJUnit = JUnit.isJUnitPluginEnabled(workspace);
     if (isJUnit) {

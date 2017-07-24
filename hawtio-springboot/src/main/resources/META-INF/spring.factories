@@ -1,0 +1,2 @@
+org.springframework.boot.actuate.autoconfigure.ManagementContextConfiguration=\
+io.hawt.springboot.HawtioConfiguration

@@ -1,5 +1,8 @@
 package io.hawt.springboot;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import io.hawt.HawtioContextListener;
 import io.hawt.web.AuthenticationFilter;
 import io.hawt.web.CORSFilter;
@@ -18,26 +21,25 @@ import io.hawt.web.UserServlet;
 import io.hawt.web.XFrameOptionsFilter;
 import io.hawt.web.keycloak.KeycloakServlet;
 import org.apache.commons.fileupload.servlet.FileCleanerCleanup;
+import org.springframework.boot.actuate.autoconfigure.ManagementContextConfiguration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-@Configuration
+@ManagementContextConfiguration
+@ConfigurationProperties(prefix = "hawtio")
 public class HawtioConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/hawtio/plugins/**").addResourceLocations("/app/", "classpath:/static/hawtio/app/");
         registry.addResourceHandler("/hawtio/**").addResourceLocations("/", "/app/", "classpath:/static/hawtio/",
-                "classpath:/static/hawtio/app/");
+            "classpath:/static/hawtio/app/");
         registry.addResourceHandler("/img/**").addResourceLocations("classpath:/static/hawtio/img/");
     }
 

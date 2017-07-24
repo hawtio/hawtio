@@ -175,6 +175,11 @@
       <param-name>mbeanQualifier</param-name>
       <param-value>qualifier=hawtio</param-value>
     </init-param>
+    <!-- turn off returning exceptions and stacktraces from jolokia -->
+    <init-param>
+      <param-name>allowErrorDetails</param-name>
+      <param-value>false</param-value>
+    </init-param>
     <init-param>
       <param-name>includeStackTrace</param-name>
       <param-value>false</param-value>
@@ -294,55 +299,56 @@
     <url-pattern>/git/*</url-pattern>
   </servlet-mapping>
 -->
+  <servlet>
+    <servlet-name>gitServlet</servlet-name>
+    <servlet-class>io.hawt.web.GitServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>gitServlet</servlet-name>
+    <url-pattern>/git/*</url-pattern>
+  </servlet-mapping>
 
-    <servlet>
-      <servlet-name>maven-source</servlet-name>
-      <servlet-class>io.hawt.web.JavaDocServlet</servlet-class>
-      <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>maven-source</servlet-name>
-        <url-pattern>/javadoc/*</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>contextFormatter</servlet-name>
-        <servlet-class>io.hawt.web.ContextFormatterServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>contextFormatter</servlet-name>
-        <url-pattern>/contextFormatter/*</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>gitServlet</servlet-name>
-        <servlet-class>io.hawt.web.GitServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>gitServlet</servlet-name>
-        <url-pattern>/git/*</url-pattern>
-    </servlet-mapping>
+  <servlet>
+    <servlet-name>maven-source</servlet-name>
+    <servlet-class>io.hawt.web.JavaDocServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>maven-source</servlet-name>
+    <url-pattern>/javadoc/*</url-pattern>
+  </servlet-mapping>
 
-    <mime-mapping>
-      <extension>woff</extension>
-      <mime-type>application/font-woff</mime-type>
-    </mime-mapping>
+  <servlet>
+    <servlet-name>contextFormatter</servlet-name>
+    <servlet-class>io.hawt.web.ContextFormatterServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>contextFormatter</servlet-name>
+    <url-pattern>/contextFormatter/*</url-pattern>
+  </servlet-mapping>
 
-    <listener>
-        <listener-class>io.hawt.HawtioContextListener</listener-class>
-    </listener>
+  <mime-mapping>
+    <extension>woff</extension>
+    <mime-type>application/font-woff</mime-type>
+  </mime-mapping>
 
-    <listener>
-        <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
-    </listener>
+  <listener>
+    <listener-class>io.hawt.HawtioContextListener</listener-class>
+  </listener>
 
-    <error-page>
-      <error-code>404</error-code>
-      <location>/index.html</location>
-    </error-page>
+  <listener>
+    <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
+  </listener>
 
-    <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-    </welcome-file-list>
+  <error-page>
+    <error-code>404</error-code>
+    <location>/index.html</location>
+  </error-page>
+
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
 
 </web-app>

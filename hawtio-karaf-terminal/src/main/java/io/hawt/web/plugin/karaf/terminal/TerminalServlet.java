@@ -31,7 +31,7 @@ import io.hawt.web.LoginTokenServlet;
 public class TerminalServlet extends HttpServlet {
 
     public static final int TERM_WIDTH = 120;
-    public static final int TERM_HEIGHT = 400;
+    public static final int TERM_HEIGHT = 39;
     private final static Logger LOG = LoggerFactory.getLogger(TerminalServlet.class);
 
     private static String KARAF4_FACTORY = "io.hawt.web.plugin.karaf.terminal.karaf4.Karaf4ConsoleFactory";
@@ -143,7 +143,6 @@ public class TerminalServlet extends HttpServlet {
         public SessionTerminal() throws IOException {
             try {
                 this.terminal = new Terminal(TERM_WIDTH, TERM_HEIGHT);
-                terminal.write("\u001b\u005B20\u0068"); // set newline mode on
 
                 in = new PipedOutputStream();
                 out = new PipedInputStream();
@@ -154,7 +153,7 @@ public class TerminalServlet extends HttpServlet {
                 // TODO: user should likely be the logged in user, eg we can grab that from the user servlet
                 session.put("USER", "karaf");
                 session.put("COLUMNS", Integer.toString(TERM_WIDTH));
-                session.put("LINES", Integer.toString(/*TERM_HEIGHT*/39));
+                session.put("LINES", Integer.toString(TERM_HEIGHT));
             } catch (IOException e) {
                 LOG.info("Exception attaching to console", e);
                 throw e;

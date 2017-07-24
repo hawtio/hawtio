@@ -1,6 +1,8 @@
 /**
  * @module Quartz
  */
+/// <reference path="../../core/js/coreHelpers.ts"/>
+/// <reference path="../../ui/js/dialog.ts"/>
 /// <reference path="./quartzPlugin.ts"/>
 module Quartz {
 
@@ -25,6 +27,7 @@ module Quartz {
       {id: '2', title: 'Do nothing'}
     ];
     $scope.updatedTrigger = {};
+    $scope.manualTrigger = {};
     $scope.triggerSchema = {
       properties: {
         'cron': {
@@ -59,6 +62,21 @@ module Quartz {
       }
     };
 
+    $scope.manualTriggerSchema = {
+      properties: {
+        'name': {
+          type: 'string'
+        },
+        'group': {
+          type: 'string',
+        },
+        'parameters': {
+          tooltip: 'Parameters if any (java.util.Map in JSON syntax)',
+          type: 'string'
+        }
+      }
+    };
+    
     $scope.gridOptions = {
       selectedItems: [],
       data: 'triggers',
@@ -300,6 +318,7 @@ module Quartz {
         data.detailHtml = detailHtml;
       }
     }
+    
 
     $scope.pauseScheduler = () => {
       if ($scope.selectedSchedulerMBean) {
@@ -392,6 +411,20 @@ module Quartz {
         $scope.showTriggerDialog = false;
       }
     }
+    
+    $scope.onBeforeManualTrigger = () => {
+      var row = $scope.gridOptions.selectedItems[0];
+      if (row) {
+        $scope.manualTrigger["name"] = row.jobName;
+        $scope.manualTrigger["group"] = row.jobGroup;
+        $scope.manualTrigger["parameters"] = '{}';
+        $scope.showManualTriggerDialog = true;
+      } else {
+        $scope.manualTrigger = {};
+        $scope.showManualTriggerDialog = false;
+      }
+    }
+    
 
     $scope.onUpdateTrigger = () => {
       var cron = $scope.updatedTrigger["cron"];
@@ -443,6 +476,30 @@ module Quartz {
           ));
       }
     }
+    function onManualTriggerError(response) {
+      Core.notification("error", "Could not manually fire trigger " + response.request.arguments[1] + "/" + response.request.arguments[0] + " due to: " + response.error);
+    }
+    
+    function onManualTriggerSuccess(response) {
+      Core.notification("success", "Manually fired trigger " + response.request.arguments[1] + "/" + response.request.arguments[0]);
+    }
+    
+    $scope.onManualTrigger = () => {
+      var parameters = JSON.parse($scope.manualTrigger["parameters"]);
+      var groupName = $scope.manualTrigger["group"];
+      var triggerName = $scope.manualTrigger["name"];
+
+      $scope.manualTrigger = {};
+      log.info("Mannually firing trigger " + groupName + "/" + triggerName + " with parameters " + parameters);
+
+      jolokia.request({type: "exec", mbean: $scope.selectedSchedulerMBean,
+          operation: "triggerJob", arguments: [
+            triggerName,
+            groupName,
+            parameters]},
+          onSuccess(onManualTriggerSuccess, {error: onManualTriggerError}) );      
+    }
+    
 
     function reloadTree() {
       log.debug("Reloading Quartz Tree")

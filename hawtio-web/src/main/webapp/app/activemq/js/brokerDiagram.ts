@@ -1,8 +1,16 @@
 /// <reference path="activemqPlugin.ts"/>
 /// <reference path="../../fabric/js/fabricHelpers.ts"/>
+/// <reference path="../../forcegraph/js/graphBuilder.ts"/>
 module ActiveMQ {
 
-  _module.controller("ActiveMQ.BrokerDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", "$routeParams", ($scope, $compile, $location, localStorage, jolokia, workspace, $routeParams) => {
+  _module.controller("ActiveMQ.BrokerDiagramController", ["$scope", "$compile", "$location", "localStorage", "jolokia", "workspace", "$routeParams", (
+      $scope,
+      $compile: ng.ICompileService,
+      $location: ng.ILocationService,
+      localStorage: WindowLocalStorage,
+      jolokia: Jolokia.IJolokia,
+      workspace: Workspace,
+      $routeParams: ng.route.IRouteParamsService) => {
 
     Fabric.initScope($scope, $location, jolokia, workspace);
     $scope.workspace = workspace;
@@ -267,11 +275,11 @@ module ActiveMQ {
         var typeLabel = selectedNode["typeLabel"];
         var name = selectedNode["name"] || selectedNode["id"] || selectedNode['objectName'];
         if (typeLabel) {
-          var html = name;
+          var html2;
           if (nodeType === "queue" || nodeType === "topic") {
-            html = createDestinationLink(name, nodeType);
+            html2 = createDestinationLink(name, nodeType);
           }
-          var typeProperty = {key: typeLabel, value: html};
+          var typeProperty = {key: typeLabel, value: ((html2) ? html2 : name)};
           if (isBroker && brokerProperty) {
             typeProperty = brokerProperty;
           }

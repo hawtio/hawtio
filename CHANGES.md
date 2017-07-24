@@ -1,6 +1,30 @@
 
 ### Change Log
 
+#### 1.5.3 (To be released)
+
+ * Quartz plugin can now be triggered manually via play button
+
+#### 1.5.2 
+
+* Added a new java.lang.Runtime plugin
+* IDE plugin modification and update
+* Various fixes and improvements
+* Upgraded to Camel 2.19.1
+* Upgraded to JGit 4.8.x
+
+#### 1.5.1
+
+* New Diagnostics plugin using JVM Flight Recorder
+* Proxy whitelist is automatically constructed based on network interfaces for local machine.
+  You can continue to use `hawtio.proxyWhitelist` system properties for further customisation.
+* Proxy whitelist supports regex by prefixing them with `r:` in the `hawtio.proxyWhitelist` system property
+* Upgraded to Camel 2.19.0
+* Upgraded to Spring Boot 1.5.3
+* Upgraded to Jolokia 1.3.6
+* Upgraded to JGit 4.7.x
+* Various bug fixes
+
 #### 1.5.0
 
 * Hawtio 1.5 requires Java 1.8 onwards

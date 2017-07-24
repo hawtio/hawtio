@@ -248,6 +248,9 @@ module Core {
       for (var domainName in domains) {
         var domainClass = escapeDots(domainName);
         var domain = <Core.JMXDomain> domains[domainName];
+        // domain name is displayed in the tree, so let's escape it here
+        // Core.escapeHtml() and _.escape() cannot be used, as escaping '"' breaks Camel tree...
+        domainName = Jmx.escapeTagOnly(domainName);
         for (var mbeanName in domain) {
           log.debug("JMX tree mbean name: " + mbeanName);
           var entries = {};
@@ -276,7 +279,9 @@ module Core {
               kv[0] = item;
             }
             var key = kv[0];
-            var value = kv[1] || key;
+            // mbean property value is displayed in the tree, so let's escape it here
+            // Core.escapeHtml() and _.escape() cannot be used, as escaping '"' breaks Camel tree...
+            var value = Jmx.escapeTagOnly(kv[1] || key);
             entries[key] = value;
             var moveToFront = false;
             var lowerKey = key.toLowerCase();

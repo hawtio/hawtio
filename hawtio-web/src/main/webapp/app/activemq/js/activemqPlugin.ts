@@ -26,11 +26,17 @@ module ActiveMQ {
             when('/activemq/topics', {templateUrl: 'app/activemq/html/destinations.html', controller: 'topicsController'})
   }]);
 
-  _module.controller('topicsController', function($scope) {
+  _module.controller('topicsController', ($scope) => {
       $scope.destinationType = 'topic';
   });
 
-  _module.run(["$location", "workspace", "viewRegistry", "helpRegistry", "preferencesRegistry", "localStorage", ($location:ng.ILocationService, workspace:Workspace, viewRegistry, helpRegistry, preferencesRegistry, localStorage) => {
+  _module.run(["$location", "workspace", "viewRegistry", "helpRegistry", "preferencesRegistry", "localStorage", (
+      $location: ng.ILocationService,
+      workspace: Workspace,
+      viewRegistry: any,
+      helpRegistry: Core.HelpRegistry,
+      preferencesRegistry: Core.PreferencesRegistry,
+      localStorage: WindowLocalStorage) => {
 
     var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
 

@@ -28,6 +28,7 @@
                   <i class="icon-remove"></i> Close
                 </button>
                 <button class="btn"
+                        ng-disabled="isExecuting"
                         ng-click="ok()">
                   <i class="icon-ok"></i> Back
                 </button>
@@ -52,8 +53,9 @@
                   <i class="icon-remove"></i> Close
                 </button>
                 <button class="btn btn-success execute"
+                        ng-disabled="isExecuting"
                         hawtio-submit="entryForm">
-                <i class="{{executeIcon}}"></i> Execute
+                  <i class="{{executeIcon}}"></i> Execute
                 </button>
               </div>
             </div>

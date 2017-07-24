@@ -1,6 +1,15 @@
 /// <reference path="activemqPlugin.ts"/>
+/// <reference path="../../ui/js/CodeEditor.ts"/>
 module ActiveMQ {
-  export var BrowseQueueController = _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", "$routeParams", ($scope, workspace:Workspace, jolokia, localStorage, location, activeMQMessage, $timeout, $routeParams) => {
+  export var BrowseQueueController = _module.controller("ActiveMQ.BrowseQueueController", ["$scope", "workspace", "jolokia", "localStorage", '$location', "activeMQMessage", "$timeout", "$routeParams", (
+      $scope,
+      workspace: Workspace,
+      jolokia: Jolokia.IJolokia,
+      localStorage: WindowLocalStorage,
+      location: ng.ILocationService,
+      activeMQMessage,
+      $timeout: ng.ITimeoutService,
+      $routeParams: ng.IRootScopeService) => {
 
     var log:Logging.Logger = Logger.get("ActiveMQ");
     var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
@@ -117,7 +126,7 @@ module ActiveMQ {
         var mbean = selection.objectName;
         if (mbean && selection && $scope.queueName) {
             var selectedItems = $scope.gridOptions.selectedItems;
-            $scope.message = "Moved " + Core.maybePlural(selectedItems.length, "message" + " to " + $scope.queueName);
+            $scope.message = "Moved " + Core.maybePlural(selectedItems.length, "message") + " to " + $scope.queueName;
             var operation = "moveMessageTo(java.lang.String, java.lang.String)";
             angular.forEach(selectedItems, (item, idx) => {
                 var id = item.JMSMessageID;
@@ -174,23 +183,14 @@ module ActiveMQ {
       }
     };
 
-    function retrieveQueueNames() {
-      var queuesFolder = getSelectionQueuesFolder(workspace);
-      if (queuesFolder) {
-        var selectedQueue = workspace.selection.key;
-        var otherQueues = queuesFolder.children.exclude((child) => {return child.key == selectedQueue});
-        return (otherQueues)? otherQueues.map(n => n.title) : [];
-      } else {
-        return [];
-      }
-    }
-
     function populateTable(response) {
       log.debug("populateTable");
 
       // setup queue names
       if ($scope.queueNames.length === 0) {
-        $scope.queueNames = retrieveQueueNames();
+        var queueNames = retrieveQueueNames(workspace, true);
+        var selectedQueue = workspace.selection.title;
+        $scope.queueNames = queueNames.filter((name) => { return name !== selectedQueue });
       }
 
       var data = response.value;
@@ -359,9 +359,19 @@ module ActiveMQ {
         $scope.showButtons = false;
         $scope.dlq = false;
         var mbean = getBrokerMBean(workspace, jolokia, amqJmxDomain);
+        // browseQueue(java.lang.String) is not available until ActiveMQ 5.15.0
+        // https://issues.apache.org/jira/browse/AMQ-6435
         jolokia.request(
             {type: 'exec', mbean: mbean, operation: 'browseQueue(java.lang.String)', arguments: [$scope.queueName]},
-            onSuccess(populateTable));
+            onSuccess(populateTable, {
+              error: (response) => {
+                // try again with the old ActiveMQ API
+                $scope.queueName = null;
+                $scope.showButtons = true;
+                Core.$apply($scope);
+                loadTable();
+              }
+            }));
         $scope.queueName = null;
       } else {
         if (workspace.selection) {
@@ -392,7 +402,6 @@ module ActiveMQ {
     }
 
     function operationSuccess() {
-      $scope.messageDialog = false;
       deselectAll();
       Core.notification("success", $scope.message);
       setTimeout(loadTable, 50);
@@ -503,7 +512,7 @@ module ActiveMQ {
     }
 
     function deselectAll() {
-      $scope.gridOptions.selectedItems = [];
+      $scope.gridOptions.selectedItems.length = 0;
       $scope.gridOptions['$gridScope'].allSelected = false;
     }
 

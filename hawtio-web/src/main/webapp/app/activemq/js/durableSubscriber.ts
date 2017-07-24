@@ -1,6 +1,10 @@
 /// <reference path="activemqPlugin.ts"/>
 module ActiveMQ {
-  _module.controller("ActiveMQ.DurableSubscriberController", ["$scope", "workspace", "jolokia", "localStorage", ($scope, workspace:Workspace, jolokia, localStorage) => {
+  _module.controller("ActiveMQ.DurableSubscriberController", ["$scope", "workspace", "jolokia", "localStorage", (
+      $scope,
+      workspace: Workspace,
+      jolokia: Jolokia.IJolokia,
+      localStorage: WindowLocalStorage) => {
 
       var amqJmxDomain = localStorage['activemqJmxDomain'] || "org.apache.activemq";
 
@@ -71,7 +75,7 @@ module ActiveMQ {
           if (Core.isBlank($scope.subSelector)) {
             $scope.subSelector = null;
           }
-          var mbean = getBrokerMBean(jolokia);
+          var mbean = getBrokerMBean(workspace, jolokia, amqJmxDomain);
           if (mbean) {
               jolokia.execute(mbean, "createDurableSubscriber(java.lang.String, java.lang.String, java.lang.String, java.lang.String)", $scope.clientId, $scope.subscriberName, $scope.topicName, $scope.subSelector, onSuccess(function() {
                   Core.notification('success', "Created durable subscriber " + clientId);
@@ -112,8 +116,7 @@ module ActiveMQ {
     };
 
     $scope.topicNames = (completionText) => {
-      var topicsFolder = getSelectionTopicsFolder(workspace);
-      return (topicsFolder) ? topicsFolder.children.map(n => n.title) : [];
+      return retrieveTopicNames(workspace, false);
     };
 
 
@@ -122,59 +125,36 @@ module ActiveMQ {
 
         // lets defer execution as we may not have the selection just yet
         setTimeout(loadTable, 50);
-      });
+    });
 
-      function loadTable() {
-        var mbean = getBrokerMBean(jolokia);
-        if (mbean) {
-            $scope.durableSubscribers = []
-            jolokia.request({type: "read", mbean: mbean, attribute: ["DurableTopicSubscribers"]}, onSuccess( (response) => populateTable(response, "DurableTopicSubscribers", "Active")));
-            jolokia.request({type: "read", mbean: mbean, attribute: ["InactiveDurableTopicSubscribers"]}, onSuccess( (response) => populateTable(response, "InactiveDurableTopicSubscribers", "Offline")));
-        }
+    function loadTable() {
+      var mbean = getBrokerMBean(workspace, jolokia, amqJmxDomain);
+      if (mbean) {
+          $scope.durableSubscribers = []
+          jolokia.request({type: "read", mbean: mbean, attribute: ["DurableTopicSubscribers"]}, onSuccess( (response) => populateTable(response, "DurableTopicSubscribers", "Active")));
+          jolokia.request({type: "read", mbean: mbean, attribute: ["InactiveDurableTopicSubscribers"]}, onSuccess( (response) => populateTable(response, "InactiveDurableTopicSubscribers", "Offline")));
       }
+    }
 
-      function populateTable(response, attr, status) {
-          var data = response.value;
-          log.debug("Got data: ", data);
-          $scope.durableSubscribers.push.apply($scope.durableSubscribers, data[attr].map(o => {
-              var objectName = o["objectName"];
-              var entries = Core.objectNameProperties(objectName);
-              if ( !('objectName' in o)) {
-                if ( 'canonicalName' in o){
-                    objectName = o['canonicalName'];
-                }
-                entries = Object.extended(o['keyPropertyList']).clone();
+    function populateTable(response, attr, status) {
+        var data = response.value;
+        log.debug("Got data: ", data);
+        $scope.durableSubscribers.push.apply($scope.durableSubscribers, data[attr].map(o => {
+            var objectName = o["objectName"];
+            var entries = Core.objectNameProperties(objectName);
+            if ( !('objectName' in o)) {
+              if ( 'canonicalName' in o){
+                  objectName = o['canonicalName'];
               }
+              entries = Object.extended(o['keyPropertyList']).clone();
+            }
 
-              entries["_id"] = objectName;
-              entries["status"] = status;
-              return entries;
-          }));
+            entries["_id"] = objectName;
+            entries["status"] = status;
+            return entries;
+        }));
 
-          Core.$apply($scope);
-      }
-
-      function getBrokerMBean(jolokia) {
-        var mbean = null;
-        var selection = workspace.selection;
-        if (selection && isBroker(workspace, amqJmxDomain) && selection.objectName) {
-          return selection.objectName;
-        }
-        var folderNames = selection.folderNames;
-        //if (selection && jolokia && folderNames && folderNames.length > 1) {
-        var parent = selection ? selection.parent : null;
-        if (selection && parent && jolokia && folderNames && folderNames.length > 1) {
-          mbean = parent.objectName;
-
-          // we might be a destination, so lets try one more parent
-          if (!mbean && parent) {
-            mbean = parent.parent.objectName;
-          }
-          if (!mbean) {
-            mbean = "" + folderNames[0] + ":BrokerName=" + folderNames[1] + ",Type=Broker";
-          }
-        }
-        return mbean;
-      }
+        Core.$apply($scope);
+    }
   }]);
 }

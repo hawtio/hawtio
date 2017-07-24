@@ -1,7 +1,7 @@
 package io.hawt.web;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 
@@ -247,17 +247,24 @@ public class ProxyDetailsTest {
             .thenReturn("/localhost/9000/jolokia/")
             .thenReturn("/localhost:8181/jolokia/")
             .thenReturn("/www.myhost.com/jolokia/")
+            .thenReturn("/myhost1.com/jolokia/")
+            .thenReturn("/myhost22.com/jolokia/")
             .thenReturn("/www.banned.com/jolokia/");
 
-        List<String> whitelist = Arrays.asList("localhost", "www.myhost.com");
+        Set<String> whitelist = new HashSet<>(Arrays.asList("localhost", "www.myhost.com"));
+        List<Pattern> regexWhitelist = Collections.singletonList(Pattern.compile("myhost[0-9]+\\.com"));
         ProxyDetails details1 = new ProxyDetails(mockReq);
         ProxyDetails details2 = new ProxyDetails(mockReq);
         ProxyDetails details3 = new ProxyDetails(mockReq);
         ProxyDetails details4 = new ProxyDetails(mockReq);
+        ProxyDetails details5 = new ProxyDetails(mockReq);
+        ProxyDetails details6 = new ProxyDetails(mockReq);
         assertTrue("localhost/9000", details1.isAllowed(whitelist));
         assertTrue("localhost:8181", details2.isAllowed(whitelist));
         assertTrue("www.myhost.com", details3.isAllowed(whitelist));
-        assertFalse("www.banned.com", details4.isAllowed(whitelist));
+        assertTrue("myhost1.com", details4.isAllowed(regexWhitelist));
+        assertTrue("myhost22.com", details5.isAllowed(regexWhitelist));
+        assertFalse("www.banned.com", details6.isAllowed(whitelist));
     }
 
     @Test
@@ -268,7 +275,7 @@ public class ProxyDetailsTest {
             .thenReturn("/www.myhost.com/jolokia/")
             .thenReturn("/www.banned.com/jolokia/");
 
-        List<String> whitelist = Arrays.asList("*");
+        Set<String> whitelist = new HashSet<>(Arrays.asList("*"));
         ProxyDetails details1 = new ProxyDetails(mockReq);
         ProxyDetails details2 = new ProxyDetails(mockReq);
         ProxyDetails details3 = new ProxyDetails(mockReq);

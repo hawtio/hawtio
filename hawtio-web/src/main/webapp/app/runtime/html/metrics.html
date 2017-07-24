@@ -1,0 +1,18 @@
+<div class="runtime-controller"
+	ng-controller="Runtime.MetricsController">
+
+	<div class="row-fluid">
+		<div class="span10">
+			<div class="control-group inline-block pull-right">
+				<input type="text" class="search-query ng-pristine ng-valid"
+					placeholder="Filter..."
+					ng-model="metricsTableConfig.filterOptions.filterText"> <i
+					class="icon-remove clickable" title="Clear filter"
+					ng-click="metricsTableConfig.filterOptions.filterText = ''"></i>
+			</div>
+			<table class="table table-condensed table-striped"
+				hawtio-simple-table="metricsTableConfig"></table>
+		</div>
+	</div>
+</div>
+

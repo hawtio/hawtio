@@ -29,6 +29,10 @@
                     ng-disabled="gridOptions.selectedItems.length == 0"
                     class="btn" ng-click="onBeforeUpdateTrigger()" title="Update trigger">
                   <i class="icon-edit"></i></button>
+                <button
+                    ng-disabled="gridOptions.selectedItems.length == 0"
+                    class="btn" ng-click="onBeforeManualTrigger()" title="Manually trigger">
+                  <i class="icon-play"></i></button>
               </div>
             </div>
           </fieldset>
@@ -39,6 +43,14 @@
            title="Update trigger: {{gridOptions.selectedItems[0].group}}/{{gridOptions.selectedItems[0].name}}">
         <div class="dialog-body">
           <div simple-form data='triggerSchema' entity='updatedTrigger'>
+          </div>
+        </div>
+      </div>
+
+      <div hawtio-confirm-dialog="showManualTriggerDialog" ok-button-text="Fire now" cancel-button-text="Cancel" on-ok="onManualTrigger()"
+           title="Manually fire trigger">
+        <div class="dialog-body">
+          <div simple-form data='manualTriggerSchema' entity='manualTrigger'>
           </div>
         </div>
       </div>

@@ -3,6 +3,8 @@
  * @main Dashboard
  */
 /// <reference path="dashboardHelpers.ts"/>
+/// <reference path="dashboardRepository.ts"/>
+/// <reference path="gridsterDirective.ts"/>
 module Dashboard {
   
   export var templatePath = 'app/dashboard/html/';
