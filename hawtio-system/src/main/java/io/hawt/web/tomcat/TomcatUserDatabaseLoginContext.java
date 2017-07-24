@@ -37,8 +37,10 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
     private File file;
     private String digestAlgorithm;
 
+
     private static final Map<String, Predicate<PasswordPair>> PASSWORD_CHECKS;
     public static final String OPTION_DIGEST_ALGORITHM = "DIGEST_ALGORITHM";
+    public static final String OPTION_TOMCAT_USER_LOCATION = "USER_LOCATION";
 
     static {
         Map<String, Predicate<PasswordPair>> temp = new HashMap<>(6);
@@ -99,9 +101,16 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
         this.subject = subject;
         this.callbackHandler = callbackHandler;
 
-        String base = System.getProperty("catalina.base", ".");
-        LOG.debug("Using base directory: {}", base);
-        this.file = new File(base, fileName);
+        String customLocation = options.get(OPTION_TOMCAT_USER_LOCATION).toString();
+        if (customLocation != null) {
+            this.file = new File(customLocation,"tomcat-users.xml");
+        }
+
+        if (file==null || !file.exists()) {
+            String base = System.getProperty("catalina.base", ".");
+            LOG.debug("Using base directory: {}", base);
+            this.file = new File(base, fileName);
+        }
 
         if (!file.exists()) {
             String msg = "Cannot find Apache Tomcat user database file: " + file;

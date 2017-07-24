@@ -22,6 +22,7 @@ public class TomcatAuthenticationContainerDiscovery implements AuthenticationCon
     private static final transient Logger LOG = LoggerFactory.getLogger(TomcatAuthenticationContainerDiscovery.class);
 
     private static final transient String AUTHENTICATION_CONTAINER_TOMCAT_DIGEST_ALGORITHM = "hawtio.authenticationContainerTomcatDigestAlgorithm";
+    private static final transient String AUTHENTICATION_TOMCAT_USER_LOCATION = "hawtio.tomcatUserFileLocation";
 
     @Override
     public String getContainerName() {
@@ -44,7 +45,8 @@ public class TomcatAuthenticationContainerDiscovery implements AuthenticationCon
             LOG.debug("Checked for {} in JMX for {} -> {}", getContainerName(), isTomcat);
 
             if (isTomcat) {
-                configuration.setConfiguration(new TomcatLoginContextConfiguration(System.getProperty(AUTHENTICATION_CONTAINER_TOMCAT_DIGEST_ALGORITHM, "NONE").toUpperCase()));
+                configuration.setConfiguration(new TomcatLoginContextConfiguration(System.getProperty(AUTHENTICATION_CONTAINER_TOMCAT_DIGEST_ALGORITHM, "NONE").toUpperCase(),
+                    System.getProperty(AUTHENTICATION_TOMCAT_USER_LOCATION,null)));
                 configuration.setRolePrincipalClasses(TomcatPrincipal.class.getName());
             }
             return isTomcat;
