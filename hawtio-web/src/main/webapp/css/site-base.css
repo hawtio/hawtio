@@ -3775,6 +3775,11 @@ span.hawtio-dropdown .dropdown-menu {
   display: block;
 }
 
+.hawtio-dropdown > ul {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
 .hawtio-dropdown > ul > li {
   padding: 3px;
   padding-left: 5px;
