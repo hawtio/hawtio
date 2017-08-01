@@ -4,6 +4,9 @@
 #### 1.5.3 (To be released)
 
  * Quartz plugin can now be triggered manually via play button
+ * Upgraded to Jolokia 1.3.7
+ * Upgraded to Camel 2.19.2
+ * Various bug fixes
 
 #### 1.5.2 
 
