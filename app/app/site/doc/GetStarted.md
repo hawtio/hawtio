@@ -13,21 +13,21 @@ The out of the box defaults try to do the right thing for most folks but if you 
 
 You can startup hawtio on your machine using the hawtio-app executable jar.
 
-<a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-app/1.5.2/hawtio-app-1.5.2.jar">Download the executable hawtio-app-1.5.2.jar</a>
+<a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-app/1.5.3/hawtio-app-1.5.3.jar">Download the executable hawtio-app-1.5.3.jar</a>
 
 Once you have downloaded it, just run this from the command line:
 
-    java -jar hawtio-app-1.5.2.jar
+    java -jar hawtio-app-1.5.3.jar
 
 And the console should show you which URL to open to view hawtio; which by default is [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/)
 
 You can specify the port number to use, for example to use port 8090 run from the command line:
 
-    java -jar hawtio-app-1.5.2.jar --port 8090
+    java -jar hawtio-app-1.5.3.jar --port 8090
 
 hawtio supports other options which you can get listed by running from command line:
 
-    java -jar hawtio-app-1.5.2.jar --help
+    java -jar hawtio-app-1.5.3.jar --help
 
 <a name="web-container"></a>
 ## Using a Servlet Engine or Application Server
@@ -40,7 +40,7 @@ If you are running Tomcat, Jetty you could just deploy a WAR:
 <div class="row">
   <div class="col-md-6 span6 text-center">
     <p>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.5.2/hawtio-default-1.5.2.war">Download hawtio-default.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default/1.5.3/hawtio-default-1.5.3.war">Download hawtio-default.war</a>
     </p>
     <p>
       a bare hawtio web application with minimal dependencies (online mode connecting to the internet for the Maven and Git plugin)
@@ -48,7 +48,7 @@ If you are running Tomcat, Jetty you could just deploy a WAR:
   </div>
   <div class="col-md-6 span6 text-center">
     <p>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.5.2/hawtio-default-offline-1.5.2.war">Download hawtio-default-offline.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-default-offline/1.5.3/hawtio-default-offline-1.5.3.war">Download hawtio-default-offline.war</a>
     </p>
     <p>
       a bare <b>offline</b> hawtio web application with minimal dependencies in offline mode, where Maven and Git plugins are not enabled.
@@ -56,7 +56,7 @@ If you are running Tomcat, Jetty you could just deploy a WAR:
   </div>
   <div class="col-md-6 span6 text-center">
     <p>
-      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.5.2/sample-1.5.2.war">Download sample.war</a>
+      <a class="btn btn-large  btn-primary" href="https://oss.sonatype.org/content/repositories/public/io/hawt/sample/1.5.3/sample-1.5.3.war">Download sample.war</a>
     </p>
     <p>
       a hawtio web application which comes with some <a href="http://activemq.apache.org/">Apache ActiveMQ</a> and
@@ -69,7 +69,7 @@ Copy the WAR file to your deploy directory in your container.
 
 If you rename the downloaded file to _hawtio.war_ then drop it into your deploy directory then open [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/) and you should have your hawtio console to play with.
 
-Otherwise you will need to use either [http://localhost:8080/hawtio-default-1.5.2/](http://localhost:8080/hawtio-default-1.5.2/) or [http://localhost:8080/sample-1.5.2/](http://localhost:8080/sample-1.5.2/)  depending on the file name you downloaded.
+Otherwise you will need to use either [http://localhost:8080/hawtio-default-1.5.3/](http://localhost:8080/hawtio-default-1.5.3/) or [http://localhost:8080/sample-1.5.3/](http://localhost:8080/sample-1.5.3/)  depending on the file name you downloaded.
 
 Please check [the configuration guide](http://hawt.io/configuration/index.html) to see how to configure things; in particular security.
 
@@ -87,27 +87,27 @@ By default installing `hawtio` installs the Maven and Git plugin which uses onli
 
 If you are using [Apache Karaf](http://karaf.apache.org/) 2.x:
 
-    features:chooseurl hawtio 1.5.2
+    features:chooseurl hawtio 1.5.3
     features:install hawtio
 
 If you are using [Apache Karaf](http://karaf.apache.org/) 3.x:
 
-    feature:repo-add hawtio 1.5.2
+    feature:repo-add hawtio 1.5.3
     feature:install hawtio-core
 
 If you are using [Apache Karaf](http://karaf.apache.org/) 4.x:
 
-    feature:repo-add hawtio 1.5.2
+    feature:repo-add hawtio 1.5.3
     feature:install hawtio
 
 If you are using [Apache ServiceMix](http://servicemix.apache.org/) 5.x/6.x:
 
-    feature:repo-add hawtio 1.5.2
+    feature:repo-add hawtio 1.5.3
     feature:install hawtio-core
 
 If you are using [Apache ServiceMix](http://servicemix.apache.org/) 7.x:
 
-    feature:repo-add hawtio 1.5.2
+    feature:repo-add hawtio 1.5.3
     feature:install hawtio
 
 
@@ -142,7 +142,7 @@ The following section gives details of other containers
 <a name="jee"></a>
 ### If you use JBoss AS or Wildfly
 
-You may have issues with slf4j JARs in WAR deployments on JBoss AS or Wildfly. To resolve this you must use <a class="btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.5.2/hawtio-no-slf4j-1.5.2.war">Download hawtio-no-slf4j.war</a>.
+You may have issues with slf4j JARs in WAR deployments on JBoss AS or Wildfly. To resolve this you must use <a class="btn-default" href="https://oss.sonatype.org/content/repositories/public/io/hawt/hawtio-no-slf4j/1.5.3/hawtio-no-slf4j-1.5.3.war">Download hawtio-no-slf4j.war</a>.
 
 See more details [here](http://totalprogus.blogspot.co.uk/2011/06/javalanglinkageerror-loader-constraint.html).
 
@@ -231,7 +231,7 @@ If you wish to do anything fancy it should be easy to override the Main class to
 
 > Chrome Extension currently does not work, as Google requires extensions to be installed using their app store, and hawtio are not yet published to the app store. This may change in the future.
 
-<a class="btn btn-large btn-primary" href="http://central.maven.org/maven2/io/hawt/hawtio-crx/1.5.2/hawtio-crx-1.5.2.crx">Download the hawtio Chrome Extension version 1.5.2</a>
+<a class="btn btn-large btn-primary" href="http://central.maven.org/maven2/io/hawt/hawtio-crx/1.5.3/hawtio-crx-1.5.3.crx">Download the hawtio Chrome Extension version 1.5.3</a>
 
 * Then you'll need to open the folder that the CRX file got downloaded to. On a Mac in Chrome you right click the downloaded file and click <b>Show in Finder</b>
 
