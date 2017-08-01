@@ -1,6 +1,6 @@
 {
   "name": "hawtio-api-docs",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "hawtio :: hawtio-api-docs",
   "license": "Apache-2.0",
   "devDependencies": {

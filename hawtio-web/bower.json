@@ -1,6 +1,6 @@
 {
   "name": "hawtio",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "The hawtio management console",
   "homepage": "http://hawt.io",
   "main": "src/main/webapp/app/app.js",
