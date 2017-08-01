@@ -8,7 +8,7 @@
  * Upgraded to Camel 2.19.2
  * Various bug fixes
 
-#### 1.5.2 
+#### 1.5.3 
 
 * Added a new java.lang.Runtime plugin
 * IDE plugin modification and update
