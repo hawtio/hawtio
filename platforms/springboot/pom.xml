@@ -41,7 +41,8 @@
   <build>
     <plugins>
       <!--
-        Repackage static content from war into a jar, placing static content under /static/hawtio
+        Repackage static content from war into a jar, placing static content under /hawtio-static
+        Do not use /static so that it will not be exposed automatically by Spring Boot
       -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -54,7 +55,7 @@
             </goals>
             <phase>prepare-package</phase>
             <configuration>
-              <outputDirectory>${project.build.directory}/classes/static/hawtio/</outputDirectory>
+              <outputDirectory>${project.build.directory}/classes/hawtio-static/</outputDirectory>
               <includeArtifactIds>hawtio-war</includeArtifactIds>
               <excludeTypes>pom</excludeTypes>
               <excludes>**/WEB-INF/**,**/META-INF/**</excludes>
@@ -72,7 +73,7 @@
         <artifactId>replacer</artifactId>
         <version>1.5.3</version>
         <configuration>
-          <basedir>${basedir}/target/classes/static/hawtio</basedir>
+          <basedir>${basedir}/target/classes/hawtio-static</basedir>
         </configuration>
         <executions>
           <execution>
