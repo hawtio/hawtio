@@ -74,8 +74,7 @@
         </configuration>
       </plugin>
 
-      <!-- TODO: to run with mvn hawtio:spring-boot -->
-      <!--
+      <!-- to run with mvn hawtio:spring-boot -->
       <plugin>
         <groupId>io.hawt</groupId>
         <artifactId>hawtio-maven-plugin</artifactId>
@@ -84,7 +83,6 @@
           <mainClass>io.hawt.example.spring.boot.SampleSpringBootService</mainClass>
         </configuration>
       </plugin>
-      -->
 
     </plugins>
   </build>

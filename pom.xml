@@ -106,6 +106,8 @@
     <!-- use slf4j-api 1.6.x to be easy compatible with older Karaf/Camel releases -->
     <slf4j-api-version>1.6.6</slf4j-api-version>
     <slf4j-version>1.7.21</slf4j-version>
+
+    <spring-version>4.3.10.RELEASE</spring-version>
     <spring-boot-version>1.5.4.RELEASE</spring-boot-version>
   </properties>
 
@@ -123,6 +125,8 @@
     <module>hawtio-system</module>
     <module>hawtio-war</module>
     <module>hawtio-maven-indexer</module>
+    <module>tooling/hawtio-junit</module>
+    <module>tooling/hawtio-maven-plugin</module>
     <module>hawtio-base</module>
     <module>hawtio-default</module>
     <module>hawtio-embedded</module>
