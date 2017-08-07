@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
     <version>1.5-SNAPSHOT</version>
   </parent>
 
-  <modelVersion>4.0.0</modelVersion>
   <artifactId>hawtio-springboot</artifactId>
   <name>${project.artifactId}</name>
-  <description>hawtio :: hawtio-springboot</description>
-
-  <properties>
-  </properties>
+  <description>hawtio :: Spring Boot starter</description>
 
   <dependencies>
-
     <dependency>
       <artifactId>hawtio-web</artifactId>
       <groupId>io.hawt</groupId>
@@ -38,12 +35,13 @@
       <artifactId>spring-boot-starter-web</artifactId>
       <version>${spring-boot-version}</version>
     </dependency>
-
   </dependencies>
+
   <build>
     <plugins>
       <!--
-        Repackage static content from war into a jar, placing static content under /static/hawtio
+        Repackage static content from war into a jar, placing static content under /hawtio-static
+        Do not use /static so that it will not be exposed automatically by Spring Boot
       -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -56,7 +54,7 @@
             </goals>
             <phase>prepare-package</phase>
             <configuration>
-              <outputDirectory>${project.build.directory}/classes/static/hawtio/</outputDirectory>
+              <outputDirectory>${project.build.directory}/classes/hawtio-static/</outputDirectory>
               <includeArtifactIds>hawtio-web</includeArtifactIds>
               <excludeTypes>pom</excludeTypes>
               <excludes>**/WEB-INF/**,**/META-INF/**</excludes>
@@ -66,7 +64,7 @@
         </executions>
       </plugin>
       <!--
-        angularJs html5mode makes things difficult, as it requires a server side redirect to be configured,
+        AngularJs html5mode makes things difficult, as it requires a server side redirect to be configured,
         and relying on a 404 redirect is also problematic so removing this feature
       -->
       <plugin>
@@ -74,7 +72,7 @@
         <artifactId>replacer</artifactId>
         <version>1.5.3</version>
         <configuration>
-          <basedir>${basedir}/target/classes/static/hawtio</basedir>
+          <basedir>${basedir}/target/classes/hawtio-static</basedir>
         </configuration>
         <executions>
           <execution>
@@ -120,8 +118,8 @@
             </configuration>
           </execution>
         </executions>
-
       </plugin>
     </plugins>
   </build>
+
 </project>
