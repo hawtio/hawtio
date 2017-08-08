@@ -1,12 +1,8 @@
 package io.hawt.example.spring.boot;
 
-import javax.servlet.ServletContext;
-
 import io.hawt.config.ConfigFacade;
 import io.hawt.springboot.HawtPlugin;
-import io.hawt.springboot.PluginService;
 import io.hawt.web.auth.AuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -14,45 +10,28 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class SampleSpringBootService {
 
-    @Autowired
-    private ServletContext servletContext;
-
     public static void main(String[] args) {
         System.setProperty(AuthenticationFilter.HAWTIO_AUTHENTICATION_ENABLED, "false");
         SpringApplication.run(SampleSpringBootService.class, args);
     }
 
     /**
-     * Loading an example plugin
-     * @return
+     * Loading an example plugin.
      */
     @Bean
     public HawtPlugin samplePlugin() {
-        return new HawtPlugin("sample-plugin", "/hawtio/plugins", "", new String[] { "sample-plugin/js/sample-plugin.js" });
+        return new HawtPlugin("sample-plugin",
+            "/hawtio/plugins",
+            "",
+            new String[] { "sample-plugin/js/sample-plugin.js" });
     }
 
     /**
-     * Set things up to be in offline mode
-     * @return
-     * @throws Exception
+     * Set things up to be in offline mode.
      */
     @Bean
-    public ConfigFacade configFacade() throws Exception {
-        ConfigFacade config = new ConfigFacade() {
-            public boolean isOffline() {
-                return true;
-            }
-        };
-        config.init();
-        return config;
-    }
-
-    /**
-     * Register rest endpoint to handle requests for /plugin, and return all registered plugins.
-     * @return
-     */
-    @Bean
-    public PluginService pluginService() {
-        return new PluginService();
+    public ConfigFacade configFacade() {
+        System.setProperty("hawtio.offline", "true");
+        return ConfigFacade.getSingleton();
     }
 }

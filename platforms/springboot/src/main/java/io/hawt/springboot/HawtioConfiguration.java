@@ -19,35 +19,42 @@ import io.hawt.web.servlets.GitServlet;
 import io.hawt.web.servlets.JavaDocServlet;
 import io.hawt.web.servlets.UploadServlet;
 import org.apache.commons.fileupload.servlet.FileCleanerCleanup;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.ManagementContextConfiguration;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.context.annotation.PropertySource;
 
 /**
  * Management configuration for hawtio on Spring Boot
  */
 @ManagementContextConfiguration
-@ConfigurationProperties(prefix = "hawtio")
-public class HawtioConfiguration extends WebMvcConfigurerAdapter {
+@EnableConfigurationProperties(HawtioProperties.class)
+@PropertySource("classpath:/io/hawt/springboot/application.properties")
+public class HawtioConfiguration {
 
-    @Override
-    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/hawtio/plugins/**").addResourceLocations("/app/", "classpath:/hawtio-static/app/");
-        registry.addResourceHandler("/hawtio/**").addResourceLocations("/", "/app/", "classpath:/hawtio-static/",
-            "classpath:/hawtio-static/app/");
-        registry.addResourceHandler("/img/**").addResourceLocations("classpath:/hawtio-static/img/");
+    @Autowired
+    private HawtioProperties hawtioProperties;
+
+    @Autowired
+    private ManagementServerProperties managementProperties;
+
+    @Bean
+    public HawtioEndpoint hawtioEndpoint() {
+        return new HawtioEndpoint();
     }
 
-    @Override
-    public void addViewControllers(final ViewControllerRegistry registry) {
-        registry.addViewController("/hawtio/plugin").setViewName("forward:/plugin");
-        registry.addViewController("/hawtio/").setViewName("redirect:/hawtio/index.html");
+    /**
+     * Register rest endpoint to handle requests for /plugin, and
+     * return all registered plugins.
+     */
+    @Bean
+    public PluginService pluginService() {
+        return new PluginService();
     }
 
     // -------------------------------------------------------------------------
@@ -117,6 +124,8 @@ public class HawtioConfiguration extends WebMvcConfigurerAdapter {
     // -------------------------------------------------------------------------
     // Servlets
     // -------------------------------------------------------------------------
+
+    // Jolokia agent servlet is provided by Spring Boot actuator
 
     @Bean
     public ServletRegistrationBean jolokiaProxyServlet() {
