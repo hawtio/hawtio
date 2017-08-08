@@ -14,6 +14,10 @@
   <description>hawtio :: Sample Spring Boot process</description>
   <packaging>war</packaging>
 
+  <properties>
+    <camel-version>2.19.2</camel-version>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -23,10 +27,18 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-boot-dependencies</artifactId>
+        <version>${camel-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <dependencies>
+    <!-- Spring Boot -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -34,20 +46,33 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-undertow</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>io.undertow</groupId>
+          <artifactId>undertow-websockets-jsr</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-actuator</artifactId>
     </dependency>
+
+    <!-- hawtio -->
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <!-- Camel -->
     <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-core</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-stream-starter</artifactId>
     </dependency>
   </dependencies>
 

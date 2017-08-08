@@ -11,11 +11,15 @@ import io.hawt.jmx.QuartzFacade;
 import io.hawt.jmx.RBACRegistry;
 import io.hawt.jmx.UploadManager;
 import io.hawt.system.ConfigManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link javax.servlet.ServletContextListener} which initialises key hawtio services in the webapp
  */
 public class HawtioContextListener implements ServletContextListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HawtioContextListener.class);
 
     private About about = new About();
     private QuartzFacade quartz = new QuartzFacade();
@@ -27,6 +31,7 @@ public class HawtioContextListener implements ServletContextListener {
     private RBACRegistry rbacRegistry = new RBACRegistry();
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
+        LOGGER.info("Initialising hawtio services");
         try {
             about.init();
             quartz.init();
@@ -43,6 +48,7 @@ public class HawtioContextListener implements ServletContextListener {
     }
 
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
+        LOGGER.info("Destroying hawtio services");
         try {
             rbacRegistry.destroy();
             about.destroy();

@@ -4,8 +4,6 @@ import java.net.URL;
 
 import io.hawt.config.ConfigFacade;
 import io.hawt.springboot.HawtPlugin;
-import io.hawt.springboot.PluginService;
-import io.hawt.web.AuthenticationFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -24,26 +22,16 @@ public class SampleAuthenticationSpringBootService {
     private static final String JAVA_SECURITY_AUTH_LOGIN_CONFIG = "java.security.auth.login.config";
 
     public static void main(String[] args) {
-        System.setProperty(AuthenticationFilter.HAWTIO_AUTHENTICATION_ENABLED, "false");
+        System.setProperty(HAWTIO_AUTHENTICATION_ENABLED, "false");
         SpringApplication.run(SampleAuthenticationSpringBootService.class, args);
     }
 
     /**
-     * Loading an example plugin
-     * @return
+     * Loading an example plugin.
      */
     @Bean
     public HawtPlugin samplePlugin() {
         return new HawtPlugin("sample-plugin", "/hawtio/plugins", "", new String[] { "sample-plugin/js/sample-plugin.js" });
-    }
-
-    /**
-     * Register rest endpoint to handle requests for /plugin, and return all registered plugins.
-     * @return
-     */
-    @Bean
-    public PluginService pluginService() {
-        return new PluginService();
     }
 
     /**
