@@ -182,6 +182,18 @@
       </plugin>
 
       <plugin>
+        <groupId>org.wildfly.plugins</groupId>
+        <artifactId>wildfly-maven-plugin</artifactId>
+        <version>${wildfly-maven-plugin-version}</version>
+        <configuration>
+          <!-- Use lightweight distribution for faster startup -->
+          <groupId>org.wildfly</groupId>
+          <artifactId>wildfly-servlet-dist</artifactId>
+          <version>${wildfly-version}</version>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty-version}</version>
