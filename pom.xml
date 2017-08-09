@@ -113,30 +113,30 @@
 
   <modules>
     <module>example-services</module>
-    <module>hawtio-json-schema-mbean</module>
-    <module>hawtio-console-assembly</module>
-    <module>hawtio-util</module>
-    <module>hawtio-ide</module>
+    <module>examples/hawtio-example-springboot-authentication</module>
+    <module>examples/hawtio-example-springboot</module>
     <module>hawtio-aether</module>
-    <module>hawtio-core</module>
-    <module>hawtio-git</module>
-    <module>hawtio-kubernetes</module>
-    <module>hawtio-local-jvm-mbean</module>
-    <module>hawtio-system</module>
-    <module>hawtio-war</module>
-    <module>hawtio-maven-indexer</module>
-    <module>tooling/hawtio-junit</module>
-    <module>tooling/hawtio-maven-plugin</module>
+    <module>hawtio-app</module>
     <module>hawtio-base</module>
+    <module>hawtio-console-assembly</module>
+    <module>hawtio-core</module>
     <module>hawtio-default</module>
     <module>hawtio-embedded</module>
-    <module>hawtio-app</module>
-    <module>platforms/wildfly</module>
+    <module>hawtio-git</module>
+    <module>hawtio-ide</module>
+    <module>hawtio-json-schema-mbean</module>
+    <module>hawtio-kubernetes</module>
+    <module>hawtio-local-jvm-mbean</module>
+    <module>hawtio-maven-indexer</module>
+    <module>hawtio-system</module>
+    <module>hawtio-util</module>
+    <module>hawtio-war</module>
     <module>platforms/hawtio-osgi-jmx</module>
     <module>platforms/karaf</module>
     <module>platforms/springboot</module>
-    <module>examples/hawtio-example-springboot</module>
-    <module>examples/hawtio-example-springboot-authentication</module>
+    <module>platforms/wildfly</module>
+    <module>tooling/hawtio-junit</module>
+    <module>tooling/hawtio-maven-plugin</module>
   </modules>
 
   <build>
