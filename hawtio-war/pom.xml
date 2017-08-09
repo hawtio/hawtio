@@ -44,13 +44,12 @@
       <artifactId>hawtio-util</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- hawtio-console-assembly-*.jar is not necessary
+    <!-- hawtio-console-assembly is needed to ensure build order -->
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-console-assembly</artifactId>
       <version>${project.version}</version>
     </dependency>
-    -->
 
     <!-- optional hawtio modules we want to use in this WAR -->
     <dependency>
