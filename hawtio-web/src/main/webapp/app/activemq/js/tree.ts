@@ -95,14 +95,17 @@ module ActiveMQ {
 
     function updateSelectionFromURL() {
       Jmx.updateTreeSelectionFromURLAndAutoSelect($location, $("#activemqtree"), (first) => {
-        // use function to auto select the queue folder on the 1st broker
-        var queues = first.getChildren()[0];
-        if (queues && queues.data.title === 'Queue') {
-          first = queues;
-          first.expand(true);
-          return first;
+        if(first.getChildren() != null) {
+          // use function to auto select the queue folder on the 1st broker
+          var queues = first.getChildren()[0];
+          if (queues && queues.data.title === 'Queue') {
+            first = queues;
+            first.expand(true);
+            return first;
+          }
+        } else {
+          return null;
         }
-        return null;
       }, true);
     }
   }]);
