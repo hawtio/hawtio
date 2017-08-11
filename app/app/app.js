@@ -10249,13 +10249,17 @@ var ActiveMQ;
         }
         function updateSelectionFromURL() {
             Jmx.updateTreeSelectionFromURLAndAutoSelect($location, $("#activemqtree"), function (first) {
-                var queues = first.getChildren()[0];
-                if (queues && queues.data.title === 'Queue') {
-                    first = queues;
-                    first.expand(true);
-                    return first;
+                if (first.getChildren() != null) {
+                    var queues = first.getChildren()[0];
+                    if (queues && queues.data.title === 'Queue') {
+                        first = queues;
+                        first.expand(true);
+                        return first;
+                    }
                 }
-                return null;
+                else {
+                    return null;
+                }
             }, true);
         }
     }]);
