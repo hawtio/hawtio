@@ -12,7 +12,9 @@
     "build": "gulp build"
   },
   "dependencies": {
-    "@hawtio/integration": "~3.0.16"
+    "@hawtio/help": "~3.0.0",
+    "@hawtio/integration": "~3.0.0",
+    "@hawtio/log": "~3.0.0"
   },
   "devDependencies": {
     "@hawtio/node-backend": "^3.0.0",
@@ -61,9 +63,17 @@
     "angular": "1.6.5",
     "angular-sanitize": "1.6.5",
     "angular-ui-bootstrap": "2.5.0",
-    "bootstrap-select": "1.12.3",
+    "bootstrap-select": "1.10.0",
     "@types/jquery": "2.0.48",
     "datatables.net": "1.10.15",
-    "moment": "2.18.1"
+    "moment": "2.18.1",
+    "lodash": "4.17.4",
+    "patternfly": "3.26.5",
+    "nopt": "3.0.6",
+    "lru-cache": "3.2.0",
+    "glob": "3.1.21",
+    "minimatch": "0.2.14",
+    "underscore.string": "2.2.1",
+    "inherits": "1.0.2"
   }
 }

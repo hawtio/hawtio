@@ -9,6 +9,6 @@
     ]
   },
   "include": [
-    "plugins/**/*.ts"
+    "src/**/*.ts"
   ]
 }
