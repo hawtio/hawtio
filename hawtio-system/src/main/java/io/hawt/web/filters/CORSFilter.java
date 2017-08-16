@@ -32,7 +32,7 @@ public class CORSFilter implements Filter {
                     resp.addHeader("Access-Control-Request-Method", "GET, POST, PUT, DELETE");
                     String headers = req.getHeader("Access-Control-Request-Headers");
                     if (headers != null) {
-                        resp.addHeader("Access-Control-Allow-Header", headers);
+                        resp.addHeader("Access-Control-Allow-Headers", headers);
                     }
                     resp.addHeader("Access-Control-Max-Age", "" + TimeUnit.DAYS.toSeconds(1));
                 }
