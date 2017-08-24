@@ -1,8 +1,13 @@
 {
-  "name"        : "jquery",
-  "version"     : "1.8.2",
-  "main"        : "./jquery.js",
-  "dependencies": {
-  }
+  "name": "jquery",
+  "version": "1.8.3+1",
+  "description": "jQuery component",
+  "keywords": [
+    "jquery",
+    "component"
+  ],
+  "scripts": [
+    "jquery.js"
+  ],
+  "license": "MIT"
 }
-

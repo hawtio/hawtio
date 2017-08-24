@@ -19407,11 +19407,15 @@ var Core;
             });
             resizeFunc();
             scope.$watch(resizeFunc);
-            $(this.$window).resize(function () {
+            angular.element(window).on('resize', function () {
                 resizeFunc();
                 Core.$apply(scope);
                 return false;
             });
+            element.on('$destroy', angular.bind(this, function () {
+                $(this.$window).off('resize');
+                angular.element(window).off('resize');
+            }));
         };
         return GridStyle;
     })();
@@ -46648,6 +46652,7 @@ var UI;
 })(UI || (UI = {}));
 var UI;
 (function (UI) {
+    ZeroClipboard.config({ moviePath: "img/ZeroClipboard.swf" });
     UI._module.directive('zeroClipboard', ["$parse", function ($parse) {
         return UI.ZeroClipboardDirective($parse);
     }]);
@@ -46655,9 +46660,7 @@ var UI;
         return {
             restrict: 'A',
             link: function ($scope, $element, $attr) {
-                var clip = new window.ZeroClipboard($element.get(0), {
-                    moviePath: "img/ZeroClipboard.swf"
-                });
+                var clip = new window.ZeroClipboard($element.get(0));
                 clip.on('complete', function (client, args) {
                     if (args.text && angular.isString(args.text)) {
                         Core.notification('info', "Copied text to clipboard: " + args.text.truncate(20));
@@ -46670,6 +46673,11 @@ var UI;
                         func($scope, { clip: clip });
                     }
                 }
+                $scope.$on('$destroy', function (destroy) {
+                    clip.destroy();
+                    clip = null;
+                    $element.off();
+                });
             }
         };
     }

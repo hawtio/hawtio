@@ -7,7 +7,12 @@
 
 /*jshint node: true */
 /*global config:true, task:true, process:true*/
+
+var child_process = require("child_process");
+
 module.exports = function( grunt ) {
+
+	"use strict";
 
 	// readOptionalJSON
 	// by Ben Alman
@@ -112,7 +117,11 @@ module.exports = function( grunt ) {
 			],
 			tasks: "dev"
 		},
-		uglify: {}
+		uglify: {
+			codegen: {
+				ascii_only: true
+			}
+		}
 	});
 
 	// Default grunt.
@@ -375,22 +384,29 @@ module.exports = function( grunt ) {
 		});
 
 	grunt.registerTask( "submodules", function() {
-		var done = this.async();
+		var done = this.async(),
+			// change pointers for submodules and update them to what is specified in jQuery
+			// --merge	doesn't work when doing an initial clone, thus test if we have non-existing
+			// submodules, then do an real update
+			cmd = "if [ -d .git ]; then \n" +
+				"if git submodule status | grep -q -E '^-'; then \n" +
+					"git submodule update --init --recursive; \n" +
+				"else \n" +
+					"git submodule update --init --recursive --merge; \n" +
+				"fi; \n" +
+			"fi;";
 
 		grunt.verbose.write( "Updating submodules..." );
 
-		// TODO: migrate remaining `make` to grunt tasks
-		//
-		grunt.utils.spawn({
-			cmd: "make"
-		}, function( err, result ) {
-			if ( err ) {
+		child_process.exec( cmd, function( err, stdout, stderr ) {
+			if ( stderr ) {
+				console.log(stderr);
 				grunt.verbose.error();
-				done( err );
+				done( stderr );
 				return;
 			}
 
-			grunt.log.writeln( result );
+			grunt.log.writeln( stdout );
 
 			done();
 		});
@@ -412,6 +428,27 @@ module.exports = function( grunt ) {
 			return path !== "*";
 		});
 
+		// Ensure the dist files are pure ASCII
+		var fs = require("fs"),
+			nonascii = false;
+		distpaths.forEach(function( filename ) {
+			var buf = fs.readFileSync( filename, "utf8" ),
+			i, c;
+			if ( buf.length !== Buffer.byteLength( buf, "utf8" ) ) {
+				log.writeln( filename + ": Non-ASCII characters detected:" );
+				for ( i = 0; i < buf.length; i++ ) {
+					c = buf.charCodeAt( i );
+					if ( c > 127 ) {
+						log.writeln( "- position " + i + ": " + c );
+						log.writeln( "-- " + buf.substring( i - 20, i + 20 ) );
+						nonascii = true;
+					}
+				}
+			}
+		});
+		if ( nonascii ) {
+			return false;
+		}
 
 		// Proceed only if there are actual
 		// paths to write to
