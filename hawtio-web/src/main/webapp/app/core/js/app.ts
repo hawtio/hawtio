@@ -20,7 +20,7 @@ module Core {
 
     $scope.setHandler = (clip) => {
 
-      clip.addEventListener('mouseDown', function(client, args) {
+      clip.on('mouseDown', function(client, args) {
 
         // this is apparently a global event handler for zero clipboard
         // so you have to make sure you're handling the right click event
