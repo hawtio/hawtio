@@ -4,6 +4,7 @@
 #### 1.5.4 (To be released)
 
 * Fixed hawtio spring-boot starter to adhere to management.port property
+* Various bug fixes
 
 #### 1.5.3
 
