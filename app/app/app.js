@@ -18412,7 +18412,7 @@ var Core;
 (function (Core) {
     Core.ConsoleController = Core._module.controller("Core.ConsoleController", ["$scope", "$element", "$templateCache", function ($scope, $element, $templateCache) {
         $scope.setHandler = function (clip) {
-            clip.addEventListener('mouseDown', function (client, args) {
+            clip.on('mouseDown', function (client, args) {
                 var icon = $element.find('.icon-copy');
                 var icon2 = $element.find('.icon-trash');
                 if (this !== icon.get(0) && this !== icon2.get(0)) {
