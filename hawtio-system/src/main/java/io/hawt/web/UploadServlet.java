@@ -1,16 +1,5 @@
 package io.hawt.web;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import io.hawt.jmx.UploadManager;
 import io.hawt.util.Strings;
 import org.apache.commons.fileupload.FileItem;
@@ -18,8 +7,18 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.MagicNumberFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.*;
 
 /**
  *
@@ -42,6 +41,7 @@ public class UploadServlet extends HttpServlet {
         final PrintWriter out = response.getWriter();
         List<File> uploadedFiles = new ArrayList<>();
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+
         if (isMultipart) {
             ServletContext context = this.getServletConfig().getServletContext();
             if (!uploadDir.exists()) {
@@ -77,37 +77,41 @@ public class UploadServlet extends HttpServlet {
             try {
                 List<FileItem> items = upload.parseRequest(request);
                 for (FileItem item : items) {
-                    if (item.isFormField()) {
-                        String name = item.getFieldName();
-                        String value = item.getString();
-                        LOG.info("Got form field {} with value {}", name, value);
-                        if (name.equals("parent")) {
-                            targetDirectory = value;
+                    if (fileAllowed(item)) {
+                        if (item.isFormField()) {
+                            String name = item.getFieldName();
+                            String value = item.getString();
+                            LOG.info("Got form field {} with value {}", name, value);
+                            if (name.equals("parent")) {
+                                targetDirectory = value;
+                            }
+                        } else {
+                            String fieldName = item.getFieldName();
+                            String fileName = item.getName();
+                            String contentType = item.getContentType();
+                            long sizeInBytes = item.getSize();
+
+                            fileName = Strings.sanitize(fileName);
+
+                            LOG.info("Got file upload, fieldName: {} fileName: {} contentType: {} size: {}", new Object[]{fieldName, fileName, contentType, sizeInBytes});
+
+                            if (fileName.equals("")) {
+                                LOG.info("Skipping field " + fieldName + " no filename given");
+                                continue;
+                            }
+                            File target = new File(uploadDir, fileName);
+
+                            try {
+                                item.write(target);
+                                files.add(target);
+                                LOG.info("Wrote to file: {}", target.getAbsoluteFile());
+                            } catch (Exception e) {
+                                LOG.warn("Failed to write to {} due to {}", target, e);
+                                //throw new RuntimeException(e);
+                            }
                         }
                     } else {
-                        String fieldName = item.getFieldName();
-                        String fileName = item.getName();
-                        String contentType = item.getContentType();
-                        long sizeInBytes = item.getSize();
-
-                        fileName = Strings.sanitize(fileName);
-
-                        LOG.info("Got file upload, fieldName: {} fileName: {} contentType: {} size: {}", new Object[]{fieldName, fileName, contentType, sizeInBytes});
-
-                        if (fileName.equals("")) {
-                            LOG.info("Skipping field " + fieldName + " no filename given");
-                            continue;
-                        }
-                        File target = new File(uploadDir, fileName);
-
-                        try {
-                            item.write(target);
-                            files.add(target);
-                            LOG.info("Wrote to file: {}", target.getAbsoluteFile());
-                        } catch (Exception e) {
-                            LOG.warn("Failed to write to {} due to {}", target, e);
-                            //throw new RuntimeException(e);
-                        }
+                        throw new RuntimeException("File is not allowed to be uploaded");
                     }
                 }
             } catch (FileUploadException e) {
@@ -143,4 +147,8 @@ public class UploadServlet extends HttpServlet {
         return uploadedFiles;
     }
 
+    private boolean fileAllowed(FileItem fileItem) throws IOException {
+        FileUploadFilter uploadFilter = new FileUploadFilter();
+        return uploadFilter.accept(IOUtils.toByteArray(fileItem.getInputStream()));
+    }
 }
