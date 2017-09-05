@@ -65,8 +65,6 @@
 
     <jetty-version>9.2.10.v20150310</jetty-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
-    <jetty-webapp-version>8.1.18.v20150929</jetty-webapp-version>
-    <jetty-webapp-artifactId>jetty-webapp</jetty-webapp-artifactId>
 
     <frontend-maven-plugin-version>1.4</frontend-maven-plugin-version>
 
@@ -86,7 +84,7 @@
     <guava-version>10.0</guava-version>
     <guava.version>14.0.1</guava.version>
     <gitective-version>0.9.22</gitective-version>
-    
+
     <!-- make sure to align jackson with fabric8 -->
     <jackson-version>2.7.0</jackson-version>
     <jackson-version-range>[2.5,3)</jackson-version-range>

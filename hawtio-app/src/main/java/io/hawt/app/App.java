@@ -17,8 +17,6 @@
  */
 package io.hawt.app;
 
-import io.hawt.embedded.Main;
-
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,6 +27,8 @@ import java.net.URI;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
+
+import io.hawt.embedded.Main;
 
 public class App {
     private static final String WAR_FILENAME = "hawtio.war";
@@ -46,8 +46,7 @@ public class App {
         try {
             String virtualMachineClass = "com.sun.tools.attach.VirtualMachine";
             try {
-                Class<?> aClass = loadClass(virtualMachineClass, App.class.getClassLoader(), Thread.currentThread().getContextClassLoader());
-                //System.out.println("Found " + aClass + " on the classpath!");
+                loadClass(virtualMachineClass, App.class.getClassLoader(), Thread.currentThread().getContextClassLoader());
             } catch (Exception e) {
                 // lets try find the tools.jar instead
                 Set<String> paths = new HashSet<String>();
@@ -72,7 +71,7 @@ public class App {
                 }
                 if (!found) {
                     System.out.println("Failed to load class " + virtualMachineClass
-                            + " and find tools.jar in directories " + paths + ". " + e);
+                        + " and find tools.jar in directories " + paths + ". " + e);
                 }
             }
 
@@ -102,7 +101,7 @@ public class App {
 
                 // should we open the url
                 int port = main.getPort();
-                String url = "http://localhost:" +  port + main.getContextPath();
+                String url = "http://localhost:" + port + main.getContextPath();
                 // set what is the url
                 System.setProperty("hawtio.url", url);
 

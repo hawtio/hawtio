@@ -23,10 +23,9 @@
         <include>io.hawt:hawtio-app</include>
         <include>io.hawt:hawtio-embedded</include>
         <include>org.eclipse.jetty:*</include>
-        <include>org.eclipse.jetty.aggregate:*</include>
-        <include>org.eclipse.jetty.orbit:*</include>
         <include>org.slf4j:*</include>
         <include>log4j:log4j</include>
+        <include>javax.servlet:javax.servlet-api</include>
       </includes>
     </dependencySet>
     <dependencySet>
