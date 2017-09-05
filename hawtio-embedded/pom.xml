@@ -56,8 +56,11 @@
           <mainClass>io.hawt.embedded.Main</mainClass>
           <classpathScope>test</classpathScope>
           <arguments>
+            <argument>--warLocation</argument>
             <argument>${basedir}/../hawtio-default/target</argument>
+            <argument>--port</argument>
             <argument>${jettyPort}</argument>
+            <argument>--contextPath</argument>
             <argument>${context}</argument>
           </arguments>
           <systemProperties>
@@ -68,6 +71,10 @@
             <systemProperty>
               <key>hawtio.config.dir</key>
               <value>${hawtio-config-dir}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>hawtio.authenticationEnabled</key>
+              <value>false</value>
             </systemProperty>
           </systemProperties>
         </configuration>
