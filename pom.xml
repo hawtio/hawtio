@@ -157,6 +157,14 @@
         </configuration>
       </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
   <profiles>
@@ -193,8 +201,8 @@
       -->
 
       <!--
-            Run the release /w the -P release flag to enable the release profile.
-          -->
+        Run the release /w the -P release flag to enable the release profile.
+      -->
       <build>
         <plugins>
           <!-- We want to sign the artifact, the POM, and all attached artifacts -->

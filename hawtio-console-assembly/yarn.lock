@@ -828,7 +828,7 @@ d@1:
   dependencies:
     es5-ext "^0.10.9"
 
-"dagre@github:hawtio/dagre#3825485552cb2ebc79afab24f9a90f14c7e1e2df":
+dagre@hawtio/dagre#3825485552cb2ebc79afab24f9a90f14c7e1e2df:
   version "0.7.5-pre"
   resolved "https://codeload.github.com/hawtio/dagre/tar.gz/3825485552cb2ebc79afab24f9a90f14c7e1e2df"
   dependencies:

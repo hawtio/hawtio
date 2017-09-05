@@ -64,6 +64,36 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <!-- Delete 'dist/', 'node_modules/', and 'temp/' directories -->
+            <fileset>
+              <directory>${basedir}/dist</directory>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>${basedir}/node_modules</directory>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>${basedir}/temp</directory>
+              <includes>
+                <include>**/*.*</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+          </filesets>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
