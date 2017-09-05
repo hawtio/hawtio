@@ -1,9 +1,11 @@
 
 ### Change Log
 
-#### 1.5.4 (To be released)
+#### 1.5.5 (To be released)
 
-* Fixed hawtio spring-boot starter to adhere to management.port property
+#### 1.5.4
+
+* Fixed hawtio spring-boot starter to adhere to `management.port` property
 * Various bug fixes
 
 #### 1.5.3
