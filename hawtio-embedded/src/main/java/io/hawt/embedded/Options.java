@@ -24,7 +24,7 @@ import java.util.List;
 
 public class Options {
 
-    private final List<Option> options = new ArrayList<Option>();
+    private final List<Option> options = new ArrayList<>();
     private String warLocation;
     private String war;
     private String contextPath = "/hawtio";
@@ -205,7 +205,7 @@ public class Options {
     }
 
     public boolean parseArguments(String[] arguments) {
-        LinkedList<String> args = new LinkedList<String>(Arrays.asList(arguments));
+        LinkedList<String> args = new LinkedList<>(Arrays.asList(arguments));
 
         boolean valid = true;
         while (!args.isEmpty()) {

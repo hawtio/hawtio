@@ -208,12 +208,7 @@ public class Main {
                         }
                         if (file.isDirectory()) {
                             // lets look for a war in this directory
-                            File[] wars = file.listFiles(new FilenameFilter() {
-                                @Override
-                                public boolean accept(File dir, String name) {
-                                    return isWarFileName(name);
-                                }
-                            });
+                            File[] wars = file.listFiles((dir, name) -> isWarFileName(name));
                             if (wars != null && wars.length > 0) {
                                 return wars[0].getPath();
                             }

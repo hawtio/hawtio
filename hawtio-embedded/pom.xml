@@ -37,6 +37,27 @@
       <artifactId>slf4j-simple</artifactId>
       <version>${slf4j-version}</version>
     </dependency>
+
+    <!-- testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>fluent-hc</artifactId>
+      <version>${httpclient-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-default</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -56,8 +77,11 @@
           <mainClass>io.hawt.embedded.Main</mainClass>
           <classpathScope>test</classpathScope>
           <arguments>
+            <argument>--warLocation</argument>
             <argument>${basedir}/../hawtio-default/target</argument>
+            <argument>--port</argument>
             <argument>${jettyPort}</argument>
+            <argument>--contextPath</argument>
             <argument>${context}</argument>
           </arguments>
           <systemProperties>
@@ -68,6 +92,10 @@
             <systemProperty>
               <key>hawtio.config.dir</key>
               <value>${hawtio-config-dir}</value>
+            </systemProperty>
+            <systemProperty>
+              <key>hawtio.authenticationEnabled</key>
+              <value>false</value>
             </systemProperty>
           </systemProperties>
         </configuration>
