@@ -109,6 +109,17 @@ By default the security in hawtio uses these system properties when running in A
       When using the tomcat tomcat-users.xml file, passwords can be hashed instead of plain text.  Use this to specify the digest algorithm; valid values are NONE MD5 SHA SHA-256 SHA-384 SHA-512.
     </td>
   </tr>
+  <tr>
+    <td>
+      hawtio.tomcatUserFileLocation
+    </td>
+    <td>
+      conf/tomcat-users.xml
+    </td>
+    <td>
+        Specify an alternative location for the tomcat-users.xml file. eg -Dhawtio.tomcatUserFileLocation=/production/userlocation/
+     </td>
+  </tr>
   </tbody>
 </table>
 
@@ -394,7 +405,7 @@ The following table contains the various configuration settings for the various 
     </tr>
     <tr>
       <td>hawtio.proxyWhitelist</td>
-      <td><strong>hawtio 1.4.69</strong> - Comma-separated whitelist for target hosts that the remote JVM connect plugin <code>ProxyServlet</code> can connect to (default <code>localhost, 127.0.0.1</code>). All hosts that are not listed in this whitelist are denied to connect for security reasons.</td>
+      <td><strong>hawtio 1.5.0</strong> - Comma-separated whitelist for target hosts that the remote JVM connect plugin <code>ProxyServlet</code> can connect to (default <code>localhost, 127.0.0.1</code>). All hosts that are not listed in this whitelist are denied to connect for security reasons. This option can be set to <tt>*</tt> to restore old behavior and whitelist all hosts. Prefixing an element of the list with "r:" allows to define a regexp (example: <code>localhost,r:myservers[0-9]+.mydomain.com</code>)</td>
     </tr>
   </tbody>
 </table>

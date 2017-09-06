@@ -15,6 +15,10 @@
  */
 package io.hawt.system;
 
+import java.util.Arrays;
+import javax.management.InstanceNotFoundException;
+import javax.management.ObjectName;
+
 import io.hawt.jmx.JMXSecurity;
 import org.jolokia.config.Configuration;
 import org.junit.After;
@@ -22,10 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.management.InstanceNotFoundException;
-import javax.management.ObjectName;
-import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -78,6 +78,7 @@ public class RBACRestrictorTest {
         assertThat(restrictor.isAttributeReadAllowed(new ObjectName("java.lang:type=Memory"), "Verbose"), is(true));
         assertThat(restrictor.isAttributeReadAllowed(new ObjectName("java.lang:type=Runtime"), "VmVersion"), is(false));
         assertThat(restrictor.isAttributeReadAllowed(new ObjectName("java.lang:type=Runtime"), "xxx"), is(false));
+        assertThat(restrictor.isAttributeReadAllowed(new ObjectName("hawtio:type=NoSuchType"), "Whatever"), is(false));
     }
 
     @Test
@@ -86,6 +87,7 @@ public class RBACRestrictorTest {
         assertThat(restrictor.isAttributeWriteAllowed(new ObjectName("java.lang:type=Memory"), "Verbose"), is(true));
         assertThat(restrictor.isAttributeWriteAllowed(new ObjectName("java.lang:type=Runtime"), "VmVersion"), is(false));
         assertThat(restrictor.isAttributeWriteAllowed(new ObjectName("java.lang:type=Runtime"), "xxx"), is(false));
+        assertThat(restrictor.isAttributeWriteAllowed(new ObjectName("hawtio:type=NoSuchType"), "Whatever"), is(false));
     }
 
     private class MockJMXSecurity extends JMXSecurity {
@@ -115,15 +117,20 @@ public class RBACRestrictorTest {
                 }
             } else {
                 if ("hawtio:type=Test".equals(objectName) && "allowed".equals(methodName) && argTypes.length == 3
-                        && "boolean".equals(argTypes[0]) && "long".equals(argTypes[1]) && "java.lang.String".equals(argTypes[2])) {
+                    && "boolean".equals(argTypes[0]) && "long".equals(argTypes[1]) && "java.lang.String".equals(argTypes[2])) {
                     return true;
                 }
                 if ("java.lang:type=Memory".equals(objectName) && "setVerbose".equals(methodName) && argTypes.length == 1
-                        && "boolean".equals(argTypes[0])) {
+                    && "boolean".equals(argTypes[0])) {
                     return true;
                 }
             }
             return false;
+        }
+
+        @Override
+        protected String getDefaultObjectName() {
+            return "hawtio:type=security,area=jmx,name=MockJMXSecurity";
         }
     }
 
