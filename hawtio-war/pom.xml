@@ -76,6 +76,13 @@
       <classifier>agent</classifier>
     </dependency>
 
+    <!-- required by hawtio-system -->
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava-version}</version>
+    </dependency>
+
     <!-- blueprint is mandatory as its for dependency injection and bootstrapping services -->
     <dependency>
       <groupId>org.apache.aries.blueprint</groupId>
@@ -166,6 +173,7 @@
               !javax.jmdns*,!javax.jms*,!javax.portlet*,
               !com.ibm.uvm.tools*,
               !com.sun.jdmk.comm*,!com.sun.net*,!com.sun.tools*,!sun.security.x509*,
+              !com.google.errorprone.annotations.concurrent,
               *
             </Import-Package>
             <Export-Package>
