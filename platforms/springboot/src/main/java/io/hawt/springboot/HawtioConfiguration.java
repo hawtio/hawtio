@@ -16,7 +16,6 @@ import io.hawt.web.proxy.ProxyServlet;
 import io.hawt.web.servlets.ContextFormatterServlet;
 import io.hawt.web.servlets.ExportContextServlet;
 import io.hawt.web.servlets.JavaDocServlet;
-import org.apache.commons.fileupload.servlet.FileCleanerCleanup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.ManagementContextConfiguration;
 import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
@@ -180,11 +179,6 @@ public class HawtioConfiguration {
     @Bean
     public ServletListenerRegistrationBean hawtioContextListener() {
         return new ServletListenerRegistrationBean<>(new HawtioContextListener());
-    }
-
-    @Bean
-    public ServletListenerRegistrationBean fileCleanerCleanupListener() {
-        return new ServletListenerRegistrationBean<>(new FileCleanerCleanup());
     }
 
 }

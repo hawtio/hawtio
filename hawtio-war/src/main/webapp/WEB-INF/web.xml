@@ -64,13 +64,6 @@
   </env-entry>
 
   <env-entry>
-    <description>Path to store file uploads, defaults to ${java.io.tmpdir}/uploads if blank</description>
-    <env-entry-name>hawtio/uploadDirectory</env-entry-name>
-    <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value></env-entry-value>
-  </env-entry>
-
-  <env-entry>
     <description>The maximum time interval, in seconds, that the servlet container will keep this session open between client accesses.</description>
     <env-entry-name>hawtio/sessionTimeout</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
@@ -314,10 +307,6 @@
 
   <listener>
     <listener-class>io.hawt.HawtioContextListener</listener-class>
-  </listener>
-
-  <listener>
-    <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
   </listener>
 
   <listener>

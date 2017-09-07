@@ -9,7 +9,6 @@ import io.hawt.jmx.JmxTreeWatcher;
 import io.hawt.jmx.PluginRegistry;
 import io.hawt.jmx.QuartzFacade;
 import io.hawt.jmx.RBACRegistry;
-import io.hawt.jmx.UploadManager;
 import io.hawt.system.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,6 @@ public class HawtioContextListener implements ServletContextListener {
     private QuartzFacade quartz = new QuartzFacade();
     private JmxTreeWatcher treeWatcher = new JmxTreeWatcher();
     private PluginRegistry registry = new PluginRegistry();
-    private UploadManager uploadManager = new UploadManager();
     private ConfigManager configManager = new ConfigManager();
     private JMXSecurity jmxSecurity = new JMXSecurity();
     private RBACRegistry rbacRegistry = new RBACRegistry();
@@ -38,7 +36,6 @@ public class HawtioContextListener implements ServletContextListener {
             configManager.init();
             treeWatcher.init();
             registry.init();
-            uploadManager.init(configManager);
             jmxSecurity.init();
             rbacRegistry.init();
         } catch (Exception e) {
@@ -55,7 +52,6 @@ public class HawtioContextListener implements ServletContextListener {
             quartz.destroy();
             treeWatcher.destroy();
             registry.destroy();
-            uploadManager.destroy();
             configManager.destroy();
             jmxSecurity.destroy();
         } catch (Exception e) {

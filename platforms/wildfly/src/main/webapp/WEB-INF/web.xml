@@ -50,13 +50,6 @@
     <env-entry-value></env-entry-value>
   </env-entry>
 
-  <env-entry>
-    <description>Path to store file uploads, defaults to ${java.io.tmpdir}/uploads if blank</description>
-    <env-entry-name>hawtio/uploadDirectory</env-entry-name>
-    <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value></env-entry-value>
-  </env-entry>
-
   <filter>
     <filter-name>SessionExpiryFilter</filter-name>
     <filter-class>io.hawt.web.filters.SessionExpiryFilter</filter-class>
@@ -211,9 +204,6 @@
 
   <listener>
     <listener-class>io.hawt.HawtioContextListener</listener-class>
-  </listener>
-  <listener>
-    <listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
   </listener>
 
   <error-page>
