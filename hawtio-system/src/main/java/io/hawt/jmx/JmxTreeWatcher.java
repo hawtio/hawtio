@@ -17,7 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A simple mbean to watch the JMX tree so its easy for clients to know when they should refresh their JMX trees (which typically isn't a cheap operation).
+ * A simple mbean to watch the JMX tree so its easy for clients to know when they should refresh
+ * their JMX trees (which typically isn't a cheap operation).
  */
 public class JmxTreeWatcher implements JmxTreeWatcherMBean {
     private static final transient Logger LOG = LoggerFactory.getLogger(JmxTreeWatcher.class);
@@ -94,12 +95,9 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
     }
 
     protected NotificationListener getNotificationListener() {
-        return new NotificationListener() {
-            @Override
-            public void handleNotification(Notification notification, Object handback) {
-                // TODO should we filter only types "JMX.mbean.registered" and "JMX.mbean.unregistered"?
-                counter.incrementAndGet();
-            }
+        return (notification, handback) -> {
+            // TODO should we filter only types "JMX.mbean.registered" and "JMX.mbean.unregistered"?
+            counter.incrementAndGet();
         };
     }
 

@@ -1,6 +1,5 @@
 package io.hawt.jmx;
 
-import io.hawt.git.GitFacade;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,19 +24,18 @@ public class JmxTreeWatcherTest {
         long value1 = treeWatcher.getCounter();
 
         // now lets register a new mbean
-        GitFacade git = new GitFacade();
-        git.setCloneRemoteRepoOnStartup(false);
-        git.init();
+        About about = new About();
+        about.init();
 
         long value2 = treeWatcher.getCounter();
         assertCounterGreater(value1, value2);
-        git.destroy();
+        about.destroy();
 
         long value3 = treeWatcher.getCounter();
         assertCounterGreater(value2, value3);
     }
 
     private void assertCounterGreater(long value1, long value2) {
-        assertTrue("Counter: " + value1 + " should be less than counter 2 " + value2, value1 < value2);
+        assertTrue("Counter: " + value1 + " should be less than counter2 = " + value2, value1 < value2);
     }
 }

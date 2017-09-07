@@ -54,11 +54,6 @@
     <!-- optional hawtio modules we want to use in this WAR -->
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-git</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.hawt</groupId>
       <artifactId>hawtio-local-jvm-mbean</artifactId>
       <version>${project.version}</version>
     </dependency>

@@ -40,29 +40,6 @@
     <bundle>mvn:io.hawt/hawtio-maven-indexer/${project.version}</bundle>
   </feature>
 
-  <feature name="hawtio-karaf-git" version="${project.version}" resolver="(obr)">
-    <details>Installs the hawtio git so that the contents of the 'etc' directory can be edited.</details>
-
-    <config name="hawtio-git">
-      hawtio.config.dir=./etc
-    </config>
-
-    <bundle>mvn:io.hawt/hawtio-karaf-git/${project.version}</bundle>
-  </feature>
-  
-  <feature name="hawtio-git" version="${project.version}" resolver="(obr)">
-    <details>Installs the hawtio git service as a separate bundle</details>
-
-    <config name="hawtio-git">
-      hawtio.config.dir=./git
-      hawtio.config.repo=https://github.com/hawtio/hawtio-config.git
-      hawtio.config.pullOnStartup=true
-      hawtio.config.cloneOnStartup=true
-    </config>
-
-    <bundle>mvn:io.hawt/hawtio-git/${project.version}</bundle>
-  </feature>
-
   <feature name="hawtio-dev-mode" version="${project.version}" resolver="(obr)">
     <details>Adds the hawtio plugin registry and configures the /hawtio-dev context to be served out from the hawtio-web target directory allowing easy development of hawtio while it's running in a real osgi container.  Install jolokia if it's not installed.  Also add org.jolokia.agentContext=/hawtio/jolokia to etc/system.properties so jolokia is installed at the right context</details>
 

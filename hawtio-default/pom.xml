@@ -39,12 +39,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-git</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j-version}</version>
