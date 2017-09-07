@@ -115,10 +115,6 @@
   -->
   <filter-mapping>
     <filter-name>AuthenticationFilter</filter-name>
-    <url-pattern>/upload/*</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>AuthenticationFilter</filter-name>
     <url-pattern>/javadoc/*</url-pattern>
   </filter-mapping>
 
@@ -156,16 +152,6 @@
   <servlet-mapping>
     <servlet-name>jolokia-proxy</servlet-name>
     <url-pattern>/proxy/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>file-upload</servlet-name>
-    <servlet-class>io.hawt.web.servlets.UploadServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>file-upload</servlet-name>
-    <url-pattern>/upload/*</url-pattern>
   </servlet-mapping>
 
   <servlet>

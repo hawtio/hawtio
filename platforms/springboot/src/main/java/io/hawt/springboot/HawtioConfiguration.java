@@ -15,9 +15,7 @@ import io.hawt.web.keycloak.KeycloakUserServlet;
 import io.hawt.web.proxy.ProxyServlet;
 import io.hawt.web.servlets.ContextFormatterServlet;
 import io.hawt.web.servlets.ExportContextServlet;
-import io.hawt.web.servlets.GitServlet;
 import io.hawt.web.servlets.JavaDocServlet;
-import io.hawt.web.servlets.UploadServlet;
 import org.apache.commons.fileupload.servlet.FileCleanerCleanup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.ManagementContextConfiguration;
@@ -116,7 +114,6 @@ public class HawtioConfiguration {
         filter.addUrlPatterns(
             "/hawtio/auth/*",
             "/jolokia/*",
-            "/hawtio/upload/*",
             "/hawtio/javadoc/*");
         return filter;
     }
@@ -131,12 +128,6 @@ public class HawtioConfiguration {
     public ServletRegistrationBean jolokiaProxyServlet() {
         return new ServletRegistrationBean(new ProxyServlet(),
             "/hawtio/proxy/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean fileUploadServlet() {
-        return new ServletRegistrationBean(new UploadServlet(),
-            "/hawtio/file-upload/*");
     }
 
     @Bean
@@ -167,12 +158,6 @@ public class HawtioConfiguration {
     public ServletRegistrationBean exportContextServlet() {
         return new ServletRegistrationBean(new ExportContextServlet(),
             "/hawtio/exportContext/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean gitServlet() {
-        return new ServletRegistrationBean(new GitServlet(),
-            "/hawtio/git/*");
     }
 
     @Bean
