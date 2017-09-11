@@ -81,7 +81,7 @@
 
   <filter>
     <filter-name>SessionExpiryFilter</filter-name>
-    <filter-class>io.hawt.web.filters.SessionExpiryFilter</filter-class>
+    <filter-class>io.hawt.web.auth.SessionExpiryFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>SessionExpiryFilter</filter-name>

@@ -19,7 +19,6 @@ import javax.servlet.http.HttpSession;
 import io.hawt.system.AuthInfo;
 import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
-import io.hawt.system.ExtractAuthInfoCallback;
 import io.hawt.system.PrivilegedCallback;
 import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
@@ -194,12 +193,7 @@ public class AuthenticationFilter implements Filter {
         String authHeader = request.getHeader(Authenticator.HEADER_AUTHORIZATION);
         final AuthInfo info = new AuthInfo();
         if (authHeader != null && !authHeader.equals("")) {
-            Authenticator.extractAuthInfo(authHeader, new ExtractAuthInfoCallback() {
-                @Override
-                public void getAuthInfo(String userName, String password) {
-                    info.username = userName;
-                }
-            });
+            Authenticator.extractAuthInfo(authHeader, (userName, password) -> info.username = userName);
         }
         String sessionUser = (String) session.getAttribute("user");
         if (info.username == null || info.username.equals(sessionUser)) {
@@ -221,12 +215,9 @@ public class AuthenticationFilter implements Filter {
                 chain.doFilter(request, response);
                 return;
             }
-            Subject.doAs(subject, new PrivilegedExceptionAction<Object>() {
-                @Override
-                public Object run() throws Exception {
-                    chain.doFilter(request, response);
-                    return null;
-                }
+            Subject.doAs(subject, (PrivilegedExceptionAction<Object>) () -> {
+                chain.doFilter(request, response);
+                return null;
             });
         } catch (ServletException | IOException | PrivilegedActionException e) {
             LOG.info("Failed to invoke action " + ((HttpServletRequest) request).getPathInfo() + " due to:", e);

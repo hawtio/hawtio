@@ -7,7 +7,7 @@ import io.hawt.web.auth.LogoutServlet;
 import io.hawt.web.filters.CORSFilter;
 import io.hawt.web.filters.CacheHeadersFilter;
 import io.hawt.web.filters.RedirectFilter;
-import io.hawt.web.filters.SessionExpiryFilter;
+import io.hawt.web.auth.SessionExpiryFilter;
 import io.hawt.web.filters.XFrameOptionsFilter;
 import io.hawt.web.filters.XXSSProtectionFilter;
 import io.hawt.web.keycloak.KeycloakServlet;

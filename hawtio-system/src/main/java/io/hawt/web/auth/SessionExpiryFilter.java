@@ -1,4 +1,4 @@
-package io.hawt.web.filters;
+package io.hawt.web.auth;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,7 +27,7 @@ public class SessionExpiryFilter implements Filter {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(SessionExpiryFilter.class);
 
-    private static final String ignoredPaths[] = {"jolokia", "proxy"};
+    private static final String ignoredPaths[] = { "jolokia", "proxy" };
     private List<String> ignoredPathList;
     private ServletContext context;
 
@@ -40,7 +40,7 @@ public class SessionExpiryFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         if (servletRequest instanceof HttpServletRequest
-                && servletResponse instanceof HttpServletResponse) {
+            && servletResponse instanceof HttpServletResponse) {
             process((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, filterChain);
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
@@ -95,8 +95,8 @@ public class SessionExpiryFilter implements Filter {
                 LOG.debug("Authentication disabled, received refresh response, responding with ok");
                 writeOk(response);
             } else {
-              chain.doFilter(request, response);
-              /*
+                chain.doFilter(request, response);
+                /*
                 // see: https://issues.jboss.org/browse/ENTESB-2418
                 // it won't allow unauthenticated requests anyway
                 String userAgent = request.getHeader("User-Agent") == null ? "" : request.getHeader("User-Agent").toLowerCase();
