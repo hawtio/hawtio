@@ -52,8 +52,6 @@
     <failIfNoTests>false</failIfNoTests>
     <jettyPort>8282</jettyPort>
     <context>/hawtio</context>
-    <hawtio-config-dir>${basedir}/hawtio-config</hawtio-config-dir>
-    <hawtio-config-repo>https://github.com/hawtio/hawtio-config.git</hawtio-config-repo>
     <hawtio-console-version>1.0.0</hawtio-console-version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>

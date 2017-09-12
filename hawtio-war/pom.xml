@@ -207,16 +207,6 @@
             <contextPath>${context}</contextPath>
           </webAppConfig>
           <classesDirectory>${project.build.directory}/${project.name}/WEB-INF/classes</classesDirectory>
-          <systemProperties>
-            <systemProperty>
-              <key>hawtio.config.dir</key>
-              <value>${hawtio-config-dir}</value>
-            </systemProperty>
-            <systemProperty>
-              <key>hawtio.config.repo</key>
-              <value>${hawtio-config-repo}</value>
-            </systemProperty>
-          </systemProperties>
           <stopKey>stop</stopKey>
           <stopPort>9999</stopPort>
         </configuration>
