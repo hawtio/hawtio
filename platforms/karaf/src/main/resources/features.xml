@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<features xmlns="http://karaf.apache.org/xmlns/features/v1.0.0" name="hawtio-${project.version}">
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0" name="hawtio-${project.version}">
 
   <feature name="hawtio-core" version="${project.version}" resolver="(obr)">
     <details>Installs the core hawtio war file with minimal extensions</details>
@@ -22,8 +22,7 @@
     <feature>hawtio-core</feature>
     <feature>hawtio-rbac</feature>
     <!--
-    <feature>hawtio-log</feature>
-    <feature>hawtio-karaf-terminal</feature>
+    TODO: Is it required for v2?
     <feature>hawtio-maven-indexer</feature>
     -->
   </feature>
@@ -31,55 +30,12 @@
   <feature name="hawtio-offline" version="${project.version}" resolver="(obr)">
     <details>Installs hawtio in offline mode (without Maven service which requires internet connection)</details>
     <feature>hawtio-core</feature>
-    <feature>hawtio-log</feature>
-    <feature>hawtio-karaf-terminal</feature>
+    <feature>hawtio-rbac</feature>
   </feature>
 
   <feature name="hawtio-maven-indexer" version="${project.version}" resolver="(obr)">
     <details>Installs the hawtio Maven indexer service as a separate bundle (requires internet connection)</details>
     <bundle>mvn:io.hawt/hawtio-maven-indexer/${project.version}</bundle>
   </feature>
-
-  <feature name="hawtio-dev-mode" version="${project.version}" resolver="(obr)">
-    <details>Adds the hawtio plugin registry and configures the /hawtio-dev context to be served out from the hawtio-web target directory allowing easy development of hawtio while it's running in a real osgi container.  Install jolokia if it's not installed.  Also add org.jolokia.agentContext=/hawtio/jolokia to etc/system.properties so jolokia is installed at the right context</details>
-
-    <config name="hawtiodev-hawtioweb">
-      context=/hawtio-dev/*
-      content=${project.basedir}/../hawtio-web/target/hawtio-web-${project.version}
-    </config>
-
-    <feature>war</feature>
-    <bundle>mvn:io.hawt/hawtio-osgi-devmode/${project.version}</bundle>
-  </feature>
-
-  <feature name="hawtio-simple-example" version="${project.version}" resolver="(obr)">
-    <details>A simple example plugin for hawtio</details>
-    <feature>war</feature>
-    <bundle>mvn:io.hawt/simple-plugin/${project.version}/war</bundle>
-  </feature>
-
-  <feature name="hawtio-irc-example" version="${project.version}" resolver="(obr)">
-    <details>An example IRC client plugin for hawtio</details>
-    <feature>war</feature>
-    <bundle>mvn:io.hawt/irc-client-plugin/${project.version}/war</bundle>
-  </feature>
-
-  <feature name="hawtio-social-example" version="${project.version}" resolver="(obr)">
-    <details>hawtio social twitter plugin example</details>
-    <feature>war</feature>
-    <bundle>mvn:io.hawt/social-plugin/${project.version}/war</bundle>
-  </feature>
-
-  <!--
-  <feature name="hawtio-karaf-terminal" version="${project.version}" resolver="(obr)">
-    <details>A terminal plugin for hawtio when installed in Karaf</details>
-    <bundle dependency="true">mvn:jline/jline/${jline.version}</bundle>
-    <bundle>mvn:io.hawt/hawtio-karaf-terminal/${project.version}/war</bundle>
-
-    <config name="jmx.acl.hawtio.plugin">
-      * = *
-    </config>
-  </feature>
-  -->
 
 </features>
