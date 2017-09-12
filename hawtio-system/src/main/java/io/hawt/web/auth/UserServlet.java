@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import io.hawt.system.ConfigManager;
-import io.hawt.web.auth.AuthenticationFilter;
 
 /**
  * Returns the username associated with the current session, if any

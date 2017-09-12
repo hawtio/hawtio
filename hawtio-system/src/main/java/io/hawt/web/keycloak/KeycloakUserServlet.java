@@ -40,8 +40,13 @@ public class KeycloakUserServlet extends UserServlet {
         }
         final Holder usernameHolder = new Holder();
 
-        Authenticator.authenticate(configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses(),
-            configuration.getConfiguration(), req, (subject) -> {
+        Authenticator.authenticate(
+            configuration.getRealm(),
+            configuration.getRole(),
+            configuration.getRolePrincipalClasses(),
+            configuration.getConfiguration(),
+            req,
+            subject -> {
                 usernameHolder.username = AuthHelpers.getUsernameFromSubject(subject);
 
                 // Start httpSession

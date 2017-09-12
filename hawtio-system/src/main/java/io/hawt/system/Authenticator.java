@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -34,7 +36,7 @@ public class Authenticator {
     private static Boolean websphereDetected;
     private static Method websphereGetGroupsMethod;
 
-    public static void extractAuthInfo(String authHeader, ExtractAuthInfoCallback cb) {
+    public static void extractAuthInfo(String authHeader, BiConsumer<String, String> callback) {
         authHeader = authHeader.trim();
         String[] parts = authHeader.split(" ");
         if (parts.length != 2) {
@@ -47,17 +49,17 @@ public class Authenticator {
         if (authType.equalsIgnoreCase(AUTHENTICATION_SCHEME_BASIC)) {
             String decoded = new String(Base64.decodeBase64(authInfo));
             int delimiter = decoded.indexOf(':');
-            if(delimiter<0){
+            if (delimiter < 0) {
                 return;
             }
-            String user = decoded.substring(0,delimiter);
-            String password = decoded.substring(delimiter+1);
-            cb.getAuthInfo(user, password);
+            String user = decoded.substring(0, delimiter);
+            String password = decoded.substring(delimiter + 1);
+            callback.accept(user, password);
         }
     }
 
     public static AuthenticateResult authenticate(String realm, String role, String rolePrincipalClasses, Configuration configuration,
-                                                  HttpServletRequest request, PrivilegedCallback cb) {
+                                                  HttpServletRequest request, Consumer<Subject> callback) {
 
         String authHeader = request.getHeader(HEADER_AUTHORIZATION);
 
@@ -65,29 +67,26 @@ public class Authenticator {
             return AuthenticateResult.NO_CREDENTIALS;
         }
 
-        final AuthInfo info = new AuthInfo();
+        AuthInfo info = new AuthInfo();
 
-        Authenticator.extractAuthInfo(authHeader, new ExtractAuthInfoCallback() {
-            @Override
-            public void getAuthInfo(String userName, String password) {
-                info.username = userName;
-                info.password = password;
-            }
+        extractAuthInfo(authHeader, (userName, password) -> {
+            info.username = userName;
+            info.password = password;
         });
 
         if (info.username == null || info.username.equals("public")) {
             return AuthenticateResult.NO_CREDENTIALS;
         }
 
-        if (info.set()) {
+        if (info.isSet()) {
             Subject subject = doAuthenticate(realm, role, rolePrincipalClasses, configuration, info.username, info.password);
             if (subject == null) {
                 return AuthenticateResult.NOT_AUTHORIZED;
             }
 
-            if (cb != null) {
+            if (callback != null) {
                 try {
-                    cb.execute(subject);
+                    callback.accept(subject);
                 } catch (Exception e) {
                     LOG.warn("Failed to execute privileged action: ", e);
                 }
@@ -103,10 +102,8 @@ public class Authenticator {
                                           final String username, final String password) {
         try {
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("doAuthenticate[realm={}, role={}, rolePrincipalClasses={}, configuration={}, username={}, password={}]",
-                        new Object[]{realm, role, rolePrincipalClasses, configuration, username, "******"});
-            }
+            LOG.debug("doAuthenticate[realm={}, role={}, rolePrincipalClasses={}, configuration={}, username={}, password={}]",
+                realm, role, rolePrincipalClasses, configuration, username, "******");
 
             Subject subject = new Subject();
             CallbackHandler handler = new AuthenticationCallbackHandler(username, password);
@@ -144,7 +141,7 @@ public class Authenticator {
             }
 
             if (!found) {
-                LOG.debug("User " + username + " does not have the required role " + role);
+                LOG.debug("User {} does not have the required role {}", username, role);
                 return null;
             }
 
@@ -153,7 +150,7 @@ public class Authenticator {
         } catch (AccountException e) {
             LOG.warn("Account failure", e);
         } catch (LoginException e) {
-            LOG.warn("Login failed due " + e.getMessage());
+            LOG.warn("Login failed due to: {}", e.getMessage());
         }
 
         return null;
@@ -207,16 +204,13 @@ public class Authenticator {
     }
 
     private static boolean checkIfSubjectHasRequiredRoleOnWebsphere(Subject subject, String role) {
-        boolean found = false;
-
         LOG.debug("Running on websphere: checking if the Role {} is in the set of groups in WSCredential", role);
         for (final Object cred : subject.getPublicCredentials()) {
             LOG.debug("Checking credential {} if it is a WebSphere specific WSCredential containing group info", cred);
             if (implementsInterface(cred, "com.ibm.websphere.security.cred.WSCredential")) {
                 try {
                     Method groupsMethod = getWebSphereGetGroupsMethod(cred);
-                    @SuppressWarnings("unchecked")
-                    final List<Object> groups = (List<Object>) groupsMethod.invoke(cred);
+                    @SuppressWarnings("unchecked") final List<Object> groups = (List<Object>) groupsMethod.invoke(cred);
 
                     if (groups != null) {
                         LOG.debug("Found a total of {} groups in the IBM WebSphere Credentials", groups.size());
@@ -243,13 +237,8 @@ public class Authenticator {
                     LOG.debug("Caught exception trying to read groups from WebSphere specific WSCredentials class", e);
                 }
             }
-
-            if (found) {
-                break;
-            }
         }
-
-        return found;
+        return false;
     }
 
     private static Method getWebSphereGetGroupsMethod(final Object cred) throws NoSuchMethodException {

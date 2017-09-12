@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import io.hawt.system.AuthInfo;
+import io.hawt.system.AuthenticateResult;
 import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
-import io.hawt.system.PrivilegedCallback;
 import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,14 +114,14 @@ public class AuthenticationFilter implements Filter {
 
         if (configuration.isEnabled()) {
             LOG.info("Starting hawtio authentication filter, JAAS realm: \"{}\" authorized role(s): \"{}\" role principal classes: \"{}\"",
-                    new Object[]{configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses()});
+                new Object[] { configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses() });
         } else {
             LOG.info("Starting hawtio authentication filter, JAAS authentication disabled");
         }
     }
 
     protected List<AuthenticationContainerDiscovery> getDiscoveries(String authDiscoveryClasses) {
-        List<AuthenticationContainerDiscovery> discoveries = new ArrayList<AuthenticationContainerDiscovery>();
+        List<AuthenticationContainerDiscovery> discoveries = new ArrayList<>();
         if (authDiscoveryClasses == null || authDiscoveryClasses.trim().isEmpty()) {
             return discoveries;
         }
@@ -164,26 +164,28 @@ public class AuthenticationFilter implements Filter {
         }
 
         LOG.debug("Doing authentication and authorization for path {}", path);
-        switch (Authenticator.authenticate(configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses(),
-                configuration.getConfiguration(), httpRequest, new PrivilegedCallback() {
-                    public void execute(Subject subject) throws Exception {
-                        executeAs(request, response, chain, subject);
-                    }
-                }
-        )) {
+        AuthenticateResult result = Authenticator.authenticate(
+            configuration.getRealm(),
+            configuration.getRole(),
+            configuration.getRolePrincipalClasses(),
+            configuration.getConfiguration(),
+            httpRequest,
+            subject -> executeAs(request, response, chain, subject));
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        switch (result) {
             case AUTHORIZED:
                 // request was executed using the authenticated subject, nothing more to do
                 break;
             case NOT_AUTHORIZED:
-                ServletHelpers.doForbidden((HttpServletResponse) response);
+                ServletHelpers.doForbidden(httpResponse);
                 break;
             case NO_CREDENTIALS:
                 if (configuration.isNoCredentials401()) {
                     // return auth prompt 401
-                    ServletHelpers.doAuthPrompt(configuration.getRealm(), (HttpServletResponse) response);
+                    ServletHelpers.doAuthPrompt(configuration.getRealm(), httpResponse);
                 } else {
                     // return forbidden 403 so the browser login does not popup
-                    ServletHelpers.doForbidden((HttpServletResponse) response);
+                    ServletHelpers.doForbidden(httpResponse);
                 }
                 break;
         }
@@ -191,7 +193,7 @@ public class AuthenticationFilter implements Filter {
 
     private boolean validateSession(HttpServletRequest request, HttpSession session, Subject subject) {
         String authHeader = request.getHeader(Authenticator.HEADER_AUTHORIZATION);
-        final AuthInfo info = new AuthInfo();
+        AuthInfo info = new AuthInfo();
         if (authHeader != null && !authHeader.equals("")) {
             Authenticator.extractAuthInfo(authHeader, (userName, password) -> info.username = userName);
         }

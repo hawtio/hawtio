@@ -10,7 +10,7 @@ public class AuthInfo {
     public String username;
     public String password;
 
-    public boolean set() {
+    public boolean isSet() {
         return Strings.isNotBlank(username) && Strings.isNotBlank(password);
     }
 

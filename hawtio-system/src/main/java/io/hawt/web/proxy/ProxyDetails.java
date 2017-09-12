@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import io.hawt.system.AuthInfo;
 import io.hawt.system.Authenticator;
-import io.hawt.system.ExtractAuthInfoCallback;
 import io.hawt.util.Strings;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
@@ -47,14 +46,11 @@ public class ProxyDetails implements ProxyAddress {
 
         if (authHeader != null && !authHeader.equals("")) {
 
-            final AuthInfo info = new AuthInfo();
+            AuthInfo info = new AuthInfo();
 
-            Authenticator.extractAuthInfo(authHeader, new ExtractAuthInfoCallback() {
-                @Override
-                public void getAuthInfo(String userName, String password) {
-                    info.username = userName;
-                    info.password = password;
-                }
+            Authenticator.extractAuthInfo(authHeader, (userName, password) -> {
+                info.username = userName;
+                info.password = password;
             });
 
             userName = info.username;
