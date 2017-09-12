@@ -87,7 +87,7 @@
     <jackson-version-range>[2.5,3)</jackson-version-range>
     <jolokia-version>1.3.7</jolokia-version>
     <junit-version>4.11</junit-version>
-    <karaf-version>4.1.1</karaf-version>
+    <karaf-version>4.1.2</karaf-version>
     <karaf-version-range>[4.0,5)</karaf-version-range>
     <log4j-version>1.2.17</log4j-version>
     <maven-version>3.0.4</maven-version>
