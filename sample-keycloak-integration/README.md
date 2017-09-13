@@ -8,7 +8,7 @@ to use Keycloak for authentication.
 Prepare Keycloak server
 -----------------------
 
-**1)** Download file [https://github.com/keycloak/keycloak/blob/master/examples/fuse/testrealm.json] with Keycloak sample metadata about `demo` realm. It's assumed you downloaded it to directory `/downloads` on your laptop. 
+**1)** Download file [https://github.com/keycloak/keycloak/blob/master/examples/fuse/demorealm.json] with Keycloak sample metadata about `demo` realm. It's assumed you downloaded it to directory `/downloads` on your laptop.
 
 **2)**  Download keycloak server from [http://www.keycloak.org](http://www.keycloak.org) and download version 2.2.1.Final . 
 Then unpack and run keycloak server on localhost:8080 . You also need to import downloaded `demorealm.json` file into your Keycloak. Import can be done either via Keycloak admin console or by 
