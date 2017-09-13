@@ -19,7 +19,7 @@ public class ConfigManager {
     }
 
     public void init() {
-        if (Boolean.parseBoolean((String) System.getProperty("hawtio.forceProperties", "false"))) {
+        if (Boolean.parseBoolean(System.getProperty("hawtio.forceProperties", "false"))) {
             LOG.info("Forced using system properties");
             return;
         }
@@ -28,7 +28,7 @@ public class ConfigManager {
             envContext = (Context) new InitialContext().lookup("java:comp/env");
             LOG.info("Configuration will be discovered via JNDI");
         } catch (NamingException e) {
-            LOG.debug("Failed to look up environment context: ", e);
+            LOG.debug("Failed to look up environment context: {}", e.getMessage());
             LOG.info("Configuration will be discovered via system properties");
         }
     }

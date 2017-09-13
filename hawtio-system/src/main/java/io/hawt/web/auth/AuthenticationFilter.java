@@ -114,7 +114,7 @@ public class AuthenticationFilter implements Filter {
 
         if (configuration.isEnabled()) {
             LOG.info("Starting hawtio authentication filter, JAAS realm: \"{}\" authorized role(s): \"{}\" role principal classes: \"{}\"",
-                new Object[] { configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses() });
+                configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses());
         } else {
             LOG.info("Starting hawtio authentication filter, JAAS authentication disabled");
         }

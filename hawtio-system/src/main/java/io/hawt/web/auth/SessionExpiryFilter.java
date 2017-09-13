@@ -3,6 +3,7 @@ package io.hawt.web.auth;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.servlet.Filter;
@@ -17,25 +18,25 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import io.hawt.system.ConfigManager;
+import io.hawt.util.Strings;
 import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * If the user has a session this will ensure it will expire if the user hasn't clicked on any links within the session expiry period
+ * If the user has a session, this will ensure it will expire if the user hasn't clicked on any links
+ * within the session expiry period
  */
 public class SessionExpiryFilter implements Filter {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(SessionExpiryFilter.class);
 
-    private static final String ignoredPaths[] = { "jolokia", "proxy" };
-    private List<String> ignoredPathList;
+    private static final List<String> IGNORED_PATHS = Collections.unmodifiableList(Arrays.asList("jolokia", "proxy"));
     private ServletContext context;
     private boolean noCredentials401;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        ignoredPathList = Arrays.asList(ignoredPaths);
         context = filterConfig.getServletContext();
 
         ConfigManager config = (ConfigManager) context.getAttribute("ConfigManager");
@@ -61,12 +62,9 @@ public class SessionExpiryFilter implements Filter {
 
     private void writeOk(HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("text/html;charset=UTF-8");
-        OutputStream out = response.getOutputStream();
-        try {
+        try (OutputStream out = response.getOutputStream()) {
             out.write("ok".getBytes());
             out.flush();
-        } finally {
-            out.close();
         }
     }
 
@@ -83,13 +81,7 @@ public class SessionExpiryFilter implements Filter {
         }
         HttpSession session = request.getSession(false);
         boolean enabled = (boolean) context.getAttribute("authenticationEnabled");
-        String uri = request.getRequestURI();
-        if (uri.startsWith("/")) {
-            uri = uri.substring(1);
-        }
-        if (uri.endsWith("/")) {
-            uri = uri.substring(0, uri.length() - 1);
-        }
+        String uri = Strings.strip(request.getRequestURI(), "/");
         String[] uriParts = Pattern.compile("/").split(uri);
         // pass along if it's the top-level context
         if (uriParts.length == 1) {
@@ -119,7 +111,7 @@ public class SessionExpiryFilter implements Filter {
                 } else {
                     if (noCredentials401 && subContext.equals("jolokia")) {
                         LOG.debug("Authentication enabled, noCredentials401 is true, allowing request for {}",
-                                subContext);
+                            subContext);
                         chain.doFilter(request, response);
                     } else if (subContext.equals("jolokia") ||
                         subContext.equals("proxy") ||
@@ -128,7 +120,7 @@ public class SessionExpiryFilter implements Filter {
                         subContext.equals("contextFormatter") ||
                         subContext.equals("upload")) {
                         LOG.debug("Authentication enabled, denying request for {}", subContext);
-                        ServletHelper.doForbidden(response);
+                        ServletHelpers.doForbidden(response);
                     } else {
                         LOG.debug("Authentication enabled, but allowing request for {}", subContext);
                         chain.doFilter(request, response);
@@ -157,7 +149,7 @@ public class SessionExpiryFilter implements Filter {
             return;
         }
         LOG.debug("Top level context: {} subContext: {}", myContext, subContext);
-        if (ignoredPathList.contains(subContext) && session.getAttribute("LastAccess") != null) {
+        if (IGNORED_PATHS.contains(subContext) && session.getAttribute("LastAccess") != null) {
             LOG.debug("Not updating LastAccess");
         } else {
             updateLastAccess(session, now);
