@@ -106,8 +106,8 @@
 
   <modules>
     <module>example-services</module>
-    <module>examples/hawtio-example-springboot-authentication</module>
-    <module>examples/hawtio-example-springboot</module>
+    <module>examples/springboot-authentication</module>
+    <module>examples/springboot</module>
     <module>hawtio-aether</module>
     <module>hawtio-app</module>
     <module>hawtio-base</module>
