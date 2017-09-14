@@ -105,7 +105,6 @@
   </properties>
 
   <modules>
-    <module>example-services</module>
     <module>examples/springboot-authentication</module>
     <module>examples/springboot</module>
     <module>hawtio-aether</module>
@@ -126,6 +125,7 @@
     <module>platforms/karaf</module>
     <module>platforms/springboot</module>
     <module>platforms/wildfly</module>
+    <module>tests/example-services</module>
     <module>tooling/hawtio-junit</module>
     <module>tooling/hawtio-maven-plugin</module>
   </modules>
