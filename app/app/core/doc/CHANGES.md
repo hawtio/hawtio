@@ -3,6 +3,8 @@
 
 #### 1.5.5 (To be released)
 
+* Upgraded to Camel 2.19.3
+
 #### 1.5.4
 
 * Fixed hawtio spring-boot starter to adhere to `management.port` property
