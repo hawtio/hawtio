@@ -1,5 +1,18 @@
 package io.hawt.web;
 
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import io.hawt.jmx.UploadManager;
 import io.hawt.util.Strings;
 import org.apache.commons.fileupload.FileItem;
@@ -8,17 +21,8 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.MagicNumberFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.*;
 
 /**
  *
@@ -33,10 +37,17 @@ public class UploadServlet extends HttpServlet {
         String uploadDirectory = UploadManager.UPLOAD_DIRECTORY;
         File uploadDir = new File(uploadDirectory);
 
-        uploadFiles(request, response, uploadDir);
+        GlobalFileUploadFilter globalFilter = GlobalFileUploadFilter.newFileUploadFilter();
+        // By default file upload is not permitted unless it is configured
+        if (globalFilter.getFilterConfig().isEmpty()) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "File upload is rejected for security reasons");
+        }
+
+        uploadFiles(request, response, uploadDir, globalFilter.getFilterConfig());
     }
 
-    protected List<File> uploadFiles(HttpServletRequest request, HttpServletResponse response, File uploadDir) throws IOException, ServletException {
+    protected List<File> uploadFiles(HttpServletRequest request, HttpServletResponse response,
+                                     File uploadDir, List<GlobalFileUploadFilter.MagicNumberFileFilter> filters) throws IOException, ServletException {
         response.setContentType("text/html");
         final PrintWriter out = response.getWriter();
         List<File> uploadedFiles = new ArrayList<>();
@@ -52,6 +63,8 @@ public class UploadServlet extends HttpServlet {
             }
             DiskFileItemFactory factory = UploadManager.newDiskFileItemFactory(context, uploadDir);
             ServletFileUpload upload = new ServletFileUpload(factory);
+            // Setting max file size allowed from config
+            upload.setFileSizeMax(GlobalFileUploadFilter.getMaxFileSizeAllowed(filters));
 
             String targetDirectory = null;
             List<File> files = new ArrayList<File>();
@@ -77,7 +90,7 @@ public class UploadServlet extends HttpServlet {
             try {
                 List<FileItem> items = upload.parseRequest(request);
                 for (FileItem item : items) {
-                    if (fileAllowed(item)) {
+                    if (fileAllowed(item, filters)) {
                         if (item.isFormField()) {
                             String name = item.getFieldName();
                             String value = item.getString();
@@ -147,8 +160,7 @@ public class UploadServlet extends HttpServlet {
         return uploadedFiles;
     }
 
-    private boolean fileAllowed(FileItem fileItem) throws IOException {
-        FileUploadFilter uploadFilter = new FileUploadFilter();
-        return uploadFilter.accept(IOUtils.toByteArray(fileItem.getInputStream()));
+    private boolean fileAllowed(FileItem fileItem, List<GlobalFileUploadFilter.MagicNumberFileFilter> filters) throws IOException {
+        return GlobalFileUploadFilter.accept(IOUtils.toByteArray(fileItem.getInputStream()), filters);
     }
 }
