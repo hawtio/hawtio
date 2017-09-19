@@ -39,6 +39,7 @@ The following videos are in the [hawtio video album](https://vimeo.com/album/332
 
 The following videos has been found on the web about hawtio.  If you find any others please [let us know](http://hawt.io/community/index.html) or [raise an issue](https://github.com/hawtio/hawtio/issues?state=open) and we'll add it to the list.
 
+* [Hawt and spicy Java monitoring](https://vimeo.com/233817010) by Martin Skarsaune, at [JavaZone 2017](https://2017.javazone.no/).
 * [hawtio - the Extensive console](https://www.youtube.com/watch?v=Bxgk9--_WzE) by Stan Lewis, at [DevNation 2014](http://www.devnation.org/) presenting how you can extend and build your own plugins to hawtio. Highly recommended if you want to build custom plugins.
 * Hawtio on Talend ESB part [1](https://www.youtube.com/watch?v=lzdgxcHwfcY), [2](https://www.youtube.com/watch?v=_vjp8rg1DNQ), [3](https://www.youtube.com/watch?v=uJqG2JbXfkM) by [Robin Huiser](http://nl.linkedin.com/in/robinhuiser)
 
