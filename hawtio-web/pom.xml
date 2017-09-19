@@ -906,7 +906,6 @@
               <key>hawtio.proxyDisableCertificateValidation</key>
               <value>true</value>
             </systemProperty>
-
             <systemProperty>
               <key>http.proxyHost</key>
               <value>${http.proxyHost}</value>

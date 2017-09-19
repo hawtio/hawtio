@@ -17,11 +17,26 @@
  */
 package io.hawt.web;
 
-import io.hawt.git.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import io.hawt.git.GitFileManager;
+import io.hawt.git.GitFacade;
+import io.hawt.git.WriteCallback;
+import io.hawt.git.WriteContext;
+import io.hawt.git.GitHelper;
 import io.hawt.util.Files;
 import io.hawt.util.Function;
 import io.hawt.util.Strings;
 import io.hawt.util.Zips;
+import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -29,14 +44,6 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 /**
  */
@@ -160,7 +167,13 @@ public class GitServlet extends UploadServlet implements ServiceTrackerCustomize
                 }
                 List<File> uploadedFiles = null;
                 try {
-                    uploadedFiles = uploadFiles(req, resp, file);
+                    GitFileUploadFilter filter = GitFileUploadFilter.newGitFileUploadFilter();
+                    if (!(file.length() <= GlobalFileUploadFilter.getMaxFileSizeAllowed(filter.getGitFilters()))) {
+                        throw new FileUploadBase.FileUploadIOException(
+                            new FileUploadException("File exceeds its maximum permitted size of bytes."));
+                    }
+
+                    uploadedFiles = uploadFiles(req, resp, file, filter.getGitFilters());
                 } catch (ServletException e) {
                     throw new IOException(e);
                 }
