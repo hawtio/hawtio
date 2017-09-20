@@ -257,6 +257,10 @@ public class GlobalFileUploadFilter implements FileUploadFilter {
                 if (!safe) {
                     return safe;
                 }
+
+                if (outputStream != null) {
+                    outputStream.close();
+                }
             }
 
             zipInputStream.closeEntry();

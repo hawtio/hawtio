@@ -4,6 +4,7 @@ package io.hawt.web;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -161,6 +162,12 @@ public class UploadServlet extends HttpServlet {
     }
 
     private boolean fileAllowed(FileItem fileItem, List<GlobalFileUploadFilter.MagicNumberFileFilter> filters) throws IOException {
-        return GlobalFileUploadFilter.accept(IOUtils.toByteArray(fileItem.getInputStream()), filters);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        // This buffers the bytes from fileItem stream
+        IOUtils.copy(fileItem.getInputStream(), outputStream);
+        boolean result = GlobalFileUploadFilter.accept(outputStream.toByteArray(), filters);
+        fileItem.getInputStream().close();
+        outputStream.close();
+        return result;
     }
 }

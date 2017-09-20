@@ -1,9 +1,5 @@
 package io.hawt.web;
 
-import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +7,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -27,7 +27,7 @@ public class GitFileUploadFilterTest {
 
     @Test
     public void testFabricProfileUpload_GoodContent() throws IOException {
-        byte[] profileBytes = getFabircProfile();
+        byte[] profileBytes = getFabricProfile();
         boolean result = GlobalFileUploadFilter.accept(profileBytes, gitFilters);
         assertTrue(result);
     }
@@ -53,7 +53,7 @@ public class GitFileUploadFilterTest {
     @Test
     public void testShouldPreventExcessiveFileSize() throws IOException {
         String GIT_CONFIG = "signature=504B0304,offset=0,maxSize=20kb,exc=[@ [ ] # * / & % ? ; $]";
-        byte[] profileBytes = getFabircProfile();
+        byte[] profileBytes = getFabricProfile();
         List<GlobalFileUploadFilter.MagicNumberFileFilter> filters =
             GlobalFileUploadFilter.constructFilters(GIT_CONFIG, new ArrayList<>());
         long maxFileSizwAllowed = GlobalFileUploadFilter.getMaxFileSizeAllowed(filters);
@@ -67,7 +67,7 @@ public class GitFileUploadFilterTest {
         return outputStream;
     }
 
-    private byte[] getFabircProfile() throws IOException {
+    private byte[] getFabricProfile() throws IOException {
         File profile = new File("src/test/resources/data/default.zip");
         FileInputStream profileInputStream = new FileInputStream(profile);
         return IOUtils.toByteArray(profileInputStream);
