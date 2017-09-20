@@ -172,7 +172,7 @@ public class GitServlet extends UploadServlet implements ServiceTrackerCustomize
                 }
                 List<File> uploadedFiles = null;
                 try {
-                    gitFileUploadFilters = new ArrayList<>(GlobalFileUploadFilter.constructFilters(GIT_CONFIG, new ArrayList<>()));
+                    gitFileUploadFilters = GlobalFileUploadFilter.constructFilters(GIT_CONFIG, new ArrayList<>());
                     if (!(file.length() <= GlobalFileUploadFilter.getMaxFileSizeAllowed(gitFileUploadFilters))) {
                         throw new FileUploadBase.FileUploadIOException(
                             new FileUploadException("File exceeds its maximum permitted size of bytes."));
