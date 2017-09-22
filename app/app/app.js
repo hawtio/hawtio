@@ -2380,6 +2380,9 @@ function isNumberTypeName(typeName) {
     }
     return false;
 }
+function escapeMBean(mbean) {
+    return encodeURI(mbean.replace(/\//g, '!/'));
+}
 function escapeMBeanPath(mbean) {
     return mbean.replace(/\//g, '!/').replace(':', '/');
 }
@@ -34547,8 +34550,9 @@ var Jmx;
             $scope.entity["key"] = row.key;
             $scope.entity["description"] = row.attrDesc;
             $scope.entity["type"] = row.type;
+            var mbean = escapeMBean(workspace.getSelectedMBeanName());
             var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
-            $scope.entity["jolokia"] = url + localStorage["url"] + "/read/" + workspace.getSelectedMBeanName() + "/" + $scope.entity["key"];
+            $scope.entity["jolokia"] = url + localStorage["url"] + "/read/" + mbean + "/" + $scope.entity["key"];
             $scope.entity["rw"] = row.rw;
             var type = asJsonSchemaType(row.type, row.key);
             var readOnly = !row.rw;
@@ -35544,8 +35548,9 @@ var Jmx;
             properties: {},
             description: $scope.objectName + "::" + $scope.item.name
         };
+        var mbean = escapeMBean(workspace.getSelectedMBeanName());
         var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
-        $scope.jolokiaUrl = url + localStorage["url"] + "/exec/" + workspace.getSelectedMBeanName() + "/" + $scope.item.name;
+        $scope.jolokiaUrl = url + localStorage["url"] + "/exec/" + mbean + "/" + $scope.item.name;
         function initItemArgs() {
             $scope.item.args.forEach(function (arg) {
                 switch (arg.type) {
