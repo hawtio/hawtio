@@ -17,11 +17,27 @@
  */
 package io.hawt.web;
 
-import io.hawt.git.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import io.hawt.git.GitFileManager;
+import io.hawt.git.GitFacade;
+import io.hawt.git.WriteCallback;
+import io.hawt.git.WriteContext;
+import io.hawt.git.GitHelper;
 import io.hawt.util.Files;
 import io.hawt.util.Function;
 import io.hawt.util.Strings;
 import io.hawt.util.Zips;
+import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -30,24 +46,18 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
 /**
  */
 public class GitServlet extends UploadServlet implements ServiceTrackerCustomizer {
     private static final transient Logger LOG = LoggerFactory.getLogger(GitServlet.class);
 
     private static final int DEFAULT_BUFFER_SIZE = 10240; // 10KB.
+    private static final String GIT_FILE_UPLOAD_PROPNAME = "hawtio.upload.git.filter";
 
     private BundleContext bundleContext;
     private ServiceTracker serviceTracker;
     private GitFileManager gitFacade;
+    private List<GlobalFileUploadFilter.MagicNumberFileFilter> gitFileUploadFilters;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -160,7 +170,11 @@ public class GitServlet extends UploadServlet implements ServiceTrackerCustomize
                 }
                 List<File> uploadedFiles = null;
                 try {
-                    uploadedFiles = uploadFiles(req, resp, file);
+                    if (isFileUploadFilterConfigured() && !(file.length() <= GlobalFileUploadFilter.getMaxFileSizeAllowed(gitFileUploadFilters))) {
+                        throw new FileUploadBase.FileUploadIOException(
+                            new FileUploadException("File exceeds its maximum permitted size of bytes."));
+                    }
+                    uploadedFiles = uploadFiles(req, resp, file, gitFileUploadFilters);
                 } catch (ServletException e) {
                     throw new IOException(e);
                 }
@@ -244,5 +258,25 @@ public class GitServlet extends UploadServlet implements ServiceTrackerCustomize
         public String getPath() {
             return path;
         }
+    }
+
+    private boolean isFileUploadFilterConfigured() {
+        boolean configured = false;
+        String config = System.getProperty(GIT_FILE_UPLOAD_PROPNAME);
+        try {
+            if (config != null) {
+                configured = true;
+                gitFileUploadFilters = GlobalFileUploadFilter.constructFilters(config, new ArrayList<>());
+            } else {
+                configured = false;
+                if (gitFileUploadFilters == null || gitFileUploadFilters.isEmpty()) {
+                    gitFileUploadFilters = new ArrayList<>();
+                }
+            }
+        } catch (RuntimeException e) {
+            LOG.warn("Error configuring filter {}", config);
+        }
+
+        return configured;
     }
 }
