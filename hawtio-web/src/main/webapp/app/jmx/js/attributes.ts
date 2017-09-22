@@ -2,6 +2,8 @@
  * @module Jmx
  */
 /// <reference path="./jmxPlugin.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
+/// <reference path="../../helpers/js/filterHelpers.ts"/>
 module Jmx {
 
   export var propertiesColumnDefs = [
@@ -26,16 +28,18 @@ module Jmx {
     }
   ];
 
-  export var AttributesController = _module.controller("Jmx.AttributesController", ["$scope", "$element", "$location", "workspace", "jolokia", "jmxWidgets", "jmxWidgetTypes", "$templateCache", "localStorage", "$browser", ($scope,
-                                       $element,
-                                       $location,
-                                       workspace:Workspace,
-                                       jolokia,
-                                       jmxWidgets,
-                                       jmxWidgetTypes,
-                                       $templateCache,
-                                       localStorage,
-                                       $browser) => {
+  export var AttributesController = _module.controller("Jmx.AttributesController", ["$scope", "$element", "$location", "workspace", "jolokia", "jmxWidgets", "jmxWidgetTypes", "$templateCache", "localStorage", "$browser", (
+      $scope,
+      $element,
+      $location,
+      workspace: Workspace,
+      jolokia: Jolokia.IJolokia,
+      jmxWidgets,
+      jmxWidgetTypes,
+      $templateCache: ng.ITemplateCacheService,
+      localStorage: WindowLocalStorage,
+      $browser) => {
+
     $scope.searchText = '';
     $scope.nid = 'empty';
     $scope.selectedItems = [];
@@ -205,8 +209,9 @@ module Jmx {
       $scope.entity["description"] = row.attrDesc;
       $scope.entity["type"] = row.type;
 
+      var mbean = escapeMBean(workspace.getSelectedMBeanName());
       var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
-      $scope.entity["jolokia"] = url + localStorage["url"] + "/read/" + workspace.getSelectedMBeanName() + "/" + $scope.entity["key"] ;
+      $scope.entity["jolokia"] = url + localStorage["url"] + "/read/" + mbean + "/" + $scope.entity["key"] ;
       $scope.entity["rw"] = row.rw;
       var type = asJsonSchemaType(row.type, row.key);
       var readOnly = !row.rw;

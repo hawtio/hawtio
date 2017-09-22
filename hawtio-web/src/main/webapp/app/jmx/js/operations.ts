@@ -3,6 +3,7 @@
 */
 /// <reference path="./jmxPlugin.ts"/>
 /// <reference path="../../core/js/corePlugin.ts"/>
+/// <reference path="../../core/js/coreHelpers.ts"/>
 /// <reference path="../../core/js/workspace.ts"/>
 /// <reference path="../../ui/js/CodeEditor.ts"/>
 module Jmx {
@@ -30,8 +31,9 @@ module Jmx {
       description: $scope.objectName + "::" + $scope.item.name
     };
 
+    var mbean = escapeMBean(workspace.getSelectedMBeanName());
     var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
-    $scope.jolokiaUrl = url + localStorage["url"] + "/exec/" + workspace.getSelectedMBeanName() + "/" + $scope.item.name;
+    $scope.jolokiaUrl = url + localStorage["url"] + "/exec/" + mbean + "/" + $scope.item.name;
 
     function initItemArgs() {
       $scope.item.args.forEach((arg) => {
@@ -249,7 +251,7 @@ module Jmx {
 
       jolokia.request({
         type: 'list',
-        path:  escapeMBeanPath($scope.objectName)
+        path: escapeMBeanPath($scope.objectName)
       }, onSuccess(render));
     }, 500);
 

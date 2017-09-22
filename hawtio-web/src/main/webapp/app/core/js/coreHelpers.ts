@@ -208,12 +208,24 @@ function isNumberTypeName(typeName):boolean {
 }
 
 /**
- * Escapes the mbean path according to jolokia path rules: http://www.jolokia.org/reference/html/protocol.html#escape-rules
+ * Escapes the mbean for Jolokia GET requests.
+ * See: http://www.jolokia.org/reference/html/protocol.html#escape-rules
  *
- * @param mbean the mbean
- * @returns {String}
+ * @param {string} mbean the mbean
+ * @returns {string}
  */
-function escapeMBeanPath(mbean) {
+function escapeMBean(mbean: string): string {
+  return encodeURI(mbean.replace(/\//g, '!/'));
+}
+
+/**
+ * Escapes the mbean as a path for Jolokia POST "list" requests.
+ * See: https://jolokia.org/reference/html/protocol.html#list
+ *
+ * @param {string} mbean the mbean
+ * @returns {string}
+ */
+function escapeMBeanPath(mbean: string): string {
   return mbean.replace(/\//g, '!/').replace(':', '/');
 }
 
