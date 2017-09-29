@@ -23,7 +23,7 @@ var ActiveMQ;
                 angular.forEach(node.children, function (child) {
                     angular.forEach(titles, function (title) {
                         if (child.title === title) {
-                            answer = node;
+                            answer = child;
                         }
                     });
                 });
