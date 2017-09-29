@@ -24,7 +24,7 @@ module ActiveMQ {
         angular.forEach(node.children, (child) => {
           angular.forEach(titles, (title) => {
             if (child.title === title) {
-              answer = node;
+              answer = child;
             }
           });
         });
