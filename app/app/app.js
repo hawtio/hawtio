@@ -3778,6 +3778,171 @@ hawtioPluginLoader.registerPreBootstrapTask(function (nextTask) {
     }
     nextTask();
 });
+var Core;
+(function (Core) {
+    var HelpRegistry = (function () {
+        function HelpRegistry($rootScope) {
+            this.$rootScope = $rootScope;
+            this.discoverableDocTypes = {
+                user: 'help.md'
+            };
+            this.topicNameMappings = {
+                activemq: 'ActiveMQ',
+                camel: 'Camel',
+                jboss: 'JBoss',
+                jclouds: 'jclouds',
+                jmx: 'JMX',
+                jvm: 'Connect',
+                log: 'Logs',
+                openejb: 'OpenEJB'
+            };
+            this.subTopicNameMappings = {
+                user: 'For Users',
+                developer: 'For Developers',
+                faq: 'FAQ'
+            };
+            this.pluginNameMappings = {
+                hawtioCore: 'core',
+                'hawtio-branding': 'branding',
+                forceGraph: 'forcegraph',
+                'hawtio-ui': 'ui',
+                'hawtio-forms': 'forms',
+                elasticjs: 'elasticsearch'
+            };
+            this.ignoredPlugins = [
+                'core',
+                'branding',
+                'datatable',
+                'forcegraph',
+                'forms',
+                'perspective',
+                'tree',
+                'ui'
+            ];
+            this.topics = {};
+        }
+        HelpRegistry.prototype.addUserDoc = function (topic, path, isValid) {
+            if (isValid === void 0) { isValid = null; }
+            this.addSubTopic(topic, 'user', path, isValid);
+        };
+        HelpRegistry.prototype.addDevDoc = function (topic, path, isValid) {
+            if (isValid === void 0) { isValid = null; }
+            this.addSubTopic(topic, 'developer', path, isValid);
+        };
+        HelpRegistry.prototype.addSubTopic = function (topic, subtopic, path, isValid) {
+            if (isValid === void 0) { isValid = null; }
+            this.getOrCreateTopic(topic, isValid)[subtopic] = path;
+        };
+        HelpRegistry.prototype.getOrCreateTopic = function (topic, isValid) {
+            if (isValid === void 0) { isValid = null; }
+            if (!angular.isDefined(this.topics[topic])) {
+                if (isValid === null) {
+                    isValid = function () {
+                        return true;
+                    };
+                }
+                this.topics[topic] = {
+                    isValid: isValid
+                };
+                this.$rootScope.$broadcast('hawtioNewHelpTopic');
+            }
+            return this.topics[topic];
+        };
+        HelpRegistry.prototype.mapTopicName = function (name) {
+            if (angular.isDefined(this.topicNameMappings[name])) {
+                return this.topicNameMappings[name];
+            }
+            return name.capitalize();
+        };
+        HelpRegistry.prototype.mapSubTopicName = function (name) {
+            if (angular.isDefined(this.subTopicNameMappings[name])) {
+                return this.subTopicNameMappings[name];
+            }
+            return name.capitalize();
+        };
+        HelpRegistry.prototype.getTopics = function () {
+            var answer = {};
+            angular.forEach(this.topics, function (value, key) {
+                if (value.isValid()) {
+                    Core.log.debug(key, " is available");
+                    answer[key] = angular.fromJson(angular.toJson(value));
+                }
+                else {
+                    Core.log.debug(key, " is not available");
+                }
+            });
+            return answer;
+        };
+        HelpRegistry.prototype.disableAutodiscover = function (name) {
+            this.ignoredPlugins.push(name);
+        };
+        HelpRegistry.prototype.discoverHelpFiles = function (plugins) {
+            var self = this;
+            console.log("Ignored plugins: ", self.ignoredPlugins);
+            plugins.forEach(function (plugin) {
+                var pluginName = self.pluginNameMappings[plugin];
+                if (!angular.isDefined(pluginName)) {
+                    pluginName = plugin;
+                }
+                if (!self.ignoredPlugins.any(function (p) {
+                    return p === pluginName;
+                })) {
+                    angular.forEach(self.discoverableDocTypes, function (value, key) {
+                        if (!angular.isDefined(self[pluginName]) || !angular.isDefined(self[pluginName][key])) {
+                            var target = 'app/' + pluginName + '/doc/' + value;
+                            console.log("checking: ", target);
+                            $.ajax(target, {
+                                type: 'HEAD',
+                                statusCode: {
+                                    200: function () {
+                                        self.getOrCreateTopic(plugin)[key] = target;
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        };
+        return HelpRegistry;
+    })();
+    Core.HelpRegistry = HelpRegistry;
+})(Core || (Core = {}));
+var Core;
+(function (Core) {
+    var PreferencesRegistry = (function () {
+        function PreferencesRegistry() {
+            this.tabs = {};
+        }
+        PreferencesRegistry.prototype.addTab = function (name, template, isValid) {
+            if (isValid === void 0) { isValid = undefined; }
+            if (!isValid) {
+                isValid = function () {
+                    return true;
+                };
+            }
+            this.tabs[name] = {
+                template: template,
+                isValid: isValid
+            };
+        };
+        PreferencesRegistry.prototype.getTab = function (name) {
+            return this.tabs[name];
+        };
+        PreferencesRegistry.prototype.getTabs = function () {
+            var answer = {};
+            angular.forEach(this.tabs, function (value, key) {
+                if (value.isValid()) {
+                    answer[key] = value;
+                }
+            });
+            return answer;
+        };
+        return PreferencesRegistry;
+    })();
+    Core.PreferencesRegistry = PreferencesRegistry;
+    ;
+})(Core || (Core = {}));
 var ActiveMQ;
 (function (ActiveMQ) {
     ActiveMQ.pluginName = 'activemq';
@@ -18782,171 +18947,6 @@ var Core;
             $scope.regexs[index + 1] = tmp;
         };
     }]);
-})(Core || (Core = {}));
-var Core;
-(function (Core) {
-    var HelpRegistry = (function () {
-        function HelpRegistry($rootScope) {
-            this.$rootScope = $rootScope;
-            this.discoverableDocTypes = {
-                user: 'help.md'
-            };
-            this.topicNameMappings = {
-                activemq: 'ActiveMQ',
-                camel: 'Camel',
-                jboss: 'JBoss',
-                jclouds: 'jclouds',
-                jmx: 'JMX',
-                jvm: 'Connect',
-                log: 'Logs',
-                openejb: 'OpenEJB'
-            };
-            this.subTopicNameMappings = {
-                user: 'For Users',
-                developer: 'For Developers',
-                faq: 'FAQ'
-            };
-            this.pluginNameMappings = {
-                hawtioCore: 'core',
-                'hawtio-branding': 'branding',
-                forceGraph: 'forcegraph',
-                'hawtio-ui': 'ui',
-                'hawtio-forms': 'forms',
-                elasticjs: 'elasticsearch'
-            };
-            this.ignoredPlugins = [
-                'core',
-                'branding',
-                'datatable',
-                'forcegraph',
-                'forms',
-                'perspective',
-                'tree',
-                'ui'
-            ];
-            this.topics = {};
-        }
-        HelpRegistry.prototype.addUserDoc = function (topic, path, isValid) {
-            if (isValid === void 0) { isValid = null; }
-            this.addSubTopic(topic, 'user', path, isValid);
-        };
-        HelpRegistry.prototype.addDevDoc = function (topic, path, isValid) {
-            if (isValid === void 0) { isValid = null; }
-            this.addSubTopic(topic, 'developer', path, isValid);
-        };
-        HelpRegistry.prototype.addSubTopic = function (topic, subtopic, path, isValid) {
-            if (isValid === void 0) { isValid = null; }
-            this.getOrCreateTopic(topic, isValid)[subtopic] = path;
-        };
-        HelpRegistry.prototype.getOrCreateTopic = function (topic, isValid) {
-            if (isValid === void 0) { isValid = null; }
-            if (!angular.isDefined(this.topics[topic])) {
-                if (isValid === null) {
-                    isValid = function () {
-                        return true;
-                    };
-                }
-                this.topics[topic] = {
-                    isValid: isValid
-                };
-                this.$rootScope.$broadcast('hawtioNewHelpTopic');
-            }
-            return this.topics[topic];
-        };
-        HelpRegistry.prototype.mapTopicName = function (name) {
-            if (angular.isDefined(this.topicNameMappings[name])) {
-                return this.topicNameMappings[name];
-            }
-            return name.capitalize();
-        };
-        HelpRegistry.prototype.mapSubTopicName = function (name) {
-            if (angular.isDefined(this.subTopicNameMappings[name])) {
-                return this.subTopicNameMappings[name];
-            }
-            return name.capitalize();
-        };
-        HelpRegistry.prototype.getTopics = function () {
-            var answer = {};
-            angular.forEach(this.topics, function (value, key) {
-                if (value.isValid()) {
-                    Core.log.debug(key, " is available");
-                    answer[key] = angular.fromJson(angular.toJson(value));
-                }
-                else {
-                    Core.log.debug(key, " is not available");
-                }
-            });
-            return answer;
-        };
-        HelpRegistry.prototype.disableAutodiscover = function (name) {
-            this.ignoredPlugins.push(name);
-        };
-        HelpRegistry.prototype.discoverHelpFiles = function (plugins) {
-            var self = this;
-            console.log("Ignored plugins: ", self.ignoredPlugins);
-            plugins.forEach(function (plugin) {
-                var pluginName = self.pluginNameMappings[plugin];
-                if (!angular.isDefined(pluginName)) {
-                    pluginName = plugin;
-                }
-                if (!self.ignoredPlugins.any(function (p) {
-                    return p === pluginName;
-                })) {
-                    angular.forEach(self.discoverableDocTypes, function (value, key) {
-                        if (!angular.isDefined(self[pluginName]) || !angular.isDefined(self[pluginName][key])) {
-                            var target = 'app/' + pluginName + '/doc/' + value;
-                            console.log("checking: ", target);
-                            $.ajax(target, {
-                                type: 'HEAD',
-                                statusCode: {
-                                    200: function () {
-                                        self.getOrCreateTopic(plugin)[key] = target;
-                                    }
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-        };
-        return HelpRegistry;
-    })();
-    Core.HelpRegistry = HelpRegistry;
-})(Core || (Core = {}));
-var Core;
-(function (Core) {
-    var PreferencesRegistry = (function () {
-        function PreferencesRegistry() {
-            this.tabs = {};
-        }
-        PreferencesRegistry.prototype.addTab = function (name, template, isValid) {
-            if (isValid === void 0) { isValid = undefined; }
-            if (!isValid) {
-                isValid = function () {
-                    return true;
-                };
-            }
-            this.tabs[name] = {
-                template: template,
-                isValid: isValid
-            };
-        };
-        PreferencesRegistry.prototype.getTab = function (name) {
-            return this.tabs[name];
-        };
-        PreferencesRegistry.prototype.getTabs = function () {
-            var answer = {};
-            angular.forEach(this.tabs, function (value, key) {
-                if (value.isValid()) {
-                    answer[key] = value;
-                }
-            });
-            return answer;
-        };
-        return PreferencesRegistry;
-    })();
-    Core.PreferencesRegistry = PreferencesRegistry;
-    ;
 })(Core || (Core = {}));
 var Themes;
 (function (Themes) {
