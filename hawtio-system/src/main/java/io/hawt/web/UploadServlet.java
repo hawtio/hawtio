@@ -1,10 +1,10 @@
 package io.hawt.web;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,6 +18,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,14 +35,17 @@ public class UploadServlet extends HttpServlet {
         String uploadDirectory = UploadManager.UPLOAD_DIRECTORY;
         File uploadDir = new File(uploadDirectory);
 
-        uploadFiles(request, response, uploadDir);
+        GlobalFileUploadFilter globalFilter = GlobalFileUploadFilter.newFileUploadFilter();
+        uploadFiles(request, response, uploadDir, globalFilter.getFilterConfig());
     }
 
-    protected List<File> uploadFiles(HttpServletRequest request, HttpServletResponse response, File uploadDir) throws IOException, ServletException {
+    protected List<File> uploadFiles(HttpServletRequest request, HttpServletResponse response,
+                                     File uploadDir, List<GlobalFileUploadFilter.MagicNumberFileFilter> filters) throws IOException, ServletException {
         response.setContentType("text/html");
         final PrintWriter out = response.getWriter();
         List<File> uploadedFiles = new ArrayList<>();
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+
         if (isMultipart) {
             ServletContext context = this.getServletConfig().getServletContext();
             if (!uploadDir.exists()) {
@@ -52,6 +56,8 @@ public class UploadServlet extends HttpServlet {
             }
             DiskFileItemFactory factory = UploadManager.newDiskFileItemFactory(context, uploadDir);
             ServletFileUpload upload = new ServletFileUpload(factory);
+            // Setting max file size allowed from config
+            upload.setFileSizeMax(GlobalFileUploadFilter.getMaxFileSizeAllowed(filters));
 
             String targetDirectory = null;
             List<File> files = new ArrayList<File>();
@@ -76,38 +82,46 @@ public class UploadServlet extends HttpServlet {
 
             try {
                 List<FileItem> items = upload.parseRequest(request);
+                if (items.size() > GlobalFileUploadFilter.ALLOWED_NUMBER_OF_UPLOADS) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Uploaded files exceed the maximum allowed number of files");
+                }
+
                 for (FileItem item : items) {
-                    if (item.isFormField()) {
-                        String name = item.getFieldName();
-                        String value = item.getString();
-                        LOG.info("Got form field {} with value {}", name, value);
-                        if (name.equals("parent")) {
-                            targetDirectory = value;
+                    if (fileAllowed(item, filters)) {
+                        if (item.isFormField()) {
+                            String name = item.getFieldName();
+                            String value = item.getString();
+                            LOG.info("Got form field {} with value {}", name, value);
+                            if (name.equals("parent")) {
+                                targetDirectory = value;
+                            }
+                        } else {
+                            String fieldName = item.getFieldName();
+                            String fileName = item.getName();
+                            String contentType = item.getContentType();
+                            long sizeInBytes = item.getSize();
+
+                            fileName = Strings.sanitize(fileName);
+
+                            LOG.info("Got file upload, fieldName: {} fileName: {} contentType: {} size: {}", new Object[]{fieldName, fileName, contentType, sizeInBytes});
+
+                            if (fileName.equals("")) {
+                                LOG.info("Skipping field " + fieldName + " no filename given");
+                                continue;
+                            }
+                            File target = new File(uploadDir, fileName);
+
+                            try {
+                                item.write(target);
+                                files.add(target);
+                                LOG.info("Wrote to file: {}", target.getAbsoluteFile());
+                            } catch (Exception e) {
+                                LOG.warn("Failed to write to {} due to {}", target, e);
+                                //throw new RuntimeException(e);
+                            }
                         }
                     } else {
-                        String fieldName = item.getFieldName();
-                        String fileName = item.getName();
-                        String contentType = item.getContentType();
-                        long sizeInBytes = item.getSize();
-
-                        fileName = Strings.sanitize(fileName);
-
-                        LOG.info("Got file upload, fieldName: {} fileName: {} contentType: {} size: {}", new Object[]{fieldName, fileName, contentType, sizeInBytes});
-
-                        if (fileName.equals("")) {
-                            LOG.info("Skipping field " + fieldName + " no filename given");
-                            continue;
-                        }
-                        File target = new File(uploadDir, fileName);
-
-                        try {
-                            item.write(target);
-                            files.add(target);
-                            LOG.info("Wrote to file: {}", target.getAbsoluteFile());
-                        } catch (Exception e) {
-                            LOG.warn("Failed to write to {} due to {}", target, e);
-                            //throw new RuntimeException(e);
-                        }
+                        throw new RuntimeException("File is not allowed to be uploaded");
                     }
                 }
             } catch (FileUploadException e) {
@@ -143,4 +157,11 @@ public class UploadServlet extends HttpServlet {
         return uploadedFiles;
     }
 
+    private boolean fileAllowed(FileItem fileItem, List<GlobalFileUploadFilter.MagicNumberFileFilter> filters) throws IOException {
+        InputStream inputStream = fileItem.getInputStream();
+        byte[] fileContent = IOUtils.toByteArray(inputStream, fileItem.getSize());
+        boolean result = GlobalFileUploadFilter.accept(fileContent, filters);
+        inputStream.close();
+        return result;
+    }
 }
