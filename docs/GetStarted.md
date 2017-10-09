@@ -19,6 +19,10 @@ Once you have downloaded it, just run this from the command line:
 
     java -jar hawtio-app-1.5.4.jar
 
+Note: If you launch hawt.io with Java 9, add the specified modules to avoid errors on startup and allow attaching to other Java processes:
+
+    java --add-modules jdk.attach,java.xml.bind -jar hawtio-app-1.5.4.jar
+
 And the console should show you which URL to open to view hawtio; which by default is [http://localhost:8080/hawtio/](http://localhost:8080/hawtio/)
 
 You can specify the port number to use, for example to use port 8090 run from the command line:
