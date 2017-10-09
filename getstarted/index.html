@@ -125,6 +125,10 @@ If you do not use a servlet container or application server, you can also embed 
 
 <pre><code>java -jar hawtio-app-1.5.4.jar</code></pre>
 
+<p>Note: If you launch hawt.io with Java 9, add the specified modules to avoid errors on startup and allow attaching to other Java processes:</p>
+
+<pre><code>java --add-modules jdk.attach,java.xml.bind -jar hawtio-app-1.5.4.jar</code></pre>
+
 <p>And the console should show you which URL to open to view hawtio; which by default is <a href="http://localhost:8080/hawtio/">http://localhost:8080/hawtio/</a></p>
 
 <p>You can specify the port number to use, for example to use port 8090 run from the command line:</p>
