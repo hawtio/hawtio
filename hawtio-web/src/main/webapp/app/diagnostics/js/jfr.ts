@@ -6,7 +6,8 @@
 module Diagnostics {
 
     function splitResponse( response:string ) {
-        return response.match( /Dumped recording (\d+),(.+) written to:\r?\n\r?\n(.+)/ );
+        //Dumped recording "Recording 8", 7,1 MB written to: /Users/marska/Documents/dev/hawtio/hawtio-web/recording8.jfr
+        return response.match( /Dumped recording "(.+)",(.+) written to:\r?\n\r?\n(.+)/ );
     }
 
     function buildStartParams( jfrSettings: JfrSettings ) {
@@ -144,7 +145,7 @@ module Diagnostics {
                 arguments: ['']
             }], onSuccess( function( response ) {
 
-                Diagnostics.log.debug( Date.now() + " Operation "
+                Diagnostics.log.debug("Diagnostic Operation "
                     + operation + " was successful" + response.value );
                 if ( response.request.operation.indexOf( "jfrCheck" ) > -1 ) {
                     render( response );
@@ -154,7 +155,10 @@ module Diagnostics {
                     }
                     Core.$apply( $scope );
                 }
-            }) );
+            }, {error: function(response){
+                        Diagnostics.log.warn("Diagnostic Operation "
+                    + operation + " failed" , response );
+                        }} ));
         }
 
 
