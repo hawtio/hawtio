@@ -6,7 +6,6 @@
 module Diagnostics {
 
     function splitResponse( response:string ) {
-        //Dumped recording "Recording 8", 7,1 MB written to: /Users/marska/Documents/dev/hawtio/hawtio-web/recording8.jfr
         return response.match( /Dumped recording "(.+)",(.+) written to:\r?\n\r?\n(.+)/ );
     }
 
