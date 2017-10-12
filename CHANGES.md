@@ -3,7 +3,7 @@
 
 #### 1.5.5 (To be released)
 
-* Upgraded to Camel 2.19.3
+* Upgraded to Camel 2.20.0
 
 #### 1.5.4
 
