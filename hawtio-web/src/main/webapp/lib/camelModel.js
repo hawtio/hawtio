@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.19.3';
+var _apacheCamelModelVersion = '2.20.0';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -55,7 +55,7 @@ var _apacheCamelModel ={
         "completionTimeoutExpression": {
           "kind": "expression",
           "type": "object",
-          "description": "Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. You cannot use this option together with completionInterval only one of the two can be used.",
+          "description": "Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. You cannot use this option together with completionInterval only one of the two can be used. By default the timeout checker runs every second you can use the completionTimeoutCheckerInterval option to configure how frequently to run the checker. The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or checker intervals.",
           "title": "Completion Timeout",
           "required": false,
           "deprecated": false
@@ -162,8 +162,17 @@ var _apacheCamelModel ={
         "completionTimeout": {
           "kind": "attribute",
           "type": "integer",
-          "description": "Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. You cannot use this option together with completionInterval only one of the two can be used.",
+          "description": "Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. You cannot use this option together with completionInterval only one of the two can be used. By default the timeout checker runs every second you can use the completionTimeoutCheckerInterval option to configure how frequently to run the checker. The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or checker intervals.",
           "title": "Completion Timeout",
+          "required": false,
+          "deprecated": false
+        },
+        "completionTimeoutCheckerInterval": {
+          "kind": "attribute",
+          "type": "integer",
+          "defaultValue": "1000",
+          "description": "Interval in millis that is used by the background task that checks for timeouts (org.apache.camel.TimeoutMap). By default the timeout checker runs every second. The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or checker intervals.",
+          "title": "Completion Timeout Checker Interval",
           "required": false,
           "deprecated": false
         },
@@ -648,11 +657,28 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "registerEndpointIdsFromRoute": {
+          "kind": "attribute",
+          "type": "string",
+          "defaultValue": "false",
+          "description": "Sets whether to register endpoints that has id attribute assigned in the Spring registry. This mode is by default false but can be turned on for backwards compatibility.",
+          "title": "Register Endpoint Ids From Route",
+          "required": false,
+          "deprecated": true
+        },
         "useMDCLogging": {
           "kind": "attribute",
           "type": "string",
           "description": "Set whether MDC is enabled.",
           "title": "Use M D C Logging",
+          "required": false,
+          "deprecated": false
+        },
+        "useDataType": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Whether to enable using data type on Camel messages. Data type are automatic turned on if: one ore more routes has been explicit configured with input and output types when using rest-dsl with binding turned on Otherwise data type is default off.",
+          "title": "Use Data Type",
           "required": false,
           "deprecated": false
         },
@@ -727,6 +753,15 @@ var _apacheCamelModel ={
           "title": "Lazy Load Type Converters",
           "required": false,
           "deprecated": true
+        },
+        "loadTypeConverters": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "true",
+          "description": "Sets whether to load custom type converters by scanning classpath. This can be turned off if you are only using Camel components that does not provide type converters which is needed at runtime. In such situations setting this option to false can speedup starting Camel.",
+          "title": "Load Type Converters",
+          "required": false,
+          "deprecated": false
         },
         "typeConverterStatisticsEnabled": {
           "kind": "attribute",
@@ -4084,7 +4119,7 @@ var _apacheCamelModel ={
           "kind": "attribute",
           "type": "boolean",
           "defaultValue": "false",
-          "description": "Will use the original input message when an org.apache.camel.Exchange is moved to the dead letter queue. Notice: this only applies when all redeliveries attempt have failed and the org.apache.camel.Exchange is doomed for failure. Instead of using the current inprogress org.apache.camel.Exchange IN body we use the original IN body instead. This allows you to store the original input in the dead letter queue instead of the inprogress snapshot of the IN body. For instance if you route transform the IN body during routing and then failed. With the original exchange store in the dead letter queue it might be easier to manually re submit the org.apache.camel.Exchange again as the IN body is the same as when Camel received it. So you should be able to send the org.apache.camel.Exchange to the same input. By default this feature is off.",
+          "description": "Will use the original input message when an org.apache.camel.Exchange is moved to the dead letter queue. Notice: this only applies when all redeliveries attempt have failed and the org.apache.camel.Exchange is doomed for failure. Instead of using the current in-progress org.apache.camel.Exchange IN body we use the original IN body instead. This allows you to store the original input in the dead letter queue instead of the in-progress snapshot of the IN body. For instance if you route transform the IN body during routing and then failed. With the original exchange store in the dead letter queue it might be easier to manually re submit the org.apache.camel.Exchange again as the IN body is the same as when Camel received it. So you should be able to send the org.apache.camel.Exchange to the same input. By default this feature is off.",
           "title": "Use Original Message",
           "required": false,
           "deprecated": false
@@ -5069,7 +5104,7 @@ var _apacheCamelModel ={
         "asyncDelayedRedelivery": {
           "kind": "attribute",
           "type": "string",
-          "description": "Allow synchronous delayed redelivery.",
+          "description": "Allow synchronous delayed redelivery. The route in particular the consumer's component must support the Asynchronous Routing Engine (e.g. seda).",
           "title": "Async Delayed Redelivery",
           "required": false,
           "deprecated": false
@@ -7129,6 +7164,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "deliveryAttemptInterval": {
+          "kind": "attribute",
+          "type": "integer",
+          "defaultValue": "1000",
+          "description": "Sets the interval in milli seconds the stream resequencer will at most wait while waiting for condition of being able to deliver.",
+          "title": "Delivery Attempt Interval",
+          "required": false,
+          "deprecated": false
+        },
         "ignoreInvalidExchanges": {
           "kind": "attribute",
           "type": "boolean",
@@ -8245,6 +8289,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "dynamicUri": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "true",
+          "description": "Whether the uri is dynamic or static. If the uri is dynamic then the simple language is used to evaluate a dynamic uri to use as the wire-tap destination for each incoming message. This works similar to how the toD EIP pattern works. If static then the uri is used as-is as the wire-tap destination.",
+          "title": "Dynamic Uri",
+          "required": false,
+          "deprecated": false
+        },
         "onPrepareRef": {
           "kind": "attribute",
           "type": "string",
@@ -8300,6 +8353,98 @@ var _apacheCamelModel ={
           "type": "object",
           "description": "Sets the description of this node",
           "title": "Description",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
+    "zookeeperServiceDiscovery": {
+      "type": "object",
+      "title": "Zookeeper Service Discovery",
+      "group": "routing,cloud,service-discovery",
+      "icon": "generic24.png",
+      "description": "",
+      "acceptInput": "false",
+      "acceptOutput": "false",
+      "nextSiblingAddedAsChild": "false",
+      "properties": {
+        "nodes": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "A comma separate list of servers to connect to in the form host:port",
+          "title": "Nodes",
+          "required": true,
+          "deprecated": false
+        },
+        "namespace": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "As ZooKeeper is a shared space users of a given cluster should stay within a pre-defined namespace. If a namespace is set here all paths will get pre-pended with the namespace",
+          "title": "Namespace",
+          "required": false,
+          "deprecated": false
+        },
+        "reconnectBaseSleepTime": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Initial amount of time to wait between retries.",
+          "title": "Reconnect Base Sleep Time",
+          "required": false,
+          "deprecated": false
+        },
+        "reconnectMaxSleepTime": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Max time in ms to sleep on each retry",
+          "title": "Reconnect Max Sleep Time",
+          "required": false,
+          "deprecated": false
+        },
+        "reconnectMaxRetries": {
+          "kind": "attribute",
+          "type": "integer",
+          "description": "Max number of times to retry",
+          "title": "Reconnect Max Retries",
+          "required": false,
+          "deprecated": false
+        },
+        "sessionTimeout": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Session timeout.",
+          "title": "Session Timeout",
+          "required": false,
+          "deprecated": false
+        },
+        "connectionTimeout": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Connection timeout.",
+          "title": "Connection Timeout",
+          "required": false,
+          "deprecated": false
+        },
+        "basePath": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Set the base path to store in ZK",
+          "title": "Base Path",
+          "required": true,
+          "deprecated": false
+        },
+        "properties": {
+          "kind": "element",
+          "type": "array",
+          "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using ribbon then the client properties are define in com.netflix.client.config.CommonClientConfigKey.",
+          "title": "Properties",
+          "required": false,
+          "deprecated": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the value of the id property.",
+          "title": "Id",
           "required": false,
           "deprecated": false
         }
@@ -9670,6 +9815,14 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "apiHost": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "To use an specific hostname for the API documentation (eg swagger) This can be used to override the generated host with this configured hostname",
+          "title": "Api Host",
+          "required": false,
+          "deprecated": false
+        },
         "port": {
           "kind": "attribute",
           "type": "string",
@@ -10073,12 +10226,55 @@ var _apacheCamelModel ={
     }
   },
   "dataformats": {
+    "asn1": {
+      "type": "object",
+      "title": "ASN.1 File",
+      "group": "dataformat,transformation,file",
+      "icon": "generic24.png",
+      "description": "The ASN.1 data format is used for file transfer with telecommunications protocols.",
+      "properties": {
+        "usingIterator": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "If the asn1 file has more then one entry the setting this option to true allows to work with the splitter EIP to split the data using an iterator in a streaming mode.",
+          "title": "Using Iterator",
+          "required": false,
+          "deprecated": false
+        },
+        "clazzName": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Name of class to use when unmarshalling",
+          "title": "Clazz Name",
+          "required": false,
+          "deprecated": false
+        },
+        "contentTypeHeader": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.",
+          "title": "Content Type Header",
+          "required": false,
+          "deprecated": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the value of the id property.",
+          "title": "Id",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
     "avro": {
       "type": "object",
       "title": "Avro",
       "group": "dataformat,transformation",
       "icon": "generic24.png",
-      "description": "Avro data format",
+      "description": "The Avro data format is used for serialization and deserialization of messages using Apache Avro binary dataformat.",
       "properties": {
         "instanceClassName": {
           "kind": "attribute",
@@ -10112,7 +10308,7 @@ var _apacheCamelModel ={
       "title": "Barcode",
       "group": "dataformat,transformation",
       "icon": "generic24.png",
-      "description": "Barcode data format",
+      "description": "The Barcode data format is used for creating barccode images (such as QR-Code)",
       "properties": {
         "width": {
           "kind": "attribute",
@@ -10170,7 +10366,7 @@ var _apacheCamelModel ={
       "title": "Base64",
       "group": "dataformat,transformation",
       "icon": "generic24.png",
-      "description": "Base64 data format",
+      "description": "The Base64 data format is used for base64 encoding and decoding.",
       "properties": {
         "lineLength": {
           "kind": "attribute",
@@ -10184,8 +10380,7 @@ var _apacheCamelModel ={
         "lineSeparator": {
           "kind": "attribute",
           "type": "string",
-          "defaultValue": "\r\n",
-          "description": "The line separators to use. By default \r\n is used.",
+          "description": "The line separators to use. Uses new line characters (CRLF) by default.",
           "title": "Line Separator",
           "required": false,
           "deprecated": false
@@ -10223,7 +10418,7 @@ var _apacheCamelModel ={
       "title": "BeanIO",
       "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
-      "description": "BeanIO data format",
+      "description": "The BeanIO data format is used for working with flat payloads (such as CSV delimited or fixed length formats).",
       "properties": {
         "mapping": {
           "kind": "attribute",
@@ -10284,6 +10479,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "unmarshalSingleObject": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "This options controls whether to unmarshal as a list of objects or as a single object only. The former is the default mode and the latter is only intended in special use-cases where beanio maps the Camel message to a single POJO bean.",
+          "title": "Unmarshal Single Object",
+          "required": false,
+          "deprecated": false
+        },
         "contentTypeHeader": {
           "kind": "attribute",
           "type": "boolean",
@@ -10308,7 +10512,7 @@ var _apacheCamelModel ={
       "title": "Bindy",
       "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
-      "description": "Bindy data format",
+      "description": "The Bindy data format is used for working with flat payloads (such as CSV delimited fixed length formats or FIX messages).",
       "properties": {
         "type": {
           "kind": "attribute",
@@ -10359,7 +10563,7 @@ var _apacheCamelModel ={
       "title": "Boon",
       "group": "dataformat,transformation,json",
       "icon": "generic24.png",
-      "description": "Boon data format",
+      "description": "Boon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.",
       "properties": {
         "unmarshalTypeName": {
           "kind": "attribute",
@@ -10402,7 +10606,7 @@ var _apacheCamelModel ={
       "title": "Castor",
       "group": "dataformat,transformation,xml",
       "icon": "generic24.png",
-      "description": "Castor data format",
+      "description": "Castor data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.",
       "properties": {
         "mappingFile": {
           "kind": "attribute",
@@ -10470,7 +10674,7 @@ var _apacheCamelModel ={
       "title": "Crypto (Java Cryptographic Extension)",
       "group": "dataformat,transformation,security",
       "icon": "generic24.png",
-      "description": "Crypto data format",
+      "description": "Crypto data format is used for encrypting and decrypting of messages using Java Cryptographic Extension.",
       "properties": {
         "algorithm": {
           "kind": "attribute",
@@ -10572,7 +10776,7 @@ var _apacheCamelModel ={
       "title": "CSV",
       "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
-      "description": "CSV data format",
+      "description": "The CSV data format is used for handling CSV payloads.",
       "properties": {
         "formatRef": {
           "kind": "attribute",
@@ -10585,6 +10789,7 @@ var _apacheCamelModel ={
         "formatName": {
           "kind": "attribute",
           "type": "string",
+          "enum": [ "DEFAULT", "EXCEL", "INFORMIX_UNLOAD", "INFORMIX_UNLOAD_CSV", "MYSQL", "RFC4180" ],
           "description": "The name of the format to use the default value is CSVFormat.DEFAULT",
           "title": "Format Name",
           "required": false,
@@ -10721,7 +10926,7 @@ var _apacheCamelModel ={
         "recordSeparator": {
           "kind": "attribute",
           "type": "string",
-          "description": "Sets the record separator (aka new line) which by default is \r\n (CRLF)",
+          "description": "Sets the record separator (aka new line) which by default is new line characters (CRLF)",
           "title": "Record Separator",
           "required": false,
           "deprecated": false
@@ -10820,7 +11025,7 @@ var _apacheCamelModel ={
       "title": "Custom",
       "group": "dataformat,transformation",
       "icon": "customDataFormat24.png",
-      "description": "Custom data format",
+      "description": "To use a custom data format implementation that does not come out of the box from Apache Camel.",
       "properties": {
         "ref": {
           "kind": "attribute",
@@ -10871,16 +11076,8 @@ var _apacheCamelModel ={
       "title": "Flatpack",
       "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
-      "description": "Flatpack data format",
+      "description": "The Flatpack data format is used for working with flat payloads (such as CSV delimited or fixed length formats).",
       "properties": {
-        "parserFactoryRef": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "References to a custom parser factory to lookup in the registry",
-          "title": "Parser Factory Ref",
-          "required": false,
-          "deprecated": false
-        },
         "definition": {
           "kind": "attribute",
           "type": "string",
@@ -10910,8 +11107,7 @@ var _apacheCamelModel ={
         "textQualifier": {
           "kind": "attribute",
           "type": "string",
-          "defaultValue": "\"",
-          "description": "If the text is qualified with a char such as \"",
+          "description": "If the text is qualified with a character. Uses quote character by default.",
           "title": "Text Qualifier",
           "required": false,
           "deprecated": false
@@ -10943,6 +11139,14 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "parserFactoryRef": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "References to a custom parser factory to lookup in the registry",
+          "title": "Parser Factory Ref",
+          "required": false,
+          "deprecated": false
+        },
         "contentTypeHeader": {
           "kind": "attribute",
           "type": "boolean",
@@ -10967,7 +11171,7 @@ var _apacheCamelModel ={
       "title": "GZip",
       "group": "dataformat,transformation",
       "icon": "generic24.png",
-      "description": "GZip compression data format",
+      "description": "The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).",
       "properties": {
         "contentTypeHeader": {
           "kind": "attribute",
@@ -10993,7 +11197,7 @@ var _apacheCamelModel ={
       "title": "Hessian",
       "group": "dataformat,transformation",
       "icon": "generic24.png",
-      "description": "Hessian data format",
+      "description": "Hessian data format is used for marshalling and unmarshalling messages using Cauchos Hessian format.",
       "properties": {
         "contentTypeHeader": {
           "kind": "attribute",
@@ -11019,7 +11223,7 @@ var _apacheCamelModel ={
       "title": "HL7",
       "group": "dataformat,transformation,hl7",
       "icon": "generic24.png",
-      "description": "HL7 data format",
+      "description": "The HL7 data format can be used to marshal or unmarshal HL7 (Health Care) model objects.",
       "properties": {
         "validate": {
           "kind": "attribute",
@@ -11054,7 +11258,7 @@ var _apacheCamelModel ={
       "title": "iCal",
       "group": "dataformat,transformation",
       "icon": "generic24.png",
-      "description": "iCal data format",
+      "description": "The iCal dataformat is used for working with iCalendar messages.",
       "properties": {
         "validating": {
           "kind": "attribute",
@@ -11089,7 +11293,7 @@ var _apacheCamelModel ={
       "title": "JacksonXML",
       "group": "dataformat,transformation,xml",
       "icon": "generic24.png",
-      "description": "Jackson XML data format",
+      "description": "JacksonXML data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.",
       "properties": {
         "xmlMapper": {
           "kind": "attribute",
@@ -11232,7 +11436,7 @@ var _apacheCamelModel ={
       "title": "JAXB",
       "group": "dataformat,transformation,xml",
       "icon": "generic24.png",
-      "description": "JAXB data format",
+      "description": "JAXB data format uses the JAXB2 XML marshalling standard to unmarshal an XML payload into Java objects or to marshal Java objects into an XML payload.",
       "properties": {
         "contextPath": {
           "kind": "attribute",
@@ -11392,7 +11596,7 @@ var _apacheCamelModel ={
       "title": "JiBX",
       "group": "dataformat,transformation,xml",
       "icon": "generic24.png",
-      "description": "JiBX data format",
+      "description": "JiBX data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.",
       "properties": {
         "unmarshallClass": {
           "kind": "attribute",
@@ -11434,7 +11638,7 @@ var _apacheCamelModel ={
       "title": "JSon",
       "group": "dataformat,transformation,json",
       "icon": "generic24.png",
-      "description": "JSon data format",
+      "description": "JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.",
       "properties": {
         "objectMapper": {
           "kind": "attribute",
@@ -11457,7 +11661,7 @@ var _apacheCamelModel ={
           "kind": "attribute",
           "type": "object",
           "defaultValue": "XStream",
-          "enum": [ "Gson", "Jackson", "Johnzon", "XStream" ],
+          "enum": [ "Fastjson", "Gson", "Jackson", "Johnzon", "XStream" ],
           "description": "Which json library to use.",
           "title": "Library",
           "required": false,
@@ -11595,7 +11799,7 @@ var _apacheCamelModel ={
       "title": "LZF Deflate Compression",
       "group": "dataformat,transformation",
       "icon": "generic24.png",
-      "description": "LZF compression data format",
+      "description": "The LZF data format is a message compression and de-compression format (uses the LZF deflate algorithm).",
       "properties": {
         "usingParallelCompression": {
           "kind": "attribute",
@@ -11630,7 +11834,7 @@ var _apacheCamelModel ={
       "title": "MIME Multipart",
       "group": "dataformat,transformation",
       "icon": "generic24.png",
-      "description": "MIME Multipart data format",
+      "description": "The MIME Multipart data format can marshal a Camel message with attachments into a Camel message having a MIME-Multipart message as message body (and no attachments) and vise-versa when unmarshalling.",
       "properties": {
         "multipartSubType": {
           "kind": "attribute",
@@ -11700,7 +11904,7 @@ var _apacheCamelModel ={
       "title": "PGP",
       "group": "dataformat,transformation,security",
       "icon": "generic24.png",
-      "description": "PGP data format",
+      "description": "PGP data format is used for encrypting and decrypting of messages using Java Cryptographic Extension and PGP.",
       "properties": {
         "keyUserid": {
           "kind": "attribute",
@@ -11840,7 +12044,7 @@ var _apacheCamelModel ={
       "title": "Protobuf",
       "group": "dataformat,transformation",
       "icon": "generic24.png",
-      "description": "Google protobuf data format",
+      "description": "The Protobuf data format is used for serializing between Java objects and the Google Protobuf protocol.",
       "properties": {
         "instanceClass": {
           "kind": "attribute",
@@ -11884,7 +12088,7 @@ var _apacheCamelModel ={
       "title": "RSS",
       "group": "dataformat,transformation",
       "icon": "generic24.png",
-      "description": "RSS data format",
+      "description": "RSS data format is used for working with RSS sync feed Java Objects and transforming to XML and vice-versa.",
       "properties": {
         "contentTypeHeader": {
           "kind": "attribute",
@@ -11910,7 +12114,7 @@ var _apacheCamelModel ={
       "title": "XML Security",
       "group": "dataformat,transformation,xml,security",
       "icon": "generic24.png",
-      "description": "XML-Security data format",
+      "description": "The XML Security data format facilitates encryption and decryption of XML payloads.",
       "properties": {
         "xmlCipherAlgorithm": {
           "kind": "attribute",
@@ -12030,7 +12234,7 @@ var _apacheCamelModel ={
       "title": "Java Object Serialization",
       "group": "dataformat,transformation,core",
       "icon": "generic24.png",
-      "description": "Java Object Serialization data format",
+      "description": "Serialization is a data format which uses the standard Java Serialization mechanism to unmarshal a binary payload into Java objects or to marshal Java objects into a binary blob.",
       "properties": {
         "contentTypeHeader": {
           "kind": "attribute",
@@ -12056,7 +12260,7 @@ var _apacheCamelModel ={
       "title": "SOAP",
       "group": "dataformat,transformation,xml",
       "icon": "generic24.png",
-      "description": "SOAP data format",
+      "description": "SOAP is a data format which uses JAXB2 and JAX-WS annotations to marshal and unmarshal SOAP payloads.",
       "properties": {
         "contextPath": {
           "kind": "attribute",
@@ -12131,7 +12335,7 @@ var _apacheCamelModel ={
       "title": "String Encoding",
       "group": "dataformat,transformation,core",
       "icon": "generic24.png",
-      "description": "String (text based) data format",
+      "description": "String data format is a textual based format that supports character encoding.",
       "properties": {
         "charset": {
           "kind": "attribute",
@@ -12163,9 +12367,9 @@ var _apacheCamelModel ={
     "syslog": {
       "type": "object",
       "title": "Syslog",
-      "group": "dataformat,transformation",
+      "group": "dataformat,transformation,monitoring",
       "icon": "generic24.png",
-      "description": "Syslog data format",
+      "description": "The Syslog dataformat is used for working with RFC3164 and RFC5424 messages (logging and monitoring).",
       "properties": {
         "contentTypeHeader": {
           "kind": "attribute",
@@ -12191,7 +12395,7 @@ var _apacheCamelModel ={
       "title": "Tar File",
       "group": "dataformat,transformation,file",
       "icon": "generic24.png",
-      "description": "TAR file data format",
+      "description": "The Tar File data format is a message compression and de-compression format of tar files.",
       "properties": {
         "usingIterator": {
           "kind": "attribute",
@@ -12230,12 +12434,56 @@ var _apacheCamelModel ={
         }
       }
     },
+    "thrift": {
+      "type": "object",
+      "title": "Thrift",
+      "group": "dataformat,transformation",
+      "icon": "generic24.png",
+      "description": "The Thrift data format is used for serialization and deserialization of messages using Apache Thrift binary dataformat.",
+      "properties": {
+        "instanceClass": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Name of class to use when unarmshalling",
+          "title": "Instance Class",
+          "required": false,
+          "deprecated": false
+        },
+        "contentTypeFormat": {
+          "kind": "attribute",
+          "type": "string",
+          "defaultValue": "binary",
+          "enum": [ "binary", "json", "sjson" ],
+          "description": "Defines a content type format in which thrift message will be serialized/deserialized from(to) the Java been. The format can either be native or json for either native binary thrift json or simple json fields representation. The default value is binary.",
+          "title": "Content Type Format",
+          "required": false,
+          "deprecated": false
+        },
+        "contentTypeHeader": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.",
+          "title": "Content Type Header",
+          "required": false,
+          "deprecated": false
+        },
+        "id": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the value of the id property.",
+          "title": "Id",
+          "required": false,
+          "deprecated": false
+        }
+      }
+    },
     "tidyMarkup": {
       "type": "object",
       "title": "TidyMarkup",
       "group": "dataformat,transformation",
       "icon": "generic24.png",
-      "description": "Tidymark (wellformed HTML) data format",
+      "description": "TidyMarkup data format is used for parsing HTML and return it as pretty well-formed HTML.",
       "properties": {
         "dataObjectType": {
           "kind": "attribute",
@@ -12305,7 +12553,7 @@ var _apacheCamelModel ={
       "title": "uniVocity CSV",
       "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
-      "description": "UniVocity CSV data format",
+      "description": "The uniVocity CSV data format is used for working with CSV (Comma Separated Values) flat payloads.",
       "properties": {
         "quoteAllFields": {
           "kind": "attribute",
@@ -12424,7 +12672,7 @@ var _apacheCamelModel ={
           "kind": "attribute",
           "type": "string",
           "defaultValue": "\n",
-          "description": "The normalized line separator of the files The default value is \n",
+          "description": "The normalized line separator of the files The default value is a new line character.",
           "title": "Normalized Line Separator",
           "required": false,
           "deprecated": false
@@ -12480,7 +12728,7 @@ var _apacheCamelModel ={
       "title": "uniVocity Fixed Length",
       "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
-      "description": "UniVocity fixed-width data format",
+      "description": "The uniVocity Fixed Length data format is used for working with fixed length flat payloads.",
       "properties": {
         "skipTrailingCharsUntilNewline": {
           "kind": "attribute",
@@ -12503,7 +12751,6 @@ var _apacheCamelModel ={
         "padding": {
           "kind": "attribute",
           "type": "string",
-          "defaultValue": "",
           "description": "The padding character. The default value is a space",
           "title": "Padding",
           "required": false,
@@ -12590,7 +12837,7 @@ var _apacheCamelModel ={
           "kind": "attribute",
           "type": "string",
           "defaultValue": "\n",
-          "description": "The normalized line separator of the files The default value is \n",
+          "description": "The normalized line separator of the files The default value is a new line character.",
           "title": "Normalized Line Separator",
           "required": false,
           "deprecated": false
@@ -12671,7 +12918,7 @@ var _apacheCamelModel ={
       "title": "uniVocity TSV",
       "group": "dataformat,transformation,csv",
       "icon": "generic24.png",
-      "description": "UniVocity TSV data format",
+      "description": "The uniVocity TSV data format is used for working with TSV (Tabular Separated Values) flat payloads.",
       "properties": {
         "escapeChar": {
           "kind": "attribute",
@@ -12763,7 +13010,7 @@ var _apacheCamelModel ={
           "kind": "attribute",
           "type": "string",
           "defaultValue": "\n",
-          "description": "The normalized line separator of the files The default value is \n",
+          "description": "The normalized line separator of the files The default value is a new line character.",
           "title": "Normalized Line Separator",
           "required": false,
           "deprecated": false
@@ -12819,7 +13066,7 @@ var _apacheCamelModel ={
       "title": "XML Beans",
       "group": "dataformat,transformation,xml",
       "icon": "generic24.png",
-      "description": "XMLBeans data format",
+      "description": "XML Beans data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.",
       "properties": {
         "prettyPrint": {
           "kind": "attribute",
@@ -12854,7 +13101,7 @@ var _apacheCamelModel ={
       "title": "XML JSon",
       "group": "dataformat,transformation,xml,json",
       "icon": "generic24.png",
-      "description": "XML-JSon data format",
+      "description": "XML JSon data format can convert from XML to JSON and vice-versa directly without stepping through intermediate POJOs.",
       "properties": {
         "encoding": {
           "kind": "attribute",
@@ -12982,7 +13229,7 @@ var _apacheCamelModel ={
       "title": "XML RPC",
       "group": "dataformat,transformation,xml",
       "icon": "generic24.png",
-      "description": "XML-RPC data format",
+      "description": "The XML RPC data format is used for working with the XML RPC protocol.",
       "properties": {
         "request": {
           "kind": "attribute",
@@ -13017,7 +13264,7 @@ var _apacheCamelModel ={
       "title": "XStream",
       "group": "dataformat,transformation,xml,json",
       "icon": "generic24.png",
-      "description": "XStream data format",
+      "description": "XSTream data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.",
       "properties": {
         "permissions": {
           "kind": "attribute",
@@ -13115,7 +13362,7 @@ var _apacheCamelModel ={
       "title": "YAML",
       "group": "dataformat,transformation,yaml",
       "icon": "generic24.png",
-      "description": "YAML data format",
+      "description": "YAML is a data format to marshal and unmarshal Java objects to and from YAML.",
       "properties": {
         "library": {
           "kind": "attribute",
@@ -13226,7 +13473,7 @@ var _apacheCamelModel ={
       "title": "Zip Deflate Compression",
       "group": "dataformat,transformation",
       "icon": "generic24.png",
-      "description": "Zip compression data format (not for zip files)",
+      "description": "Zip Deflate Compression data format is a message compression and de-compression format (not zip files).",
       "properties": {
         "compressionLevel": {
           "kind": "attribute",
@@ -13261,7 +13508,7 @@ var _apacheCamelModel ={
       "title": "Zip File",
       "group": "dataformat,transformation,file",
       "icon": "generic24.png",
-      "description": "Zip-file data format",
+      "description": "The Zip File data format is a message compression and de-compression format of zip files.",
       "properties": {
         "usingIterator": {
           "kind": "attribute",
@@ -13307,7 +13554,7 @@ var _apacheCamelModel ={
       "title": "Constant",
       "group": "language,core",
       "icon": "generic24.png",
-      "description": "For expressions and predicates using a constant",
+      "description": "To use a constant value in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13341,7 +13588,7 @@ var _apacheCamelModel ={
       "title": "EL",
       "group": "language,script",
       "icon": "generic24.png",
-      "description": "For EL expressions and predicates",
+      "description": "To use EL scripts in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13375,7 +13622,7 @@ var _apacheCamelModel ={
       "title": "ExchangeProperty",
       "group": "language,core",
       "icon": "generic24.png",
-      "description": "An expression which extracts the named exchange property",
+      "description": "To use a Camel Exchange property in expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13443,7 +13690,7 @@ var _apacheCamelModel ={
       "title": "Groovy",
       "group": "language,script",
       "icon": "generic24.png",
-      "description": "For Groovy expressions and predicates",
+      "description": "To use Groovy scripts in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13477,7 +13724,7 @@ var _apacheCamelModel ={
       "title": "Header",
       "group": "language,core",
       "icon": "generic24.png",
-      "description": "An expression which extracts the named exchange header",
+      "description": "To use a Camel Message header in expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13511,7 +13758,7 @@ var _apacheCamelModel ={
       "title": "JavaScript",
       "group": "language,script",
       "icon": "generic24.png",
-      "description": "For JavaScript expressions and predicates",
+      "description": "To use JavaScript in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13545,7 +13792,7 @@ var _apacheCamelModel ={
       "title": "JSonPath",
       "group": "language,json",
       "icon": "generic24.png",
-      "description": "For JSonPath expressions and predicates",
+      "description": "To use JSonPath in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13590,6 +13837,23 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "writeAsString": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to write the output of each row/element as a JSon String value instead of a Map/POJO value.",
+          "title": "Write As String",
+          "required": false,
+          "deprecated": false
+        },
+        "headerName": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Name of header to use as input instead of the message body",
+          "title": "Header Name",
+          "required": false,
+          "deprecated": false
+        },
         "trim": {
           "kind": "attribute",
           "type": "boolean",
@@ -13614,7 +13878,7 @@ var _apacheCamelModel ={
       "title": "JXPath",
       "group": "language,java",
       "icon": "generic24.png",
-      "description": "For JXPath expressions and predicates",
+      "description": "To use JXPath in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13657,7 +13921,7 @@ var _apacheCamelModel ={
       "title": "Language",
       "group": "language,core",
       "icon": "generic24.png",
-      "description": "Represents a parameterised language expression which can support any language at runtime using the language attribute.",
+      "description": "To use the specified language in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13699,7 +13963,7 @@ var _apacheCamelModel ={
       "title": "Bean method",
       "group": "language,core,java",
       "icon": "generic24.png",
-      "description": "For expressions and predicates using a java bean (aka method call)",
+      "description": "To use a Java bean (aka method call) in Camel expressions or predicates.",
       "properties": {
         "bean": {
           "kind": "attribute",
@@ -13757,7 +14021,7 @@ var _apacheCamelModel ={
       "title": "MVEL",
       "group": "language,java",
       "icon": "generic24.png",
-      "description": "For MVEL expressions and predicates",
+      "description": "To use MVEL scripts in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13791,7 +14055,7 @@ var _apacheCamelModel ={
       "title": "OGNL",
       "group": "language,java",
       "icon": "generic24.png",
-      "description": "For OGNL expressions and predicates",
+      "description": "To use OGNL scripts in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13825,7 +14089,7 @@ var _apacheCamelModel ={
       "title": "PHP",
       "group": "language,script",
       "icon": "generic24.png",
-      "description": "For PHP expressions and predicates",
+      "description": "To use PHP scripts in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13859,7 +14123,7 @@ var _apacheCamelModel ={
       "title": "Python",
       "group": "language,script",
       "icon": "generic24.png",
-      "description": "For Python expressions and predicates",
+      "description": "To use Python scripts in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13893,7 +14157,7 @@ var _apacheCamelModel ={
       "title": "Ref",
       "group": "language,core",
       "icon": "generic24.png",
-      "description": "For using a custom expression or predicate",
+      "description": "Reference to an existing Camel expression or predicate which is looked up from the Camel registry.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13927,7 +14191,7 @@ var _apacheCamelModel ={
       "title": "Ruby",
       "group": "language,script",
       "icon": "generic24.png",
-      "description": "For Ruby expressions and predicates",
+      "description": "To use Ruby scripts in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -13961,7 +14225,7 @@ var _apacheCamelModel ={
       "title": "Simple",
       "group": "language,core,java",
       "icon": "generic24.png",
-      "description": "For expressions and predicates using the simple language",
+      "description": "To use Camels built-in Simple language in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -14003,7 +14267,7 @@ var _apacheCamelModel ={
       "title": "SpEL",
       "group": "language,spring",
       "icon": "generic24.png",
-      "description": "For Spring Expression Language (SpEL) expressions and predicates",
+      "description": "To use Spring Expression Language (SpEL) in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -14037,7 +14301,7 @@ var _apacheCamelModel ={
       "title": "SQL",
       "group": "language",
       "icon": "generic24.png",
-      "description": "For SQL expressions and predicates",
+      "description": "To use SQL (on Java beans) in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -14071,7 +14335,7 @@ var _apacheCamelModel ={
       "title": "HL7 Terser",
       "group": "language,hl7",
       "icon": "generic24.png",
-      "description": "For HL7 terser expressions and predicates",
+      "description": "To use HL7 terser scripts in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -14105,12 +14369,12 @@ var _apacheCamelModel ={
       "title": "Tokenize",
       "group": "language,core",
       "icon": "generic24.png",
-      "description": "For expressions and predicates using a body or header tokenizer",
+      "description": "To use Camel message body or header with a tokenizer in Camel expressions or predicates.",
       "properties": {
         "token": {
           "kind": "attribute",
           "type": "string",
-          "description": "The (start) token to use as tokenizer for example \n for a new line token. You can use simple language as the token to support dynamic tokens.",
+          "description": "The (start) token to use as tokenizer for example you can use the new line token. You can use simple language as the token to support dynamic tokens.",
           "title": "Token",
           "required": true,
           "deprecated": false
@@ -14168,8 +14432,8 @@ var _apacheCamelModel ={
         },
         "group": {
           "kind": "attribute",
-          "type": "integer",
-          "description": "To group N parts together for example to split big files into chunks of 1000 lines.",
+          "type": "string",
+          "description": "To group N parts together for example to split big files into chunks of 1000 lines. You can use simple language as the group to support dynamic group sizes.",
           "title": "Group",
           "required": false,
           "deprecated": false
@@ -14207,7 +14471,7 @@ var _apacheCamelModel ={
       "title": "XPath",
       "group": "language,core,xml",
       "icon": "generic24.png",
-      "description": "For XPath expressions and predicates",
+      "description": "To use XPath (XML) in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -14228,6 +14492,8 @@ var _apacheCamelModel ={
         "resultType": {
           "kind": "attribute",
           "type": "string",
+          "defaultValue": "NODESET",
+          "enum": [ "BOOLEAN", "NODE", "NODESET", "NUMBER", "STRING" ],
           "description": "Sets the class name of the result type (type from output) The default result type is NodeSet",
           "title": "Result Type",
           "required": false,
@@ -14275,6 +14541,15 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "threadSafety": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether to enable thread-safety for the returned result of the xpath expression. This applies to when using NODESET as the result type and the returned set has multiple elements. In this situation there can be thread-safety issues if you process the NODESET concurrently such as from a Camel Splitter EIP in parallel processing mode. This option prevents concurrency issues by doing defensive copies of the nodes. It is recommended to turn this option on if you are using camel-saxon or Saxon in your application. Saxon has thread-safety issues which can be prevented by turning this option on.",
+          "title": "Thread Safety",
+          "required": false,
+          "deprecated": false
+        },
         "trim": {
           "kind": "attribute",
           "type": "boolean",
@@ -14299,7 +14574,7 @@ var _apacheCamelModel ={
       "title": "XQuery",
       "group": "language,xml",
       "icon": "generic24.png",
-      "description": "For XQuery expressions and predicates",
+      "description": "To use XQuery (XML) in Camel expressions or predicates.",
       "properties": {
         "expression": {
           "kind": "value",
@@ -14349,7 +14624,7 @@ var _apacheCamelModel ={
       "title": "XML Tokenize",
       "group": "language,core,xml",
       "icon": "generic24.png",
-      "description": "For expressions and predicates using a body or header XML tokenizer",
+      "description": "To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.",
       "properties": {
         "headerName": {
           "kind": "attribute",
