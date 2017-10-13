@@ -6,7 +6,7 @@
 module Diagnostics {
 
     function splitResponse( response:string ) {
-        return response.match( /Dumped recording (\d+),(.+) written to:\r?\n\r?\n(.+)/ );
+        return response.match( /Dumped recording "(.+)",(.+) written to:\r?\n\r?\n(.+)/ );
     }
 
     function buildStartParams( jfrSettings: JfrSettings ) {
@@ -18,8 +18,7 @@ module Diagnostics {
             params.push( 'filename="' + jfrSettings.filename + '"');
         }
         params.push( 'dumponexit=' + jfrSettings.dumpOnExit );
-        params.push( 'compress=' + jfrSettings.compress );
-        if ( jfrSettings.limitType != 'unlimited' ) {
+         if ( jfrSettings.limitType != 'unlimited' ) {
             params.push( jfrSettings.limitType + '=' + jfrSettings.limitValue );
         }
 
@@ -29,8 +28,7 @@ module Diagnostics {
     function buildDumpParams( jfrSettings: JfrSettings ) {
         return [
             'filename="' + jfrSettings.filename + '"',
-            'compress=' + jfrSettings.compress,
-            'recording=' + jfrSettings.recordingNumber
+            'name="' + jfrSettings.name + '"'
         ];
     }
 
@@ -42,7 +40,6 @@ module Diagnostics {
         limitType: string;
         limitValue: string;
         recordingNumber: string;
-        compress: boolean;
         dumpOnExit: boolean;
         name: string;
         filename: string;
@@ -92,7 +89,11 @@ module Diagnostics {
             }
             $scope.jfrStatus = statusString;
             if ( $scope.isRecording ) {
-                var regex = /recording=(\d+) name="(.+?)"/g;
+                    var regex = /recording=(\d+) name="(.+?)"/g;
+                if($scope.isRunning) { //if there are several recordings (some stopped), make sure we parse the running one
+                    regex = /recording=(\d+) name="(.+?)".+?\(running\)/g;
+                }
+                
                 var parsed=regex.exec( statusString );
                 $scope.jfrSettings.recordingNumber = parsed[1];
                 $scope.jfrSettings.name = parsed[2];
@@ -147,7 +148,7 @@ module Diagnostics {
                 arguments: ['']
             }], onSuccess( function( response ) {
 
-                Diagnostics.log.debug( Date.now() + " Operation "
+                Diagnostics.log.debug("Diagnostic Operation "
                     + operation + " was successful" + response.value );
                 if ( response.request.operation.indexOf( "jfrCheck" ) > -1 ) {
                     render( response );
@@ -157,7 +158,10 @@ module Diagnostics {
                     }
                     Core.$apply( $scope );
                 }
-            }) );
+            }, {error: function(response){
+                        Diagnostics.log.warn("Diagnostic Operation "
+                    + operation + " failed" , response );
+                        }} ));
         }
 
 
@@ -189,19 +193,15 @@ module Diagnostics {
                 limitType: <Forms.FormElement>{
                     type: "java.lang.String",
                     tooltip: "Duration if any",
-                    enum: ['unlimited', 'duration']
+                    enum: ['unlimited', 'duration', 'maxsize']
                 },
                 limitValue: <Forms.FormElement>{
                     type: "java.lang.String",
-                    tooltip: "Limit value. duration: [val]s/m/h",
+                    tooltip: "Limit value. duration: [val]s/m/h, maxsize: [val]kB/MB/GB",
                     required: false,
                     "input-attributes": {
                         "ng-show": "jfrSettings.limitType != 'unlimited'"
                     }
-                },
-                compress: <Forms.FormElement>{
-                    type: "java.lang.Boolean",
-                    tooltip: "Compress recording"
                 },
                 dumpOnExit: <Forms.FormElement>{
                     type: "java.lang.Boolean",
@@ -222,6 +222,10 @@ module Diagnostics {
         };
 
         $scope.startRecording = () => {
+            if($scope.isRecording) {//this means that there is a stopped recording, clear state before starting the next
+                $scope.jfrSettings.name = null;
+                $scope.jfrSettings.filename = null;
+            }
             executeDiagnosticFunction( 'jfrStart([Ljava.lang.String;)', 'JFR.start', [buildStartParams( $scope.jfrSettings )], null );
         };
 
@@ -252,10 +256,11 @@ module Diagnostics {
         }
 
         $scope.stopRecording = () => {
+            var name = $scope.jfrSettings.name;
             $scope.jfrSettings.filename = '';
             $scope.jfrSettings.name = '';
             executeDiagnosticFunction( 'jfrStop([Ljava.lang.String;)', 'JFR.stop',
-                ["recording=" + $scope.jfrSettings.recordingNumber], null );
+                ['name="' + name + '"'], null );
         }
         
         $scope.toggleSettingsVisible = () => {

@@ -74,10 +74,10 @@
 						<i class="icon-5x"
 							ng-class="jfrEnabled ? 'icon-unlock' : 'icon-lock'"></i>
 					</button>
-					<button class="recorderButton btn" ng-enabled="!isRecording"
-						ng-class="!jfrEnabled || isRecording ? 'disabled' : 'raisedButton'"
+					<button class="recorderButton btn" ng-enabled="!isRunning"
+						ng-class="!jfrEnabled || isRunning ? 'disabled' : 'raisedButton'"
 						tooltip="Start recording"
-						ng-click="startRecording()" ng-disabled="isRecording">
+						ng-click="startRecording()" ng-disabled="isRunning" >
 						<div class="recordingSymbol" id="rec"></div>
 					</button>
 					<button class="recorderButton btn" title="Dump recording to disk"
