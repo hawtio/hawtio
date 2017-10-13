@@ -22707,7 +22707,7 @@ var Forms;
 var Diagnostics;
 (function (Diagnostics) {
     function splitResponse(response) {
-        return response.match(/Dumped recording (\d+),(.+) written to:\r?\n\r?\n(.+)/);
+        return response.match(/Dumped recording "(.+)",(.+) written to:\r?\n\r?\n(.+)/);
     }
     function buildStartParams(jfrSettings) {
         var params = [];
@@ -22718,7 +22718,6 @@ var Diagnostics;
             params.push('filename="' + jfrSettings.filename + '"');
         }
         params.push('dumponexit=' + jfrSettings.dumpOnExit);
-        params.push('compress=' + jfrSettings.compress);
         if (jfrSettings.limitType != 'unlimited') {
             params.push(jfrSettings.limitType + '=' + jfrSettings.limitValue);
         }
@@ -22727,8 +22726,7 @@ var Diagnostics;
     function buildDumpParams(jfrSettings) {
         return [
             'filename="' + jfrSettings.filename + '"',
-            'compress=' + jfrSettings.compress,
-            'recording=' + jfrSettings.recordingNumber
+            'name="' + jfrSettings.name + '"'
         ];
     }
     ;
@@ -22744,6 +22742,9 @@ var Diagnostics;
             $scope.jfrStatus = statusString;
             if ($scope.isRecording) {
                 var regex = /recording=(\d+) name="(.+?)"/g;
+                if ($scope.isRunning) {
+                    regex = /recording=(\d+) name="(.+?)".+?\(running\)/g;
+                }
                 var parsed = regex.exec(statusString);
                 $scope.jfrSettings.recordingNumber = parsed[1];
                 $scope.jfrSettings.name = parsed[2];
@@ -22794,7 +22795,7 @@ var Diagnostics;
                 mbean: 'com.sun.management:type=DiagnosticCommand',
                 arguments: ['']
             }], onSuccess(function (response) {
-                Diagnostics.log.debug(Date.now() + " Operation " + operation + " was successful" + response.value);
+                Diagnostics.log.debug("Diagnostic Operation " + operation + " was successful" + response.value);
                 if (response.request.operation.indexOf("jfrCheck") > -1) {
                     render(response);
                 }
@@ -22804,7 +22805,9 @@ var Diagnostics;
                     }
                     Core.$apply($scope);
                 }
-            }));
+            }, { error: function (response) {
+                Diagnostics.log.warn("Diagnostic Operation " + operation + " failed", response);
+            } }));
         }
         $scope.forms = {};
         $scope.pid = Diagnostics.findMyPid($scope.pageTitle);
@@ -22831,19 +22834,15 @@ var Diagnostics;
                 limitType: {
                     type: "java.lang.String",
                     tooltip: "Duration if any",
-                    enum: ['unlimited', 'duration']
+                    enum: ['unlimited', 'duration', 'maxsize']
                 },
                 limitValue: {
                     type: "java.lang.String",
-                    tooltip: "Limit value. duration: [val]s/m/h",
+                    tooltip: "Limit value. duration: [val]s/m/h, maxsize: [val]kB/MB/GB",
                     required: false,
                     "input-attributes": {
                         "ng-show": "jfrSettings.limitType != 'unlimited'"
                     }
-                },
-                compress: {
-                    type: "java.lang.Boolean",
-                    tooltip: "Compress recording"
                 },
                 dumpOnExit: {
                     type: "java.lang.Boolean",
@@ -22862,6 +22861,10 @@ var Diagnostics;
             executeDiagnosticFunction('vmUnlockCommercialFeatures()', 'VM.unlock_commercial_features', [], null);
         };
         $scope.startRecording = function () {
+            if ($scope.isRecording) {
+                $scope.jfrSettings.name = null;
+                $scope.jfrSettings.filename = null;
+            }
             executeDiagnosticFunction('jfrStart([Ljava.lang.String;)', 'JFR.start', [buildStartParams($scope.jfrSettings)], null);
         };
         $scope.dumpRecording = function () {
@@ -22881,9 +22884,10 @@ var Diagnostics;
             });
         };
         $scope.stopRecording = function () {
+            var name = $scope.jfrSettings.name;
             $scope.jfrSettings.filename = '';
             $scope.jfrSettings.name = '';
-            executeDiagnosticFunction('jfrStop([Ljava.lang.String;)', 'JFR.stop', ["recording=" + $scope.jfrSettings.recordingNumber], null);
+            executeDiagnosticFunction('jfrStop([Ljava.lang.String;)', 'JFR.stop', ['name="' + name + '"'], null);
         };
         $scope.toggleSettingsVisible = function () {
             $scope.settingsVisible = !$scope.settingsVisible;
