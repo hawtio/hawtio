@@ -89,7 +89,11 @@ module Diagnostics {
             }
             $scope.jfrStatus = statusString;
             if ( $scope.isRecording ) {
-                var regex = /recording=(\d+) name="(.+?)"/g;
+                    var regex = /recording=(\d+) name="(.+?)"/g;
+                if($scope.isRunning) { //if there are several recordings (some stopped), make sure we parse the running one
+                    regex = /recording=(\d+) name="(.+?)".+?\(running\)/g;
+                }
+                
                 var parsed=regex.exec( statusString );
                 $scope.jfrSettings.recordingNumber = parsed[1];
                 $scope.jfrSettings.name = parsed[2];
@@ -218,6 +222,10 @@ module Diagnostics {
         };
 
         $scope.startRecording = () => {
+            if($scope.isRecording) {//this means that there is a stopped recording, clear state before starting the next
+                $scope.jfrSettings.name = null;
+                $scope.jfrSettings.filename = null;
+            }
             executeDiagnosticFunction( 'jfrStart([Ljava.lang.String;)', 'JFR.start', [buildStartParams( $scope.jfrSettings )], null );
         };
 
