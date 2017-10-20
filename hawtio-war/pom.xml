@@ -209,6 +209,12 @@
           <classesDirectory>${project.build.directory}/${project.name}/WEB-INF/classes</classesDirectory>
           <stopKey>stop</stopKey>
           <stopPort>9999</stopPort>
+          <systemProperties>
+            <systemProperty>
+              <key>java.security.auth.login.config</key>
+              <value>${project.basedir}/etc/login.conf</value>
+            </systemProperty>
+          </systemProperties>
         </configuration>
       </plugin>
 

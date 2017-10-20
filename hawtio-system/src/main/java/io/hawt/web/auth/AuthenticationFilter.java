@@ -70,8 +70,7 @@ public class AuthenticationFilter implements Filter {
             configuration.setRole(roles);
             configuration.setRolePrincipalClasses(config.get("rolePrincipalClasses", defaultRolePrincipalClasses));
             configuration.setEnabled(Boolean.parseBoolean(config.get("authenticationEnabled", "true")));
-            // TODO let's prompt for credentials in 2.x since we've no login page
-            configuration.setNoCredentials401(Boolean.parseBoolean(config.get("noCredentials401", "true")));
+            configuration.setNoCredentials401(Boolean.parseBoolean(config.get("noCredentials401", "false")));
 
             authDiscoveryClasses = config.get("authenticationContainerDiscoveryClasses", authDiscoveryClasses);
         }
