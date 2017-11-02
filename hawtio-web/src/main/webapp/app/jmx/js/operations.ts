@@ -238,13 +238,8 @@ module Jmx {
       }
     });
 
-    var fetch = <() => void>Core.throttled(() => {
-      var node = workspace.selection;
-      if (!node) {
-        return;
-      }
-
-      $scope.objectName = node.objectName;
+    var fetch: () => void = Core.throttled(() => {
+      $scope.objectName = workspace.getSelectedMBeanName();
       if (!$scope.objectName) {
         return;
       }
@@ -259,7 +254,7 @@ module Jmx {
       return "(" + args.map(function(arg) {return arg.type}).join() + ")";
     }
 
-    function sanitize (value) {
+    function sanitize(value) {
       for (var item in value) {
         item = "" + item;
         value[item].name = item;

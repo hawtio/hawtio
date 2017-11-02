@@ -40,6 +40,8 @@ module Jmx {
       localStorage: WindowLocalStorage,
       $browser) => {
 
+    $scope.objectName = '';
+
     $scope.searchText = '';
     $scope.nid = 'empty';
     $scope.selectedItems = [];
@@ -213,7 +215,6 @@ module Jmx {
       var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
       $scope.entity["jolokia"] = url + localStorage["url"] + "/read/" + mbean + "/" + $scope.entity["key"] ;
       $scope.entity["rw"] = row.rw;
-      var type = asJsonSchemaType(row.type, row.key);
       var readOnly = !row.rw;
 
       // calculate a textare with X number of rows that usually fit the value to display
@@ -347,16 +348,7 @@ module Jmx {
     $scope.toolBarTemplate = () => {
       // lets lookup the list of helpers by domain
       var answer = Jmx.getAttributeToolBar(workspace.selection);
-
-      // TODO - maybe there's a better way to determine when to enable selections
-
-      /*
-       if (answer.startsWith("app/camel") && workspace.selection.children.length > 0) {
-       $scope.selectToggle.setSelect(true);
-       } else {
-       $scope.selectToggle.setSelect(false);
-       }
-       */
+      $scope.objectName = workspace.getSelectedMBeanName();
       return answer;
     };
 
@@ -424,7 +416,7 @@ module Jmx {
       $scope.gridData = [];
       $scope.mbeanIndex = null;
       var mbean = workspace.getSelectedMBeanName();
-      var request = <any>null;
+      var request = null;
       var node = workspace.selection;
       if (node === null || angular.isUndefined(node) || node.key !== $scope.lastKey) {
         // cache attributes info, so we know if the attribute is read-only or read-write, and also the attribute description
@@ -774,26 +766,6 @@ module Jmx {
 
     function includePropertyValue(key:string, value) {
       return !angular.isObject(value);
-    }
-
-    function asJsonSchemaType(typeName, id) {
-      if (typeName) {
-        var lower = typeName.toLowerCase();
-        if (lower.startsWith("int") || lower === "long" || lower === "short" || lower === "byte" || lower.endsWith("int")) {
-          return "integer";
-        }
-        if (lower === "double" || lower === "float" || lower === "bigdecimal") {
-          return "number";
-        }
-        if (lower === "boolean" || lower === "java.lang.boolean") {
-          return "boolean";
-        }
-        if (lower === "string" || lower === "java.lang.String") {
-          return "string";
-        }
-      }
-      // fallback as string
-      return "string";
     }
 
   }]);
