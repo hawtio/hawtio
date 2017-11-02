@@ -34418,6 +34418,7 @@ var Jmx;
         }
     ];
     Jmx.AttributesController = Jmx._module.controller("Jmx.AttributesController", ["$scope", "$element", "$location", "workspace", "jolokia", "jmxWidgets", "jmxWidgetTypes", "$templateCache", "localStorage", "$browser", function ($scope, $element, $location, workspace, jolokia, jmxWidgets, jmxWidgetTypes, $templateCache, localStorage, $browser) {
+        $scope.objectName = '';
         $scope.searchText = '';
         $scope.nid = 'empty';
         $scope.selectedItems = [];
@@ -34558,7 +34559,6 @@ var Jmx;
             var url = $location.protocol() + "://" + $location.host() + ":" + $location.port() + $browser.baseHref();
             $scope.entity["jolokia"] = url + localStorage["url"] + "/read/" + mbean + "/" + $scope.entity["key"];
             $scope.entity["rw"] = row.rw;
-            var type = asJsonSchemaType(row.type, row.key);
             var readOnly = !row.rw;
             var len = row.summary.length;
             var rows = (len / 40) + 1;
@@ -34655,6 +34655,7 @@ var Jmx;
         };
         $scope.toolBarTemplate = function () {
             var answer = Jmx.getAttributeToolBar(workspace.selection);
+            $scope.objectName = workspace.getSelectedMBeanName();
             return answer;
         };
         $scope.invokeSelectedMBeans = function (operationName, completeFunction) {
@@ -35021,24 +35022,6 @@ var Jmx;
         }
         function includePropertyValue(key, value) {
             return !angular.isObject(value);
-        }
-        function asJsonSchemaType(typeName, id) {
-            if (typeName) {
-                var lower = typeName.toLowerCase();
-                if (lower.startsWith("int") || lower === "long" || lower === "short" || lower === "byte" || lower.endsWith("int")) {
-                    return "integer";
-                }
-                if (lower === "double" || lower === "float" || lower === "bigdecimal") {
-                    return "number";
-                }
-                if (lower === "boolean" || lower === "java.lang.boolean") {
-                    return "boolean";
-                }
-                if (lower === "string" || lower === "java.lang.String") {
-                    return "string";
-                }
-            }
-            return "string";
         }
     }]);
 })(Jmx || (Jmx = {}));
@@ -35718,11 +35701,7 @@ var Jmx;
             }
         });
         var fetch = Core.throttled(function () {
-            var node = workspace.selection;
-            if (!node) {
-                return;
-            }
-            $scope.objectName = node.objectName;
+            $scope.objectName = workspace.getSelectedMBeanName();
             if (!$scope.objectName) {
                 return;
             }
