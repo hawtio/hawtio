@@ -1,9 +1,13 @@
 
 ### Change Log
 
-#### 1.5.5 (To be released)
+#### 1.5.6 (To be released)
+
+#### 1.5.5
 
 * Upgraded to Camel 2.20.0
+* JFR support for Java 9
+* Bug fixes
 
 #### 1.5.4
 
