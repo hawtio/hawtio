@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class PluginService {
 
-    @Autowired
-    List<HawtPlugin> registeredPlugins;
+    @Autowired(required = false)
+    private List<HawtPlugin> registeredPlugins;
 
     @RequestMapping("/plugin")
     @ResponseBody
