@@ -320,7 +320,7 @@ module Core {
   export function addCSS(path) {
     if ('createStyleSheet' in document) {
       // IE9
-      document.createStyleSheet(path);
+      (document as any).createStyleSheet(path);
     } else {
       // Everyone else
       var link = (<JQueryStatic>$)("<link>");

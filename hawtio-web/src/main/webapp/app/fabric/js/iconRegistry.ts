@@ -1,9 +1,12 @@
+/// <reference path="fabricPlugin.ts"/>
+
 module Fabric {
 
   export interface Icon {
     title: string;
     type: string;
     src: string;
+    class?: string;
   };
 
   export class IconRegistry {
@@ -120,7 +123,7 @@ module Fabric {
     title: "Apache Cassandra",
     type: "img",
     src: "img/icons/cassandra.svg",
-    "class": "girthy"
+    class: "girthy"
   }, "org.apache.cassandra.db", "org.apache.cassandra.metrics", "org.apache.cassandra.net", "org.apache.cassandra.request");
 
 
@@ -137,7 +140,7 @@ module Fabric {
     title: "Apache Cassandra",
     type: "img",
     src: "img/icons/cassandra.svg",
-    "class": "girthy"
+    class: "girthy"
   }, "Cassandra");
 
   containerIconRegistry.addIcons({

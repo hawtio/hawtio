@@ -54,7 +54,7 @@ module UI {
           scope.text = ngModel.$viewValue[scope.getPropertyName()];
         };
 
-        scope.getInputStyle = () => {
+        scope.getInputStyle = (): any => {
           if (!scope.text) {
             return {};
           }

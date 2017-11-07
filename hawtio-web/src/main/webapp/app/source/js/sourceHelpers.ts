@@ -1,3 +1,5 @@
+/// <reference path="../../baseHelpers.ts"/>
+
 /**
  * @module Source
  */
@@ -27,7 +29,7 @@ module Source {
    */
   export function createBreadcrumbLinks(mavenCoords: string, pathName: string) {
     var linkPrefix = "#/source/index/" + mavenCoords;
-    var answer = [{href: linkPrefix, name: "root"}];
+    var answer = [{ href: linkPrefix, name: "root", fileName: null }];
     if (pathName) {
       var pathNames = pathName.split("/");
       var fullPath = "";
@@ -35,7 +37,7 @@ module Source {
         fullPath += "/" + path;
         var href = linkPrefix + fullPath;
         if (!path.isBlank()) {
-          answer.push({href: href, name: path || "/", fileName: "/" + fullPath});
+          answer.push({ href: href, name: path || "/", fileName: "/" + fullPath });
         }
       });
     }

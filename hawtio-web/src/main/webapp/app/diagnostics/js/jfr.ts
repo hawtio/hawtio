@@ -39,6 +39,7 @@ module Diagnostics {
     interface JfrSettings {
         limitType: string;
         limitValue: string;
+        compress: boolean;
         recordingNumber: string;
         dumpOnExit: boolean;
         name: string;
@@ -119,13 +120,13 @@ module Diagnostics {
         }
         
         function showArguments(arguments: Array<any>) {
-            var result='';
+            var result = '';
             var first = true;
-            for(var i=0;i < arguments.length;i++) {
-                if(true) {
-                    first=false;
+            for (var i = 0; i < arguments.length; i++) {
+                if (first) {
+                  first = false;
                 } else {
-                    result += ',';
+                  result += ',';
                 }
                 result += arguments[i];
             }

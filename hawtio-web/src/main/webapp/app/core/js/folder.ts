@@ -227,7 +227,7 @@ module Core {
     public insertBefore(child: Folder, referenceFolder: Folder) {
       child.detach();
       child.parent = this;
-      var idx = _.indexOf(this.children, referenceFolder);
+      var idx = _.indexOf<NodeSelection>(this.children, referenceFolder);
       if (idx >= 0) {
         this.children.splice(idx, 0, child);
       }
@@ -236,7 +236,7 @@ module Core {
     public insertAfter(child: Folder, referenceFolder: Folder) {
       child.detach();
       child.parent = this;
-      var idx = _.indexOf(this.children, referenceFolder);
+      var idx = _.indexOf<NodeSelection>(this.children, referenceFolder);
       if (idx >= 0) {
         this.children.splice(idx + 1, 0, child);
       }
@@ -306,6 +306,6 @@ module Core {
 }
 
 // TODO refactor code using these two classes
-interface NodeSelection extends Core.NodeSelection{};
+interface NodeSelection extends Core.NodeSelection {};
 class Folder extends Core.Folder {};
 
