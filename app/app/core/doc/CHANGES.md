@@ -3,6 +3,9 @@
 
 #### 1.5.6 (To be released)
 
+* Improved Spring Boot support
+* Now JMX attributes/operations tabs show ObjectName at the content header
+
 #### 1.5.5
 
 * Upgraded to Camel 2.20.0
