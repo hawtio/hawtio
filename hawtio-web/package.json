@@ -8,8 +8,8 @@
     "url": "https://github.com/hawtio/hawtio"
   },
   "devDependencies": {
-    "CSSwhat": "~0.4.7",
     "bower": "^1.8.2",
+    "css-what": "^2.1.0",
     "domelementtype": "~1.1.1",
     "domhandler": "~2.2.0",
     "domutils": "~1.4.0",
