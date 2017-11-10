@@ -179,7 +179,7 @@ public class RBACDecoratorTest {
         Map<String, Map<String, Object>> domains = (Map<String, Map<String, Object>>) result.get("domains");
         Map<String, Object> domain = domains.get("org.apache.activemq");
         Map<String, Object> mbean = (Map<String, Object>) domain.get("type=Broker,brokerName=amq");
-        assertThat(mbean.get("canInvoke"), equalTo((Object) false));
+        assertThat(mbean.get("canInvoke"), equalTo(false));
 
         // op
         Map<String, Object> op = (Map<String, Object>) mbean.get("op");
