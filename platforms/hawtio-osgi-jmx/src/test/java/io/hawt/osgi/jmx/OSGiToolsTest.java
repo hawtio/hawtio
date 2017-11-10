@@ -3,6 +3,7 @@ package io.hawt.osgi.jmx;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -11,11 +12,13 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleReference;
 
 public class OSGiToolsTest {
+
     @Test
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void testGetLoadClassOrigin() throws Exception {
         // Setup a mock OSGi classloader
-        URL res = getClass().getClassLoader().getResource(getClass().getName().replace('.', '/') + ".class");
+        URL res = getClass().getClassLoader().getResource(
+            getClass().getName().replace('.', '/') + ".class");
         File dir = new File(new File(res.getFile()).getParentFile(), "test");
 
         Bundle b1 = Mockito.mock(Bundle.class);
@@ -50,7 +53,8 @@ public class OSGiToolsTest {
 
     @Test
     public void testGetResourceURL() {
-        URL someURL = getClass().getClassLoader().getResource(getClass().getName().replace('.', '/') + ".class");
+        URL someURL = getClass().getClassLoader().getResource(
+            getClass().getName().replace('.', '/') + ".class");
 
         Bundle bundle = Mockito.mock(Bundle.class);
         Mockito.when(bundle.getResource("org/foo/Bar.txt")).thenReturn(someURL);
@@ -73,7 +77,7 @@ public class OSGiToolsTest {
     private static class TestClassLoader extends URLClassLoader implements BundleReference {
         private final Bundle bundle;
 
-        public TestClassLoader(Bundle b, URL ... urls) {
+        public TestClassLoader(Bundle b, URL... urls) {
             super(urls);
             bundle = b;
         }
