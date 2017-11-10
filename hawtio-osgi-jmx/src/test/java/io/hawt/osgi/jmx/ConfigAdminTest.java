@@ -3,6 +3,7 @@ package io.hawt.osgi.jmx;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
@@ -11,9 +12,11 @@ import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 public class ConfigAdminTest {
+
     @Test
+    @SuppressWarnings("unchecked")
     public void testConfigAdminUpdate() throws Exception {
-        Configuration conf = Mockito.mock(Configuration.class);        
+        Configuration conf = Mockito.mock(Configuration.class);
 
         ConfigurationAdmin cas = Mockito.mock(ConfigurationAdmin.class);
         Mockito.when(cas.getConfiguration("mypid", null)).thenReturn(conf);
@@ -26,13 +29,14 @@ public class ConfigAdminTest {
 
         ConfigAdmin ca = new ConfigAdmin(bc);
 
-        Map<String, String> props = new HashMap<String, String>();
+        Map<String, String> props = new HashMap<>();
         props.put("A", "B");
         props.put("C D", "E F");
 
         ca.configAdminUpdate("mypid", props);
 
         Mockito.verify(cas).getConfiguration("mypid", null);
-        Mockito.verify(conf).update(new Hashtable<String, String>(props));
+        Mockito.verify(conf).update(new Hashtable<>(props));
     }
+
 }
