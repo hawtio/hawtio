@@ -40,7 +40,7 @@
             </goals>
             <configuration>
               <nodeVersion>v6.11.0</nodeVersion>
-              <yarnVersion>v0.27.5</yarnVersion>
+              <yarnVersion>v1.3.2</yarnVersion>
             </configuration>
           </execution>
           <execution>

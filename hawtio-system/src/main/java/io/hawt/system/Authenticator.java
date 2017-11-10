@@ -98,7 +98,7 @@ public class Authenticator {
         return AuthenticateResult.NO_CREDENTIALS;
     }
 
-    private static Subject doAuthenticate(String realm, String role, String rolePrincipalClasses, Configuration configuration,
+    public static Subject doAuthenticate(String realm, String role, String rolePrincipalClasses, Configuration configuration,
                                           final String username, final String password) {
         try {
 

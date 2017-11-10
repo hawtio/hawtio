@@ -20,17 +20,14 @@ public class LogoutServlet extends HttpServlet {
     private static final transient Logger LOG = LoggerFactory.getLogger(LogoutServlet.class);
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
-        if (session == null) {
-            ServletHelpers.doForbidden(resp);
-            return;
+        if (session != null) {
+            LOG.debug("Logging out user: {}", session.getAttribute("user"));
+            session.invalidate();
         }
+        resp.sendRedirect(req.getContextPath());
 
-        String username = (String) session.getAttribute("user");
-
-        LOG.debug("Logging out user: {}", username);
-        session.invalidate();
     }
 
 }

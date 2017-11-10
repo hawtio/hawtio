@@ -1,15 +1,7 @@
 package io.hawt.web.auth;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.security.AccessControlContext;
-import java.security.AccessController;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import javax.security.auth.Subject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -18,9 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import io.hawt.system.AuthHelpers;
+import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
-import io.hawt.web.ServletHelpers;
 import org.jolokia.converter.Converters;
 import org.jolokia.converter.json.JsonConvertOptions;
 import org.slf4j.Logger;
@@ -35,10 +26,9 @@ public class LoginServlet extends HttpServlet {
     private static final transient Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
     private static final int DEFAULT_SESSION_TIMEOUT = 1800;
 
-    protected Converters converters = new Converters();
-    protected JsonConvertOptions options = JsonConvertOptions.DEFAULT;
     protected ConfigManager config;
     private Integer timeout = DEFAULT_SESSION_TIMEOUT;
+    private AuthenticationConfiguration configuration;
 
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
@@ -59,46 +49,35 @@ public class LoginServlet extends HttpServlet {
             }
         }
 
+        configuration = (AuthenticationConfiguration) servletConfig.getServletContext().getAttribute(AuthenticationFilter.AUTHENTICATION_CONFIGURATION);
+
         LOG.info("hawtio login is using " + (timeout != null ? timeout + " sec." : "default") + " HttpSession timeout");
     }
 
     @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        forwardToLoginPage(req, resp, "", false);
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
 
-        resp.setContentType("application/json");
-        final PrintWriter out = resp.getWriter();
-
-        HttpSession session = req.getSession(false);
-
-        if (session != null) {
-            Subject subject = (Subject) session.getAttribute("subject");
-            if (subject == null) {
-                LOG.warn("No security subject stored in existing session, invalidating");
-                session.invalidate();
-                ServletHelpers.doForbidden(resp);
-                return;
-            }
-            sendResponse(session, subject, out);
-            return;
-        }
-
-        Subject subject = null;
-        if (System.getProperty("jboss.server.name") != null) {
-            // In WildFly / JBoss EAP privileged action is skipped at AuthenticationFilter
-            subject = (Subject) req.getAttribute("subject");
-        } else {
-            AccessControlContext acc = AccessController.getContext();
-            subject = Subject.getSubject(acc);
-        }
+        Subject subject = Authenticator.doAuthenticate(
+            configuration.getRealm(),
+            configuration.getRole(),
+            configuration.getRolePrincipalClasses(),
+            configuration.getConfiguration(),
+            username,
+            password);
 
         if (subject == null) {
-            ServletHelpers.doForbidden(resp);
+            forwardToLoginPage(req, resp, username, true);
             return;
         }
 
-        String username = AuthHelpers.getUsernameFromSubject(subject);
-
-        session = req.getSession(true);
+        HttpSession session = req.getSession(true);
         session.setAttribute("subject", subject);
         session.setAttribute("user", username);
         session.setAttribute("org.osgi.service.http.authentication.remote.user", username);
@@ -111,33 +90,13 @@ public class LoginServlet extends HttpServlet {
             LOG.debug("Http session timeout for user {} is {} sec.", username, session.getMaxInactiveInterval());
         }
 
-        sendResponse(session, subject, out);
+        resp.sendRedirect(req.getContextPath());
     }
 
-    protected void sendResponse(HttpSession session, Subject subject, PrintWriter out) {
-
-        Map<String, Object> answer = new HashMap<String, Object>();
-
-        List<Object> principals = new ArrayList<Object>();
-
-        for (Principal principal : subject.getPrincipals()) {
-            Map<String, String> data = new HashMap<String, String>();
-            data.put("type", principal.getClass().getName());
-            data.put("name", principal.getName());
-            principals.add(data);
-        }
-
-        List<Object> credentials = new ArrayList<Object>();
-        for (Object credential : subject.getPublicCredentials()) {
-            Map<String, Object> data = new HashMap<String, Object>();
-            data.put("type", credential.getClass().getName());
-            data.put("credential", credential);
-        }
-
-        answer.put("principals", principals);
-        answer.put("credentials", credentials);
-
-        ServletHelpers.writeObject(converters, options, out, answer);
+    private static void forwardToLoginPage(HttpServletRequest req, HttpServletResponse resp, String username,
+                                           boolean wrongPassword) throws ServletException, IOException {
+        req.setAttribute("username", username);
+        req.setAttribute("wrong_password", wrongPassword);
+        req.getRequestDispatcher("/login.jsp").forward(req, resp);
     }
-
 }

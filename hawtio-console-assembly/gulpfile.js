@@ -13,7 +13,7 @@ const gulp          = require('gulp'),
     hawtio          = require('@hawtio/node-backend'),
     tslint          = require('gulp-tslint'),
     tslintRules     = require('./tslint.json'),
-    yarn            = require('gulp-yarn');
+    exec            = require('child_process').exec;
 
 const plugins = gulpLoadPlugins({});
 
@@ -152,22 +152,16 @@ gulp.task('usemin', function() {
 //   )
 // );
 
-gulp.task('install-dependencies', function() {
-  return gulp.src(['package.json', 'yarn.lock'])
-    .pipe(gulp.dest(config.temp))
-    .pipe(yarn({
-      production: true,
-      flat: true,
-      noBinLinks: true,
-      noProgress: true,
-      ignoreScripts: true,
-      nonInteractive: true
-    }));
-});
-
-gulp.task('copy-dependencies', function() {
-  return gulp.src([config.temp + 'node_modules/**/*'])
-    .pipe(gulp.dest(config.distLibs));
+gulp.task('install-dependencies', function(cb) {
+  exec(`cp package.json yarn.lock ${config.temp} &&
+        cd ${config.temp} &&
+        yarn install --prod --flat --frozen-lockfile &&
+        cd .. &&
+        cp -R ${config.temp}/node_modules ${config.distLibs}`, function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    cb(err);
+  });
 });
 
 gulp.task('copy-images', function() {
@@ -262,6 +256,6 @@ gulp.task('reload', function() {
 //------------------------------------------------------------------------------
 
 gulp.task('build', callback => sequence('clean', 'tsc', 'template', 'template-docs', 'concat', 'less', 'usemin',
-  'install-dependencies', 'copy-dependencies', 'copy-images', '404', callback));
+  'install-dependencies', 'copy-images', '404', callback));
 
 gulp.task('default', callback => sequence('build', ['connect', 'watch']));

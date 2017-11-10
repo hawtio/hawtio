@@ -142,6 +142,7 @@ public class AuthenticationFilter implements Filter {
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
         String path = httpRequest.getServletPath();
         LOG.debug("Handling request for path {}", path);
 
@@ -162,49 +163,52 @@ public class AuthenticationFilter implements Filter {
             }
         }
 
-        LOG.debug("Doing authentication and authorization for path {}", path);
-        AuthenticateResult result = Authenticator.authenticate(
-            configuration.getRealm(),
-            configuration.getRole(),
-            configuration.getRolePrincipalClasses(),
-            configuration.getConfiguration(),
-            httpRequest,
-            subject -> executeAs(request, response, chain, subject));
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-        switch (result) {
-            case AUTHORIZED:
-                // request was executed using the authenticated subject, nothing more to do
-                break;
-            case NOT_AUTHORIZED:
-                ServletHelpers.doForbidden(httpResponse);
-                break;
-            case NO_CREDENTIALS:
-                if (configuration.isNoCredentials401()) {
-                    // return auth prompt 401
-                    ServletHelpers.doAuthPrompt(configuration.getRealm(), httpResponse);
-                } else {
-                    // return forbidden 403 so the browser login does not popup
-                    ServletHelpers.doForbidden(httpResponse);
-                }
-                break;
-        }
+        LoginRedirectFilter.redirect(httpRequest, httpResponse);
+
+//        LOG.debug("Doing authentication and authorization for path {}", path);
+//        AuthenticateResult result = Authenticator.authenticate(
+//            configuration.getRealm(),
+//            configuration.getRole(),
+//            configuration.getRolePrincipalClasses(),
+//            configuration.getConfiguration(),
+//            httpRequest,
+//            subject -> executeAs(request, response, chain, subject));
+//        HttpServletResponse httpResponse = (HttpServletResponse) response;
+//        switch (result) {
+//            case AUTHORIZED:
+//                // request was executed using the authenticated subject, nothing more to do
+//                break;
+//            case NOT_AUTHORIZED:
+//                ServletHelpers.doForbidden(httpResponse);
+//                break;
+//            case NO_CREDENTIALS:
+//                if (configuration.isNoCredentials401()) {
+//                    // return auth prompt 401
+//                    ServletHelpers.doAuthPrompt(configuration.getRealm(), httpResponse);
+//                } else {
+//                    // return forbidden 403 so the browser login does not popup
+//                    ServletHelpers.doForbidden(httpResponse);
+//                }
+//                break;
+//        }
     }
 
     private boolean validateSession(HttpServletRequest request, HttpSession session, Subject subject) {
-        String authHeader = request.getHeader(Authenticator.HEADER_AUTHORIZATION);
-        AuthInfo info = new AuthInfo();
-        if (authHeader != null && !authHeader.equals("")) {
-            Authenticator.extractAuthInfo(authHeader, (userName, password) -> info.username = userName);
-        }
-        String sessionUser = (String) session.getAttribute("user");
-        if (info.username == null || info.username.equals(sessionUser)) {
-            LOG.debug("Session subject - {}", subject);
-            return true;
-        } else {
-            LOG.debug("User differs, re-authenticating: {} (request) != {} (session)", info.username, sessionUser);
-            session.invalidate();
-            return false;
-        }
+//        String authHeader = request.getHeader(Authenticator.HEADER_AUTHORIZATION);
+//        AuthInfo info = new AuthInfo();
+//        if (authHeader != null && !authHeader.equals("")) {
+//            Authenticator.extractAuthInfo(authHeader, (userName, password) -> info.username = userName);
+//        }
+//        String sessionUser = (String) session.getAttribute("user");
+//        if (info.username == null || info.username.equals(sessionUser)) {
+//            LOG.debug("Session subject - {}", subject);
+//            return true;
+//        } else {
+//            LOG.debug("User differs, re-authenticating: {} (request) != {} (session)", info.username, sessionUser);
+//            session.invalidate();
+//            return false;
+//        }
+        return true;
     }
 
     private static void executeAs(final ServletRequest request, final ServletResponse response, final FilterChain chain, Subject subject) {

@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@hawtio/help": "~3.0.0",
-    "@hawtio/integration": "~3.0.0",
+    "@hawtio/integration": "3.0.26",
     "@hawtio/log": "~3.0.0"
   },
   "devDependencies": {
@@ -44,7 +44,6 @@
     "gulp-typescript": "^3.0.0",
     "gulp-uglify": "^3.0.0",
     "gulp-usemin": "~0.3.0",
-    "gulp-yarn": "^1.0.0",
     "run-sequence": "^2.0.0",
     "tslint": "^5.4.3",
     "typescript": "^2.0.0",
@@ -59,6 +58,8 @@
     "url": "https://github.com/hawtio/hawtio.git"
   },
   "resolutions": {
+    "@hawtio/utilities": "3.0.14",
+    "@hawtio/jmx": "3.0.76",
     "jquery": "2.2.4",
     "angular": "1.6.5",
     "angular-sanitize": "1.6.5",
@@ -71,9 +72,10 @@
     "patternfly": "3.26.5",
     "nopt": "3.0.6",
     "lru-cache": "3.2.0",
-    "glob": "3.1.21",
     "minimatch": "0.2.14",
     "underscore.string": "2.2.1",
-    "inherits": "1.0.2"
+    "inherits": "1.0.2",
+    "angular-patternfly": "4.12.1",
+    "angularjs-datatables": "0.5.9"
   }
 }

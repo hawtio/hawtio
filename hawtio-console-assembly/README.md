@@ -20,13 +20,13 @@ cd hawtio/hawtio-console-assembly
 ### Install project dependencies
 
 ```
-yarn install:dev
+yarn install
 ```
 
 ### Run the web application
 
 ```
-gulp
+yarn start
 ```
 
 ### Change the default proxy port
