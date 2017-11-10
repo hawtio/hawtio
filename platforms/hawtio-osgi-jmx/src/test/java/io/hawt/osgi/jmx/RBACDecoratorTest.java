@@ -184,13 +184,13 @@ public class RBACDecoratorTest {
         // op
         Map<String, Object> op = (Map<String, Object>) mbean.get("op");
         LOG.info("op = {}", op);
-        assertThat(((Map<String, Object>) op.get("removeQueue")).get("canInvoke"), equalTo((Object) false));
-        assertThat(((Map<String, Object>) op.get("addQueue")).get("canInvoke"), equalTo((Object) false));
-        assertThat(((Map<String, Object>) op.get("stop")).get("canInvoke"), equalTo((Object) true));
-        assertThat(((Map<String, Object>) op.get("start")).get("canInvoke"), equalTo((Object) true));
-        assertThat(((List<Map<String, Object>>) op.get("overloadedMethod")).get(0).get("canInvoke"), equalTo((Object) true));
-        assertThat(((List<Map<String, Object>>) op.get("overloadedMethod")).get(1).get("canInvoke"), equalTo((Object) false));
-        assertThat(((List<Map<String, Object>>) op.get("overloadedMethod")).get(2).get("canInvoke"), equalTo((Object) true));
+        assertThat(((Map<String, Object>) op.get("removeQueue")).get("canInvoke"), equalTo(false));
+        assertThat(((Map<String, Object>) op.get("addQueue")).get("canInvoke"), equalTo(false));
+        assertThat(((Map<String, Object>) op.get("stop")).get("canInvoke"), equalTo(true));
+        assertThat(((Map<String, Object>) op.get("start")).get("canInvoke"), equalTo(true));
+        assertThat(((List<Map<String, Object>>) op.get("overloadedMethod")).get(0).get("canInvoke"), equalTo(true));
+        assertThat(((List<Map<String, Object>>) op.get("overloadedMethod")).get(1).get("canInvoke"), equalTo(false));
+        assertThat(((List<Map<String, Object>>) op.get("overloadedMethod")).get(2).get("canInvoke"), equalTo(true));
 
         // opByString
         Map<String, Map<String, Boolean>> opByString = (Map<String, Map<String, Boolean>>) mbean.get("opByString");
