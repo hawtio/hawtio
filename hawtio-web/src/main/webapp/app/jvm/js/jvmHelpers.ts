@@ -5,7 +5,7 @@
 /// <reference path="../../core/js/coreHelpers.ts"/>
 module JVM {
 
-  export var log:Logging.Logger = Logger.get("JVM");
+  export var log: Logging.Logger = Logger.get("JVM");
 
   export var connectControllerKey = "jvmConnectSettings";
   export var connectionSettingsKey = Core.connectionSettingsKey;
@@ -46,19 +46,19 @@ module JVM {
       {
         content: '<i class=" icon-signin"></i> Remote',
         title: "Connect to a remote JVM running Jolokia",
-        isValid: (workspace:Workspace) => true,
+        isValid: (workspace: Workspace) => true,
         href: "#/jvm/connect"
       },
       {
         content: '<i class="icon-list-ul"></i> Local',
         title: "View a diagram of the route",
-        isValid: (workspace:Workspace) => hasLocalMBean(workspace),
+        isValid: (workspace: Workspace) => hasLocalMBean(workspace),
         href: "#/jvm/local"
       },
       {
         content: '<i class="icon-signin"></i> Discovery',
         title: "Discover",
-        isValid: (workspace:Workspace) => hasDiscoveryMBean(workspace),
+        isValid: (workspace: Workspace) => hasDiscoveryMBean(workspace),
         href: "#/jvm/discover"
       }
     ];

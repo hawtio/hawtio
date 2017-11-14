@@ -3,6 +3,9 @@
  * @main JVM
  */
 /// <reference path="jvmHelpers.ts"/>
+/// <reference path="../../core/js/corePlugin.ts"/>
+/// <reference path="../../core/js/helpRegistry.ts"/>
+/// <reference path="../../core/js/preferencesRegistry.ts"/>
 module JVM {
 
   export var rootPath = 'app/jvm';
@@ -20,7 +23,14 @@ module JVM {
 
   _module.constant('mbeanName', 'hawtio:type=JVMList');
 
-  _module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry", "ConnectOptions", ($location, workspace:Workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry, connectOptions:Core.ConnectOptions) => {
+  _module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry", "ConnectOptions", (
+      $location: ng.ILocationService,
+      workspace: Workspace,
+      viewRegistry,
+      layoutFull,
+      helpRegistry: Core.HelpRegistry,
+      preferencesRegistry: Core.PreferencesRegistry,
+      connectOptions: Core.ConnectOptions) => {
 
     viewRegistry[pluginName] = templatePath + 'layoutConnect.html';
     helpRegistry.addUserDoc('jvm', 'app/jvm/doc/help.md');
@@ -38,7 +48,7 @@ module JVM {
       href: () => {
         return '#/jvm/connect';
       },
-      isActive: (workspace:Workspace) => workspace.isLinkActive("jvm")
+      isActive: (workspace: Workspace) => workspace.isLinkActive("jvm")
     });
   }]);
 

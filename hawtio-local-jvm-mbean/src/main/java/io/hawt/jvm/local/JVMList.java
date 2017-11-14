@@ -30,43 +30,45 @@ public class JVMList implements JVMListMBean {
     private MBeanServer mBeanServer;
     private ObjectName objectName;
 
-    protected static final Map<String, String> vmAliasMap = new HashMap<String, String>();
-    protected static final Map<String, String> vmAliasOverrideMap = new HashMap<String, String>();
+    protected static final Map<String, String> VM_ALIAS_MAP = new HashMap<>();
+    protected static final Map<String, String> VM_ALIAS_OVERRIDE_MAP = new HashMap<>();
 
     static {
-        vmAliasMap.put("hawtio-app", "hawtio");
+        VM_ALIAS_MAP.put("hawtio-app", "hawtio");
 
-        vmAliasMap.put("com.intellij.idea.Main", "IntelliJ IDEA");
-        vmAliasMap.put("com.intellij.rt.execution.application.AppMain", "IntelliJ IDEA");
-        vmAliasMap.put("org.jetbrains.idea.maven.server.RemoteMavenServer", "IntelliJ IDEA");
-        vmAliasMap.put("idea maven server", "IntelliJ IDEA");
+        VM_ALIAS_MAP.put("com.intellij.idea.Main", "IntelliJ IDEA");
+        VM_ALIAS_MAP.put("com.intellij.rt.execution.application.AppMain", "IntelliJ IDEA");
+        VM_ALIAS_MAP.put("org.jetbrains.idea.maven.server.RemoteMavenServer", "IntelliJ IDEA");
+        VM_ALIAS_MAP.put("idea maven server", "IntelliJ IDEA");
+        VM_ALIAS_MAP.put("IntelliJ IDEA", "IntelliJ IDEA");
 
-        vmAliasMap.put("org.apache.karaf.main.Main", "Apache Karaf");
-        vmAliasMap.put("activemq.jar start", "Apache ActiveMQ");
+        VM_ALIAS_MAP.put("org.apache.karaf.main.Main", "Apache Karaf");
+        VM_ALIAS_MAP.put("activemq.jar start", "Apache ActiveMQ");
 
-        vmAliasMap.put("org.apache.catalina", "Apache Tomcat");
+        VM_ALIAS_MAP.put("org.apache.catalina", "Apache Tomcat");
 
-        vmAliasMap.put("jetty", "Jetty");
+        VM_ALIAS_MAP.put("jetty", "Jetty");
 
-        vmAliasMap.put("org.eclipse.equinox.launcher.Main", "Eclipse Equinox");
+        VM_ALIAS_MAP.put("org.eclipse.equinox.launcher.Main", "Eclipse Equinox");
 
-        vmAliasMap.put("scala.tools.nsc.MainGenericRunner", "Scala REPL");
+        VM_ALIAS_MAP.put("scala.tools.nsc.MainGenericRunner", "Scala REPL");
 
-        vmAliasMap.put("org.codehaus.groovy.tools.shell.Main", "Groovy Shell");
-        vmAliasMap.put("org.codehaus.groovy.tools.GroovyStarter", "Groovy Starter");
+        VM_ALIAS_MAP.put("org.codehaus.groovy.tools.shell.Main", "Groovy Shell");
+        VM_ALIAS_MAP.put("org.codehaus.groovy.tools.GroovyStarter", "Groovy Starter");
 
-        vmAliasMap.put("jboss-eap-6.1/jboss-modules.jar", "JBoss EAP 6");
-        vmAliasMap.put("wildfly", "WildFly");
+        VM_ALIAS_MAP.put("jboss-eap-6.1/jboss-modules.jar", "JBoss EAP 6");
+        VM_ALIAS_MAP.put("wildfly", "WildFly");
 
-        vmAliasMap.put("target/surefire", "Maven Surefire Test");
+        VM_ALIAS_MAP.put("target/surefire", "Maven Surefire Test");
 
-        vmAliasMap.put("org.apache.camel:camel-maven-plugin:run", "Apache Camel");
-        vmAliasMap.put("camel:run", "Apache Camel");
+        VM_ALIAS_MAP.put("org.apache.camel:camel-maven-plugin:run", "Apache Camel");
+        VM_ALIAS_MAP.put("camel:run", "Apache Camel");
 
-        vmAliasMap.put("org.springframework.boot.loader.JarLauncher shell", "Spring Boot Shell");
-        vmAliasMap.put("org.jboss.forge.bootstrap.Bootstrap", "JBoss Forge Shell");
+        VM_ALIAS_MAP.put("org.codehaus.plexus.classworlds.launcher.Launcher spring-boot:run", "Spring Boot");
+        VM_ALIAS_MAP.put("org.springframework.boot.loader.JarLauncher shell", "Spring Boot Shell");
+        VM_ALIAS_MAP.put("org.jboss.forge.bootstrap.Bootstrap", "JBoss Forge Shell");
 
-        vmAliasOverrideMap.put("${zk:root/http}/jolokia", "Fabric8");
+        VM_ALIAS_OVERRIDE_MAP.put("${zk:root/http}/jolokia", "Fabric8");
     }
 
     public JVMList() {
@@ -80,7 +82,9 @@ public class JVMList implements JVMListMBean {
                 listLocalJVMs();
             } catch (LinkageError e) {
                 // Some JVM's don't support com.sun.tools.attach.VirtualMachine
-                LOG.warn("Local JVM discovery disabled as this JVM cannot access com.sun.tools.attach.VirtualMachine due to: " + e.getMessage());
+                LOG.warn(
+                    "Local JVM discovery disabled as this JVM cannot access com.sun.tools.attach.VirtualMachine due to: {}",
+                    e.getMessage());
                 return;
             }
 
@@ -119,7 +123,7 @@ public class JVMList implements JVMListMBean {
 
     @Override
     public List<VMDescriptorDTO> listLocalJVMs() {
-        List<VMDescriptorDTO> rc = new ArrayList<VMDescriptorDTO>();
+        List<VMDescriptorDTO> rc = new ArrayList<>();
         try {
             List<VirtualMachineDescriptor> processes = VirtualMachine.list();
             for (VirtualMachineDescriptor process : processes) {
@@ -146,7 +150,7 @@ public class JVMList implements JVMListMBean {
                 rc.add(dto);
             }
         } catch (Exception e) {
-            LOG.warn("Failed to get local JVM processes due to: ", e.getMessage());
+            LOG.warn("Failed to get local JVM processes due to: {}", e.getMessage());
             throw new RuntimeException("Failed to get local JVM processes due to: " + e.getMessage(), e);
         }
         return rc;
@@ -249,17 +253,17 @@ public class JVMList implements JVMListMBean {
 
     static String getVmAlias(String displayName, String agentUrl) {
         String answer = displayName;
-        for (String key : vmAliasMap.keySet()) {
+        for (String key : VM_ALIAS_MAP.keySet()) {
             if (displayName.contains(key)) {
-                answer = vmAliasMap.get(key);
+                answer = VM_ALIAS_MAP.get(key);
                 break;
             }
         }
         // the agent url may help indicate what the process really is
         if (agentUrl != null) {
-            for (String key : vmAliasOverrideMap.keySet()) {
+            for (String key : VM_ALIAS_OVERRIDE_MAP.keySet()) {
                 if (agentUrl.contains(key)) {
-                    answer = vmAliasOverrideMap.get(key);
+                    answer = VM_ALIAS_OVERRIDE_MAP.get(key);
                     break;
                 }
             }
