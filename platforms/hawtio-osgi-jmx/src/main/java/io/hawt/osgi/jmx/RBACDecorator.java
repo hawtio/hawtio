@@ -21,6 +21,7 @@ import java.lang.management.ManagementFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,7 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
-
+import java.util.stream.Collectors;
 import javax.management.MBeanInfo;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -96,117 +97,123 @@ public class RBACDecorator implements RBACDecoratorMBean {
         try {
             ServiceReference<ConfigurationAdmin> cmRef = bundleContext.getServiceReference(ConfigurationAdmin.class);
             ServiceReference<JMXSecurityMBean> jmxSecRef = bundleContext.getServiceReference(JMXSecurityMBean.class);
-            if (cmRef != null && jmxSecRef != null) {
-                ConfigurationAdmin configAdmin = bundleContext.getService(cmRef);
-                JMXSecurityMBean jmxSec = bundleContext.getService(jmxSecRef);
-                if (configAdmin != null && jmxSec != null) {
-                    // 1. each pair of MBean/operation has to be marked with RBAC flag (can/can't invoke)
-                    // 2. the information is provided by org.apache.karaf.management.JMXSecurityMBean.canInvoke(java.util.Map)
-                    // 3. we'll peek into available configadmin jmx.acl* configs, to see which MBeans/operations have to
-                    //    be examined and which will produce same results
-                    // 4. only then we'll prepare Map as parameter for canInvoke()
+            if (cmRef == null || jmxSecRef == null) {
+                return;
+            }
 
-                    Configuration[] configurations = configAdmin.listConfigurations("(service.pid=jmx.acl*)");
-                    List<String> allJmxAclPids = new LinkedList<>();
-                    for (Configuration cfg : configurations) {
-                        allJmxAclPids.add(cfg.getPid());
-                    }
-                    if (allJmxAclPids.size() == 0) {
-                        return;
-                    }
+            ConfigurationAdmin configAdmin = bundleContext.getService(cmRef);
+            JMXSecurityMBean jmxSec = bundleContext.getService(jmxSecRef);
+            if (configAdmin == null || jmxSec == null) {
+                return;
+            }
 
-                    Map<String, Map<String, Object>> domains = (Map<String, Map<String, Object>>) result.get("domains");
+            // 1. each pair of MBean/operation has to be marked with RBAC flag (can/can't invoke)
+            // 2. the information is provided by org.apache.karaf.management.JMXSecurityMBean.canInvoke(java.util.Map)
+            // 3. we'll peek into available configadmin jmx.acl* configs, to see which MBeans/operations have to
+            //    be examined and which will produce same results
+            // 4. only then we'll prepare Map as parameter for canInvoke()
 
-                    // cache contains MBeanInfos for different MBeans/ObjectNames
-                    Map<String, Map<String, Object>> cache = (Map<String, Map<String, Object>>) result.get("cache");
-                    // new cache will contain MBeanInfos + RBAC info
-                    Map<String, Map<String, Object>> rbacCache = new HashMap<>();
+            Configuration[] configurations = configAdmin.listConfigurations("(service.pid=jmx.acl*)");
+            if (configurations == null) {
+                return;
+            }
+            List<String> allJmxAclPids = Arrays.stream(configurations)
+                .map(Configuration::getPid)
+                .collect(Collectors.toCollection(LinkedList::new));
+            if (allJmxAclPids.isEmpty()) {
+                return;
+            }
 
-                    // the fact that some MBeans share JSON MBeanInfo doesn't mean that they can share RBAC info
-                    // - each MBean's name may have RBAC information configured in different PIDs.
+            Map<String, Map<String, Object>> domains = (Map<String, Map<String, Object>>) result.get("domains");
 
-                    // when iterating through all reapeating MBeans that share MBeanInfo (that doesn't have RBAC info
-                    // yet), we have to decide if it'll use shared info after RBAC check or will switch to dedicated
-                    // info. we have to be careful not to end with most MBeans *not* sharing MBeanInfo (in case if
-                    // somehow the shared info will be "special case" from RBAC point of view)
+            // cache contains MBeanInfos for different MBeans/ObjectNames
+            Map<String, Map<String, Object>> cache = (Map<String, Map<String, Object>>) result.get("cache");
+            // new cache will contain MBeanInfos + RBAC info
+            Map<String, Map<String, Object>> rbacCache = new HashMap<>();
 
-                    Map<String, List<String>> queryForMBeans = new HashMap<>();
-                    Map<String, List<String>> queryForMBeanOperations = new HashMap<>();
+            // the fact that some MBeans share JSON MBeanInfo doesn't mean that they can share RBAC info
+            // - each MBean's name may have RBAC information configured in different PIDs.
 
-                    for (String domain : domains.keySet()) {
-                        Map<String, Object> domainMBeansCheck = new HashMap<>(domains.get(domain));
-                        Map<String, Object> domainMBeans = domains.get(domain);
-                        for (String name : domainMBeansCheck.keySet()) {
-                            Object mBeanInfo = domainMBeansCheck.get(name);
-                            String fullName = domain + ":" + name;
-                            ObjectName n = new ObjectName(fullName);
-                            if (mBeanInfo instanceof Map) {
-                                // not shared JSONified MBeanInfo
-                                prepareKarafRbacInvocations(fullName, (Map<String, Object>) mBeanInfo,
-                                        queryForMBeans, queryForMBeanOperations);
-                            } else /*if (mBeanInfo instanceof String)*/{
-                                // shared JSONified MBeanInfo
+            // when iterating through all repeating MBeans that share MBeanInfo (that doesn't have RBAC info
+            // yet), we have to decide if it'll use shared info after RBAC check or will switch to dedicated
+            // info. we have to be careful not to end with most MBeans *not* sharing MBeanInfo (in case if
+            // somehow the shared info will be "special case" from RBAC point of view)
 
-                                // shard mbeanNames sharing MBeanInfo by the hierarchy of jmx.acl* PIDs used to
-                                // check RBAC info
-                                String key = (String) mBeanInfo;
-                                String pidListKey = pidListKey(allJmxAclPids, n);
-                                if (!rbacCache.containsKey(key + ":" + pidListKey)) {
-                                    // shallow copy - we can share op/not/attr/desc, but we put specific
-                                    // canInvoke/opByString keys
-                                    HashMap<String, Object> sharedMBeanAndRbacInfo = new HashMap<>(cache.get(key));
-                                    rbacCache.put(key + ":" + pidListKey, sharedMBeanAndRbacInfo);
-                                    // we'll be checking RBAC only for single (first) MBean having this pidListKey
-                                    prepareKarafRbacInvocations(fullName, sharedMBeanAndRbacInfo,
-                                            queryForMBeans, queryForMBeanOperations);
-                                }
-                                // switch key from shared MBeanInfo-only to shared MBean+RbacInfo
-                                domainMBeans.put(name, key + ":" + pidListKey);
-                            }
+            Map<String, List<String>> queryForMBeans = new HashMap<>();
+            Map<String, List<String>> queryForMBeanOperations = new HashMap<>();
+
+            for (String domain : domains.keySet()) {
+                Map<String, Object> domainMBeansCheck = new HashMap<>(domains.get(domain));
+                Map<String, Object> domainMBeans = domains.get(domain);
+                for (String name : domainMBeansCheck.keySet()) {
+                    Object mBeanInfo = domainMBeansCheck.get(name);
+                    String fullName = domain + ":" + name;
+                    ObjectName n = new ObjectName(fullName);
+                    if (mBeanInfo instanceof Map) {
+                        // not shared JSONified MBeanInfo
+                        prepareKarafRbacInvocations(fullName, (Map<String, Object>) mBeanInfo,
+                            queryForMBeans, queryForMBeanOperations);
+                    } else {
+                        // shared JSONified MBeanInfo
+
+                        // shard mbeanNames sharing MBeanInfo by the hierarchy of jmx.acl* PIDs used to
+                        // check RBAC info
+                        String key = (String) mBeanInfo;
+                        String pidListKey = pidListKey(allJmxAclPids, n);
+                        if (!rbacCache.containsKey(key + ":" + pidListKey)) {
+                            // shallow copy - we can share op/not/attr/desc, but we put specific
+                            // canInvoke/opByString keys
+                            HashMap<String, Object> sharedMBeanAndRbacInfo = new HashMap<>(cache.get(key));
+                            rbacCache.put(key + ":" + pidListKey, sharedMBeanAndRbacInfo);
+                            // we'll be checking RBAC only for single (first) MBean having this pidListKey
+                            prepareKarafRbacInvocations(fullName, sharedMBeanAndRbacInfo,
+                                queryForMBeans, queryForMBeanOperations);
                         }
+                        // switch key from shared MBeanInfo-only to shared MBean+RbacInfo
+                        domainMBeans.put(name, key + ":" + pidListKey);
                     }
-
-                    // RBAC per MBeans (can invoke *any* operation or attribute?)
-                    TabularData dataForMBeans = jmxSec.canInvoke(queryForMBeans);
-                    Collection<?> results = dataForMBeans.values();
-                    for (Object cd : results) {
-                        ObjectName objectName = new ObjectName((String) ((CompositeData) cd).get("ObjectName"));
-                        boolean canInvoke = ((CompositeData) cd).get("CanInvoke") != null ? (Boolean) ((CompositeData) cd).get("CanInvoke") : false;
-                        Object mBeanInfoOrKey = domains.get(objectName.getDomain()).get(objectName.getKeyPropertyListString());
-                        Map<String, Object> mBeanInfo;
-                        if (mBeanInfoOrKey instanceof Map) {
-                            mBeanInfo = (Map<String, Object>) mBeanInfoOrKey;
-                        } else /*if (mBeanInfoOrKey instanceof String) */{
-                            mBeanInfo = rbacCache.get(mBeanInfoOrKey.toString());
-                        }
-                        if (mBeanInfo != null) {
-                            mBeanInfo.put("canInvoke", canInvoke);
-                        }
-                    }
-
-                    // RBAC per { MBean,operation } (can invoke status for each operation)
-                    TabularData dataForMBeanOperations = jmxSec.canInvoke(queryForMBeanOperations);
-                    results = dataForMBeanOperations.values();
-                    for (Object cd : results) {
-                        ObjectName objectName = new ObjectName((String) ((CompositeData) cd).get("ObjectName"));
-                        String method = (String) ((CompositeData) cd).get("Method");
-                        boolean canInvoke = ((CompositeData) cd).get("CanInvoke") != null ? (Boolean) ((CompositeData) cd).get("CanInvoke") : false;
-                        Object mBeanInfoOrKey = domains.get(objectName.getDomain()).get(objectName.getKeyPropertyListString());
-                        Map<String, Object> mBeanInfo;
-                        if (mBeanInfoOrKey instanceof Map) {
-                            mBeanInfo = (Map<String, Object>) mBeanInfoOrKey;
-                        } else /*if (mBeanInfoOrKey instanceof String) */{
-                            mBeanInfo = rbacCache.get(mBeanInfoOrKey.toString());
-                        }
-                        if (mBeanInfo != null) {
-                            decorateCanInvoke(mBeanInfo, method, canInvoke);
-                        }
-                    }
-
-                    result.remove("cache");
-                    result.put("cache", rbacCache);
                 }
             }
+
+            // RBAC per MBeans (can invoke *any* operation or attribute?)
+            TabularData dataForMBeans = jmxSec.canInvoke(queryForMBeans);
+            Collection<?> results = dataForMBeans.values();
+            for (Object cd : results) {
+                ObjectName objectName = new ObjectName((String) ((CompositeData) cd).get("ObjectName"));
+                boolean canInvoke = ((CompositeData) cd).get("CanInvoke") != null ? (Boolean) ((CompositeData) cd).get("CanInvoke") : false;
+                Object mBeanInfoOrKey = domains.get(objectName.getDomain()).get(objectName.getKeyPropertyListString());
+                Map<String, Object> mBeanInfo;
+                if (mBeanInfoOrKey instanceof Map) {
+                    mBeanInfo = (Map<String, Object>) mBeanInfoOrKey;
+                } else {
+                    mBeanInfo = rbacCache.get(mBeanInfoOrKey.toString());
+                }
+                if (mBeanInfo != null) {
+                    mBeanInfo.put("canInvoke", canInvoke);
+                }
+            }
+
+            // RBAC per { MBean,operation } (can invoke status for each operation)
+            TabularData dataForMBeanOperations = jmxSec.canInvoke(queryForMBeanOperations);
+            results = dataForMBeanOperations.values();
+            for (Object cd : results) {
+                ObjectName objectName = new ObjectName((String) ((CompositeData) cd).get("ObjectName"));
+                String method = (String) ((CompositeData) cd).get("Method");
+                boolean canInvoke = ((CompositeData) cd).get("CanInvoke") != null ? (Boolean) ((CompositeData) cd).get("CanInvoke") : false;
+                Object mBeanInfoOrKey = domains.get(objectName.getDomain()).get(objectName.getKeyPropertyListString());
+                Map<String, Object> mBeanInfo;
+                if (mBeanInfoOrKey instanceof Map) {
+                    mBeanInfo = (Map<String, Object>) mBeanInfoOrKey;
+                } else {
+                    mBeanInfo = rbacCache.get(mBeanInfoOrKey.toString());
+                }
+                if (mBeanInfo != null) {
+                    decorateCanInvoke(mBeanInfo, method, canInvoke);
+                }
+            }
+
+            result.remove("cache");
+            result.put("cache", rbacCache);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             // simply do not decorate
@@ -224,7 +231,7 @@ public class RBACDecorator implements RBACDecoratorMBean {
     private void prepareKarafRbacInvocations(String fullName, /*inout*/Map<String, Object> mBeanInfo,
                                              Map<String, List<String>> queryForMBeans,
                                              Map<String, List<String>> queryForMBeanOperations) {
-        queryForMBeans.put(fullName, new ArrayList<String>());
+        queryForMBeans.put(fullName, new ArrayList<>());
         List<String> operations = operations((Map<String, Object>) mBeanInfo.get("op"));
         // prepare opByString for MBeainInfo
         HashMap<String, Object> opByString = new HashMap<>();
@@ -270,7 +277,7 @@ public class RBACDecorator implements RBACDecoratorMBean {
             List<Map<String, Object>> toStringify;
             if (operationOrListOfOperations instanceof List) {
                 toStringify = (List<Map<String, Object>>) operationOrListOfOperations;
-            } else /*if (operationOrListOfOperations instanceof Map) */{
+            } else {
                 toStringify = Collections.singletonList((Map<String, Object>) operationOrListOfOperations);
             }
             for (Map<String, Object> op : toStringify) {
@@ -375,7 +382,7 @@ public class RBACDecorator implements RBACDecoratorMBean {
                 boolean match = true;
                 for (int i = 0; i < idStrArray.length; i++) {
                     if (!(idStrArray[i].equals(JMX_OBJECTNAME_PROPERTY_WILDCARD)
-                            || idStrArray[i].equals(pidStrArray[i]))) {
+                        || idStrArray[i].equals(pidStrArray[i]))) {
                         match = false;
                         break;
                     }
@@ -446,7 +453,7 @@ public class RBACDecorator implements RBACDecoratorMBean {
             for (Map<String, Object> m : overloaded) {
                 String args = argsToString((List<Map<String, String>>) m.get("args"));
                 if ((methodNameAndArgs.length == 1 && args.equals(""))
-                        || (methodNameAndArgs.length > 1 && args.equals(methodNameAndArgs[1]))) {
+                    || (methodNameAndArgs.length > 1 && args.equals(methodNameAndArgs[1]))) {
                     m.put("canInvoke", canInvoke);
                     break;
                 }
