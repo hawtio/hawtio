@@ -27,7 +27,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
-      <version>1.5.5</version>
+      <version>1.5.6</version>
       <scope>test</scope>
     </dependency>
 
