@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.20.0';
+var _apacheCamelModelVersion = '2.20.1';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -9041,6 +9041,14 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "dataFormat": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the Swagger Parameter data format.",
+          "title": "Data Format",
+          "required": false,
+          "deprecated": false
+        },
         "value": {
           "kind": "element",
           "type": "array",
@@ -9500,6 +9508,14 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "dataFormat": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Sets the Swagger Parameter data format.",
+          "title": "Data Format",
+          "required": false,
+          "deprecated": false
+        },
         "value": {
           "kind": "element",
           "type": "array",
@@ -9877,6 +9893,15 @@ var _apacheCamelModel ={
           "defaultValue": "false",
           "description": "Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it allows to discover these contexts if false then only the current CamelContext is in use.",
           "title": "Api Context Listing",
+          "required": false,
+          "deprecated": false
+        },
+        "apiVendorExtension": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "false",
+          "description": "Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information as vendor extension (eg keys starting with x-) such as route ids class names etc. Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs.",
+          "title": "Api Vendor Extension",
           "required": false,
           "deprecated": false
         },
@@ -10616,6 +10641,31 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
+        "whitelistEnabled": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "true",
+          "description": "Define if Whitelist feature is enabled or not",
+          "title": "Whitelist Enabled",
+          "required": false,
+          "deprecated": false
+        },
+        "allowedUnmarshallObjects": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Define the allowed objects to be unmarshalled. You can specify the FQN class name of allowed objects and you can use comma to separate multiple entries. It is also possible to use wildcards and regular expression which is based on the pattern defined by link org.apache.camel.util.EndpointHelpermatchPattern(String String). Denied objects takes precedence over allowed objects.",
+          "title": "Allowed Unmarshall Objects",
+          "required": false,
+          "deprecated": false
+        },
+        "deniedUnmarshallObjects": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Define the denied objects to be unmarshalled. You can specify the FQN class name of deined objects and you can use comma to separate multiple entries. It is also possible to use wildcards and regular expression which is based on the pattern defined by link org.apache.camel.util.EndpointHelpermatchPattern(String String). Denied objects takes precedence over allowed objects.",
+          "title": "Denied Unmarshall Objects",
+          "required": false,
+          "deprecated": false
+        },
         "validation": {
           "kind": "attribute",
           "type": "boolean",
@@ -11199,6 +11249,31 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "Hessian data format is used for marshalling and unmarshalling messages using Cauchos Hessian format.",
       "properties": {
+        "whitelistEnabled": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "true",
+          "description": "Define if Whitelist feature is enabled or not",
+          "title": "Whitelist Enabled",
+          "required": false,
+          "deprecated": false
+        },
+        "allowedUnmarshallObjects": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Define the allowed objects to be unmarshalled",
+          "title": "Allowed Unmarshall Objects",
+          "required": false,
+          "deprecated": false
+        },
+        "deniedUnmarshallObjects": {
+          "kind": "attribute",
+          "type": "string",
+          "description": "Define the denied objects to be unmarshalled",
+          "title": "Denied Unmarshall Objects",
+          "required": false,
+          "deprecated": false
+        },
         "contentTypeHeader": {
           "kind": "attribute",
           "type": "boolean",
