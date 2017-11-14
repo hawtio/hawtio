@@ -36959,6 +36959,9 @@ var JVM;
     JVM.hasDiscoveryMBean = hasDiscoveryMBean;
 })(JVM || (JVM = {}));
 /// <reference path="jvmHelpers.ts"/>
+/// <reference path="../../core/js/corePlugin.ts"/>
+/// <reference path="../../core/js/helpRegistry.ts"/>
+/// <reference path="../../core/js/preferencesRegistry.ts"/>
 var JVM;
 (function (JVM) {
     JVM.rootPath = 'app/jvm';
