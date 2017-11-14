@@ -1,7 +1,9 @@
 
 ### Change Log
 
-#### 1.5.6 (To be released)
+#### 1.5.7 (To be released)
+
+#### 1.5.6
 
 * Improved Spring Boot support
 * Now JMX attributes/operations tabs show ObjectName at the content header
