@@ -163,7 +163,11 @@
   </filter>
   <filter-mapping>
     <filter-name>LoginRedirectFilter</filter-name>
-    <url-pattern></url-pattern>
+    <url-pattern>*.html</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>LoginRedirectFilter</filter-name>
+    <url-pattern>/</url-pattern>
   </filter-mapping>
 
   <servlet>

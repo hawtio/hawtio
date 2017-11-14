@@ -12,8 +12,6 @@ import javax.servlet.http.HttpSession;
 
 import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
-import org.jolokia.converter.Converters;
-import org.jolokia.converter.json.JsonConvertOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +47,7 @@ public class LoginServlet extends HttpServlet {
             }
         }
 
-        configuration = (AuthenticationConfiguration) servletConfig.getServletContext().getAttribute(AuthenticationFilter.AUTHENTICATION_CONFIGURATION);
+        configuration = ConfigurationManager.getConfiguration(servletConfig.getServletContext());
 
         LOG.info("hawtio login is using " + (timeout != null ? timeout + " sec." : "default") + " HttpSession timeout");
     }

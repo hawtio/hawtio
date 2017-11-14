@@ -4,16 +4,12 @@ import java.net.URL;
 
 import io.hawt.config.ConfigFacade;
 import io.hawt.springboot.HawtPlugin;
+import io.hawt.web.auth.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import static io.hawt.web.auth.AuthenticationFilter.HAWTIO_AUTHENTICATION_ENABLED;
-import static io.hawt.web.auth.AuthenticationFilter.HAWTIO_REALM;
-import static io.hawt.web.auth.AuthenticationFilter.HAWTIO_ROLES;
-import static io.hawt.web.auth.AuthenticationFilter.HAWTIO_ROLE_PRINCIPAL_CLASSES;
 
 @SpringBootApplication
 public class SampleAuthenticationSpringBootService {
@@ -23,7 +19,7 @@ public class SampleAuthenticationSpringBootService {
 
 
     public static void main(String[] args) {
-        System.setProperty(HAWTIO_AUTHENTICATION_ENABLED, "false");
+        System.setProperty(ConfigurationManager.HAWTIO_AUTHENTICATION_ENABLED, "false");
         SpringApplication.run(SampleAuthenticationSpringBootService.class, args);
     }
 
@@ -57,11 +53,11 @@ public class SampleAuthenticationSpringBootService {
         }
         LOG.info("Using login.file : " + System.getProperty("login.file"));
 
-        setSystemPropertyIfNotSet(HAWTIO_ROLES, "admin");
-        setSystemPropertyIfNotSet(HAWTIO_REALM, "hawtio");
-        setSystemPropertyIfNotSet(HAWTIO_ROLE_PRINCIPAL_CLASSES, "org.eclipse.jetty.jaas.JAASRole");
+        setSystemPropertyIfNotSet(ConfigurationManager.HAWTIO_ROLES, "admin");
+        setSystemPropertyIfNotSet(ConfigurationManager.HAWTIO_REALM, "hawtio");
+        setSystemPropertyIfNotSet(ConfigurationManager.HAWTIO_ROLE_PRINCIPAL_CLASSES, "org.eclipse.jetty.jaas.JAASRole");
         if (!Boolean.getBoolean("debugMode")) {
-            System.setProperty(HAWTIO_AUTHENTICATION_ENABLED, "true");
+            System.setProperty(ConfigurationManager.HAWTIO_AUTHENTICATION_ENABLED, "true");
         }
         return new ConfigFacade();
     }

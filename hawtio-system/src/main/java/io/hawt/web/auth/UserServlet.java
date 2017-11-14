@@ -26,8 +26,8 @@ public class UserServlet extends HttpServlet {
         }
 
         // JVM system properties can override always
-        if (System.getProperty(AuthenticationFilter.HAWTIO_AUTHENTICATION_ENABLED) != null) {
-            this.authenticationEnabled = Boolean.getBoolean(AuthenticationFilter.HAWTIO_AUTHENTICATION_ENABLED);
+        if (System.getProperty(ConfigurationManager.HAWTIO_AUTHENTICATION_ENABLED) != null) {
+            this.authenticationEnabled = Boolean.getBoolean(ConfigurationManager.HAWTIO_AUTHENTICATION_ENABLED);
         }
     }
 

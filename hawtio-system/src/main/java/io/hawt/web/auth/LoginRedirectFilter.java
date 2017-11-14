@@ -1,8 +1,5 @@
 package io.hawt.web.auth;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,8 +15,7 @@ public class LoginRedirectFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        configuration = (AuthenticationConfiguration) filterConfig.getServletContext().getAttribute(
-            AuthenticationFilter.AUTHENTICATION_CONFIGURATION);
+        configuration = ConfigurationManager.getConfiguration(filterConfig.getServletContext());
     }
 
     @Override
