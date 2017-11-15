@@ -193,6 +193,19 @@
           <groupId>org.wildfly</groupId>
           <artifactId>wildfly-servlet-dist</artifactId>
           <version>${wildfly-version}</version>
+          <addUser>
+            <users>
+              <user>
+                <username>admin</username>
+                <password>admin</password>
+              </user>
+            </users>
+          </addUser>
+          <beforeDeployment>
+            <scripts>
+              <script>${project.basedir}/etc/security.cli</script>
+            </scripts>
+          </beforeDeployment>
         </configuration>
       </plugin>
 

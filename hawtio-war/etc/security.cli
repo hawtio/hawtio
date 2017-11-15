@@ -1,0 +1,13 @@
+# Adds hawtio security domain configuration to WildFly
+
+batch
+
+/system-property=hawtio.authenticationEnabled/:add(value=true)
+/system-property=hawtio.realm/:add(value=hawtio-domain)
+/subsystem=security/security-domain=hawtio-domain/:add(cache-type=default)
+/subsystem=security/security-domain=hawtio-domain/authentication=classic:add
+/subsystem=security/security-domain=hawtio-domain/authentication=classic/login-module=hawtio-domain/:add(code=RealmDirect,flag=optional,module-options=realm=ManagementRealm)
+
+run-batch
+
+reload
