@@ -4,11 +4,11 @@
     "declaration": false,
     "outFile": "compiled.js",
     "typeRoots": [
-      "node_modules/@types",
-      "node_modules/@hawtio"
+      "app/node_modules/@types",
+      "app/node_modules/@hawtio"
     ]
   },
   "include": [
-    "src/**/*.ts"
+    "app/src/**/*.ts"
   ]
 }

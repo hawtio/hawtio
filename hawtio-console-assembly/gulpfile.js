@@ -21,10 +21,11 @@ const config = {
   proxyPort      : argv.port || 8181,
   targetPath     : argv.path || '/hawtio/jolokia',
   logLevel       : argv.debug ? logger.DEBUG : logger.INFO,
-  src            : 'src/',
-  srcTs          : 'src/**/*.ts',
-  srcLess        : 'src/**/*.less',
-  srcTemplates   : 'src/**/!(index).html',
+  app            : 'app/',
+  src            : 'app/src/',
+  srcTs          : 'app/src/**/*.ts',
+  srcLess        : 'app/src/**/*.less',
+  srcTemplates   : 'app/src/**/!(index).html',
   docTemplates   : '../@(CHANGES|FAQ).md',
   templateModule : 'hawtio-console-assembly-templates',
   temp           : 'temp/',
@@ -119,7 +120,7 @@ gulp.task('less', function() {
 gulp.task('usemin', function() {
   return gulp.src(config.src + 'index.html')
     .pipe(plugins.usemin({
-      css: [plugins.minifyCss({ keepBreaks: true }), 'concat'],
+      css: [plugins.cleanCss(), 'concat'],
       js: [
         plugins.sourcemaps.init({
           loadMaps: true
@@ -153,11 +154,10 @@ gulp.task('usemin', function() {
 // );
 
 gulp.task('install-dependencies', function(cb) {
-  exec(`cp package.json yarn.lock ${config.temp} &&
-        cd ${config.temp} &&
+  exec(`cd ${config.app} &&
         yarn install --prod --flat --frozen-lockfile &&
         cd .. &&
-        cp -R ${config.temp}/node_modules ${config.distLibs}`, function (err, stdout, stderr) {
+        cp -R ${config.app}/node_modules ${config.distLibs}`, function (err, stdout, stderr) {
     console.log(stdout);
     console.log(stderr);
     cb(err);
@@ -165,7 +165,7 @@ gulp.task('install-dependencies', function(cb) {
 });
 
 gulp.task('copy-images', function() {
-  var hawtioDependencies = config.temp + 'node_modules/@hawtio';
+  var hawtioDependencies = config.app + 'node_modules/@hawtio';
   var dirs = fs.readdirSync(hawtioDependencies);
   var patterns = [];
   dirs.forEach(function(dir) {
@@ -181,7 +181,7 @@ gulp.task('copy-images', function() {
     }
   });
   // Add PatternFly images package in dist
-  patterns.push(config.temp + 'node_modules/patternfly/dist/img/**/*');
+  patterns.push(config.app + 'node_modules/patternfly/dist/img/**/*');
   return gulp.src(patterns)
     .pipe(plugins.debug({ title: 'image copy' }))
     .pipe(gulp.dest(config.distImg));

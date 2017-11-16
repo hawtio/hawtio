@@ -2,19 +2,10 @@
   "name": "@hawtio/console-assembly",
   "version": "2.0.0",
   "description": "The hawt.io web console helps you manage your JVM stuff and stay cool!",
-  "main": "dist/hawtio-console-assembly.js",
-  "types": "dist/hawtio-console-assembly.d.ts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
+    "postinstall": "cd app && yarn install --prod --flat",
     "start": "gulp",
     "build": "gulp build"
-  },
-  "dependencies": {
-    "@hawtio/help": "~3.0.0",
-    "@hawtio/integration": "3.0.26",
-    "@hawtio/log": "~3.0.0"
   },
   "devDependencies": {
     "@hawtio/node-backend": "^3.0.0",
@@ -33,7 +24,6 @@
     "gulp-if": "^2.0.2",
     "gulp-less": "^3.0.0",
     "gulp-load-plugins": "^1.0.0",
-    "gulp-minify-css": "^1.0.0",
     "gulp-notify": "^3.0.0",
     "gulp-rename": "^1.0.0",
     "gulp-replace": "^0.6.1",
@@ -56,26 +46,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/hawtio/hawtio.git"
-  },
-  "resolutions": {
-    "@hawtio/utilities": "3.0.14",
-    "@hawtio/jmx": "3.0.76",
-    "jquery": "2.2.4",
-    "angular": "1.6.5",
-    "angular-sanitize": "1.6.5",
-    "angular-ui-bootstrap": "2.5.0",
-    "bootstrap-select": "1.10.0",
-    "@types/jquery": "2.0.48",
-    "datatables.net": "1.10.15",
-    "moment": "2.18.1",
-    "lodash": "4.17.4",
-    "patternfly": "3.26.5",
-    "nopt": "3.0.6",
-    "lru-cache": "3.2.0",
-    "minimatch": "0.2.14",
-    "underscore.string": "2.2.1",
-    "inherits": "1.0.2",
-    "angular-patternfly": "4.12.1",
-    "angularjs-datatables": "0.5.9"
   }
 }
