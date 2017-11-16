@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "dependencies": {
     "@hawtio/help": "~3.0.0",
-    "@hawtio/integration": "3.0.26",
+    "@hawtio/integration": "~3.0.0",
     "@hawtio/log": "~3.0.0"
   },
   "flat": true,
