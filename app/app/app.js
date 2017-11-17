@@ -42237,6 +42237,7 @@ var RBAC;
 })(RBAC || (RBAC = {}));
 /// <reference path="../../baseIncludes.ts"/>
 /// <reference path="../../baseHelpers.ts"/>
+/// <reference path="../../core/js/coreServices.ts"/>
 /// <reference path="../../core/js/workspace.ts"/>
 /// <reference path="rbacHelpers.ts"/>
 /// <reference path="rbacTasks.ts"/>
