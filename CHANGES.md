@@ -3,6 +3,8 @@
 
 #### 1.5.7 (To be released)
 
+* Bug fixes
+
 #### 1.5.6
 
 * Improved Spring Boot support
