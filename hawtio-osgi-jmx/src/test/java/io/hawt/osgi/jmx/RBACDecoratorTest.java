@@ -94,6 +94,7 @@ public class RBACDecoratorTest {
     public void decorateCanInvoke() throws Exception {
         BundleContext bc = setUpMocksForDecorate();
         RBACDecorator decorator = new RBACDecorator(bc);
+        decorator.setVerify(true);
 
         String inputJson = getClass().getSimpleName() + "-input.json";
         Map<String, Object> result = new ObjectMapper().readValue(
