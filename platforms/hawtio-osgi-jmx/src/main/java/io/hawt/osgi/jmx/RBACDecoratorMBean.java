@@ -39,4 +39,17 @@ public interface RBACDecoratorMBean {
      */
     void decorate(Map<String, Object> map) throws Exception;
 
+    /**
+     * Returns if it is in verify mode. When it runs in verify mode, consistency of RBAC information is
+     * checked upon decorate.
+     * @return verify mode
+     */
+    boolean getVerify();
+
+    /**
+     * Sets verify mode.
+     * @param verify verify mode to set
+     */
+    void setVerify(boolean verify);
+
 }

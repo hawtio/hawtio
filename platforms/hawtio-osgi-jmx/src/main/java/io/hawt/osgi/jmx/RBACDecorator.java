@@ -66,6 +66,11 @@ public class RBACDecorator implements RBACDecoratorMBean {
     private ObjectName objectName;
     private MBeanServer mBeanServer;
 
+    /**
+     * Run with verify mode.
+     */
+    private boolean verify = false;
+
     public RBACDecorator(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
@@ -149,6 +154,11 @@ public class RBACDecorator implements RBACDecoratorMBean {
 
             result.remove("cache");
             result.put("cache", rbacCache);
+
+            if (verify) {
+                verify(result);
+            }
+
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             // simply do not decorate
@@ -194,7 +204,8 @@ public class RBACDecorator implements RBACDecoratorMBean {
     }
 
     @SuppressWarnings("unchecked")
-    private void doQueryForMBeans(JMXSecurityMBean jmxSec, Map<String, Map<String, Object>> domains, Map<String, Map<String, Object>> rbacCache, Map<String, List<String>> queryForMBeans) throws Exception {
+    private void doQueryForMBeans(JMXSecurityMBean jmxSec, Map<String, Map<String, Object>> domains,
+                                  Map<String, Map<String, Object>> rbacCache, Map<String, List<String>> queryForMBeans) throws Exception {
         TabularData dataForMBeans = jmxSec.canInvoke(queryForMBeans);
         Collection<?> results = dataForMBeans.values();
         for (Object cd : results) {
@@ -214,19 +225,23 @@ public class RBACDecorator implements RBACDecoratorMBean {
     }
 
     @SuppressWarnings("unchecked")
-    private void doQueryForMBeanOperations(JMXSecurityMBean jmxSec, Map<String, Map<String, Object>> domains, Map<String, Map<String, Object>> rbacCache, Map<String, List<String>> queryForMBeanOperations) throws Exception {
+    private void doQueryForMBeanOperations(JMXSecurityMBean jmxSec, Map<String, Map<String, Object>> domains,
+                                           Map<String, Map<String, Object>> rbacCache, Map<String, List<String>> queryForMBeanOperations) throws Exception {
         TabularData dataForMBeanOperations = jmxSec.canInvoke(queryForMBeanOperations);
         Collection<?> results = dataForMBeanOperations.values();
-        for (Object cd : results) {
-            ObjectName objectName = new ObjectName((String) ((CompositeData) cd).get("ObjectName"));
-            String method = (String) ((CompositeData) cd).get("Method");
-            boolean canInvoke = ((CompositeData) cd).get("CanInvoke") != null ? (Boolean) ((CompositeData) cd).get("CanInvoke") : false;
+        for (Object result : results) {
+            CompositeData cd = (CompositeData) result;
+            ObjectName objectName = new ObjectName((String) cd.get("ObjectName"));
+            String method = (String) cd.get("Method");
+            boolean canInvoke = cd.get("CanInvoke") != null ? (Boolean) cd.get("CanInvoke") : false;
             Object mBeanInfoOrKey = domains.get(objectName.getDomain()).get(objectName.getKeyPropertyListString());
             Map<String, Object> mBeanInfo;
             if (mBeanInfoOrKey instanceof Map) {
                 mBeanInfo = (Map<String, Object>) mBeanInfoOrKey;
+                LOG.trace("{} {} - {}", objectName, method, canInvoke);
             } else {
                 mBeanInfo = rbacCache.get(mBeanInfoOrKey.toString());
+                LOG.trace("{} {} - {} - {}", objectName, method, canInvoke, mBeanInfoOrKey.toString());
             }
             if (mBeanInfo != null) {
                 decorateCanInvoke(mBeanInfo, method, canInvoke);
@@ -436,6 +451,8 @@ public class RBACDecorator implements RBACDecoratorMBean {
      */
     @SuppressWarnings("unchecked")
     private void decorateCanInvoke(Map<String, Object> mBeanInfo, String method, boolean canInvoke) {
+        LOG.trace("decorateCanInvoke: {} - {}", method, canInvoke);
+
         // op
         String[] methodNameAndArgs = method.split("[()]");
         Object op = ((Map<String, Object>) mBeanInfo.get("op")).get(methodNameAndArgs[0]);
@@ -446,15 +463,85 @@ public class RBACDecorator implements RBACDecoratorMBean {
                 if ((methodNameAndArgs.length == 1 && args.equals(""))
                     || (methodNameAndArgs.length > 1 && args.equals(methodNameAndArgs[1]))) {
                     m.put("canInvoke", canInvoke);
+                    LOG.trace("  op: {}({}) - {}", methodNameAndArgs[0], args, m.get("canInvoke"));
                     break;
                 }
             }
         } else {
             ((Map<String, Object>) op).put("canInvoke", canInvoke);
+            LOG.trace("  op: {} - {}", method, ((Map<String, Object>) op).get("canInvoke"));
         }
 
         // opByString
-        ((Map<String, Object>) ((Map<String, Object>) mBeanInfo.get("opByString")).get(method)).put("canInvoke", canInvoke);
+        Map<String, Object> opByString = (Map<String, Object>) mBeanInfo.get("opByString");
+        Map<String, Object> opByStringMethod = (Map<String, Object>) opByString.get(method);
+        opByStringMethod.put("canInvoke", canInvoke);
+        LOG.trace("  opByString: {} - {}", method, opByStringMethod.get("canInvoke"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private void verify(Map<String, Object> result) {
+        LOG.debug("Verifying result...");
+
+        // domains
+        Map<String, Map<String, Object>> domains = (Map<String, Map<String, Object>>) result.get("domains");
+        for (String domain : domains.keySet()) {
+            Map<String, Object> mBeans = domains.get(domain);
+            for (String propertyList : mBeans.keySet()) {
+                Object mBeanInfo = mBeans.get(propertyList);
+                // skip if it's a cache key
+                if (mBeanInfo instanceof Map) {
+                    doVerifyRBAC((Map<String, Object>) mBeanInfo);
+                }
+            }
+        }
+
+        // cache
+        Map<String, Map<String, Object>> cache = (Map<String, Map<String, Object>>) result.get("cache");
+        for (String key : cache.keySet()) {
+            doVerifyRBAC(cache.get(key));
+        }
+
+        LOG.debug("Verification done");
+    }
+
+    @SuppressWarnings("unchecked")
+    private void doVerifyRBAC(Map<String, Object> mBeanInfo) {
+        Map<String, Object> ops = (Map<String, Object>) mBeanInfo.get("op");
+        Map<String, Object> opByStrings = (Map<String, Object>) mBeanInfo.get("opByString");
+        for (String name : ops.keySet()) {
+            Object op = ops.get(name);
+            if (op instanceof List) { // for method overloading
+                List<Map<String, Object>> overloaded = (List<Map<String, Object>>) op;
+                for (Map<String, Object> method : overloaded) {
+                    doVerifyCanInvoke(opByStrings, name, method);
+                }
+            } else {
+                Map<String, Object> method = (Map<String, Object>) op;
+                doVerifyCanInvoke(opByStrings, name, method);
+            }
+        }
+    }
+
+    private void doVerifyCanInvoke(Map<String, Object> opByStrings, String name, Map<String, Object> method) {
+        boolean canInvoke1 = (boolean) method.get("canInvoke");
+        String args = argsToString((List<Map<String, String>>) method.get("args"));
+        String opByStringName = name + "(" + args + ")";
+        Map<String, Object> opByString = (Map<String, Object>) opByStrings.get(opByStringName);
+        boolean canInvoke2 = (boolean) opByString.get("canInvoke");
+        if (canInvoke1 != canInvoke2) {
+            LOG.error("canInvoke doesn't match: {} - {}, {}", opByStringName, canInvoke1, canInvoke2);
+        }
+    }
+
+    @Override
+    public boolean getVerify() {
+        return verify;
+    }
+
+    @Override
+    public void setVerify(boolean verify) {
+        this.verify = verify;
     }
 
     /**
