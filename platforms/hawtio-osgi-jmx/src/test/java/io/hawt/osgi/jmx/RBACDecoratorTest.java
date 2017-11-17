@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyMap;
@@ -89,6 +90,13 @@ public class RBACDecoratorTest {
         assertThat(k1, equalTo(k3));
     }
 
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> readInput() throws java.io.IOException {
+        String inputJson = getClass().getSimpleName() + "-input.json";
+        return new ObjectMapper().readValue(
+            getClass().getResourceAsStream(inputJson), Map.class);
+    }
+
     @Test
     @SuppressWarnings("unchecked")
     public void decorateCanInvoke() throws Exception {
@@ -96,9 +104,7 @@ public class RBACDecoratorTest {
         RBACDecorator decorator = new RBACDecorator(bc);
         decorator.setVerify(true);
 
-        String inputJson = getClass().getSimpleName() + "-input.json";
-        Map<String, Object> result = new ObjectMapper().readValue(
-            getClass().getResourceAsStream(inputJson), Map.class);
+        Map<String, Object> result = readInput();
 
         LOG.info("In:  {}", result);
         decorator.decorate(result);
@@ -191,5 +197,19 @@ public class RBACDecoratorTest {
             true, true);
 
         return bc;
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void deepCopy() throws Exception {
+        Map<String, Object> result = readInput();
+        Map<String, Map<String, Object>> cache = (Map<String, Map<String, Object>>) result.get("cache");
+
+        for (String key : cache.keySet()) {
+            Map<String, Object> original = cache.get(key);
+            Map<String, Object> copy = RBACDecorator.deepCopy(original);
+            assertThat(copy, not(sameInstance(original)));
+            assertThat(copy, equalTo(original));
+        }
     }
 }

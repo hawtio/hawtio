@@ -170,12 +170,12 @@ public class RBACDecorator implements RBACDecoratorMBean {
                                   Map<String, Map<String, Object>> cache, Map<String, Map<String, Object>> rbacCache,
                                   Map<String, List<String>> queryForMBeans, Map<String, List<String>> queryForMBeanOperations) throws MalformedObjectNameException, NoSuchAlgorithmException, UnsupportedEncodingException {
         for (String domain : domains.keySet()) {
-            Map<String, Object> domainMBeansCheck = new HashMap<>(domains.get(domain));
+            Map<String, Object> domainMBeansCheck = new HashMap<>(domains.get(domain)); // shallow copy is ok for a domain
             Map<String, Object> domainMBeans = domains.get(domain);
             for (String name : domainMBeansCheck.keySet()) {
                 Object mBeanInfo = domainMBeansCheck.get(name);
                 String fullName = domain + ":" + name;
-                ObjectName n = new ObjectName(fullName);
+                ObjectName oName = new ObjectName(fullName);
                 if (mBeanInfo instanceof Map) {
                     // not shared JSONified MBeanInfo
                     prepareKarafRbacInvocations(fullName, (Map<String, Object>) mBeanInfo,
@@ -186,11 +186,10 @@ public class RBACDecorator implements RBACDecoratorMBean {
                     // shard mbeanNames sharing MBeanInfo by the hierarchy of jmx.acl* PIDs used to
                     // check RBAC info
                     String key = (String) mBeanInfo;
-                    String pidListKey = pidListKey(allJmxAclPids, n);
+                    String pidListKey = pidListKey(allJmxAclPids, oName);
                     if (!rbacCache.containsKey(key + ":" + pidListKey)) {
-                        // shallow copy - we can share op/not/attr/desc, but we put specific
-                        // canInvoke/opByString keys
-                        HashMap<String, Object> sharedMBeanAndRbacInfo = new HashMap<>(cache.get(key));
+                        // deep copy - "op" / "opByString" may differ per MBeanInfo with different pid list key
+                        Map<String, Object> sharedMBeanAndRbacInfo = deepCopy(cache.get(key));
                         rbacCache.put(key + ":" + pidListKey, sharedMBeanAndRbacInfo);
                         // we'll be checking RBAC only for single (first) MBean having this pidListKey
                         prepareKarafRbacInvocations(fullName, sharedMBeanAndRbacInfo,
@@ -201,6 +200,35 @@ public class RBACDecorator implements RBACDecoratorMBean {
                 }
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    static Map<String, Object> deepCopy(Map<String, Object> mBeanInfo) {
+        // it's not really "deep" copy; it just copies deep enough
+        Map<String, Object> copy = new HashMap<>(mBeanInfo);
+
+        // copy "op" deep enough
+        Map<String, Object> ops = (Map<String, Object>) mBeanInfo.get("op");
+        Map<String, Object> newOps = new HashMap<>(ops.size());
+        for (String name : ops.keySet()) {
+            Object op = ops.get(name);
+            Object newOp;
+            if (op instanceof List) { // for method overloading
+                List<Map<String, Object>> overloaded = (List<Map<String, Object>>) op;
+                List<Map<String, Object>> newOpList = new ArrayList<>(overloaded.size());
+                for (Map<String, Object> method : overloaded) {
+                    newOpList.add(new HashMap<>(method));
+                }
+                newOp = newOpList;
+            } else {
+                Map<String, Object> method = (Map<String, Object>) op;
+                newOp = new HashMap<>(method);
+            }
+            newOps.put(name, newOp);
+        }
+        copy.put("op", newOps);
+
+        return copy;
     }
 
     @SuppressWarnings("unchecked")
