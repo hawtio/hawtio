@@ -23,9 +23,9 @@
     patternfly "~3.25.0"
     urijs "~1.18.10"
 
-"@hawtio/core@~3.0.10", "@hawtio/core@~3.0.4", "@hawtio/core@~3.0.9":
-  version "3.0.16"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-3.0.16.tgz#7c02fea05191b97c67d9d0724069be14f9f4b0a2"
+"@hawtio/core@~3.0.0", "@hawtio/core@~3.0.10", "@hawtio/core@~3.0.4", "@hawtio/core@~3.0.9":
+  version "3.0.17"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-3.0.17.tgz#3527fec4477cfb84313c516a0e1b7454c1e2a0bb"
   dependencies:
     "@hawtio/core-dts" "~3.0.12"
     "@types/angular" "~1.6.18"
@@ -50,9 +50,10 @@
     "@hawtio/ui" "~3.0.25"
 
 "@hawtio/help@~3.0.0":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@hawtio/help/-/help-3.0.1.tgz#fcf7b6236242297472632fd486ad80276b244799"
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@hawtio/help/-/help-3.0.2.tgz#aa9f3b1d9459b5c7656d4d1ddf912a84b4948886"
   dependencies:
+    "@hawtio/core" "~3.0.0"
     "@hawtio/ui" "~3.0.25"
 
 "@hawtio/integration@~3.0.0":
@@ -65,13 +66,13 @@
     dagre hawtio/dagre#3825485552cb2ebc79afab24f9a90f14c7e1e2df
     ng-infinite-scroll "~1.3.0"
 
-"@hawtio/jmx@3.0.76", "@hawtio/jmx@~3.0.0":
-  version "3.0.76"
-  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-3.0.76.tgz#9353b457a9d47c9b9995cbafc74068cff344af2e"
+"@hawtio/jmx@3.0.76", "@hawtio/jmx@3.0.78", "@hawtio/jmx@~3.0.0":
+  version "3.0.78"
+  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-3.0.78.tgz#5332bd9d89d24530c83b0c959d697535dc023029"
   dependencies:
     "@hawtio/forms" "3.0.11"
     "@hawtio/preferences" "3.0.10"
-    "@hawtio/utilities" "3.0.14"
+    "@hawtio/utilities" "~3.0.0"
     angular-patternfly "4.12.1"
     angular-resizable "1.2.0"
     patternfly-bootstrap-treeview "2.1.5"
@@ -119,9 +120,9 @@
     lodash "~4.17.4"
     marked "~0.3.6"
 
-"@hawtio/utilities@3.0.14", "@hawtio/utilities@~3.0.8":
-  version "3.0.14"
-  resolved "https://registry.yarnpkg.com/@hawtio/utilities/-/utilities-3.0.14.tgz#db6a08f49d86b4697016cf2d23ad5b8d356938c9"
+"@hawtio/utilities@3.0.14", "@hawtio/utilities@3.0.15", "@hawtio/utilities@~3.0.0", "@hawtio/utilities@~3.0.8":
+  version "3.0.15"
+  resolved "https://registry.yarnpkg.com/@hawtio/utilities/-/utilities-3.0.15.tgz#5897235705bed897fc1d7aec9001b0b9822ef86b"
   dependencies:
     "@hawtio/core" "~3.0.9"
     "@hawtio/core-dts" "~3.0.11"
@@ -318,7 +319,7 @@ d3@~3.5.0, d3@~3.5.17:
   version "3.5.17"
   resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.17.tgz#bc46748004378b21a360c9fc7cf5231790762fb8"
 
-"dagre@github:hawtio/dagre#3825485552cb2ebc79afab24f9a90f14c7e1e2df":
+dagre@hawtio/dagre#3825485552cb2ebc79afab24f9a90f14c7e1e2df:
   version "0.7.5-pre"
   resolved "https://codeload.github.com/hawtio/dagre/tar.gz/3825485552cb2ebc79afab24f9a90f14c7e1e2df"
   dependencies:

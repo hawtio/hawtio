@@ -18,7 +18,7 @@
         <% if (((Boolean) request.getAttribute("wrong_password")).booleanValue()) { %>
         <div class="alert alert-danger">
           <span class="pficon pficon-error-circle-o"></span>
-          Your username or password is incorrect
+          Incorrect username or password
         </div>
         <% } %>
       </div><!--/.col-*-->

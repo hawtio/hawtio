@@ -94,10 +94,6 @@
     <filter-name>AuthenticationFilter</filter-name>
     <url-pattern>/jolokia/*</url-pattern>
   </filter-mapping>
-  <filter-mapping>
-    <filter-name>AuthenticationFilter</filter-name>
-    <url-pattern>/auth/*</url-pattern>
-  </filter-mapping>
   <!--
        don't want to try and interpret the authentication header
        intended for the proxy
