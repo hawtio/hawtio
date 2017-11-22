@@ -285,9 +285,9 @@ angular.module('ngGrid.services').factory('$domUtilityService',['$utilityService
         var width = 0;
         var props = { visibility: "hidden", display: "block" };
         var hiddenParents = obj.parents().andSelf().not(':visible');
-        $.swap(hiddenParents[0], props, function () {
+        if (hiddenParents[0]) {
             width = obj.outerWidth();
-        });
+        };
         return width;
     };
     domUtilityService.UpdateGridLayout = function($scope, grid) {
