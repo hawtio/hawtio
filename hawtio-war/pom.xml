@@ -162,6 +162,7 @@
             <Import-Package>
               org.apache.commons.logging;resolution:=optional,
               org.slf4j;resolution:=optional;version="[1.6,2)",
+              org.apache.karaf.jaas.boot.principal;resolution:=optional,
               !org.slf4j.impl,
               !org.apache.avalon*,
               !org.apache.log*,
