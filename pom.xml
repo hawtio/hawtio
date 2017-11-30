@@ -115,6 +115,8 @@
     <module>hawtio-default</module>
     <module>hawtio-embedded</module>
     <module>hawtio-ide</module>
+    <module>hawtio-log</module>
+    <module>hawtio-log-osgi</module>
     <module>hawtio-json-schema-mbean</module>
     <module>hawtio-local-jvm-mbean</module>
     <module>hawtio-maven-indexer</module>

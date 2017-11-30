@@ -17,10 +17,20 @@
     <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
   </feature>
 
+  <feature name="hawtio-log" version="${project.version}" resolver="(obr)">
+    <details>Installs the hawtio logging</details>
+    <bundle>mvn:io.hawt/hawtio-log/${project.version}</bundle>
+    <bundle>mvn:io.hawt/hawtio-log-osgi/${project.version}</bundle>
+    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-core/${jackson-version}</bundle>
+    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson-version}</bundle>
+    <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-databind/${jackson-version}</bundle>
+  </feature>
+
   <feature name="hawtio" version="${project.version}" resolver="(obr)">
     <details>Installs the main hawtio web console</details>
     <feature>hawtio-core</feature>
     <feature>hawtio-rbac</feature>
+    <feature>hawtio-log</feature>
     <!--
     TODO: Is it required for v2?
     <feature>hawtio-maven-indexer</feature>
