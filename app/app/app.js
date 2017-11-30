@@ -42192,7 +42192,7 @@ var RBAC;
         var parts = css.split(" ");
         var answer = [];
         parts.forEach(function (part) {
-            if (part !== "can-invoke" || part !== "cant-invoke") {
+            if (part !== "can-invoke" && part !== "cant-invoke") {
                 answer.push(part);
             }
         });
