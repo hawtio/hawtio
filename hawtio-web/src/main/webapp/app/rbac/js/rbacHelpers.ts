@@ -24,7 +24,7 @@ module RBAC {
     var parts = css.split(" ");
     var answer = [];
     parts.forEach((part) => {
-      if (part !== "can-invoke" || part !== "cant-invoke") {
+      if (part !== "can-invoke" && part !== "cant-invoke") {
         answer.push(part);
       }
     });
