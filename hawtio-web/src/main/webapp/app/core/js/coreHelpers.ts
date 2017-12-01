@@ -2,7 +2,6 @@
 /// <reference path="../../helpers/js/controllerHelpers.ts"/>
 /// <reference path="../../ui/js/colors.ts"/>
 /// <reference path="coreInterfaces.ts"/>
-/// <reference path="coreServices.ts"/>
 /// <reference path="folder.ts"/>
 /// <reference path="tasks.ts"/>
 /// <reference path="workspace.ts"/>
