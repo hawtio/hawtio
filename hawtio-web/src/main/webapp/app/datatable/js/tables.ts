@@ -179,11 +179,7 @@ module DataTable {
         var widget = this;
 
         if (this.dataTable) {
-          var keys = new KeyTable({
-            "table": tableElement[0],
-            "datatable": this.dataTable
-          });
-          keys.fnSetPosition(0, 0);
+          var keys = new $.fn.dataTable.KeyTable(this.dataTable);
 
           if (angular.isArray(data) && data.length) {
             var selected = data[0];
@@ -238,32 +234,8 @@ module DataTable {
           this.addedExpandNodes = true;
 
           $(tableElement).on("click", "td.control", expandCollapseNode);
-          //$(document).on("click", "#grid td.control", expandCollapseNode);
-
-          keys.event.action( 0, null, function(node) {
-            expandCollapseNode.call(node);
-          });
         }
 
-        keys.event.focus( null, null, function(node) {
-          var dataTable = widget.dataTable;
-          var row = node;
-          if (node) {
-            var nodeName = node.nodeName;
-            if (nodeName) {
-              if (nodeName.toLowerCase() === "td") {
-                row = $(node).parents("tr")[0];
-              }
-              var selected = dataTable.fnGetData(row);
-              var selectHandler = widget.config.selectHandler;
-              if (selected && selectHandler) {
-                selectHandler(selected);
-              }
-            }
-          }
-        });
-
-        // $(document).on("click", "#grid td", function () {
         $(tableElement).find("td.control").on("click", function (event) {
           var dataTable = widget.dataTable;
           if ($(this).hasClass('selected')) {
