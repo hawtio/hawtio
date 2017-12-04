@@ -3,6 +3,7 @@
 
 #### 1.5.7 (To be released)
 
+* Upgraded to jQuery 1.12.4
 * Bug fixes
 
 #### 1.5.6
