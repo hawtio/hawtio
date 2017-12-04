@@ -36,6 +36,35 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <version>${karaf-version}</version>
+        <executions>
+          <execution>
+            <id>verify</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>file://${basedir}/target/classes/features.xml</descriptor>
+                <descriptor>mvn:org.apache.karaf.features/standard/${karaf-version}/xml/features</descriptor>
+                <descriptor>mvn:org.apache.karaf.features/framework/${karaf-version}/xml/features</descriptor>
+              </descriptors>
+              <distribution>org.apache.karaf.features:framework</distribution>
+              <javase>1.8</javase>
+              <framework>
+                <feature>framework</feature>
+              </framework>
+              <features>
+                hawtio-*
+              </features>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <version>${build-helper-maven-plugin-version}</version>
@@ -61,4 +90,21 @@
     </plugins>
   </build>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.karaf.features</groupId>
+      <artifactId>standard</artifactId>
+      <version>${karaf-version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf.features</groupId>
+      <artifactId>framework</artifactId>
+      <version>${karaf-version}</version>
+      <type>kar</type>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>

@@ -1,9 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.0" name="hawtio-${project.version}">
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.3.0" name="hawtio-${project.version}">
 
-  <feature name="hawtio-core" version="${project.version}" resolver="(obr)">
+  <feature name="hawtio-core" version="${project.version}">
     <details>Installs the core hawtio war file with minimal extensions</details>
     <feature>war</feature>
+    <feature>aries-blueprint</feature>
     <bundle>mvn:io.hawt/hawtio-json-schema-mbean/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-war/${project.version}/war</bundle>
 
@@ -12,13 +13,15 @@
     </config>
   </feature>
 
-  <feature name="hawtio-rbac" version="${project.version}" resolver="(obr)">
+  <feature name="hawtio-rbac" version="${project.version}">
     <details>Installs the hawtio RBAC enabler bundle(s)</details>
+    <feature>management</feature>
     <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
   </feature>
 
-  <feature name="hawtio-log" version="${project.version}" resolver="(obr)">
+  <feature name="hawtio-log" version="${project.version}">
     <details>Installs the hawtio logging</details>
+    <feature>log</feature>
     <bundle>mvn:io.hawt/hawtio-log/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-log-osgi/${project.version}</bundle>
     <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-core/${jackson-version}</bundle>
@@ -26,7 +29,7 @@
     <bundle dependency="true">mvn:com.fasterxml.jackson.core/jackson-databind/${jackson-version}</bundle>
   </feature>
 
-  <feature name="hawtio" version="${project.version}" resolver="(obr)">
+  <feature name="hawtio" version="${project.version}">
     <details>Installs the main hawtio web console</details>
     <feature>hawtio-core</feature>
     <feature>hawtio-rbac</feature>
@@ -37,13 +40,13 @@
     -->
   </feature>
 
-  <feature name="hawtio-offline" version="${project.version}" resolver="(obr)">
+  <feature name="hawtio-offline" version="${project.version}">
     <details>Installs hawtio in offline mode (without Maven service which requires internet connection)</details>
     <feature>hawtio-core</feature>
     <feature>hawtio-rbac</feature>
   </feature>
 
-  <feature name="hawtio-maven-indexer" version="${project.version}" resolver="(obr)">
+  <feature name="hawtio-maven-indexer" version="${project.version}">
     <details>Installs the hawtio Maven indexer service as a separate bundle (requires internet connection)</details>
     <bundle>mvn:io.hawt/hawtio-maven-indexer/${project.version}</bundle>
   </feature>
