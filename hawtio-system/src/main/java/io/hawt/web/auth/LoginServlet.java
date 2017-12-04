@@ -85,7 +85,7 @@ public class LoginServlet extends HttpServlet {
         String password = (String) json.get("password");
 
         AuthenticateResult result = Authenticator.authenticate(
-            authConfiguration, username, password,
+            authConfiguration, request, username, password,
             subject -> {
                 setupSession(request, subject, username);
                 sendResponse(response, subject);

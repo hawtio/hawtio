@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import io.hawt.web.auth.AuthenticationConfiguration;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.karaf.jaas.boot.principal.ClientPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,15 +90,17 @@ public class Authenticator {
         }
 
         if (info.isSet()) {
-            return authenticate(authConfiguration, info.username, info.password, callback);
+            return authenticate(authConfiguration, request, info.username, info.password, callback);
         }
 
         return AuthenticateResult.NO_CREDENTIALS;
     }
 
     public static AuthenticateResult authenticate(AuthenticationConfiguration authConfiguration,
+                                                  HttpServletRequest request,
                                                   String username, String password, Consumer<Subject> callback) {
         Subject subject = doAuthenticate(
+            request,
             authConfiguration.getRealm(),
             authConfiguration.getRole(),
             authConfiguration.getRolePrincipalClasses(),
@@ -119,7 +122,7 @@ public class Authenticator {
         return AuthenticateResult.AUTHORIZED;
     }
 
-    private static Subject doAuthenticate(String realm, String role, String rolePrincipalClasses, Configuration configuration,
+    private static Subject doAuthenticate(HttpServletRequest request, String realm, String role, String rolePrincipalClasses, Configuration configuration,
                                           final String username, final String password) {
         try {
 
@@ -127,6 +130,12 @@ public class Authenticator {
                 realm, role, rolePrincipalClasses, configuration, username, "******");
 
             Subject subject = new Subject();
+            try {
+                String addr = request.getRemoteHost() + ":" + request.getRemotePort();
+                subject.getPrincipals().add(new ClientPrincipal("hawtio", addr));
+            } catch (Throwable t) {
+                // ignore
+            }
             CallbackHandler handler = new AuthenticationCallbackHandler(username, password);
 
             // call the constructor with or without the configuration as it behaves differently
