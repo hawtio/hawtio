@@ -1,9 +1,8 @@
 package io.hawt.web.auth;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import javax.security.auth.Subject;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +11,8 @@ import javax.servlet.http.HttpSession;
 
 import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,15 +25,15 @@ public class LoginServlet extends HttpServlet {
     private static final transient Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
     private static final int DEFAULT_SESSION_TIMEOUT = 1800;
 
-    protected ConfigManager config;
     private Integer timeout = DEFAULT_SESSION_TIMEOUT;
-    private AuthenticationConfiguration configuration;
+    private AuthenticationConfiguration authenticationConfiguration;
+    private BrandingService brandingService;
 
     @Override
-    public void init(ServletConfig servletConfig) throws ServletException {
-        config = (ConfigManager) servletConfig.getServletContext().getAttribute("ConfigManager");
-        if (config != null) {
-            String s = config.get("sessionTimeout", "" + DEFAULT_SESSION_TIMEOUT);
+    public void init() throws ServletException {
+        ConfigManager configManager = (ConfigManager) getServletContext().getAttribute("ConfigManager");
+        if (configManager != null) {
+            String s = configManager.get("sessionTimeout", "" + DEFAULT_SESSION_TIMEOUT);
             if (s != null) {
                 try {
                     timeout = Integer.parseInt(s);
@@ -47,9 +48,12 @@ public class LoginServlet extends HttpServlet {
             }
         }
 
-        configuration = ConfigurationManager.getConfiguration(servletConfig.getServletContext());
+        authenticationConfiguration = ConfigurationManager.getConfiguration(getServletContext());
+
+        brandingService = new BrandingService(getServletContext());
 
         LOG.info("hawtio login is using " + (timeout != null ? timeout + " sec." : "default") + " HttpSession timeout");
+
     }
 
     @Override
@@ -63,10 +67,10 @@ public class LoginServlet extends HttpServlet {
         String password = req.getParameter("password");
 
         Subject subject = Authenticator.doAuthenticate(
-            configuration.getRealm(),
-            configuration.getRole(),
-            configuration.getRolePrincipalClasses(),
-            configuration.getConfiguration(),
+            authenticationConfiguration.getRealm(),
+            authenticationConfiguration.getRole(),
+            authenticationConfiguration.getRolePrincipalClasses(),
+            authenticationConfiguration.getConfiguration(),
             username,
             password);
 
@@ -91,8 +95,11 @@ public class LoginServlet extends HttpServlet {
         resp.sendRedirect(req.getContextPath());
     }
 
-    private static void forwardToLoginPage(HttpServletRequest req, HttpServletResponse resp, String username,
+    private void forwardToLoginPage(HttpServletRequest req, HttpServletResponse resp, String username,
                                            boolean wrongPassword) throws ServletException, IOException {
+        req.setAttribute("logoUrl", brandingService.getLogoUrl());
+        req.setAttribute("brandUrl", brandingService.getBrandUrl());
+        req.setAttribute("brandName", brandingService.getBrandName());
         req.setAttribute("username", username);
         req.setAttribute("wrong_password", wrongPassword);
         req.getRequestDispatcher("/login.jsp").forward(req, resp);

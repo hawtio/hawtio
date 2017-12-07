@@ -72,6 +72,13 @@
       <version>${guava-version}</version>
     </dependency>
 
+    <!-- Used to read hawtconfig.json file -->
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20171018</version>
+    </dependency>
+
     <!-- testing -->
     <dependency>
       <groupId>junit</groupId>

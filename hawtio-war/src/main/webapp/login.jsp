@@ -7,13 +7,13 @@
 </head>
 <body>
   <span id="badge">
-    <img src="../img/logo.svg" alt=" logo" />
+    <img src="<%= request.getAttribute("logoUrl") %>" alt="logo">
   </span>
   <div class="container">
     <div class="row">
       <div class="col-sm-12">
         <div id="brand">
-          <img src="../img/brand.svg" alt="PatternFly Enterprise Application">
+          <img src="<%= request.getAttribute("brandUrl") %>" alt="<%= request.getAttribute("brandName") %>">
         </div><!--/#brand-->
         <% if (((Boolean) request.getAttribute("wrong_password")).booleanValue()) { %>
         <div class="alert alert-danger">
@@ -45,7 +45,6 @@
         </form>
       </div><!--/.col-*-->
       <div class="col-sm-5 col-md-6 col-lg-7 details">
-        <p><strong>Welcome to hawtio</strong></p>
       </div><!--/.col-*-->
     </div><!--/.row-->
   </div><!--/.container-->

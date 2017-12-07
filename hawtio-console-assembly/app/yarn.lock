@@ -242,11 +242,19 @@ bootstrap-datepicker@~1.6.4:
   dependencies:
     jquery ">=1.7.1"
 
+bootstrap-sass@^3.3.7:
+  version "3.3.7"
+  resolved "https://registry.yarnpkg.com/bootstrap-sass/-/bootstrap-sass-3.3.7.tgz#6596c7ab40f6637393323ab0bc80d064fc630498"
+
 bootstrap-select@^1.12.2, bootstrap-select@~1.12.4:
   version "1.12.4"
   resolved "https://registry.yarnpkg.com/bootstrap-select/-/bootstrap-select-1.12.4.tgz#7f15d3c0ce978868d9c09c70f96624f55fa02ee1"
   dependencies:
     jquery ">=1.8"
+
+bootstrap-slider@^9.9.0:
+  version "9.10.0"
+  resolved "https://registry.yarnpkg.com/bootstrap-slider/-/bootstrap-slider-9.10.0.tgz#1103d6bc00cfbfa8cfc9a2599ab518c55643da3f"
 
 bootstrap-switch@~3.3.4:
   version "3.3.4"
@@ -374,6 +382,10 @@ eonasdan-bootstrap-datetimepicker@^4.17.47:
     jquery "^1.8.3 || ^2.0 || ^3.0"
     moment "^2.10"
     moment-timezone "^0.4.0"
+
+font-awesome-sass@^4.7.0:
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/font-awesome-sass/-/font-awesome-sass-4.7.0.tgz#4eda693e915009ce00b228e0964dc5eca9bc34e1"
 
 font-awesome@^4.7.0:
   version "4.7.0"

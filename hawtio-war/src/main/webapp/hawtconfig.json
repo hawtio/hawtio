@@ -1,0 +1,9 @@
+{
+  "branding": {
+    "logoUrl": "../img/logo.svg",
+    "logoAltUrl": "../img/logo-alt.svg",
+    "brandUrl": "../img/brand.svg",
+    "brandAltUrl": "../img/brand-alt.svg",
+    "brandName": "PatternFly Enterprise Application"
+  }
+}
