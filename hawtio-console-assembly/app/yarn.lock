@@ -8,27 +8,27 @@
   dependencies:
     "@types/jquery" "~2.0.46"
 
-"@hawtio/core@3.1.0", "@hawtio/core@~3.0.9", "@hawtio/core@~3.1.0", "@hawtio/core@~3.1.2":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-3.1.0.tgz#d1454f35a2375cd4ef816d218a7b6130a2a08382"
+"@hawtio/core@3.1.3", "@hawtio/core@~3.0.9", "@hawtio/core@~3.1.0", "@hawtio/core@~3.1.2":
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-3.1.3.tgz#52a22c5202c6dc784fe02264f375c7457a42def7"
   dependencies:
     "@hawtio/core-dts" "~3.0.12"
-    "@types/angular" "~1.6.18"
+    "@types/angular" "~1.6.0"
     "@types/angular-route" "~1.3.4"
     "@types/jasmine" "~2.8.2"
     "@types/jquery" "~2.0.0"
     "@types/lodash" "~4.14.85"
     "@types/urijs" "~1.15.34"
-    angular "~1.6.4"
-    angular-route "~1.6.6"
-    angular-sanitize "~1.6.4"
+    angular "~1.6.0"
+    angular-route "~1.6.0"
+    angular-sanitize "~1.6.0"
     jquery "~2.2.4"
     js-logger "~1.3.0"
     lodash "~4.17.4"
     patternfly "~3.30.0"
     urijs "~1.19.0"
 
-"@hawtio/forms@3.0.12", "@hawtio/forms@~3.0.0", "@hawtio/forms@~3.0.7":
+"@hawtio/forms@~3.0.0", "@hawtio/forms@~3.0.7":
   version "3.0.12"
   resolved "https://registry.yarnpkg.com/@hawtio/forms/-/forms-3.0.12.tgz#7f73abffd4c2127038fad14183ecad8ce5e9452a"
   dependencies:
@@ -54,9 +54,9 @@
     dagre hawtio/dagre#3825485552cb2ebc79afab24f9a90f14c7e1e2df
     ng-infinite-scroll "~1.3.0"
 
-"@hawtio/jmx@3.0.81", "@hawtio/jmx@~3.0.0", "@hawtio/jmx@~3.0.81":
-  version "3.0.81"
-  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-3.0.81.tgz#40ae17563358bffe1152175a5b9129d96c754cf4"
+"@hawtio/jmx@~3.0.0", "@hawtio/jmx@~3.0.81":
+  version "3.0.82"
+  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-3.0.82.tgz#a2ecac2f65ed381ceee120ed8cb87c5bcbb8374f"
   dependencies:
     "@hawtio/forms" "~3.0.0"
     "@hawtio/preferences" "~3.0.0"
@@ -78,7 +78,7 @@
     "@hawtio/forms" "~3.0.7"
     "@hawtio/help" "~3.0.0"
 
-"@hawtio/ui@3.0.35", "@hawtio/ui@~3.0.25", "@hawtio/ui@~3.0.35":
+"@hawtio/ui@~3.0.25", "@hawtio/ui@~3.0.35":
   version "3.0.35"
   resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-3.0.35.tgz#1bafafaf7bed13547a0d989f9135e1786ba5cdc8"
   dependencies:
@@ -96,7 +96,7 @@
     lodash "~4.17.4"
     marked "~0.3.6"
 
-"@hawtio/utilities@3.0.17", "@hawtio/utilities@^3.0.17", "@hawtio/utilities@~3.0.17", "@hawtio/utilities@~3.0.8":
+"@hawtio/utilities@^3.0.17", "@hawtio/utilities@~3.0.17", "@hawtio/utilities@~3.0.8":
   version "3.0.17"
   resolved "https://registry.yarnpkg.com/@hawtio/utilities/-/utilities-3.0.17.tgz#df1d558435597a8ab05c25b9788e7cf6a27ad356"
   dependencies:
@@ -148,8 +148,8 @@
   resolved "https://registry.yarnpkg.com/@types/js-beautify/-/js-beautify-0.0.30.tgz#82ffbeb2c2dec592f1d04169e926912eeed567ec"
 
 "@types/lodash@~4.14.65", "@types/lodash@~4.14.85":
-  version "4.14.85"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.85.tgz#a16fbf942422f6eca5622b6910492c496c35069b"
+  version "4.14.88"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.88.tgz#97eaf2dc668f33ed8e511a5b627035f4ea20b0f5"
 
 "@types/marked@0.0.28":
   version "0.0.28"
@@ -177,7 +177,7 @@ angular-file-upload@~2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/angular-file-upload/-/angular-file-upload-2.5.0.tgz#0f53c93fbc70ed8ba8340a9a289ba64b680e2167"
 
-angular-patternfly@4.13.2, angular-patternfly@^4.0.0:
+angular-patternfly@^4.0.0:
   version "4.13.2"
   resolved "https://registry.yarnpkg.com/angular-patternfly/-/angular-patternfly-4.13.2.tgz#ba40a3cb61337c136cdf2b30a13c636b0ea5c1d0"
   dependencies:
@@ -205,13 +205,13 @@ angular-resizable@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/angular-resizable/-/angular-resizable-1.2.0.tgz#9dd29af008f8b54abfc051bd269a8f0b4fe43f1a"
 
-angular-route@1.6.7, angular-route@~1.6.0, angular-route@~1.6.6:
+angular-route@1.6.7, angular-route@~1.6.0:
   version "1.6.7"
   resolved "https://registry.yarnpkg.com/angular-route/-/angular-route-1.6.7.tgz#020970d93d8b2ce4ca6aff0e0d7922579543cbcf"
 
-angular-sanitize@1.5.*, angular-sanitize@1.6.6, angular-sanitize@~1.6.0, angular-sanitize@~1.6.4:
-  version "1.6.6"
-  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.6.6.tgz#0fd065a19931517fbece66596d325d72b6e06041"
+angular-sanitize@1.5.*, angular-sanitize@1.6.7, angular-sanitize@~1.6.0, angular-sanitize@~1.6.4:
+  version "1.6.7"
+  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.6.7.tgz#5a3d61ad7b8b699923329635d99248bcfce26408"
 
 angular-svg-base-fix@2.0.0:
   version "2.0.0"
@@ -221,9 +221,9 @@ angular-ui-bootstrap@2.3.2, angular-ui-bootstrap@2.3.x, angular-ui-bootstrap@~2.
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/angular-ui-bootstrap/-/angular-ui-bootstrap-2.3.2.tgz#bfec894ed983ade1e5d3f402fc10f8829652ac99"
 
-angular@1.5.*, angular@1.6.6, angular@>=1.3.0, angular@~1.6.0, angular@~1.6.4:
-  version "1.6.6"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.6.tgz#fd5a3cfb437ce382d854ee01120797978527cb64"
+angular@1.5.*, angular@1.6.7, angular@>=1.3.0, angular@~1.6.0, angular@~1.6.4:
+  version "1.6.7"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.7.tgz#0f89837dae1776b01ccb1fa2096db0d9373d9897"
 
 angularjs-datatables@^0.5.9:
   version "0.5.9"
@@ -289,8 +289,8 @@ codemirror@~5.26.0:
   resolved "https://registry.yarnpkg.com/codemirror/-/codemirror-5.26.0.tgz#bcbee86816ed123870c260461c2b5c40b68746e5"
 
 commander@^2.9.0:
-  version "2.12.1"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.12.1.tgz#468635c4168d06145b9323356d1da84d14ac4a7a"
+  version "2.12.2"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.12.2.tgz#0f5946c427ed9ec0d91a46bb9def53e54650e555"
 
 components-jqueryui@components/jqueryui#1.12.1:
   version "1.12.1"
@@ -357,8 +357,8 @@ datatables.net@1.10.16, datatables.net@>=1.10.9, datatables.net@^1.10.11, datata
     jquery ">=1.7"
 
 delegate@^3.1.2:
-  version "3.1.3"
-  resolved "https://registry.yarnpkg.com/delegate/-/delegate-3.1.3.tgz#9a8251a777d7025faa55737bc3b071742127a9fd"
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/delegate/-/delegate-3.2.0.tgz#b66b71c3158522e8ab5744f720d8ca0c2af59166"
 
 drmonty-datatables-colvis@~1.1.2:
   version "1.1.2"
@@ -453,8 +453,8 @@ lru-cache@^3.2.0:
     pseudomap "^1.0.1"
 
 marked@~0.3.6:
-  version "0.3.6"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-0.3.6.tgz#b2c6c618fccece4ef86c4fc6cb8a7cbf5aeda8d7"
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-0.3.7.tgz#80ef3bbf1bd00d1c9cfebe42ba1b8c85da258d0d"
 
 minimist@0.0.8:
   version "0.0.8"

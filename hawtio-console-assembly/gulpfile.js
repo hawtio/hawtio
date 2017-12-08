@@ -70,6 +70,7 @@ gulp.task('tsc', function() {
       title: 'Typescript compilation error'
     }))
     .js
+    .pipe(plugins.ngAnnotate())
     .pipe(plugins.debug({ title: 'tsc js' }))
     .pipe(plugins.if(config.sourceMap, plugins.sourcemaps.write()))
     .pipe(gulp.dest(config.temp));
@@ -193,6 +194,11 @@ gulp.task('404', ['usemin'], function() {
     .pipe(gulp.dest(config.dist));
 });
 
+gulp.task('copy-config', function() {
+  return gulp.src(config.src + '*.json')
+    .pipe(gulp.dest(config.dist));
+});
+
 //------------------------------------------------------------------------------
 // serve tasks
 //------------------------------------------------------------------------------
@@ -201,19 +207,19 @@ gulp.task('connect', function() {
   hawtio.setConfig({
     logLevel: config.logLevel,
     port: 2772,
+    proxy: '/hawtio/proxy',
     staticProxies: [
-    {
-      proto: 'http',
-      port: config.proxyPort,
-      hostname: 'localhost',
-      path: '/hawtio/jolokia',
-      targetPath: config.targetPath
-    }
+      {
+        proto: 'http',
+        port: config.proxyPort,
+        hostname: 'localhost',
+        path: '/hawtio/jolokia',
+        targetPath: config.targetPath
+      }
     ],
     staticAssets: [{
       path: '/hawtio/',
       dir: './dist/'
-
     }],
     liveReload: {
       enabled: true
@@ -256,6 +262,6 @@ gulp.task('reload', function() {
 //------------------------------------------------------------------------------
 
 gulp.task('build', callback => sequence('clean', 'tsc', 'template', 'template-docs', 'concat', 'less', 'usemin',
-  'install-dependencies', 'copy-images', '404', callback));
+  'install-dependencies', 'copy-images', '404', 'copy-config', callback));
 
 gulp.task('default', callback => sequence('build', ['connect', 'watch']));

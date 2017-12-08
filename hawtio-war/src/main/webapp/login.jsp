@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html class="login-pf">
 <head>
+  <title>hawtio console</title>
+  <base href='/hawtio/'></base>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="../libs/patternfly/dist/css/patternfly.min.css">
-  <link rel="stylesheet" href="../libs/patternfly/dist/css/patternfly-additions.min.css">
+  <link rel="stylesheet" href="libs/patternfly/dist/css/patternfly.min.css">
+  <link rel="stylesheet" href="libs/patternfly/dist/css/patternfly-additions.min.css">
 </head>
 <body>
   <span id="badge">
