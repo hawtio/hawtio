@@ -3,8 +3,11 @@
   "version": "2.0.0",
   "dependencies": {
     "@hawtio/help": "~3.0.0",
-    "@hawtio/integration": "~3.0.0",
-    "@hawtio/log": "~3.0.0"
+    "@hawtio/integration": "~3.0.30",
+    "@hawtio/jmx": "~3.0.81",
+    "@hawtio/log": "~3.0.0",
+    "@hawtio/ui": "~3.0.35",
+    "@hawtio/utilities": "~3.0.17"
   },
   "flat": true,
   "resolutions": {
@@ -18,6 +21,11 @@
     "moment": "2.14.1",
     "@hawtio/core": "3.1.0",
     "urijs": "1.19.0",
-    "@hawtio/forms": "3.0.12"
+    "@hawtio/forms": "3.0.12",
+    "@hawtio/jmx": "3.0.81",
+    "@hawtio/ui": "3.0.35",
+    "@hawtio/utilities": "3.0.17",
+    "angular-route": "1.6.7",
+    "angular-patternfly": "4.13.2"
   }
 }
