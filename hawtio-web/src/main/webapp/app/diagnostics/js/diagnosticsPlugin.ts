@@ -5,11 +5,11 @@
 /// <reference path="diagnosticHelpers.ts"/>
 module Diagnostics {
 
-  export var rootPath = 'app/diagnostics';
-  export var templatePath = rootPath + '/html/';
-  export var pluginName = 'diagnostics';
+  const rootPath = 'app/diagnostics';
+  const templatePath = rootPath + '/html/';
+  const pluginName = 'diagnostics';
 
-  export var _module = angular.module(pluginName, ['bootstrap', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-forms', 'ui']);
+  export const _module = angular.module(pluginName, ['bootstrap', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-forms', 'ui']);
 
   _module.config(["$routeProvider", ($routeProvider) => {
     $routeProvider.
@@ -20,14 +20,13 @@ module Diagnostics {
 
   _module.constant('mbeanName', 'com.sun.management:type=DiagnosticCommand');
 
-  _module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry",  ($location, workspace:Workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) => {
+  _module.run(["workspace", "viewRegistry", "helpRegistry",  ( workspace:Workspace, viewRegistry, helpRegistry) => {
 
     viewRegistry[pluginName] = templatePath + 'layoutDiagnostics.html';
     helpRegistry.addUserDoc('diagnostics', 'app/diagnostics/doc/help.md');
     
     Core.addCSS(rootPath + "/css/diagnostics.css");
 
-//    preferencesRegistry.addTab("Connect", 'app/jvm/html/reset.html');
 
     workspace.topLevelTabs.push({
       id: "diagnostics",

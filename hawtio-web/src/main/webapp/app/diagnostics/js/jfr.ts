@@ -5,12 +5,22 @@
 /// <reference path="../../forms/js/formInterfaces.ts"/>
 module Diagnostics {
 
-    function splitResponse( response:string ) {
-        return response.match( /Dumped recording "(.+)",(.+) written to:\r?\n\r?\n(.+)/ );
+    function parseDumpFeedback(response:string ) {
+        let parsed = response.match( /Dumped recording "(.+)", (.+) written to:\r?\n\r?\n(.+)/ );
+        if(parsed && parsed.length == 4) {
+            return {
+                    number: parsed[1],
+                    size: parsed[2],
+                    file: parsed[3],
+                    time: Date.now()
+                };
+
+            }
+        return null;
     }
 
     function buildStartParams( jfrSettings: JfrSettings ) {
-        var params = [];
+        const params = [];
         if ( jfrSettings.name && jfrSettings.name.length > 0 ) {
             params.push( 'name="' + jfrSettings.name + '"');
         }
@@ -31,15 +41,9 @@ module Diagnostics {
             'name="' + jfrSettings.name + '"'
         ];
     }
-
-    interface ScopeSettings {
-        lastConnection: string;
-    }
-
     interface JfrSettings {
         limitType: string;
         limitValue: string;
-        compress: boolean;
         recordingNumber: string;
         dumpOnExit: boolean;
         name: string;
@@ -51,7 +55,7 @@ module Diagnostics {
         size: string;
         file: string;
         time: number;
-    };
+    }
 
     interface JfrControllerScope extends ng.IScope {
         forms: any;
@@ -73,44 +77,47 @@ module Diagnostics {
         jcmd: string;
     }
 
-    export var JfrController = _module.controller( "Diagnostics.JfrController", ["$scope", "$location", "workspace", "jolokia", ( $scope: JfrControllerScope, $location: ng.ILocationService, workspace: Core.Workspace, jolokia: Jolokia.IJolokia ) => {
+    function updateJfrScope(response, scope: JfrControllerScope) : JfrControllerScope {
+        let statusString = response.value;
+        scope.jfrEnabled = statusString.indexOf("not enabled") == -1;
+        scope.isRunning = statusString.indexOf("(running)") > -1;
+        scope.isRecording = scope.isRunning || statusString.indexOf("(stopped)") > -1;
+        if ((statusString.indexOf("Use JFR.") > -1 || statusString
+                .indexOf("Use VM.") > -1)
+            && scope.pid) {
+            statusString = statusString.replace("Use ",
+                "Use command line: jcmd " + scope.pid + " ");
+        }
+        scope.jfrStatus = statusString;
+        if (scope.isRecording) {
+            let regex = /recording=(\d+) name="(.+?)"/g;
+            if (scope.isRunning) { //if there are several recordings (some stopped), make sure we parse the running one
+                regex = /recording=(\d+) name="(.+?)".+?\(running\)/g;
+            }
+
+            const parsed = regex.exec(statusString);
+            scope.jfrSettings.recordingNumber = parsed[1];
+            scope.jfrSettings.name = parsed[2];
+            const parsedFilename = statusString.match(/filename="(.+)"/);
+            if (parsedFilename && parsedFilename[1]) {
+                scope.jfrSettings.filename = parsedFilename[1];
+            } else {
+                scope.jfrSettings.filename = 'recording' + parsed[1] + '.jfr';
+            }
+
+        }
+        return scope;
+    }
+
+    var JfrController = _module.controller( "Diagnostics.JfrController", ["$scope", "$location", "workspace", "jolokia", ( $scope: JfrControllerScope, $location: ng.ILocationService, workspace: Core.Workspace, jolokia: Jolokia.IJolokia ) => {
 
         function render( response ) {
-
-
-            var statusString = response.value;
-            $scope.jfrEnabled = statusString.indexOf( "not enabled" ) == -1;
-            $scope.isRunning = statusString.indexOf( "(running)" ) > -1;
-            $scope.isRecording = $scope.isRunning || statusString.indexOf("(stopped)") > -1;
-            if ( ( statusString.indexOf( "Use JFR." ) > -1 || statusString
-                .indexOf( "Use VM." ) > -1 )
-                && $scope.pid ) {
-                statusString = statusString.replace( "Use ",
-                    "Use command line: jcmd " + $scope.pid + " " );
-            }
-            $scope.jfrStatus = statusString;
-            if ( $scope.isRecording ) {
-                    var regex = /recording=(\d+) name="(.+?)"/g;
-                if($scope.isRunning) { //if there are several recordings (some stopped), make sure we parse the running one
-                    regex = /recording=(\d+) name="(.+?)".+?\(running\)/g;
-                }
-                
-                var parsed=regex.exec( statusString );
-                $scope.jfrSettings.recordingNumber = parsed[1];
-                $scope.jfrSettings.name = parsed[2];
-                var parsedFilename=statusString.match(/filename="(.+)"/);
-                if(parsedFilename && parsedFilename[1]) {
-                    $scope.jfrSettings.filename = parsedFilename[1];
-                } else {
-                    $scope.jfrSettings.filename = 'recording' + parsed[1] + '.jfr';
-                }
-                
-            }
+            updateJfrScope(response, $scope);
             Core.$apply( $scope );
         }
         
         function addRecording(recording:Recording, recordings:Array<Recording>) {
-            for(var i=0; i < recordings.length; i++) {
+            for(let i=0; i < recordings.length; i++) {
                 if(recordings[i].file === recording.file) {
                     recordings[i] = recording;
                     return;
@@ -120,9 +127,9 @@ module Diagnostics {
         }
         
         function showArguments(arguments: Array<any>) {
-            var result = '';
-            var first = true;
-            for (var i = 0; i < arguments.length; i++) {
+            let result = '';
+            let first = true;
+            for (let i = 0; i < arguments.length; i++) {
                 if (first) {
                   first = false;
                 } else {
@@ -167,14 +174,13 @@ module Diagnostics {
 
 
         $scope.forms = {};
-        $scope.pid = findMyPid($scope.pageTitle)
+        $scope.pid = findMyPid($scope.pageTitle);
         $scope.recordings = [];
         $scope.settingsVisible=false;
 
         $scope.jfrSettings = {
             limitType: 'unlimited',
             limitValue: '',
-            compress: false,
             name: '',
             dumpOnExit: true,
             recordingNumber: '',
@@ -235,39 +241,34 @@ module Diagnostics {
             executeDiagnosticFunction( 'jfrDump([Ljava.lang.String;)', 'JFR.dump',
                 [buildDumpParams( $scope.jfrSettings )], ( response ) => {
 
-                    var matches = splitResponse( response );
+                    const recoding = parseDumpFeedback(response);
                     Diagnostics.log.debug( "response: " + response
-                        + " split: " + matches + "split2: "
-                        + matches );
-                    if ( matches ) {
-                        var recordingData = {
-                            number: matches[1],
-                            size: matches[2],
-                            file: matches[3],
-                            time: Date.now()
-                        };
+                        + " split: " + recoding + "split2: "
+                        + recoding );
+                    if ( recoding ) {
+
                         Diagnostics.log.debug( "data: "
-                            + recordingData );
-                        addRecording(recordingData, $scope.recordings);
+                            + recoding );
+                        addRecording(recoding, $scope.recordings);
                     }
 
                 });
 
 
-        }
+        };
 
         $scope.stopRecording = () => {
-            var name = $scope.jfrSettings.name;
+            const name = $scope.jfrSettings.name;
             $scope.jfrSettings.filename = '';
             $scope.jfrSettings.name = '';
             executeDiagnosticFunction( 'jfrStop([Ljava.lang.String;)', 'JFR.stop',
                 ['name="' + name + '"'], null );
-        }
+        };
         
         $scope.toggleSettingsVisible = () => {
             $scope.settingsVisible = !$scope.settingsVisible;
             Core.$apply($scope);
-        }
+        };
 
         Core.register( jolokia, $scope, [{
             type: 'exec',

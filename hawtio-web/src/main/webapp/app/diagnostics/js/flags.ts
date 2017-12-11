@@ -20,13 +20,13 @@ module Diagnostics {
     }
 
 
-    _module.controller( "Diagnostics.FlagsController", ["$scope", "$location", "workspace", "jolokia", ( $scope: JvmFlagsScope, $location: ng.ILocationService, workspace: Core.Workspace, jolokia: Jolokia.IJolokia ) => {
+    _module.controller( "Diagnostics.FlagsController", ["$scope", "jolokia", ( $scope: JvmFlagsScope, jolokia: Jolokia.IJolokia ) => {
         $scope.flags = [];
         $scope.tableDef = tableDef();
-        var readRequest = {
-          type: 'read',
-          mbean: 'com.sun.management:type=HotSpotDiagnostic',
-          arguments: []
+      const readRequest = {
+        type: 'read',
+        mbean: 'com.sun.management:type=HotSpotDiagnostic',
+        arguments: []
 
         };
 
@@ -39,13 +39,13 @@ module Diagnostics {
         function render( response ) {
 
             //remove watches on previous content
-            for ( var i = 0; i < $scope.flags.length; i++ ) {
+            for ( let i = 0; i < $scope.flags.length; i++ ) {
                 $scope.flags[i].deregisterWatch();
             }
 
             $scope.flags = response.value.DiagnosticOptions;
-            for ( var i = 0; i < $scope.flags.length; i++ ) {
-                var flag=$scope.flags[i];
+            for ( let i = 0; i < $scope.flags.length; i++ ) {
+                const flag=$scope.flags[i];
                 flag.value  = parseValue(flag.value); //convert to typed value
                 if(flag.writeable) { //hint for the kind of control to use
                     flag.dataType = typeof(flag.value);
@@ -53,7 +53,7 @@ module Diagnostics {
                     flag.dataType = "readonly";
                 }
                 
-                flag.deregisterWatch = $scope.$watch( 'flags[' + i + ']', ( newValue,  oldValue) => {
+                flag.deregisterWatch = $scope.$watch( 'flags[' + i + ']', ( newValue:JvmFlag,  oldValue:JvmFlag) => {
                     if ( newValue.value != oldValue.value ) {
                       jolokia.request([{
                         type: 'exec',
