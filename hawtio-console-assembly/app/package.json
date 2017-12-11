@@ -4,7 +4,7 @@
   "dependencies": {
     "@hawtio/help": "~3.0.0",
     "@hawtio/integration": "~3.0.30",
-    "@hawtio/jmx": "~3.0.81",
+    "@hawtio/jmx": "~3.0.83",
     "@hawtio/log": "~3.0.0",
     "@hawtio/ui": "~3.0.35",
     "@hawtio/utilities": "~3.0.17"
