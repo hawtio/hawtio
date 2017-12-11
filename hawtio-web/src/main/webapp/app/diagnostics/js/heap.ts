@@ -14,14 +14,14 @@ module Diagnostics {
         deltaCount: string;
         deltaBytes: string;
         sourceReference: IDE.SourceReference;
-    };
+    }
 
     interface HeapControllerScope extends ng.IScope {
         classHistogram: string;
         status: string;
         loading: boolean;
         pid: string;
-        lastLoaded: any;        
+        lastLoaded: any;
         loadClassStats: () => void;
         classes: Array<ClassStats>;
         tableDef: any;
@@ -30,7 +30,7 @@ module Diagnostics {
         byteCounts: any;
     }
     
-    _module.controller( "Diagnostics.HeapController", ["$scope", "$window", "$location",  "workspace", "jolokia", ( $scope: HeapControllerScope, $window: ng.IWindowService, $location: ng.ILocationService, workspace: Core.Workspace, jolokia: Jolokia.IJolokia ) => {
+    _module.controller( "Diagnostics.HeapController", ["$scope",  "jolokia", ( $scope: HeapControllerScope, jolokia: Jolokia.IJolokia ) => {
 
         $scope.classHistogram = '';
         $scope.status = '';
@@ -39,7 +39,6 @@ module Diagnostics {
         $scope.loading = false;
         $scope.lastLoaded = 'n/a';
         $scope.pid = findMyPid($scope.pageTitle);
-
 
         $scope.loadClassStats = () => {
             $scope.loading = true;
@@ -62,25 +61,25 @@ module Diagnostics {
 
         function render( response ) {
             $scope.classHistogram = response.value;
-            var lines = response.value.split( '\n' );
-            var parsed = [];
-            var classCounts = {};
-            var bytesCounts = {};
-            for ( var i = 0; i < lines.length; i++ ) {
-                var values = lines[i].match( /\s*(\d+):\s*(\d+)\s*(\d+)\s*(\S+)\s*/ );
+            const lines = response.value.split('\n');
+            const parsed = [];
+            const classCounts = {};
+            const bytesCounts = {};
+            for (let i = 0; i < lines.length; i++ ) {
+                const values = lines[i].match(/\s*(\d+):\s*(\d+)\s*(\d+)\s*(\S+)\s*/);
                 if ( values && values.length >= 5 ) {
-                    var className = translateJniName( values[4] );
-                    var count = values[2];
-                    var bytes = values[3];
-                    var sourceReference = javaSource(className);
-                    var entry = {
+                    const className = translateJniName(values[4]);
+                    const count = values[2];
+                    const bytes = values[3];
+                    const sourceReference = javaSource(className);
+                    const entry = {
                         num: values[1],
                         count: count,
                         bytes: bytes,
                         name: className,
-                        deltaCount: findDelta( $scope.instanceCounts, className, count ),
-                        deltaBytes: findDelta( $scope.byteCounts, className, bytes ),
-                        sourceReference : sourceReference,
+                        deltaCount: findDelta($scope.instanceCounts, className, count),
+                        deltaBytes: findDelta($scope.byteCounts, className, bytes),
+                        sourceReference: sourceReference,
                     };
 
                     parsed.push( entry );
@@ -100,7 +99,7 @@ module Diagnostics {
             if ( !oldCounts ) {
                 return '';
             }
-            var oldValue = oldCounts[className];
+            const oldValue = oldCounts[className];
             if ( oldValue ) {
                 return oldValue - newValue;
             } else {
@@ -191,20 +190,20 @@ module Diagnostics {
         }
         
         function javaSource(className):IDE.SourceReference {
-            var baseName = className;
-            
+            let baseName = className;
+
             //trim array types
             if(baseName.indexOf('[') > -1) {
                 baseName = baseName.substring(0, className.indexOf('['));
             }
-            
-            var lastPackage = baseName.lastIndexOf('.');
+
+            const lastPackage = baseName.lastIndexOf('.');
             if(lastPackage < 0) {
                 return null;
             }
-            
-            var simpleName = baseName.substring(lastPackage + 1);
-            var nestedClassIndex = simpleName.indexOf('$');
+
+            let simpleName = baseName.substring(lastPackage + 1);
+            const nestedClassIndex = simpleName.indexOf('$');
             if(nestedClassIndex > -1) {
                 simpleName = simpleName.substring(0, nestedClassIndex);
             }
