@@ -30,25 +30,11 @@ public class BrandingService {
         }
     }
 
-    public String getLogoUrl() {
-        return getProperty("logoUrl");
-    }
-
-    public String getBrandUrl() {
-        return getProperty("brandUrl");
-    }
-
-    public String getBrandName() {
-        return getProperty("brandName");
-    }
-
-    private String getProperty(String name) {
-        if (config != null) {
-            if (config.get("branding") != null) {
-                JSONObject branding = (JSONObject) config.get("branding");
-                if (branding.get(name) != null) {
-                    return (String) branding.get(name);
-                }
+    public String getProperty(String name) {
+        if (config != null && config.get("branding") != null) {
+            JSONObject branding = (JSONObject) config.get("branding");
+            if (branding.get(name) != null) {
+                return (String) branding.get(name);
             }
         }
         LOG.warn("Branding property '" + name + "' not found in hawtconfig.json");

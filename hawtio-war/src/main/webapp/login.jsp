@@ -6,16 +6,18 @@
   <meta charset="UTF-8">
   <link rel="stylesheet" href="libs/patternfly/dist/css/patternfly.min.css">
   <link rel="stylesheet" href="libs/patternfly/dist/css/patternfly-additions.min.css">
+  <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
   <span id="badge">
-    <img src="<%= request.getAttribute("logoUrl") %>" alt="logo">
+    <img src="<%= request.getAttribute("companyLogoUrl") %>" alt="">
   </span>
   <div class="container">
     <div class="row">
       <div class="col-sm-12">
         <div id="brand">
-          <img src="<%= request.getAttribute("brandUrl") %>" alt="<%= request.getAttribute("brandName") %>">
+          <img src="<%= request.getAttribute("appLogoUrl") %>" alt="<%= request.getAttribute("appName") %>">
+          <span><%= request.getAttribute("appType") %></span>
         </div><!--/#brand-->
         <% if (((Boolean) request.getAttribute("wrong_password")).booleanValue()) { %>
         <div class="alert alert-danger">

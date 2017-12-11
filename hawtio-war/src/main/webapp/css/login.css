@@ -1,0 +1,12 @@
+.login-pf #brand img {
+  display: inline-block;
+  height: auto;
+  padding: 0 5px 7px 0;
+}
+.login-pf #brand span {
+  font-size: 18px;
+  font-weight: bold;
+  vertical-align: bottom;
+  text-transform: uppercase;
+  color: #c0c0c0;
+}

@@ -97,9 +97,10 @@ public class LoginServlet extends HttpServlet {
 
     private void forwardToLoginPage(HttpServletRequest req, HttpServletResponse resp, String username,
                                            boolean wrongPassword) throws ServletException, IOException {
-        req.setAttribute("logoUrl", brandingService.getLogoUrl());
-        req.setAttribute("brandUrl", brandingService.getBrandUrl());
-        req.setAttribute("brandName", brandingService.getBrandName());
+        req.setAttribute("appName", brandingService.getProperty("appName"));
+        req.setAttribute("appType", brandingService.getProperty("appType"));
+        req.setAttribute("appLogoUrl", brandingService.getProperty("appLogoUrl"));
+        req.setAttribute("companyLogoUrl", brandingService.getProperty("companyLogoUrl"));
         req.setAttribute("username", username);
         req.setAttribute("wrong_password", wrongPassword);
         req.getRequestDispatcher("/login.jsp").forward(req, resp);
