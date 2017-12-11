@@ -111,22 +111,28 @@ public class RBACRegistry implements RBACRegistryMBean {
                     jsonifiedMBeanInfo = cache.get(mbeanInfoKey);
                 } else {
                     // we may have to assemble the info on the fly
-                    MBeanInfo mBeanInfo = mBeanServer.getMBeanInfo(nameObject);
+                    try {
+                        MBeanInfo mBeanInfo = mBeanServer.getMBeanInfo(nameObject);
 
-                    // 2nd level of special cases - a bit slower (we had to getMBeanInfo(), but we may try
-                    // cache by MBean's domain and class)
-                    if (mbeanInfoKey == null) {
-                        mbeanInfoKey = isSpecialClass(nameObject, mBeanInfo);
-                    }
-                    if (mbeanInfoKey != null && cache.containsKey(mbeanInfoKey)) {
-                        jsonifiedMBeanInfo = cache.get(mbeanInfoKey);
-                    } else {
-                        // hard work here
-                        jsonifiedMBeanInfo = jsonifyMBeanInfo(mBeanInfo);
-                    }
+                        // 2nd level of special cases - a bit slower (we had to getMBeanInfo(), but we may try
+                        // cache by MBean's domain and class)
+                        if (mbeanInfoKey == null) {
+                            mbeanInfoKey = isSpecialClass(nameObject, mBeanInfo);
+                        }
+                        if (mbeanInfoKey != null && cache.containsKey(mbeanInfoKey)) {
+                            jsonifiedMBeanInfo = cache.get(mbeanInfoKey);
+                        } else {
+                            // hard work here
+                            jsonifiedMBeanInfo = jsonifyMBeanInfo(mBeanInfo);
+                        }
 
-                    if (mbeanInfoKey != null) {
-                        cache.put(mbeanInfoKey, jsonifiedMBeanInfo);
+                        if (mbeanInfoKey != null) {
+                            cache.put(mbeanInfoKey, jsonifiedMBeanInfo);
+                        }
+                    } catch (InstanceNotFoundException e) {
+                        // Log failure and continue so that we can still send a response back
+                        LOG.debug("Failed to get MBean info for {}. Due to InstanceNotFoundException.", nameObject);
+                        continue;
                     }
                 }
 
