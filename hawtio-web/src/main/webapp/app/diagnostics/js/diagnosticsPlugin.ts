@@ -3,7 +3,7 @@
  * @main Diagnostics
  */
 /// <reference path="diagnosticHelpers.ts"/>
-module Diagnostics {
+namespace Diagnostics {
 
   const rootPath = 'app/diagnostics';
   const templatePath = rootPath + '/html/';

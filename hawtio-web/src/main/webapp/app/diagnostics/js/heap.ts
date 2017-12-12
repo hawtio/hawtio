@@ -4,7 +4,7 @@
 /// <reference path="./diagnosticsPlugin.ts"/>
 /// <reference path="./diagnosticHelpers.ts"/>
 /// <reference path="../../ide/js/openInIdeDirective.ts"/>
-module Diagnostics {
+namespace Diagnostics {
 
     interface ClassStats {
         num: string;

@@ -3,7 +3,7 @@
  */
 /// <reference path="../../baseIncludes.ts"/>
 /// <reference path="../../core/js/coreHelpers.ts"/>
-module Diagnostics {
+namespace Diagnostics {
   export const log:Logging.Logger = Logger.get("Diagnostics");
 
 
