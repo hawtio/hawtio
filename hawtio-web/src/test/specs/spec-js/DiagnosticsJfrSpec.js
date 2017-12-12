@@ -1,4 +1,5 @@
 /// <reference path="../../../main/webapp/app/diagnostics/js/jfr.ts"/>
+
 describe("Diagnostics", function () {
     it("Test locked", function () {
         var scope;
@@ -95,11 +96,14 @@ describe("Diagnostics", function () {
         expect(scope.jfrSettings.recordingNumber).toBe("3");
     });
 
-    it("Test dump parsing", function () {
+    it("Test successful dump parsing", function () {
         var parsed=Diagnostics.parseDumpFeedback('Dumped recording "Recording-1", 1,1 MB written to:\n\n/Users/marska/Downloads/recording1.jfr');
         expect(parsed.number).toBe("Recording-1");
         expect(parsed.size).toBe("1,1 MB");
         expect(parsed.file).toBe("/Users/marska/Downloads/recording1.jfr");
     });
 
+    it("Invalid dump format", function () {
+        expect(Diagnostics.parseDumpFeedback('blablabla')).toBeFalsy();
+    });
 });

@@ -3,9 +3,9 @@
  */
 /// <reference path="diagnosticsPlugin.ts"/>
 /// <reference path="../../forms/js/formInterfaces.ts"/>
-module Diagnostics {
+namespace Diagnostics {
 
-    function parseDumpFeedback(response:string ) {
+    export function parseDumpFeedback(response:string ) : Recording{
         let parsed = response.match( /Dumped recording "(.+)", (.+) written to:\r?\n\r?\n(.+)/ );
         if(parsed && parsed.length == 4) {
             return {
@@ -41,7 +41,7 @@ module Diagnostics {
             'name="' + jfrSettings.name + '"'
         ];
     }
-    interface JfrSettings {
+    export interface JfrSettings {
         limitType: string;
         limitValue: string;
         recordingNumber: string;
@@ -50,14 +50,14 @@ module Diagnostics {
         filename: string;
     }
 
-    interface Recording {
+    export interface Recording {
         number: string;
         size: string;
         file: string;
         time: number;
     }
 
-    interface JfrControllerScope extends ng.IScope {
+    export interface JfrControllerScope extends ng.IScope {
         forms: any;
         jfrEnabled: boolean;
         isRecording: boolean;
@@ -77,7 +77,7 @@ module Diagnostics {
         jcmd: string;
     }
 
-    function updateJfrScope(response, scope: JfrControllerScope) : JfrControllerScope {
+    export function updateJfrScope(response, scope: JfrControllerScope)  {
         let statusString = response.value;
         scope.jfrEnabled = statusString.indexOf("not enabled") == -1;
         scope.isRunning = statusString.indexOf("(running)") > -1;
@@ -106,7 +106,6 @@ module Diagnostics {
             }
 
         }
-        return scope;
     }
 
     var JfrController = _module.controller( "Diagnostics.JfrController", ["$scope", "$location", "workspace", "jolokia", ( $scope: JfrControllerScope, $location: ng.ILocationService, workspace: Core.Workspace, jolokia: Jolokia.IJolokia ) => {
