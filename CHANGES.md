@@ -9,6 +9,7 @@
 * Karaf RBAC support
 * PatternFly-based login page and logo
 * Port fixes from hawtio v1
+* Bug fixes
 
 #### 2.0 M3
 
