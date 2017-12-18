@@ -1,6 +1,8 @@
 ### Change Log
 
-#### 2.0 M4 (To be released)
+#### 2.0 Beta2 (To be released)
+
+#### 2.0 Beta1
 
 * hawtio Maven plugin
 * Improved Spring Boot support
