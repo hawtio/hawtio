@@ -103,6 +103,11 @@
     </dependency>
     <dependency>
       <groupId>io.hawt</groupId>
+      <artifactId>hawtio-log</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
       <artifactId>hawtio-json-schema-mbean</artifactId>
       <version>${project.version}</version>
     </dependency>
