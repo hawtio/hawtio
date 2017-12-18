@@ -8,6 +8,7 @@
 * Diagnostics plugin
 * Karaf RBAC support
 * PatternFly-based login page and logo
+* Upgrade to Servlet API 3.1
 * Port fixes from hawtio v1
 * Bug fixes
 
