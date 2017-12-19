@@ -1,13 +1,12 @@
 package io.hawt.web.auth;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.ServletContext;
+
 import io.hawt.system.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.security.krb5.Config;
-
-import javax.servlet.ServletContext;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ConfigurationManager {
 
@@ -23,6 +22,8 @@ public class ConfigurationManager {
     public static final String HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES = "hawtio.authenticationContainerDiscoveryClasses";
 
     private static final String AUTHENTICATION_CONFIGURATION = "authenticationConfig";
+
+    private static final String DEFAULT_KARAF_ROLES = "admin,manager,viewer";
 
     private ConfigurationManager() {
     }
@@ -59,7 +60,7 @@ public class ConfigurationManager {
             }
             if (roles == null) {
                 // use default roles (karaf roles)
-                roles = "admin,viewer";
+                roles = DEFAULT_KARAF_ROLES;
             }
             configuration.setRole(roles);
             configuration.setRolePrincipalClasses(config.get("rolePrincipalClasses", defaultRolePrincipalClasses));
