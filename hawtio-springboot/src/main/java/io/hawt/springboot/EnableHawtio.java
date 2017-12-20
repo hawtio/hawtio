@@ -10,10 +10,13 @@ import java.lang.annotation.Target;
 
 /**
  * EnableHawtio annotation.
+ *
+ * @deprecated Not necessary to use this annotation any longer
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Import(HawtioConfiguration.class)
 @Documented
+@Deprecated
 public @interface EnableHawtio {
 }
