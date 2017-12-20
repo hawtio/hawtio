@@ -83,7 +83,7 @@ public class HawtioConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean corsFilter() {
+    public FilterRegistrationBean CORSFilter() {
         final FilterRegistrationBean filter = new FilterRegistrationBean();
         filter.setFilter(new CORSFilter());
         filter.addUrlPatterns("/hawtio/*");
