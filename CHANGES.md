@@ -1,7 +1,9 @@
 
 ### Change Log
 
-#### 1.5.7 (To be released)
+#### 1.5.8 (To be released)
+
+#### 1.5.7
 
 * Upgraded to jQuery 1.12.4
 * Deprecated `@EnableHawtio`. Do not use it any longer. Not only unnecessary, but also
