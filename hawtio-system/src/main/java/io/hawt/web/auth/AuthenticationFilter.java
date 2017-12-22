@@ -23,22 +23,21 @@ public class AuthenticationFilter implements Filter {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
 
-    private AuthenticationConfiguration configuration;
+    private AuthenticationConfiguration authConfiguration;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        configuration = ConfigurationManager.getConfiguration(filterConfig.getServletContext());
+        authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
     }
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
         String path = httpRequest.getServletPath();
 
         LOG.debug("Handling request for path {}", path);
 
-        if (configuration.getRealm() == null || configuration.getRealm().equals("") || !configuration.isEnabled()) {
+        if (authConfiguration.getRealm() == null || authConfiguration.getRealm().equals("") || !authConfiguration.isEnabled()) {
             LOG.debug("No authentication needed for path {}", path);
             chain.doFilter(request, response);
             return;
@@ -58,13 +57,10 @@ public class AuthenticationFilter implements Filter {
         LOG.debug("Doing authentication and authorization for path {}", path);
 
         AuthenticateResult result = Authenticator.authenticate(
-            configuration.getRealm(),
-            configuration.getRole(),
-            configuration.getRolePrincipalClasses(),
-            configuration.getConfiguration(),
-            httpRequest,
+            authConfiguration, httpRequest,
             subject -> executeAs(request, response, chain, subject));
 
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
         switch (result) {
             case AUTHORIZED:
                 // request was executed using the authenticated subject, nothing more to do
@@ -73,9 +69,9 @@ public class AuthenticationFilter implements Filter {
                 ServletHelpers.doForbidden(httpResponse);
                 break;
             case NO_CREDENTIALS:
-                if (configuration.isNoCredentials401()) {
+                if (authConfiguration.isNoCredentials401()) {
                     // return auth prompt 401
-                    ServletHelpers.doAuthPrompt(configuration.getRealm(), httpResponse);
+                    ServletHelpers.doAuthPrompt(authConfiguration.getRealm(), httpResponse);
                 } else {
                     // return forbidden 403 so the browser login does not popup
                     ServletHelpers.doForbidden(httpResponse);

@@ -4,7 +4,7 @@ import java.net.URL;
 
 import io.hawt.config.ConfigFacade;
 import io.hawt.springboot.HawtPlugin;
-import io.hawt.web.auth.ConfigurationManager;
+import io.hawt.web.auth.AuthenticationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -19,7 +19,7 @@ public class SampleAuthenticationSpringBootService {
 
 
     public static void main(String[] args) {
-        System.setProperty(ConfigurationManager.HAWTIO_AUTHENTICATION_ENABLED, "false");
+        System.setProperty(AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED, "false");
         SpringApplication.run(SampleAuthenticationSpringBootService.class, args);
     }
 
@@ -53,11 +53,11 @@ public class SampleAuthenticationSpringBootService {
         }
         LOG.info("Using login.file : " + System.getProperty("login.file"));
 
-        setSystemPropertyIfNotSet(ConfigurationManager.HAWTIO_ROLES, "admin");
-        setSystemPropertyIfNotSet(ConfigurationManager.HAWTIO_REALM, "hawtio");
-        setSystemPropertyIfNotSet(ConfigurationManager.HAWTIO_ROLE_PRINCIPAL_CLASSES, "org.eclipse.jetty.jaas.JAASRole");
+        setSystemPropertyIfNotSet(AuthenticationConfiguration.HAWTIO_ROLES, "admin");
+        setSystemPropertyIfNotSet(AuthenticationConfiguration.HAWTIO_REALM, "hawtio");
+        setSystemPropertyIfNotSet(AuthenticationConfiguration.HAWTIO_ROLE_PRINCIPAL_CLASSES, "org.eclipse.jetty.jaas.JAASRole");
         if (!Boolean.getBoolean("debugMode")) {
-            System.setProperty(ConfigurationManager.HAWTIO_AUTHENTICATION_ENABLED, "true");
+            System.setProperty(AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED, "true");
         }
         return new ConfigFacade();
     }

@@ -11,11 +11,11 @@ import java.io.IOException;
  */
 public class LoginRedirectFilter implements Filter {
 
-    private AuthenticationConfiguration configuration;
+    private AuthenticationConfiguration authConfiguration;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        configuration = ConfigurationManager.getConfiguration(filterConfig.getServletContext());
+        authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
     }
 
     @Override
@@ -24,7 +24,7 @@ public class LoginRedirectFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         HttpSession session = httpRequest.getSession(false);
 
-        if (configuration.isEnabled() && (session == null || session.getAttribute("subject") == null)) {
+        if (authConfiguration.isEnabled() && (session == null || session.getAttribute("subject") == null)) {
             redirect(httpRequest, httpResponse);
         } else {
             chain.doFilter(request, response);

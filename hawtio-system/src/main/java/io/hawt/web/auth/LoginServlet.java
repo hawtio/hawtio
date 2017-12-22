@@ -1,7 +1,13 @@
 package io.hawt.web.auth;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.security.auth.Subject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -9,8 +15,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import io.hawt.system.AuthHelpers;
+import io.hawt.system.AuthenticateResult;
 import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
+import io.hawt.web.ServletHelpers;
+import org.jolokia.converter.Converters;
+import org.jolokia.converter.json.JsonConvertOptions;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,20 +33,22 @@ public class LoginServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final transient Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
-    private static final int DEFAULT_SESSION_TIMEOUT = 1800;
+    private static final int DEFAULT_SESSION_TIMEOUT = 1800; // 30 mins
 
     private Integer timeout = DEFAULT_SESSION_TIMEOUT;
-    private AuthenticationConfiguration authenticationConfiguration;
-    private BrandingService brandingService;
+    private AuthenticationConfiguration authConfiguration;
+
+    private Converters converters = new Converters();
+    private JsonConvertOptions options = JsonConvertOptions.DEFAULT;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         ConfigManager configManager = (ConfigManager) getServletContext().getAttribute("ConfigManager");
         if (configManager != null) {
-            String s = configManager.get("sessionTimeout", "" + DEFAULT_SESSION_TIMEOUT);
+            String s = configManager.get("sessionTimeout", Integer.toString(DEFAULT_SESSION_TIMEOUT));
             if (s != null) {
                 try {
-                    timeout = Integer.parseInt(s);
+                    timeout = Integer.valueOf(s);
                     // timeout of 0 means default timeout
                     if (timeout == 0) {
                         timeout = DEFAULT_SESSION_TIMEOUT;
@@ -46,38 +60,63 @@ public class LoginServlet extends HttpServlet {
             }
         }
 
-        authenticationConfiguration = ConfigurationManager.getConfiguration(getServletContext());
+        authConfiguration = AuthenticationConfiguration.getConfiguration(getServletContext());
 
-        brandingService = new BrandingService(getServletContext());
-
-        LOG.info("hawtio login is using " + (timeout != null ? timeout + " sec." : "default") + " HttpSession timeout");
-
+        LOG.info("hawtio login is using {} HttpSession timeout", timeout != null ? timeout + " sec." : "default");
     }
 
+    /**
+     * GET simply returns login.html
+     */
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        forwardToLoginPage(req, resp, "", false);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("/login.html").forward(request, response);
     }
 
+    /**
+     * POST with username/password tries authentication and returns result as JSON
+     */
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String username = req.getParameter("username");
-        String password = req.getParameter("password");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        clearSession(request);
 
-        Subject subject = Authenticator.doAuthenticate(
-            authenticationConfiguration.getRealm(),
-            authenticationConfiguration.getRole(),
-            authenticationConfiguration.getRolePrincipalClasses(),
-            authenticationConfiguration.getConfiguration(),
-            username,
-            password);
+        JSONObject json = ServletHelpers.readObject(request.getReader());
+        String username = (String) json.get("username");
+        String password = (String) json.get("password");
 
-        if (subject == null) {
-            forwardToLoginPage(req, resp, username, true);
+        AuthenticateResult result = Authenticator.authenticate(
+            authConfiguration, username, password,
+            subject -> {
+                setupSession(request, subject, username);
+                sendResponse(response, subject);
+            });
+
+        switch (result) {
+            case AUTHORIZED:
+                // response was sent using the authenticated subject, nothing more to do
+                break;
+            case NOT_AUTHORIZED:
+            case NO_CREDENTIALS:
+                ServletHelpers.doForbidden(response);
+                break;
+        }
+    }
+
+    private void clearSession(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
             return;
         }
+        Subject subject = (Subject) session.getAttribute("subject");
+        if (subject != null) {
+            LOG.info("Logging out existing user: {}", AuthHelpers.getUsernameFromSubject(subject));
+            Authenticator.logout(authConfiguration, subject);
+            session.invalidate();
+        }
+    }
 
-        HttpSession session = req.getSession(true);
+    private void setupSession(HttpServletRequest request, Subject subject, String username) {
+        HttpSession session = request.getSession(true);
         session.setAttribute("subject", subject);
         session.setAttribute("user", username);
         session.setAttribute("org.osgi.service.http.authentication.remote.user", username);
@@ -86,21 +125,37 @@ public class LoginServlet extends HttpServlet {
         if (timeout != null) {
             session.setMaxInactiveInterval(timeout);
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Http session timeout for user {} is {} sec.", username, session.getMaxInactiveInterval());
+        LOG.debug("Http session timeout for user {} is {} sec.", username, session.getMaxInactiveInterval());
+    }
+
+    private void sendResponse(HttpServletResponse response, Subject subject) {
+        response.setContentType("application/json");
+        try (PrintWriter out = response.getWriter()) {
+            Map<String, Object> answer = new HashMap<>();
+
+            List<Object> principals = new ArrayList<>();
+            for (Principal principal : subject.getPrincipals()) {
+                Map<String, String> data = new HashMap<>();
+                data.put("type", principal.getClass().getName());
+                data.put("name", principal.getName());
+                principals.add(data);
+            }
+
+            List<Object> credentials = new ArrayList<>();
+            for (Object credential : subject.getPublicCredentials()) {
+                Map<String, Object> data = new HashMap<>();
+                data.put("type", credential.getClass().getName());
+                data.put("credential", credential);
+                credentials.add(data);
+            }
+
+            answer.put("principals", principals);
+            answer.put("credentials", credentials);
+
+            ServletHelpers.writeObject(converters, options, out, answer);
+        } catch (IOException e) {
+            LOG.error("Failed to send response", e);
         }
-
-        resp.sendRedirect(req.getContextPath());
     }
 
-    private void forwardToLoginPage(HttpServletRequest req, HttpServletResponse resp, String username,
-                                    boolean wrongPassword) throws ServletException, IOException {
-        req.setAttribute("appName", brandingService.getProperty("appName"));
-        req.setAttribute("appType", brandingService.getProperty("appType"));
-        req.setAttribute("appLogoUrl", brandingService.getProperty("appLogoUrl"));
-        req.setAttribute("companyLogoUrl", brandingService.getProperty("companyLogoUrl"));
-        req.setAttribute("username", username);
-        req.setAttribute("wrong_password", wrongPassword);
-        req.getRequestDispatcher("/login.jsp").forward(req, resp);
-    }
 }

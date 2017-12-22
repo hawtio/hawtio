@@ -2,7 +2,7 @@ package io.hawt.example.spring.boot;
 
 import io.hawt.config.ConfigFacade;
 import io.hawt.springboot.HawtPlugin;
-import io.hawt.web.auth.ConfigurationManager;
+import io.hawt.web.auth.AuthenticationConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 public class SampleSpringBootService {
 
     public static void main(String[] args) {
-        System.setProperty(ConfigurationManager.HAWTIO_AUTHENTICATION_ENABLED, "false");
+        System.setProperty(AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED, "false");
         SpringApplication.run(SampleSpringBootService.class, args);
     }
 

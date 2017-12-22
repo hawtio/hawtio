@@ -76,7 +76,7 @@
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20171018</version>
+      <version>${org-json-version}</version>
     </dependency>
 
     <!-- testing -->

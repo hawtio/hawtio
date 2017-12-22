@@ -1,5 +1,6 @@
 package io.hawt.web;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import io.hawt.system.Authenticator;
 import org.jolokia.converter.Converters;
 import org.jolokia.converter.json.JsonConvertOptions;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,15 @@ public class ServletHelpers {
         } catch (IOException ioe) {
             LOG.debug("Failed to send auth response: {}", ioe);
         }
+    }
 
+    public static JSONObject readObject(BufferedReader reader) throws IOException {
+        StringBuilder data = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            data.append(line);
+        }
+        return new JSONObject(data.toString());
     }
 
     public static void writeEmpty(PrintWriter out) {
@@ -57,11 +66,11 @@ public class ServletHelpers {
         out.close();
     }
 
-    public static void writeObject(Converters converters, JsonConvertOptions options, PrintWriter out, Object answer) {
+    public static void writeObject(Converters converters, JsonConvertOptions options, PrintWriter out, Object data) {
         Object result = null;
 
         try {
-            result = converters.getToJsonConverter().convertToJson(answer, null, options);
+            result = converters.getToJsonConverter().convertToJson(data, null, options);
         } catch (AttributeNotFoundException e) {
             LOG.warn("Failed to convert object to json", e);
         }

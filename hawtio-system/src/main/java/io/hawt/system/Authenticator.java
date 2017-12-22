@@ -19,6 +19,7 @@ import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 
+import io.hawt.web.auth.AuthenticationConfiguration;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,16 @@ public class Authenticator {
         }
     }
 
-    public static AuthenticateResult authenticate(String realm, String role, String rolePrincipalClasses, Configuration configuration,
+    public static void logout(AuthenticationConfiguration authConfiguration, Subject subject) {
+        try {
+            LoginContext loginContext = new LoginContext(authConfiguration.getRealm(), subject);
+            loginContext.logout();
+        } catch (Exception e) {
+            LOG.warn("Error occurred while logging out", e);
+        }
+    }
+
+    public static AuthenticateResult authenticate(AuthenticationConfiguration authConfiguration,
                                                   HttpServletRequest request, Consumer<Subject> callback) {
 
         String authHeader = request.getHeader(HEADER_AUTHORIZATION);
@@ -79,26 +89,37 @@ public class Authenticator {
         }
 
         if (info.isSet()) {
-            Subject subject = doAuthenticate(realm, role, rolePrincipalClasses, configuration, info.username, info.password);
-            if (subject == null) {
-                return AuthenticateResult.NOT_AUTHORIZED;
-            }
-
-            if (callback != null) {
-                try {
-                    callback.accept(subject);
-                } catch (Exception e) {
-                    LOG.warn("Failed to execute privileged action: ", e);
-                }
-            }
-
-            return AuthenticateResult.AUTHORIZED;
+            return authenticate(authConfiguration, info.username, info.password, callback);
         }
 
         return AuthenticateResult.NO_CREDENTIALS;
     }
 
-    public static Subject doAuthenticate(String realm, String role, String rolePrincipalClasses, Configuration configuration,
+    public static AuthenticateResult authenticate(AuthenticationConfiguration authConfiguration,
+                                                  String username, String password, Consumer<Subject> callback) {
+        Subject subject = doAuthenticate(
+            authConfiguration.getRealm(),
+            authConfiguration.getRole(),
+            authConfiguration.getRolePrincipalClasses(),
+            authConfiguration.getConfiguration(),
+            username,
+            password);
+        if (subject == null) {
+            return AuthenticateResult.NOT_AUTHORIZED;
+        }
+
+        if (callback != null) {
+            try {
+                callback.accept(subject);
+            } catch (Exception e) {
+                LOG.warn("Failed to execute privileged action:", e);
+            }
+        }
+
+        return AuthenticateResult.AUTHORIZED;
+    }
+
+    private static Subject doAuthenticate(String realm, String role, String rolePrincipalClasses, Configuration configuration,
                                           final String username, final String password) {
         try {
 

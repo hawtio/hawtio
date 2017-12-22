@@ -45,8 +45,8 @@ public class SessionExpiryFilter implements Filter {
         }
 
         // Override if defined as JVM system property
-        if (System.getProperty(ConfigurationManager.HAWTIO_NO_CREDENTIALS_401) != null) {
-            this.noCredentials401 = Boolean.getBoolean(ConfigurationManager.HAWTIO_NO_CREDENTIALS_401);
+        if (System.getProperty(AuthenticationConfiguration.HAWTIO_NO_CREDENTIALS_401) != null) {
+            this.noCredentials401 = Boolean.getBoolean(AuthenticationConfiguration.HAWTIO_NO_CREDENTIALS_401);
         }
     }
 

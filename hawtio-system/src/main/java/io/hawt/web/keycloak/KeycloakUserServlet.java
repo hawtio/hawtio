@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 import io.hawt.system.AuthHelpers;
 import io.hawt.system.Authenticator;
 import io.hawt.web.auth.AuthenticationConfiguration;
-import io.hawt.web.auth.ConfigurationManager;
 import io.hawt.web.auth.UserServlet;
 
 public class KeycloakUserServlet extends UserServlet {
@@ -33,7 +32,7 @@ public class KeycloakUserServlet extends UserServlet {
      * With Keycloak integration, the Authorization header is available in the request to the UserServlet.
      */
     protected String getKeycloakUsername(final HttpServletRequest req, HttpServletResponse resp) {
-        AuthenticationConfiguration configuration = ConfigurationManager.getConfiguration(getServletContext());
+        AuthenticationConfiguration configuration = AuthenticationConfiguration.getConfiguration(getServletContext());
 
         class Holder {
             String username = null;
@@ -41,11 +40,7 @@ public class KeycloakUserServlet extends UserServlet {
         final Holder usernameHolder = new Holder();
 
         Authenticator.authenticate(
-            configuration.getRealm(),
-            configuration.getRole(),
-            configuration.getRolePrincipalClasses(),
-            configuration.getConfiguration(),
-            req,
+            configuration, req,
             subject -> {
                 usernameHolder.username = AuthHelpers.getUsernameFromSubject(subject);
 
