@@ -77,7 +77,7 @@ public class ServletHelpers {
 
     public static Map populateTableMapForXl(List listEntry) {
         listEntry = flatten(listEntry);
-        Map<String, Object> xlData = new HashMap<String, Object>();
+        Map<String, Object> xlData = new HashMap<>();
         Set columns = getColumns(listEntry);
         List rowsData = getRowsData(listEntry, columns);
 
@@ -90,12 +90,12 @@ public class ServletHelpers {
     public static Map populateErrorTableMapForXl(List listEntry) {
         listEntry = flatten(listEntry);
 
-        Map<String, Object> xlData = new HashMap<String, Object>();
-        Set<String> columns = new HashSet<String>();
+        Map<String, Object> xlData = new HashMap<>();
+        Set<String> columns = new HashSet<>();
         columns.add("Error Message");
         List rowsData = new ArrayList();
         for (Object o : listEntry) {
-            Map<String, Object> keyValuePairs = new HashMap<String, Object>();
+            Map<String, Object> keyValuePairs = new HashMap<>();
             keyValuePairs.put(columns.toArray()[0].toString(), removeNoisyString(o.toString()));
             rowsData.add(keyValuePairs);
         }
@@ -116,9 +116,9 @@ public class ServletHelpers {
 
 
     private static List getRowsData(List listEntry, Set columns) {
-        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> list = new ArrayList<>();
         for (Object o : listEntry) {
-            Map<String, Object> keyValuePairs = new HashMap<String, Object>();
+            Map<String, Object> keyValuePairs = new HashMap<>();
             if (o instanceof JSONObject) {
                 JSONObject jsonObject = (JSONObject) o;
                 for (Object column : columns) {

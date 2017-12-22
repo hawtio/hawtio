@@ -1,7 +1,7 @@
 package io.hawt.web.auth;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.GregorianCalendar;
 import javax.security.auth.Subject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,8 +11,6 @@ import javax.servlet.http.HttpSession;
 
 import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +94,7 @@ public class LoginServlet extends HttpServlet {
     }
 
     private void forwardToLoginPage(HttpServletRequest req, HttpServletResponse resp, String username,
-                                           boolean wrongPassword) throws ServletException, IOException {
+                                    boolean wrongPassword) throws ServletException, IOException {
         req.setAttribute("appName", brandingService.getProperty("appName"));
         req.setAttribute("appType", brandingService.getProperty("appType"));
         req.setAttribute("appLogoUrl", brandingService.getProperty("appLogoUrl"));

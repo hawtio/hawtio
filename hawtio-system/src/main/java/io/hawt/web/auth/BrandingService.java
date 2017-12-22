@@ -13,10 +13,10 @@ import java.io.Reader;
 public class BrandingService {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
-    JSONObject config;
+    private JSONObject config;
 
     public BrandingService(ServletContext servletContext) {
-        LOG.info("Loading src/main/webapp/hawtconfig.json...");
+        LOG.info("Loading hawtconfig.json...");
         InputStream in = servletContext.getResourceAsStream("/hawtconfig.json");
         if (in == null) {
             LOG.warn("hawtconfig.json not found");
@@ -40,6 +40,5 @@ public class BrandingService {
         LOG.warn("Branding property '" + name + "' not found in hawtconfig.json");
         return "";
     }
-
 
 }
