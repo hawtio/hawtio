@@ -49,7 +49,7 @@ public class App {
                 loadClass(virtualMachineClass, App.class.getClassLoader(), Thread.currentThread().getContextClassLoader());
             } catch (Exception e) {
                 // lets try find the tools.jar instead
-                Set<String> paths = new HashSet<String>();
+                Set<String> paths = new HashSet<>();
                 String javaHome = System.getProperty("java.home", ".");
                 addPath(paths, javaHome);
 
@@ -70,25 +70,25 @@ public class App {
                     }
                 }
                 if (!found) {
-                    System.out.println("Failed to load class " + virtualMachineClass
-                        + " and find tools.jar in directories " + paths + ". " + e);
+                    System.err.println(String.format(
+                        "Failed to load class %s and find tools.jar in directories %s. %s",
+                        virtualMachineClass, paths, e));
                 }
             }
 
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             URL resource = classLoader.getResource(WAR_FILENAME);
             if (resource == null) {
-                System.err.println("Could not find the " + WAR_FILENAME + " on classpath!");
+                System.err.println(String.format("Could not find the %s on classpath!", WAR_FILENAME));
                 System.exit(1);
             }
             File warFile = File.createTempFile("hawtio-", ".war");
-            //System.out.println("Extracting " + WAR_FILENAME + " to " + warFile + " ...");
             writeStreamTo(resource.openStream(), new FileOutputStream(warFile), 64 * KB);
 
             String warPath = warFile.getCanonicalPath();
             main.setWar(warPath);
         } catch (Exception e) {
-            System.out.println("Failed to create hawtio: " + e.getMessage());
+            System.err.println("Failed to create hawtio: " + e.getMessage());
             e.printStackTrace();
             return;
         }
@@ -112,11 +112,13 @@ public class App {
                     try {
                         Desktop.getDesktop().browse(new URI(url));
                     } catch (Exception e) {
-                        System.out.println("Failed to open browser session, to access hawtio visit \"" + url + "\"");
+                        System.err.println(String.format(
+                            "Failed to open browser session, to access hawtio visit \"%s\"",
+                            url));
                     }
                 }
             } catch (Exception e) {
-                System.out.println("Failed running hawtio: " + e.getMessage());
+                System.err.println("Failed running hawtio: " + e.getMessage());
                 e.printStackTrace();
             }
         }

@@ -87,6 +87,7 @@
     <junit-version>4.11</junit-version>
     <karaf-version>4.1.2</karaf-version>
     <karaf-version-range>[4.0,5)</karaf-version-range>
+    <keycloak-version>3.4.1.Final</keycloak-version>
     <log4j-version>1.2.17</log4j-version>
     <maven-version>3.0.4</maven-version>
     <maven-bundle-plugin-version>3.0.1</maven-bundle-plugin-version>

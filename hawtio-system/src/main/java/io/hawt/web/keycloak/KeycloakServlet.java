@@ -166,7 +166,7 @@ public class KeycloakServlet extends HttpServlet {
 
         String username = (String) session.getAttribute("user");
         if (username != null && !username.equals(keycloakUser)) {
-            LOG.debug("Non matching username found. JAAS username: " + username + ", keycloakUsername: " + keycloakUser + ". Invalidating session");
+            LOG.debug("No matching username found. JAAS username: {}, keycloakUsername: {}. Invalidating session", username, keycloakUser);
             session.invalidate();
             return false;
         } else {
