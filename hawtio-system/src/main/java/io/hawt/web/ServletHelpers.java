@@ -14,6 +14,7 @@ import javax.management.AttributeNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 
 import io.hawt.system.Authenticator;
+import io.hawt.util.IOHelper;
 import org.jolokia.converter.Converters;
 import org.jolokia.converter.json.JsonConvertOptions;
 import org.json.JSONObject;
@@ -52,12 +53,8 @@ public class ServletHelpers {
     }
 
     public static JSONObject readObject(BufferedReader reader) throws IOException {
-        StringBuilder data = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            data.append(line);
-        }
-        return new JSONObject(data.toString());
+        String data = IOHelper.readFully(reader);
+        return new JSONObject(data);
     }
 
     public static void writeEmpty(PrintWriter out) {

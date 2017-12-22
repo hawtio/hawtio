@@ -1,5 +1,6 @@
 package io.hawt.web.keycloak;
 
+import java.util.concurrent.atomic.AtomicReference;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,7 +17,7 @@ public class KeycloakUserServlet extends UserServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        keycloakEnabled = KeycloakServlet.isKeycloakEnabled(config);
+        keycloakEnabled = KeycloakHelper.isKeycloakEnabled(config);
     }
 
     @Override
@@ -34,23 +35,17 @@ public class KeycloakUserServlet extends UserServlet {
     protected String getKeycloakUsername(final HttpServletRequest req, HttpServletResponse resp) {
         AuthenticationConfiguration configuration = AuthenticationConfiguration.getConfiguration(getServletContext());
 
-        class Holder {
-            String username = null;
-        }
-        final Holder usernameHolder = new Holder();
-
+        AtomicReference<String> username = new AtomicReference<>();
         Authenticator.authenticate(
             configuration, req,
             subject -> {
-                usernameHolder.username = AuthHelpers.getUsernameFromSubject(subject);
+                username.set(AuthHelpers.getUsernameFromSubject(subject));
 
                 // Start httpSession
                 req.getSession(true);
             }
         );
-
-        return usernameHolder.username;
-
+        return username.get();
     }
 
 

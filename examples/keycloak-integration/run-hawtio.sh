@@ -6,12 +6,12 @@ if [ -z $1 ]; then
     exit 1
 fi
 
-DIR=`dirname $0`
+DIR=`cd $(dirname $0); pwd`
 
 JAVA_OPTS="$JAVA_OPTS -Dhawtio.authenticationEnabled=true"
 JAVA_OPTS="$JAVA_OPTS -Dhawtio.realm=demo"
 JAVA_OPTS="$JAVA_OPTS -Dhawtio.keycloakEnabled=true"
-JAVA_OPTS="$JAVA_OPTS -Dhawtio.roles=admin,viewer"
+JAVA_OPTS="$JAVA_OPTS -Dhawtio.roles=admin,manager,viewer"
 JAVA_OPTS="$JAVA_OPTS -Dhawtio.rolePrincipalClasses=org.keycloak.adapters.jaas.RolePrincipal"
 JAVA_OPTS="$JAVA_OPTS -Dhawtio.keycloakClientConfig=$DIR/keycloak-hawtio-client.json"
 JAVA_OPTS="$JAVA_OPTS -Dhawtio.keycloakServerConfig=$DIR/keycloak-hawtio.json"

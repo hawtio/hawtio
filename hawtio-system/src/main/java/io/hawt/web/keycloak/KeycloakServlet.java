@@ -28,10 +28,8 @@ public class KeycloakServlet extends HttpServlet {
     private static final transient Logger LOG = LoggerFactory.getLogger(KeycloakServlet.class);
 
     public static final String KEYCLOAK_CLIENT_CONFIG = "keycloakClientConfig";
-    public static final String KEYCLOAK_ENABLED = "keycloakEnabled";
 
     public static final String HAWTIO_KEYCLOAK_CLIENT_CONFIG = "hawtio." + KEYCLOAK_CLIENT_CONFIG;
-    public static final String HAWTIO_KEYCLOAK_ENABLED = "hawtio." + KEYCLOAK_ENABLED;
 
     private String keycloakConfig = null;
     private boolean keycloakEnabled;
@@ -41,8 +39,8 @@ public class KeycloakServlet extends HttpServlet {
     public void init() throws ServletException {
         ConfigManager config = (ConfigManager) getServletContext().getAttribute("ConfigManager");
 
-        keycloakEnabled = isKeycloakEnabled(config);
-        LOG.info("Keycloak integration is " + (this.keycloakEnabled ? "enabled" : "disabled"));
+        keycloakEnabled = KeycloakHelper.isKeycloakEnabled(config);
+        LOG.info("Keycloak integration is {}", this.keycloakEnabled ? "enabled" : "disabled");
         if (!keycloakEnabled) {
             return;
         }
@@ -58,7 +56,7 @@ public class KeycloakServlet extends HttpServlet {
             keycloakConfigFile = defaultKeycloakConfigLocation();
         }
 
-        LOG.info("Will load keycloak config from location: " + keycloakConfigFile);
+        LOG.info("Will load keycloak config from location: {}", keycloakConfigFile);
 
         InputStream is = loadFile(keycloakConfigFile);
         if (is == null) {
@@ -76,14 +74,6 @@ public class KeycloakServlet extends HttpServlet {
                 IOHelper.close(is, "keycloakInputStream", LOG);
             }
         }
-    }
-
-    public static boolean isKeycloakEnabled(ConfigManager config) {
-        String keycloakEnabledCfg = config.get(KEYCLOAK_ENABLED, "false");
-        if (System.getProperty(HAWTIO_KEYCLOAK_ENABLED) != null) {
-            keycloakEnabledCfg = System.getProperty(HAWTIO_KEYCLOAK_ENABLED);
-        }
-        return Boolean.parseBoolean(keycloakEnabledCfg);
     }
 
     /**
@@ -138,21 +128,25 @@ public class KeycloakServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String pathInfo = request.getPathInfo();
-        if ("/enabled".equals(pathInfo)) {
-            renderJSONResponse(response, String.valueOf(keycloakEnabled));
-        } else if ("/client-config".equals(pathInfo)) {
-            if (keycloakConfig == null) {
-                response.sendError(404, "Keycloak client configuration not found");
-            } else {
-                renderJSONResponse(response, keycloakConfig);
-            }
-        } else if ("/validate-subject-matches".equals(pathInfo)) {
-            String keycloakUser = request.getParameter("keycloakUser");
-            if (keycloakUser == null || keycloakUser.length() == 0) {
-                LOG.warn("Parameter 'keycloakUser' not found");
-            }
-            boolean valid = validateKeycloakUser(request, keycloakUser);
-            renderJSONResponse(response, String.valueOf(valid));
+        switch (pathInfo) {
+            case "/enabled":
+                renderJSONResponse(response, String.valueOf(keycloakEnabled));
+                break;
+            case "/client-config":
+                if (keycloakConfig == null) {
+                    response.sendError(404, "Keycloak client configuration not found");
+                } else {
+                    renderJSONResponse(response, keycloakConfig);
+                }
+                break;
+            case "/validate-subject-matches":
+                String keycloakUser = request.getParameter("keycloakUser");
+                if (keycloakUser == null || keycloakUser.length() == 0) {
+                    LOG.warn("Parameter 'keycloakUser' not found");
+                }
+                boolean valid = validateKeycloakUser(request, keycloakUser);
+                renderJSONResponse(response, String.valueOf(valid));
+                break;
         }
     }
 
