@@ -2,33 +2,35 @@
 # yarn lockfile v1
 
 
-"@hawtio/core-dts@~3.0.0", "@hawtio/core-dts@~3.0.11", "@hawtio/core-dts@~3.0.12":
-  version "3.0.17"
-  resolved "https://registry.yarnpkg.com/@hawtio/core-dts/-/core-dts-3.0.17.tgz#ee4981ef95a3251d00704d3baf1bc66830b6d095"
+"@hawtio/core-dts@3.0.18", "@hawtio/core-dts@~3.0.11", "@hawtio/core-dts@~3.0.12":
+  version "3.0.18"
+  resolved "https://registry.yarnpkg.com/@hawtio/core-dts/-/core-dts-3.0.18.tgz#20d1ff7e839c0e3180c18e954ad7a305c4ba2b24"
   dependencies:
     "@types/jquery" "~2.0.46"
 
-"@hawtio/core@3.1.5", "@hawtio/core@~3.0.9", "@hawtio/core@~3.1.0", "@hawtio/core@~3.1.2":
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-3.1.5.tgz#aabf77aef21d6239e6b6410e722233119136a9c6"
+"@hawtio/core@3.2.1", "@hawtio/core@3.2.2", "@hawtio/core@3.2.3", "@hawtio/core@~3.0.9", "@hawtio/core@~3.1.0":
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-3.2.3.tgz#3a4d5075a7fd5bb869284abfb689e2887ce3b47a"
   dependencies:
-    "@hawtio/core-dts" "~3.0.12"
-    "@types/angular" "~1.6.0"
-    "@types/angular-route" "~1.3.4"
-    "@types/jasmine" "~2.8.2"
+    "@hawtio/core-dts" "3.0.18"
+    "@types/angular" "1.6.39"
+    "@types/angular-route" "1.3.4"
+    "@types/jasmine" "2.8.2"
     "@types/jquery" "~2.0.0"
-    "@types/lodash" "~4.14.85"
-    "@types/urijs" "~1.15.34"
-    angular "~1.6.0"
-    angular-route "~1.6.0"
-    angular-sanitize "~1.6.0"
-    jquery "~2.2.4"
-    js-logger "~1.3.0"
-    lodash "~4.17.4"
-    patternfly "~3.30.0"
-    urijs "~1.19.0"
+    "@types/lodash" "4.14.91"
+    "@types/marked" "0.3.0"
+    "@types/urijs" "1.15.34"
+    angular "1.6.8"
+    angular-route "1.6.8"
+    angular-sanitize "1.6.8"
+    jquery "2.2.4"
+    js-logger "1.4.1"
+    lodash "4.17.4"
+    marked "0.3.9"
+    patternfly "3.32.1"
+    urijs "1.19.0"
 
-"@hawtio/forms@~3.0.0", "@hawtio/forms@~3.0.7":
+"@hawtio/forms@3.0.12":
   version "3.0.12"
   resolved "https://registry.yarnpkg.com/@hawtio/forms/-/forms-3.0.12.tgz#7f73abffd4c2127038fad14183ecad8ce5e9452a"
   dependencies:
@@ -36,50 +38,35 @@
     "@hawtio/core-dts" "~3.0.12"
     "@hawtio/ui" "~3.0.25"
 
-"@hawtio/help@~3.0.0":
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@hawtio/help/-/help-3.0.3.tgz#9476392f276dee614917f194936b640ef47ffed2"
+"@hawtio/integration@3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-3.2.1.tgz#8ebbd72c22cd2aafb6ee7410d57ae22ad0ab5949"
   dependencies:
-    "@hawtio/ui" "~3.0.25"
+    "@hawtio/jmx" "3.2.1"
+    "@types/jqueryui" "1.12.0"
+    dagre-layout "0.8.0"
+    ng-infinite-scroll "1.3.0"
 
-"@hawtio/integration@~3.0.30":
-  version "3.0.30"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-3.0.30.tgz#04e37d9520916c1dc5a21e7a457ffe87bcb1d74e"
+"@hawtio/jmx@3.2.0", "@hawtio/jmx@3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-3.2.1.tgz#e05344eea08a56ffa32f8f7832eb971baff33561"
   dependencies:
-    "@hawtio/core" "~3.1.2"
-    "@hawtio/core-dts" "~3.0.0"
-    "@hawtio/jmx" "~3.0.81"
-    "@hawtio/ui" "~3.0.35"
-    "@types/jqueryui" "~1.11.34"
-    dagre hawtio/dagre#3825485552cb2ebc79afab24f9a90f14c7e1e2df
-    ng-infinite-scroll "~1.3.0"
-
-"@hawtio/jmx@~3.0.0", "@hawtio/jmx@~3.0.81", "@hawtio/jmx@~3.0.83":
-  version "3.0.83"
-  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-3.0.83.tgz#adae7077597ee16eb5d2b4f5d73c506efccf8f6b"
-  dependencies:
-    "@hawtio/forms" "~3.0.0"
-    "@hawtio/preferences" "~3.0.0"
-    "@hawtio/ui" "~3.0.35"
-    "@hawtio/utilities" "^3.0.17"
-    angular-patternfly "^4.0.0"
+    "@hawtio/core" "3.2.3"
+    "@hawtio/forms" "3.0.12"
+    "@hawtio/ui" "3.0.35"
+    "@hawtio/utilities" "3.2.0"
+    "@types/jqueryui" "1.12.0"
+    angular-patternfly "4.14.0"
     angular-resizable "1.2.0"
     patternfly-bootstrap-treeview "2.1.5"
 
-"@hawtio/log@~3.0.0":
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@hawtio/log/-/log-3.0.3.tgz#41b0e2da0fc2f8f9136e7b514ce80abf420570d4"
+"@hawtio/log@3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@hawtio/log/-/log-3.2.1.tgz#40cbbab1711c196b7d1f3766aabf9b2df2ef81a4"
   dependencies:
-    "@hawtio/jmx" "~3.0.0"
+    "@hawtio/jmx" "3.2.0"
 
-"@hawtio/preferences@~3.0.0":
-  version "3.0.11"
-  resolved "https://registry.yarnpkg.com/@hawtio/preferences/-/preferences-3.0.11.tgz#b12385826fc2fc3ca65ea2b37fc3d0bfced624a8"
-  dependencies:
-    "@hawtio/forms" "~3.0.7"
-    "@hawtio/help" "~3.0.0"
-
-"@hawtio/ui@~3.0.25", "@hawtio/ui@~3.0.35":
+"@hawtio/ui@3.0.35", "@hawtio/ui@~3.0.25":
   version "3.0.35"
   resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-3.0.35.tgz#1bafafaf7bed13547a0d989f9135e1786ba5cdc8"
   dependencies:
@@ -97,28 +84,22 @@
     lodash "~4.17.4"
     marked "~0.3.6"
 
-"@hawtio/utilities@^3.0.17", "@hawtio/utilities@~3.0.17", "@hawtio/utilities@~3.0.8":
-  version "3.0.17"
-  resolved "https://registry.yarnpkg.com/@hawtio/utilities/-/utilities-3.0.17.tgz#df1d558435597a8ab05c25b9788e7cf6a27ad356"
+"@hawtio/utilities@3.2.0", "@hawtio/utilities@~3.0.8":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/utilities/-/utilities-3.2.0.tgz#31506054856fdd3013ab3e4c8dadbcb55f599ef9"
   dependencies:
-    "@hawtio/core" "~3.0.9"
-    "@hawtio/core-dts" "~3.0.11"
-    "@types/angular" "~1.6.18"
-    "@types/lodash" "~4.14.65"
-    "@types/urijs" "~1.15.32"
+    "@hawtio/core" "3.2.1"
     angular-file-upload "~2.5.0"
     human-date "~1.4.0"
     humanize-duration "~3.10.0"
-    lodash "~4.17.4"
-    urijs "~1.18.10"
 
-"@types/angular-route@~1.3.4":
+"@types/angular-route@1.3.4", "@types/angular-route@~1.3.4":
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/@types/angular-route/-/angular-route-1.3.4.tgz#10d3f7eb313fb8a4b832041f9401869803dcd4df"
   dependencies:
     "@types/angular" "*"
 
-"@types/angular@*", "@types/angular@~1.6.0", "@types/angular@~1.6.18":
+"@types/angular@*", "@types/angular@1.6.39", "@types/angular@~1.6.0", "@types/angular@~1.6.18":
   version "1.6.39"
   resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.6.39.tgz#0c34938fc546f360c14817686f2e453ebf22312f"
 
@@ -130,17 +111,17 @@
   version "0.0.40"
   resolved "https://registry.yarnpkg.com/@types/codemirror/-/codemirror-0.0.40.tgz#0868ed9ba5bf3ef8072de80e245ecf4a8f0bbdfd"
 
-"@types/jasmine@~2.8.2":
+"@types/jasmine@2.8.2", "@types/jasmine@~2.8.2":
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-2.8.2.tgz#6ae4d8740c0da5d5a627df725b4eed71b8e36668"
 
-"@types/jquery@*", "@types/jquery@2.0.48", "@types/jquery@~2.0.0", "@types/jquery@~2.0.46":
+"@types/jquery@*", "@types/jquery@~2.0.0", "@types/jquery@~2.0.46":
   version "2.0.48"
   resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-2.0.48.tgz#3e90d8cde2d29015e5583017f7830cb3975b2eef"
 
-"@types/jqueryui@~1.11.34":
-  version "1.11.37"
-  resolved "https://registry.yarnpkg.com/@types/jqueryui/-/jqueryui-1.11.37.tgz#baf66986ae3d57be7f0df631806e3faafe90b131"
+"@types/jqueryui@1.12.0":
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/@types/jqueryui/-/jqueryui-1.12.0.tgz#69e6e6e2c1c7b97d0b6405c8f6036db09056bd87"
   dependencies:
     "@types/jquery" "*"
 
@@ -148,15 +129,15 @@
   version "0.0.30"
   resolved "https://registry.yarnpkg.com/@types/js-beautify/-/js-beautify-0.0.30.tgz#82ffbeb2c2dec592f1d04169e926912eeed567ec"
 
-"@types/lodash@~4.14.65", "@types/lodash@~4.14.85":
-  version "4.14.88"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.88.tgz#97eaf2dc668f33ed8e511a5b627035f4ea20b0f5"
+"@types/lodash@4.14.91", "@types/lodash@~4.14.65", "@types/lodash@~4.14.85":
+  version "4.14.91"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.91.tgz#794611b28056d16b5436059c6d800b39d573cd3a"
 
-"@types/marked@0.0.28":
-  version "0.0.28"
-  resolved "https://registry.yarnpkg.com/@types/marked/-/marked-0.0.28.tgz#44ba754e9fa51432583e8eb30a7c4dd249b52faa"
+"@types/marked@0.0.28", "@types/marked@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@types/marked/-/marked-0.3.0.tgz#583c223dd33385a1dda01aaf77b0cd0411c4b524"
 
-"@types/urijs@~1.15.32", "@types/urijs@~1.15.34":
+"@types/urijs@1.15.34", "@types/urijs@~1.15.32", "@types/urijs@~1.15.34":
   version "1.15.34"
   resolved "https://registry.yarnpkg.com/@types/urijs/-/urijs-1.15.34.tgz#b9d5954e9beaabb6fc48c2127d8df15ac6393256"
   dependencies:
@@ -178,9 +159,9 @@ angular-file-upload@~2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/angular-file-upload/-/angular-file-upload-2.5.0.tgz#0f53c93fbc70ed8ba8340a9a289ba64b680e2167"
 
-angular-patternfly@^4.0.0:
-  version "4.13.2"
-  resolved "https://registry.yarnpkg.com/angular-patternfly/-/angular-patternfly-4.13.2.tgz#ba40a3cb61337c136cdf2b30a13c636b0ea5c1d0"
+angular-patternfly@4.14.0:
+  version "4.14.0"
+  resolved "https://registry.yarnpkg.com/angular-patternfly/-/angular-patternfly-4.14.0.tgz#87db81ac346764208060caebde49c369953729d4"
   dependencies:
     angular "1.5.*"
     angular-animate "1.5.*"
@@ -188,7 +169,7 @@ angular-patternfly@^4.0.0:
     angular-svg-base-fix "2.0.0"
     angular-ui-bootstrap "2.3.x"
     lodash "4.x"
-    patternfly ">=3.27.2"
+    patternfly "^3.31.0"
   optionalDependencies:
     angular-drag-and-drop-lists "2.0.0"
     angularjs-datatables "^0.5.9"
@@ -200,31 +181,31 @@ angular-patternfly@^4.0.0:
     datatables.net "^1.10.12"
     datatables.net-select "~1.2.0"
     jquery "~3.2.1"
-    moment "~2.14.1"
+    moment "~2.19.3"
 
 angular-resizable@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/angular-resizable/-/angular-resizable-1.2.0.tgz#9dd29af008f8b54abfc051bd269a8f0b4fe43f1a"
 
-angular-route@1.6.7, angular-route@~1.6.0:
-  version "1.6.7"
-  resolved "https://registry.yarnpkg.com/angular-route/-/angular-route-1.6.7.tgz#020970d93d8b2ce4ca6aff0e0d7922579543cbcf"
+angular-route@1.6.8, angular-route@~1.6.0:
+  version "1.6.8"
+  resolved "https://registry.yarnpkg.com/angular-route/-/angular-route-1.6.8.tgz#82ace773e7b232bf77768370760244a8caab5d36"
 
-angular-sanitize@1.5.*, angular-sanitize@1.6.7, angular-sanitize@~1.6.0, angular-sanitize@~1.6.4:
-  version "1.6.7"
-  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.6.7.tgz#5a3d61ad7b8b699923329635d99248bcfce26408"
+angular-sanitize@1.5.*, angular-sanitize@1.6.8, angular-sanitize@~1.6.0, angular-sanitize@~1.6.4:
+  version "1.6.8"
+  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.6.8.tgz#68175a1a5853a6439fffcb251a88a538a44a8e70"
 
 angular-svg-base-fix@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/angular-svg-base-fix/-/angular-svg-base-fix-2.0.0.tgz#f3d5f85b87a10d21310f47da8455038b90cfb000"
 
-angular-ui-bootstrap@2.3.2, angular-ui-bootstrap@2.3.x, angular-ui-bootstrap@~2.5.0:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/angular-ui-bootstrap/-/angular-ui-bootstrap-2.3.2.tgz#bfec894ed983ade1e5d3f402fc10f8829652ac99"
+angular-ui-bootstrap@2.3.x, angular-ui-bootstrap@2.5.6, angular-ui-bootstrap@~2.5.0:
+  version "2.5.6"
+  resolved "https://registry.yarnpkg.com/angular-ui-bootstrap/-/angular-ui-bootstrap-2.5.6.tgz#23937322ec641a6fbee16498cc32452aa199e7c5"
 
-angular@1.5.*, angular@1.6.7, angular@>=1.3.0, angular@~1.6.0, angular@~1.6.4:
-  version "1.6.7"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.7.tgz#0f89837dae1776b01ccb1fa2096db0d9373d9897"
+angular@1.5.*, angular@1.6.8, angular@>=1.3.0, angular@~1.6.0, angular@~1.6.4:
+  version "1.6.8"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.8.tgz#5be378a58be91a5489e78b59c4518cd9fd273ffb"
 
 angularjs-datatables@^0.5.9:
   version "0.5.9"
@@ -308,12 +289,12 @@ d3@~3.5.0, d3@~3.5.17:
   version "3.5.17"
   resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.17.tgz#bc46748004378b21a360c9fc7cf5231790762fb8"
 
-dagre@hawtio/dagre#3825485552cb2ebc79afab24f9a90f14c7e1e2df:
-  version "0.7.5-pre"
-  resolved "https://codeload.github.com/hawtio/dagre/tar.gz/3825485552cb2ebc79afab24f9a90f14c7e1e2df"
+dagre-layout@0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/dagre-layout/-/dagre-layout-0.8.0.tgz#7147b6afb655602f855158dfea171db9aa98d4ff"
   dependencies:
     graphlib "^2.1.1"
-    lodash "^4.14.1"
+    lodash "^4.17.4"
 
 datatables.net-bs@>=1.10.9:
   version "1.10.16"
@@ -330,7 +311,7 @@ datatables.net-colreorder-bs@~1.3.2:
     datatables.net-colreorder ">=1.2.0"
     jquery ">=1.7"
 
-datatables.net-colreorder@1.3.3, datatables.net-colreorder@>=1.2.0, datatables.net-colreorder@~1.3.2:
+datatables.net-colreorder@>=1.2.0, datatables.net-colreorder@~1.3.2:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/datatables.net-colreorder/-/datatables.net-colreorder-1.3.3.tgz#fc762e350f94224cb2cd45c2b962261a0fffef72"
   dependencies:
@@ -439,11 +420,11 @@ js-beautify@~1.6.14:
     mkdirp "~0.5.0"
     nopt "~3.0.1"
 
-js-logger@~1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/js-logger/-/js-logger-1.3.0.tgz#de1a1143242710f7ce4da20408348a2a93ebf34d"
+js-logger@1.4.1, js-logger@~1.3.0:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/js-logger/-/js-logger-1.4.1.tgz#f0230dc5e84e120f213d6e5a6b767a913d290335"
 
-lodash@4.x, lodash@^4.11.1, lodash@^4.14.1, lodash@~4.17.4:
+lodash@4.17.4, lodash@4.x, lodash@^4.11.1, lodash@^4.17.4, lodash@~4.17.4:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -453,9 +434,9 @@ lru-cache@^3.2.0:
   dependencies:
     pseudomap "^1.0.1"
 
-marked@~0.3.6:
-  version "0.3.7"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-0.3.7.tgz#80ef3bbf1bd00d1c9cfebe42ba1b8c85da258d0d"
+marked@0.3.9, marked@~0.3.6:
+  version "0.3.9"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-0.3.9.tgz#54ce6a57e720c3ac6098374ec625fcbcc97ff290"
 
 minimist@0.0.8:
   version "0.0.8"
@@ -473,11 +454,11 @@ moment-timezone@^0.4.0, moment-timezone@^0.4.1:
   dependencies:
     moment ">= 2.6.0"
 
-moment@2.14.1, "moment@>= 2.6.0", moment@^2.10, moment@~2.14.1:
-  version "2.14.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.14.1.tgz#b35b27c47e57ed2ddc70053d6b07becdb291741c"
+moment@2.19.4, "moment@>= 2.6.0", moment@^2.10, moment@~2.14.1, moment@~2.19.3:
+  version "2.19.4"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.19.4.tgz#17e5e2c6ead8819c8ecfad83a0acccb312e94682"
 
-ng-infinite-scroll@~1.3.0:
+ng-infinite-scroll@1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/ng-infinite-scroll/-/ng-infinite-scroll-1.3.0.tgz#c2e98d8fd134b0525a4d2cf58c95d9b583755112"
 
@@ -498,16 +479,18 @@ patternfly-bootstrap-treeview@2.1.5, patternfly-bootstrap-treeview@~2.1.0:
     bootstrap "3.3.x"
     jquery ">= 2.1.x"
 
-patternfly@3.25.1, patternfly@>=3.27.2, patternfly@~3.30.0:
-  version "3.25.1"
-  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.25.1.tgz#2cb95924ea0300ff5c720be876b949257befaf9d"
+patternfly@3.32.1, patternfly@^3.31.0, patternfly@~3.30.0:
+  version "3.32.1"
+  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.32.1.tgz#33725d652ac9a6b7f4d3f18a4189dbc319ed593a"
   dependencies:
     bootstrap "~3.3.7"
     font-awesome "^4.7.0"
     jquery "~3.2.1"
   optionalDependencies:
     bootstrap-datepicker "~1.6.4"
+    bootstrap-sass "^3.3.7"
     bootstrap-select "^1.12.2"
+    bootstrap-slider "^9.9.0"
     bootstrap-switch "~3.3.4"
     bootstrap-touchspin "~3.1.1"
     c3 "~0.4.11"
@@ -518,6 +501,7 @@ patternfly@3.25.1, patternfly@>=3.27.2, patternfly@~3.30.0:
     datatables.net-select "~1.2.0"
     drmonty-datatables-colvis "~1.1.2"
     eonasdan-bootstrap-datetimepicker "^4.17.47"
+    font-awesome-sass "^4.7.0"
     google-code-prettify "~1.0.5"
     jquery-match-height "^0.7.2"
     moment "~2.14.1"

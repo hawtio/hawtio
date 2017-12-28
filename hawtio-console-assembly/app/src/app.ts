@@ -38,7 +38,7 @@ namespace ConsoleAssembly {
     'ngInject';
     $provide.decorator('authService', [
       '$delegate',
-      function($delegate): Auth.AuthService {
+      function($delegate): Core.AuthService {
         return {
           logout(): void {
             window.location.href = 'auth/logout';

@@ -24,18 +24,12 @@
     <link rel="stylesheet" href="libs/@hawtio/ui/dist/hawtio-ui.css" />
     <!-- @hawtio/forms -->
     <link rel="stylesheet" href="libs/@hawtio/forms/dist/hawtio-forms.css" />
-    <!-- @hawtio/help -->
-    <link rel="stylesheet" href="libs/@hawtio/help/dist/hawtio-help.css" />
-    <!-- @hawtio/preferences -->
-    <link rel="stylesheet" href="libs/@hawtio/preferences/dist/hawtio-preferences.css" />
     <!-- @hawtio/jmx -->
     <link rel="stylesheet" href="libs/@hawtio/jmx/dist/hawtio-jmx.css" />
     <!-- @hawtio/integration -->
     <link rel="stylesheet" href="libs/@hawtio/integration/dist/hawtio-integration.css" />
     <!-- @hawtio/log -->
     <link rel="stylesheet" href="libs/@hawtio/log/dist/hawtio-log.css" />
-    <!-- @hawtio/help -->
-    <link rel="stylesheet" href="libs/@hawtio/help/dist/hawtio-help.css" />
     <!-- @hawtio/console-assembly -->
     <link rel="stylesheet" href="css/hawtio-console-assembly.css" />
 
@@ -107,7 +101,7 @@
     <script src="libs/codemirror/mode/yaml/yaml.js"></script>
     <!-- graphlib, dagre -->
     <script src="libs/graphlib/dist/graphlib.core.min.js"></script>
-    <script src="libs/dagre/dist/dagre.core.min.js"></script>
+    <script src="libs/dagre-layout/dist/dagre-layout.js"></script>
     <!-- ng-infinite-scroll -->
     <script src="libs/ng-infinite-scroll/build/ng-infinite-scroll.min.js"></script>
     <!-- @hawtio/core -->
@@ -118,10 +112,6 @@
     <script src="libs/@hawtio/ui/dist/hawtio-ui.js"></script>
     <!-- @hawtio/forms -->
     <script src="libs/@hawtio/forms/dist/hawtio-forms.js"></script>
-    <!-- @hawtio/help -->
-    <script src="libs/@hawtio/help/dist/hawtio-help.js"></script>
-    <!-- @hawtio/preferences -->
-    <script src="libs/@hawtio/preferences/dist/hawtio-preferences.js"></script>
     <!-- @hawtio/jmx -->
     <script src="libs/@hawtio/jmx/dist/hawtio-jmx.js"></script>
     <!-- @hawtio/integration -->
@@ -133,25 +123,25 @@
   </head>
 
   <body>
-    <nav class="navbar navbar-pf-vertical" style="height: 60px">
+    <nav class="navbar navbar-pf-vertical">
       <div class="navbar-header">
-        <a href="/hawtio/" class="navbar-brand">
+        <a href="." class="navbar-brand">
           <hawtio-branding-image class="navbar-brand-name" src="appLogoUrl" alt="appName"></hawtio-branding-image>
         </a>
       </div>
       <nav class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right navbar-iconic">
           <li>
-            <a class="nav-item-iconic" href="/hawtio/help">
+            <a class="nav-item-iconic" href="help">
               <span title="Help" class="fa pficon-help"></span>
             </a>
           </li>
           <li class="dropdown">
-            <a class="dropdown-toggle nav-item-iconic" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            <a class="dropdown-toggle nav-item-iconic" id="userDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
               <span title="Username" class="fa pficon-user"></span>
               <span class="caret"></span>
             </a>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" hawtio-extension name="hawtio-user">
+            <ul class="dropdown-menu" aria-labelledby="userDropdownMenu" hawtio-extension name="hawtio-user">
             </ul>
           </li>
         </ul>
