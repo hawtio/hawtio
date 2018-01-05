@@ -8,9 +8,9 @@
   dependencies:
     "@types/jquery" "~2.0.46"
 
-"@hawtio/core@3.2.1", "@hawtio/core@3.2.2", "@hawtio/core@3.2.3", "@hawtio/core@~3.0.9", "@hawtio/core@~3.1.0":
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-3.2.3.tgz#3a4d5075a7fd5bb869284abfb689e2887ce3b47a"
+"@hawtio/core@3.2.1", "@hawtio/core@3.2.2", "@hawtio/core@3.2.3", "@hawtio/core@3.2.4", "@hawtio/core@~3.0.9", "@hawtio/core@~3.1.0":
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-3.2.4.tgz#cd9fd85a40516734cf867e653697584431a54460"
   dependencies:
     "@hawtio/core-dts" "3.0.18"
     "@types/angular" "1.6.39"
@@ -38,22 +38,22 @@
     "@hawtio/core-dts" "~3.0.12"
     "@hawtio/ui" "~3.0.25"
 
-"@hawtio/integration@3.2.1":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-3.2.1.tgz#8ebbd72c22cd2aafb6ee7410d57ae22ad0ab5949"
+"@hawtio/integration@3.2.4":
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-3.2.4.tgz#23a4493dcc26c36fa800ffabd7d60222634a4412"
   dependencies:
-    "@hawtio/jmx" "3.2.1"
+    "@hawtio/jmx" "3.2.2"
     "@types/jqueryui" "1.12.0"
     dagre-layout "0.8.0"
     ng-infinite-scroll "1.3.0"
 
-"@hawtio/jmx@3.2.0", "@hawtio/jmx@3.2.1":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-3.2.1.tgz#e05344eea08a56ffa32f8f7832eb971baff33561"
+"@hawtio/jmx@3.2.0", "@hawtio/jmx@3.2.2":
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-3.2.2.tgz#d307bd262eda961d59676f5467288ef05d8bb0bf"
   dependencies:
-    "@hawtio/core" "3.2.3"
+    "@hawtio/core" "3.2.4"
     "@hawtio/forms" "3.0.12"
-    "@hawtio/ui" "3.0.35"
+    "@hawtio/ui" "3.2.0"
     "@hawtio/utilities" "3.2.0"
     "@types/jqueryui" "1.12.0"
     angular-patternfly "4.14.0"
@@ -66,23 +66,22 @@
   dependencies:
     "@hawtio/jmx" "3.2.0"
 
-"@hawtio/ui@3.0.35", "@hawtio/ui@~3.0.25":
-  version "3.0.35"
-  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-3.0.35.tgz#1bafafaf7bed13547a0d989f9135e1786ba5cdc8"
+"@hawtio/ui@3.0.35", "@hawtio/ui@3.2.0", "@hawtio/ui@~3.0.25":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-3.2.0.tgz#29ed6aa1d01cd7d7e5e704dc5dd16a2e6e76e0a4"
   dependencies:
-    "@hawtio/core" "~3.1.0"
-    "@hawtio/core-dts" "~3.0.12"
-    "@hawtio/utilities" "~3.0.8"
-    "@types/clipboard" "~1.5.34"
+    "@hawtio/core" "3.2.3"
+    "@hawtio/core-dts" "3.0.18"
+    "@hawtio/utilities" "3.2.0"
+    "@types/bootstrap" "3.3.36"
+    "@types/clipboard" "1.5.35"
     "@types/codemirror" "0.0.40"
     "@types/js-beautify" "0.0.30"
     "@types/marked" "0.0.28"
-    angular-ui-bootstrap "~2.5.0"
-    clipboard "~1.7.1"
-    codemirror "~5.26.0"
-    js-beautify "~1.6.14"
-    lodash "~4.17.4"
-    marked "~0.3.6"
+    angular-ui-bootstrap "2.5.6"
+    clipboard "1.7.1"
+    codemirror "5.33.0"
+    js-beautify "1.7.5"
 
 "@hawtio/utilities@3.2.0", "@hawtio/utilities@~3.0.8":
   version "3.2.0"
@@ -103,7 +102,13 @@
   version "1.6.39"
   resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.6.39.tgz#0c34938fc546f360c14817686f2e453ebf22312f"
 
-"@types/clipboard@~1.5.34":
+"@types/bootstrap@3.3.36":
+  version "3.3.36"
+  resolved "https://registry.yarnpkg.com/@types/bootstrap/-/bootstrap-3.3.36.tgz#5ca0b81655427398fe7c8728bccdc395069093d0"
+  dependencies:
+    "@types/jquery" "*"
+
+"@types/clipboard@1.5.35", "@types/clipboard@~1.5.34":
   version "1.5.35"
   resolved "https://registry.yarnpkg.com/@types/clipboard/-/clipboard-1.5.35.tgz#bceb67a7e0aad3070468929b95a2d626405db464"
 
@@ -258,7 +263,7 @@ c3@~0.4.11:
   dependencies:
     d3 "~3.5.0"
 
-clipboard@~1.7.1:
+clipboard@1.7.1, clipboard@~1.7.1:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/clipboard/-/clipboard-1.7.1.tgz#360d6d6946e99a7a1fef395e42ba92b5e9b5a16b"
   dependencies:
@@ -266,9 +271,9 @@ clipboard@~1.7.1:
     select "^1.1.2"
     tiny-emitter "^2.0.0"
 
-codemirror@~5.26.0:
-  version "5.26.0"
-  resolved "https://registry.yarnpkg.com/codemirror/-/codemirror-5.26.0.tgz#bcbee86816ed123870c260461c2b5c40b68746e5"
+codemirror@5.33.0, codemirror@~5.26.0:
+  version "5.33.0"
+  resolved "https://registry.yarnpkg.com/codemirror/-/codemirror-5.33.0.tgz#462ad9a6fe8d38b541a9536a3997e1ef93b40c6a"
 
 commander@^2.9.0:
   version "2.12.2"
@@ -411,9 +416,9 @@ jquery@2.2.4, "jquery@>= 2.1.x", jquery@>=1.11.0, jquery@>=1.7, jquery@>=1.7.0, 
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.2.4.tgz#2c89d6889b5eac522a7eea32c14521559c6cbf02"
 
-js-beautify@~1.6.14:
-  version "1.6.14"
-  resolved "https://registry.yarnpkg.com/js-beautify/-/js-beautify-1.6.14.tgz#d3b8f7322d02b9277d58bd238264c327e58044cd"
+js-beautify@1.7.5, js-beautify@~1.6.14:
+  version "1.7.5"
+  resolved "https://registry.yarnpkg.com/js-beautify/-/js-beautify-1.7.5.tgz#69d9651ef60dbb649f65527b53674950138a7919"
   dependencies:
     config-chain "~1.1.5"
     editorconfig "^0.13.2"

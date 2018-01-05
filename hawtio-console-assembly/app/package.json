@@ -2,27 +2,30 @@
   "name": "@hawtio/console-assembly",
   "version": "2.0.0",
   "dependencies": {
-    "@hawtio/integration": "3.2.1",
+    "@hawtio/integration": "3.2.4",
     "@hawtio/log": "3.2.1"
   },
   "flat": true,
   "resolutions": {
-    "@hawtio/jmx": "3.2.1",
-    "@hawtio/core": "3.2.3",
-    "@hawtio/utilities": "3.2.0",
+    "@hawtio/core": "3.2.4",
     "@hawtio/core-dts": "3.0.18",
+    "@hawtio/jmx": "3.2.2",
+    "@hawtio/ui": "3.2.0",
+    "@hawtio/utilities": "3.2.0",
     "@types/lodash": "4.14.91",
     "@types/marked": "0.3.0",
     "angular": "1.6.8",
     "angular-route": "1.6.8",
     "angular-sanitize": "1.6.8",
     "angular-patternfly": "4.14.0",
+    "angular-ui-bootstrap": "2.5.6",
+    "codemirror": "5.33.0",
     "jquery": "2.2.4",
+    "js-beautify": "1.7.5",
     "js-logger": "1.4.1",
     "marked": "0.3.9",
-    "patternfly": "3.32.1",
-    "urijs": "1.19.0",
     "moment": "2.19.4",
-    "angular-ui-bootstrap": "2.5.6"
+    "patternfly": "3.32.1",
+    "urijs": "1.19.0"
   }
 }
