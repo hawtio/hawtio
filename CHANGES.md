@@ -2,6 +2,8 @@
 
 #### 2.0 Beta2 (To be released)
 
+* Bug fixes
+
 #### 2.0 Beta1
 
 * hawtio Maven plugin
