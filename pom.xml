@@ -71,7 +71,7 @@
     <atmosphere-version>1.0.18</atmosphere-version>
     <blueprint-web-version>1.0.0</blueprint-web-version>
     <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
-    <camel-version>2.20.1</camel-version>
+    <camel-version>2.20.2</camel-version>
     <commons-codec-version>1.10</commons-codec-version>
     <commons-fileupload-version>1.3.2</commons-fileupload-version>
     <httpclient-version>4.5.2</httpclient-version>
