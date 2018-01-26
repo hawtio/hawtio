@@ -3,6 +3,8 @@
 
 #### 1.5.8 (To be released)
 
+* Upgraded to Camel 2.20.2
+
 #### 1.5.7
 
 * Upgraded to jQuery 1.12.4
