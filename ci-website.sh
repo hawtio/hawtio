@@ -13,7 +13,7 @@ echo ===========================================================================
 #mvn clean scalate:sitegen scalate:deploy
 
 cd website && \
-mvn clean compile org.scalatra.scalate:maven-scalate-plugin_2.11:sitegen && \
+mvn --batch-mode clean compile org.scalatra.scalate:maven-scalate-plugin_2.11:sitegen && \
 echo 'hawt.io' > target/sitegen/CNAME && \
 npm install && \
 gulp
