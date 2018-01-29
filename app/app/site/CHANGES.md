@@ -1,8 +1,15 @@
 
 ### Change Log
 
-#### 1.5.7 (To be released)
+#### 1.5.8 (To be released)
 
+* Upgraded to Camel 2.20.2
+
+#### 1.5.7
+
+* Upgraded to jQuery 1.12.4
+* Deprecated `@EnableHawtio`. Do not use it any longer. Not only unnecessary, but also
+  even harmful to use it in some cases.
 * Bug fixes
 
 #### 1.5.6
@@ -61,7 +68,9 @@
 * Upgraded to Camel 2.18.2
 * Upgraded to Spring Boot 1.5.1
 
-Hawtio 1.4.x is now in maintenance mode.
+--------------------------------------------------
+
+*Hawtio 1.4.x is now in maintenance mode.*
 
 #### 1.4.68
 

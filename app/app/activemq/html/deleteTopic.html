@@ -1,22 +1,22 @@
 <form class="form-horizontal" ng-controller="ActiveMQ.DestinationController">
-    <div class="control-group">
-        <div class="alert">
-          <button type="button" class="close" data-dismiss="alert">×</button>
-          <strong>Warning!</strong> You are about to delete topic '{{name().unescapeHTML()}}'.
-          <br/>
-          This operation cannot be undone!
-        </div>
+  <div class="control-group">
+    <div class="alert">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <strong>Warning!</strong> This operation cannot be undone. Please be careful!
     </div>
-    <div class="control-group">
-        <button type="submit" class="btn btn-warning" ng-click="deleteDialog = true">Delete topic '{{name().unescapeHTML()}}'</button>
-    </div>
+  </div>
+  <h4>Topic '{{name().unescapeHTML()}}'</h4>
+  <p>You are about to delete this topic.</p>
+  <div class="control-group">
+    <button type="submit" class="btn btn-warning" ng-click="deleteDialog = true">Delete topic</button>
+  </div>
 
-    <div hawtio-confirm-dialog="deleteDialog"
-         ok-button-text="Delete"
-         on-ok="deleteDestination()">
-        <div class="dialog-body">
-          <p>You are about to delete the <b>{{name().unescapeHTML()}}</b> topic</p>
-          <p>This operation cannot be undone so please be careful.</p>
-        </div>
+  <div hawtio-confirm-dialog="deleteDialog"
+       ok-button-text="Delete"
+       on-ok="deleteDestination()">
+    <div class="dialog-body">
+      <p>You are about to delete the <b>{{name().unescapeHTML()}}</b> topic</p>
+      <p>This operation cannot be undone so please be careful.</p>
     </div>
+  </div>
 </form>

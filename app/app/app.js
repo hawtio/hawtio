@@ -22664,11 +22664,7 @@ var DataTable;
                 }
                 var widget = this;
                 if (this.dataTable) {
-                    var keys = new KeyTable({
-                        "table": tableElement[0],
-                        "datatable": this.dataTable
-                    });
-                    keys.fnSetPosition(0, 0);
+                    var keys = new $.fn.dataTable.KeyTable(this.dataTable);
                     if (angular.isArray(data) && data.length) {
                         var selected = data[0];
                         var selectHandler = widget.config.selectHandler;
@@ -22712,27 +22708,7 @@ var DataTable;
                 if (!this.addedExpandNodes) {
                     this.addedExpandNodes = true;
                     $(tableElement).on("click", "td.control", expandCollapseNode);
-                    keys.event.action(0, null, function (node) {
-                        expandCollapseNode.call(node);
-                    });
                 }
-                keys.event.focus(null, null, function (node) {
-                    var dataTable = widget.dataTable;
-                    var row = node;
-                    if (node) {
-                        var nodeName = node.nodeName;
-                        if (nodeName) {
-                            if (nodeName.toLowerCase() === "td") {
-                                row = $(node).parents("tr")[0];
-                            }
-                            var selected = dataTable.fnGetData(row);
-                            var selectHandler = widget.config.selectHandler;
-                            if (selected && selectHandler) {
-                                selectHandler(selected);
-                            }
-                        }
-                    }
-                });
                 $(tableElement).find("td.control").on("click", function (event) {
                     var dataTable = widget.dataTable;
                     if ($(this).hasClass('selected')) {
@@ -23326,9 +23302,6 @@ var DataTable;
 var Diagnostics;
 (function (Diagnostics) {
     Diagnostics.log = Logger.get("Diagnostics");
-    Diagnostics.connectControllerKey = "jvmConnectSettings";
-    Diagnostics.connectionSettingsKey = Core.connectionSettingsKey;
-    Diagnostics.logoPath = 'img/icons/jvm/';
     function configureScope($scope, $location, workspace) {
         $scope.isActive = function (href) {
             var tidy = Core.trimLeading(href, "#");
@@ -23399,21 +23372,21 @@ var Diagnostics;
 /// <reference path="diagnosticHelpers.ts"/>
 var Diagnostics;
 (function (Diagnostics) {
-    Diagnostics.rootPath = 'app/diagnostics';
-    Diagnostics.templatePath = Diagnostics.rootPath + '/html/';
-    Diagnostics.pluginName = 'diagnostics';
-    Diagnostics._module = angular.module(Diagnostics.pluginName, ['bootstrap', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-forms', 'ui']);
+    var rootPath = 'app/diagnostics';
+    var templatePath = rootPath + '/html/';
+    var pluginName = 'diagnostics';
+    Diagnostics._module = angular.module(pluginName, ['bootstrap', 'ngResource', 'datatable', 'hawtioCore', 'hawtio-forms', 'ui']);
     Diagnostics._module.config(["$routeProvider", function ($routeProvider) {
             $routeProvider.
-                when('/diagnostics/jfr', { templateUrl: Diagnostics.templatePath + 'jfr.html' }).
-                when('/diagnostics/heap', { templateUrl: Diagnostics.templatePath + 'heap.html' }).
-                when('/diagnostics/flags', { templateUrl: Diagnostics.templatePath + 'flags.html' });
+                when('/diagnostics/jfr', { templateUrl: templatePath + 'jfr.html' }).
+                when('/diagnostics/heap', { templateUrl: templatePath + 'heap.html' }).
+                when('/diagnostics/flags', { templateUrl: templatePath + 'flags.html' });
         }]);
     Diagnostics._module.constant('mbeanName', 'com.sun.management:type=DiagnosticCommand');
-    Diagnostics._module.run(["$location", "workspace", "viewRegistry", "layoutFull", "helpRegistry", "preferencesRegistry", function ($location, workspace, viewRegistry, layoutFull, helpRegistry, preferencesRegistry) {
-            viewRegistry[Diagnostics.pluginName] = Diagnostics.templatePath + 'layoutDiagnostics.html';
+    Diagnostics._module.run(["workspace", "viewRegistry", "helpRegistry", function (workspace, viewRegistry, helpRegistry) {
+            viewRegistry[pluginName] = templatePath + 'layoutDiagnostics.html';
             helpRegistry.addUserDoc('diagnostics', 'app/diagnostics/doc/help.md');
-            Core.addCSS(Diagnostics.rootPath + "/css/diagnostics.css");
+            Core.addCSS(rootPath + "/css/diagnostics.css");
             workspace.topLevelTabs.push({
                 id: "diagnostics",
                 content: "Diagnostics",
@@ -23427,12 +23400,12 @@ var Diagnostics;
                 isActive: function (workspace) { return workspace.isLinkActive("diagnostics"); }
             });
         }]);
-    hawtioPluginLoader.addModule(Diagnostics.pluginName);
+    hawtioPluginLoader.addModule(pluginName);
 })(Diagnostics || (Diagnostics = {}));
 /// <reference path="./diagnosticsPlugin.ts"/>
 var Diagnostics;
 (function (Diagnostics) {
-    Diagnostics._module.controller("Diagnostics.FlagsController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+    Diagnostics._module.controller("Diagnostics.FlagsController", ["$scope", "jolokia", function ($scope, jolokia) {
             $scope.flags = [];
             $scope.tableDef = tableDef();
             var readRequest = {
@@ -23527,8 +23500,7 @@ var Diagnostics;
 /// <reference path="../../ide/js/openInIdeDirective.ts"/>
 var Diagnostics;
 (function (Diagnostics) {
-    ;
-    Diagnostics._module.controller("Diagnostics.HeapController", ["$scope", "$window", "$location", "workspace", "jolokia", function ($scope, $window, $location, workspace, jolokia) {
+    Diagnostics._module.controller("Diagnostics.HeapController", ["$scope", "jolokia", function ($scope, jolokia) {
             $scope.classHistogram = '';
             $scope.status = '';
             $scope.tableDef = tableDef();
@@ -23731,9 +23703,19 @@ var Forms;
 /// <reference path="../../forms/js/formInterfaces.ts"/>
 var Diagnostics;
 (function (Diagnostics) {
-    function splitResponse(response) {
-        return response.match(/Dumped recording "(.+)",(.+) written to:\r?\n\r?\n(.+)/);
+    function parseDumpFeedback(response) {
+        var parsed = response.match(/Dumped recording "(.+)", (.+) written to:\r?\n\r?\n(.+)/);
+        if (parsed && parsed.length == 4) {
+            return {
+                number: parsed[1],
+                size: parsed[2],
+                file: parsed[3],
+                time: Date.now()
+            };
+        }
+        return null;
     }
+    Diagnostics.parseDumpFeedback = parseDumpFeedback;
     function buildStartParams(jfrSettings) {
         var params = [];
         if (jfrSettings.name && jfrSettings.name.length > 0) {
@@ -23754,35 +23736,38 @@ var Diagnostics;
             'name="' + jfrSettings.name + '"'
         ];
     }
-    ;
-    Diagnostics.JfrController = Diagnostics._module.controller("Diagnostics.JfrController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
+    function updateJfrScope(response, scope) {
+        var statusString = response.value;
+        scope.jfrEnabled = statusString.indexOf("not enabled") == -1;
+        scope.isRunning = statusString.indexOf("(running)") > -1;
+        scope.isRecording = scope.isRunning || statusString.indexOf("(stopped)") > -1;
+        if ((statusString.indexOf("Use JFR.") > -1 || statusString
+            .indexOf("Use VM.") > -1)
+            && scope.pid) {
+            statusString = statusString.replace("Use ", "Use command line: jcmd " + scope.pid + " ");
+        }
+        scope.jfrStatus = statusString;
+        if (scope.isRecording) {
+            var regex = /recording=(\d+) name="(.+?)"/g;
+            if (scope.isRunning) {
+                regex = /recording=(\d+) name="(.+?)".+?\(running\)/g;
+            }
+            var parsed = regex.exec(statusString);
+            scope.jfrSettings.recordingNumber = parsed[1];
+            scope.jfrSettings.name = parsed[2];
+            var parsedFilename = statusString.match(/filename="(.+)"/);
+            if (parsedFilename && parsedFilename[1]) {
+                scope.jfrSettings.filename = parsedFilename[1];
+            }
+            else {
+                scope.jfrSettings.filename = 'recording' + parsed[1] + '.jfr';
+            }
+        }
+    }
+    Diagnostics.updateJfrScope = updateJfrScope;
+    var JfrController = Diagnostics._module.controller("Diagnostics.JfrController", ["$scope", "$location", "workspace", "jolokia", function ($scope, $location, workspace, jolokia) {
             function render(response) {
-                var statusString = response.value;
-                $scope.jfrEnabled = statusString.indexOf("not enabled") == -1;
-                $scope.isRunning = statusString.indexOf("(running)") > -1;
-                $scope.isRecording = $scope.isRunning || statusString.indexOf("(stopped)") > -1;
-                if ((statusString.indexOf("Use JFR.") > -1 || statusString
-                    .indexOf("Use VM.") > -1)
-                    && $scope.pid) {
-                    statusString = statusString.replace("Use ", "Use command line: jcmd " + $scope.pid + " ");
-                }
-                $scope.jfrStatus = statusString;
-                if ($scope.isRecording) {
-                    var regex = /recording=(\d+) name="(.+?)"/g;
-                    if ($scope.isRunning) {
-                        regex = /recording=(\d+) name="(.+?)".+?\(running\)/g;
-                    }
-                    var parsed = regex.exec(statusString);
-                    $scope.jfrSettings.recordingNumber = parsed[1];
-                    $scope.jfrSettings.name = parsed[2];
-                    var parsedFilename = statusString.match(/filename="(.+)"/);
-                    if (parsedFilename && parsedFilename[1]) {
-                        $scope.jfrSettings.filename = parsedFilename[1];
-                    }
-                    else {
-                        $scope.jfrSettings.filename = 'recording' + parsed[1] + '.jfr';
-                    }
-                }
+                updateJfrScope(response, $scope);
                 Core.$apply($scope);
             }
             function addRecording(recording, recordings) {
@@ -23846,7 +23831,6 @@ var Diagnostics;
             $scope.jfrSettings = {
                 limitType: 'unlimited',
                 limitValue: '',
-                compress: false,
                 name: '',
                 dumpOnExit: true,
                 recordingNumber: '',
@@ -23899,20 +23883,14 @@ var Diagnostics;
             };
             $scope.dumpRecording = function () {
                 executeDiagnosticFunction('jfrDump([Ljava.lang.String;)', 'JFR.dump', [buildDumpParams($scope.jfrSettings)], function (response) {
-                    var matches = splitResponse(response);
+                    var recoding = parseDumpFeedback(response);
                     Diagnostics.log.debug("response: " + response
-                        + " split: " + matches + "split2: "
-                        + matches);
-                    if (matches) {
-                        var recordingData = {
-                            number: matches[1],
-                            size: matches[2],
-                            file: matches[3],
-                            time: Date.now()
-                        };
+                        + " split: " + recoding + "split2: "
+                        + recoding);
+                    if (recoding) {
                         Diagnostics.log.debug("data: "
-                            + recordingData);
-                        addRecording(recordingData, $scope.recordings);
+                            + recoding);
+                        addRecording(recoding, $scope.recordings);
                     }
                 });
             };
