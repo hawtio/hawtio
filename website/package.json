@@ -4,7 +4,7 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-debug": "^3.2.0",
-    "gulp-gh-pages": "git@github.com:tekd/gulp-gh-pages.git#update-dependency",
+    "gulp-gh-pages-gift": "^0.5.5",
     "gulp-load-plugins": "^1.5.0"
   },
   "license": "Apache-2.0",
