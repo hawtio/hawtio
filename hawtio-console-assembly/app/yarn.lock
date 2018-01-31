@@ -67,9 +67,9 @@
   dependencies:
     "@hawtio/jmx" "3.2.0"
 
-"@hawtio/ui@3.0.35", "@hawtio/ui@3.2.0", "@hawtio/ui@~3.0.25":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-3.2.0.tgz#29ed6aa1d01cd7d7e5e704dc5dd16a2e6e76e0a4"
+"@hawtio/ui@3.0.35", "@hawtio/ui@3.2.0", "@hawtio/ui@3.2.1", "@hawtio/ui@~3.0.25":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-3.2.1.tgz#89a9b54dd55f7e46e649491ac9e1ef723c6a3a8b"
   dependencies:
     "@hawtio/core" "3.2.3"
     "@hawtio/core-dts" "3.0.18"
