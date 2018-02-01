@@ -211,7 +211,7 @@ public class RBACMBeanInvoker {
         Subject subject = Subject.getSubject(acc);
         try {
             if (subject != null) {
-                String username = AuthHelpers.getUsernameFromSubject(subject);
+                String username = AuthHelpers.getUsername(subject);
                 return canInvokeCache.get(new CanInvokeKey(username, objectName, operation));
             } else {
                 // For now, let's bypass the caching and directly invoke the security MBean if

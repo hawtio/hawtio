@@ -35,7 +35,7 @@ public class AuthHelpers {
     public static final List<String> KNOWN_PRINCIPALS = Arrays.asList(
         "UserPrincipal", "KeycloakPrincipal", "JAASPrincipal", "SimplePrincipal");
 
-    public static String getUsernameFromSubject(Subject subject) {
+    public static String getUsername(Subject subject) {
         Set<Principal> principals = subject.getPrincipals();
 
         String username = null;
@@ -45,7 +45,7 @@ public class AuthHelpers {
                 String principalClass = principal.getClass().getSimpleName();
                 if (KNOWN_PRINCIPALS.contains(principalClass)) {
                     username = principal.getName();
-                    LOG.debug("Authorizing user {}", username);
+                    LOG.debug("Username in principal: {}", username);
                 }
             }
         }

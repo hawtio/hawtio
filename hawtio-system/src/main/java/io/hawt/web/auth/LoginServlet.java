@@ -109,7 +109,7 @@ public class LoginServlet extends HttpServlet {
         }
         Subject subject = (Subject) session.getAttribute("subject");
         if (subject != null) {
-            LOG.info("Logging out existing user: {}", AuthHelpers.getUsernameFromSubject(subject));
+            LOG.info("Logging out existing user: {}", AuthHelpers.getUsername(subject));
             Authenticator.logout(authConfiguration, subject);
             session.invalidate();
         }

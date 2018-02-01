@@ -39,7 +39,7 @@ public class KeycloakUserServlet extends UserServlet {
         Authenticator.authenticate(
             configuration, req,
             subject -> {
-                username.set(AuthHelpers.getUsernameFromSubject(subject));
+                username.set(AuthHelpers.getUsername(subject));
 
                 // Start httpSession
                 req.getSession(true);
