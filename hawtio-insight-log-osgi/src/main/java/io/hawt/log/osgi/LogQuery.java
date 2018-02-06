@@ -3,6 +3,8 @@ package io.hawt.log.osgi;
 import java.io.IOException;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import io.hawt.log.LogFilter;
 import io.hawt.log.LogResults;
 import io.hawt.log.support.LogQuerySupport;
@@ -22,7 +24,7 @@ public class LogQuery extends LogQuerySupport implements LogQueryMBean {
 
     public LogQuery(LogService logService) {
         this.logService = logService;
-        mapper.getSerializationConfig().withSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        mapper.getSerializationConfig().withPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.NON_EMPTY, Include.ALWAYS));
     }
 
     @Override
