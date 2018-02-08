@@ -83,7 +83,7 @@
     <!-- make sure to align jackson with fabric8 -->
     <jackson-version>2.7.0</jackson-version>
     <jackson-version-range>[2.5,3)</jackson-version-range>
-    <jolokia-version>1.4.0</jolokia-version>
+    <jolokia-version>1.5.0</jolokia-version>
     <junit-version>4.11</junit-version>
     <karaf-version>4.1.2</karaf-version>
     <karaf-version-range>[4.0,5)</karaf-version-range>
