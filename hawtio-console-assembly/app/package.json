@@ -2,7 +2,7 @@
   "name": "@hawtio/console-assembly",
   "version": "2.0.0",
   "dependencies": {
-    "@hawtio/integration": "3.2.11",
+    "@hawtio/integration": "3.2.12",
     "@hawtio/log": "3.2.1"
   },
   "flat": true,
