@@ -10,7 +10,8 @@ public class SampleCamelRouter extends RouteBuilder {
     public void configure() throws Exception {
         from("timer:hello?period={{timer.period}}")
             .setBody().constant("Hello Camel!")
-            .to("stream:out");
+            .to("stream:out")
+            .to("mock:result");
     }
 
 }
