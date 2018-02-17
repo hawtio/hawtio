@@ -22,6 +22,7 @@ import org.apache.commons.fileupload.servlet.FileCleanerCleanup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.ManagementContextConfiguration;
 import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
@@ -33,6 +34,7 @@ import org.springframework.context.annotation.PropertySource;
  * Management configuration for hawtio on Spring Boot
  */
 @ManagementContextConfiguration
+@ConditionalOnProperty(name = "hawtio.enabled", matchIfMissing = true)
 @EnableConfigurationProperties(HawtioProperties.class)
 @PropertySource("classpath:/io/hawt/springboot/application.properties")
 public class HawtioConfiguration {
