@@ -5,7 +5,7 @@ namespace ConsoleAssembly {
   angular.module(pluginName, [])
     .run(refreshUserSessionWhenLocationChanges)
     .run(addLogoutToUserDropdown)
-    .config(overrideAuthService);
+    .run(addPostLogoutTasks);
 
   function refreshUserSessionWhenLocationChanges($rootScope, $http) {
     'ngInject';
@@ -23,29 +23,18 @@ namespace ConsoleAssembly {
 
   function addLogoutToUserDropdown(HawtioExtension) {
     'ngInject';
-    HawtioExtension.add('hawtio-user', ($scope) => {
+    HawtioExtension.add('hawtio-logout', ($scope) => {
       const a = document.createElement('a');
       a.setAttribute('href', 'auth/logout');
       a.setAttribute('target', '_self');
       a.textContent = 'Logout';
-      const li = document.createElement('li');
-      li.appendChild(a);
-      return li;
+      return a;
     });
   }
 
-  function overrideAuthService($provide) {
+  function addPostLogoutTasks(postLogoutTasks: Core.Tasks) {
     'ngInject';
-    $provide.decorator('authService', [
-      '$delegate',
-      function($delegate): Core.AuthService {
-        return {
-          logout(): void {
-            window.location.href = 'auth/logout';
-          }
-        };
-      }
-    ]);
+    postLogoutTasks.addTask('redirectToLogout', () => window.location.href = 'auth/logout');
   }
 
   hawtioPluginLoader.addModule(pluginName);

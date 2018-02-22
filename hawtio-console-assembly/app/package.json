@@ -2,15 +2,15 @@
   "name": "@hawtio/console-assembly",
   "version": "2.0.0",
   "dependencies": {
-    "@hawtio/integration": "3.2.16",
+    "@hawtio/integration": "3.2.17",
     "@hawtio/log": "3.2.1"
   },
   "flat": true,
   "resolutions": {
-    "@hawtio/jmx": "3.2.12",
-    "@hawtio/core": "3.2.11",
-    "@hawtio/ui": "3.2.0",
-    "@hawtio/utilities": "3.2.1",
+    "@hawtio/jmx": "3.2.13",
+    "@hawtio/core": "3.2.13",
+    "@hawtio/ui": "3.2.1",
+    "@hawtio/utilities": "3.2.2",
     "@types/marked": "0.3.0",
     "angular": "1.6.8",
     "angular-sanitize": "1.6.8",
@@ -21,6 +21,9 @@
     "js-logger": "1.4.1",
     "moment": "2.19.4",
     "patternfly": "3.32.1",
-    "urijs": "1.19.0"
+    "urijs": "1.19.0",
+    "angular-patternfly": "4.14.11",
+    "bootstrap-datepicker": "1.7.1",
+    "datatables.net-colreorder": "1.4.1"
   }
 }
