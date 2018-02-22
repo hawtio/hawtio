@@ -131,17 +131,23 @@
       </div>
       <nav class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right navbar-iconic">
-          <li>
-            <a class="nav-item-iconic" href="help">
+          <li class="dropdown">
+            <a class="dropdown-toggle nav-item-iconic" id="helpDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
               <span title="Help" class="fa pficon-help"></span>
+              <span class="caret"></span>
             </a>
+            <ul class="dropdown-menu" aria-labelledby="helpDropdownMenu">
+              <li hawtio-extension name="hawtio-help"></li>
+              <li hawtio-extension name="hawtio-about"></li>
+            </ul>
           </li>
           <li class="dropdown">
             <a class="dropdown-toggle nav-item-iconic" id="userDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
               <span title="Username" class="fa pficon-user"></span>
               <span class="caret"></span>
             </a>
-            <ul class="dropdown-menu" aria-labelledby="userDropdownMenu" hawtio-extension name="hawtio-user">
+            <ul class="dropdown-menu" aria-labelledby="userDropdownMenu">
+              <li hawtio-extension name="hawtio-preferences"></li>
             </ul>
           </li>
         </ul>
