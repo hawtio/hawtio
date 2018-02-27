@@ -4,13 +4,14 @@
 
 namespace Login {
 
+  const USER_URL: string = 'user';
   const AUTH_LOGOUT_URL: string = 'auth/logout';
 
   angular
     .module(pluginName, [])
     .component('hawtioLogin', loginComponent)
     .run(addLogoutToUserDropdown)
-    .run(addLogoutTask);
+    .run(loginUserDetails);
 
   export function addLogoutToUserDropdown(
     HawtioExtension: Core.HawtioExtension,
@@ -26,19 +27,32 @@ namespace Login {
     });
   }
 
-  function addLogoutTask(keycloakService: HawtioKeycloak.KeycloakService, postLogoutTasks: Core.Tasks,
+  function loginUserDetails(userDetails: Core.AuthService,
+    keycloakService: HawtioKeycloak.KeycloakService, postLogoutTasks: Core.Tasks,
     $window: ng.IWindowService): void {
     'ngInject';
 
     if (keycloakService.enabled) {
-      // When Keycloak is enabled, logout task is handled at hawtio-oauth keycloak plugin
+      // When Keycloak is enabled, login/logout is handled at hawtio-oauth keycloak plugin
       return;
     }
 
-    log.debug("Register 'DefaultLogout' to postLogoutTasks");
-    postLogoutTasks.addTask('DefaultLogout', () => {
-      log.debug("Log out, redirecting to:", AUTH_LOGOUT_URL);
-      $window.location.href = AUTH_LOGOUT_URL;
+    // Get logged-in user from server session
+    $.ajax(USER_URL, {
+      type: "GET",
+      success: (data: any, status: string, xhr: JQueryXHR) => {
+        log.debug("Logged-in user:", data);
+        userDetails.login(data, null);
+
+        log.debug("Register 'DefaultLogout' to postLogoutTasks");
+        postLogoutTasks.addTask('DefaultLogout', () => {
+          log.debug("Log out, redirecting to:", AUTH_LOGOUT_URL);
+          $window.location.href = AUTH_LOGOUT_URL;
+        });
+      },
+      error: (xhr: JQueryXHR, status: string, error: string) => {
+        // Silently ignore as mostly it's just not logged-in yet
+      }
     });
   }
 

@@ -239,6 +239,13 @@ gulp.task('connect', function () {
   });
 
   // used for hawtio-login
+  hawtio.use('/hawtio/user', (req, res, next) => {
+    // login always succeeds
+    res.set('Content-Type', 'application/json');
+    res.send('user');
+  });
+
+  // used for hawtio-login
   hawtio.use('/hawtio/keycloak/enabled', (req, res, next) => {
     res.set('Content-Type', 'application/json');
     res.send(config.keycloak);

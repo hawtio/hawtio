@@ -37,7 +37,7 @@ public class UserServlet extends HttpServlet {
         final PrintWriter out = resp.getWriter();
 
         if (!authenticationEnabled) {
-            out.write("\"user\"");
+            out.write("\"public\"");
             out.flush();
             out.close();
             return;
