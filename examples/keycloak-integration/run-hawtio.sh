@@ -9,7 +9,7 @@ fi
 HOME=`cd $(dirname $0); pwd`
 
 JAVA_OPTS="$JAVA_OPTS -Dhawtio.authenticationEnabled=true"
-JAVA_OPTS="$JAVA_OPTS -Dhawtio.realm=demo"
+JAVA_OPTS="$JAVA_OPTS -Dhawtio.realm=hawtio-demo"
 JAVA_OPTS="$JAVA_OPTS -Dhawtio.keycloakEnabled=true"
 JAVA_OPTS="$JAVA_OPTS -Dhawtio.roles=admin,manager,viewer"
 JAVA_OPTS="$JAVA_OPTS -Dhawtio.rolePrincipalClasses=org.keycloak.adapters.jaas.RolePrincipal"
@@ -21,7 +21,7 @@ echo =========================================================================
 echo
 echo "  hawtio integration with Keycloak"
 echo
-echo "  java $JAVA_OPTS -jar $1"
+echo "  java $JAVA_OPTS -jar $*"
 echo
 echo =========================================================================
-java $JAVA_OPTS -jar $1
+java $JAVA_OPTS -jar $*

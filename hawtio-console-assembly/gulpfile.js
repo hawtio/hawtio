@@ -257,7 +257,7 @@ gulp.task('connect', function () {
     res.send(`
       {
         "clientId": "hawtio-client",
-        "url": "http://localhost:8080/auth",
+        "url": "http://localhost:18080/auth",
         "realm": "hawtio-demo"
       }
     `);

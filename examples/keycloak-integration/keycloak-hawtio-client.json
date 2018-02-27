@@ -1,7 +1,7 @@
 {
-  "realm" : "demo",
-  "resource" : "hawtio-client",
-  "auth-server-url" : "http://localhost:18080/auth",
-  "ssl-required" : "external",
-  "public-client" : true
+  "realm": "hawtio-demo",
+  "clientId": "hawtio-client",
+  "url": "http://localhost:18080/auth",
+  "ssl-required": "external",
+  "public-client": true
 }
