@@ -9,8 +9,8 @@
   },
   "flat": true,
   "resolutions": {
-    "@hawtio/jmx": "3.2.13",
-    "@hawtio/core": "3.2.14",
+    "@hawtio/jmx": "3.2.14",
+    "@hawtio/core": "3.2.15",
     "@hawtio/ui": "3.2.1",
     "@hawtio/utilities": "3.2.2",
     "@types/marked": "0.3.0",
