@@ -1,0 +1,42 @@
+<span id="badge">
+  <img ng-src="{{$ctrl.branding.companyLogoUrl}}" alt="">
+</span>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <div id="brand">
+        <img ng-src="{{$ctrl.branding.appLogoUrl}}" alt="{{$ctrl.branding.appName}}">
+        <span>{{$ctrl.branding.appType}}</span>
+      </div><!--/#brand-->
+      <div class="alert alert-danger" ng-if="$ctrl.wrongPassword">
+        <span class="pficon pficon-error-circle-o"></span>
+        Incorrect username or password
+      </div>
+    </div><!--/.col-*-->
+    <div class="col-sm-7 col-md-6 col-lg-5 login">
+      <form class="form-horizontal" role="form" ng-submit="$ctrl.doLogin()">
+        <div class="form-group">
+          <label for="username" class="col-sm-2 col-md-2 control-label">Username</label>
+          <div class="col-sm-10 col-md-10">
+            <input type="text" class="form-control" id="username" autocomplete="section-login username"
+                    ng-model="$ctrl.entity.username" tabindex="1" autofocus>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password" class="col-sm-2 col-md-2 control-label">Password</label>
+          <div class="col-sm-10 col-md-10">
+            <input type="password" class="form-control" id="password" autocomplete="section-login current-password"
+                    ng-model="$ctrl.entity.password" tabindex="2">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-xs-12 col-sm-12 col-md-12 submit">
+            <button type="submit" class="btn btn-primary btn-lg" tabindex="4">Log In</button>
+          </div>
+        </div>
+      </form>
+    </div><!--/.col-*-->
+    <div class="col-sm-5 col-md-6 col-lg-7 details">
+    </div><!--/.col-*-->
+  </div><!--/.row-->
+</div><!--/.container-->

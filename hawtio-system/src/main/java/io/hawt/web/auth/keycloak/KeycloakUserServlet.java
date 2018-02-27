@@ -1,4 +1,4 @@
-package io.hawt.web.keycloak;
+package io.hawt.web.auth.keycloak;
 
 import java.util.concurrent.atomic.AtomicReference;
 import javax.servlet.ServletException;

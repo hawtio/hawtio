@@ -28,8 +28,8 @@ public class LogoutServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession(false);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
         if (session != null) {
             LOG.debug("Logging out user: {}", session.getAttribute("user"));
             Subject subject = (Subject) session.getAttribute("subject");
@@ -38,7 +38,8 @@ public class LogoutServlet extends HttpServlet {
             }
             session.invalidate();
         }
-        resp.sendRedirect(req.getContextPath() + "/auth/login");
+        request.logout();
+        response.sendRedirect(request.getContextPath() + "/auth/login");
     }
 
 }

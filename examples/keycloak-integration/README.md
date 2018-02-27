@@ -28,8 +28,8 @@ There are also 3 users:
 * **mary** with password `password` and no role assigned, so she is not allowed to login into hawtio
 
 
-Integration on Apache Karaf or JBoss Fuse
------------------------------------------
+Apache Karaf or JBoss Fuse
+--------------------------
 
 Assuming `$KARAF_HOME` is the root directory of your Karaf/Fuse installation.
 
@@ -70,8 +70,8 @@ File `keycloak-hawtio.json` is currently used for adapters on server (JAAS Login
 * Go to [http://localhost:8181/hawtio](http://localhost:8181/hawtio) and login in keycloak as `root` or `john` to see hawtio admin console. If you login as `mary`, you should receive 'forbidden' error in hawtio.
 
 
-Integration on WildFly
-----------------------
+WildFly or JBoss EAP
+--------------------
 
 This is even easier as you can use same WildFly server where Keycloak is already running. No need to have separate server, but you can use separate server if you want.
 
@@ -123,8 +123,8 @@ So in next steps we will use the existing Keycloak server on localhost:8080 and 
 * Run WildFly on port 8080 as described in [Prepare Keycloak server](#prepare-keycloak-server) section and go to http://localhost:8080/hawtio. Users are again `root` and `john` with access and `mary` without access.
 
 
-Integration on Jetty
---------------------
+Jetty
+-----
 
 Assuming `$JETTY_HOME` is the root directory of your Jetty installation and you deployed hawtio WAR to Jetty as described in [hawtio Get Started](http://hawt.io/getstarted/index.html).
 
@@ -161,7 +161,11 @@ Assuming `$JETTY_HOME` is the root directory of your Jetty installation and you 
 * Run Jetty and go to http://localhost:8080/hawtio. Users are again `root` and `john` with access and `mary` without access.
 
 
-Integration on Tomcat
----------------------
+Tomcat
+------
 
-Instructions are quite similar to Jetty, you would need to setup JAAS realm and set the system properties. Just use Tomcat adapter instead of the Jetty one. Also you may need to add system property `-Dhawtio.authenticationContainerDiscoveryClasses=` (really empty value). This is needed, so that Tomcat will use configured JAAS realm with BearerTokenLoginModule instead of `tomcat-users.xml` file, which hawtio uses on Tomcat by default.
+Instructions are quite similar to Jetty. You would need to setup JAAS realm and set the system properties. Just use Tomcat adapter instead of the Jetty one. Also you may need to add system property (really empty value):
+
+    -Dhawtio.authenticationContainerDiscoveryClasses=
+
+This is needed, so that Tomcat will use configured JAAS realm with BearerTokenLoginModule instead of `tomcat-users.xml` file, which hawtio uses on Tomcat by default.

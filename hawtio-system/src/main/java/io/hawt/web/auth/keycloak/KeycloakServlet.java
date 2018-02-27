@@ -1,4 +1,4 @@
-package io.hawt.web.keycloak;
+package io.hawt.web.auth.keycloak;
 
 import java.io.BufferedReader;
 import java.io.IOException;

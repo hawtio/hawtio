@@ -1,40 +1,31 @@
+/// <reference path="./login/login.module.ts"/>
+
 namespace ConsoleAssembly {
 
   const pluginName = 'hawtio-console-assembly';
+  const log: Logging.Logger = Logger.get(pluginName);
 
-  angular.module(pluginName, [])
-    .run(refreshUserSessionWhenLocationChanges)
-    .run(addLogoutToUserDropdown)
-    .run(addPostLogoutTasks);
+  angular
+    .module(pluginName, [
+      Login.pluginName
+    ])
+    .run(refreshUserSessionWhenLocationChanges);
 
-  function refreshUserSessionWhenLocationChanges($rootScope, $http) {
+  function refreshUserSessionWhenLocationChanges(
+    locationChangeStartTasks: Core.ParameterizedTasks,
+    $http: ng.IHttpService): void {
     'ngInject';
-    $rootScope.$on('$locationChangeStart', ($event, newUrl, oldUrl) => {
-      $http({
-        method: 'post',
-        url: 'refresh'
-      }).then((response) => {
-        console.debug("Updated session. Response: ", response);
-      }).catch((response) => {
-        console.debug("Failed to update session expiry. Response: " + response);
+    locationChangeStartTasks.addTask('RefreshUserSession',
+      ($event: ng.IAngularEvent, newUrl: string, oldUrl: string): void => {
+        $http({
+          method: 'post',
+          url: 'refresh'
+        }).then((response) => {
+          log.debug("Updated session. Response:", response);
+        }).catch((response) => {
+          log.debug("Failed to update session expiry. Response:", response);
+        });
       });
-    });
-  }
-
-  function addLogoutToUserDropdown(HawtioExtension) {
-    'ngInject';
-    HawtioExtension.add('hawtio-logout', ($scope) => {
-      const a = document.createElement('a');
-      a.setAttribute('href', 'auth/logout');
-      a.setAttribute('target', '_self');
-      a.textContent = 'Logout';
-      return a;
-    });
-  }
-
-  function addPostLogoutTasks(postLogoutTasks: Core.Tasks) {
-    'ngInject';
-    postLogoutTasks.addTask('redirectToLogout', () => window.location.href = 'auth/logout');
   }
 
   hawtioPluginLoader.addModule(pluginName);

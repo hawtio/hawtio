@@ -171,7 +171,7 @@
 
   <servlet>
     <servlet-name>user</servlet-name>
-    <servlet-class>io.hawt.web.keycloak.KeycloakUserServlet</servlet-class>
+    <servlet-class>io.hawt.web.auth.keycloak.KeycloakUserServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>user</servlet-name>
@@ -198,7 +198,7 @@
 
   <servlet>
     <servlet-name>keycloak</servlet-name>
-    <servlet-class>io.hawt.web.keycloak.KeycloakServlet</servlet-class>
+    <servlet-class>io.hawt.web.auth.keycloak.KeycloakServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>keycloak</servlet-name>
