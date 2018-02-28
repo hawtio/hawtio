@@ -1,4 +1,4 @@
-### General Questions
+## General Questions
 
 General questions on all things hawtio.
 

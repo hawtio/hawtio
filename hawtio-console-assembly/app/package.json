@@ -15,8 +15,6 @@
     "@types/marked": "0.3.0",
     "angular": "1.6.8",
     "angular-sanitize": "1.6.8",
-    "angular-ui-bootstrap": "2.5.6",
-    "codemirror": "5.33.0",
     "jquery": "2.2.4",
     "js-beautify": "1.7.5",
     "js-logger": "1.4.1",

@@ -1,4 +1,4 @@
-### Change Log
+## Change Log
 
 #### 2.0 Beta2 (To be released)
 
