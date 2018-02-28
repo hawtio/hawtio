@@ -12,6 +12,8 @@ import io.hawt.web.auth.UserServlet;
 
 public class KeycloakUserServlet extends UserServlet {
 
+    private static final long serialVersionUID = 1734127369954899957L;
+
     private boolean keycloakEnabled;
 
     @Override

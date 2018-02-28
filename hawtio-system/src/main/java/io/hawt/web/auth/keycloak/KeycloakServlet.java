@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
  */
 public class KeycloakServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 3464713772839013741L;
+
     private static final transient Logger LOG = LoggerFactory.getLogger(KeycloakServlet.class);
 
     public static final String KEYCLOAK_CLIENT_CONFIG = "keycloakClientConfig";

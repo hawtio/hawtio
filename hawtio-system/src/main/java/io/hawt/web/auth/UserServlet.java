@@ -15,6 +15,8 @@ import io.hawt.system.ConfigManager;
  */
 public class UserServlet extends HttpServlet {
 
+    private static final long serialVersionUID = -1239510748236245667L;
+
     protected ConfigManager config;
     private boolean authenticationEnabled = true;
 

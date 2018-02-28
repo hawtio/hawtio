@@ -69,6 +69,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ProxyServlet extends HttpServlet {
 
+    private static final long serialVersionUID = 7792226114533360114L;
+
     private static final transient Logger LOG = LoggerFactory.getLogger(ProxyServlet.class);
 
     /* INIT PARAMETER NAME CONSTANTS */
@@ -133,8 +135,8 @@ public class ProxyServlet extends HttpServlet {
 
         cookieStore = new BasicCookieStore();
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
-                .setDefaultCookieStore(cookieStore)
-                .useSystemProperties();
+            .setDefaultCookieStore(cookieStore)
+            .useSystemProperties();
 
         if (System.getProperty(PROXY_ACCEPT_SELF_SIGNED_CERTS) != null) {
             acceptSelfSignedCerts = Boolean.parseBoolean(System.getProperty(PROXY_ACCEPT_SELF_SIGNED_CERTS));
@@ -147,7 +149,7 @@ public class ProxyServlet extends HttpServlet {
                 SSLContextBuilder builder = new SSLContextBuilder();
                 builder.loadTrustMaterial(null, (X509Certificate[] x509Certificates, String s) -> true);
                 SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-                        builder.build(), SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+                    builder.build(), SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
                 httpClientBuilder.setSSLSocketFactory(sslsf);
             } catch (NoSuchAlgorithmException e) {
                 throw new ServletException(e);
@@ -174,7 +176,7 @@ public class ProxyServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         // Make the Request
         //note: we won't transfer the protocol version because I'm not sure it would truly be compatible
         ProxyAddress proxyAddress = parseProxyAddress(servletRequest);
@@ -207,7 +209,7 @@ public class ProxyServlet extends HttpServlet {
         HttpRequest proxyRequest;
         //spec: RFC 2616, sec 4.3: either of these two headers signal that there is a message body.
         if (servletRequest.getHeader(HttpHeaders.CONTENT_LENGTH) != null ||
-                servletRequest.getHeader(HttpHeaders.TRANSFER_ENCODING) != null) {
+            servletRequest.getHeader(HttpHeaders.TRANSFER_ENCODING) != null) {
             HttpEntityEnclosingRequest eProxyRequest = new BasicHttpEntityEnclosingRequest(method, proxyRequestUri);
             // Add the input entity (streamed)
             //  note: we don't bother ensuring we close the servletInputStream since the container handles it
@@ -309,17 +311,17 @@ public class ProxyServlet extends HttpServlet {
     }
 
     protected boolean doResponseRedirectOrNotModifiedLogic(
-            HttpServletRequest servletRequest, HttpServletResponse servletResponse,
-            HttpResponse proxyResponse, int statusCode, URI targetUriObj)
-            throws ServletException, IOException {
+        HttpServletRequest servletRequest, HttpServletResponse servletResponse,
+        HttpResponse proxyResponse, int statusCode, URI targetUriObj)
+        throws ServletException, IOException {
         // Check if the proxy response is a redirect
         // The following code is adapted from org.tigris.noodle.filters.CheckForRedirect
         if (statusCode >= HttpServletResponse.SC_MULTIPLE_CHOICES /* 300 */
-                && statusCode < HttpServletResponse.SC_NOT_MODIFIED /* 304 */) {
+            && statusCode < HttpServletResponse.SC_NOT_MODIFIED /* 304 */) {
             Header locationHeader = proxyResponse.getLastHeader(HttpHeaders.LOCATION);
             if (locationHeader == null) {
                 throw new ServletException("Received status code: " + statusCode
-                        + " but no " + HttpHeaders.LOCATION + " header was found in the response");
+                    + " but no " + HttpHeaders.LOCATION + " header was found in the response");
             }
             // Modify the redirect to go to this proxy servlet rather that the proxied host
             String locStr = rewriteUrlFromResponse(servletRequest, locationHeader.getValue(), targetUriObj.toString());
@@ -351,9 +353,9 @@ public class ProxyServlet extends HttpServlet {
 
     static {
         hopByHopHeaders = new HeaderGroup();
-        String[] headers = new String[]{
-                "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization",
-                "TE", "Trailers", "Transfer-Encoding", "Upgrade", "Cookie", "Set-Cookie"};
+        String[] headers = new String[] {
+            "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization",
+            "TE", "Trailers", "Transfer-Encoding", "Upgrade", "Cookie", "Set-Cookie" };
         for (String header : headers) {
             hopByHopHeaders.addHeader(new BasicHeader(header, null));
         }
