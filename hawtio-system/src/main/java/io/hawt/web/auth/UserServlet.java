@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import io.hawt.system.ConfigManager;
+import io.hawt.web.ServletHelpers;
 
 /**
  * Returns the username associated with the current session, if any
@@ -34,30 +35,32 @@ public class UserServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("application/json");
-        final PrintWriter out = resp.getWriter();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
         if (!authenticationEnabled) {
-            out.write("\"public\"");
-            out.flush();
-            out.close();
+            sendResponse(response, "public");
             return;
         }
 
-        String username = getUsername(req, resp);
-
-        if (username != null) {
-            out.write("\"" + username + "\"");
-        } else {
-            out.write("");
+        String username = getUsername(request, response);
+        if (username == null) {
+            ServletHelpers.doForbidden(response);
+            return;
         }
+        sendResponse(response, username);
+    }
+
+    private void sendResponse(HttpServletResponse response, String username) throws IOException {
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        out.write("\"" + username + "\"");
         out.flush();
         out.close();
     }
 
-    protected String getUsername(HttpServletRequest req, HttpServletResponse resp) {
-        HttpSession session = req.getSession(false);
+    protected String getUsername(HttpServletRequest request, HttpServletResponse response) {
+        HttpSession session = request.getSession(false);
 
         if (session != null) {
             return (String) session.getAttribute("user");
