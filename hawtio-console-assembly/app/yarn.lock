@@ -2,13 +2,13 @@
 # yarn lockfile v1
 
 
-"@hawtio/core-dts@3.0.18", "@hawtio/core-dts@~3.0.11", "@hawtio/core-dts@~3.0.12":
+"@hawtio/core-dts@3.0.18", "@hawtio/core-dts@~3.0.0", "@hawtio/core-dts@~3.0.11", "@hawtio/core-dts@~3.0.12":
   version "3.0.18"
   resolved "https://registry.yarnpkg.com/@hawtio/core-dts/-/core-dts-3.0.18.tgz#20d1ff7e839c0e3180c18e954ad7a305c4ba2b24"
   dependencies:
     "@types/jquery" "~2.0.46"
 
-"@hawtio/core@3.2.1", "@hawtio/core@3.2.12", "@hawtio/core@3.2.13", "@hawtio/core@3.2.14", "@hawtio/core@3.2.15", "@hawtio/core@3.2.2", "@hawtio/core@3.2.3", "@hawtio/core@~3.0.9", "@hawtio/core@~3.1.0":
+"@hawtio/core@3.2.1", "@hawtio/core@3.2.12", "@hawtio/core@3.2.13", "@hawtio/core@3.2.15", "@hawtio/core@3.2.2", "@hawtio/core@3.2.3", "@hawtio/core@~3.0.9", "@hawtio/core@~3.1.0", "@hawtio/core@~3.2.0":
   version "3.2.15"
   resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-3.2.15.tgz#3841f193df2945e8b19ea6ef6ace8966e0eaf9e3"
   dependencies:
@@ -30,13 +30,13 @@
     marked "0.3.9"
     urijs "1.19.0"
 
-"@hawtio/forms@3.0.12":
-  version "3.0.12"
-  resolved "https://registry.yarnpkg.com/@hawtio/forms/-/forms-3.0.12.tgz#7f73abffd4c2127038fad14183ecad8ce5e9452a"
+"@hawtio/forms@3.0.12", "@hawtio/forms@3.2.0", "@hawtio/forms@~3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/forms/-/forms-3.2.0.tgz#868b86aa462797e7721fdfdba99701e4b3d6405c"
   dependencies:
-    "@hawtio/core" "~3.1.0"
-    "@hawtio/core-dts" "~3.0.12"
-    "@hawtio/ui" "~3.0.25"
+    "@hawtio/core" "~3.2.0"
+    "@hawtio/core-dts" "~3.0.0"
+    "@hawtio/ui" "~3.2.0"
 
 "@hawtio/integration@3.2.17":
   version "3.2.17"
@@ -66,22 +66,20 @@
   dependencies:
     "@hawtio/jmx" "3.2.0"
 
-"@hawtio/oauth@3.0.5":
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-3.0.5.tgz#39eb559eab0614c7341139ee16f6dc8644327cce"
+"@hawtio/oauth@3.0.6":
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-3.0.6.tgz#22f1d8dfb544c684b16986dfce308653f683b1d4"
   dependencies:
-    "@hawtio/core" "3.2.14"
-    "@hawtio/forms" "3.0.12"
-    "@hawtio/ui" "3.2.0"
-    "@hawtio/utilities" "3.2.2"
+    "@hawtio/core" "~3.2.0"
+    "@hawtio/forms" "~3.2.0"
+    "@hawtio/ui" "~3.2.0"
     "@types/angular-idle" "^1.1.31"
     "@types/jqueryui" "1.12.0"
-    angular-patternfly "4.14.0"
     angular-resizable "1.2.0"
     ng-idle "^1.3.2"
     patternfly-bootstrap-treeview "2.1.5"
 
-"@hawtio/ui@3.0.35", "@hawtio/ui@3.2.0", "@hawtio/ui@3.2.1", "@hawtio/ui@~3.0.25":
+"@hawtio/ui@3.0.35", "@hawtio/ui@3.2.0", "@hawtio/ui@3.2.1", "@hawtio/ui@~3.0.25", "@hawtio/ui@~3.2.0":
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-3.2.1.tgz#89a9b54dd55f7e46e649491ac9e1ef723c6a3a8b"
   dependencies:

@@ -4,7 +4,7 @@
   "dependencies": {
     "@hawtio/integration": "3.2.17",
     "@hawtio/log": "3.2.1",
-    "@hawtio/oauth": "3.0.5",
+    "@hawtio/oauth": "3.0.6",
     "keycloak-js": "3.4.3"
   },
   "flat": true,
@@ -26,7 +26,8 @@
     "urijs": "1.19.0",
     "angular-patternfly": "4.14.11",
     "bootstrap-datepicker": "1.7.1",
-    "datatables.net-colreorder": "1.4.1"
+    "datatables.net-colreorder": "1.4.1",
+    "@hawtio/forms": "3.2.0"
   },
   "license": "Apache-2.0",
   "repository": {
