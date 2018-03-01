@@ -242,7 +242,7 @@ gulp.task('connect', function () {
   hawtio.use('/hawtio/user', (req, res, next) => {
     // login always succeeds
     res.set('Content-Type', 'application/json');
-    res.send('user');
+    res.send('"user"');
   });
 
   // used for hawtio-login

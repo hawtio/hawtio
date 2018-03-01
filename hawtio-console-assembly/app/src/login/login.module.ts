@@ -52,6 +52,7 @@ namespace Login {
       },
       error: (xhr: JQueryXHR, status: string, error: string) => {
         // Silently ignore as mostly it's just not logged-in yet
+        log.debug("Failed to get logged-in user from server", error);
       }
     });
   }
