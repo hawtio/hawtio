@@ -15,7 +15,7 @@ dependencies:
     - rm -rf ~/.yarn
     - npm install --global yarn
   override:
-    - mvn install
+    - mvn --batch-mode install
   cache_directories:
     - ~/.cache/yarn
 
