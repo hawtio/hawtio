@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 public class SampleSpringBootService {
 
     public static void main(String[] args) {
-        System.setProperty(AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED, "false");
         SpringApplication.run(SampleSpringBootService.class, args);
     }
 
@@ -21,7 +20,7 @@ public class SampleSpringBootService {
     @Bean
     public HawtPlugin samplePlugin() {
         return new HawtPlugin("sample-plugin",
-            "/hawtio/plugins",
+            "plugins",
             "",
             new String[] { "sample-plugin/js/sample-plugin.js" });
     }
@@ -31,7 +30,6 @@ public class SampleSpringBootService {
      */
     @Bean
     public ConfigFacade configFacade() {
-        System.setProperty("hawtio.offline", "true");
         return ConfigFacade.getSingleton();
     }
 }

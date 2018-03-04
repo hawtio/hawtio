@@ -5,7 +5,6 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -17,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import io.hawt.system.HawtioProperty;
 import io.hawt.util.Strings;
 import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
@@ -36,11 +36,19 @@ public class SessionExpiryFilter implements Filter {
 
     private ServletContext context;
     private AuthenticationConfiguration authConfiguration;
+    private int pathIndex;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         context = filterConfig.getServletContext();
         authConfiguration = AuthenticationConfiguration.getConfiguration(context);
+
+        String servletPath = (String) filterConfig.getServletContext().getAttribute(HawtioProperty.SERVLET_PATH);
+        if (servletPath == null) {
+            this.pathIndex = 0; // assume hawtio is served from root
+        } else {
+            this.pathIndex = Strings.webContextPath(servletPath).replaceAll("[^/]+", "").length();
+        }
     }
 
     @Override
@@ -63,7 +71,7 @@ public class SessionExpiryFilter implements Filter {
 
     private void updateLastAccess(HttpSession session, long now) {
         session.setAttribute(ATTRIBUTE_LAST_ACCESS, now);
-        LOG.debug("Reset LastAccess to: {}", session.getAttribute(ATTRIBUTE_LAST_ACCESS));
+        LOG.debug("Reset LastAccess to: {}", now);
     }
 
     private void process(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -72,12 +80,14 @@ public class SessionExpiryFilter implements Filter {
             chain.doFilter(request, response);
             return;
         }
+
         HttpSession session = request.getSession(false);
         boolean enabled = (boolean) context.getAttribute(AuthenticationConfiguration.AUTHENTICATION_ENABLED);
-        String uri = Strings.strip(request.getRequestURI(), "/");
-        String[] uriParts = Pattern.compile("/").split(uri);
+        final RelativeRequestUri uri = new RelativeRequestUri(request, pathIndex);
+        LOG.debug("Accessing [{}], hawtio path is [{}]", request.getRequestURI(), uri.getUri());
+
         // pass along if it's the top-level context
-        if (uriParts.length == 1) {
+        if (uri.getComponents().length == 0) {
             if (session != null) {
                 long now = System.currentTimeMillis();
                 updateLastAccess(session, now);
@@ -85,8 +95,8 @@ public class SessionExpiryFilter implements Filter {
             chain.doFilter(request, response);
             return;
         }
-        String myContext = uriParts[0];
-        String subContext = uriParts[1];
+
+        String subContext = uri.getComponents()[0];
         if (session == null || session.getMaxInactiveInterval() < 0) {
             if (subContext.equals("refresh") && !enabled) {
                 LOG.debug("Authentication disabled, received refresh response, responding with ok");
@@ -123,12 +133,13 @@ public class SessionExpiryFilter implements Filter {
             }
             return;
         }
+
         int maxInactiveInterval = session.getMaxInactiveInterval();
         long now = System.currentTimeMillis();
         if (session.getAttribute(ATTRIBUTE_LAST_ACCESS) != null) {
             long lastAccess = (long) session.getAttribute(ATTRIBUTE_LAST_ACCESS);
             long remainder = (now - lastAccess) / 1000;
-            LOG.debug("Session expiry: {}, duration since last access: {}", maxInactiveInterval, remainder);
+            LOG.debug("Session expiry: {}s, duration since last access: {}s", maxInactiveInterval, remainder);
             if (remainder > maxInactiveInterval) {
                 LOG.info("Expiring session due to inactivity");
                 session.invalidate();
@@ -136,17 +147,20 @@ public class SessionExpiryFilter implements Filter {
                 return;
             }
         }
+
         if (subContext.equals("refresh")) {
             updateLastAccess(session, now);
             writeOk(response);
             return;
         }
-        LOG.debug("Top level context: {} subContext: {}", myContext, subContext);
+
+        LOG.debug("SubContext: {}", subContext);
         if (IGNORED_PATHS.contains(subContext) && session.getAttribute(ATTRIBUTE_LAST_ACCESS) != null) {
             LOG.debug("Not updating LastAccess");
         } else {
             updateLastAccess(session, now);
         }
+
         chain.doFilter(request, response);
     }
 

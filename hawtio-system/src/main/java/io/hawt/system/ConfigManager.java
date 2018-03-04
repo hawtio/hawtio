@@ -1,14 +1,19 @@
 package io.hawt.system;
 
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.function.Function;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.ServletContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Configuration manager
+ * Configuration manager that provides hawtio configuration properties.
  */
 public class ConfigManager {
 
@@ -16,11 +21,21 @@ public class ConfigManager {
 
     private Context envContext = null;
 
+    private Function<String, String> propertyResolver;
+
     public ConfigManager() {
+        this.propertyResolver = ConfigManager::getHawtioSystemProperty;
     }
 
-    public void init() {
-        if (Boolean.parseBoolean(System.getProperty("hawtio.forceProperties", "false"))) {
+    public ConfigManager(final Function<String, String> propertyResolver) {
+        Objects.requireNonNull(propertyResolver);
+
+        // System properties must always have priority
+        this.propertyResolver = x -> getProperty(x, ConfigManager::getHawtioSystemProperty, propertyResolver);
+    }
+
+    public void init(ServletContext servletContext) {
+        if (Boolean.parseBoolean(getHawtioSystemProperty(HawtioProperty.FORCE_PROPERTIES))) {
             LOG.info("Forced using system properties");
             return;
         }
@@ -54,18 +69,31 @@ public class ConfigManager {
                 // ignore...
             }
         }
+
         if (answer == null) {
-            if (defaultValue == null) {
-                answer = System.getProperty("hawtio." + name);
-            } else {
-                answer = System.getProperty("hawtio." + name, defaultValue.toString());
-            }
+            answer = this.propertyResolver.apply(name);
         }
+
         if (answer == null) {
             answer = defaultValue;
         }
+
         LOG.debug("Property {} is set to value {}", name, answer);
         return answer;
+    }
+
+    private static String getHawtioSystemProperty(String name) {
+        return System.getProperty("hawtio." + name);
+    }
+
+    @SafeVarargs
+    private static String getProperty(String name,
+                                      Function<String, String>... propertyResolvers) {
+        return Arrays.stream(propertyResolvers)
+            .map(resolver -> resolver.apply(name))
+            .filter(result -> result != null)
+            .findFirst()
+            .orElse(null);
     }
 
 }

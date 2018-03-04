@@ -28,7 +28,7 @@ public class SampleAuthenticationSpringBootService {
      */
     @Bean
     public HawtPlugin samplePlugin() {
-        return new HawtPlugin("sample-plugin", "/hawtio/plugins", "", new String[] { "sample-plugin/js/sample-plugin.js" });
+        return new HawtPlugin("sample-plugin", "plugins", "", new String[] { "sample-plugin/js/sample-plugin.js" });
     }
 
     /**
