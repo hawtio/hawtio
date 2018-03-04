@@ -12,7 +12,7 @@ public class TerminalContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         try {
-            configManager.init();
+            configManager.init(sce.getServletContext());
         } catch (Exception e) {
             throw createServletException(e);
         }

@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(HawtioConfiguration.class)
+@Import(HawtioManagementContextConfiguration.class)
 @Documented
 @Deprecated
 public @interface EnableHawtio {
