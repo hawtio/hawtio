@@ -83,7 +83,7 @@ public class AuthenticationConfiguration {
             this.rolePrincipalClasses = config.get(ROLE_PRINCIPAL_CLASSES, defaultRolePrincipalClasses);
             this.enabled = Boolean.parseBoolean(config.get(AUTHENTICATION_ENABLED, "true"));
             this.noCredentials401 = Boolean.parseBoolean(config.get(NO_CREDENTIALS_401, "false"));
-            this.keycloakEnabled = Boolean.parseBoolean(config.get(KEYCLOAK_ENABLED, "false"));
+            this.keycloakEnabled = this.enabled && Boolean.parseBoolean(config.get(KEYCLOAK_ENABLED, "false"));
 
             authDiscoveryClasses = config.get(AUTHENTICATION_CONTAINER_DISCOVERY_CLASSES, authDiscoveryClasses);
         }
@@ -108,7 +108,7 @@ public class AuthenticationConfiguration {
             this.rolePrincipalClasses = System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES);
         }
         if (System.getProperty(HAWTIO_KEYCLOAK_ENABLED) != null) {
-            this.keycloakEnabled = Boolean.getBoolean(HAWTIO_KEYCLOAK_ENABLED);
+            this.keycloakEnabled = this.enabled && Boolean.getBoolean(HAWTIO_KEYCLOAK_ENABLED);
         }
         if (System.getProperty(HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES) != null) {
             authDiscoveryClasses = System.getProperty(HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES);
