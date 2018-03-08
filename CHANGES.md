@@ -2,6 +2,7 @@
 
 #### 2.0 Beta2 (To be released)
 
+* Keycloak integration support
 * Bug fixes
 
 #### 2.0 Beta1
