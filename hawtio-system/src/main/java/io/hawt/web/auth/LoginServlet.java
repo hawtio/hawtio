@@ -75,7 +75,11 @@ public class LoginServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/login.html").forward(request, response);
+        if (authConfiguration.isKeycloakEnabled()) {
+            response.sendRedirect(request.getContextPath() + "/");
+        } else {
+            request.getRequestDispatcher("/login.html").forward(request, response);
+        }
     }
 
     /**
