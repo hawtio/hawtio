@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
  * Configuration manager
  */
 public class ConfigManager {
+
     private static final transient Logger LOG = LoggerFactory.getLogger(ConfigManager.class);
 
     private Context envContext = null;

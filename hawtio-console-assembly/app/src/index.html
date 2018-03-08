@@ -51,8 +51,6 @@
     <script src="libs/angular-sanitize/angular-sanitize.js"></script>
     <!-- angular-route -->
     <script src="libs/angular-route/angular-route.min.js"></script>
-    <!-- angular-file-upload -->
-    <script src="libs/angular-file-upload/dist/angular-file-upload.min.js"></script>
     <!-- angular-ui-bootstrap -->
     <script src="libs/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
     <!-- angular-resizable -->
@@ -108,63 +106,24 @@
     <script src="libs/ng-infinite-scroll/build/ng-infinite-scroll.min.js"></script>
     <!-- @hawtio/core -->
     <script src="libs/@hawtio/core/dist/hawtio-core.js"></script>
-    <!-- @hawtio/utilities -->
-    <script src="libs/@hawtio/utilities/dist/hawtio-utilities.js"></script>
     <!-- @hawtio/ui -->
     <script src="libs/@hawtio/ui/dist/hawtio-ui.js"></script>
     <!-- @hawtio/forms -->
     <script src="libs/@hawtio/forms/dist/hawtio-forms.js"></script>
+    <!-- @hawtio/oauth -->
+    <script src="libs/@hawtio/oauth/dist/hawtio-oauth.js"></script>
     <!-- @hawtio/jmx -->
     <script src="libs/@hawtio/jmx/dist/hawtio-jmx.js"></script>
     <!-- @hawtio/integration -->
     <script src="libs/@hawtio/integration/dist/hawtio-integration.js"></script>
     <!-- @hawtio/log -->
     <script src="libs/@hawtio/log/dist/hawtio-log.js"></script>
-    <!-- @hawtio/oauth -->
-    <script src="libs/@hawtio/oauth/dist/hawtio-oauth.js"></script>
     <!-- @hawtio/console-assembly -->
     <script src="js/hawtio-console-assembly.js"></script>
   </head>
 
   <body>
-    <nav class="navbar navbar-pf-vertical">
-      <div class="navbar-header">
-        <a href="." class="navbar-brand">
-          <hawtio-branding-image class="navbar-brand-name" src="appLogoUrl" alt="appName"></hawtio-branding-image>
-        </a>
-      </div>
-      <nav class="collapse navbar-collapse">
-        <ul class="nav navbar-nav navbar-right navbar-iconic">
-          <li class="dropdown">
-            <a class="dropdown-toggle nav-item-iconic" id="helpDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              <span title="Help" class="fa pficon-help"></span>
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="helpDropdownMenu">
-              <li hawtio-extension name="hawtio-help"></li>
-              <li hawtio-extension name="hawtio-about"></li>
-            </ul>
-          </li>
-          <li class="dropdown">
-            <a class="dropdown-toggle nav-item-iconic" id="userDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-              <span title="Username" class="fa pficon-user"></span>
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="userDropdownMenu">
-              <li hawtio-extension name="hawtio-preferences"></li>
-              <li hawtio-extension name="hawtio-logout"></li>
-            </ul>
-          </li>
-        </ul>
-      </nav>
-    </nav>
-
-    <hawtio-vertical-nav></hawtio-vertical-nav>
-
-    <div id="main" class="container-fluid container-pf-nav-pf-vertical ng-cloak"
-        ng-controller="HawtioNav.ViewController"
-        ng-include src="viewPartial">
-    </div>
+    <hawtio-app></hawtio-app>
   </body>
 
 </html>

@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import io.hawt.system.ConfigManager;
 import io.hawt.util.Strings;
 import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
@@ -31,23 +30,17 @@ public class SessionExpiryFilter implements Filter {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(SessionExpiryFilter.class);
 
+    public static final String ATTRIBUTE_LAST_ACCESS = "LastAccess";
+
     private static final List<String> IGNORED_PATHS = Collections.unmodifiableList(Arrays.asList("jolokia", "proxy"));
+
     private ServletContext context;
-    private boolean noCredentials401;
+    private AuthenticationConfiguration authConfiguration;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         context = filterConfig.getServletContext();
-
-        ConfigManager config = (ConfigManager) context.getAttribute("ConfigManager");
-        if (config != null) {
-            this.noCredentials401 = Boolean.parseBoolean(config.get("noCredentials401", "false"));
-        }
-
-        // Override if defined as JVM system property
-        if (System.getProperty(AuthenticationConfiguration.HAWTIO_NO_CREDENTIALS_401) != null) {
-            this.noCredentials401 = Boolean.getBoolean(AuthenticationConfiguration.HAWTIO_NO_CREDENTIALS_401);
-        }
+        authConfiguration = AuthenticationConfiguration.getConfiguration(context);
     }
 
     @Override
@@ -69,18 +62,18 @@ public class SessionExpiryFilter implements Filter {
     }
 
     private void updateLastAccess(HttpSession session, long now) {
-        session.setAttribute("LastAccess", now);
-        LOG.debug("Reset LastAccess to: {}", session.getAttribute("LastAccess"));
+        session.setAttribute(ATTRIBUTE_LAST_ACCESS, now);
+        LOG.debug("Reset LastAccess to: {}", session.getAttribute(ATTRIBUTE_LAST_ACCESS));
     }
 
     private void process(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (context == null || context.getAttribute("authenticationEnabled") == null) {
+        if (context.getAttribute(AuthenticationConfiguration.AUTHENTICATION_ENABLED) == null) {
             // most likely the authentication filter hasn't been started up yet, let this request through and it can be dealt with by the authentication filter
             chain.doFilter(request, response);
             return;
         }
         HttpSession session = request.getSession(false);
-        boolean enabled = (boolean) context.getAttribute("authenticationEnabled");
+        boolean enabled = (boolean) context.getAttribute(AuthenticationConfiguration.AUTHENTICATION_ENABLED);
         String uri = Strings.strip(request.getRequestURI(), "/");
         String[] uriParts = Pattern.compile("/").split(uri);
         // pass along if it's the top-level context
@@ -132,8 +125,8 @@ public class SessionExpiryFilter implements Filter {
         }
         int maxInactiveInterval = session.getMaxInactiveInterval();
         long now = System.currentTimeMillis();
-        if (session.getAttribute("LastAccess") != null) {
-            long lastAccess = (long) session.getAttribute("LastAccess");
+        if (session.getAttribute(ATTRIBUTE_LAST_ACCESS) != null) {
+            long lastAccess = (long) session.getAttribute(ATTRIBUTE_LAST_ACCESS);
             long remainder = (now - lastAccess) / 1000;
             LOG.debug("Session expiry: {}, duration since last access: {}", maxInactiveInterval, remainder);
             if (remainder > maxInactiveInterval) {
@@ -149,7 +142,7 @@ public class SessionExpiryFilter implements Filter {
             return;
         }
         LOG.debug("Top level context: {} subContext: {}", myContext, subContext);
-        if (IGNORED_PATHS.contains(subContext) && session.getAttribute("LastAccess") != null) {
+        if (IGNORED_PATHS.contains(subContext) && session.getAttribute(ATTRIBUTE_LAST_ACCESS) != null) {
             LOG.debug("Not updating LastAccess");
         } else {
             updateLastAccess(session, now);

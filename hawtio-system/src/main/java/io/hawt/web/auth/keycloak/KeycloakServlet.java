@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import io.hawt.system.ConfigManager;
 import io.hawt.util.IOHelper;
+import io.hawt.web.auth.AuthenticationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,14 +35,15 @@ public class KeycloakServlet extends HttpServlet {
     public static final String HAWTIO_KEYCLOAK_CLIENT_CONFIG = "hawtio." + KEYCLOAK_CLIENT_CONFIG;
 
     private String keycloakConfig = null;
+    private AuthenticationConfiguration authConfiguration;
     private boolean keycloakEnabled;
-
 
     @Override
     public void init() throws ServletException {
         ConfigManager config = (ConfigManager) getServletContext().getAttribute("ConfigManager");
 
-        keycloakEnabled = KeycloakHelper.isKeycloakEnabled(config);
+        authConfiguration = AuthenticationConfiguration.getConfiguration(getServletContext());
+        keycloakEnabled = authConfiguration.isKeycloakEnabled();
         LOG.info("Keycloak integration is {}", this.keycloakEnabled ? "enabled" : "disabled");
         if (!keycloakEnabled) {
             return;

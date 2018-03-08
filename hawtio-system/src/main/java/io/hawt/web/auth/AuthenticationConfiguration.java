@@ -13,18 +13,41 @@ public class AuthenticationConfiguration {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(AuthenticationConfiguration.class);
 
+    public static final String LOGIN_URL = "/auth/login";
+
+    // Configuration properties
+    public static final String AUTHENTICATION_ENABLED = "authenticationEnabled";
+    public static final String NO_CREDENTIALS_401 = "noCredentials401";
+    public static final String REALM = "realm";
+    public static final String ROLE = "role";
+    public static final String ROLES = "roles";
+    public static final String ROLE_PRINCIPAL_CLASSES = "rolePrincipalClasses";
+    public static final String AUTHENTICATION_CONTAINER_DISCOVERY_CLASSES = "authenticationContainerDiscoveryClasses";
+    public static final String KEYCLOAK_ENABLED = "keycloakEnabled";
+
     // JVM system properties
-    public static final String HAWTIO_NO_CREDENTIALS_401 = "hawtio.noCredentials401";
-    public static final String HAWTIO_AUTHENTICATION_ENABLED = "hawtio.authenticationEnabled";
-    public static final String HAWTIO_REALM = "hawtio.realm";
+    public static final String HAWTIO_AUTHENTICATION_ENABLED = "hawtio." + AUTHENTICATION_ENABLED;
+    public static final String HAWTIO_NO_CREDENTIALS_401 = "hawtio." + NO_CREDENTIALS_401;
+    public static final String HAWTIO_REALM = "hawtio." + REALM;
     public static final String HAWTIO_ROLE = "hawtio.role";
     public static final String HAWTIO_ROLES = "hawtio.roles";
-    public static final String HAWTIO_ROLE_PRINCIPAL_CLASSES = "hawtio.rolePrincipalClasses";
-    public static final String HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES = "hawtio.authenticationContainerDiscoveryClasses";
+    public static final String HAWTIO_ROLE_PRINCIPAL_CLASSES = "hawtio." + ROLE_PRINCIPAL_CLASSES;
+    public static final String HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES
+        = "hawtio." + AUTHENTICATION_CONTAINER_DISCOVERY_CLASSES;
+    public static final String HAWTIO_KEYCLOAK_ENABLED = "hawtio." + KEYCLOAK_ENABLED;
 
-    private static final String AUTHENTICATION_CONFIGURATION = "authenticationConfig";
+    // ServletContext attributes
+    public static final String AUTHENTICATION_CONFIGURATION = "authenticationConfig";
+    public static final String CONFIG_MANAGER = "ConfigManager";
 
+    public static final String DEFAULT_REALM = "karaf";
     private static final String DEFAULT_KARAF_ROLES = "admin,manager,viewer";
+    public static final String DEFAULT_KARAF_ROLE_PRINCIPAL_CLASSES =
+        "org.apache.karaf.jaas.boot.principal.RolePrincipal,"
+            + "org.apache.karaf.jaas.modules.RolePrincipal,"
+            + "org.apache.karaf.jaas.boot.principal.GroupPrincipal";
+    public static final String TOMCAT_AUTH_CONTAINER_DISCOVERY =
+        "io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery";
 
     private boolean enabled;
     private boolean noCredentials401;
@@ -32,93 +55,92 @@ public class AuthenticationConfiguration {
     private String role;
     private String rolePrincipalClasses;
     private Configuration configuration;
+    private boolean keycloakEnabled;
 
-    public AuthenticationConfiguration() {
-    }
-
-    public static AuthenticationConfiguration getConfiguration(ServletContext servletContext) {
-        AuthenticationConfiguration configuration = (AuthenticationConfiguration) servletContext.getAttribute(
-            AUTHENTICATION_CONFIGURATION);
-        if (configuration == null) {
-            configuration = createConfiguration(servletContext);
-            servletContext.setAttribute("authenticationEnabled", configuration.isEnabled());
-            servletContext.setAttribute(AUTHENTICATION_CONFIGURATION, configuration);
-        }
-        return configuration;
-    }
-
-    private static AuthenticationConfiguration createConfiguration(ServletContext servletContext) {
-        AuthenticationConfiguration configuration = new AuthenticationConfiguration();
-        ConfigManager config = (ConfigManager) servletContext.getAttribute("ConfigManager");
+    public AuthenticationConfiguration(ServletContext servletContext) {
+        ConfigManager config = (ConfigManager) servletContext.getAttribute(CONFIG_MANAGER);
 
         String defaultRolePrincipalClasses = "";
 
         if (System.getProperty("karaf.name") != null) {
-            defaultRolePrincipalClasses = "org.apache.karaf.jaas.boot.principal.RolePrincipal,org.apache.karaf.jaas.modules.RolePrincipal,org.apache.karaf.jaas.boot.principal.GroupPrincipal";
+            defaultRolePrincipalClasses = DEFAULT_KARAF_ROLE_PRINCIPAL_CLASSES;
         }
 
-        String authDiscoveryClasses = "io.hawt.web.tomcat.TomcatAuthenticationContainerDiscovery";
+        String authDiscoveryClasses = TOMCAT_AUTH_CONTAINER_DISCOVERY;
 
         if (config != null) {
-            configuration.setRealm(config.get("realm", "karaf"));
+            this.realm = config.get(REALM, DEFAULT_REALM);
             // we have either role or roles
-            String roles = config.get("role", null);
+            String roles = config.get(ROLE, null);
             if (roles == null) {
-                roles = config.get("roles", null);
+                roles = config.get(ROLES, null);
             }
             if (roles == null) {
                 // use default roles (karaf roles)
                 roles = DEFAULT_KARAF_ROLES;
             }
-            configuration.setRole(roles);
-            configuration.setRolePrincipalClasses(config.get("rolePrincipalClasses", defaultRolePrincipalClasses));
-            configuration.setEnabled(Boolean.parseBoolean(config.get("authenticationEnabled", "true")));
-            configuration.setNoCredentials401(Boolean.parseBoolean(config.get("noCredentials401", "false")));
+            this.role = roles;
+            this.rolePrincipalClasses = config.get(ROLE_PRINCIPAL_CLASSES, defaultRolePrincipalClasses);
+            this.enabled = Boolean.parseBoolean(config.get(AUTHENTICATION_ENABLED, "true"));
+            this.noCredentials401 = Boolean.parseBoolean(config.get(NO_CREDENTIALS_401, "false"));
+            this.keycloakEnabled = this.enabled && Boolean.parseBoolean(config.get(KEYCLOAK_ENABLED, "false"));
 
-            authDiscoveryClasses = config.get("authenticationContainerDiscoveryClasses", authDiscoveryClasses);
+            authDiscoveryClasses = config.get(AUTHENTICATION_CONTAINER_DISCOVERY_CLASSES, authDiscoveryClasses);
         }
 
         // JVM system properties can override always
         if (System.getProperty(HAWTIO_AUTHENTICATION_ENABLED) != null) {
-            configuration.setEnabled(Boolean.getBoolean(HAWTIO_AUTHENTICATION_ENABLED));
+            this.enabled = Boolean.getBoolean(HAWTIO_AUTHENTICATION_ENABLED);
         }
         if (System.getProperty(HAWTIO_NO_CREDENTIALS_401) != null) {
-            configuration.setNoCredentials401(Boolean.getBoolean(HAWTIO_NO_CREDENTIALS_401));
+            this.noCredentials401 = Boolean.getBoolean(HAWTIO_NO_CREDENTIALS_401);
         }
         if (System.getProperty(HAWTIO_REALM) != null) {
-            configuration.setRealm(System.getProperty(HAWTIO_REALM));
+            this.realm = System.getProperty(HAWTIO_REALM);
         }
         if (System.getProperty(HAWTIO_ROLE) != null) {
-            configuration.setRole(System.getProperty(HAWTIO_ROLE));
+            this.role = System.getProperty(HAWTIO_ROLE);
         }
         if (System.getProperty(HAWTIO_ROLES) != null) {
-            configuration.setRole(System.getProperty(HAWTIO_ROLES));
+            this.role = System.getProperty(HAWTIO_ROLES);
         }
         if (System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES) != null) {
-            configuration.setRolePrincipalClasses(System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES));
+            this.rolePrincipalClasses = System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES);
+        }
+        if (System.getProperty(HAWTIO_KEYCLOAK_ENABLED) != null) {
+            this.keycloakEnabled = this.enabled && Boolean.getBoolean(HAWTIO_KEYCLOAK_ENABLED);
         }
         if (System.getProperty(HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES) != null) {
             authDiscoveryClasses = System.getProperty(HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES);
         }
 
-        if (configuration.isEnabled()) {
+        if (this.enabled) {
             List<AuthenticationContainerDiscovery> discoveries = getDiscoveries(authDiscoveryClasses);
             for (AuthenticationContainerDiscovery discovery : discoveries) {
-                if (discovery.canAuthenticate(configuration)) {
+                if (discovery.canAuthenticate(this)) {
                     LOG.info("Discovered container {} to use with hawtio authentication filter", discovery.getContainerName());
                     break;
                 }
             }
         }
 
-        if (configuration.isEnabled()) {
+        if (this.enabled) {
             LOG.info("Starting hawtio authentication filter, JAAS realm: \"{}\" authorized role(s): \"{}\" role principal classes: \"{}\"",
-                configuration.getRealm(), configuration.getRole(), configuration.getRolePrincipalClasses());
+                     this.realm, this.role, this.rolePrincipalClasses);
         } else {
             LOG.info("Starting hawtio authentication filter, JAAS authentication disabled");
         }
+    }
 
-        return configuration;
+    public static AuthenticationConfiguration getConfiguration(ServletContext servletContext) {
+        AuthenticationConfiguration authConfig = (AuthenticationConfiguration) servletContext.getAttribute(
+            AUTHENTICATION_CONFIGURATION);
+        if (authConfig == null) {
+            authConfig = new AuthenticationConfiguration(servletContext);
+            servletContext.setAttribute(AUTHENTICATION_ENABLED, authConfig.isEnabled());
+            servletContext.setAttribute(AUTHENTICATION_CONFIGURATION, authConfig);
+        }
+        return authConfig;
     }
 
     private static List<AuthenticationContainerDiscovery> getDiscoveries(String authDiscoveryClasses) {
@@ -131,7 +153,9 @@ public class AuthenticationConfiguration {
         for (String discoveryClass : discoveryClasses) {
             try {
                 // Should have more clever classloading?
-                Class<? extends AuthenticationContainerDiscovery> clazz = (Class<? extends AuthenticationContainerDiscovery>) AuthenticationConfiguration.class.getClassLoader().loadClass(discoveryClass.trim());
+                Class<? extends AuthenticationContainerDiscovery> clazz =
+                    (Class<? extends AuthenticationContainerDiscovery>) AuthenticationConfiguration.class
+                        .getClassLoader().loadClass(discoveryClass.trim());
                 AuthenticationContainerDiscovery discovery = clazz.newInstance();
                 discoveries.add(discovery);
             } catch (Exception e) {
@@ -145,32 +169,16 @@ public class AuthenticationConfiguration {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public boolean isNoCredentials401() {
         return noCredentials401;
-    }
-
-    public void setNoCredentials401(boolean noCredentials401) {
-        this.noCredentials401 = noCredentials401;
     }
 
     public String getRealm() {
         return realm;
     }
 
-    public void setRealm(String realm) {
-        this.realm = realm;
-    }
-
     public String getRole() {
         return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public String getRolePrincipalClasses() {
@@ -189,6 +197,10 @@ public class AuthenticationConfiguration {
         this.configuration = configuration;
     }
 
+    public boolean isKeycloakEnabled() {
+        return keycloakEnabled;
+    }
+
     @Override
     public String toString() {
         return "AuthenticationConfiguration[" +
@@ -198,6 +210,7 @@ public class AuthenticationConfiguration {
             ", role(s)='" + role + '\'' +
             ", rolePrincipalClasses='" + rolePrincipalClasses + '\'' +
             ", configuration=" + configuration +
+            ", keycloakEnabled=" + keycloakEnabled +
             ']';
     }
 }
