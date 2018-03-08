@@ -44,26 +44,30 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     public void init() {
-        ConfigManager configManager = (ConfigManager) getServletContext().getAttribute("ConfigManager");
-        if (configManager != null) {
-            String s = configManager.get("sessionTimeout", Integer.toString(DEFAULT_SESSION_TIMEOUT));
-            if (s != null) {
-                try {
-                    timeout = Integer.valueOf(s);
-                    // timeout of 0 means default timeout
-                    if (timeout == 0) {
-                        timeout = DEFAULT_SESSION_TIMEOUT;
-                    }
-                } catch (Exception e) {
-                    // ignore and use our own default of 1/2 hour
-                    timeout = DEFAULT_SESSION_TIMEOUT;
-                }
-            }
-        }
-
         authConfiguration = AuthenticationConfiguration.getConfiguration(getServletContext());
-
+        setupSessionTimeout();
         LOG.info("hawtio login is using {} HttpSession timeout", timeout != null ? timeout + " sec." : "default");
+    }
+
+    private void setupSessionTimeout() {
+        ConfigManager configManager = (ConfigManager) getServletContext().getAttribute("ConfigManager");
+        if (configManager == null) {
+            return;
+        }
+        String timeoutStr = configManager.get("sessionTimeout", Integer.toString(DEFAULT_SESSION_TIMEOUT));
+        if (timeoutStr == null) {
+            return;
+        }
+        try {
+            timeout = Integer.valueOf(timeoutStr);
+            // timeout of 0 means default timeout
+            if (timeout == 0) {
+                timeout = DEFAULT_SESSION_TIMEOUT;
+            }
+        } catch (Exception e) {
+            // ignore and use our own default of 1/2 hour
+            timeout = DEFAULT_SESSION_TIMEOUT;
+        }
     }
 
     /**

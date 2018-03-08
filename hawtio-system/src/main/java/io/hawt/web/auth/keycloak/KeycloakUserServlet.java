@@ -14,12 +14,14 @@ public class KeycloakUserServlet extends UserServlet {
 
     private static final long serialVersionUID = 1734127369954899957L;
 
+    private AuthenticationConfiguration authConfiguration;
     private boolean keycloakEnabled;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        keycloakEnabled = KeycloakHelper.isKeycloakEnabled(config);
+        authConfiguration = AuthenticationConfiguration.getConfiguration(getServletContext());
+        keycloakEnabled = authConfiguration.isKeycloakEnabled();
     }
 
     @Override
@@ -35,11 +37,9 @@ public class KeycloakUserServlet extends UserServlet {
      * With Keycloak integration, the Authorization header is available in the request to the UserServlet.
      */
     protected String getKeycloakUsername(final HttpServletRequest req, HttpServletResponse resp) {
-        AuthenticationConfiguration configuration = AuthenticationConfiguration.getConfiguration(getServletContext());
-
         AtomicReference<String> username = new AtomicReference<>();
         Authenticator.authenticate(
-            configuration, req,
+            authConfiguration, req,
             subject -> {
                 username.set(AuthHelpers.getUsername(subject));
 
