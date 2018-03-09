@@ -2442,11 +2442,17 @@ function isNumberTypeName(typeName) {
     }
     return false;
 }
+function applyJolokiaEscapeRules(mbean) {
+    return mbean
+        .replace(/!/g, '!!')
+        .replace(/\//g, '!/')
+        .replace(/"/g, '!"');
+}
 function escapeMBean(mbean) {
-    return encodeURI(mbean.replace(/\//g, '!/'));
+    return encodeURI(applyJolokiaEscapeRules(mbean));
 }
 function escapeMBeanPath(mbean) {
-    return mbean.replace(/\//g, '!/').replace(':', '/');
+    return applyJolokiaEscapeRules(mbean).replace(':', '/');
 }
 function escapeDots(text) {
     return text.replace(/\./g, '-');
