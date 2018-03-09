@@ -208,14 +208,27 @@ function isNumberTypeName(typeName):boolean {
 }
 
 /**
- * Escapes the mbean for Jolokia GET requests.
+ * Applies the Jolokia escaping rules to the mbean name.
  * See: http://www.jolokia.org/reference/html/protocol.html#escape-rules
  *
  * @param {string} mbean the mbean
  * @returns {string}
  */
+function applyJolokiaEscapeRules(mbean: string): string {
+  return mbean
+    .replace(/!/g, '!!')
+    .replace(/\//g, '!/')
+    .replace(/"/g, '!"');
+}
+
+/**
+ * Escapes the mbean for Jolokia GET requests.
+ *
+ * @param {string} mbean the mbean
+ * @returns {string}
+ */
 function escapeMBean(mbean: string): string {
-  return encodeURI(mbean.replace(/\//g, '!/'));
+  return encodeURI(applyJolokiaEscapeRules(mbean));
 }
 
 /**
@@ -226,7 +239,7 @@ function escapeMBean(mbean: string): string {
  * @returns {string}
  */
 function escapeMBeanPath(mbean: string): string {
-  return mbean.replace(/\//g, '!/').replace(':', '/');
+  return applyJolokiaEscapeRules(mbean).replace(':', '/');
 }
 
 function escapeDots(text:string) {
