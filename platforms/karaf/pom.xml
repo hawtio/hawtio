@@ -58,7 +58,7 @@
                 <feature>framework</feature>
               </framework>
               <features>
-                hawtio-*
+		<feature>hawtio-*</feature>
               </features>
             </configuration>
           </execution>
