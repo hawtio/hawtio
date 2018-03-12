@@ -1,5 +1,7 @@
 package io.hawt;
 
+import java.util.Objects;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -21,21 +23,37 @@ public class HawtioContextListener implements ServletContextListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HawtioContextListener.class);
 
-    private About about = new About();
-    private QuartzFacade quartz = new QuartzFacade();
-    private JmxTreeWatcher treeWatcher = new JmxTreeWatcher();
-    private PluginRegistry registry = new PluginRegistry();
-    private UploadManager uploadManager = new UploadManager();
-    private ConfigManager configManager = new ConfigManager();
-    private JMXSecurity jmxSecurity = new JMXSecurity();
-    private RBACRegistry rbacRegistry = new RBACRegistry();
+    private final About about;
+    private final QuartzFacade quartz;
+    private final JmxTreeWatcher treeWatcher;
+    private final PluginRegistry registry;
+    private final UploadManager uploadManager;
+    private final ConfigManager configManager;
+    private final JMXSecurity jmxSecurity;
+    private final RBACRegistry rbacRegistry;
+
+    public HawtioContextListener() {
+        this(new ConfigManager());
+    }
+
+    public HawtioContextListener(final ConfigManager configManager) {
+        this.configManager = Objects.requireNonNull(configManager);
+
+        this.about = new About();
+        this.quartz = new QuartzFacade();
+        this.treeWatcher = new JmxTreeWatcher();
+        this.registry = new PluginRegistry();
+        this.uploadManager = new UploadManager();
+        this.jmxSecurity = new JMXSecurity();
+        this.rbacRegistry = new RBACRegistry();
+    }
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         LOGGER.info("Initialising hawtio services");
         try {
             about.init();
             quartz.init();
-            configManager.init();
+            configManager.init(servletContextEvent.getServletContext());
             treeWatcher.init();
             registry.init();
             uploadManager.init(configManager);

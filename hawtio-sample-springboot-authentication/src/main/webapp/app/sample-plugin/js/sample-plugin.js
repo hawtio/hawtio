@@ -1,11 +1,11 @@
 var SamplePlugin = (function(SamplePlugin) {
 
-	SamplePlugin.pluginName = 'sample-plugin';
-	SamplePlugin.log = Logger.get('SamplePlugin');
-	SamplePlugin.contextPath = "/hawtio/plugins/";
-	SamplePlugin.templatePath = SamplePlugin.contextPath + "sample-plugin/html/";
+    SamplePlugin.pluginName = 'sample-plugin';
+    SamplePlugin.log = Logger.get('SamplePlugin');
+    SamplePlugin.contextPath = window.location.pathname.substr(0, window.location.pathname.lastIndexOf("/")) + "/plugins/";
+    SamplePlugin.templatePath = SamplePlugin.contextPath + "sample-plugin/html/";
 
-	SamplePlugin.module = angular.module('sample-plugin', ['hawtioCore'])
+    SamplePlugin.module = angular.module('sample-plugin', ['hawtioCore'])
       .config(function($routeProvider) {
         $routeProvider.
             when('/sample-plugin', {
@@ -13,9 +13,9 @@ var SamplePlugin = (function(SamplePlugin) {
             });
       });
 
-	SamplePlugin.module.run(function(workspace, viewRegistry, layoutFull) {
+    SamplePlugin.module.run(function(workspace, viewRegistry, layoutFull) {
 
-	SamplePlugin.log.info(SamplePlugin.pluginName, " loaded");
+    SamplePlugin.log.info(SamplePlugin.pluginName, " loaded");
     viewRegistry["sample-plugin"] = layoutFull;
     workspace.topLevelTabs.push({
       id: "samplePlugin",
@@ -31,7 +31,7 @@ var SamplePlugin = (function(SamplePlugin) {
 
   SamplePlugin.SamplePluginController = function($scope, jolokia) {
     $scope.message = "hello world";
-    Core.$apply($scope);    
+    Core.$apply($scope);
   };
 
   return SamplePlugin;
