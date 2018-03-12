@@ -205,6 +205,7 @@ gulp.task('connect', function () {
       path: '/hawtio/',
       dir: './dist/'
     }],
+    fallback: './dist/index.html',
     liveReload: {
       enabled: true
     }
