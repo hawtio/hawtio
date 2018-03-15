@@ -61,8 +61,8 @@
     patternfly-bootstrap-treeview "2.1.5"
 
 "@hawtio/log@~3.2.0":
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/@hawtio/log/-/log-3.2.2.tgz#2677cfa86e00f1fe8fc0ecd8676e40b3b1dd9c01"
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/@hawtio/log/-/log-3.2.3.tgz#8c1dcdac0c8b1b1e790980b2e2ce688d86bbb66f"
   dependencies:
     "@hawtio/jmx" "~3.2.0"
 
