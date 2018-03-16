@@ -4,7 +4,7 @@
 #### 1.5.8 (To be released)
 
 * Much improved hawtio-springboot to respect the various path and port configurations from Spring-Boot, and more. 
-* Upgraded to Camel 2.20.2
+* Upgraded to Camel 2.21.0
 
 #### 1.5.7
 
