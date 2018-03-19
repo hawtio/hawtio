@@ -1,7 +1,9 @@
 
 ### Change Log
 
-#### 1.5.8 (To be released)
+#### 1.5.9 (To be released)
+
+#### 1.5.8
 
 * Much improved hawtio-springboot to respect the various path and port configurations from Spring-Boot, and more. 
 * Upgraded to Camel 2.21.0
