@@ -99,18 +99,11 @@ public class AuthenticationFilter implements Filter {
 
     private static void executeAs(final ServletRequest request, final ServletResponse response, final FilterChain chain, Subject subject) {
         try {
-            if (System.getProperty("jboss.server.name") != null) {
-                // WildFly / JBoss EAP currently do not support in-vm privileged action with subject
-                LOG.debug("Running on WildFly / JBoss EAP. Directly invoking filter chain instead of privileged action");
-                request.setAttribute("subject", subject);
-                chain.doFilter(request, response);
-                return;
-            }
             Subject.doAs(subject, (PrivilegedExceptionAction<Object>) () -> {
                 chain.doFilter(request, response);
                 return null;
             });
-        } catch (ServletException | IOException | PrivilegedActionException e) {
+        } catch (PrivilegedActionException e) {
             LOG.info("Failed to invoke action " + ((HttpServletRequest) request).getPathInfo() + " due to:", e);
         }
     }
