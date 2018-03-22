@@ -234,44 +234,6 @@
     <url-pattern>/keycloak/*</url-pattern>
   </servlet-mapping>
 
-  <servlet>
-    <servlet-name>plugin</servlet-name>
-    <servlet-class>io.hawt.web.servlets.PluginServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>plugin</servlet-name>
-    <url-pattern>/plugin/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>exportContext</servlet-name>
-    <servlet-class>io.hawt.web.servlets.ExportContextServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>exportContext</servlet-name>
-    <url-pattern>/exportContext/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>maven-source</servlet-name>
-    <servlet-class>io.hawt.web.servlets.JavaDocServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>maven-source</servlet-name>
-    <url-pattern>/javadoc/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>contextFormatter</servlet-name>
-    <servlet-class>io.hawt.web.servlets.ContextFormatterServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>contextFormatter</servlet-name>
-    <url-pattern>/contextFormatter/*</url-pattern>
-  </servlet-mapping>
-
   <mime-mapping>
     <extension>woff</extension>
     <mime-type>application/font-woff</mime-type>

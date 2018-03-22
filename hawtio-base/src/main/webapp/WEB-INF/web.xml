@@ -123,19 +123,7 @@
     <filter-name>AuthenticationFilter</filter-name>
     <url-pattern>/jolokia/*</url-pattern>
   </filter-mapping>
-  <!--
-       don't want to try and interpret the authentication header
-       intended for the proxy
-  <filter-mapping>
-    <filter-name>AuthenticationFilter</filter-name>
-    <url-pattern>/proxy/*</url-pattern>
-  </filter-mapping>
-  -->
-  <filter-mapping>
-    <filter-name>AuthenticationFilter</filter-name>
-    <url-pattern>/javadoc/*</url-pattern>
-  </filter-mapping>
-
+  
   <filter>
     <filter-name>LoginRedirectFilter</filter-name>
     <filter-class>io.hawt.web.auth.LoginRedirectFilter</filter-class>
@@ -232,44 +220,6 @@
   <servlet-mapping>
     <servlet-name>keycloak</servlet-name>
     <url-pattern>/keycloak/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>plugin</servlet-name>
-    <servlet-class>io.hawt.web.servlets.PluginServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>plugin</servlet-name>
-    <url-pattern>/plugin/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>exportContext</servlet-name>
-    <servlet-class>io.hawt.web.servlets.ExportContextServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>exportContext</servlet-name>
-    <url-pattern>/exportContext/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>maven-source</servlet-name>
-    <servlet-class>io.hawt.web.servlets.JavaDocServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>maven-source</servlet-name>
-    <url-pattern>/javadoc/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet>
-    <servlet-name>contextFormatter</servlet-name>
-    <servlet-class>io.hawt.web.servlets.ContextFormatterServlet</servlet-class>
-    <load-on-startup>1</load-on-startup>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>contextFormatter</servlet-name>
-    <url-pattern>/contextFormatter/*</url-pattern>
   </servlet-mapping>
 
   <mime-mapping>

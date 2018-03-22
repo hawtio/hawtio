@@ -12,9 +12,6 @@ import io.hawt.web.filters.XXSSProtectionFilter;
 import io.hawt.web.auth.keycloak.KeycloakServlet;
 import io.hawt.web.auth.keycloak.KeycloakUserServlet;
 import io.hawt.web.proxy.ProxyServlet;
-import io.hawt.web.servlets.ContextFormatterServlet;
-import io.hawt.web.servlets.ExportContextServlet;
-import io.hawt.web.servlets.JavaDocServlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.ManagementContextConfiguration;
 import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
@@ -101,10 +98,7 @@ public class HawtioConfiguration {
     public FilterRegistrationBean authenticationFilter() {
         final FilterRegistrationBean filter = new FilterRegistrationBean();
         filter.setFilter(new AuthenticationFilter());
-        filter.addUrlPatterns(
-            "/hawtio/auth/*",
-            "/jolokia/*",
-            "/hawtio/javadoc/*");
+        filter.addUrlPatterns("/hawtio/auth/*", "/jolokia/*");
         return filter;
     }
 
@@ -142,24 +136,6 @@ public class HawtioConfiguration {
     public ServletRegistrationBean keycloakServlet() {
         return new ServletRegistrationBean(new KeycloakServlet(),
             "/hawtio/keycloak/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean exportContextServlet() {
-        return new ServletRegistrationBean(new ExportContextServlet(),
-            "/hawtio/exportContext/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean mavenSourceServlet() {
-        return new ServletRegistrationBean(new JavaDocServlet(),
-            "/hawtio/javadoc/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean contextFormatterServlet() {
-        return new ServletRegistrationBean(new ContextFormatterServlet(),
-            "/hawtio/contextFormatter/*");
     }
 
     // -------------------------------------------------------------------------
