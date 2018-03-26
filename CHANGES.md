@@ -1,6 +1,8 @@
 ## Change Log
 
-#### 2.0 Beta2 (To be released)
+#### 2.0 Beta3 (To be released)
+
+#### 2.0 Beta2
 
 * Keycloak integration support
 * Bug fixes
