@@ -5,11 +5,11 @@
     "@hawtio/integration": "~3.2.0",
     "@hawtio/log": "~3.2.0",
     "@hawtio/oauth": "~3.0.0",
+    "@types/angular-ui-bootstrap": "~0.13.46",
     "keycloak-js": "3.4.3"
   },
   "flat": true,
   "resolutions": {
-    "@hawtio/core": "3.2.22",
     "@types/jasmine": "2.8.6",
     "@types/jqueryui": "1.12.2",
     "@types/angular": "1.6.43",
@@ -21,7 +21,9 @@
     "jquery": "2.2.4",
     "lodash": "4.17.5",
     "angular-ui-bootstrap": "2.5.6",
-    "moment": "2.21.0"
+    "moment": "2.21.0",
+    "@hawtio/core": "3.2.25",
+    "@hawtio/core-dts": "3.1.0"
   },
   "license": "Apache-2.0",
   "repository": {
