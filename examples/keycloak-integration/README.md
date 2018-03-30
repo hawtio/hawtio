@@ -1,87 +1,92 @@
-hawtio integration with Keycloak
-================================
+# hawtio integration with Keycloak
 
-Those steps assume that you want your hawtio console to be secured by [Keycloak](http://www.keycloak.org). Integration consists of 2 main steps. First step is to download and prepare Keycloak server. Next step is deploy hawtio to your favourite server (JBoss Fuse, Karaf, Jetty, Tomcat, ...) and configure it to use Keycloak for authentication.
+hawtio's Keycloak integration is provided through [hawtio-oauth](https://github.com/hawtio/hawtio-oauth).
 
-Prepare Keycloak server
------------------------
+Those steps assume that you want your hawtio console to be secured by [Keycloak](http://www.keycloak.org). Integration consists of 2 main steps:
 
-1. Download keycloak server from http://www.keycloak.org and download version 3.4.1.Final.
-Then unpack and run keycloak server on `localhost:8080`.
+1. Prepare Keycloak server
+2. Deploy hawtio to your favourite server (Spring Boot, WildFly, Karaf, Jetty, Tomcat, Red Hat Fuse, ...) and configure it to use Keycloak for authentication
 
-2. If you haven't created `demo` realm on Keycloak yet, see Keycloak [Getting Started](http://www.keycloak.org/docs/3.4/getting_started/index.html#creating-a-realm-and-user) guide to create one.
 
-3. Download [demorealm.json](https://github.com/keycloak/keycloak/blob/3.4.1.Final/examples/fuse/demorealm.json) with Keycloak sample metadata about `demo` realm. It's assumed you downloaded it to directory `/downloads` on your laptop.
+## Table of contents
 
-4. Import the downloaded `demorealm.json` file into your Keycloak. Import can be done either via Keycloak admin console or by using `keycloak.import` system property:
+1. [Prepare Keycloak server](#prepare-keycloak-server)
+2. [Apache Karaf or Red Hat Fuse](#apache-karaf-or-red-hat-fuse)
+3. [WildFly or JBoss EAP](#wildfly-or-jboss-eap)
+4. [Jetty](#jetty)
+5. [Tomcat](#tomcat)
+
+
+## Prepare Keycloak server
+
+1. Install and run Keycloak server. The easiest way is to use [Docker image](https://hub.docker.com/r/jboss/keycloak/):
     
-        unzip -q /downloads/keycloak-3.4.1.Final.zip
-        cd keycloak-3.4.1.Final/bin/
-        ./standalone.sh -Djboss.http.port=8080 -Dkeycloak.import=/downloads/demorealm.json
+        $ docker run -d -p 18080:8080 -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin --name keycloak jboss/keycloak
+    
+    Here we use port number `18080` for Keycloak server to avoid conflict with the default port number of most application servers.
 
-Realm has `hawtio-client` application installed as public client. There are a couple of realm roles like `admin` and `viewer`. Names of these roles are same like default hawtio roles, which are allowed to login into hawtio admin console and to JMX.
+2. Import [hawtio-demo-realm.json](https://github.com/hawtio/hawtio-oauth/blob/master/test-plugins/hawtio-demo-realm.json) into your Keycloak. To do that, go to the Keycloak admin console (http://localhost:18080/auth/admin/) and select "Add realm" and then select the JSON file. It creates `hawtio-demo` realm.
+
+`hawtio-demo` realm has `hawtio-client` application installed as public client. There are a couple of realm roles like `admin` and `viewer`. Names of these roles are the same as default hawtio roles, which are allowed to login into hawtio admin console and to JMX.
 
 There are also 3 users:
 
-* **root** with password `password` and role `jmxAdmin`, so he is allowed to login into hawtio
-* **john** with password `password` and role `viewer`, so he is allowed to login into hawtio
-* **mary** with password `password` and no role assigned, so she is not allowed to login into hawtio
+* `admin` with password `password` and role `admin`, who is allowed to login into hawtio
+* `viewer` with password `password` and role `viewer`, who is allowed to login into hawtio
+* `jdoe` with password `password` and no role assigned, who is not allowed to login into hawtio
 
 
-Apache Karaf or JBoss Fuse
---------------------------
+## Apache Karaf or Red Hat Fuse
 
-Assuming `$KARAF_HOME` is the root directory of your Karaf/Fuse installation.
+Assume `$KARAF_HOME` is the root directory of your Karaf/Fuse installation.
 
-* Add this into the end of file `$KARAF_HOME/etc/system.properties`:
-    
-        hawtio.keycloakEnabled=true
-        hawtio.realm=keycloak
-        hawtio.keycloakClientConfig=${karaf.base}/etc/keycloak-hawtio-client.json
-        hawtio.rolePrincipalClasses=org.keycloak.adapters.jaas.RolePrincipal,org.apache.karaf.jaas.boot.principal.RolePrincipal
-
-* Download and copy [keycloak-hawtio.json](keycloak-hawtio.json) and [keycloak-hawtio-client.json](keycloak-hawtio-client.json) into Karaf/Fuse.
-File `keycloak-hawtio.json` is currently used for adapters on server (JAAS Login module) side. File `keycloak-hawtio-client.json` is used on client (hawtio JS application) side.
-    
-        cp /downloads/keycloak-hawtio.json $KARAF_HOME/etc/
-        cp /downloads/keycloak-hawtio-client.json $KARAF_HOME/etc/
-
-* Run Karaf/Fuse.
+* Run Karaf/Fuse:
     
         cd $KARAF_HOME/bin
         ./karaf
     
-    Replace `./karaf` with `./fuse` if you are on JBoss Fuse.
+    Replace `./karaf` with `./fuse` if you are on Red Hat Fuse.
 
-* Install hawtio.
+* Install hawtio:
     
-        feature:add-repo hawtio 2.0-beta-1
+        feature:add-repo hawtio 2.0-beta-2
         feature:install hawtio
 
-* Install keycloak OSGi bundling into Karaf/Fuse . It contains a few jars with Keycloak adapter and also configuration of `keycloak` JAAS realm
+* Install [pax-keycloak](https://github.com/ops4j/org.ops4j.pax.keycloak):
     
-        feature:repo-add mvn:org.keycloak/keycloak-osgi-features/3.4.1.Final/xml/features
-        feature:install keycloak
+        feature:add-repo pax-keycloak
+        feature:install pax-keycloak
     
-    You might also need to install the Keycloak Jetty 9 feature.
-
-        feature:install keycloak-jetty9-adapter
-
-* Go to [http://localhost:8181/hawtio](http://localhost:8181/hawtio) and login in keycloak as `root` or `john` to see hawtio admin console. If you login as `mary`, you should receive 'forbidden' error in hawtio.
-
-
-WildFly or JBoss EAP
---------------------
-
-This is even easier as you can use same WildFly server where Keycloak is already running. No need to have separate server, but you can use separate server if you want.
-
-So in next steps we will use the existing Keycloak server on localhost:8080 and assume that hawtio WAR is already deployed on WildFly as described in http://hawt.io/getstarted/index.html.
-
-* Download and copy [keycloak-hawtio.json](keycloak-hawtio.json) and [keycloak-hawtio-client.json](keycloak-hawtio-client.json) into WildFly.
-  File `keycloak-hawtio.json` is currently used for adapters on server (JAAS Login module) side. File `keycloak-hawtio-client.json` is used on client (hawtio JS application) side.
+    This automatically generates `keycloak-hawtio.json`, `keycloak-bearer.json`, and `keycloak-direct-access.json` files under `$KARAF_HOME/etc/`. It also updates `$KARAF_HOME/etc/system.properties` with the following system properties:
     
-        cp /downloads/keycloak-hawtio.json $JBOSS_HOME/standalone/configuration/
-        cp /downloads/keycloak-hawtio-client.json $JBOSS_HOME/standalone/configuration/
+        # Hawtio / Keycloak integration
+        hawtio.keycloakEnabled = true
+        hawtio.roles = admin,manager,viewer
+        hawtio.realm = karaf
+        hawtio.keycloakClientConfig = file://${karaf.etc}/keycloak-hawtio.json
+        hawtio.rolePrincipalClasses=org.keycloak.adapters.jaas.RolePrincipal,org.apache.karaf.jaas.boot.principal.RolePrincipal
+
+* Replace them with [keycloak-hawtio.json](keycloak-hawtio.json), [keycloak-bearer.json](keycloak-bearer.json), and [keycloak-direct-access.json](keycloak-direct-access.json) in this example. File `keycloak-bearer.json` is currently used for adapters on server (JAAS Login module) side. File `keycloak-hawtio.json` is used on client (hawtio JS application) side. File `keycloak-direct-access.json` is not used but the realm name needs to be updated.
+    
+        cp examples/keycloak-integration/keycloak-hawtio.json $KARAF_HOME/etc/
+        cp examples/keycloak-integration/keycloak-bearer.json $KARAF_HOME/etc/
+        cp examples/keycloak-integration/keycloak-direct-access.json $KARAF_HOME/etc/
+
+* Restart Karaf/Fuse.
+
+* Go to http://localhost:8181/hawtio and login to Keycloak as `admin` or `viewer` to see hawtio admin console. If you login as `jdoe`, you should receive "forbidden" error in hawtio.
+
+
+## WildFly or JBoss EAP
+
+Assume `$JBOSS_HOME` is the root directory of your WildFly/JBoss EAP installation and you deployed hawtio WAR to it as described in [hawtio Get Started](http://hawt.io/getstarted/index.html).
+
+* Install Keycloak adapter subsystem to your WildFly as described on: http://www.keycloak.org/docs/3.4/securing_apps/index.html#_jboss_adapter
+
+* Download and copy [keycloak-hawtio.json](keycloak-hawtio.json) and [keycloak-bearer.json](keycloak-bearer.json) into WildFly. File `keycloak-bearer.json` is currently used for adapters on server (JAAS Login module) side. File `keycloak-hawtio.json` is used on client (hawtio JS application) side.
+    
+        cp examples/keycloak-integration/keycloak-hawtio.json $JBOSS_HOME/standalone/configuration/
+        cp examples/keycloak-integration/keycloak-bearer.json $JBOSS_HOME/standalone/configuration/
 
 * In `$JBOSS_HOME/standalone/configuration/standalone.xml` configure system properties like this:
     
@@ -95,11 +100,11 @@ So in next steps we will use the existing Keycloak server on localhost:8080 and 
             <property name="hawtio.roles" value="admin,manager,viewer" />
             <property name="hawtio.rolePrincipalClasses" value="org.keycloak.adapters.jaas.RolePrincipal" />
             <property name="hawtio.keycloakEnabled" value="true" />
-            <property name="hawtio.keycloakClientConfig" value="${jboss.server.config.dir}/keycloak-hawtio-client.json" />
-            <property name="hawtio.keycloakServerConfig" value="${jboss.server.config.dir}/keycloak-hawtio.json" />
+            <property name="hawtio.keycloakClientConfig" value="${jboss.server.config.dir}/keycloak-hawtio.json" />
+            <property name="hawtio.keycloakServerConfig" value="${jboss.server.config.dir}/keycloak-bearer.json" />
         </system-properties>
     
-    Also add hawtio realm to this file to `security-domains` section:
+    Also add `hawtio` realm to this file in `<security-domains>` section:
     
         <security-domain name="hawtio" cache-type="default">
             <authentication>
@@ -109,9 +114,7 @@ So in next steps we will use the existing Keycloak server on localhost:8080 and 
             </authentication>
         </security-domain>
 
-* Install Keycloak adapter subsystem to your WildFly as described in [Keycloak documentation](http://www.keycloak.org) .
-
-* Add the `secure-deployment` section hawtio into `$JBOSS_HOME/standalone/configuration/standalone.xml`  to the keycloak subsystem. It should ensure that hawtio WAR is able to find the JAAS login modules.
+* Add the `<secure-deployment>` section to the `keycloak` subsystem in `$JBOSS_HOME/standalone/configuration/standalone.xml`. It should ensure that hawtio WAR is able to find the JAAS login modules.
     
         <subsystem xmlns="urn:jboss:domain:keycloak:1.1">
             <secure-deployment name="hawtio.war">
@@ -120,13 +123,19 @@ So in next steps we will use the existing Keycloak server on localhost:8080 and 
             </secure-deployment>
         </subsystem>
 
-* Run WildFly on port 8080 as described in [Prepare Keycloak server](#prepare-keycloak-server) section and go to http://localhost:8080/hawtio. Users are again `root` and `john` with access and `mary` without access.
+* Run WildFly on port `8080` and go to http://localhost:8080/hawtio. Users are again `admin` and `viewer` with access and `jdoe` without access.
 
 
-Jetty
------
+## Jetty
 
-Assuming `$JETTY_HOME` is the root directory of your Jetty installation and you deployed hawtio WAR to Jetty as described in [hawtio Get Started](http://hawt.io/getstarted/index.html).
+Assume `$JETTY_HOME` is the root directory of your Jetty installation and you deployed hawtio WAR to Jetty as described in [hawtio Get Started](http://hawt.io/getstarted/index.html).
+
+* Install Keycloak Jetty adapter into your Jetty server as described on: http://www.keycloak.org/docs/3.4/securing_apps/index.html#_jetty9_adapter
+
+* Download and copy [keycloak-hawtio.json](keycloak-hawtio.json) and [keycloak-bearer.json](keycloak-bearer.json) into Jetty. File `keycloak-bearer.json` is currently used for adapters on server (JAAS Login module) side. File `keycloak-hawtio.json` is used on client (hawtio JS application) side.
+    
+        cp examples/keycloak-integration/keycloak-hawtio.json $JETTY_HOME/etc/
+        cp examples/keycloak-integration/keycloak-bearer.json $JETTY_HOME/etc/
 
 * Create file `$JETTY_HOME/etc/login.conf` with the content like this:
     
@@ -135,37 +144,28 @@ Assuming `$JETTY_HOME` is the root directory of your Jetty installation and you 
                 keycloak-config-file="${hawtio.keycloakServerConfig}";
         };
 
-* Download and copy [keycloak-hawtio.json](keycloak-hawtio.json) and [keycloak-hawtio-client.json](keycloak-hawtio-client.json) into Jetty.
-  File `keycloak-hawtio.json` is currently used for adapters on server (JAAS Login module) side. File `keycloak-hawtio-client.json` is used on client (hawtio JS application) side.
-    
-        cp /downloads/keycloak-hawtio.json $JETTY_HOME/etc/
-        cp /downloads/keycloak-hawtio-client.json $JETTY_HOME/etc/
-
-* Install Keycloak jetty adapter into your Jetty server as described on: http://www.keycloak.org/docs/3.4/securing_apps/index.html#_jetty9_adapter
-
 * Export `JETTY_HOME` in your terminal. For example:
     
         export JETTY_HOME=/mydir/jetty-distribution-9.x.x
 
-* Export `JAVA_OPTIONS` and add all necessary system options similarly like this:
+* Export `JAVA_OPTIONS` and add all necessary system properties similarly like this:
     
         export JAVA_OPTIONS="-Dhawtio.authenticationEnabled=true \
-                             -Dhawtio.realm=demo \
+                             -Dhawtio.realm=hawtio \
                              -Dhawtio.keycloakEnabled=true \
                              -Dhawtio.roles=admin,manager,viewer \
                              -Dhawtio.rolePrincipalClasses=org.keycloak.adapters.jaas.RolePrincipal \
-                             -Dhawtio.keycloakClientConfig=$JETTY_HOME/etc/keycloak-hawtio-client.json \
-                             -Dhawtio.keycloakServerConfig=$JETTY_HOME/etc/keycloak-hawtio.json \
+                             -Dhawtio.keycloakClientConfig=$JETTY_HOME/etc/keycloak-hawtio.json \
+                             -Dhawtio.keycloakServerConfig=$JETTY_HOME/etc/keycloak-bearer.json \
                              -Djava.security.auth.login.config=$JETTY_HOME/etc/login.conf"
 
-* Run Jetty and go to http://localhost:8080/hawtio. Users are again `root` and `john` with access and `mary` without access.
+* Run Jetty and go to http://localhost:8080/hawtio. Users are again `admin` and `viewer` with access and `jdoe` without access.
 
 
-Tomcat
-------
+## Tomcat
 
-Instructions are quite similar to Jetty. You would need to setup JAAS realm and set the system properties. Just use Tomcat adapter instead of the Jetty one. Also you may need to add system property (really empty value):
+Instructions are quite similar to Jetty. You would need to setup JAAS realm and set the system properties. Just use Tomcat adapter instead of the Jetty one. Also you may need to add this system property (really empty value):
 
     -Dhawtio.authenticationContainerDiscoveryClasses=
 
-This is needed, so that Tomcat will use configured JAAS realm with BearerTokenLoginModule instead of `tomcat-users.xml` file, which hawtio uses on Tomcat by default.
+This is needed, so that Tomcat will use configured JAAS realm with `BearerTokenLoginModule` instead of `tomcat-users.xml` file, which hawtio uses on Tomcat by default.
