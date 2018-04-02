@@ -4261,7 +4261,7 @@ var ActiveMQ;
                         }
                         var connectorName = entries["connectorName"];
                         if (connectorName && !node.icon) {
-                            node.icon = Core.url("/img/icons/activemq/connector.png");
+                            node.icon = Core.url("img/icons/activemq/connector.png");
                         }
                     }
                     angular.forEach(node.children, function (child) { return setConsumerType(child); });
@@ -11940,12 +11940,12 @@ var Camel;
         bigdata: {
             label: "Big Data",
             endpoints: ["hdfs", "hbase", "lucene", "solr"],
-            endpointIcon: "/img/icons/camel/endpointRepository24.png"
+            endpointIcon: "img/icons/camel/endpointRepository24.png"
         },
         database: {
             label: "Database",
             endpoints: ["couchdb", "elasticsearch", "hbase", "jdbc", "jpa", "hibernate", "mongodb", "mybatis", "sql"],
-            endpointIcon: "/img/icons/camel/endpointRepository24.png"
+            endpointIcon: "img/icons/camel/endpointRepository24.png"
         },
         cloud: {
             label: "Cloud",
@@ -11961,7 +11961,7 @@ var Camel;
         messaging: {
             label: "Messaging",
             endpoints: ["jms", "activemq", "amqp", "cometd", "cometds", "mqtt", "netty", "vertx", "websocket"],
-            endpointIcon: "/img/icons/camel/endpointQueue24.png"
+            endpointIcon: "img/icons/camel/endpointQueue24.png"
         },
         mobile: {
             label: "Mobile",
@@ -11977,7 +11977,7 @@ var Camel;
         },
         storage: {
             label: "Storage",
-            endpointIcon: "/img/icons/camel/endpointFolder24.png",
+            endpointIcon: "img/icons/camel/endpointFolder24.png",
             endpoints: ["file", "ftp", "sftp", "scp", "jsch"]
         },
         template: {
@@ -11986,115 +11986,115 @@ var Camel;
         }
     };
     Camel.endpointToCategory = {};
-    Camel.endpointIcon = "/img/icons/camel/endpoint24.png";
+    Camel.endpointIcon = "img/icons/camel/endpoint24.png";
     Camel.endpointConfigurations = {
         activemq: {
-            icon: "/img/icons/camel/endpoints/activemq24.png"
+            icon: "img/icons/camel/endpoints/activemq24.png"
         },
         atom: {
-            icon: "/img/icons/camel/endpoints/atom24.png"
+            icon: "img/icons/camel/endpoints/atom24.png"
         },
         bean: {
-            icon: "/img/icons/camel/endpoints/bean24.png"
+            icon: "img/icons/camel/endpoints/bean24.png"
         },
         cxf: {
-            icon: "/img/icons/camel/endpoints/cxf24.png"
+            icon: "img/icons/camel/endpoints/cxf24.png"
         },
         cxfrs: {
-            icon: "/img/icons/camel/endpoints/cxfrs24.png"
+            icon: "img/icons/camel/endpoints/cxfrs24.png"
         },
         ejb: {
-            icon: "/img/icons/camel/endpoints/ejb24.png"
+            icon: "img/icons/camel/endpoints/ejb24.png"
         },
         facebook: {
-            icon: "/img/icons/camel/endpoints/facebook24.jpg"
+            icon: "img/icons/camel/endpoints/facebook24.jpg"
         },
         file: {
-            icon: "/img/icons/camel/endpoints/file24.png"
+            icon: "img/icons/camel/endpoints/file24.png"
         },
         ftp: {
-            icon: "/img/icons/camel/endpoints/ftp24.png"
+            icon: "img/icons/camel/endpoints/ftp24.png"
         },
         ftps: {
-            icon: "/img/icons/camel/endpoints/ftps24.png"
+            icon: "img/icons/camel/endpoints/ftps24.png"
         },
         imap: {
-            icon: "/img/icons/camel/endpoints/imap24.png"
+            icon: "img/icons/camel/endpoints/imap24.png"
         },
         imaps: {
-            icon: "/img/icons/camel/endpoints/imaps24.png"
+            icon: "img/icons/camel/endpoints/imaps24.png"
         },
         jdbc: {
-            icon: "/img/icons/camel/endpoints/jdbc24.png"
+            icon: "img/icons/camel/endpoints/jdbc24.png"
         },
         jms: {
-            icon: "/img/icons/camel/endpoints/jms24.png"
+            icon: "img/icons/camel/endpoints/jms24.png"
         },
         language: {
-            icon: "/img/icons/camel/endpoints/language24.png"
+            icon: "img/icons/camel/endpoints/language24.png"
         },
         linkedin: {
-            icon: "/img/icons/camel/endpoints/linkedin24.png"
+            icon: "img/icons/camel/endpoints/linkedin24.png"
         },
         log: {
-            icon: "/img/icons/camel/endpoints/log24.png"
+            icon: "img/icons/camel/endpoints/log24.png"
         },
         mqtt: {
-            icon: "/img/icons/camel/endpoints/mqtt24.png"
+            icon: "img/icons/camel/endpoints/mqtt24.png"
         },
         pop3: {
-            icon: "/img/icons/camel/endpoints/pop324.png"
+            icon: "img/icons/camel/endpoints/pop324.png"
         },
         pop3s: {
-            icon: "/img/icons/camel/endpoints/pop3s24.png"
+            icon: "img/icons/camel/endpoints/pop3s24.png"
         },
         quartz: {
-            icon: "/img/icons/camel/endpoints/quartz24.png"
+            icon: "img/icons/camel/endpoints/quartz24.png"
         },
         quartz2: {
-            icon: "/img/icons/camel/endpoints/quartz224.png"
+            icon: "img/icons/camel/endpoints/quartz224.png"
         },
         rss: {
-            icon: "/img/icons/camel/endpoints/rss24.png"
+            icon: "img/icons/camel/endpoints/rss24.png"
         },
         salesforce: {
-            icon: "/img/icons/camel/endpoints/salesForce24.png"
+            icon: "img/icons/camel/endpoints/salesForce24.png"
         },
         sap: {
-            icon: "/img/icons/camel/endpoints/SAP24.png"
+            icon: "img/icons/camel/endpoints/SAP24.png"
         },
         "sap-netweaver": {
-            icon: "/img/icons/camel/endpoints/SAPNetweaver24.jpg"
+            icon: "img/icons/camel/endpoints/SAPNetweaver24.jpg"
         },
         servlet: {
-            icon: "/img/icons/camel/endpoints/servlet24.png"
+            icon: "img/icons/camel/endpoints/servlet24.png"
         },
         sftp: {
-            icon: "/img/icons/camel/endpoints/sftp24.png"
+            icon: "img/icons/camel/endpoints/sftp24.png"
         },
         smtp: {
-            icon: "/img/icons/camel/endpoints/smtp24.png"
+            icon: "img/icons/camel/endpoints/smtp24.png"
         },
         smtps: {
-            icon: "/img/icons/camel/endpoints/smtps24.png"
+            icon: "img/icons/camel/endpoints/smtps24.png"
         },
         snmp: {
-            icon: "/img/icons/camel/endpoints/snmp24.png"
+            icon: "img/icons/camel/endpoints/snmp24.png"
         },
         sql: {
-            icon: "/img/icons/camel/endpoints/sql24.png"
+            icon: "img/icons/camel/endpoints/sql24.png"
         },
         timer: {
-            icon: "/img/icons/camel/endpoints/timer24.png"
+            icon: "img/icons/camel/endpoints/timer24.png"
         },
         twitter: {
-            icon: "/img/icons/camel/endpoints/twitter24.png"
+            icon: "img/icons/camel/endpoints/twitter24.png"
         },
         weather: {
-            icon: "/img/icons/camel/endpoints/weather24.jpg"
+            icon: "img/icons/camel/endpoints/weather24.jpg"
         },
         xslt: {
-            icon: "/img/icons/camel/endpoints/xslt24.jpg"
+            icon: "img/icons/camel/endpoints/xslt24.jpg"
         }
     };
     Camel.endpointForms = {
@@ -12516,7 +12516,7 @@ var Camel;
         }
         if (nodeSettings) {
             var imageName = nodeSettings["icon"] || "generic24.png";
-            return Core.url("/img/icons/camel/" + imageName);
+            return Core.url("img/icons/camel/" + imageName);
         }
         else {
             return null;
@@ -16742,7 +16742,7 @@ var Camel;
                     $scope.model = JSON.parse(data);
                     $scope.model.title = $scope.componentName;
                     $scope.model.description = $scope.model.component.description;
-                    $scope.icon = Core.url("/img/icons/camel/endpoint24.png");
+                    $scope.icon = Core.url("img/icons/camel/endpoint24.png");
                     $scope.nodeData = {};
                     var tabs = {};
                     tabs = Camel.buildTabsFromProperties(tabs, $scope.model.componentProperties);
@@ -16861,7 +16861,7 @@ var Camel;
                     $scope.model = JSON.parse(data);
                     $scope.model.title = $scope.model.dataformat.title + " (" + $scope.model.dataformat.name + ")";
                     $scope.model.description = $scope.model.dataformat.description;
-                    $scope.icon = Core.url("/img/icons/camel/marshal24.png");
+                    $scope.icon = Core.url("img/icons/camel/marshal24.png");
                     $scope.nodeData = {};
                     var tabs = {};
                     tabs = Camel.buildTabsFromProperties(tabs, $scope.model.properties);
@@ -16993,7 +16993,7 @@ var Camel;
                     $scope.model = JSON.parse(data);
                     $scope.model.title = $scope.endpointUrl;
                     $scope.model.description = $scope.model.component.description;
-                    $scope.icon = Core.url("/img/icons/camel/endpoint24.png");
+                    $scope.icon = Core.url("img/icons/camel/endpoint24.png");
                     $scope.nodeData = {};
                     var tabs = {};
                     tabs = Camel.buildTabsFromProperties(tabs, $scope.model.properties);
