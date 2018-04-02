@@ -3,6 +3,8 @@
 
 #### 1.5.9 (To be released)
 
+* Fixed icon images bug on Camel plugin - [#2456](https://github.com/hawtio/hawtio/pull/2456)
+
 #### 1.5.8
 
 * Much improved hawtio-springboot to respect the various path and port configurations from Spring-Boot, and more. 
