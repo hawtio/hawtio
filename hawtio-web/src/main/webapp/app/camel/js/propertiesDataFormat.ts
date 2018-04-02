@@ -116,7 +116,7 @@ module Camel {
         $scope.model.title = $scope.model.dataformat.title  + " (" + $scope.model.dataformat.name + ")";
         $scope.model.description = $scope.model.dataformat.description;
         // TODO: look for specific component icon,
-        $scope.icon = Core.url("/img/icons/camel/marshal24.png");
+        $scope.icon = Core.url("img/icons/camel/marshal24.png");
 
         // grab all values form the model as they are the current data we need to add to node data (not all properties has a value)
         $scope.nodeData = {};

@@ -226,7 +226,7 @@ module Camel {
     }
     if (nodeSettings) {
       var imageName = nodeSettings["icon"] || "generic24.png";
-      return Core.url("/img/icons/camel/" + imageName);
+      return Core.url("img/icons/camel/" + imageName);
     } else {
       return null;
     }
