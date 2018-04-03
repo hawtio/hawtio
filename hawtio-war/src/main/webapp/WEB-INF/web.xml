@@ -131,10 +131,6 @@
     <url-pattern>/proxy/*</url-pattern>
   </filter-mapping>
   -->
-  <filter-mapping>
-    <filter-name>AuthenticationFilter</filter-name>
-    <url-pattern>/javadoc/*</url-pattern>
-  </filter-mapping>
 
   <filter>
     <filter-name>LoginRedirectFilter</filter-name>
