@@ -31,8 +31,8 @@ Those steps assume that you want your hawtio console to be secured by [Keycloak]
 
 There are also 3 users:
 
-* `admin` with password `password` and role `admin`, who is allowed to login into hawtio
-* `viewer` with password `password` and role `viewer`, who is allowed to login into hawtio
+* `admin` with password `admin` and role `admin`, who is allowed to login into hawtio
+* `viewer` with password `viewer` and role `viewer`, who is allowed to login into hawtio
 * `jdoe` with password `password` and no role assigned, who is not allowed to login into hawtio
 
 
