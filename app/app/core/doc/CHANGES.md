@@ -1,7 +1,9 @@
 
 ### Change Log
 
-#### 1.5.9 (To be released)
+#### 1.5.10 (To be released)
+
+#### 1.5.9
 
 * Fixed icon images bug on Camel plugin - [#2456](https://github.com/hawtio/hawtio/pull/2456)
 
