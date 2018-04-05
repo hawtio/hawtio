@@ -230,6 +230,10 @@ Then in your application run the following code:
 
 If you wish to do anything fancy it should be easy to override the Main class to find the hawtio-web.war in whatever place you wish to locate it (such as your local maven repo or download it from some server etc).
 
+Depending on the war you are loading, you may also need to turn off authentication before running the embedded hawtio so that it can be accessible in an unauthenticated environment:
+
+    System.setProperty("hawtio.authenticationEnabled", "false");
+
 <a name="chrome-ext"></a>
 ## Using the Chrome Extension (currently not working)
 
