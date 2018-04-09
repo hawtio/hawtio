@@ -13,6 +13,10 @@
   <description>hawtio :: tooling :: hawtio-maven-plugin</description>
   <packaging>maven-plugin</packaging>
 
+  <prerequisites>
+    <maven>3.1.1</maven>
+  </prerequisites>
+
   <dependencies>
 
     <!-- maven plugin dependencies -->
