@@ -38,11 +38,6 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-aether</artifactId>
-      <version>${project.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>

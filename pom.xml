@@ -59,7 +59,6 @@
     <webapp-dir>${project.artifactId}-${project.version}</webapp-dir>
     <webapp-outdir>${basedir}/target/${webapp-dir}</webapp-outdir>
 
-    <aether-version>1.13.1</aether-version>
     <blueprint-web-version>1.1.0</blueprint-web-version>
     <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
     <commons-codec-version>1.10</commons-codec-version>
@@ -82,7 +81,6 @@
     <karaf-version-range>[4.0,5)</karaf-version-range>
     <keycloak-version>3.4.1.Final</keycloak-version>
     <log4j-version>1.2.17</log4j-version>
-    <maven-version>3.0.4</maven-version>
     <maven-bundle-plugin-version>3.0.1</maven-bundle-plugin-version>
     <maven-failsafe-plugin-version>2.19.1</maven-failsafe-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
@@ -95,7 +93,6 @@
     <slf4j-version>1.7.21</slf4j-version>
     <spring-version>4.3.10.RELEASE</spring-version>
     <spring-boot-version>1.5.6.RELEASE</spring-boot-version>
-    <wagon-version>2.7</wagon-version>
     <wildfly-version>11.0.0.Final</wildfly-version>
     <wildfly-maven-plugin-version>1.2.1.Final</wildfly-maven-plugin-version>
   </properties>
@@ -103,7 +100,6 @@
   <modules>
     <module>examples/springboot-authentication</module>
     <module>examples/springboot</module>
-    <module>hawtio-aether</module>
     <module>hawtio-app</module>
     <module>hawtio-base</module>
     <module>hawtio-console-assembly</module>
