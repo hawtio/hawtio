@@ -34,21 +34,6 @@
     <feature>hawtio-core</feature>
     <feature>hawtio-rbac</feature>
     <feature>hawtio-log</feature>
-    <!--
-    TODO: Is it required for v2?
-    <feature>hawtio-maven-indexer</feature>
-    -->
-  </feature>
-
-  <feature name="hawtio-offline" version="${project.version}">
-    <details>Installs hawtio in offline mode (without Maven service which requires internet connection)</details>
-    <feature>hawtio-core</feature>
-    <feature>hawtio-rbac</feature>
-  </feature>
-
-  <feature name="hawtio-maven-indexer" version="${project.version}">
-    <details>Installs the hawtio Maven indexer service as a separate bundle (requires internet connection)</details>
-    <bundle>mvn:io.hawt/hawtio-maven-indexer/${project.version}</bundle>
   </feature>
 
 </features>
