@@ -5,7 +5,6 @@
     <details>Installs the core hawtio war file with minimal extensions</details>
     <feature>war</feature>
     <feature>aries-blueprint</feature>
-    <bundle>mvn:io.hawt/hawtio-json-schema-mbean/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-war/${project.version}/war</bundle>
 
     <config name="jmx.acl.hawtio.plugin">

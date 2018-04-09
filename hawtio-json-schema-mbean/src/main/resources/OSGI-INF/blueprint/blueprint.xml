@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
-
-  <bean id="schemaLookup" class="io.hawt.jsonschema.SchemaLookup" init-method="init" destroy-method="destroy" scope="singleton"/>
-
-</blueprint>
-

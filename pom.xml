@@ -103,7 +103,6 @@
     <module>hawtio-ide</module>
     <module>hawtio-log</module>
     <module>hawtio-log-osgi</module>
-    <module>hawtio-json-schema-mbean</module>
     <module>hawtio-local-jvm-mbean</module>
     <module>hawtio-system</module>
     <module>hawtio-util</module>
@@ -112,7 +111,6 @@
     <module>platforms/karaf</module>
     <module>platforms/springboot</module>
     <module>platforms/wildfly</module>
-    <module>tests/example-services</module>
     <module>tooling/hawtio-junit</module>
     <module>tooling/hawtio-maven-plugin</module>
   </modules>
