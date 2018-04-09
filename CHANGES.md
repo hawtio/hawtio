@@ -2,6 +2,8 @@
 
 #### 2.0 Beta3 (To be released)
 
+* Added hawtio BOM
+
 #### 2.0 Beta2
 
 * Keycloak integration support
