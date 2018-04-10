@@ -307,7 +307,7 @@
             <artifactId>maven-javadoc-plugin</artifactId>
             <configuration>
               <encoding>${project.build.sourceEncoding}</encoding>
-              <additionalparam>-Xdoclint:none</additionalparam>
+              <doclint>none</doclint>
             </configuration>
             <executions>
               <execution>
