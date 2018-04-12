@@ -8,9 +8,9 @@
   dependencies:
     "@types/jquery" "~2.0.46"
 
-"@hawtio/core@3.2.22", "@hawtio/core@3.2.25", "@hawtio/core@~3.2.0":
-  version "3.2.25"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-3.2.25.tgz#4f1cece51fe8a209be4972bf84faa6498393de41"
+"@hawtio/core@3.2.22", "@hawtio/core@3.2.26", "@hawtio/core@~3.2.0":
+  version "3.2.26"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-3.2.26.tgz#0efc45bec40f21bfc37e045c556e5dbea70b4e6d"
   dependencies:
     "@hawtio/core-dts" "3.0.18"
     "@types/angular" "~1.6.0"
@@ -21,6 +21,7 @@
     "@types/marked" "0.3.0"
     "@types/urijs" "1.15.34"
     angular "~1.6.0"
+    angular-animate "~1.6.0"
     angular-patternfly "^4.0.0"
     angular-route "~1.6.0"
     angular-sanitize "~1.6.0"
@@ -39,23 +40,25 @@
     "@hawtio/ui" "~3.2.0"
 
 "@hawtio/integration@~3.2.0":
-  version "3.2.27"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-3.2.27.tgz#4fe6447a432397612513f3979f002b40f1d22df1"
+  version "3.2.28"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-3.2.28.tgz#08abad1b23e35b0554196ccae910bc7f6e09257b"
   dependencies:
     "@hawtio/core-dts" "3.1.0"
     "@hawtio/jmx" "~3.2.0"
     "@types/angular-mocks" "~1.5.11"
+    "@types/angular-ui-bootstrap" "~0.13.46"
     "@types/jqueryui" "1.12.0"
     dagre-layout "0.8.0"
     ng-infinite-scroll "1.3.0"
 
 "@hawtio/jmx@~3.2.0":
-  version "3.2.27"
-  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-3.2.27.tgz#daef8984e499c10b8fe00f643686da2a574b5115"
+  version "3.2.28"
+  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-3.2.28.tgz#e3b97b1479c31116a59f11dd69fea6efb88d6e7e"
   dependencies:
     "@hawtio/core" "~3.2.0"
     "@hawtio/forms" "~3.2.0"
     "@hawtio/ui" "~3.2.0"
+    "@types/angular-ui-bootstrap" "~0.13.46"
     angular-resizable "1.2.0"
     patternfly-bootstrap-treeview "2.1.5"
 
@@ -73,8 +76,8 @@
     ng-idle "^1.3.2"
 
 "@hawtio/ui@~3.2.0":
-  version "3.2.5"
-  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-3.2.5.tgz#ac17327c8d6196c4aa2c830da327363820058d63"
+  version "3.2.6"
+  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-3.2.6.tgz#1154a232a590db8d097dcfe159c49c2a7a640300"
   dependencies:
     "@hawtio/core" "3.2.22"
     "@hawtio/core-dts" "3.0.18"
@@ -160,17 +163,17 @@ abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
 
-angular-animate@1.5.*:
-  version "1.5.11"
-  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.5.11.tgz#1baa43c303d1b93c4e6aa89453b39114b7a1c669"
+angular-animate@1.5.*, angular-animate@1.6.9, angular-animate@~1.6.0:
+  version "1.6.9"
+  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.6.9.tgz#a0f926c1ba3190bd8929ef966a7fa79760682622"
 
 angular-drag-and-drop-lists@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/angular-drag-and-drop-lists/-/angular-drag-and-drop-lists-2.0.0.tgz#a01d44b94cf233c9c2d45a31842cb35a9d0882ca"
 
 angular-patternfly@^4.0.0:
-  version "4.15.1"
-  resolved "https://registry.yarnpkg.com/angular-patternfly/-/angular-patternfly-4.15.1.tgz#ed02c2724a0d11624346c7e9cf044b3f895412a8"
+  version "4.16.1"
+  resolved "https://registry.yarnpkg.com/angular-patternfly/-/angular-patternfly-4.16.1.tgz#43a74fcdc6fdc880ba0f683b571cd14867b8e187"
   dependencies:
     angular "1.5.*"
     angular-animate "1.5.*"
@@ -230,8 +233,8 @@ bluebird@^3.0.5:
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.1.tgz#d9551f9de98f1fcda1e683d17ee91a0602ee2eb9"
 
 bootstrap-datepicker@^1.7.1:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/bootstrap-datepicker/-/bootstrap-datepicker-1.7.1.tgz#4ee7faf34888dbec7834fbf9dbe7c4277e01ddaf"
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/bootstrap-datepicker/-/bootstrap-datepicker-1.8.0.tgz#c63513931e6f09f16ae9f11b62f32d950df3958e"
   dependencies:
     jquery ">=1.7.1 <4.0.0"
 
@@ -491,8 +494,8 @@ patternfly-bootstrap-treeview@2.1.5, patternfly-bootstrap-treeview@~2.1.0:
     jquery ">= 2.1.x"
 
 patternfly@^3.37.1:
-  version "3.42.0"
-  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.42.0.tgz#bdf9b1171ff7e2f4395094c4a7cb58e44122232e"
+  version "3.44.0"
+  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.44.0.tgz#5744516cc0611370a4ccfdbcc1978dd72d8ac4d6"
   dependencies:
     bootstrap "~3.3.7"
     font-awesome "^4.7.0"
