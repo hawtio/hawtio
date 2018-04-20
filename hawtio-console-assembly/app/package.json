@@ -23,7 +23,8 @@
     "angular-ui-bootstrap": "2.5.6",
     "jquery": "2.2.4",
     "lodash": "4.17.5",
-    "moment": "2.21.0"
+    "moment": "2.21.0",
+    "bootstrap-select": "1.13.0"
   },
   "license": "Apache-2.0",
   "repository": {

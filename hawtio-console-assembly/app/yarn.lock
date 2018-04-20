@@ -40,8 +40,8 @@
     "@hawtio/ui" "~3.2.0"
 
 "@hawtio/integration@~3.2.0":
-  version "3.2.28"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-3.2.28.tgz#08abad1b23e35b0554196ccae910bc7f6e09257b"
+  version "3.2.29"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-3.2.29.tgz#2e483ae3ea74909ad19680255e83de2e7ee986d5"
   dependencies:
     "@hawtio/core-dts" "3.1.0"
     "@hawtio/jmx" "~3.2.0"
@@ -172,8 +172,8 @@ angular-drag-and-drop-lists@2.0.0:
   resolved "https://registry.yarnpkg.com/angular-drag-and-drop-lists/-/angular-drag-and-drop-lists-2.0.0.tgz#a01d44b94cf233c9c2d45a31842cb35a9d0882ca"
 
 angular-patternfly@^4.0.0:
-  version "4.16.1"
-  resolved "https://registry.yarnpkg.com/angular-patternfly/-/angular-patternfly-4.16.1.tgz#43a74fcdc6fdc880ba0f683b571cd14867b8e187"
+  version "4.17.0"
+  resolved "https://registry.yarnpkg.com/angular-patternfly/-/angular-patternfly-4.17.0.tgz#23412bfa853cb3f68400c8f64f7f5ebb604059d0"
   dependencies:
     angular "1.5.*"
     angular-animate "1.5.*"
@@ -243,10 +243,8 @@ bootstrap-sass@^3.3.7:
   resolved "https://registry.yarnpkg.com/bootstrap-sass/-/bootstrap-sass-3.3.7.tgz#6596c7ab40f6637393323ab0bc80d064fc630498"
 
 bootstrap-select@^1.12.2, bootstrap-select@~1.12.4:
-  version "1.12.4"
-  resolved "https://registry.yarnpkg.com/bootstrap-select/-/bootstrap-select-1.12.4.tgz#7f15d3c0ce978868d9c09c70f96624f55fa02ee1"
-  dependencies:
-    jquery ">=1.8"
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/bootstrap-select/-/bootstrap-select-1.13.0.tgz#f31d0a23fc6070fd5b17b841bf1ca115ce54775b"
 
 bootstrap-slider@^9.9.0:
   version "9.10.0"
@@ -433,8 +431,8 @@ keycloak-js@3.4.3:
   resolved "https://registry.yarnpkg.com/keycloak-js/-/keycloak-js-3.4.3.tgz#9fbb1ba7b2433229f5cc8babbd308ff0e945dac7"
 
 lodash@4.17.4, lodash@4.17.5, lodash@4.x, lodash@^4.11.1, lodash@^4.17.4:
-  version "4.17.5"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
+  version "4.17.4"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
 lru-cache@^3.2.0:
   version "3.2.0"
@@ -494,8 +492,8 @@ patternfly-bootstrap-treeview@2.1.5, patternfly-bootstrap-treeview@~2.1.0:
     jquery ">= 2.1.x"
 
 patternfly@^3.37.1:
-  version "3.44.0"
-  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.44.0.tgz#5744516cc0611370a4ccfdbcc1978dd72d8ac4d6"
+  version "3.45.0"
+  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.45.0.tgz#5b27bde3e3ef68a1542906b96016654aa089a7f3"
   dependencies:
     bootstrap "~3.3.7"
     font-awesome "^4.7.0"
