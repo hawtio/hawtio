@@ -16,10 +16,6 @@
   <description>hawtio :: Sample Spring Boot process</description>
   <packaging>war</packaging>
 
-  <properties>
-    <camel-version>2.21.0</camel-version>
-  </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
