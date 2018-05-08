@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.21.0';
+var _apacheCamelModelVersion = '2.21.1';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -12020,6 +12020,15 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Lookup and use the existing ObjectMapper with the given id when using Jackson.",
           "title": "Object Mapper",
+          "required": false,
+          "deprecated": false
+        },
+        "useDefaultObjectMapper": {
+          "kind": "attribute",
+          "type": "boolean",
+          "defaultValue": "true",
+          "description": "Whether to lookup and use default Jackson ObjectMapper from the registry.",
+          "title": "Use Default Object Mapper",
           "required": false,
           "deprecated": false
         },
