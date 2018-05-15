@@ -71,6 +71,19 @@
   </env-entry>
 
   <filter>
+    <filter-name>LoginRedirectFilter</filter-name>
+    <filter-class>io.hawt.web.auth.LoginRedirectFilter</filter-class>
+    <init-param>
+      <param-name>unsecuredPaths</param-name>
+      <param-value>/auth,/css,/img,/js,/hawtconfig.json,/jolokia,/keycloak,/libs,/oauth,/user</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>LoginRedirectFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
     <filter-name>SessionExpiryFilter</filter-name>
     <filter-class>io.hawt.web.auth.SessionExpiryFilter</filter-class>
   </filter>
@@ -131,19 +144,6 @@
     <url-pattern>/proxy/*</url-pattern>
   </filter-mapping>
   -->
-
-  <filter>
-    <filter-name>LoginRedirectFilter</filter-name>
-    <filter-class>io.hawt.web.auth.LoginRedirectFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>LoginRedirectFilter</filter-name>
-    <url-pattern>*.html</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>LoginRedirectFilter</filter-name>
-    <url-pattern>/</url-pattern>
-  </filter-mapping>
 
   <servlet>
     <servlet-name>jolokia-agent</servlet-name>
