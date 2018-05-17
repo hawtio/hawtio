@@ -3,6 +3,10 @@
 
 #### 1.5.10 (To be released)
 
+* Upgraded to Camel 2.21.0
+* Upgraded to Spring Boot 1.5.11
+* Minor improvements
+
 #### 1.5.9
 
 * Fixed icon images bug on Camel plugin - [#2456](https://github.com/hawtio/hawtio/pull/2456)
