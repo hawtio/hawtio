@@ -556,6 +556,7 @@
             <configuration>
               <encoding>${project.build.sourceEncoding}</encoding>
               <additionalparam>-Xdoclint:none</additionalparam>
+              <additionalJOption>-Xdoclint:none</additionalJOption>
             </configuration>
             <executions>
               <execution>
