@@ -1,9 +1,11 @@
 
 ### Change Log
 
-#### 1.5.10 (To be released)
+#### 1.5.11 (To be released)
 
-* Upgraded to Camel 2.21.0
+#### 1.5.10
+
+* Upgraded to Camel 2.21.1
 * Upgraded to Spring Boot 1.5.11
 * Minor improvements
 
