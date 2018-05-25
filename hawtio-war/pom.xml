@@ -14,8 +14,6 @@
 
   <properties>
     <finalName>hawtio</finalName>
-    <hawtio-console-url>https://github.com/fabric8io/fabric8-console/archive/</hawtio-console-url>
-    <destDir>target/hawtio-console</destDir>
   </properties>
 
   <dependencies>
