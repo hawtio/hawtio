@@ -40,8 +40,8 @@
     "@hawtio/ui" "~3.2.0"
 
 "@hawtio/integration@~3.2.0":
-  version "3.2.29"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-3.2.29.tgz#2e483ae3ea74909ad19680255e83de2e7ee986d5"
+  version "3.2.30"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-3.2.30.tgz#cce71bf3b639cdff91afb4852daa7873339eb518"
   dependencies:
     "@hawtio/core-dts" "3.1.0"
     "@hawtio/jmx" "~3.2.0"
@@ -52,8 +52,8 @@
     ng-infinite-scroll "1.3.0"
 
 "@hawtio/jmx@~3.2.0":
-  version "3.2.28"
-  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-3.2.28.tgz#e3b97b1479c31116a59f11dd69fea6efb88d6e7e"
+  version "3.2.29"
+  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-3.2.29.tgz#d5ff622ed5496e402d34d5f1d8d9991dbb5ba01f"
   dependencies:
     "@hawtio/core" "~3.2.0"
     "@hawtio/forms" "~3.2.0"
@@ -119,6 +119,12 @@
   dependencies:
     "@types/jquery" "*"
 
+"@types/c3@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@types/c3/-/c3-0.6.0.tgz#74fe73461f18386ae460e8113ea4883ab7fbeab1"
+  dependencies:
+    "@types/d3" "^4"
+
 "@types/clipboard@1.5.35":
   version "1.5.35"
   resolved "https://registry.yarnpkg.com/@types/clipboard/-/clipboard-1.5.35.tgz#bceb67a7e0aad3070468929b95a2d626405db464"
@@ -126,6 +132,186 @@
 "@types/codemirror@0.0.40":
   version "0.0.40"
   resolved "https://registry.yarnpkg.com/@types/codemirror/-/codemirror-0.0.40.tgz#0868ed9ba5bf3ef8072de80e245ecf4a8f0bbdfd"
+
+"@types/d3-array@*":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@types/d3-array/-/d3-array-1.2.1.tgz#e489605208d46a1c9d980d2e5772fa9c75d9ec65"
+
+"@types/d3-axis@*":
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/@types/d3-axis/-/d3-axis-1.0.10.tgz#41d6b3ea9032f9531ec0d71d83bcf49294511210"
+  dependencies:
+    "@types/d3-selection" "*"
+
+"@types/d3-brush@*":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@types/d3-brush/-/d3-brush-1.0.8.tgz#2bb9b93e58115da9e0c94ac2b865e34d3631b69b"
+  dependencies:
+    "@types/d3-selection" "*"
+
+"@types/d3-chord@*":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@types/d3-chord/-/d3-chord-1.0.7.tgz#6cb982d84c02bf1b05874d921316451546fde9c3"
+
+"@types/d3-collection@*":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@types/d3-collection/-/d3-collection-1.0.7.tgz#829e1db477d6bbbcdc038cbc489f22798752d707"
+
+"@types/d3-color@*":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@types/d3-color/-/d3-color-1.2.1.tgz#26141c3c554e320edd40726b793570a3ae57397e"
+
+"@types/d3-dispatch@*":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@types/d3-dispatch/-/d3-dispatch-1.0.6.tgz#19b173f669cd2ab7dd3d862e8037aae1a98c7508"
+
+"@types/d3-drag@*":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@types/d3-drag/-/d3-drag-1.2.1.tgz#6394bcf2f6414140b3b0d521259cadc6fa1da926"
+  dependencies:
+    "@types/d3-selection" "*"
+
+"@types/d3-dsv@*":
+  version "1.0.33"
+  resolved "https://registry.yarnpkg.com/@types/d3-dsv/-/d3-dsv-1.0.33.tgz#18de1867927f7ec898671aef82f730f16d4c7fcb"
+
+"@types/d3-ease@*":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@types/d3-ease/-/d3-ease-1.0.7.tgz#93a301868be9e15061f3d44343b1ab3f8acb6f09"
+
+"@types/d3-force@*":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@types/d3-force/-/d3-force-1.1.1.tgz#185c18b77932df63457894bd36d0d6e9692546c0"
+
+"@types/d3-format@*":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@types/d3-format/-/d3-format-1.3.0.tgz#c5e115fac8e6861ce656fe9861892b22f6b0cfcb"
+
+"@types/d3-geo@*":
+  version "1.10.3"
+  resolved "https://registry.yarnpkg.com/@types/d3-geo/-/d3-geo-1.10.3.tgz#3c01b2baa480e1108301096328dc2837e7ff4d8a"
+  dependencies:
+    "@types/geojson" "*"
+
+"@types/d3-hierarchy@*":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@types/d3-hierarchy/-/d3-hierarchy-1.1.2.tgz#63a4e433f321ffc4dbd9aa05ff95962072b51993"
+
+"@types/d3-interpolate@*":
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/@types/d3-interpolate/-/d3-interpolate-1.1.6.tgz#64041b15c9c032c348da1b22baabc59fa4d16136"
+  dependencies:
+    "@types/d3-color" "*"
+
+"@types/d3-path@*":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@types/d3-path/-/d3-path-1.0.7.tgz#a0736fceed688a695f48265a82ff7a3369414b81"
+
+"@types/d3-polygon@*":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@types/d3-polygon/-/d3-polygon-1.0.6.tgz#db25c630a2afb9191fe51ba61dd37baee9dd44c7"
+
+"@types/d3-quadtree@*":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@types/d3-quadtree/-/d3-quadtree-1.0.5.tgz#1ce1e659eae4530df0cb127f297f1741a367a82e"
+
+"@types/d3-queue@*":
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/@types/d3-queue/-/d3-queue-3.0.6.tgz#2f5aa7eca3b153bb49687eaa570c10ab713439d3"
+
+"@types/d3-random@*":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@types/d3-random/-/d3-random-1.1.1.tgz#38647ce2ff4ce7d0d56974334c1c4092513c8b9f"
+
+"@types/d3-request@*":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@types/d3-request/-/d3-request-1.0.2.tgz#db9db8154f47816584706c6e6f702be66f22f4be"
+  dependencies:
+    "@types/d3-dsv" "*"
+
+"@types/d3-scale@^1":
+  version "1.0.13"
+  resolved "https://registry.yarnpkg.com/@types/d3-scale/-/d3-scale-1.0.13.tgz#8c89f73ea8adf81b849124683628aa834dcf545e"
+  dependencies:
+    "@types/d3-time" "*"
+
+"@types/d3-selection@*":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@types/d3-selection/-/d3-selection-1.3.1.tgz#c6227f4e39d429cc429ce3882fd533facc7f014c"
+
+"@types/d3-shape@*":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@types/d3-shape/-/d3-shape-1.2.3.tgz#cadc9f93a626db9190f306048a650df4ffa4e500"
+  dependencies:
+    "@types/d3-path" "*"
+
+"@types/d3-time-format@*":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@types/d3-time-format/-/d3-time-format-2.1.0.tgz#011e0fb7937be34a9a8f580ae1e2f2f1336a8a22"
+
+"@types/d3-time@*":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@types/d3-time/-/d3-time-1.0.8.tgz#6c083127b330b3c2fc65cd0f3a6e9cbd9607b28c"
+
+"@types/d3-timer@*":
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/@types/d3-timer/-/d3-timer-1.0.6.tgz#786d4e20731adf03af2c5df6c86fe29667fe429b"
+
+"@types/d3-transition@*":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@types/d3-transition/-/d3-transition-1.1.1.tgz#c209fce6a966d6696356dd42b091a9c6cc79929f"
+  dependencies:
+    "@types/d3-selection" "*"
+
+"@types/d3-voronoi@*":
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/@types/d3-voronoi/-/d3-voronoi-1.1.7.tgz#c0a145cf04395927e01706ff6c4ff835c97a8ece"
+
+"@types/d3-zoom@*":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@types/d3-zoom/-/d3-zoom-1.7.1.tgz#0d69be0bf5849cffb66f48e4258c838436b43822"
+  dependencies:
+    "@types/d3-interpolate" "*"
+    "@types/d3-selection" "*"
+
+"@types/d3@^4":
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/@types/d3/-/d3-4.13.0.tgz#aae092b368266409cfbf19c611203145ec0d5f65"
+  dependencies:
+    "@types/d3-array" "*"
+    "@types/d3-axis" "*"
+    "@types/d3-brush" "*"
+    "@types/d3-chord" "*"
+    "@types/d3-collection" "*"
+    "@types/d3-color" "*"
+    "@types/d3-dispatch" "*"
+    "@types/d3-drag" "*"
+    "@types/d3-dsv" "*"
+    "@types/d3-ease" "*"
+    "@types/d3-force" "*"
+    "@types/d3-format" "*"
+    "@types/d3-geo" "*"
+    "@types/d3-hierarchy" "*"
+    "@types/d3-interpolate" "*"
+    "@types/d3-path" "*"
+    "@types/d3-polygon" "*"
+    "@types/d3-quadtree" "*"
+    "@types/d3-queue" "*"
+    "@types/d3-random" "*"
+    "@types/d3-request" "*"
+    "@types/d3-scale" "^1"
+    "@types/d3-selection" "*"
+    "@types/d3-shape" "*"
+    "@types/d3-time" "*"
+    "@types/d3-time-format" "*"
+    "@types/d3-timer" "*"
+    "@types/d3-transition" "*"
+    "@types/d3-voronoi" "*"
+    "@types/d3-zoom" "*"
+
+"@types/geojson@*":
+  version "7946.0.3"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.3.tgz#e5791534ab0acfb2b3a39b713966cfcee85d469f"
 
 "@types/jasmine@2.8.2", "@types/jasmine@2.8.6":
   version "2.8.6"
@@ -172,8 +358,8 @@ angular-drag-and-drop-lists@2.0.0:
   resolved "https://registry.yarnpkg.com/angular-drag-and-drop-lists/-/angular-drag-and-drop-lists-2.0.0.tgz#a01d44b94cf233c9c2d45a31842cb35a9d0882ca"
 
 angular-patternfly@^4.0.0:
-  version "4.17.0"
-  resolved "https://registry.yarnpkg.com/angular-patternfly/-/angular-patternfly-4.17.0.tgz#23412bfa853cb3f68400c8f64f7f5ebb604059d0"
+  version "4.18.0"
+  resolved "https://registry.yarnpkg.com/angular-patternfly/-/angular-patternfly-4.18.0.tgz#802a4604f232afde39ec1009e7580913a3456b65"
   dependencies:
     angular "1.5.*"
     angular-animate "1.5.*"
@@ -242,7 +428,7 @@ bootstrap-sass@^3.3.7:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/bootstrap-sass/-/bootstrap-sass-3.3.7.tgz#6596c7ab40f6637393323ab0bc80d064fc630498"
 
-bootstrap-select@1.13.0, bootstrap-select@^1.12.2, bootstrap-select@~1.12.4:
+bootstrap-select@1.12.2, bootstrap-select@1.13.0, bootstrap-select@~1.12.4:
   version "1.13.0"
   resolved "https://registry.yarnpkg.com/bootstrap-select/-/bootstrap-select-1.13.0.tgz#f31d0a23fc6070fd5b17b841bf1ca115ce54775b"
 
@@ -263,8 +449,8 @@ bootstrap@3.3.x, bootstrap@^3.3, bootstrap@~3.3.7:
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-3.3.7.tgz#5a389394549f23330875a3b150656574f8a9eb71"
 
 c3@~0.4.11:
-  version "0.4.22"
-  resolved "https://registry.yarnpkg.com/c3/-/c3-0.4.22.tgz#88b895f06fb6b44314e94b2d7331c3dc98b64d2d"
+  version "0.4.23"
+  resolved "https://registry.yarnpkg.com/c3/-/c3-0.4.23.tgz#32ece135d0ac6d124187be5c6935903699643002"
   dependencies:
     d3 "~3.5.0"
 
@@ -492,16 +678,17 @@ patternfly-bootstrap-treeview@2.1.5, patternfly-bootstrap-treeview@~2.1.0:
     jquery ">= 2.1.x"
 
 patternfly@^3.37.1:
-  version "3.45.0"
-  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.45.0.tgz#5b27bde3e3ef68a1542906b96016654aa089a7f3"
+  version "3.47.1"
+  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.47.1.tgz#299e6e76ccd9b5521390397de81cc512edd8e6f4"
   dependencies:
     bootstrap "~3.3.7"
     font-awesome "^4.7.0"
     jquery "~3.2.1"
   optionalDependencies:
+    "@types/c3" "^0.6.0"
     bootstrap-datepicker "^1.7.1"
     bootstrap-sass "^3.3.7"
-    bootstrap-select "^1.12.2"
+    bootstrap-select "1.12.2"
     bootstrap-slider "^9.9.0"
     bootstrap-switch "~3.3.4"
     bootstrap-touchspin "~3.1.1"
