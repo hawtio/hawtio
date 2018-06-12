@@ -13,13 +13,13 @@
   </feature>
 
   <feature name="hawtio-rbac" version="${project.version}">
-    <details>Installs the Hawtio RBAC enabler bundle(s)</details>
+    <details>Installs the Hawtio RBAC enabler bundles</details>
     <feature>management</feature>
     <bundle>mvn:io.hawt/hawtio-osgi-jmx/${project.version}</bundle>
   </feature>
 
   <feature name="hawtio-log" version="${project.version}">
-    <details>Installs the Hawtio logging</details>
+    <details>Installs the Hawtio logging backend MBeans</details>
     <feature>log</feature>
     <bundle>mvn:io.hawt/hawtio-log/${project.version}</bundle>
     <bundle>mvn:io.hawt/hawtio-log-osgi/${project.version}</bundle>
