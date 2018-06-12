@@ -43,6 +43,7 @@ object Website {
   val disqus_shortname = project_id
 
   val scala_compat_tag = "2.9"
+  val context_path= "/hawtio"
 
   // -------------------------------------------------------------------
   val project_maven_groupId= "io.hawt"
