@@ -53,7 +53,7 @@ public class LoginRedirectFilter implements Filter {
     	if (null == schem) {
     		schem = "http";
     	}
-    	System.out.println(schem);
+    	System.out.println(schem+" -- LoginRedirectFilter");
     	String portstr = ":"+httpRequest.getServerPort();
     	String redirURL=schem+"://"+httpRequest.getServerName()+portstr+httpRequest.getContextPath() + AuthenticationConfiguration.LOGIN_URL;
         httpResponse.sendRedirect(redirURL);

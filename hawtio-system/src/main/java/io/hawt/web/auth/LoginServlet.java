@@ -80,7 +80,7 @@ public class LoginServlet extends HttpServlet {
         	if (null == schem) {
         		schem = "http";
         	}
-        	System.out.println(schem);
+        	System.out.println(schem+"-- LoginServlet");
         	String redir = schem+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
             response.sendRedirect(redir);
         } else {
