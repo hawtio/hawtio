@@ -76,7 +76,12 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (authConfiguration.isKeycloakEnabled()) {
-        	String redir = request.getScheme()+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
+        	String schem=System.getenv("hawtio.redirect.scheme");
+        	if (null == schem) {
+        		schem = "http";
+        	}
+        	System.out.println(schem);
+        	String redir = schem+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
             response.sendRedirect(redir);
         } else {
             request.getRequestDispatcher("/login.html").forward(request, response);

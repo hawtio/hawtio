@@ -35,7 +35,7 @@ public class LoginRedirectFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         HttpSession session = httpRequest.getSession(false);
         String path = httpRequest.getServletPath();
-
+        
         if (authConfiguration.isEnabled() && !authConfiguration.isKeycloakEnabled()
             && !isAuthenticated(session) && isSecuredPath(path)) {
             redirect(httpRequest, httpResponse);
@@ -53,6 +53,7 @@ public class LoginRedirectFilter implements Filter {
     	if (null == schem) {
     		schem = "http";
     	}
+    	System.out.println(schem);
     	String portstr = ":"+httpRequest.getServerPort();
     	String redirURL=schem+"://"+httpRequest.getServerName()+portstr+httpRequest.getContextPath() + AuthenticationConfiguration.LOGIN_URL;
         httpResponse.sendRedirect(redirURL);
