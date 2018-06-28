@@ -49,7 +49,17 @@ public class LoginRedirectFilter implements Filter {
     }
 
     private void redirect(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
-        httpResponse.sendRedirect(httpRequest.getContextPath() + AuthenticationConfiguration.LOGIN_URL);
+    	String schem=httpRequest.getScheme();
+    	int defport = 80;
+    	if ("https".equalsIgnoreCase(schem)) {
+    		defport=443;
+    	}
+    	String portstr = "";
+    	if (httpRequest.getServerPort() != defport) {
+    		portstr = ":"+httpRequest.getServerPort();
+    	}
+    	String redirURL=schem+"://"+httpRequest.getServerName()+portstr+httpRequest.getContextPath() + AuthenticationConfiguration.LOGIN_URL;
+        httpResponse.sendRedirect(redirURL);
     }
 
     List<String> convertCsvToList(String unsecuredPaths) {
