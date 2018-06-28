@@ -50,6 +50,7 @@ public class LoginRedirectFilter implements Filter {
 
     private void redirect(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
     	String schem=httpRequest.getScheme();
+    	System.out.println(schem);
     	int defport = 80;
     	if ("https".equalsIgnoreCase(schem)) {
     		defport=443;
