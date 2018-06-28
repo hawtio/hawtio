@@ -49,16 +49,11 @@ public class LoginRedirectFilter implements Filter {
     }
 
     private void redirect(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
-    	String schem=httpRequest.getScheme();
-    	System.out.println(schem);
-    	int defport = 80;
-    	if ("https".equalsIgnoreCase(schem)) {
-    		defport=443;
+    	String schem=System.getenv("hawtio.redirect.scheme");
+    	if (null == schem) {
+    		schem = "http";
     	}
-    	String portstr = "";
-    	if (httpRequest.getServerPort() != defport) {
-    		portstr = ":"+httpRequest.getServerPort();
-    	}
+    	String portstr = ":"+httpRequest.getServerPort();
     	String redirURL=schem+"://"+httpRequest.getServerName()+portstr+httpRequest.getContextPath() + AuthenticationConfiguration.LOGIN_URL;
         httpResponse.sendRedirect(redirURL);
     }

@@ -101,8 +101,13 @@ public class Main {
 		try(ServerConnector sslconn = new ServerConnector(server, new SslConnectionFactory(sslcontf, "http/1.1"), new HttpConnectionFactory(httpconf));) {
 			sslconn.setPort(options.getPort());
 			server.setConnectors(new Connector[] { sslconn });
+			
 		}
 	scheme="https";
+	}
+	String sysScheme = System.getProperty("hawtio.redirect.scheme");
+	if (null == sysScheme  ) {
+		System.setProperty("hawtio.redirect.scheme", scheme);
 	}
         WebAppContext webapp = new WebAppContext();
         webapp.setServer(server);

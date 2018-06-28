@@ -40,7 +40,11 @@ public class LogoutServlet extends HttpServlet {
             session.invalidate();
         }
         request.logout();
-        String redir = request.getScheme()+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+AuthenticationConfiguration.LOGIN_URL;
+        String schem=System.getenv("hawtio.redirect.scheme");
+    	if (null == schem) {
+    		schem = "http";
+    	}
+        String redir = schem+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+AuthenticationConfiguration.LOGIN_URL;
         response.sendRedirect(redir);
     }
 
