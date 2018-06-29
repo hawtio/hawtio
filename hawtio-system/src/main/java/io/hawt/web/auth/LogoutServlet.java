@@ -40,7 +40,7 @@ public class LogoutServlet extends HttpServlet {
             session.invalidate();
         }
         request.logout();
-        String schem=System.getenv("hawtio.redirect.scheme");
+    	String schem=request.getServletContext().getInitParameter("scheme");
     	if (null == schem) {
     		schem = "http";
     	}

@@ -126,6 +126,7 @@ public class Main {
         webapp.setWar(war);
         webapp.setParentLoaderPriority(true);
         webapp.setLogUrlOnStart(true);
+        webapp.setInitParameter("scheme", scheme);
         webapp.setExtraClasspath(options.getExtraClassPath());
 
         // lets set a temporary directory so jetty doesn't bork if some process zaps /tmp/*
