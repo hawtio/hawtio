@@ -107,7 +107,7 @@ public class Main {
 	}
 	String sysScheme = System.getProperty("hawtio.redirect.scheme");
 	if (null == sysScheme  ) {
-		System.out.println("Setting Scheme = "+scheme);
+		System.out.println("Implicitly setting Scheme = "+scheme);
 		System.setProperty("hawtio.redirect.scheme", scheme);
 	} else {
 		System.out.println("Scheme Was Set Explicitly To = "+scheme);

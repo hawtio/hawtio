@@ -51,6 +51,7 @@ public class LoginRedirectFilter implements Filter {
     private void redirect(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
     	String schem=System.getenv("hawtio.redirect.scheme");
     	if (null == schem) {
+                System.out.println ("scheme is Null, using default");
     		schem = "http";
     	}
     	System.out.println(schem+" -- LoginRedirectFilter");
