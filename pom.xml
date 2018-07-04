@@ -56,7 +56,7 @@
 
     <blueprint-web-version>1.1.0</blueprint-web-version>
     <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
-    <camel-version>2.21.1</camel-version>
+    <camel-version>2.22.0</camel-version>
     <commons-codec-version>1.10</commons-codec-version>
     <commons-httpclient-version>3.1</commons-httpclient-version>
     <commons-io-version>2.2</commons-io-version>
