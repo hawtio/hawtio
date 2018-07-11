@@ -76,7 +76,31 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (authConfiguration.isKeycloakEnabled()) {
-            response.sendRedirect(request.getContextPath() + "/");
+<<<<<<< HEAD
+<<<<<<< HEAD
+            String schem=request.getServletContext().getInitParameter("scheme");
+            if (null == schem) {
+                schem = "http";
+            }
+            System.out.println(schem+"-- LoginServlet");
+            String redir = schem+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
+=======
+            String schem=request.getServletContext().getInitParameter("scheme");
+            if (null == schem) {
+                schem = "http";
+            }
+            System.out.println(schem+"-- LoginServlet");
+            String redir = schem+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
+>>>>>>> us20xx
+=======
+        	String schem=request.getServletContext().getInitParameter("scheme");
+        	if (null == schem) {
+        		schem = "http";
+        	}
+        	System.out.println(schem+"-- LoginServlet");
+        	String redir = schem+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
+>>>>>>> c64af7101e298bf4015d573f96e37b9d4cefa2b0
+            response.sendRedirect(redir);
         } else {
             request.getRequestDispatcher("/login.html").forward(request, response);
         }

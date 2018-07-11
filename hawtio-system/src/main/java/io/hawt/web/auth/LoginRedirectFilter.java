@@ -35,7 +35,7 @@ public class LoginRedirectFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         HttpSession session = httpRequest.getSession(false);
         String path = httpRequest.getServletPath();
-
+        
         if (authConfiguration.isEnabled() && !authConfiguration.isKeycloakEnabled()
             && !isAuthenticated(session) && isSecuredPath(path)) {
             redirect(httpRequest, httpResponse);
@@ -49,7 +49,40 @@ public class LoginRedirectFilter implements Filter {
     }
 
     private void redirect(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
-        httpResponse.sendRedirect(httpRequest.getContextPath() + AuthenticationConfiguration.LOGIN_URL);
+<<<<<<< HEAD
+<<<<<<< HEAD
+        String schem=httpRequest.getServletContext().getInitParameter("scheme");
+        if (null == schem) {
+                System.out.println ("scheme is Null, using default");
+            schem = "http";
+        }
+        
+        System.out.println(schem+" -- LoginRedirectFilter");
+        String portstr = ":"+httpRequest.getServerPort();
+        String redirURL=schem+"://"+httpRequest.getServerName()+portstr+httpRequest.getContextPath() + AuthenticationConfiguration.LOGIN_URL;
+=======
+        String schem=httpRequest.getServletContext().getInitParameter("scheme");
+        if (null == schem) {
+                System.out.println ("scheme is Null, using default");
+            schem = "http";
+        }
+        
+        System.out.println(schem+" -- LoginRedirectFilter");
+        String portstr = ":"+httpRequest.getServerPort();
+        String redirURL=schem+"://"+httpRequest.getServerName()+portstr+httpRequest.getContextPath() + AuthenticationConfiguration.LOGIN_URL;
+>>>>>>> us20xx
+=======
+    	String schem=httpRequest.getServletContext().getInitParameter("scheme");
+    	if (null == schem) {
+                System.out.println ("scheme is Null, using default");
+    		schem = "http";
+    	}
+    	
+    	System.out.println(schem+" -- LoginRedirectFilter");
+    	String portstr = ":"+httpRequest.getServerPort();
+    	String redirURL=schem+"://"+httpRequest.getServerName()+portstr+httpRequest.getContextPath() + AuthenticationConfiguration.LOGIN_URL;
+>>>>>>> c64af7101e298bf4015d573f96e37b9d4cefa2b0
+        httpResponse.sendRedirect(redirURL);
     }
 
     List<String> convertCsvToList(String unsecuredPaths) {
