@@ -40,7 +40,13 @@ public class LogoutServlet extends HttpServlet {
             session.invalidate();
         }
         request.logout();
-        response.sendRedirect(request.getContextPath() + AuthenticationConfiguration.LOGIN_URL);
+        String schem=request.getServletContext().getInitParameter("scheme");
+        if (null == schem) {
+            schem = "http";
+        }
+        System.out.println(schem+" --logoutservlet");
+        String redir = schem+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+AuthenticationConfiguration.LOGIN_URL;
+        response.sendRedirect(redir);
     }
 
 }
