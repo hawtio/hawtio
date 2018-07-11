@@ -41,6 +41,7 @@ public class LogoutServlet extends HttpServlet {
         }
         request.logout();
 <<<<<<< HEAD
+<<<<<<< HEAD
         String schem=request.getServletContext().getInitParameter("scheme");
         if (null == schem) {
             schem = "http";
@@ -53,6 +54,13 @@ public class LogoutServlet extends HttpServlet {
         }
         System.out.println(schem+" --logoutservlet");
 >>>>>>> us20xx
+=======
+    	String schem=request.getServletContext().getInitParameter("scheme");
+    	if (null == schem) {
+    		schem = "http";
+    	}
+    	System.out.println(schem+" --logoutservlet");
+>>>>>>> c64af7101e298bf4015d573f96e37b9d4cefa2b0
         String redir = schem+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+AuthenticationConfiguration.LOGIN_URL;
         response.sendRedirect(redir);
     }

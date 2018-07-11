@@ -88,6 +88,7 @@ public class Main {
         handlers.setServer(server);
         server.setHandler(handlers);
 <<<<<<< HEAD
+<<<<<<< HEAD
     String scheme="http";
     if (null != options.getKeyStore()) {
         System.out.println("Configuring SSL");
@@ -142,6 +143,34 @@ public class Main {
         scheme = sysScheme;
     }
 >>>>>>> us20xx
+=======
+	String scheme="http";
+	if (null != options.getKeyStore()) {
+		System.out.println("Configuring SSL");
+		SslContextFactory sslcontf = new SslContextFactory();
+		HttpConfiguration httpconf = new HttpConfiguration();
+		sslcontf.setKeyStorePath(options.getKeyStore());
+                if (null != options.getKeyStorePass()){
+		    sslcontf.setKeyStorePassword(options.getKeyStorePass());
+                } else {
+                    System.out.println("Attempting to open keystore with no password...");
+                }
+		try(ServerConnector sslconn = new ServerConnector(server, new SslConnectionFactory(sslcontf, "http/1.1"), new HttpConnectionFactory(httpconf));) {
+			sslconn.setPort(options.getPort());
+			server.setConnectors(new Connector[] { sslconn });
+			
+		}
+	scheme="https";
+	}
+	String sysScheme = System.getProperty("hawtio.redirect.scheme");
+	if (null == sysScheme  ) {
+		System.out.println("Implicitly setting Scheme = "+scheme);
+		System.setProperty("hawtio.redirect.scheme", scheme);
+	} else {
+		System.out.println("Scheme Was Set Explicitly To = "+scheme);
+		scheme = sysScheme;
+	}
+>>>>>>> c64af7101e298bf4015d573f96e37b9d4cefa2b0
         WebAppContext webapp = new WebAppContext();
         webapp.setServer(server);
         webapp.setContextPath(options.getContextPath());
