@@ -22,10 +22,16 @@ import java.io.FilenameFilter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.util.log.Log;
 import org.eclipse.jetty.util.log.Slf4jLog;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
@@ -82,7 +88,32 @@ public class Main {
         HandlerCollection handlers = new HandlerCollection();
         handlers.setServer(server);
         server.setHandler(handlers);
+        String scheme = "http";
+        if (null != options.getKeyStore()) {
+            System.out.println("Configuring SSL");
+            SslContextFactory sslcontf = new SslContextFactory();
+            HttpConfiguration httpconf = new HttpConfiguration();
+            sslcontf.setKeyStorePath(options.getKeyStore());
+            if (null != options.getKeyStorePass()) {
+                sslcontf.setKeyStorePassword(options.getKeyStorePass());
+            } else {
+                System.out.println("Attempting to open keystore with no password...");
+            }
+            try (ServerConnector sslconn = new ServerConnector(server, new SslConnectionFactory(sslcontf, "http/1.1"), new HttpConnectionFactory(httpconf));) {
+                sslconn.setPort(options.getPort());
+                server.setConnectors(new Connector[] { sslconn });
 
+            }
+            scheme = "https";
+        }
+        String sysScheme = System.getProperty("hawtio.redirect.scheme");
+        if (null == sysScheme) {
+            System.out.println("Implicitly setting Scheme = " + scheme);
+            System.setProperty("hawtio.redirect.scheme", scheme);
+        } else {
+            System.out.println("Scheme Was Set Explicitly To = " + scheme);
+            scheme = sysScheme;
+        }
         WebAppContext webapp = new WebAppContext();
         webapp.setServer(server);
         webapp.setContextPath(options.getContextPath());
@@ -96,6 +127,7 @@ public class Main {
         webapp.setWar(war);
         webapp.setParentLoaderPriority(true);
         webapp.setLogUrlOnStart(true);
+        webapp.setInitParameter("scheme", scheme);
         webapp.setExtraClasspath(options.getExtraClassPath());
 
         // lets set a temporary directory so jetty doesn't bork if some process zaps /tmp/*
@@ -126,7 +158,7 @@ public class Main {
             System.out.println("hawtio: Don't cha wish your console was hawt like me!");
             System.out.println("=====================================================");
             System.out.println();
-            System.out.println("http://localhost:" + options.getPort() + options.getContextPath());
+            System.out.println(scheme + "://localhost:" + options.getPort() + options.getContextPath());
             System.out.println();
         }
 

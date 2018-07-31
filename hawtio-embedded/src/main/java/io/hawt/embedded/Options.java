@@ -35,6 +35,8 @@ public class Options {
     private boolean help;
     private boolean jointServerThread;
     private boolean openUrl = true;
+    private String keyStore = null;
+    private String keyStorePass = null;
 
     private abstract class Option {
         private String abbreviation;
@@ -166,6 +168,16 @@ public class Options {
                 openUrl = Boolean.valueOf(parameter);
             }
         });
+        addOption(new ParameterOption("ks", "keyStore", "JKS keyStore with the keys for https") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                keyStore = parameter;
+            }
+        });
+        addOption(new ParameterOption("kp", "keyStorePass", "password for the JKS keyStore with the keys for https") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                keyStorePass = parameter;
+            }
+        });
 
     }
 
@@ -206,6 +218,12 @@ public class Options {
         }
         if (plugins != null) {
             sb.append("\n\tplugins=").append(plugins);
+        }
+        if (keyStore != null) {
+            sb.append("\n\tkeyStore=").append(keyStore);
+        }
+        if (keyStorePass != null) {
+            sb.append("\n\tkeyStore=").append(keyStorePass);
         }
         sb.append("\n\topenUrl=").append(openUrl);
         sb.append("\n\tjointServerThread=").append(jointServerThread);
@@ -267,7 +285,9 @@ public class Options {
         return host;
     }
 
-    public void setHost(String host) { this.host = host; }
+    public void setHost(String host) {
+        this.host = host;
+    }
 
     public Integer getPort() {
         return port;
@@ -313,4 +333,19 @@ public class Options {
         return help;
     }
 
+    public String getKeyStore() {
+        return keyStore;
+    }
+
+    public void setKeyStore(String keyStore) {
+        this.keyStore = keyStore;
+    }
+
+    public String getKeyStorePass() {
+        return keyStorePass;
+    }
+
+    public void setKeyStorePass(String keyStorePass) {
+        this.keyStorePass = keyStorePass;
+    }
 }

@@ -1,7 +1,5 @@
 package io.hawt.web.auth;
 
-import io.hawt.util.Strings;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -15,10 +13,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import io.hawt.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Redirect to login page when authentication is enabled.
  */
 public class LoginRedirectFilter implements Filter {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(LoginRedirectFilter.class);
 
     private AuthenticationConfiguration authConfiguration;
     private List<String> unsecuredPaths;
@@ -49,7 +53,16 @@ public class LoginRedirectFilter implements Filter {
     }
 
     private void redirect(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
-        httpResponse.sendRedirect(httpRequest.getContextPath() + AuthenticationConfiguration.LOGIN_URL);
+        String scheme = httpRequest.getServletContext().getInitParameter("scheme");
+        if (null == scheme) {
+            LOG.debug("scheme is null, using default");
+            scheme = "http";
+        }
+
+        LOG.debug("scheme = {}", scheme);
+        String redirectUrl = scheme + "://" + httpRequest.getServerName() + ":" + httpRequest.getServerPort()
+            + httpRequest.getContextPath() + AuthenticationConfiguration.LOGIN_URL;
+        httpResponse.sendRedirect(redirectUrl);
     }
 
     List<String> convertCsvToList(String unsecuredPaths) {
