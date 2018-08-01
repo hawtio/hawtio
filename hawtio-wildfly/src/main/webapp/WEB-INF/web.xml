@@ -94,6 +94,42 @@
   </filter-mapping>
 
   <filter>
+    <filter-name>XContentTypeOptionsFilter</filter-name>
+    <filter-class>io.hawt.web.XContentTypeOptionsFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>XContentTypeOptionsFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>ContentSecurityPolicyFilter</filter-name>
+    <filter-class>io.hawt.web.ContentSecurityPolicyFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>ContentSecurityPolicyFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>StrictTransportSecurityFilter</filter-name>
+    <filter-class>io.hawt.web.StrictTransportSecurityFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>StrictTransportSecurityFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
+    <filter-name>PublicKeyPinningFilter</filter-name>
+    <filter-class>io.hawt.web.PublicKeyPinningFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>PublicKeyPinningFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
     <filter-name>AuthenticationFilter</filter-name>
     <filter-class>io.hawt.web.AuthenticationFilter</filter-class>
   </filter>
