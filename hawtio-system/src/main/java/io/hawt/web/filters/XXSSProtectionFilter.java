@@ -1,30 +1,15 @@
 package io.hawt.web.filters;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
-public class XXSSProtectionFilter implements Filter {
+/**
+ * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+ */
+public class XXSSProtectionFilter extends HttpHeaderFilter {
 
-    public XXSSProtectionFilter() {
-    }
-
-    public void init(FilterConfig fConfig) throws ServletException {
-    }
-
-    public void destroy() {
-    }
-
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (response instanceof HttpServletResponse) {
-            HttpServletResponse resp = (HttpServletResponse) response;
-            resp.addHeader("X-XSS-Protection", "1");
-        }
-        chain.doFilter(request, response);
+    @Override
+    protected void addHeaders(HttpServletRequest request, HttpServletResponse response) {
+        response.addHeader("X-XSS-Protection", "1");
     }
 }

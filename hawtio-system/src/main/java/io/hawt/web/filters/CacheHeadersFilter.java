@@ -2,17 +2,13 @@ package io.hawt.web.filters;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class CacheHeadersFilter implements Filter {
+public class CacheHeadersFilter extends HttpHeaderFilter {
 
     static String INCLUDE_REQUEST_URI = "javax.servlet.include.request_uri";
     static String INCLUDE_SERVLET_PATH = "javax.servlet.include.servlet_path";
@@ -20,21 +16,19 @@ public class CacheHeadersFilter implements Filter {
 
     private ServletContext servletContext;
 
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        super.init(filterConfig);
         servletContext = filterConfig.getServletContext();
     }
 
-    public void destroy() {
-    }
-
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse resp = (HttpServletResponse) response;
-        if (!cacheInBrowser(req)) {
-            resp.setHeader("Cache-Control", "max-age=0, no-cache, must-revalidate, proxy-revalidate, private");
-            resp.setHeader("Pragma", "no-cache");
+    @Override
+    protected void addHeaders(HttpServletRequest request, HttpServletResponse response)
+        throws IOException {
+        if (!cacheInBrowser(request)) {
+            response.setHeader("Cache-Control", "max-age=0, no-cache, must-revalidate, proxy-revalidate, private");
+            response.setHeader("Pragma", "no-cache");
         }
-        chain.doFilter(request, response);
     }
 
     public boolean cacheInBrowser(HttpServletRequest request) throws MalformedURLException {
