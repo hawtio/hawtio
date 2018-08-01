@@ -3,6 +3,8 @@
 
 #### 1.5.11 (To be released)
 
+* Added `hawtio.http.strictTransportSecurity` and `hawtio.http.publicKeyPins` config properties
+
 #### 1.5.10
 
 * Upgraded to Camel 2.21.1
