@@ -108,7 +108,7 @@
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-webapp-artifactId>jetty-webapp</jetty-webapp-artifactId>
 
-    <jgit-version>5.0.1.201806211838-r</jgit-version>
+    <jgit-version>5.0.2.201807311906-r</jgit-version>
     <jline.version>3.2.0</jline.version>
     <jolokia-version>1.5.0</jolokia-version>
     <junit-version>4.12</junit-version>
