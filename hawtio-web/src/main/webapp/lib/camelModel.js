@@ -1,4 +1,4 @@
-var _apacheCamelModelVersion = '2.22.0';
+var _apacheCamelModelVersion = '2.21.1';
 
 var _apacheCamelModel ={
   "definitions": {
@@ -1219,78 +1219,6 @@ var _apacheCamelModel ={
           "type": "object",
           "description": "Sets the description of this node",
           "title": "Description",
-          "required": false,
-          "deprecated": false
-        }
-      }
-    },
-    "combinedServiceDiscovery": {
-      "type": "object",
-      "title": "Combined Service Discovery",
-      "group": "routing,cloud,service-discovery",
-      "icon": "generic24.png",
-      "description": "",
-      "acceptInput": "false",
-      "acceptOutput": "false",
-      "nextSiblingAddedAsChild": "false",
-      "properties": {
-        "serviceDiscoveryConfigurations": {
-          "kind": "element",
-          "type": "array",
-          "description": "List of ServiceDiscovery configuration to use",
-          "title": "Service Discovery Configurations",
-          "required": true,
-          "deprecated": false
-        },
-        "properties": {
-          "kind": "element",
-          "type": "array",
-          "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using ribbon, then the client properties are define in com.netflix.client.config.CommonClientConfigKey.",
-          "title": "Properties",
-          "required": false,
-          "deprecated": false
-        },
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the value of the id property.",
-          "title": "Id",
-          "required": false,
-          "deprecated": false
-        }
-      }
-    },
-    "combinedServiceFilter": {
-      "type": "object",
-      "title": "Combined Service Filter",
-      "group": "routing,cloud,service-filter",
-      "icon": "generic24.png",
-      "description": "",
-      "acceptInput": "false",
-      "acceptOutput": "false",
-      "nextSiblingAddedAsChild": "false",
-      "properties": {
-        "serviceFilterConfigurations": {
-          "kind": "element",
-          "type": "array",
-          "description": "List of ServiceFilter configuration to use",
-          "title": "Service Filter Configurations",
-          "required": true,
-          "deprecated": false
-        },
-        "properties": {
-          "kind": "element",
-          "type": "array",
-          "description": "Set client properties to use. These properties are specific to what service call implementation are in use. For example if using ribbon, then the client properties are define in com.netflix.client.config.CommonClientConfigKey.",
-          "title": "Properties",
-          "required": false,
-          "deprecated": false
-        },
-        "id": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the value of the id property.",
-          "title": "Id",
           "required": false,
           "deprecated": false
         }
@@ -3496,7 +3424,7 @@ var _apacheCamelModel ={
           "type": "string",
           "defaultValue": "environment",
           "enum": [ "client", "dns", "environment" ],
-          "description": "How to perform service lookup. Possible values: client, dns, environment. When using client, then the client queries the kubernetes master to obtain a list of active pods that provides the service, and then random (or round robin) select a pod. When using dns the service name is resolved as name.namespace.svc.dnsDomain. When using dnssrv the service name is resolved with SRV query for _._...svc... When using environment then environment variables are used to lookup the service. By default environment is used.",
+          "description": "How to perform service lookup. Possible values: client, dns, environment. When using client, then the client queries the kubernetes master to obtain a list of active pods that provides the service, and then random (or round robin) select a pod. When using dns the service name is resolved as name.namespace.service.dnsDomain. When using environment then environment variables are used to lookup the service. By default environment is used.",
           "title": "Lookup",
           "required": false,
           "deprecated": false
@@ -3506,22 +3434,6 @@ var _apacheCamelModel ={
           "type": "string",
           "description": "Sets the DNS domain to use for DNS lookup.",
           "title": "Dns Domain",
-          "required": false,
-          "deprecated": false
-        },
-        "portName": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the Port Name to use for DNS/DNSSRV lookup.",
-          "title": "Port Name",
-          "required": false,
-          "deprecated": false
-        },
-        "portProtocol": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the Port Protocol to use for DNS/DNSSRV lookup.",
-          "title": "Port Protocol",
           "required": false,
           "deprecated": false
         },
@@ -4573,8 +4485,8 @@ var _apacheCamelModel ={
       "icon": "generic24.png",
       "description": "Defines a policy the route will use",
       "acceptInput": "true",
-      "acceptOutput": "false",
-      "nextSiblingAddedAsChild": "true",
+      "acceptOutput": "true",
+      "nextSiblingAddedAsChild": "false",
       "properties": {
         "ref": {
           "kind": "attribute",
@@ -5333,14 +5245,6 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
-        "retryAttemptedLogInterval": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Sets the interval to use for logging retry attempts",
-          "title": "Retry Attempted Log Interval",
-          "required": false,
-          "deprecated": false
-        },
         "logRetryAttempted": {
           "kind": "attribute",
           "type": "string",
@@ -5545,15 +5449,6 @@ var _apacheCamelModel ={
           "enum": [ "DEBUG", "ERROR", "INFO", "OFF", "TRACE", "WARN" ],
           "description": "Sets the logging level to use for log messages when retries are attempted.",
           "title": "Retry Attempted Log Level",
-          "required": false,
-          "deprecated": false
-        },
-        "retryAttemptedLogInterval": {
-          "kind": "attribute",
-          "type": "string",
-          "defaultValue": "0",
-          "description": "Sets the interval for log messages when retries are attempted.",
-          "title": "Retry Attempted Log Interval",
           "required": false,
           "deprecated": false
         },
@@ -8179,15 +8074,6 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
-        "allowOptimisedComponents": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "true",
-          "description": "Whether to allow components to optimise toD if they are org.apache.camel.spi.SendDynamicAware.",
-          "title": "Allow Optimised Components",
-          "required": false,
-          "deprecated": false
-        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -8233,8 +8119,8 @@ var _apacheCamelModel ={
       "icon": "transactionalClient24.png",
       "description": "Enables transaction on the route",
       "acceptInput": "true",
-      "acceptOutput": "false",
-      "nextSiblingAddedAsChild": "true",
+      "acceptOutput": "true",
+      "nextSiblingAddedAsChild": "false",
       "properties": {
         "ref": {
           "kind": "attribute",
@@ -8630,15 +8516,6 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
-        "allowOptimisedComponents": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "true",
-          "description": "Whether to allow components to optimise toD if they are org.apache.camel.spi.SendDynamicAware.",
-          "title": "Allow Optimised Components",
-          "required": false,
-          "deprecated": false
-        },
         "id": {
           "kind": "attribute",
           "type": "string",
@@ -8751,88 +8628,6 @@ var _apacheCamelModel ={
     }
   },
   "rests": {
-    "apiKey": {
-      "type": "object",
-      "title": "Api Key",
-      "group": "rest",
-      "icon": "generic24.png",
-      "description": "Rest security basic auth definition",
-      "acceptInput": "false",
-      "acceptOutput": "false",
-      "nextSiblingAddedAsChild": "false",
-      "properties": {
-        "name": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "The name of the header or query parameter to be used.",
-          "title": "Name",
-          "required": true,
-          "deprecated": false
-        },
-        "inHeader": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "To use header as the location of the API key.",
-          "title": "In Header",
-          "required": false,
-          "deprecated": false
-        },
-        "inQuery": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "To use query parameter as the location of the API key.",
-          "title": "In Query",
-          "required": false,
-          "deprecated": false
-        },
-        "key": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Key used to refer to this security definition",
-          "title": "Key",
-          "required": true,
-          "deprecated": false
-        },
-        "description": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "A short description for security scheme.",
-          "title": "Description",
-          "required": false,
-          "deprecated": false
-        }
-      }
-    },
-    "basicAuth": {
-      "type": "object",
-      "title": "Basic Auth",
-      "group": "rest,security",
-      "icon": "generic24.png",
-      "description": "Rest security basic auth definition",
-      "acceptInput": "false",
-      "acceptOutput": "false",
-      "nextSiblingAddedAsChild": "false",
-      "properties": {
-        "key": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Key used to refer to this security definition",
-          "title": "Key",
-          "required": true,
-          "deprecated": false
-        },
-        "description": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "A short description for security scheme.",
-          "title": "Description",
-          "required": false,
-          "deprecated": false
-        }
-      }
-    },
     "delete": {
       "type": "object",
       "title": "Delete",
@@ -8891,15 +8686,6 @@ var _apacheCamelModel ={
           "defaultValue": "false",
           "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level",
           "title": "Skip Binding On Error Code",
-          "required": false,
-          "deprecated": false
-        },
-        "clientRequestValidation": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false.",
-          "title": "Client Request Validation",
           "required": false,
           "deprecated": false
         },
@@ -9032,15 +8818,6 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
-        "clientRequestValidation": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false.",
-          "title": "Client Request Validation",
-          "required": false,
-          "deprecated": false
-        },
         "enableCORS": {
           "kind": "attribute",
           "type": "boolean",
@@ -9170,15 +8947,6 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
-        "clientRequestValidation": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false.",
-          "title": "Client Request Validation",
-          "required": false,
-          "deprecated": false
-        },
         "enableCORS": {
           "kind": "attribute",
           "type": "boolean",
@@ -9247,67 +9015,6 @@ var _apacheCamelModel ={
         }
       }
     },
-    "oauth2": {
-      "type": "object",
-      "title": "Oauth2",
-      "group": "rest,security",
-      "icon": "generic24.png",
-      "description": "Rest security OAuth2 definition",
-      "acceptInput": "false",
-      "acceptOutput": "false",
-      "nextSiblingAddedAsChild": "false",
-      "properties": {
-        "authorizationUrl": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "The authorization URL to be used for this flow. This SHOULD be in the form of a URL. Required for implicit and access code flows",
-          "title": "Authorization Url",
-          "required": false,
-          "deprecated": false
-        },
-        "tokenUrl": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "The token URL to be used for this flow. This SHOULD be in the form of a URL. Required for password, application, and access code flows.",
-          "title": "Token Url",
-          "required": false,
-          "deprecated": false
-        },
-        "flow": {
-          "kind": "attribute",
-          "type": "string",
-          "enum": [ "accessCode", "application", "implicit", "password" ],
-          "description": "The flow used by the OAuth2 security scheme. Valid values are implicit, password, application or accessCode.",
-          "title": "Flow",
-          "required": false,
-          "deprecated": false
-        },
-        "scopes": {
-          "kind": "element",
-          "type": "array",
-          "description": "The available scopes for an OAuth2 security scheme",
-          "title": "Scopes",
-          "required": false,
-          "deprecated": false
-        },
-        "key": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Key used to refer to this security definition",
-          "title": "Key",
-          "required": true,
-          "deprecated": false
-        },
-        "description": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "A short description for security scheme.",
-          "title": "Description",
-          "required": false,
-          "deprecated": false
-        }
-      }
-    },
     "options": {
       "type": "object",
       "title": "Options",
@@ -9366,15 +9073,6 @@ var _apacheCamelModel ={
           "defaultValue": "false",
           "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level",
           "title": "Skip Binding On Error Code",
-          "required": false,
-          "deprecated": false
-        },
-        "clientRequestValidation": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false.",
-          "title": "Client Request Validation",
           "required": false,
           "deprecated": false
         },
@@ -9622,15 +9320,6 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
-        "clientRequestValidation": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false.",
-          "title": "Client Request Validation",
-          "required": false,
-          "deprecated": false
-        },
         "enableCORS": {
           "kind": "attribute",
           "type": "boolean",
@@ -9760,15 +9449,6 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
-        "clientRequestValidation": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false.",
-          "title": "Client Request Validation",
-          "required": false,
-          "deprecated": false
-        },
         "enableCORS": {
           "kind": "attribute",
           "type": "boolean",
@@ -9895,15 +9575,6 @@ var _apacheCamelModel ={
           "defaultValue": "false",
           "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level",
           "title": "Skip Binding On Error Code",
-          "required": false,
-          "deprecated": false
-        },
-        "clientRequestValidation": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false.",
-          "title": "Client Request Validation",
           "required": false,
           "deprecated": false
         },
@@ -10169,15 +9840,6 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
-        "clientRequestValidation": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false.",
-          "title": "Client Request Validation",
-          "required": false,
-          "deprecated": false
-        },
         "enableCORS": {
           "kind": "attribute",
           "type": "boolean",
@@ -10193,14 +9855,6 @@ var _apacheCamelModel ={
           "defaultValue": "false",
           "description": "Whether to include or exclude the VerbDefinition in API documentation. This option will override what may be configured on a parent level The default value is true.",
           "title": "Api Docs",
-          "required": false,
-          "deprecated": false
-        },
-        "securityDefinitions": {
-          "kind": "element",
-          "type": "object",
-          "description": "Sets the security definitions such as Basic, OAuth2 etc.",
-          "title": "Security Definitions",
           "required": false,
           "deprecated": false
         },
@@ -10288,15 +9942,6 @@ var _apacheCamelModel ={
           "defaultValue": "false",
           "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.",
           "title": "Skip Binding On Error Code",
-          "required": false,
-          "deprecated": false
-        },
-        "clientRequestValidation": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false.",
-          "title": "Client Request Validation",
           "required": false,
           "deprecated": false
         },
@@ -10488,15 +10133,6 @@ var _apacheCamelModel ={
           "required": false,
           "deprecated": false
         },
-        "clientRequestValidation": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false.",
-          "title": "Client Request Validation",
-          "required": false,
-          "deprecated": false
-        },
         "enableCORS": {
           "kind": "attribute",
           "type": "boolean",
@@ -10684,54 +10320,6 @@ var _apacheCamelModel ={
         }
       }
     },
-    "security": {
-      "type": "object",
-      "title": "Security",
-      "group": "rest,security",
-      "icon": "generic24.png",
-      "description": "",
-      "acceptInput": "false",
-      "acceptOutput": "false",
-      "nextSiblingAddedAsChild": "false",
-      "properties": {
-        "key": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "Key used to refer to this security definition",
-          "title": "Key",
-          "required": true,
-          "deprecated": false
-        },
-        "scopes": {
-          "kind": "attribute",
-          "type": "string",
-          "description": "The scopes to allow (separate multiple scopes by comma)",
-          "title": "Scopes",
-          "required": false,
-          "deprecated": false
-        }
-      }
-    },
-    "securityDefinitions": {
-      "type": "object",
-      "title": "Security Definitions",
-      "group": "rest,security",
-      "icon": "generic24.png",
-      "description": "To configure security definition",
-      "acceptInput": "false",
-      "acceptOutput": "false",
-      "nextSiblingAddedAsChild": "false",
-      "properties": {
-        "securityDefinitions": {
-          "kind": "element",
-          "type": "array",
-          "description": "",
-          "title": "Security Definitions",
-          "required": true,
-          "deprecated": false
-        }
-      }
-    },
     "verb": {
       "type": "object",
       "title": "Verb",
@@ -10790,15 +10378,6 @@ var _apacheCamelModel ={
           "defaultValue": "false",
           "description": "Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do. This option will override what may be configured on a parent level",
           "title": "Skip Binding On Error Code",
-          "required": false,
-          "deprecated": false
-        },
-        "clientRequestValidation": {
-          "kind": "attribute",
-          "type": "boolean",
-          "defaultValue": "false",
-          "description": "Whether to enable validation of the client request to check whether the Content-Type and Accept headers from the client is supported by the Rest-DSL configuration of its consumes/produces settings. This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned. The default value is false.",
-          "title": "Client Request Validation",
           "required": false,
           "deprecated": false
         },
