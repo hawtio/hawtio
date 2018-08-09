@@ -2,6 +2,10 @@
 
 #### 2.1.0 (To be released)
 
+#### 2.0.3
+
+- #2488: Allow using SSL by specifying a keyStore and keyStorePass from embedded Hawtio
+
 #### 2.0.2
 
 **Official Hawtio v2 GA version!**
