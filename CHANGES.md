@@ -4,6 +4,7 @@
 #### 1.5.11 (To be released)
 
 * Added `hawtio.http.strictTransportSecurity` and `hawtio.http.publicKeyPins` config properties
+* Minor updates
 
 #### 1.5.10
 
