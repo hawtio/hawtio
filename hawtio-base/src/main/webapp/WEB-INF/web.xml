@@ -57,13 +57,6 @@
   </env-entry>
 
   <env-entry>
-    <description>Whether or not to check and see if branding should be enabled, value is really a boolean</description>
-    <env-entry-name>hawtio/useBranding</env-entry-name>
-    <env-entry-type>java.lang.String</env-entry-type>
-    <env-entry-value>true</env-entry-value>
-  </env-entry>
-
-  <env-entry>
     <description>The maximum time interval, in seconds, that the servlet container will keep this session open between client accesses.</description>
     <env-entry-name>hawtio/sessionTimeout</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
