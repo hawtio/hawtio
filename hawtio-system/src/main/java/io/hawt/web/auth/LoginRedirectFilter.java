@@ -55,11 +55,12 @@ public class LoginRedirectFilter implements Filter {
     private void redirect(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
         String scheme = httpRequest.getServletContext().getInitParameter("scheme");
         if (null == scheme) {
-            LOG.debug("scheme is null, using default");
             scheme = "http";
+            LOG.debug("scheme is null, using default ({})", scheme);
+        } else {
+            LOG.debug("scheme = {}", scheme);
         }
 
-        LOG.debug("scheme = {}", scheme);
         String redirectUrl = scheme + "://" + httpRequest.getServerName() + ":" + httpRequest.getServerPort()
             + httpRequest.getContextPath() + AuthenticationConfiguration.LOGIN_URL;
         httpResponse.sendRedirect(redirectUrl);
