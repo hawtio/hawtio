@@ -60,6 +60,15 @@
   </filter-mapping>
 
   <filter>
+    <filter-name>cache</filter-name>
+    <filter-class>io.hawt.web.filters.CacheHeadersFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>cache</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
     <filter-name>CORSFilter</filter-name>
     <filter-class>io.hawt.web.filters.CORSFilter</filter-class>
   </filter>
