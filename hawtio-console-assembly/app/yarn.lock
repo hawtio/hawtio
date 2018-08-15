@@ -2,85 +2,78 @@
 # yarn lockfile v1
 
 
-"@hawtio/core-dts@3.0.18", "@hawtio/core-dts@3.1.0", "@hawtio/core-dts@^3.0.0", "@hawtio/core-dts@~3.0.0":
+"@hawtio/core-dts@3.0.18", "@hawtio/core-dts@3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@hawtio/core-dts/-/core-dts-3.1.0.tgz#23b73d0f7f884fb1e1e8d9537d36d42bbdee18df"
   dependencies:
     "@types/jquery" "~2.0.46"
 
-"@hawtio/core@3.2.26", "@hawtio/core@^3.0.0", "@hawtio/core@~3.2.0", "@hawtio/core@~3.2.25":
-  version "3.2.26"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-3.2.26.tgz#0efc45bec40f21bfc37e045c556e5dbea70b4e6d"
+"@hawtio/core@^4.0.0":
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.0.9.tgz#ed97736c7c6720d9ded7968e2d8e856b73bd8f4a"
   dependencies:
     "@hawtio/core-dts" "3.0.18"
-    "@types/angular" "~1.6.0"
-    "@types/angular-route" "1.3.4"
+    "@types/angular" "*"
+    "@types/angular-route" "*"
     "@types/jasmine" "2.8.2"
     "@types/jquery" "~2.0.0"
     "@types/lodash" "4.14.91"
     "@types/marked" "0.3.0"
     "@types/urijs" "1.15.34"
-    angular "~1.6.0"
-    angular-animate "~1.6.0"
+    angular "~1.7.0"
+    angular-animate "~1.7.0"
     angular-patternfly "^4.0.0"
-    angular-route "~1.6.0"
-    angular-sanitize "~1.6.0"
+    angular-route "~1.7.0"
+    angular-sanitize "~1.7.0"
+    gulp-rename "~1.2.3"
     jquery "2.2.4"
     js-logger "1.4.1"
     lodash "4.17.4"
     marked "0.3.9"
     urijs "1.19.0"
 
-"@hawtio/forms@~3.2.0":
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/@hawtio/forms/-/forms-3.2.1.tgz#5486e4c5685b7705ef40aeac89914567cd7f937c"
+"@hawtio/forms@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/forms/-/forms-4.0.0.tgz#b5720ccf592c8c8820eb1076beeffb0021373b6d"
   dependencies:
-    "@hawtio/core" "~3.2.0"
-    "@hawtio/core-dts" "~3.0.0"
-    "@hawtio/ui" "~3.2.0"
+    "@hawtio/ui" "^4.0.0"
 
-"@hawtio/integration@~3.2.0":
-  version "3.2.32"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-3.2.32.tgz#80005d40666dbb16cc737367193dbf3550c8e20a"
+"@hawtio/integration@~4.0.0":
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.0.5.tgz#5f1d7966630e4e31c87f304e50b0de845a13e89e"
   dependencies:
     "@hawtio/core-dts" "3.1.0"
-    "@hawtio/jmx" "~3.2.0"
+    "@hawtio/jmx" "~4.0.0"
     "@types/angular-mocks" "~1.5.11"
     "@types/angular-ui-bootstrap" "~0.13.46"
-    "@types/jqueryui" "1.12.0"
+    "@types/jqueryui" "1.12.2"
     dagre-layout "0.8.0"
     ng-infinite-scroll "1.3.0"
 
-"@hawtio/jmx@~3.2.0":
-  version "3.2.34"
-  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-3.2.34.tgz#110e8e94debd23298cce0b6e52efa6d9b7740b21"
+"@hawtio/jmx@~4.0.0":
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-4.0.7.tgz#8c669d21168282f725380d8b1a7f6fec819a7f63"
   dependencies:
-    "@hawtio/core" "~3.2.0"
-    "@hawtio/forms" "~3.2.0"
-    "@hawtio/ui" "~3.2.0"
+    "@hawtio/core" "^4.0.0"
+    "@hawtio/forms" "^4.0.0"
+    "@hawtio/ui" "^4.0.0"
     "@types/angular-ui-bootstrap" "~0.13.46"
     angular-resizable "1.2.0"
     patternfly-bootstrap-treeview "2.1.5"
 
-"@hawtio/log@~3.2.0":
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@hawtio/log/-/log-3.2.3.tgz#8c1dcdac0c8b1b1e790980b2e2ce688d86bbb66f"
+"@hawtio/oauth@~4.0.0":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.0.4.tgz#4218f4775b4e69f03ae311704322a7f72fc1e046"
   dependencies:
-    "@hawtio/jmx" "~3.2.0"
-
-"@hawtio/oauth@~3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-3.1.0.tgz#03e5f37d717da6cd051752894c870a22fd6469ef"
-  dependencies:
-    "@hawtio/core" "~3.2.25"
+    "@hawtio/core" "^4.0.0"
     ng-idle "^1.3.2"
 
-"@hawtio/ui@~3.2.0":
-  version "3.2.7"
-  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-3.2.7.tgz#9625556409d28adb021373575f6e0d7401c3ae19"
+"@hawtio/ui@^4.0.0":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-4.0.2.tgz#8231c23af9a594acc99fbf041ff1004fa3ceccab"
   dependencies:
-    "@hawtio/core" "^3.0.0"
-    "@hawtio/core-dts" "^3.0.0"
+    "@hawtio/core" "^4.0.0"
+    "@hawtio/core-dts" "3.0.18"
     "@types/bootstrap" "3.3.36"
     "@types/clipboard" "1.5.35"
     "@types/codemirror" "0.0.40"
@@ -97,9 +90,9 @@
   dependencies:
     "@types/angular" "*"
 
-"@types/angular-route@1.3.4":
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/@types/angular-route/-/angular-route-1.3.4.tgz#10d3f7eb313fb8a4b832041f9401869803dcd4df"
+"@types/angular-route@*":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@types/angular-route/-/angular-route-1.7.0.tgz#ba12d09df1aac3c88e3684500001daedfc97fb69"
   dependencies:
     "@types/angular" "*"
 
@@ -109,7 +102,7 @@
   dependencies:
     "@types/angular" "*"
 
-"@types/angular@*", "@types/angular@1.6.43", "@types/angular@~1.6.0":
+"@types/angular@*", "@types/angular@1.6.43":
   version "1.6.43"
   resolved "https://registry.yarnpkg.com/@types/angular/-/angular-1.6.43.tgz#6235ef416053a86302970717510a936d889cbb9a"
 
@@ -321,7 +314,7 @@
   version "2.0.49"
   resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-2.0.49.tgz#95bd7064caebf65bde10429dff491a1aea05b67d"
 
-"@types/jqueryui@1.12.0", "@types/jqueryui@1.12.2":
+"@types/jqueryui@1.12.2":
   version "1.12.2"
   resolved "https://registry.yarnpkg.com/@types/jqueryui/-/jqueryui-1.12.2.tgz#8daa7ffa16880c78b1662ff287df058a2aceb651"
   dependencies:
@@ -349,9 +342,9 @@ abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
 
-angular-animate@1.5.*, angular-animate@1.6.9, angular-animate@~1.6.0:
-  version "1.6.9"
-  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.6.9.tgz#a0f926c1ba3190bd8929ef966a7fa79760682622"
+angular-animate@1.5.*, angular-animate@1.7.3, angular-animate@~1.7.0:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.7.3.tgz#99aa794d3417aa6a794f603c9c27ec0ee4c4b3b4"
 
 angular-drag-and-drop-lists@2.0.0:
   version "2.0.0"
@@ -385,13 +378,13 @@ angular-resizable@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/angular-resizable/-/angular-resizable-1.2.0.tgz#9dd29af008f8b54abfc051bd269a8f0b4fe43f1a"
 
-angular-route@1.6.9, angular-route@~1.6.0:
-  version "1.6.9"
-  resolved "https://registry.yarnpkg.com/angular-route/-/angular-route-1.6.9.tgz#73c63cec6a8a6b924698aec635eac32aa41f5e2b"
+angular-route@~1.7.0:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/angular-route/-/angular-route-1.7.3.tgz#245c7ea7d18514c1d08201588092db7df210e7c6"
 
-angular-sanitize@1.5.*, angular-sanitize@1.6.9, angular-sanitize@~1.6.0:
-  version "1.6.9"
-  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.6.9.tgz#1adba33f6f513e5f93e3aca8071bef53666739ea"
+angular-sanitize@1.5.*, angular-sanitize@1.7.3, angular-sanitize@~1.7.0:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.7.3.tgz#e1ddaa7337724f9554066fd9e9123486b8881c4a"
 
 angular-svg-base-fix@2.0.0:
   version "2.0.0"
@@ -401,9 +394,9 @@ angular-ui-bootstrap@2.3.x, angular-ui-bootstrap@2.5.6:
   version "2.5.6"
   resolved "https://registry.yarnpkg.com/angular-ui-bootstrap/-/angular-ui-bootstrap-2.5.6.tgz#23937322ec641a6fbee16498cc32452aa199e7c5"
 
-angular@1.5.*, angular@1.6.9, angular@>=1.3.0, angular@^1.2.0, angular@~1.6.0:
-  version "1.6.9"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.9.tgz#bc812932e18909038412d594a5990f4bb66c0619"
+angular@1.5.*, angular@1.7.3, angular@>=1.3.0, angular@^1.2.0, angular@~1.7.0:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/angular/-/angular-1.7.3.tgz#0f25a661d079fc84d5ccc877a2ef9d7178575ddb"
 
 angularjs-datatables@^0.5.9:
   version "0.5.9"
@@ -582,6 +575,10 @@ graphlib@^2.1.1:
   resolved "https://registry.yarnpkg.com/graphlib/-/graphlib-2.1.5.tgz#6afe1afcc5148555ec799e499056795bd6938c87"
   dependencies:
     lodash "^4.11.1"
+
+gulp-rename@~1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/gulp-rename/-/gulp-rename-1.2.3.tgz#37b75298e9d3e6c0fe9ac4eac13ce3be5434646b"
 
 ini@^1.3.4:
   version "1.3.5"

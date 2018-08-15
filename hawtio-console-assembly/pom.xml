@@ -29,8 +29,8 @@
               <goal>install-node-and-npm</goal>
             </goals>
             <configuration>
-              <nodeVersion>v8.9.1</nodeVersion>
-              <npmVersion>5.5.1</npmVersion>
+              <nodeVersion>v8.11.3</nodeVersion>
+              <npmVersion>5.6.0</npmVersion>
             </configuration>
           </execution>
           <execution>
@@ -39,8 +39,8 @@
               <goal>install-node-and-yarn</goal>
             </goals>
             <configuration>
-              <nodeVersion>v8.9.1</nodeVersion>
-              <yarnVersion>v1.3.2</yarnVersion>
+              <nodeVersion>v8.11.3</nodeVersion>
+              <yarnVersion>v1.9.4</yarnVersion>
             </configuration>
           </execution>
           <execution>
