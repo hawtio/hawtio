@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.hawt.util.Strings;
 import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Spring Boot endpoint to expose hawtio.
@@ -71,14 +72,11 @@ public class HawtioEndpoint extends AbstractNamedMvcEndpoint {
     }
 
     protected String getIndexHtmlRedirect(final HttpServletRequest request) {
-        UriComponents uriComponents = ServletUriComponentsBuilder.fromRequest(request).build();
-        return "redirect:" +
-            (uriComponents.getScheme() != null ? (uriComponents.getScheme() + "://") : "") +
-            (uriComponents.getHost() != null ? uriComponents.getHost() : "") +
-            (uriComponents.getPort() != -1 ? (":" + uriComponents.getPort()) : "") +
-            (uriComponents.getPath() != null ? uriComponents.getPath() : "") +
-            (uriComponents.getPath() != null && uriComponents.getPath().endsWith("/") ? "" : "/") +
-            "index.html" +
-            (uriComponents.getQuery() != null ? ("?" + uriComponents.getQuery()) : "");
+        UriComponentsBuilder builder = ServletUriComponentsBuilder.fromRequest(request);
+        // append "/index.html" to the current path
+        builder.path("/index.html");
+        UriComponents uriComponents = builder.build();
+        String uri = uriComponents.toUriString();
+        return "redirect:" + uri;
     }
 }
