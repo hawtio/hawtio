@@ -1,0 +1,20 @@
+version: 2
+
+jobs:
+
+  build:
+    working_directory: ~/hawtio
+    docker:
+      - image: circleci/openjdk:8-browsers
+    steps:
+      - checkout
+      - restore_cache:
+          key: hawtio-{{ checksum "pom.xml" }}
+      - run:
+          command: mvn --batch-mode install
+          environment:
+            MAVEN_OPTS: -showversion -Xms256m -Xmx4096m
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: hawtio-{{ checksum "pom.xml" }}
