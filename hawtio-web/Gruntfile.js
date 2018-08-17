@@ -191,7 +191,8 @@ module.exports = function(grunt) {
     // https://github.com/hollandben/grunt-cache-bust
     cacheBust: {
       options: {
-        assets: ['dist/**']
+        assets: ['dist/**'],
+        createCopies: false
       },
       assets: {
         src: ['index.html']
