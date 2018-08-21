@@ -80,16 +80,6 @@
               <maxIdleTime>60000</maxIdleTime>
             </connector>
           </connectors>
-          <systemProperties>
-            <systemProperty>
-              <key>hawtio.config.dir</key>
-              <value>${hawtio-config-dir}</value>
-            </systemProperty>
-            <systemProperty>
-              <key>hawtio.config.repo</key>
-              <value>${hawtio-config-repo}</value>
-            </systemProperty>
-          </systemProperties>
         </configuration>
       </plugin>
       <plugin>

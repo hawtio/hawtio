@@ -69,23 +69,11 @@ public abstract class BaseMojo extends AbstractMojo {
     @Parameter(property = "hawtio.logDependencies", defaultValue = "false")
     boolean logDependencies;
 
-    @Parameter(property = "hawtio.offline", defaultValue = "false")
-    boolean offline;
-
     String extraPluginDependencyArtifactId;
     String extendedPluginDependencyArtifactId;
 
     protected void doBeforeExecute() {
         mojoLifecycle = createMojoLifecycle();
-
-        if (offline) {
-            getLog().info("hawtio is running in offline mode");
-            System.setProperty("hawtio.offline", "true");
-        }
-    }
-
-    protected void doAfterExecute() {
-        System.clearProperty("hawtio.offline");
     }
 
     protected abstract MojoLifecycle createMojoLifecycle();

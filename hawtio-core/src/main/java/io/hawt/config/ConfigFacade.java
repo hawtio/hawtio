@@ -80,10 +80,6 @@ public class ConfigFacade extends MBeanSupport implements ConfigFacadeMBean {
         this.configDir = configDir;
     }
 
-    public boolean isOffline() {
-        return "true".equals(System.getProperty("hawtio.offline", "false"));
-    }
-
     public InputStream openURL(String url) throws IOException {
         int idx = url.indexOf(':');
         if (idx > 1) {

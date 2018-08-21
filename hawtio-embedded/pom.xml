@@ -87,10 +87,6 @@
               <value>${basedir}</value>
             </systemProperty>
             <systemProperty>
-              <key>hawtio.config.dir</key>
-              <value>${hawtio-config-dir}</value>
-            </systemProperty>
-            <systemProperty>
               <key>hawtio.authenticationEnabled</key>
               <value>false</value>
             </systemProperty>

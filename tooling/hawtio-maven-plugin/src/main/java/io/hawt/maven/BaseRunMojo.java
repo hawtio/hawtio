@@ -53,7 +53,6 @@ public abstract class BaseRunMojo extends BaseMojo {
             doPrepareArguments();
             doBeforeExecute();
             doExecute();
-            doAfterExecute();
         } catch (Exception e) {
             throw new MojoExecutionException("Error executing", e);
         }
