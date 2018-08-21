@@ -36,13 +36,8 @@ public class HawtioEndpoint extends AbstractNamedMvcEndpoint {
         this.plugins = plugins;
     }
 
-    @RequestMapping(value = "", produces = MediaType.TEXT_HTML_VALUE)
-    public String redirect(final HttpServletRequest request) {
-        return getIndexHtmlRedirect(request);
-    }
-
-    @RequestMapping(value = "/", produces = MediaType.TEXT_HTML_VALUE)
-    public String rootRedirect(final HttpServletRequest request) {
+    @RequestMapping(value = {"", "/"}, produces = MediaType.TEXT_HTML_VALUE)
+    public String redirectRootToIndexPage(final HttpServletRequest request) {
         return getIndexHtmlRedirect(request);
     }
 
