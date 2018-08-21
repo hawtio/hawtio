@@ -246,6 +246,7 @@ public class ProxyServlet extends HttpServlet {
         setXForwardedForHeader(servletRequest, proxyRequest);
 
         HttpResponse proxyResponse = null;
+        int statusCode = 0;
         try {
 
             // Execute the request
@@ -256,7 +257,7 @@ public class ProxyServlet extends HttpServlet {
             proxyResponse = proxyClient.execute(URIUtils.extractHost(targetUriObj), proxyRequest);
 
             // Process the response
-            int statusCode = proxyResponse.getStatusLine().getStatusCode();
+            statusCode = proxyResponse.getStatusLine().getStatusCode();
 
             if (statusCode == 401 || statusCode == 403) {
                 if (doLog) {
@@ -293,6 +294,9 @@ public class ProxyServlet extends HttpServlet {
             } else if (e instanceof ServletException) {
                 // Redirect / Not Modified failed
                 servletResponse.sendError(HttpServletResponse.SC_BAD_GATEWAY, e.getMessage());
+            } else if (e instanceof SecurityException) {
+                servletResponse.setHeader("WWW-Authenticate", "Basic");
+                servletResponse.sendError(statusCode, e.getMessage());
             } else {
                 servletResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             }
