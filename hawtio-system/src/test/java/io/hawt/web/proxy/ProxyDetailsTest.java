@@ -73,6 +73,7 @@ public class ProxyDetailsTest {
         when(mockReq.getPathInfo()).thenReturn("/localhost/90/jolokia/");
 
         ProxyDetails details = new ProxyDetails(mockReq);
+        
         assertEquals("getUserName()", null, details.getUserName());
         assertEquals("getPassword()", null, details.getPassword());
         assertEquals("getHost()", "localhost", details.getHost());
@@ -81,6 +82,16 @@ public class ProxyDetailsTest {
         assertEquals("getProxyPath()", "/jolokia/", details.getProxyPath());
         assertEquals("getScheme()", "http", details.getScheme());
         assertEquals("getFullProxyUrl()", "http://localhost:90/jolokia/", details.getFullProxyUrl());
+    }
+
+    @Test
+    public void testPathInfoWithWhitespace() throws Exception {
+        HttpServletRequest mockReq = mock(HttpServletRequest.class);
+        when(mockReq.getPathInfo()).thenReturn("/http/localhost/10001/jolokia/read/java.lang:type=MemoryManager,name=Metaspace Manager/Name");
+
+        ProxyDetails details = new ProxyDetails(mockReq);
+
+        assertEquals("getFullProxyUrl()", "http://localhost:10001/jolokia/read/java.lang:type=MemoryManager,name=Metaspace%20Manager/Name", details.getFullProxyUrl());
     }
 
     @Test

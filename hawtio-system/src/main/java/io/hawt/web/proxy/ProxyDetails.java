@@ -78,7 +78,7 @@ public class ProxyDetails implements ProxyAddress {
     }
 
     public ProxyDetails(String pathInfo) {
-        hostAndPort = pathInfo;
+        hostAndPort = pathInfo.replace(" ", "%20");
 
         if (hostAndPort == null) {
             return;

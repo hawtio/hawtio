@@ -201,7 +201,7 @@ public class ProxyServlet extends HttpServlet {
         try {
             targetUriObj = new URI(proxyRequestUri);
         } catch (URISyntaxException e) {
-            LOG.debug("URL '{}' is not valid: {}", proxyRequestUri, e.getMessage());
+            LOG.error("URL '{}' is not valid: {}", proxyRequestUri, e.getMessage());
             servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
