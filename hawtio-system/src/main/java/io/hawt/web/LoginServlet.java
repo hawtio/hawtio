@@ -79,7 +79,7 @@ public class LoginServlet extends HttpServlet {
         }
 
         Subject subject = null;
-        if (System.getProperty("jboss.server.name") != null) {
+        if (Helpers.isRunningOnWildFly()) {
             // In WildFly / JBoss EAP privileged action is skipped at AuthenticationFilter
             subject = (Subject) req.getAttribute("subject");
         } else {

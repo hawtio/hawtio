@@ -61,4 +61,8 @@ public class Helpers {
         return username;
     }
 
+    public static boolean isRunningOnWildFly() {
+        return System.getProperty("jboss.server.name") != null;
+    }
+
 }
