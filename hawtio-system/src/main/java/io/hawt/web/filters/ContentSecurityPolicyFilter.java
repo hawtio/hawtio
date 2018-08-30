@@ -8,11 +8,14 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
 
-    private static final String POLICY = "default-src 'self'";
+    private static final String POLICY =
+        "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+        "style-src 'self' 'unsafe-inline'; " +
+        "font-src 'self' data:";
 
     @Override
     protected void addHeaders(HttpServletRequest request, HttpServletResponse response) {
-        // TODO disabled for now...
-        //response.addHeader("Content-Security-Policy", POLICY);
+        response.addHeader("Content-Security-Policy", POLICY);
     }
 }
