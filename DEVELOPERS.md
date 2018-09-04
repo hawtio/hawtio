@@ -1,14 +1,10 @@
-We love [contributions](http://hawt.io/contributing/index.html). This page is intended to help you get started hacking on the code, it contains various information on technology and tools together with code walk-throughs.
+We love [contributions](http://hawt.io/docs/contributing/). This page is intended to help you get started hacking on the code, it contains various information on technology and tools together with code walk-throughs.
 
 Welcome and enjoy! Its hawt, but stay cool! :)
 
-<div class="alert alert-info">
-Hawtio 2.x Overview!  Ooh, shiny shiny...  <a href="https://github.com/hawtio/hawtio/blob/master/docs/Overview2dotX.md">look here!</a>
-</div>
-
 ## Building the code
 
-Check out <a class="btn btn-primary btn-large" href="http://hawt.io/building/index.html">How To Build The Code</a> if you want to start hacking on the source.
+Check out [How To Build The Code](BUILDING.md) if you want to start hacking on the source.
 
 ## Architecture
 
@@ -17,14 +13,12 @@ Check out <a class="btn btn-primary btn-large" href="http://hawt.io/building/ind
 You may want to check out:
 
 * [Current hawtio plugins](http://hawt.io/plugins/index.html)
-* [External AngularJS Directives](http://hawt.io/developers/directives.html)
-* [How plugins work](http://hawt.io/plugins/howPluginsWork.html)
+* [How plugins work](http://hawt.io/docs/how-plugins-work/)
 
 ## Developer Tools
 
 The following are recommended if you want to contribute to the code
 
-* [hawtio Typescript API documentation](http://hawt.io/ts-api/index.html) Typedoc output for all of the typescript code on hawtio's master branch
 * [IntelliJ IDEA EAP 12 or later](http://confluence.jetbrains.net/display/IDEADEV/IDEA+12+EAP) as this has TypeScript support and is the daddy of IDEs!
 * [There are other TypeScript plugins](http://blogs.msdn.com/b/interoperability/archive/2012/10/01/sublime-text-vi-emacs-typescript-enabled.aspx) if you prefer Sublime, Emacs or VIM. (Unfortunately we're not aware of an eclipse plugin yet).
 * [AngularJS plugin for IDEA](http://plugins.jetbrains.com/plugin/?id=6971) if you use [IDEA](http://www.jetbrains.com/idea/) then this plugin really helps work with Angular JS
@@ -87,7 +81,7 @@ If you are interested in working on the code the following references and articl
 
 ## Code Walkthrough
 
-If you fancy contributing--and [we love contributions!](http://hawt.io/contributing/index.html)--the following should give you an overview of how the code hangs together:
+If you fancy contributing--and [we love contributions!](http://hawt.io/docs/contributing/)--the following should give you an overview of how the code hangs together:
 
 * hawtio is a single page web application, from [this single page of HTML](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/index.html)
 * We use [AngularJS routing](http://docs.angularjs.org/api/ng.directive:ngView) to display different [partial pages](https://github.com/hawtio/hawtio/tree/master/hawtio-web/src/main/webapp/app/core/html) depending on which tab/view you choose. You'll notice that the partials are simple HTML fragments which use [AngularJS](http://angularjs.org/) attributes (starting with **ng-**) along with some {{expressions}} in the markup.
@@ -100,16 +94,16 @@ If you fancy contributing--and [we love contributions!](http://hawt.io/contribut
 Tabs can dynamically become visible or disappear based on the following:
 
 * the contents of the JVM
-* the [plugins](plugins.html),
+* the [plugins](http://hawt.io/docs/plugins/),
 * and the current UI selection(s).
 
-[Plugins](plugins.html) can register new top-level tabs by adding to the [topLevelTabs](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L9) on the workspace which can be dependency injected into your plugin via [AngularJS Dependency Injection](http://docs.angularjs.org/guide/di).
+[Plugins](http://hawt.io/docs/plugins/) can register new top-level tabs by adding to the [topLevelTabs](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L9) on the workspace which can be dependency injected into your plugin via [AngularJS Dependency Injection](http://docs.angularjs.org/guide/di).
 
 The [isValid()](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L12) function is then used to specify when this top-level tab should be visible.
 
 You can register [subLevelTabs](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L16) which are then visible when the [right kind of MBean is selected](https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L19).
 
-For more detail check out the [plugin documentation](plugins.html).
+For more detail check out the [plugin documentation](http://hawt.io/docs/plugins/).
 
 #### Enable Source Maps for Easier Debugging
 
@@ -190,6 +184,6 @@ The website is automatic build and updated on each commit. There is a CI job on 
 
     https://circleci.com/gh/hawtio/hawtio
 
-The task runs the script `ci-website.sh` that builds the website. If anything goes wrong, the errors are usully shown in the CI job output (link above).
+The task runs the script `ci-website.sh` that builds the website. If anything goes wrong, the errors are usually shown in the CI job output (link above).
 
 

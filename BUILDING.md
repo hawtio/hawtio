@@ -1,4 +1,4 @@
-We love [contributions](http://hawt.io/contributing/index.html)! You may also want to know [how to hack on the hawtio code](http://hawt.io/developers/index.html)
+We love [contributions](http://hawt.io/docs/contributing/)! You may also want to know [how to hack on the hawtio code](DEVELOPERS.md)
 
 [hawtio](http://hawt.io/) can now be built **without** having to install node.js or anything first thanks to the [frontend-maven-plugin](https://github.com/eirslett/frontend-maven-plugin). This
 will install node.js & npm into a subdirectory, run `npm install` to install dependencies & run the build like normal.

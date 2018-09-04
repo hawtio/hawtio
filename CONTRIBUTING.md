@@ -53,10 +53,10 @@ Now perform a git push as above and then submit a pull request on your forked re
 
 # Additional Resources
 
-* [hawtio FAQ](http://hawt.io/faq/index.html)
+* [FAQ](http://hawt.io/docs/faq/)
 * [General GitHub documentation](http://help.github.com/)
-* [GitHub create pull request documentation](hhttps://help.github.com/articles/creating-a-pull-request)
-* [Here is how to build the code](http://hawt.io/building/index.html)
-* [More information for developers in terms of hawtio technologies, tools and code walkthroughs](http://hawt.io/developers/index.html)
-* [join the hawtio community](http://hawt.io/community/index.html)
+* [GitHub create pull request documentation](https://help.github.com/articles/creating-a-pull-request)
+* [Here is how to build the code](BUILDING.md)
+* [More information for developers in terms of hawtio technologies, tools and code walkthroughs](DEVELOPERS.md)
+* [Join the hawtio community](http://hawt.io/community/)
 

@@ -51,4 +51,4 @@
 
 #### 1.x
 
-See: https://github.com/hawtio/hawtio/blob/master/CHANGES.md
+See: https://github.com/hawtio/hawtio/blob/1.x/CHANGES.md
