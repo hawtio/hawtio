@@ -8,7 +8,6 @@
   },
   "flat": true,
   "resolutions": {
-    "@hawtio/core-dts": "3.1.0",
     "@types/jasmine": "2.8.6",
     "@types/jqueryui": "1.12.2",
     "@types/angular": "1.6.43",

@@ -2,22 +2,22 @@
 # yarn lockfile v1
 
 
-"@hawtio/core-dts@3.0.18", "@hawtio/core-dts@3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/core-dts/-/core-dts-3.1.0.tgz#23b73d0f7f884fb1e1e8d9537d36d42bbdee18df"
+"@hawtio/core-dts@3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/core-dts/-/core-dts-3.2.0.tgz#9a685349dcfb9733234f6de71da5005d69b613fb"
   dependencies:
     "@types/jquery" "~2.0.46"
 
 "@hawtio/core@^4.0.0":
-  version "4.0.9"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.0.9.tgz#ed97736c7c6720d9ded7968e2d8e856b73bd8f4a"
+  version "4.0.14"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.0.14.tgz#9e5c8c379ae208a62e9b998aea98b00036b6940e"
   dependencies:
-    "@hawtio/core-dts" "3.0.18"
+    "@hawtio/core-dts" "3.2.0"
     "@types/angular" "*"
     "@types/angular-route" "*"
     "@types/jasmine" "2.8.2"
     "@types/jquery" "~2.0.0"
-    "@types/lodash" "4.14.91"
+    "@types/lodash" "^4.0.0"
     "@types/marked" "0.3.0"
     "@types/urijs" "1.15.34"
     angular "~1.7.0"
@@ -28,7 +28,7 @@
     gulp-rename "~1.2.3"
     jquery "2.2.4"
     js-logger "1.4.1"
-    lodash "4.17.4"
+    lodash "~4.17.0"
     marked "0.3.9"
     urijs "1.19.0"
 
@@ -39,41 +39,41 @@
     "@hawtio/ui" "^4.0.0"
 
 "@hawtio/integration@~4.0.0":
-  version "4.0.5"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.0.5.tgz#5f1d7966630e4e31c87f304e50b0de845a13e89e"
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.0.8.tgz#c0f9c8af71b3c78d7bc82c504d358134bbc14b47"
   dependencies:
-    "@hawtio/core-dts" "3.1.0"
     "@hawtio/jmx" "~4.0.0"
-    "@types/angular-mocks" "~1.5.11"
+    "@types/angular-mocks" "~1.7.0"
     "@types/angular-ui-bootstrap" "~0.13.46"
     "@types/jqueryui" "1.12.2"
     dagre-layout "0.8.0"
     ng-infinite-scroll "1.3.0"
 
 "@hawtio/jmx@~4.0.0":
-  version "4.0.7"
-  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-4.0.7.tgz#8c669d21168282f725380d8b1a7f6fec819a7f63"
+  version "4.0.13"
+  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-4.0.13.tgz#6015accc858016f8df19516386857574a10b2007"
   dependencies:
     "@hawtio/core" "^4.0.0"
     "@hawtio/forms" "^4.0.0"
     "@hawtio/ui" "^4.0.0"
     "@types/angular-ui-bootstrap" "~0.13.46"
     angular-resizable "1.2.0"
+    cubism "^1.6.0"
+    jolokia.js "^1.6.0-1"
     patternfly-bootstrap-treeview "2.1.5"
 
 "@hawtio/oauth@~4.0.0":
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.0.4.tgz#4218f4775b4e69f03ae311704322a7f72fc1e046"
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.0.6.tgz#2434aecd310ab219ca4a64ad31d0516684e2df21"
   dependencies:
     "@hawtio/core" "^4.0.0"
     ng-idle "^1.3.2"
 
 "@hawtio/ui@^4.0.0":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-4.0.2.tgz#8231c23af9a594acc99fbf041ff1004fa3ceccab"
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-4.0.3.tgz#2568974045be62643105e003e2d0f58793fe337d"
   dependencies:
     "@hawtio/core" "^4.0.0"
-    "@hawtio/core-dts" "3.0.18"
     "@types/bootstrap" "3.3.36"
     "@types/clipboard" "1.5.35"
     "@types/codemirror" "0.0.40"
@@ -84,9 +84,9 @@
     codemirror "5.33.0"
     js-beautify "1.7.5"
 
-"@types/angular-mocks@~1.5.11":
-  version "1.5.12"
-  resolved "https://registry.yarnpkg.com/@types/angular-mocks/-/angular-mocks-1.5.12.tgz#755af97607efa54730e64b9a6ab41f9d8a908ae1"
+"@types/angular-mocks@~1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@types/angular-mocks/-/angular-mocks-1.7.0.tgz#310d999a3c47c10ecd8eef466b5861df84799429"
   dependencies:
     "@types/angular" "*"
 
@@ -324,9 +324,9 @@
   version "0.0.30"
   resolved "https://registry.yarnpkg.com/@types/js-beautify/-/js-beautify-0.0.30.tgz#82ffbeb2c2dec592f1d04169e926912eeed567ec"
 
-"@types/lodash@4.14.91":
-  version "4.14.91"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.91.tgz#794611b28056d16b5436059c6d800b39d573cd3a"
+"@types/lodash@^4.0.0":
+  version "4.14.116"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.116.tgz#5ccf215653e3e8c786a58390751033a9adca0eb9"
 
 "@types/marked@0.0.28", "@types/marked@0.3.0":
   version "0.3.0"
@@ -470,7 +470,13 @@ config-chain@~1.1.5:
     ini "^1.3.4"
     proto-list "~1.2.1"
 
-d3@~3.5.0, d3@~3.5.17:
+cubism@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/cubism/-/cubism-1.6.0.tgz#a566e10594ac59abfc73b829bdee32d91a2f0350"
+  dependencies:
+    d3 "3.x"
+
+d3@3.x, d3@~3.5.0, d3@~3.5.17:
   version "3.5.17"
   resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.17.tgz#bc46748004378b21a360c9fc7cf5231790762fb8"
 
@@ -584,6 +590,12 @@ ini@^1.3.4:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.5.tgz#eee25f56db1c9ec6085e0c22778083f596abf927"
 
+jolokia.js@^1.6.0-1:
+  version "1.6.0-1"
+  resolved "https://registry.yarnpkg.com/jolokia.js/-/jolokia.js-1.6.0-1.tgz#b0b527135e16940c2cfbc6b5b50be608177cc50e"
+  dependencies:
+    "@types/jquery" "~2.0.46"
+
 jquery-match-height@^0.7.2:
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/jquery-match-height/-/jquery-match-height-0.7.2.tgz#f8d9f3ba5314daab109cf07408674be204be5f0e"
@@ -613,7 +625,7 @@ keycloak-js@3.4.3:
   version "3.4.3"
   resolved "https://registry.yarnpkg.com/keycloak-js/-/keycloak-js-3.4.3.tgz#9fbb1ba7b2433229f5cc8babbd308ff0e945dac7"
 
-lodash@4.17.4, lodash@4.17.5, lodash@4.x, lodash@^4.11.1, lodash@^4.17.4:
+lodash@4.17.5, lodash@4.x, lodash@^4.11.1, lodash@^4.17.4, lodash@~4.17.0:
   version "4.17.5"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
 
