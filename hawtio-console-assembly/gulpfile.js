@@ -62,7 +62,7 @@ gulp.task('clean', function () {
 });
 
 gulp.task('tsc', function () {
-  return gulp.src(config.srcTs)
+  return gulp.src(config.srcTs, { cwd: 'app' })
     .pipe(plugins.debug({ title: 'tsc' }))
     .pipe(plugins.if(config.sourceMap, plugins.sourcemaps.init()))
     .pipe(config.tsProject())
