@@ -37,7 +37,7 @@
     "gulp-usemin": "~0.3.0",
     "run-sequence": "^2.0.0",
     "tslint": "^5.4.3",
-    "typescript": "^2.0.0",
+    "typescript": "^3.0.0",
     "underscore.string": "^3.0.0",
     "urijs": "^1.0.0",
     "url-join": "^2.0.2",
