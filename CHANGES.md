@@ -1,6 +1,13 @@
 ## Change Log
 
-#### 2.1.0 (To be released)
+#### 2.2.0 (To be released)
+
+#### 2.1.0
+
+* Upgrade Hawtio components to 4.0.x
+* Upgrade AngularJS to 1.7.x
+* Improve security-releated HTTP headers handling
+* Bug fixes
 
 #### 2.0.3
 
