@@ -22,6 +22,8 @@ namespace Login {
         let keycloakEnabled = (data === true || data === "true");
         if (keycloakEnabled) {
           loadKeycloakConfig(next);
+        } else {
+          next();
         }
       },
       error: (xhr: JQueryXHR, status: string, error: string) => {
