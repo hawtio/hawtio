@@ -1,4 +1,4 @@
-/// <reference path="./login/login.module.ts"/>
+/// <reference path="login/login.module.ts"/>
 
 namespace ConsoleAssembly {
 
@@ -7,7 +7,7 @@ namespace ConsoleAssembly {
 
   angular
     .module(pluginName, [
-      Login.pluginName
+      Login.loginModule
     ])
     .run(refreshUserSessionWhenLocationChanges);
 

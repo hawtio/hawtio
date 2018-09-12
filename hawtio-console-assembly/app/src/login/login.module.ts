@@ -1,5 +1,4 @@
-/// <reference path="./login.globals.ts"/>
-/// <reference path="./login.controller.ts"/>
+/// <reference path="./login.component.ts"/>
 /// <reference path="./keycloak-login.ts"/>
 
 namespace Login {
@@ -7,11 +6,14 @@ namespace Login {
   const USER_URL: string = 'user';
   const AUTH_LOGOUT_URL: string = 'auth/logout';
 
-  angular
-    .module(pluginName, [])
+  export const loginModule = angular
+    .module('hawtio-login', [])
     .component('hawtioLogin', loginComponent)
     .run(addLogoutToUserDropdown)
-    .run(loginUserDetails);
+    .run(loginUserDetails)
+    .name;
+
+  export const log = Logger.get(loginModule);
 
   export function addLogoutToUserDropdown(
     HawtioExtension: Core.HawtioExtension,

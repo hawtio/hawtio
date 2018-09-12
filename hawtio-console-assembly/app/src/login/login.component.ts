@@ -1,11 +1,8 @@
-/// <reference path="./login.globals.ts"/>
-
 namespace Login {
 
   const LOGIN_URL: string = 'auth/login';
 
   export class LoginController {
-
     branding = {};
     entity = {
       username: '',
@@ -50,6 +47,6 @@ namespace Login {
 
   export const loginComponent: angular.IComponentOptions = {
     controller: LoginController,
-    templateUrl: 'app/src/login/login-template.html'
+    templateUrl: 'app/src/login/login.component.html'
   };
 }
