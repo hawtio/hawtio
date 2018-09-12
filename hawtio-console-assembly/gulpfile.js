@@ -62,14 +62,10 @@ gulp.task('clean', function () {
 });
 
 gulp.task('tsc', function () {
-  return gulp.src(config.srcTs, { cwd: 'app' })
+  return gulp.src(config.srcTs)
     .pipe(plugins.debug({ title: 'tsc' }))
     .pipe(plugins.if(config.sourceMap, plugins.sourcemaps.init()))
     .pipe(config.tsProject())
-    .on('error', plugins.notify.onError({
-      message: '<%= error.message %>',
-      title: 'Typescript compilation error'
-    }))
     .js
     .pipe(plugins.ngAnnotate())
     .pipe(plugins.debug({ title: 'tsc js' }))

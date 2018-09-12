@@ -25,7 +25,6 @@
     "gulp-less": "^3.0.0",
     "gulp-load-plugins": "^1.0.0",
     "gulp-ng-annotate": "~2.0.0",
-    "gulp-notify": "^3.0.0",
     "gulp-rename": "^1.0.0",
     "gulp-replace": "^0.6.1",
     "gulp-rev": "^7.0.0",

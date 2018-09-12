@@ -63,8 +63,8 @@
     patternfly-bootstrap-treeview "2.1.5"
 
 "@hawtio/oauth@~4.0.0":
-  version "4.0.6"
-  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.0.6.tgz#2434aecd310ab219ca4a64ad31d0516684e2df21"
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.0.7.tgz#f5e88d7dcc4001f6cb1d8e6b6e062828b9d02d80"
   dependencies:
     "@hawtio/core" "^4.0.0"
     ng-idle "^1.3.2"
