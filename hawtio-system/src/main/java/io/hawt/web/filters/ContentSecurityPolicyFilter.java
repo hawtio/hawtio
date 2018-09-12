@@ -28,7 +28,8 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
         "script-src 'self'%s 'unsafe-inline' 'unsafe-eval'; " +
         "style-src 'self' 'unsafe-inline'; " +
         "font-src 'self' data:; " +
-        "connect-src 'self'%s";
+        "connect-src 'self'%s; " +
+        "frame-src 'self'%s";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -49,14 +50,14 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
                 // mind the initial whitespace
                 String hostPort = String.format(" %s:%d", uri.getHost(), uri.getPort() > 0 ? uri.getPort()
                         : "https".equals(uri.getScheme()) ? 443 : 80);
-                POLICY = String.format(POLICY_TEMPLATE, hostPort, hostPort);
+                POLICY = String.format(POLICY_TEMPLATE, hostPort, hostPort, hostPort);
                 addedKeycloakUrl = true;
             } catch (IOException e) {
                 LOG.error("Can't read keycloak configuration file", e);
             }
         }
         if (!addedKeycloakUrl) {
-            POLICY = String.format(POLICY_TEMPLATE, "", "");
+            POLICY = String.format(POLICY_TEMPLATE, "", "", "");
         }
 
         super.init(filterConfig);
