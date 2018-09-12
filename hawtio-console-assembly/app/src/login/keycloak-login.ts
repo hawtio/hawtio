@@ -11,28 +11,28 @@ namespace Login {
     name: 'KeycloakLoginBootstrap',
     task: (next) => {
       log.debug('Executing keycloak login bootstrap task');
-      configureKeycloakIfEnabled();
-      next();
+      configureKeycloakIfEnabled(next);
     }
   }, true);
 
-  function configureKeycloakIfEnabled(): void {
+  function configureKeycloakIfEnabled(next: () => void): void {
     $.ajax(KEYCLOAK_ENABLED_URL, {
       type: "GET",
       success: (data: any, status: string, xhr: JQueryXHR) => {
         log.debug("Keycloak enabled:", data);
         let keycloakEnabled = (data === true || data === "true");
         if (keycloakEnabled) {
-          loadKeycloakConfig();
+          loadKeycloakConfig(next);
         }
       },
       error: (xhr: JQueryXHR, status: string, error: string) => {
         log.error("Failed to retrieve keycloak/enabled:", error);
+        next();
       }
     });
   }
 
-  function loadKeycloakConfig(): void {
+  function loadKeycloakConfig(next: () => void): void {
     $.ajax(KEYCLOAK_CLIENT_CONFIG_URL, {
       type: "GET",
       success: (data: any, status: string, xhr: JQueryXHR) => {
@@ -40,9 +40,11 @@ namespace Login {
 
         // This enables hawtio-oauth keycloak integration
         HawtioKeycloak.config = data;
+        next();
       },
       error: (xhr: JQueryXHR, status: string, error: string) => {
         log.error("Failed to retrieve keycloak/client-config:", error);
+        next();
       }
     });
   }
