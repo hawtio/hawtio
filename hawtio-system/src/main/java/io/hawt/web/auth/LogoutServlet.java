@@ -45,7 +45,7 @@ public class LogoutServlet extends HttpServlet {
             scheme = "http";
         }
         LOG.debug("scheme = {}", scheme);
-        String redirectUrl = scheme + request.getServerName() + ":" + request.getServerPort()
+        String redirectUrl = scheme + "://" + request.getServerName() + ":" + request.getServerPort()
             + request.getContextPath() + AuthenticationConfiguration.LOGIN_URL;
         response.sendRedirect(redirectUrl);
     }
