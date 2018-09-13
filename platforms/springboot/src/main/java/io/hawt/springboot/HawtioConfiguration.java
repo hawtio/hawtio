@@ -17,6 +17,10 @@ import io.hawt.web.auth.keycloak.KeycloakServlet;
 import io.hawt.web.auth.keycloak.KeycloakUserServlet;
 import io.hawt.web.filters.CORSFilter;
 import io.hawt.web.filters.CacheHeadersFilter;
+import io.hawt.web.filters.ContentSecurityPolicyFilter;
+import io.hawt.web.filters.PublicKeyPinningFilter;
+import io.hawt.web.filters.StrictTransportSecurityFilter;
+import io.hawt.web.filters.XContentTypeOptionsFilter;
 import io.hawt.web.filters.XFrameOptionsFilter;
 import io.hawt.web.filters.XXSSProtectionFilter;
 import io.hawt.web.proxy.ProxyServlet;
@@ -142,6 +146,38 @@ public class HawtioConfiguration {
     public FilterRegistrationBean xxssProtectionFilter() {
         final FilterRegistrationBean filter = new FilterRegistrationBean();
         filter.setFilter(new XXSSProtectionFilter());
+        filter.addUrlPatterns(hawtioPath + "/*");
+        return filter;
+    }
+
+    @Bean
+    public FilterRegistrationBean xContentTypeOptionsFilter() {
+        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        filter.setFilter(new XContentTypeOptionsFilter());
+        filter.addUrlPatterns(hawtioPath + "/*");
+        return filter;
+    }
+
+    @Bean
+    public FilterRegistrationBean contentSecurityPolicyFilter() {
+        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        filter.setFilter(new ContentSecurityPolicyFilter());
+        filter.addUrlPatterns(hawtioPath + "/*");
+        return filter;
+    }
+
+    @Bean
+    public FilterRegistrationBean strictTransportSecurityFilter() {
+        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        filter.setFilter(new StrictTransportSecurityFilter());
+        filter.addUrlPatterns(hawtioPath + "/*");
+        return filter;
+    }
+
+    @Bean
+    public FilterRegistrationBean publicKeyPinningFilter() {
+        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        filter.setFilter(new PublicKeyPinningFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
         return filter;
     }
