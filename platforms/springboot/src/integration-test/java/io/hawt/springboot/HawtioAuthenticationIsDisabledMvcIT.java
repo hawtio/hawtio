@@ -3,7 +3,6 @@ package io.hawt.springboot;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
@@ -102,8 +101,8 @@ public abstract class HawtioAuthenticationIsDisabledMvcIT {
             @Test
             public void hawtioRootRedirectsToIndexHtml() throws Exception {
                 mockMvc.perform(get("/hawtio/"))
-                        .andExpect(status().is3xxRedirection()).andExpect(
-                                redirectedUrl("http://localhost/hawtio/index.html"));
+                        .andExpect(status().isOk()).andExpect(
+                                forwardedUrl("/hawtio/index.html"));
             }
 
             @Test
@@ -148,8 +147,8 @@ public abstract class HawtioAuthenticationIsDisabledMvcIT {
             @Test
             public void testHawtioRootRedirectsToIndexHtml() throws Exception {
                 mockMvc.perform(getRequest(hawtioPath + "/"))
-                        .andExpect(status().is3xxRedirection())
-                        .andExpect(redirectedUrl("http://localhost" + contextPath
+                        .andExpect(status().isOk())
+                        .andExpect(forwardedUrl(contextPath
                                 + servletPrefix + managementContextPath + hawtioPath
                                 + "/index.html"));
             }
@@ -343,10 +342,8 @@ public abstract class HawtioAuthenticationIsDisabledMvcIT {
             @Test
             public void testHawtioRootRedirectsToIndexHtml() throws Exception {
                 mockMvc.perform(getRequest(hawtioPath + "/"))
-                        .andExpect(status().is3xxRedirection())
-                        .andExpect(redirectedUrl(
-                                "http://localhost" + managementContextPath
-                                        + hawtioPath + "/index.html"));
+                        .andExpect(status().isOk())
+                        .andExpect(forwardedUrl(managementContextPath + hawtioPath + "/index.html"));
             }
 
             @Test

@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.login.LoginException;
+
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,4 +101,8 @@ public class PropertyFileLoginModule extends AbstractLoginModule {
         return new UserInfo(userName, credential, roles);
     }
 
+    @Override
+    public boolean logout() throws LoginException {
+        return true;
+    }
 }

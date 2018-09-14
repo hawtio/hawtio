@@ -1,17 +1,22 @@
 package io.hawt.springboot;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpServletRequest;
 
 import io.hawt.system.ConfigManager;
 import io.hawt.util.Strings;
 import io.hawt.web.auth.AuthenticationFilter;
+import io.hawt.web.auth.LoginRedirectFilter;
 import io.hawt.web.auth.LoginServlet;
 import io.hawt.web.auth.LogoutServlet;
+import io.hawt.web.auth.Redirector;
 import io.hawt.web.auth.SessionExpiryFilter;
 import io.hawt.web.auth.keycloak.KeycloakServlet;
 import io.hawt.web.auth.keycloak.KeycloakUserServlet;
@@ -106,6 +111,16 @@ public class HawtioConfiguration {
     }
 
     // -------------------------------------------------------------------------
+    // Redirect Helper
+    // -------------------------------------------------------------------------
+    @Bean
+    public Redirector redirector() {
+        final Redirector redirector = new Redirector();
+        redirector.setApplicationContextPath(hawtioPath);
+        return redirector;
+    }
+
+    // -------------------------------------------------------------------------
     // Filters
     // -------------------------------------------------------------------------
 
@@ -186,11 +201,23 @@ public class HawtioConfiguration {
     public FilterRegistrationBean authenticationFilter(final Optional<JolokiaMvcEndpoint> jolokiaEndpoint) {
         final FilterRegistrationBean filter = new FilterRegistrationBean();
         filter.setFilter(new AuthenticationFilter());
-        filter.addUrlPatterns(hawtioPath + "/auth/*");
         if (jolokiaEndpoint.isPresent() && !jolokiaEndpoint.get().getPath().isEmpty()) {
             filter.addUrlPatterns(
                 Strings.webContextPath(managementContextPath, jolokiaEndpoint.get().getPath(), "*"));
         }
+        return filter;
+    }
+
+    @Bean
+    public FilterRegistrationBean loginRedirectFilter(Redirector redirector) {
+        final String[] unsecuredPaths = {"/auth","/css","/img","/js","/hawtconfig.json","/jolokia","/keycloak","/libs","/oauth","/user", "/login.html"};
+        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        final LoginRedirectFilter loginRedirectFilter = new LoginRedirectFilter();
+        loginRedirectFilter.setRedirector(redirector);
+        filter.setFilter(loginRedirectFilter);
+        filter.addUrlPatterns(hawtioPath + "/*");
+        filter.addInitParameter("unsecuredPaths", prependContextPath(unsecuredPaths));
+        filter.addInitParameter("applicationContextPath", hawtioPath);
         return filter;
     }
 
@@ -216,16 +243,18 @@ public class HawtioConfiguration {
     }
 
     @Bean
-    public ServletRegistrationBean loginServlet() {
-        return new ServletRegistrationBean(
-            new LoginServlet(),
+    public ServletRegistrationBean loginServlet(Redirector redirector) {
+        LoginServlet loginServlet = new LoginServlet();
+        loginServlet.setRedirector(redirector);
+        return new ServletRegistrationBean(loginServlet,
             hawtioPath + "/auth/login");
     }
 
     @Bean
-    public ServletRegistrationBean logoutServlet() {
-        return new ServletRegistrationBean(
-            new LogoutServlet(),
+    public ServletRegistrationBean logoutServlet(Redirector redirector) {
+        LogoutServlet logoutServlet = new LogoutServlet();
+        logoutServlet.setRedirector(redirector);
+        return new ServletRegistrationBean(logoutServlet,
             hawtioPath + "/auth/logout");
     }
 
@@ -253,6 +282,13 @@ public class HawtioConfiguration {
 
     private static int getOrDefault(final Integer number, final int defaultValue) {
         return number == null ? defaultValue : number;
+    }
+
+    private String prependContextPath(String... paths) {
+        List<String> contextPaths = Arrays.stream(paths)
+            .map(path -> hawtioPath + path)
+            .collect(Collectors.toList());
+        return String.join(",", contextPaths);
     }
 
     private class JolokiaForwardingController extends AbstractUrlViewController {

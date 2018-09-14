@@ -18,15 +18,13 @@ public class HawtioEndpointTest {
     @Test
     public void testGetIndexHtmlRedirect() {
         runTestGetIndexHtmlRedirect(null, null,
-            "redirect:http://localhost/index.html");
+            "forward:/index.html");
         runTestGetIndexHtmlRedirect("", "",
-            "redirect:http://localhost/index.html");
+            "forward:/index.html");
         runTestGetIndexHtmlRedirect("/hawtio", null,
-            "redirect:http://localhost/hawtio/index.html");
+            "forward:/hawtio/index.html");
         runTestGetIndexHtmlRedirect("/hawtio/", null,
-            "redirect:http://localhost/hawtio/index.html");
-        runTestGetIndexHtmlRedirect("/hawtio", "param1=value1",
-            "redirect:http://localhost/hawtio/index.html?param1=value1");
+            "forward:/hawtio/index.html");
     }
 
     private void runTestGetIndexHtmlRedirect(String requestURI, String queryString, String expectedResult) {

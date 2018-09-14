@@ -18,7 +18,7 @@
 
   <properties>
     <!-- Jetty version referred from the spring-boot-dependencies project -->
-    <jetty.version>9.4.1.v20170120</jetty.version>
+    <jetty.version>9.4.9.v20180320</jetty.version>
   </properties>
 
   <dependencyManagement>

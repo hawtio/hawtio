@@ -27,6 +27,8 @@ public class LoginRedirectFilter implements Filter {
     private AuthenticationConfiguration authConfiguration;
     private List<String> unsecuredPaths;
 
+    private Redirector redirector = new Redirector();
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
@@ -42,7 +44,7 @@ public class LoginRedirectFilter implements Filter {
 
         if (authConfiguration.isEnabled() && !authConfiguration.isKeycloakEnabled()
             && !isAuthenticated(session) && isSecuredPath(path)) {
-            redirect(httpRequest, httpResponse);
+            redirector.doRedirect(httpRequest, httpResponse, AuthenticationConfiguration.LOGIN_URL);
         } else {
             chain.doFilter(request, response);
         }
@@ -50,20 +52,6 @@ public class LoginRedirectFilter implements Filter {
 
     private boolean isAuthenticated(HttpSession session) {
         return session != null && session.getAttribute("subject") != null;
-    }
-
-    private void redirect(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
-        String scheme = httpRequest.getServletContext().getInitParameter("scheme");
-        if (null == scheme) {
-            scheme = "http";
-            LOG.debug("scheme is null, using default ({})", scheme);
-        } else {
-            LOG.debug("scheme = {}", scheme);
-        }
-
-        String redirectUrl = scheme + "://" + httpRequest.getServerName() + ":" + httpRequest.getServerPort()
-            + httpRequest.getContextPath() + AuthenticationConfiguration.LOGIN_URL;
-        httpResponse.sendRedirect(redirectUrl);
     }
 
     List<String> convertCsvToList(String unsecuredPaths) {
@@ -78,5 +66,9 @@ public class LoginRedirectFilter implements Filter {
 
     @Override
     public void destroy() {
+    }
+
+    public void setRedirector(Redirector redirector) {
+        this.redirector = redirector;
     }
 }

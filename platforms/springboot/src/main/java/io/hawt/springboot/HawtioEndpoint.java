@@ -1,5 +1,7 @@
 package io.hawt.springboot;
 
+import io.hawt.util.Strings;
+
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import io.hawt.util.Strings;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -71,7 +71,7 @@ public class HawtioEndpoint extends AbstractNamedMvcEndpoint {
         // append "/index.html" to the current path
         builder.path("/index.html");
         UriComponents uriComponents = builder.build();
-        String uri = uriComponents.toUriString();
-        return "redirect:" + uri;
+        String path = uriComponents.getPath();
+        return "forward:" + path;
     }
 }

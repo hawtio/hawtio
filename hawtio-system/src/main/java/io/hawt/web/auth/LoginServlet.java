@@ -42,6 +42,8 @@ public class LoginServlet extends HttpServlet {
     private Converters converters = new Converters();
     private JsonConvertOptions options = JsonConvertOptions.DEFAULT;
 
+    private Redirector redirector = new Redirector();
+
     @Override
     public void init() {
         authConfiguration = AuthenticationConfiguration.getConfiguration(getServletContext());
@@ -76,16 +78,9 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (authConfiguration.isKeycloakEnabled()) {
-            String scheme = request.getServletContext().getInitParameter("scheme");
-            if (null == scheme) {
-                scheme = "http";
-            }
-            LOG.debug("scheme = {}", scheme);
-            String redirectUrl = scheme + request.getServerName() + ":" + request.getServerPort()
-                + request.getContextPath() + "/";
-            response.sendRedirect(redirectUrl);
+            redirector.doRedirect(request, response, "/");
         } else {
-            request.getRequestDispatcher("/login.html").forward(request, response);
+            redirector.doForward(request, response, "/login.html");
         }
     }
 
@@ -174,4 +169,7 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
+    public void setRedirector(Redirector redirector) {
+        this.redirector = redirector;
+    }
 }
