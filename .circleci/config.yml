@@ -1,7 +1,9 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-java/ for more details
+#
 version: 2
-
 jobs:
-
   build:
     working_directory: ~/hawtio
     docker:
@@ -9,7 +11,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: hawtio-{{ checksum "pom.xml" }}
+          key: dependency-cache-{{ checksum "pom.xml" }}
       - run:
           command: mvn --batch-mode install
           environment:
@@ -17,4 +19,4 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          key: hawtio-{{ checksum "pom.xml" }}
+          key: dependency-cache-{{ checksum "pom.xml" }}
