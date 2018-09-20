@@ -1,6 +1,6 @@
 ![hawtio][logo]
 
-[![CircleCI](https://circleci.com/gh/hawtio/hawtio/tree/master.svg?style=shield)](https://circleci.com/gh/hawtio/hawtio/tree/master)
+[![CircleCI](https://circleci.com/gh/hawtio/hawtio.svg?style=svg)](https://circleci.com/gh/hawtio/hawtio)
 
 Don't cha wish your console was [hawt like me?](http://www.youtube.com/watch?v=YNSxNsr4wmA) I'm hawt so you can stay cool
 
