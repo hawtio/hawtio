@@ -14,7 +14,7 @@ public class DefaultSettingsMvcIT extends AbstractMvcIT {
     public void testHawtioLoginRedirect() throws Exception {
         mockMvc.perform(get("/hawtio/"))
             .andExpect(status().isFound())
-            .andExpect(redirectedUrl("http://localhost:80/hawtio/auth/login"));
+            .andExpect(redirectedUrl("/hawtio/auth/login"));
     }
 
     @Test
