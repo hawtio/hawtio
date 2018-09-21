@@ -135,14 +135,15 @@ gulp.task('usemin', function () {
 });
 
 gulp.task('install-dependencies', function (cb) {
-  exec(`cd ${config.app} &&
-        yarn install --prod --flat --frozen-lockfile &&
-        cd .. &&
-        cp -R ${config.app}/node_modules ${config.distLibs}`, function (err, stdout, stderr) {
-      console.log(stdout);
+  exec(`cd ${config.app} && yarn install --prod --flat --frozen-lockfile && cd ..`, function (error, stdout, stderr) {
+    if (error) {
       console.log(stderr);
-      cb(err);
-    });
+    } else {
+      gulp.src(config.app + '/node_modules/**/*')
+        .pipe(gulp.dest(config.distLibs));
+    }
+    cb(error);
+  });
 });
 
 gulp.task('copy-images', function () {
