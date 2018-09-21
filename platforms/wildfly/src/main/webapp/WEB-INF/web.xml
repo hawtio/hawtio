@@ -153,6 +153,20 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
+  <filter>
+    <filter-name>BaseTagHrefFilter</filter-name>
+    <filter-class>io.hawt.web.filters.BaseTagHrefFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>BaseTagHrefFilter</filter-name>
+    <url-pattern>/</url-pattern>
+    <url-pattern>/index.html</url-pattern>
+    <url-pattern>/login.html</url-pattern>
+    <dispatcher>ERROR</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+
   <servlet>
     <servlet-name>jolokia-agent</servlet-name>
     <servlet-class>io.hawt.web.servlets.JolokiaConfiguredAgentServlet</servlet-class>

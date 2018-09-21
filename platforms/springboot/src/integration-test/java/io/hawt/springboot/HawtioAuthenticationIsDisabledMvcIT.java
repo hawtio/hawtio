@@ -148,9 +148,7 @@ public abstract class HawtioAuthenticationIsDisabledMvcIT {
             public void testHawtioRootRedirectsToIndexHtml() throws Exception {
                 mockMvc.perform(getRequest(hawtioPath + "/"))
                         .andExpect(status().isOk())
-                        .andExpect(forwardedUrl(contextPath
-                                + servletPrefix + managementContextPath + hawtioPath
-                                + "/index.html"));
+                        .andExpect(forwardedUrl(servletPrefix + managementContextPath + hawtioPath + "/index.html"));
             }
 
             @Test
@@ -167,7 +165,7 @@ public abstract class HawtioAuthenticationIsDisabledMvcIT {
             }
 
             @Test
-            public void testHawtioPluginnRequest() throws Exception {
+            public void testHawtioPluginRequest() throws Exception {
                 mockMvc.perform(getRequest(hawtioPath + "/plugin"))
                         .andExpect(status().isOk())
                         .andExpect(content().string("[]"));

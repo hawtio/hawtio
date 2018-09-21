@@ -15,6 +15,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UrlPathHelper;
 
 /**
  * Spring Boot endpoint to expose hawtio.
@@ -68,6 +69,11 @@ public class HawtioEndpoint extends AbstractNamedMvcEndpoint {
 
     protected String getIndexHtmlRedirect(final HttpServletRequest request) {
         UriComponentsBuilder builder = ServletUriComponentsBuilder.fromRequest(request);
+        if (request.getServletContext().getContextPath() != null) {
+            String path = new UrlPathHelper().getPathWithinApplication(request);
+            builder.replacePath(path);
+        }
+
         // append "/index.html" to the current path
         builder.path("/index.html");
         UriComponents uriComponents = builder.build();
