@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServletRequest;
 
 import io.hawt.system.ConfigManager;
@@ -20,6 +21,7 @@ import io.hawt.web.auth.Redirector;
 import io.hawt.web.auth.SessionExpiryFilter;
 import io.hawt.web.auth.keycloak.KeycloakServlet;
 import io.hawt.web.auth.keycloak.KeycloakUserServlet;
+import io.hawt.web.filters.BaseTagHrefFilter;
 import io.hawt.web.filters.CORSFilter;
 import io.hawt.web.filters.CacheHeadersFilter;
 import io.hawt.web.filters.ContentSecurityPolicyFilter;
@@ -43,6 +45,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.AbstractUrlViewController;
+import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
 
 /**
  * Management context configuration for hawtio on Spring Boot.
@@ -217,7 +220,19 @@ public class HawtioConfiguration {
         filter.setFilter(loginRedirectFilter);
         filter.addUrlPatterns(hawtioPath + "/*");
         filter.addInitParameter("unsecuredPaths", prependContextPath(unsecuredPaths));
-        filter.addInitParameter("applicationContextPath", hawtioPath);
+        return filter;
+    }
+
+    @Bean
+    FilterRegistrationBean baseTagHrefFilter() {
+        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        final BaseTagHrefFilter baseTagHrefFilter = new BaseTagHrefFilter();
+        filter.setFilter(baseTagHrefFilter);
+        filter.addUrlPatterns(hawtioPath + "/");
+        filter.addUrlPatterns(hawtioPath + "/index.html");
+        filter.addUrlPatterns(hawtioPath + "/login.html");
+        filter.setDispatcherTypes(DispatcherType.ERROR, DispatcherType.FORWARD, DispatcherType.REQUEST);
+        filter.addInitParameter(PARAM_APPLICATION_CONTEXT_PATH, hawtioPath);
         return filter;
     }
 
