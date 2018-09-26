@@ -177,6 +177,9 @@ public class RBACRegistry implements RBACRegistryMBean {
         Map<String, Object> attrMap = new LinkedHashMap<>();
         result.put("attr", attrMap);
         for (MBeanAttributeInfo attrInfo : mBeanInfo.getAttributes()) {
+            if (attrInfo == null) {
+                continue;
+            }
             Map<String, Object> attr = new HashMap<>();
             attr.put("type", attrInfo.getType());
             attr.put("desc", attrInfo.getDescription());
