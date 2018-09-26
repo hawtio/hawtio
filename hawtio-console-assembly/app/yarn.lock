@@ -9,8 +9,8 @@
     "@types/jquery" "~2.0.46"
 
 "@hawtio/core@^4.0.0":
-  version "4.0.14"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.0.14.tgz#9e5c8c379ae208a62e9b998aea98b00036b6940e"
+  version "4.0.18"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.0.18.tgz#65d95a6ebbf48ea62b1ac3ecd7d459506abb0be7"
   dependencies:
     "@hawtio/core-dts" "3.2.0"
     "@types/angular" "*"
@@ -39,8 +39,8 @@
     "@hawtio/ui" "^4.0.0"
 
 "@hawtio/integration@~4.0.0":
-  version "4.0.9"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.0.9.tgz#8fe2dab4fe3252c3a2071979796b39224d39b09b"
+  version "4.0.12"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.0.12.tgz#37ff07a22a6614137577746bac57d8b21a810ef5"
   dependencies:
     "@hawtio/jmx" "~4.0.0"
     "@types/angular-mocks" "~1.7.0"
@@ -50,8 +50,8 @@
     ng-infinite-scroll "1.3.0"
 
 "@hawtio/jmx@~4.0.0":
-  version "4.0.14"
-  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-4.0.14.tgz#d9dfb0e0b1ad1fec97bb0a1617e4e031e561df3a"
+  version "4.0.17"
+  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-4.0.17.tgz#ce7253b46f38bb528ed85ef2e8b2714f43573fe3"
   dependencies:
     "@hawtio/core" "^4.0.0"
     "@hawtio/forms" "^4.0.0"
@@ -60,7 +60,7 @@
     angular-resizable "1.2.0"
     cubism "^1.6.0"
     jolokia.js "^1.6.0-1"
-    patternfly-bootstrap-treeview "2.1.5"
+    patternfly-bootstrap-treeview "~2.1.0"
 
 "@hawtio/oauth@~4.0.0":
   version "4.0.7"
@@ -243,12 +243,12 @@
   resolved "https://registry.yarnpkg.com/@types/d3-time-format/-/d3-time-format-2.1.0.tgz#011e0fb7937be34a9a8f580ae1e2f2f1336a8a22"
 
 "@types/d3-time@*":
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/@types/d3-time/-/d3-time-1.0.8.tgz#6c083127b330b3c2fc65cd0f3a6e9cbd9607b28c"
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@types/d3-time/-/d3-time-1.0.9.tgz#c2cf05a3cd51f810b8d8a9bbca0c74030d4e535e"
 
 "@types/d3-timer@*":
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/@types/d3-timer/-/d3-timer-1.0.7.tgz#053e6369d9485c9dc80bc62fc0851123341d7816"
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@types/d3-timer/-/d3-timer-1.0.8.tgz#a3441d9605367059e14ad8c3494132143cbc8d58"
 
 "@types/d3-transition@*":
   version "1.1.2"
@@ -679,16 +679,16 @@ patternfly-bootstrap-combobox@~1.1.7:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/patternfly-bootstrap-combobox/-/patternfly-bootstrap-combobox-1.1.7.tgz#6a5e3ccd1170c21b3c4b4aa168a7413e1ddbb6e1"
 
-patternfly-bootstrap-treeview@2.1.5, patternfly-bootstrap-treeview@~2.1.0:
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/patternfly-bootstrap-treeview/-/patternfly-bootstrap-treeview-2.1.5.tgz#4c29f2582fb8a2f28f0a928f2f0d324d21d6990d"
+patternfly-bootstrap-treeview@~2.1.0:
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/patternfly-bootstrap-treeview/-/patternfly-bootstrap-treeview-2.1.7.tgz#3e325d4ca34040c24e7e3f701c8021b1700a6f5d"
   dependencies:
     bootstrap "3.3.x"
     jquery ">= 2.1.x"
 
 patternfly@^3.37.1:
-  version "3.54.2"
-  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.54.2.tgz#58b4b424462c4b01aaebf41db2da3bcd63bedfbf"
+  version "3.54.8"
+  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.54.8.tgz#fd6c69714dc460575d2534c9f29017a58b442a83"
   dependencies:
     bootstrap "~3.3.7"
     font-awesome "^4.7.0"
