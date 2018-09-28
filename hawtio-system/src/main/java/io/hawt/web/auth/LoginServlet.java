@@ -98,6 +98,7 @@ public class LoginServlet extends HttpServlet {
         AuthenticateResult result = Authenticator.authenticate(
             authConfiguration, request, username, password,
             subject -> {
+                LOG.info("Logging in user: {}", AuthHelpers.getUsername(subject));
                 setupSession(request, subject, username);
                 sendResponse(response, subject);
             });
