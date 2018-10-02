@@ -57,11 +57,7 @@ public class JmxTreeWatcher implements JmxTreeWatcherMBean {
             mBeanServer.addNotificationListener(MBeanServerDelegate.DELEGATE_NAME, listener, filter, handback);
         }
         if (logged.compareAndSet(false, true)) {
-            String text = getVersion();
-            if (Strings.isNotBlank(text)) {
-                text += " ";
-            }
-            LOG.info("Welcome to hawtio " + text + ": http://hawt.io/ : Don't cha wish your console was hawt like me? ;-)");
+            LOG.info("Welcome to hawtio {}", getVersion());
         }
     }
 
