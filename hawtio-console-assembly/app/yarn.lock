@@ -42,9 +42,9 @@
     "@hawtio/ui" "^4.0.0"
 
 "@hawtio/integration@~4.0.0":
-  version "4.0.14"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.0.14.tgz#0a2708471ad850da58b9d3aefb36cd82df57822c"
-  integrity sha512-Ciu1aJ5dIgo/ca5BtkNlUlWTXL7v8U7z5c9YtTXnUDtn93EwgR39QhNZYSmRxh3lM7Cop3bgclRSjW8sCotRGQ==
+  version "4.0.15"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.0.15.tgz#b668d834e7e15046ea5ad3a450e46e70b11ffa16"
+  integrity sha512-a5FwsvEUd2oceSVNLWVykEI5DkzJDG2jn229dXEA275OlrHQB8NVEn/+yi8cDZsvIezow54QgsY3zLHMODiY4w==
   dependencies:
     "@hawtio/jmx" "~4.0.0"
     "@types/angular-mocks" "~1.7.0"
@@ -54,9 +54,9 @@
     ng-infinite-scroll "1.3.0"
 
 "@hawtio/jmx@~4.0.0":
-  version "4.0.17"
-  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-4.0.17.tgz#ce7253b46f38bb528ed85ef2e8b2714f43573fe3"
-  integrity sha512-6Eh5QexOalUfiW3VxuK6Psmk7KC+GaNpM8XmIirca5GQl6hjd209dU2p7F112AbeHVI9hDeF7UZAggWzqsZNQA==
+  version "4.0.18"
+  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-4.0.18.tgz#e1ca68cd15782fd71415f11f3d0dbed456dbaf68"
+  integrity sha512-Ju274j7V3UicQMKINgBI7hiPsD2qjZLHniU7fpFRVvkQzKjO0C/QPciISJyIYsY67nIQzgh0qe9zKFbLNJ8sBw==
   dependencies:
     "@hawtio/core" "^4.0.0"
     "@hawtio/forms" "^4.0.0"
@@ -142,9 +142,9 @@
   integrity sha1-CGjtm6W/PvgHLegOJF7PSo8Lvf0=
 
 "@types/d3-array@*":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@types/d3-array/-/d3-array-1.2.2.tgz#29edf3e2001e5f4e33e899fcda52ee2387401792"
-  integrity sha512-juoqZ4j/ZPC52AoCjbxiNOGAXudj+69w08ln4cpQIubQfIrHNIptPVYkG6IELEY9Iw/q/PMwKLhk6HYcYk7bOA==
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@types/d3-array/-/d3-array-1.2.3.tgz#dd141e3ba311485fffbf0792a1b01a7f2ec12dc1"
+  integrity sha512-yTO4ws1jnWC7iSKK8j7sUAGKIcJ628ioiGTdyXmPd36cNnuY9fDcjgEW2r19yXWuQFLu61/JhHVZ8RYYTEzFSg==
 
 "@types/d3-axis@*":
   version "1.0.11"
@@ -376,9 +376,9 @@
   integrity sha512-T3KB4C0CDwupgvOmnzA/Z9qEGQlt0zcLUkqHd7lB/9cWhe5+htJZrjAxaU4riYNBfQ7fiCn/RKfQyXusirv0vQ==
 
 "@types/lodash@^4.0.0":
-  version "4.14.116"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.116.tgz#5ccf215653e3e8c786a58390751033a9adca0eb9"
-  integrity sha512-lRnAtKnxMXcYYXqOiotTmJd74uawNWuPnsnPrrO7HiFuE3npE2iQhfABatbYDyxTNqZNuXzcKGhw37R7RjBFLg==
+  version "4.14.117"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.117.tgz#695a7f514182771a1e0f4345d189052ee33c8778"
+  integrity sha512-xyf2m6tRbz8qQKcxYZa7PA4SllYcay+eh25DN3jmNYY6gSTL7Htc/bttVdkqj2wfJGbeWlQiX8pIyJpKU+tubw==
 
 "@types/marked@0.0.28", "@types/marked@0.3.0":
   version "0.3.0"
@@ -536,9 +536,9 @@ codemirror@5.33.0:
   integrity sha512-HT6PKVqkwpzwB3jl5hXFoQteEWXbSWMzG3Z8RVYlx8hZwCOLCy4NU7vkSB3dYX3e6ORwRfGw4uFOXaw4rn/a9Q==
 
 commander@^2.9.0:
-  version "2.18.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.18.0.tgz#2bf063ddee7c7891176981a2cc798e5754bc6970"
-  integrity sha512-6CYPa+JP2ftfRU2qkDK+UTVeQYosOg/2GbcjIcKPHfinyOLPVGXu/ovN86RP49Re5ndJK1N0kuiidFFuepc4ZQ==
+  version "2.19.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-2.19.0.tgz#f6198aa84e5b83c46054b94ddedbfed5ee9ff12a"
+  integrity sha512-6tvAOO+D6OENvRAh524Dh9jcfKTYDQAqvqezbCW82xj5X0pSrcpxtvRKHLG0yBY6SD7PSDrJaj+0AiOcKVd1Xg==
 
 config-chain@~1.1.5:
   version "1.1.12"
@@ -731,9 +731,9 @@ keycloak-js@3.4.3:
   integrity sha1-n7sbp7JDMin1zIurvTCP8OlF2sc=
 
 lodash@4.x, lodash@^4.11.1, lodash@^4.17.4, lodash@~4.17.0:
-  version "4.17.5"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
-  integrity sha512-svL3uiZf1RwhH+cWrfZn3A4+U58wbP0tGVTLQPbjplZxZ8ROD9VLuNgsRniTlLe7OlSqR79RUehXgpBW/s0IQw==
+  version "4.17.11"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
+  integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
 
 lru-cache@^3.2.0:
   version "3.2.0"
