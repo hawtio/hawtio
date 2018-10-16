@@ -9,7 +9,8 @@ namespace ConsoleAssembly {
     .module(pluginName, [
       Login.loginModule
     ])
-    .run(refreshUserSessionWhenLocationChanges);
+    .run(refreshUserSessionWhenLocationChanges)
+    .run(configureAbout);
 
   function refreshUserSessionWhenLocationChanges(
     locationChangeStartTasks: Core.ParameterizedTasks,
@@ -26,6 +27,11 @@ namespace ConsoleAssembly {
           log.debug("Failed to update session expiry. Response:", response);
         });
       });
+  }
+
+  function configureAbout(aboutService: About.AboutService, jolokiaService: JVM.JolokiaService): void {
+    jolokiaService.getAttribute('hawtio:type=About', 'HawtioVersion')
+      .then(hawtioVersion => aboutService.addProductInfo('Hawtio', hawtioVersion));
   }
 
   hawtioPluginLoader.addModule(pluginName);
