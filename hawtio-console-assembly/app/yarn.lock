@@ -9,10 +9,10 @@
   dependencies:
     "@types/jquery" "~2.0.46"
 
-"@hawtio/core@^4.0.0":
-  version "4.0.18"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.0.18.tgz#65d95a6ebbf48ea62b1ac3ecd7d459506abb0be7"
-  integrity sha512-tlw6+mr6XzX4D2lVHJZd4EEVKeMEGYbNFmSUoPh3gPkHz0hdXtKHIdzXzs/ADkz2KxT1IY9ZsVSB4IjcJbJeEw==
+"@hawtio/core@~4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.1.0.tgz#3940a86954991303f03793144281399032364702"
+  integrity sha512-11cI41ltbbuHVJq5MYqAN7cheI1/4/jmdTUp52zrklDwKKmlUbKjRZ2iMB34xM73nIk2lUqh06uykiy6M9t8gA==
   dependencies:
     "@hawtio/core-dts" "3.2.0"
     "@types/angular" "*"
@@ -34,53 +34,53 @@
     marked "0.3.9"
     urijs "1.19.0"
 
-"@hawtio/forms@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/forms/-/forms-4.0.0.tgz#b5720ccf592c8c8820eb1076beeffb0021373b6d"
-  integrity sha1-tXIMz1ksjIgg6xB2vu/7ACE3O20=
+"@hawtio/forms@~4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/forms/-/forms-4.1.0.tgz#1bf89334e8cdf787661f2b38e788e3053dc7eef0"
+  integrity sha512-/bIKqXp2/pgrScF83TKgTOWuDeg4kWVw1JnHHWbgzSBzMKFfd7HbfxbG3AANfdXGjmawGiOJVnwxiq+O31raeA==
   dependencies:
-    "@hawtio/ui" "^4.0.0"
+    "@hawtio/ui" "~4.1.0"
 
-"@hawtio/integration@~4.0.0":
-  version "4.0.15"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.0.15.tgz#b668d834e7e15046ea5ad3a450e46e70b11ffa16"
-  integrity sha512-a5FwsvEUd2oceSVNLWVykEI5DkzJDG2jn229dXEA275OlrHQB8NVEn/+yi8cDZsvIezow54QgsY3zLHMODiY4w==
+"@hawtio/integration@~4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.1.0.tgz#aabfe1f11011e97175fbe9dc26ce5ffe1c0f9e9b"
+  integrity sha512-Zr/bxVVSDlT/aEP8v6r8xmutE9RgD9KaWYQm333PDuiMhvyj71py21NPZu7bWPEzliIG0rF1M5+IAbCFnTrh4w==
   dependencies:
-    "@hawtio/jmx" "~4.0.0"
+    "@hawtio/jmx" "~4.1.0"
     "@types/angular-mocks" "~1.7.0"
     "@types/angular-ui-bootstrap" "~0.13.46"
     "@types/jqueryui" "1.12.2"
     dagre-layout "0.8.0"
     ng-infinite-scroll "1.3.0"
 
-"@hawtio/jmx@~4.0.0":
-  version "4.0.18"
-  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-4.0.18.tgz#e1ca68cd15782fd71415f11f3d0dbed456dbaf68"
-  integrity sha512-Ju274j7V3UicQMKINgBI7hiPsD2qjZLHniU7fpFRVvkQzKjO0C/QPciISJyIYsY67nIQzgh0qe9zKFbLNJ8sBw==
+"@hawtio/jmx@~4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-4.1.0.tgz#1f85d64825c74efa311e88213a54e628476290ee"
+  integrity sha512-BkUZixdHgDDCiRy2Ruu8Kec63SVIwrykJl731MuECOWhDytNsknboZ8LTC8gCPbmrFIgUMcGr7GP72W6uUOdgg==
   dependencies:
-    "@hawtio/core" "^4.0.0"
-    "@hawtio/forms" "^4.0.0"
-    "@hawtio/ui" "^4.0.0"
+    "@hawtio/core" "~4.1.0"
+    "@hawtio/forms" "~4.1.0"
+    "@hawtio/ui" "~4.1.0"
     "@types/angular-ui-bootstrap" "~0.13.46"
     angular-resizable "1.2.0"
     cubism "^1.6.0"
     jolokia.js "^1.6.0-1"
     patternfly-bootstrap-treeview "~2.1.0"
 
-"@hawtio/oauth@~4.0.0":
-  version "4.0.7"
-  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.0.7.tgz#f5e88d7dcc4001f6cb1d8e6b6e062828b9d02d80"
-  integrity sha512-XJGEzy0mh9l6dxFSh/bnq1a7/KZddcSRC1nV+4m8F5yQ8e9kY1KUGGJsujyqKevfBt3NfKUG6rY2kHoXmLjZRw==
+"@hawtio/oauth@~4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.1.0.tgz#18340083bf6f9ced3f1207f3eb3912b64a34f477"
+  integrity sha512-/yDlQn9vUh2AdJaLk4UAfR6bbdD71nk5hQls+/mqXPBp87UQsamMJlFjgs8P0Lra7np6Ozm/3MA/Cfma1yO4Jw==
   dependencies:
-    "@hawtio/core" "^4.0.0"
+    "@hawtio/core" "~4.1.0"
     ng-idle "^1.3.2"
 
-"@hawtio/ui@^4.0.0":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-4.0.3.tgz#2568974045be62643105e003e2d0f58793fe337d"
-  integrity sha512-G/TH6OVCabVDZEzRd39LRhQI7bJQ5POzv1+I9jnHxzwYE8f2ejAAnEgyzb5dOrpEIQOmqGp6wzgfcoWM4bfFUg==
+"@hawtio/ui@~4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-4.1.0.tgz#c7d26dfa8e54f7a8e418eb872074e1821cf2bb54"
+  integrity sha512-Us25o43VmUGswmLix1D8qLVzmAo6zvbOue0UWJ+X5cR3rC5JMqcwzy7aQy5i9+daKR0zsEMVlCUAI84satDqyQ==
   dependencies:
-    "@hawtio/core" "^4.0.0"
+    "@hawtio/core" "~4.1.0"
     "@types/bootstrap" "3.3.36"
     "@types/clipboard" "1.5.35"
     "@types/codemirror" "0.0.40"
