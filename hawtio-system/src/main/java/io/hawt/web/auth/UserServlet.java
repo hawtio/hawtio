@@ -17,6 +17,7 @@ import io.hawt.web.ServletHelpers;
 public class UserServlet extends HttpServlet {
 
     private static final long serialVersionUID = -1239510748236245667L;
+    private static final String DEFAULT_USER = "public";
 
     protected ConfigManager config;
     private boolean authenticationEnabled = true;
@@ -39,7 +40,7 @@ public class UserServlet extends HttpServlet {
         throws ServletException, IOException {
 
         if (!authenticationEnabled) {
-            sendResponse(response, "public");
+            sendResponse(response, DEFAULT_USER);
             return;
         }
 
