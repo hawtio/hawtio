@@ -13,8 +13,8 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "pom.xml" }}
       - run:
-          # Run with surefire.useSystemClassLoader=false due to: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=911925
-          command: mvn -Dsurefire.useSystemClassLoader=false --batch-mode install
+          # Run with useSystemClassLoader=false due to: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=911925
+          command: mvn -Dsurefire.useSystemClassLoader=false -Dfailsafe.useSystemClassLoader=false --batch-mode install
           environment:
             MAVEN_OPTS: -showversion -Xms256m -Xmx4096m
       - save_cache:
