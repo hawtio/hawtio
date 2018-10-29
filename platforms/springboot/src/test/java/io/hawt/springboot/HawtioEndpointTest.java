@@ -12,7 +12,7 @@ public class HawtioEndpointTest {
 
     @Before
     public void setUp() {
-        hawtioEndpoint = new HawtioEndpoint("/hawtio");
+        hawtioEndpoint = new HawtioEndpoint(null);
     }
 
     @Test

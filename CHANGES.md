@@ -2,6 +2,12 @@
 
 #### 2.3.0 (To be released)
 
+* Add support for Spring Boot 2
+
+**Note:** Spring Boot 2 is now the default Spring Boot version for Hawtio dependency `hawtio-spring-boot`.
+
+If Spring Boot 1 is required, use dependency `hawtio-spring-boot-1`.
+
 #### 2.2.0
 
 * Upgrade Hawtio components to 4.1.x

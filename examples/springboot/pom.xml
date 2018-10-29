@@ -13,7 +13,7 @@
   <groupId>io.hawt.examples</groupId>
   <artifactId>hawtio-example-springboot</artifactId>
   <name>${project.artifactId}</name>
-  <description>hawtio :: Sample Spring Boot process</description>
+  <description>hawtio :: Sample Spring Boot 2.x process</description>
   <packaging>war</packaging>
 
   <dependencyManagement>
@@ -60,7 +60,12 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-actuator</artifactId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
     </dependency>
 
     <!-- hawtio -->
