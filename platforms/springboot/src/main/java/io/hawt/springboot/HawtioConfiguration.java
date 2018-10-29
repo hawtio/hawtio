@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import io.hawt.system.ConfigManager;
 import io.hawt.util.Strings;
+import io.hawt.web.auth.AuthenticationConfiguration;
 import io.hawt.web.auth.AuthenticationFilter;
 import io.hawt.web.auth.LoginRedirectFilter;
 import io.hawt.web.auth.LoginServlet;
@@ -213,13 +214,12 @@ public class HawtioConfiguration {
 
     @Bean
     public FilterRegistrationBean loginRedirectFilter(Redirector redirector) {
-        final String[] unsecuredPaths = {"/auth","/css","/img","/js","/hawtconfig.json","/jolokia","/keycloak","/libs","/oauth","/user", "/login.html"};
+        final String[] unsecuredPaths = prependContextPath(AuthenticationConfiguration.UNSECURED_PATHS);
         final FilterRegistrationBean filter = new FilterRegistrationBean();
-        final LoginRedirectFilter loginRedirectFilter = new LoginRedirectFilter();
+        final LoginRedirectFilter loginRedirectFilter = new LoginRedirectFilter(unsecuredPaths);
         loginRedirectFilter.setRedirector(redirector);
         filter.setFilter(loginRedirectFilter);
         filter.addUrlPatterns(hawtioPath + "/*");
-        filter.addInitParameter("unsecuredPaths", prependContextPath(unsecuredPaths));
         return filter;
     }
 
@@ -299,11 +299,10 @@ public class HawtioConfiguration {
         return number == null ? defaultValue : number;
     }
 
-    private String prependContextPath(String... paths) {
-        List<String> contextPaths = Arrays.stream(paths)
+    private String[] prependContextPath(String[] paths) {
+        return Arrays.stream(paths)
             .map(path -> hawtioPath + path)
-            .collect(Collectors.toList());
-        return String.join(",", contextPaths);
+            .toArray(String[]::new);
     }
 
     private class JolokiaForwardingController extends AbstractUrlViewController {
