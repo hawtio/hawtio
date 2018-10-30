@@ -1,6 +1,12 @@
 ## Change Log
 
-#### 2.2.0 (To be released)
+#### 2.3.0 (To be released)
+
+#### 2.2.0
+
+* Upgrade Hawtio components to 4.1.x
+* Minor improvements
+* Bug fixes
 
 #### 2.1.0
 
