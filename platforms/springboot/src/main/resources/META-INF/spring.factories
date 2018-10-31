@@ -1,5 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-io.hawt.springboot.HawtioAutoConfiguration\
+io.hawt.springboot.HawtioEndpointAutoConfiguration
 
-org.springframework.boot.actuate.autoconfigure.ManagementContextConfiguration=\
-io.hawt.springboot.HawtioConfiguration
+org.springframework.boot.actuate.autoconfigure.web.ManagementContextConfiguration=\
+io.hawt.springboot.HawtioManagementConfiguration

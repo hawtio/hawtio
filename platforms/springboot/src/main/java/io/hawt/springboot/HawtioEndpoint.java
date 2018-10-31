@@ -6,12 +6,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpoint;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -20,17 +20,14 @@ import org.springframework.web.util.UrlPathHelper;
 /**
  * Spring Boot endpoint to expose hawtio.
  */
-@ConfigurationProperties(prefix = "endpoints.hawtio", ignoreUnknownFields = false)
-public class HawtioEndpoint extends AbstractNamedMvcEndpoint {
+@ControllerEndpoint(id = "hawtio")
+public class HawtioEndpoint implements WebMvcConfigurer {
 
-    private final String managementContextPrefix;
-
+    private final EndpointPathResolver endpointPath;
     private List<HawtPlugin> plugins;
 
-    public HawtioEndpoint(final String managementContextPrefix) {
-        super("hawtio", "/hawtio", true);
-        this.managementContextPrefix = Strings
-                .webContextPath(managementContextPrefix);
+    public HawtioEndpoint(final EndpointPathResolver endpointPath) {
+        this.endpointPath = endpointPath;
     }
 
     public void setPlugins(final List<HawtPlugin> plugins) {
@@ -51,19 +48,19 @@ public class HawtioEndpoint extends AbstractNamedMvcEndpoint {
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry // @formatter:off
-            .addResourceHandler(managementContextPrefix + getPath() + "/plugins/**")
+            .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/plugins/**"))
             .addResourceLocations(
                 "/app/",
                 "classpath:/hawtio-static/app/");
         registry
-            .addResourceHandler(managementContextPrefix + getPath() + "/**")
+            .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/**"))
             .addResourceLocations(
                 "/",
                 "/app/",
                 "classpath:/hawtio-static/",
                 "classpath:/hawtio-static/app/");
         registry
-            .addResourceHandler("/img/**")
+            .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/img/**"))
             .addResourceLocations("classpath:/hawtio-static/img/"); // @formatter:on
     }
 

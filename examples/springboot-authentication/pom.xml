@@ -13,12 +13,12 @@
   <groupId>io.hawt.examples</groupId>
   <artifactId>hawtio-example-springboot-authentication</artifactId>
   <name>${project.artifactId}</name>
-  <description>hawtio :: Sample Spring Boot process with authentication</description>
+  <description>hawtio :: Sample Spring Boot 2.x process with authentication</description>
   <packaging>war</packaging>
 
   <properties>
     <!-- Jetty version referred from the spring-boot-dependencies project -->
-    <jetty.version>9.4.9.v20180320</jetty.version>
+    <jetty.version>9.4.11.v20180605</jetty.version>
   </properties>
 
   <dependencyManagement>
@@ -66,7 +66,7 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-actuator</artifactId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
     <dependency>
       <groupId>io.hawt</groupId>
