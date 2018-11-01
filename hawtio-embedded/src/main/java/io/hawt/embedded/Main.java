@@ -155,7 +155,7 @@ public class Main {
 
         if (welcome) {
             System.out.println();
-            System.out.println("hawtio: Don't cha wish your console was hawt like me!");
+            System.out.println("Welcome to hawtio");
             System.out.println("=====================================================");
             System.out.println();
             System.out.println(scheme + "://localhost:" + options.getPort() + options.getContextPath());
