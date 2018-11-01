@@ -12,7 +12,6 @@ import javax.management.NotificationListener;
 import javax.management.ObjectName;
 
 import io.hawt.util.Objects;
-import io.hawt.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

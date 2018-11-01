@@ -1,7 +1,5 @@
 package io.hawt.springboot;
 
-import io.hawt.util.Strings;
-
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
