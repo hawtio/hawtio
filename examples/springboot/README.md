@@ -26,10 +26,10 @@ Hawtio will then be available at http://localhost:10001/hawtio/index.html.
 
 ### Alternative hawtio endpoint paths
 
-You can also customize the endpoint path of the Hawtio actuator endpoint by setting the `management.endpoints.web.path-mapping.hawtio property` in `application.properties`:
+You can also customize the endpoint path of the Hawtio actuator endpoint by setting the `management.endpoints.web.path-mapping.hawtio` property in `application.properties`:
 
 ```
-management.endpoints.web.path-mapping.hawtio property=hawtio/console
+management.endpoints.web.path-mapping.hawtio=hawtio/console
 ```
 
 ### Alternative ports & context paths
