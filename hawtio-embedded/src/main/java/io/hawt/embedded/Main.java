@@ -146,16 +146,16 @@ public class Main {
 
         // create server and add the handlers
         if (welcome) {
-            System.out.println("Embedded hawtio: You can use --help to show usage");
+            System.out.println("Embedded Hawtio: You can use --help to show usage");
             System.out.println(options.usedOptionsSummary());
         }
 
-        System.out.println("About to start hawtio " + war);
+        System.out.println("About to start Hawtio " + war);
         server.start();
 
         if (welcome) {
             System.out.println();
-            System.out.println("Welcome to hawtio");
+            System.out.println("Welcome to Hawtio");
             System.out.println("=====================================================");
             System.out.println();
             System.out.println(scheme + "://localhost:" + options.getPort() + options.getContextPath());
@@ -192,7 +192,7 @@ public class Main {
                         contextPath = contextPath.substring(0, contextPath.length() - 4);
                     }
                     if (contextPath.equals(options.getContextPath())) {
-                        throw new IllegalArgumentException("3rd party plugin " + war.getName() + " cannot have same name as hawtio context path. Rename the plugin file to avoid the clash.");
+                        throw new IllegalArgumentException("3rd party plugin " + war.getName() + " cannot have same name as Hawtio context path. Rename the plugin file to avoid the clash.");
                     }
 
                     WebAppContext plugin = new WebAppContext();
