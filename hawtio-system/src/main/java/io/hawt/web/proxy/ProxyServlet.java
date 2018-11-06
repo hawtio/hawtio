@@ -34,6 +34,7 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.AbortableHttpRequest;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContextBuilder;
@@ -246,7 +247,7 @@ public class ProxyServlet extends HttpServlet {
 
         setXForwardedForHeader(servletRequest, proxyRequest);
 
-        HttpResponse proxyResponse = null;
+        CloseableHttpResponse proxyResponse = null;
         int statusCode = 0;
         try {
 
@@ -303,9 +304,16 @@ public class ProxyServlet extends HttpServlet {
             }
 
         } finally {
-            // make sure the entire entity was consumed, so the connection is released
-            if (proxyResponse != null)
+            if (proxyResponse != null) {
+                // Make sure the entire entity was consumed
                 EntityUtils.consumeQuietly(proxyResponse.getEntity());
+
+                try {
+                    proxyResponse.close();
+                } catch (IOException e) {
+                    LOG.error("Error closing proxy client response: {}", e.getMessage());
+                }
+            }
             //Note: Don't need to close servlet outputStream:
             // http://stackoverflow.com/questions/1159168/should-one-call-close-on-httpservletresponse-getoutputstream-getwriter
         }
