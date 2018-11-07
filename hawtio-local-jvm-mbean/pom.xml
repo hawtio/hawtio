@@ -15,14 +15,6 @@
   <dependencies>
 
     <dependency>
-      <groupId>com.sun</groupId>
-      <artifactId>tools</artifactId>
-      <version>1.6</version>
-      <scope>system</scope>
-      <systemPath>${toolsjar}</systemPath>
-    </dependency>
-
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j-version}</version>
@@ -73,6 +65,23 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+        <id>pre-java9</id>
+        <dependencies>
+            <dependency>
+                <groupId>com.sun</groupId>
+                <artifactId>tools</artifactId>
+                <version>1.6.0</version>
+                <scope>system</scope>
+                <systemPath>${java.home}/../lib/tools.jar</systemPath>
+            </dependency>
+        </dependencies>
+        <activation>
+            <file>
+                <exists>${java.home}/../lib/tools.jar</exists>
+            </file>
+        </activation>
+     </profile>
   </profiles>
 
 </project>
