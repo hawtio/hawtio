@@ -2,6 +2,8 @@
 
 #### 2.4.0 (To be released)
 
+* Support Java 11
+
 #### 2.3.0
 
 * Add support for Spring Boot 2  
