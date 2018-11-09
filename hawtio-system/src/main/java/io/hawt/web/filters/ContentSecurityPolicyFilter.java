@@ -59,8 +59,6 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
         if (!addedKeycloakUrl) {
             POLICY = String.format(POLICY_TEMPLATE, "", "", "");
         }
-
-        super.init(filterConfig);
     }
 
     @Override
