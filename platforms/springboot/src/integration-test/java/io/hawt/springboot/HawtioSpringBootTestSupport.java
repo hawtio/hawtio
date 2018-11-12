@@ -26,6 +26,9 @@ import org.springframework.util.SocketUtils;
 
 public class HawtioSpringBootTestSupport {
 
+    public static final int SERVER_PORT = SocketUtils.findAvailableTcpPort();
+    public static final int MANAGEMENT_PORT = SocketUtils.findAvailableTcpPort(SERVER_PORT + 1);
+
     protected WebApplicationContextRunner contextRunner;
 
     @Before
@@ -136,7 +139,7 @@ public class HawtioSpringBootTestSupport {
                 addProperty("management.endpoint.jolokia.enabled", "false");
             }
 
-            addProperty("server.port", String.valueOf(SocketUtils.findAvailableTcpPort()));
+            addProperty("server.port", String.valueOf(SERVER_PORT));
             addProperty("server.servlet.context-path", contextPath);
             addProperty("server.servlet.path", servletPath);
             addProperty("management.server.servlet.context-path", managementContextPath);

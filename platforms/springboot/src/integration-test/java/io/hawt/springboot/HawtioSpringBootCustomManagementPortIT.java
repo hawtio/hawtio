@@ -2,14 +2,13 @@ package io.hawt.springboot;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.util.SocketUtils;
 
 public class HawtioSpringBootCustomManagementPortIT extends HawtioSpringBootTestCommon {
 
     @Before
     public void setUp() {
         super.setUp();
-        contextRunner = contextRunner.withPropertyValues("management.server.port=" + SocketUtils.findAvailableTcpPort());
+        contextRunner = contextRunner.withPropertyValues("management.server.port=" + MANAGEMENT_PORT);
     }
 
     @Test
