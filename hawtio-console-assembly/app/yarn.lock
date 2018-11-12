@@ -39,8 +39,8 @@
     "@hawtio/ui" "~4.1.0"
 
 "@hawtio/integration@~4.1.0":
-  version "4.1.4"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.1.4.tgz#7d3100bc7d5277e276921d792e0f2f0b037c839c"
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.1.5.tgz#5577e7fba742a089e850630819b166ae0b1d23d6"
   dependencies:
     "@hawtio/jmx" "~4.1.0"
     "@types/angular-mocks" "~1.7.0"
@@ -229,12 +229,12 @@
     "@types/d3-time" "*"
 
 "@types/d3-selection@*":
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/@types/d3-selection/-/d3-selection-1.3.2.tgz#dd5661a560ba9ce3aba823c424b8d4a1bc7e833f"
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/@types/d3-selection/-/d3-selection-1.3.3.tgz#9f89da68c78b6a1f940bf34b90f98b0201da908d"
 
 "@types/d3-shape@*":
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/@types/d3-shape/-/d3-shape-1.2.4.tgz#e65585f2254d83ae42c47af2e730dd9b97952996"
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@types/d3-shape/-/d3-shape-1.2.5.tgz#73483732731b3817286f60fb877afd72694feb35"
   dependencies:
     "@types/d3-path" "*"
 
@@ -325,8 +325,8 @@
   resolved "https://registry.yarnpkg.com/@types/js-beautify/-/js-beautify-0.0.30.tgz#82ffbeb2c2dec592f1d04169e926912eeed567ec"
 
 "@types/lodash@^4.0.0":
-  version "4.14.117"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.117.tgz#695a7f514182771a1e0f4345d189052ee33c8778"
+  version "4.14.118"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.118.tgz#247bab39bfcc6d910d4927c6e06cbc70ec376f27"
 
 "@types/marked@0.0.28", "@types/marked@0.3.0":
   version "0.3.0"
@@ -408,8 +408,8 @@ angularjs-datatables@^0.5.9:
     jquery ">=1.11.0"
 
 bluebird@^3.0.5:
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.2.tgz#1be0908e054a751754549c270489c1505d4ab15a"
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.3.tgz#7d01c6f9616c9a51ab0f8c549a79dfe6ec33efa7"
 
 bootstrap-datepicker@^1.7.1:
   version "1.8.0"
@@ -687,8 +687,8 @@ patternfly-bootstrap-treeview@~2.1.0:
     jquery ">= 2.1.x"
 
 patternfly@^3.37.1:
-  version "3.55.0"
-  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.55.0.tgz#ee8a711d42713738176aed51eb60722d7f324ad8"
+  version "3.57.0"
+  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.57.0.tgz#63ee1f096258176ce7efeac27d08bfac5aabd611"
   dependencies:
     bootstrap "~3.3.7"
     font-awesome "^4.7.0"
