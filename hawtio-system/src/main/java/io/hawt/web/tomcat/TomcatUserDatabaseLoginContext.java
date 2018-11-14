@@ -101,9 +101,9 @@ public class TomcatUserDatabaseLoginContext implements LoginModule {
         this.subject = subject;
         this.callbackHandler = callbackHandler;
 
-        String customLocation = options.get(OPTION_TOMCAT_USER_LOCATION).toString();
+        Object customLocation = options.get(OPTION_TOMCAT_USER_LOCATION);
         if (customLocation != null) {
-            this.file = new File(customLocation, "tomcat-users.xml");
+            this.file = new File(customLocation.toString(), "tomcat-users.xml");
         }
 
         if (file == null || ! file.exists()) {
