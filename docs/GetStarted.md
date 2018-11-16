@@ -1,12 +1,12 @@
-You can use hawtio from a Chrome Extension or in many different containers - or outside a container in a stand alone executable jar. Below are all the various options for running hawtio. To see whats changed lately check out the <a class="btn btn-default" href="http://hawt.io/changelog.html">change log</a>
+You can use hawtio from a Chrome Extension or in many different containers - or outside a container in a stand alone executable jar. Below are all the various options for running hawtio. To see whats changed lately check out the <a class="btn btn-default" href="http://hawtio.github.io/hawtio/changelog.html">change log</a>
 
-The Hawtio platform consists of 2 parts, the backend which is running in a Java Web Container the Jolokia gateway (JMX to JSON) and the front end containing the Angular, D3, ... Javascript to do the rendering of the JSON responses in a very nice way. 
+The Hawtio platform consists of 2 parts, the backend which is running in a Java Web Container the Jolokia gateway (JMX to JSON) and the front end containing the Angular, D3, ... Javascript to do the rendering of the JSON responses in a very nice way.
 Depending how you plan to use Hawtio for your project in your environment, you can run the backend using a [java standalone jar](#standalone), [a servlet engine](#web-container), [application server](#jee) or [an OSGI container](#osgi).
 If you do not use a servlet container or application server, you can also embed the hawtio backend [inside your process](#embedded).
- 
+
 The front end could be accessed using the **HTML5 web console** or from [Google Browser](#chrome-ext)
 
-The out of the box defaults try to do the right thing for most folks but if you want to configure things then please check out the <a class="btn btn-default" href="http://hawt.io/configuration/index.html">configuration guide</a>
+The out of the box defaults try to do the right thing for most folks but if you want to configure things then please check out the <a class="btn btn-default" href="http://hawtio.github.io/hawtio/configuration/index.html">configuration guide</a>
 
 <a name="standalone"></a>
 ## Using the executable jar
@@ -75,7 +75,7 @@ If you rename the downloaded file to _hawtio.war_ then drop it into your deploy 
 
 Otherwise you will need to use either [http://localhost:8080/hawtio-default-1.5.11/](http://localhost:8080/hawtio-default-1.5.11/) or [http://localhost:8080/sample-1.5.11/](http://localhost:8080/sample-1.5.11/)  depending on the file name you downloaded.
 
-Please check [the configuration guide](http://hawt.io/configuration/index.html) to see how to configure things; in particular security.
+Please check [the configuration guide](http://hawtio.github.io/hawtio/configuration/index.html) to see how to configure things; in particular security.
 
 
 If you don't see a Tomcat / Jetty tab for your container you may need to enable JMX.
@@ -116,7 +116,7 @@ If you are using [Apache ServiceMix](http://servicemix.apache.org/) 7.x:
 
 
 
-**NOTE** Karaf 2.x/3.x has an issue with the `hawtio-log` and `hawtio-terminal` which does not work. And therefore you need to install `hawtio-core` instead of `hawtio`. 
+**NOTE** Karaf 2.x/3.x has an issue with the `hawtio-log` and `hawtio-terminal` which does not work. And therefore you need to install `hawtio-core` instead of `hawtio`.
 
 The hawtio console can then be viewed at [http://localhost:8181/hawtio/](http://localhost:8181/hawtio/). The default login for Karaf is `karaf/karaf`, and for ServiceMix its `smx/smx`.
 
@@ -155,27 +155,27 @@ uses its logging mechanisms instead of trying to use the embedded log4j. From th
 try:
 
     zip -d hawtio.war WEB-INF/classes/log4j.properties
-    
+
 Since hawtio does use some CDI beans, but does not deploy a beans.xml CDI descriptor, you can also relax
-Wildfly's [implicit CDI detection](https://docs.jboss.org/author/display/WFLY8/CDI+Reference) by changing the 
+Wildfly's [implicit CDI detection](https://docs.jboss.org/author/display/WFLY8/CDI+Reference) by changing the
 Weld config to look like this:
 
         <system-properties>
             <property name="hawtio.authenticationEnabled" value="false" />
         </system-properties>
-        
+
 To enable security, you'll need to set you configuration up like this:
 
     <extensions>
         ...
     </extensions>
-    
+
     <system-properties>
         <property name="hawtio.authenticationEnabled" value="true" />
         <property name="hawtio.realm" value="jboss-web-policy" />
         <property name="hawtio.role" value="admin" />
     </system-properties>
-    
+
 You can follow the [steps outlined in this blog](http://www.christianposta.com/blog/?p=403) for a more comprehensive
 look at enabling security in Wildfly with hawtio.
 
@@ -194,7 +194,7 @@ Or in newer versions (Wildfly 8.1) you'll want to add this to standalone/configu
     <extensions>
         ...
     </extensions>
-    
+
     <system-properties>
         <property name="hawtio.authenticationEnabled" value="false" />
     </system-properties>
@@ -247,15 +247,15 @@ Depending on the war you are loading, you may also need to turn off authenticati
 
 * now drop the downloaded CRX file (from Finder or Windows Explorer) onto Chrome's <a href="chrome://extensions/">Extensions Page</a> at <b>chrome://extensions/</b> or <b>Window pull down menu -&gt; Extensions</b> and it should install the hawtio extension for Chrome.
 
-* now to open a <a href="http://hawt.io/">hawtio</a> tab or window at any point, just open a new tab / window in Chrome, click the <b>Apps</b> button on the left hand of the bookmark bar which should open a window with all your extensions in there....
+* now to open a <a href="http://hawtio.github.io/hawtio/">hawtio</a> tab or window at any point, just open a new tab / window in Chrome, click the <b>Apps</b> button on the left hand of the bookmark bar which should open a window with all your extensions in there....
 
-* you should see a <a href="http://hawt.io/">hawtio icon</a> in the apps page. If not <a href="http://hawt.io/community/index.html">let us know!</a>.
+* you should see a <a href="http://hawtio.github.io/hawtio/">hawtio icon</a> in the apps page. If not <a href="http://hawtio.github.io/hawtio/community/index.html">let us know!</a>.
 
-* Click the <a href="http://hawt.io/">hawtio icon</a>
+* Click the <a href="http://hawtio.github.io/hawtio/">hawtio icon</a>
 
 * the <b>Connect</b> page should appear where you can then connect to any processes which are running a <a href="http://jolokia.org/">jolokia agent</a>.
 
-* have fun and profit! Please share with us your <a href="http://hawt.io/community/index.html">feedback!</a> or <a href="https://twitter.com/hawtio">tweet us!</a>
+* have fun and profit! Please share with us your <a href="http://hawtio.github.io/hawtio/community/index.html">feedback!</a> or <a href="https://twitter.com/hawtio">tweet us!</a>
 
 ## Using a git Clone
 
@@ -271,11 +271,11 @@ A good MBean for real time values and charts is `java.lang/OperatingSystem`. Try
 
 ## Using Third Party Plugins
 
-**hawtio** is fully pluggable, and allows to integrate with custom plugins, as if they are out of the box. There is different approaches how you can install and use custom plugins with hawtio, which you can read more about at [How Plugin Works](http://hawt.io/plugins/howPluginsWork.html).
+**hawtio** is fully pluggable, and allows to integrate with custom plugins, as if they are out of the box. There is different approaches how you can install and use custom plugins with hawtio, which you can read more about at [How Plugin Works](http://hawtio.github.io/hawtio/plugins/howPluginsWork.html).
 
 ## Using hawtio Maven Plugins
 
-**hawtio** offers a number of [Maven Plugins](http://hawt.io/maven/), so that users can bootup Maven projects and have hawtio embedded in the running JVM.
+**hawtio** offers a number of [Maven Plugins](http://hawtio.github.io/hawtio/maven/), so that users can bootup Maven projects and have hawtio embedded in the running JVM.
 
 ## Trying SNAPSHOT builds
 
@@ -285,7 +285,7 @@ download it from the [Maven repository](https://repository.jboss.org/nexus/conte
 
 ## Further Reading
 
-* [Articles and Demos](http://hawt.io/articles/index.html)
-* [FAQ](http://hawt.io/faq/index.html)
-* [How to contribute](http://hawt.io/contributing/index.html)
-* [Join the hawtio community](http://hawt.io/community/index.html)
+* [Articles and Demos](http://hawtio.github.io/hawtio/articles/index.html)
+* [FAQ](http://hawtio.github.io/hawtio/faq/index.html)
+* [How to contribute](http://hawtio.github.io/hawtio/contributing/index.html)
+* [Join the hawtio community](http://hawtio.github.io/hawtio/community/index.html)

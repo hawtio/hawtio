@@ -177,7 +177,7 @@
 -->
 
                 <!-- copy the api docs -->
-<!--                
+<!--
                 <mkdir dir="${project.build.directory}/sitegen/ts-api"/>
                 <copy todir="${project.build.directory}/sitegen/ts-api">
                   <fileset dir="${basedir}/../hawtio-api-docs/target/hawtio-api-docs-${project.version}">
@@ -282,7 +282,7 @@
         <version>${jetty-plugin-version}</version>
         <configuration>
           <webAppConfig>
-            <contextPath>/</contextPath>
+            <contextPath>/hawtio</contextPath>
             <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
               <resourcesAsCSV>${basedir}/src,${project.build.directory}/sitegen</resourcesAsCSV>
             </baseResource>

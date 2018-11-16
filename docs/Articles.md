@@ -37,7 +37,7 @@ The following videos are in the [hawtio video album](https://vimeo.com/album/332
 
 ## Videos on hawtio
 
-The following videos has been found on the web about hawtio.  If you find any others please [let us know](http://hawt.io/community/index.html) or [raise an issue](https://github.com/hawtio/hawtio/issues?state=open) and we'll add it to the list.
+The following videos has been found on the web about hawtio.  If you find any others please [let us know](http://hawtio.github.io/hawtio/community/index.html) or [raise an issue](https://github.com/hawtio/hawtio/issues?state=open) and we'll add it to the list.
 
 * [Hawt and spicy Java monitoring](https://vimeo.com/233817010) by Martin Skarsaune, at [JavaZone 2017](https://2017.javazone.no/).
 * [hawtio - the Extensive console](https://www.youtube.com/watch?v=Bxgk9--_WzE) by Stan Lewis, at [DevNation 2014](http://www.devnation.org/) presenting how you can extend and build your own plugins to hawtio. Highly recommended if you want to build custom plugins.
@@ -45,7 +45,7 @@ The following videos has been found on the web about hawtio.  If you find any ot
 
 ## Articles on using hawtio
 
-The following articles have been found on the web about hawtio. If you find any others please [let us know](http://hawt.io/community/index.html) or [raise an issue](https://github.com/hawtio/hawtio/issues?state=open) and we'll add it to the list.
+The following articles have been found on the web about hawtio. If you find any others please [let us know](http://hawtio.github.io/hawtio/community/index.html) or [raise an issue](https://github.com/hawtio/hawtio/issues?state=open) and we'll add it to the list.
 
 * [Running Apache ActiveMQ and hawtio in Standalone Mode (2016)](http://www.bennet-schulz.com/2016/07/apache-activemq-and-hawtio.html) by [Bennet Schulz](https://twitter.com/bennetelli)
 * [Hawtio + ActiveMQ](http://www.christianposta.com/blog/?p=315) by [Christian Posta](http://www.christianposta.com/)

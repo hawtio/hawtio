@@ -2,7 +2,7 @@
 
 The following walks through how we make a release.
 
-* Pop onto [IRC](http://hawt.io/community/index.html) and let folks know you're about to cut a release
+* Pop onto [IRC](http://hawtio.github.io/hawtio/community/index.html) and let folks know you're about to cut a release
 * Now pull and make sure things build locally fine first :)
 
 		mvn release:prepare -P release,grunt

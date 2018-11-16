@@ -26,7 +26,7 @@ object Website {
   val project_id= "hawtio"
   val project_jira_key= "hawtio"
   val project_issue_url= "https://github.com/hawtio/hawtio/issues?state=open"
-  val project_forums_url= "http://hawt.io/community/index.html"
+  val project_forums_url= "http://hawtio.github.io/hawtio/community/index.html"
   val project_wiki_url= "https://github.com/hawtio/hawtio/wiki"
   val project_logo= "/images/project-logo.png"
   val project_version= "1.2.2"

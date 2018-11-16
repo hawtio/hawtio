@@ -7,7 +7,7 @@ machine:
 
 branches:
   only:
-    - master
+    - 1.x
 
 dependencies:
   pre:
@@ -27,7 +27,7 @@ general:
 
 deployment:
   website:
-    branch: master
+    branch: 1.x
     owner: hawtio
     commands:
       - git config --global user.email "circleci@mail.com"
