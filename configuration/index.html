@@ -25,7 +25,7 @@
 
     <!-- begin dropup -->
     <div class="dropup visible-md visible-lg visible-sm">
-      <div id="ajbossproject">A JBoss Project</div> 
+      <div id="ajbossproject">A JBoss Project</div>
       <a class="tabnav-closed" href="#" id="tab">Red Hat</a>
       <script>
     window.addEventListener('load', function() {
@@ -40,7 +40,7 @@
       <div class="container">
         <div class="row">
           <div class="col-md-12">
-            <a class="top-banner-logo" href="http://hawt.io/">
+            <a class="top-banner-logo" href="/hawtio">
               <img src="/hawtio/images/hawtio_logo.svg" />
             </a>
           </div>
@@ -60,7 +60,7 @@
 
     <!-- begin header -->
     <div class="top-bar navbar navbar-default" role="navigation">
-      <!-- begin inner container --> 
+      <!-- begin inner container -->
       <div class="container">
         <!-- begin inner row -->
         <div class="row">
@@ -93,7 +93,7 @@
         </div>
         <!-- end inner row -->
       </div>
-      <!-- end inner container --> 
+      <!-- end inner container -->
     </div>
     <!-- end header -->
 
@@ -359,12 +359,12 @@ All you have to do is to set the following <strong>CATALINA_OPTS</strong> enviro
 <pre><code>&lt;role rolename="manager"/&gt;
 &lt;user username="scott" password="tiger" roles="tomcat,manager"/&gt;</code></pre>
 
-<p>Note that if you still want to use your own login modules instead of conf/tomcat-users.xml file, you can do it by remove TomcatAuthenticationContainerDiscovery from <br/>
+<p>Note that if you still want to use your own login modules instead of conf/tomcat-users.xml file, you can do it by remove TomcatAuthenticationContainerDiscovery from
 system properties and point to login.conf file with your login modules configuration. Something like:</p>
 
 <pre><code>export CATALINA_OPTS='-Dhawtio.authenticationEnabled=true -Dhawtio.authenticationContainerDiscoveryClasses= -Dhawtio.realm=hawtio -Djava.security.auth.login.config=$CATALINA_BASE/conf/login.conf'</code></pre>
 
-<p>Then you can configure jaas in file TOMCAT_HOME/conf/login.conf (Example of file below in jetty section).     </p>
+<p>Then you can configure jaas in file TOMCAT_HOME/conf/login.conf (Example of file below in jetty section).</p>
 
 <h5 id = "Configuring_security_in_Jetty">Configuring security in Jetty</h5>
 
@@ -378,7 +378,7 @@ admin=CRYPT:adpexzg3FUZAk,admin,user</code></pre>
 <p>Now create a second file in the same directory called login.conf. This is the login configuration file.</p>
 
 <pre><code>hawtio {
-  org.eclipse.jetty.jaas.spi.PropertyFileLoginModule required 
+  org.eclipse.jetty.jaas.spi.PropertyFileLoginModule required
   debug="true"
   file="${jetty.base}/etc/login.properties";
 };</code></pre>
@@ -449,7 +449,7 @@ admin=CRYPT:adpexzg3FUZAk,admin,user</code></pre>
 
 <h4 id = "Keycloak_integration">Keycloak integration</h4>
 
-<p>Hawtio can now be integrated with <a href="http://www.keycloak.org">Keycloak</a> for SSO authentication. See details <a href="https://github.com/hawtio/hawtio/blob/master/sample-keycloak-integration/README.md">here</a> . </p>
+<p>Hawtio can now be integrated with <a href="http://www.keycloak.org">Keycloak</a> for SSO authentication. See details <a href="https://github.com/hawtio/hawtio/blob/1.x/sample-keycloak-integration/README.md">here</a> .</p>
 
 <h2 id = "Configuration_Properties">Configuration Properties</h2>
 
@@ -465,7 +465,7 @@ admin=CRYPT:adpexzg3FUZAk,admin,user</code></pre>
   <tbody>
     <tr>
       <td>hawtio.offline</td>
-      <td>Whether to run hawtio in offline mode (default false). When in offline mode, then some plugins is not enabled such as <a href="http://hawt.io/plugins/maven/">Maven</a> and <a href="http://hawt.io/plugins/git/">Git</a>.</td>
+      <td>Whether to run hawtio in offline mode (default false). When in offline mode, then some plugins is not enabled such as <a href="http://hawtio.github.io/hawtio/plugins/maven/">Maven</a> and <a href="http://hawtio.github.io/hawtio/plugins/git/">Git</a>.</td>
     </tr>
     <tr>
       <td>hawtio.dirname</td>
@@ -515,8 +515,8 @@ admin=CRYPT:adpexzg3FUZAk,admin,user</code></pre>
 <p>If you are using a web container, the easiest way to change the web app configuration values is:</p>
 
 <ul>
-<li>Create your own WAR which depends on the <strong>hawtio-default.war</strong> like the <a href="https://github.com/hawtio/hawtio/blob/master/sample/pom.xml#L17">sample project's pom.xml</a></li>
-<li>Create your own <a href="https://github.com/hawtio/hawtio/blob/master/sample/src/main/resources/blueprint.properties#L7">blueprint.properties</a> file that then can override whatever properties you require</li>
+<li>Create your own WAR which depends on the <strong>hawtio-default.war</strong> like the <a href="https://github.com/hawtio/hawtio/blob/1.x/sample/pom.xml#L17">sample project's pom.xml</a></li>
+<li>Create your own <a href="https://github.com/hawtio/hawtio/blob/1.x/sample/src/main/resources/blueprint.properties#L7">blueprint.properties</a> file that then can override whatever properties you require</li>
 </ul>
 
 <h4 id = "OSGi_configuration">OSGi configuration</h4>
@@ -525,8 +525,8 @@ admin=CRYPT:adpexzg3FUZAk,admin,user</code></pre>
 
 <h4 id = "Jolokia_configuration">Jolokia configuration</h4>
 
-<p>Jolokia agent is deployed automatically with <code>io.hawt.web.JolokiaConfiguredAgentServlet</code> that extends Jolokia native <code>org.jolokia.http.AgentServlet</code> class, defined in <code>hawtio-web/WEB-INF/web.xml</code>. <br/>
-To customize Jolokia Servlet configuration, according to the parameters that it supports and that are defined here: <br/>
+<p>Jolokia agent is deployed automatically with <code>io.hawt.web.JolokiaConfiguredAgentServlet</code> that extends Jolokia native <code>org.jolokia.http.AgentServlet</code> class, defined in <code>hawtio-web/WEB-INF/web.xml</code>.
+To customize Jolokia Servlet configuration, according to the parameters that it supports and that are defined here:
 https://jolokia.org/reference/html/agents.html#agent-war-init-params</p>
 
 <p>You have to pass them as java system properties, prefixed with <code>jolokia.</code>.</p>
@@ -539,7 +539,7 @@ https://jolokia.org/reference/html/agents.html#agent-war-init-params</p>
 
 <h4 id = "More_information">More information</h4>
 
-<p>In the <a href="http://hawt.io/articles/index.html">articles</a> colleciton you may find links to blog posts how to setup authentication with hawtio in various other containers. </p>
+<p>In the <a href="http://hawtio.github.io/hawtio/articles/index.html">articles</a> colleciton you may find links to blog posts how to setup authentication with hawtio in various other containers.</p>
 
 <p>  </div>
     </div>

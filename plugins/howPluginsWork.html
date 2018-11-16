@@ -25,7 +25,7 @@
 
     <!-- begin dropup -->
     <div class="dropup visible-md visible-lg visible-sm">
-      <div id="ajbossproject">A JBoss Project</div> 
+      <div id="ajbossproject">A JBoss Project</div>
       <a class="tabnav-closed" href="#" id="tab">Red Hat</a>
       <script>
     window.addEventListener('load', function() {
@@ -40,7 +40,7 @@
       <div class="container">
         <div class="row">
           <div class="col-md-12">
-            <a class="top-banner-logo" href="http://hawt.io/">
+            <a class="top-banner-logo" href="/hawtio">
               <img src="/hawtio/images/hawtio_logo.svg" />
             </a>
           </div>
@@ -60,7 +60,7 @@
 
     <!-- begin header -->
     <div class="top-bar navbar navbar-default" role="navigation">
-      <!-- begin inner container --> 
+      <!-- begin inner container -->
       <div class="container">
         <!-- begin inner row -->
         <div class="row">
@@ -93,7 +93,7 @@
         </div>
         <!-- end inner row -->
       </div>
-      <!-- end inner container --> 
+      <!-- end inner container -->
     </div>
     <!-- end header -->
 
@@ -119,7 +119,7 @@
 
 <p>From a plugin developer's perspective a plugin is just a set of resources; usually at least one JavaScript file.</p>
 
-<p>For <a href="http://hawt.io/plugins/index.html">all the plugins</a> we've done so far we've picked <a href="http://angularjs.org/">AngularJS</a> as the UI framework, which has nice a two-way binding between the HTML markup and the JS data model along with modularisation, web directives and dependency injection.</p>
+<p>For <a href="http://hawtio.github.io/hawtio/plugins/index.html">all the plugins</a> we've done so far we've picked <a href="http://angularjs.org/">AngularJS</a> as the UI framework, which has nice a two-way binding between the HTML markup and the JS data model along with modularisation, web directives and dependency injection.</p>
 
 <p>We're using TypeScript to generate the JS code to get syntax for modules, classes, interfaces, type inference and static type checking; but folks can use anything that compiles to JS (e.g. vanilla JS or JSLint / Google Closure, CoffeeScript or any of the JVM language &rarr; JS translators like GWT, Kotlin, Ceylon etc)</p>
 
@@ -127,13 +127,13 @@
 
 <h3 id = "Example_Plugin">Example Plugin</h3>
 
-<p>If you want so see some example code, here's a <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts">log plugin</a> designed to work with an MBean which queries the log statements from SLF4J/log4j, etc.</p>
+<p>If you want so see some example code, here's a <a href="https://github.com/hawtio/hawtio/blob/1.x/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts">log plugin</a> designed to work with an MBean which queries the log statements from SLF4J/log4j, etc.</p>
 
 <ul>
-<li>We can <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L5">map single page URIs templates</a> to HTML templates (partials) and controllers. This will add the view at http://localhost:8282/hawtio/#/logs if you are running hawtio locally.</li>
+<li>We can <a href="https://github.com/hawtio/hawtio/blob/1.x/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L5">map single page URIs templates</a> to HTML templates (partials) and controllers. This will add the view at http://localhost:8282/hawtio/#/logs if you are running hawtio locally.</li>
 <li>These AngularJS modules can be added and removed at runtime inside the same single page application without requiring a reload.</li>
-<li><a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L12">Here's where we register a top-level navigation bar item</a> for this the new log tab.</li>
-<li>Here's a <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L19">sub tab in the JMX plugin</a> which is only visible if you select a node in the JMX tree.</li>
+<li><a href="https://github.com/hawtio/hawtio/blob/1.x/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L12">Here's where we register a top-level navigation bar item</a> for this the new log tab.</li>
+<li>Here's a <a href="https://github.com/hawtio/hawtio/blob/1.x/hawtio-web/src/main/webapp/app/log/js/logPlugin.ts#L19">sub tab in the JMX plugin</a> which is only visible if you select a node in the JMX tree.</li>
 </ul>
 
 <p>Thanks to the dependency injection of <a href="http://angularjs.org/">AngularJS</a> different plugins can expose services and perform various kinds of integration and wiring together.</p>
@@ -146,17 +146,17 @@
 
 <p>The simplest way to make plugins available is to statically link them inside the WAR hosting the hawtio web application.</p>
 
-<p>e.g. if you create a maven WAR project and <a href="https://github.com/hawtio/hawtio/blob/master/sample/pom.xml#L17">add the hawtio-web WAR dependency and use the maven war plugin</a> you can then add your own plugins into the <strong>src/main/webapp/app</strong> directory.</p>
+<p>e.g. if you create a maven WAR project and <a href="https://github.com/hawtio/hawtio/blob/1.x/sample/pom.xml#L17">add the hawtio-web WAR dependency and use the maven war plugin</a> you can then add your own plugins into the <strong>src/main/webapp/app</strong> directory.</p>
 
 <h3 id = "Separate_Deployment_Unit">Separate Deployment Unit</h3>
 
 <p>Plugins can be packaged up as a separate deployment unit (WAR, OSGi bundle, EAR, etc) and then deployed like any other deployment unit.</p>
 
-<p>The plugin then needs to expose a hawtio plugin MBean instance which describes how to load the plugin artifacts (e.g. local URLs inside the container or public URLs to some website). See the <a href="https://github.com/hawtio/hawtio/tree/master/hawtio-plugin-examples">plugin examples</a> for more details.</p>
+<p>The plugin then needs to expose a hawtio plugin MBean instance which describes how to load the plugin artifacts (e.g. local URLs inside the container or public URLs to some website). See the <a href="https://github.com/hawtio/hawtio/tree/1.x/hawtio-plugin-examples">plugin examples</a> for more details.</p>
 
-<p>So plugins can be deployed into the JVM via whatever container you prefer (web container, OSGi, JEE). </p>
+<p>So plugins can be deployed into the JVM via whatever container you prefer (web container, OSGi, JEE).</p>
 
-<p>To see how this works check out the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-plugin-examples/readme.md">plugin examples and detailed description</a>.</p>
+<p>To see how this works check out the <a href="https://github.com/hawtio/hawtio/blob/1.x/hawtio-plugin-examples/readme.md">plugin examples and detailed description</a>.</p>
 
 <p>For example WAR deployment units can easily be deployed in a web container such as Apache Tomcat. Just drop the plugin in the deploy directory along with the hawtio WAR. And hawtio will automatic detect the custom plugin.</p>
 
@@ -171,7 +171,7 @@ java -jar hawtio-app-1.5.11.jar</code></pre>
 
 <p>You can copy as many custom plugins to the <code>plugins</code> directory.</p>
 
-<p>An important aspect however, is that the name of the WAR file must match the context-path name, that has been configured in the <code>web.xml</code> file. For example the groovy-shell example plugin has configured <code>groovy-shell-plugin</code> as its context-path, which means the name of the WAR file must be <code>groovy-shell-plugin.war</code>. Here is the name configured <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-plugin-examples/groovy-shell-plugin/pom.xml#L23">here</a>, which will be used as placeholder in the <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-plugin-examples/groovy-shell-plugin/src/main/resources/WEB-INF/web.xml#L14">web.xml</a> file.</p>
+<p>An important aspect however, is that the name of the WAR file must match the context-path name, that has been configured in the <code>web.xml</code> file. For example the groovy-shell example plugin has configured <code>groovy-shell-plugin</code> as its context-path, which means the name of the WAR file must be <code>groovy-shell-plugin.war</code>. Here is the name configured <a href="https://github.com/hawtio/hawtio/blob/1.x/hawtio-plugin-examples/groovy-shell-plugin/pom.xml#L23">here</a>, which will be used as placeholder in the <a href="https://github.com/hawtio/hawtio/blob/1.x/hawtio-plugin-examples/groovy-shell-plugin/src/main/resources/WEB-INF/web.xml#L14">web.xml</a> file.</p>
 
 <h3 id = "Using_a_Registry">Using a Registry</h3>
 
@@ -179,7 +179,7 @@ java -jar hawtio-app-1.5.11.jar</code></pre>
 
 <p>This has the benefit of not requiring any changes to the JVM being managed (other than Jolokia being inside).</p>
 
-<p>Here is a <a href="https://github.com/hawtio/hawtio/blob/master/hawtio-web/src/main/webapp/test.json">sample JSON file</a> to show the kind of thing we mean.</p>
+<p>Here is a <a href="https://github.com/hawtio/hawtio/blob/1.x/hawtio-web/src/main/webapp/test.json">sample JSON file</a> to show the kind of thing we mean.</p>
 
 <h3 id = "Plugin_Manager__plugin_">Plugin Manager (plugin)</h3>
 

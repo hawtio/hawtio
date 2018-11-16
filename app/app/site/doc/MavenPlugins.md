@@ -14,31 +14,31 @@
   <tr>
     <td>run</td>
     <td>This goal runs the Maven project, by executing the configured mainClass (as a public static void main)</td>
-  </tr>  
+  </tr>
   <tr>
     <td>spring</td>
     <td>This goal runs the Maven project as a Spring application, by loading Spring XML configurations files from the classpath or file system.</td>
-  </tr>    
+  </tr>
   <tr>
     <td>spring-boot</td>
     <td>This goal runs the Maven project as a Spring Boot application, by executing the configured Spring Boot mainClass.</td>
-  </tr>    
+  </tr>
   <tr>
     <td>camel</td>
-    <td>This goal is an extension to the <a href="http://camel.apache.org/camel-maven-plugin.html">Apache Camel Maven Plugins</a>, allowing to run the Camel Maven project and have hawtio embedded. This allows users to gain visibility into the running JVM, and see what happens, such as live visualization of the Camel routes, and being able to debug and profile routes, and much more, offered by the <a href="http://hawt.io/plugins/camel/">Camel plugin</a>.</td>
+    <td>This goal is an extension to the <a href="http://camel.apache.org/camel-maven-plugin.html">Apache Camel Maven Plugins</a>, allowing to run the Camel Maven project and have hawtio embedded. This allows users to gain visibility into the running JVM, and see what happens, such as live visualization of the Camel routes, and being able to debug and profile routes, and much more, offered by the <a href="http://hawtio.github.io/hawtio/plugins/camel/">Camel plugin</a>.</td>
   </tr>
   <tr>
     <td>camel-blueprint</td>
     <td>The same as the camel goal but needed when using OSGi Blueprint Camel applications.</td>
-  </tr>         
+  </tr>
   <tr>
     <td>camel-cdi</td>
     <td>The same as the camel goal but needed when using CDI Camel applications.</td>
-  </tr>         
+  </tr>
   <tr>
     <td>test</td>
-    <td>This goal run the unit tests of the Maven project. Can be used together with the <a href"http://hawt.io/plugins/junit.html">JUnit</a> plugin to run unit tests from within hawtio console as well.</td>
-  </tr>         
+    <td>This goal run the unit tests of the Maven project. Can be used together with the <a href"http://hawtio.github.io/hawtio/plugins/junit.html">JUnit</a> plugin to run unit tests from within hawtio console as well.</td>
+  </tr>
 </table>
 
 
@@ -56,17 +56,17 @@ All of the **hawtio** Maven Plugins provides the following common options:
     <td>logClasspath</td>
     <td>false</td>
     <td>Whether to log the classpath.</td>
-  </tr>  
+  </tr>
   <tr>
     <td>logDependencies</td>
     <td>false</td>
     <td>Whether to log resolved Maven dependencies.</td>
-  </tr>  
+  </tr>
   <tr>
     <td>offline</td>
     <td>false</td>
     <td>Whether to run hawtio in offline mode. Some of the hawtio plugins requires online connection to the internet.</td>
-  </tr>  
+  </tr>
 </table>
 
 
@@ -85,37 +85,37 @@ Currently all of the **hawtio** Maven Plugins provides the following common opti
     <td>context</td>
     <td>hawtio</td>
     <td>The context-path to use for the embedded hawtio web console.</td>
-  </tr>  
+  </tr>
   <tr>
     <td>port</td>
     <td>8080</td>
     <td>The port number to use for the embedded hawtio web console. Notice the spring-boot goal uses port 9191 as default.</td>
-  </tr>  
+  </tr>
   <tr>
     <td>mainClass</td>
     <td></td>
     <td>The fully qualified name of the main class to executed to bootstrap the Maven project. This option is required, and must be a public static void main Java class.</td>
-  </tr>  
+  </tr>
   <tr>
     <td>openWebConsole</td>
     <td>true</td>
     <td>Wheter to automatic open the hawtio web console after 3 number of seconds</td>
-  </tr>  
+  </tr>
   <tr>
     <td>openWebConsoleDelay</td>
     <td>3</td>
     <td>Number of seconds to wait before opening the web console</td>
-  </tr>  
+  </tr>
   <tr>
     <td>arguments</td>
     <td></td>
     <td>Optional arguments to pass to the main class.</td>
-  </tr>  
+  </tr>
   <tr>
     <td>systemProperties</td>
     <td></td>
     <td>Optional system properties to set on the JVM.</td>
-  </tr>  
+  </tr>
 </table>
 
 
@@ -133,12 +133,12 @@ The spring goal extends the run goal and provides the following additional optio
     <td>applicationContextUri</td>
     <td>META-INF/spring/*.xml</td>
     <td>Location on class-path to look for Spring XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContextUri or fileApplicationContextUri can be in use.</td>
-  </tr> 
+  </tr>
   <tr>
     <td>fileApplicationContextUri</td>
     <td></td>
     <td>Location on file system to look for Spring XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContextUri or fileApplicationContextUri can be in use.</td>
-  </tr>     
+  </tr>
 </table>
 
 
@@ -160,12 +160,12 @@ The camel goal extends the run goal and provides the following additional option
     <td>applicationContextUri</td>
     <td>META-INF/spring/*.xml</td>
     <td>Location on class-path to look for Spring XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContextUri or fileApplicationContextUri can be in use.</td>
-  </tr> 
+  </tr>
   <tr>
     <td>fileApplicationContextUri</td>
     <td></td>
     <td>Location on file system to look for Spring XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContextUri or fileApplicationContextUri can be in use.</td>
-  </tr>     
+  </tr>
 </table>
 
 By default the camel plugin will assume the application is a Camel spring application and use the applicationContextUri or fileApplicationContextUri to use as Spring XML files. By configurign a custom mainClass, then the Camel application is using the custom mainClass to bootstrap the Camel application, and neither applicationContextUri, nor fileApplicationContextUri are in use.
@@ -184,22 +184,22 @@ The camel goal extends the run goal and provides the following additional option
     <td>applicationContext</td>
     <td>OSGI-INF/blueprint/*.xml</td>
     <td>Location on class-path to look for Blueprint XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContext or fileApplicationContext can be in use.</td>
-  </tr> 
+  </tr>
   <tr>
     <td>fileApplicationContext</td>
     <td></td>
     <td>Location on file-system to look for Blueprint XML files. Mulutple paths can be seperated with semi colon. Only either one of applicationContext or fileApplicationContext can be in use.</td>
-  </tr> 
+  </tr>
   <tr>
     <td>configAdminPid</td>
     <td></td>
     <td>To use a custom config admin persistence id. The configAdminFileName must be configured as well.</td>
-  </tr> 
+  </tr>
   <tr>
     <td>configAdminFileName</td>
     <td></td>
     <td>Location of the configuration admin configuration file</td>
-  </tr>     
+  </tr>
 </table>
 
 ### camel-cdi Maven Goal configuration
@@ -221,19 +221,19 @@ The test **hawtio** Maven Plugins provides the following common options:
     <td>className</td>
     <td></td>
     <td>Optional to select a specific unit test class to start testing (must specific class name as fully qualified classname)</td>
-  </tr>  
+  </tr>
   <tr>
     <td>testName</td>
     <td></td>
     <td>Optional to select a specific test method(s) to filter and use for testing. You can use * as wildcard to match multiple test methods.</td>
-  </tr>  
+  </tr>
 </table>
 
-If no **className** has been specified then **hawtio** is started up included the projects test classpath, and the <a href="hawt.io/plugins/junit">junit plugin</a> can be used to select tests to run from within **hawtio** console itself.
+If no **className** has been specified then **hawtio** is started up included the projects test classpath, and the <a href="http://hawtio.github.io/hawtio/plugins/junit">junit plugin</a> can be used to select tests to run from within **hawtio** console itself.
 
-If a **className** has been specified then unit testing of the selected class happens when **hawtio** has been started, **but** the unit test will not tear down until the user press enter in the shell. This is on purpose allowing using **hawtio** to inspect the state of the JVM during and after testing. For example to look at the Camel plugin to see route diagrams and profiles with metrics from the completed unit tests. 
+If a **className** has been specified then unit testing of the selected class happens when **hawtio** has been started, **but** the unit test will not tear down until the user press enter in the shell. This is on purpose allowing using **hawtio** to inspect the state of the JVM during and after testing. For example to look at the Camel plugin to see route diagrams and profiles with metrics from the completed unit tests.
 
-Pressing enter in the shell runs the tear down of the unit tests, which for example could unregister Camel from JMX and therefore remove the CamelContext used during testing. When using the <a href="hawt.io/plugins/junit">junit plugin</a> to run unit tests, then these tests will tear down immediately when they complete, and therefore remove any CamelContexts during testing. This may change in the future, allows to keep the CamelContexts alive after testing, giving end users time to inspect the data; and then tear down by pressing a button.
+Pressing enter in the shell runs the tear down of the unit tests, which for example could unregister Camel from JMX and therefore remove the CamelContext used during testing. When using the <a href="http://hawtio.github.io/hawtio/plugins/junit">junit plugin</a> to run unit tests, then these tests will tear down immediately when they complete, and therefore remove any CamelContexts during testing. This may change in the future, allows to keep the CamelContexts alive after testing, giving end users time to inspect the data; and then tear down by pressing a button.
 
 
 ## Configuring hawtio Maven Plugin in pom.xml
@@ -270,7 +270,7 @@ And to set a number of system properties to the JVM, such as the JVM http proxy 
         <systemProperties>
           <http.proxyHost>myproxyserver.org</http.proxyHost>
           <http.proxyPort>8081<http.proxyPort>
-        </systemProperties>  
+        </systemProperties>
       </configuration>
 
 
@@ -296,7 +296,7 @@ Where 1.5.11 is the **hawtio** version to use.
 
 ### Adding hawtio plugin to the Apache Camel examples
 
-In any Maven pom.xml file you can include the hawtio Maven plugin. For example to include the hawtio plugin in the Camel console example, you edit the pom.xml file in examples/camel-example-console directory. 
+In any Maven pom.xml file you can include the hawtio Maven plugin. For example to include the hawtio plugin in the Camel console example, you edit the pom.xml file in examples/camel-example-console directory.
 
 In the &lt;build&gt;&lt;plugin&gt;section add the following xml code:
 
@@ -312,6 +312,6 @@ And you can run the console example simply by typing
 
 And the example is started together with the embedded **hawtio** web console, such as the screenshot below illustrates:
 
-<img src="https://raw.github.com/hawtio/hawtio/master/docs/images/camel-example-console.png" alt="screenshot">
+<img src="https://raw.github.com/hawtio/hawtio/1.x/docs/images/camel-example-console.png" alt="screenshot">
 
 

@@ -257,12 +257,12 @@ Now the user must be in the manager role to be able to login, which we can setup
     <role rolename="manager"/>
     <user username="scott" password="tiger" roles="tomcat,manager"/>
 
-Note that if you still want to use your own login modules instead of conf/tomcat-users.xml file, you can do it by remove TomcatAuthenticationContainerDiscovery from     
+Note that if you still want to use your own login modules instead of conf/tomcat-users.xml file, you can do it by remove TomcatAuthenticationContainerDiscovery from
 system properties and point to login.conf file with your login modules configuration. Something like:
 
     export CATALINA_OPTS='-Dhawtio.authenticationEnabled=true -Dhawtio.authenticationContainerDiscoveryClasses= -Dhawtio.realm=hawtio -Djava.security.auth.login.config=$CATALINA_BASE/conf/login.conf'
 
-Then you can configure jaas in file TOMCAT_HOME/conf/login.conf (Example of file below in jetty section).     
+Then you can configure jaas in file TOMCAT_HOME/conf/login.conf (Example of file below in jetty section).
 
 ##### Configuring security in Jetty
 
@@ -278,7 +278,7 @@ You have added two users. The first one named scott with the password tiger. He 
 Now create a second file in the same directory called login.conf. This is the login configuration file.
 
     hawtio {
-      org.eclipse.jetty.jaas.spi.PropertyFileLoginModule required 
+      org.eclipse.jetty.jaas.spi.PropertyFileLoginModule required
       debug="true"
       file="${jetty.base}/etc/login.properties";
     };
@@ -349,7 +349,7 @@ At last enable the jaas module in jetty. This is done by adding the following li
 
 #### Keycloak integration
 
-Hawtio can now be integrated with [Keycloak](http://www.keycloak.org) for SSO authentication. See details [here](https://github.com/hawtio/hawtio/blob/master/sample-keycloak-integration/README.md) . 
+Hawtio can now be integrated with [Keycloak](http://www.keycloak.org) for SSO authentication. See details [here](https://github.com/hawtio/hawtio/blob/1.x/sample-keycloak-integration/README.md) .
 
 ## Configuration Properties
 
@@ -365,7 +365,7 @@ The following table contains the various configuration settings for the various 
   <tbody>
     <tr>
       <td>hawtio.offline</td>
-      <td>Whether to run hawtio in offline mode (default false). When in offline mode, then some plugins is not enabled such as <a href="http://hawt.io/plugins/maven/">Maven</a> and <a href="http://hawt.io/plugins/git/">Git</a>.</td>
+      <td>Whether to run hawtio in offline mode (default false). When in offline mode, then some plugins is not enabled such as <a href="http://hawtio.github.io/hawtio/plugins/maven/">Maven</a> and <a href="http://hawtio.github.io/hawtio/plugins/git/">Git</a>.</td>
     </tr>
     <tr>
       <td>hawtio.dirname</td>
@@ -414,8 +414,8 @@ The following table contains the various configuration settings for the various 
 
 If you are using a web container, the easiest way to change the web app configuration values is:
 
-* Create your own WAR which depends on the **hawtio-default.war** like the [sample project's pom.xml](https://github.com/hawtio/hawtio/blob/master/sample/pom.xml#L17)
-* Create your own [blueprint.properties](https://github.com/hawtio/hawtio/blob/master/sample/src/main/resources/blueprint.properties#L7) file that then can override whatever properties you require
+* Create your own WAR which depends on the **hawtio-default.war** like the [sample project's pom.xml](https://github.com/hawtio/hawtio/blob/1.x/sample/pom.xml#L17)
+* Create your own [blueprint.properties](https://github.com/hawtio/hawtio/blob/1.x/sample/src/main/resources/blueprint.properties#L7) file that then can override whatever properties you require
 
 #### OSGi configuration
 
@@ -423,8 +423,8 @@ Just update the blueprint configuration values in OSGi config admim as you would
 
 #### Jolokia configuration
 
-Jolokia agent is deployed automatically with `io.hawt.web.JolokiaConfiguredAgentServlet` that extends Jolokia native `org.jolokia.http.AgentServlet` class, defined in `hawtio-web/WEB-INF/web.xml`.  
-To customize Jolokia Servlet configuration, according to the parameters that it supports and that are defined here:  
+Jolokia agent is deployed automatically with `io.hawt.web.JolokiaConfiguredAgentServlet` that extends Jolokia native `org.jolokia.http.AgentServlet` class, defined in `hawtio-web/WEB-INF/web.xml`.
+To customize Jolokia Servlet configuration, according to the parameters that it supports and that are defined here:
 https://jolokia.org/reference/html/agents.html#agent-war-init-params
 
 You have to pass them as java system properties, prefixed with `jolokia.`.
@@ -437,4 +437,4 @@ EX.
 
 #### More information
 
-In the [articles](http://hawt.io/articles/index.html) colleciton you may find links to blog posts how to setup authentication with hawtio in various other containers. 
+In the [articles](http://hawtio.github.io/hawtio/articles/index.html) colleciton you may find links to blog posts how to setup authentication with hawtio in various other containers.

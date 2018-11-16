@@ -1,6 +1,6 @@
-We love contributions! We really need your help to make [hawtio](http://hawt.io/) even more hawt, so please [join our community](http://hawt.io/community/index.html)!
+We love contributions! We really need your help to make [hawtio](http://hawtio.github.io/hawtio/) even more hawt, so please [join our community](http://hawtio.github.io/hawtio/community/index.html)!
 
-Many thanks to all of our [existing contributors](https://github.com/hawtio/hawtio/graphs/contributors)! But we're greedy, we want more! hawtio is _hawt_, but it can be _hawter_! :). We have  [lots of plugins](http://hawt.io/plugins/index.html) but they can be improved and we want more plugins!
+Many thanks to all of our [existing contributors](https://github.com/hawtio/hawtio/graphs/contributors)! But we're greedy, we want more! hawtio is _hawt_, but it can be _hawter_! :). We have  [lots of plugins](http://hawtio.github.io/hawtio/plugins/index.html) but they can be improved and we want more plugins!
 
 Here's some notes to help you get started:
 
@@ -8,7 +8,7 @@ Here's some notes to help you get started:
 
 * Make sure you have a [GitHub account](https://github.com/signup/free) as you'll need it to submit issues, comments or pull requests.
 * Got any ideas for how we can improve hawtio? Please [submit an issue](https://github.com/hawtio/hawtio/issues?state=open) with your thoughts. Constructive criticism is always greatly appreciated!
-* Fancy submitting [any nice screenshots of how you're using hawtio?](https://github.com/hawtio/hawtio/tree/master/website/src/images/screenshots) A quick Youtube screencast would be even _hawter_ or a blog post/article we can link to? Just [submit an issue](https://github.com/hawtio/hawtio/issues?state=open) (or fork and patch the [website](https://github.com/hawtio/hawtio/tree/master/website/src/) or any Markdown docs in our repository directly) and we'll merge it into our website.
+* Fancy submitting [any nice screenshots of how you're using hawtio?](https://github.com/hawtio/hawtio/tree/1.x/website/src/images/screenshots) A quick Youtube screencast would be even _hawter_ or a blog post/article we can link to? Just [submit an issue](https://github.com/hawtio/hawtio/issues?state=open) (or fork and patch the [website](https://github.com/hawtio/hawtio/tree/1.x/website/src/) or any Markdown docs in our repository directly) and we'll merge it into our website.
 * Fancy submitting your cool new dashboard configuration or some wiki docs? See below on how to do that...
 * Search [our issue tracker](https://github.com/hawtio/hawtio/issues?state=open) and see if there's been any ideas or issues reported for what you had in mind; if so please join the conversation in the comments.
 * Submit any issues, feature requests or improvement ideas [our issue tracker](https://github.com/hawtio/hawtio/issues?state=open).
@@ -28,7 +28,7 @@ Here's some notes to help you get started:
    * writing new test cases or improve existing ones
    * adding new features
    * improving the layout / design / CSS
-   * creating a new [plugin](http://hawt.io/plugins/index.html)
+   * creating a new [plugin](http://hawtio.github.io/hawtio/plugins/index.html)
 
 ## Submitting changes to hawtio
 
@@ -38,7 +38,7 @@ Here's some notes to help you get started:
 
 ## Submitting changes dashboard and wiki content
 
-Hawtio uses the [hawtio-config repository](https://github.com/hawtio/hawtio-config) to host its runtime configuration. When you startup hawtio by default it will clone this repository to the configuration directory (see the [configuration document](https://github.com/hawtio/hawtio/blob/master/docs/Configuration.md) or more detail).
+Hawtio uses the [hawtio-config repository](https://github.com/hawtio/hawtio-config) to host its runtime configuration. When you startup hawtio by default it will clone this repository to the configuration directory (see the [configuration document](https://github.com/hawtio/hawtio/blob/1.x/docs/Configuration.md) or more detail).
 
 In development mode if you are running hawtio via the **hawtio-web** directory, then your local clone of the [hawtio-config repository](https://github.com/hawtio/hawtio-config) will be in the **hawtio/hawtio-web/hawtio-config directory**. If you've added some cool new dashboard or editted any files via the hawtio user interface then your changes will be committed locally in this directory.
 
@@ -53,10 +53,10 @@ Now perform a git push as above and then submit a pull request on your forked re
 
 # Additional Resources
 
-* [hawtio FAQ](http://hawt.io/faq/index.html)
+* [hawtio FAQ](http://hawtio.github.io/hawtio/faq/index.html)
 * [General GitHub documentation](http://help.github.com/)
 * [GitHub create pull request documentation](hhttps://help.github.com/articles/creating-a-pull-request)
-* [Here is how to build the code](http://hawt.io/building/index.html)
-* [More information for developers in terms of hawtio technologies, tools and code walkthroughs](http://hawt.io/developers/index.html)
-* [join the hawtio community](http://hawt.io/community/index.html)
+* [Here is how to build the code](http://hawtio.github.io/hawtio/building/index.html)
+* [More information for developers in terms of hawtio technologies, tools and code walkthroughs](http://hawtio.github.io/hawtio/developers/index.html)
+* [join the hawtio community](http://hawtio.github.io/hawtio/community/index.html)
 
