@@ -1,19 +1,24 @@
-const gulp = require('gulp'),
-  eventStream = require('event-stream'),
-  gulpLoadPlugins = require('gulp-load-plugins'),
-  map = require('vinyl-map'),
-  fs = require('fs'),
-  path = require('path'),
-  sequence = require('run-sequence'),
-  size = require('gulp-size'),
-  uri = require('urijs'),
-  s = require('underscore.string'),
-  argv = require('yargs').argv,
-  logger = require('js-logger'),
-  hawtio = require('@hawtio/node-backend'),
-  tslint = require('gulp-tslint'),
-  tslintRules = require('./tslint.json'),
-  exec = require('child_process').exec;
+const gulp = require('gulp');
+const eventStream = require('event-stream');
+const gulpLoadPlugins = require('gulp-load-plugins');
+const map = require('vinyl-map');
+const fs = require('fs');
+const path = require('path');
+const sequence = require('run-sequence');
+const size = require('gulp-size');
+const uri = require('urijs');
+const s = require('underscore.string');
+const argv = require('yargs').argv;
+const logger = require('js-logger');
+const hawtio = require('@hawtio/node-backend');
+const tslint = require('gulp-tslint');
+const tslintRules = require('./tslint.json');
+const exec = require('child_process').exec;
+const usemin = require('gulp-usemin');
+const uglify = require('gulp-uglify');
+const cleanCss = require('gulp-clean-css');
+const rev = require('gulp-rev');
+const preprocess = require("gulp-preprocess");
 
 const plugins = gulpLoadPlugins({});
 
@@ -24,17 +29,13 @@ const config = {
   keycloak: argv.keycloak ? 'true' : 'false',
   app: 'app/',
   src: 'app/src/',
-  srcTs: 'app/src/**/*.ts',
   srcLess: 'app/src/**/*.less',
   srcTemplates: 'app/src/**/!(index|login).html',
   docTemplates: '../@(CHANGES|FAQ).md',
   templateModule: 'hawtio-console-assembly-templates',
   temp: 'temp/',
   dist: 'dist/',
-  distJs: 'dist/js',
-  distCss: 'dist/css',
   distFonts: 'dist/fonts',
-  distLibs: 'dist/libs',
   distImg: 'dist/img',
   js: 'hawtio-console-assembly.js',
   css: 'hawtio-console-assembly.css',
@@ -106,29 +107,25 @@ gulp.task('concat', function () {
     .pipe(plugins.header(license))
     .pipe(size(normalSizeOptions))
     .pipe(gZipSize)
-    .pipe(gulp.dest(config.distJs));
+    .pipe(gulp.dest(config.temp));
 });
 
 gulp.task('less', function () {
   return gulp.src(config.srcLess)
     .pipe(plugins.less())
     .pipe(plugins.concat(config.css))
-    .pipe(gulp.dest(config.distCss));
+    .pipe(gulp.dest(config.temp));
 });
 
 gulp.task('usemin', function () {
   return gulp.src(config.src + '@(index|login).html')
-    .pipe(plugins.usemin({
-      css: [plugins.cleanCss(), 'concat'],
-      js: [
-        plugins.sourcemaps.init({
-          loadMaps: true
-        }),
-        'concat',
-        plugins.uglify(),
-        plugins.rev(),
-        plugins.sourcemaps.write('./')
-      ]
+    .pipe(preprocess())
+    .pipe(usemin({
+      libCss: [cleanCss, rev],
+      appCss: [() => cleanCss({ rebaseTo: 'css/css' }), rev],
+      libJs: [uglify, rev],
+      appJs: [uglify, rev],
+      jsAttributes: { defer: true }
     }))
     .pipe(plugins.debug({ title: 'usemin' }))
     .pipe(gulp.dest(config.dist));
@@ -138,12 +135,15 @@ gulp.task('install-dependencies', function (cb) {
   exec(`cd ${config.app} && yarn install --prod --flat --frozen-lockfile && cd ..`, function (error, stdout, stderr) {
     if (error) {
       console.log(stderr);
-    } else {
-      gulp.src(config.app + '/node_modules/**/*')
-        .pipe(gulp.dest(config.distLibs));
     }
     cb(error);
   });
+});
+
+gulp.task('copy-fonts', function () {
+  return gulp.src('app/node_modules/patternfly/dist/fonts/*')
+    .pipe(plugins.debug({ title: 'copy-fonts' }))
+    .pipe(gulp.dest(config.distFonts));
 });
 
 gulp.task('copy-images', function () {
@@ -165,11 +165,11 @@ gulp.task('copy-images', function () {
   // Add PatternFly images package in dist
   patterns.push(config.app + 'node_modules/patternfly/dist/img/**/*');
   return gulp.src(patterns)
-    .pipe(plugins.debug({ title: 'image copy' }))
+    .pipe(plugins.debug({ title: 'copy-images' }))
     .pipe(gulp.dest(config.distImg));
 });
 
-gulp.task('404', ['usemin'], function () {
+gulp.task('404', function () {
   return gulp.src(config.dist + 'index.html')
     .pipe(plugins.rename('404.html'))
     .pipe(gulp.dest(config.dist));
@@ -275,14 +275,8 @@ gulp.task('connect', function () {
 });
 
 gulp.task('watch', function () {
-  gulp.watch([
-    config.distCss + '*',
-    config.distJs + '*',
-    config.dist + '@(index|login).html'
-  ], ['reload']);
-  gulp.watch([config.srcTs, config.srcTemplates], ['tsc', 'template', 'concat']);
-  gulp.watch(config.srcLess, ['less']);
-  gulp.watch(config.src + '@(index|login).html', ['usemin']);
+  gulp.watch(config.src + '**/*', ['build']);
+  gulp.watch(config.dist + '*', ['reload']);
 });
 
 gulp.task('reload', function () {
@@ -294,7 +288,7 @@ gulp.task('reload', function () {
 // main tasks
 //------------------------------------------------------------------------------
 
-gulp.task('build', callback => sequence('clean', 'tsc', 'template', 'template-docs', 'concat', 'less', 'usemin',
-  'install-dependencies', 'copy-images', '404', 'copy-config', callback));
+gulp.task('build', callback => sequence('clean', 'tsc', 'template', 'template-docs', 'concat', 'less',
+  'install-dependencies', 'usemin', 'copy-fonts', 'copy-images', '404', 'copy-config', callback));
 
 gulp.task('default', callback => sequence('build', ['connect', 'watch']));

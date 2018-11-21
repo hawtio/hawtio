@@ -1,0 +1,133 @@
+<head>
+  <meta charset="UTF-8" />
+  <title>Hawtio</title>
+  <base href='/hawtio/'>
+  <link rel="icon" type="image/x-icon" href="img/favicon.ico?v=1">
+
+  <!-- build:libCss css/lib.css -->
+  <!-- datatables -->
+  <link rel="stylesheet" href="../node_modules/datatables.net-dt/css/jquery.dataTables.css" />
+  <!-- patternfly -->
+  <link rel="stylesheet" href="../node_modules/patternfly/dist/css/patternfly.css">
+  <link rel="stylesheet" href="../node_modules/patternfly/dist/css/patternfly-additions.css">
+  <!-- angular-patternfly -->
+  <link rel="stylesheet" href="../node_modules/angular-patternfly/dist/styles/angular-patternfly.css" />
+  <!-- codemirror -->
+  <link rel="stylesheet" href="../node_modules/codemirror/lib/codemirror.css" />
+  <!-- angular-resizable -->
+  <link rel="stylesheet" href="../node_modules/angular-resizable/src/angular-resizable.css" />
+  <!-- endbuild -->
+
+  <!-- build:appCss css/app.css -->
+  <!-- @hawtio/core -->
+  <link rel="stylesheet" href="../node_modules/@hawtio/core/dist/hawtio-core.css">
+  <!-- @hawtio/ui -->
+  <link rel="stylesheet" href="../node_modules/@hawtio/ui/dist/hawtio-ui.css" />
+  <!-- @hawtio/forms -->
+  <link rel="stylesheet" href="../node_modules/@hawtio/forms/dist/hawtio-forms.css" />
+  <!-- @hawtio/jmx -->
+  <link rel="stylesheet" href="../node_modules/@hawtio/jmx/dist/hawtio-jmx.css" />
+  <!-- @hawtio/integration -->
+  <link rel="stylesheet" href="../node_modules/@hawtio/integration/dist/hawtio-integration.css" />
+  <!-- @hawtio/console-assembly -->
+  <link rel="stylesheet" href="../../temp/hawtio-console-assembly.css" />
+  <!-- endbuild -->
+
+  <!-- build:libJs js/lib.js -->
+  <!-- jquery -->
+  <script src="../node_modules/jquery/dist/jquery.js"></script>
+  <!-- datatables -->
+  <script src="../node_modules/datatables.net/js/jquery.dataTables.js"></script>
+  <script src="../node_modules/datatables.net-select/js/dataTables.select.js"></script>
+  <!-- bootstrap -->
+  <script src="../node_modules/bootstrap/dist/js/bootstrap.js"></script>
+  <!-- patternfly -->
+  <script src="../node_modules/patternfly/dist/js/patternfly.js"></script>
+  <!-- patternfly-bootstrap-treeview -->
+  <script src="../node_modules/patternfly-bootstrap-treeview/dist/bootstrap-treeview.js"></script>
+  <!-- angular -->
+  <script src="../node_modules/angular/angular.js"></script>
+  <!-- angular-animate -->
+  <script src="../node_modules/angular-animate/angular-animate.js"></script>
+  <!-- angular-sanitize -->
+  <script src="../node_modules/angular-sanitize/angular-sanitize.js"></script>
+  <!-- angular-route -->
+  <script src="../node_modules/angular-route/angular-route.js"></script>
+  <!-- angular-ui-bootstrap -->
+  <script src="../node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
+  <!-- angular-resizable -->
+  <script src="../node_modules/angular-resizable/angular-resizable.min.js"></script>
+  <!-- angular-animate -->
+  <script src="../node_modules/angular-animate/angular-animate.js"></script>
+  <!-- angular-drag-and-drop-lists -->
+  <script src="../node_modules/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>
+  <!-- angular-datatables -->
+  <script src="../node_modules/angularjs-datatables/dist/angular-datatables.js"></script>
+  <script src="../node_modules/angularjs-datatables/dist/plugins/select/angular-datatables.select.js"></script>
+  <!-- angular-patternfly -->
+  <script src="../node_modules/angular-patternfly/dist/angular-patternfly.js"></script>
+  <!-- angular-idle -->
+  <script src="../node_modules/ng-idle/angular-idle.js"></script>
+  <!-- c3, d3 -->
+  <script src="../node_modules/c3/c3.js"></script>
+  <script src="../node_modules/d3/d3.js"></script>
+  <!-- lodash -->
+  <script src="../node_modules/lodash/lodash.js"></script>
+  <!-- urijs -->
+  <script src="../node_modules/urijs/src/URI.js"></script>
+  <!-- js-logger -->
+  <script src="../node_modules/js-logger/src/logger.js"></script>
+  <!-- clipboard -->
+  <script src="../node_modules/clipboard/dist/clipboard.js"></script>
+  <!-- marked -->
+  <script src="../node_modules/marked/lib/marked.js"></script>
+  <!-- js-beautify -->
+  <script src="../node_modules/js-beautify/js/lib/beautify.js"></script>
+  <script src="../node_modules/js-beautify/js/lib/beautify-html.js"></script>
+  <!-- codemirror -->
+  <script src="../node_modules/codemirror/lib/codemirror.js"></script>
+  <script src="../node_modules/codemirror/addon/edit/closetag.js"></script>
+  <script src="../node_modules/codemirror/addon/edit/continuelist.js"></script>
+  <script src="../node_modules/codemirror/addon/edit/matchbrackets.js"></script>
+  <script src="../node_modules/codemirror/addon/fold/foldcode.js"></script>
+  <script src="../node_modules/codemirror/addon/fold/brace-fold.js"></script>
+  <script src="../node_modules/codemirror/addon/fold/xml-fold.js"></script>
+  <script src="../node_modules/codemirror/mode/javascript/javascript.js"></script>
+  <script src="../node_modules/codemirror/mode/xml/xml.js"></script>
+  <script src="../node_modules/codemirror/mode/css/css.js"></script>
+  <script src="../node_modules/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+  <script src="../node_modules/codemirror/mode/markdown/markdown.js"></script>
+  <script src="../node_modules/codemirror/mode/diff/diff.js"></script>
+  <script src="../node_modules/codemirror/mode/properties/properties.js"></script>
+  <script src="../node_modules/codemirror/mode/clike/clike.js"></script>
+  <script src="../node_modules/codemirror/mode/yaml/yaml.js"></script>
+  <!-- graphlib, dagre -->
+  <script src="../node_modules/graphlib/dist/graphlib.core.js"></script>
+  <script src="../node_modules/dagre-layout/dist/dagre-layout.js"></script>
+  <!-- ng-infinite-scroll -->
+  <script src="../node_modules/ng-infinite-scroll/build/ng-infinite-scroll.js"></script>
+  <!-- cubism -->
+  <script src="../node_modules/cubism/cubism.v1.js"></script>
+  <!-- jolokia -->
+  <script src="../node_modules/jolokia.js/jolokia.js"></script>
+  <script src="../node_modules/jolokia.js/jolokia-simple.js"></script>
+  <script src="../node_modules/jolokia.js/jolokia-cubism.js"></script>
+  <!-- endbuild -->
+
+  <!-- build:appJs js/app.js -->
+  <!-- @hawtio/core -->
+  <script src="../node_modules/@hawtio/core/dist/hawtio-core.js"></script>
+  <!-- @hawtio/ui -->
+  <script src="../node_modules/@hawtio/ui/dist/hawtio-ui.js"></script>
+  <!-- @hawtio/forms -->
+  <script src="../node_modules/@hawtio/forms/dist/hawtio-forms.js"></script>
+  <!-- @hawtio/oauth -->
+  <script src="../node_modules/@hawtio/oauth/dist/hawtio-oauth.js"></script>
+  <!-- @hawtio/jmx -->
+  <script src="../node_modules/@hawtio/jmx/dist/hawtio-jmx.js"></script>
+  <!-- @hawtio/integration -->
+  <script src="../node_modules/@hawtio/integration/dist/hawtio-integration.js"></script>
+  <!-- @hawtio/console-assembly -->
+  <script src="../../temp/hawtio-console-assembly.js"></script>
+  <!-- endbuild -->
+</head>
