@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@hawtio/node-backend": "^3.0.0",
-    "event-stream": "^3.0.0",
+    "event-stream": "3.3.4",
     "gulp": "^3.0.0",
     "gulp-angular-templatecache": "^2.0.0",
     "gulp-chmod": "^2.0.0",
