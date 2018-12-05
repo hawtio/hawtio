@@ -1,0 +1,6 @@
+startDelaySecs: 5
+ssl: false
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+blacklistObjectNames: ["java.lang:*"]
+attrNameSnakeCase: true
