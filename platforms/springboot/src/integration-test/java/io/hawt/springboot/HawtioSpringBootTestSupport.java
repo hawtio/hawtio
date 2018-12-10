@@ -141,7 +141,7 @@ public class HawtioSpringBootTestSupport {
 
             addProperty("server.port", String.valueOf(SERVER_PORT));
             addProperty("server.servlet.context-path", contextPath);
-            addProperty("server.servlet.path", servletPath);
+            addProperty("spring.mvc.servlet.path", servletPath);
             addProperty("management.server.servlet.context-path", managementContextPath);
             addProperty("management.endpoints.web.base-path", managementBasePath);
             addProperty("management.endpoints.web.path-mapping.jolokia", jolokiaPath);

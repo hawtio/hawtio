@@ -7,25 +7,29 @@ import java.util.Map;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletPath;
 
 public class EndpointPathResolver {
 
     private final WebEndpointProperties webEndpointProperties;
     private final ServerProperties serverProperties;
     private final ManagementServerProperties managementServerProperties;
+    private final DispatcherServletPath dispatcherServletPath;
 
     public EndpointPathResolver(final WebEndpointProperties webEndpointProperties,
                                 final ServerProperties serverProperties,
-                                final ManagementServerProperties managementServerProperties) {
+                                final ManagementServerProperties managementServerProperties,
+                                final DispatcherServletPath dispatcherServletPath) {
         this.webEndpointProperties = webEndpointProperties;
         this.serverProperties = serverProperties;
         this.managementServerProperties = managementServerProperties;
+        this.dispatcherServletPath = dispatcherServletPath;
     }
 
     public String resolve(final String endpointName) {
         final Map<String, String> pathMapping = webEndpointProperties.getPathMapping();
         final String basePath = webEndpointProperties.getBasePath();
-        final String servletPath = serverProperties.getServlet().getPath();
+        final String servletPath = dispatcherServletPath.getPath();
         String endpointPathMapping = pathMapping.get(endpointName);
 
         if (endpointPathMapping == null) {
@@ -37,7 +41,7 @@ public class EndpointPathResolver {
     }
 
     public String resolveUrlMapping(String endpointName, String... mappings) {
-        String servletPath = serverProperties.getServlet().getPath();
+        String servletPath = dispatcherServletPath.getPath();
         String endpointPath = resolve(endpointName);
 
         if (!servletPath.equals("/")) {

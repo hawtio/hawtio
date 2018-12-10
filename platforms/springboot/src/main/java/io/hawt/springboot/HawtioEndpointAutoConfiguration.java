@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletPath;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -35,8 +36,12 @@ public class HawtioEndpointAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnBean(HawtioEndpoint.class)
-    public EndpointPathResolver hawtioEndpointPathResolver(WebEndpointProperties webEndpointProperties, ServerProperties serverProperties, ManagementServerProperties managementServerProperties) {
-        return new EndpointPathResolver(webEndpointProperties, serverProperties, managementServerProperties);
+    public EndpointPathResolver hawtioEndpointPathResolver(
+        WebEndpointProperties webEndpointProperties,
+        ServerProperties serverProperties,
+        ManagementServerProperties managementServerProperties,
+        DispatcherServletPath dispatcherServletPath) {
+        return new EndpointPathResolver(webEndpointProperties, serverProperties, managementServerProperties, dispatcherServletPath);
     }
 
     @Bean

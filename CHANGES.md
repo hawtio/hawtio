@@ -4,11 +4,12 @@
 
 * Support Java 11
 * Upgrade @hawtio/integration, @hawtio/jmx to 4.2.x
+* Upgrade Spring Boot to 2.1.0
 
 #### 2.3.0
 
-* Add support for Spring Boot 2  
-  **Note:** Spring Boot 2 is now the default Spring Boot version for Hawtio dependency `hawtio-spring-boot`.  
+* Add support for Spring Boot 2
+  **Note:** Spring Boot 2 is now the default Spring Boot version for Hawtio dependency `hawtio-spring-boot`.
   If Spring Boot 1 is required, use dependency `hawtio-spring-boot-1`.
 * Bug fixes
 
