@@ -92,10 +92,10 @@ public class AuthenticationConfiguration {
 
         // JVM system properties can override always
         if (System.getProperty(HAWTIO_AUTHENTICATION_ENABLED) != null) {
-            this.enabled = Boolean.getBoolean(HAWTIO_AUTHENTICATION_ENABLED);
+            this.enabled = Boolean.getBoolean(System.getProperty(HAWTIO_AUTHENTICATION_ENABLED));
         }
         if (System.getProperty(HAWTIO_NO_CREDENTIALS_401) != null) {
-            this.noCredentials401 = Boolean.getBoolean(HAWTIO_NO_CREDENTIALS_401);
+            this.noCredentials401 = Boolean.getBoolean(System.getProperty(HAWTIO_NO_CREDENTIALS_401));
         }
         if (System.getProperty(HAWTIO_REALM) != null) {
             this.realm = System.getProperty(HAWTIO_REALM);
@@ -110,7 +110,7 @@ public class AuthenticationConfiguration {
             this.rolePrincipalClasses = System.getProperty(HAWTIO_ROLE_PRINCIPAL_CLASSES);
         }
         if (System.getProperty(HAWTIO_KEYCLOAK_ENABLED) != null) {
-            this.keycloakEnabled = this.enabled && Boolean.getBoolean(HAWTIO_KEYCLOAK_ENABLED);
+            this.keycloakEnabled = this.enabled && Boolean.getBoolean(System.getProperty(HAWTIO_KEYCLOAK_ENABLED));
         }
         if (System.getProperty(HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES) != null) {
             authDiscoveryClasses = System.getProperty(HAWTIO_AUTH_CONTAINER_DISCOVERY_CLASSES);
