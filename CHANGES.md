@@ -4,7 +4,7 @@
 
 * Support Java 11
 * Upgrade @hawtio/integration, @hawtio/jmx to 4.2.x
-* Upgrade Spring Boot to 2.1.0
+* Upgrade Spring Boot to 2.1.1
 
 #### 2.3.0
 
