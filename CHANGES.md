@@ -1,6 +1,8 @@
 ## Change Log
 
-#### 2.4.0 (To be released)
+#### 2.5.0 (To be released)
+
+#### 2.4.0
 
 * Support Java 11
 * Upgrade @hawtio/integration, @hawtio/jmx to 4.2.x
