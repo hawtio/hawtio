@@ -1,5 +1,7 @@
 package io.hawt.web;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,9 +12,12 @@ import java.util.Map;
 import java.util.Set;
 import javax.management.AttributeNotFoundException;
 
+import io.hawt.util.IOHelper;
 import org.jolokia.converter.Converters;
 import org.jolokia.converter.json.JsonConvertOptions;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +27,16 @@ import org.slf4j.LoggerFactory;
 public class ServletHelpers {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(ServletHelpers.class);
+
+    public static JSONObject readObject(BufferedReader reader) throws IOException {
+        String data = IOHelper.readFully(reader);
+        JSONParser parser = new JSONParser();
+        try {
+            return (JSONObject) parser.parse(data);
+        } catch (ParseException e) {
+            throw new IOException(e);
+        }
+    }
 
     static void writeEmpty(PrintWriter out) {
         out.write("{}");

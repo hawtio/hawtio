@@ -3,6 +3,7 @@ target
 *.ipr
 *.iws
 *.log
+*.out
 overlays
 .DS_Store
 .settings
