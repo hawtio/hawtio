@@ -19,6 +19,8 @@ public class ConfigManager {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(ConfigManager.class);
 
+    public static final String CONFIG_MANAGER = "ConfigManager";
+
     private Context envContext = null;
 
     private Function<String, String> propertyResolver;
@@ -80,6 +82,10 @@ public class ConfigManager {
 
         LOG.debug("Property {} is set to value {}", name, answer);
         return answer;
+    }
+
+    public boolean getBoolean(String name, boolean defaultValue) {
+        return Boolean.parseBoolean(get(name, Boolean.toString(defaultValue)));
     }
 
     private static String getHawtioSystemProperty(String name) {

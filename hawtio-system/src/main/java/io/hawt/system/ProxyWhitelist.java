@@ -41,6 +41,10 @@ public class ProxyWhitelist {
     protected ObjectName fabricMBean;
 
     public ProxyWhitelist(String whitelistStr) {
+        this(whitelistStr, true);
+    }
+
+    public ProxyWhitelist(String whitelistStr, boolean probeLocal) {
         if (Strings.isBlank(whitelistStr)) {
             whitelist = new CopyOnWriteArraySet<>();
             regexWhitelist = Collections.emptyList();
@@ -48,7 +52,15 @@ public class ProxyWhitelist {
             whitelist = new CopyOnWriteArraySet<>(filterRegex(Strings.split(whitelistStr, ",")));
             regexWhitelist = buildRegexWhitelist(Strings.split(whitelistStr, ","));
         }
-        initialiseWhitelist();
+
+        if (probeLocal) {
+            LOG.info("Probing local addresses ...");
+            initialiseWhitelist();
+        } else {
+            LOG.info("Probing local addresses disabled");
+            whitelist.add("localhost");
+            whitelist.add("127.0.0.1");
+        }
         LOG.info("Initial proxy whitelist: {}", whitelist);
 
         mBeanServer = ManagementFactory.getPlatformMBeanServer();

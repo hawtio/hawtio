@@ -58,7 +58,7 @@ public class HawtioContextListener implements ServletContextListener {
         } catch (Exception e) {
             throw createServletException(e);
         }
-        servletContextEvent.getServletContext().setAttribute("ConfigManager", configManager);
+        servletContextEvent.getServletContext().setAttribute(ConfigManager.CONFIG_MANAGER, configManager);
     }
 
     public void contextDestroyed(ServletContextEvent servletContextEvent) {

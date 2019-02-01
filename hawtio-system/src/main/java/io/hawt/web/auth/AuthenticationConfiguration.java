@@ -40,7 +40,6 @@ public class AuthenticationConfiguration {
 
     // ServletContext attributes
     public static final String AUTHENTICATION_CONFIGURATION = "authenticationConfig";
-    public static final String CONFIG_MANAGER = "ConfigManager";
 
     public static final String DEFAULT_REALM = "karaf";
     private static final String DEFAULT_KARAF_ROLES = "admin,manager,viewer";
@@ -60,7 +59,7 @@ public class AuthenticationConfiguration {
     private boolean keycloakEnabled;
 
     public AuthenticationConfiguration(ServletContext servletContext) {
-        ConfigManager config = (ConfigManager) servletContext.getAttribute(CONFIG_MANAGER);
+        ConfigManager config = (ConfigManager) servletContext.getAttribute(ConfigManager.CONFIG_MANAGER);
 
         String defaultRolePrincipalClasses = "";
 
@@ -83,9 +82,9 @@ public class AuthenticationConfiguration {
             }
             this.role = roles;
             this.rolePrincipalClasses = config.get(ROLE_PRINCIPAL_CLASSES, defaultRolePrincipalClasses);
-            this.enabled = Boolean.parseBoolean(config.get(AUTHENTICATION_ENABLED, "true"));
-            this.noCredentials401 = Boolean.parseBoolean(config.get(NO_CREDENTIALS_401, "false"));
-            this.keycloakEnabled = this.enabled && Boolean.parseBoolean(config.get(KEYCLOAK_ENABLED, "false"));
+            this.enabled = config.getBoolean(AUTHENTICATION_ENABLED, true);
+            this.noCredentials401 = config.getBoolean(NO_CREDENTIALS_401, false);
+            this.keycloakEnabled = this.enabled && config.getBoolean(KEYCLOAK_ENABLED, false);
 
             authDiscoveryClasses = config.get(AUTHENTICATION_CONTAINER_DISCOVERY_CLASSES, authDiscoveryClasses);
         }

@@ -40,7 +40,7 @@ public class KeycloakServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        ConfigManager config = (ConfigManager) getServletContext().getAttribute("ConfigManager");
+        ConfigManager config = (ConfigManager) getServletContext().getAttribute(ConfigManager.CONFIG_MANAGER);
 
         authConfiguration = AuthenticationConfiguration.getConfiguration(getServletContext());
         keycloakEnabled = authConfiguration.isKeycloakEnabled();

@@ -52,7 +52,7 @@ public class LoginServlet extends HttpServlet {
     }
 
     private void setupSessionTimeout() {
-        ConfigManager configManager = (ConfigManager) getServletContext().getAttribute("ConfigManager");
+        ConfigManager configManager = (ConfigManager) getServletContext().getAttribute(ConfigManager.CONFIG_MANAGER);
         if (configManager == null) {
             return;
         }

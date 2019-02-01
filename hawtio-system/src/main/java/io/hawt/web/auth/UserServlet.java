@@ -24,9 +24,9 @@ public class UserServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        config = (ConfigManager) getServletConfig().getServletContext().getAttribute("ConfigManager");
+        config = (ConfigManager) getServletConfig().getServletContext().getAttribute(ConfigManager.CONFIG_MANAGER);
         if (config != null) {
-            this.authenticationEnabled = Boolean.parseBoolean(config.get("authenticationEnabled", "true"));
+            this.authenticationEnabled = config.getBoolean(AuthenticationConfiguration.AUTHENTICATION_ENABLED, true);
         }
 
         // JVM system properties can override always

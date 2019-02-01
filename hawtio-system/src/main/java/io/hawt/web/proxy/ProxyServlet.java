@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import io.hawt.system.ConfigManager;
 import io.hawt.system.ProxyWhitelist;
 import io.hawt.util.Strings;
 import io.hawt.web.ForbiddenReason;
@@ -97,7 +98,10 @@ public class ProxyServlet extends HttpServlet {
     private static final String PROXY_ACCEPT_SELF_SIGNED_CERTS_ENV = "PROXY_DISABLE_CERT_VALIDATION";
 
     public static final String PROXY_WHITELIST = "proxyWhitelist";
+    public static final String LOCAL_ADDRESS_PROBING = "localAddressProbing";
+
     public static final String HAWTIO_PROXY_WHITELIST = "hawtio." + PROXY_WHITELIST;
+    public static final String HAWTIO_LOCAL_ADDRESS_PROBING = "hawtio." + LOCAL_ADDRESS_PROBING;
 
     /* MISC */
 
@@ -119,11 +123,11 @@ public class ProxyServlet extends HttpServlet {
     public void init(ServletConfig servletConfig) throws ServletException {
         super.init(servletConfig);
 
-        String whitelistStr = servletConfig.getInitParameter(PROXY_WHITELIST);
-        if (System.getProperty(HAWTIO_PROXY_WHITELIST) != null) {
-            whitelistStr = System.getProperty(HAWTIO_PROXY_WHITELIST);
-        }
-        whitelist = new ProxyWhitelist(whitelistStr);
+        ConfigManager config = (ConfigManager) getServletContext().getAttribute(ConfigManager.CONFIG_MANAGER);
+
+        String whitelistStr = config.get(PROXY_WHITELIST, servletConfig.getInitParameter(PROXY_WHITELIST));
+        boolean probeLocal = config.getBoolean(LOCAL_ADDRESS_PROBING, true);
+        whitelist = new ProxyWhitelist(whitelistStr, probeLocal);
 
         String doForwardIPString = servletConfig.getInitParameter(P_FORWARDEDFOR);
         if (doForwardIPString != null) {

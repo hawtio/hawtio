@@ -23,7 +23,7 @@ public abstract class HttpHeaderFilter implements Filter {
     }
 
     public void init(FilterConfig filterConfig) throws ServletException {
-        configManager = (ConfigManager) filterConfig.getServletContext().getAttribute("ConfigManager");
+        configManager = (ConfigManager) filterConfig.getServletContext().getAttribute(ConfigManager.CONFIG_MANAGER);
     }
 
     public void destroy() {
