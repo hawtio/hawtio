@@ -48,8 +48,10 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
                 URI uri = URI.create(url);
                 LOG.info("Found Keycloak URL: {}", uri);
                 // mind the initial whitespace
-                String hostPort = String.format(" %s:%d", uri.getHost(), uri.getPort() > 0 ? uri.getPort()
-                        : "https".equals(uri.getScheme()) ? 443 : 80);
+                String hostPort = " " + uri.getHost();
+                if (uri.getPort() >= 0) {
+                    hostPort += ":" + uri.getPort();
+                }
                 POLICY = String.format(POLICY_TEMPLATE, hostPort, hostPort, hostPort);
                 addedKeycloakUrl = true;
             } catch (IOException e) {
