@@ -4,6 +4,9 @@
 
 * Add config property `hawtio.localAddressProbing`. Now you can disable local address probing
   for proxy whitelist upon startup by setting this property to `false` (default: `true`).
+* Upgrade Camel to 2.23.1
+* Upgrade Spring Framework to 5.1.3
+* Upgrade Spring Boot to 2.1.2
 * Bug fixes
 
 #### 2.4.0
