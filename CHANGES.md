@@ -1,6 +1,8 @@
 ## Change Log
 
-#### 2.5.0 (To be released)
+#### 2.6.0 (To be released)
+
+#### 2.5.0
 
 * Add config property `hawtio.localAddressProbing`. Now you can disable local address probing
   for proxy whitelist upon startup by setting this property to `false` (default: `true`).
