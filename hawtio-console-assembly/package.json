@@ -35,6 +35,7 @@
     "gulp-typescript": "^4.0.0",
     "gulp-uglify": "^3.0.0",
     "gulp-usemin": "~0.3.0",
+    "natives": "~1.1.6",
     "run-sequence": "^2.0.0",
     "tslint": "^5.4.3",
     "typescript": "^3.0.0",

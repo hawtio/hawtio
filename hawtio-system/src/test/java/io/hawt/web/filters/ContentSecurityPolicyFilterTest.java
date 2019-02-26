@@ -50,8 +50,8 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
                 "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
-                        + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self'; "
-                        + "frame-src 'self'");
+                        + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
+                        + "connect-src 'self'; frame-src 'self'");
     }
 
     @Test
@@ -64,7 +64,7 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
                 "default-src 'self'; script-src 'self' localhost:8180 'unsafe-inline' 'unsafe-eval'; "
-                        + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; "
+                        + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
                         + "connect-src 'self' localhost:8180; frame-src 'self' localhost:8180");
     }
 
@@ -78,7 +78,7 @@ public class ContentSecurityPolicyFilterTest {
         // then
         verify(response).addHeader("Content-Security-Policy",
                 "default-src 'self'; script-src 'self' localhost:8180 'unsafe-inline' 'unsafe-eval'; "
-                        + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; "
+                        + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
                         + "connect-src 'self' localhost:8180; frame-src 'self' localhost:8180");
     }
 

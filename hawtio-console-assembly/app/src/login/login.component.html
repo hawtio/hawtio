@@ -1,42 +1,60 @@
-<span id="badge">
-  <img ng-src="{{$ctrl.branding.companyLogoUrl}}" alt="">
-</span>
-<div class="container">
-  <div class="row">
-    <div class="col-sm-12">
-      <div id="brand">
-        <img ng-src="{{$ctrl.branding.appLogoUrl}}" alt="{{$ctrl.branding.appName}}">
-        <span>{{$ctrl.branding.appType}}</span>
-      </div><!--/#brand-->
-      <div class="alert alert-danger" ng-if="$ctrl.wrongPassword">
-        <span class="pficon pficon-error-circle-o"></span>
-        Incorrect username or password
+<div class="pf-c-background-image">
+  <svg xmlns="http://www.w3.org/2000/svg" class="pf-c-background-image__filter" width="0" height="0">
+    <filter id="image_overlay">
+      <feColorMatrix type="matrix" values="1 0 0 0 0
+              1 0 0 0 0
+              1 0 0 0 0
+              0 0 0 1 0" />
+      <feComponentTransfer color-interpolation-filters="sRGB" result="duotone">
+        <feFuncR type="table" tableValues="0.086274509803922 0.43921568627451"></feFuncR>
+        <feFuncG type="table" tableValues="0.086274509803922 0.43921568627451"></feFuncG>
+        <feFuncB type="table" tableValues="0.086274509803922 0.43921568627451"></feFuncB>
+        <feFuncA type="table" tableValues="0 1"></feFuncA>
+      </feComponentTransfer>
+    </filter>
+  </svg>
+</div>
+<div class="pf-c-login">
+  <div class="pf-c-login__container">
+    <header class="pf-c-login__header">
+      <img class="pf-c-brand" ng-src="{{$ctrl.branding.appLogoUrl}}" alt="{{$ctrl.branding.appName}}">
+      <span>{{$ctrl.branding.appType}}</span>
+    </header>
+    <main class="pf-c-login__main">
+      <header class="pf-c-login__main-header">
+        <h1 class="pf-c-title pf-m-3xl">
+          Log in to your account
+        </h1>
+      </header>
+      <div class="pf-c-login__main-body">
+        <form novalidate class="pf-c-form" ng-submit="$ctrl.doLogin()">
+          <p class="pf-c-form__helper-text pf-m-error" ng-class="{'pf-m-hidden': !$ctrl.wrongPassword}">
+            <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+            &nbsp;Invalid login credentials
+          </p>
+          <div class="pf-c-form__group">
+            <label class="pf-c-form__label" for="username">
+              Username <span class="pf-c-form__label-required" aria-hidden="true">&#42;</span>
+            </label>
+            <input id="username" name="username" type="text" class="pf-c-form-control"
+              ng-model="$ctrl.entity.username" aria-invalid="{{$ctrl.wrongPassword}}" autocomplete="username"
+              required autofocus></input>
+          </div>
+          <div class="pf-c-form__group">
+            <label class="pf-c-form__label" for="password">
+              Password <span class="pf-c-form__label-required" aria-hidden="true">&#42;</span>
+            </label>
+            <input id="password" name="password" type="password" class="pf-c-form-control"
+              ng-model="$ctrl.entity.password" aria-invalid="{{$ctrl.wrongPassword}}" autocomplete="current-password"
+              required></input>
+          </div>
+          <div class="pf-c-form__group pf-m-action">
+            <button type="submit" class="pf-c-button pf-m-primary pf-m-block">
+              Log in
+            </button>
+          </div>
+        </form>
       </div>
-    </div><!--/.col-*-->
-    <div class="col-sm-7 col-md-6 col-lg-5 login">
-      <form class="form-horizontal" role="form" ng-submit="$ctrl.doLogin()">
-        <div class="form-group">
-          <label for="username" class="col-sm-2 col-md-2 control-label">Username</label>
-          <div class="col-sm-10 col-md-10">
-            <input type="text" class="form-control" id="username" autocomplete="section-login username"
-                    ng-model="$ctrl.entity.username" tabindex="1" autofocus>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="password" class="col-sm-2 col-md-2 control-label">Password</label>
-          <div class="col-sm-10 col-md-10">
-            <input type="password" class="form-control" id="password" autocomplete="section-login current-password"
-                    ng-model="$ctrl.entity.password" tabindex="2">
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="col-xs-12 col-sm-12 col-md-12 submit">
-            <button type="submit" class="btn btn-primary btn-lg" tabindex="4">Log In</button>
-          </div>
-        </div>
-      </form>
-    </div><!--/.col-*-->
-    <div class="col-sm-5 col-md-6 col-lg-7 details">
-    </div><!--/.col-*-->
-  </div><!--/.row-->
-</div><!--/.container-->
+    </main>
+  </div>
+</div>

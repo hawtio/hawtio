@@ -2,15 +2,12 @@
   "name": "@hawtio/console-assembly",
   "version": "2.0.0",
   "dependencies": {
-    "@hawtio/integration": "~4.3.0",
-    "@hawtio/oauth": "~4.1.0",
+    "@hawtio/integration": "~4.4.0",
+    "@hawtio/oauth": "~4.4.0",
     "keycloak-js": "3.4.3"
   },
   "flat": true,
   "resolutions": {
-    "@types/jquery": "2.0.53",
-    "@hawtio/core": "4.3.3",
-    "@hawtio/core-dts": "3.3.2",
     "@types/jasmine": "2.8.16",
     "@types/marked": "0.6.0",
     "@types/urijs": "1.15.38",
@@ -22,7 +19,9 @@
     "marked": "0.6.0",
     "angular-ui-bootstrap": "2.5.6",
     "bootstrap-select": "1.12.4",
-    "moment": "2.21.0"
+    "moment": "2.21.0",
+    "@types/jquery": "2.0.53",
+    "bootstrap": "3.3.7"
   },
   "license": "Apache-2.0",
   "repository": {

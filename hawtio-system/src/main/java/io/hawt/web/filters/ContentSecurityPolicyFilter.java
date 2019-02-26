@@ -28,6 +28,7 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
         "script-src 'self'%s 'unsafe-inline' 'unsafe-eval'; " +
         "style-src 'self' 'unsafe-inline'; " +
         "font-src 'self' data:; " +
+        "img-src 'self' data:; " +
         "connect-src 'self'%s; " +
         "frame-src 'self'%s";
 
