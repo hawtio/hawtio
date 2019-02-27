@@ -9,8 +9,8 @@
     "@types/jquery" "2.0.53"
 
 "@hawtio/core@~4.4.0":
-  version "4.4.3"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.4.3.tgz#d7f076e98a0518fad7e0469ad7d0b082f22072c5"
+  version "4.4.4"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.4.4.tgz#078d35341e3a950c958ba595c62bfd8349918bde"
   dependencies:
     "@hawtio/core-dts" "~3.3.0"
     "@patternfly/patternfly" "~1.0.192"
@@ -34,8 +34,8 @@
     urijs "1.19.0"
 
 "@hawtio/integration@~4.4.0":
-  version "4.4.3"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.4.3.tgz#fcab8f43e7543f495c253b65d79726410a8e4281"
+  version "4.4.4"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.4.4.tgz#3be070f00db3e83562471646a9d9f1990757876b"
   dependencies:
     "@hawtio/jmx" "~4.4.0"
     "@types/angular-mocks" "~1.7.0"
@@ -46,8 +46,8 @@
     ng-infinite-scroll "1.3.0"
 
 "@hawtio/jmx@~4.4.0":
-  version "4.4.3"
-  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-4.4.3.tgz#e05700bac9ad77fa3d0cd59b236363494ff5115e"
+  version "4.4.4"
+  resolved "https://registry.yarnpkg.com/@hawtio/jmx/-/jmx-4.4.4.tgz#c4cf48cce6f1a39433ea667b72f8c6ce4548e3a5"
   dependencies:
     "@hawtio/ui" "~4.4.0"
     "@types/angular-ui-bootstrap" "~0.13.46"
@@ -58,15 +58,15 @@
     patternfly-bootstrap-treeview "~2.1.0"
 
 "@hawtio/oauth@~4.4.0":
-  version "4.4.3"
-  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.4.3.tgz#ae03c42fdfd6641eface4f501df0a0ae88904ec3"
+  version "4.4.4"
+  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.4.4.tgz#c68c119a204bdae34c5e04d73f6223420b813a90"
   dependencies:
     "@hawtio/core" "~4.4.0"
     ng-idle "^1.3.2"
 
 "@hawtio/ui@~4.4.0":
-  version "4.4.3"
-  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-4.4.3.tgz#4d307138da79a66672fca3d1bb422b84210fd300"
+  version "4.4.4"
+  resolved "https://registry.yarnpkg.com/@hawtio/ui/-/ui-4.4.4.tgz#f2107456041d9d9b8a8ba8f0f2f8afe1f74e04fa"
   dependencies:
     "@hawtio/core" "~4.4.0"
     "@types/bootstrap" "3.3.36"
@@ -78,8 +78,8 @@
     js-beautify "1.7.5"
 
 "@patternfly/patternfly@~1.0.192":
-  version "1.0.209"
-  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-1.0.209.tgz#6fa7af6cbbbcca3928fb619eb1c82e1031cf4a0a"
+  version "1.0.212"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-1.0.212.tgz#fefa4ff58a1398ab586c4dbee285fda6774c293d"
 
 "@types/angular-mocks@~1.7.0":
   version "1.7.0"
