@@ -42,14 +42,14 @@ public class SampleAuthenticationSpringBootService {
 
         final URL loginResource = this.getClass().getClassLoader().getResource("login.conf");
         if (loginResource != null) {
-            setSystemPropertyIfNotSet(JAVA_SECURITY_AUTH_LOGIN_CONFIG, loginResource.getFile());
+            setSystemPropertyIfNotSet(JAVA_SECURITY_AUTH_LOGIN_CONFIG, loginResource.toExternalForm());
         }
         LOG.info("Using loginResource " + JAVA_SECURITY_AUTH_LOGIN_CONFIG + " : " + System
             .getProperty(JAVA_SECURITY_AUTH_LOGIN_CONFIG));
 
         final URL loginFile = this.getClass().getClassLoader().getResource("realm.properties");
         if (loginFile != null) {
-            setSystemPropertyIfNotSet("login.file", loginFile.getFile());
+            setSystemPropertyIfNotSet("login.file", loginFile.toExternalForm());
         }
         LOG.info("Using login.file : " + System.getProperty("login.file"));
 
