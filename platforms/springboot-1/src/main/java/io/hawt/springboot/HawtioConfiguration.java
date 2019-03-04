@@ -36,7 +36,6 @@ import org.springframework.boot.actuate.autoconfigure.ManagementContextConfigura
 import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
 import org.springframework.boot.actuate.endpoint.mvc.JolokiaMvcEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -59,24 +58,10 @@ public class HawtioConfiguration {
     private final String hawtioPath;
 
     @Autowired
-    public HawtioConfiguration(
-        final ServerProperties serverProperties,
-        final ManagementServerProperties managementServerProperties,
-        final HawtioEndpoint hawtioEndpoint) {
-        final int serverPort = getOrDefault(serverProperties.getPort(), 8080);
-        final int managementPort = getOrDefault(managementServerProperties.getPort(), serverPort);
-
-        final String prefix;
-        if (serverPort == managementPort) {
-            prefix = Strings.webContextPath(serverProperties.getServletPrefix());
-        } else {
-            prefix = "";
-        }
-
-        this.managementContextPath = Strings.webContextPath(prefix,
-                                                            managementServerProperties.getContextPath());
-        this.hawtioPath = Strings.webContextPath(managementContextPath,
-                                                 hawtioEndpoint.getPath());
+    public HawtioConfiguration(final HawtioEndpoint hawtioEndpoint,
+                               final ServerPathHelper serverPathHelper) {
+        this.managementContextPath = serverPathHelper.getBasePath();
+        this.hawtioPath = serverPathHelper.getPathFor(hawtioEndpoint.getPath());
     }
 
     @Autowired
@@ -292,10 +277,6 @@ public class HawtioConfiguration {
     // -------------------------------------------------------------------------
     // Utilities
     // -------------------------------------------------------------------------
-
-    private static int getOrDefault(final Integer number, final int defaultValue) {
-        return number == null ? defaultValue : number;
-    }
 
     private String[] prependContextPath(String[] paths) {
         return Arrays.stream(paths)

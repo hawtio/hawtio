@@ -5,8 +5,10 @@ import java.util.Map;
 
 import org.springframework.boot.actuate.autoconfigure.ManagementServerProperties;
 import org.springframework.boot.actuate.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -27,9 +29,15 @@ public class HawtioAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public HawtioEndpoint hawtioEndpoint(
-            final ManagementServerProperties managementServerProperties) {
-        return new HawtioEndpoint(managementServerProperties.getContextPath());
+    public HawtioEndpoint hawtioEndpoint(final ServerPathHelper serverPathHelper) {
+        return new HawtioEndpoint(serverPathHelper);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnBean(HawtioEndpoint.class)
+    public ServerPathHelper serverPathHelper(ServerProperties serverProperties, ManagementServerProperties managementServerProperties) {
+        return new ServerPathHelper(serverProperties, managementServerProperties);
     }
 
     @Bean
