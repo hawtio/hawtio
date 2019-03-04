@@ -2,43 +2,24 @@ package io.hawt.springboot;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-
+import org.mockito.Mockito;
 import static org.junit.Assert.assertEquals;
 
 public class HawtioEndpointTest {
 
+    private EndpointPathResolver resolver;
     private HawtioEndpoint hawtioEndpoint;
 
     @Before
     public void setUp() {
-        hawtioEndpoint = new HawtioEndpoint(null);
+        resolver = Mockito.mock(EndpointPathResolver.class);
+        hawtioEndpoint = new HawtioEndpoint(resolver);
     }
 
     @Test
-    public void testGetIndexHtmlRedirect() {
-        runTestGetIndexHtmlRedirect(null, null,
-            "forward:/index.html");
-        runTestGetIndexHtmlRedirect("", "",
-            "forward:/index.html");
-        runTestGetIndexHtmlRedirect("/hawtio", null,
-            "forward:/hawtio/index.html");
-        runTestGetIndexHtmlRedirect("/hawtio/", null,
-            "forward:/hawtio/index.html");
+    public void testForwardHawtioRequestToIndexHtml() {
+        Mockito.when(resolver.resolve("hawtio")).thenReturn("/actuator/hawtio");
+        String result = hawtioEndpoint.forwardHawtioRequestToIndexHtml();
+        assertEquals("forward:/actuator/hawtio/index.html", result);
     }
-
-    private void runTestGetIndexHtmlRedirect(String requestURI, String queryString, String expectedResult) {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        if (requestURI != null) {
-            request.setRequestURI(requestURI);
-        }
-        if (queryString != null) {
-            request.setQueryString(queryString);
-        }
-
-        String result = hawtioEndpoint.getIndexHtmlRedirect(request);
-
-        assertEquals(expectedResult, result);
-    }
-
 }

@@ -2,8 +2,6 @@ package io.hawt.springboot;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpoint;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,8 +10,6 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.web.util.UrlPathHelper;
 
 /**
  * Spring Boot endpoint to expose hawtio.
@@ -32,9 +28,20 @@ public class HawtioEndpoint implements WebMvcConfigurer {
         this.plugins = plugins;
     }
 
-    @RequestMapping(value = {"", "/"}, produces = MediaType.TEXT_HTML_VALUE)
-    public String redirectRootToIndexPage(final HttpServletRequest request) {
-        return getIndexHtmlRedirect(request);
+    /**
+     * Forwards all Angular route URLs to index.html.
+     *
+     * Ignores jolokia paths and paths for other Hawtio resources.
+     *
+     * @return The Spring Web forward directive for the Hawtio index.html resource.
+     */
+    @RequestMapping(value = {"", "{path:^(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|oauth|\\.).)*$}/**"}, produces = MediaType.TEXT_HTML_VALUE)
+    public String forwardHawtioRequestToIndexHtml() {
+        final String path = endpointPath.resolve("hawtio");
+        final UriComponents uriComponents = ServletUriComponentsBuilder.fromPath(path)
+            .path("/index.html")
+            .build();
+        return "forward:" + uriComponents.getPath();
     }
 
     @RequestMapping("/plugin")
@@ -60,19 +67,5 @@ public class HawtioEndpoint implements WebMvcConfigurer {
         registry
             .addResourceHandler(endpointPath.resolveUrlMapping("hawtio", "/img/**"))
             .addResourceLocations("classpath:/hawtio-static/img/"); // @formatter:on
-    }
-
-    protected String getIndexHtmlRedirect(final HttpServletRequest request) {
-        UriComponentsBuilder builder = ServletUriComponentsBuilder.fromRequest(request);
-        if (request.getServletContext().getContextPath() != null) {
-            String path = new UrlPathHelper().getPathWithinApplication(request);
-            builder.replacePath(path);
-        }
-
-        // append "/index.html" to the current path
-        builder.path("/index.html");
-        UriComponents uriComponents = builder.build();
-        String path = uriComponents.getPath();
-        return "forward:" + path;
     }
 }

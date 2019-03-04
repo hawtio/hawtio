@@ -45,7 +45,13 @@ public abstract class HawtioSpringBootTestCommon extends HawtioSpringBootTestSup
             client.get().uri(properties.getJolokiaPath()).exchange()
                 .expectStatus().isNotFound();
 
+            client.get().uri(properties.getJolokiaPath() + "/foo/bar?a=b").exchange()
+                .expectStatus().isNotFound();
+
             client.get().uri(properties.getHawtioJolokiaPath()).exchange()
+                .expectStatus().isNotFound();
+
+            client.get().uri(properties.getHawtioJolokiaPath() + "/foo/bar?a=b").exchange()
                 .expectStatus().isNotFound();
         });
     }
