@@ -107,7 +107,7 @@ public class HawtioManagementConfiguration {
 
     @Bean
     public FilterRegistrationBean sessionExpiryFilter() {
-        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        final FilterRegistrationBean<SessionExpiryFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new SessionExpiryFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
         return filter;
@@ -115,7 +115,7 @@ public class HawtioManagementConfiguration {
 
     @Bean
     public FilterRegistrationBean cacheFilter() {
-        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        final FilterRegistrationBean<CacheHeadersFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new CacheHeadersFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
         return filter;
@@ -123,7 +123,7 @@ public class HawtioManagementConfiguration {
 
     @Bean
     public FilterRegistrationBean hawtioCorsFilter() {
-        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        final FilterRegistrationBean<CORSFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new CORSFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
         return filter;
@@ -131,7 +131,7 @@ public class HawtioManagementConfiguration {
 
     @Bean
     public FilterRegistrationBean xframeOptionsFilter() {
-        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        final FilterRegistrationBean<XFrameOptionsFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new XFrameOptionsFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
         return filter;
@@ -139,7 +139,7 @@ public class HawtioManagementConfiguration {
 
     @Bean
     public FilterRegistrationBean xxssProtectionFilter() {
-        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        final FilterRegistrationBean<XXSSProtectionFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new XXSSProtectionFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
         return filter;
@@ -147,7 +147,7 @@ public class HawtioManagementConfiguration {
 
     @Bean
     public FilterRegistrationBean xContentTypeOptionsFilter() {
-        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        final FilterRegistrationBean<XContentTypeOptionsFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new XContentTypeOptionsFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
         return filter;
@@ -155,7 +155,7 @@ public class HawtioManagementConfiguration {
 
     @Bean
     public FilterRegistrationBean contentSecurityPolicyFilter() {
-        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        final FilterRegistrationBean<ContentSecurityPolicyFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new ContentSecurityPolicyFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
         return filter;
@@ -163,7 +163,7 @@ public class HawtioManagementConfiguration {
 
     @Bean
     public FilterRegistrationBean strictTransportSecurityFilter() {
-        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        final FilterRegistrationBean<StrictTransportSecurityFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new StrictTransportSecurityFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
         return filter;
@@ -171,7 +171,7 @@ public class HawtioManagementConfiguration {
 
     @Bean
     public FilterRegistrationBean publicKeyPinningFilter() {
-        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        final FilterRegistrationBean<PublicKeyPinningFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new PublicKeyPinningFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
         return filter;
@@ -181,7 +181,7 @@ public class HawtioManagementConfiguration {
     @ConditionalOnBean(JolokiaEndpoint.class)
     @ConditionalOnExposedEndpoint(name = "jolokia")
     public FilterRegistrationBean authenticationFilter(final EndpointPathResolver pathResolver) {
-        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        final FilterRegistrationBean<AuthenticationFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new AuthenticationFilter());
         filter.addUrlPatterns(pathResolver.resolveUrlMapping("jolokia", "*"));
         filter.setDispatcherTypes(DispatcherType.ERROR, DispatcherType.FORWARD, DispatcherType.REQUEST);
@@ -191,7 +191,7 @@ public class HawtioManagementConfiguration {
     @Bean
     public FilterRegistrationBean loginRedirectFilter(final Redirector redirector) {
         final String[] unsecuredPaths = prependContextPath(AuthenticationConfiguration.UNSECURED_PATHS);
-        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        final FilterRegistrationBean<LoginRedirectFilter> filter = new FilterRegistrationBean<>();
         final LoginRedirectFilter loginRedirectFilter = new LoginRedirectFilter(unsecuredPaths);
         loginRedirectFilter.setRedirector(redirector);
         filter.setFilter(loginRedirectFilter);
@@ -201,7 +201,7 @@ public class HawtioManagementConfiguration {
 
     @Bean
     public FilterRegistrationBean baseTagHrefFilter(final EndpointPathResolver pathResolver) {
-        final FilterRegistrationBean filter = new FilterRegistrationBean();
+        final FilterRegistrationBean<BaseTagHrefFilter> filter = new FilterRegistrationBean<>();
         final BaseTagHrefFilter baseTagHrefFilter = new BaseTagHrefFilter();
         filter.setFilter(baseTagHrefFilter);
         filter.addUrlPatterns(hawtioPath + "/");
@@ -220,14 +220,14 @@ public class HawtioManagementConfiguration {
 
     @Bean
     public ServletRegistrationBean jolokiaProxyServlet() {
-        return new ServletRegistrationBean(
+        return new ServletRegistrationBean<>(
             new ProxyServlet(),
             hawtioPath + "/proxy/*");
     }
 
     @Bean
     public ServletRegistrationBean userServlet() {
-        return new ServletRegistrationBean(
+        return new ServletRegistrationBean<>(
             new KeycloakUserServlet(),
             hawtioPath + "/user/*");
     }
@@ -236,7 +236,7 @@ public class HawtioManagementConfiguration {
     public ServletRegistrationBean loginServlet(Redirector redirector) {
         LoginServlet loginServlet = new LoginServlet();
         loginServlet.setRedirector(redirector);
-        return new ServletRegistrationBean(loginServlet,
+        return new ServletRegistrationBean<>(loginServlet,
             hawtioPath + "/auth/login");
     }
 
@@ -244,13 +244,13 @@ public class HawtioManagementConfiguration {
     public ServletRegistrationBean logoutServlet(Redirector redirector) {
         LogoutServlet logoutServlet = new LogoutServlet();
         logoutServlet.setRedirector(redirector);
-        return new ServletRegistrationBean(logoutServlet,
+        return new ServletRegistrationBean<>(logoutServlet,
             hawtioPath + "/auth/logout");
     }
 
     @Bean
     public ServletRegistrationBean keycloakServlet() {
-        return new ServletRegistrationBean(
+        return new ServletRegistrationBean<>(
             new KeycloakServlet(),
             hawtioPath + "/keycloak/*");
     }
