@@ -13,6 +13,7 @@ namespace Login {
 
     if (keycloakService.enabled) {
       // When Keycloak is enabled, login/logout is handled at hawtio-oauth keycloak plugin
+      addLogoutLink(authService, HawtioExtension, $compile);
       return;
     }
 
