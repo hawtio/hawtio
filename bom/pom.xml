@@ -27,11 +27,6 @@
       </dependency>
       <dependency>
         <groupId>io.hawt</groupId>
-        <artifactId>hawtio-console-assembly</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.hawt</groupId>
         <artifactId>hawtio-core</artifactId>
         <version>${project.version}</version>
       </dependency>

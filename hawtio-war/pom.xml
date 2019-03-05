@@ -47,6 +47,8 @@
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-console-assembly</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
+      <type>pom</type>
     </dependency>
 
     <!-- optional hawtio modules we want to use in this WAR -->
