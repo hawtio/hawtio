@@ -8,7 +8,7 @@
     "build": "gulp build"
   },
   "devDependencies": {
-    "@hawtio/node-backend": "^3.0.0",
+    "@hawtio/node-backend": "^4.0.0",
     "event-stream": "3.3.4",
     "gulp": "^3.0.0",
     "gulp-angular-templatecache": "^2.0.0",
