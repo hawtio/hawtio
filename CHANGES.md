@@ -2,6 +2,13 @@
 
 #### 2.6.0 (To be released)
 
+* Fix memory leak with sidemenu visible in v2.5.0 [#2573](https://github.com/hawtio/hawtio/issues/2573)
+* Apply Pattern Fly 4 styles to masthead, sidebar, and login page
+* Upgrade Spring Framework to 5.1.5
+* Upgrade Spring Boot to 2.1.3
+* Upgrade Hawtio components
+* Bug fixes
+
 #### 2.5.0
 
 * Add config property `hawtio.localAddressProbing`. Now you can disable local address probing
