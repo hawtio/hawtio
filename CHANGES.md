@@ -1,6 +1,8 @@
 ## Change Log
 
-#### 2.6.0 (To be released)
+#### 2.7.0 (To be released)
+
+#### 2.6.0
 
 * Fix memory leak with sidemenu visible in v2.5.0 [#2573](https://github.com/hawtio/hawtio/issues/2573)
 * Apply Pattern Fly 4 styles to masthead, sidebar, and login page
