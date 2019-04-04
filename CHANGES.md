@@ -4,8 +4,7 @@
 
 * Fix memory leak with sidemenu visible in v2.5.0 [#2573](https://github.com/hawtio/hawtio/issues/2573)
 * Apply Pattern Fly 4 styles to masthead, sidebar, and login page
-* Upgrade Spring Framework to 5.1.5
-* Upgrade Spring Boot to 2.1.3
+* Upgrade to Spring Boot 2.1.4 / Spring Framework 5.1.6
 * Upgrade Hawtio components
 * Bug fixes
 
