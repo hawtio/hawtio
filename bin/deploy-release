@@ -1,21 +1,32 @@
 #!/bin/sh
 
 if [ -z $2 ]; then
-  echo "Usage: `basename $0` <release_version> [path to m2 settings file]"
+  echo "Use this script to release a Hawtio version from the snapshot master branch."
+  echo ""
+  echo "Usage:"
+  echo "  `basename $0` <release_version> <next_snapshot_version> [path to m2 settings file]"
   exit
 fi
 
 RELEASE_VERSION=$1
-M2_SETTINGS=${2:-$HOME/.m2/settings.xml}
+SNAPSHOT_VERSION=$2
+M2_SETTINGS=${3:-$HOME/.m2/settings.xml}
 
 echo ============================================================================
-echo Deploying version $RELEASE_VERSION to Sonatype OSSRH
+echo Building version $RELEASE_VERSION
 echo ============================================================================
 
 mvn -s $M2_SETTINGS \
-  org.apache.maven.plugins:maven-release-plugin:2.3.2:perform -Prelease \
-  -DconnectionUrl=scm:git:git@github.com:hawtio/hawtio.git \
-  -Dtag=hawtio-$RELEASE_VERSION
+  org.apache.maven.plugins:maven-release-plugin:2.5:prepare \
+  -Prelease \
+  -Dtag=hawtio-$RELEASE_VERSION \
+  -DreleaseVersion=$RELEASE_VERSION \
+  -DdevelopmentVersion=$SNAPSHOT_VERSION
+
+mvn -s $M2_SETTINGS \
+  org.apache.maven.plugins:maven-release-plugin:2.5:perform -Prelease
+
+git push --tags
 
 REPO_ID=$(mvn -s $M2_SETTINGS org.sonatype.plugins:nexus-staging-maven-plugin:1.6.5:rc-list -DserverId=oss-sonatype-staging -DnexusUrl=https://oss.sonatype.org | grep OPEN | grep -Eo 'iohawt-[[:digit:]]+')
 if [ -z $REPO_ID ]; then
