@@ -14,8 +14,10 @@ public class AuthenticationConfiguration {
     private static final transient Logger LOG = LoggerFactory.getLogger(AuthenticationConfiguration.class);
 
     public static final String LOGIN_URL = "/auth/login";
-    public static final String[] UNSECURED_PATHS = {"/auth", "/css", "/fonts", "/img", "/js", "/hawtconfig.json",
-        "/jolokia", "/keycloak", "/oauth", "/user", "/login.html"};
+    public static final String[] UNSECURED_PATHS = {"/auth/login", "/auth/logout", "/css",
+        "/fonts", "/img", "/js", "/hawtconfig.json",
+        "/jolokia", "/keycloak", "/oauth", "/user",
+        "/login.html"};
 
     // Configuration properties
     public static final String AUTHENTICATION_ENABLED = "authenticationEnabled";

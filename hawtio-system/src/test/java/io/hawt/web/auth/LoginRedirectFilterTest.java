@@ -28,6 +28,7 @@ public class LoginRedirectFilterTest {
         loginRedirectFilter.init(filterConfig);
         assertTrue(loginRedirectFilter.isSecuredPath("/d"));
         assertTrue(loginRedirectFilter.isSecuredPath("/e/f"));
+        assertTrue(loginRedirectFilter.isSecuredPath("/auth"));
         assertFalse(loginRedirectFilter.isSecuredPath("/auth/login"));
         assertFalse(loginRedirectFilter.isSecuredPath("/auth/logout"));
     }
