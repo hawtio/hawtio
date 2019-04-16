@@ -2,6 +2,8 @@
 
 #### 2.7.0 (To be released)
 
+* Upgrade Camel to 2.23.2
+
 #### 2.6.0
 
 * Fix memory leak with sidemenu visible in v2.5.0 [#2573](https://github.com/hawtio/hawtio/issues/2573)
