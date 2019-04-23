@@ -17,12 +17,18 @@ public class HawtioSpringBootExposedEndpointIT {
     public void testStringListProperty() {
         contextRunner.withPropertyValues("management.endpoints.web.exposure.include=hawtio,jolokia,foo")
             .run((context) -> assertThat(context).hasBean("foo"));
+
+        contextRunner.withPropertyValues("management.endpoints.web.exposure.include=*")
+            .run((context) -> assertThat(context).hasBean("foo"));
     }
 
     @Test
     public void testStringArrayProperty() {
         contextRunner.withPropertyValues("management.endpoints.web.exposure.include[0]=hawtio",
             "management.endpoints.web.exposure.include[1]=jolokia", "management.endpoints.web.exposure.include[2]=foo")
+            .run((context) -> assertThat(context).hasBean("foo"));
+
+        contextRunner.withPropertyValues("management.endpoints.web.exposure.include[0]=*")
             .run((context) -> assertThat(context).hasBean("foo"));
     }
 
