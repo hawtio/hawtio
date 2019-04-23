@@ -9,7 +9,6 @@ import io.hawt.jmx.About;
 import io.hawt.jmx.JMXSecurity;
 import io.hawt.jmx.JmxTreeWatcher;
 import io.hawt.jmx.PluginRegistry;
-import io.hawt.jmx.QuartzFacade;
 import io.hawt.jmx.RBACRegistry;
 import io.hawt.system.ConfigManager;
 import org.slf4j.Logger;
@@ -23,7 +22,6 @@ public class HawtioContextListener implements ServletContextListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(HawtioContextListener.class);
 
     private final About about;
-    private final QuartzFacade quartz;
     private final JmxTreeWatcher treeWatcher;
     private final PluginRegistry registry;
     private final ConfigManager configManager;
@@ -38,7 +36,6 @@ public class HawtioContextListener implements ServletContextListener {
         this.configManager = Objects.requireNonNull(configManager);
 
         this.about = new About();
-        this.quartz = new QuartzFacade();
         this.treeWatcher = new JmxTreeWatcher();
         this.registry = new PluginRegistry();
         this.jmxSecurity = new JMXSecurity();
@@ -49,7 +46,6 @@ public class HawtioContextListener implements ServletContextListener {
         LOGGER.info("Initialising hawtio services");
         try {
             about.init();
-            quartz.init();
             configManager.init(servletContextEvent.getServletContext());
             treeWatcher.init();
             registry.init();
@@ -66,7 +62,6 @@ public class HawtioContextListener implements ServletContextListener {
         try {
             rbacRegistry.destroy();
             about.destroy();
-            quartz.destroy();
             treeWatcher.destroy();
             registry.destroy();
             configManager.destroy();
