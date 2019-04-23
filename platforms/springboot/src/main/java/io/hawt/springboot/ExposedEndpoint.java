@@ -26,7 +26,7 @@ public class ExposedEndpoint implements Condition {
             Environment environment = context.getEnvironment();
             BindResult<List<String>> property = Binder.get(environment).bind(WEB_EXPOSURE_INCLUDE, STRING_LIST);
             List<String> exposedEndpoints = property.orElse(Collections.emptyList());
-            return exposedEndpoints.contains(endpointName);
+            return exposedEndpoints.contains(endpointName) || exposedEndpoints.contains("*");
         }
 
         return false;
