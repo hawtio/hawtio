@@ -37,7 +37,7 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
         super.init(filterConfig);
 
         String keycloakConfigFile = getConfigParameter(KeycloakServlet.KEYCLOAK_CLIENT_CONFIG);
-        if (keycloakConfigFile == null && System.getProperty(KeycloakServlet.HAWTIO_KEYCLOAK_CLIENT_CONFIG) != null) {
+        if (System.getProperty(KeycloakServlet.HAWTIO_KEYCLOAK_CLIENT_CONFIG) != null) {
             keycloakConfigFile = System.getProperty(KeycloakServlet.HAWTIO_KEYCLOAK_CLIENT_CONFIG);
         }
 
