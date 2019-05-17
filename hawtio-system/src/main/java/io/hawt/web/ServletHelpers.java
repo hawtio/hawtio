@@ -2,7 +2,9 @@ package io.hawt.web;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,9 +23,6 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- */
 public class ServletHelpers {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(ServletHelpers.class);
@@ -179,5 +178,23 @@ public class ServletHelpers {
             string = (value.toString().contains("@reference")) ? "" : value.toString();
         }
         return string;
+    }
+
+    public static InputStream loadFile(String path) {
+        if (path.startsWith("classpath:")) {
+            String classPathLocation = path.substring(10);
+            return ServletHelpers.class.getClassLoader().getResourceAsStream(classPathLocation);
+        }
+        try {
+            if (!path.contains(":")) {
+                //assume file protocol
+                path = "file://" + path;
+            }
+            return new URL(path).openStream();
+        } catch (Exception e) {
+            LOG.warn("Couldn't find keycloak config file on location: {}", path);
+            LOG.debug("Couldn't find keycloak config file", e);
+            return null;
+        }
     }
 }
