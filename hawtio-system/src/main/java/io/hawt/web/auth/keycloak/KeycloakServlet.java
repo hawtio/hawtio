@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.URL;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import io.hawt.system.ConfigManager;
 import io.hawt.util.IOHelper;
 import io.hawt.web.auth.AuthenticationConfiguration;
+import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +62,7 @@ public class KeycloakServlet extends HttpServlet {
 
         LOG.info("Will load keycloak config from location: {}", keycloakConfigFile);
 
-        InputStream is = loadFile(keycloakConfigFile);
+        InputStream is = ServletHelpers.loadFile(keycloakConfigFile);
         if (is == null) {
             LOG.warn("Keycloak client configuration not found!");
         } else {
@@ -108,25 +108,6 @@ public class KeycloakServlet extends HttpServlet {
 
         // Fallback to classpath inside hawtio.war
         return "classpath:keycloak.json";
-    }
-
-    protected InputStream loadFile(String keycloakConfigFile) {
-        if (keycloakConfigFile.startsWith("classpath:")) {
-            String classPathLocation = keycloakConfigFile.substring(10);
-            return getClass().getClassLoader().getResourceAsStream(classPathLocation);
-        } else {
-            try {
-                if (!keycloakConfigFile.contains(":")) {
-                    //assume file protocol
-                    keycloakConfigFile = "file://" + keycloakConfigFile;
-                }
-                return new URL(keycloakConfigFile).openStream();
-            } catch (Exception e) {
-                LOG.warn("Couldn't find keycloak config file on location: " + keycloakConfigFile);
-                LOG.debug("Couldn't find keycloak config file", e);
-                return null;
-            }
-        }
     }
 
     @Override

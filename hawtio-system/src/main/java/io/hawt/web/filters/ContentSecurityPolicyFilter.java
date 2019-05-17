@@ -1,8 +1,9 @@
 package io.hawt.web.filters;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -43,8 +44,9 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
 
         boolean addedKeycloakUrl = false;
         if (keycloakConfigFile != null) {
-            try (FileReader reader = new FileReader(keycloakConfigFile)) {
-                JSONObject json = ServletHelpers.readObject(new BufferedReader(reader));
+            try (InputStream is = ServletHelpers.loadFile(keycloakConfigFile);
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+                JSONObject json = ServletHelpers.readObject(reader);
                 String url = (String) json.get("url");
                 URI uri = URI.create(url);
                 LOG.info("Found Keycloak URL: {}", uri);
