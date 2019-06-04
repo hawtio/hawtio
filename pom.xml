@@ -250,20 +250,6 @@
   </build>
 
   <profiles>
-    <!-- dealing with tools.jar for hawtio-local-jvm-mbean -->
-    <profile>
-      <id>default-profile</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-        <file>
-          <exists>${java.home}/../lib/tools.jar</exists>
-        </file>
-      </activation>
-      <properties>
-        <toolsjar>${java.home}/../lib/tools.jar</toolsjar>
-      </properties>
-    </profile>
-
     <profile>
       <id>release</id>
       <properties>
