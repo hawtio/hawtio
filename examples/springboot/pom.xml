@@ -26,13 +26,6 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-spring-boot-dependencies</artifactId>
-        <version>${camel-version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
         <groupId>io.hawt</groupId>
         <artifactId>hawtio-bom</artifactId>
         <version>${project.version}</version>
@@ -73,16 +66,6 @@
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot</artifactId>
-    </dependency>
-
-    <!-- Camel -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring-boot-starter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-stream-starter</artifactId>
     </dependency>
   </dependencies>
 
