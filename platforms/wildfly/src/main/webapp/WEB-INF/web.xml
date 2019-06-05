@@ -147,6 +147,8 @@
   <filter-mapping>
     <filter-name>LoginRedirectFilter</filter-name>
     <url-pattern>/*</url-pattern>
+    <dispatcher>ERROR</dispatcher>
+    <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
 
   <filter>

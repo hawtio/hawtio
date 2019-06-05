@@ -36,7 +36,7 @@ public class HawtioEndpoint extends AbstractNamedMvcEndpoint {
      *
      * @return The Spring Web forward directive for the Hawtio index.html resource.
      */
-    @RequestMapping(value = {"", "{path:^(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|oauth|\\.).)*$}/**"}, produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(value = {"", "{path:^(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|user|oauth|\\.).)*$}/**"}, produces = MediaType.TEXT_HTML_VALUE)
     public String forwardHawtioRequestToIndexHtml() {
         UriComponents uriComponents = ServletUriComponentsBuilder.fromPath(serverPathHelper.getPathFor(getPath()))
             .path("/index.html")
