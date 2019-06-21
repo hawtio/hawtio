@@ -46,7 +46,7 @@ public class UserServlet extends HttpServlet {
 
         String username = getUsername(request, response);
         if (username == null) {
-            ServletHelpers.doForbidden(response);
+            ServletHelpers.doForbidden(request, response);
             return;
         }
         sendResponse(response, username);
