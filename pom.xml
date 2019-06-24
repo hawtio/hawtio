@@ -110,7 +110,7 @@
 
     <jgit-version>5.0.2.201807311906-r</jgit-version>
     <jline.version>3.2.0</jline.version>
-    <jolokia-version>1.5.0</jolokia-version>
+    <jolokia-version>1.6.2</jolokia-version>
     <junit-version>4.12</junit-version>
     <karaf-version>4.1.5</karaf-version>
     <karaf-version-range>[3.0,5)</karaf-version-range>
