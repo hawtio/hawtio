@@ -10,9 +10,9 @@
     "@types/jquery" "2.0.53"
 
 "@hawtio/core@~4.5.0":
-  version "4.5.2"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.5.2.tgz#7a6b19274e00e820921ffc47fa3ef9725f654e25"
-  integrity sha512-dEMbulHhuWCO3+0KtWNLfroJfnwRtZ2m7JJ3NYxbIQMN+ZZHNEtU5kacYAVaqblGj22pjwWE51WuALY52aOIMQ==
+  version "4.5.3"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.5.3.tgz#9f3d5c0b84a65dba8c13749d4fee0a7af0226db1"
+  integrity sha512-4lbvCuX5ahfMlfGPiHgSpkVO9Oip0XnrBYE0wFNQm3U0dFu1PkBvjObqMKlfmQ8ECWSmKgzX4+EL8ADHvQ8z5Q==
   dependencies:
     "@hawtio/core-dts" "~3.3.0"
     "@patternfly/patternfly" "~1.0.192"
@@ -28,14 +28,14 @@
     jquery "2.2.4"
     js-logger "1.4.1"
     lodash "4.17.11"
-    marked "0.6.0"
+    marked "0.6.1"
     typescript "^3.0.3"
     urijs "1.19.0"
 
 "@hawtio/integration@^4.0.0":
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.6.0.tgz#3ed3ccb941897b8b9f212f5628e4f4d1d00f81d9"
-  integrity sha512-5Yo3JU7bhRFLvZYvsxIlg8v7UI/v9qPU0+4gM7x4kCnPtY0zDD8t8pY8KHIoVUzmcnPoDm+dGhuS9MHKNxp3kA==
+  version "4.6.1"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.6.1.tgz#c624698f0808220bce6600034390892b50be1b53"
+  integrity sha512-k5SJm/cUW6slVQdxnhsEduA6oDpGYIQM7KArWmcVgYbgdszQIa+2g4hoh4B/L9XL1lQLwhjgpYllAFxQcXuwIw==
   dependencies:
     "@hawtio/core" "~4.5.0"
     "@types/angular-mocks" "~1.7.0"
@@ -58,8 +58,9 @@
     patternfly-bootstrap-treeview "~2.1.0"
 
 "@hawtio/oauth@^4.0.0":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.5.0.tgz#e2b6b838bc5ccc465e1c3c9a0119fc13d445d7d6"
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.6.0.tgz#fe509c093c5bf79c2ac829813a71229d981800ac"
+  integrity sha512-N2gbRUS1LyNHyO/trVMZCcRtyh4pbZ0y6ZUybuIOtX5WGPnfABRW0gf0CMHhQ3UIKeolqc+WFiO6PQIdOg4a4w==
   dependencies:
     "@hawtio/core" "~4.5.0"
     ng-idle "^1.3.2"
@@ -1225,10 +1226,10 @@ map-obj@^1.0.0, map-obj@^1.0.1:
   resolved "https://registry.yarnpkg.com/map-obj/-/map-obj-1.0.1.tgz#d933ceb9205d82bdcf4886f6742bdc2b4dea146d"
   integrity sha1-2TPOuSBdgr3PSIb2dCvcK03qFG0=
 
-marked@0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-0.6.0.tgz#a18d01cfdcf8d15c3c455b71c8329e5e0f01faa1"
-  integrity sha512-HduzIW2xApSXKXJSpCipSxKyvMbwRRa/TwMbepmlZziKdH8548WSoDP4SxzulEKjlo8BE39l+2fwJZuRKOln6g==
+marked@0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-0.6.1.tgz#a63addde477bca9613028de4b2bc3629e53a0562"
+  integrity sha512-+H0L3ibcWhAZE02SKMqmvYsErLo4EAVJxu5h3bHBBDvvjeWXtl92rGUSBYHL2++5Y+RSNgl8dYOAXcYe7lp1fA==
 
 maven@^4.5.0:
   version "4.5.0"
@@ -1300,6 +1301,7 @@ nan@^2.13.2:
 ng-idle@^1.3.2:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/ng-idle/-/ng-idle-1.3.2.tgz#73a4dcc0a6c8360310d1396df376be6bd0b0a867"
+  integrity sha1-c6TcwKbINgMQ0Tlt83a+a9CwqGc=
   dependencies:
     angular "^1.2.0"
 
