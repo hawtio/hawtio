@@ -1,8 +1,12 @@
 ## Change Log
 
-#### 2.7.0 (To be released)
+#### 2.8.0 (To be released)
+
+#### 2.7.0
 
 * Upgrade Camel to 2.24.1
+* Upgrade Hawtio components
+* Upgrade Jolokia to 1.6.2
 * Bug fixes
 
 #### 2.6.0
