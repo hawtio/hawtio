@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import io.hawt.web.ServletHelpers;
 import io.hawt.web.auth.keycloak.KeycloakServlet;
-
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
