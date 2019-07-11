@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import io.hawt.web.ServletHelpers;
 import io.hawt.web.auth.keycloak.KeycloakServlet;
+
+import org.apache.commons.codec.binary.StringUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +45,9 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
         }
 
         boolean addedKeycloakUrl = false;
-        if (keycloakConfigFile != null) {
+        if (keycloakConfigFile != null && keycloakConfigFile.trim() != "") {
             try (InputStream is = ServletHelpers.loadFile(keycloakConfigFile);
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
                 JSONObject json = ServletHelpers.readObject(reader);
                 String url = (String) json.get("url");
                 URI uri = URI.create(url);
