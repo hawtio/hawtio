@@ -1,6 +1,9 @@
 package io.hawt.web.filters;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -82,4 +85,15 @@ public class ContentSecurityPolicyFilterTest {
                         + "connect-src 'self' localhost:8180; frame-src 'self' localhost:8180");
     }
 
+    @Test
+    public void shouldNotNPEWithBlankStringAsKeycloakConfigFile() throws Exception {
+        // given
+        System.setProperty(KeycloakServlet.HAWTIO_KEYCLOAK_CLIENT_CONFIG, "");
+        contentSecurityPolicyFilter.init(filterConfig);
+        // when
+        contentSecurityPolicyFilter.addHeaders(request, response);
+        // then
+        verify(response).addHeader(eq("Content-Security-Policy"), eq(
+            "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'; frame-src 'self'"));
+		}
 }

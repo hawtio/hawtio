@@ -43,9 +43,9 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
         }
 
         boolean addedKeycloakUrl = false;
-        if (keycloakConfigFile != null) {
+        if (keycloakConfigFile != null && !keycloakConfigFile.trim().equals("")) {
             try (InputStream is = ServletHelpers.loadFile(keycloakConfigFile);
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
                 JSONObject json = ServletHelpers.readObject(reader);
                 String url = (String) json.get("url");
                 URI uri = URI.create(url);
