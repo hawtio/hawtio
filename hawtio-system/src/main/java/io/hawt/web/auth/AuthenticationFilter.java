@@ -66,7 +66,7 @@ public class AuthenticationFilter implements Filter {
                 // request was executed using the authenticated subject, nothing more to do
                 break;
             case NOT_AUTHORIZED:
-                ServletHelpers.doForbidden(httpRequest, httpResponse);
+                ServletHelpers.doForbidden(httpResponse);
                 break;
             case NO_CREDENTIALS:
                 if (authConfiguration.isNoCredentials401()) {
@@ -74,7 +74,7 @@ public class AuthenticationFilter implements Filter {
                     ServletHelpers.doAuthPrompt(authConfiguration.getRealm(), httpResponse);
                 } else {
                     // return forbidden 403 so the browser login does not popup
-                    ServletHelpers.doForbidden(httpRequest, httpResponse);
+                    ServletHelpers.doForbidden(httpResponse);
                 }
                 break;
         }

@@ -143,7 +143,7 @@ public class SessionExpiryFilter implements Filter {
             if (remainder > maxInactiveInterval) {
                 LOG.info("Expiring session due to inactivity");
                 session.invalidate();
-                ServletHelpers.doForbidden(request, response);
+                ServletHelpers.doForbidden(response);
                 return;
             }
         }

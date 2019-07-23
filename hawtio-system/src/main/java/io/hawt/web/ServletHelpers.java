@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.management.AttributeNotFoundException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.hawt.system.Authenticator;
@@ -30,27 +28,21 @@ import org.slf4j.LoggerFactory;
  */
 public class ServletHelpers {
 
+    protected static final String HEADER_HAWTIO_FORBIDDEN_REASON = "Hawtio-Forbidden-Reason";
+
     private static final transient Logger LOG = LoggerFactory.getLogger(ServletHelpers.class);
 
     private static final String HEADER_WWW_AUTHENTICATE = "WWW-Authenticate";
 
-    public static void doForbidden(HttpServletRequest request, HttpServletResponse response) {
-        doForbidden(request, response, ForbiddenReason.NONE);
+    public static void doForbidden(HttpServletResponse response) {
+        doForbidden(response, ForbiddenReason.NONE);
     }
 
-    public static void doForbidden(HttpServletRequest request, HttpServletResponse response, ForbiddenReason reason) {
+    public static void doForbidden(HttpServletResponse response, ForbiddenReason reason) {
         try {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentLength(0);
-
-            String acceptHeader = request.getHeader("Accept");
-            if (acceptHeader != null && acceptHeader.contains("application/json")) {
-                byte[] contentBytes = new JSONObject().put("reason", reason).toString().getBytes(StandardCharsets.UTF_8);
-                response.setContentLength(contentBytes.length);
-                response.setContentType("application/json");
-                response.getOutputStream().write(contentBytes);
-            }
-
+            response.setHeader(HEADER_HAWTIO_FORBIDDEN_REASON, reason.name());
             response.flushBuffer();
         } catch (IOException ioe) {
             LOG.debug("Failed to send forbidden response: {}", ioe);

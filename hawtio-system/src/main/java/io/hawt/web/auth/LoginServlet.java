@@ -109,7 +109,7 @@ public class LoginServlet extends HttpServlet {
                 break;
             case NOT_AUTHORIZED:
             case NO_CREDENTIALS:
-                ServletHelpers.doForbidden(request, response);
+                ServletHelpers.doForbidden(response);
                 break;
         }
     }

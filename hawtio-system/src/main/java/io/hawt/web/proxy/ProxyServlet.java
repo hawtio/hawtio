@@ -195,7 +195,7 @@ public class ProxyServlet extends HttpServlet {
             ProxyDetails details = (ProxyDetails) proxyAddress;
             if (!whitelist.isAllowed(details)) {
                 LOG.debug("Rejecting {}", proxyAddress);
-                ServletHelpers.doForbidden(servletRequest, servletResponse, ForbiddenReason.HOST_NOT_ALLOWED);
+                ServletHelpers.doForbidden(servletResponse, ForbiddenReason.HOST_NOT_ALLOWED);
                 return;
             }
         }
