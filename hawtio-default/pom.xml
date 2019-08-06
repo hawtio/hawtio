@@ -106,7 +106,7 @@
       </plugin>
 
       <plugin>
-        <groupId>${jetty-plugin-groupId}</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty-version}</version>
         <configuration>
@@ -115,12 +115,10 @@
           <webAppConfig>
             <contextPath>${context}</contextPath>
           </webAppConfig>
-          <connectors>
-            <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+          <httpConnector>
               <port>${jettyPort}</port>
-              <maxIdleTime>60000</maxIdleTime>
-            </connector>
-          </connectors>
+              <idleTimeout>60000</idleTimeout>
+          </httpConnector>
         </configuration>
       </plugin>
       <plugin>
