@@ -2,6 +2,10 @@
 
 #### 2.8.0 (To be released)
 
+#### 2.7.1
+
+* Bug fixes
+
 #### 2.7.0
 
 * Upgrade Camel to 2.24.1
