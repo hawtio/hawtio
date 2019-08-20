@@ -49,7 +49,7 @@ Assume `$KARAF_HOME` is the root directory of your Karaf/Fuse installation.
 
 * Install Hawtio:
     
-        feature:add-repo hawtio 2.0-beta-2
+        feature:add-repo hawtio 2.7.1
         feature:install hawtio
 
 * Install [pax-keycloak](https://github.com/ops4j/org.ops4j.pax.keycloak):
