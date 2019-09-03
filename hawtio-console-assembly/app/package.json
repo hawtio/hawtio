@@ -23,7 +23,9 @@
     "is-fullwidth-code-point": "2.0.0",
     "punycode": "2.1.1",
     "extsprintf": "1.4.0",
-    "lodash": "4.17.15"
+    "lodash": "4.17.15",
+    "@types/jquery": "2.0.54",
+    "safe-buffer": "5.2.0"
   },
   "license": "Apache-2.0",
   "repository": {
