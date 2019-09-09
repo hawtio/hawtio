@@ -51,33 +51,6 @@
       <type>pom</type>
     </dependency>
 
-    <!-- optional hawtio modules we want to use in this WAR -->
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-local-jvm-mbean</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <!-- jolokia is mandatory -->
-    <dependency>
-      <groupId>org.jolokia</groupId>
-      <artifactId>jolokia-core</artifactId>
-      <version>${jolokia-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jolokia</groupId>
-      <artifactId>jolokia-jvm</artifactId>
-      <version>${jolokia-version}</version>
-      <classifier>agent</classifier>
-    </dependency>
-
-    <!-- required by hawtio-system -->
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${guava-version}</version>
-    </dependency>
-
     <!-- blueprint is mandatory as its for dependency injection and bootstrapping services -->
     <dependency>
       <groupId>org.apache.aries.blueprint</groupId>
