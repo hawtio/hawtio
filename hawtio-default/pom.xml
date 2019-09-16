@@ -94,17 +94,6 @@
 
   <build>
     <plugins>
-
-      <!-- exclude duplicate JARs which for some odd reason gets included -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <packagingExcludes>**/lib/commons-logging-1.0.3.jar</packagingExcludes>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-        </configuration>
-      </plugin>
-
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
