@@ -18,9 +18,9 @@
 package io.hawt.embedded;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -135,7 +135,7 @@ public class Main {
         String tempDirPath = homeDir + "/tmp";
         File tempDir = new File(tempDirPath);
         tempDir.mkdirs();
-        log.info("using temp directory for jetty: " + tempDir.getPath());
+        log.info("Using temp directory for jetty: {}", tempDir.getPath());
         webapp.setTempDirectory(tempDir);
 
         // check for 3rd party plugins before we add hawtio, so they are initialized before hawtio
@@ -172,56 +172,59 @@ public class Main {
 
     protected void findThirdPartyPlugins(Slf4jLog log, HandlerCollection handlers, File tempDir) {
         File dir = new File(options.getPlugins());
-        if (dir.exists() && dir.isDirectory()) {
-
-            log.info("Scanning for 3rd party plugins in directory: " + dir.getName());
-
-            // find any .war files
-            File[] wars = dir.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return isWarFileName(name);
-                }
-            });
-            if (wars != null) {
-                for (File war : wars) {
-
-                    // custom plugins must not use same context-path as hawtio
-                    String contextPath = "/" + war.getName();
-                    if (contextPath.endsWith(".war")) {
-                        contextPath = contextPath.substring(0, contextPath.length() - 4);
-                    }
-                    if (contextPath.equals(options.getContextPath())) {
-                        throw new IllegalArgumentException("3rd party plugin " + war.getName() + " cannot have same name as Hawtio context path. Rename the plugin file to avoid the clash.");
-                    }
-
-                    WebAppContext plugin = new WebAppContext();
-                    plugin.setServer(handlers.getServer());
-                    plugin.setContextPath(contextPath);
-                    plugin.setWar(war.getAbsolutePath());
-                    // plugin.setParentLoaderPriority(true);
-                    plugin.setLogUrlOnStart(true);
-
-                    // need to have private sub directory for each plugin
-                    File pluginTempDir = new File(tempDir, war.getName());
-                    pluginTempDir.mkdirs();
-
-                    plugin.setTempDirectory(pluginTempDir);
-                    plugin.setThrowUnavailableOnStartupException(true);
-
-                    try {
-                        plugin.start();
-                        handlers.addHandler(plugin);
-
-                        log.info("Added 3rd party plugin with context-path: " + contextPath);
-                        System.out.println("Added 3rd party plugin with context-path: " + contextPath);
-                    } catch (Exception e) {
-                        log.warn("Failed to add and start 3rd party plugin with context-path: " + contextPath + " due " + e.getMessage(), e);
-                    }
-                }
-            }
-
+        if (!dir.exists() || !dir.isDirectory()) {
+            return;
         }
+
+        log.info("Scanning for 3rd party plugins in directory: {}", dir.getPath());
+
+        // find any .war files
+        File[] wars = dir.listFiles((d, name) -> isWarFileName(name));
+        if (wars == null) {
+            return;
+        }
+        Arrays.stream(wars).forEach(
+            war -> startPlugin(war, log, handlers, tempDir));
+    }
+
+    private void startPlugin(File war, Slf4jLog log, HandlerCollection handlers, File tempDir) {
+        String contextPath = resolveContextPath(war);
+
+        WebAppContext plugin = new WebAppContext();
+        plugin.setServer(handlers.getServer());
+        plugin.setContextPath(contextPath);
+        plugin.setWar(war.getAbsolutePath());
+        // plugin.setParentLoaderPriority(true);
+        plugin.setLogUrlOnStart(true);
+
+        // need to have private sub directory for each plugin
+        File pluginTempDir = new File(tempDir, war.getName());
+        pluginTempDir.mkdirs();
+
+        plugin.setTempDirectory(pluginTempDir);
+        plugin.setThrowUnavailableOnStartupException(true);
+
+        try {
+            plugin.start();
+            handlers.addHandler(plugin);
+
+            log.info("Added 3rd party plugin with context-path: {}", contextPath);
+            System.out.println("Added 3rd party plugin with context-path: " + contextPath);
+        } catch (Exception e) {
+            log.warn("Failed to add and start 3rd party plugin with context-path: " + contextPath + " due to " + e.getMessage(), e);
+        }
+    }
+
+    private String resolveContextPath(File war) {
+        String contextPath = "/" + war.getName();
+        if (contextPath.endsWith(".war")) {
+            contextPath = contextPath.substring(0, contextPath.length() - 4);
+        }
+        // custom plugins must not use same context-path as Hawtio
+        if (contextPath.equals(options.getContextPath())) {
+            throw new IllegalArgumentException("3rd party plugin " + war.getName() + " cannot have same name as Hawtio context path. Rename the plugin file to avoid the clash.");
+        }
+        return contextPath;
     }
 
     /**
