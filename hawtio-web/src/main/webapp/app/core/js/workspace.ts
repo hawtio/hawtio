@@ -356,6 +356,7 @@ module Core {
               // lets add the various data into the folder
               folder.entries = entries;
               folder.key = key;
+              folderNames.push(lastPath);
               angular.bind(this, configureFolder, folder, lastPath)();
               folder.title = trimQuotes(lastPath);
               folder.objectName = objectName;
