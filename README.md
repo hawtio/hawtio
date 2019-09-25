@@ -18,6 +18,7 @@ The only server side dependency (other than the static HTML/CSS/JS/images) is th
 - [Running an executable JAR](#running-an-executable-jar)
 - [Running a Spring Boot app](#running-a-spring-boot-app)
 - [Deploying on Apache Karaf](#deploying-on-apache-karaf)
+- [Deploying on OpenShift](https://github.com/hawtio/hawtio-online)
 
 For more details and other containers, see [Get Started Guide](http://hawt.io/docs/get-started/).
 
