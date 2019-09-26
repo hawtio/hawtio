@@ -34,6 +34,8 @@ namespace ConsoleAssembly {
       .then(hawtioVersion => aboutService.addProductInfo('Hawtio', hawtioVersion));
   }
 
-  hawtioPluginLoader.addModule(pluginName);
+  hawtioPluginLoader
+    .addUrl('plugin')
+    .addModule(pluginName);
 
 }

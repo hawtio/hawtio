@@ -42,12 +42,9 @@ public class PluginRegistry extends JmxTreeWatcher implements PluginRegistryMBea
     }
 
     protected NotificationListener getNotificationListener() {
-        return new NotificationListener() {
-            @Override
-            public void handleNotification(Notification notification, Object handback) {
-                LOG.debug("Got notification: " + notification + " for object " + handback);
-                updateCounter.incrementAndGet();
-            }
+        return (notification, handback) -> {
+            LOG.debug("Got notification: {} for object {}", notification, handback);
+            updateCounter.incrementAndGet();
         };
     }
 

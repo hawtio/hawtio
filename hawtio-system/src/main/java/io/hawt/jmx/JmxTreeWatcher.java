@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A simple mbean to watch the JMX tree so its easy for clients to know when they should refresh
+ * A simple MBean to watch the JMX tree so it's easy for clients to know when they should refresh
  * their JMX trees (which typically isn't a cheap operation).
  */
 public class JmxTreeWatcher implements JmxTreeWatcherMBean {
