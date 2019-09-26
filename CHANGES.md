@@ -3,6 +3,7 @@
 #### 2.8.0 (To be released)
 
 * Dynamic custom plugin support [#2508](https://github.com/hawtio/hawtio/issues/2508)
+* Add custom plugin example [simple-plugin](examples/simple-plugin)
 
 #### 2.7.1
 
