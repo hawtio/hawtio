@@ -4,41 +4,32 @@
     <groupId>io.hawt</groupId>
     <artifactId>project</artifactId>
     <version>2.8-SNAPSHOT</version>
-    <relativePath>../..</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>hawtio-osgi-jmx</artifactId>
+  <artifactId>hawtio-plugin-mbean</artifactId>
   <packaging>bundle</packaging>
   <name>${project.artifactId}</name>
-  <description>hawtio :: OSGi-related JMX MBeans</description>
+  <description>hawtio :: Plugin MBean</description>
+
+  <properties>
+    <fuse.osgi.export>
+      io.hawt.web.plugin
+    </fuse.osgi.export>
+    <fuse.osgi.import>
+      io.hawt.web.plugin,
+      javax.management,
+      *;resolution:=optional
+    </fuse.osgi.import>
+  </properties>
 
   <dependencies>
+
     <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <version>${osgi-version}</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-version}</version>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.enterprise</artifactId>
-        <version>${osgi-version}</version>
-        <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.karaf.management</groupId>
-      <artifactId>org.apache.karaf.management.server</artifactId>
-      <version>${karaf-version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>${commons-codec-version}</version>
     </dependency>
 
     <!-- testing -->
@@ -55,32 +46,17 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>2.20.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.7</version>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>${slf4j-version}</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
-  
+
   <build>
     <plugins>
+
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
@@ -97,19 +73,19 @@
         </executions>
         <configuration>
           <instructions>
+
+            <Export-Package>${fuse.osgi.export}</Export-Package>
+            <Import-Package>${fuse.osgi.import}</Import-Package>
+
             <Bundle-Name>${project.description}</Bundle-Name>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Bundle-Activator>io.hawt.osgi.jmx.Activator</Bundle-Activator>
-            <Bundle-Description>Additional JMX APIs into the OSGi Framework, used by hawt.io browser-based client.</Bundle-Description>
-            <Import-Package>
-              org.apache.karaf.management;version="${karaf-version-range}",
-              *
-            </Import-Package>
-            <Export-Package />
-            <Private-Package>org.apache.commons.codec*,io.hawt.osgi.jmx</Private-Package>
+            <Implementation-Title>HawtIO</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+
           </instructions>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
 </project>

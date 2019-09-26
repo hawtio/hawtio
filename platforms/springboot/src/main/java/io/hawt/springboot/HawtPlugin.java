@@ -7,7 +7,7 @@ public class HawtPlugin {
     private String name;
     private String context;
     private String domain;
-    private String scripts[];
+    private String[] scripts;
 
     public HawtPlugin(String name, String context, String domain,
                       String[] scripts) {

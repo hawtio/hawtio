@@ -19,6 +19,7 @@ import io.hawt.web.filters.StrictTransportSecurityFilter;
 import io.hawt.web.filters.XContentTypeOptionsFilter;
 import io.hawt.web.filters.XFrameOptionsFilter;
 import io.hawt.web.filters.XXSSProtectionFilter;
+import io.hawt.web.plugin.PluginServlet;
 import io.hawt.web.proxy.ProxyServlet;
 
 import java.util.Arrays;
@@ -93,6 +94,7 @@ public class HawtioManagementConfiguration {
     // -------------------------------------------------------------------------
     // Redirect Helper
     // -------------------------------------------------------------------------
+
     @Bean
     public Redirector redirector() {
         final Redirector redirector = new Redirector();
@@ -253,6 +255,13 @@ public class HawtioManagementConfiguration {
         return new ServletRegistrationBean<>(
             new KeycloakServlet(),
             hawtioPath + "/keycloak/*");
+    }
+
+    @Bean
+    public ServletRegistrationBean pluginServlet() {
+        return new ServletRegistrationBean<>(
+            new PluginServlet(),
+            hawtioPath + "/plugin/*");
     }
 
     // -------------------------------------------------------------------------

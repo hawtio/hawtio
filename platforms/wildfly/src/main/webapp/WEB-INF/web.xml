@@ -251,6 +251,15 @@
     <url-pattern>/keycloak/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>plugin</servlet-name>
+    <servlet-class>io.hawt.web.plugin.PluginServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>plugin</servlet-name>
+    <url-pattern>/plugin/*</url-pattern>
+  </servlet-mapping>
+
   <listener>
     <listener-class>io.hawt.HawtioContextListener</listener-class>
   </listener>
