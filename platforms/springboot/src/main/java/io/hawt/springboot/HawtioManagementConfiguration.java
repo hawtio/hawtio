@@ -1,5 +1,14 @@
 package io.hawt.springboot;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.servlet.DispatcherType;
+import javax.servlet.http.HttpServletRequest;
+
 import io.hawt.system.ConfigManager;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import io.hawt.web.auth.AuthenticationFilter;
@@ -19,19 +28,7 @@ import io.hawt.web.filters.StrictTransportSecurityFilter;
 import io.hawt.web.filters.XContentTypeOptionsFilter;
 import io.hawt.web.filters.XFrameOptionsFilter;
 import io.hawt.web.filters.XXSSProtectionFilter;
-import io.hawt.web.plugin.PluginServlet;
 import io.hawt.web.proxy.ProxyServlet;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.servlet.DispatcherType;
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.jolokia.JolokiaEndpoint;
 import org.springframework.boot.actuate.autoconfigure.jolokia.JolokiaEndpointAutoConfiguration;
@@ -45,6 +42,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.AbstractUrlViewController;
+
 import static io.hawt.web.filters.BaseTagHrefFilter.PARAM_APPLICATION_CONTEXT_PATH;
 
 @ManagementContextConfiguration
@@ -255,13 +253,6 @@ public class HawtioManagementConfiguration {
         return new ServletRegistrationBean<>(
             new KeycloakServlet(),
             hawtioPath + "/keycloak/*");
-    }
-
-    @Bean
-    public ServletRegistrationBean pluginServlet() {
-        return new ServletRegistrationBean<>(
-            new PluginServlet(),
-            hawtioPath + "/plugin/*");
     }
 
     // -------------------------------------------------------------------------
