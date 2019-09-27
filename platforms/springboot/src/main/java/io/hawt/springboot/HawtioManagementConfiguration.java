@@ -52,12 +52,12 @@ public class HawtioManagementConfiguration {
 
     private final String hawtioPath;
 
-    public HawtioManagementConfiguration (final EndpointPathResolver pathResolver) {
+    public HawtioManagementConfiguration(final EndpointPathResolver pathResolver) {
         this.hawtioPath = pathResolver.resolve("hawtio");
     }
 
     @Autowired
-    public void initializeHawtioPlugins(final HawtioEndpoint hawtioEndpoint, final Optional<List<HawtPlugin>> plugins) {
+    public void initializeHawtioPlugins(final HawtioEndpoint hawtioEndpoint, final Optional<List<HawtioPlugin>> plugins) {
         hawtioEndpoint.setPlugins(plugins.orElse(Collections.emptyList()));
     }
 
@@ -88,7 +88,6 @@ public class HawtioManagementConfiguration {
         return mapping;
     }
 
-
     // -------------------------------------------------------------------------
     // Redirect Helper
     // -------------------------------------------------------------------------
@@ -103,7 +102,6 @@ public class HawtioManagementConfiguration {
     // -------------------------------------------------------------------------
     // Filters
     // -------------------------------------------------------------------------
-
 
     @Bean
     public FilterRegistrationBean sessionExpiryFilter() {

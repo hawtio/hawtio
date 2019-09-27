@@ -87,12 +87,16 @@ Help documentation for Simple plugin.
    *   isValid - A function that returns whether or not this
    *             plugin has functionality that can be used for
    *             the current JVM
+   *   rank    - The order in the menu. Higher ranks come first
+   *             (default = 0)
    */
   function configureLayout(mainNavService) {
+    // set rank = -10 to make sure the item is placed at the bottom
     mainNavService.addItem({
       title: 'Simple',
       href: '/simple',
-      isValid: function () { return true; }
+      isValid: function () { return true; },
+      rank: -10
     });
   }
   configureLayout.$inject = ['mainNavService'];

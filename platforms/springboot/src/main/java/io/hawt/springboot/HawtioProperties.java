@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Configuration properties for hawtio
+ * Configuration properties for Hawtio
  */
 public class HawtioProperties {
 

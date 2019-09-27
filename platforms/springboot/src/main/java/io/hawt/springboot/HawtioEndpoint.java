@@ -12,19 +12,19 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 
 /**
- * Spring Boot endpoint to expose hawtio.
+ * Spring Boot endpoint to expose Hawtio.
  */
 @ControllerEndpoint(id = "hawtio")
 public class HawtioEndpoint implements WebMvcConfigurer {
 
     private final EndpointPathResolver endpointPath;
-    private List<HawtPlugin> plugins;
+    private List<HawtioPlugin> plugins;
 
     public HawtioEndpoint(final EndpointPathResolver endpointPath) {
         this.endpointPath = endpointPath;
     }
 
-    public void setPlugins(final List<HawtPlugin> plugins) {
+    public void setPlugins(final List<HawtioPlugin> plugins) {
         this.plugins = plugins;
     }
 
@@ -35,7 +35,7 @@ public class HawtioEndpoint implements WebMvcConfigurer {
      *
      * @return The Spring Web forward directive for the Hawtio index.html resource.
      */
-    @RequestMapping(value = {"", "{path:^(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|user|oauth|\\.).)*$}/**"}, produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(value = {"", "{path:^(?:(?!\\bjolokia\\b|auth|css|fonts|img|js|user|oauth|plugins|\\.).)*$}/**"}, produces = MediaType.TEXT_HTML_VALUE)
     public String forwardHawtioRequestToIndexHtml() {
         final String path = endpointPath.resolve("hawtio");
         final UriComponents uriComponents = ServletUriComponentsBuilder.fromPath(path)
@@ -46,7 +46,7 @@ public class HawtioEndpoint implements WebMvcConfigurer {
 
     @RequestMapping("/plugin")
     @ResponseBody
-    public List<HawtPlugin> getPlugins() {
+    public List<HawtioPlugin> getPlugins() {
         return plugins;
     }
 

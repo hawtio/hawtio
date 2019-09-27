@@ -1,7 +1,7 @@
 package io.hawt.example.spring.boot;
 
 import io.hawt.config.ConfigFacade;
-import io.hawt.springboot.HawtPlugin;
+import io.hawt.springboot.HawtioPlugin;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -17,11 +17,11 @@ public class SampleSpringBootService {
      * Loading an example plugin.
      */
     @Bean
-    public HawtPlugin samplePlugin() {
-        return new HawtPlugin("sample-plugin",
+    public HawtioPlugin samplePlugin() {
+        return new HawtioPlugin("sample-plugin",
             "plugins",
             "",
-            new String[] { "sample-plugin/js/sample-plugin.js" });
+            new String[] { "sample-plugin/sample-plugin.js" });
     }
 
     /**

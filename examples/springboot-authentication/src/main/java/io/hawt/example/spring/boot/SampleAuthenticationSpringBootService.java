@@ -3,7 +3,7 @@ package io.hawt.example.spring.boot;
 import java.net.URL;
 
 import io.hawt.config.ConfigFacade;
-import io.hawt.springboot.HawtPlugin;
+import io.hawt.springboot.HawtioPlugin;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,6 @@ public class SampleAuthenticationSpringBootService {
     private static final Logger LOG = LoggerFactory.getLogger(SampleAuthenticationSpringBootService.class);
     private static final String JAVA_SECURITY_AUTH_LOGIN_CONFIG = "java.security.auth.login.config";
 
-
     public static void main(String[] args) {
         System.setProperty(AuthenticationConfiguration.HAWTIO_AUTHENTICATION_ENABLED, "false");
         SpringApplication.run(SampleAuthenticationSpringBootService.class, args);
@@ -27,8 +26,11 @@ public class SampleAuthenticationSpringBootService {
      * Loading an example plugin.
      */
     @Bean
-    public HawtPlugin samplePlugin() {
-        return new HawtPlugin("sample-plugin", "plugins", "", new String[] { "sample-plugin/js/sample-plugin.js" });
+    public HawtioPlugin samplePlugin() {
+        return new HawtioPlugin("sample-plugin",
+            "plugins",
+            "",
+            new String[] { "sample-plugin/sample-plugin.js" });
     }
 
     /**

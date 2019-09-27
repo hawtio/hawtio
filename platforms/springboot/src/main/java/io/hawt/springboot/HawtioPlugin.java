@@ -2,16 +2,17 @@ package io.hawt.springboot;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class HawtPlugin {
+/**
+ * Hawtio plugin for Spring Boot
+ */
+public class HawtioPlugin {
 
     private String name;
     private String context;
     private String domain;
     private String[] scripts;
 
-    public HawtPlugin(String name, String context, String domain,
-                      String[] scripts) {
-        super();
+    public HawtioPlugin(String name, String context, String domain, String[] scripts) {
         this.name = name;
         this.context = context;
         this.domain = domain;
