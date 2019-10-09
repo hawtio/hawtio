@@ -126,7 +126,7 @@ function offsetString(n){
 }
 
 
-/* Check browser version, since $.browser was removed in jQuery 1.9 */
+/* Check browser version, since $.support was removed in jQuery 1.9 */
 function _checkBrowser(){
 	var matched, browser;
 	function uaMatch( ua ) {
