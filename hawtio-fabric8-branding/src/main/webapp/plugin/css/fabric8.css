@@ -205,13 +205,13 @@ tr td.focus {
 }
 */
 
-.gridster ul#widgets .gs_w {
+.gridster ul#widgets .gs-w {
   border: 1px solid #d4d4d4;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   background: #ffffff;
   border-radius: 6px;
 }
-.gridster ul#widgets .gs_w.dragging {
+.gridster ul#widgets .gs-w.dragging {
   box-shadow: 0 1px 13px rgba(0, 0, 0, 0.12);
 }
 .gridster ul#widgets .preview-holder {

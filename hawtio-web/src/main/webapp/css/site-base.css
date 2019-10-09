@@ -416,7 +416,7 @@ li.attr-column {
   list-style-type: none;
 }
 
-.gridster ul#widgets .gs_w {
+.gridster ul#widgets .gs-w {
   padding: 0;
   position: relative;
 }
