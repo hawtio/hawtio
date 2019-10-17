@@ -1,6 +1,6 @@
 ## Change Log
 
-#### 2.8.0 (To be released)
+#### 2.8.0
 
 * Dynamic custom plugin support [#2508](https://github.com/hawtio/hawtio/issues/2508)
 * Add custom plugin example [simple-plugin](examples/simple-plugin)

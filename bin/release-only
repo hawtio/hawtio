@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -z $2 ]; then
+if [ -z $1 ]; then
   echo "Use this script to release a Hawtio version from an existing tag."
   echo "It is normally used when a tag has been published to GitHub but"
   echo "releasing it to OSSRH has failed for some reason."
