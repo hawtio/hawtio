@@ -1,3 +1,7 @@
+# DEPRECATED
+
+**The 1.x branch is no longer actively developed or maintained. Go to [master](https://github.com/hawtio/hawtio) for the active Hawtio 2.x branch.**
+
 ![hawtio][logo]
 
 [![CircleCI](https://circleci.com/gh/hawtio/hawtio.svg?style=shield)](https://circleci.com/gh/hawtio/hawtio)
