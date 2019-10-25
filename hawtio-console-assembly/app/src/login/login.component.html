@@ -56,5 +56,15 @@
         </form>
       </div>
     </main>
+    <footer class="pf-c-login__footer">
+      <p>{{$ctrl.login.description}}</p>
+      <ul class="pf-c-list pf-m-inline">
+        <li ng-repeat="link in $ctrl.login.links">
+          <a href="{{link.url}}">
+            {{link.text}}
+          </a>
+        </li>
+      </ul>
+    </footer>
   </div>
 </div>
