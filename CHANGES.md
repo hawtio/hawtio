@@ -1,5 +1,32 @@
 ## Change Log
 
+#### 2.9.0 (To be released)
+
+* Support login page customisation through `hawtconfig.json`.
+  Now you can add custom description and links to the standard login page as follows:
+  
+      {
+        ...
+        "login": {
+          "description": "This is placeholder text only. Use this area to place any information or introductory message about your application that may be relevant to users.",
+          "links": [
+            {
+              "url": "#",
+              "text": "Terms of use"
+            },
+            {
+              "url": "#",
+              "text": "Help"
+            },
+            {
+              "url": "#",
+              "text": "Privacy policy"
+            }
+          ]
+        },
+        ...
+      }
+
 #### 2.8.0
 
 * Dynamic custom plugin support [#2508](https://github.com/hawtio/hawtio/issues/2508)
