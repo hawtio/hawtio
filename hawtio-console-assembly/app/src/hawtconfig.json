@@ -4,12 +4,16 @@
     "appLogoUrl": "img/hawtio-logo.svg",
     "companyLogoUrl": "img/hawtio-logo.svg"
   },
+  "login": {
+    "description": "",
+    "links": []
+  },
   "about": {
     "title": "Hawtio Management Console",
     "productInfo": [],
     "additionalInfo": "",
     "copyright": "",
     "imgSrc": "img/hawtio-logo.svg"
-  },  
+  },
   "disabledRoutes": []
 }

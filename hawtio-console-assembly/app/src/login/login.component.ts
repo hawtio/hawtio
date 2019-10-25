@@ -4,6 +4,7 @@ namespace Login {
 
   export class LoginController {
     branding = {};
+    login = {};
     entity = {
       username: '',
       password: ''
@@ -23,6 +24,7 @@ namespace Login {
         (response: ng.IHttpResponse<Core.Config>) => {
           log.debug('hawtconfig.json:', response.data);
           this.branding = response.data.branding;
+          this.login = response.data.login;
         },
         (response) => {
           log.warn('Failed to fetch hawtconfig.json', response);
@@ -30,7 +32,7 @@ namespace Login {
     }
 
     doLogin(): void {
-      if (this.entity.username.trim() == '') {
+      if (this.entity.username.trim() === '') {
         return;
       }
       this.$http.post(LOGIN_URL, this.entity).then(
