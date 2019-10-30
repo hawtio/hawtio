@@ -10,9 +10,9 @@
     "@types/jquery" "2.0.53"
 
 "@hawtio/core@~4.9.0":
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.9.0.tgz#6bf61ddc6b513c89905df49a01e969a8cfda5cd8"
-  integrity sha512-fyTnJ8vEv/rIYjqTP5FxnoIzgzm5apXuf8fKTeqHp9dRa6EWH/8yN8LDjuwgmw9einSZ2nkohc3ehQwoL86kFg==
+  version "4.9.1"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.9.1.tgz#8c9377344a22543ab760de4a85259d5e6c5f1069"
+  integrity sha512-AwkjXPYWhUYQmIXO0WX/eNmrVbTudHKYguxCRonD7LzNNvtOlryBJSRtxb2INBb9vM7hYMjVr4M4HY2Diqjm7w==
   dependencies:
     "@hawtio/core-dts" "~3.3.0"
     "@patternfly/patternfly" "^2.0.0"
@@ -33,9 +33,9 @@
     urijs "1.19.0"
 
 "@hawtio/integration@^4.0.0":
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.9.0.tgz#8a0510886d436a0c2dcce6c79502360954a0627a"
-  integrity sha512-qDyBoETIM/K1p2ZluwQO8KSdsKfy4zBInyYArIufseNaRIhOARLWE3+2M1EIAl8wPn+Irjg5OgZOY0Hc8YlLlQ==
+  version "4.9.1"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.9.1.tgz#482f6a99c149f2b01d2872ec7f6a7ce5129abd55"
+  integrity sha512-BwKZBW9wCEaBtMtJgAtXkMwGOdDTQ1+tYFqeIIGdbhzphu0JqYqFEqQYWFu0JsdDE0P+MN2jSpBbbEzI3pOgvA==
   dependencies:
     "@hawtio/core" "~4.9.0"
     "@types/angular-mocks" "~1.7.0"
@@ -65,9 +65,9 @@
     ng-idle "^1.3.2"
 
 "@patternfly/patternfly@^2.0.0":
-  version "2.40.2"
-  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.40.2.tgz#c1e4fd8f80b191faea576e78a45d8edaf48b7926"
-  integrity sha512-KCPQ6EL39xJen/B67MGv56i3h6bU5l7FD6f5IYU30z+ed2gM8zAYI3mPKNV05TMJv6+EQfp6O7dqCM3PJ8Q1yw==
+  version "2.40.3"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.40.3.tgz#49e7a4164ccf956d5ba1d39a6f3e6d0dc0c41032"
+  integrity sha512-9hA9fIAD0ebJbJmWrykophBv0oORoyInTPekgMplbvOxXMRFFz2T2z+P0rzCku5ecBTT8zzrIkiF9B+YucFSkA==
 
 "@types/angular-mocks@~1.7.0":
   version "1.7.0"
@@ -266,9 +266,9 @@
   integrity sha512-WvfJ3LFxBbWjqRGz9n7GJt08RrTHPJDVsIwwoCMROlqF+iDacYiAFjf9oqnq0mXpb2juA2N/qjKP+MKdal3YNQ==
 
 "@types/d3-transition@*":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@types/d3-transition/-/d3-transition-1.1.4.tgz#3c7a35ae9acfc59dfef1eb7308ebabf0fc0680de"
-  integrity sha512-/vsmKVUIXEyCcIXYAlw7bnYkIs9/J/nZbptRJFKUN3FdXq/dF6j9z9xXzerkyU6TDHLrMrwx9eGwdKyTIy/j9w==
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@types/d3-transition/-/d3-transition-1.1.5.tgz#b75b871664a45ce7c862e337a16bd1c42cc14857"
+  integrity sha512-4IexeQEmEk2u5/ZxqHPCiKxX+sn7uPsg+wb6zL3KLqj8jFlhcueAo3a5Tj1Z74VBeeeQjirdSFNtR87Gox/iwA==
   dependencies:
     "@types/d3-selection" "*"
 
@@ -357,11 +357,6 @@
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/@types/marked/-/marked-0.6.0.tgz#e4ac316144a84afda5c2474488d7b9fef3ab9995"
   integrity sha512-TxwhgR9VsIfRDJ3WwFokG8Xu+ea0nYGDRHdI783WJ983uffatz0ytIeUEIBOwPvRy241KRSNVyywQltuTqDh0w==
-
-"@types/sizzle@*":
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.2.tgz#a811b8c18e2babab7d542b3365887ae2e4d9de47"
-  integrity sha512-7EJYyKTL7tFR8+gDbB6Wwz/arpGa0Mywk1TJbNzKzHtzbwVmY4HR9WqS5VV7dsBUKQmPNr192jHr/VpBluj/hg==
 
 "@types/urijs@~1.15.38":
   version "1.15.38"
