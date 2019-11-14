@@ -102,18 +102,17 @@ public class HawtioBlueprintContextListener implements ServletContextListener {
     protected void appendEnvironmentVariablesAndSystemProperties(ServletContext servletContext, Map<String, String> properties) {
         try {
             Properties sysProperties = System.getProperties();
-            Set<Map.Entry<Object, Object>> sysEntries = sysProperties.entrySet();
-            for (Map.Entry<Object, Object> sysEntry : sysEntries) {
-                Object key = sysEntry.getKey();
-                Object value = sysEntry.getValue();
-                if (key != null && value != null) {
-                    String propertyName = key.toString();
-                    String propertyValue = value.toString();
-                    if (!properties.containsKey(propertyName)) {
+            // iterating over sysProps.keySet() directly is not thread-safe and may throw ConcurrentMod.Ex.,
+            // so first get the keys and then query their values
+            Set<String> keys = sysProperties.stringPropertyNames();
+            for (String propertyName : keys) {
+                String propertyValue = sysProperties.getProperty(propertyName); // value can be null if removed in meantime, but unlikely
+                if (propertyName != null && propertyValue != null &&
+                    !properties.containsKey(propertyName)) {
                         properties.put(propertyName, propertyValue);
-                    }
                 }
             }
+
             Map<String, String> env = System.getenv();
             if (env != null) {
                 Set<Map.Entry<String, String>> entries = env.entrySet();
