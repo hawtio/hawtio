@@ -33,9 +33,9 @@
     urijs "1.19.0"
 
 "@hawtio/integration@^4.0.0":
-  version "4.9.1"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.9.1.tgz#482f6a99c149f2b01d2872ec7f6a7ce5129abd55"
-  integrity sha512-BwKZBW9wCEaBtMtJgAtXkMwGOdDTQ1+tYFqeIIGdbhzphu0JqYqFEqQYWFu0JsdDE0P+MN2jSpBbbEzI3pOgvA==
+  version "4.9.2"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.9.2.tgz#100f2f3376cfc6b062b2c51505a7a72de5d3b5e5"
+  integrity sha512-7BAAW8DhFbgJ9rfKw6SaTuC7YT512rEJK2m2SFObIymYWja8jLbuq83WTeSrvQs7QWZazq+GTefaiXOjwB5CjA==
   dependencies:
     "@hawtio/core" "~4.9.0"
     "@types/angular-mocks" "~1.7.0"
