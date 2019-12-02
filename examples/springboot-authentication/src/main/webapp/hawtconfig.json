@@ -1,24 +1,3 @@
-# Hawtio Spring Boot 2 Authentication Example
-
-Sample application for Hawtio + Spring Boot 2 with authentication enabled.
-
-## How to run
-
-Run with
-
-    mvn spring-boot:run
-
-Browse Hawtio using the url: http://localhost:10001/actuator/hawtio/index.html
-
-Log in with user: `hawtio` password: `hawtio`
-
-## `hawtconfig.json` customisation
-
-This example also illustrates how to provide a custom `hawtconfig.json` so that you can customise the application branding (title & logo) and login page information on Spring Boot.
-
-See [src/main/webapp/hawtconfig.json](src/main/webapp/hawtconfig.json).
-
-```
 {
   "branding": {
     "appName": "Hawtio Spring Boot 2 Authentication Example",
@@ -51,4 +30,3 @@ See [src/main/webapp/hawtconfig.json](src/main/webapp/hawtconfig.json).
   },
   "disabledRoutes": []
 }
-```
