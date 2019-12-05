@@ -3,8 +3,8 @@ namespace Login {
   const LOGIN_URL: string = 'auth/login';
 
   export class LoginController {
-    branding = {};
-    login = {};
+    branding: Core.Branding = {};
+    login: Core.Login = {};
     entity = {
       username: '',
       password: ''
@@ -12,6 +12,7 @@ namespace Login {
     wrongPassword: boolean = false;
 
     constructor(
+      private configManager: Core.ConfigManager,
       private $http: ng.IHttpService,
       private $window: ng.IWindowService,
       private documentBase: string) {
@@ -19,16 +20,8 @@ namespace Login {
     }
 
     $onInit(): void {
-      // fetch hawtconfig.json
-      this.$http.get('hawtconfig.json').then(
-        (response: ng.IHttpResponse<Core.Config>) => {
-          log.debug('hawtconfig.json:', response.data);
-          this.branding = response.data.branding;
-          this.login = response.data.login;
-        },
-        (response) => {
-          log.warn('Failed to fetch hawtconfig.json', response);
-        });
+      this.branding = this.configManager.branding;
+      this.login = this.configManager.login;
     }
 
     doLogin(): void {

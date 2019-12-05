@@ -17,7 +17,7 @@ public class AuthenticationConfiguration {
     public static final String[] UNSECURED_PATHS = {"/auth/login", "/auth/logout", "/css",
         "/fonts", "/img", "/js", "/hawtconfig.json",
         "/jolokia", "/keycloak", "/oauth", "/user",
-        "/login.html"};
+        "/plugin", "/login.html"};
 
     // Configuration properties
     public static final String AUTHENTICATION_ENABLED = "authenticationEnabled";

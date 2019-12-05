@@ -102,6 +102,7 @@
 
   <modules>
     <module>bom</module>
+    <module>examples/branding-plugin</module>
     <module>examples/simple-plugin</module>
     <module>examples/springboot-authentication</module>
     <module>examples/springboot</module>
