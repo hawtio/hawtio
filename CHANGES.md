@@ -26,6 +26,8 @@
         },
         ...
       }
+* `hawtconfig.json` is now customisable through a custom plugin.
+  See [branding-plugin](examples/branding-plugin) and[springboot-authentication](examples/springboot-authentication) examples.
 * Bug fixes
 
 #### 2.8.0
