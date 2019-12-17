@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServletRequest;
 
@@ -78,7 +79,9 @@ public class HawtioManagementConfiguration {
 
         if (!hawtioPath.isEmpty()) {
             final String hawtioJolokiaPath = pathResolver.resolveUrlMapping("hawtio", "jolokia", "**");
-            urlMap.put(hawtioJolokiaPath, new JolokiaForwardingController(jolokiaPath));
+            urlMap.put(
+                hawtioJolokiaPath,
+                new JolokiaForwardingController(hawtioPath + "/jolokia", jolokiaPath));
             mapping.setOrder(Ordered.HIGHEST_PRECEDENCE);
         } else {
             urlMap.put(SilentSimpleUrlHandlerMapping.DUMMY, null);
@@ -275,9 +278,11 @@ public class HawtioManagementConfiguration {
 
     private class JolokiaForwardingController extends AbstractUrlViewController {
 
+        private final String hawtioJolokiaPath;
         private final String jolokiaPath;
 
-        JolokiaForwardingController(final String jolokiaPath) {
+        JolokiaForwardingController(final String hawtioJolokiaPath, final String jolokiaPath) {
+            this.hawtioJolokiaPath = hawtioJolokiaPath;
             this.jolokiaPath = jolokiaPath;
         }
 
@@ -287,6 +292,9 @@ public class HawtioManagementConfiguration {
             final StringBuilder b = new StringBuilder();
             b.append("forward:");
             b.append(jolokiaPath);
+            final String pathQuery = request.getRequestURI().substring(
+                request.getContextPath().length() + hawtioJolokiaPath.length());
+            b.append(pathQuery);
             if (request.getQueryString() != null) {
                 b.append('?').append(request.getQueryString());
             }

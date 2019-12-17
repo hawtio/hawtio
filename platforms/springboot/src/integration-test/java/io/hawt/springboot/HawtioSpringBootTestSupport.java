@@ -83,6 +83,10 @@ public class HawtioSpringBootTestSupport {
         getTestClient(context)
             .get().uri(properties.getHawtioJolokiaPath()).exchange()
             .expectStatus().isOk();
+        getTestClient(context)
+            .get().uri(properties.getHawtioJolokiaPath() + "/read/java.lang:type=Memory/Verbose").exchange()
+            .expectStatus().isOk()
+            .expectBody().jsonPath("$.value").isEqualTo("false");
     }
 
     public void testHawtioPluginRequest(AssertableWebApplicationContext context, TestProperties properties) {
