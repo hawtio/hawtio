@@ -19,9 +19,9 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+
 import javax.security.auth.Subject;
 
-import io.hawt.web.auth.LoginServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AuthHelpers {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(AuthHelpers.class);
 
     public static final List<String> KNOWN_PRINCIPALS = Arrays.asList(
         "UserPrincipal", "KeycloakPrincipal", "JAASPrincipal", "SimplePrincipal");
