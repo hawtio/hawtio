@@ -42,17 +42,8 @@ public class ProxyDetails implements ProxyAddress {
     public ProxyDetails(HttpServletRequest httpServletRequest) {
         this(httpServletRequest.getPathInfo());
 
-        String authHeader = httpServletRequest.getHeader(Authenticator.HEADER_AUTHORIZATION);
-
-        if (authHeader != null && !authHeader.equals("")) {
-
-            AuthInfo info = new AuthInfo();
-
-            Authenticator.extractAuthInfo(authHeader, (userName, password) -> {
-                info.username = userName;
-                info.password = password;
-            });
-
+        AuthInfo info = Authenticator.getAuthorizationHeader(httpServletRequest);
+        if (info.isSet()) {
             userName = info.username;
             password = info.password;
         }

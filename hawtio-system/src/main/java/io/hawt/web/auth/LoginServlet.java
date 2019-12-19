@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import io.hawt.system.AuthHelpers;
 import io.hawt.system.AuthenticateResult;
@@ -36,7 +34,7 @@ public class LoginServlet extends HttpServlet {
     private static final transient Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
     private static final int DEFAULT_SESSION_TIMEOUT = 1800; // 30 mins
 
-    private Integer timeout = DEFAULT_SESSION_TIMEOUT;
+    private int timeout = DEFAULT_SESSION_TIMEOUT;
     private AuthenticationConfiguration authConfiguration;
 
     private Converters converters = new Converters();
@@ -48,7 +46,7 @@ public class LoginServlet extends HttpServlet {
     public void init() {
         authConfiguration = AuthenticationConfiguration.getConfiguration(getServletContext());
         setupSessionTimeout();
-        LOG.info("hawtio login is using {} HttpSession timeout", timeout != null ? timeout + " sec." : "default");
+        LOG.info("Hawtio login is using {} sec. HttpSession timeout", timeout);
     }
 
     private void setupSessionTimeout() {
@@ -61,7 +59,7 @@ public class LoginServlet extends HttpServlet {
             return;
         }
         try {
-            timeout = Integer.valueOf(timeoutStr);
+            timeout = Integer.parseInt(timeoutStr);
             // timeout of 0 means default timeout
             if (timeout == 0) {
                 timeout = DEFAULT_SESSION_TIMEOUT;
@@ -89,7 +87,7 @@ public class LoginServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        clearSession(request);
+        AuthSessionHelpers.clear(request, authConfiguration);
 
         JSONObject json = ServletHelpers.readObject(request.getReader());
         String username = (String) json.get("username");
@@ -99,7 +97,7 @@ public class LoginServlet extends HttpServlet {
             authConfiguration, request, username, password,
             subject -> {
                 LOG.info("Logging in user: {}", AuthHelpers.getUsername(subject));
-                setupSession(request, subject, username);
+                AuthSessionHelpers.setup(request, subject, username, timeout);
                 sendResponse(response, subject);
             });
 
@@ -112,32 +110,6 @@ public class LoginServlet extends HttpServlet {
                 ServletHelpers.doForbidden(response);
                 break;
         }
-    }
-
-    private void clearSession(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            return;
-        }
-        Subject subject = (Subject) session.getAttribute("subject");
-        if (subject != null) {
-            LOG.info("Logging out existing user: {}", AuthHelpers.getUsername(subject));
-            Authenticator.logout(authConfiguration, subject);
-            session.invalidate();
-        }
-    }
-
-    private void setupSession(HttpServletRequest request, Subject subject, String username) {
-        HttpSession session = request.getSession(true);
-        session.setAttribute("subject", subject);
-        session.setAttribute("user", username);
-        session.setAttribute("org.osgi.service.http.authentication.remote.user", username);
-        session.setAttribute("org.osgi.service.http.authentication.type", HttpServletRequest.BASIC_AUTH);
-        session.setAttribute("loginTime", GregorianCalendar.getInstance().getTimeInMillis());
-        if (timeout != null) {
-            session.setMaxInactiveInterval(timeout);
-        }
-        LOG.debug("Http session timeout for user {} is {} sec.", username, session.getMaxInactiveInterval());
     }
 
     private void sendResponse(HttpServletResponse response, Subject subject) {

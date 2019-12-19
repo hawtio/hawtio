@@ -37,7 +37,7 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+        throws IOException {
 
         if (!authenticationEnabled) {
             sendResponse(response, DEFAULT_USER);

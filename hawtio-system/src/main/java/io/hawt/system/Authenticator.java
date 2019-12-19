@@ -1,6 +1,5 @@
 package io.hawt.system;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.Principal;
@@ -12,13 +11,13 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.AccountException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 
+import io.hawt.util.Strings;
 import io.hawt.web.auth.AuthenticationConfiguration;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.karaf.jaas.boot.principal.ClientPrincipal;
@@ -38,7 +37,19 @@ public class Authenticator {
     private static Boolean websphereDetected;
     private static Method websphereGetGroupsMethod;
 
-    public static void extractAuthInfo(String authHeader, BiConsumer<String, String> callback) {
+    public static AuthInfo getAuthorizationHeader(HttpServletRequest request) {
+        String authHeader = request.getHeader(Authenticator.HEADER_AUTHORIZATION);
+        AuthInfo info = new AuthInfo();
+        if (Strings.isNotBlank(authHeader)) {
+            extractAuthInfo(authHeader, (username, password) -> {
+                info.username = username;
+                info.password = password;
+            });
+        }
+        return info;
+    }
+
+    private static void extractAuthInfo(String authHeader, BiConsumer<String, String> callback) {
         authHeader = authHeader.trim();
         String[] parts = authHeader.split(" ");
         if (parts.length != 2) {
@@ -71,19 +82,7 @@ public class Authenticator {
 
     public static AuthenticateResult authenticate(AuthenticationConfiguration authConfiguration,
                                                   HttpServletRequest request, Consumer<Subject> callback) {
-
-        String authHeader = request.getHeader(HEADER_AUTHORIZATION);
-
-        if (authHeader == null || authHeader.equals("")) {
-            return AuthenticateResult.NO_CREDENTIALS;
-        }
-
-        AuthInfo info = new AuthInfo();
-
-        extractAuthInfo(authHeader, (userName, password) -> {
-            info.username = userName;
-            info.password = password;
-        });
+        AuthInfo info = getAuthorizationHeader(request);
 
         if (info.username == null || info.username.equals("public")) {
             return AuthenticateResult.NO_CREDENTIALS;
@@ -302,7 +301,7 @@ public class Authenticator {
         }
 
         @Override
-        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+        public void handle(Callback[] callbacks) {
             for (Callback callback : callbacks) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Callback type {} -> {}", callback.getClass(), callback);

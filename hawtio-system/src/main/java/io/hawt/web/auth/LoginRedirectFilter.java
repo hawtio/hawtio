@@ -44,15 +44,11 @@ public class LoginRedirectFilter implements Filter {
         String path = httpRequest.getServletPath();
 
         if (authConfiguration.isEnabled() && !authConfiguration.isKeycloakEnabled()
-            && !isAuthenticated(session) && isSecuredPath(path)) {
+            && !AuthSessionHelpers.isAuthenticated(session) && isSecuredPath(path)) {
             redirector.doRedirect(httpRequest, httpResponse, AuthenticationConfiguration.LOGIN_URL);
         } else {
             chain.doFilter(request, response);
         }
-    }
-
-    private boolean isAuthenticated(HttpSession session) {
-        return session != null && session.getAttribute("subject") != null;
     }
 
     boolean isSecuredPath(String path) {

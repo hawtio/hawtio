@@ -1,20 +1,25 @@
 package io.hawt.web.auth;
 
-import io.hawt.system.AuthInfo;
+import java.io.IOException;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+
+import javax.security.auth.Subject;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import io.hawt.system.AuthenticateResult;
 import io.hawt.system.Authenticator;
 import io.hawt.web.ServletHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.security.auth.Subject;
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 
 /**
  * Filter for authentication. If the filter is enabled, then the login screen is shown.
@@ -48,7 +53,7 @@ public class AuthenticationFilter implements Filter {
             Subject subject = (Subject) session.getAttribute("subject");
             // Connecting from another Hawtio may have a different user authentication, so
             // let's check if the session user is the same as in the authorization header here
-            if (subject != null && validateSession(httpRequest, session, subject)) {
+            if (AuthSessionHelpers.validate(httpRequest, session, subject)) {
                 executeAs(request, response, chain, subject);
                 return;
             }
@@ -77,23 +82,6 @@ public class AuthenticationFilter implements Filter {
                     ServletHelpers.doForbidden(httpResponse);
                 }
                 break;
-        }
-    }
-
-    private boolean validateSession(HttpServletRequest request, HttpSession session, Subject subject) {
-        String authHeader = request.getHeader(Authenticator.HEADER_AUTHORIZATION);
-        AuthInfo info = new AuthInfo();
-        if (authHeader != null && !authHeader.equals("")) {
-            Authenticator.extractAuthInfo(authHeader, (userName, password) -> info.username = userName);
-        }
-        String sessionUser = (String) session.getAttribute("user");
-        if (info.username == null || info.username.equals(sessionUser)) {
-            LOG.debug("Session subject - {}", subject);
-            return true;
-        } else {
-            LOG.debug("User differs, re-authenticating: {} (request) != {} (session)", info.username, sessionUser);
-            session.invalidate();
-            return false;
         }
     }
 
