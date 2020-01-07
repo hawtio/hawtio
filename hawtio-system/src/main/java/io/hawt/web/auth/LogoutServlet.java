@@ -1,14 +1,12 @@
 package io.hawt.web.auth;
 
 import java.io.IOException;
-import javax.security.auth.Subject;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import io.hawt.system.Authenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,18 +30,14 @@ public class LogoutServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            LOG.debug("Logging out user: {}", session.getAttribute("user"));
-            Subject subject = (Subject) session.getAttribute("subject");
-            if (subject != null) {
-                Authenticator.logout(authConfiguration, subject);
-            }
-            session.invalidate();
-        }
         request.logout();
-
-        redirector.doRedirect(request, response, AuthenticationConfiguration.LOGIN_URL);
+        if (AuthSessionHelpers.isSpringSecurityEnabled()) {
+            AuthSessionHelpers.clear(request, authConfiguration, false);
+            redirector.doRedirect(request, response, "/");
+        } else {
+            AuthSessionHelpers.clear(request, authConfiguration, true);
+            redirector.doRedirect(request, response, AuthenticationConfiguration.LOGIN_URL);
+        }
     }
 
     public void setRedirector(Redirector redirector) {

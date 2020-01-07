@@ -2,6 +2,7 @@ package io.hawt.web.auth;
 
 import java.io.IOException;
 import java.util.Arrays;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -43,12 +44,19 @@ public class LoginRedirectFilter implements Filter {
         HttpSession session = httpRequest.getSession(false);
         String path = httpRequest.getServletPath();
 
-        if (authConfiguration.isEnabled() && !authConfiguration.isKeycloakEnabled()
-            && !AuthSessionHelpers.isAuthenticated(session) && isSecuredPath(path)) {
+        if (isRedirectRequired(session, path)) {
             redirector.doRedirect(httpRequest, httpResponse, AuthenticationConfiguration.LOGIN_URL);
         } else {
             chain.doFilter(request, response);
         }
+    }
+
+    private boolean isRedirectRequired(HttpSession session, String path) {
+        return authConfiguration.isEnabled()
+            && !authConfiguration.isKeycloakEnabled()
+            && !AuthSessionHelpers.isSpringSecurityEnabled()
+            && !AuthSessionHelpers.isAuthenticated(session)
+            && isSecuredPath(path);
     }
 
     boolean isSecuredPath(String path) {

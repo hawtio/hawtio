@@ -28,11 +28,13 @@ public class AuthenticationFilter implements Filter {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(AuthenticationFilter.class);
 
+    private int timeout;
     private AuthenticationConfiguration authConfiguration;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
+        timeout = AuthSessionHelpers.getSessionTimeout(filterConfig.getServletContext());
     }
 
     @Override
@@ -51,6 +53,17 @@ public class AuthenticationFilter implements Filter {
         HttpSession session = httpRequest.getSession(false);
         if (session != null) {
             Subject subject = (Subject) session.getAttribute("subject");
+
+            // For Spring Security
+            if (AuthSessionHelpers.isSpringSecurityEnabled()) {
+                if (subject == null && httpRequest.getRemoteUser() != null) {
+                    AuthSessionHelpers.setup(
+                        session, new Subject(), httpRequest.getRemoteUser(), timeout);
+                }
+                chain.doFilter(request, response);
+                return;
+            }
+
             // Connecting from another Hawtio may have a different user authentication, so
             // let's check if the session user is the same as in the authorization header here
             if (AuthSessionHelpers.validate(httpRequest, session, subject)) {
