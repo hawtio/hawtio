@@ -3,12 +3,13 @@ package io.hawt.web.auth;
 import java.util.GregorianCalendar;
 
 import javax.security.auth.Subject;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import io.hawt.system.AuthHelpers;
 import io.hawt.system.AuthInfo;
 import io.hawt.system.Authenticator;
+import io.hawt.system.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,23 +20,50 @@ public final class AuthSessionHelpers {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(AuthSessionHelpers.class);
 
+    public static final int DEFAULT_SESSION_TIMEOUT = 1800; // 30 mins
+
     private AuthSessionHelpers() {
         // utility class
     }
 
-    public static void clear(HttpServletRequest request, AuthenticationConfiguration authConfig) {
+    public static int getSessionTimeout(ServletContext context) {
+        int timeout = DEFAULT_SESSION_TIMEOUT;
+        ConfigManager configManager = (ConfigManager) context.getAttribute(ConfigManager.CONFIG_MANAGER);
+        if (configManager == null) {
+            return timeout;
+        }
+        String timeoutStr = configManager.get("sessionTimeout", Integer.toString(DEFAULT_SESSION_TIMEOUT));
+        if (timeoutStr == null) {
+            return timeout;
+        }
+        try {
+            timeout = Integer.parseInt(timeoutStr);
+            // timeout of 0 means default timeout
+            if (timeout == 0) {
+                timeout = DEFAULT_SESSION_TIMEOUT;
+            }
+        } catch (Exception e) {
+            // ignore and use our own default of 1/2 hour
+            timeout = DEFAULT_SESSION_TIMEOUT;
+        }
+        return timeout;
+    }
+
+    public static void clear(HttpServletRequest request, AuthenticationConfiguration authConfig,
+                             boolean authenticatorLogout) {
         HttpSession session = request.getSession(false);
         if (!isAuthenticated(session)) {
             return;
         }
         Subject subject = (Subject) session.getAttribute("subject");
-        LOG.info("Logging out existing user: {}", AuthHelpers.getUsername(subject));
-        Authenticator.logout(authConfig, subject);
+        LOG.info("Logging out existing user: {}", session.getAttribute("user"));
+        if (authenticatorLogout) {
+            Authenticator.logout(authConfig, subject);
+        }
         session.invalidate();
     }
 
-    public static void setup(HttpServletRequest request, Subject subject, String username, int timeout) {
-        HttpSession session = request.getSession(true);
+    public static void setup(HttpSession session, Subject subject, String username, int timeout) {
         session.setAttribute("subject", subject);
         session.setAttribute("user", username);
         session.setAttribute("org.osgi.service.http.authentication.remote.user", username);
@@ -63,6 +91,15 @@ public final class AuthSessionHelpers {
 
     public static boolean isAuthenticated(HttpSession session) {
         return session != null && session.getAttribute("subject") != null;
+    }
+
+    public static boolean isSpringSecurityEnabled() {
+        try {
+            Class.forName("org.springframework.security.core.SpringSecurityCoreVersion");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
 }

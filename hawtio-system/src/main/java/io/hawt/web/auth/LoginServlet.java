@@ -32,9 +32,8 @@ public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 187076436862364207L;
 
     private static final transient Logger LOG = LoggerFactory.getLogger(LoginServlet.class);
-    private static final int DEFAULT_SESSION_TIMEOUT = 1800; // 30 mins
 
-    private int timeout = DEFAULT_SESSION_TIMEOUT;
+    private int timeout;
     private AuthenticationConfiguration authConfiguration;
 
     private Converters converters = new Converters();
@@ -45,29 +44,8 @@ public class LoginServlet extends HttpServlet {
     @Override
     public void init() {
         authConfiguration = AuthenticationConfiguration.getConfiguration(getServletContext());
-        setupSessionTimeout();
+        timeout = AuthSessionHelpers.getSessionTimeout(getServletContext());
         LOG.info("Hawtio login is using {} sec. HttpSession timeout", timeout);
-    }
-
-    private void setupSessionTimeout() {
-        ConfigManager configManager = (ConfigManager) getServletContext().getAttribute(ConfigManager.CONFIG_MANAGER);
-        if (configManager == null) {
-            return;
-        }
-        String timeoutStr = configManager.get("sessionTimeout", Integer.toString(DEFAULT_SESSION_TIMEOUT));
-        if (timeoutStr == null) {
-            return;
-        }
-        try {
-            timeout = Integer.parseInt(timeoutStr);
-            // timeout of 0 means default timeout
-            if (timeout == 0) {
-                timeout = DEFAULT_SESSION_TIMEOUT;
-            }
-        } catch (Exception e) {
-            // ignore and use our own default of 1/2 hour
-            timeout = DEFAULT_SESSION_TIMEOUT;
-        }
     }
 
     /**
@@ -87,7 +65,7 @@ public class LoginServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        AuthSessionHelpers.clear(request, authConfiguration);
+        AuthSessionHelpers.clear(request, authConfiguration, true);
 
         JSONObject json = ServletHelpers.readObject(request.getReader());
         String username = (String) json.get("username");
@@ -97,7 +75,8 @@ public class LoginServlet extends HttpServlet {
             authConfiguration, request, username, password,
             subject -> {
                 LOG.info("Logging in user: {}", AuthHelpers.getUsername(subject));
-                AuthSessionHelpers.setup(request, subject, username, timeout);
+                AuthSessionHelpers.setup(
+                    request.getSession(true), subject, username, timeout);
                 sendResponse(response, subject);
             });
 
