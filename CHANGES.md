@@ -28,6 +28,9 @@
       }
 * `hawtconfig.json` is now customisable through a custom plugin.
   See [branding-plugin](examples/branding-plugin) and[springboot-authentication](examples/springboot-authentication) examples.
+* Support Spring Security authentication on Spring Boot.
+  See [springboot-security](examples/springboot-security) example.
+* Upgrade to Spring Boot 2.2.2 / Spring Framework 5.2.2
 * Bug fixes
 
 #### 2.8.0
