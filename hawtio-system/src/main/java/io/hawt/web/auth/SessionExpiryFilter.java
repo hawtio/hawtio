@@ -53,6 +53,8 @@ public class SessionExpiryFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        LOG.trace("Applying {}", getClass().getSimpleName());
+
         if (servletRequest instanceof HttpServletRequest
             && servletResponse instanceof HttpServletResponse) {
             process((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, filterChain);

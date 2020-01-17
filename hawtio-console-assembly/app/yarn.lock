@@ -59,17 +59,19 @@
     patternfly-bootstrap-treeview "~2.1.0"
 
 "@hawtio/oauth@^4.0.0":
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.9.0.tgz#9f2e0a6599e12f78f2014f3b48a3dd3e0043b694"
-  integrity sha512-I180ZVvx7cOY57JasKRThE06Vmh7NfFFqJNJDPnPCNcbPK/d71ZE2lqUpbClnbLxIExcep4rlu5iP7Z8a/MERQ==
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.10.0.tgz#5f0a4d574ddb41ca79e0284ba6c8be5a0db44b3c"
+  integrity sha512-9sdTJY7mI7e/G8utU/GAA8AE4EinJGpssLanaPq2zihR155l/PHiSP0sO624RFUcj0kWXxSvN9FyFjXzBMQI3w==
   dependencies:
     "@hawtio/core" "~4.10.0"
+    "@types/angular-cookies" "^1.4.5"
+    angular-cookies "^1.7.9"
     ng-idle "^1.3.2"
 
 "@patternfly/patternfly@^2.0.0":
-  version "2.47.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.47.0.tgz#efb7c27b6a0258f708952d6a684ab6887f5acbea"
-  integrity sha512-2xDgr+nZuB04ArNit9B0P1a/3tnqFwJfFQYjE2vW1qDESv6gCxG226eUyEgpJRt7gmqaldbHD+ElXAPcyKtmvQ==
+  version "2.50.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.50.0.tgz#68d06be09770e65d54c0cee5ea295dd2af6aa34b"
+  integrity sha512-atMG9EyPmCn1N5qtPoToz/AIYoM1cdIWRoxHO0ZtuZjPyoSxrxJyPdAK9X0YYSQMCenxeGdD4vtTA8SzyskX9A==
 
 "@types/angular-cookies@^1.4.5":
   version "1.4.5"
@@ -530,9 +532,9 @@ aws-sign2@~0.7.0:
   integrity sha1-tG6JCTSpWR8tL2+G1+ap8bP+dqg=
 
 aws4@^1.8.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.9.0.tgz#24390e6ad61386b0a747265754d2a17219de862c"
-  integrity sha512-Uvq6hVe90D0B2WEnUqtdgY1bATGz3mw33nH9Y+dmA+w5DHvUmBgkr5rM/KCHpCsiFNRUfokW/szpPPgMK2hm4A==
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.9.1.tgz#7e33d8f7d449b3f673cd72deb9abdc552dbe528e"
+  integrity sha512-wMHVg2EOHaMRxbzgFJ9gtjOOCrI80OHLG14rxi28XwOW8ux6IiEbRCGGGqCtdAIg4FQCbW20k9RsT4y3gJlFug==
 
 balanced-match@^1.0.0:
   version "1.0.0"
@@ -1339,9 +1341,9 @@ node-gyp@^3.8.0:
     which "1"
 
 node-sass@^4.11.0:
-  version "4.13.0"
-  resolved "https://registry.yarnpkg.com/node-sass/-/node-sass-4.13.0.tgz#b647288babdd6a1cb726de4545516b31f90da066"
-  integrity sha512-W1XBrvoJ1dy7VsvTAS5q1V45lREbTlZQqFbiHb3R3OTTCma0XBtuG6xZ6Z4506nR4lmHPTqVRwxT6KgtWC97CA==
+  version "4.13.1"
+  resolved "https://registry.yarnpkg.com/node-sass/-/node-sass-4.13.1.tgz#9db5689696bb2eec2c32b98bfea4c7a2e992d0a3"
+  integrity sha512-TTWFx+ZhyDx1Biiez2nB0L3YrCZ/8oHagaDalbuBSlqXgUPsdkUSzJsVxeDO9LtPB49+Fh3WQl3slABo6AotNw==
   dependencies:
     async-foreach "^0.1.3"
     chalk "^1.1.1"
@@ -1852,9 +1854,9 @@ tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   integrity sha1-WuaBd/GS1EViadEIr6k/+HQ/T2Q=
 
 typescript@^3.0.3:
-  version "3.7.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.4.tgz#1743a5ec5fef6a1fa9f3e4708e33c81c73876c19"
-  integrity sha512-A25xv5XCtarLwXpcDNZzCGvW2D1S3/bACratYBx2sax8PefsFhlYmkQicKHvpYflFS8if4zne5zT5kpJ7pzuvw==
+  version "3.7.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.5.tgz#0692e21f65fd4108b9330238aac11dd2e177a1ae"
+  integrity sha512-/P5lkRXkWHNAbcJIiHPfRoKqyd7bsyCma1hZNUGfn20qm64T6ZBlrzprymeu918H+mB/0rIg2gGK/BXkhhYgBw==
 
 uri-js@^4.2.2:
   version "4.2.2"
@@ -1874,9 +1876,9 @@ util-deprecate@~1.0.1:
   integrity sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=
 
 uuid@^3.3.2:
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.3.tgz#4568f0216e78760ee1dbf3a4d2cf53e224112866"
-  integrity sha512-pW0No1RGHgzlpHJO1nsVrHKpOEIxkGg1xB+v0ZmdNH5OAeAwzAVrCnI2/6Mtx+Uys6iaylxa+D3g4j63IKKjSQ==
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
+  integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
 
 validate-npm-package-license@^3.0.1:
   version "3.0.4"
