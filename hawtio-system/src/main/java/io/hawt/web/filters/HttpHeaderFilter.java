@@ -11,11 +11,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.hawt.system.ConfigManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract servlet filter for applying HTTP headers to responses.
  */
 public abstract class HttpHeaderFilter implements Filter {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(HttpHeaderFilter.class);
 
     private ConfigManager configManager;
 
@@ -31,6 +35,8 @@ public abstract class HttpHeaderFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
+        LOG.trace("Applying {}", getClass().getSimpleName());
+
         if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
             addHeaders((HttpServletRequest) request, (HttpServletResponse) response);
         }

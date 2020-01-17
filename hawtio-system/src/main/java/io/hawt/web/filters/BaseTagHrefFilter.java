@@ -19,7 +19,12 @@ import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class BaseTagHrefFilter implements Filter {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(BaseTagHrefFilter.class);
 
     public static final String PARAM_APPLICATION_CONTEXT_PATH = "applicationContextPath";
     private static final String DEFAULT_CONTEXT_PATH = "/hawtio";
@@ -46,13 +51,15 @@ public class BaseTagHrefFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        LOG.trace("Applying {}", getClass().getSimpleName());
+
         // For Spring Boot we need to append the context path of the hawtio application
         String baseTagHref = basePath + applicationContextPath;
 
         if (baseTagHref.equals(DEFAULT_CONTEXT_PATH)) {
             filterChain.doFilter(request, response);
         } else {
-            final BaseTagHrefRequestWrapper requestWrapper = new BaseTagHrefRequestWrapper((HttpServletResponse) response);
+            final BaseTagHrefResponseWrapper requestWrapper = new BaseTagHrefResponseWrapper((HttpServletResponse) response);
             filterChain.doFilter(request, requestWrapper);
 
             final ServletOutputStream out = response.getOutputStream();
@@ -114,10 +121,10 @@ public class BaseTagHrefFilter implements Filter {
     }
 
 
-    private class BaseTagHrefRequestWrapper extends HttpServletResponseWrapper {
+    private class BaseTagHrefResponseWrapper extends HttpServletResponseWrapper {
         private ByteArrayOutputStream output;
 
-        public BaseTagHrefRequestWrapper(HttpServletResponse response) {
+        public BaseTagHrefResponseWrapper(HttpServletResponse response) {
             super(response);
             output = new ByteArrayOutputStream();
         }

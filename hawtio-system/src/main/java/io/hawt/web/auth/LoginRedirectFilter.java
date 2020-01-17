@@ -13,10 +13,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Redirect to login page when authentication is enabled.
  */
 public class LoginRedirectFilter implements Filter {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(LoginRedirectFilter.class);
 
     private AuthenticationConfiguration authConfiguration;
 
@@ -39,6 +44,8 @@ public class LoginRedirectFilter implements Filter {
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+        LOG.trace("Applying {}", getClass().getSimpleName());
+
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         HttpSession session = httpRequest.getSession(false);
