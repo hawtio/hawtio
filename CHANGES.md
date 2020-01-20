@@ -27,7 +27,7 @@
         ...
       }
 * `hawtconfig.json` is now customisable through a custom plugin.
-  See [branding-plugin](examples/branding-plugin) and[springboot-authentication](examples/springboot-authentication) examples.
+  See [branding-plugin](examples/branding-plugin) and [springboot-authentication](examples/springboot-authentication) examples.
 * Support Spring Security and Keycloak authentications on Spring Boot.
   See [springboot-security](examples/springboot-security) and [springboot-keycloak](examples/springboot-keycloak) examples.
 * Upgrade to Spring Boot 2.2.2 / Spring Framework 5.2.2
