@@ -1,4 +1,4 @@
-package io.hawt.example.spring.boot;
+package io.hawt.springboot.keycloak;
 
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.springframework.context.annotation.Bean;
@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Configuration;
  * Workaround for: https://issues.redhat.com/browse/KEYCLOAK-11282
  */
 @Configuration
-public class KeycloakConfig {
+public class KeycloakConfigResolverConfiguration {
 
     @Bean
-    public KeycloakSpringBootConfigResolver KeycloakConfigResolver() {
+    public KeycloakSpringBootConfigResolver keycloakConfigResolver() {
         return new KeycloakSpringBootConfigResolver();
     }
 
