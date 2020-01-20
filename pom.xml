@@ -78,7 +78,7 @@
     <junit-version>4.12</junit-version>
     <karaf-version>4.2.1</karaf-version>
     <karaf-version-range>[4.0,5)</karaf-version-range>
-    <keycloak-version>3.4.1.Final</keycloak-version>
+    <keycloak-version>8.0.1</keycloak-version>
     <log4j-version>1.2.17</log4j-version>
     <maven-antrun-plugin-version>1.8</maven-antrun-plugin-version>
     <maven-bundle-plugin-version>3.0.1</maven-bundle-plugin-version>
@@ -125,6 +125,7 @@
     <module>platforms/hawtio-osgi-jmx</module>
     <module>platforms/karaf</module>
     <module>platforms/springboot</module>
+    <module>platforms/springboot-keycloak</module>
     <module>platforms/wildfly</module>
     <module>tooling/hawtio-junit</module>
     <module>tooling/hawtio-maven-plugin</module>
