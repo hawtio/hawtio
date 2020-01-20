@@ -10,13 +10,13 @@ The important bits are:
 
 ## Installation
 
-### Apache Tomcat / Jetty
+### WildFly / Apache Tomcat / Jetty
 
-Copy the simple-plugin war file as the following name
+Copy the branding-plugin war file as the following name:
 
     branding-plugin.war
 
-to the `deploy` directory of Apache Tomcat / Jetty as similar Java web container.
+to the `standalone/deployments/` directory of WildFly or the `deploy/` directory of Apache Tomcat / Jetty.
 
 ### Apache Karaf / Red Hat Fuse (on Karaf)
 
