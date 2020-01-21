@@ -16,10 +16,6 @@
   <description>hawtio :: Sample Spring Boot 2.x process with Keycloak authentication</description>
   <packaging>war</packaging>
 
-  <properties>
-    <keycloak.version>8.0.1</keycloak.version>
-  </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
