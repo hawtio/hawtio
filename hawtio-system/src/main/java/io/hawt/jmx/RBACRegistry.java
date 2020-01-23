@@ -247,25 +247,40 @@ public class RBACRegistry implements RBACRegistryMBean {
      */
     private String isSpecialMBean(ObjectName nameObject) {
         String domain = nameObject.getDomain();
-        if ("org.apache.activemq".equals(domain)) {
-            String destinationType = nameObject.getKeyProperty("destinationType");
-            // see: org.apache.activemq.command.ActiveMQDestination.getDestinationTypeAsString()
-            if ("Queue".equals(destinationType)) {
-                return "activemq:queue";
-            }
-            if ("TempQueue".equals(destinationType)) {
-                return "activemq:tempqueue";
-            }
-            if ("Topic".equals(destinationType)) {
-                return "activemq:topic";
-            }
-            if ("TempTopic".equals(destinationType)) {
-                return "activemq:temptopic";
-            }
-        } else if ("org.apache.camel".equals(domain)) {
-            String type = nameObject.getKeyProperty("type");
-            // TODO: verify: "type" attribute is not enough - we have to know real class of MBean
-            return null;
+        switch (domain) {
+            case "org.apache.activemq":
+                final String destinationType = nameObject.getKeyProperty("destinationType");
+                // see: org.apache.activemq.command.ActiveMQDestination.getDestinationTypeAsString()
+                if ("Queue".equals(destinationType)) {
+                    return "activemq:queue";
+                }
+                if ("TempQueue".equals(destinationType)) {
+                    return "activemq:tempqueue";
+                }
+                if ("Topic".equals(destinationType)) {
+                    return "activemq:topic";
+                }
+                if ("TempTopic".equals(destinationType)) {
+                    return "activemq:temptopic";
+                }
+                break;
+            case "org.apache.activemq.artemis":
+                final String component = nameObject.getKeyProperty("component");
+                if ("addresses".equals(component)) {
+                    final String subComponent = nameObject.getKeyProperty("subcomponent");
+                    if (subComponent == null) {
+                        return "activemq.artemis:address";
+                    }
+                    if ("queues".equals(subComponent)) {
+                        return "activemq.artemis:queue";
+                    }
+                }
+                break;
+            case "org.apache.camel":
+                @SuppressWarnings("unused")
+                final String type = nameObject.getKeyProperty("type");
+                // TODO: verify: "type" attribute is not enough - we have to know real class of MBean
+                return null;
         }
 
         return null;
