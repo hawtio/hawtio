@@ -1,6 +1,8 @@
 ## Change Log
 
-#### 2.9.0 (To be released)
+#### 2.10.0 (To be released)
+
+#### 2.9.0
 
 * Support login page customisation through `hawtconfig.json`.
   Now you can add custom description and links to the standard login page as follows:
