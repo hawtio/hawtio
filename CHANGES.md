@@ -2,6 +2,10 @@
 
 #### 2.10.0 (To be released)
 
+#### 2.9.1
+
+* Support Karaf 4.3.0
+
 #### 2.9.0
 
 * Support login page customisation through `hawtconfig.json`.
