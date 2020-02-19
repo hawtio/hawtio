@@ -115,13 +115,13 @@ public class KeycloakServlet extends HttpServlet {
         String pathInfo = request.getPathInfo();
         switch (pathInfo) {
             case "/enabled":
-                renderJSONResponse(response, String.valueOf(keycloakEnabled));
+                ServletHelpers.sendJSONResponse(response, keycloakEnabled);
                 break;
             case "/client-config":
                 if (keycloakConfig == null) {
                     response.sendError(404, "Keycloak client configuration not found");
                 } else {
-                    renderJSONResponse(response, keycloakConfig);
+                    ServletHelpers.sendJSONResponse(response, keycloakConfig);
                 }
                 break;
             case "/validate-subject-matches":
@@ -130,7 +130,7 @@ public class KeycloakServlet extends HttpServlet {
                     LOG.warn("Parameter 'keycloakUser' not found");
                 }
                 boolean valid = validateKeycloakUser(request, keycloakUser);
-                renderJSONResponse(response, String.valueOf(valid));
+                ServletHelpers.sendJSONResponse(response, valid);
                 break;
         }
     }
@@ -151,13 +151,5 @@ public class KeycloakServlet extends HttpServlet {
         } else {
             return true;
         }
-    }
-
-    private void renderJSONResponse(HttpServletResponse response, String text) throws ServletException, IOException {
-        response.setContentType("application/json");
-        PrintWriter writer = response.getWriter();
-        writer.println(text);
-        writer.flush();
-        writer.close();
     }
 }

@@ -1,7 +1,7 @@
 package io.hawt.web.auth;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +40,7 @@ public class UserServlet extends HttpServlet {
         throws IOException {
 
         if (!authenticationEnabled) {
-            sendResponse(response, DEFAULT_USER);
+            ServletHelpers.sendJSONResponse(response, wrapQuote(DEFAULT_USER));
             return;
         }
 
@@ -49,15 +49,11 @@ public class UserServlet extends HttpServlet {
             ServletHelpers.doForbidden(response);
             return;
         }
-        sendResponse(response, username);
+        ServletHelpers.sendJSONResponse(response, wrapQuote(username));
     }
 
-    private void sendResponse(HttpServletResponse response, String username) throws IOException {
-        response.setContentType("application/json");
-        PrintWriter out = response.getWriter();
-        out.write("\"" + username + "\"");
-        out.flush();
-        out.close();
+    private String wrapQuote(String str) {
+        return "\"" + str + "\"";
     }
 
     protected String getUsername(HttpServletRequest request, HttpServletResponse response) {

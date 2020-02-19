@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.management.AttributeNotFoundException;
 import javax.servlet.http.HttpServletResponse;
 
@@ -59,6 +60,18 @@ public class ServletHelpers {
         } catch (IOException ioe) {
             LOG.debug("Failed to send auth response: {}", ioe);
         }
+    }
+
+    public static void sendJSONResponse(HttpServletResponse response, boolean value) throws IOException {
+        sendJSONResponse(response, String.valueOf(value));
+    }
+
+    public static void sendJSONResponse(HttpServletResponse response, String json) throws IOException {
+        response.setContentType("application/json");
+        PrintWriter writer = response.getWriter();
+        writer.println(json);
+        writer.flush();
+        writer.close();
     }
 
     public static JSONObject readObject(BufferedReader reader) throws IOException {

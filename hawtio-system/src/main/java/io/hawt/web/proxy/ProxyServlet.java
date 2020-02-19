@@ -99,11 +99,15 @@ public class ProxyServlet extends HttpServlet {
 
     public static final String PROXY_WHITELIST = "proxyWhitelist";
     public static final String LOCAL_ADDRESS_PROBING = "localAddressProbing";
+    public static final String DISABLE_PROXY = "disableProxy";
 
     public static final String HAWTIO_PROXY_WHITELIST = "hawtio." + PROXY_WHITELIST;
     public static final String HAWTIO_LOCAL_ADDRESS_PROBING = "hawtio." + LOCAL_ADDRESS_PROBING;
+    public static final String HAWTIO_DISABLE_PROXY = "hawtio." + DISABLE_PROXY;
 
     /* MISC */
+
+    protected boolean enabled = true;
 
     protected boolean doLog = false;
     protected boolean doForwardIP = true;
@@ -124,6 +128,13 @@ public class ProxyServlet extends HttpServlet {
         super.init(servletConfig);
 
         ConfigManager config = (ConfigManager) getServletContext().getAttribute(ConfigManager.CONFIG_MANAGER);
+
+        enabled = !config.getBoolean(DISABLE_PROXY, false);
+        if (!enabled) {
+            LOG.info("Proxy servlet is disabled");
+            // proxy servlet is disabled so won't run any further initialisation
+            return;
+        }
 
         String whitelistStr = config.get(PROXY_WHITELIST, servletConfig.getInitParameter(PROXY_WHITELIST));
         boolean probeLocal = config.getBoolean(LOCAL_ADDRESS_PROBING, true);
@@ -172,7 +183,9 @@ public class ProxyServlet extends HttpServlet {
     @Override
     public void destroy() {
         try {
-            proxyClient.close();
+            if (proxyClient != null) {
+                proxyClient.close();
+            }
         } catch (IOException e) {
             log("While destroying servlet, shutting down httpclient: " + e, e);
             LOG.error("While destroying servlet, shutting down httpclient: " + e, e);
@@ -183,6 +196,17 @@ public class ProxyServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse)
         throws ServletException, IOException {
+        // returns if enabled or not so that Connect plugin can turn on/off itself
+        if ("/enabled".equals(servletRequest.getPathInfo())) {
+            ServletHelpers.sendJSONResponse(servletResponse, enabled);
+            return;
+        }
+
+        if (!enabled) {
+            servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
         // Make the Request
         //note: we won't transfer the protocol version because I'm not sure it would truly be compatible
         ProxyAddress proxyAddress = parseProxyAddress(servletRequest);
