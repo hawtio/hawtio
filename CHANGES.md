@@ -2,6 +2,9 @@
 
 #### 2.10.0 (To be released)
 
+* Add config property `hawtio.disableProxy`. With this property set to `true`,
+  you can disable `ProxyServlet` (`/hawtio/proxy/*`) completely. (Default: `false`)
+
 #### 2.9.1
 
 * Support Karaf 4.3.0
