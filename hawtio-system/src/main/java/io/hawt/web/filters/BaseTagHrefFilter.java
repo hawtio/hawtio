@@ -59,23 +59,23 @@ public class BaseTagHrefFilter implements Filter {
         if (baseTagHref.equals(DEFAULT_CONTEXT_PATH)) {
             filterChain.doFilter(request, response);
         } else {
-            final BaseTagHrefResponseWrapper requestWrapper = new BaseTagHrefResponseWrapper((HttpServletResponse) response);
-            filterChain.doFilter(request, requestWrapper);
+            final BaseTagHrefResponseWrapper responseWrapper = new BaseTagHrefResponseWrapper((HttpServletResponse) response);
+            filterChain.doFilter(request, responseWrapper);
 
             final ServletOutputStream out = response.getOutputStream();
             final String contentType = response.getContentType();
-            final byte[] data = requestWrapper.getData();
+            final byte[] data = responseWrapper.getData();
 
             if (contentType != null && contentType.startsWith("text/html")) {
                 if (!baseTagHref.endsWith("/")) {
                     baseTagHref += "/";
                 }
 
-                final String characterEncoding = requestWrapper.getCharacterEncoding() != null ? requestWrapper.getCharacterEncoding() : StandardCharsets.UTF_8.name();
+                final String characterEncoding = responseWrapper.getCharacterEncoding() != null ? responseWrapper.getCharacterEncoding() : StandardCharsets.UTF_8.name();
                 final String originalContent = new String(data, characterEncoding);
                 final byte[] replacedContent = originalContent.replaceAll("<base href='.*?'>", "<base href='" + baseTagHref + "'>").getBytes(characterEncoding);
 
-                requestWrapper.setContentLength(replacedContent.length);
+                responseWrapper.setContentLength(replacedContent.length);
                 out.write(replacedContent);
             } else {
                 out.write(data);
