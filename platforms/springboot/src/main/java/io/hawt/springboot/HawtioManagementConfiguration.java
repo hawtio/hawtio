@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.DispatcherType;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import io.hawt.system.ConfigManager;
@@ -37,6 +39,7 @@ import org.springframework.boot.actuate.autoconfigure.web.ManagementContextConfi
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -264,6 +267,20 @@ public class HawtioManagementConfiguration {
     public ServletListenerRegistrationBean<?> hawtioContextListener(final ConfigManager configManager) {
         return new ServletListenerRegistrationBean<>(
             new SpringHawtioContextListener(configManager, hawtioPath));
+    }
+
+    // -------------------------------------------------------------------------
+    // Session Config
+    // -------------------------------------------------------------------------
+
+    @Bean
+    public ServletContextInitializer servletContextInitializer() {
+        return new ServletContextInitializer() {
+            @Override
+            public void onStartup(ServletContext servletContext) throws ServletException {
+                servletContext.getSessionCookieConfig().setHttpOnly(true);
+            }
+        };
     }
 
     // -------------------------------------------------------------------------
