@@ -4,6 +4,7 @@
 
 * Add config property `hawtio.disableProxy`. With this property set to `true`,
   you can disable `ProxyServlet` (`/hawtio/proxy/*`) completely. (Default: `false`)
+* Bug fixes
 
 #### 2.9.1
 
