@@ -9,10 +9,10 @@
   dependencies:
     "@types/jquery" "2.0.53"
 
-"@hawtio/core@~4.12.0":
-  version "4.12.1"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.12.1.tgz#ab50cd48cf462e288e8940204b90fd091ffb9d92"
-  integrity sha512-kiyUksiHVIu886tH9mzqCIMAumOtdn79XLk/W0DHkWHPBHXsFsF2gIIcyZcUcrFcc/hCuNTVv2LyDUFxbFTzZQ==
+"@hawtio/core@^4.12.0":
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.13.0.tgz#f130ccd985cd0b3f4d0fe78a9e120938c7eea4e5"
+  integrity sha512-Rt+oOtIETFR5tl82wwDp0ENPWxzrSsWEB+i3P5bQIvk8O4Rif3Kvn3M39PG4aCZdy6zACkn9Dii95oszAONkpg==
   dependencies:
     "@hawtio/core-dts" "~3.3.0"
     "@patternfly/patternfly" "^2.0.0"
@@ -33,11 +33,11 @@
     urijs "1.19.0"
 
 "@hawtio/integration@^4.0.0":
-  version "4.13.4"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.13.4.tgz#6f954ec7c398d90134fb4e9138e0bad802dce104"
-  integrity sha512-qPpBQ88Fcr/2VfAPGUOA05GddJQrc7agPp/v6NEMV3XsoWK6qIR0VA7tSoIKQEG6++l5RWuLLMdBjr3XX9Ie9w==
+  version "4.13.5"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.13.5.tgz#dde75f547e0c516b36c02d257937e91fc50fe487"
+  integrity sha512-SpC36NWD4rOnAlDfdnTX8K75/sKEfYd8Gdp4m3DiTovKCdvayXdm0Yjl7HaH65fGwBmL4LI2czFcki7y8oMp2w==
   dependencies:
-    "@hawtio/core" "~4.12.0"
+    "@hawtio/core" "^4.12.0"
     "@types/angular-cookies" "^1.4.5"
     "@types/angular-mocks" "~1.7.0"
     "@types/angular-ui-bootstrap" "~0.13.46"
@@ -59,11 +59,11 @@
     patternfly-bootstrap-treeview "~2.1.0"
 
 "@hawtio/oauth@^4.0.0":
-  version "4.12.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.12.0.tgz#18ecfdbf9b0a87cdc04671333d6e237b14004455"
-  integrity sha512-dFs/MpXy82cEDaMVYRq4AKKCXgoYDTYsCko6somOTnGrZIVnNxCCm/j/9SzZhQjQmIQlKX7lriA4MrHdosuhqg==
+  version "4.12.2"
+  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.12.2.tgz#36002f614d7523ba55aeb389a84a0258d91571c0"
+  integrity sha512-sPob3pMU0lzGMhQ4qGyS5yDYOShHmaYDDGygEZjMO140s61WegEV6S1A+JlR7MZppsX2nWt/em4FZl/A0ypavg==
   dependencies:
-    "@hawtio/core" "~4.12.0"
+    "@hawtio/core" "^4.12.0"
     "@types/angular-cookies" "^1.4.5"
     angular-cookies "^1.7.9"
     ng-idle "^1.3.2"
@@ -1286,9 +1286,9 @@ minimist@1.2.0, minimist@^1.1.3, minimist@^1.2.5:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
 
 "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0:
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.4.tgz#fd01504a6797ec5c9be81ff43d204961ed64a512"
-  integrity sha512-iG9AK/dJLtJ0XNgTuDbSyNS3zECqDlAhnQW4CsNxBG3LQJBbHmRX1egw39DmtOdCAqY+dKXV+sgPgilNWUKMVw==
+  version "0.5.5"
+  resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.5.tgz#d91cefd62d1436ca0f41620e251288d420099def"
+  integrity sha512-NKmAlESf6jMGym1++R0Ra7wvhV+wFW63FaSOFPwRahvea0gMUcGUhVeAg/0BC0wiv9ih5NYPB1Wn1UEI1/L+xQ==
   dependencies:
     minimist "^1.2.5"
 

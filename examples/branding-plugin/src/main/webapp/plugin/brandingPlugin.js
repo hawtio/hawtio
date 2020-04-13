@@ -14,6 +14,11 @@ var Branding = (function (Branding) {
   Branding.log = Logger.get('branding-plugin');
 
   /**
+   * The top level path of this plugin on the server
+   */
+  Branding.contextPath = '/branding-plugin';
+
+  /**
    * This plugin's AngularJS module instance.
    */
   Branding.module = angular.module(Branding.pluginName, [])
@@ -28,7 +33,9 @@ var Branding = (function (Branding) {
       "branding": {
         "appName": "Hawtio Branding Example",
         "appLogoUrl": "img/hawtio-logo.svg",
-        "companyLogoUrl": "img/hawtio-logo.svg"
+        "companyLogoUrl": "img/hawtio-logo.svg",
+        "css": `${Branding.contextPath}/app.css`,
+        "favicon": `${Branding.contextPath}/img/favicon.ico`
       },
       "login": {
         "description": "This is placeholder text only. Use this area to place any information or introductory message about your application that may be relevant to users.",
@@ -56,6 +63,10 @@ var Branding = (function (Branding) {
       },
       "disabledRoutes": []
     };
+
+    // Calling this function is required to apply the custom css and
+    // favicon settings
+    Core.applyBranding(configManager);
 
     Branding.log.info(Branding.pluginName, "loaded");
   }

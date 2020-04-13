@@ -3,12 +3,9 @@ namespace Login {
   const LOGIN_URL: string = 'auth/login';
 
   export class LoginController {
-    branding: Core.Branding = {};
+    branding: Core.Branding = { appName: '', appLogoUrl: '' };
     login: Core.Login = {};
-    entity = {
-      username: '',
-      password: ''
-    };
+    entity = { username: '', password: '' };
     wrongPassword: boolean = false;
 
     constructor(

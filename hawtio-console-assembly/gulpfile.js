@@ -164,6 +164,9 @@ gulp.task('copy-images', function () {
   });
   // Add PatternFly images package in dist
   patterns.push(config.app + 'node_modules/patternfly/dist/img/**/*');
+  // Add Hawtio Console Assembly images
+  patterns.push(config.app + 'src/img/**/*');
+  // Copy images
   return gulp.src(patterns)
     .pipe(plugins.debug({ title: 'copy-images' }))
     .pipe(gulp.dest(config.distImg));

@@ -23,7 +23,9 @@ See [src/main/webapp/hawtconfig.json](src/main/webapp/hawtconfig.json).
   "branding": {
     "appName": "Hawtio Spring Boot 2 Authentication Example",
     "appLogoUrl": "img/hawtio-logo.svg",
-    "companyLogoUrl": "img/hawtio-logo.svg"
+    "companyLogoUrl": "img/hawtio-logo.svg",
+    "css": "/app.css",
+    "favicon": "/img/favicon.ico"
   },
   "login": {
     "description": "This is placeholder text only. Use this area to place any information or introductory message about your application that may be relevant to users.",
