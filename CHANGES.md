@@ -4,6 +4,8 @@
 
 * Add config property `hawtio.disableProxy`. With this property set to `true`,
   you can disable `ProxyServlet` (`/hawtio/proxy/*`) completely. (Default: `false`)
+* Support custom styles and background image via `hawtconfig.json`.
+  See [branding-plugin](examples/branding-plugin) and [springboot-authentication](examples/springboot-authentication) examples for more details.
 * Bug fixes
 
 #### 2.9.1
