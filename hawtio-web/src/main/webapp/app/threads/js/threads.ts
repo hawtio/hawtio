@@ -212,7 +212,7 @@ module Threads {
         Core.register(jolokia, $scope, {
           type: 'exec',
           mbean: Threads.mbean,
-          operation: 'dumpAllThreads',
+          operation: 'dumpAllThreads(boolean,boolean)',
           arguments: [$scope.support.objectMonitorUsageSupported, $scope.support.synchronizerUsageSupported]
         }, onSuccess(render));
 
