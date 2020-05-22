@@ -3,7 +3,7 @@ package io.hawt.springboot;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -28,7 +28,7 @@ public class HawtioEndpointAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnEnabledEndpoint
+    @ConditionalOnAvailableEndpoint
     public HawtioEndpoint hawtioEndpoint(final EndpointPathResolver endpointPathResolver) {
         return new HawtioEndpoint(endpointPathResolver);
     }

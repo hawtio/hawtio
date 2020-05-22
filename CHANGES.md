@@ -2,6 +2,8 @@
 
 #### 2.11.0 (To be released)
 
+* Upgrade to Spring Boot 2.3.0 / Spring Framework 5.2.6
+
 #### 2.10.0
 
 * Add config property `hawtio.disableProxy`. With this property set to `true`,
