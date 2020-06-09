@@ -1,0 +1,34 @@
+{
+  "branding": {
+    "appName": "Hawtio Spring Boot 2 Authentication Example",
+    "appLogoUrl": "img/hawtio-logo.svg",
+    "companyLogoUrl": "img/hawtio-logo.svg",
+    "css": "css/app.css",
+    "favicon": "img/favicon.ico"
+  },
+  "login": {
+    "description": "This is placeholder text only. Use this area to place any information or introductory message about your application that may be relevant to users.",
+    "links": [
+      {
+        "url": "#terms",
+        "text": "Terms of use"
+      },
+      {
+        "url": "#help",
+        "text": "Help"
+      },
+      {
+        "url": "#privacy",
+        "text": "Privacy policy"
+      }
+    ]
+  },
+  "about": {
+    "title": "Hawtio Spring Boot 2 Authentication Example",
+    "productInfo": [],
+    "additionalInfo": "",
+    "copyright": "(c) 2019 Hawtio team",
+    "imgSrc": "img/hawtio-logo.svg"
+  },
+  "disabledRoutes": []
+}
