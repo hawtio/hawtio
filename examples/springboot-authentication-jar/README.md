@@ -22,7 +22,7 @@ The classpath `classpath:/hawtio-static/*` is a special classpath for Hawtio Spr
 
 A custom plugin js needs to be put under `hawtio-static/app/`. It is then accessible at http://localhost:10001/actuator/hawtio/plugins/**/*.js (note `app/` is replaced with `plugins/` in the real path). Also CSS and images need to be put under `hawtio-static/css/` and `hawtio-static/img/` respectively. It is necessary because Hawtio redirects requests to paths other than `css/`, `img/`, `fonts/`, and `plugins/` to `index.html`.
 
-See [src/main/resources/hawtconfig.json](src/main/resources/hawtconfig.json).
+See [src/main/resources/hawtio-static/hawtconfig.json](src/main/resources/hawtio-static/hawtconfig.json).
 
 ```json
 {
