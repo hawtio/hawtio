@@ -62,7 +62,7 @@ There are a [few different agents you can use](http://jolokia.org/agent.html):
 
 So once you've got a jolokia agent in your JVM you can test it by accessing `http://host:port/jolokia` in a browser to see if you can view the JSON returned for the version information of the jolokia agent.
 
-Assuming you have jolokia working in your JVM, then you can use the **Remote** tab on the **Connect** menu in hawtio to connect; just enter the host, port, jolokia path and user/password. Note by default only `localhost` is accepted to connect for security, so you need to configure `hawtio.proxyWhitelist` system property or `proxyWhitelist` init parameter on `ProxyServlet` in `hawtio.war`'s `WEB-INF/web.xml` to explicitly allow hosts that you are connecting to.
+Assuming you have jolokia working in your JVM, then you can use the **Remote** tab on the **Connect** menu in hawtio to connect; just enter the host, port, jolokia path and user/password. Note by default only `localhost` is accepted to connect for security, so you need to configure `hawtio.proxyAllowlist` system property or `proxyAllowlist` init parameter on `ProxyServlet` in `hawtio.war`'s `WEB-INF/web.xml` to explicitly allow hosts that you are connecting to.
 
 After trying the above if you have problems connecting to your JVM, please [let us know](http://hawt.io/community/index.html) by [raising an issue](https://github.com/hawtio/hawtio/issues?state=open) and we'll try to help.
 

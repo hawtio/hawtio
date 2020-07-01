@@ -248,20 +248,20 @@ public class ProxyDetailsTest {
             .thenReturn("/myhost22.com/jolokia/")
             .thenReturn("/www.banned.com/jolokia/");
 
-        Set<String> whitelist = new HashSet<>(Arrays.asList("localhost", "www.myhost.com"));
-        List<Pattern> regexWhitelist = Collections.singletonList(Pattern.compile("myhost[0-9]+\\.com"));
+        Set<String> allowlist = new HashSet<>(Arrays.asList("localhost", "www.myhost.com"));
+        List<Pattern> regexAllowlist = Collections.singletonList(Pattern.compile("myhost[0-9]+\\.com"));
         ProxyDetails details1 = new ProxyDetails(mockReq);
         ProxyDetails details2 = new ProxyDetails(mockReq);
         ProxyDetails details3 = new ProxyDetails(mockReq);
         ProxyDetails details4 = new ProxyDetails(mockReq);
         ProxyDetails details5 = new ProxyDetails(mockReq);
         ProxyDetails details6 = new ProxyDetails(mockReq);
-        assertTrue("localhost/9000", details1.isAllowed(whitelist));
-        assertTrue("localhost:8181", details2.isAllowed(whitelist));
-        assertTrue("www.myhost.com", details3.isAllowed(whitelist));
-        assertTrue("myhost1.com", details4.isAllowed(regexWhitelist));
-        assertTrue("myhost22.com", details5.isAllowed(regexWhitelist));
-        assertFalse("www.banned.com", details6.isAllowed(whitelist));
+        assertTrue("localhost/9000", details1.isAllowed(allowlist));
+        assertTrue("localhost:8181", details2.isAllowed(allowlist));
+        assertTrue("www.myhost.com", details3.isAllowed(allowlist));
+        assertTrue("myhost1.com", details4.isAllowed(regexAllowlist));
+        assertTrue("myhost22.com", details5.isAllowed(regexAllowlist));
+        assertFalse("www.banned.com", details6.isAllowed(allowlist));
     }
 
     @Test
@@ -272,12 +272,12 @@ public class ProxyDetailsTest {
             .thenReturn("/www.myhost.com/jolokia/")
             .thenReturn("/www.banned.com/jolokia/");
 
-        Set<String> whitelist = new HashSet<>(Arrays.asList("*"));
+        Set<String> allowlist = new HashSet<>(Arrays.asList("*"));
         ProxyDetails details1 = new ProxyDetails(mockReq);
         ProxyDetails details2 = new ProxyDetails(mockReq);
         ProxyDetails details3 = new ProxyDetails(mockReq);
-        assertTrue("localhost", details1.isAllowed(whitelist));
-        assertTrue("www.myhost.com", details2.isAllowed(whitelist));
-        assertTrue("www.banned.com", details3.isAllowed(whitelist));
+        assertTrue("localhost", details1.isAllowed(allowlist));
+        assertTrue("www.myhost.com", details2.isAllowed(allowlist));
+        assertTrue("www.banned.com", details3.isAllowed(allowlist));
     }
 }

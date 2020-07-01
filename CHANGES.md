@@ -4,6 +4,7 @@
 
 * Upgrade to Spring Boot 2.3.0 / Spring Framework 5.2.6
 * Add [springboot-authentication-jar](examples/springboot-authentication-jar) example to demonstrate how to customise `hawtconfig.json` with Spring Boot jar app.
+* Change property `hawtio.proxyWhitelist` to `hawtio.proxyAllowlist`
 
 #### 2.10.0
 

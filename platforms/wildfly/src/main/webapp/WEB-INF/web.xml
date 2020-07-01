@@ -202,7 +202,7 @@
       '*' allows all hosts but keep in mind it's vulnerable to security attacks.
     -->
     <init-param>
-      <param-name>proxyWhitelist</param-name>
+      <param-name>proxyAllowlist</param-name>
       <param-value>
         localhost,
         127.0.0.1

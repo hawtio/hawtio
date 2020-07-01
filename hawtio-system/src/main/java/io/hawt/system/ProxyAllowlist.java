@@ -25,43 +25,43 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Whitelist manager for hawtio proxy.
+ * Allowlist manager for hawtio proxy.
  *
  * TODO: For now this implementation is heavily relying on Fabric v1, and should be rewritten to a more general form.
  */
-public class ProxyWhitelist {
+public class ProxyAllowlist {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ProxyWhitelist.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ProxyAllowlist.class);
 
     private static final String FABRIC_MBEAN = "io.fabric8:type=Fabric";
 
-    protected CopyOnWriteArraySet<String> whitelist;
-    protected List<Pattern> regexWhitelist;
+    protected CopyOnWriteArraySet<String> allowlist;
+    protected List<Pattern> regexAllowlist;
     protected MBeanServer mBeanServer;
     protected ObjectName fabricMBean;
 
-    public ProxyWhitelist(String whitelistStr) {
-        this(whitelistStr, true);
+    public ProxyAllowlist(String allowlistStr) {
+        this(allowlistStr, true);
     }
 
-    public ProxyWhitelist(String whitelistStr, boolean probeLocal) {
-        if (Strings.isBlank(whitelistStr)) {
-            whitelist = new CopyOnWriteArraySet<>();
-            regexWhitelist = Collections.emptyList();
+    public ProxyAllowlist(String allowlistStr, boolean probeLocal) {
+        if (Strings.isBlank(allowlistStr)) {
+            allowlist = new CopyOnWriteArraySet<>();
+            regexAllowlist = Collections.emptyList();
         } else {
-            whitelist = new CopyOnWriteArraySet<>(filterRegex(Strings.split(whitelistStr, ",")));
-            regexWhitelist = buildRegexWhitelist(Strings.split(whitelistStr, ","));
+            allowlist = new CopyOnWriteArraySet<>(filterRegex(Strings.split(allowlistStr, ",")));
+            regexAllowlist = buildRegexAllowlist(Strings.split(allowlistStr, ","));
         }
 
         if (probeLocal) {
             LOG.info("Probing local addresses ...");
-            initialiseWhitelist();
+            initialiseAllowlist();
         } else {
             LOG.info("Probing local addresses disabled");
-            whitelist.add("localhost");
-            whitelist.add("127.0.0.1");
+            allowlist.add("localhost");
+            allowlist.add("127.0.0.1");
         }
-        LOG.info("Initial proxy whitelist: {}", whitelist);
+        LOG.info("Initial proxy allowlist: {}", allowlist);
 
         mBeanServer = ManagementFactory.getPlatformMBeanServer();
         try {
@@ -71,10 +71,10 @@ public class ProxyWhitelist {
         }
     }
 
-    protected List<String> filterRegex(List<String> whitelist) {
+    protected List<String> filterRegex(List<String> allowlist) {
         List<String> result = new ArrayList<>();
 
-        for (String element : whitelist) {
+        for (String element : allowlist) {
             if (!element.startsWith("r:")) {
                 result.add(element);
             }
@@ -83,10 +83,10 @@ public class ProxyWhitelist {
         return result;
     }
 
-    protected List<Pattern> buildRegexWhitelist(List<String> whitelist) {
+    protected List<Pattern> buildRegexAllowlist(List<String> allowlist) {
         List<Pattern> patterns = new ArrayList<>();
 
-        for (String element : whitelist) {
+        for (String element : allowlist) {
             if (element.startsWith("r:")) {
                 String regex = element.substring(2);
                 patterns.add(Pattern.compile(regex));
@@ -96,30 +96,30 @@ public class ProxyWhitelist {
         return patterns;
     }
 
-    protected void initialiseWhitelist() {
+    protected void initialiseAllowlist() {
         Map<String, Set<InetAddress>> localAddresses = Hosts.getNetworkInterfaceAddresses(true);
         for (Set<InetAddress> addresses : localAddresses.values()) {
             for (InetAddress address : addresses) {
-                whitelist.add(address.getHostAddress());
-                whitelist.add(address.getHostName());
-                whitelist.add(address.getCanonicalHostName());
+                allowlist.add(address.getHostAddress());
+                allowlist.add(address.getHostName());
+                allowlist.add(address.getCanonicalHostName());
             }
         }
     }
 
     public boolean isAllowed(ProxyDetails details) {
-        if (details.isAllowed(whitelist)) {
+        if (details.isAllowed(allowlist)) {
             return true;
         }
 
-        // Update whitelist and check again
-        LOG.debug("Updating proxy whitelist: {}, {}", whitelist, details);
-        if (update() && details.isAllowed(whitelist)) {
+        // Update allowlist and check again
+        LOG.debug("Updating proxy allowlist: {}, {}", allowlist, details);
+        if (update() && details.isAllowed(allowlist)) {
             return true;
         }
 
         // test against the regex as last resort
-        if (details.isAllowed(regexWhitelist)) {
+        if (details.isAllowed(regexAllowlist)) {
             return true;
         } else {
             return false;
@@ -129,18 +129,18 @@ public class ProxyWhitelist {
 
     public boolean update() {
         if (!mBeanServer.isRegistered(fabricMBean)) {
-            LOG.debug("Whitelist MBean not available");
+            LOG.debug("Allowlist MBean not available");
             return false;
         }
 
-        Set<String> newWhitelist = invokeMBean();
-        int previousSize = whitelist.size();
-        whitelist.addAll(newWhitelist);
-        if (whitelist.size() == previousSize) {
-            LOG.debug("No new proxy whitelist to update");
+        Set<String> newAllowlist = invokeMBean();
+        int previousSize = allowlist.size();
+        allowlist.addAll(newAllowlist);
+        if (allowlist.size() == previousSize) {
+            LOG.debug("No new proxy allowlist to update");
             return false;
         } else {
-            LOG.info("Updated proxy whitelist: {}", whitelist);
+            LOG.info("Updated proxy allowlist: {}", allowlist);
             return true;
         }
     }
@@ -161,9 +161,9 @@ public class ProxyWhitelist {
                     }
                 }
             }
-            LOG.debug("Extracted whitelist: {}", list);
+            LOG.debug("Extracted allowlist: {}", list);
         } catch (InstanceNotFoundException | MBeanException | ReflectionException e) {
-            LOG.error("Invocation to whitelist MBean failed: " + e.getMessage(), e);
+            LOG.error("Invocation to allowlist MBean failed: " + e.getMessage(), e);
         }
         return list;
     }

@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import io.hawt.system.ConfigManager;
-import io.hawt.system.ProxyWhitelist;
+import io.hawt.system.ProxyAllowlist;
 import io.hawt.util.Strings;
 import io.hawt.web.ForbiddenReason;
 import io.hawt.web.ServletHelpers;
@@ -97,11 +97,11 @@ public class ProxyServlet extends HttpServlet {
     private static final String PROXY_ACCEPT_SELF_SIGNED_CERTS = "hawtio.proxyDisableCertificateValidation";
     private static final String PROXY_ACCEPT_SELF_SIGNED_CERTS_ENV = "PROXY_DISABLE_CERT_VALIDATION";
 
-    public static final String PROXY_WHITELIST = "proxyWhitelist";
+    public static final String PROXY_ALLOWLIST = "proxyAllowlist";
     public static final String LOCAL_ADDRESS_PROBING = "localAddressProbing";
     public static final String DISABLE_PROXY = "disableProxy";
 
-    public static final String HAWTIO_PROXY_WHITELIST = "hawtio." + PROXY_WHITELIST;
+    public static final String HAWTIO_PROXY_ALLOWLIST = "hawtio." + PROXY_ALLOWLIST;
     public static final String HAWTIO_LOCAL_ADDRESS_PROBING = "hawtio." + LOCAL_ADDRESS_PROBING;
     public static final String HAWTIO_DISABLE_PROXY = "hawtio." + DISABLE_PROXY;
 
@@ -113,7 +113,7 @@ public class ProxyServlet extends HttpServlet {
     protected boolean doForwardIP = true;
     protected boolean acceptSelfSignedCerts = false;
 
-    protected ProxyWhitelist whitelist;
+    protected ProxyAllowlist allowlist;
 
     protected CloseableHttpClient proxyClient;
     private CookieStore cookieStore;
@@ -136,9 +136,9 @@ public class ProxyServlet extends HttpServlet {
             return;
         }
 
-        String whitelistStr = config.get(PROXY_WHITELIST, servletConfig.getInitParameter(PROXY_WHITELIST));
+        String allowlistStr = config.get(PROXY_ALLOWLIST, servletConfig.getInitParameter(PROXY_ALLOWLIST));
         boolean probeLocal = config.getBoolean(LOCAL_ADDRESS_PROBING, true);
-        whitelist = new ProxyWhitelist(whitelistStr, probeLocal);
+        allowlist = new ProxyAllowlist(allowlistStr, probeLocal);
 
         String doForwardIPString = servletConfig.getInitParameter(P_FORWARDEDFOR);
         if (doForwardIPString != null) {
@@ -214,10 +214,10 @@ public class ProxyServlet extends HttpServlet {
             servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        // TODO Implement whitelist protection for Kubernetes services as well
+        // TODO Implement allowlist protection for Kubernetes services as well
         if (proxyAddress instanceof ProxyDetails) {
             ProxyDetails details = (ProxyDetails) proxyAddress;
-            if (!whitelist.isAllowed(details)) {
+            if (!allowlist.isAllowed(details)) {
                 LOG.debug("Rejecting {}", proxyAddress);
                 ServletHelpers.doForbidden(servletResponse, ForbiddenReason.HOST_NOT_ALLOWED);
                 return;

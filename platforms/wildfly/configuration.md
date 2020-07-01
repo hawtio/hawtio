@@ -14,7 +14,7 @@ Now you can overwrite the configuration defined in `web.xml` using the following
     hawtio.rolePrincipalClasses
     hawtio.realm
     hawtio.dirname
-    hawtio.proxyWhitelist
+    hawtio.proxyAllowlist
 
 These can either set by using JBoss CLI, f.e.
 
