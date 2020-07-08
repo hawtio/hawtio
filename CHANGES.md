@@ -2,6 +2,8 @@
 
 #### 2.11.0 (To be released)
 
+* Upgrade to Keycloak adapter 10.0.2
+
 #### 2.10.1
 
 * Upgrade to Spring Boot 2.3.0 / Spring Framework 5.2.6
