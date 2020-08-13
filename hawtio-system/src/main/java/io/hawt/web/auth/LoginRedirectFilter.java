@@ -29,9 +29,9 @@ public class LoginRedirectFilter implements Filter {
     private int timeout;
     private AuthenticationConfiguration authConfiguration;
 
-    private final String[] unsecuredPaths;
+    private String[] unsecuredPaths;
 
-    private Redirector redirector = new Redirector();
+    private Redirector redirector;
 
     public LoginRedirectFilter() {
         this(AuthenticationConfiguration.UNSECURED_PATHS);
@@ -46,6 +46,11 @@ public class LoginRedirectFilter implements Filter {
         authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
         timeout = AuthSessionHelpers.getSessionTimeout(filterConfig.getServletContext());
         LOG.info("Hawtio loginRedirectFilter is using {} sec. HttpSession timeout", timeout);
+
+        Object unsecured = filterConfig.getServletContext().getAttribute("unsecuredPaths");
+        if (unsecured != null) {
+            unsecuredPaths = (String[]) unsecured;
+        }
     }
 
     @Override
