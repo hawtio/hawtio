@@ -1,0 +1,10 @@
+---
+name: "Hawtio Quarkus"
+description: "Hawtio Quarkus Extension"
+metadata:
+  keywords:
+    - "hawtio"
+    - "console"
+  guide: "https://hawt.io/docs/"
+  categories:
+    - "monitoring"

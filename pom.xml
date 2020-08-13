@@ -60,6 +60,8 @@
     <spring-version>5.3.24</spring-version>
     <spring-boot-version>2.7.6</spring-boot-version>
 
+    <quarkus-version>2.16.6.Final</quarkus-version>
+
     <assertj-core-version>3.22.0</assertj-core-version>
     <commons-codec-version>1.15</commons-codec-version>
     <commons-io-version>2.11.0</commons-io-version>
@@ -107,6 +109,7 @@
     <module>deploy/hawtio-default</module>
     <module>deploy/hawtio-embedded</module>
     <module>examples/branding-plugin</module>
+    <module>examples/quarkus</module>
     <module>examples/simple-plugin</module>
     <module>examples/springboot</module>
     <module>examples/springboot-authentication</module>
@@ -119,6 +122,7 @@
     <module>hawtio-plugin-mbean</module>
     <module>hawtio-system</module>
     <module>hawtio-war</module>
+    <module>platforms/quarkus</module>
     <module>platforms/springboot</module>
     <module>platforms/springboot-keycloak</module>
     <module>plugins/hawtio-local-jvm-mbean</module>
