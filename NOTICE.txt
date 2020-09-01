@@ -1,0 +1,10 @@
+================================================================
+==  NOTICE file for use with the Apache License, Version 2.0, ==
+==  in this case for the Hawtio distribution.                 ==
+================================================================
+
+Hawtio
+Copyright 2020 The Hawtio development team.
+
+This product includes software developed at
+Hawtio project (https://hawt.io/).
