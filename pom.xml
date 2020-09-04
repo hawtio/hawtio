@@ -61,7 +61,6 @@
     <spring-boot-version>2.3.0.RELEASE</spring-boot-version>
 
     <commons-codec-version>1.10</commons-codec-version>
-    <commons-httpclient-version>3.1</commons-httpclient-version>
     <commons-io-version>2.2</commons-io-version>
     <commons-logging-version>1.2</commons-logging-version>
     <exec-maven-plugin-version>1.5.0</exec-maven-plugin-version>

@@ -11,11 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import io.hawt.system.AuthInfo;
 import io.hawt.system.Authenticator;
 import io.hawt.util.Strings;
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -194,19 +189,6 @@ public class ProxyDetails implements ProxyAddress {
             }
         }
         return answer;
-    }
-
-    public HttpClient createHttpClient(HttpMethod httpMethodProxyRequest) {
-        HttpClient client = new HttpClient();
-
-        if (userName != null) {
-            //client.getParams().setAuthenticationPreemptive(true);
-            httpMethodProxyRequest.setDoAuthentication(true);
-
-            Credentials defaultcreds = new UsernamePasswordCredentials(userName, password);
-            client.getState().setCredentials(new AuthScope(host, port, AuthScope.ANY_REALM), defaultcreds);
-        }
-        return client;
     }
 
     public String getStringProxyURL() {
