@@ -2,7 +2,12 @@
 
 #### 2.11.0 (To be released)
 
+#### 2.10.2
+
+* Upgrade Hawtio components
+* Upgrade to AngularJS 1.8.0
 * Upgrade to Keycloak adapter 10.0.2
+* Bug fixes
 
 #### 2.10.1
 
