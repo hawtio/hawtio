@@ -58,7 +58,7 @@
                 <feature>framework</feature>
               </framework>
               <features>
-		<feature>hawtio-*</feature>
+                <feature>hawtio-*</feature>
               </features>
             </configuration>
           </execution>
@@ -105,6 +105,14 @@
       <version>${karaf-version}</version>
       <type>kar</type>
       <scope>provided</scope>
+    </dependency>
+    <!-- hawtio-osgi is needed to ensure build order -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-osgi</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+      <type>war</type>
     </dependency>
   </dependencies>
 </project>

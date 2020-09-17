@@ -124,6 +124,7 @@
     <module>hawtio-war</module>
     <module>platforms/hawtio-osgi-jmx</module>
     <module>platforms/karaf</module>
+    <module>platforms/osgi-war</module>
     <module>platforms/springboot</module>
     <module>platforms/springboot-keycloak</module>
     <module>platforms/wildfly</module>

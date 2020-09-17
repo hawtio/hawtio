@@ -277,19 +277,6 @@
     <listener-class>io.hawt.HawtioContextListener</listener-class>
   </listener>
 
-  <listener>
-    <listener-class>io.hawt.blueprint.HawtioBlueprintContextListener</listener-class>
-  </listener>
-
-  <context-param>
-    <param-name>blueprintProperties</param-name>
-    <param-value>blueprint.properties</param-value>
-  </context-param>
-  <context-param>
-    <param-name>blueprintLocation</param-name>
-    <param-value>OSGI-INF/blueprint/blueprint.xml</param-value>
-  </context-param>
-
   <error-page>
     <error-code>404</error-code>
     <location>/index.html</location>

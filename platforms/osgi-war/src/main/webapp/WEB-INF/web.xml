@@ -194,6 +194,10 @@
       <param-name>includeStackTrace</param-name>
       <param-value>false</param-value>
     </init-param>
+    <init-param>
+      <param-name>restrictorClass</param-name>
+      <param-value>io.hawt.system.RBACRestrictor</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
@@ -276,6 +280,19 @@
   <listener>
     <listener-class>io.hawt.HawtioContextListener</listener-class>
   </listener>
+
+  <listener>
+    <listener-class>io.hawt.blueprint.HawtioBlueprintContextListener</listener-class>
+  </listener>
+
+  <context-param>
+    <param-name>blueprintProperties</param-name>
+    <param-value>blueprint.properties</param-value>
+  </context-param>
+  <context-param>
+    <param-name>blueprintLocation</param-name>
+    <param-value>OSGI-INF/blueprint/blueprint.xml</param-value>
+  </context-param>
 
   <error-page>
     <error-code>404</error-code>
