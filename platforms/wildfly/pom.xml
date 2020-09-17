@@ -54,7 +54,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-          <packagingExcludes>**/lib/slf4j*.jar,**/lib/commons-logging-*.jar,**/classes/log4j.properties,**/lib/netty-*.jar,**/lib/org.apache.aries.blueprint*.jar,**/lib/plexus-classworlds-*.jar,**/lib/plexus-component-annotations-*.jar,**/lib/plexus-interpolation-*.jar,**/lib/plexus-utils-*.jar,**/lib/wagon-ahc-*.jar,**/lib/wagon-provider-api-*.jar,**/lib/xbean-reflect-*.jar</packagingExcludes>
+          <packagingExcludes>**/lib/slf4j*.jar,**/lib/commons-logging-*.jar,**/classes/log4j.properties,**/lib/netty-*.jar,**/lib/plexus-classworlds-*.jar,**/lib/plexus-component-annotations-*.jar,**/lib/plexus-interpolation-*.jar,**/lib/plexus-utils-*.jar,**/lib/wagon-ahc-*.jar,**/lib/wagon-provider-api-*.jar,**/lib/xbean-reflect-*.jar</packagingExcludes>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>

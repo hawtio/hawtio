@@ -26,12 +26,12 @@
       <version>${project.version}</version>
       <!--
         NOTE this WAR dependency type which enables this WAR to
-        inherit all the plugins and content from the core hawtio-web WAR
+        inherit all the plugins and content from the core hawtio-war WAR
       -->
       <type>war</type>
     </dependency>
 
-    <!-- lets mark dependencies from the WAR as provided to avoid jetty:run adding duplicates -->
+    <!-- let's mark dependencies from the WAR as provided to avoid jetty:run adding duplicates -->
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-core</artifactId>
@@ -43,22 +43,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${slf4j-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.aries.blueprint</groupId>
-      <artifactId>org.apache.aries.blueprint.web</artifactId>
-      <version>${blueprint-web-version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-servlet_2.5_spec</artifactId>
-        </exclusion>
-        <!-- ignore old versions -->
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
 

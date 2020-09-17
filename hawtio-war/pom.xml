@@ -51,24 +51,6 @@
       <type>pom</type>
     </dependency>
 
-    <!-- blueprint is mandatory as its for dependency injection and bootstrapping services -->
-    <dependency>
-      <groupId>org.apache.aries.blueprint</groupId>
-      <artifactId>org.apache.aries.blueprint.web</artifactId>
-      <version>${blueprint-web-version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-servlet_2.5_spec</artifactId>
-        </exclusion>
-        <!-- ignore old versions -->
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
     <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -101,60 +83,6 @@
               </includes>
             </resource>
           </webResources>
-          <archive>
-            <manifestFile>${project.build.directory}/classes/META-INF/MANIFEST.MF</manifestFile>
-          </archive>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>${maven-bundle-plugin-version}</version>
-        <executions>
-          <execution>
-            <id>bundle-manifest</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>manifest</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <supportedProjectTypes>
-            <supportedProjectType>war</supportedProjectType>
-          </supportedProjectTypes>
-          <instructions>
-            <Webapp-Context>${context}</Webapp-Context>
-            <Web-ContextPath>${context}</Web-ContextPath>
-
-            <Embed-Directory>WEB-INF/lib</Embed-Directory>
-            <Embed-Dependency>*;scope=compile|runtime;artifactId=!org.osgi.enterprise|org.osgi.core</Embed-Dependency>
-            <Embed-Transitive>true</Embed-Transitive>
-
-            <Import-Package>
-              org.apache.commons.logging;resolution:=optional,
-              org.slf4j;resolution:=optional;version="[1.6,2)",
-              org.apache.karaf.jaas.boot.principal;resolution:=optional,
-              !org.slf4j.impl,
-              !org.apache.avalon*,
-              !org.apache.log*,
-              !javax.jmdns*,!javax.jms*,!javax.portlet*,
-              !com.ibm.uvm.tools*,
-              !com.sun.jdmk.comm*,!com.sun.net*,!com.sun.tools*,!sun.security.x509*,
-              !com.google.errorprone.annotations.concurrent,
-              *
-            </Import-Package>
-            <Export-Package>
-              !*
-            </Export-Package>
-
-            <Bundle-ClassPath>WEB-INF/classes</Bundle-ClassPath>
-            <Bundle-Name>${project.description}</Bundle-Name>
-            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Implementation-Title>hawtio osgi</Implementation-Title>
-            <Implementation-Version>${project.version}</Implementation-Version>
-          </instructions>
         </configuration>
       </plugin>
 
