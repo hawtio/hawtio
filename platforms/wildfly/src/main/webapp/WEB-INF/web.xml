@@ -181,10 +181,6 @@
       <param-name>includeStackTrace</param-name>
       <param-value>false</param-value>
     </init-param>
-    <init-param>
-      <param-name>restrictorClass</param-name>
-      <param-value>io.hawt.system.RBACRestrictor</param-value>
-    </init-param>
     <!-- TODO: Reinstate eager initialization - https://issues.jboss.org/browse/ENTESB-7958 -->
     <!--<load-on-startup>1</load-on-startup>-->
   </servlet>
