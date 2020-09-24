@@ -4,6 +4,7 @@
 
 * Performance improvement for distributions other than Karaf by removing `RBACRestrictor` from their `web.xml`.
 * Bundle installed with the `hawtio` Karaf feature is renamed from `hawtio-war` to `hawtio-osgi`.
+* Bug fixes
 
 #### 2.10.2
 
