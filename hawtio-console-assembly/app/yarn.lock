@@ -33,10 +33,10 @@
     typescript "^3.0.3"
     urijs "1.19.0"
 
-"@hawtio/integration@^4.13.0":
-  version "4.13.6"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.13.6.tgz#686c7d3db6c17532f9dbcccda7d6296c56c03b49"
-  integrity sha512-tCn9wwUygbxKtlFvwaLIS4gJMSgfO/U6Ml1JNYdXJRlqgey8mTpTWSZaoBEyGH6m4jcmm+5lxXyLxUF3D/J1ug==
+"@hawtio/integration@^4.14.0":
+  version "4.14.0"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.14.0.tgz#e719b7d17e709ca7635dd3ab635beecb07c8abdc"
+  integrity sha512-cQbA6aZe7ghsfIs31NJIJyQ/o37nlUQnFxauDC+0Na/wMQCWl4T7bg8H8k1H/reRC0Sry2JW6zmMR8xooSgwHA==
   dependencies:
     "@hawtio/core" "^4.13.0"
     "@types/angular-cookies" "^1.4.5"
@@ -49,6 +49,7 @@
     "@types/js-beautify" "0.0.30"
     angular-cookies "^1.7.9"
     angular-resizable "1.2.0"
+    angular-sanitize "^1.8.1"
     angular-ui-bootstrap "2.5.6"
     clipboard "~2.0.0"
     codemirror "5.33.0"
@@ -448,10 +449,10 @@ angular-route@^1.7.7:
   resolved "https://registry.yarnpkg.com/angular-route/-/angular-route-1.7.9.tgz#f9910a2af0ba3ad7a969c5dd369b8360d0d5e4ef"
   integrity sha512-vRoj5hzdQtWbODhWJqDzD1iNOEfCKshO6GFBuPVV7RHlPjzIc4R2dHCc7Qiv/8F3LDxJDohc6vSnTDMLHuaqeA==
 
-angular-sanitize@^1.7.7:
-  version "1.7.9"
-  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.7.9.tgz#6b4d5e826abdabd352b13a7c65c8c74daf6a7b15"
-  integrity sha512-nB/xe7JQWF9nLvhHommAICQ3eWrfRETo0EVGFESi952CDzDa+GAJ/2BFBNw44QqQPxj1Xua/uYKrbLsOGWZdbQ==
+angular-sanitize@1.8.1, angular-sanitize@^1.7.7, angular-sanitize@^1.8.1:
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/angular-sanitize/-/angular-sanitize-1.8.1.tgz#80e24614669cf3d252d199e199680f4c9dee5505"
+  integrity sha512-kDtbAQkN+biyvBMJ8mgFIDZureng5yl6qegFCQ+bUw50n3KOx4FCsZ9S5tNAQ/rjYYTC5tP4hREv7+2ha+8M2w==
 
 angular-svg-base-fix@2.0.0:
   version "2.0.0"
