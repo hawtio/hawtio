@@ -49,7 +49,7 @@ namespace Login {
     $compile: ng.ICompileService) {
     HawtioExtension.add('hawtio-logout', ($scope) => {
       $scope.authService = authService;
-      let template = '<li><a class="pf-c-dropdown__menu-item" href="#" ng-focus="authService.logout()">Logout</a></li>';
+      let template = '<li><a class="pf-c-dropdown__menu-item" href="#" ng-focus="authService.logout()">Logout ({{authService.username}})</a></li>';
       return $compile(template)($scope);
     });
   }
