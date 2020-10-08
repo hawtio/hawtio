@@ -48,6 +48,15 @@
               ng-model="$ctrl.entity.password" aria-invalid="{{$ctrl.wrongPassword}}" autocomplete="current-password"
               required></input>
           </div>
+          <div class="pf-c-form__group">
+            <div class="pf-c-check">
+              <input id="login-rememberme" name="login-rememberme" type="checkbox" class="pf-c-check__input"
+                ng-model="$ctrl.rememberMe" />
+              <label class="pf-c-check__label" for="login-rememberme">
+                Remember me
+              </label>
+            </div>
+          </div>
           <div class="pf-c-form__group pf-m-action">
             <button type="submit" class="pf-c-button pf-m-primary pf-m-block">
               Log in
