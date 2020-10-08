@@ -4,6 +4,9 @@
 
 * Performance improvement for distributions other than Karaf by removing `RBACRestrictor` from their `web.xml`.
 * Bundle installed with the `hawtio` Karaf feature is renamed from `hawtio-war` to `hawtio-osgi`.
+* Add "remember me" checkbox to Login page
+* Add user name to logout menu item
+* Upgrade Hawtio components
 * Bug fixes
 
 #### 2.10.2
