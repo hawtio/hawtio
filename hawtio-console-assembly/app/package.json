@@ -27,7 +27,10 @@
     "@types/jquery": "2.0.54",
     "safe-buffer": "5.2.0",
     "angular": "1.8.0",
-    "angular-sanitize": "1.8.1"
+    "angular-sanitize": "1.8.1",
+    "ansi-styles": "3.2.1",
+    "find-up": "3.0.0",
+    "path-exists": "3.0.0"
   },
   "license": "Apache-2.0",
   "repository": {
