@@ -8,6 +8,9 @@ public class SampleCamelRouter extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
+        // Uncomment to enable the Camel plugin Debug tab
+        // getContext().setDebugging(true);
+
         from("timer:hello?period={{timer.period}}")
             .setBody().constant("Hello Camel!")
             .to("stream:out")
