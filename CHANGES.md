@@ -7,6 +7,7 @@
 * Add "remember me" checkbox to Login page
 * Add user name to logout menu item
 * Upgrade Hawtio components
+* Upgrade to Spring Boot 2.3.4.RELEASE / Spring Framework 5.2.9
 * Bug fixes
 
 #### 2.10.2
