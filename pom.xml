@@ -71,7 +71,7 @@
     <!-- make sure to align jackson with fuse/karaf 4.2 -->
     <jackson-version>2.8.11</jackson-version>
     <jackson-version-range>[2.8,3)</jackson-version-range>
-    <jetty-version>9.4.6.v20170531</jetty-version>
+    <jetty-version>9.4.32.v20200930</jetty-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jolokia-version>1.6.2</jolokia-version>
     <junit-version>4.12</junit-version>

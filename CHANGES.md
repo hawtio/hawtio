@@ -2,6 +2,10 @@
 
 #### 2.12.0 (To be released)
 
+#### 2.11.1
+
+* Upgrade to Jetty 9.4.32.v20200930
+
 #### 2.11.0
 
 * Performance improvement for distributions other than Karaf by removing `RBACRestrictor` from their `web.xml`.
