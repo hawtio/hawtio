@@ -32,7 +32,7 @@ public class ProxyDetails implements ProxyAddress {
     public static final String USER_PARAM = "_user";
     public static final String PWD_PARAM = "_pwd";
 
-    private static Set<String> ignoreHeaderNames = new HashSet<String>(Arrays.asList(USER_PARAM, PWD_PARAM, "_url", "url"));
+    private static final Set<String> ignoreHeaderNames = new HashSet<>(Arrays.asList(USER_PARAM, PWD_PARAM, "_url", "url"));
 
     public ProxyDetails(HttpServletRequest httpServletRequest) {
         this(httpServletRequest.getPathInfo());
@@ -65,10 +65,6 @@ public class ProxyDetails implements ProxyAddress {
 
     public ProxyDetails(String pathInfo) {
         hostAndPort = pathInfo.replace(" ", "%20");
-
-        if (hostAndPort == null) {
-            return;
-        }
 
         while (hostAndPort.startsWith("/")) {
             hostAndPort = hostAndPort.substring(1);
