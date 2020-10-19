@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpServletRequest;
 
-import io.hawt.system.AuthInfo;
 import io.hawt.system.Authenticator;
 import io.hawt.util.Strings;
 import org.slf4j.Logger;
@@ -37,11 +37,10 @@ public class ProxyDetails implements ProxyAddress {
     public ProxyDetails(HttpServletRequest httpServletRequest) {
         this(httpServletRequest.getPathInfo());
 
-        AuthInfo info = Authenticator.getAuthorizationHeader(httpServletRequest);
-        if (info.isSet()) {
-            userName = info.username;
-            password = info.password;
-        }
+        Authenticator.extractAuthHeader(httpServletRequest, (user, pass) -> {
+            userName = user;
+            password = pass;
+        });
 
         // lets add the query parameters
         Enumeration<?> iter = httpServletRequest.getParameterNames();
@@ -166,9 +165,7 @@ public class ProxyDetails implements ProxyAddress {
 
     @Override
     public String toString() {
-        return "ProxyDetails{" +
-                userName + "@" + hostAndPort + "/" + stringProxyURL
-                + "}";
+        return String.format("ProxyDetails{%s@%s/%s}", userName, hostAndPort, stringProxyURL);
     }
 
     /**

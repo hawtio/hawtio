@@ -1,6 +1,7 @@
 package io.hawt.web.auth.keycloak;
 
 import java.util.concurrent.atomic.AtomicReference;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,8 +39,7 @@ public class KeycloakUserServlet extends UserServlet {
      */
     protected String getKeycloakUsername(final HttpServletRequest req, HttpServletResponse resp) {
         AtomicReference<String> username = new AtomicReference<>();
-        Authenticator.authenticate(
-            authConfiguration, req,
+        new Authenticator(req, authConfiguration).authenticate(
             subject -> {
                 username.set(AuthHelpers.getUsername(subject));
 
@@ -49,6 +49,5 @@ public class KeycloakUserServlet extends UserServlet {
         );
         return username.get();
     }
-
 
 }
