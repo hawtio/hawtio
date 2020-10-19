@@ -1,13 +1,13 @@
 package io.hawt.web.auth;
 
 import java.util.GregorianCalendar;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.security.auth.Subject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import io.hawt.system.AuthInfo;
 import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
 import org.slf4j.Logger;
@@ -77,13 +77,18 @@ public final class AuthSessionHelpers {
         if (session == null || subject == null) {
             return false;
         }
-        AuthInfo info = Authenticator.getAuthorizationHeader(request);
         String sessionUser = (String) session.getAttribute("user");
-        if (info.username == null || info.username.equals(sessionUser)) {
+        AtomicReference<String> username = new AtomicReference<>();
+        AtomicReference<String> password = new AtomicReference<>();
+        Authenticator.extractAuthHeader(request, (u, p) -> {
+            username.set(u);
+            password.set(p);
+        });
+        if (username.get() == null || username.get().equals(sessionUser)) {
             LOG.debug("Session subject - {}", subject);
             return true;
         } else {
-            LOG.debug("User differs, re-authenticating: {} (request) != {} (session)", info.username, sessionUser);
+            LOG.debug("User differs, re-authenticating: {} (request) != {} (session)", username.get(), sessionUser);
             session.invalidate();
             return false;
         }

@@ -76,27 +76,26 @@ public class AuthenticationFilter implements Filter {
 
         LOG.debug("Doing authentication and authorization for path {}", path);
 
-        AuthenticateResult result = Authenticator.authenticate(
-            authConfiguration, httpRequest,
+        AuthenticateResult result = new Authenticator(httpRequest, authConfiguration).authenticate(
             subject -> executeAs(request, response, chain, subject));
 
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         switch (result) {
-            case AUTHORIZED:
-                // request was executed using the authenticated subject, nothing more to do
-                break;
-            case NOT_AUTHORIZED:
+        case AUTHORIZED:
+            // request was executed using the authenticated subject, nothing more to do
+            break;
+        case NOT_AUTHORIZED:
+            ServletHelpers.doForbidden(httpResponse);
+            break;
+        case NO_CREDENTIALS:
+            if (authConfiguration.isNoCredentials401()) {
+                // return auth prompt 401
+                ServletHelpers.doAuthPrompt(authConfiguration.getRealm(), httpResponse);
+            } else {
+                // return forbidden 403 so the browser login does not popup
                 ServletHelpers.doForbidden(httpResponse);
-                break;
-            case NO_CREDENTIALS:
-                if (authConfiguration.isNoCredentials401()) {
-                    // return auth prompt 401
-                    ServletHelpers.doAuthPrompt(authConfiguration.getRealm(), httpResponse);
-                } else {
-                    // return forbidden 403 so the browser login does not popup
-                    ServletHelpers.doForbidden(httpResponse);
-                }
-                break;
+            }
+            break;
         }
     }
 

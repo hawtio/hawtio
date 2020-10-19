@@ -3,6 +3,9 @@ package io.hawt.system;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.Principal;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -17,6 +20,7 @@ import javax.security.auth.login.AccountException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+import javax.security.cert.CertificateException;
 import javax.servlet.http.HttpServletRequest;
 
 import io.hawt.util.Strings;
@@ -27,7 +31,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * To perform authentication using JAAS using the {@link LoginContext} for the choosen realm.
+ * Authenticator performs authentication using JAAS with the {@link LoginContext} for the chosen realm.
+ *
+ * Authenticator supports the following authentication methods:
+ * <ul>
+ * <li>a set of user name and password</li>
+ * <li>client certificates</li>
+ * </ul>
  */
 public class Authenticator {
 
@@ -35,27 +45,61 @@ public class Authenticator {
 
     public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String AUTHENTICATION_SCHEME_BASIC = "Basic";
+    public static final String ATTRIBUTE_X509_CERTIFICATE = "javax.servlet.request.X509Certificate";
 
     private static Boolean websphereDetected;
     private static Method websphereGetGroupsMethod;
     private static Boolean jbosseapDetected;
     private static Method jbosseapGetGroupsMethod;
 
-    public static AuthInfo getAuthorizationHeader(HttpServletRequest request) {
-        String authHeader = request.getHeader(Authenticator.HEADER_AUTHORIZATION);
-        AuthInfo info = new AuthInfo();
-        if (Strings.isNotBlank(authHeader)) {
-            extractAuthInfo(authHeader, (username, password) -> {
-                info.username = username;
-                info.password = password;
-            });
-        }
-        return info;
+    private final HttpServletRequest request;
+    private final AuthenticationConfiguration authConfiguration;
+    private String username;
+    private String password;
+    private X509Certificate[] certificates;
+
+    /**
+     * Explicit username/password authenticator when authenticating users from login page.
+     */
+    public Authenticator(HttpServletRequest request, AuthenticationConfiguration authConfiguration,
+                         String username, String password) {
+        this.request = request;
+        this.authConfiguration = authConfiguration;
+        this.username = username;
+        this.password = password;
     }
 
-    private static void extractAuthInfo(String authHeader, BiConsumer<String, String> callback) {
-        authHeader = authHeader.trim();
-        String[] parts = authHeader.split(" ");
+    /**
+     * Request-based authenticator such as when authenticating direct Jolokia accesses.
+     */
+    public Authenticator(HttpServletRequest request, AuthenticationConfiguration authConfiguration) {
+        this.request = request;
+        this.authConfiguration = authConfiguration;
+
+        // Basic auth
+        extractAuthHeader(request, (username, password) -> {
+            this.username = username;
+            this.password = password;
+        });
+
+        // Client certificate auth
+        Object certificates = request.getAttribute(ATTRIBUTE_X509_CERTIFICATE);
+        if (certificates != null) {
+            this.certificates = (X509Certificate[]) certificates;
+        }
+    }
+
+    /**
+     * Extracts username/password from Authorization header.
+     * Callback is invoked only when Authorization header is present.
+     */
+    public static void extractAuthHeader(HttpServletRequest request, BiConsumer<String, String> callback) {
+        String authHeader = request.getHeader(Authenticator.HEADER_AUTHORIZATION);
+        if (Strings.isBlank(authHeader)) {
+            return;
+        }
+
+        String[] parts = authHeader.trim().split(" ");
         if (parts.length != 2) {
             return;
         }
@@ -69,10 +113,18 @@ public class Authenticator {
             if (delimiter < 0) {
                 return;
             }
-            String user = decoded.substring(0, delimiter);
+            String username = decoded.substring(0, delimiter);
             String password = decoded.substring(delimiter + 1);
-            callback.accept(user, password);
+            callback.accept(username, password);
         }
+    }
+
+    public boolean isUsernamePasswordSet() {
+        return Strings.isNotBlank(username) && Strings.isNotBlank(password);
+    }
+
+    public boolean hasNoCredentials() {
+        return (!isUsernamePasswordSet() || username.equals("public")) && certificates == null;
     }
 
     public static void logout(AuthenticationConfiguration authConfiguration, Subject subject) {
@@ -84,32 +136,12 @@ public class Authenticator {
         }
     }
 
-    public static AuthenticateResult authenticate(AuthenticationConfiguration authConfiguration,
-                                                  HttpServletRequest request, Consumer<Subject> callback) {
-        AuthInfo info = getAuthorizationHeader(request);
-
-        if (info.username == null || info.username.equals("public")) {
+    public AuthenticateResult authenticate(Consumer<Subject> callback) {
+        if (hasNoCredentials()) {
             return AuthenticateResult.NO_CREDENTIALS;
         }
 
-        if (info.isSet()) {
-            return authenticate(authConfiguration, request, info.username, info.password, callback);
-        }
-
-        return AuthenticateResult.NO_CREDENTIALS;
-    }
-
-    public static AuthenticateResult authenticate(AuthenticationConfiguration authConfiguration,
-                                                  HttpServletRequest request,
-                                                  String username, String password, Consumer<Subject> callback) {
-        Subject subject = doAuthenticate(
-            request,
-            authConfiguration.getRealm(),
-            authConfiguration.getRole(),
-            authConfiguration.getRolePrincipalClasses(),
-            authConfiguration.getConfiguration(),
-            username,
-            password);
+        Subject subject = doAuthenticate();
         if (subject == null) {
             return AuthenticateResult.NOT_AUTHORIZED;
         }
@@ -125,62 +157,21 @@ public class Authenticator {
         return AuthenticateResult.AUTHORIZED;
     }
 
-    private static Subject doAuthenticate(HttpServletRequest request, String realm, String role, String rolePrincipalClasses, Configuration configuration,
-                                          final String username, final String password) {
-        try {
+    protected Subject doAuthenticate() {
+        String realm = authConfiguration.getRealm();
+        String role = authConfiguration.getRole();
+        String rolePrincipalClasses = authConfiguration.getRolePrincipalClasses();
+        Configuration configuration = authConfiguration.getConfiguration();
 
+        try {
             LOG.debug("doAuthenticate[realm={}, role={}, rolePrincipalClasses={}, configuration={}, username={}, password={}]",
                 realm, role, rolePrincipalClasses, configuration, username, "******");
 
-            Subject subject = new Subject();
-            try {
-                String addr = request.getRemoteHost() + ":" + request.getRemotePort();
-                subject.getPrincipals().add(new ClientPrincipal("hawtio", addr));
-            } catch (Throwable t) {
-                // ignore
-            }
-            CallbackHandler handler = new AuthenticationCallbackHandler(username, password);
-
-            // call the constructor with or without the configuration as it behaves differently
-            LoginContext loginContext;
-            if (configuration != null) {
-                loginContext = new LoginContext(realm, subject, handler, configuration);
-            } else {
-                loginContext = new LoginContext(realm, subject, handler);
-            }
-
-            loginContext.login();
-
-            if (role == null || role.equals("")) {
-                LOG.debug("Skipping role check, no role configured");
+            Subject subject = initSubject();
+            login(subject, realm, configuration);
+            if (checkRoles(subject, role, rolePrincipalClasses)) {
                 return subject;
             }
-
-            if (role.equals("*")) {
-                LOG.debug("Skipping role check, all roles allowed");
-                return subject;
-            }
-
-            boolean found;
-            if (isRunningOnWebsphere(subject)) {
-                found = checkIfSubjectHasRequiredRoleOnWebsphere(subject, role);
-            } else if (isRunningOnJbossEAP(subject)) {
-                found = checkIfSubjectHasRequiredRoleOnJbossEAP(subject, role);
-            } else {
-                if (rolePrincipalClasses == null || rolePrincipalClasses.equals("")) {
-                    LOG.debug("Skipping role check, no rolePrincipalClasses configured");
-                    return subject;
-                }
-
-                found = checkIfSubjectHasRequiredRole(subject, role, rolePrincipalClasses);
-            }
-
-            if (!found) {
-                LOG.debug("User {} does not have the required role {}", username, role);
-                return null;
-            }
-
-            return subject;
 
         } catch (AccountException e) {
             LOG.warn("Account failure", e);
@@ -192,8 +183,73 @@ public class Authenticator {
         return null;
     }
 
-    private static boolean checkIfSubjectHasRequiredRole(Subject subject,
-                                                         String role, String rolePrincipalClasses) {
+    protected Subject initSubject() {
+        Subject subject = new Subject();
+        try {
+            String addr = request.getRemoteHost() + ":" + request.getRemotePort();
+            subject.getPrincipals().add(new ClientPrincipal("hawtio", addr));
+        } catch (Throwable t) {
+            // ignore
+        }
+        return subject;
+    }
+
+    protected void login(Subject subject, String realm, Configuration configuration) throws LoginException {
+        CallbackHandler handler = createCallbackHandler();
+
+        // call the constructor with or without the configuration as it behaves differently
+        LoginContext loginContext;
+        if (configuration != null) {
+            loginContext = new LoginContext(realm, subject, handler, configuration);
+        } else {
+            loginContext = new LoginContext(realm, subject, handler);
+        }
+
+        loginContext.login();
+    }
+
+    private CallbackHandler createCallbackHandler() {
+        if (isUsernamePasswordSet()) {
+            return new UsernamePasswordCallbackHandler(username, password);
+        } else {
+            return new CertificateCallbackHandler(certificates);
+        }
+    }
+
+    protected boolean checkRoles(Subject subject, String role, String rolePrincipalClasses) {
+        if (Strings.isBlank(role)) {
+            LOG.debug("Skipping role check, no role configured");
+            return true;
+        }
+
+        if (role.equals("*")) {
+            LOG.debug("Skipping role check, all roles allowed");
+            return true;
+        }
+
+        boolean found;
+        if (isRunningOnWebsphere(subject)) {
+            found = checkIfSubjectHasRequiredRoleOnWebsphere(subject, role);
+        } else if (isRunningOnJbossEAP(subject)) {
+            found = checkIfSubjectHasRequiredRoleOnJbossEAP(subject, role);
+        } else {
+            if (Strings.isBlank(rolePrincipalClasses)) {
+                LOG.debug("Skipping role check, no rolePrincipalClasses configured");
+                return true;
+            }
+
+            found = checkIfSubjectHasRequiredRole(subject, role, rolePrincipalClasses);
+        }
+
+        if (!found) {
+            LOG.debug("User {} does not have the required role {}", username, role);
+        }
+
+        return found;
+    }
+
+    private boolean checkIfSubjectHasRequiredRole(Subject subject,
+                                                  String role, String rolePrincipalClasses) {
         String[] roleArray = role.split(",");
         String[] rolePrincipalClazzes = rolePrincipalClasses.split(",");
         boolean found = false;
@@ -260,7 +316,8 @@ public class Authenticator {
             if (implementsInterface(cred, "com.ibm.websphere.security.cred.WSCredential")) {
                 try {
                     Method groupsMethod = getWebSphereGetGroupsMethod(cred);
-                    @SuppressWarnings("unchecked") final List<Object> groups = (List<Object>) groupsMethod.invoke(cred);
+                    @SuppressWarnings("unchecked")
+                    final List<Object> groups = (List<Object>) groupsMethod.invoke(cred);
 
                     if (groups != null) {
                         LOG.debug("Found a total of {} groups in the IBM WebSphere Credentials", groups.size());
@@ -292,8 +349,6 @@ public class Authenticator {
     }
 
     private static boolean checkIfSubjectHasRequiredRoleOnJbossEAP(Subject subject, String role) {
-        boolean found = false;
-
         LOG.debug("Running on Jboss EAP: checking if the Role {} is in the set of groups in SimpleGroup", role);
         for (final Principal prin : subject.getPrincipals()) {
             LOG.debug("Checking principal {} if it is a Jboss specific SimpleGroup containing group info", prin);
@@ -326,13 +381,9 @@ public class Authenticator {
                     LOG.debug("Caught exception trying to read groups from JBoss EAP specific SimpleGroup class", e);
                 }
             }
-
-            if (found) {
-                break;
-            }
         }
 
-        return found;
+        return false;
     }
 
     private static Method getWebSphereGetGroupsMethod(final Object cred) throws NoSuchMethodException {
@@ -361,12 +412,15 @@ public class Authenticator {
         return implementsIf;
     }
 
-    private static final class AuthenticationCallbackHandler implements CallbackHandler {
+    /**
+     * JAAS callback handler for username & password.
+     */
+    private static final class UsernamePasswordCallbackHandler implements CallbackHandler {
 
         private final String username;
         private final String password;
 
-        private AuthenticationCallbackHandler(String username, String password) {
+        private UsernamePasswordCallbackHandler(String username, String password) {
             this.username = username;
             this.password = password;
         }
@@ -382,9 +436,60 @@ public class Authenticator {
                 } else if (callback instanceof PasswordCallback) {
                     ((PasswordCallback) callback).setPassword(password.toCharArray());
                 } else {
-                    LOG.debug("Unknown callback class [" + callback.getClass().getName() + "]");
+                    LOG.debug("Unknown callback class [{}]", callback.getClass().getName());
                 }
             }
+        }
+    }
+
+    /**
+     * JAAS callback handler for X509 client certificates.
+     */
+    private static final class CertificateCallbackHandler implements CallbackHandler {
+
+        private static final String ARTEMIS_CALLBACK = "org.apache.activemq.artemis.spi.core.security.jaas.CertificateCallback";
+        private static final String ARTEMIS_CALLBACK_METHOD = "setCertificates";
+
+        private final X509Certificate[] certificates;
+
+        private CertificateCallbackHandler(X509Certificate[] certificates) {
+            this.certificates = certificates;
+        }
+
+        @Override
+        public void handle(Callback[] callbacks) {
+            for (Callback callback : callbacks) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Callback type {} -> {}", callback.getClass(), callback);
+                }
+                // currently supports only Apache ActiveMQ Artemis
+                switch (callback.getClass().getName()) {
+                case ARTEMIS_CALLBACK:
+                    setCertificates(callback);
+                    break;
+                default:
+                    LOG.warn("Callback class not supported: {}", callback.getClass().getName());
+                }
+            }
+        }
+
+        private void setCertificates(Callback callback) {
+            try {
+                // Artemis still uses deprecated javax.security.cert.X509Certificate class
+                Method method = callback.getClass().getDeclaredMethod(ARTEMIS_CALLBACK_METHOD, javax.security.cert.X509Certificate[].class);
+                method.invoke(callback, new Object[] { toJavax(certificates) });
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | CertificateEncodingException | CertificateException e) {
+                LOG.error("Setting certificates to callback failed", e);
+            }
+        }
+
+        private static javax.security.cert.X509Certificate[] toJavax(X509Certificate[] certificates)
+            throws CertificateEncodingException, CertificateException {
+            List<javax.security.cert.X509Certificate> answer = new ArrayList<>();
+            for (X509Certificate cert : certificates) {
+                answer.add(javax.security.cert.X509Certificate.getInstance(cert.getEncoded()));
+            }
+            return answer.toArray(new javax.security.cert.X509Certificate[certificates.length]);
         }
     }
 

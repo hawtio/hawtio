@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.security.auth.Subject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -71,8 +72,7 @@ public class LoginServlet extends HttpServlet {
         String username = (String) json.get("username");
         String password = (String) json.get("password");
 
-        AuthenticateResult result = Authenticator.authenticate(
-            authConfiguration, request, username, password,
+        AuthenticateResult result = new Authenticator(request, authConfiguration, username, password).authenticate(
             subject -> {
                 LOG.info("Logging in user: {}", AuthHelpers.getUsername(subject));
                 AuthSessionHelpers.setup(
@@ -81,13 +81,13 @@ public class LoginServlet extends HttpServlet {
             });
 
         switch (result) {
-            case AUTHORIZED:
-                // response was sent using the authenticated subject, nothing more to do
-                break;
-            case NOT_AUTHORIZED:
-            case NO_CREDENTIALS:
-                ServletHelpers.doForbidden(response);
-                break;
+        case AUTHORIZED:
+            // response was sent using the authenticated subject, nothing more to do
+            break;
+        case NOT_AUTHORIZED:
+        case NO_CREDENTIALS:
+            ServletHelpers.doForbidden(response);
+            break;
         }
     }
 
