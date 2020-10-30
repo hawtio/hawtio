@@ -9,6 +9,7 @@ import io.hawt.jmx.About;
 import io.hawt.jmx.JMXSecurity;
 import io.hawt.jmx.JmxTreeWatcher;
 import io.hawt.jmx.PluginRegistry;
+import io.hawt.jmx.QuartzFacade;
 import io.hawt.jmx.RBACRegistry;
 import io.hawt.system.ConfigManager;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ public class HawtioContextListener implements ServletContextListener {
     private final ConfigManager configManager;
     private final JMXSecurity jmxSecurity;
     private final RBACRegistry rbacRegistry;
+    private final QuartzFacade quartzFacade;
 
     public HawtioContextListener() {
         this(new ConfigManager());
@@ -40,6 +42,7 @@ public class HawtioContextListener implements ServletContextListener {
         this.registry = new PluginRegistry();
         this.jmxSecurity = new JMXSecurity();
         this.rbacRegistry = new RBACRegistry();
+        this.quartzFacade = new QuartzFacade();
     }
 
     public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -51,6 +54,7 @@ public class HawtioContextListener implements ServletContextListener {
             registry.init();
             jmxSecurity.init();
             rbacRegistry.init();
+            quartzFacade.init();
         } catch (Exception e) {
             throw createServletException(e);
         }
@@ -66,6 +70,7 @@ public class HawtioContextListener implements ServletContextListener {
             registry.destroy();
             configManager.destroy();
             jmxSecurity.destroy();
+            quartzFacade.destroy();
         } catch (Exception e) {
             throw createServletException(e);
         }

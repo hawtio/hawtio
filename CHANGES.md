@@ -2,6 +2,8 @@
 
 #### 2.12.0 (To be released)
 
+* Add Quartz plugin[#2642](https://github.com/hawtio/hawtio/issues/2642)
+
 #### 2.11.1
 
 * Upgrade to Jetty 9.4.32.v20200930

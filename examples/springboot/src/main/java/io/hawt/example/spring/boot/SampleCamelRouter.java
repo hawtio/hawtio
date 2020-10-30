@@ -11,8 +11,13 @@ public class SampleCamelRouter extends RouteBuilder {
         // Uncomment to enable the Camel plugin Debug tab
         // getContext().setDebugging(true);
 
-        from("timer:hello?period={{timer.period}}")
-            .setBody().constant("Hello Camel!")
+        from("quartz:cron?cron={{quartz.cron}}").routeId("cron")
+            .setBody().constant("Hello Camel! - cron")
+            .to("stream:out")
+            .to("mock:result");
+
+        from("quartz:simple?trigger.repeatInterval={{quartz.repeatInterval}}").routeId("simple")
+            .setBody().constant("Hello Camel! - simple")
             .to("stream:out")
             .to("mock:result");
     }
