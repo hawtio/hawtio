@@ -49,29 +49,29 @@ Once you get the account, set up your default Maven settings (`$HOME/.m2/setting
 
 Use the [two scripts](bin/) for releasing a version of Hawtio:
 
-* `deploy-release`
+* `release`
 ```
-./bin/deploy-release
+./bin/release
 Use this script to release a Hawtio version from the snapshot master branch.
 
 Usage:
-  deploy-release <release_version> <next_snapshot_version> [path to m2 settings file]
+  release <release_version> <next_snapshot_version> [path to m2 settings file]
 ```
 
-* `release-only`
+* `release-from-tag`
 ```
-./bin/deploy-release
+./bin/release-from-tag
 Use this script to release a Hawtio version from an existing tag.
 It is normally used when a tag has been published to GitHub but
 releasing it to OSSRH has failed for some reason.
 
 Usage:
-  release-only <release_version> [path to m2 settings file]
+  release-from-tag <release_version> [path to m2 settings file]
 ```
 
 So, for example, if you want to release version `2.8.0` then normally all you need to do is run the following command:
 ```
-./bin/deploy-release 2.8.0 2.9-SNAPSHOT
+./bin/release 2.8.0 2.9-SNAPSHOT
 ```
 
 ### After releasing
