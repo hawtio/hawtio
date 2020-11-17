@@ -1,9 +1,12 @@
 ## Change Log
 
-#### 2.12.0 (To be released)
+#### 2.13.0 (To be released)
+
+#### 2.12.0
 
 * Add Quartz plugin [#2642](https://github.com/hawtio/hawtio/issues/2642)
 * Support client certificate authentication for Apache Artemis [#2469](https://github.com/hawtio/hawtio/issues/2469)
+* Bug fix
 
 #### 2.11.1
 
