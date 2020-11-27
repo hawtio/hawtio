@@ -25,8 +25,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
+import javax.management.IntrospectionException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanException;
 import javax.management.MBeanInfo;
@@ -101,59 +103,7 @@ public class RBACRegistry implements RBACRegistryMBean {
 
         // see: org.jolokia.backend.executor.AbstractMBeanServerExecutor.each()
         for (ObjectName nameObject : mBeanServer.queryNames(null, null)) {
-            // Don't add if already visited previously
-            if (!visited.contains(nameObject)) {
-                Map<String, Object> jsonifiedMBeanInfo;
-
-                Map<String, Object> domain = domains.get(nameObject.getDomain());
-                if (domain == null) {
-                    domain = new HashMap<>();
-                    domains.put(nameObject.getDomain(), domain);
-                }
-
-                // Let's try to avoid invoking getMBeanInfo. simply domain+type attr is not enough, but we may
-                // detect special cases
-                String mbeanInfoKey = isSpecialMBean(nameObject);
-                if (mbeanInfoKey != null && cache.containsKey(mbeanInfoKey)) {
-                    jsonifiedMBeanInfo = cache.get(mbeanInfoKey);
-                } else {
-                    // we may have to assemble the info on the fly
-                    try {
-                        MBeanInfo mBeanInfo = mBeanServer.getMBeanInfo(nameObject);
-
-                        // 2nd level of special cases - a bit slower (we had to getMBeanInfo(), but we may try
-                        // cache by MBean's domain and class)
-                        if (mbeanInfoKey == null) {
-                            mbeanInfoKey = isSpecialClass(nameObject, mBeanInfo);
-                        }
-                        if (mbeanInfoKey != null && cache.containsKey(mbeanInfoKey)) {
-                            jsonifiedMBeanInfo = cache.get(mbeanInfoKey);
-                        } else {
-                            // hard work here
-                            jsonifiedMBeanInfo = jsonifyMBeanInfo(mBeanInfo);
-                        }
-
-                        if (mbeanInfoKey != null) {
-                            cache.put(mbeanInfoKey, jsonifiedMBeanInfo);
-                        }
-                    } catch (InstanceNotFoundException e) {
-                        // Log failure and continue so that we can still send a response back
-                        LOG.debug("Failed to get MBean info for {}. Due to InstanceNotFoundException.", nameObject);
-                        continue;
-                    }
-                }
-
-                // jsonifiedMBeanInfo should not be null here and *may* be cached
-                if (mbeanInfoKey != null) {
-                    // in hawtio we'll check `typeof info === 'string'` (angular.isString(info))
-                    domain.put(nameObject.getKeyPropertyListString(), mbeanInfoKey);
-                } else {
-                    // angular.isObject(info)
-                    domain.put(nameObject.getKeyPropertyListString(), jsonifiedMBeanInfo);
-                }
-
-                visited.add(nameObject);
-            }
+            addMBeanInfo(cache, domains, visited, nameObject);
         }
 
         tryAddRBACInfo(result);
@@ -161,13 +111,67 @@ public class RBACRegistry implements RBACRegistryMBean {
         return result;
     }
 
+    private void addMBeanInfo(Map<String, Map<String, Object>> cache, Map<String, Map<String, Object>> domains, Set<ObjectName> visited,
+                              ObjectName nameObject) throws IntrospectionException, ReflectionException {
+        // Don't add if already visited previously
+        if (visited.contains(nameObject)) {
+            return;
+        }
+
+        Map<String, Object> jsonifiedMBeanInfo;
+
+        // Let's try to avoid invoking getMBeanInfo. simply domain+type attr is not enough, but we may
+        // detect special cases
+        String mbeanInfoKey = isSpecialMBean(nameObject);
+        if (mbeanInfoKey != null && cache.containsKey(mbeanInfoKey)) {
+            jsonifiedMBeanInfo = cache.get(mbeanInfoKey);
+        } else {
+            // we may have to assemble the info on the fly
+            try {
+                MBeanInfo mBeanInfo = mBeanServer.getMBeanInfo(nameObject);
+
+                // 2nd level of special cases - a bit slower (we had to getMBeanInfo(), but we may try
+                // cache by MBean's domain and class)
+                if (mbeanInfoKey == null) {
+                    mbeanInfoKey = isSpecialClass(nameObject, mBeanInfo);
+                }
+                if (mbeanInfoKey != null && cache.containsKey(mbeanInfoKey)) {
+                    jsonifiedMBeanInfo = cache.get(mbeanInfoKey);
+                } else {
+                    // hard work here
+                    jsonifiedMBeanInfo = jsonifyMBeanInfo(mBeanInfo);
+                }
+
+                if (mbeanInfoKey != null) {
+                    cache.put(mbeanInfoKey, jsonifiedMBeanInfo);
+                }
+            } catch (InstanceNotFoundException e) {
+                // Log failure and continue so that we can still send a response back
+                LOG.debug("Failed to get MBean info for {}. Due to InstanceNotFoundException.", nameObject);
+                return;
+            }
+        }
+
+        Map<String, Object> domain = domains.computeIfAbsent(nameObject.getDomain(), key -> new HashMap<>());
+
+        // jsonifiedMBeanInfo should not be null here and *may* be cached
+        if (mbeanInfoKey != null) {
+            // in hawtio we'll check `typeof info === 'string'` (angular.isString(info))
+            domain.put(nameObject.getKeyPropertyListString(), mbeanInfoKey);
+        } else {
+            // angular.isObject(info)
+            domain.put(nameObject.getKeyPropertyListString(), jsonifiedMBeanInfo);
+        }
+
+        visited.add(nameObject);
+    }
+
     /**
      * This method duplicates what Jolokia does in List Handler in order to convert {@link MBeanInfo} to JSON.
      * @param mBeanInfo
      * @return
      */
-    @SuppressWarnings("unchecked")
-    private Map<String,Object> jsonifyMBeanInfo(MBeanInfo mBeanInfo) {
+    private Map<String, Object> jsonifyMBeanInfo(MBeanInfo mBeanInfo) {
         Map<String, Object> result = new LinkedHashMap<>();
 
         // desc
@@ -251,39 +255,38 @@ public class RBACRegistry implements RBACRegistryMBean {
     private String isSpecialMBean(ObjectName nameObject) {
         String domain = nameObject.getDomain();
         switch (domain) {
-            case "org.apache.activemq":
-                final String destinationType = nameObject.getKeyProperty("destinationType");
-                // see: org.apache.activemq.command.ActiveMQDestination.getDestinationTypeAsString()
-                if ("Queue".equals(destinationType)) {
-                    return "activemq:queue";
+        case "org.apache.activemq":
+            final String destinationType = nameObject.getKeyProperty("destinationType");
+            // see: org.apache.activemq.command.ActiveMQDestination.getDestinationTypeAsString()
+            if ("Queue".equals(destinationType)) {
+                return "activemq:queue";
+            }
+            if ("TempQueue".equals(destinationType)) {
+                return "activemq:tempqueue";
+            }
+            if ("Topic".equals(destinationType)) {
+                return "activemq:topic";
+            }
+            if ("TempTopic".equals(destinationType)) {
+                return "activemq:temptopic";
+            }
+            break;
+        case "org.apache.activemq.artemis":
+            final String component = nameObject.getKeyProperty("component");
+            if ("addresses".equals(component)) {
+                final String subComponent = nameObject.getKeyProperty("subcomponent");
+                if (subComponent == null) {
+                    return "activemq.artemis:address";
                 }
-                if ("TempQueue".equals(destinationType)) {
-                    return "activemq:tempqueue";
+                if ("queues".equals(subComponent)) {
+                    return "activemq.artemis:queue";
                 }
-                if ("Topic".equals(destinationType)) {
-                    return "activemq:topic";
-                }
-                if ("TempTopic".equals(destinationType)) {
-                    return "activemq:temptopic";
-                }
-                break;
-            case "org.apache.activemq.artemis":
-                final String component = nameObject.getKeyProperty("component");
-                if ("addresses".equals(component)) {
-                    final String subComponent = nameObject.getKeyProperty("subcomponent");
-                    if (subComponent == null) {
-                        return "activemq.artemis:address";
-                    }
-                    if ("queues".equals(subComponent)) {
-                        return "activemq.artemis:queue";
-                    }
-                }
-                break;
-            case "org.apache.camel":
-                @SuppressWarnings("unused")
-                final String type = nameObject.getKeyProperty("type");
-                // TODO: verify: "type" attribute is not enough - we have to know real class of MBean
-                return null;
+            }
+            break;
+        case "org.apache.camel":
+            //final String type = nameObject.getKeyProperty("type");
+            // TODO: verify: "type" attribute is not enough - we have to know real class of MBean
+            return null;
         }
 
         return null;
@@ -323,7 +326,6 @@ public class RBACRegistry implements RBACRegistryMBean {
      * we can add RBAC information
      * @param result
      */
-    @SuppressWarnings("unchecked")
     private void tryAddRBACInfo(Map<String, Object> result) throws MBeanException, InstanceNotFoundException, ReflectionException {
         if (mBeanServer != null && mBeanServer.isRegistered(rbacDecorator)) {
             mBeanServer.invoke(rbacDecorator, "decorate", new Object[] { result }, new String[] { Map.class.getName() });
