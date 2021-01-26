@@ -178,6 +178,16 @@
     <dispatcher>REQUEST</dispatcher>
   </filter-mapping>
 
+  <filter>
+    <filter-name>FlightRecorderDownloadFacade</filter-name>
+    <filter-class>io.hawt.web.filters.FlightRecordingDownloadFacade</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>FlightRecorderDownloadFacade</filter-name>
+    <url-pattern>/jolokia/*</url-pattern>
+    <url-pattern>/proxy/*</url-pattern>
+  </filter-mapping>
+
   <servlet>
     <servlet-name>jolokia-agent</servlet-name>
     <servlet-class>io.hawt.web.servlets.JolokiaConfiguredAgentServlet</servlet-class>
