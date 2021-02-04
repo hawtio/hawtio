@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -128,12 +130,22 @@ public class FlightRecordingDownloadFacade implements Filter {
         DerivedResponse openResponse = new DerivedResponse(response);
         chain.doFilter(new StandinRequest(req,
             replacementPattern, "openStream(long,javax.management.openmbean.TabularData)/"+ recordingNumber
-            +"/%7B%7D"), openResponse);
+            +"/" + emptyMapArgument(req)), openResponse);
         Object streamRef = openResponse.interpretResponse();
         if(!(streamRef instanceof Number)) {
             throw new ServletException("Response did not contain stream reference");
         }
         return ((Number)streamRef).longValue();
+    }
+
+    private String emptyMapArgument(HttpServletRequest req) {
+        //since proxy URLs must be valid, encode these characters
+        //but for local jolokia use as is
+        String emptyMap="{}";
+        if("/proxy".equals(req.getServletPath())) {
+            emptyMap="%7B%7D";
+        }
+        return emptyMap;
     }
 
     @Override
