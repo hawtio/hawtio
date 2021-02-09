@@ -1,6 +1,10 @@
 ## Change Log
 
-#### 2.13.0 (To be released)
+#### 2.14.0 (To be released)
+
+#### 2.13.0
+
+* Improve JFR Diagnostics plugin [hawtio-integration#109](https://github.com/hawtio/hawtio-integration/pull/109)
 
 #### 2.12.0
 
