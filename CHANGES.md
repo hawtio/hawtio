@@ -2,6 +2,10 @@
 
 #### 2.14.0 (To be released)
 
+#### 2.13.2
+
+* Bug fixes
+
 #### 2.13.1
 
 * Bug fixes
