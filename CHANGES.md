@@ -2,6 +2,10 @@
 
 #### 2.14.0 (To be released)
 
+#### 2.13.4
+
+* Upgrade to Jackson 2.12.3
+
 #### 2.13.3
 
 * Upgrade to commons-io 2.8.0
