@@ -92,14 +92,20 @@ public class Main {
         String scheme = resolveScheme(server);
         WebAppContext webapp = createHawtioWebapp(server, scheme);
 
-        // lets set a temporary directory so jetty doesn't bork if some process zaps /tmp/*
-        String homeDir = System.getProperty("user.home", ".") + "/.hawtio";
+        // start -- REGISTER CUSTOM PLUGINS CORRECTLY
+        String homeDir = System.getProperty("user.home", ".") + "/.jetty";
         String tempDirPath = homeDir + "/tmp";
-        File tempDir = new File(tempDirPath);
-        tempDir.mkdirs();
-        log.info("Using temp directory for jetty: {}", tempDir.getPath());
-        webapp.setTempDirectory(tempDir);
+        String hawtioDirPath = tempDirPath + "/hawtio";
 
+        File hawtioDir = new File(hawtioDirPath);
+        hawtioDir.mkdirs();
+
+        File tempDir = new File(tempDirPath);
+
+        log.info("Using temp directory for jetty: {}", tempDir.getPath());
+        webapp.setTempDirectory(hawtioDir);
+        // end -- REGISTER CUSTOM PLUGINS CORRECTLY
+        
         // check for 3rd party plugins before we add hawtio, so they are initialized before hawtio
         findThirdPartyPlugins(log, handlers, tempDir);
 
