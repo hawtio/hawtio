@@ -2,6 +2,11 @@
 
 #### 2.14.0 (To be released)
 
+#### 2.13.5
+
+* Upgrade Hawtio components
+* Bug fixes
+
 #### 2.13.4
 
 * Upgrade to Jackson 2.12.3

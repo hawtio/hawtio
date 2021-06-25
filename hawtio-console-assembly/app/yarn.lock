@@ -9,10 +9,10 @@
   dependencies:
     "@types/jquery" "2.0.53"
 
-"@hawtio/core@^4.14.1":
-  version "4.14.1"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.14.1.tgz#fd7b23c3525e617ca955ac98b493ef932720d8dd"
-  integrity sha512-d+DeI0teqfXiwX7AGqN8oOYe+RwJCnKfAzzey0hEccWtqc/24VBvbDf7SiDMBcNKStUXGBO94HjW8UBiAwA3dQ==
+"@hawtio/core@^4.14.2":
+  version "4.14.2"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.14.2.tgz#3c3185cfdf8694005bdb711366b85fea4dec25a1"
+  integrity sha512-lwTrS5jRmbnW6C9y/sk9BsBzVKb0skWzR7bNjWhPpLPY/u3g04vOA7Tb6CLvwsT3kXQxmzdnZTxsOTPhobEMHw==
   dependencies:
     "@hawtio/core-dts" "~3.3.0"
     "@patternfly/patternfly" "^2.0.0"
@@ -28,17 +28,17 @@
     angular-route "^1.7.7"
     jquery "2.2.4"
     js-logger "1.4.1"
-    lodash "~4.17.0"
+    lodash "~4.17.21"
     marked "0.6.1"
     typescript "^3.0.3"
     urijs "1.19.0"
 
-"@hawtio/integration@^4.16.2":
-  version "4.16.2"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.16.2.tgz#f9a545029fbaa8ced575a4f37fd0eb3351bcb4d7"
-  integrity sha512-y3lmWXcg96C8vHqXnSP9706H1d9Q13K7z+bFk1L1daNaMkOQmmoQGZj0RUrpHVBJYOFImtrbN/wK2Dy+NLuKeg==
+"@hawtio/integration@^4.16.3":
+  version "4.16.3"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-4.16.3.tgz#6e99ffff1eb073fa1c0b3fa8a95ba08b10338ce8"
+  integrity sha512-P80oHx3DlVrNd/85NnuzJxvmf6O3vs9FKJVMIc4ujYSm+h9HzKXQ+HEnC1zuXS12MWkLZLkGCY8uqY3IAk6gzQ==
   dependencies:
-    "@hawtio/core" "^4.14.1"
+    "@hawtio/core" "^4.14.2"
     "@types/angular-cookies" "^1.4.5"
     "@types/angular-mocks" "~1.7.0"
     "@types/angular-ui-bootstrap" "~0.13.46"
@@ -60,12 +60,12 @@
     ng-infinite-scroll "1.3.0"
     patternfly-bootstrap-treeview "~2.1.0"
 
-"@hawtio/oauth@^4.12.5":
-  version "4.12.5"
-  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.12.5.tgz#299d222c6d1ba230a2e9740fccd928bf3faba282"
-  integrity sha512-bmVuAyH8Acm0YQ6VMd82VuUypO9hoaF3a66sWVRF9S67ezsoM7GRMZiKH1rhk8ixUWYhMaWewAEqiHtgv9oCEg==
+"@hawtio/oauth@^4.12.6":
+  version "4.12.6"
+  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.12.6.tgz#3d11db341d0460f5fa5a0820f4bccc00350f0b95"
+  integrity sha512-PE97Ey0+dO3bcFilO6rT6Xjkv3/LjzJMiu0t4PDYIGfYTMVQx7d7y7NzaaNlAmf+vVVSBYKKHa9BQcAYEhqasQ==
   dependencies:
-    "@hawtio/core" "^4.14.1"
+    "@hawtio/core" "^4.14.2"
     "@types/angular-cookies" "^1.4.5"
     angular-cookies "^1.7.9"
     ng-idle "^1.3.2"
@@ -1240,10 +1240,10 @@ locate-path@^3.0.0:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
 
-lodash@4.17.15, lodash@^4.0.0, lodash@^4.17.12, lodash@^4.17.15, lodash@^4.17.4, lodash@~4.17.0, lodash@~4.17.10:
-  version "4.17.15"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
-  integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
+lodash@4.17.21, lodash@^4.0.0, lodash@^4.17.12, lodash@^4.17.15, lodash@^4.17.4, lodash@~4.17.10, lodash@~4.17.21:
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
+  integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
 loud-rejection@^1.0.0:
   version "1.6.0"
