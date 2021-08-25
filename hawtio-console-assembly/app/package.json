@@ -10,7 +10,7 @@
   "resolutions": {
     "angular-ui-bootstrap": "2.5.6",
     "jquery": "2.2.4",
-    "bootstrap": "3.3.7",
+    "bootstrap": "3.4.1",
     "bootstrap-select": "1.12.4",
     "moment": "2.21.0",
     "strip-ansi": "4.0.0",
