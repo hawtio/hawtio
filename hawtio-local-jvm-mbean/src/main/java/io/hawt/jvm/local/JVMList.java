@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -19,7 +20,8 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
 import org.jolokia.jvmagent.JvmAgent;
 import org.jolokia.jvmagent.client.command.CommandDispatcher;
 import org.jolokia.jvmagent.client.util.OptionsAndArgs;
-import org.jolokia.jvmagent.client.util.VirtualMachineHandler;
+import org.jolokia.jvmagent.client.util.PlatformUtils;
+import org.jolokia.jvmagent.client.util.VirtualMachineHandlerOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,7 +170,7 @@ public class JVMList implements JVMListMBean {
 
         // System.out.println("Jar file at : " + options.getJarFilePath());
 
-        VirtualMachineHandler vmHandler = new VirtualMachineHandler(options);
+        VirtualMachineHandlerOperations vmHandler = PlatformUtils.createVMAccess(options);
         CommandDispatcher dispatcher = new CommandDispatcher(options);
 
         Object vm = null;
@@ -222,7 +224,7 @@ public class JVMList implements JVMListMBean {
         Object vm = null;
 
         OptionsAndArgs options = new OptionsAndArgs(CommandDispatcher.getAvailableCommands(), "--quiet", "status", PID);
-        VirtualMachineHandler vmHandler = new VirtualMachineHandler(options);
+        VirtualMachineHandlerOperations vmHandler = PlatformUtils.createVMAccess(options);
 
         String agentUrl = null;
 

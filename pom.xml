@@ -73,7 +73,7 @@
     <jackson-version-range>[2.8,3)</jackson-version-range>
     <jetty-version>9.4.43.v20210629</jetty-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
-    <jolokia-version>1.6.2</jolokia-version>
+    <jolokia-version>1.7.0</jolokia-version>
     <junit-version>4.12</junit-version>
     <karaf-version>4.2.1</karaf-version>
     <karaf-version-range>[4.0,5)</karaf-version-range>

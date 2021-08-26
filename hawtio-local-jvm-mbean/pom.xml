@@ -25,7 +25,6 @@
       <groupId>org.jolokia</groupId>
       <artifactId>jolokia-jvm</artifactId>
       <version>${jolokia-version}</version>
-      <classifier>agent</classifier>
     </dependency>
 
     <dependency>
