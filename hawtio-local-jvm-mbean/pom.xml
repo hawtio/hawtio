@@ -25,6 +25,12 @@
       <groupId>org.jolokia</groupId>
       <artifactId>jolokia-jvm</artifactId>
       <version>${jolokia-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.sun</groupId>
+          <artifactId>tools</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
