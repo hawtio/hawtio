@@ -2,6 +2,11 @@
 
 #### 2.14.0 (To be released)
 
+#### 2.13.6
+
+* Upgrade to Jolokia 1.17.0
+* Update dependencies
+
 #### 2.13.5
 
 * Upgrade Hawtio components
