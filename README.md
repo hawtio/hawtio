@@ -8,7 +8,7 @@
 
 ![Hawtio screenshot](https://raw.githubusercontent.com/hawtio/website/master/static/images/screenshots/camel-route.png)
 
-Hawtio has [lots of plugins](http://hawt.io/docs/plugins/) such as: Apache ActiveMQ, Apache Camel, JMX, OSGi, Logs, Spring Boot, and Diagnostics.
+Hawtio has [lots of plugins](http://hawt.io/docs/plugins/) such as: Apache ActiveMQ "Classic," Apache Camel, JMX, OSGi, Logs, Spring Boot, and Diagnostics.
 You can dynamically extend Hawtio with your own plugins or automatically discover plugins inside the JVM.
 
 The only server side dependency (other than the static HTML/CSS/JS/images) is the excellent [Jolokia library](http://jolokia.org) which has small footprint (around 300KB) and is available as a [JVM agent](http://jolokia.org/agent/jvm.html), or comes embedded as a servlet inside the `hawtio-default.war` or can be deployed as [an OSGi bundle](http://jolokia.org/agent/osgi.html).
