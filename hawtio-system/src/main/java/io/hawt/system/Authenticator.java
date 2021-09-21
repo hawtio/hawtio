@@ -475,11 +475,19 @@ public class Authenticator {
 
         private void setCertificates(Callback callback) {
             try {
-                // Artemis still uses deprecated javax.security.cert.X509Certificate class
-                Method method = callback.getClass().getDeclaredMethod(ARTEMIS_CALLBACK_METHOD, javax.security.cert.X509Certificate[].class);
-                method.invoke(callback, new Object[] { toJavax(certificates) });
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | CertificateEncodingException | CertificateException e) {
-                LOG.error("Setting certificates to callback failed", e);
+                // Artemis uses java.security.cert.X509Certificate class since the 2.18.0 version.
+                Method method = callback.getClass().getDeclaredMethod(ARTEMIS_CALLBACK_METHOD, java.security.cert.X509Certificate[].class);
+                method.invoke(callback, new Object[] { certificates });
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                LOG.warn("Setting certificates to new callback failed", e);
+
+                try {
+                    // Artemis used deprecated javax.security.cert.X509Certificate class up to the 2.17.0 version.
+                    Method method = callback.getClass().getDeclaredMethod(ARTEMIS_CALLBACK_METHOD, javax.security.cert.X509Certificate[].class);
+                    method.invoke(callback, new Object[] { toJavax(certificates) });
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | CertificateEncodingException | CertificateException ex) {
+                    LOG.error("Setting certificates to callback failed", ex);
+                }
             }
         }
 
