@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import io.hawt.system.AuthHelpers;
+import io.hawt.system.AuthenticateResult;
+import io.hawt.system.Authenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +26,7 @@ public class LoginRedirectFilter implements Filter {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(LoginRedirectFilter.class);
 
+    private int timeout;
     private AuthenticationConfiguration authConfiguration;
 
     private final String[] unsecuredPaths;
@@ -40,6 +44,8 @@ public class LoginRedirectFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         authConfiguration = AuthenticationConfiguration.getConfiguration(filterConfig.getServletContext());
+        timeout = AuthSessionHelpers.getSessionTimeout(filterConfig.getServletContext());
+        LOG.info("Hawtio loginRedirectFilter is using {} sec. HttpSession timeout", timeout);
     }
 
     @Override
@@ -51,19 +57,32 @@ public class LoginRedirectFilter implements Filter {
         HttpSession session = httpRequest.getSession(false);
         String path = httpRequest.getServletPath();
 
-        if (isRedirectRequired(session, path)) {
+        if (isRedirectRequired(session, path, httpRequest)) {
             redirector.doRedirect(httpRequest, httpResponse, AuthenticationConfiguration.LOGIN_URL);
         } else {
             chain.doFilter(request, response);
         }
     }
 
-    private boolean isRedirectRequired(HttpSession session, String path) {
+    private boolean isRedirectRequired(HttpSession session, String path, HttpServletRequest request) {
         return authConfiguration.isEnabled()
             && !authConfiguration.isKeycloakEnabled()
             && !AuthSessionHelpers.isSpringSecurityEnabled()
             && !AuthSessionHelpers.isAuthenticated(session)
-            && isSecuredPath(path);
+            && isSecuredPath(path)
+            && !tryAuthenticateRequest(request, session);
+    }
+
+    boolean tryAuthenticateRequest(HttpServletRequest request, HttpSession session) {
+        AuthenticateResult result = new Authenticator(request, authConfiguration).authenticate(
+           subject -> {
+               String username = AuthHelpers.getUsername(subject);
+               LOG.info("Logging in user: {}", username);
+               AuthSessionHelpers.setup(session != null ? session :
+                  request.getSession(true), subject, username, timeout);
+           });
+
+        return result == AuthenticateResult.AUTHORIZED;
     }
 
     boolean isSecuredPath(String path) {
