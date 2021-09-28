@@ -3,6 +3,7 @@ package io.hawt.config;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
@@ -42,6 +43,7 @@ public class ConfigFacadeTest {
     public void testHasVersion() throws Exception {
         String version = facade.getVersion();
         System.out.println("Has version: " + version);
+        LoggerFactory.getLogger("hawtio-core").info("Has version: {}", version);
     }
 
 }
