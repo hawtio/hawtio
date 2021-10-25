@@ -2,6 +2,10 @@
 
 #### 2.15.0 (To be released)
 
+#### 2.14.1
+
+* Bug fix
+
 #### 2.14.0
 
 * Enhancements for ActiveMQ Artemis console
