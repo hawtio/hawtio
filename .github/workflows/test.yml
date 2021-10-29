@@ -35,4 +35,4 @@ jobs:
             ${{ runner.os }}-maven-
       - name: Build & test
         run: |
-          mvn install
+          mvn --batch-mode install
