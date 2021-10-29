@@ -8,7 +8,7 @@ namespace Login {
 
   export function init(authService: Core.AuthService, keycloakService: HawtioKeycloak.KeycloakService,
     postLogoutTasks: Core.Tasks, $window: ng.IWindowService, HawtioExtension: Core.HawtioExtension,
-    $compile: ng.ICompileService): void {
+    $compile: ng.ICompileService, $rootScope: ng.IRootScopeService): void {
     'ngInject';
 
     if (keycloakService.enabled) {
@@ -28,6 +28,7 @@ namespace Login {
         if (!authService.isDefaultUser()) {
           registerPostLogoutTasks(postLogoutTasks, $window);
           addLogoutLink(authService, HawtioExtension, $compile);
+          Core.$apply($rootScope);
         }
       },
       error: (xhr: JQueryXHR, status: string, error: string) => {
@@ -48,6 +49,7 @@ namespace Login {
   function addLogoutLink(authService: Core.AuthService, HawtioExtension: Core.HawtioExtension,
     $compile: ng.ICompileService) {
     HawtioExtension.add('hawtio-logout', ($scope) => {
+      log.debug("Adding Logout item to menu");
       $scope.authService = authService;
       let template = '<li><a class="pf-c-dropdown__menu-item" href="#" ng-focus="authService.logout()">Logout ({{authService.username}})</a></li>';
       return $compile(template)($scope);
