@@ -59,7 +59,7 @@ public class EndpointPathResolver {
         if (serverPort == null || managementServerPort == null || serverPort.equals(managementServerProperties.getPort())) {
             contextPath = serverProperties.getServlet().getContextPath();
         } else {
-            contextPath = managementServerProperties.getServlet().getContextPath();
+            contextPath = managementServerProperties.getBasePath();
         }
 
         return Strings.webContextPath(contextPath);
