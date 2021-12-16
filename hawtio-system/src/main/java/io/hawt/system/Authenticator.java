@@ -45,6 +45,7 @@ public class Authenticator {
 
     public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String AUTHENTICATION_SCHEME_BASIC = "Basic";
+	public static final String AUTHENTICATION_SCHEME_BEARER = "Bearer";
     public static final String ATTRIBUTE_X509_CERTIFICATE = "javax.servlet.request.X509Certificate";
 
     private static Boolean websphereDetected;
@@ -117,6 +118,12 @@ public class Authenticator {
             String password = decoded.substring(delimiter + 1);
             callback.accept(username, password);
         }
+
+		if (authType.equalsIgnoreCase(AUTHENTICATION_SCHEME_BEARER)) {
+			String username = "token";
+			String password = authInfo;
+			callback.accept(username, password);
+		}
     }
 
     public boolean isUsernamePasswordSet() {
