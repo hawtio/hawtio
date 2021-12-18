@@ -79,7 +79,7 @@
     <karaf-version-range>[4.0,5)</karaf-version-range>
     <keycloak-version>11.0.2</keycloak-version>
     <log4j-version>1.2.17</log4j-version>
-    <log4j2-version>2.16.0</log4j2-version>
+    <log4j2-version>2.17.0</log4j2-version>
     <maven-antrun-plugin-version>1.8</maven-antrun-plugin-version>
     <maven-bundle-plugin-version>3.0.1</maven-bundle-plugin-version>
     <maven-failsafe-plugin-version>3.0.0-M1</maven-failsafe-plugin-version>
