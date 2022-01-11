@@ -26,12 +26,12 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
     private static String POLICY = "";
     private static final String POLICY_TEMPLATE =
         "default-src 'self'; " +
-        "script-src 'self'%s 'unsafe-inline' 'unsafe-eval'; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' %s; " +
         "style-src 'self' 'unsafe-inline'; " +
         "font-src 'self' data:; " +
         "img-src 'self' data:; " +
-        "connect-src 'self'%s; " +
-        "frame-src 'self'%s";
+        "connect-src 'self' %s; " +
+        "frame-src 'self' %s";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -51,11 +51,11 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
                 URI uri = URI.create(url);
                 LOG.info("Found Keycloak URL: {}", uri);
                 // mind the initial whitespace
-                String hostPort = " " + uri.getHost();
+                String cspSrc = uri.getScheme() + "://" + uri.getHost();
                 if (uri.getPort() >= 0) {
-                    hostPort += ":" + uri.getPort();
+                    cspSrc += ":" + uri.getPort();
                 }
-                POLICY = String.format(POLICY_TEMPLATE, hostPort, hostPort, hostPort);
+                POLICY = String.format(POLICY_TEMPLATE, cspSrc, cspSrc, cspSrc);
                 addedKeycloakUrl = true;
             } catch (IOException e) {
                 LOG.error("Can't read keycloak configuration file", e);

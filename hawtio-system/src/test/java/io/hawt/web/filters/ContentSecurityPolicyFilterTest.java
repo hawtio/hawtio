@@ -52,9 +52,9 @@ public class ContentSecurityPolicyFilterTest {
         contentSecurityPolicyFilter.addHeaders(request, response);
         // then
         verify(response).addHeader("Content-Security-Policy",
-                "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
+                "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' ; "
                         + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
-                        + "connect-src 'self'; frame-src 'self'");
+                        + "connect-src 'self' ; frame-src 'self' ");
     }
 
     @Test
@@ -66,9 +66,9 @@ public class ContentSecurityPolicyFilterTest {
         contentSecurityPolicyFilter.addHeaders(request, response);
         // then
         verify(response).addHeader("Content-Security-Policy",
-                "default-src 'self'; script-src 'self' localhost:8180 'unsafe-inline' 'unsafe-eval'; "
+                "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:8180; "
                         + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
-                        + "connect-src 'self' localhost:8180; frame-src 'self' localhost:8180");
+                        + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180");
     }
 
     @Test
@@ -80,9 +80,9 @@ public class ContentSecurityPolicyFilterTest {
         contentSecurityPolicyFilter.addHeaders(request, response);
         // then
         verify(response).addHeader("Content-Security-Policy",
-                "default-src 'self'; script-src 'self' localhost:8180 'unsafe-inline' 'unsafe-eval'; "
+                "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:8180; "
                         + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
-                        + "connect-src 'self' localhost:8180; frame-src 'self' localhost:8180");
+                        + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180");
     }
 
     @Test
@@ -94,6 +94,6 @@ public class ContentSecurityPolicyFilterTest {
         contentSecurityPolicyFilter.addHeaders(request, response);
         // then
         verify(response).addHeader(eq("Content-Security-Policy"), eq(
-            "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'; frame-src 'self'"));
+            "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' ; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self' ; frame-src 'self' "));
 		}
 }
