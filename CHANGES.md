@@ -2,6 +2,8 @@
 
 #### 2.15.0 (To be released)
 
+* Add config property `hawtio.redirect.scheme` to specify the scheme for the redirect URL at login.
+
 #### 2.14.4
 
 * Upgrade dependencies
