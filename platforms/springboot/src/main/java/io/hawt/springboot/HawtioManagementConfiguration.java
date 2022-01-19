@@ -26,6 +26,7 @@ import io.hawt.web.filters.BaseTagHrefFilter;
 import io.hawt.web.filters.CORSFilter;
 import io.hawt.web.filters.CacheHeadersFilter;
 import io.hawt.web.filters.ContentSecurityPolicyFilter;
+import io.hawt.web.filters.FlightRecordingDownloadFacade;
 import io.hawt.web.filters.PublicKeyPinningFilter;
 import io.hawt.web.filters.StrictTransportSecurityFilter;
 import io.hawt.web.filters.XContentTypeOptionsFilter;
@@ -213,6 +214,16 @@ public class HawtioManagementConfiguration {
         filter.addUrlPatterns(hawtioPath + "/login.html");
         filter.setDispatcherTypes(DispatcherType.ERROR, DispatcherType.FORWARD, DispatcherType.REQUEST);
         filter.addInitParameter(PARAM_APPLICATION_CONTEXT_PATH, pathResolver.resolve("hawtio"));
+        return filter;
+    }
+
+    @Bean
+    public FilterRegistrationBean flightRecorderDownloadFacade(final EndpointPathResolver pathResolver) {
+        final FilterRegistrationBean<FlightRecordingDownloadFacade> filter = new FilterRegistrationBean<>();
+        filter.setFilter(new FlightRecordingDownloadFacade());
+        filter.addUrlPatterns(hawtioPath + "/jolokia/*");
+        filter.addUrlPatterns(hawtioPath + "/proxy/*");
+        filter.setDispatcherTypes(DispatcherType.ERROR, DispatcherType.FORWARD, DispatcherType.REQUEST);
         return filter;
     }
 
