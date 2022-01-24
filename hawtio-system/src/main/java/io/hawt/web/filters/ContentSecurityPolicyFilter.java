@@ -50,7 +50,6 @@ public class ContentSecurityPolicyFilter extends HttpHeaderFilter {
                 String url = (String) json.get("url");
                 URI uri = URI.create(url);
                 LOG.info("Found Keycloak URL: {}", uri);
-                // mind the initial whitespace
                 String cspSrc = uri.getScheme() + "://" + uri.getHost();
                 if (uri.getPort() >= 0) {
                     cspSrc += ":" + uri.getPort();
