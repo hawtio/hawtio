@@ -75,6 +75,8 @@ We love [contributions](http://hawt.io/docs/contributing/)!  Here are the resour
 * [FAQ](http://hawt.io/docs/faq/)
 * [Change Log](CHANGES.md)
 * [How to contribute](http://hawt.io/docs/contributing/)
+* [How to build the code](BUILDING.md)
+* [How to get started working on the code](DEVELOPERS.md)
 * [Community](http://hawt.io/community/)
 
 Check out the [GitHub issues](https://github.com/hawtio/hawtio/issues) for finding issues to work on.
