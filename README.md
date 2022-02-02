@@ -46,8 +46,13 @@ Attaching the Hawtio console to your Spring Boot app is simple.
         </dependency>
 
 2. Enable the Hawtio and Jolokia endpoints by adding the following line in `application.properties`:
+   ```
+   management.endpoints.web.exposure.include=hawtio,jolokia
+   spring.jmx.enabled=true 
+   ```
 
-        management.endpoints.web.exposure.include=hawtio,jolokia
+
+
 
 Now you should be able to run Hawtio in your Spring Boot app as follows:
 
