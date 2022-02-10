@@ -1,7 +1,6 @@
 ![hawtio][logo]
 
 [![Test](https://github.com/hawtio/hawtio/actions/workflows/test.yml/badge.svg)](https://github.com/hawtio/hawtio/actions/workflows/test.yml)
-[![CircleCI](https://circleci.com/gh/hawtio/hawtio.svg?style=svg)](https://circleci.com/gh/hawtio/hawtio)
 
 ## Introduction
 
