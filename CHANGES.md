@@ -2,6 +2,11 @@
 
 #### 2.15.0 (To be released)
 
+* Drop support for Java 8
+
+#### 2.14.5
+
+* Build a release based on Java 8, which should be the last version that supports Java8.
 * Add config property `hawtio.redirect.scheme` to specify the scheme for the redirect URL at login.
 
 #### 2.14.4
