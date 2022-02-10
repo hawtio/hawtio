@@ -3,7 +3,7 @@
 set -e
 
 if [ -z $2 ]; then
-  echo "Use this script to release a Hawtio version from the snapshot master branch."
+  echo "Use this script to release a Hawtio version from the snapshot main branch."
   echo ""
   echo "Usage:"
   echo "  `basename $0` <release_version> <next_snapshot_version> [path to m2 settings file]"

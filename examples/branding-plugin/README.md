@@ -1,6 +1,6 @@
 # Hawtio branding plugin example
 
-[branding-plugin](https://github.com/hawtio/hawtio/tree/master/examples/branding-plugin) demonstrates how you can customise the application branding information such as title and logo, as well as login page information, through Hawtio plugin mechanism.
+[branding-plugin](https://github.com/hawtio/hawtio/tree/main/examples/branding-plugin) demonstrates how you can customise the application branding information such as title and logo, as well as login page information, through Hawtio plugin mechanism.
 
 The important bits are:
 
@@ -30,4 +30,4 @@ From the CLI type:
 
 For Spring Boot, you don't need an extra plugin war like this example to customise `hawtconfig.json`. You can simply put `hawtconfig.json` file into the Spring Boot application to overwrite the information.
 
-See [Spring Boot Authentication example](https://github.com/hawtio/hawtio/tree/master/examples/springboot-authentication) instead for more details.
+See [Spring Boot Authentication example](https://github.com/hawtio/hawtio/tree/main/examples/springboot-authentication) instead for more details.

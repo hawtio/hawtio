@@ -10,7 +10,7 @@ The following walks through how we make a release.
 
 Pop onto [IRC](https://hawt.io/community/) and let folks know you are about to cut a release.
 
-Also, pull `master` and make sure things build locally fine first.
+Also, pull `main` and make sure things build locally fine first.
 
 #### Sonatype OSSRH Account
 
@@ -52,7 +52,7 @@ Use the [two scripts](bin/) for releasing a version of Hawtio:
 * `release`
 ```
 ./bin/release
-Use this script to release a Hawtio version from the snapshot master branch.
+Use this script to release a Hawtio version from the snapshot main branch.
 
 Usage:
   release <release_version> <next_snapshot_version> [path to m2 settings file]

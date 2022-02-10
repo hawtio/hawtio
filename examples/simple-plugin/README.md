@@ -1,6 +1,6 @@
 # Hawtio simple plugin example
 
-[simple-plugin](https://github.com/hawtio/hawtio/tree/master/examples/simple-plugin) is an introduction to writing a standalone Hawtio plugin that can be deployed in a server alongside the main `hawtio.war` application.
+[simple-plugin](https://github.com/hawtio/hawtio/tree/main/examples/simple-plugin) is an introduction to writing a standalone Hawtio plugin that can be deployed in a server alongside the main `hawtio.war` application.
 
 The important bits are:
 
@@ -30,4 +30,4 @@ From the CLI type:
 
 For Spring Boot, you don't need an extra war like this example to deploy a custom plugin. There is a better way, and you can directly put a JavaScript plugin into the Spring Boot application to extend Hawtio features.
 
-See [Spring Boot example](https://github.com/hawtio/hawtio/tree/master/examples/springboot) instead for more details.
+See [Spring Boot example](https://github.com/hawtio/hawtio/tree/main/examples/springboot) instead for more details.

@@ -7,7 +7,7 @@
 
 [Hawtio](http://hawt.io) is a lightweight and modular Web console for managing Java applications.
 
-![Hawtio screenshot](https://raw.githubusercontent.com/hawtio/website/master/static/images/screenshots/camel-route.png)
+![Hawtio screenshot](https://raw.githubusercontent.com/hawtio/website/main/static/images/screenshots/camel-route.png)
 
 Hawtio has [lots of plugins](http://hawt.io/docs/plugins/) such as: Apache ActiveMQ "Classic," Apache Camel, JMX, OSGi, Logs, Spring Boot, and Diagnostics.
 You can dynamically extend Hawtio with your own plugins or automatically discover plugins inside the JVM.
