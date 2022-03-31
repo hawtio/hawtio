@@ -1,4 +1,4 @@
-package io.hawt.log.log4j;
+package io.hawt.log.support;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -6,8 +6,6 @@ import java.net.URL;
 import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.Map;
-
-import io.hawt.log.support.Objects;
 
 /**
  * Code modified from log4j to format exceptions
@@ -21,7 +19,6 @@ public class ThrowableFormatter {
      * StackTraceElement.getClassName() method.
      */
     private Method getClassNameMethod;
-
 
     /**
      * Construct new instance.
@@ -43,7 +40,7 @@ public class ThrowableFormatter {
         if (getStackTraceMethod != null) {
             try {
                 Object[] noArgs = null;
-                Object[] elements = (Object[])getStackTraceMethod.invoke(throwable, noArgs);
+                Object[] elements = (Object[]) getStackTraceMethod.invoke(throwable, noArgs);
                 String[] lines = new String[elements.length + 1];
                 lines[0] = throwable.toString();
                 Map classMap = new HashMap();
@@ -68,7 +65,7 @@ public class ThrowableFormatter {
         StringBuffer buf = new StringBuffer("\tat ");
         buf.append(element);
         try {
-            String className = getClassNameMethod.invoke(element, (Object[])null).toString();
+            String className = getClassNameMethod.invoke(element, (Object[]) null).toString();
             Object classDetails = classMap.get(className);
             if (classDetails != null) {
                 buf.append(classDetails);

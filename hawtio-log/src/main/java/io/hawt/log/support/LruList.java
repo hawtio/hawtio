@@ -1,7 +1,9 @@
 package io.hawt.log.support;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.StreamSupport;
 
 /**
  * A simple LRU list that stores a fixed size
@@ -17,10 +19,10 @@ public class LruList<T> {
 
     public LruList(Class<T> klass, int size) {
         this.klass = klass;
-        this.size = size;
         if (size <= 0) {
             throw new IllegalArgumentException("The size must be greater than 0");
         }
+        this.size = size;
         elements = createArray(size);
         maxElements = elements.length;
     }
@@ -45,7 +47,7 @@ public class LruList<T> {
 
     public synchronized void add(T element) {
         if (null == element) {
-             throw new NullPointerException("Attempted to add null object to buffer");
+            throw new NullPointerException("Attempted to add null object to buffer");
         }
         if (size() == maxElements) {
             Object e = elements[start];
@@ -70,18 +72,18 @@ public class LruList<T> {
         return getElements(size());
     }
 
-    public synchronized Iterable<T> getElements(int nb) {
+    public synchronized Iterable<T> getElements(int number) {
         int s = size();
-        nb = Math.min(Math.max(0, nb), s);
-        T[] e = createArray(nb);
-        for (int i = 0; i < nb; i++) {
-            e[i] = elements[(i + s - nb + start) % maxElements];
+        int n = Math.min(Math.max(0, number), s);
+        T[] e = createArray(n);
+        for (int i = 0; i < n; i++) {
+            e[i] = elements[(i + s - n + start) % maxElements];
         }
         return Arrays.asList(e);
     }
 
+    @SuppressWarnings("unchecked")
     private T[] createArray(int size) {
         return (T[]) Array.newInstance(klass, size);
     }
-
 }

@@ -1,7 +1,5 @@
-package io.hawt.log.log4j;
+package io.hawt.log.support;
 
-import io.hawt.log.support.MavenCoordinates;
-import io.hawt.log.support.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +91,6 @@ public class MavenCoordHelper {
         }
         return buffer.toString();
     }
-
 
     /**
      * Find class given class name.

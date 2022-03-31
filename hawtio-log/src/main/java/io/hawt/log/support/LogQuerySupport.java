@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectInstance;
@@ -54,9 +55,8 @@ public abstract class LogQuerySupport implements LogQuerySupportMBean {
             StringWriter writer = new StringWriter();
             final char[] buffer = new char[4096];
             int n;
-            while ( -1 != ( n = reader.read( buffer ) ) )
-            {
-                writer.write( buffer, 0, n );
+            while (-1 != (n = reader.read(buffer))) {
+                writer.write(buffer, 0, n);
             }
             writer.flush();
             return writer.toString();
@@ -223,7 +223,7 @@ public abstract class LogQuerySupport implements LogQuerySupportMBean {
 
         String coords = mavenCoords.replace(':', '/');
         String[] array = coords.split("\\s+");
-        if (array == null || array.length < 2) {
+        if (array.length < 2) {
             return loadCoords(coords, filePath, classifier);
         } else {
             // lets enumerate all values if space separated
@@ -293,8 +293,6 @@ public abstract class LogQuerySupport implements LogQuerySupportMBean {
             buffer.append("\n");
         }
     }
-
-
 
     /**
      * Returns true if the file path is "/" or empty
