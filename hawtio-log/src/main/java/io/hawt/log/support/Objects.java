@@ -1,19 +1,11 @@
 package io.hawt.log.support;
 
+import java.util.Arrays;
+
 public final class Objects {
 
     public static boolean isBlank(String text) {
         return text == null || text.trim().length() == 0;
-    }
-
-    /**
-     * A helper method for comparing objects for equality while handling nulls
-     */
-    public static boolean equal(Object a, Object b) {
-        if (a == b) {
-            return true;
-        }
-        return a != null && b != null && a.equals(b);
     }
 
     /**
@@ -35,8 +27,7 @@ public final class Objects {
             return 1;
         }
         if (a instanceof Comparable) {
-            Comparable comparable = (Comparable)a;
-            return comparable.compareTo(b);
+            return ((Comparable) a).compareTo(b);
         }
         int answer = a.getClass().getName().compareTo(b.getClass().getName());
         if (answer == 0) {
@@ -46,11 +37,8 @@ public final class Objects {
     }
 
     public static boolean contains(String matchesText, String... values) {
-        for (String v : values) {
-            if (v != null && v.contains(matchesText)) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(values)
+            .filter(java.util.Objects::nonNull)
+            .anyMatch(v -> v.contains(matchesText));
     }
 }

@@ -7,20 +7,20 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LogEvent implements Comparable<LogEvent>, Serializable {
     private static final long serialVersionUID = 1L;
     private static String defaultContainerName;
 
-	private String host;
-	private Long seq;
-	private Date timestamp;
-	private String level;
-	private String logger;
-	private String thread;
-	private String message;
-	private String[] exception;
-	private Map<String, String> properties;
+    private String host;
+    private Long seq;
+    private Date timestamp;
+    private String level;
+    private String logger;
+    private String thread;
+    private String message;
+    private String[] exception;
+    private Map<String, String> properties;
     private String className;
     private String fileName;
     private String methodName;
@@ -32,11 +32,11 @@ public class LogEvent implements Comparable<LogEvent>, Serializable {
     }
 
     public static LogEvent toLogEvent(Object element) {
-		if (element instanceof LogEvent) {
-			return (LogEvent) element;
-		}
-		return null;
-	}
+        if (element instanceof LogEvent) {
+            return (LogEvent) element;
+        }
+        return null;
+    }
 
     public LogEvent() {
         this.containerName = getDefaultContainerName();
@@ -50,7 +50,8 @@ public class LogEvent implements Comparable<LogEvent>, Serializable {
         LogEvent logEvent = (LogEvent) o;
 
         if (host != null ? !host.equals(logEvent.host) : logEvent.host != null) return false;
-        if (containerName != null ? !containerName.equals(logEvent.containerName) : logEvent.containerName != null) return false;
+        if (containerName != null ? !containerName.equals(logEvent.containerName) : logEvent.containerName != null)
+            return false;
         if (logger != null ? !logger.equals(logEvent.logger) : logEvent.logger != null) return false;
         if (message != null ? !message.equals(logEvent.message) : logEvent.message != null) return false;
         if (seq != null ? !seq.equals(logEvent.seq) : logEvent.seq != null) return false;
@@ -105,12 +106,12 @@ public class LogEvent implements Comparable<LogEvent>, Serializable {
     }
 
     public String getHost() {
-		return host;
-	}
+        return host;
+    }
 
-	public void setHost(String host) {
-		this.host = host;
-	}
+    public void setHost(String host) {
+        this.host = host;
+    }
 
     public String getContainerName() {
         return containerName;
@@ -121,68 +122,68 @@ public class LogEvent implements Comparable<LogEvent>, Serializable {
     }
 
     public Long getSeq() {
-		return seq;
-	}
+        return seq;
+    }
 
-	public void setSeq(Long seq) {
-		this.seq = seq;
-	}
+    public void setSeq(Long seq) {
+        this.seq = seq;
+    }
 
-	public Date getTimestamp() {
-		return timestamp;
-	}
+    public Date getTimestamp() {
+        return timestamp;
+    }
 
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
-	}
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
-	public String getLevel() {
-		return level;
-	}
+    public String getLevel() {
+        return level;
+    }
 
-	public void setLevel(String level) {
-		this.level = level;
-	}
+    public void setLevel(String level) {
+        this.level = level;
+    }
 
-	public String getLogger() {
-		return logger;
-	}
+    public String getLogger() {
+        return logger;
+    }
 
-	public void setLogger(String logger) {
-		this.logger = logger;
-	}
+    public void setLogger(String logger) {
+        this.logger = logger;
+    }
 
-	public String getThread() {
-		return thread;
-	}
+    public String getThread() {
+        return thread;
+    }
 
-	public void setThread(String thread) {
-		this.thread = thread;
-	}
+    public void setThread(String thread) {
+        this.thread = thread;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public Map<String, String> getProperties() {
-		return properties;
-	}
+    public Map<String, String> getProperties() {
+        return properties;
+    }
 
-	public void setProperties(Map<String, String> properties) {
-		this.properties = properties;
-	}
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
+    }
 
-	public String[] getException() {
-		return exception;
-	}
+    public String[] getException() {
+        return exception;
+    }
 
-	public void setException(String[] exception) {
-		this.exception = exception;
-	}
+    public void setException(String[] exception) {
+        this.exception = exception;
+    }
 
     public String getClassName() {
         return className;
