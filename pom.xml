@@ -57,8 +57,8 @@
     <blueprint-web-version>1.1.0</blueprint-web-version>
     <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
 
-    <spring-version>5.3.17</spring-version>
-    <spring-boot-version>2.6.2</spring-boot-version>
+    <spring-version>5.3.18</spring-version>
+    <spring-boot-version>2.6.6</spring-boot-version>
 
     <assertj-core-version>3.22.0</assertj-core-version>
     <commons-codec-version>1.15</commons-codec-version>
