@@ -1,5 +1,8 @@
 ## Change Log
 
+We don't maintain this file any longer. See GitHub releases page:
+https://github.com/hawtio/hawtio/releases
+
 #### 2.15.0 (To be released)
 
 * Drop support for Java 8
