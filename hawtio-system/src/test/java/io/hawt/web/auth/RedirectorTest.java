@@ -26,7 +26,6 @@ public class RedirectorTest {
         servletContext = mock(ServletContext.class);
 
         when(request.getServerName()).thenReturn("server01");
-        when(request.getServerPort()).thenReturn(9000);
         when(request.getContextPath()).thenReturn("/context-path");
         when(request.getServletContext()).thenReturn(servletContext);
     }
@@ -42,6 +41,7 @@ public class RedirectorTest {
         redirector = new Redirector();
         redirector.setApplicationContextPath("/application-context-path");
         when(servletContext.getInitParameter("scheme")).thenReturn(null);
+        when(request.getServerPort()).thenReturn(9000);
         // when
         redirector.doRedirect(request, response, "/path");
         // then
@@ -54,6 +54,7 @@ public class RedirectorTest {
         redirector = new Redirector();
         redirector.setApplicationContextPath("/application-context-path");
         when(servletContext.getInitParameter("scheme")).thenReturn("https");
+        when(request.getServerPort()).thenReturn(9000);
         // when
         redirector.doRedirect(request, response, "/path");
         // then
@@ -66,10 +67,37 @@ public class RedirectorTest {
         System.setProperty(Redirector.HAWTIO_REDIRECT_SCHEME, "https");
         redirector = new Redirector();
         redirector.setApplicationContextPath("/application-context-path");
+        when(request.getServerPort()).thenReturn(9000);
         // when
         redirector.doRedirect(request, response, "/path");
         // then
         verify(response).sendRedirect("https://server01:9000/context-path/application-context-path/path");
+    }
+
+    @Test
+    public void shouldRedirectToAbsoluteUrlWhenSchemeIsConfiguredPort80() throws Exception {
+        // given
+        System.setProperty(Redirector.HAWTIO_REDIRECT_SCHEME, "http");
+        redirector = new Redirector();
+        redirector.setApplicationContextPath("/application-context-path");
+        when(request.getServerPort()).thenReturn(80);
+        // when
+        redirector.doRedirect(request, response, "/path");
+        // then
+        verify(response).sendRedirect("http://server01/context-path/application-context-path/path");
+    }
+
+    @Test
+    public void shouldRedirectToAbsoluteUrlWhenSchemeIsConfiguredPort443() throws Exception {
+        // given
+        System.setProperty(Redirector.HAWTIO_REDIRECT_SCHEME, "https");
+        redirector = new Redirector();
+        redirector.setApplicationContextPath("/application-context-path");
+        when(request.getServerPort()).thenReturn(443);
+        // when
+        redirector.doRedirect(request, response, "/path");
+        // then
+        verify(response).sendRedirect("https://server01/context-path/application-context-path/path");
     }
 
 }

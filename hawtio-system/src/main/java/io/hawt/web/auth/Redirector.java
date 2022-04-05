@@ -27,7 +27,13 @@ public class Redirector {
             scheme = request.getServletContext().getInitParameter("scheme");
         }
         if (scheme != null) {
-            redirectUrl = scheme + "://" + request.getServerName() + ":" + request.getServerPort();
+            int port = request.getServerPort();
+            if (port == 80 || port == 443) {
+                // default ports should not be added to redirect URL
+                redirectUrl = String.format("%s://%s", scheme, request.getServerName());
+            } else {
+                redirectUrl = String.format("%s://%s:%s", scheme, request.getServerName(), port);
+            }
         }
 
         redirectUrl += request.getContextPath() + applicationContextPath + path;
