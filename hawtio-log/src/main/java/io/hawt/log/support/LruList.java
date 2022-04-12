@@ -1,9 +1,7 @@
 package io.hawt.log.support;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.StreamSupport;
 
 /**
  * A simple LRU list that stores a fixed size
