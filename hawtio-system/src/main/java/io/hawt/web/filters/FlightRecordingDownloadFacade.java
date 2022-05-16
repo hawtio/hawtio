@@ -168,7 +168,7 @@ public class FlightRecordingDownloadFacade implements Filter {
         }
 
         private String replaceInPath(String servletPath) {
-            return servletPath.replace(this.replaceFrom, this.replaceTo);
+            return servletPath == null ? null : servletPath.replace(this.replaceFrom, this.replaceTo);
         }
 
         @Override
