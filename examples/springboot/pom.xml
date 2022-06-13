@@ -17,7 +17,7 @@
   <packaging>war</packaging>
 
   <properties>
-    <camel-version>3.13.0</camel-version>
+    <camel-version>3.14.3</camel-version>
   </properties>
 
   <dependencyManagement>
