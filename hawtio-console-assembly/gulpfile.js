@@ -4,7 +4,6 @@ const gulpLoadPlugins = require('gulp-load-plugins');
 const map = require('vinyl-map');
 const fs = require('fs');
 const path = require('path');
-const sequence = require('run-sequence');
 const size = require('gulp-size');
 const uri = require('urijs');
 const s = require('underscore.string');
@@ -58,7 +57,7 @@ var normalSizeOptions = {
 //------------------------------------------------------------------------------
 
 gulp.task('clean', function () {
-  return gulp.src(['dist', 'temp'], { read: false })
+  return gulp.src(['dist', 'temp'], { read: false, allowEmpty: true })
     .pipe(plugins.clean());
 });
 
@@ -291,7 +290,10 @@ gulp.task('reload', function () {
 // main tasks
 //------------------------------------------------------------------------------
 
-gulp.task('build', callback => sequence('clean', 'tsc', 'template', 'template-docs', 'concat', 'less',
-  'install-dependencies', 'usemin', 'copy-fonts', 'copy-images', '404', 'copy-config', callback));
 
-gulp.task('default', callback => sequence('build', ['connect', 'watch']));
+gulp.task('build', gulp.series('clean', 'tsc', 'template', 'template-docs', 'concat', 'less',
+  'install-dependencies', 'usemin', 'copy-fonts', 'copy-images', '404', 'copy-config', function () {
+return Promise.resolve('Finished');
+}));
+
+gulp.task('default', gulp.series('build', ['connect', 'watch']));
