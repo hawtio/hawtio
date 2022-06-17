@@ -130,6 +130,15 @@ gulp.task('usemin', function () {
     .pipe(gulp.dest(config.dist));
 });
 
+gulp.task('install-dependencies', function (cb) {
+  exec(`cd ${config.app} && yarn install --prod --flat --frozen-lockfile --prefer-offline && cd ..`, function (error, stdout, stderr) {
+    if (error) {
+      console.log(stderr);
+    }
+    cb(error);
+  });
+});
+
 gulp.task('copy-fonts', function () {
   return gulp.src('app/node_modules/patternfly/dist/fonts/*')
     .pipe(plugins.debug({ title: 'copy-fonts' }))
@@ -283,7 +292,7 @@ gulp.task('reload', function () {
 
 
 gulp.task('build', gulp.series('clean', 'tsc', 'template', 'template-docs', 'concat', 'less',
-  'usemin', 'copy-fonts', 'copy-images', '404', 'copy-config', function () {
+  'install-dependencies', 'usemin', 'copy-fonts', 'copy-images', '404', 'copy-config', function () {
 return Promise.resolve('Finished');
 }));
 
