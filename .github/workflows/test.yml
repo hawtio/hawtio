@@ -48,7 +48,7 @@ jobs:
         with:
           path: |
             ~/work/hawtio/hawtio/hawtio-console-assembly/node
-          key: ${{ runner.os }}-node-{{ hashFiles('**/hawtio-console-assembly/pom.xml') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/hawtio-console-assembly/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-node-
             
