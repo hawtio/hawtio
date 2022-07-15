@@ -9,10 +9,10 @@
   dependencies:
     "@types/jquery" "2.0.53"
 
-"@hawtio/core@^4.16.1":
-  version "4.16.1"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.16.1.tgz#f92675e9aebd1a38135d97b64a09beef311ada76"
-  integrity sha512-B3dfGHiPQKyBdXQLigoDV6GVsaNJsC2SGU1bieOplefQzt/FhXq4zPZ5TY3seXDFa6p1cIlmEvwUmdiDVsA6wA==
+"@hawtio/core@^4.16.2":
+  version "4.16.2"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.16.2.tgz#e2f7ae435a75b73998b84a59eb9e0ecfe9cda119"
+  integrity sha512-8ZJcDGUl3lfkdwF8Mkqc/sPkhERB9O1Gbz57oxuSiSWvWtxSLVABJHVXYUZWSmV83R6ZWGoSZE6VwxalRlKkzg==
   dependencies:
     "@hawtio/core-dts" "~3.3.0"
     "@patternfly/patternfly" "^2.0.0"
@@ -33,12 +33,12 @@
     typescript "^3.0.3"
     urijs "1.19.0"
 
-"@hawtio/integration@^5.0.3":
-  version "5.0.3"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-5.0.3.tgz#af487ff7530a3a3527176791ad9095087e73c82d"
-  integrity sha512-U/wzFLcZUG6TVUyKSHx3af2naAiT1lQeiWp2yIu28K9h9q5zzHouw/TrnMrFwzumriRTIU7JvC8RyVSHR4XItQ==
+"@hawtio/integration@^5.0.4":
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-5.0.4.tgz#9c5cf445cb6f5e1ab9b61b04e896a12bff38419d"
+  integrity sha512-HZleubsrt5TjdcH7eFVgwzrpX2d1Lx5dlMZXWn5NMwftcFZ4N/F7LjoMO7rwJXvOpkQNlXpVtGs4754cFbebjQ==
   dependencies:
-    "@hawtio/core" "^4.16.1"
+    "@hawtio/core" "^4.16.2"
     "@types/angular-cookies" "^1.4.5"
     "@types/angular-mocks" "~1.7.0"
     "@types/angular-ui-bootstrap" "~0.13.46"
@@ -60,12 +60,12 @@
     ng-infinite-scroll "1.3.0"
     patternfly-bootstrap-treeview "~2.1.0"
 
-"@hawtio/oauth@^4.13.8":
-  version "4.13.8"
-  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.13.8.tgz#051a74d271826f05f072e96d5f5028128536d3bc"
-  integrity sha512-QTL4XpPBBPowGwd2CFTLe3B2jldquKYJEfBUbv0xGZ8fKqhoz2bV5KxkFZ9YmlC/mod+OdOHMZFqwAJyDTer1Q==
+"@hawtio/oauth@^4.13.9":
+  version "4.13.9"
+  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.13.9.tgz#7ae46976d93978922833996639cf07785ac541b8"
+  integrity sha512-ZLlo0b6S7qm0LxBziYLOoan4srGvQVBYfpV+RgYFmLg1+sqR8d7j/drAIid4VPuGwSGm+8nlsFda/3jtCNGV9Q==
   dependencies:
-    "@hawtio/core" "^4.16.1"
+    "@hawtio/core" "^4.16.2"
     "@types/angular-cookies" "^1.4.5"
     angular-cookies "^1.7.9"
     ng-idle "^1.3.2"
