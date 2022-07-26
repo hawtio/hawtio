@@ -2,8 +2,8 @@
   "name": "@hawtio/console-assembly",
   "version": "2.0.0",
   "dependencies": {
-    "@hawtio/integration": "^5.0.4",
-    "@hawtio/oauth": "^4.13.9",
+    "@hawtio/integration": "^5.1.0",
+    "@hawtio/oauth": "^4.13.10",
     "keycloak-js": "3.4.3"
   },
   "flat": true,
@@ -12,7 +12,7 @@
     "jquery": "2.2.4",
     "bootstrap": "3.4.1",
     "bootstrap-select": "1.12.4",
-    "moment": "2.21.0",
+    "moment": "2.29.4",
     "strip-ansi": "4.0.0",
     "ansi-regex": "4.1.1",
     "lru-cache": "5.1.1",
