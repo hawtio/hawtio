@@ -100,6 +100,13 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-management</artifactId>
     </dependency>
+    <!--
+      To enable Camel plugin debugging feature, add this dependency.
+    -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-debug</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
