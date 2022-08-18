@@ -60,10 +60,10 @@
     ng-infinite-scroll "1.3.0"
     patternfly-bootstrap-treeview "~2.1.0"
 
-"@hawtio/oauth@^4.13.10":
-  version "4.13.10"
-  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.13.10.tgz#5b9df02995f45b2b1e03ef01373e3a312ea511ef"
-  integrity sha512-XEcoR3H459ux7VNmFjxdg9U+xOI8gBTkc48IbhZiHFNjVQiBjnbECTJBWtfCX4fHA8wCDWsGnwXDqGs6s19lOQ==
+"@hawtio/oauth@^4.13.11":
+  version "4.13.11"
+  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.13.11.tgz#df1e2105b416f39c2fc8068d5086672ee39a835f"
+  integrity sha512-OiYOqPjhxtwZBObotYmZDbOFrb0LVHnojy1Htf6T28tPH8wulK6Z78+ZN3UZ3Izty+wwPAMOUo46PI6Bu0Zptg==
   dependencies:
     "@hawtio/core" "^4.16.3"
     "@types/angular-cookies" "^1.4.5"
