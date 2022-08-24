@@ -2,8 +2,8 @@
   "name": "@hawtio/console-assembly",
   "version": "2.0.0",
   "dependencies": {
-    "@hawtio/integration": "^5.1.0",
-    "@hawtio/oauth": "^4.13.11",
+    "@hawtio/integration": "^5.1.1",
+    "@hawtio/oauth": "^4.13.12",
     "keycloak-js": "3.4.3"
   },
   "flat": true,

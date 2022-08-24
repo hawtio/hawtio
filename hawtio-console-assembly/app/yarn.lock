@@ -9,10 +9,10 @@
   dependencies:
     "@types/jquery" "2.0.53"
 
-"@hawtio/core@^4.16.3":
-  version "4.16.3"
-  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.16.3.tgz#11b2fc8b88577854eca1c14fe00c9848b89b431e"
-  integrity sha512-NpnhoJkeNgly/cGr47HrYTNvpAT769Au5Sxjs2TQDLjWMAkL+MWiNAzpQDDTChkPMafkvxQgw7yz9xxC2w5YuA==
+"@hawtio/core@^4.16.4":
+  version "4.16.4"
+  resolved "https://registry.yarnpkg.com/@hawtio/core/-/core-4.16.4.tgz#f13ebfa72c30ebe9a08e45a49491b9ad0b93e111"
+  integrity sha512-Qz2+nP41+1W4MzrRsy+SEADVNvFcLZ2Nek7dmAdGq2B6X8wR1Jp83NPbWkjx9RX29KsoLhuHAld8PumtW4G46g==
   dependencies:
     "@hawtio/core-dts" "~3.3.0"
     "@patternfly/patternfly" "^2.0.0"
@@ -27,18 +27,18 @@
     angular-patternfly "^5.0.0"
     angular-route "^1.7.7"
     jquery "2.2.4"
-    js-logger "1.4.1"
+    js-logger "^1.6.0"
     lodash "~4.17.21"
     marked "0.6.1"
     typescript "^3.0.3"
-    urijs "1.19.0"
+    urijs "^1.19.9"
 
-"@hawtio/integration@^5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-5.1.0.tgz#f6900a53831627e4e0713d4d52f336ef6d497d20"
-  integrity sha512-TVoF7OUw4XJUJ++X3m3YLKDZy/cpVjiEck2779+XqZ5gDwlYt+6Q9B7U8P+GhFwTAcNfASrKfkV34sn6B2L0zw==
+"@hawtio/integration@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@hawtio/integration/-/integration-5.1.1.tgz#da2b98b3b3f7a0a8b38f00d36c1e852ad1d09fb1"
+  integrity sha512-Flf7z0Do/fN1GVDFx7e4hqjSNdUeFmDNYRv7aCfbalMtl7ILD2uKbQ/Hoeyj+7M1YYMAU58I/knWWByJ1KaXxA==
   dependencies:
-    "@hawtio/core" "^4.16.3"
+    "@hawtio/core" "^4.16.4"
     "@types/angular-cookies" "^1.4.5"
     "@types/angular-mocks" "~1.7.0"
     "@types/angular-ui-bootstrap" "~0.13.46"
@@ -60,12 +60,12 @@
     ng-infinite-scroll "1.3.0"
     patternfly-bootstrap-treeview "~2.1.0"
 
-"@hawtio/oauth@^4.13.11":
-  version "4.13.11"
-  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.13.11.tgz#df1e2105b416f39c2fc8068d5086672ee39a835f"
-  integrity sha512-OiYOqPjhxtwZBObotYmZDbOFrb0LVHnojy1Htf6T28tPH8wulK6Z78+ZN3UZ3Izty+wwPAMOUo46PI6Bu0Zptg==
+"@hawtio/oauth@^4.13.12":
+  version "4.13.12"
+  resolved "https://registry.yarnpkg.com/@hawtio/oauth/-/oauth-4.13.12.tgz#620e7c4424c4ce5a79133adc53c40ff87a9a170a"
+  integrity sha512-TtLF6k/K/nIav2XJ6caCd7M/c9LGk8CmkYUV+SomlRt0K1yJSmF99MKv7MVjFBJSWFVhomLQ3GYQVWwtDoF6Zw==
   dependencies:
-    "@hawtio/core" "^4.16.3"
+    "@hawtio/core" "^4.16.4"
     "@types/angular-cookies" "^1.4.5"
     angular-cookies "^1.7.9"
     ng-idle "^1.3.2"
@@ -1181,10 +1181,10 @@ js-beautify@1.7.5:
     mkdirp "~0.5.0"
     nopt "~3.0.1"
 
-js-logger@1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/js-logger/-/js-logger-1.4.1.tgz#f0230dc5e84e120f213d6e5a6b767a913d290335"
-  integrity sha1-8CMNxehOEg8hPW5aa3Z6kT0pAzU=
+js-logger@^1.6.0:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/js-logger/-/js-logger-1.6.1.tgz#8f09671b515e4a6f31dced8fdb8923432e2c60af"
+  integrity sha512-yTgMCPXVjhmg28CuUH8CKjU+cIKL/G+zTu4Fn4lQxs8mRFH/03QTNvEFngcxfg/gRDiQAOoyCKmMTOm9ayOzXA==
 
 jsbn@~0.1.0:
   version "0.1.1"
@@ -1904,10 +1904,10 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
-urijs@1.19.0:
-  version "1.19.0"
-  resolved "https://registry.yarnpkg.com/urijs/-/urijs-1.19.0.tgz#d8aa284d0e7469703a6988ad045c4cbfdf08ada0"
-  integrity sha512-Qs2odXn0hST5VSPVjpi73CMqtbAoanahaqWBujGU+IyMrMqpWcIhDewxQRhCkmqYxuyvICDcSuLdv2O7ncWBGw==
+urijs@^1.19.9:
+  version "1.19.11"
+  resolved "https://registry.yarnpkg.com/urijs/-/urijs-1.19.11.tgz#204b0d6b605ae80bea54bea39280cdb7c9f923cc"
+  integrity sha512-HXgFDgDommxn5/bIv0cnQZsPhHDA90NPHD6+c/v21U5+Sx5hoP8+dP9IZXBU1gIfvdRfhG8cel9QNPeionfcCQ==
 
 util-deprecate@~1.0.1:
   version "1.0.2"
