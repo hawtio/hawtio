@@ -38,7 +38,7 @@ public class SampleSpringBootService {
      * Enable HTTP tracing for Spring Boot
      */
     @Bean
-    public HttpTraceRepository htttpTraceRepository() {
+    public HttpTraceRepository httpTraceRepository() {
         return new InMemoryHttpTraceRepository();
     }
 }
