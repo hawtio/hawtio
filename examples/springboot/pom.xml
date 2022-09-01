@@ -17,7 +17,7 @@
   <packaging>war</packaging>
 
   <properties>
-    <camel-version>3.18.0</camel-version>
+    <camel-version>3.18.1</camel-version>
   </properties>
 
   <dependencyManagement>
@@ -77,6 +77,10 @@
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-log-logback</artifactId>
     </dependency>
 
     <!-- Camel -->
