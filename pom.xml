@@ -107,6 +107,7 @@
     <module>examples/simple-plugin</module>
     <module>examples/springboot-authentication</module>
     <module>examples/springboot-authentication-jar</module>
+    <module>examples/springboot-log4j2</module>
     <module>examples/springboot-keycloak</module>
     <module>examples/springboot-security</module>
     <module>examples/springboot</module>
