@@ -11,9 +11,9 @@
   </parent>
 
   <groupId>io.hawt.examples</groupId>
-  <artifactId>hawtio-example-springboot</artifactId>
+  <artifactId>hawtio-example-springboot-log4j2</artifactId>
   <name>${project.artifactId}</name>
-  <description>hawtio :: Sample Spring Boot 2.x process</description>
+  <description>hawtio :: Sample Spring Boot 2.x process with Log4J2</description>
   <packaging>war</packaging>
 
   <properties>
@@ -56,6 +56,10 @@
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-starter-tomcat</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-logging</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -70,6 +74,10 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-log4j2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
 
@@ -77,14 +85,6 @@
     <dependency>
       <groupId>io.hawt</groupId>
       <artifactId>hawtio-springboot</artifactId>
-    </dependency>
-    <!--
-      Include hawtio-log-logback if you want to use Logs plugin with Spring Boot.
-      Currently only Logback is supported.
-    -->
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-log-logback</artifactId>
     </dependency>
 
     <!-- Camel -->
