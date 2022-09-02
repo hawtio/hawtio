@@ -20,7 +20,7 @@ echo Deploying version $RELEASE_VERSION to Sonatype OSSRH
 echo ============================================================================
 
 mvn -s $M2_SETTINGS \
-  org.apache.maven.plugins:maven-release-plugin:2.3.2:perform -Prelease \
+  org.apache.maven.plugins:maven-release-plugin:2.5.3:perform -Prelease \
   -DconnectionUrl=scm:git:git@github.com:hawtio/hawtio.git \
   -Dtag=hawtio-$RELEASE_VERSION
 

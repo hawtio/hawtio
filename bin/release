@@ -19,14 +19,14 @@ echo Building version $RELEASE_VERSION
 echo ============================================================================
 
 mvn -s $M2_SETTINGS \
-  org.apache.maven.plugins:maven-release-plugin:2.5:prepare \
+  org.apache.maven.plugins:maven-release-plugin:2.5.3:prepare \
   -Prelease \
   -Dtag=hawtio-$RELEASE_VERSION \
   -DreleaseVersion=$RELEASE_VERSION \
   -DdevelopmentVersion=$SNAPSHOT_VERSION
 
 mvn -s $M2_SETTINGS \
-  org.apache.maven.plugins:maven-release-plugin:2.5:perform -Prelease
+  org.apache.maven.plugins:maven-release-plugin:2.5.3:perform -Prelease
 
 git push --tags
 
