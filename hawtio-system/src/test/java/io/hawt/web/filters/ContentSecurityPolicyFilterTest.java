@@ -54,7 +54,8 @@ public class ContentSecurityPolicyFilterTest {
         verify(response).addHeader("Content-Security-Policy",
                 "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' ; "
                         + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
-                        + "connect-src 'self' ; frame-src 'self' ");
+                        + "connect-src 'self' ; frame-src 'self' ; "
+                        + "frame-ancestors 'none'");
     }
 
     @Test
@@ -68,7 +69,8 @@ public class ContentSecurityPolicyFilterTest {
         verify(response).addHeader("Content-Security-Policy",
                 "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:8180; "
                         + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
-                        + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180");
+                        + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180; "
+                        + "frame-ancestors 'none'");
     }
 
     @Test
@@ -82,7 +84,8 @@ public class ContentSecurityPolicyFilterTest {
         verify(response).addHeader("Content-Security-Policy",
                 "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:8180; "
                         + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
-                        + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180");
+                        + "connect-src 'self' http://localhost:8180; frame-src 'self' http://localhost:8180; "
+                        + "frame-ancestors 'none'");
     }
 
     @Test
@@ -94,6 +97,21 @@ public class ContentSecurityPolicyFilterTest {
         contentSecurityPolicyFilter.addHeaders(request, response);
         // then
         verify(response).addHeader(eq("Content-Security-Policy"), eq(
-            "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' ; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self' ; frame-src 'self' "));
-		}
+            "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' ; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self' ; frame-src 'self' ; frame-ancestors 'none'"));
+    }
+
+    @Test
+    public void shouldSetHeaderWithFrameAncestorsSelfWhenConfigParameterIsSet() throws Exception {
+        // given
+        when(configManager.get(HttpHeaderFilter.ALLOW_X_FRAME_SAME_ORIGIN, null)).thenReturn("true");
+        contentSecurityPolicyFilter.init(filterConfig);
+        // when
+        contentSecurityPolicyFilter.addHeaders(request, response);
+        // then
+        verify(response).addHeader("Content-Security-Policy",
+                "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' ; "
+                        + "style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; "
+                        + "connect-src 'self' ; frame-src 'self' ; "
+                        + "frame-ancestors 'self'");
+    }
 }

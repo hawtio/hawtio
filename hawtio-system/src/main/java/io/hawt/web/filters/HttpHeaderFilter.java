@@ -21,6 +21,9 @@ public abstract class HttpHeaderFilter implements Filter {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(HttpHeaderFilter.class);
 
+    public static final String ALLOW_X_FRAME_SAME_ORIGIN = "http.allowXFrameSameOrigin";
+    public static final String HAWTIO_ALLOW_X_FRAME_SAME_ORIGIN = "hawtio." + ALLOW_X_FRAME_SAME_ORIGIN;
+
     private ConfigManager configManager;
 
     public HttpHeaderFilter() {
@@ -48,5 +51,10 @@ public abstract class HttpHeaderFilter implements Filter {
 
     protected String getConfigParameter(String key) {
         return configManager.get(key, null);
+    }
+
+    protected boolean isXFrameSameOriginAllowed() {
+        String allow = getConfigParameter(ALLOW_X_FRAME_SAME_ORIGIN);
+        return Boolean.parseBoolean(allow);
     }
 }
