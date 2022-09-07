@@ -132,6 +132,15 @@
   </filter-mapping>
 
   <filter>
+    <filter-name>ReferrerPolicyFilter</filter-name>
+    <filter-class>io.hawt.web.filters.ReferrerPolicyFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>ReferrerPolicyFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
     <filter-name>AuthenticationFilter</filter-name>
     <filter-class>io.hawt.web.auth.AuthenticationFilter</filter-class>
   </filter>

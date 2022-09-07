@@ -28,6 +28,7 @@ import io.hawt.web.filters.CacheHeadersFilter;
 import io.hawt.web.filters.ContentSecurityPolicyFilter;
 import io.hawt.web.filters.FlightRecordingDownloadFacade;
 import io.hawt.web.filters.PublicKeyPinningFilter;
+import io.hawt.web.filters.ReferrerPolicyFilter;
 import io.hawt.web.filters.StrictTransportSecurityFilter;
 import io.hawt.web.filters.XContentTypeOptionsFilter;
 import io.hawt.web.filters.XFrameOptionsFilter;
@@ -178,6 +179,14 @@ public class HawtioManagementConfiguration {
     public FilterRegistrationBean publicKeyPinningFilter() {
         final FilterRegistrationBean<PublicKeyPinningFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new PublicKeyPinningFilter());
+        filter.addUrlPatterns(hawtioPath + "/*");
+        return filter;
+    }
+
+    @Bean
+    public FilterRegistrationBean referrerPolicyFilter() {
+        final FilterRegistrationBean<ReferrerPolicyFilter> filter = new FilterRegistrationBean<>();
+        filter.setFilter(new ReferrerPolicyFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
         return filter;
     }
