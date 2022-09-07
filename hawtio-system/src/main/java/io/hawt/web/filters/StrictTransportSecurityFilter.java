@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class StrictTransportSecurityFilter extends HttpHeaderFilter {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(PublicKeyPinningFilter.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(StrictTransportSecurityFilter.class);
 
     private static final String STRICT_TRANSPORT_SECURITY = "http.strictTransportSecurity";
 
