@@ -17,14 +17,24 @@ public class CORSFilter extends HttpHeaderFilter {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(CORSFilter.class);
 
+    public static final String ENABLE_CORS = "http.enableCORS";
+    public static final String HAWTIO_ENABLE_CORS = "hawtio." + ENABLE_CORS;
+
     public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "http.accessControlAllowOrigin";
     public static final String HAWTIO_ACCESS_CONTROL_ALLOW_ORIGIN = "hawtio." + ACCESS_CONTROL_ALLOW_ORIGIN;
 
+    private boolean enabled = false;
     private String headerValue = "*";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
+        String enableCORS = getConfigParameter(ENABLE_CORS);
+        if (Boolean.parseBoolean(enableCORS)) {
+            enabled = true;
+            LOG.debug("CORS enabled");
+        }
+
         String origin = getConfigParameter(ACCESS_CONTROL_ALLOW_ORIGIN);
         if (origin != null) {
             headerValue = origin;
@@ -34,6 +44,10 @@ public class CORSFilter extends HttpHeaderFilter {
 
     @Override
     protected void addHeaders(HttpServletRequest request, HttpServletResponse response) {
+        if (!enabled) {
+            return;
+        }
+
         if ("OPTIONS".equals(request.getMethod())) {
             response.addHeader("Access-Control-Request-Method", "GET, POST, PUT, DELETE");
             String headers = request.getHeader("Access-Control-Request-Headers");
