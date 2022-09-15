@@ -18,7 +18,10 @@ public class ReferrerPolicyFilter extends HttpHeaderFilter {
     public static final String REFERRER_POLICY = "http.referrerPolicy";
     public static final String HAWTIO_REFERRER_POLICY = "hawtio." + REFERRER_POLICY;
 
-    private String headerValue = "no-referrer";
+    /**
+     * Jolokia requires Origin header for CORS access control
+     */
+    private String headerValue = "strict-origin";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
