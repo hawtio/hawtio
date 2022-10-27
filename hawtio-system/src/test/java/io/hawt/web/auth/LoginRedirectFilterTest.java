@@ -3,8 +3,8 @@ package io.hawt.web.auth;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;

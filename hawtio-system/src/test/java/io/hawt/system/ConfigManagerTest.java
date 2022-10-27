@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.junit.After;
 import org.junit.Assert;

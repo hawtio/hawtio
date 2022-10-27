@@ -2,8 +2,8 @@ package io.hawt;
 
 import java.util.Objects;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 import io.hawt.jmx.About;
 import io.hawt.jmx.JMXSecurity;
@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link javax.servlet.ServletContextListener} which initialises key hawtio services in the webapp
+ * A {@link jakarta.servlet.ServletContextListener} which initialises key hawtio services in the webapp
  */
 public class HawtioContextListener implements ServletContextListener {
 

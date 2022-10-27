@@ -3,7 +3,7 @@ package io.hawt.web.proxy;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.junit.Ignore;
 import org.junit.Test;

@@ -5,9 +5,9 @@ import org.jolokia.http.AgentServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;

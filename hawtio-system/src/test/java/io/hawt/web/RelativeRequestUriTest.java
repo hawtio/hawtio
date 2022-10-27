@@ -1,6 +1,6 @@
 package io.hawt.web;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import io.hawt.web.auth.RelativeRequestUri;
 import org.junit.Assert;

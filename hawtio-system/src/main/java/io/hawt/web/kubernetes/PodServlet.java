@@ -17,7 +17,7 @@
  */
 package io.hawt.web.kubernetes;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import io.hawt.util.Strings;
 import io.hawt.web.proxy.ProxyAddress;

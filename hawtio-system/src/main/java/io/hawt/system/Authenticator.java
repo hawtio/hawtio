@@ -21,7 +21,7 @@ import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import javax.security.cert.CertificateException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import io.hawt.util.Strings;
 import io.hawt.web.auth.AuthenticationConfiguration;
@@ -46,7 +46,7 @@ public class Authenticator {
     public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String AUTHENTICATION_SCHEME_BASIC = "Basic";
     public static final String AUTHENTICATION_SCHEME_BEARER = "Bearer";
-    public static final String ATTRIBUTE_X509_CERTIFICATE = "javax.servlet.request.X509Certificate";
+    public static final String ATTRIBUTE_X509_CERTIFICATE = "jakarta.servlet.request.X509Certificate";
 
     private static Boolean websphereDetected;
     private static Method websphereGetGroupsMethod;

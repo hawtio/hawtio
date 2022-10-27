@@ -35,7 +35,7 @@
     <!-- this lets this plugin deploy nicely into karaf, these get used
       for the ImportPackage directive for maven-bundle-plugin -->
     <fuse.osgi.import>
-      javax.servlet,
+      jakarta.servlet,
       *;resolution:=optional
     </fuse.osgi.import>
   </properties>
@@ -53,9 +53,9 @@
 
     <!-- servlet API is provided by the container -->
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>${servlet-api-version}</version>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <version>${jakarta-servlet-api-version}</version>
       <scope>provided</scope>
     </dependency>
 

@@ -4,9 +4,9 @@ import java.util.GregorianCalendar;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.security.auth.Subject;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import io.hawt.system.Authenticator;
 import io.hawt.system.ConfigManager;
