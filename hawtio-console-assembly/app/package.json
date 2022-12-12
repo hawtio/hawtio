@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "dependencies": {
     "@hawtio/integration": "^5.2.0",
-    "@hawtio/oauth": "^4.13.12",
+    "@hawtio/oauth": "^4.13.13",
     "keycloak-js": "3.4.3"
   },
   "flat": true,
