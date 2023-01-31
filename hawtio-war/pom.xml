@@ -29,17 +29,7 @@
     <!-- mandatory core hawito modules -->
     <dependency>
       <groupId>io.hawt</groupId>
-      <artifactId>hawtio-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.hawt</groupId>
       <artifactId>hawtio-system</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.hawt</groupId>
-      <artifactId>hawtio-util</artifactId>
       <version>${project.version}</version>
     </dependency>
     <!-- hawtio-console-assembly is needed to ensure build order -->
@@ -77,7 +67,7 @@
         <configuration>
           <webResources>
             <resource>
-              <directory>../hawtio-console-assembly/dist/</directory>
+              <directory>../console/dist/</directory>
               <includes>
                 <include>**/*.*</include>
               </includes>

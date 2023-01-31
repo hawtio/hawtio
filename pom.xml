@@ -103,37 +103,27 @@
 
   <modules>
     <module>bom</module>
+    <module>console</module>
+    <module>deploy/hawtio-app</module>
+    <module>deploy/hawtio-base</module>
+    <module>deploy/hawtio-default</module>
+    <module>deploy/hawtio-embedded</module>
     <module>examples/branding-plugin</module>
     <module>examples/simple-plugin</module>
+    <module>examples/springboot</module>
     <module>examples/springboot-authentication</module>
     <module>examples/springboot-authentication-jar</module>
-    <module>examples/springboot-log4j2</module>
     <module>examples/springboot-keycloak</module>
+    <module>examples/springboot-log4j2</module>
     <module>examples/springboot-security</module>
-    <module>examples/springboot</module>
-    <module>hawtio-app</module>
-    <module>hawtio-base</module>
-    <module>hawtio-console-assembly</module>
-    <module>hawtio-core</module>
-    <module>hawtio-default</module>
-    <module>hawtio-embedded</module>
-    <module>hawtio-ide</module>
-    <module>hawtio-local-jvm-mbean</module>
-    <module>hawtio-log</module>
-    <module>hawtio-log-logback</module>
-    <module>hawtio-log-osgi</module>
     <module>hawtio-plugin-mbean</module>
     <module>hawtio-system</module>
-    <module>hawtio-util</module>
     <module>hawtio-war</module>
-    <module>platforms/hawtio-osgi-jmx</module>
-    <module>platforms/karaf</module>
-    <module>platforms/osgi-war</module>
     <module>platforms/springboot</module>
     <module>platforms/springboot-keycloak</module>
-    <module>platforms/wildfly</module>
-    <module>tooling/hawtio-junit</module>
-    <module>tooling/hawtio-maven-plugin</module>
+    <module>plugins/hawtio-local-jvm-mbean</module>
+    <module>plugins/hawtio-log-logback</module>
+    <module>plugins/hawtio-log</module>
   </modules>
 
   <build>

@@ -27,27 +27,12 @@
       </dependency>
       <dependency>
         <groupId>io.hawt</groupId>
-        <artifactId>hawtio-core</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.hawt</groupId>
         <artifactId>hawtio-default</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>io.hawt</groupId>
         <artifactId>hawtio-embedded</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.hawt</groupId>
-        <artifactId>hawtio-ide</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.hawt</groupId>
-        <artifactId>hawtio-karaf</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -62,17 +47,7 @@
       </dependency>
       <dependency>
         <groupId>io.hawt</groupId>
-        <artifactId>hawtio-log-osgi</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.hawt</groupId>
         <artifactId>hawtio-local-jvm-mbean</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.hawt</groupId>
-        <artifactId>hawtio-osgi-jmx</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -97,17 +72,7 @@
       </dependency>
       <dependency>
         <groupId>io.hawt</groupId>
-        <artifactId>hawtio-util</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.hawt</groupId>
         <artifactId>hawtio-war</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.hawt</groupId>
-        <artifactId>hawtio-wildfly</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
