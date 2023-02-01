@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2013 the original author or authors.
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
@@ -19,12 +19,12 @@ package io.hawt.app;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -48,7 +48,7 @@ public class App {
             try {
                 loadClass(virtualMachineClass, App.class.getClassLoader(), Thread.currentThread().getContextClassLoader());
             } catch (Exception e) {
-                // lets try find the tools.jar instead
+                // let's try to find the tools.jar instead
                 Set<String> paths = new HashSet<>();
                 String javaHome = System.getProperty("java.home", ".");
                 addPath(paths, javaHome);
@@ -70,20 +70,20 @@ public class App {
                     }
                 }
                 if (!found) {
-                    System.err.println(String.format(
-                        "Failed to load class %s and find tools.jar in directories %s. %s",
-                        virtualMachineClass, paths, e));
+                    System.err.printf(
+                        "Failed to load class %s and find tools.jar in directories %s. %s%n",
+                        virtualMachineClass, paths, e);
                 }
             }
 
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             URL resource = classLoader.getResource(WAR_FILENAME);
             if (resource == null) {
-                System.err.println(String.format("Could not find the %s on classpath!", WAR_FILENAME));
+                System.err.printf("Could not find the %s on classpath!%n", WAR_FILENAME);
                 System.exit(1);
             }
             File warFile = File.createTempFile("hawtio-", ".war");
-            writeStreamTo(resource.openStream(), new FileOutputStream(warFile), 64 * KB);
+            writeStreamTo(resource.openStream(), Files.newOutputStream(warFile.toPath()), 64 * KB);
 
             String warPath = warFile.getCanonicalPath();
             main.setWar(warPath);
@@ -112,9 +112,9 @@ public class App {
                     try {
                         Desktop.getDesktop().browse(new URI(url));
                     } catch (Exception e) {
-                        System.err.println(String.format(
-                            "Failed to open browser session, to access hawtio visit \"%s\"",
-                            url));
+                        System.err.printf(
+                            "Failed to open browser session, to access hawtio visit \"%s\"%n",
+                            url);
                     }
                 }
             } catch (Exception e) {
@@ -133,28 +133,26 @@ public class App {
         }
     }
 
-    private static Class<?> loadClass(String name, ClassLoader... classLoaders) throws ClassNotFoundException {
+    private static void loadClass(String name, ClassLoader... classLoaders) throws ClassNotFoundException {
         for (ClassLoader classLoader : classLoaders) {
             try {
-                return classLoader.loadClass(name);
+                classLoader.loadClass(name);
+                return;
             } catch (ClassNotFoundException e) {
                 // ignore
             }
         }
-        return Class.forName(name);
+        Class.forName(name);
     }
 
-    public static int writeStreamTo(final InputStream input, final OutputStream output, int bufferSize) throws IOException {
+    public static void writeStreamTo(final InputStream input, final OutputStream output, int bufferSize) throws IOException {
         int available = Math.min(input.available(), 256 * KB);
         byte[] buffer = new byte[Math.max(bufferSize, available)];
-        int answer = 0;
         int count = input.read(buffer);
         while (count >= 0) {
             output.write(buffer, 0, count);
-            answer += count;
             count = input.read(buffer);
         }
-        return answer;
     }
 
 }
