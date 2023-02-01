@@ -104,7 +104,6 @@
   <modules>
     <module>bom</module>
     <module>console</module>
-    <module>deploy/hawtio-app</module>
     <module>deploy/hawtio-base</module>
     <module>deploy/hawtio-default</module>
     <module>deploy/hawtio-embedded</module>
@@ -116,6 +115,7 @@
     <module>examples/springboot-keycloak</module>
     <module>examples/springboot-log4j2</module>
     <module>examples/springboot-security</module>
+    <module>hawtio-app</module>
     <module>hawtio-plugin-mbean</module>
     <module>hawtio-system</module>
     <module>hawtio-war</module>

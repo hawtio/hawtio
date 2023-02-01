@@ -1,15 +1,26 @@
 {
   "compilerOptions": {
-    "target": "ES5",
-    "declaration": false,
-    "outFile": "compiled.js",
-    "typeRoots": [
-      "app/node_modules/@types",
-      "app/node_modules/@hawtio"
-    ]
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx"
   },
   "include": [
-    "app/src/**/*.ts",
-    "app/node_modules/jolokia.js/index.d.ts"
+    "src"
   ]
 }

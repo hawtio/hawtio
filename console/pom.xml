@@ -30,8 +30,11 @@
               <goal>install-node-and-yarn</goal>
             </goals>
             <configuration>
-              <nodeVersion>v14.17.3</nodeVersion>
-              <yarnVersion>v1.22.1</yarnVersion>
+              <nodeVersion>v16.15.0</nodeVersion>
+              <yarnVersion>v1.22.19</yarnVersion>
+              <environmentVariables>
+                <PUBLIC_URL>/hawtio</PUBLIC_URL>
+              </environmentVariables>
             </configuration>
           </execution>
           <execution>
@@ -44,12 +47,12 @@
             </configuration>
           </execution>
           <execution>
-            <id>yarn run build</id>
+            <id>yarn build</id>
             <goals>
               <goal>yarn</goal>
             </goals>
             <configuration>
-              <arguments>run build</arguments>
+              <arguments>build</arguments>
             </configuration>
           </execution>
         </executions>
@@ -59,9 +62,9 @@
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
           <filesets>
-            <!-- Delete 'dist/', 'node_modules/', and 'temp/' directories -->
+            <!-- Delete 'build/' and 'node_modules/' directories -->
             <fileset>
-              <directory>${basedir}/dist</directory>
+              <directory>${basedir}/build</directory>
               <includes>
                 <include>**/*</include>
               </includes>
@@ -69,20 +72,6 @@
             </fileset>
             <fileset>
               <directory>${basedir}/node_modules</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-            <fileset>
-              <directory>${basedir}/app/node_modules</directory>
-              <includes>
-                <include>**/*</include>
-              </includes>
-              <followSymlinks>false</followSymlinks>
-            </fileset>
-            <fileset>
-              <directory>${basedir}/temp</directory>
               <includes>
                 <include>**/*</include>
               </includes>

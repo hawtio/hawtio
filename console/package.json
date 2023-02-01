@@ -1,51 +1,52 @@
 {
   "name": "@hawtio/console-assembly",
-  "version": "2.0.0",
-  "description": "The hawt.io web console helps you manage your JVM stuff and stay cool!",
+  "version": "3.0.0",
+  "description": "A modular web console for managing your Java stuff",
+  "private": true,
   "scripts": {
-    "postinstall": "cd app && yarn install --prod --flat",
-    "start": "gulp",
-    "build": "gulp build"
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test"
+  },
+  "dependencies": {
+    "@hawtio/react": "^0.1.0-1",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^13.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.7.13",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "typescript": "^4.4.2",
+    "web-vitals": "^2.1.0"
   },
   "devDependencies": {
-    "@hawtio/node-backend": "^4.1.0",
-    "event-stream": "3.3.4",
-    "gulp": "^4.0.0",
-    "gulp-angular-templatecache": "^2.0.0",
-    "gulp-chmod": "^2.0.0",
-    "gulp-clean": "^0.3.2",
-    "gulp-clean-css": "^4.3.0",
-    "gulp-concat": "^2.6.0",
-    "gulp-debug": "^3.1.0",
-    "gulp-dedupe": "0.0.2",
-    "gulp-flatten": "~0.3.0",
-    "gulp-gh-pages": "~0.5.0",
-    "gulp-header": "^1.0.0",
-    "gulp-if": "^3.0.0",
-    "gulp-less": "^4.0.1",
-    "gulp-load-plugins": "^1.0.0",
-    "gulp-ng-annotate": "~2.0.0",
-    "gulp-preprocess": "~4.0.2",
-    "gulp-rename": "^1.2.0",
-    "gulp-replace": "^0.6.1",
-    "gulp-rev": "^9.0.0",
-    "gulp-size": "^4.0.1",
-    "gulp-sourcemaps": "^2.6.0",
-    "gulp-tslint": "^8.1.1",
-    "gulp-typescript": "^4.0.0",
-    "gulp-uglify": "^3.0.0",
-    "gulp-usemin": "~0.3.0",
-    "natives": "~1.1.6",
-    "tslint": "^5.4.3",
-    "typescript": "^3.0.0",
-    "underscore.string": "^3.0.0",
-    "urijs": "^1.0.0",
-    "url-join": "^2.0.2",
-    "vinyl-map": "^1.0.0"
+    "@craco/craco": "^7.0.0",
+    "@hawtio/backend-middleware": "^1.0.3"
   },
-  "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hawtio/hawtio.git"
-  }
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "packageManager": "yarn@3.3.1"
 }

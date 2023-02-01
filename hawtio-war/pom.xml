@@ -60,69 +60,19 @@
 
     <plugins>
 
-      <!-- Add hawtio-console resources to the WAR -->
+      <!-- Add hawtio console resources to the WAR -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <webResources>
             <resource>
-              <directory>../console/dist/</directory>
+              <directory>../console/build/</directory>
               <includes>
                 <include>**/*.*</include>
               </includes>
             </resource>
           </webResources>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.wildfly.plugins</groupId>
-        <artifactId>wildfly-maven-plugin</artifactId>
-        <version>${wildfly-maven-plugin-version}</version>
-        <configuration>
-          <!-- Use lightweight distribution for faster startup -->
-          <groupId>org.wildfly</groupId>
-          <artifactId>wildfly-servlet-dist</artifactId>
-          <version>${wildfly-version}</version>
-          <addUser>
-            <users>
-              <user>
-                <username>admin</username>
-                <password>admin</password>
-              </user>
-            </users>
-          </addUser>
-          <beforeDeployment>
-            <scripts>
-              <script>${project.basedir}/etc/security.cli</script>
-            </scripts>
-          </beforeDeployment>
-          <javaOpts>
-            <javaOpt>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8787</javaOpt>
-          </javaOpts>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>${jetty-version}</version>
-        <configuration>
-          <webAppSourceDirectory>../hawtio-console-assembly/</webAppSourceDirectory>
-          <scanIntervalSeconds>1</scanIntervalSeconds>
-          <webAppConfig>
-            <contextPath>${context}</contextPath>
-          </webAppConfig>
-          <classesDirectory>${project.build.directory}/${project.name}/WEB-INF/classes</classesDirectory>
-          <stopKey>stop</stopKey>
-          <stopPort>9999</stopPort>
-          <systemProperties>
-            <systemProperty>
-              <key>java.security.auth.login.config</key>
-              <value>${project.basedir}/etc/login.conf</value>
-            </systemProperty>
-          </systemProperties>
         </configuration>
       </plugin>
 
