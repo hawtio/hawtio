@@ -1,9 +1,14 @@
+const path = require('path')
 const { hawtioBackend } = require('@hawtio/backend-middleware')
 
 module.exports = {
   webpack: {
-    configure: {
-      ignoreWarnings: [
+    alias: {
+      // Required when doing `yarn link`
+      react: path.resolve(__dirname, 'node_modules/react'),
+    },
+    configure: (webpackConfig) => {
+      webpackConfig.ignoreWarnings = [
         // For suppressing sourcemap warnings coming from superstruct
         function ignoreSourcemapsloaderWarnings(warning) {
           return warning.module
@@ -11,7 +16,15 @@ module.exports = {
             && warning.details
             && warning.details.includes('source-map-loader')
         },
-      ],
+      ]
+
+      // Tweak ModuleScopePlugin for allowing aliases outside of src
+      const moduleScopePlugin = webpackConfig.resolve.plugins.find(p => p.constructor.name === 'ModuleScopePlugin')
+      if (moduleScopePlugin) {
+        moduleScopePlugin.allowedPaths.push(path.resolve(__dirname, 'node_modules/react'))
+      }
+
+      return webpackConfig
     },
   },
   devServer: {
