@@ -1758,52 +1758,52 @@ __metadata:
   dependencies:
     "@craco/craco": ^7.0.0
     "@hawtio/backend-middleware": ^1.0.3
-    "@hawtio/react": ^0.1.0-1
-    "@testing-library/jest-dom": ^5.14.1
-    "@testing-library/react": ^13.0.0
-    "@testing-library/user-event": ^13.2.1
-    "@types/jest": ^27.0.1
-    "@types/node": ^16.7.13
-    "@types/react": ^18.0.0
-    "@types/react-dom": ^18.0.0
+    "@hawtio/react": ^0.1.0-3
+    "@testing-library/jest-dom": ^5.16.5
+    "@testing-library/react": ^13.4.0
+    "@testing-library/user-event": ^14.4.3
+    "@types/jest": ^29.4.0
+    "@types/node": ^18.11.18
+    "@types/react": ^18.0.27
+    "@types/react-dom": ^18.0.10
     react: ^18.2.0
     react-dom: ^18.2.0
     react-scripts: 5.0.1
-    typescript: ^4.4.2
+    typescript: ^4.9.5
     web-vitals: ^2.1.0
   languageName: unknown
   linkType: soft
 
-"@hawtio/react@npm:^0.1.0-1":
-  version: 0.1.0-1
-  resolution: "@hawtio/react@npm:0.1.0-1"
+"@hawtio/react@npm:^0.1.0-3":
+  version: 0.1.0-3
+  resolution: "@hawtio/react@npm:0.1.0-3"
   dependencies:
-    "@patternfly/react-core": ^4.250.1
-    "@patternfly/react-table": ^4.111.33
+    "@patternfly/react-core": ^4.267.6
+    "@patternfly/react-table": ^4.112.6
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
-    "@testing-library/user-event": ^13.5.0
+    "@testing-library/user-event": ^14.4.3
     "@types/jest": ^29.4.0
-    "@types/node": ^16.18.3
-    "@types/react": ^18.0.24
-    "@types/react-dom": ^18.0.8
+    "@types/node": ^18.11.18
+    "@types/react": ^18.0.27
+    "@types/react-dom": ^18.0.10
     "@types/react-router-dom": ^5.3.3
-    jolokia.js: 1.7.1-6
-    jquery: ^3.6.1
+    jolokia.js: 1.7.2
+    jquery: ^3.6.3
     js-logger: ^1.6.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-markdown: ^8.0.3
+    react-markdown: ^8.0.5
     react-router-dom: ^5.3.4
     react-split: ^2.0.14
     superstruct: ^1.0.3
-    typescript: ^4.8.4
+    typescript: ^4.9.5
   peerDependencies:
-    "@patternfly/react-core": ^4.250.1
-    "@patternfly/react-table": ^4.111.33
+    "@patternfly/react-core": ^4.267.6
+    "@patternfly/react-table": ^4.112.6
     react: ^16.8 || ^17 || ^18
     react-dom: ^16.8 || ^17 || ^18
-  checksum: 782c5fe9af85ef177d738df7de2f5650173b0e734257d6a63616fca55dc83429c63c9023c7c0e6defee91bf0e9a3440fe8002e363f1034a55c1931a1d9b93dd6
+  checksum: 196e3ede96b54e062b9202c08654ceb53183174ee5e51bec2e7aafe49fd6821dc02e316d1738bff9e3ae135238f177f00ac94e4c9a1a763f0df156d3dcc72763
   languageName: node
   linkType: hard
 
@@ -2269,7 +2269,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-core@npm:^4.250.1, @patternfly/react-core@npm:^4.276.6":
+"@patternfly/react-core@npm:^4.267.6, @patternfly/react-core@npm:^4.276.6":
   version: 4.276.6
   resolution: "@patternfly/react-core@npm:4.276.6"
   dependencies:
@@ -2304,7 +2304,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@patternfly/react-table@npm:^4.111.33":
+"@patternfly/react-table@npm:^4.112.6":
   version: 4.112.39
   resolution: "@patternfly/react-table@npm:4.112.39"
   dependencies:
@@ -2623,7 +2623,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^5.14.1, @testing-library/jest-dom@npm:^5.16.5":
+"@testing-library/jest-dom@npm:^5.16.5":
   version: 5.16.5
   resolution: "@testing-library/jest-dom@npm:5.16.5"
   dependencies:
@@ -2640,7 +2640,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^13.0.0, @testing-library/react@npm:^13.4.0":
+"@testing-library/react@npm:^13.4.0":
   version: 13.4.0
   resolution: "@testing-library/react@npm:13.4.0"
   dependencies:
@@ -2654,14 +2654,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:^13.2.1, @testing-library/user-event@npm:^13.5.0":
-  version: 13.5.0
-  resolution: "@testing-library/user-event@npm:13.5.0"
-  dependencies:
-    "@babel/runtime": ^7.12.5
+"@testing-library/user-event@npm:^14.4.3":
+  version: 14.4.3
+  resolution: "@testing-library/user-event@npm:14.4.3"
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
-  checksum: 16319de685fbb7008f1ba667928f458b2d08196918002daca56996de80ef35e6d9de26e9e1ece7d00a004692b95a597cf9142fff0dc53f2f51606a776584f549
+  checksum: 852c48ea6db1c9471b18276617c84fec4320771e466cd58339a732ca3fd73ad35e5a43ae14f51af51a8d0a150dcf60fcaab049ef367871207bea8f92c4b8195e
   languageName: node
   linkType: hard
 
@@ -2949,16 +2947,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^27.0.1":
-  version: 27.5.2
-  resolution: "@types/jest@npm:27.5.2"
-  dependencies:
-    jest-matcher-utils: ^27.0.0
-    pretty-format: ^27.0.0
-  checksum: 7e11c6826aa429ad990dc262e4e4b54aa36573287fddf15773e4137f07d11d3105f0dd9f1baff73252160a057df23f5529bb83b1bf83cd3f45f9460a5ca5c22e
-  languageName: node
-  linkType: hard
-
 "@types/jquery@npm:^3.5.14":
   version: 3.5.16
   resolution: "@types/jquery@npm:3.5.16"
@@ -3005,17 +2993,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
+"@types/node@npm:*, @types/node@npm:^18.11.18":
   version: 18.11.18
   resolution: "@types/node@npm:18.11.18"
   checksum: 03f17f9480f8d775c8a72da5ea7e9383db5f6d85aa5fefde90dd953a1449bd5e4ffde376f139da4f3744b4c83942166d2a7603969a6f8ea826edfb16e6e3b49d
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^16.18.3, @types/node@npm:^16.7.13":
-  version: 16.18.11
-  resolution: "@types/node@npm:16.18.11"
-  checksum: 2a3b1da13063debe6e26f732defb5f03ef4ef732c3e08daba838d8850433bd00e537ce1a97ce9bcfc4b15db5218d701d1265fae94e0d6926906bec157e6b46e0
   languageName: node
   linkType: hard
 
@@ -3061,7 +3042,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.0.0, @types/react-dom@npm:^18.0.8":
+"@types/react-dom@npm:^18.0.0, @types/react-dom@npm:^18.0.10":
   version: 18.0.10
   resolution: "@types/react-dom@npm:18.0.10"
   dependencies:
@@ -3091,7 +3072,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.0.0, @types/react@npm:^18.0.24":
+"@types/react@npm:*, @types/react@npm:^18.0.27":
   version: 18.0.27
   resolution: "@types/react@npm:18.0.27"
   dependencies:
@@ -8202,7 +8183,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-matcher-utils@npm:^27.0.0, jest-matcher-utils@npm:^27.5.1":
+"jest-matcher-utils@npm:^27.5.1":
   version: 27.5.1
   resolution: "jest-matcher-utils@npm:27.5.1"
   dependencies:
@@ -8596,16 +8577,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jolokia.js@npm:1.7.1-6":
-  version: 1.7.1-6
-  resolution: "jolokia.js@npm:1.7.1-6"
+"jolokia.js@npm:1.7.2":
+  version: 1.7.2
+  resolution: "jolokia.js@npm:1.7.2"
   dependencies:
     "@types/jquery": ^3.5.14
-  checksum: 4c7e6dda1db83935ee42341048a23eb5cbf76ec6f3f6fc2328d8c05a850345a25eb1f9f6491c0504ff9f3b94a84d94fb41b7c85b312c452081599b3d1df61847
+  checksum: 88aafeee1416ee6b02c0d7fd78bc8bf379a928f0047a7cb629c2eff5ddc9403a57b59ebbf58e86a55984649de76a18a93fc7153d7763d916981624f5034477af
   languageName: node
   linkType: hard
 
-"jquery@npm:^3.6.1":
+"jquery@npm:^3.6.3":
   version: 3.6.3
   resolution: "jquery@npm:3.6.3"
   checksum: 0fd366bdcaa0c84a7a8751ce20f8192290141913978b5059574426d9b01f4365daa675f95aab3eec94fd794d27b08d32078a2236bef404b8ba78073009988ce6
@@ -11146,7 +11127,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:^27.0.0, pretty-format@npm:^27.0.2, pretty-format@npm:^27.5.1":
+"pretty-format@npm:^27.0.2, pretty-format@npm:^27.5.1":
   version: 27.5.1
   resolution: "pretty-format@npm:27.5.1"
   dependencies:
@@ -11458,7 +11439,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-markdown@npm:^8.0.3":
+"react-markdown@npm:^8.0.5":
   version: 8.0.5
   resolution: "react-markdown@npm:8.0.5"
   dependencies:
@@ -13281,7 +13262,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.4.2, typescript@npm:^4.8.4":
+"typescript@npm:^4.9.5":
   version: 4.9.5
   resolution: "typescript@npm:4.9.5"
   bin:
@@ -13291,7 +13272,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.4.2#~builtin<compat/typescript>, typescript@patch:typescript@^4.8.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.9.5#~builtin<compat/typescript>":
   version: 4.9.5
   resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=ad5954"
   bin:
