@@ -5,7 +5,6 @@ import java.util.Objects;
 import javax.servlet.ServletContextEvent;
 
 import io.hawt.HawtioContextListener;
-import io.hawt.log.logback.LogbackLogQuery;
 import io.hawt.system.ConfigManager;
 import io.hawt.system.HawtioProperty;
 

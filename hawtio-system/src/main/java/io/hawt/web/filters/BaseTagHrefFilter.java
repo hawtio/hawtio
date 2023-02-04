@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
+import javax.annotation.Nonnull;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -24,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 public class BaseTagHrefFilter implements Filter {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(BaseTagHrefFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BaseTagHrefFilter.class);
 
     public static final String PARAM_APPLICATION_CONTEXT_PATH = "applicationContextPath";
     private static final String DEFAULT_CONTEXT_PATH = "/hawtio";
@@ -87,27 +88,27 @@ public class BaseTagHrefFilter implements Filter {
     public void destroy() {
     }
 
-    private class FilterServletOutputStream extends ServletOutputStream {
+    private static class FilterServletOutputStream extends ServletOutputStream {
 
-        private DataOutputStream stream;
+        private final DataOutputStream stream;
 
         public FilterServletOutputStream(OutputStream output) {
             stream = new DataOutputStream(output);
         }
 
         @Override
-        public void write(int b) throws IOException  {
+        public void write(int b) throws IOException {
             stream.write(b);
         }
 
         @Override
-        public void write(byte[] b) throws IOException  {
+        public void write(@Nonnull byte[] b) throws IOException {
             stream.write(b);
         }
 
         @Override
-        public void write(byte[] b, int off, int len) throws IOException  {
-            stream.write(b,off,len);
+        public void write(@Nonnull byte[] b, int off, int len) throws IOException {
+            stream.write(b, off, len);
         }
 
         @Override
@@ -120,9 +121,8 @@ public class BaseTagHrefFilter implements Filter {
         }
     }
 
-
-    private class BaseTagHrefResponseWrapper extends HttpServletResponseWrapper {
-        private ByteArrayOutputStream output;
+    private static class BaseTagHrefResponseWrapper extends HttpServletResponseWrapper {
+        private final ByteArrayOutputStream output;
 
         public BaseTagHrefResponseWrapper(HttpServletResponse response) {
             super(response);

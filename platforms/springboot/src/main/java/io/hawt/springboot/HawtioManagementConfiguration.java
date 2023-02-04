@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.annotation.Nonnull;
 import javax.servlet.DispatcherType;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import io.hawt.system.ConfigManager;
@@ -112,7 +111,7 @@ public class HawtioManagementConfiguration {
     // -------------------------------------------------------------------------
 
     @Bean
-    public FilterRegistrationBean sessionExpiryFilter() {
+    public FilterRegistrationBean<SessionExpiryFilter> sessionExpiryFilter() {
         final FilterRegistrationBean<SessionExpiryFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new SessionExpiryFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
@@ -120,7 +119,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean cacheFilter() {
+    public FilterRegistrationBean<CacheHeadersFilter> cacheFilter() {
         final FilterRegistrationBean<CacheHeadersFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new CacheHeadersFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
@@ -128,7 +127,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean hawtioCorsFilter() {
+    public FilterRegistrationBean<CORSFilter> hawtioCorsFilter() {
         final FilterRegistrationBean<CORSFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new CORSFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
@@ -136,7 +135,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean xframeOptionsFilter() {
+    public FilterRegistrationBean<XFrameOptionsFilter> xframeOptionsFilter() {
         final FilterRegistrationBean<XFrameOptionsFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new XFrameOptionsFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
@@ -144,7 +143,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean xxssProtectionFilter() {
+    public FilterRegistrationBean<XXSSProtectionFilter> xxssProtectionFilter() {
         final FilterRegistrationBean<XXSSProtectionFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new XXSSProtectionFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
@@ -152,7 +151,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean xContentTypeOptionsFilter() {
+    public FilterRegistrationBean<XContentTypeOptionsFilter> xContentTypeOptionsFilter() {
         final FilterRegistrationBean<XContentTypeOptionsFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new XContentTypeOptionsFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
@@ -160,7 +159,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean contentSecurityPolicyFilter() {
+    public FilterRegistrationBean<ContentSecurityPolicyFilter> contentSecurityPolicyFilter() {
         final FilterRegistrationBean<ContentSecurityPolicyFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new ContentSecurityPolicyFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
@@ -168,7 +167,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean strictTransportSecurityFilter() {
+    public FilterRegistrationBean<StrictTransportSecurityFilter> strictTransportSecurityFilter() {
         final FilterRegistrationBean<StrictTransportSecurityFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new StrictTransportSecurityFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
@@ -176,7 +175,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean publicKeyPinningFilter() {
+    public FilterRegistrationBean<PublicKeyPinningFilter> publicKeyPinningFilter() {
         final FilterRegistrationBean<PublicKeyPinningFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new PublicKeyPinningFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
@@ -184,7 +183,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean referrerPolicyFilter() {
+    public FilterRegistrationBean<ReferrerPolicyFilter> referrerPolicyFilter() {
         final FilterRegistrationBean<ReferrerPolicyFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new ReferrerPolicyFilter());
         filter.addUrlPatterns(hawtioPath + "/*");
@@ -194,7 +193,7 @@ public class HawtioManagementConfiguration {
     @Bean
     @ConditionalOnBean(JolokiaEndpoint.class)
     @ConditionalOnExposedEndpoint(name = "jolokia")
-    public FilterRegistrationBean authenticationFilter(final EndpointPathResolver pathResolver) {
+    public FilterRegistrationBean<AuthenticationFilter> authenticationFilter(final EndpointPathResolver pathResolver) {
         final FilterRegistrationBean<AuthenticationFilter> filter = new FilterRegistrationBean<>();
         filter.setFilter(new AuthenticationFilter());
         filter.addUrlPatterns(pathResolver.resolveUrlMapping("jolokia", "*"));
@@ -203,7 +202,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean loginRedirectFilter(final Redirector redirector) {
+    public FilterRegistrationBean<LoginRedirectFilter> loginRedirectFilter(final Redirector redirector) {
         final String[] unsecuredPaths = prependContextPath(AuthenticationConfiguration.UNSECURED_PATHS);
         final FilterRegistrationBean<LoginRedirectFilter> filter = new FilterRegistrationBean<>();
         final LoginRedirectFilter loginRedirectFilter = new LoginRedirectFilter(unsecuredPaths);
@@ -214,7 +213,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean baseTagHrefFilter(final EndpointPathResolver pathResolver) {
+    public FilterRegistrationBean<BaseTagHrefFilter> baseTagHrefFilter(final EndpointPathResolver pathResolver) {
         final FilterRegistrationBean<BaseTagHrefFilter> filter = new FilterRegistrationBean<>();
         final BaseTagHrefFilter baseTagHrefFilter = new BaseTagHrefFilter();
         filter.setFilter(baseTagHrefFilter);
@@ -227,7 +226,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean flightRecorderDownloadFacade(final EndpointPathResolver pathResolver) {
+    public FilterRegistrationBean<FlightRecordingDownloadFacade> flightRecorderDownloadFacade(final EndpointPathResolver pathResolver) {
         final FilterRegistrationBean<FlightRecordingDownloadFacade> filter = new FilterRegistrationBean<>();
         filter.setFilter(new FlightRecordingDownloadFacade());
         filter.addUrlPatterns(hawtioPath + "/jolokia/*");
@@ -243,21 +242,21 @@ public class HawtioManagementConfiguration {
     // Jolokia agent servlet is provided by Spring Boot actuator
 
     @Bean
-    public ServletRegistrationBean jolokiaProxyServlet() {
+    public ServletRegistrationBean<ProxyServlet> jolokiaProxyServlet() {
         return new ServletRegistrationBean<>(
             new ProxyServlet(),
             hawtioPath + "/proxy/*");
     }
 
     @Bean
-    public ServletRegistrationBean userServlet() {
+    public ServletRegistrationBean<KeycloakUserServlet> userServlet() {
         return new ServletRegistrationBean<>(
             new KeycloakUserServlet(),
             hawtioPath + "/user/*");
     }
 
     @Bean
-    public ServletRegistrationBean loginServlet(Redirector redirector) {
+    public ServletRegistrationBean<LoginServlet> loginServlet(Redirector redirector) {
         LoginServlet loginServlet = new LoginServlet();
         loginServlet.setRedirector(redirector);
         return new ServletRegistrationBean<>(loginServlet,
@@ -265,7 +264,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    public ServletRegistrationBean logoutServlet(Redirector redirector) {
+    public ServletRegistrationBean<LogoutServlet> logoutServlet(Redirector redirector) {
         LogoutServlet logoutServlet = new LogoutServlet();
         logoutServlet.setRedirector(redirector);
         return new ServletRegistrationBean<>(logoutServlet,
@@ -273,7 +272,7 @@ public class HawtioManagementConfiguration {
     }
 
     @Bean
-    public ServletRegistrationBean keycloakServlet() {
+    public ServletRegistrationBean<KeycloakServlet> keycloakServlet() {
         return new ServletRegistrationBean<>(
             new KeycloakServlet(),
             hawtioPath + "/keycloak/*");
@@ -284,7 +283,7 @@ public class HawtioManagementConfiguration {
     // -------------------------------------------------------------------------
 
     @Bean
-    public ServletListenerRegistrationBean<?> hawtioContextListener(final ConfigManager configManager) {
+    public ServletListenerRegistrationBean<SpringHawtioContextListener> hawtioContextListener(final ConfigManager configManager) {
         return new ServletListenerRegistrationBean<>(
             new SpringHawtioContextListener(configManager, hawtioPath));
     }
@@ -295,12 +294,7 @@ public class HawtioManagementConfiguration {
 
     @Bean
     public ServletContextInitializer servletContextInitializer() {
-        return new ServletContextInitializer() {
-            @Override
-            public void onStartup(ServletContext servletContext) throws ServletException {
-                servletContext.getSessionCookieConfig().setHttpOnly(true);
-            }
-        };
+        return servletContext -> servletContext.getSessionCookieConfig().setHttpOnly(true);
     }
 
     // -------------------------------------------------------------------------
@@ -313,7 +307,7 @@ public class HawtioManagementConfiguration {
             .toArray(String[]::new);
     }
 
-    private class JolokiaForwardingController extends AbstractUrlViewController {
+    private static class JolokiaForwardingController extends AbstractUrlViewController {
 
         private final String hawtioJolokiaPath;
         private final String jolokiaPath;
@@ -324,6 +318,7 @@ public class HawtioManagementConfiguration {
         }
 
         @Override
+        @Nonnull
         protected String getViewNameForRequest(final HttpServletRequest request) {
             // Forward requests from hawtio/jolokia to the Spring Boot Jolokia actuator endpoint
             final StringBuilder b = new StringBuilder();
@@ -344,7 +339,7 @@ public class HawtioManagementConfiguration {
         private static final String DUMMY = "/<DUMMY>";
 
         @Override
-        protected void registerHandler(final String urlPath, final Object handler) {
+        protected void registerHandler(@Nonnull final String urlPath, @Nonnull final Object handler) {
             if (!DUMMY.equals(urlPath)) {
                 super.registerHandler(urlPath, handler);
             }
