@@ -20,7 +20,7 @@ The most important difference is that you need to put static web resources under
 
 The classpath `classpath:/hawtio-static/*` is a special classpath for Hawtio Spring Boot support, which is similar to `classpath:static/*` in Spring Boot but exposes static resources under the Hawtio context (default to `/actuator/hawtio/`).
 
-A custom plugin js needs to be put under `hawtio-static/app/`. It is then accessible at http://localhost:10001/actuator/hawtio/plugins/**/*.js (note `app/` is replaced with `plugins/` in the real path). Also CSS and images need to be put under `hawtio-static/css/` and `hawtio-static/img/` respectively. It is necessary because Hawtio redirects requests to paths other than `css/`, `img/`, `fonts/`, and `plugins/` to `index.html`.
+A custom plugin js needs to be put under `hawtio-static/app/`. It is then accessible at http://localhost:10001/actuator/hawtio/plugins/**/*.js (note `app/` is replaced with `plugins/` in the real path). Also, CSS and images need to be put under `hawtio-static/css/` and `hawtio-static/img/` respectively. It is necessary because Hawtio redirects requests to paths other than `css/`, `img/`, `fonts/`, and `plugins/` to `index.html`.
 
 See [src/main/resources/hawtio-static/hawtconfig.json](src/main/resources/hawtio-static/hawtconfig.json).
 
