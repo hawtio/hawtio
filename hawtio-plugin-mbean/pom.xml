@@ -10,7 +10,7 @@
   <artifactId>hawtio-plugin-mbean</artifactId>
   <packaging>bundle</packaging>
   <name>${project.artifactId}</name>
-  <description>hawtio :: Plugin MBean</description>
+  <description>Hawtio :: Plugin MBean</description>
 
   <properties>
     <fuse.osgi.export>

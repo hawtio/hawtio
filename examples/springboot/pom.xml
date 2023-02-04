@@ -13,7 +13,7 @@
   <groupId>io.hawt.examples</groupId>
   <artifactId>hawtio-example-springboot</artifactId>
   <name>${project.artifactId}</name>
-  <description>hawtio :: Sample Spring Boot 2.x process</description>
+  <description>Hawtio :: Sample Spring Boot 2.x process</description>
   <packaging>war</packaging>
 
   <properties>

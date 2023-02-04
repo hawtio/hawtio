@@ -12,7 +12,7 @@
 
   <artifactId>branding-plugin</artifactId>
   <name>${project.artifactId}</name>
-  <description>hawtio :: Branding plugin example</description>
+  <description>Hawtio :: Branding plugin example</description>
 
   <!-- Hawtio plugins are almost always war files -->
   <packaging>war</packaging>

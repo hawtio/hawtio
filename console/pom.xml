@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>hawtio-console-assembly</artifactId>
   <name>${project.artifactId}</name>
-  <description>hawtio :: ${project.artifactId}</description>
+  <description>Hawtio :: ${project.artifactId}</description>
   <packaging>pom</packaging>
 
   <properties>

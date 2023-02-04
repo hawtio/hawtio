@@ -11,7 +11,7 @@
 
   <artifactId>hawtio-springboot</artifactId>
   <name>${project.artifactId}</name>
-  <description>hawtio :: Spring Boot 2.x starter</description>
+  <description>Hawtio :: Spring Boot 2.x starter</description>
 
   <dependencyManagement>
     <dependencies>

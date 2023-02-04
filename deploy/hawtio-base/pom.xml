@@ -11,7 +11,7 @@
   <artifactId>hawtio-base</artifactId>
   <packaging>war</packaging>
   <name>${project.artifactId}</name>
-  <description>hawtio :: Base Web Application</description>
+  <description>Hawtio :: Base Web Application</description>
 
   <dependencies>
     <dependency>

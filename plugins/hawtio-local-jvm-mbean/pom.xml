@@ -11,7 +11,7 @@
   <artifactId>hawtio-local-jvm-mbean</artifactId>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
-  <description>hawtio :: ${project.artifactId}</description>
+  <description>Hawtio :: ${project.artifactId}</description>
 
   <dependencies>
 

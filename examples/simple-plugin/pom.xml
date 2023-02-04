@@ -12,7 +12,7 @@
 
   <artifactId>simple-plugin</artifactId>
   <name>${project.artifactId}</name>
-  <description>hawtio :: Simple plugin example</description>
+  <description>Hawtio :: Simple plugin example</description>
 
   <!-- hawtio plugins are almost always war files -->
   <packaging>war</packaging>

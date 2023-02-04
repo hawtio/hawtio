@@ -10,7 +10,7 @@
   <artifactId>hawtio-war</artifactId>
   <packaging>war</packaging>
   <name>${project.artifactId}</name>
-  <description>hawtio :: Web Console</description>
+  <description>Hawtio :: Web Console</description>
 
   <properties>
     <finalName>hawtio</finalName>

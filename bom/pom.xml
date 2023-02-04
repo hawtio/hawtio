@@ -11,7 +11,7 @@
   <artifactId>hawtio-bom</artifactId>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
-  <description>hawtio :: BOM</description>
+  <description>Hawtio :: BOM</description>
 
   <dependencyManagement>
     <dependencies>
